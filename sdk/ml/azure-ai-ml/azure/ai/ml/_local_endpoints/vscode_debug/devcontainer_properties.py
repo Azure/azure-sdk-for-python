@@ -22,8 +22,7 @@ class Image(object):
 
 
 class Build(object):
-    """Python object representation of devcontainer build.dockerfile
-    property."""
+    """Python object representation of devcontainer build.dockerfile property."""
 
     def __init__(
         self,
@@ -119,7 +118,6 @@ class OverrideCommand(object):
     def __init__(self):
         pass
 
-    # pylint: disable=no-self-use
     def to_dict(self) -> dict:
         return {"overrideCommand": True}
 
@@ -128,7 +126,6 @@ class Extensions(object):
     def __init__(self):
         pass
 
-    # pylint: disable=no-self-use
     def to_dict(self) -> dict:
         return {"extensions": ["ms-python.python", "ms-toolsai.vscode-ai-inference"]}
 
@@ -137,7 +134,6 @@ class Settings(object):
     def __init__(self):
         pass
 
-    # pylint: disable=no-self-use
     def to_dict(self) -> dict:
         return {
             "settings": {

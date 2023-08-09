@@ -15,7 +15,7 @@ from azure.mgmt.core import ARMPipelineClient
 from . import models as _models
 from ._configuration import ImageBuilderClientConfiguration
 from ._serialization import Deserializer, Serializer
-from .operations import Operations, VirtualMachineImageTemplatesOperations
+from .operations import Operations, TriggersOperations, VirtualMachineImageTemplatesOperations
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -28,6 +28,8 @@ class ImageBuilderClient:  # pylint: disable=client-accepts-api-version-keyword
     :ivar virtual_machine_image_templates: VirtualMachineImageTemplatesOperations operations
     :vartype virtual_machine_image_templates:
      azure.mgmt.imagebuilder.operations.VirtualMachineImageTemplatesOperations
+    :ivar triggers: TriggersOperations operations
+    :vartype triggers: azure.mgmt.imagebuilder.operations.TriggersOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.imagebuilder.operations.Operations
     :param credential: Credential needed for the client to connect to Azure. Required.
@@ -37,7 +39,7 @@ class ImageBuilderClient:  # pylint: disable=client-accepts-api-version-keyword
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2022-02-14". Note that overriding this
+    :keyword api_version: Api Version. Default value is "2022-07-01". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
@@ -52,7 +54,7 @@ class ImageBuilderClient:  # pylint: disable=client-accepts-api-version-keyword
         **kwargs: Any
     ) -> None:
         self._config = ImageBuilderClientConfiguration(credential=credential, subscription_id=subscription_id, **kwargs)
-        self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        self._client: ARMPipelineClient = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
@@ -61,6 +63,7 @@ class ImageBuilderClient:  # pylint: disable=client-accepts-api-version-keyword
         self.virtual_machine_image_templates = VirtualMachineImageTemplatesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.triggers = TriggersOperations(self._client, self._config, self._serialize, self._deserialize)
         self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
 
     def _send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:
@@ -92,5 +95,5 @@ class ImageBuilderClient:  # pylint: disable=client-accepts-api-version-keyword
         self._client.__enter__()
         return self
 
-    def __exit__(self, *exc_details) -> None:
+    def __exit__(self, *exc_details: Any) -> None:
         self._client.__exit__(*exc_details)

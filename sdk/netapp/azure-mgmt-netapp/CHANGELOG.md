@@ -1,5 +1,54 @@
 # Release History
 
+## 10.1.0 (2023-07-21)
+
+### Features Added
+
+  - Added operation VolumesOperations.begin_list_get_group_id_list_for_ldap_user
+  - Model NetAppAccountPatch has a new parameter identity
+  - Model Volume has a new parameter actual_throughput_mibps
+  - Model Volume has a new parameter originating_resource_id
+  - Model VolumeGroupVolumeProperties has a new parameter actual_throughput_mibps
+  - Model VolumeGroupVolumeProperties has a new parameter originating_resource_id
+  - Model VolumePatch has a new parameter snapshot_directory_visible
+
+## 10.0.0 (2023-04-20)
+
+### Features Added
+
+  - Added operation BackupsOperations.begin_restore_files
+  - Added operation VolumesOperations.begin_break_file_locks
+  - Model ActiveDirectory has a new parameter preferred_servers_for_ldap_client
+  - Model Backup has a new parameter system_data
+  - Model BackupPolicyDetails has a new parameter system_data
+  - Model Snapshot has a new parameter system_data
+  - Model Volume has a new parameter data_store_resource_id
+  - Model Volume has a new parameter file_access_logs
+  - Model Volume has a new parameter is_large_volume
+  - Model Volume has a new parameter provisioned_availability_zone
+  - Model VolumeGroupVolumeProperties has a new parameter data_store_resource_id
+  - Model VolumeGroupVolumeProperties has a new parameter file_access_logs
+  - Model VolumeGroupVolumeProperties has a new parameter is_large_volume
+  - Model VolumeGroupVolumeProperties has a new parameter provisioned_availability_zone
+  - Model VolumePropertiesDataProtection has a new parameter volume_relocation
+  - Model VolumeQuotaRulePatch has a new parameter tags
+  - Model VolumeRelocationProperties has a new parameter ready_to_be_finalized
+
+### Breaking Changes
+
+  - Model VolumeBackupProperties no longer has parameter vault_id
+  - Model VolumeRelocationProperties no longer has parameter old_bare_metal_tenant_id
+  - Model VolumeRelocationProperties no longer has parameter old_volume_id
+  - Parameter location of model BackupPolicyDetails is now required
+  - Removed operation group VaultsOperations
+
+## 9.0.2b1 (2023-02-16)
+
+### Other Changes
+
+  - Added generated samples in github repo
+  - Drop support for python<3.7.0
+
 ## 9.0.1 (2022-10-26)
 
 ### Bugs Fixed

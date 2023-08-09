@@ -34,7 +34,7 @@ class AuthorizationManagementClientConfiguration(Configuration):  # pylint: disa
 
     def __init__(self, credential: "AsyncTokenCredential", **kwargs: Any) -> None:
         super(AuthorizationManagementClientConfiguration, self).__init__(**kwargs)
-        api_version = kwargs.pop("api_version", "2020-10-01")  # type: str
+        api_version: str = kwargs.pop("api_version", "2020-10-01")
 
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")

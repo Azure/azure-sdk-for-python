@@ -9,7 +9,6 @@
 from ._machines_operations import MachinesOperations
 from ._machine_extensions_operations import MachineExtensionsOperations
 from ._hybrid_compute_management_client_operations import HybridComputeManagementClientOperationsMixin
-from ._extension_metadata_operations import ExtensionMetadataOperations
 from ._operations import Operations
 from ._private_link_scopes_operations import PrivateLinkScopesOperations
 from ._private_link_resources_operations import PrivateLinkResourcesOperations
@@ -23,7 +22,6 @@ __all__ = [
     "MachinesOperations",
     "MachineExtensionsOperations",
     "HybridComputeManagementClientOperationsMixin",
-    "ExtensionMetadataOperations",
     "Operations",
     "PrivateLinkScopesOperations",
     "PrivateLinkResourcesOperations",

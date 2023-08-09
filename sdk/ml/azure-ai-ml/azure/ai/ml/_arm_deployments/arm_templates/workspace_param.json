@@ -11,6 +11,9 @@
     "description": {
         "value": ""
     },
+    "kind": {
+        "value": "Default"
+    },
     "friendlyName": {
         "value": ""
     },
@@ -39,6 +42,12 @@
         "value": "new"
     },
     "applicationInsightsName": {
+        "value": ""
+    },
+    "logAnalyticsName": {
+        "value": "none"
+    },
+    "logAnalyticsArmId": {
         "value": ""
     },
     "applicationInsightsResourceGroupName": {
@@ -115,5 +124,44 @@
     },
     "primaryUserAssignedIdentity": {
         "value": ""
+    },
+    "managedNetwork": {
+        "value": {}
+    },
+    "setup_materialization_store" : {
+        "value": "false"
+    },
+    "spark_runtime_version" : {
+        "value": ""
+    },
+    "offline_store_connection_name" : {
+        "value": ""
+    },
+    "offline_store_connection_target" : {
+        "value": ""
+    },
+    "materialization_identity_client_id" : {
+        "value": ""
+    },
+    "materialization_identity_resource_id" : {
+        "value": ""
+    },
+    "online_store_connection_name" : {
+        "value": ""
+    },
+    "online_store_connection_target" : {
+        "value": ""
+    },
+    "workspace_hub_config" : {
+        "value": {}
+    },
+    "existing_workspaces" : {
+        "value": []
+    },
+    "workspace_hub" : {
+        "value": ""
+    },
+    "enable_data_isolation": {
+        "value": "false"
     }
 }

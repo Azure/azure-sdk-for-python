@@ -1,5 +1,30 @@
 # Release History
 
+## 2.0.0b1 (2023-07-21)
+
+### Features Added
+
+  - Added operation WebPubSubOperations.list_replica_skus
+  - Added operation group WebPubSubReplicasOperations
+  - Model PrivateLinkResource has a new parameter system_data
+  - Model ProxyResource has a new parameter system_data
+  - Model Resource has a new parameter system_data
+  - Model TrackedResource has a new parameter system_data
+  - Model WebPubSubResource has a new parameter kind
+
+### Breaking Changes
+
+  - Parameter location of model TrackedResource is now required
+  - Parameter location of model WebPubSubResource is now required
+
+## 1.1.0 (2023-03-20)
+
+### Features Added
+
+  - Added operation group WebPubSubCustomCertificatesOperations
+  - Added operation group WebPubSubCustomDomainsOperations
+  - Model WebPubSubHubProperties has a new parameter event_listeners
+
 ## 1.1.0b1 (2022-11-02)
 
 ### Features Added

@@ -1,6 +1,6 @@
 from common import Common
 
-_GO_OWNER = {'ArcturusZhang', 'lirenhe'}
+_GO_OWNER = {'ArcturusZhang', 'lirenhe', 'Alancere', 'github-actions[bot]'}
 _GO_REPO = 'Azure/azure-sdk-for-go'
 _FILE_OUT_NAME_GO = 'sdk_issue_go.md'
 

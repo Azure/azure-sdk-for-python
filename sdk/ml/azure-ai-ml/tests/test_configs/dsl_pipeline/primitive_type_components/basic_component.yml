@@ -1,0 +1,18 @@
+$schema: https://azuremlschemas.azureedge.net/latest/commandComponent.schema.json
+type: command
+name: basic_component
+command: >-
+  mldesigner execute --source primitive_type_components.py --name basic_component_func
+  --inputs bool_param=${{inputs.bool_param}} int_param=${{inputs.int_param}} 
+  float_param=${{inputs.float_param}} str_param=${{inputs.str_param}}
+code: ./src
+environment: azureml://registries/azureml/environments/mldesigner/labels/latest
+inputs:
+  bool_param:
+    type: boolean
+  int_param:
+    type: integer
+  float_param:
+    type: number
+  str_param:
+    type: string

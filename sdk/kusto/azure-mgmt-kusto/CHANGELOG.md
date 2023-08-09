@@ -1,5 +1,30 @@
 # Release History
 
+## 3.2.0 (2023-07-21)
+
+### Features Added
+
+  - Added operation ClustersOperations.begin_migrate
+  - Added operation group DatabaseOperations
+  - Model Cluster has a new parameter migration_cluster
+  - Model ClusterUpdate has a new parameter migration_cluster
+  - Model DatabaseListResult has a new parameter next_link
+  - Model ReadOnlyFollowingDatabase has a new parameter suspension_details
+  - Model ReadWriteDatabase has a new parameter key_vault_properties
+  - Model ReadWriteDatabase has a new parameter suspension_details
+  - Operation DatabasesOperations.list_by_cluster has a new optional parameter skiptoken
+  - Operation DatabasesOperations.list_by_cluster has a new optional parameter top
+
+## 3.1.0 (2023-02-15)
+
+### Features Added
+
+  - Added operation group SkusOperations
+  - Model LanguageExtension has a new parameter language_extension_image_name
+  - Model SkuLocationInfoItem has a new parameter zone_details
+  - Model TableLevelSharingProperties has a new parameter functions_to_exclude
+  - Model TableLevelSharingProperties has a new parameter functions_to_include
+
 ## 3.1.0b1 (2022-12-27)
 
 ### Features Added

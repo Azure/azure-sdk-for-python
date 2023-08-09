@@ -10,14 +10,16 @@ import logging
 import time
 from concurrent.futures import Future
 from pathlib import Path
-from typing import Any, Callable, Optional, Union
+from typing import Any, Callable, Dict, Optional, Union
 
 from azure.ai.ml._utils._arm_id_utils import is_ARM_id_for_resource, is_registry_id_for_resource
 from azure.ai.ml._utils._logger_utils import initialize_logger_info
-from azure.ai.ml.constants._common import ARM_ID_PREFIX, AzureMLResourceType, LROConfigurations
+from azure.ai.ml.constants._common import ARM_ID_PREFIX, AzureMLResourceType, DefaultOpenEncoding, LROConfigurations
 from azure.ai.ml.entities import BatchDeployment
 from azure.ai.ml.entities._assets._artifacts.code import Code
 from azure.ai.ml.entities._deployment.deployment import Deployment
+from azure.ai.ml.entities._deployment.model_batch_deployment import ModelBatchDeployment
+from azure.ai.ml._restclient.v2020_09_01_dataplanepreview.models import DataVersion, UriFileJobOutput
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, MlException, ValidationErrorType, ValidationException
 from azure.ai.ml.operations._operation_orchestrator import OperationOrchestrator
 from azure.core.exceptions import (
@@ -36,7 +38,7 @@ initialize_logger_info(module_logger, terminator="")
 
 
 def get_duration(start_time: float) -> None:
-    """Calculates the duration of the Long running operation took to finish
+    """Calculates the duration of the Long running operation took to finish.
 
     :param start_time: Start time
     :type start_time: float
@@ -89,7 +91,7 @@ def local_endpoint_polling_wrapper(func: Callable, message: str, **kwargs) -> An
 
     :param Callable func: Name of the endpoint.
     :param str message: Message to print out before starting operation write-out.
-    :param dict kwargs: kwargs to be passed to the func
+    :keyword dict kwargs: kwargs to be passed to the func
     :return: The type returned by Func
     """
     pool = concurrent.futures.ThreadPoolExecutor()
@@ -100,7 +102,7 @@ def local_endpoint_polling_wrapper(func: Callable, message: str, **kwargs) -> An
 
 
 def validate_response(response: HttpResponse) -> None:
-    """Validates the response of POST requests, throws on error
+    """Validates the response of POST requests, throws on error.
 
     :param HttpResponse response: the response of a POST requests
     :raises Exception: Raised when response is not json serializable
@@ -114,9 +116,9 @@ def validate_response(response: HttpResponse) -> None:
         if response.status_code != 204:
             try:
                 r_json = response.json()
-            except ValueError:
+            except ValueError as e:
                 # exception is not in the json format
-                raise Exception(response.content.decode("utf-8"))
+                raise Exception(response.content.decode("utf-8")) from e
         failure_msg = r_json.get("error", {}).get("message", response)
         error_map = {
             401: ClientAuthenticationError,
@@ -128,8 +130,7 @@ def validate_response(response: HttpResponse) -> None:
 
 
 def upload_dependencies(deployment: Deployment, orchestrators: OperationOrchestrator) -> None:
-    """Upload code, dependency, model dependencies. For BatchDeployment only
-    register compute.
+    """Upload code, dependency, model dependencies. For BatchDeployment only register compute.
 
     :param Deployment deployment: Endpoint deployment object.
     :param OperationOrchestrator orchestrators: Operation Orchestrator.
@@ -166,7 +167,7 @@ def upload_dependencies(deployment: Deployment, orchestrators: OperationOrchestr
             if deployment.model
             else None
         )
-    if isinstance(deployment, BatchDeployment) and deployment.compute:
+    if isinstance(deployment, (BatchDeployment, ModelBatchDeployment)) and deployment.compute:
         deployment.compute = orchestrators.get_asset_arm_id(
             deployment.compute, azureml_type=AzureMLResourceType.COMPUTE
         )
@@ -177,11 +178,11 @@ def validate_scoring_script(deployment):
         deployment.code_configuration.code, deployment.scoring_script
     )
     try:
-        with open(score_script_path, "r") as script:
+        with open(score_script_path, "r", encoding=DefaultOpenEncoding.READ) as script:
             contents = script.read()
             try:
                 ast.parse(contents, score_script_path)
-            except Exception as err:  # pylint: disable=broad-except
+            except SyntaxError as err:
                 err.filename = err.filename.split("/")[-1]
                 msg = (
                     f"Failed to submit deployment {deployment.name} due to syntax errors "  # pylint: disable=no-member
@@ -203,11 +204,16 @@ def validate_scoring_script(deployment):
                     no_personal_data_message=np_msg,
                     error_category=ErrorCategory.USER_ERROR,
                     error_type=ValidationErrorType.CANNOT_PARSE,
-                )
-    except Exception as err:
-        if isinstance(err, ValidationException):
-            raise err
+                ) from err
+    except OSError as err:
         raise MlException(
             message=f"Failed to open scoring script {err.filename}.",
             no_personal_data_message="Failed to open scoring script.",
-        )
+        ) from err
+
+
+def convert_v1_dataset_to_v2(output_data_set: DataVersion, file_name: str) -> Dict[str, Any]:
+    v2_dataset = UriFileJobOutput(
+        uri=f"azureml://datastores/{output_data_set.datastore_id}/paths/{output_data_set.path}/{file_name}"
+    ).serialize()
+    return {"output_name": v2_dataset}

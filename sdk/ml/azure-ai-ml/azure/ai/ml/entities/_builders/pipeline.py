@@ -12,30 +12,26 @@ from azure.ai.ml.entities._inputs_outputs import Input, Output
 
 from ..._schema import PathAwareSchema
 from .._job.pipeline.pipeline_job_settings import PipelineJobSettings
-from .._util import convert_ordered_dict_to_dict, validate_attribute_type
+from .._util import convert_ordered_dict_to_dict, copy_output_setting, validate_attribute_type
 from .base_node import BaseNode
 
 module_logger = logging.getLogger(__name__)
 
 
 class Pipeline(BaseNode):
-    """Base class for pipeline node, used for pipeline component version
-    consumption. You should not instantiate this class directly. Instead, you should
-    use @pipeline decorator to create a pipeline node.
+    """Base class for pipeline node, used for pipeline component version consumption. You should not instantiate this
+    class directly. Instead, you should use @pipeline decorator to create a pipeline node.
 
-    You should not instantiate this class directly. Instead, you should
-    create from @pipeline decorator.
-
-    :param component: Id or instance of the pipeline component/job to be run for the step
-    :type component: PipelineComponent
-    :param description: Description of the pipeline node.
-    :type description: str
+    :param component: Id or instance of the pipeline component/job to be run for the step.
+    :type component: Union[~azure.ai.ml.entities.Component, str]
     :param inputs: Inputs of the pipeline node.
-    :type inputs: dict
+    :type inputs: Optional[Dict[str, Union[
+                                    ~azure.ai.ml.entities.Input,
+                                    str, bool, int, float, Enum, "Input"]]].
     :param outputs: Outputs of the pipeline node.
-    :type outputs: dict
+    :type outputs: Optional[Dict[str, Union[str, ~azure.ai.ml.entities.Output, "Output"]]]
     :param settings: Setting of pipeline node, only taking effect for root pipeline job.
-    :type settings: ~azure.ai.ml.entities.PipelineJobSettings
+    :type settings: Optional[~azure.ai.ml.entities._job.pipeline.pipeline_job_settings.PipelineJobSettings]
     """
 
     def __init__(
@@ -59,7 +55,7 @@ class Pipeline(BaseNode):
         outputs: Optional[Dict[str, Union[str, Output, "Output"]]] = None,
         settings: Optional[PipelineJobSettings] = None,
         **kwargs,
-    ):
+    ) -> None:
         # validate init params are valid type
         validate_attribute_type(attrs_to_check=locals(), attr_type_map=self._attr_type_map())
         kwargs.pop("type", None)
@@ -72,11 +68,18 @@ class Pipeline(BaseNode):
             outputs=outputs,
             **kwargs,
         )
+        # copy pipeline component output's setting to node level
+        self._copy_pipeline_component_out_setting_to_node()
         self._settings = None
         self.settings = settings
 
     @property
     def component(self) -> Union[str, Component]:
+        """Id or instance of the pipeline component/job to be run for the step.
+
+        :return: Id or instance of the pipeline component/job.
+        :rtype: Union[str, ~azure.ai.ml.entities.Component]
+        """
         return self._component
 
     @property
@@ -95,8 +98,20 @@ class Pipeline(BaseNode):
 
     @settings.setter
     def settings(self, value):
-        if value is not None and not isinstance(value, PipelineJobSettings):
-            raise TypeError("settings must be PipelineJobSettings or dict but got {}".format(type(value)))
+        """Set the settings of the pipeline.
+
+        :param value: The settings of the pipeline.
+        :type value: Union[~azure.ai.ml.entities.PipelineJobSettings, dict]
+        :raises TypeError: If the value is not an instance of PipelineJobSettings or a dict.
+        """
+        if value is not None:
+            if isinstance(value, PipelineJobSettings):
+                # since PipelineJobSettings inherit _AttrDict, we need add this branch to distinguish with dict
+                pass
+            elif isinstance(value, dict):
+                value = PipelineJobSettings(**value)
+            else:
+                raise TypeError("settings must be PipelineJobSettings or dict but got {}".format(type(value)))
         self._settings = value
 
     @classmethod
@@ -162,9 +177,9 @@ class Pipeline(BaseNode):
         rest_obj = super()._to_rest_object(**kwargs)
         rest_obj.update(
             convert_ordered_dict_to_dict(
-                dict(
-                    componentId=self._get_component_id(),
-                )
+                {
+                    "componentId": self._get_component_id(),
+                }
             )
         )
         return rest_obj
@@ -183,3 +198,13 @@ class Pipeline(BaseNode):
         from azure.ai.ml._schema.pipeline.pipeline_component import PipelineSchema
 
         return PipelineSchema(context=context)
+
+    def _copy_pipeline_component_out_setting_to_node(self):
+        """Copy pipeline component output's setting to node level."""
+        from azure.ai.ml.entities import PipelineComponent
+
+        if not isinstance(self.component, PipelineComponent):
+            return
+        for key, val in self.component.outputs.items():
+            node_output = self.outputs.get(key)
+            copy_output_setting(source=val, target=node_output)

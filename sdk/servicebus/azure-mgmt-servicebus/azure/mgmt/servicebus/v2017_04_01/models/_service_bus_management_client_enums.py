@@ -11,28 +11,29 @@ from azure.core import CaseInsensitiveEnumMeta
 
 
 class AccessRights(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """AccessRights."""
 
     MANAGE = "Manage"
     SEND = "Send"
     LISTEN = "Listen"
 
+
 class DefaultAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Default Action for Network Rule Set
-    """
+    """Default Action for Network Rule Set."""
 
     ALLOW = "Allow"
     DENY = "Deny"
 
+
 class EncodingCaptureDescription(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Enumerates the possible values for the encoding format of capture description.
-    """
+    """Enumerates the possible values for the encoding format of capture description."""
 
     AVRO = "Avro"
     AVRO_DEFLATE = "AvroDeflate"
 
+
 class EntityStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Entity status.
-    """
+    """Entity status."""
 
     ACTIVE = "Active"
     DISABLED = "Disabled"
@@ -44,27 +45,29 @@ class EntityStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     RENAMING = "Renaming"
     UNKNOWN = "Unknown"
 
+
 class FilterType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Rule filter types
-    """
+    """Rule filter types."""
 
     SQL_FILTER = "SqlFilter"
     CORRELATION_FILTER = "CorrelationFilter"
 
+
 class KeyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The access key to regenerate.
-    """
+    """The access key to regenerate."""
 
     PRIMARY_KEY = "PrimaryKey"
     SECONDARY_KEY = "SecondaryKey"
 
+
 class MigrationConfigurationName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """MigrationConfigurationName."""
 
     _DEFAULT = "$default"
 
+
 class NameSpaceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of namespaces
-    """
+    """Type of namespaces."""
 
     MESSAGING = "Messaging"
     NOTIFICATION_HUB = "NotificationHub"
@@ -72,49 +75,51 @@ class NameSpaceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     EVENT_HUB = "EventHub"
     RELAY = "Relay"
 
+
 class NetworkRuleIPAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The IP Filter Action
-    """
+    """The IP Filter Action."""
 
     ALLOW = "Allow"
 
+
 class ProvisioningStateDR(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Provisioning state of the Alias(Disaster Recovery configuration) - possible values 'Accepted'
-    or 'Succeeded' or 'Failed'
+    or 'Succeeded' or 'Failed'.
     """
 
     ACCEPTED = "Accepted"
     SUCCEEDED = "Succeeded"
     FAILED = "Failed"
 
+
 class RoleDisasterRecovery(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """role of namespace in GEO DR - possible values 'Primary' or 'PrimaryNotReplicating' or
-    'Secondary'
+    'Secondary'.
     """
 
     PRIMARY = "Primary"
     PRIMARY_NOT_REPLICATING = "PrimaryNotReplicating"
     SECONDARY = "Secondary"
 
+
 class SkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Name of this SKU.
-    """
+    """Name of this SKU."""
 
     BASIC = "Basic"
     STANDARD = "Standard"
     PREMIUM = "Premium"
+
 
 class SkuTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The billing tier of this particular SKU.
-    """
+    """The billing tier of this particular SKU."""
 
     BASIC = "Basic"
     STANDARD = "Standard"
     PREMIUM = "Premium"
 
+
 class UnavailableReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Specifies the reason for the unavailability of the service.
-    """
+    """Specifies the reason for the unavailability of the service."""
 
     NONE = "None"
     INVALID_NAME = "InvalidName"

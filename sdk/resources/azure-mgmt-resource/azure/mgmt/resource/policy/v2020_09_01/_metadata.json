@@ -1,6 +1,6 @@
 {
     "chosen_version": "2020-09-01",
-    "total_api_version_list": ["2020-07-01-preview", "2020-09-01"],
+    "total_api_version_list": ["2020-09-01"],
     "client": {
         "name": "PolicyClient",
         "filename": "_policy_client",
@@ -19,13 +19,15 @@
                 "signature": "credential: \"TokenCredential\",",
                 "description": "Credential needed for the client to connect to Azure. Required.",
                 "docstring_type": "~azure.core.credentials.TokenCredential",
-                "required": true
+                "required": true,
+                "method_location": "positional"
             },
             "subscription_id": {
                 "signature": "subscription_id: str,",
                 "description": "The ID of the target subscription. Required.",
                 "docstring_type": "str",
-                "required": true
+                "required": true,
+                "method_location": "positional"
             }
         },
         "async": {
@@ -51,19 +53,22 @@
                     "signature": "api_version: Optional[str]=None,",
                     "description": "API version to use if no profile is provided, or if missing in profile.",
                     "docstring_type": "str",
-                    "required": false
+                    "required": false,
+                    "method_location": "positional"
                 },
                 "base_url": {
                     "signature": "base_url: str = \"https://management.azure.com\",",
                     "description": "Service URL",
                     "docstring_type": "str",
-                    "required": false
+                    "required": false,
+                    "method_location": "positional"
                 },
                 "profile": {
                     "signature": "profile: KnownProfiles=KnownProfiles.default,",
                     "description": "A profile definition, from KnownProfiles to dict.",
                     "docstring_type": "azure.profiles.KnownProfiles",
-                    "required": false
+                    "required": false,
+                    "method_location": "positional"
                 }
             },
             "async": {
@@ -71,19 +76,22 @@
                     "signature": "api_version: Optional[str] = None,",
                     "description": "API version to use if no profile is provided, or if missing in profile.",
                     "docstring_type": "str",
-                    "required": false
+                    "required": false,
+                    "method_location": "positional"
                 },
                 "base_url": {
                     "signature": "base_url: str = \"https://management.azure.com\",",
                     "description": "Service URL",
                     "docstring_type": "str",
-                    "required": false
+                    "required": false,
+                    "method_location": "positional"
                 },
                 "profile": {
                     "signature": "profile: KnownProfiles = KnownProfiles.default,",
                     "description": "A profile definition, from KnownProfiles to dict.",
                     "docstring_type": "azure.profiles.KnownProfiles",
-                    "required": false
+                    "required": false,
+                    "method_location": "positional"
                 }
             }
         }
@@ -100,7 +108,6 @@
         "data_policy_manifests": "DataPolicyManifestsOperations",
         "policy_assignments": "PolicyAssignmentsOperations",
         "policy_definitions": "PolicyDefinitionsOperations",
-        "policy_set_definitions": "PolicySetDefinitionsOperations",
-        "policy_exemptions": "PolicyExemptionsOperations"
+        "policy_set_definitions": "PolicySetDefinitionsOperations"
     }
 }

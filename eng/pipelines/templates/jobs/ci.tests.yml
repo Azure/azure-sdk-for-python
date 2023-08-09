@@ -93,6 +93,10 @@ jobs:
         ServiceDirectory: "template"
         TestPipeline: ${{ parameters.TestPipeline }}
 
+    - pwsh: |
+        python -m pip install "tools/azure-sdk-tools[build]"
+      displayName: Install build tooling
+
     - task: PythonScript@0
       displayName: 'Set Tox Environment'
       inputs:

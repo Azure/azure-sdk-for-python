@@ -26,8 +26,12 @@
 """
 This module is the requests implementation of Pipeline ABC
 """
+from typing import TypeVar
 import logging
 import time
+from azure.core.pipeline import PipelineRequest, PipelineResponse
+from azure.core.pipeline.transport import AsyncHttpResponse as LegacyAsyncHttpResponse, HttpRequest as LegacyHttpRequest
+from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.core.exceptions import (
     AzureError,
     ClientAuthenticationError,
@@ -36,10 +40,13 @@ from azure.core.exceptions import (
 from ._base_async import AsyncHTTPPolicy
 from ._retry import RetryPolicyBase
 
+AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType", AsyncHttpResponse, LegacyAsyncHttpResponse)
+HTTPRequestType = TypeVar("HTTPRequestType", HttpRequest, LegacyHttpRequest)
+
 _LOGGER = logging.getLogger(__name__)
 
 
-class AsyncRetryPolicy(RetryPolicyBase, AsyncHTTPPolicy):
+class AsyncRetryPolicy(RetryPolicyBase, AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType]):
     """Async flavor of the retry policy.
 
     The async retry policy in the pipeline can be configured directly, or tweaked on a per-call basis.
@@ -75,14 +82,15 @@ class AsyncRetryPolicy(RetryPolicyBase, AsyncHTTPPolicy):
             :caption: Configuring an async retry policy.
     """
 
-    async def _sleep_for_retry(
-        self, response, transport
-    ):  # pylint:disable=invalid-overridden-method
+    async def _sleep_for_retry(self, response, transport):
         """Sleep based on the Retry-After response header value.
 
         :param response: The PipelineResponse object.
         :type response: ~azure.core.pipeline.PipelineResponse
         :param transport: The HTTP transport type.
+        :type transport: ~azure.core.pipeline.transport.AsyncHttpTransport
+        :return: Whether the retry-after value was found.
+        :rtype: bool
         """
         retry_after = self.get_retry_after(response)
         if retry_after:
@@ -90,22 +98,19 @@ class AsyncRetryPolicy(RetryPolicyBase, AsyncHTTPPolicy):
             return True
         return False
 
-    async def _sleep_backoff(
-        self, settings, transport
-    ):  # pylint:disable=invalid-overridden-method
+    async def _sleep_backoff(self, settings, transport):
         """Sleep using exponential backoff. Immediately returns if backoff is 0.
 
         :param dict settings: The retry settings.
         :param transport: The HTTP transport type.
+        :type transport: ~azure.core.pipeline.transport.AsyncHttpTransport
         """
         backoff = self.get_backoff_time(settings)
         if backoff <= 0:
             return
         await transport.sleep(backoff)
 
-    async def sleep(
-        self, settings, transport, response=None
-    ):  # pylint:disable=invalid-overridden-method
+    async def sleep(self, settings, transport, response=None):
         """Sleep between retry attempts.
 
         This method will respect a server's ``Retry-After`` response header
@@ -115,6 +120,7 @@ class AsyncRetryPolicy(RetryPolicyBase, AsyncHTTPPolicy):
 
         :param dict settings: The retry settings.
         :param transport: The HTTP transport type.
+        :type transport: ~azure.core.pipeline.transport.AsyncHttpTransport
         :param response: The PipelineResponse object.
         :type response: ~azure.core.pipeline.PipelineResponse
         """
@@ -124,7 +130,9 @@ class AsyncRetryPolicy(RetryPolicyBase, AsyncHTTPPolicy):
                 return
         await self._sleep_backoff(settings, transport)
 
-    async def send(self, request):  # pylint:disable=invalid-overridden-method
+    async def send(
+        self, request: PipelineRequest[HTTPRequestType]
+    ) -> PipelineResponse[HTTPRequestType, AsyncHTTPResponseType]:
         """Uses the configured retry policy to send the request to the next policy in the pipeline.
 
         :param request: The PipelineRequest object
@@ -143,16 +151,14 @@ class AsyncRetryPolicy(RetryPolicyBase, AsyncHTTPPolicy):
         is_response_error = True
 
         while retry_active:
+            start_time = time.time()
             try:
-                start_time = time.time()
                 self._configure_timeout(request, absolute_timeout, is_response_error)
                 response = await self.next.send(request)
                 if self.is_retry(retry_settings, response):
                     retry_active = self.increment(retry_settings, response=response)
                     if retry_active:
-                        await self.sleep(
-                            retry_settings, request.context.transport, response=response
-                        )
+                        await self.sleep(retry_settings, request.context.transport, response=response)
                         is_response_error = True
                         continue
                 break
@@ -161,12 +167,8 @@ class AsyncRetryPolicy(RetryPolicyBase, AsyncHTTPPolicy):
                 # succeed--we'll never have a response to it, so propagate the exception
                 raise
             except AzureError as err:
-                if absolute_timeout > 0 and self._is_method_retryable(
-                    retry_settings, request.http_request
-                ):
-                    retry_active = self.increment(
-                        retry_settings, response=request, error=err
-                    )
+                if absolute_timeout > 0 and self._is_method_retryable(retry_settings, request.http_request):
+                    retry_active = self.increment(retry_settings, response=request, error=err)
                     if retry_active:
                         await self.sleep(retry_settings, request.context.transport)
                         if isinstance(err, ServiceRequestError):
@@ -179,6 +181,8 @@ class AsyncRetryPolicy(RetryPolicyBase, AsyncHTTPPolicy):
                 end_time = time.time()
                 if absolute_timeout:
                     absolute_timeout -= end_time - start_time
+        if not response:
+            raise AzureError("Maximum retries exceeded.")
 
         self.update_context(response.context, retry_settings)
         return response

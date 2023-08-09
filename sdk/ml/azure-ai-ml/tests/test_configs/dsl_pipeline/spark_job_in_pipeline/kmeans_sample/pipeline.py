@@ -14,12 +14,12 @@ def generate_dsl_pipeline_from_yaml() -> PipelineJob:
     @dsl.pipeline(description="submit a pipeline with spark job")
     def spark_pipeline_from_yaml(sample_data):
         kmeans_cluster = spark_component_func(file_input=sample_data)
-        kmeans_cluster.resources = {"instance_type": "standard_e4s_v3", "runtime_version": "3.1.0"}
+        kmeans_cluster.resources = {"instance_type": "standard_e4s_v3", "runtime_version": "3.2.0"}
 
         command_func = command(
             inputs=dict(spark_output=Input(type=AssetTypes.URI_FOLDER)),
             command="ls ${{inputs.spark_output}}",
-            environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+            environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
         )
         show_output = command_func(spark_output=kmeans_cluster.outputs.output)
         show_output.compute = cluster_name

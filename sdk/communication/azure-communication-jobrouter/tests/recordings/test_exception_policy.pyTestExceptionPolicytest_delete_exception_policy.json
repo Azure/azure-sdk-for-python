@@ -8,41 +8,40 @@
         "Accept-Encoding": "gzip, deflate",
         "Authorization": "Sanitized",
         "Connection": "keep-alive",
-        "Content-Length": "157",
+        "Content-Length": "166",
         "Content-Type": "application/merge-patch\u002Bjson",
-        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22621-SP0)",
-        "x-ms-client-request-id": "82df8d65-6007-11ed-a948-046c590f95d2",
+        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.13 (Windows-10-10.0.22621-SP0)",
+        "x-ms-client-request-id": "c7d03bf3-2024-11ee-80e2-046c590f95d2",
         "x-ms-content-sha256": "Sanitized",
-        "x-ms-date": "Wed, 09 Nov 2022 08:21:29 GMT",
+        "x-ms-date": "Tue, 11 Jul 2023 19:54:43 GMT",
         "x-ms-return-client-request-id": "true"
       },
       "RequestBody": {
         "name": "test_delete_exception_policy_tst_dp",
-        "offerTtlSeconds": 10.0,
+        "offerExpiresAfterSeconds": 10.0,
         "mode": {
           "kind": "round-robin",
           "minConcurrentOffers": 1,
           "maxConcurrentOffers": 1
         }
       },
-      "StatusCode": 200,
+      "StatusCode": 201,
       "ResponseHeaders": {
         "api-supported-versions": "2021-04-07-preview1, 2022-07-18-preview",
         "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 09 Nov 2022 08:21:28 GMT",
+        "Date": "Tue, 11 Jul 2023 19:54:44 GMT",
         "ETag": "Sanitized",
-        "Last-Modified": "Wed, 09 Nov 2022 08:21:28 GMT",
-        "Request-Context": "appId=",
-        "trace-id": "2ab4bf2e1e8d1164c5a9b664c02aacf1",
+        "Last-Modified": "Tue, 11 Jul 2023 19:54:43 GMT",
+        "trace-id": "4ed63b35-7da2-e84e-2b8d-d85ff8ef99f4",
         "Transfer-Encoding": "chunked",
-        "x-azure-ref": "20221109T082128Z-rwhup4fafx79d2nv68y4rbyapc00000004ug00000001h7at",
+        "x-azure-ref": "20230711T195443Z-vrmngh4fw128h9bk4nxt75n3sg00000000s000000000vget",
         "X-Cache": "CONFIG_NOCACHE"
       },
       "ResponseBody": {
         "id": "test_delete_exception_policy_tst_dp",
         "name": "test_delete_exception_policy_tst_dp",
-        "offerTtlSeconds": 10,
+        "offerExpiresAfterSeconds": 10,
         "mode": {
           "kind": "round-robin",
           "minConcurrentOffers": 1,
@@ -61,10 +60,10 @@
         "Connection": "keep-alive",
         "Content-Length": "196",
         "Content-Type": "application/merge-patch\u002Bjson",
-        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22621-SP0)",
-        "x-ms-client-request-id": "82fce74b-6007-11ed-8923-046c590f95d2",
+        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.13 (Windows-10-10.0.22621-SP0)",
+        "x-ms-client-request-id": "c7e9aeb5-2024-11ee-9c35-046c590f95d2",
         "x-ms-content-sha256": "Sanitized",
-        "x-ms-date": "Wed, 09 Nov 2022 08:21:29 GMT",
+        "x-ms-date": "Tue, 11 Jul 2023 19:54:43 GMT",
         "x-ms-return-client-request-id": "true"
       },
       "RequestBody": {
@@ -83,13 +82,12 @@
         "api-supported-versions": "2021-04-07-preview1, 2022-07-18-preview",
         "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 09 Nov 2022 08:21:29 GMT",
+        "Date": "Tue, 11 Jul 2023 19:54:44 GMT",
         "ETag": "Sanitized",
-        "Last-Modified": "Wed, 09 Nov 2022 08:21:29 GMT",
-        "Request-Context": "appId=",
-        "trace-id": "fc424826b0b6c61a7a0d9f3388d87279",
+        "Last-Modified": "Tue, 11 Jul 2023 19:54:44 GMT",
+        "trace-id": "93bf2bb6-31f6-a155-10ac-31c3244a21a7",
         "Transfer-Encoding": "chunked",
-        "x-azure-ref": "20221109T082128Z-rwhup4fafx79d2nv68y4rbyapc00000004ug00000001h7bz",
+        "x-azure-ref": "20230711T195444Z-vrmngh4fw128h9bk4nxt75n3sg00000000s000000000vgfh",
         "X-Cache": "CONFIG_NOCACHE"
       },
       "ResponseBody": {
@@ -116,28 +114,27 @@
         "Connection": "keep-alive",
         "Content-Length": "104",
         "Content-Type": "application/merge-patch\u002Bjson",
-        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22621-SP0)",
-        "x-ms-client-request-id": "8330a68b-6007-11ed-892e-046c590f95d2",
+        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.13 (Windows-10-10.0.22621-SP0)",
+        "x-ms-client-request-id": "c800941d-2024-11ee-9e56-046c590f95d2",
         "x-ms-content-sha256": "Sanitized",
-        "x-ms-date": "Wed, 09 Nov 2022 08:21:30 GMT",
+        "x-ms-date": "Tue, 11 Jul 2023 19:54:44 GMT",
         "x-ms-return-client-request-id": "true"
       },
       "RequestBody": {
         "name": "test_delete_exception_policy_tst_cp",
         "fallbackQueueId": "test_delete_exception_policy_tst_q"
       },
-      "StatusCode": 200,
+      "StatusCode": 201,
       "ResponseHeaders": {
         "api-supported-versions": "2021-04-07-preview1, 2022-07-18-preview",
         "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 09 Nov 2022 08:21:29 GMT",
+        "Date": "Tue, 11 Jul 2023 19:54:44 GMT",
         "ETag": "Sanitized",
-        "Last-Modified": "Wed, 09 Nov 2022 08:21:29 GMT",
-        "Request-Context": "appId=",
-        "trace-id": "7b297c774a85bc96aa422384023711f1",
+        "Last-Modified": "Tue, 11 Jul 2023 19:54:44 GMT",
+        "trace-id": "830bf176-b1d6-1c83-e51c-3e277e93befe",
         "Transfer-Encoding": "chunked",
-        "x-azure-ref": "20221109T082129Z-rwhup4fafx79d2nv68y4rbyapc00000004ug00000001h7d9",
+        "x-azure-ref": "20230711T195444Z-vrmngh4fw128h9bk4nxt75n3sg00000000s000000000vgg1",
         "X-Cache": "CONFIG_NOCACHE"
       },
       "ResponseBody": {
@@ -158,10 +155,10 @@
         "Connection": "keep-alive",
         "Content-Length": "181",
         "Content-Type": "application/merge-patch\u002Bjson",
-        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22621-SP0)",
-        "x-ms-client-request-id": "834fc375-6007-11ed-bfd6-046c590f95d2",
+        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.13 (Windows-10-10.0.22621-SP0)",
+        "x-ms-client-request-id": "c81b46b3-2024-11ee-872b-046c590f95d2",
         "x-ms-content-sha256": "Sanitized",
-        "x-ms-date": "Wed, 09 Nov 2022 08:21:30 GMT",
+        "x-ms-date": "Tue, 11 Jul 2023 19:54:44 GMT",
         "x-ms-return-client-request-id": "true"
       },
       "RequestBody": {
@@ -180,18 +177,17 @@
           }
         }
       },
-      "StatusCode": 200,
+      "StatusCode": 201,
       "ResponseHeaders": {
         "api-supported-versions": "2021-04-07-preview1, 2022-07-18-preview",
         "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 09 Nov 2022 08:21:29 GMT",
+        "Date": "Tue, 11 Jul 2023 19:54:44 GMT",
         "ETag": "Sanitized",
-        "Last-Modified": "Wed, 09 Nov 2022 08:21:29 GMT",
-        "Request-Context": "appId=",
-        "trace-id": "fa368f44dd98cb6da265c19bc9c5080c",
+        "Last-Modified": "Tue, 11 Jul 2023 19:54:44 GMT",
+        "trace-id": "4f8d6da1-0987-3e52-178b-875da1736b60",
         "Transfer-Encoding": "chunked",
-        "x-azure-ref": "20221109T082129Z-rwhup4fafx79d2nv68y4rbyapc00000004ug00000001h7ed",
+        "x-azure-ref": "20230711T195444Z-vrmngh4fw128h9bk4nxt75n3sg00000000s000000000vgh4",
         "X-Cache": "CONFIG_NOCACHE"
       },
       "ResponseBody": {
@@ -221,10 +217,10 @@
         "Authorization": "Sanitized",
         "Connection": "keep-alive",
         "Content-Length": "0",
-        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22621-SP0)",
-        "x-ms-client-request-id": "836ccf49-6007-11ed-b1c4-046c590f95d2",
+        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.13 (Windows-10-10.0.22621-SP0)",
+        "x-ms-client-request-id": "c833b8ee-2024-11ee-9899-046c590f95d2",
         "x-ms-content-sha256": "Sanitized",
-        "x-ms-date": "Wed, 09 Nov 2022 08:21:30 GMT",
+        "x-ms-date": "Tue, 11 Jul 2023 19:54:44 GMT",
         "x-ms-return-client-request-id": "true"
       },
       "RequestBody": null,
@@ -232,10 +228,9 @@
       "ResponseHeaders": {
         "api-supported-versions": "2021-04-07-preview1, 2022-07-18-preview",
         "Connection": "keep-alive",
-        "Date": "Wed, 09 Nov 2022 08:21:29 GMT",
-        "Request-Context": "appId=",
-        "trace-id": "2d1ebf6787c2f9d4333b3f0cfa440341",
-        "x-azure-ref": "20221109T082129Z-rwhup4fafx79d2nv68y4rbyapc00000004ug00000001h7fc",
+        "Date": "Tue, 11 Jul 2023 19:54:44 GMT",
+        "trace-id": "b1c5762f-5f19-dec1-4997-a24c8bd618e2",
+        "x-azure-ref": "20230711T195444Z-vrmngh4fw128h9bk4nxt75n3sg00000000s000000000vghw",
         "X-Cache": "CONFIG_NOCACHE"
       },
       "ResponseBody": null
@@ -248,10 +243,10 @@
         "Accept-Encoding": "gzip, deflate",
         "Authorization": "Sanitized",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22621-SP0)",
-        "x-ms-client-request-id": "83827cba-6007-11ed-8c46-046c590f95d2",
+        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.13 (Windows-10-10.0.22621-SP0)",
+        "x-ms-client-request-id": "c847bda7-2024-11ee-b924-046c590f95d2",
         "x-ms-content-sha256": "Sanitized",
-        "x-ms-date": "Wed, 09 Nov 2022 08:21:30 GMT",
+        "x-ms-date": "Tue, 11 Jul 2023 19:54:44 GMT",
         "x-ms-return-client-request-id": "true"
       },
       "RequestBody": null,
@@ -260,11 +255,10 @@
         "api-supported-versions": "2021-04-07-preview1, 2022-07-18-preview",
         "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 09 Nov 2022 08:21:29 GMT",
-        "Request-Context": "appId=",
-        "trace-id": "706c9acc97ae36b0dbfde47f7857f0d2",
+        "Date": "Tue, 11 Jul 2023 19:54:44 GMT",
+        "trace-id": "5dc1f032-d8b0-b8e8-1497-fbe77ccc65c0",
         "Transfer-Encoding": "chunked",
-        "x-azure-ref": "20221109T082129Z-rwhup4fafx79d2nv68y4rbyapc00000004ug00000001h7gb",
+        "x-azure-ref": "20230711T195444Z-vrmngh4fw128h9bk4nxt75n3sg00000000s000000000vgky",
         "X-Cache": "CONFIG_NOCACHE"
       },
       "ResponseBody": {
@@ -285,10 +279,10 @@
         "Connection": "keep-alive",
         "Content-Length": "256",
         "Content-Type": "application/merge-patch\u002Bjson",
-        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22621-SP0)",
-        "x-ms-client-request-id": "83919584-6007-11ed-93d6-046c590f95d2",
+        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.13 (Windows-10-10.0.22621-SP0)",
+        "x-ms-client-request-id": "c85478fe-2024-11ee-9514-046c590f95d2",
         "x-ms-content-sha256": "Sanitized",
-        "x-ms-date": "Wed, 09 Nov 2022 08:21:30 GMT",
+        "x-ms-date": "Tue, 11 Jul 2023 19:54:44 GMT",
         "x-ms-return-client-request-id": "true"
       },
       "RequestBody": {
@@ -309,18 +303,17 @@
           }
         }
       },
-      "StatusCode": 200,
+      "StatusCode": 201,
       "ResponseHeaders": {
         "api-supported-versions": "2021-04-07-preview1, 2022-07-18-preview",
         "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 09 Nov 2022 08:21:29 GMT",
+        "Date": "Tue, 11 Jul 2023 19:54:44 GMT",
         "ETag": "Sanitized",
-        "Last-Modified": "Wed, 09 Nov 2022 08:21:29 GMT",
-        "Request-Context": "appId=",
-        "trace-id": "57bf3f55c0604d31be4c67fc777aa672",
+        "Last-Modified": "Tue, 11 Jul 2023 19:54:44 GMT",
+        "trace-id": "1ed4d6d8-4ddb-3fc2-21d9-5fb135131b41",
         "Transfer-Encoding": "chunked",
-        "x-azure-ref": "20221109T082129Z-rwhup4fafx79d2nv68y4rbyapc00000004ug00000001h7h5",
+        "x-azure-ref": "20230711T195444Z-vrmngh4fw128h9bk4nxt75n3sg00000000s000000000vgm9",
         "X-Cache": "CONFIG_NOCACHE"
       },
       "ResponseBody": {
@@ -353,10 +346,10 @@
         "Authorization": "Sanitized",
         "Connection": "keep-alive",
         "Content-Length": "0",
-        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22621-SP0)",
-        "x-ms-client-request-id": "83a8848a-6007-11ed-afe4-046c590f95d2",
+        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.13 (Windows-10-10.0.22621-SP0)",
+        "x-ms-client-request-id": "c86d697f-2024-11ee-a3be-046c590f95d2",
         "x-ms-content-sha256": "Sanitized",
-        "x-ms-date": "Wed, 09 Nov 2022 08:21:30 GMT",
+        "x-ms-date": "Tue, 11 Jul 2023 19:54:44 GMT",
         "x-ms-return-client-request-id": "true"
       },
       "RequestBody": null,
@@ -364,10 +357,9 @@
       "ResponseHeaders": {
         "api-supported-versions": "2021-04-07-preview1, 2022-07-18-preview",
         "Connection": "keep-alive",
-        "Date": "Wed, 09 Nov 2022 08:21:30 GMT",
-        "Request-Context": "appId=",
-        "trace-id": "5e0b3d737656d6ae88e4b3db9ca65be0",
-        "x-azure-ref": "20221109T082129Z-rwhup4fafx79d2nv68y4rbyapc00000004ug00000001h7kq",
+        "Date": "Tue, 11 Jul 2023 19:54:44 GMT",
+        "trace-id": "15e2cef8-cd15-c40d-e7a7-50dc3ca20e7b",
+        "x-azure-ref": "20230711T195444Z-vrmngh4fw128h9bk4nxt75n3sg00000000s000000000vgmt",
         "X-Cache": "CONFIG_NOCACHE"
       },
       "ResponseBody": null
@@ -380,10 +372,10 @@
         "Accept-Encoding": "gzip, deflate",
         "Authorization": "Sanitized",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22621-SP0)",
-        "x-ms-client-request-id": "83d031a6-6007-11ed-9db5-046c590f95d2",
+        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.13 (Windows-10-10.0.22621-SP0)",
+        "x-ms-client-request-id": "c87e71f7-2024-11ee-be3e-046c590f95d2",
         "x-ms-content-sha256": "Sanitized",
-        "x-ms-date": "Wed, 09 Nov 2022 08:21:31 GMT",
+        "x-ms-date": "Tue, 11 Jul 2023 19:54:44 GMT",
         "x-ms-return-client-request-id": "true"
       },
       "RequestBody": null,
@@ -392,11 +384,10 @@
         "api-supported-versions": "2021-04-07-preview1, 2022-07-18-preview",
         "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 09 Nov 2022 08:21:30 GMT",
-        "Request-Context": "appId=",
-        "trace-id": "7c6db96c353c9af39345fb8e2f915b64",
+        "Date": "Tue, 11 Jul 2023 19:54:45 GMT",
+        "trace-id": "e3dfba24-0edd-a42d-6fa1-f83cf7e20124",
         "Transfer-Encoding": "chunked",
-        "x-azure-ref": "20221109T082130Z-rwhup4fafx79d2nv68y4rbyapc00000004ug00000001h7nm",
+        "x-azure-ref": "20230711T195445Z-vrmngh4fw128h9bk4nxt75n3sg00000000s000000000vgn9",
         "X-Cache": "CONFIG_NOCACHE"
       },
       "ResponseBody": {
@@ -417,10 +408,10 @@
         "Connection": "keep-alive",
         "Content-Length": "250",
         "Content-Type": "application/merge-patch\u002Bjson",
-        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22621-SP0)",
-        "x-ms-client-request-id": "83e38bea-6007-11ed-b747-046c590f95d2",
+        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.13 (Windows-10-10.0.22621-SP0)",
+        "x-ms-client-request-id": "c888d7a9-2024-11ee-91f8-046c590f95d2",
         "x-ms-content-sha256": "Sanitized",
-        "x-ms-date": "Wed, 09 Nov 2022 08:21:31 GMT",
+        "x-ms-date": "Tue, 11 Jul 2023 19:54:45 GMT",
         "x-ms-return-client-request-id": "true"
       },
       "RequestBody": {
@@ -440,18 +431,17 @@
           }
         }
       },
-      "StatusCode": 200,
+      "StatusCode": 201,
       "ResponseHeaders": {
         "api-supported-versions": "2021-04-07-preview1, 2022-07-18-preview",
         "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 09 Nov 2022 08:21:30 GMT",
+        "Date": "Tue, 11 Jul 2023 19:54:45 GMT",
         "ETag": "Sanitized",
-        "Last-Modified": "Wed, 09 Nov 2022 08:21:30 GMT",
-        "Request-Context": "appId=",
-        "trace-id": "ec165a56f82e00d5fee39d7c34dbbc9c",
+        "Last-Modified": "Tue, 11 Jul 2023 19:54:45 GMT",
+        "trace-id": "457c32de-7cba-0573-2345-ea696d7a7a10",
         "Transfer-Encoding": "chunked",
-        "x-azure-ref": "20221109T082130Z-rwhup4fafx79d2nv68y4rbyapc00000004ug00000001h7pe",
+        "x-azure-ref": "20230711T195445Z-vrmngh4fw128h9bk4nxt75n3sg00000000s000000000vgnh",
         "X-Cache": "CONFIG_NOCACHE"
       },
       "ResponseBody": {
@@ -483,10 +473,10 @@
         "Authorization": "Sanitized",
         "Connection": "keep-alive",
         "Content-Length": "0",
-        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22621-SP0)",
-        "x-ms-client-request-id": "840d2b1d-6007-11ed-9c02-046c590f95d2",
+        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.13 (Windows-10-10.0.22621-SP0)",
+        "x-ms-client-request-id": "c8a0be0b-2024-11ee-9c64-046c590f95d2",
         "x-ms-content-sha256": "Sanitized",
-        "x-ms-date": "Wed, 09 Nov 2022 08:21:31 GMT",
+        "x-ms-date": "Tue, 11 Jul 2023 19:54:45 GMT",
         "x-ms-return-client-request-id": "true"
       },
       "RequestBody": null,
@@ -494,10 +484,9 @@
       "ResponseHeaders": {
         "api-supported-versions": "2021-04-07-preview1, 2022-07-18-preview",
         "Connection": "keep-alive",
-        "Date": "Wed, 09 Nov 2022 08:21:30 GMT",
-        "Request-Context": "appId=",
-        "trace-id": "21c2c117b9f51a15aed217a9727131b2",
-        "x-azure-ref": "20221109T082130Z-rwhup4fafx79d2nv68y4rbyapc00000004ug00000001h7rn",
+        "Date": "Tue, 11 Jul 2023 19:54:45 GMT",
+        "trace-id": "0aeefd0a-5672-d0eb-1d3f-40f27df3a204",
+        "x-azure-ref": "20230711T195445Z-vrmngh4fw128h9bk4nxt75n3sg00000000s000000000vgpc",
         "X-Cache": "CONFIG_NOCACHE"
       },
       "ResponseBody": null
@@ -510,10 +499,10 @@
         "Accept-Encoding": "gzip, deflate",
         "Authorization": "Sanitized",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22621-SP0)",
-        "x-ms-client-request-id": "8439ed6c-6007-11ed-9aeb-046c590f95d2",
+        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.13 (Windows-10-10.0.22621-SP0)",
+        "x-ms-client-request-id": "c8b28a92-2024-11ee-a9e7-046c590f95d2",
         "x-ms-content-sha256": "Sanitized",
-        "x-ms-date": "Wed, 09 Nov 2022 08:21:31 GMT",
+        "x-ms-date": "Tue, 11 Jul 2023 19:54:45 GMT",
         "x-ms-return-client-request-id": "true"
       },
       "RequestBody": null,
@@ -522,11 +511,10 @@
         "api-supported-versions": "2021-04-07-preview1, 2022-07-18-preview",
         "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 09 Nov 2022 08:21:31 GMT",
-        "Request-Context": "appId=",
-        "trace-id": "345b4625f30bf7e95658d55e871ed2a2",
+        "Date": "Tue, 11 Jul 2023 19:54:45 GMT",
+        "trace-id": "1e64ab64-fe75-58ce-cf5b-a020d0fe4f72",
         "Transfer-Encoding": "chunked",
-        "x-azure-ref": "20221109T082130Z-rwhup4fafx79d2nv68y4rbyapc00000004ug00000001h7t0",
+        "x-azure-ref": "20230711T195445Z-vrmngh4fw128h9bk4nxt75n3sg00000000s000000000vgq0",
         "X-Cache": "CONFIG_NOCACHE"
       },
       "ResponseBody": {
@@ -547,10 +535,10 @@
         "Connection": "keep-alive",
         "Content-Length": "190",
         "Content-Type": "application/merge-patch\u002Bjson",
-        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22621-SP0)",
-        "x-ms-client-request-id": "844b669f-6007-11ed-be5a-046c590f95d2",
+        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.13 (Windows-10-10.0.22621-SP0)",
+        "x-ms-client-request-id": "c8bcb825-2024-11ee-8324-046c590f95d2",
         "x-ms-content-sha256": "Sanitized",
-        "x-ms-date": "Wed, 09 Nov 2022 08:21:31 GMT",
+        "x-ms-date": "Tue, 11 Jul 2023 19:54:45 GMT",
         "x-ms-return-client-request-id": "true"
       },
       "RequestBody": {
@@ -569,18 +557,17 @@
           }
         }
       },
-      "StatusCode": 200,
+      "StatusCode": 201,
       "ResponseHeaders": {
         "api-supported-versions": "2021-04-07-preview1, 2022-07-18-preview",
         "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 09 Nov 2022 08:21:31 GMT",
+        "Date": "Tue, 11 Jul 2023 19:54:45 GMT",
         "ETag": "Sanitized",
-        "Last-Modified": "Wed, 09 Nov 2022 08:21:31 GMT",
-        "Request-Context": "appId=",
-        "trace-id": "981d29d9077e56ce7b5dd2e89146f5dd",
+        "Last-Modified": "Tue, 11 Jul 2023 19:54:45 GMT",
+        "trace-id": "dfe49498-e0d6-a6fb-3688-89d78a1a2fe6",
         "Transfer-Encoding": "chunked",
-        "x-azure-ref": "20221109T082131Z-rwhup4fafx79d2nv68y4rbyapc00000004ug00000001h7td",
+        "x-azure-ref": "20230711T195445Z-vrmngh4fw128h9bk4nxt75n3sg00000000s000000000vgqf",
         "X-Cache": "CONFIG_NOCACHE"
       },
       "ResponseBody": {
@@ -610,10 +597,10 @@
         "Authorization": "Sanitized",
         "Connection": "keep-alive",
         "Content-Length": "0",
-        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22621-SP0)",
-        "x-ms-client-request-id": "846867f3-6007-11ed-8a70-046c590f95d2",
+        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.13 (Windows-10-10.0.22621-SP0)",
+        "x-ms-client-request-id": "c8d3997a-2024-11ee-b5d1-046c590f95d2",
         "x-ms-content-sha256": "Sanitized",
-        "x-ms-date": "Wed, 09 Nov 2022 08:21:32 GMT",
+        "x-ms-date": "Tue, 11 Jul 2023 19:54:45 GMT",
         "x-ms-return-client-request-id": "true"
       },
       "RequestBody": null,
@@ -621,10 +608,9 @@
       "ResponseHeaders": {
         "api-supported-versions": "2021-04-07-preview1, 2022-07-18-preview",
         "Connection": "keep-alive",
-        "Date": "Wed, 09 Nov 2022 08:21:31 GMT",
-        "Request-Context": "appId=",
-        "trace-id": "0dda853ed557eb6aca3c37af33df2814",
-        "x-azure-ref": "20221109T082131Z-rwhup4fafx79d2nv68y4rbyapc00000004ug00000001h7ub",
+        "Date": "Tue, 11 Jul 2023 19:54:45 GMT",
+        "trace-id": "aa277875-c89c-c0af-f2bf-7efbeabae69b",
+        "x-azure-ref": "20230711T195445Z-vrmngh4fw128h9bk4nxt75n3sg00000000s000000000vgqz",
         "X-Cache": "CONFIG_NOCACHE"
       },
       "ResponseBody": null
@@ -637,10 +623,10 @@
         "Accept-Encoding": "gzip, deflate",
         "Authorization": "Sanitized",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22621-SP0)",
-        "x-ms-client-request-id": "847ffb11-6007-11ed-9e0d-046c590f95d2",
+        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.13 (Windows-10-10.0.22621-SP0)",
+        "x-ms-client-request-id": "c8e49664-2024-11ee-bdf6-046c590f95d2",
         "x-ms-content-sha256": "Sanitized",
-        "x-ms-date": "Wed, 09 Nov 2022 08:21:32 GMT",
+        "x-ms-date": "Tue, 11 Jul 2023 19:54:45 GMT",
         "x-ms-return-client-request-id": "true"
       },
       "RequestBody": null,
@@ -649,11 +635,10 @@
         "api-supported-versions": "2021-04-07-preview1, 2022-07-18-preview",
         "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 09 Nov 2022 08:21:31 GMT",
-        "Request-Context": "appId=",
-        "trace-id": "77777b970f77a8a5cea61390a9df158f",
+        "Date": "Tue, 11 Jul 2023 19:54:45 GMT",
+        "trace-id": "bc5efd7a-da8e-b2ca-1f1e-504a757037fd",
         "Transfer-Encoding": "chunked",
-        "x-azure-ref": "20221109T082131Z-rwhup4fafx79d2nv68y4rbyapc00000004ug00000001h7v5",
+        "x-azure-ref": "20230711T195445Z-vrmngh4fw128h9bk4nxt75n3sg00000000s000000000vgrh",
         "X-Cache": "CONFIG_NOCACHE"
       },
       "ResponseBody": {
@@ -674,10 +659,10 @@
         "Connection": "keep-alive",
         "Content-Length": "265",
         "Content-Type": "application/merge-patch\u002Bjson",
-        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22621-SP0)",
-        "x-ms-client-request-id": "848fef43-6007-11ed-b0eb-046c590f95d2",
+        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.13 (Windows-10-10.0.22621-SP0)",
+        "x-ms-client-request-id": "c8eecc27-2024-11ee-bd72-046c590f95d2",
         "x-ms-content-sha256": "Sanitized",
-        "x-ms-date": "Wed, 09 Nov 2022 08:21:32 GMT",
+        "x-ms-date": "Tue, 11 Jul 2023 19:54:45 GMT",
         "x-ms-return-client-request-id": "true"
       },
       "RequestBody": {
@@ -698,18 +683,17 @@
           }
         }
       },
-      "StatusCode": 200,
+      "StatusCode": 201,
       "ResponseHeaders": {
         "api-supported-versions": "2021-04-07-preview1, 2022-07-18-preview",
         "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 09 Nov 2022 08:21:31 GMT",
+        "Date": "Tue, 11 Jul 2023 19:54:45 GMT",
         "ETag": "Sanitized",
-        "Last-Modified": "Wed, 09 Nov 2022 08:21:31 GMT",
-        "Request-Context": "appId=",
-        "trace-id": "f2c7f884765089bd4c14fc4046eb3950",
+        "Last-Modified": "Tue, 11 Jul 2023 19:54:45 GMT",
+        "trace-id": "cf0f599d-c962-b596-e0c6-969888b27c16",
         "Transfer-Encoding": "chunked",
-        "x-azure-ref": "20221109T082131Z-rwhup4fafx79d2nv68y4rbyapc00000004ug00000001h7w3",
+        "x-azure-ref": "20230711T195445Z-vrmngh4fw128h9bk4nxt75n3sg00000000s000000000vgru",
         "X-Cache": "CONFIG_NOCACHE"
       },
       "ResponseBody": {
@@ -742,10 +726,10 @@
         "Authorization": "Sanitized",
         "Connection": "keep-alive",
         "Content-Length": "0",
-        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22621-SP0)",
-        "x-ms-client-request-id": "84a7715e-6007-11ed-a395-046c590f95d2",
+        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.13 (Windows-10-10.0.22621-SP0)",
+        "x-ms-client-request-id": "c9067923-2024-11ee-a9eb-046c590f95d2",
         "x-ms-content-sha256": "Sanitized",
-        "x-ms-date": "Wed, 09 Nov 2022 08:21:32 GMT",
+        "x-ms-date": "Tue, 11 Jul 2023 19:54:45 GMT",
         "x-ms-return-client-request-id": "true"
       },
       "RequestBody": null,
@@ -753,10 +737,9 @@
       "ResponseHeaders": {
         "api-supported-versions": "2021-04-07-preview1, 2022-07-18-preview",
         "Connection": "keep-alive",
-        "Date": "Wed, 09 Nov 2022 08:21:31 GMT",
-        "Request-Context": "appId=",
-        "trace-id": "26c5f76d78ab6a9faee9683609ffc031",
-        "x-azure-ref": "20221109T082131Z-rwhup4fafx79d2nv68y4rbyapc00000004ug00000001h7wz",
+        "Date": "Tue, 11 Jul 2023 19:54:46 GMT",
+        "trace-id": "036816ec-53b2-853f-1911-0e3fe7eb5813",
+        "x-azure-ref": "20230711T195445Z-vrmngh4fw128h9bk4nxt75n3sg00000000s000000000vgsn",
         "X-Cache": "CONFIG_NOCACHE"
       },
       "ResponseBody": null
@@ -769,10 +752,10 @@
         "Accept-Encoding": "gzip, deflate",
         "Authorization": "Sanitized",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22621-SP0)",
-        "x-ms-client-request-id": "84beac95-6007-11ed-b983-046c590f95d2",
+        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.13 (Windows-10-10.0.22621-SP0)",
+        "x-ms-client-request-id": "c9189d62-2024-11ee-ad94-046c590f95d2",
         "x-ms-content-sha256": "Sanitized",
-        "x-ms-date": "Wed, 09 Nov 2022 08:21:32 GMT",
+        "x-ms-date": "Tue, 11 Jul 2023 19:54:45 GMT",
         "x-ms-return-client-request-id": "true"
       },
       "RequestBody": null,
@@ -781,11 +764,10 @@
         "api-supported-versions": "2021-04-07-preview1, 2022-07-18-preview",
         "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 09 Nov 2022 08:21:31 GMT",
-        "Request-Context": "appId=",
-        "trace-id": "751e36a1e0f401def79b3bfe4c7064d1",
+        "Date": "Tue, 11 Jul 2023 19:54:46 GMT",
+        "trace-id": "ccf90445-2699-379d-7bb5-8a0192e2c39b",
         "Transfer-Encoding": "chunked",
-        "x-azure-ref": "20221109T082131Z-rwhup4fafx79d2nv68y4rbyapc00000004ug00000001h7yk",
+        "x-azure-ref": "20230711T195446Z-vrmngh4fw128h9bk4nxt75n3sg00000000s000000000vgsz",
         "X-Cache": "CONFIG_NOCACHE"
       },
       "ResponseBody": {
@@ -806,10 +788,10 @@
         "Connection": "keep-alive",
         "Content-Length": "259",
         "Content-Type": "application/merge-patch\u002Bjson",
-        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22621-SP0)",
-        "x-ms-client-request-id": "84ce1751-6007-11ed-a73c-046c590f95d2",
+        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.13 (Windows-10-10.0.22621-SP0)",
+        "x-ms-client-request-id": "c925012b-2024-11ee-b934-046c590f95d2",
         "x-ms-content-sha256": "Sanitized",
-        "x-ms-date": "Wed, 09 Nov 2022 08:21:32 GMT",
+        "x-ms-date": "Tue, 11 Jul 2023 19:54:46 GMT",
         "x-ms-return-client-request-id": "true"
       },
       "RequestBody": {
@@ -829,18 +811,17 @@
           }
         }
       },
-      "StatusCode": 200,
+      "StatusCode": 201,
       "ResponseHeaders": {
         "api-supported-versions": "2021-04-07-preview1, 2022-07-18-preview",
         "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 09 Nov 2022 08:21:32 GMT",
+        "Date": "Tue, 11 Jul 2023 19:54:46 GMT",
         "ETag": "Sanitized",
-        "Last-Modified": "Wed, 09 Nov 2022 08:21:32 GMT",
-        "Request-Context": "appId=",
-        "trace-id": "4308fc6b53052e96b445da134d2b3de3",
+        "Last-Modified": "Tue, 11 Jul 2023 19:54:46 GMT",
+        "trace-id": "2afa90e7-24c5-6508-e791-f76377ef8cd4",
         "Transfer-Encoding": "chunked",
-        "x-azure-ref": "20221109T082131Z-rwhup4fafx79d2nv68y4rbyapc00000004ug00000001h806",
+        "x-azure-ref": "20230711T195446Z-vrmngh4fw128h9bk4nxt75n3sg00000000s000000000vgt8",
         "X-Cache": "CONFIG_NOCACHE"
       },
       "ResponseBody": {
@@ -872,10 +853,10 @@
         "Authorization": "Sanitized",
         "Connection": "keep-alive",
         "Content-Length": "0",
-        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22621-SP0)",
-        "x-ms-client-request-id": "84fa532c-6007-11ed-9731-046c590f95d2",
+        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.13 (Windows-10-10.0.22621-SP0)",
+        "x-ms-client-request-id": "c93f418e-2024-11ee-b935-046c590f95d2",
         "x-ms-content-sha256": "Sanitized",
-        "x-ms-date": "Wed, 09 Nov 2022 08:21:33 GMT",
+        "x-ms-date": "Tue, 11 Jul 2023 19:54:46 GMT",
         "x-ms-return-client-request-id": "true"
       },
       "RequestBody": null,
@@ -883,10 +864,9 @@
       "ResponseHeaders": {
         "api-supported-versions": "2021-04-07-preview1, 2022-07-18-preview",
         "Connection": "keep-alive",
-        "Date": "Wed, 09 Nov 2022 08:21:32 GMT",
-        "Request-Context": "appId=",
-        "trace-id": "1ed8f7265ca8ad29648eade81bf3f375",
-        "x-azure-ref": "20221109T082132Z-rwhup4fafx79d2nv68y4rbyapc00000004ug00000001h81c",
+        "Date": "Tue, 11 Jul 2023 19:54:46 GMT",
+        "trace-id": "efcae0a4-abee-ba77-81d2-2bcb18356407",
+        "x-azure-ref": "20230711T195446Z-vrmngh4fw128h9bk4nxt75n3sg00000000s000000000vgv9",
         "X-Cache": "CONFIG_NOCACHE"
       },
       "ResponseBody": null
@@ -899,10 +879,10 @@
         "Accept-Encoding": "gzip, deflate",
         "Authorization": "Sanitized",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22621-SP0)",
-        "x-ms-client-request-id": "851d534a-6007-11ed-afa1-046c590f95d2",
+        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.13 (Windows-10-10.0.22621-SP0)",
+        "x-ms-client-request-id": "c95087d8-2024-11ee-ae67-046c590f95d2",
         "x-ms-content-sha256": "Sanitized",
-        "x-ms-date": "Wed, 09 Nov 2022 08:21:33 GMT",
+        "x-ms-date": "Tue, 11 Jul 2023 19:54:46 GMT",
         "x-ms-return-client-request-id": "true"
       },
       "RequestBody": null,
@@ -911,11 +891,10 @@
         "api-supported-versions": "2021-04-07-preview1, 2022-07-18-preview",
         "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 09 Nov 2022 08:21:32 GMT",
-        "Request-Context": "appId=",
-        "trace-id": "c31f56b5829f3ac9aa434fb89f6d1a85",
+        "Date": "Tue, 11 Jul 2023 19:54:46 GMT",
+        "trace-id": "35e43b33-1757-fcff-46cf-e089ecc99e8f",
         "Transfer-Encoding": "chunked",
-        "x-azure-ref": "20221109T082132Z-rwhup4fafx79d2nv68y4rbyapc00000004ug00000001h82q",
+        "x-azure-ref": "20230711T195446Z-vrmngh4fw128h9bk4nxt75n3sg00000000s000000000vgvv",
         "X-Cache": "CONFIG_NOCACHE"
       },
       "ResponseBody": {
@@ -935,10 +914,10 @@
         "Authorization": "Sanitized",
         "Connection": "keep-alive",
         "Content-Length": "0",
-        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22621-SP0)",
-        "x-ms-client-request-id": "852c99d0-6007-11ed-86ae-046c590f95d2",
+        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.13 (Windows-10-10.0.22621-SP0)",
+        "x-ms-client-request-id": "c95a75ae-2024-11ee-a23f-046c590f95d2",
         "x-ms-content-sha256": "Sanitized",
-        "x-ms-date": "Wed, 09 Nov 2022 08:21:33 GMT",
+        "x-ms-date": "Tue, 11 Jul 2023 19:54:46 GMT",
         "x-ms-return-client-request-id": "true"
       },
       "RequestBody": null,
@@ -946,10 +925,9 @@
       "ResponseHeaders": {
         "api-supported-versions": "2021-04-07-preview1, 2022-07-18-preview",
         "Connection": "keep-alive",
-        "Date": "Wed, 09 Nov 2022 08:21:32 GMT",
-        "Request-Context": "appId=",
-        "trace-id": "31b66fb4b11ab9042e8ba3ef08933755",
-        "x-azure-ref": "20221109T082132Z-rwhup4fafx79d2nv68y4rbyapc00000004ug00000001h83m",
+        "Date": "Tue, 11 Jul 2023 19:54:46 GMT",
+        "trace-id": "ca2fed2c-7a28-bc1d-c49c-c838d320692d",
+        "x-azure-ref": "20230711T195446Z-vrmngh4fw128h9bk4nxt75n3sg00000000s000000000vgw9",
         "X-Cache": "CONFIG_NOCACHE"
       },
       "ResponseBody": null
@@ -963,10 +941,10 @@
         "Authorization": "Sanitized",
         "Connection": "keep-alive",
         "Content-Length": "0",
-        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22621-SP0)",
-        "x-ms-client-request-id": "85536aca-6007-11ed-b5ca-046c590f95d2",
+        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.13 (Windows-10-10.0.22621-SP0)",
+        "x-ms-client-request-id": "c972efec-2024-11ee-b2fd-046c590f95d2",
         "x-ms-content-sha256": "Sanitized",
-        "x-ms-date": "Wed, 09 Nov 2022 08:21:33 GMT",
+        "x-ms-date": "Tue, 11 Jul 2023 19:54:46 GMT",
         "x-ms-return-client-request-id": "true"
       },
       "RequestBody": null,
@@ -974,10 +952,9 @@
       "ResponseHeaders": {
         "api-supported-versions": "2021-04-07-preview1, 2022-07-18-preview",
         "Connection": "keep-alive",
-        "Date": "Wed, 09 Nov 2022 08:21:32 GMT",
-        "Request-Context": "appId=",
-        "trace-id": "c264c538abd7fd31d9ba415922b05253",
-        "x-azure-ref": "20221109T082132Z-rwhup4fafx79d2nv68y4rbyapc00000004ug00000001h84q",
+        "Date": "Tue, 11 Jul 2023 19:54:46 GMT",
+        "trace-id": "36e8d577-14c7-3425-00da-b30942e78721",
+        "x-azure-ref": "20230711T195446Z-vrmngh4fw128h9bk4nxt75n3sg00000000s000000000vgwf",
         "X-Cache": "CONFIG_NOCACHE"
       },
       "ResponseBody": null
@@ -991,10 +968,10 @@
         "Authorization": "Sanitized",
         "Connection": "keep-alive",
         "Content-Length": "0",
-        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22621-SP0)",
-        "x-ms-client-request-id": "8576cc2f-6007-11ed-94fe-046c590f95d2",
+        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.13 (Windows-10-10.0.22621-SP0)",
+        "x-ms-client-request-id": "c98b238d-2024-11ee-8239-046c590f95d2",
         "x-ms-content-sha256": "Sanitized",
-        "x-ms-date": "Wed, 09 Nov 2022 08:21:33 GMT",
+        "x-ms-date": "Tue, 11 Jul 2023 19:54:46 GMT",
         "x-ms-return-client-request-id": "true"
       },
       "RequestBody": null,
@@ -1002,10 +979,9 @@
       "ResponseHeaders": {
         "api-supported-versions": "2021-04-07-preview1, 2022-07-18-preview",
         "Connection": "keep-alive",
-        "Date": "Wed, 09 Nov 2022 08:21:33 GMT",
-        "Request-Context": "appId=",
-        "trace-id": "f91167ec05b6e4bfc434b765e50f3e39",
-        "x-azure-ref": "20221109T082133Z-rwhup4fafx79d2nv68y4rbyapc00000004ug00000001h85z",
+        "Date": "Tue, 11 Jul 2023 19:54:46 GMT",
+        "trace-id": "583ce3d8-98d7-e43c-40df-5d74c0259df9",
+        "x-azure-ref": "20230711T195446Z-vrmngh4fw128h9bk4nxt75n3sg00000000s000000000vgwr",
         "X-Cache": "CONFIG_NOCACHE"
       },
       "ResponseBody": null
@@ -1019,10 +995,10 @@
         "Authorization": "Sanitized",
         "Connection": "keep-alive",
         "Content-Length": "0",
-        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22621-SP0)",
-        "x-ms-client-request-id": "8596dde0-6007-11ed-b57b-046c590f95d2",
+        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.13 (Windows-10-10.0.22621-SP0)",
+        "x-ms-client-request-id": "c99c828c-2024-11ee-adf8-046c590f95d2",
         "x-ms-content-sha256": "Sanitized",
-        "x-ms-date": "Wed, 09 Nov 2022 08:21:34 GMT",
+        "x-ms-date": "Tue, 11 Jul 2023 19:54:46 GMT",
         "x-ms-return-client-request-id": "true"
       },
       "RequestBody": null,
@@ -1030,10 +1006,9 @@
       "ResponseHeaders": {
         "api-supported-versions": "2021-04-07-preview1, 2022-07-18-preview",
         "Connection": "keep-alive",
-        "Date": "Wed, 09 Nov 2022 08:21:33 GMT",
-        "Request-Context": "appId=",
-        "trace-id": "4a7d4720cbd8b82d2a30d653b759ab45",
-        "x-azure-ref": "20221109T082133Z-rwhup4fafx79d2nv68y4rbyapc00000004ug00000001h87a",
+        "Date": "Tue, 11 Jul 2023 19:54:46 GMT",
+        "trace-id": "059b26b4-4518-5691-49b5-e17e2937f8e1",
+        "x-azure-ref": "20230711T195446Z-vrmngh4fw128h9bk4nxt75n3sg00000000s000000000vgx5",
         "X-Cache": "CONFIG_NOCACHE"
       },
       "ResponseBody": null

@@ -1,0 +1,595 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/v2.0/.well-known/openid-configuration",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-identity/1.12.0 Python/3.10.7 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Allow-Methods": "GET, OPTIONS",
+        "Access-Control-Allow-Origin": "*",
+        "Cache-Control": "max-age=86400, private",
+        "Content-Length": "1753",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Wed, 22 Feb 2023 13:44:44 GMT",
+        "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
+        "Set-Cookie": [
+          "fpc=At5mL4m7BPdPrquR-YFQ2ocU3PbiBAAAAP4SiNsOAAAA; expires=Fri, 24-Mar-2023 13:44:44 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly"
+        ],
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-ests-server": "2.1.14649.20 - SEASLR2 ProdSlices",
+        "X-XSS-Protection": "0"
+      },
+      "ResponseBody": {
+        "token_endpoint": "https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/oauth2/v2.0/token",
+        "token_endpoint_auth_methods_supported": [
+          "client_secret_post",
+          "private_key_jwt",
+          "client_secret_basic"
+        ],
+        "jwks_uri": "https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/discovery/v2.0/keys",
+        "response_modes_supported": [
+          "query",
+          "fragment",
+          "form_post"
+        ],
+        "subject_types_supported": [
+          "pairwise"
+        ],
+        "id_token_signing_alg_values_supported": [
+          "RS256"
+        ],
+        "response_types_supported": [
+          "code",
+          "id_token",
+          "code id_token",
+          "id_token token"
+        ],
+        "scopes_supported": [
+          "openid",
+          "profile",
+          "email",
+          "offline_access"
+        ],
+        "issuer": "https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/v2.0",
+        "request_uri_parameter_supported": false,
+        "userinfo_endpoint": "https://graph.microsoft.com/oidc/userinfo",
+        "authorization_endpoint": "https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/oauth2/v2.0/authorize",
+        "device_authorization_endpoint": "https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/oauth2/v2.0/devicecode",
+        "http_logout_supported": true,
+        "frontchannel_logout_supported": true,
+        "end_session_endpoint": "https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/oauth2/v2.0/logout",
+        "claims_supported": [
+          "sub",
+          "iss",
+          "cloud_instance_name",
+          "cloud_instance_host_name",
+          "cloud_graph_host_name",
+          "msgraph_host",
+          "aud",
+          "exp",
+          "iat",
+          "auth_time",
+          "acr",
+          "nonce",
+          "preferred_username",
+          "name",
+          "tid",
+          "ver",
+          "at_hash",
+          "c_hash",
+          "email"
+        ],
+        "kerberos_endpoint": "https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/kerberos",
+        "tenant_region_scope": "WW",
+        "cloud_instance_name": "microsoftonline.com",
+        "cloud_graph_host_name": "graph.windows.net",
+        "msgraph_host": "graph.microsoft.com",
+        "rbac_url": "https://pas.windows.net"
+      }
+    },
+    {
+      "RequestUri": "https://login.microsoftonline.com/common/discovery/instance?api-version=1.1\u0026authorization_endpoint=https://login.microsoftonline.com/common/oauth2/authorize",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Cookie": "fpc=At5mL4m7BPdPrquR-YFQ2ocU3PbiBAAAAP4SiNsOAAAA; x-ms-gateway-slice=estsfd",
+        "User-Agent": "azsdk-python-identity/1.12.0 Python/3.10.7 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Allow-Methods": "GET, OPTIONS",
+        "Access-Control-Allow-Origin": "*",
+        "Cache-Control": "max-age=86400, private",
+        "Content-Length": "945",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Wed, 22 Feb 2023 13:44:44 GMT",
+        "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
+        "Set-Cookie": [
+          "fpc=At5mL4m7BPdPrquR-YFQ2ocU3PbiBAAAAP4SiNsOAAAA; expires=Fri, 24-Mar-2023 13:44:44 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly"
+        ],
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-ests-server": "2.1.14649.20 - KRC ProdSlices",
+        "X-XSS-Protection": "0"
+      },
+      "ResponseBody": {
+        "tenant_discovery_endpoint": "https://login.microsoftonline.com/common/.well-known/openid-configuration",
+        "api-version": "1.1",
+        "metadata": [
+          {
+            "preferred_network": "login.microsoftonline.com",
+            "preferred_cache": "login.windows.net",
+            "aliases": [
+              "login.microsoftonline.com",
+              "login.windows.net",
+              "login.microsoft.com",
+              "sts.windows.net"
+            ]
+          },
+          {
+            "preferred_network": "login.partner.microsoftonline.cn",
+            "preferred_cache": "login.partner.microsoftonline.cn",
+            "aliases": [
+              "login.partner.microsoftonline.cn",
+              "login.chinacloudapi.cn"
+            ]
+          },
+          {
+            "preferred_network": "login.microsoftonline.de",
+            "preferred_cache": "login.microsoftonline.de",
+            "aliases": [
+              "login.microsoftonline.de"
+            ]
+          },
+          {
+            "preferred_network": "login.microsoftonline.us",
+            "preferred_cache": "login.microsoftonline.us",
+            "aliases": [
+              "login.microsoftonline.us",
+              "login.usgovcloudapi.net"
+            ]
+          },
+          {
+            "preferred_network": "login-us.microsoftonline.com",
+            "preferred_cache": "login-us.microsoftonline.com",
+            "aliases": [
+              "login-us.microsoftonline.com"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "RequestUri": "https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/oauth2/v2.0/token",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "client-request-id": "51fdd330-af4e-46a5-a479-acbf586bd5ce",
+        "Connection": "keep-alive",
+        "Content-Length": "291",
+        "Content-Type": "application/x-www-form-urlencoded",
+        "Cookie": "fpc=At5mL4m7BPdPrquR-YFQ2ocU3PbiBAAAAP4SiNsOAAAA; x-ms-gateway-slice=estsfd",
+        "User-Agent": "azsdk-python-identity/1.12.0 Python/3.10.7 (Windows-10-10.0.22000-SP0)",
+        "x-client-cpu": "x64",
+        "x-client-current-telemetry": "4|730,0|",
+        "x-client-last-telemetry": "4|0|||",
+        "x-client-os": "win32",
+        "x-client-sku": "MSAL.Python",
+        "x-client-ver": "1.21.0",
+        "x-ms-lib-capability": "retry-after, h429"
+      },
+      "RequestBody": "client_id=39d176c5-91b6-454b-854d-55813c17d92d\u0026grant_type=client_credentials\u0026client_info=1\u0026client_secret=KCf8Q~J3H5tYIwsneXeV_aMSAwR5QTDM.1SsNcee\u0026claims=%7B%22access_token%22%3A\u002B%7B%22xms_cc%22%3A\u002B%7B%22values%22%3A\u002B%5B%22CP1%22%5D%7D%7D%7D\u0026scope=https%3A%2F%2Ffarmbeats.azure.net%2F.default",
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-store, no-cache",
+        "client-request-id": "51fdd330-af4e-46a5-a479-acbf586bd5ce",
+        "Content-Length": "111",
+        "Content-Security-Policy-Report-Only": "script-src \u0027self\u0027 \u0027nonce-oZxhDDrp8xgQ52jjS4Ve0w\u0027 \u0027unsafe-eval\u0027 \u0027unsafe-inline\u0027 \u0027report-sample\u0027; object-src \u0027none\u0027; base-uri \u0027self\u0027; report-uri https://csp.microsoft.com/report/ESTS-UX-All",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Wed, 22 Feb 2023 13:44:44 GMT",
+        "Expires": "-1",
+        "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
+        "Pragma": "no-cache",
+        "Set-Cookie": [
+          "fpc=At5mL4m7BPdPrquR-YFQ2ocU3PbiBAAAAP4SiNsOAAAA; expires=Fri, 24-Mar-2023 13:44:44 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly"
+        ],
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-clitelem": "1,0,0,,",
+        "x-ms-ests-server": "2.1.14711.5 - KRSLR1 ProdSlices",
+        "X-XSS-Protection": "0"
+      },
+      "ResponseBody": {
+        "token_type": "Bearer",
+        "expires_in": 86399,
+        "ext_expires_in": 86399,
+        "refresh_in": 43199,
+        "access_token": "Sanitized"
+      }
+    },
+    {
+      "RequestUri": "https://fakeaccount.farmbeats.azure.net/parties/smoke-test-party?api-version=2022-11-01-preview",
+      "RequestMethod": "PATCH",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "165",
+        "Content-Type": "application/merge-patch\u002Bjson",
+        "User-Agent": "azsdk-python-agrifood-farming/1.0.0b2 Python/3.10.7 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": {
+        "name": "Test Party",
+        "description": "Party created during testing.",
+        "status": "Sample Status",
+        "properties": {
+          "foo": "bar",
+          "numeric one": 1,
+          "1": "numeric key"
+        }
+      },
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "api-supported-versions": "2022-11-01-preview",
+        "Connection": "keep-alive",
+        "Content-Encoding": "gzip",
+        "Content-Security-Policy": "self",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Wed, 22 Feb 2023 13:44:45 GMT",
+        "ETag": "0200a916-0000-0600-0000-63f61c4d0000",
+        "Location": "http://bb-prod-wcus-1.farmbeats.azure.net/parties/smoke-test-party",
+        "mise-correlation-id": "fd2ff287-2fe4-4cc9-8eb3-ccbfc2ec3dee",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "Vary": "Accept-Encoding",
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "SAMEORIGIN",
+        "x-ms-throttle-information": "1000"
+      },
+      "ResponseBody": {
+        "id": "smoke-test-party",
+        "eTag": "0200a916-0000-0600-0000-63f61c4d0000",
+        "status": "Sample Status",
+        "createdDateTime": "2023-02-22T13:44:45Z",
+        "modifiedDateTime": "2023-02-22T13:44:45Z",
+        "name": "Test Party",
+        "description": "Party created during testing.",
+        "createdBy": "9002b50e-dc98-445e-a865-72dce38ecafd",
+        "modifiedBy": "9002b50e-dc98-445e-a865-72dce38ecafd",
+        "properties": {
+          "foo": "bar",
+          "numeric one": 1,
+          "1": "numeric key"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeaccount.farmbeats.azure.net/parties/smoke-test-party/boundaries/smoke-test-boundary?api-version=2022-11-01-preview",
+      "RequestMethod": "PATCH",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "408",
+        "Content-Type": "application/merge-patch\u002Bjson",
+        "User-Agent": "azsdk-python-agrifood-farming/1.0.0b2 Python/3.10.7 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": {
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                73.70457172393799,
+                20.545385304358106
+              ],
+              [
+                73.70457172393799,
+                20.545385304358106
+              ],
+              [
+                73.70448589324951,
+                20.542411534243367
+              ],
+              [
+                73.70877742767334,
+                20.541688176010233
+              ],
+              [
+                73.71023654937744,
+                20.545083911372505
+              ],
+              [
+                73.70663166046143,
+                20.546992723579137
+              ],
+              [
+                73.70457172393799,
+                20.545385304358106
+              ]
+            ]
+          ]
+        },
+        "status": "\u003Cstring\u003E",
+        "name": "\u003Cstring\u003E",
+        "description": "\u003Cstring\u003E"
+      },
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "api-supported-versions": "2021-07-31-preview, 2022-11-01-preview",
+        "Connection": "keep-alive",
+        "Content-Encoding": "gzip",
+        "Content-Security-Policy": "self",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Wed, 22 Feb 2023 13:44:45 GMT",
+        "ETag": "0200d316-0000-0600-0000-63f61c4d0000",
+        "Location": "http://bb-prod-wcus-1.farmbeats.azure.net/parties/smoke-test-party/boundaries/smoke-test-boundary",
+        "mise-correlation-id": "9e33780c-2f34-4141-9f9f-276d2b6df1bc",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "Vary": "Accept-Encoding",
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "SAMEORIGIN",
+        "x-ms-throttle-information": "1000"
+      },
+      "ResponseBody": {
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                73.70457172393799,
+                20.545385304358106
+              ],
+              [
+                73.70457172393799,
+                20.545385304358106
+              ],
+              [
+                73.70448589324951,
+                20.542411534243367
+              ],
+              [
+                73.70877742767334,
+                20.541688176010233
+              ],
+              [
+                73.71023654937744,
+                20.545083911372505
+              ],
+              [
+                73.70663166046143,
+                20.546992723579137
+              ],
+              [
+                73.70457172393799,
+                20.545385304358106
+              ]
+            ]
+          ]
+        },
+        "crs": "WGS84",
+        "centroid": {
+          "type": "Point",
+          "coordinates": [
+            73.70711478791443,
+            20.54418916247634
+          ]
+        },
+        "bbox": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                73.70448589324951,
+                20.541688176010233
+              ],
+              [
+                73.70448589324951,
+                20.546992723579137
+              ],
+              [
+                73.71023654937744,
+                20.546992723579137
+              ],
+              [
+                73.71023654937744,
+                20.541688176010233
+              ]
+            ]
+          ]
+        },
+        "partyId": "smoke-test-party",
+        "area": {
+          "unit": "Acre",
+          "value": 60.405
+        },
+        "id": "smoke-test-boundary",
+        "eTag": "0200d316-0000-0600-0000-63f61c4d0000",
+        "status": "\u003Cstring\u003E",
+        "createdDateTime": "2023-02-22T13:44:45Z",
+        "modifiedDateTime": "2023-02-22T13:44:45Z",
+        "name": "\u003Cstring\u003E",
+        "description": "\u003Cstring\u003E",
+        "createdBy": "9002b50e-dc98-445e-a865-72dce38ecafd",
+        "modifiedBy": "9002b50e-dc98-445e-a865-72dce38ecafd"
+      }
+    },
+    {
+      "RequestUri": "https://fakeaccount.farmbeats.azure.net/parties/smoke-test-party/boundaries/smoke-test-boundary?api-version=2022-11-01-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-agrifood-farming/1.0.0b2 Python/3.10.7 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "api-supported-versions": "2021-07-31-preview, 2022-11-01-preview",
+        "Connection": "keep-alive",
+        "Content-Encoding": "gzip",
+        "Content-Security-Policy": "self",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Wed, 22 Feb 2023 13:44:46 GMT",
+        "ETag": "0200d316-0000-0600-0000-63f61c4d0000",
+        "mise-correlation-id": "fd0f6a1d-bf71-4760-aadb-b52cd58f249a",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "Vary": "Accept-Encoding",
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "SAMEORIGIN",
+        "x-ms-throttle-information": "100"
+      },
+      "ResponseBody": {
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                73.70457172393799,
+                20.545385304358106
+              ],
+              [
+                73.70457172393799,
+                20.545385304358106
+              ],
+              [
+                73.70448589324951,
+                20.542411534243367
+              ],
+              [
+                73.70877742767334,
+                20.541688176010233
+              ],
+              [
+                73.71023654937744,
+                20.545083911372505
+              ],
+              [
+                73.70663166046143,
+                20.546992723579137
+              ],
+              [
+                73.70457172393799,
+                20.545385304358106
+              ]
+            ]
+          ]
+        },
+        "crs": "WGS84",
+        "centroid": {
+          "type": "Point",
+          "coordinates": [
+            73.70711478791443,
+            20.54418916247634
+          ]
+        },
+        "bbox": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                73.70448589324951,
+                20.541688176010233
+              ],
+              [
+                73.70448589324951,
+                20.546992723579137
+              ],
+              [
+                73.71023654937744,
+                20.546992723579137
+              ],
+              [
+                73.71023654937744,
+                20.541688176010233
+              ]
+            ]
+          ]
+        },
+        "partyId": "smoke-test-party",
+        "area": {
+          "unit": "Acre",
+          "value": 60.405
+        },
+        "id": "smoke-test-boundary",
+        "eTag": "0200d316-0000-0600-0000-63f61c4d0000",
+        "status": "\u003Cstring\u003E",
+        "createdDateTime": "2023-02-22T13:44:45Z",
+        "modifiedDateTime": "2023-02-22T13:44:45Z",
+        "name": "\u003Cstring\u003E",
+        "description": "\u003Cstring\u003E",
+        "createdBy": "9002b50e-dc98-445e-a865-72dce38ecafd",
+        "modifiedBy": "9002b50e-dc98-445e-a865-72dce38ecafd"
+      }
+    },
+    {
+      "RequestUri": "https://fakeaccount.farmbeats.azure.net/parties/smoke-test-party/boundaries/smoke-test-boundary?api-version=2022-11-01-preview",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-agrifood-farming/1.0.0b2 Python/3.10.7 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 204,
+      "ResponseHeaders": {
+        "api-supported-versions": "2021-07-31-preview, 2022-11-01-preview",
+        "Connection": "keep-alive",
+        "Content-Security-Policy": "self",
+        "Date": "Wed, 22 Feb 2023 13:44:47 GMT",
+        "mise-correlation-id": "5a53f47b-8ba2-45ef-868a-3b9b844e9b25",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "SAMEORIGIN",
+        "x-ms-throttle-information": "100"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://fakeaccount.farmbeats.azure.net/parties/smoke-test-party?api-version=2022-11-01-preview",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-agrifood-farming/1.0.0b2 Python/3.10.7 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 204,
+      "ResponseHeaders": {
+        "api-supported-versions": "2022-11-01-preview",
+        "Connection": "keep-alive",
+        "Content-Security-Policy": "self",
+        "Date": "Wed, 22 Feb 2023 13:44:47 GMT",
+        "mise-correlation-id": "7bc2d68a-4a73-4ca2-bac6-129b9c75f774",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "SAMEORIGIN",
+        "x-ms-throttle-information": "100"
+      },
+      "ResponseBody": null
+    }
+  ],
+  "Variables": {}
+}

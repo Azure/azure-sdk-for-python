@@ -65,13 +65,10 @@ class _FinalStateViaOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class AzureAsyncOperationPolling(OperationResourcePolling):
-    """Implements a operation resource polling, typically from Azure-AsyncOperation.
-    """
+    """Implements a operation resource polling, typically from Azure-AsyncOperation."""
 
     def __init__(self, lro_options=None):
-        super(AzureAsyncOperationPolling, self).__init__(
-            operation_location_header="azure-asyncoperation"
-        )
+        super(AzureAsyncOperationPolling, self).__init__(operation_location_header="azure-asyncoperation")
 
         self._lro_options = lro_options or {}
 
@@ -79,17 +76,16 @@ class AzureAsyncOperationPolling(OperationResourcePolling):
         # type: (PipelineResponseType) -> Optional[str]
         """If a final GET is needed, returns the URL.
 
+        :param ~azure.core.pipeline.PipelineResponse pipeline_response: The pipeline response object.
+        :return: The URL to poll for the final GET.
         :rtype: str
         """
         if (
-            self._lro_options.get(_LroOption.FINAL_STATE_VIA)
-            == _FinalStateViaOption.AZURE_ASYNC_OPERATION_FINAL_STATE
+            self._lro_options.get(_LroOption.FINAL_STATE_VIA) == _FinalStateViaOption.AZURE_ASYNC_OPERATION_FINAL_STATE
             and self._request.method == "POST"
         ):
             return None
-        return super(AzureAsyncOperationPolling, self).get_final_get_url(
-            pipeline_response
-        )
+        return super(AzureAsyncOperationPolling, self).get_final_get_url(pipeline_response)
 
 
 class BodyContentPolling(LongRunningOperation):
@@ -104,6 +100,10 @@ class BodyContentPolling(LongRunningOperation):
     def can_poll(self, pipeline_response):
         # type: (PipelineResponseType) -> bool
         """Answer if this polling method could be used.
+
+        :param ~azure.core.pipeline.PipelineResponse pipeline_response: The pipeline response object.
+        :return: True if this polling method could be used.
+        :rtype: bool
         """
         response = pipeline_response.http_response
         return response.request.method in ["PUT", "PATCH"]
@@ -111,6 +111,8 @@ class BodyContentPolling(LongRunningOperation):
     def get_polling_url(self):
         # type: () -> str
         """Return the polling URL.
+        :return: The polling URL.
+        :rtype: str
         """
         return self._initial_response.http_response.request.url
 
@@ -118,6 +120,8 @@ class BodyContentPolling(LongRunningOperation):
         # type: (PipelineResponseType) -> Optional[str]
         """If a final GET is needed, returns the URL.
 
+        :param ~azure.core.pipeline.PipelineResponse pipeline_response: The pipeline response object.
+        :return: The URL to poll for the final GET.
         :rtype: str
         """
         return None
@@ -126,7 +130,9 @@ class BodyContentPolling(LongRunningOperation):
         # type: (PipelineResponseType) -> str
         """Process first response after initiating long running operation.
 
-        :param azure.core.pipeline.PipelineResponse response: initial REST call response.
+        :param ~azure.core.pipeline.PipelineResponse pipeline_response: initial REST call response.
+        :return: Status string.
+        :rtype: str
         """
         self._initial_response = pipeline_response
         response = pipeline_response.http_response
@@ -151,6 +157,7 @@ class BodyContentPolling(LongRunningOperation):
 
         :param azure.core.pipeline.transport.HttpResponse response: latest REST call response.
         :returns: Status if found, else 'None'.
+        :rtype: str or None
         """
         if _is_empty(response):
             return None
@@ -162,14 +169,14 @@ class BodyContentPolling(LongRunningOperation):
         """Process the latest status update retrieved from the same URL as
         the previous request.
 
-        :param azure.core.pipeline.PipelineResponse response: latest REST call response.
+        :param ~azure.core.pipeline.PipelineResponse pipeline_response: latest REST call response.
+        :return: Status string.
+        :rtype: str
         :raises: BadResponse if status not 200 or 204.
         """
         response = pipeline_response.http_response
         if _is_empty(response):
-            raise BadResponse(
-                "The response from long running operation does not contain a body."
-            )
+            raise BadResponse("The response from long running operation does not contain a body.")
 
         status = self._get_provisioning_state(response)
         return status or "Succeeded"
@@ -177,12 +184,7 @@ class BodyContentPolling(LongRunningOperation):
 
 class ARMPolling(LROBasePolling):
     def __init__(
-        self,
-        timeout=30,
-        lro_algorithms=None,
-        lro_options=None,
-        path_format_arguments=None,
-        **operation_config
+        self, timeout=30, lro_algorithms=None, lro_options=None, path_format_arguments=None, **operation_config
     ):
         lro_algorithms = lro_algorithms or [
             AzureAsyncOperationPolling(lro_options=lro_options),
@@ -198,8 +200,9 @@ class ARMPolling(LROBasePolling):
             **operation_config
         )
 
+
 __all__ = [
-    'AzureAsyncOperationPolling',
-    'BodyContentPolling',
-    'ARMPolling',
+    "AzureAsyncOperationPolling",
+    "BodyContentPolling",
+    "ARMPolling",
 ]

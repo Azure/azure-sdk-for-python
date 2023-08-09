@@ -77,7 +77,7 @@ class TestCompute(AzureRecordedTestCase):
             "Test takes 5 minutes in automation. "
             "Already have unit tests verifying correct _restclient method is called. "
             "Can be validated in live build only."
-        )
+        ),
     )
     def test_compute_instance_stop_start_restart(
         self, client: MLClient, rand_compute_name: Callable[[str], str]

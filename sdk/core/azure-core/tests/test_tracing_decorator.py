@@ -21,6 +21,7 @@ from azure.core.tracing.decorator import distributed_trace
 from tracing_common import FakeSpan
 from utils import HTTP_REQUESTS
 
+
 @pytest.fixture(scope="module")
 def fake_span():
     settings.tracing_implementation.set_value(FakeSpan)
@@ -53,7 +54,7 @@ class MockClient:
             return None
         response = self.pipeline.run(self.request, **kwargs)
         self.get_foo(merge_span=True)
-        kwargs['merge_span'] = True
+        kwargs["merge_span"] = True
         self.make_request(numb_times - 1, **kwargs)
         return response
 
@@ -74,7 +75,7 @@ class MockClient:
     def check_name_is_different(self):
         time.sleep(0.001)
 
-    @distributed_trace(tracing_attributes={'foo': 'bar'})
+    @distributed_trace(tracing_attributes={"foo": "bar"})
     def tracing_attr(self):
         time.sleep(0.001)
 
@@ -100,7 +101,6 @@ def test_get_function_and_class_name(http_request):
 
 @pytest.mark.usefixtures("fake_span")
 class TestDecorator(object):
-
     @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
     def test_decorator_tracing_attr(self, http_request):
         with FakeSpan(name="parent") as parent:
@@ -111,7 +111,7 @@ class TestDecorator(object):
         assert parent.children[0].name == "MockClient.__init__"
         assert parent.children[1].name == "MockClient.tracing_attr"
         assert parent.children[1].kind == SpanKind.INTERNAL
-        assert parent.children[1].attributes == {'foo': 'bar'}
+        assert parent.children[1].attributes == {"foo": "bar"}
 
     @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
     def test_decorator_has_different_name(self, http_request):
@@ -188,8 +188,7 @@ class TestDecorator(object):
 
     @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
     def test_span_with_exception(self, http_request):
-        """Assert that if an exception is raised, the next sibling method is actually a sibling span.
-        """
+        """Assert that if an exception is raised, the next sibling method is actually a sibling span."""
         with FakeSpan(name="parent") as parent:
             client = MockClient(http_request)
             try:
@@ -202,5 +201,5 @@ class TestDecorator(object):
         assert parent.children[0].name == "MockClient.__init__"
         assert parent.children[1].name == "MockClient.raising_exception"
         # Exception should propagate status for Opencensus
-        assert parent.children[1].status == 'Something went horribly wrong here'
+        assert parent.children[1].status == "Something went horribly wrong here"
         assert parent.children[2].name == "MockClient.get_foo"

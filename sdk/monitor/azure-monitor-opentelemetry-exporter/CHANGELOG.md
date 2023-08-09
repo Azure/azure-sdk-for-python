@@ -1,8 +1,11 @@
 # Release History
 
-## 1.0.0b13 (Unreleased)
+## 1.0.0b16 (Unreleased)
 
 ### Features Added
+
+- Export OTel Resource
+    ([#31355](https://github.com/Azure/azure-sdk-for-python/pull/31355))
 
 ### Breaking Changes
 
@@ -10,12 +13,42 @@
 
 ### Other Changes
 
+- Unpin Opentelemetry SDK/API.
+    ([#31253](https://github.com/Azure/azure-sdk-for-python/pull/31253))
+
+## 1.0.0b15 (2023-07-17)
+
+### Features Added
+
+- Upgrading to OpenTelemetry SDK/API 1.19.
+    ([#31170](https://github.com/Azure/azure-sdk-for-python/pull/31170))
+
+## 1.0.0b14 (2023-06-09)
+
+### Features Added
+
+- Upgrading to OpenTelemetry SDK/API 1.18.
+    ([#30611](https://github.com/Azure/azure-sdk-for-python/pull/30611))
+
+## 1.0.0b13 (2023-04-11)
+
+### Features Added
+
+- Enable AAD Credentials
+    ([#28888](https://github.com/Azure/azure-sdk-for-python/pull/28888))
+- Upgrading to OpenTelemetry SDK/API 1.17
+    ([#29656](https://github.com/Azure/azure-sdk-for-python/pull/29656))
+- Updating sdkVersion prefix according to new spec. Using agents folder for marker.
+    ([#29730](https://github.com/Azure/azure-sdk-for-python/pull/29730))
+
 ## 1.0.0b12 (2023-02-06)
 
 ### Features Added
 
 - Add sdkVersion prefix during App Service attach
     ([#28637](https://github.com/Azure/azure-sdk-for-python/pull/28637))
+- Correcting sdkVersion prefix
+    ([#29227](https://github.com/Azure/azure-sdk-for-python/pull/29227))
 
 ### Bugs Fixed
 

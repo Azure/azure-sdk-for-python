@@ -25,10 +25,10 @@ from azure.ai.ml._scope_dependent_operations import (
     _ScopeDependentOperations,
 )
 
-# from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
+from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._arm_id_utils import get_datastore_arm_id, is_ARM_id_for_resource, remove_aml_prefix
 from azure.ai.ml._utils._azureml_polling import AzureMLPolling
-from azure.ai.ml._utils._endpoint_utils import validate_response
+from azure.ai.ml._utils._endpoint_utils import validate_response, convert_v1_dataset_to_v2
 from azure.ai.ml._utils._http_utils import HttpPipeline
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils.utils import (
@@ -65,15 +65,14 @@ if TYPE_CHECKING:
     from azure.ai.ml.operations import DatastoreOperations
 
 ops_logger = OpsLogger(__name__)
-module_logger = ops_logger.module_logger
+logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
 
 
 class BatchEndpointOperations(_ScopeDependentOperations):
     """BatchEndpointOperations.
 
-    You should not instantiate this class directly. Instead, you should
-    create an MLClient instance that instantiates it for you and
-    attaches it as an attribute.
+    You should not instantiate this class directly. Instead, you should create an MLClient instance that instantiates it
+    for you and attaches it as an attribute.
     """
 
     def __init__(
@@ -85,9 +84,8 @@ class BatchEndpointOperations(_ScopeDependentOperations):
         credentials: Optional[TokenCredential] = None,
         **kwargs: Dict,
     ):
-
         super(BatchEndpointOperations, self).__init__(operation_scope, operation_config)
-        # ops_logger.update_info(kwargs)
+        ops_logger.update_info(kwargs)
         self._batch_operation = service_client_05_2022.batch_endpoints
         self._batch_deployment_operation = service_client_05_2022.batch_deployments
         self._batch_job_endpoint = kwargs.pop("service_client_09_2020_dataplanepreview").batch_job_endpoint
@@ -102,7 +100,7 @@ class BatchEndpointOperations(_ScopeDependentOperations):
         return self._all_operations.all_operations[AzureMLResourceType.DATASTORE]
 
     @distributed_trace
-    # @monitor_with_activity(logger, "BatchEndpoint.List", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "BatchEndpoint.List", ActivityType.PUBLICAPI)
     def list(self) -> ItemPaged[BatchEndpoint]:
         """List endpoints of the workspace.
 
@@ -117,7 +115,7 @@ class BatchEndpointOperations(_ScopeDependentOperations):
         )
 
     @distributed_trace
-    # @monitor_with_activity(logger, "BatchEndpoint.Get", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "BatchEndpoint.Get", ActivityType.PUBLICAPI)
     def get(
         self,
         name: str,
@@ -141,7 +139,7 @@ class BatchEndpointOperations(_ScopeDependentOperations):
         return endpoint_data
 
     @distributed_trace
-    # @monitor_with_activity(logger, "BatchEndpoint.BeginDelete", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "BatchEndpoint.BeginDelete", ActivityType.PUBLICAPI)
     def begin_delete(self, name: str) -> LROPoller[None]:
         """Delete a batch Endpoint.
 
@@ -171,7 +169,7 @@ class BatchEndpointOperations(_ScopeDependentOperations):
         return delete_poller
 
     @distributed_trace
-    # @monitor_with_activity(logger, "BatchEndpoint.BeginCreateOrUpdate", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "BatchEndpoint.BeginCreateOrUpdate", ActivityType.PUBLICAPI)
     def begin_create_or_update(self, endpoint: BatchEndpoint) -> LROPoller[BatchEndpoint]:
         """Create or update a batch endpoint.
 
@@ -201,7 +199,7 @@ class BatchEndpointOperations(_ScopeDependentOperations):
             raise ex
 
     @distributed_trace
-    # @monitor_with_activity(logger, "BatchEndpoint.Invoke", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "BatchEndpoint.Invoke", ActivityType.PUBLICAPI)
     def invoke(
         self,
         endpoint_name: str,
@@ -214,10 +212,10 @@ class BatchEndpointOperations(_ScopeDependentOperations):
 
         :param endpoint_name: The endpoint name.
         :type endpoint_name: str
-        :param deployment_name: (Optional) The name of a specific deployment to invoke. This is optional.
+        :keyword deployment_name: (Optional) The name of a specific deployment to invoke. This is optional.
             By default requests are routed to any of the deployments according to the traffic rules.
         :type deployment_name: str
-        :param inputs: (Optional) A dictionary of existing data asset, public uri file or folder
+        :keyword inputs: (Optional) A dictionary of existing data asset, public uri file or folder
             to use with the deployment
         :type inputs: Dict[str, Input]
         :raises ~azure.ai.ml.exceptions.ValidationException: Raised if deployment cannot be successfully validated.
@@ -271,9 +269,9 @@ class BatchEndpointOperations(_ScopeDependentOperations):
                     self._resolve_input(input_data, os.getcwd())
             params_override.append({EndpointYamlFields.BATCH_JOB_INPUT_DATA: inputs})
 
-        if is_private_preview_enabled() and outputs:
+        if outputs:
             params_override.append({EndpointYamlFields.BATCH_JOB_OUTPUT_DATA: outputs})
-        if is_private_preview_enabled() and job_name:
+        if job_name:
             params_override.append({EndpointYamlFields.BATCH_JOB_NAME: job_name})
 
         # Batch job doesn't have a python class, loading a rest object using params override
@@ -285,14 +283,19 @@ class BatchEndpointOperations(_ScopeDependentOperations):
         batch_job = BatchJobSchema(context=context).load(data={})  # pylint: disable=no-member
         # update output datastore to arm id if needed
         # TODO: Unify datastore name -> arm id logic, TASK: 1104172
+        request = {}
         if (
             batch_job.output_dataset
             and batch_job.output_dataset.datastore_id
             and (not is_ARM_id_for_resource(batch_job.output_dataset.datastore_id))
         ):
-            batch_job.output_dataset.datastore_id = get_datastore_arm_id(
-                batch_job.output_dataset.datastore_id, self._operation_scope
-            )
+            v2_dataset_dictionary = convert_v1_dataset_to_v2(batch_job.output_dataset, batch_job.output_file_name)
+            batch_job.output_dataset = None
+            batch_job.output_file_name = None
+            request = BatchJobResource(properties=batch_job).serialize()
+            request["properties"]["outputData"] = v2_dataset_dictionary
+        else:
+            request = BatchJobResource(properties=batch_job).serialize()
 
         endpoint = self._batch_operation.get(
             resource_group_name=self._resource_group_name,
@@ -312,7 +315,7 @@ class BatchEndpointOperations(_ScopeDependentOperations):
 
         response = self._requests_pipeline.post(
             endpoint.properties.scoring_uri,
-            json=BatchJobResource(properties=batch_job).serialize(),
+            json=request,
             headers=headers,
         )
         validate_response(response)
@@ -320,10 +323,9 @@ class BatchEndpointOperations(_ScopeDependentOperations):
         return BatchJobResource.deserialize(batch_job)
 
     @distributed_trace
-    # @monitor_with_activity(logger, "BatchEndpoint.ListJobs", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "BatchEndpoint.ListJobs", ActivityType.PUBLICAPI)
     def list_jobs(self, endpoint_name: str) -> ItemPaged[BatchJob]:
-        """List jobs under the provided batch endpoint deployment. This is only
-        valid for batch endpoint.
+        """List jobs under the provided batch endpoint deployment. This is only valid for batch endpoint.
 
         :param endpoint_name: The endpoint name
         :type endpoint_name: str
@@ -456,4 +458,4 @@ class BatchEndpointOperations(_ScopeDependentOperations):
                 "public URI, a registered data asset, or a local folder path.",
                 error=e,
                 error_type=ValidationErrorType.INVALID_VALUE,
-            )
+            ) from e

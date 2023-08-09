@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from ... import _serialization
 
@@ -46,8 +46,8 @@ class CloudErrorBody(_serialization.Model):
         message: Optional[str] = None,
         target: Optional[str] = None,
         details: Optional[List["_models.CloudErrorBody"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword code: An identifier for the error. Codes are invariant and are intended to be consumed
          programmatically.
@@ -93,8 +93,8 @@ class NetworkProfile(_serialization.Model):
         vnet_cidr: str = "10.0.0.0/8",
         management_subnet_cidr: Optional[str] = None,
         vnet_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword vnet_cidr: CIDR for the OpenShift Vnet.
         :paramtype vnet_cidr: str
@@ -121,7 +121,7 @@ class OpenShiftAPIProperties(_serialization.Model):
         "private_api_server": {"key": "privateApiServer", "type": "bool"},
     }
 
-    def __init__(self, *, private_api_server: Optional[bool] = None, **kwargs):
+    def __init__(self, *, private_api_server: Optional[bool] = None, **kwargs: Any) -> None:
         """
         :keyword private_api_server: Specifies if API server is public or private.
         :paramtype private_api_server: bool
@@ -164,7 +164,7 @@ class Resource(_serialization.Model):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword location: Resource location. Required.
         :paramtype location: str
@@ -283,8 +283,8 @@ class OpenShiftManagedCluster(Resource):  # pylint: disable=too-many-instance-at
         auth_profile: Optional["_models.OpenShiftManagedClusterAuthProfile"] = None,
         monitor_profile: Optional["_models.OpenShiftManagedClusterMonitorProfile"] = None,
         refresh_cluster: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location. Required.
         :paramtype location: str
@@ -353,7 +353,7 @@ class OpenShiftManagedClusterBaseIdentityProvider(_serialization.Model):
 
     _subtype_map = {"kind": {"AADIdentityProvider": "OpenShiftManagedClusterAADIdentityProvider"}}
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.kind: Optional[str] = None
@@ -395,8 +395,8 @@ class OpenShiftManagedClusterAADIdentityProvider(OpenShiftManagedClusterBaseIden
         secret: Optional[str] = None,
         tenant_id: Optional[str] = None,
         customer_admin_group_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword client_id: The clientId password associated with the provider.
         :paramtype client_id: str
@@ -469,8 +469,8 @@ class OpenShiftManagedClusterAgentPoolProfile(_serialization.Model):
         subnet_cidr: str = "10.0.0.0/24",
         os_type: Union[str, "_models.OSType"] = "Linux",
         role: Optional[Union[str, "_models.OpenShiftAgentPoolProfileRole"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: Unique name of the pool profile in the context of the subscription and resource
          group. Required.
@@ -519,8 +519,11 @@ class OpenShiftManagedClusterAuthProfile(_serialization.Model):
     }
 
     def __init__(
-        self, *, identity_providers: Optional[List["_models.OpenShiftManagedClusterIdentityProvider"]] = None, **kwargs
-    ):
+        self,
+        *,
+        identity_providers: Optional[List["_models.OpenShiftManagedClusterIdentityProvider"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword identity_providers: Type of authentication profile to use.
         :paramtype identity_providers:
@@ -550,8 +553,8 @@ class OpenShiftManagedClusterIdentityProvider(_serialization.Model):
         *,
         name: Optional[str] = None,
         provider: Optional["_models.OpenShiftManagedClusterBaseIdentityProvider"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: Name of the provider.
         :paramtype name: str
@@ -585,7 +588,7 @@ class OpenShiftManagedClusterListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.OpenShiftManagedCluster"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.OpenShiftManagedCluster"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: The list of OpenShift managed clusters.
         :paramtype value:
@@ -640,8 +643,8 @@ class OpenShiftManagedClusterMasterPoolProfile(_serialization.Model):
         vm_size: Union[str, "_models.OpenShiftContainerServiceVMSize"],
         subnet_cidr: Optional[str] = None,
         api_properties: Optional["_models.OpenShiftAPIProperties"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword count: Number of masters (VMs) to host docker containers. The default value is 3.
          Required.
@@ -684,7 +687,9 @@ class OpenShiftManagedClusterMonitorProfile(_serialization.Model):
         "enabled": {"key": "enabled", "type": "bool"},
     }
 
-    def __init__(self, *, workspace_resource_id: Optional[str] = None, enabled: Optional[bool] = None, **kwargs):
+    def __init__(
+        self, *, workspace_resource_id: Optional[str] = None, enabled: Optional[bool] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword workspace_resource_id: Azure Resource Manager Resource ID for the Log Analytics
          workspace to integrate with.
@@ -721,7 +726,7 @@ class OpenShiftRouterProfile(_serialization.Model):
         "fqdn": {"key": "fqdn", "type": "str"},
     }
 
-    def __init__(self, *, name: Optional[str] = None, **kwargs):
+    def __init__(self, *, name: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword name: Name of the router profile.
         :paramtype name: str
@@ -760,8 +765,8 @@ class PurchasePlan(_serialization.Model):
         product: Optional[str] = None,
         promotion_code: Optional[str] = None,
         publisher: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The plan ID.
         :paramtype name: str
@@ -791,7 +796,7 @@ class TagsObject(_serialization.Model):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]

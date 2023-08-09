@@ -7,9 +7,9 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum
 import datetime
-from typing import Dict, List, Optional, Union
+from enum import Enum
+from typing import Any, Dict, List, Optional, Union
 
 from azure.core import CaseInsensitiveEnumMeta
 
@@ -27,7 +27,7 @@ class Action(_serialization.Model):
         "action_type": {"key": "action_type", "type": "str"},
     }
 
-    def __init__(self, *, action_type: Optional[Union[str, "ActionType"]] = None, **kwargs):
+    def __init__(self, *, action_type: Optional[Union[str, "ActionType"]] = None, **kwargs: Any) -> None:
         """
         :keyword action_type: The type of the action. Known values are: "EmailContacts" and
          "AutoRenew".
@@ -64,8 +64,8 @@ class AdministratorDetails(_serialization.Model):
         last_name: Optional[str] = None,
         email_address: Optional[str] = None,
         phone: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword first_name: First name.
         :paramtype first_name: str
@@ -119,8 +119,8 @@ class Attributes(_serialization.Model):
         enabled: Optional[bool] = None,
         not_before: Optional[datetime.datetime] = None,
         expires: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword enabled: Determines whether the object is enabled.
         :paramtype enabled: bool
@@ -154,7 +154,7 @@ class BackupCertificateResult(_serialization.Model):
         "value": {"key": "value", "type": "base64"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -210,8 +210,8 @@ class CertificateAttributes(Attributes):
         enabled: Optional[bool] = None,
         not_before: Optional[datetime.datetime] = None,
         expires: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword enabled: Determines whether the object is enabled.
         :paramtype enabled: bool
@@ -242,7 +242,8 @@ class CertificateBundle(_serialization.Model):
     :vartype policy: ~azure.keyvault.certificates._generated_models.CertificatePolicy
     :ivar cer: CER contents of x509 certificate.
     :vartype cer: bytes
-    :ivar content_type: The content type of the secret.
+    :ivar content_type: The content type of the secret. eg. 'application/x-pem-file' or
+     'application/x-pkcs12',.
     :vartype content_type: str
     :ivar attributes: The certificate attributes.
     :vartype attributes: ~azure.keyvault.certificates._generated_models.CertificateAttributes
@@ -277,12 +278,13 @@ class CertificateBundle(_serialization.Model):
         content_type: Optional[str] = None,
         attributes: Optional["CertificateAttributes"] = None,
         tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword cer: CER contents of x509 certificate.
         :paramtype cer: bytes
-        :keyword content_type: The content type of the secret.
+        :keyword content_type: The content type of the secret. eg. 'application/x-pem-file' or
+         'application/x-pkcs12',.
         :paramtype content_type: str
         :keyword attributes: The certificate attributes.
         :paramtype attributes: ~azure.keyvault.certificates._generated_models.CertificateAttributes
@@ -324,8 +326,8 @@ class CertificateCreateParameters(_serialization.Model):
         certificate_policy: Optional["CertificatePolicy"] = None,
         certificate_attributes: Optional["CertificateAttributes"] = None,
         tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword certificate_policy: The management policy for the certificate.
         :paramtype certificate_policy: ~azure.keyvault.certificates._generated_models.CertificatePolicy
@@ -345,8 +347,8 @@ class CertificateImportParameters(_serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar base64_encoded_certificate: A PEM file or a base64-encoded PFX file.  PEM files need to
-     contain the private key. Required.
+    :ivar base64_encoded_certificate: Base64 encoded representation of the certificate object to
+     import. This certificate needs to contain the private key. Required.
     :vartype base64_encoded_certificate: str
     :ivar password: If the private key in base64EncodedCertificate is encrypted, the password used
      for encryption.
@@ -379,11 +381,11 @@ class CertificateImportParameters(_serialization.Model):
         certificate_policy: Optional["CertificatePolicy"] = None,
         certificate_attributes: Optional["CertificateAttributes"] = None,
         tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword base64_encoded_certificate: A PEM file or a base64-encoded PFX file.  PEM files need
-         to contain the private key. Required.
+        :keyword base64_encoded_certificate: Base64 encoded representation of the certificate object to
+         import. This certificate needs to contain the private key. Required.
         :paramtype base64_encoded_certificate: str
         :keyword password: If the private key in base64EncodedCertificate is encrypted, the password
          used for encryption.
@@ -418,8 +420,12 @@ class CertificateIssuerItem(_serialization.Model):
     }
 
     def __init__(
-        self, *, id: Optional[str] = None, provider: Optional[str] = None, **kwargs  # pylint: disable=redefined-builtin
-    ):
+        self,
+        *,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        provider: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Certificate Identifier.
         :paramtype id: str
@@ -453,7 +459,7 @@ class CertificateIssuerListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -493,8 +499,8 @@ class CertificateIssuerSetParameters(_serialization.Model):
         credentials: Optional["IssuerCredentials"] = None,
         organization_details: Optional["OrganizationDetails"] = None,
         attributes: Optional["IssuerAttributes"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword provider: The issuer provider. Required.
         :paramtype provider: str
@@ -539,8 +545,8 @@ class CertificateIssuerUpdateParameters(_serialization.Model):
         credentials: Optional["IssuerCredentials"] = None,
         organization_details: Optional["OrganizationDetails"] = None,
         attributes: Optional["IssuerAttributes"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword provider: The issuer provider.
         :paramtype provider: str
@@ -585,8 +591,8 @@ class CertificateItem(_serialization.Model):
         attributes: Optional["CertificateAttributes"] = None,
         tags: Optional[Dict[str, str]] = None,
         x509_thumbprint: Optional[bytes] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Certificate identifier.
         :paramtype id: str
@@ -626,7 +632,7 @@ class CertificateListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -662,8 +668,8 @@ class CertificateMergeParameters(_serialization.Model):
         x509_certificates: List[bytes],
         certificate_attributes: Optional["CertificateAttributes"] = None,
         tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword x509_certificates: The certificate or the certificate chain to merge. Required.
         :paramtype x509_certificates: list[bytes]
@@ -732,8 +738,8 @@ class CertificateOperation(_serialization.Model):
         error: Optional["Error"] = None,
         target: Optional[str] = None,
         request_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword issuer_parameters: Parameters for the issuer of the X509 component of a certificate.
         :paramtype issuer_parameters: ~azure.keyvault.certificates._generated_models.IssuerParameters
@@ -784,7 +790,7 @@ class CertificateOperationUpdateParameter(_serialization.Model):
         "cancellation_requested": {"key": "cancellation_requested", "type": "bool"},
     }
 
-    def __init__(self, *, cancellation_requested: bool, **kwargs):
+    def __init__(self, *, cancellation_requested: bool, **kwargs: Any) -> None:
         """
         :keyword cancellation_requested: Indicates if cancellation was requested on the certificate
          operation. Required.
@@ -839,8 +845,8 @@ class CertificatePolicy(_serialization.Model):
         lifetime_actions: Optional[List["LifetimeAction"]] = None,
         issuer_parameters: Optional["IssuerParameters"] = None,
         attributes: Optional["CertificateAttributes"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword key_properties: Properties of the key backing a certificate.
         :paramtype key_properties: ~azure.keyvault.certificates._generated_models.KeyProperties
@@ -884,7 +890,7 @@ class CertificateRestoreParameters(_serialization.Model):
         "certificate_bundle_backup": {"key": "value", "type": "base64"},
     }
 
-    def __init__(self, *, certificate_bundle_backup: bytes, **kwargs):
+    def __init__(self, *, certificate_bundle_backup: bytes, **kwargs: Any) -> None:
         """
         :keyword certificate_bundle_backup: The backup blob associated with a certificate bundle.
          Required.
@@ -917,8 +923,8 @@ class CertificateUpdateParameters(_serialization.Model):
         certificate_policy: Optional["CertificatePolicy"] = None,
         certificate_attributes: Optional["CertificateAttributes"] = None,
         tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword certificate_policy: The management policy for the certificate.
         :paramtype certificate_policy: ~azure.keyvault.certificates._generated_models.CertificatePolicy
@@ -951,8 +957,13 @@ class Contact(_serialization.Model):
     }
 
     def __init__(
-        self, *, email_address: Optional[str] = None, name: Optional[str] = None, phone: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        email_address: Optional[str] = None,
+        name: Optional[str] = None,
+        phone: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword email_address: Email address.
         :paramtype email_address: str
@@ -987,7 +998,7 @@ class Contacts(_serialization.Model):
         "contact_list": {"key": "contacts", "type": "[Contact]"},
     }
 
-    def __init__(self, *, contact_list: Optional[List["Contact"]] = None, **kwargs):
+    def __init__(self, *, contact_list: Optional[List["Contact"]] = None, **kwargs: Any) -> None:
         """
         :keyword contact_list: The contact list for the vault certificates.
         :paramtype contact_list: list[~azure.keyvault.certificates._generated_models.Contact]
@@ -998,7 +1009,8 @@ class Contacts(_serialization.Model):
 
 
 class DeletedCertificateBundle(CertificateBundle):  # pylint: disable=too-many-instance-attributes
-    """A Deleted Certificate consisting of its previous id, attributes and its tags, as well as information on when it will be purged.
+    """A Deleted Certificate consisting of its previous id, attributes and its tags, as well as
+    information on when it will be purged.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -1014,7 +1026,8 @@ class DeletedCertificateBundle(CertificateBundle):  # pylint: disable=too-many-i
     :vartype policy: ~azure.keyvault.certificates._generated_models.CertificatePolicy
     :ivar cer: CER contents of x509 certificate.
     :vartype cer: bytes
-    :ivar content_type: The content type of the secret.
+    :ivar content_type: The content type of the secret. eg. 'application/x-pem-file' or
+     'application/x-pkcs12',.
     :vartype content_type: str
     :ivar attributes: The certificate attributes.
     :vartype attributes: ~azure.keyvault.certificates._generated_models.CertificateAttributes
@@ -1062,12 +1075,13 @@ class DeletedCertificateBundle(CertificateBundle):  # pylint: disable=too-many-i
         attributes: Optional["CertificateAttributes"] = None,
         tags: Optional[Dict[str, str]] = None,
         recovery_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword cer: CER contents of x509 certificate.
         :paramtype cer: bytes
-        :keyword content_type: The content type of the secret.
+        :keyword content_type: The content type of the secret. eg. 'application/x-pem-file' or
+         'application/x-pkcs12',.
         :paramtype content_type: str
         :keyword attributes: The certificate attributes.
         :paramtype attributes: ~azure.keyvault.certificates._generated_models.CertificateAttributes
@@ -1128,8 +1142,8 @@ class DeletedCertificateItem(CertificateItem):
         tags: Optional[Dict[str, str]] = None,
         x509_thumbprint: Optional[bytes] = None,
         recovery_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Certificate identifier.
         :paramtype id: str
@@ -1171,7 +1185,7 @@ class DeletedCertificateListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -1203,7 +1217,7 @@ class Error(_serialization.Model):
         "inner_error": {"key": "innererror", "type": "Error"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.code = None
@@ -1235,7 +1249,7 @@ class IssuerAttributes(_serialization.Model):
         "updated": {"key": "updated", "type": "unix-time"},
     }
 
-    def __init__(self, *, enabled: Optional[bool] = None, **kwargs):
+    def __init__(self, *, enabled: Optional[bool] = None, **kwargs: Any) -> None:
         """
         :keyword enabled: Determines whether the issuer is enabled.
         :paramtype enabled: bool
@@ -1282,8 +1296,8 @@ class IssuerBundle(_serialization.Model):
         credentials: Optional["IssuerCredentials"] = None,
         organization_details: Optional["OrganizationDetails"] = None,
         attributes: Optional["IssuerAttributes"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword provider: The issuer provider.
         :paramtype provider: str
@@ -1316,7 +1330,7 @@ class IssuerCredentials(_serialization.Model):
         "password": {"key": "pwd", "type": "str"},
     }
 
-    def __init__(self, *, account_id: Optional[str] = None, password: Optional[str] = None, **kwargs):
+    def __init__(self, *, account_id: Optional[str] = None, password: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword account_id: The user name/account name/account id.
         :paramtype account_id: str
@@ -1354,8 +1368,8 @@ class IssuerParameters(_serialization.Model):
         name: Optional[str] = None,
         certificate_type: Optional[str] = None,
         certificate_transparency: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: Name of the referenced issuer object or reserved names; for example, 'Self' or
          'Unknown'.
@@ -1376,10 +1390,11 @@ class IssuerParameters(_serialization.Model):
 class KeyProperties(_serialization.Model):
     """Properties of the key pair backing a certificate.
 
-    :ivar exportable: Not supported in this version. Indicates if the private key can be exported.
+    :ivar exportable: Indicates if the private key can be exported. Release policy must be provided
+     when creating the first version of an exportable key.
     :vartype exportable: bool
     :ivar key_type: The type of key pair to be used for the certificate. Known values are: "EC",
-     "EC-HSM", "RSA", "RSA-HSM", and "oct".
+     "EC-HSM", "RSA", "RSA-HSM", "oct", and "oct-HSM".
     :vartype key_type: str or ~azure.keyvault.certificates._generated_models.JsonWebKeyType
     :ivar key_size: The key size in bits. For example: 2048, 3072, or 4096 for RSA.
     :vartype key_size: int
@@ -1406,14 +1421,14 @@ class KeyProperties(_serialization.Model):
         key_size: Optional[int] = None,
         reuse_key: Optional[bool] = None,
         curve: Optional[Union[str, "JsonWebKeyCurveName"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword exportable: Not supported in this version. Indicates if the private key can be
-         exported.
+        :keyword exportable: Indicates if the private key can be exported. Release policy must be
+         provided when creating the first version of an exportable key.
         :paramtype exportable: bool
         :keyword key_type: The type of key pair to be used for the certificate. Known values are: "EC",
-         "EC-HSM", "RSA", "RSA-HSM", and "oct".
+         "EC-HSM", "RSA", "RSA-HSM", "oct", and "oct-HSM".
         :paramtype key_type: str or ~azure.keyvault.certificates._generated_models.JsonWebKeyType
         :keyword key_size: The key size in bits. For example: 2048, 3072, or 4096 for RSA.
         :paramtype key_size: int
@@ -1448,7 +1463,7 @@ class KeyVaultError(_serialization.Model):
         "error": {"key": "error", "type": "Error"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.error = None
@@ -1469,8 +1484,8 @@ class LifetimeAction(_serialization.Model):
     }
 
     def __init__(
-        self, *, trigger: Optional["Trigger"] = None, action: Optional["Action"] = None, **kwargs
-    ):
+        self, *, trigger: Optional["Trigger"] = None, action: Optional["Action"] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword trigger: The condition that will execute the action.
         :paramtype trigger: ~azure.keyvault.certificates._generated_models.Trigger
@@ -1501,8 +1516,8 @@ class OrganizationDetails(_serialization.Model):
         *,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         admin_details: Optional[List["AdministratorDetails"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Id of the organization.
         :paramtype id: str
@@ -1531,7 +1546,7 @@ class PendingCertificateSigningRequestResult(_serialization.Model):
         "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -1548,7 +1563,7 @@ class SecretProperties(_serialization.Model):
         "content_type": {"key": "contentType", "type": "str"},
     }
 
-    def __init__(self, *, content_type: Optional[str] = None, **kwargs):
+    def __init__(self, *, content_type: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword content_type: The media type (MIME type).
         :paramtype content_type: str
@@ -1580,8 +1595,8 @@ class SubjectAlternativeNames(_serialization.Model):
         emails: Optional[List[str]] = None,
         dns_names: Optional[List[str]] = None,
         upns: Optional[List[str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword emails: Email addresses.
         :paramtype emails: list[str]
@@ -1618,8 +1633,8 @@ class Trigger(_serialization.Model):
     }
 
     def __init__(
-        self, *, lifetime_percentage: Optional[int] = None, days_before_expiry: Optional[int] = None, **kwargs
-    ):
+        self, *, lifetime_percentage: Optional[int] = None, days_before_expiry: Optional[int] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword lifetime_percentage: Percentage of lifetime at which to trigger. Value should be
          between 1 and 99.
@@ -1643,7 +1658,7 @@ class X509CertificateProperties(_serialization.Model):
     :vartype ekus: list[str]
     :ivar subject_alternative_names: The subject alternative names.
     :vartype subject_alternative_names: ~azure.keyvault.certificates._generated_models.SubjectAlternativeNames
-    :ivar key_usage: List of key usages.
+    :ivar key_usage: Defines how the certificate's key may be used.
     :vartype key_usage: list[str or ~azure.keyvault.certificates._generated_models.KeyUsageType]
     :ivar validity_in_months: The duration that the certificate is valid in months.
     :vartype validity_in_months: int
@@ -1669,8 +1684,8 @@ class X509CertificateProperties(_serialization.Model):
         subject_alternative_names: Optional["SubjectAlternativeNames"] = None,
         key_usage: Optional[List[Union[str, "KeyUsageType"]]] = None,
         validity_in_months: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword subject: The subject name. Should be a valid X509 distinguished Name.
         :paramtype subject: str
@@ -1678,7 +1693,7 @@ class X509CertificateProperties(_serialization.Model):
         :paramtype ekus: list[str]
         :keyword subject_alternative_names: The subject alternative names.
         :paramtype subject_alternative_names: ~azure.keyvault.certificates._generated_models.SubjectAlternativeNames
-        :keyword key_usage: List of key usages.
+        :keyword key_usage: Defines how the certificate's key may be used.
         :paramtype key_usage: list[str or ~azure.keyvault.certificates._generated_models.KeyUsageType]
         :keyword validity_in_months: The duration that the certificate is valid in months.
         :paramtype validity_in_months: int
@@ -1704,42 +1719,42 @@ class DeletionRecoveryLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     otherwise, only the system can purge the certificate, at the end of the retention interval.
     """
 
-    #: Denotes a vault state in which deletion is an irreversible operation, without the possibility
+    PURGEABLE = "Purgeable"
+    """Denotes a vault state in which deletion is an irreversible operation, without the possibility
     #: for recovery. This level corresponds to no protection being available against a Delete
     #: operation; the data is irretrievably lost upon accepting a Delete operation at the entity level
-    #: or higher (vault, resource group, subscription etc.)
-    PURGEABLE = "Purgeable"
-    #: Denotes a vault state in which deletion is recoverable, and which also permits immediate and
+    #: or higher (vault, resource group, subscription etc.)"""
+    RECOVERABLE_PURGEABLE = "Recoverable+Purgeable"
+    """Denotes a vault state in which deletion is recoverable, and which also permits immediate and
     #: permanent deletion (i.e. purge). This level guarantees the recoverability of the deleted entity
     #: during the retention interval (90 days), unless a Purge operation is requested, or the
-    #: subscription is cancelled. System wil permanently delete it after 90 days, if not recovered
-    RECOVERABLE_PURGEABLE = "Recoverable+Purgeable"
-    #: Denotes a vault state in which deletion is recoverable without the possibility for immediate
+    #: subscription is cancelled. System wil permanently delete it after 90 days, if not recovered"""
+    RECOVERABLE = "Recoverable"
+    """Denotes a vault state in which deletion is recoverable without the possibility for immediate
     #: and permanent deletion (i.e. purge). This level guarantees the recoverability of the deleted
     #: entity during the retention interval(90 days) and while the subscription is still available.
-    #: System wil permanently delete it after 90 days, if not recovered
-    RECOVERABLE = "Recoverable"
-    #: Denotes a vault and subscription state in which deletion is recoverable within retention
+    #: System wil permanently delete it after 90 days, if not recovered"""
+    RECOVERABLE_PROTECTED_SUBSCRIPTION = "Recoverable+ProtectedSubscription"
+    """Denotes a vault and subscription state in which deletion is recoverable within retention
     #: interval (90 days), immediate and permanent deletion (i.e. purge) is not permitted, and in
     #: which the subscription itself  cannot be permanently canceled. System wil permanently delete it
-    #: after 90 days, if not recovered
-    RECOVERABLE_PROTECTED_SUBSCRIPTION = "Recoverable+ProtectedSubscription"
-    #: Denotes a vault state in which deletion is recoverable, and which also permits immediate and
+    #: after 90 days, if not recovered"""
+    CUSTOMIZED_RECOVERABLE_PURGEABLE = "CustomizedRecoverable+Purgeable"
+    """Denotes a vault state in which deletion is recoverable, and which also permits immediate and
     #: permanent deletion (i.e. purge when 7<= SoftDeleteRetentionInDays < 90). This level guarantees
     #: the recoverability of the deleted entity during the retention interval, unless a Purge
-    #: operation is requested, or the subscription is cancelled.
-    CUSTOMIZED_RECOVERABLE_PURGEABLE = "CustomizedRecoverable+Purgeable"
-    #: Denotes a vault state in which deletion is recoverable without the possibility for immediate
+    #: operation is requested, or the subscription is cancelled."""
+    CUSTOMIZED_RECOVERABLE = "CustomizedRecoverable"
+    """Denotes a vault state in which deletion is recoverable without the possibility for immediate
     #: and permanent deletion (i.e. purge when 7<= SoftDeleteRetentionInDays < 90).This level
     #: guarantees the recoverability of the deleted entity during the retention interval and while the
-    #: subscription is still available.
-    CUSTOMIZED_RECOVERABLE = "CustomizedRecoverable"
-    #: Denotes a vault and subscription state in which deletion is recoverable, immediate and
+    #: subscription is still available."""
+    CUSTOMIZED_RECOVERABLE_PROTECTED_SUBSCRIPTION = "CustomizedRecoverable+ProtectedSubscription"
+    """Denotes a vault and subscription state in which deletion is recoverable, immediate and
     #: permanent deletion (i.e. purge) is not permitted, and in which the subscription itself cannot
     #: be permanently canceled when 7<= SoftDeleteRetentionInDays < 90. This level guarantees the
     #: recoverability of the deleted entity during the retention interval, and also reflects the fact
-    #: that the subscription itself cannot be cancelled.
-    CUSTOMIZED_RECOVERABLE_PROTECTED_SUBSCRIPTION = "CustomizedRecoverable+ProtectedSubscription"
+    #: that the subscription itself cannot be cancelled."""
 
 
 class JsonWebKeyCurveName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1759,6 +1774,7 @@ class JsonWebKeyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     RSA = "RSA"
     RSA_HSM = "RSA-HSM"
     OCT = "oct"
+    OCT_HSM = "oct-HSM"
 
 
 class KeyUsageType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

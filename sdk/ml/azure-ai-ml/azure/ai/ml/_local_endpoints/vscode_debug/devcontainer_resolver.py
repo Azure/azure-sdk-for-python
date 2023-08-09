@@ -20,12 +20,12 @@ from azure.ai.ml._local_endpoints.vscode_debug.devcontainer_properties import (
     RunArgs,
     Settings,
 )
+from azure.ai.ml.constants._common import DefaultOpenEncoding
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 
 
 class DevContainerResolver:
-    """DevContainerResolver class represents the collection of properties of a
-    devcontainer.json.
+    """DevContainerResolver class represents the collection of properties of a devcontainer.json.
 
     Reference: https://code.visualstudio.com/docs/remote/devcontainerjson-reference
     """
@@ -123,7 +123,7 @@ class DevContainerResolver:
         self._local_path = get_wsl_path(directory_path) if in_wsl() else directory_path
 
         file_path = _get_devcontainer_file_path(directory_path=directory_path)
-        with open(file_path, "w") as f:
+        with open(file_path, "w", encoding=DefaultOpenEncoding.WRITE) as f:
             f.write(f"{json.dumps(self._properties, indent=4)}\n")
 
 
@@ -168,8 +168,7 @@ def _reformat_labels(labels: dict) -> list:
 
 
 def _get_devcontainer_file_path(directory_path: str) -> str:
-    """Returns the path of the devcontainer in relation to provided
-    directory path.
+    """Returns the path of the devcontainer in relation to provided directory path.
 
     :param directory_path: absolute path of local directory to write devcontainer.json.
     :type directory_path: str

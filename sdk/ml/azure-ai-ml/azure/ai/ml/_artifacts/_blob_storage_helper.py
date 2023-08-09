@@ -93,7 +93,7 @@ class BlobStorageClient:
             file_size, _ = get_directory_size(source, ignore_file=ignore_file)
             file_size_in_mb = file_size / 10**6
             cloud = _get_cloud_details()
-            cloud_endpoint = cloud['storage_endpoint']  # make sure proper cloud endpoint is used
+            cloud_endpoint = cloud["storage_endpoint"]  # make sure proper cloud endpoint is used
             full_storage_url = f"https://{self.account_name}.blob.{cloud_endpoint}/{self.container}/{dest}"
             if file_size_in_mb > 100:
                 module_logger.warning(FILE_SIZE_WARNING.format(source=source, destination=full_storage_url))
@@ -142,11 +142,9 @@ class BlobStorageClient:
     def check_blob_exists(self) -> None:
         """Throw error if blob already exists.
 
-        Check if blob already exists in container by checking the
-        metadata for existence and confirmation data. If confirmation
-        data is missing, blob does not exist or was only partially
-        uploaded and the partial upload will be overwritten with a
-        complete upload.
+        Check if blob already exists in container by checking the metadata for existence and confirmation data. If
+        confirmation data is missing, blob does not exist or was only partially uploaded and the partial upload will be
+        overwritten with a complete upload.
         """
 
         try:
@@ -194,7 +192,7 @@ class BlobStorageClient:
                     no_personal_data_message=msg,
                     target=ErrorTarget.ARTIFACT,
                     error_category=ErrorCategory.USER_ERROR,
-                )
+                ) from e
             raise e
 
     def _set_confirmation_metadata(self, name: str, version: str) -> None:
@@ -208,8 +206,7 @@ class BlobStorageClient:
         destination: str = Path.home(),
         max_concurrency: int = MAX_CONCURRENCY,
     ) -> None:
-        """Downloads all blobs inside a specified container to the destination
-        folder.
+        """Downloads all blobs inside a specified container to the destination folder.
 
         :param starts_with: Indicates the blob name starts with to search.
         :param destination: Indicates path to download in local
@@ -231,9 +228,9 @@ class BlobStorageClient:
                 # check if total size of download has exceeded 100 MB
                 # make sure proper cloud endpoint is used
                 cloud = _get_cloud_details()
-                cloud_endpoint = cloud['storage_endpoint']
+                cloud_endpoint = cloud["storage_endpoint"]
                 full_storage_url = f"https://{self.account_name}.blob.{cloud_endpoint}/{self.container}/{starts_with}"
-                download_size_in_mb += (blob_content.size / 10**6)
+                download_size_in_mb += blob_content.size / 10**6
                 if download_size_in_mb > 100:
                     module_logger.warning(FILE_SIZE_WARNING.format(source=full_storage_url, destination=destination))
 
@@ -251,7 +248,7 @@ class BlobStorageClient:
                 target=ErrorTarget.ARTIFACT,
                 error_category=ErrorCategory.USER_ERROR,
                 error=e,
-            )
+            ) from e
 
     def list(self, starts_with: str) -> List[str]:
         """Lists all blob names in the specified container.
@@ -262,9 +259,9 @@ class BlobStorageClient:
         blobs = self.container_client.list_blobs(name_starts_with=starts_with)
         return [blob.name for blob in blobs]
 
-    def exists(self, blobpath: str, delimeter: str = "/") -> bool:
-        """Returns whether there exists a blob named `blobpath`, or if there
-        exists a virtual directory given path delimeter `delimeter`
+    def exists(self, blobpath: str, delimiter: str = "/") -> bool:
+        """Returns whether there exists a blob named `blobpath`, or if there exists a virtual directory given path
+        delimeter `delimeter`
 
            e.g:
                 Given blob store with blobs
@@ -284,11 +281,11 @@ class BlobStorageClient:
         if self.container_client.get_blob_client(blobpath).exists():
             return True
 
-        ensure_delimeter = delimeter if not blobpath.endswith(delimeter) else ""
+        ensure_delimeter = delimiter if not blobpath.endswith(delimiter) else ""
 
         # Virtual directory only exists if there is atleast one blob with it
         result = next(
-            self.container_client.walk_blobs(name_starts_with=blobpath + ensure_delimeter, delimiter=delimeter),
+            self.container_client.walk_blobs(name_starts_with=blobpath + ensure_delimeter, delimiter=delimiter),
             None,
         )
         return result is not None

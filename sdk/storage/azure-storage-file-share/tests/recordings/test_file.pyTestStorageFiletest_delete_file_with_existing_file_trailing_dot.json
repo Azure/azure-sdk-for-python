@@ -1,0 +1,110 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://storagename.file.core.windows.net/utshareb6693211?restype=share",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-storage-file-share/12.12.0b1 Python/3.11.1 (Windows-10-10.0.22621-SP0)",
+        "x-ms-date": "Wed, 01 Feb 2023 00:08:08 GMT",
+        "x-ms-version": "2022-11-02"
+      },
+      "RequestBody": null,
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Date": "Wed, 01 Feb 2023 00:07:20 GMT",
+        "ETag": "\u00220x8DB03E84A64FB42\u0022",
+        "Last-Modified": "Wed, 01 Feb 2023 00:07:21 GMT",
+        "Transfer-Encoding": "chunked",
+        "x-ms-version": "2022-11-02"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://storagename.file.core.windows.net/utshareb6693211/fileb6693211.",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-storage-file-share/12.12.0b1 Python/3.11.1 (Windows-10-10.0.22621-SP0)",
+        "x-ms-allow-trailing-dot": "true",
+        "x-ms-content-length": "1024",
+        "x-ms-date": "Wed, 01 Feb 2023 00:08:09 GMT",
+        "x-ms-file-attributes": "none",
+        "x-ms-file-creation-time": "now",
+        "x-ms-file-last-write-time": "now",
+        "x-ms-file-permission": "Inherit",
+        "x-ms-type": "file",
+        "x-ms-version": "2022-11-02"
+      },
+      "RequestBody": null,
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Date": "Wed, 01 Feb 2023 00:07:22 GMT",
+        "ETag": "\u00220x8DB03E84A7ED043\u0022",
+        "Last-Modified": "Wed, 01 Feb 2023 00:07:22 GMT",
+        "Transfer-Encoding": "chunked",
+        "x-ms-file-attributes": "Archive",
+        "x-ms-file-change-time": "2023-02-01T00:07:22.0177987Z",
+        "x-ms-file-creation-time": "2023-02-01T00:07:22.0177987Z",
+        "x-ms-file-id": "13835128424026341376",
+        "x-ms-file-last-write-time": "2023-02-01T00:07:22.0177987Z",
+        "x-ms-file-parent-id": "0",
+        "x-ms-file-permission-key": "6195413519394405181*13244350442060319835",
+        "x-ms-request-server-encrypted": "true",
+        "x-ms-version": "2022-11-02"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://storagename.file.core.windows.net/utshareb6693211/fileb6693211.",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-storage-file-share/12.12.0b1 Python/3.11.1 (Windows-10-10.0.22621-SP0)",
+        "x-ms-allow-trailing-dot": "true",
+        "x-ms-date": "Wed, 01 Feb 2023 00:08:09 GMT",
+        "x-ms-version": "2022-11-02"
+      },
+      "RequestBody": null,
+      "StatusCode": 202,
+      "ResponseHeaders": {
+        "Date": "Wed, 01 Feb 2023 00:07:22 GMT",
+        "Transfer-Encoding": "chunked",
+        "x-ms-version": "2022-11-02"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://storagename.file.core.windows.net/utshareb6693211/fileb6693211.",
+      "RequestMethod": "HEAD",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-storage-file-share/12.12.0b1 Python/3.11.1 (Windows-10-10.0.22621-SP0)",
+        "x-ms-allow-trailing-dot": "true",
+        "x-ms-date": "Wed, 01 Feb 2023 00:08:09 GMT",
+        "x-ms-version": "2022-11-02"
+      },
+      "RequestBody": null,
+      "StatusCode": 404,
+      "ResponseHeaders": {
+        "Date": "Wed, 01 Feb 2023 00:07:22 GMT",
+        "Transfer-Encoding": "chunked",
+        "x-ms-error-code": "ResourceNotFound",
+        "x-ms-version": "2022-11-02"
+      },
+      "ResponseBody": null
+    }
+  ],
+  "Variables": {}
+}

@@ -1,14 +1,20 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-
-# pylint: disable=protected-access
-
+import re
+from os import PathLike
+from pathlib import Path
 from typing import Dict, Union
 
+from azure.core.exceptions import HttpResponseError
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
-from azure.ai.ml._artifacts._artifact_utilities import _check_and_upload_path
+from azure.ai.ml._artifacts._artifact_utilities import (
+    _check_and_upload_path,
+    _get_datastore_name,
+    _get_snapshot_path_info,
+    get_datastore_info,
+)
 from azure.ai.ml._artifacts._constants import (
     ASSET_PATH_ERROR,
     CHANGED_ASSET_PATH_MSG,
@@ -19,11 +25,17 @@ from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
     AzureMachineLearningWorkspaces as ServiceClient102021Dataplane,
 )
 from azure.ai.ml._restclient.v2022_10_01_preview import AzureMachineLearningWorkspaces as ServiceClient102022
+from azure.ai.ml._restclient.v2023_04_01 import AzureMachineLearningWorkspaces as ServiceClient042023
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope, _ScopeDependentOperations
-
-# from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
+from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
+from azure.ai.ml._utils._asset_utils import (
+    _get_existing_asset_name_and_version,
+    get_content_hash_version,
+    get_storage_info_for_non_registry_asset,
+)
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils._registry_utils import get_asset_body_for_registry_storage, get_sas_uri_for_registry_asset
+from azure.ai.ml._utils._storage_utils import get_storage_client
 from azure.ai.ml.entities._assets import Code
 from azure.ai.ml.exceptions import (
     AssetPathException,
@@ -33,36 +45,38 @@ from azure.ai.ml.exceptions import (
     ValidationException,
 )
 from azure.ai.ml.operations._datastore_operations import DatastoreOperations
-from azure.core.exceptions import HttpResponseError
+
+# pylint: disable=protected-access
+
 
 ops_logger = OpsLogger(__name__)
-module_logger = ops_logger.module_logger
+logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
 
 
 class CodeOperations(_ScopeDependentOperations):
     """Represents a client for performing operations on code assets.
 
-    You should not instantiate this class directly. Instead, you should
-    create MLClient and use this client via the property MLClient.code
+    You should not instantiate this class directly. Instead, you should create MLClient and use this client via the
+    property MLClient.code
     """
 
     def __init__(
         self,
         operation_scope: OperationScope,
         operation_config: OperationConfig,
-        service_client: Union[ServiceClient102022, ServiceClient102021Dataplane],
+        service_client: Union[ServiceClient102022, ServiceClient102021Dataplane, ServiceClient042023],
         datastore_operations: DatastoreOperations,
         **kwargs: Dict,
     ):
         super(CodeOperations, self).__init__(operation_scope, operation_config)
-        # ops_logger.update_info(kwargs)
+        ops_logger.update_info(kwargs)
         self._service_client = service_client
         self._version_operation = service_client.code_versions
         self._container_operation = service_client.code_containers
         self._datastore_operation = datastore_operations
         self._init_kwargs = kwargs
 
-    # @monitor_with_activity(logger, "Code.CreateOrUpdate", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "Code.CreateOrUpdate", ActivityType.PUBLICAPI)
     def create_or_update(self, code: Code) -> Code:
         """Returns created or updated code asset.
 
@@ -82,6 +96,7 @@ class CodeOperations(_ScopeDependentOperations):
             name = code.name
             version = code.version
             sas_uri = None
+            blob_uri = None
 
             if self._registry_name:
                 sas_uri = get_sas_uri_for_registry_asset(
@@ -92,8 +107,41 @@ class CodeOperations(_ScopeDependentOperations):
                     registry=self._registry_name,
                     body=get_asset_body_for_registry_storage(self._registry_name, "codes", name, version),
                 )
+            else:
+                snapshot_path_info = _get_snapshot_path_info(code)
+                if snapshot_path_info:
+                    _, _, asset_hash = snapshot_path_info
+                    existing_assets = list(
+                        self._version_operation.list(
+                            resource_group_name=self._resource_group_name,
+                            workspace_name=self._workspace_name,
+                            name=name,
+                            hash=asset_hash,
+                            hash_version=str(get_content_hash_version()),
+                        )
+                    )
+
+                    if len(existing_assets) > 0:
+                        existing_asset = existing_assets[0]
+                        name, version = _get_existing_asset_name_and_version(existing_asset)
+                        return self.get(name=name, version=version)
+                    sas_info = get_storage_info_for_non_registry_asset(
+                        service_client=self._service_client,
+                        workspace_name=self._workspace_name,
+                        name=name,
+                        version=version,
+                        resource_group=self._resource_group_name,
+                    )
+                    sas_uri = sas_info["sas_uri"]
+                    blob_uri = sas_info["blob_uri"]
+
             code, _ = _check_and_upload_path(
-                artifact=code, asset_operations=self, sas_uri=sas_uri, artifact_type=ErrorTarget.CODE
+                artifact=code,
+                asset_operations=self,
+                sas_uri=sas_uri,
+                artifact_type=ErrorTarget.CODE,
+                show_progress=self._show_progress,
+                blob_uri=blob_uri,
             )
 
             # For anonymous code, if the code already exists in storage, we reuse the name,
@@ -138,10 +186,10 @@ class CodeOperations(_ScopeDependentOperations):
                         target=ErrorTarget.CODE,
                         no_personal_data_message=CHANGED_ASSET_PATH_MSG_NO_PERSONAL_DATA,
                         error_category=ErrorCategory.USER_ERROR,
-                    )
+                    ) from ex
             raise ex
 
-    # @monitor_with_activity(logger, "Code.Get", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "Code.Get", ActivityType.PUBLICAPI)
     def get(self, name: str, version: str) -> Code:
         """Returns information about the specified code asset.
 
@@ -154,6 +202,66 @@ class CodeOperations(_ScopeDependentOperations):
         :return: Code asset object.
         :rtype: ~azure.ai.ml.entities.Code
         """
+        return self._get(name=name, version=version)
+
+    # this is a public API but CodeOperations is hidden, so it may only monitor internal calls
+    @monitor_with_activity(logger, "Code.Download", ActivityType.PUBLICAPI)
+    def download(self, name: str, version: str, download_path: Union[PathLike, str]) -> None:
+        """Download content of a code.
+
+        :param str name: Name of the code.
+        :param str version: Version of the code.
+        :param Union[PathLike, str] download_path: Local path as download destination,
+            defaults to current working directory of the current user. Contents will be overwritten.
+        :raise: ResourceNotFoundError if can't find a code matching provided name.
+        """
+        output_dir = Path(download_path)
+        if output_dir.is_dir():
+            # an OSError will be raised if the directory is not empty
+            output_dir.rmdir()
+        output_dir.mkdir(parents=True)
+
+        code = self._get(name=name, version=version)
+
+        # TODO: how should we maintain this regex?
+        m = re.match(
+            r"https://(?P<account_name>.+)\.blob\.core\.windows\.net"
+            r"(:[0-9]+)?/(?P<container_name>.+)/(?P<blob_name>.*)",
+            code.path,
+        )
+        if not m:
+            raise ValueError(f"Invalid code path: {code.path}")
+
+        # 1. different content now saved in different container, so we need to override the container name
+        # 2. get credentials from datastore requires authorization to perform action
+        #    'Microsoft.MachineLearningServices/workspaces/datastores/listSecrets/action' over target datastore,
+        #    so we use local credential instead if so.
+        # check more information here:
+        # https://github.com/Azure/azureml_run_specification/blob/master/specs/create_workspace_asset_from_local_upload.md
+        try:
+            datastore_info = get_datastore_info(
+                self._datastore_operation,
+                # always use WORKSPACE_BLOB_STORE
+                name=_get_datastore_name(),
+                container_name=m.group("container_name"),
+            )
+        except HttpResponseError:
+            datastore_info = get_datastore_info(
+                self._datastore_operation,
+                # always use WORKSPACE_BLOB_STORE
+                name=_get_datastore_name(),
+                credential=self._service_client._config.credential,
+                container_name=m.group("container_name"),
+            )
+        storage_client = get_storage_client(**datastore_info)
+        storage_client.download(
+            starts_with=m.group("blob_name"),
+            destination=output_dir.as_posix(),
+        )
+        if not output_dir.is_dir() or not any(output_dir.iterdir()):
+            raise RuntimeError(f"Failed to download code to {output_dir}")
+
+    def _get(self, name: str, version: str = None) -> Code:
         if not version:
             msg = "Code asset version must be specified as part of name parameter, in format 'name:version'."
             raise ValidationException(

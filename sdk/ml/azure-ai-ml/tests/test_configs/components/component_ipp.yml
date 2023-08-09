@@ -1,0 +1,40 @@
+name: spec_samples_train
+version: 3
+display_name: Train
+is_deterministic: True
+type: command
+inputs:
+  training_data:
+    type: path
+    optional: False
+    intellectual_property:
+      protection_level: none
+  max_epochs:
+    type: integer
+    optional: False
+  learning_rate:
+    type: number
+    optional: False
+    default: 0.01
+  learning_rate_schedule:
+    type: string
+    optional: False
+    default: time-based
+  base_model:
+    type: path
+outputs:
+  model_output_not_ipp:
+    type: path
+    intellectual_property:
+      protection_level: none
+  model_output_ipp:
+    type: path
+    intellectual_property:
+      protection_level: all
+environment: azureml://registries/azureml-dev/environments/sklearn-1.1/versions/2-azureml-dev.858142
+resources:
+  instance_count: 1
+command: ls
+intellectual_property:
+  publisher: contoso
+  protection_level: all

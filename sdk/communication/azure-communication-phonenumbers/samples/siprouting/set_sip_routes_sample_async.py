@@ -21,7 +21,7 @@ import asyncio
 from azure.communication.phonenumbers.siprouting.aio import SipRoutingClient
 from azure.communication.phonenumbers.siprouting import SipTrunkRoute
 
-ROUTES = [SipTrunkRoute(name="First rule", description="Handle numbers starting with '+123'", number_pattern="\+123[0-9]+", trunks=["sbs1.sipsampletest.com"])]
+ROUTES = [SipTrunkRoute(name="First rule", description="Handle numbers starting with '+123'", number_pattern="\+123[0-9]+", trunks=[])]
 connection_string = os.getenv("COMMUNICATION_SAMPLES_CONNECTION_STRING")
 client = SipRoutingClient.from_connection_string(connection_string)
 

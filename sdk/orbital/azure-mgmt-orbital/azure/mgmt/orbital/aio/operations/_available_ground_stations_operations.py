@@ -23,13 +23,12 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator import distributed_trace
-from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from ... import models as _models
 from ..._vendor import _convert_request
-from ...operations._available_ground_stations_operations import build_get_request, build_list_by_capability_request
+from ...operations._available_ground_stations_operations import build_list_by_capability_request
 
 if sys.version_info >= (3, 8):
     from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
@@ -60,12 +59,12 @@ class AvailableGroundStationsOperations:
 
     @distributed_trace
     def list_by_capability(
-        self, capability: Union[str, _models.CapabilityParameter] = "EarthObservation", **kwargs: Any
+        self, capability: Union[str, _models.CapabilityParameter], **kwargs: Any
     ) -> AsyncIterable["_models.AvailableGroundStation"]:
         """Returns list of available ground stations.
 
         :param capability: Ground Station Capability. Known values are: "EarthObservation" and
-         "Communication". Default value is "EarthObservation".
+         "Communication". Required.
         :type capability: str or ~azure.mgmt.orbital.models.CapabilityParameter
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either AvailableGroundStation or the result of
@@ -77,7 +76,7 @@ class AvailableGroundStationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-03-01"] = kwargs.pop(
+        api_version: Literal["2022-11-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[_models.AvailableGroundStationListResult] = kwargs.pop("cls", None)
@@ -139,7 +138,8 @@ class AvailableGroundStationsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
@@ -147,63 +147,4 @@ class AvailableGroundStationsOperations:
 
     list_by_capability.metadata = {
         "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Orbital/availableGroundStations"
-    }
-
-    @distributed_trace_async
-    async def get(self, ground_station_name: str, **kwargs: Any) -> _models.AvailableGroundStation:
-        """Gets the specified available ground station.
-
-        :param ground_station_name: Ground Station name. Required.
-        :type ground_station_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: AvailableGroundStation or the result of cls(response)
-        :rtype: ~azure.mgmt.orbital.models.AvailableGroundStation
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: Literal["2022-03-01"] = kwargs.pop(
-            "api_version", _params.pop("api-version", self._config.api_version)
-        )
-        cls: ClsType[_models.AvailableGroundStation] = kwargs.pop("cls", None)
-
-        request = build_get_request(
-            ground_station_name=ground_station_name,
-            subscription_id=self._config.subscription_id,
-            api_version=api_version,
-            template_url=self.get.metadata["url"],
-            headers=_headers,
-            params=_params,
-        )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
-
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        deserialized = self._deserialize("AvailableGroundStation", pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Orbital/availableGroundStations/{groundStationName}"
     }

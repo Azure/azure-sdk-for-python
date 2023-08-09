@@ -7,9 +7,13 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import List, Optional
+from typing import Any, List, Optional, TYPE_CHECKING
 
 from ... import _serialization
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
 
 
 class Resource(_serialization.Model):
@@ -37,7 +41,7 @@ class Resource(_serialization.Model):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.id = None
@@ -82,10 +86,10 @@ class Setting(Resource):
 
     _subtype_map = {"kind": {"AlertSyncSettings": "AlertSyncSettings", "DataExportSettings": "DataExportSettings"}}
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.kind = None  # type: Optional[str]
+        self.kind: Optional[str] = None
 
 
 class AlertSyncSettings(Setting):
@@ -123,13 +127,13 @@ class AlertSyncSettings(Setting):
         "enabled": {"key": "properties.enabled", "type": "bool"},
     }
 
-    def __init__(self, *, enabled: Optional[bool] = None, **kwargs):
+    def __init__(self, *, enabled: Optional[bool] = None, **kwargs: Any) -> None:
         """
         :keyword enabled: Is the alert sync setting enabled.
         :paramtype enabled: bool
         """
         super().__init__(**kwargs)
-        self.kind = "AlertSyncSettings"  # type: str
+        self.kind: str = "AlertSyncSettings"
         self.enabled = enabled
 
 
@@ -166,7 +170,7 @@ class CloudErrorBody(_serialization.Model):
         "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.code = None
@@ -211,13 +215,13 @@ class DataExportSettings(Setting):
         "enabled": {"key": "properties.enabled", "type": "bool"},
     }
 
-    def __init__(self, *, enabled: Optional[bool] = None, **kwargs):
+    def __init__(self, *, enabled: Optional[bool] = None, **kwargs: Any) -> None:
         """
         :keyword enabled: Is the data export setting enabled.
         :paramtype enabled: bool
         """
         super().__init__(**kwargs)
-        self.kind = "DataExportSettings"  # type: str
+        self.kind: str = "DataExportSettings"
         self.enabled = enabled
 
 
@@ -242,7 +246,7 @@ class ErrorAdditionalInfo(_serialization.Model):
         "info": {"key": "info", "type": "object"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.type = None
@@ -269,7 +273,7 @@ class SettingsList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Setting"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.Setting"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: The settings list.
         :paramtype value: list[~azure.mgmt.security.v2021_07_01.models.Setting]

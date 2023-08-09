@@ -1,4 +1,4 @@
-#--------------------------------------------------------------------------
+# --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 #
 # The MIT License (MIT)
@@ -21,7 +21,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 #
-#--------------------------------------------------------------------------
+# --------------------------------------------------------------------------
 
 import json
 import time
@@ -39,14 +39,16 @@ from azure.core.pipeline.transport import (
 from azure.mgmt.core import ARMPipelineClient
 from azure.mgmt.core.policies import (
     ARMAutoResourceProviderRegistrationPolicy,
-    ARMHttpLoggingPolicy
+    ARMHttpLoggingPolicy,
 )
+
 
 @pytest.fixture
 def sleepless(monkeypatch):
     def sleep(_):
         pass
-    monkeypatch.setattr(time, 'sleep', sleep)
+
+    monkeypatch.setattr(time, "sleep", sleep)
 
 
 @httpretty.activate
@@ -59,51 +61,61 @@ def test_register_rp_policy():
     - We call again the first endpoint and this time this succeed
     """
 
-    provider_url = ("https://management.azure.com/"
-                    "subscriptions/12345678-9abc-def0-0000-000000000000/"
-                    "resourceGroups/clitest.rg000001/"
-                    "providers/Microsoft.Sql/servers/ygserver123?api-version=2014-04-01")
+    provider_url = (
+        "https://management.azure.com/"
+        "subscriptions/12345678-9abc-def0-0000-000000000000/"
+        "resourceGroups/clitest.rg000001/"
+        "providers/Microsoft.Sql/servers/ygserver123?api-version=2014-04-01"
+    )
 
-    provider_error = ('{"error":{"code":"MissingSubscriptionRegistration", '
-                        '"message":"The subscription registration is in \'Unregistered\' state. '
-                        'The subscription must be registered to use namespace \'Microsoft.Sql\'. '
-                        'See https://aka.ms/rps-not-found for how to register subscriptions."}}')
+    provider_error = (
+        '{"error":{"code":"MissingSubscriptionRegistration", '
+        '"message":"The subscription registration is in \'Unregistered\' state. '
+        "The subscription must be registered to use namespace 'Microsoft.Sql'. "
+        'See https://aka.ms/rps-not-found for how to register subscriptions."}}'
+    )
 
     provider_success = '{"success": true}'
 
-    httpretty.register_uri(httpretty.PUT,
-                            provider_url,
-                            responses=[
-                                httpretty.Response(body=provider_error, status=409),
-                                httpretty.Response(body=provider_success),
-                            ],
-                            content_type="application/json")
+    httpretty.register_uri(
+        httpretty.PUT,
+        provider_url,
+        responses=[
+            httpretty.Response(body=provider_error, status=409),
+            httpretty.Response(body=provider_success),
+        ],
+        content_type="application/json",
+    )
 
-    register_post_url = ("https://management.azure.com/"
-                            "subscriptions/12345678-9abc-def0-0000-000000000000/"
-                            "providers/Microsoft.Sql/register?api-version=2016-02-01")
+    register_post_url = (
+        "https://management.azure.com/"
+        "subscriptions/12345678-9abc-def0-0000-000000000000/"
+        "providers/Microsoft.Sql/register?api-version=2016-02-01"
+    )
 
-    register_post_result = {
-        "registrationState":"Registering"
-    }
+    register_post_result = {"registrationState": "Registering"}
 
-    register_get_url = ("https://management.azure.com/"
-                        "subscriptions/12345678-9abc-def0-0000-000000000000/"
-                        "providers/Microsoft.Sql?api-version=2016-02-01")
+    register_get_url = (
+        "https://management.azure.com/"
+        "subscriptions/12345678-9abc-def0-0000-000000000000/"
+        "providers/Microsoft.Sql?api-version=2016-02-01"
+    )
 
-    register_get_result = {
-        "registrationState":"Registered"
-    }
+    register_get_result = {"registrationState": "Registered"}
 
-    httpretty.register_uri(httpretty.POST,
-                            register_post_url,
-                            body=json.dumps(register_post_result),
-                            content_type="application/json")
+    httpretty.register_uri(
+        httpretty.POST,
+        register_post_url,
+        body=json.dumps(register_post_result),
+        content_type="application/json",
+    )
 
-    httpretty.register_uri(httpretty.GET,
-                            register_get_url,
-                            body=json.dumps(register_get_result),
-                            content_type="application/json")
+    httpretty.register_uri(
+        httpretty.GET,
+        register_get_url,
+        body=json.dumps(register_get_result),
+        content_type="application/json",
+    )
 
     request = HttpRequest("PUT", provider_url)
     policies = [
@@ -112,7 +124,7 @@ def test_register_rp_policy():
     with Pipeline(RequestsTransport(), policies=policies) as pipeline:
         response = pipeline.run(request)
 
-    assert json.loads(response.http_response.text())['success']
+    assert json.loads(response.http_response.text())["success"]
 
 
 @httpretty.activate
@@ -124,34 +136,39 @@ def test_register_failed_policy():
     - This POST failed
     """
 
-    provider_url = ("https://management.azure.com/"
-                    "subscriptions/12345678-9abc-def0-0000-000000000000/"
-                    "resourceGroups/clitest.rg000001/"
-                    "providers/Microsoft.Sql/servers/ygserver123?api-version=2014-04-01")
+    provider_url = (
+        "https://management.azure.com/"
+        "subscriptions/12345678-9abc-def0-0000-000000000000/"
+        "resourceGroups/clitest.rg000001/"
+        "providers/Microsoft.Sql/servers/ygserver123?api-version=2014-04-01"
+    )
 
-    provider_error = ('{"error":{"code":"MissingSubscriptionRegistration", '
-                        '"message":"The subscription registration is in \'Unregistered\' state. '
-                        'The subscription must be registered to use namespace \'Microsoft.Sql\'. '
-                        'See https://aka.ms/rps-not-found for how to register subscriptions."}}')
+    provider_error = (
+        '{"error":{"code":"MissingSubscriptionRegistration", '
+        '"message":"The subscription registration is in \'Unregistered\' state. '
+        "The subscription must be registered to use namespace 'Microsoft.Sql'. "
+        'See https://aka.ms/rps-not-found for how to register subscriptions."}}'
+    )
 
     provider_success = '{"success": true}'
 
-    httpretty.register_uri(httpretty.PUT,
-                            provider_url,
-                            responses=[
-                                httpretty.Response(body=provider_error, status=409),
-                                httpretty.Response(body=provider_success),
-                            ],
-                            content_type="application/json")
+    httpretty.register_uri(
+        httpretty.PUT,
+        provider_url,
+        responses=[
+            httpretty.Response(body=provider_error, status=409),
+            httpretty.Response(body=provider_success),
+        ],
+        content_type="application/json",
+    )
 
-    register_post_url = ("https://management.azure.com/"
-                            "subscriptions/12345678-9abc-def0-0000-000000000000/"
-                            "providers/Microsoft.Sql/register?api-version=2016-02-01")
+    register_post_url = (
+        "https://management.azure.com/"
+        "subscriptions/12345678-9abc-def0-0000-000000000000/"
+        "providers/Microsoft.Sql/register?api-version=2016-02-01"
+    )
 
-    httpretty.register_uri(httpretty.POST,
-                            register_post_url,
-                            status=409,
-                            content_type="application/json")
+    httpretty.register_uri(httpretty.POST, register_post_url, status=409, content_type="application/json")
 
     request = HttpRequest("PUT", provider_url)
     policies = [
@@ -162,6 +179,7 @@ def test_register_failed_policy():
 
     assert response.http_response.status_code == 409
 
+
 def test_default_http_logging_policy():
     config = Configuration()
     pipeline_client = ARMPipelineClient(base_url="test", config=config)
@@ -169,15 +187,18 @@ def test_default_http_logging_policy():
     assert http_logging_policy.allowed_header_names == ARMHttpLoggingPolicy.DEFAULT_HEADERS_WHITELIST
     assert http_logging_policy.allowed_header_names == ARMHttpLoggingPolicy.DEFAULT_HEADERS_ALLOWLIST
 
+
 def test_pass_in_http_logging_policy():
     config = Configuration()
     http_logging_policy = ARMHttpLoggingPolicy()
-    http_logging_policy.allowed_header_names.update(
-        {"x-ms-added-header"}
-    )
+    http_logging_policy.allowed_header_names.update({"x-ms-added-header"})
     config.http_logging_policy = http_logging_policy
 
     pipeline_client = ARMPipelineClient(base_url="test", config=config)
     http_logging_policy = pipeline_client._pipeline._impl_policies[-1]._policy
-    assert http_logging_policy.allowed_header_names == ARMHttpLoggingPolicy.DEFAULT_HEADERS_ALLOWLIST.union({"x-ms-added-header"})
-    assert http_logging_policy.allowed_header_names == ARMHttpLoggingPolicy.DEFAULT_HEADERS_WHITELIST.union({"x-ms-added-header"})
+    assert http_logging_policy.allowed_header_names == ARMHttpLoggingPolicy.DEFAULT_HEADERS_ALLOWLIST.union(
+        {"x-ms-added-header"}
+    )
+    assert http_logging_policy.allowed_header_names == ARMHttpLoggingPolicy.DEFAULT_HEADERS_WHITELIST.union(
+        {"x-ms-added-header"}
+    )

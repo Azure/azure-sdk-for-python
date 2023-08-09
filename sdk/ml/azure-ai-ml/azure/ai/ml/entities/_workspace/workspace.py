@@ -8,16 +8,21 @@ from os import PathLike
 from pathlib import Path
 from typing import IO, AnyStr, Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2022_10_01_preview.models import ManagedServiceIdentity as RestManagedServiceIdentity
-from azure.ai.ml._restclient.v2022_10_01_preview.models import Workspace as RestWorkspace
+from azure.ai.ml._restclient.v2023_06_01_preview.models import ManagedServiceIdentity as RestManagedServiceIdentity
+from azure.ai.ml._restclient.v2023_06_01_preview.models import FeatureStoreSettings as RestFeatureStoreSettings
+from azure.ai.ml._restclient.v2023_06_01_preview.models import Workspace as RestWorkspace
+from azure.ai.ml._restclient.v2023_06_01_preview.models import ManagedNetworkSettings as RestManagedNetwork
 from azure.ai.ml._schema.workspace.workspace import WorkspaceSchema
-from azure.ai.ml._utils.utils import dump_yaml_to_file
+from azure.ai.ml._utils.utils import dump_yaml_to_file, is_private_preview_enabled
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, WorkspaceResourceConstants
+from azure.ai.ml.entities._workspace_hub._constants import PROJECT_WORKSPACE_KIND
 from azure.ai.ml.entities._credentials import IdentityConfiguration
 from azure.ai.ml.entities._resource import Resource
 from azure.ai.ml.entities._util import load_from_dict
 
 from .customer_managed_key import CustomerManagedKey
+from .feature_store_settings import FeatureStoreSettings
+from .networking import ManagedNetwork
 
 
 class Workspace(Resource):
@@ -40,9 +45,11 @@ class Workspace(Resource):
         public_network_access: Optional[str] = None,
         identity: Optional[IdentityConfiguration] = None,
         primary_user_assigned_identity: Optional[str] = None,
+        managed_network: Optional[ManagedNetwork] = None,
+        enable_data_isolation: bool = False,
+        workspace_hub: Optional[str] = None,
         **kwargs,
     ):
-
         """Azure ML workspace.
 
         :param name: Name of the workspace.
@@ -86,11 +93,21 @@ class Workspace(Resource):
         :type identity: IdentityConfiguration
         :param primary_user_assigned_identity: The workspace's primary user assigned identity
         :type primary_user_assigned_identity: str
+        :param managed_network: workspace's Managed Network configuration
+        :type managed_network: ManagedNetwork
+        :param enable_data_isolation: A flag to determine if workspace has data isolation enabled.
+            The flag can only be set at the creation phase, it can't be updated.
+        :type enable_data_isolation: bool
+        :param workspace_hub: The resource ID of an existing workspace hub to help create project workspace
+        :type workspace_hub: str
         :param kwargs: A dictionary of additional configuration parameters.
         :type kwargs: dict
         """
+        self._kind = kwargs.pop("kind", "default")
+        self.print_as_yaml = True
         self._discovery_url = kwargs.pop("discovery_url", None)
         self._mlflow_tracking_uri = kwargs.pop("mlflow_tracking_uri", None)
+        self._feature_store_settings: Optional[FeatureStoreSettings] = kwargs.pop("feature_store_settings", None)
         super().__init__(name=name, description=description, tags=tags, **kwargs)
 
         self.display_name = display_name
@@ -106,6 +123,11 @@ class Workspace(Resource):
         self.public_network_access = public_network_access
         self.identity = identity
         self.primary_user_assigned_identity = primary_user_assigned_identity
+        self.managed_network = managed_network
+        self.enable_data_isolation = enable_data_isolation
+        self.workspace_hub = workspace_hub
+        if workspace_hub:
+            self._kind = PROJECT_WORKSPACE_KIND
 
     @property
     def discovery_url(self) -> str:
@@ -163,7 +185,6 @@ class Workspace(Resource):
 
     @classmethod
     def _from_rest_object(cls, rest_obj: RestWorkspace) -> "Workspace":
-
         if not rest_obj:
             return None
         customer_managed_key = (
@@ -181,6 +202,14 @@ class Workspace(Resource):
         if hasattr(rest_obj, "ml_flow_tracking_uri"):
             mlflow_tracking_uri = rest_obj.ml_flow_tracking_uri
 
+        # TODO: remove this once it is included in API response
+        managed_network = None
+        if hasattr(rest_obj, "managed_network"):
+            if rest_obj.managed_network and isinstance(rest_obj.managed_network, RestManagedNetwork):
+                managed_network = ManagedNetwork._from_rest_object(  # pylint: disable=protected-access
+                    rest_obj.managed_network
+                )
+
         armid_parts = str(rest_obj.id).split("/")
         group = None if len(armid_parts) < 4 else armid_parts[4]
         identity = None
@@ -188,10 +217,20 @@ class Workspace(Resource):
             identity = IdentityConfiguration._from_workspace_rest_object(  # pylint: disable=protected-access
                 rest_obj.identity
             )
+        feature_store_settings = None
+        if (
+            is_private_preview_enabled()
+            and rest_obj.feature_store_settings
+            and isinstance(rest_obj.feature_store_settings, RestFeatureStoreSettings)
+        ):
+            feature_store_settings = FeatureStoreSettings._from_rest_object(  # pylint: disable=protected-access
+                rest_obj.feature_store_settings
+            )
         return Workspace(
             name=rest_obj.name,
             id=rest_obj.id,
             description=rest_obj.description,
+            kind=rest_obj.kind.lower() if rest_obj.kind else None,
             tags=rest_obj.tags,
             location=rest_obj.location,
             resource_group=group,
@@ -208,9 +247,28 @@ class Workspace(Resource):
             mlflow_tracking_uri=mlflow_tracking_uri,
             identity=identity,
             primary_user_assigned_identity=rest_obj.primary_user_assigned_identity,
+            managed_network=managed_network,
+            feature_store_settings=feature_store_settings,
+            enable_data_isolation=rest_obj.enable_data_isolation,
+            workspace_hub=rest_obj.hub_resource_id,
         )
 
+    @classmethod
+    def get_workspace_info(cls, armid: str) -> str:
+        """Get the workspace SubscriptionId, ResourceGroup, Name from from the resource ID.
+
+        :param armid: the Resource Id of a workspace
+        :type armid: str
+        :return: This method return SubscriptionId, ResourceGroupName, WorkspaceName in order.
+        :rtype: (str,str,str)
+        """
+        return armid.split("/")[-7], armid.split("/")[-5], armid.split("/")[-1]
+
     def _to_rest_object(self) -> RestWorkspace:
+        feature_store_Settings = None
+        if is_private_preview_enabled() and self._feature_store_settings:
+            feature_store_Settings = self._feature_store_settings._to_rest_object()  # pylint: disable=protected-access
+
         return RestWorkspace(
             identity=self.identity._to_workspace_rest_object()  # pylint: disable=protected-access
             if self.identity
@@ -218,6 +276,7 @@ class Workspace(Resource):
             location=self.location,
             tags=self.tags,
             description=self.description,
+            kind=self._kind,
             friendly_name=self.display_name,
             key_vault=self.key_vault,
             application_insights=self.application_insights,
@@ -228,4 +287,10 @@ class Workspace(Resource):
             image_build_compute=self.image_build_compute,
             public_network_access=self.public_network_access,
             primary_user_assigned_identity=self.primary_user_assigned_identity,
+            managed_network=self.managed_network._to_rest_object()  # pylint: disable=protected-access
+            if self.managed_network
+            else None,  # pylint: disable=protected-access
+            feature_store_Settings=feature_store_Settings,
+            enable_data_isolation=self.enable_data_isolation,
+            hub_resource_id=self.workspace_hub,
         )

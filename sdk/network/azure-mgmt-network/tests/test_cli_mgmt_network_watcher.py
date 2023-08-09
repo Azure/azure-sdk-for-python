@@ -37,7 +37,6 @@ from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGrou
 AZURE_LOCATION = 'eastus'
 
 
-@pytest.mark.live_test_only
 @pytest.mark.skip(reason="cost too much time which influence pipeline")
 class TestMgmtNetwork(AzureMgmtRecordedTestCase):
 

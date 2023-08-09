@@ -7,9 +7,13 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import List, Optional
+from typing import Any, List, Optional, TYPE_CHECKING
 
 from ... import _serialization
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
 
 
 class ResourceSku(_serialization.Model):  # pylint: disable=too-many-instance-attributes
@@ -81,7 +85,7 @@ class ResourceSku(_serialization.Model):  # pylint: disable=too-many-instance-at
         "restrictions": {"key": "restrictions", "type": "[ResourceSkuRestrictions]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.resource_type = None
@@ -120,7 +124,7 @@ class ResourceSkuCapabilities(_serialization.Model):
         "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.name = None
@@ -157,7 +161,7 @@ class ResourceSkuCapacity(_serialization.Model):
         "scale_type": {"key": "scaleType", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.minimum = None
@@ -191,7 +195,7 @@ class ResourceSkuCosts(_serialization.Model):
         "extended_unit": {"key": "extendedUnit", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.meter_id = None
@@ -224,7 +228,7 @@ class ResourceSkuLocationInfo(_serialization.Model):
         "zone_details": {"key": "zoneDetails", "type": "[ResourceSkuZoneDetails]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.location = None
@@ -253,7 +257,7 @@ class ResourceSkuRestrictionInfo(_serialization.Model):
         "zones": {"key": "zones", "type": "[str]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.locations = None
@@ -292,7 +296,7 @@ class ResourceSkuRestrictions(_serialization.Model):
         "reason_code": {"key": "reasonCode", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.type = None
@@ -322,7 +326,7 @@ class ResourceSkusResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.ResourceSku"], next_link: Optional[str] = None, **kwargs):
+    def __init__(self, *, value: List["_models.ResourceSku"], next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword value: The list of skus available for the subscription. Required.
         :paramtype value: list[~azure.mgmt.compute.v2019_04_01.models.ResourceSku]
@@ -357,7 +361,7 @@ class ResourceSkuZoneDetails(_serialization.Model):
         "capabilities": {"key": "capabilities", "type": "[ResourceSkuCapabilities]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.name = None

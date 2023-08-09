@@ -4,13 +4,19 @@
 
 from marshmallow import fields
 
-from azure.ai.ml._schema.core.fields import CodeField, DistributionField, NestedField
+from azure.ai.ml._schema.core.fields import (
+    CodeField,
+    DistributionField,
+    EnvironmentField,
+    ExperimentalField,
+    NestedField,
+)
 from azure.ai.ml._schema.core.schema import PathAwareSchema
+from azure.ai.ml._schema.job.input_output_entry import InputLiteralValueSchema
 from azure.ai.ml._schema.job_resource_configuration import JobResourceConfigurationSchema
-from azure.ai.ml.constants._common import AzureMLResourceType
+from azure.ai.ml._schema.queue_settings import QueueSettingsSchema
 
-from ..assets.environment import AnonymousEnvironmentSchema
-from ..core.fields import ArmVersionedStr, RegistryStr, UnionField
+from ..core.fields import UnionField
 
 
 class ParameterizedCommandSchema(PathAwareSchema):
@@ -22,14 +28,14 @@ class ParameterizedCommandSchema(PathAwareSchema):
         required=True,
     )
     code = CodeField()
-    environment = UnionField(
+    environment = EnvironmentField(required=True)
+    environment_variables = UnionField(
         [
-            NestedField(AnonymousEnvironmentSchema),
-            RegistryStr(azureml_type=AzureMLResourceType.ENVIRONMENT),
-            ArmVersionedStr(azureml_type=AzureMLResourceType.ENVIRONMENT, allow_default_version=True),
-        ],
-        required=True,
+            fields.Dict(keys=fields.Str(), values=fields.Str()),
+            # Used for binding environment variables
+            NestedField(InputLiteralValueSchema),
+        ]
     )
-    environment_variables = fields.Dict(keys=fields.Str(), values=fields.Str())
     resources = NestedField(JobResourceConfigurationSchema)
     distribution = DistributionField()
+    queue_settings = ExperimentalField(NestedField(QueueSettingsSchema))

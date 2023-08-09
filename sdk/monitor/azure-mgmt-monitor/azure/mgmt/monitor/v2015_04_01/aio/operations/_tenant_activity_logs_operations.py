@@ -38,7 +38,7 @@ class TenantActivityLogsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~$(python-base-namespace).v2015_04_01.aio.MonitorManagementClient`'s
+        :class:`~azure.mgmt.monitor.v2015_04_01.aio.MonitorManagementClient`'s
         :attr:`tenant_activity_logs` attribute.
     """
 
@@ -89,14 +89,14 @@ class TenantActivityLogsOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either EventData or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~$(python-base-namespace).v2015_04_01.models.EventData]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.monitor.v2015_04_01.models.EventData]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2015-04-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.EventDataCollection]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2015-04-01"))
+        cls: ClsType[_models.EventDataCollection] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -118,12 +118,12 @@ class TenantActivityLogsOperations:
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             else:
                 request = HttpRequest("GET", next_link)
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
                 request.method = "GET"
             return request
 
@@ -131,14 +131,15 @@ class TenantActivityLogsOperations:
             deserialized = self._deserialize("EventDataCollection", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                request, stream=False, **kwargs
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -151,4 +152,4 @@ class TenantActivityLogsOperations:
 
         return AsyncItemPaged(get_next, extract_data)
 
-    list.metadata = {"url": "/providers/Microsoft.Insights/eventtypes/management/values"}  # type: ignore
+    list.metadata = {"url": "/providers/Microsoft.Insights/eventtypes/management/values"}

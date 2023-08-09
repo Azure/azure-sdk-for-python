@@ -16,6 +16,13 @@
         "description": "The subscription ID to which the application and resources belong."
       }
     },
+    "serviceBusEndpointSuffix": {
+      "type": "string",
+      "defaultValue": ".servicebus.windows.net",
+      "metadata": {
+          "description": "The url suffix to use when creating eventhubs connection strings."
+      }
+    },
     "tenantId": {
       "type": "string",
       "defaultValue": "[subscription().tenantId]",
@@ -180,7 +187,7 @@
     },
     "EVENT_HUB_HOSTNAME": {
         "type": "string",
-        "value": "[concat(variables('eventHubsNamespace'), '.servicebus.windows.net')]"
+        "value": "[concat(variables('eventHubsNamespace'), parameters('serviceBusEndpointSuffix'))]"
     },
     "EVENT_HUB_CONN_STR": {
         "type": "string",
@@ -213,6 +220,14 @@
     "AZURE_TABLES_CONN_STR": {
       "type": "string",
       "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccount'), ';AccountKey=', listKeys(variables('storageAccountId'), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value, ';EndpointSuffix=', parameters('storageEndpointSuffix'))]"
+    },
+    "RESOURCE_REGION": {
+      "type": "string",
+      "value": "[parameters('location')]"
+    },
+    "EVENT_HUB_ENDPOINT_SUFFIX": {
+      "type": "string",
+      "value": "[parameters('serviceBusEndpointSuffix')]"
     }
   }
 }

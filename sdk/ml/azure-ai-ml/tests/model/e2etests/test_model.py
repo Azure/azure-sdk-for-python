@@ -2,12 +2,11 @@ import os
 import re
 import uuid
 from pathlib import Path
-from typing import Callable
+from typing import Callable, Iterator
 from unittest.mock import patch
 
 import pytest
 from devtools_testutils import AzureRecordedTestCase, is_live
-from six import Iterator
 from test_utilities.utils import sleep_if_live
 
 from azure.ai.ml import MLClient, load_model
@@ -28,6 +27,7 @@ def artifact_path(tmpdir_factory) -> str:  # type: ignore
     file_name = tmpdir_factory.mktemp("artifact_testing").join("artifact_file.txt")
     file_name.write("content")
     return str(file_name)
+
 
 # previous bodiless_matcher fixture doesn't take effect because of typo, please add it in method level if needed
 
@@ -68,24 +68,34 @@ class TestModel(AzureRecordedTestCase):
         # with pytest.raises(Exception):
         #     client.models.get(name=model.name, version="3")
 
-    def test_create_autoincrement(self, client: MLClient, randstr: Callable[[], str], tmp_path: Path) -> None:
-        path = Path("./tests/test_configs/model/model_no_version.yml")
-        model_name = randstr("model_name")
+    def test_crud_model_with_stage(self, client: MLClient, randstr: Callable[[], str], tmp_path: Path) -> None:
+        path = Path("./tests/test_configs/model/model_with_stage.yml")
+        model_name = randstr("model_prod_name")
 
         model = load_model(path)
         model.name = model_name
-        assert model.version is None
-        assert model._auto_increment_version
+        model = client.models.create_or_update(model)
+        assert model.name == model_name
+        assert model.version == "3"
+        assert model.description == "this is my test model with stage"
+        assert model.type == "mlflow_model"
+        assert model.stage == "Production"
+        assert re.match(LONG_URI_REGEX_FORMAT, model.path)
 
-        created_model = client.models.create_or_update(model)
-        assert created_model.version == "1"
-        assert created_model.type == "custom_model"
-        assert created_model._auto_increment_version is False
+        with pytest.raises(Exception):
+            with patch("azure.ai.ml._artifacts._artifact_utilities.get_object_hash", return_value="DIFFERENT_HASH"):
+                model = load_model(source=artifact_path)
+                model = client.models.create_or_update(model)
 
-        next_model_asset = client.models.create_or_update(model)
-        assert next_model_asset.version == "2"
-        assert next_model_asset.type == "custom_model"
-        assert next_model_asset._auto_increment_version is False
+        model = client.models.get(model.name, "3")
+        assert model.name == model_name
+        assert model.version == "3"
+        assert model.description == "this is my test model with stage"
+        assert model.stage == "Production"
+
+        model_list = client.models.list(name=model.name, stage="Production")
+        model_stage_list = [m.stage for m in model_list if m is not None]
+        assert model.stage in model_stage_list
 
     def test_list_no_name(self, client: MLClient) -> None:
         models = client.models.list()
@@ -145,10 +155,7 @@ class TestModel(AzureRecordedTestCase):
         client.models.restore(name=name)
         assert name in get_model_list()
 
-    @pytest.mark.skipif(
-        condition=not is_live(),
-        reason="Registry uploads do not record well. Investigate later"
-    )
+    @pytest.mark.skipif(condition=not is_live(), reason="Registry uploads do not record well. Investigate later")
     def test_create_get_download_model_registry(self, registry_client: MLClient, randstr: Callable[[], str]) -> None:
         model_path = Path("./tests/test_configs/model/model_full.yml")
         model_name = randstr("model_name")
@@ -175,10 +182,7 @@ class TestModel(AzureRecordedTestCase):
         assert os.path.exists(wd)
         assert os.path.exists(f"{wd}/lightgbm_mlflow_model/MLmodel")
 
-    @pytest.mark.skipif(
-        condition=not is_live(),
-        reason="Registry uploads do not record well. Investigate later"
-    )
+    @pytest.mark.skipif(condition=not is_live(), reason="Registry uploads do not record well. Investigate later")
     def test_list_model_registry(self, registry_client: MLClient, randstr: Callable[[], str]) -> None:
         model_path = Path("./tests/test_configs/model/model_full.yml")
         model_name = randstr("model_name")
@@ -197,10 +201,7 @@ class TestModel(AzureRecordedTestCase):
         model_list = [m.name for m in model_list if m is not None]
         assert model.name in model_list
 
-    @pytest.mark.skipif(
-        condition=not is_live(),
-        reason="Registry uploads do not record well. Investigate later"
-    )
+    @pytest.mark.skipif(condition=not is_live(), reason="Registry uploads do not record well. Investigate later")
     def test_promote_model(self, randstr: Callable[[], str], client: MLClient, registry_client: MLClient) -> None:
         # Create model in workspace
         model_path = Path("./tests/test_configs/model/model_full.yml")

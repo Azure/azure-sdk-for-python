@@ -1,21 +1,139 @@
 # Release History
 
-## 1.5.0 (Unreleased)
+
+## 1.10.0 (Unreleased)
 
 ### Features Added
+- Added support of features that are known into the future/at forecast time for dnn in AutoML Forecasting jobs.
+- Added support for new workspace connection types: azure_open_ai, cognitive_search, and cognitive_service.
+- Added support for new credential type: ApiKeyConfiguration.
+- Added support of `download` for component operations.
 
 ### Bugs Fixed
+- Local job runs will no longer fail if Docker registry has no username/password
+- Fixed an issue that code asset doesn't work with relative symbol links.
+- Fixed [Issue 31319](https://github.com/Azure/azure-sdk-for-python/issues/31319): can't accept `PathLike` for `CommandComponent.code`.
+
+### Breaking Changes
+
+### Other Changes
+
+- `azure-ai-ml` now performs all file i/o on `utf-8` encoded files per Azure SDK guidance. 
+  (instead of the default behavior for python < 3.15, which uses locale specific encodings)
+- Removed references to deprecated "feature_store" workspace connection type.
+
+## 1.9.0 (2023-07-25)
+
+### Features Added
+- Added support to enable gpu access (local_enable_gpu) for local deployment.
+
+### Other Changes
+
+- Improved the output when printing a workspace object to be more clean and readable.
+- Log level of unknown field notifications for pipeline nodes raised from INFO to WARNING.
+## 1.8.0 (2023-06-12)
+
+### Features Added
+- Added support to enable set workspace connection secret expiry time.
+- Added support for `stage` on model version
+
+### Bugs Fixed
+
+- Fixed an issue affecting authentication to registry-related services in sovereign regions.
+- Made job_tier and priority values case insensitive
+
+## 1.7.2 (2023-05-18)
+
+### Features Added
+- Public preview support for new schedule type `MonitorSchedule`
+
+
+## 1.7.1 (2023-05-17)
+
+### Bugs Fixed
+- Fixed an issue where `OnlineDeployment.provisioning_state` was incorrectly deserialized and set as `None`
+
+
+## 1.7.0 (2023-05-15)
+
+### Features Added
+- Added data import schedule. The class added is `ImportDataSchedule`.
+- Added support to enable data isolation feature at workspace creation stage.
+- Added auto_delete_setting support for asset version in data import job.
+
+### Bugs Fixed
+
+### Breaking Changes
+
+### Other Changes
+
+
+## 1.6.0 (2023-05-01)
+
+### Features Added
+- Added experimental scatter gather node to DSL package. This node has a unique mldesigner dependency.
+- Added support to make JobService and ServiceInstance objects serializable when printed
+- Support Singularity compute in pipeline job
+- Added purge operation support for workspace resource
+- Added Feature Store, its dedicated classes and updated the docstrings, now available in public interface. The classes added are `FeatureStoreOperations, FeatureSetOperations, FeatureStoreEntityOperations` with properties classes specific to the new features.
+- Support additional_includes in command component
+- Added experimental `distribution: ray` support in command job.
+
+### Bugs Fixed
+
+- Fixed issue where show_progress=False was not being respected for uploads when set via MLClient
+- Fixed issue of spark input/output mode validation doesn't take effect because of wrong type assertion
+- Fixed the bug when setting `node.limits.timeout` to a pipeline input.
+- Removed Experimental Tag from Idle Shutdown, Custom Applications, Setup Scripts, and Image Metadata on Compute Instances.
+- Removed Experimental Tag from JobService classes
+
+### Breaking Changes
+
+- Renamed `JobServiceBase.job_service_type` to `type`
+
+### Other Changes
+
+- Remove the default placeholder for CommandComponent.code
+
+## 1.5.0 (2023-03-20)
+
+### Features Added
+- Added support for `tags` on Compute Resources.
+- Added support for promoting data asset from a workspace to a registry
+- Added support for registering named asset from job output or node output by specifying name and version settings.
+- Added support for data binding on outputs inside dynamic arguments for dsl pipeline
+- Added support for serverless compute in pipeline, command, automl and sweep job
+- Added support for `job_tier` and `priority` in standalone job
+- Added support for passing `locations` via command function and set it to `JobResourceConfiguration.locations`
+- Added support for modifying SSH key values after creation on Compute Resources.
+- Added WorkspaceConnection types `s3`, `snowflake`, `azure_sql_db`, `azure_synapse_analytics`, `azure_my_sql_db`, `azure_postgres_db`
+- Added WorkspaceConnection auth type `access_key` for `s3`
+- Added DataImport class and DataOperations.import_data.
+- Added DataOperations.list_materialization_status - list status of data import jobs that create asset versions via asset name.
+
+### Bugs Fixed
+
+- Fix experiment name wrongly set to 'Default' when schedule existing job.
+- Error message improvement when a local path fails to match with data asset type.
+- Error message improvement when an asset does not exist in a registry
+- Fix an issue when submit spark pipeline job with referring a registered component
+- Fix an issue that prevented Job.download from downloading the output of a BatchJob
 
 ### Other Changes
 
 - Added dependency on `azure-mgmt-resource`
 - Added dependency on `azure-mgmt-resourcegraph`
+- Added dependency on `opencensus-ext-azure<2.0.0`
+- Update job types to use MFE Dec preview rest objects.
+- Added classifiers for Python version 3.11.
+- Added warning for reserved keywords in IO names in pipeline job nodes.
+- Added telemetry logging for SDK Jupyter Notebook scenarios with opt-out option (see README.md)
 
 ## 1.4.0 (2023-02-07)
 
 ### Features Added
 - Added dedicated classes for each type of job service and updated the docstrings. The classes added are `JupyterLabJobService, SshJobService, TensorBoardJobService, VsCodeJobService` with a few properties specific to the type.
-- Added Custom Applications Support to Compute Instances. 
+- Added Custom Applications Support to Compute Instances.
 - Update data asset list, show and create operations to support data assets in registry.
 
 ### Bugs Fixed

@@ -11,16 +11,19 @@ import pytest
 
 from azure.monitor.query import MetricAggregationType, Metric
 from azure.monitor.query.aio import MetricsQueryClient
-from devtools_testutils import AzureRecordedTestCase
+
+from base_testcase import AzureMonitorQueryMetricsTestCase
 
 
-METRIC_NAME = "Event"
+METRIC_NAME = "requests/count"
+METRIC_RESOURCE_PROVIDER = "Microsoft.Insights/components"
 
-class TestMetricsClientAsync(AzureRecordedTestCase):
+
+class TestMetricsClientAsync(AzureMonitorQueryMetricsTestCase):
 
     @pytest.mark.asyncio
     async def test_metrics_auth(self, recorded_test, monitor_info):
-        client = self.create_client_from_credential(
+        client = self.get_client(
             MetricsQueryClient, self.get_credential(MetricsQueryClient, is_async=True))
         async with client:
             response = await client.query_resource(
@@ -34,7 +37,7 @@ class TestMetricsClientAsync(AzureRecordedTestCase):
 
     @pytest.mark.asyncio
     async def test_metrics_granularity(self, recorded_test, monitor_info):
-        client = self.create_client_from_credential(
+        client = self.get_client(
             MetricsQueryClient, self.get_credential(MetricsQueryClient, is_async=True))
         async with client:
             response = await client.query_resource(
@@ -46,10 +49,14 @@ class TestMetricsClientAsync(AzureRecordedTestCase):
                 )
             assert response
             assert response.granularity == timedelta(minutes=5)
+            metric = response.metrics[METRIC_NAME]
+            assert metric.timeseries
+            for t in metric.timeseries:
+                assert t.metadata_values is not None
 
     @pytest.mark.asyncio
     async def test_metrics_filter(self, recorded_test, monitor_info):
-        client = self.create_client_from_credential(
+        client = self.get_client(
             MetricsQueryClient, self.get_credential(MetricsQueryClient, is_async=True))
         async with client:
             response = await client.query_resource(
@@ -57,7 +64,7 @@ class TestMetricsClientAsync(AzureRecordedTestCase):
                 metric_names=[METRIC_NAME],
                 timespan=timedelta(days=1),
                 granularity=timedelta(minutes=5),
-                filter="Source eq '*'",
+                filter="request/success eq '0'",
                 aggregations=[MetricAggregationType.COUNT]
                 )
             assert response
@@ -67,7 +74,7 @@ class TestMetricsClientAsync(AzureRecordedTestCase):
 
     @pytest.mark.asyncio
     async def test_metrics_list(self, recorded_test, monitor_info):
-        client = self.create_client_from_credential(
+        client = self.get_client(
             MetricsQueryClient, self.get_credential(MetricsQueryClient, is_async=True))
         async with client:
             response = await client.query_resource(
@@ -91,7 +98,7 @@ class TestMetricsClientAsync(AzureRecordedTestCase):
 
         with mock.patch("azure.monitor.query._generated.metrics.aio.operations.MetricsOperations.list") as mock_list:
             mock_list.return_value = {"foo": "bar"}
-            client = self.create_client_from_credential(
+            client = self.get_client(
                 MetricsQueryClient, self.get_credential(MetricsQueryClient, is_async=True))
             async with client:
                 await client.query_resource(
@@ -107,7 +114,7 @@ class TestMetricsClientAsync(AzureRecordedTestCase):
 
     @pytest.mark.asyncio
     async def test_metrics_namespaces(self, recorded_test, monitor_info):
-        client = self.create_client_from_credential(
+        client = self.get_client(
             MetricsQueryClient, self.get_credential(MetricsQueryClient, is_async=True))
 
         async with client:
@@ -119,13 +126,22 @@ class TestMetricsClientAsync(AzureRecordedTestCase):
 
     @pytest.mark.asyncio
     async def test_metrics_definitions(self, recorded_test, monitor_info):
-        client = self.create_client_from_credential(
+        client = self.get_client(
             MetricsQueryClient, self.get_credential(MetricsQueryClient, is_async=True))
 
         async with client:
             response = client.list_metric_definitions(
-                monitor_info['metrics_resource_id'], namespace='Microsoft.OperationalInsights/workspaces')
+                monitor_info['metrics_resource_id'], namespace=METRIC_RESOURCE_PROVIDER)
 
             assert response is not None
             async for item in response:
                 assert item
+
+    @pytest.mark.asyncio
+    async def test_client_different_endpoint(self):
+        credential = self.get_credential(MetricsQueryClient)
+        endpoint = "https://management.chinacloudapi.cn"
+        client = MetricsQueryClient(credential, endpoint=endpoint)
+
+        assert client._endpoint == endpoint
+        assert f"{endpoint}/.default" in client._client._config.authentication_policy._scopes

@@ -418,7 +418,7 @@ class FederatedIdentityCredentialsOperations:
          credential resource. Required.
         :type federated_identity_credential_resource_name: str
         :param parameters: Parameters to create or update the federated identity credential. Is either
-         a model type or a IO type. Required.
+         a FederatedIdentityCredential type or a IO type. Required.
         :type parameters: ~azure.mgmt.msi.v2022_01_31_preview.models.FederatedIdentityCredential or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.

@@ -41,8 +41,10 @@ class AzureSkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     STANDARD_L16_S_V2 = "Standard_L16s_v2"
     STANDARD_L8_S_V3 = "Standard_L8s_v3"
     STANDARD_L16_S_V3 = "Standard_L16s_v3"
+    STANDARD_L32_S_V3 = "Standard_L32s_v3"
     STANDARD_L8_AS_V3 = "Standard_L8as_v3"
     STANDARD_L16_AS_V3 = "Standard_L16as_v3"
+    STANDARD_L32_AS_V3 = "Standard_L32as_v3"
     STANDARD_E64_I_V3 = "Standard_E64i_v3"
     STANDARD_E80_IDS_V4 = "Standard_E80ids_v4"
     STANDARD_E2_A_V4 = "Standard_E2a_v4"
@@ -285,8 +287,6 @@ class LanguageExtensionImageName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     R = "R"
     PYTHON3_6_5 = "Python3_6_5"
-    PYTHON3_9_12 = "Python3_9_12"
-    PYTHON3_9_12_INCLUDE_DEEP_LEARNING = "Python3_9_12IncludeDeepLearning"
     PYTHON3_10_8 = "Python3_10_8"
 
 
@@ -295,6 +295,13 @@ class LanguageExtensionName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     PYTHON = "PYTHON"
     R = "R"
+
+
+class MigrationClusterRole(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The role of the cluster in the migration process."""
+
+    SOURCE = "Source"
+    DESTINATION = "Destination"
 
 
 class PrincipalsModificationKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -360,6 +367,7 @@ class State(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     STOPPED = "Stopped"
     STARTING = "Starting"
     UPDATING = "Updating"
+    MIGRATED = "Migrated"
 
 
 class Status(str, Enum, metaclass=CaseInsensitiveEnumMeta):

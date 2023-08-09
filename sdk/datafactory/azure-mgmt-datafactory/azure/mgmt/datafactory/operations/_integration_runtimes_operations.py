@@ -49,7 +49,7 @@ def build_list_by_factory_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2018-06-01"))  # type: Literal["2018-06-01"]
+    api_version: Literal["2018-06-01"] = kwargs.pop("api_version", _params.pop("api-version", "2018-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -72,7 +72,7 @@ def build_list_by_factory_request(
         ),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -95,8 +95,8 @@ def build_create_or_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2018-06-01"))  # type: Literal["2018-06-01"]
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    api_version: Literal["2018-06-01"] = kwargs.pop("api_version", _params.pop("api-version", "2018-06-01"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -127,7 +127,7 @@ def build_create_or_update_request(
         ),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -154,7 +154,7 @@ def build_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2018-06-01"))  # type: Literal["2018-06-01"]
+    api_version: Literal["2018-06-01"] = kwargs.pop("api_version", _params.pop("api-version", "2018-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -185,7 +185,7 @@ def build_get_request(
         ),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -204,8 +204,8 @@ def build_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2018-06-01"))  # type: Literal["2018-06-01"]
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    api_version: Literal["2018-06-01"] = kwargs.pop("api_version", _params.pop("api-version", "2018-06-01"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -236,7 +236,7 @@ def build_update_request(
         ),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -255,7 +255,7 @@ def build_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2018-06-01"))  # type: Literal["2018-06-01"]
+    api_version: Literal["2018-06-01"] = kwargs.pop("api_version", _params.pop("api-version", "2018-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -286,7 +286,7 @@ def build_delete_request(
         ),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -303,7 +303,7 @@ def build_get_status_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2018-06-01"))  # type: Literal["2018-06-01"]
+    api_version: Literal["2018-06-01"] = kwargs.pop("api_version", _params.pop("api-version", "2018-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -334,7 +334,7 @@ def build_get_status_request(
         ),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -351,7 +351,7 @@ def build_list_outbound_network_dependencies_endpoints_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2018-06-01"))  # type: Literal["2018-06-01"]
+    api_version: Literal["2018-06-01"] = kwargs.pop("api_version", _params.pop("api-version", "2018-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -382,7 +382,7 @@ def build_list_outbound_network_dependencies_endpoints_request(
         ),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -399,7 +399,7 @@ def build_get_connection_info_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2018-06-01"))  # type: Literal["2018-06-01"]
+    api_version: Literal["2018-06-01"] = kwargs.pop("api_version", _params.pop("api-version", "2018-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -430,7 +430,7 @@ def build_get_connection_info_request(
         ),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -447,8 +447,8 @@ def build_regenerate_auth_key_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2018-06-01"))  # type: Literal["2018-06-01"]
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    api_version: Literal["2018-06-01"] = kwargs.pop("api_version", _params.pop("api-version", "2018-06-01"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -479,7 +479,7 @@ def build_regenerate_auth_key_request(
         ),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -498,7 +498,7 @@ def build_list_auth_keys_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2018-06-01"))  # type: Literal["2018-06-01"]
+    api_version: Literal["2018-06-01"] = kwargs.pop("api_version", _params.pop("api-version", "2018-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -529,7 +529,7 @@ def build_list_auth_keys_request(
         ),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -546,7 +546,7 @@ def build_start_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2018-06-01"))  # type: Literal["2018-06-01"]
+    api_version: Literal["2018-06-01"] = kwargs.pop("api_version", _params.pop("api-version", "2018-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -577,7 +577,7 @@ def build_start_request(
         ),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -594,7 +594,7 @@ def build_stop_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2018-06-01"))  # type: Literal["2018-06-01"]
+    api_version: Literal["2018-06-01"] = kwargs.pop("api_version", _params.pop("api-version", "2018-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -625,7 +625,7 @@ def build_stop_request(
         ),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -642,7 +642,7 @@ def build_sync_credentials_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2018-06-01"))  # type: Literal["2018-06-01"]
+    api_version: Literal["2018-06-01"] = kwargs.pop("api_version", _params.pop("api-version", "2018-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -673,7 +673,7 @@ def build_sync_credentials_request(
         ),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -690,7 +690,7 @@ def build_get_monitoring_data_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2018-06-01"))  # type: Literal["2018-06-01"]
+    api_version: Literal["2018-06-01"] = kwargs.pop("api_version", _params.pop("api-version", "2018-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -721,7 +721,7 @@ def build_get_monitoring_data_request(
         ),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -738,7 +738,7 @@ def build_upgrade_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2018-06-01"))  # type: Literal["2018-06-01"]
+    api_version: Literal["2018-06-01"] = kwargs.pop("api_version", _params.pop("api-version", "2018-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -769,7 +769,7 @@ def build_upgrade_request(
         ),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -786,8 +786,8 @@ def build_remove_links_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2018-06-01"))  # type: Literal["2018-06-01"]
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    api_version: Literal["2018-06-01"] = kwargs.pop("api_version", _params.pop("api-version", "2018-06-01"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -818,7 +818,7 @@ def build_remove_links_request(
         ),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -837,8 +837,8 @@ def build_create_linked_integration_runtime_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2018-06-01"))  # type: Literal["2018-06-01"]
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    api_version: Literal["2018-06-01"] = kwargs.pop("api_version", _params.pop("api-version", "2018-06-01"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -869,7 +869,7 @@ def build_create_linked_integration_runtime_request(
         ),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -920,10 +920,10 @@ class IntegrationRuntimesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2018-06-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: Literal["2018-06-01"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.IntegrationRuntimeListResponse]
+        )
+        cls: ClsType[_models.IntegrationRuntimeListResponse] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -946,7 +946,7 @@ class IntegrationRuntimesOperations:
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -962,7 +962,7 @@ class IntegrationRuntimesOperations:
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
                 request.method = "GET"
             return request
 
@@ -970,13 +970,13 @@ class IntegrationRuntimesOperations:
             deserialized = self._deserialize("IntegrationRuntimeListResponse", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
                 request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
@@ -989,7 +989,9 @@ class IntegrationRuntimesOperations:
 
         return ItemPaged(get_next, extract_data)
 
-    list_by_factory.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/integrationRuntimes"}  # type: ignore
+    list_by_factory.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/integrationRuntimes"
+    }
 
     @overload
     def create_or_update(
@@ -1079,8 +1081,8 @@ class IntegrationRuntimesOperations:
         :type factory_name: str
         :param integration_runtime_name: The integration runtime name. Required.
         :type integration_runtime_name: str
-        :param integration_runtime: Integration runtime resource definition. Is either a model type or
-         a IO type. Required.
+        :param integration_runtime: Integration runtime resource definition. Is either a
+         IntegrationRuntimeResource type or a IO type. Required.
         :type integration_runtime: ~azure.mgmt.datafactory.models.IntegrationRuntimeResource or IO
         :param if_match: ETag of the integration runtime entity. Should only be specified for update,
          for which it should match existing entity or can be * for unconditional update. Default value
@@ -1105,11 +1107,11 @@ class IntegrationRuntimesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2018-06-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: Literal["2018-06-01"]
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.IntegrationRuntimeResource]
+        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.IntegrationRuntimeResource] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -1134,9 +1136,9 @@ class IntegrationRuntimesOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -1153,7 +1155,9 @@ class IntegrationRuntimesOperations:
 
         return deserialized
 
-    create_or_update.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/integrationRuntimes/{integrationRuntimeName}"}  # type: ignore
+    create_or_update.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/integrationRuntimes/{integrationRuntimeName}"
+    }
 
     @distributed_trace
     def get(
@@ -1192,10 +1196,10 @@ class IntegrationRuntimesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2018-06-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: Literal["2018-06-01"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[Optional[_models.IntegrationRuntimeResource]]
+        )
+        cls: ClsType[Optional[_models.IntegrationRuntimeResource]] = kwargs.pop("cls", None)
 
         request = build_get_request(
             resource_group_name=resource_group_name,
@@ -1209,9 +1213,9 @@ class IntegrationRuntimesOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -1230,7 +1234,9 @@ class IntegrationRuntimesOperations:
 
         return deserialized
 
-    get.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/integrationRuntimes/{integrationRuntimeName}"}  # type: ignore
+    get.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/integrationRuntimes/{integrationRuntimeName}"
+    }
 
     @overload
     def update(
@@ -1313,7 +1319,7 @@ class IntegrationRuntimesOperations:
         :param integration_runtime_name: The integration runtime name. Required.
         :type integration_runtime_name: str
         :param update_integration_runtime_request: The parameters for updating an integration runtime.
-         Is either a model type or a IO type. Required.
+         Is either a UpdateIntegrationRuntimeRequest type or a IO type. Required.
         :type update_integration_runtime_request:
          ~azure.mgmt.datafactory.models.UpdateIntegrationRuntimeRequest or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
@@ -1335,11 +1341,11 @@ class IntegrationRuntimesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2018-06-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: Literal["2018-06-01"]
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.IntegrationRuntimeResource]
+        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.IntegrationRuntimeResource] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -1363,9 +1369,9 @@ class IntegrationRuntimesOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -1382,7 +1388,9 @@ class IntegrationRuntimesOperations:
 
         return deserialized
 
-    update.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/integrationRuntimes/{integrationRuntimeName}"}  # type: ignore
+    update.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/integrationRuntimes/{integrationRuntimeName}"
+    }
 
     @distributed_trace
     def delete(  # pylint: disable=inconsistent-return-statements
@@ -1412,10 +1420,10 @@ class IntegrationRuntimesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2018-06-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: Literal["2018-06-01"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        )
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_delete_request(
             resource_group_name=resource_group_name,
@@ -1428,9 +1436,9 @@ class IntegrationRuntimesOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -1443,7 +1451,9 @@ class IntegrationRuntimesOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-    delete.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/integrationRuntimes/{integrationRuntimeName}"}  # type: ignore
+    delete.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/integrationRuntimes/{integrationRuntimeName}"
+    }
 
     @distributed_trace
     def get_status(
@@ -1473,10 +1483,10 @@ class IntegrationRuntimesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2018-06-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: Literal["2018-06-01"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.IntegrationRuntimeStatusResponse]
+        )
+        cls: ClsType[_models.IntegrationRuntimeStatusResponse] = kwargs.pop("cls", None)
 
         request = build_get_status_request(
             resource_group_name=resource_group_name,
@@ -1489,9 +1499,9 @@ class IntegrationRuntimesOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -1508,7 +1518,9 @@ class IntegrationRuntimesOperations:
 
         return deserialized
 
-    get_status.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/integrationRuntimes/{integrationRuntimeName}/getStatus"}  # type: ignore
+    get_status.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/integrationRuntimes/{integrationRuntimeName}/getStatus"
+    }
 
     @distributed_trace
     def list_outbound_network_dependencies_endpoints(
@@ -1540,12 +1552,10 @@ class IntegrationRuntimesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2018-06-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: Literal["2018-06-01"]
-        cls = kwargs.pop(
-            "cls", None
-        )  # type: ClsType[_models.IntegrationRuntimeOutboundNetworkDependenciesEndpointsResponse]
+        )
+        cls: ClsType[_models.IntegrationRuntimeOutboundNetworkDependenciesEndpointsResponse] = kwargs.pop("cls", None)
 
         request = build_list_outbound_network_dependencies_endpoints_request(
             resource_group_name=resource_group_name,
@@ -1558,9 +1568,9 @@ class IntegrationRuntimesOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -1579,7 +1589,9 @@ class IntegrationRuntimesOperations:
 
         return deserialized
 
-    list_outbound_network_dependencies_endpoints.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/integrationRuntimes/{integrationRuntimeName}/outboundNetworkDependenciesEndpoints"}  # type: ignore
+    list_outbound_network_dependencies_endpoints.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/integrationRuntimes/{integrationRuntimeName}/outboundNetworkDependenciesEndpoints"
+    }
 
     @distributed_trace
     def get_connection_info(
@@ -1610,10 +1622,10 @@ class IntegrationRuntimesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2018-06-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: Literal["2018-06-01"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.IntegrationRuntimeConnectionInfo]
+        )
+        cls: ClsType[_models.IntegrationRuntimeConnectionInfo] = kwargs.pop("cls", None)
 
         request = build_get_connection_info_request(
             resource_group_name=resource_group_name,
@@ -1626,9 +1638,9 @@ class IntegrationRuntimesOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -1645,7 +1657,9 @@ class IntegrationRuntimesOperations:
 
         return deserialized
 
-    get_connection_info.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/integrationRuntimes/{integrationRuntimeName}/getConnectionInfo"}  # type: ignore
+    get_connection_info.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/integrationRuntimes/{integrationRuntimeName}/getConnectionInfo"
+    }
 
     @overload
     def regenerate_auth_key(
@@ -1728,7 +1742,8 @@ class IntegrationRuntimesOperations:
         :param integration_runtime_name: The integration runtime name. Required.
         :type integration_runtime_name: str
         :param regenerate_key_parameters: The parameters for regenerating integration runtime
-         authentication key. Is either a model type or a IO type. Required.
+         authentication key. Is either a IntegrationRuntimeRegenerateKeyParameters type or a IO type.
+         Required.
         :type regenerate_key_parameters:
          ~azure.mgmt.datafactory.models.IntegrationRuntimeRegenerateKeyParameters or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
@@ -1750,11 +1765,11 @@ class IntegrationRuntimesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2018-06-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: Literal["2018-06-01"]
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.IntegrationRuntimeAuthKeys]
+        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.IntegrationRuntimeAuthKeys] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -1778,9 +1793,9 @@ class IntegrationRuntimesOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -1797,7 +1812,9 @@ class IntegrationRuntimesOperations:
 
         return deserialized
 
-    regenerate_auth_key.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/integrationRuntimes/{integrationRuntimeName}/regenerateAuthKey"}  # type: ignore
+    regenerate_auth_key.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/integrationRuntimes/{integrationRuntimeName}/regenerateAuthKey"
+    }
 
     @distributed_trace
     def list_auth_keys(
@@ -1827,10 +1844,10 @@ class IntegrationRuntimesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2018-06-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: Literal["2018-06-01"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.IntegrationRuntimeAuthKeys]
+        )
+        cls: ClsType[_models.IntegrationRuntimeAuthKeys] = kwargs.pop("cls", None)
 
         request = build_list_auth_keys_request(
             resource_group_name=resource_group_name,
@@ -1843,9 +1860,9 @@ class IntegrationRuntimesOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -1862,7 +1879,9 @@ class IntegrationRuntimesOperations:
 
         return deserialized
 
-    list_auth_keys.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/integrationRuntimes/{integrationRuntimeName}/listAuthKeys"}  # type: ignore
+    list_auth_keys.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/integrationRuntimes/{integrationRuntimeName}/listAuthKeys"
+    }
 
     def _start_initial(
         self, resource_group_name: str, factory_name: str, integration_runtime_name: str, **kwargs: Any
@@ -1878,10 +1897,10 @@ class IntegrationRuntimesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2018-06-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: Literal["2018-06-01"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[Optional[_models.IntegrationRuntimeStatusResponse]]
+        )
+        cls: ClsType[Optional[_models.IntegrationRuntimeStatusResponse]] = kwargs.pop("cls", None)
 
         request = build_start_request(
             resource_group_name=resource_group_name,
@@ -1894,9 +1913,9 @@ class IntegrationRuntimesOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -1915,7 +1934,9 @@ class IntegrationRuntimesOperations:
 
         return deserialized
 
-    _start_initial.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/integrationRuntimes/{integrationRuntimeName}/start"}  # type: ignore
+    _start_initial.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/integrationRuntimes/{integrationRuntimeName}/start"
+    }
 
     @distributed_trace
     def begin_start(
@@ -1946,15 +1967,15 @@ class IntegrationRuntimesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2018-06-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: Literal["2018-06-01"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.IntegrationRuntimeStatusResponse]
-        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
+        )
+        cls: ClsType[_models.IntegrationRuntimeStatusResponse] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = self._start_initial(  # type: ignore
+            raw_result = self._start_initial(
                 resource_group_name=resource_group_name,
                 factory_name=factory_name,
                 integration_runtime_name=integration_runtime_name,
@@ -1973,7 +1994,7 @@ class IntegrationRuntimesOperations:
             return deserialized
 
         if polling is True:
-            polling_method = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))  # type: PollingMethod
+            polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
         else:
@@ -1985,9 +2006,11 @@ class IntegrationRuntimesOperations:
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    begin_start.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/integrationRuntimes/{integrationRuntimeName}/start"}  # type: ignore
+    begin_start.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/integrationRuntimes/{integrationRuntimeName}/start"
+    }
 
     def _stop_initial(  # pylint: disable=inconsistent-return-statements
         self, resource_group_name: str, factory_name: str, integration_runtime_name: str, **kwargs: Any
@@ -2003,10 +2026,10 @@ class IntegrationRuntimesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2018-06-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: Literal["2018-06-01"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        )
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_stop_request(
             resource_group_name=resource_group_name,
@@ -2019,9 +2042,9 @@ class IntegrationRuntimesOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -2034,7 +2057,9 @@ class IntegrationRuntimesOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-    _stop_initial.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/integrationRuntimes/{integrationRuntimeName}/stop"}  # type: ignore
+    _stop_initial.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/integrationRuntimes/{integrationRuntimeName}/stop"
+    }
 
     @distributed_trace
     def begin_stop(
@@ -2063,13 +2088,13 @@ class IntegrationRuntimesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2018-06-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: Literal["2018-06-01"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
-        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
+        )
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = self._stop_initial(  # type: ignore
                 resource_group_name=resource_group_name,
@@ -2088,7 +2113,7 @@ class IntegrationRuntimesOperations:
                 return cls(pipeline_response, None, {})
 
         if polling is True:
-            polling_method = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))  # type: PollingMethod
+            polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
         else:
@@ -2100,9 +2125,11 @@ class IntegrationRuntimesOperations:
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    begin_stop.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/integrationRuntimes/{integrationRuntimeName}/stop"}  # type: ignore
+    begin_stop.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/integrationRuntimes/{integrationRuntimeName}/stop"
+    }
 
     @distributed_trace
     def sync_credentials(  # pylint: disable=inconsistent-return-statements
@@ -2135,10 +2162,10 @@ class IntegrationRuntimesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2018-06-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: Literal["2018-06-01"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        )
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_sync_credentials_request(
             resource_group_name=resource_group_name,
@@ -2151,9 +2178,9 @@ class IntegrationRuntimesOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -2166,7 +2193,9 @@ class IntegrationRuntimesOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-    sync_credentials.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/integrationRuntimes/{integrationRuntimeName}/syncCredentials"}  # type: ignore
+    sync_credentials.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/integrationRuntimes/{integrationRuntimeName}/syncCredentials"
+    }
 
     @distributed_trace
     def get_monitoring_data(
@@ -2197,10 +2226,10 @@ class IntegrationRuntimesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2018-06-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: Literal["2018-06-01"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.IntegrationRuntimeMonitoringData]
+        )
+        cls: ClsType[_models.IntegrationRuntimeMonitoringData] = kwargs.pop("cls", None)
 
         request = build_get_monitoring_data_request(
             resource_group_name=resource_group_name,
@@ -2213,9 +2242,9 @@ class IntegrationRuntimesOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -2232,7 +2261,9 @@ class IntegrationRuntimesOperations:
 
         return deserialized
 
-    get_monitoring_data.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/integrationRuntimes/{integrationRuntimeName}/monitoringData"}  # type: ignore
+    get_monitoring_data.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/integrationRuntimes/{integrationRuntimeName}/monitoringData"
+    }
 
     @distributed_trace
     def upgrade(  # pylint: disable=inconsistent-return-statements
@@ -2262,10 +2293,10 @@ class IntegrationRuntimesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2018-06-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: Literal["2018-06-01"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        )
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_upgrade_request(
             resource_group_name=resource_group_name,
@@ -2278,9 +2309,9 @@ class IntegrationRuntimesOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -2293,7 +2324,9 @@ class IntegrationRuntimesOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-    upgrade.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/integrationRuntimes/{integrationRuntimeName}/upgrade"}  # type: ignore
+    upgrade.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/integrationRuntimes/{integrationRuntimeName}/upgrade"
+    }
 
     @overload
     def remove_links(  # pylint: disable=inconsistent-return-statements
@@ -2379,7 +2412,7 @@ class IntegrationRuntimesOperations:
         :param integration_runtime_name: The integration runtime name. Required.
         :type integration_runtime_name: str
         :param linked_integration_runtime_request: The data factory name for the linked integration
-         runtime. Is either a model type or a IO type. Required.
+         runtime. Is either a LinkedIntegrationRuntimeRequest type or a IO type. Required.
         :type linked_integration_runtime_request:
          ~azure.mgmt.datafactory.models.LinkedIntegrationRuntimeRequest or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
@@ -2401,11 +2434,11 @@ class IntegrationRuntimesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2018-06-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: Literal["2018-06-01"]
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -2429,9 +2462,9 @@ class IntegrationRuntimesOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -2444,7 +2477,9 @@ class IntegrationRuntimesOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-    remove_links.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/integrationRuntimes/{integrationRuntimeName}/removeLinks"}  # type: ignore
+    remove_links.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/integrationRuntimes/{integrationRuntimeName}/removeLinks"
+    }
 
     @overload
     def create_linked_integration_runtime(
@@ -2527,7 +2562,7 @@ class IntegrationRuntimesOperations:
         :param integration_runtime_name: The integration runtime name. Required.
         :type integration_runtime_name: str
         :param create_linked_integration_runtime_request: The linked integration runtime properties. Is
-         either a model type or a IO type. Required.
+         either a CreateLinkedIntegrationRuntimeRequest type or a IO type. Required.
         :type create_linked_integration_runtime_request:
          ~azure.mgmt.datafactory.models.CreateLinkedIntegrationRuntimeRequest or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
@@ -2549,11 +2584,11 @@ class IntegrationRuntimesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2018-06-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: Literal["2018-06-01"]
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.IntegrationRuntimeStatusResponse]
+        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.IntegrationRuntimeStatusResponse] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -2579,9 +2614,9 @@ class IntegrationRuntimesOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -2598,4 +2633,6 @@ class IntegrationRuntimesOperations:
 
         return deserialized
 
-    create_linked_integration_runtime.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/integrationRuntimes/{integrationRuntimeName}/linkedIntegrationRuntime"}  # type: ignore
+    create_linked_integration_runtime.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/integrationRuntimes/{integrationRuntimeName}/linkedIntegrationRuntime"
+    }

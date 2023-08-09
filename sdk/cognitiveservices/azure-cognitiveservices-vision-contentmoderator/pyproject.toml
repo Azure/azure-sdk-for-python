@@ -1,0 +1,2 @@
+[tool.azure-sdk-build]
+pylint = false

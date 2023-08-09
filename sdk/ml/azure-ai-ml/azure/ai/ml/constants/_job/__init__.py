@@ -12,6 +12,7 @@ from .automl import (
     ImageObjectDetectionModelNames,
     NlpLearningRateScheduler,
     NlpModels,
+    TabularTrainingMode,
 )
 from .job import DistributionType, ImportSourceType, JobType
 from .pipeline import PipelineConstants
@@ -30,4 +31,5 @@ __all__ = [
     "SearchSpace",
     "NlpModels",
     "NlpLearningRateScheduler",
+    "TabularTrainingMode",
 ]

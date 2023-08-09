@@ -1,5 +1,47 @@
 # Release History
 
+## 13.5.0 (2023-07-21)
+
+### Features Added
+
+  - Added operation group ModelsOperations
+  - Added operation group UsagesOperations
+  - Model AccountModel has a new parameter is_default_version
+  - Model AccountModel has a new parameter skus
+  - Model AccountModel has a new parameter source
+  - Model AccountProperties has a new parameter abuse_penalty
+  - Model CommitmentPlanProperties has a new parameter provisioning_issues
+  - Model Deployment has a new parameter sku
+  - Model DeploymentModel has a new parameter source
+  - Model DeploymentProperties has a new parameter rate_limits
+  - Model DeploymentProperties has a new parameter version_upgrade_option
+  - Model UsageListResult has a new parameter next_link
+
+## 13.4.0 (2023-02-15)
+
+### Features Added
+
+  - Added operation CommitmentPlansOperations.begin_create_or_update_association
+  - Added operation CommitmentPlansOperations.begin_create_or_update_plan
+  - Added operation CommitmentPlansOperations.begin_delete_association
+  - Added operation CommitmentPlansOperations.begin_delete_plan
+  - Added operation CommitmentPlansOperations.begin_update_plan
+  - Added operation CommitmentPlansOperations.get_association
+  - Added operation CommitmentPlansOperations.get_plan
+  - Added operation CommitmentPlansOperations.list_associations
+  - Added operation CommitmentPlansOperations.list_plans_by_resource_group
+  - Added operation CommitmentPlansOperations.list_plans_by_subscription
+  - Model AccountModel has a new parameter finetune_capabilities
+  - Model AccountModel has a new parameter lifecycle_status
+  - Model AccountProperties has a new parameter commitment_plan_associations
+  - Model AccountProperties has a new parameter locations
+  - Model CommitmentPlan has a new parameter kind
+  - Model CommitmentPlan has a new parameter location
+  - Model CommitmentPlan has a new parameter sku
+  - Model CommitmentPlan has a new parameter tags
+  - Model CommitmentPlanProperties has a new parameter commitment_plan_guid
+  - Model CommitmentPlanProperties has a new parameter provisioning_state
+
 ## 13.4.0b1 (2022-12-29)
 
 ### Features Added

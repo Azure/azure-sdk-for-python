@@ -66,8 +66,8 @@ class ParallelComponentSchema(ComponentSchema):
 
 
 class RestParallelComponentSchema(ParallelComponentSchema):
-    """When component load from rest, won't validate on name since there might
-    be existing component with invalid name."""
+    """When component load from rest, won't validate on name since there might be existing component with invalid
+    name."""
 
     name = fields.Str(required=True)
 
@@ -75,10 +75,8 @@ class RestParallelComponentSchema(ParallelComponentSchema):
 class AnonymousParallelComponentSchema(AnonymousAssetSchema, ParallelComponentSchema):
     """Anonymous parallel component schema.
 
-    Note inheritance follows order: AnonymousAssetSchema,
-    ParallelComponentSchema because we need name and version to be
-    dump_only(marshmallow collects fields follows method resolution
-    order).
+    Note inheritance follows order: AnonymousAssetSchema, ParallelComponentSchema because we need name and version to be
+    dump_only(marshmallow collects fields follows method resolution order).
     """
 
     @post_load

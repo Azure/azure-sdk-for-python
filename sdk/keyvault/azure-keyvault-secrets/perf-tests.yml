@@ -1,0 +1,23 @@
+Service: keyvault-secrets
+
+Project: sdk/keyvault/azure-keyvault-secrets
+
+PrimaryPackage: azure-keyvault-secrets
+
+PackageVersions:
+- azure-core: 1.15.0
+  azure-keyvault-secrets: 4.3.0
+- azure-core: source
+  azure-keyvault-secrets: source
+
+Tests:
+- Test: get-secret
+  Class: GetSecretTest
+  Arguments: 
+  - --parallel 64
+
+- Test: list-secrets
+  Class: ListSecretsTest
+  Arguments:
+  - --count 5 --parallel 64
+  - --count 500 --parallel 32

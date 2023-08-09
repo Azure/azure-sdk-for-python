@@ -7,20 +7,20 @@
 # --------------------------------------------------------------------------
 
 from ._operations import Operations
-from ._availability_sets_operations import AvailabilitySetsOperations
-from ._virtual_machine_extension_images_operations import VirtualMachineExtensionImagesOperations
-from ._virtual_machine_extensions_operations import VirtualMachineExtensionsOperations
-from ._virtual_machines_operations import VirtualMachinesOperations
-from ._virtual_machine_images_operations import VirtualMachineImagesOperations
-from ._usage_operations import UsageOperations
-from ._virtual_machine_sizes_operations import VirtualMachineSizesOperations
-from ._images_operations import ImagesOperations
-from ._virtual_machine_scale_sets_operations import VirtualMachineScaleSetsOperations
-from ._virtual_machine_scale_set_extensions_operations import VirtualMachineScaleSetExtensionsOperations
-from ._virtual_machine_scale_set_rolling_upgrades_operations import VirtualMachineScaleSetRollingUpgradesOperations
-from ._virtual_machine_scale_set_vms_operations import VirtualMachineScaleSetVMsOperations
-from ._log_analytics_operations import LogAnalyticsOperations
-from ._virtual_machine_run_commands_operations import VirtualMachineRunCommandsOperations
+from ._operations import AvailabilitySetsOperations
+from ._operations import VirtualMachineExtensionImagesOperations
+from ._operations import VirtualMachineExtensionsOperations
+from ._operations import VirtualMachinesOperations
+from ._operations import VirtualMachineImagesOperations
+from ._operations import UsageOperations
+from ._operations import VirtualMachineSizesOperations
+from ._operations import ImagesOperations
+from ._operations import VirtualMachineScaleSetsOperations
+from ._operations import VirtualMachineScaleSetExtensionsOperations
+from ._operations import VirtualMachineScaleSetRollingUpgradesOperations
+from ._operations import VirtualMachineScaleSetVMsOperations
+from ._operations import LogAnalyticsOperations
+from ._operations import VirtualMachineRunCommandsOperations
 
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import

@@ -1,4 +1,5 @@
 # coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -6,14 +7,23 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, Dict, List, Optional, Union
+import sys
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
-import msrest.serialization
+from ... import _serialization
 
-from ._application_insights_management_client_enums import *
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
+JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 
-class ComponentsResource(msrest.serialization.Model):
+class ComponentsResource(_serialization.Model):
     """An azure resource object.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -26,41 +36,35 @@ class ComponentsResource(msrest.serialization.Model):
     :vartype name: str
     :ivar type: Azure resource type.
     :vartype type: str
-    :ivar location: Required. Resource location.
+    :ivar location: Resource location. Required.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        *,
-        location: str,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
-        :keyword location: Required. Resource location.
+        :keyword location: Resource location. Required.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         """
-        super(ComponentsResource, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
@@ -68,7 +72,7 @@ class ComponentsResource(msrest.serialization.Model):
         self.tags = tags
 
 
-class ApplicationInsightsComponent(ComponentsResource):
+class ApplicationInsightsComponent(ComponentsResource):  # pylint: disable=too-many-instance-attributes
     """An Application Insights component definition.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -81,30 +85,29 @@ class ApplicationInsightsComponent(ComponentsResource):
     :vartype name: str
     :ivar type: Azure resource type.
     :vartype type: str
-    :ivar location: Required. Resource location.
+    :ivar location: Resource location. Required.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
-    :ivar kind: Required. The kind of application that this component refers to, used to customize
-     UI. This value is a freeform string, values should typically be one of the following: web, ios,
-     other, store, java, phone.
+    :ivar kind: The kind of application that this component refers to, used to customize UI. This
+     value is a freeform string, values should typically be one of the following: web, ios, other,
+     store, java, phone. Required.
     :vartype kind: str
     :ivar application_id: The unique ID of your application. This field mirrors the 'Name' field
      and cannot be changed.
     :vartype application_id: str
     :ivar app_id: Application Insights Unique ID for your Application.
     :vartype app_id: str
-    :ivar application_type: Type of application being monitored. Possible values include: "web",
-     "other". Default value: "web".
+    :ivar application_type: Type of application being monitored. Known values are: "web" and
+     "other".
     :vartype application_type: str or
      ~azure.mgmt.applicationinsights.v2018_05_01_preview.models.ApplicationType
     :ivar flow_type: Used by the Application Insights system to determine what kind of flow this
      component was created by. This is to be set to 'Bluefield' when creating/updating a component
-     via the REST API. Possible values include: "Bluefield". Default value: "Bluefield".
+     via the REST API. "Bluefield"
     :vartype flow_type: str or ~azure.mgmt.applicationinsights.v2018_05_01_preview.models.FlowType
     :ivar request_source: Describes what tool created this Application Insights component.
-     Customers using this API should set this to the default 'rest'. Possible values include:
-     "rest". Default value: "rest".
+     Customers using this API should set this to the default 'rest'. "rest"
     :vartype request_source: str or
      ~azure.mgmt.applicationinsights.v2018_05_01_preview.models.RequestSource
     :ivar instrumentation_key: Application Insights Instrumentation key. A read-only value that
@@ -141,106 +144,107 @@ class ApplicationInsightsComponent(ComponentsResource):
     :vartype private_link_scoped_resources:
      list[~azure.mgmt.applicationinsights.v2018_05_01_preview.models.PrivateLinkScopedResource]
     :ivar public_network_access_for_ingestion: The network access type for accessing Application
-     Insights ingestion. Possible values include: "Enabled", "Disabled". Default value: "Enabled".
+     Insights ingestion. Known values are: "Enabled" and "Disabled".
     :vartype public_network_access_for_ingestion: str or
      ~azure.mgmt.applicationinsights.v2018_05_01_preview.models.PublicNetworkAccessType
     :ivar public_network_access_for_query: The network access type for accessing Application
-     Insights query. Possible values include: "Enabled", "Disabled". Default value: "Enabled".
+     Insights query. Known values are: "Enabled" and "Disabled".
     :vartype public_network_access_for_query: str or
      ~azure.mgmt.applicationinsights.v2018_05_01_preview.models.PublicNetworkAccessType
-    :ivar ingestion_mode: Indicates the flow of the ingestion. Possible values include:
-     "ApplicationInsights", "ApplicationInsightsWithDiagnosticSettings", "LogAnalytics". Default
-     value: "ApplicationInsights".
+    :ivar ingestion_mode: Indicates the flow of the ingestion. Known values are:
+     "ApplicationInsights", "ApplicationInsightsWithDiagnosticSettings", and "LogAnalytics".
     :vartype ingestion_mode: str or
      ~azure.mgmt.applicationinsights.v2018_05_01_preview.models.IngestionMode
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
-        'kind': {'required': True},
-        'application_id': {'readonly': True},
-        'app_id': {'readonly': True},
-        'instrumentation_key': {'readonly': True},
-        'creation_date': {'readonly': True},
-        'tenant_id': {'readonly': True},
-        'hockey_app_token': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'connection_string': {'readonly': True},
-        'private_link_scoped_resources': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
+        "kind": {"required": True},
+        "application_id": {"readonly": True},
+        "app_id": {"readonly": True},
+        "instrumentation_key": {"readonly": True},
+        "creation_date": {"readonly": True},
+        "tenant_id": {"readonly": True},
+        "hockey_app_token": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "connection_string": {"readonly": True},
+        "private_link_scoped_resources": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'application_id': {'key': 'properties.ApplicationId', 'type': 'str'},
-        'app_id': {'key': 'properties.AppId', 'type': 'str'},
-        'application_type': {'key': 'properties.Application_Type', 'type': 'str'},
-        'flow_type': {'key': 'properties.Flow_Type', 'type': 'str'},
-        'request_source': {'key': 'properties.Request_Source', 'type': 'str'},
-        'instrumentation_key': {'key': 'properties.InstrumentationKey', 'type': 'str'},
-        'creation_date': {'key': 'properties.CreationDate', 'type': 'iso-8601'},
-        'tenant_id': {'key': 'properties.TenantId', 'type': 'str'},
-        'hockey_app_id': {'key': 'properties.HockeyAppId', 'type': 'str'},
-        'hockey_app_token': {'key': 'properties.HockeyAppToken', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'sampling_percentage': {'key': 'properties.SamplingPercentage', 'type': 'float'},
-        'connection_string': {'key': 'properties.ConnectionString', 'type': 'str'},
-        'retention_in_days': {'key': 'properties.RetentionInDays', 'type': 'int'},
-        'disable_ip_masking': {'key': 'properties.DisableIpMasking', 'type': 'bool'},
-        'immediate_purge_data_on30_days': {'key': 'properties.ImmediatePurgeDataOn30Days', 'type': 'bool'},
-        'private_link_scoped_resources': {'key': 'properties.PrivateLinkScopedResources', 'type': '[PrivateLinkScopedResource]'},
-        'public_network_access_for_ingestion': {'key': 'properties.publicNetworkAccessForIngestion', 'type': 'str'},
-        'public_network_access_for_query': {'key': 'properties.publicNetworkAccessForQuery', 'type': 'str'},
-        'ingestion_mode': {'key': 'properties.IngestionMode', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "kind": {"key": "kind", "type": "str"},
+        "application_id": {"key": "properties.ApplicationId", "type": "str"},
+        "app_id": {"key": "properties.AppId", "type": "str"},
+        "application_type": {"key": "properties.Application_Type", "type": "str"},
+        "flow_type": {"key": "properties.Flow_Type", "type": "str"},
+        "request_source": {"key": "properties.Request_Source", "type": "str"},
+        "instrumentation_key": {"key": "properties.InstrumentationKey", "type": "str"},
+        "creation_date": {"key": "properties.CreationDate", "type": "iso-8601"},
+        "tenant_id": {"key": "properties.TenantId", "type": "str"},
+        "hockey_app_id": {"key": "properties.HockeyAppId", "type": "str"},
+        "hockey_app_token": {"key": "properties.HockeyAppToken", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "sampling_percentage": {"key": "properties.SamplingPercentage", "type": "float"},
+        "connection_string": {"key": "properties.ConnectionString", "type": "str"},
+        "retention_in_days": {"key": "properties.RetentionInDays", "type": "int"},
+        "disable_ip_masking": {"key": "properties.DisableIpMasking", "type": "bool"},
+        "immediate_purge_data_on30_days": {"key": "properties.ImmediatePurgeDataOn30Days", "type": "bool"},
+        "private_link_scoped_resources": {
+            "key": "properties.PrivateLinkScopedResources",
+            "type": "[PrivateLinkScopedResource]",
+        },
+        "public_network_access_for_ingestion": {"key": "properties.publicNetworkAccessForIngestion", "type": "str"},
+        "public_network_access_for_query": {"key": "properties.publicNetworkAccessForQuery", "type": "str"},
+        "ingestion_mode": {"key": "properties.IngestionMode", "type": "str"},
     }
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-locals
         self,
         *,
         location: str,
         kind: str,
         tags: Optional[Dict[str, str]] = None,
-        application_type: Optional[Union[str, "ApplicationType"]] = "web",
-        flow_type: Optional[Union[str, "FlowType"]] = "Bluefield",
-        request_source: Optional[Union[str, "RequestSource"]] = "rest",
+        application_type: Union[str, "_models.ApplicationType"] = "web",
+        flow_type: Union[str, "_models.FlowType"] = "Bluefield",
+        request_source: Union[str, "_models.RequestSource"] = "rest",
         hockey_app_id: Optional[str] = None,
         sampling_percentage: Optional[float] = None,
-        retention_in_days: Optional[int] = 90,
+        retention_in_days: int = 90,
         disable_ip_masking: Optional[bool] = None,
         immediate_purge_data_on30_days: Optional[bool] = None,
-        public_network_access_for_ingestion: Optional[Union[str, "PublicNetworkAccessType"]] = "Enabled",
-        public_network_access_for_query: Optional[Union[str, "PublicNetworkAccessType"]] = "Enabled",
-        ingestion_mode: Optional[Union[str, "IngestionMode"]] = "ApplicationInsights",
-        **kwargs
-    ):
+        public_network_access_for_ingestion: Union[str, "_models.PublicNetworkAccessType"] = "Enabled",
+        public_network_access_for_query: Union[str, "_models.PublicNetworkAccessType"] = "Enabled",
+        ingestion_mode: Union[str, "_models.IngestionMode"] = "ApplicationInsights",
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword location: Required. Resource location.
+        :keyword location: Resource location. Required.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
-        :keyword kind: Required. The kind of application that this component refers to, used to
-         customize UI. This value is a freeform string, values should typically be one of the following:
-         web, ios, other, store, java, phone.
+        :keyword kind: The kind of application that this component refers to, used to customize UI.
+         This value is a freeform string, values should typically be one of the following: web, ios,
+         other, store, java, phone. Required.
         :paramtype kind: str
-        :keyword application_type: Type of application being monitored. Possible values include: "web",
-         "other". Default value: "web".
+        :keyword application_type: Type of application being monitored. Known values are: "web" and
+         "other".
         :paramtype application_type: str or
          ~azure.mgmt.applicationinsights.v2018_05_01_preview.models.ApplicationType
         :keyword flow_type: Used by the Application Insights system to determine what kind of flow this
          component was created by. This is to be set to 'Bluefield' when creating/updating a component
-         via the REST API. Possible values include: "Bluefield". Default value: "Bluefield".
+         via the REST API. "Bluefield"
         :paramtype flow_type: str or
          ~azure.mgmt.applicationinsights.v2018_05_01_preview.models.FlowType
         :keyword request_source: Describes what tool created this Application Insights component.
-         Customers using this API should set this to the default 'rest'. Possible values include:
-         "rest". Default value: "rest".
+         Customers using this API should set this to the default 'rest'. "rest"
         :paramtype request_source: str or
          ~azure.mgmt.applicationinsights.v2018_05_01_preview.models.RequestSource
         :keyword hockey_app_id: The unique application ID created when a new application is added to
@@ -256,20 +260,19 @@ class ApplicationInsightsComponent(ComponentsResource):
         :keyword immediate_purge_data_on30_days: Purge data immediately after 30 days.
         :paramtype immediate_purge_data_on30_days: bool
         :keyword public_network_access_for_ingestion: The network access type for accessing Application
-         Insights ingestion. Possible values include: "Enabled", "Disabled". Default value: "Enabled".
+         Insights ingestion. Known values are: "Enabled" and "Disabled".
         :paramtype public_network_access_for_ingestion: str or
          ~azure.mgmt.applicationinsights.v2018_05_01_preview.models.PublicNetworkAccessType
         :keyword public_network_access_for_query: The network access type for accessing Application
-         Insights query. Possible values include: "Enabled", "Disabled". Default value: "Enabled".
+         Insights query. Known values are: "Enabled" and "Disabled".
         :paramtype public_network_access_for_query: str or
          ~azure.mgmt.applicationinsights.v2018_05_01_preview.models.PublicNetworkAccessType
-        :keyword ingestion_mode: Indicates the flow of the ingestion. Possible values include:
-         "ApplicationInsights", "ApplicationInsightsWithDiagnosticSettings", "LogAnalytics". Default
-         value: "ApplicationInsights".
+        :keyword ingestion_mode: Indicates the flow of the ingestion. Known values are:
+         "ApplicationInsights", "ApplicationInsightsWithDiagnosticSettings", and "LogAnalytics".
         :paramtype ingestion_mode: str or
          ~azure.mgmt.applicationinsights.v2018_05_01_preview.models.IngestionMode
         """
-        super(ApplicationInsightsComponent, self).__init__(location=location, tags=tags, **kwargs)
+        super().__init__(location=location, tags=tags, **kwargs)
         self.kind = kind
         self.application_id = None
         self.app_id = None
@@ -293,12 +296,12 @@ class ApplicationInsightsComponent(ComponentsResource):
         self.ingestion_mode = ingestion_mode
 
 
-class ApplicationInsightsComponentListResult(msrest.serialization.Model):
+class ApplicationInsightsComponentListResult(_serialization.Model):
     """Describes the list of Application Insights Resources.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar value: Required. List of Application Insights component definitions.
+    :ivar value: List of Application Insights component definitions. Required.
     :vartype value:
      list[~azure.mgmt.applicationinsights.v2018_05_01_preview.models.ApplicationInsightsComponent]
     :ivar next_link: The URI to get the next set of Application Insights component definitions if
@@ -307,35 +310,31 @@ class ApplicationInsightsComponentListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ApplicationInsightsComponent]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ApplicationInsightsComponent]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: List["ApplicationInsightsComponent"],
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+        self, *, value: List["_models.ApplicationInsightsComponent"], next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
-        :keyword value: Required. List of Application Insights component definitions.
+        :keyword value: List of Application Insights component definitions. Required.
         :paramtype value:
          list[~azure.mgmt.applicationinsights.v2018_05_01_preview.models.ApplicationInsightsComponent]
         :keyword next_link: The URI to get the next set of Application Insights component definitions
          if too many components where returned in the result set.
         :paramtype next_link: str
         """
-        super(ApplicationInsightsComponentListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class ApplicationInsightsComponentProactiveDetectionConfiguration(msrest.serialization.Model):
+class ApplicationInsightsComponentProactiveDetectionConfiguration(_serialization.Model):
     """A ProactiveDetection configuration definition.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -366,23 +365,26 @@ class ApplicationInsightsComponentProactiveDetectionConfiguration(msrest.seriali
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'type': {'readonly': True},
-        'name_properties_name': {'readonly': True},
-        'last_updated_time': {'readonly': True},
+        "id": {"readonly": True},
+        "type": {"readonly": True},
+        "name_properties_name": {"readonly": True},
+        "last_updated_time": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'name_properties_name': {'key': 'properties.Name', 'type': 'str'},
-        'enabled': {'key': 'properties.Enabled', 'type': 'bool'},
-        'send_emails_to_subscription_owners': {'key': 'properties.SendEmailsToSubscriptionOwners', 'type': 'bool'},
-        'custom_emails': {'key': 'properties.CustomEmails', 'type': '[str]'},
-        'last_updated_time': {'key': 'properties.LastUpdatedTime', 'type': 'str'},
-        'rule_definitions': {'key': 'properties.RuleDefinitions', 'type': 'ApplicationInsightsComponentProactiveDetectionConfigurationPropertiesRuleDefinitions'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "name_properties_name": {"key": "properties.Name", "type": "str"},
+        "enabled": {"key": "properties.Enabled", "type": "bool"},
+        "send_emails_to_subscription_owners": {"key": "properties.SendEmailsToSubscriptionOwners", "type": "bool"},
+        "custom_emails": {"key": "properties.CustomEmails", "type": "[str]"},
+        "last_updated_time": {"key": "properties.LastUpdatedTime", "type": "str"},
+        "rule_definitions": {
+            "key": "properties.RuleDefinitions",
+            "type": "ApplicationInsightsComponentProactiveDetectionConfigurationPropertiesRuleDefinitions",
+        },
     }
 
     def __init__(
@@ -393,9 +395,11 @@ class ApplicationInsightsComponentProactiveDetectionConfiguration(msrest.seriali
         enabled: Optional[bool] = None,
         send_emails_to_subscription_owners: Optional[bool] = None,
         custom_emails: Optional[List[str]] = None,
-        rule_definitions: Optional["ApplicationInsightsComponentProactiveDetectionConfigurationPropertiesRuleDefinitions"] = None,
-        **kwargs
-    ):
+        rule_definitions: Optional[
+            "_models.ApplicationInsightsComponentProactiveDetectionConfigurationPropertiesRuleDefinitions"
+        ] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: Azure resource name.
         :paramtype name: str
@@ -413,7 +417,7 @@ class ApplicationInsightsComponentProactiveDetectionConfiguration(msrest.seriali
         :paramtype rule_definitions:
          ~azure.mgmt.applicationinsights.v2018_05_01_preview.models.ApplicationInsightsComponentProactiveDetectionConfigurationPropertiesRuleDefinitions
         """
-        super(ApplicationInsightsComponentProactiveDetectionConfiguration, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = None
         self.name = name
         self.type = None
@@ -426,8 +430,9 @@ class ApplicationInsightsComponentProactiveDetectionConfiguration(msrest.seriali
         self.rule_definitions = rule_definitions
 
 
-class ApplicationInsightsComponentProactiveDetectionConfigurationPropertiesRuleDefinitions(msrest.serialization.Model):
-    """Static definitions of the ProactiveDetection configuration rule (same values for all components).
+class ApplicationInsightsComponentProactiveDetectionConfigurationPropertiesRuleDefinitions(_serialization.Model):
+    """Static definitions of the ProactiveDetection configuration rule (same values for all
+    components).
 
     :ivar name: The rule name.
     :vartype name: str
@@ -449,14 +454,14 @@ class ApplicationInsightsComponentProactiveDetectionConfigurationPropertiesRuleD
     """
 
     _attribute_map = {
-        'name': {'key': 'Name', 'type': 'str'},
-        'display_name': {'key': 'DisplayName', 'type': 'str'},
-        'description': {'key': 'Description', 'type': 'str'},
-        'help_url': {'key': 'HelpUrl', 'type': 'str'},
-        'is_hidden': {'key': 'IsHidden', 'type': 'bool'},
-        'is_enabled_by_default': {'key': 'IsEnabledByDefault', 'type': 'bool'},
-        'is_in_preview': {'key': 'IsInPreview', 'type': 'bool'},
-        'supports_email_notifications': {'key': 'SupportsEmailNotifications', 'type': 'bool'},
+        "name": {"key": "Name", "type": "str"},
+        "display_name": {"key": "DisplayName", "type": "str"},
+        "description": {"key": "Description", "type": "str"},
+        "help_url": {"key": "HelpUrl", "type": "str"},
+        "is_hidden": {"key": "IsHidden", "type": "bool"},
+        "is_enabled_by_default": {"key": "IsEnabledByDefault", "type": "bool"},
+        "is_in_preview": {"key": "IsInPreview", "type": "bool"},
+        "supports_email_notifications": {"key": "SupportsEmailNotifications", "type": "bool"},
     }
 
     def __init__(
@@ -470,8 +475,8 @@ class ApplicationInsightsComponentProactiveDetectionConfigurationPropertiesRuleD
         is_enabled_by_default: Optional[bool] = None,
         is_in_preview: Optional[bool] = None,
         supports_email_notifications: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The rule name.
         :paramtype name: str
@@ -491,7 +496,7 @@ class ApplicationInsightsComponentProactiveDetectionConfigurationPropertiesRuleD
          supported for detections for this rule.
         :paramtype supports_email_notifications: bool
         """
-        super(ApplicationInsightsComponentProactiveDetectionConfigurationPropertiesRuleDefinitions, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.display_name = display_name
         self.description = description
@@ -502,50 +507,44 @@ class ApplicationInsightsComponentProactiveDetectionConfigurationPropertiesRuleD
         self.supports_email_notifications = supports_email_notifications
 
 
-class ComponentPurgeBody(msrest.serialization.Model):
+class ComponentPurgeBody(_serialization.Model):
     """Describes the body of a purge request for an App Insights component.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar table: Required. Table from which to purge data.
+    :ivar table: Table from which to purge data. Required.
     :vartype table: str
-    :ivar filters: Required. The set of columns and filters (queries) to run over them to purge the
-     resulting data.
+    :ivar filters: The set of columns and filters (queries) to run over them to purge the resulting
+     data. Required.
     :vartype filters:
      list[~azure.mgmt.applicationinsights.v2018_05_01_preview.models.ComponentPurgeBodyFilters]
     """
 
     _validation = {
-        'table': {'required': True},
-        'filters': {'required': True},
+        "table": {"required": True},
+        "filters": {"required": True},
     }
 
     _attribute_map = {
-        'table': {'key': 'table', 'type': 'str'},
-        'filters': {'key': 'filters', 'type': '[ComponentPurgeBodyFilters]'},
+        "table": {"key": "table", "type": "str"},
+        "filters": {"key": "filters", "type": "[ComponentPurgeBodyFilters]"},
     }
 
-    def __init__(
-        self,
-        *,
-        table: str,
-        filters: List["ComponentPurgeBodyFilters"],
-        **kwargs
-    ):
+    def __init__(self, *, table: str, filters: List["_models.ComponentPurgeBodyFilters"], **kwargs: Any) -> None:
         """
-        :keyword table: Required. Table from which to purge data.
+        :keyword table: Table from which to purge data. Required.
         :paramtype table: str
-        :keyword filters: Required. The set of columns and filters (queries) to run over them to purge
-         the resulting data.
+        :keyword filters: The set of columns and filters (queries) to run over them to purge the
+         resulting data. Required.
         :paramtype filters:
          list[~azure.mgmt.applicationinsights.v2018_05_01_preview.models.ComponentPurgeBodyFilters]
         """
-        super(ComponentPurgeBody, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.table = table
         self.filters = filters
 
 
-class ComponentPurgeBodyFilters(msrest.serialization.Model):
+class ComponentPurgeBodyFilters(_serialization.Model):
     """User-defined filters to return data which will be purged from the table.
 
     :ivar column: The column of the table over which the given query should run.
@@ -563,10 +562,10 @@ class ComponentPurgeBodyFilters(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'column': {'key': 'column', 'type': 'str'},
-        'operator': {'key': 'operator', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'object'},
-        'key': {'key': 'key', 'type': 'str'},
+        "column": {"key": "column", "type": "str"},
+        "operator": {"key": "operator", "type": "str"},
+        "value": {"key": "value", "type": "object"},
+        "key": {"key": "key", "type": "str"},
     }
 
     def __init__(
@@ -576,8 +575,8 @@ class ComponentPurgeBodyFilters(msrest.serialization.Model):
         operator: Optional[str] = None,
         value: Optional[Any] = None,
         key: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword column: The column of the table over which the given query should run.
         :paramtype column: str
@@ -592,80 +591,70 @@ class ComponentPurgeBodyFilters(msrest.serialization.Model):
          custom dimension.
         :paramtype key: str
         """
-        super(ComponentPurgeBodyFilters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.column = column
         self.operator = operator
         self.value = value
         self.key = key
 
 
-class ComponentPurgeResponse(msrest.serialization.Model):
+class ComponentPurgeResponse(_serialization.Model):
     """Response containing operationId for a specific purge action.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar operation_id: Required. Id to use when querying for status for a particular purge
-     operation.
+    :ivar operation_id: Id to use when querying for status for a particular purge operation.
+     Required.
     :vartype operation_id: str
     """
 
     _validation = {
-        'operation_id': {'required': True},
+        "operation_id": {"required": True},
     }
 
     _attribute_map = {
-        'operation_id': {'key': 'operationId', 'type': 'str'},
+        "operation_id": {"key": "operationId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        operation_id: str,
-        **kwargs
-    ):
+    def __init__(self, *, operation_id: str, **kwargs: Any) -> None:
         """
-        :keyword operation_id: Required. Id to use when querying for status for a particular purge
-         operation.
+        :keyword operation_id: Id to use when querying for status for a particular purge operation.
+         Required.
         :paramtype operation_id: str
         """
-        super(ComponentPurgeResponse, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.operation_id = operation_id
 
 
-class ComponentPurgeStatusResponse(msrest.serialization.Model):
+class ComponentPurgeStatusResponse(_serialization.Model):
     """Response containing status for a specific purge operation.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar status: Required. Status of the operation represented by the requested Id. Possible
-     values include: "pending", "completed".
+    :ivar status: Status of the operation represented by the requested Id. Required. Known values
+     are: "pending" and "completed".
     :vartype status: str or ~azure.mgmt.applicationinsights.v2018_05_01_preview.models.PurgeState
     """
 
     _validation = {
-        'status': {'required': True},
+        "status": {"required": True},
     }
 
     _attribute_map = {
-        'status': {'key': 'status', 'type': 'str'},
+        "status": {"key": "status", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        status: Union[str, "PurgeState"],
-        **kwargs
-    ):
+    def __init__(self, *, status: Union[str, "_models.PurgeState"], **kwargs: Any) -> None:
         """
-        :keyword status: Required. Status of the operation represented by the requested Id. Possible
-         values include: "pending", "completed".
+        :keyword status: Status of the operation represented by the requested Id. Required. Known
+         values are: "pending" and "completed".
         :paramtype status: str or ~azure.mgmt.applicationinsights.v2018_05_01_preview.models.PurgeState
         """
-        super(ComponentPurgeStatusResponse, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.status = status
 
 
-class HeaderField(msrest.serialization.Model):
+class HeaderField(_serialization.Model):
     """A header to add to the WebTest.
 
     :ivar header_field_name: The name of the header.
@@ -675,29 +664,25 @@ class HeaderField(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'header_field_name': {'key': 'key', 'type': 'str'},
-        'header_field_value': {'key': 'value', 'type': 'str'},
+        "header_field_name": {"key": "key", "type": "str"},
+        "header_field_value": {"key": "value", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        header_field_name: Optional[str] = None,
-        header_field_value: Optional[str] = None,
-        **kwargs
-    ):
+        self, *, header_field_name: Optional[str] = None, header_field_value: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword header_field_name: The name of the header.
         :paramtype header_field_name: str
         :keyword header_field_value: The value of the header.
         :paramtype header_field_value: str
         """
-        super(HeaderField, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.header_field_name = header_field_name
         self.header_field_value = header_field_value
 
 
-class Operation(msrest.serialization.Model):
+class Operation(_serialization.Model):
     """Represents an operation returned by the GetOperations request.
 
     :ivar name: Name of the operation.
@@ -707,25 +692,25 @@ class Operation(msrest.serialization.Model):
     :ivar origin: Origin of the operation.
     :vartype origin: str
     :ivar properties: Properties of the operation.
-    :vartype properties: any
+    :vartype properties: JSON
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'display': {'key': 'display', 'type': 'OperationInfo'},
-        'origin': {'key': 'origin', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'object'},
+        "name": {"key": "name", "type": "str"},
+        "display": {"key": "display", "type": "OperationInfo"},
+        "origin": {"key": "origin", "type": "str"},
+        "properties": {"key": "properties", "type": "object"},
     }
 
     def __init__(
         self,
         *,
         name: Optional[str] = None,
-        display: Optional["OperationInfo"] = None,
+        display: Optional["_models.OperationInfo"] = None,
         origin: Optional[str] = None,
-        properties: Optional[Any] = None,
-        **kwargs
-    ):
+        properties: Optional[JSON] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: Name of the operation.
         :paramtype name: str
@@ -734,16 +719,16 @@ class Operation(msrest.serialization.Model):
         :keyword origin: Origin of the operation.
         :paramtype origin: str
         :keyword properties: Properties of the operation.
-        :paramtype properties: any
+        :paramtype properties: JSON
         """
-        super(Operation, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.display = display
         self.origin = origin
         self.properties = properties
 
 
-class OperationInfo(msrest.serialization.Model):
+class OperationInfo(_serialization.Model):
     """Information about an operation.
 
     :ivar provider: Name of the provider.
@@ -757,10 +742,10 @@ class OperationInfo(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'provider': {'key': 'provider', 'type': 'str'},
-        'resource': {'key': 'resource', 'type': 'str'},
-        'operation': {'key': 'operation', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
+        "provider": {"key": "provider", "type": "str"},
+        "resource": {"key": "resource", "type": "str"},
+        "operation": {"key": "operation", "type": "str"},
+        "description": {"key": "description", "type": "str"},
     }
 
     def __init__(
@@ -770,8 +755,8 @@ class OperationInfo(msrest.serialization.Model):
         resource: Optional[str] = None,
         operation: Optional[str] = None,
         description: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword provider: Name of the provider.
         :paramtype provider: str
@@ -782,14 +767,14 @@ class OperationInfo(msrest.serialization.Model):
         :keyword description: Description of the operation.
         :paramtype description: str
         """
-        super(OperationInfo, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.provider = provider
         self.resource = resource
         self.operation = operation
         self.description = description
 
 
-class OperationsListResult(msrest.serialization.Model):
+class OperationsListResult(_serialization.Model):
     """Result of the List Operations operation.
 
     :ivar value: A collection of operations.
@@ -799,29 +784,25 @@ class OperationsListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Operation]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Operation]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["Operation"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+        self, *, value: Optional[List["_models.Operation"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: A collection of operations.
         :paramtype value: list[~azure.mgmt.applicationinsights.v2018_05_01_preview.models.Operation]
         :keyword next_link: URL to get the next set of operation list results if there are any.
         :paramtype next_link: str
         """
-        super(OperationsListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class PrivateLinkScopedResource(msrest.serialization.Model):
+class PrivateLinkScopedResource(_serialization.Model):
     """The private link scope resource reference.
 
     :ivar resource_id: The full resource Id of the private link scope resource.
@@ -831,54 +812,44 @@ class PrivateLinkScopedResource(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'resource_id': {'key': 'ResourceId', 'type': 'str'},
-        'scope_id': {'key': 'ScopeId', 'type': 'str'},
+        "resource_id": {"key": "ResourceId", "type": "str"},
+        "scope_id": {"key": "ScopeId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        resource_id: Optional[str] = None,
-        scope_id: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, resource_id: Optional[str] = None, scope_id: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword resource_id: The full resource Id of the private link scope resource.
         :paramtype resource_id: str
         :keyword scope_id: The private link scope unique Identifier.
         :paramtype scope_id: str
         """
-        super(PrivateLinkScopedResource, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.resource_id = resource_id
         self.scope_id = scope_id
 
 
-class TagsResource(msrest.serialization.Model):
-    """A container holding only the Tags for a resource, allowing the user to update the tags on a WebTest instance.
+class TagsResource(_serialization.Model):
+    """A container holding only the Tags for a resource, allowing the user to update the tags on a
+    WebTest instance.
 
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        *,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         """
-        super(TagsResource, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.tags = tags
 
 
-class WebtestsResource(msrest.serialization.Model):
+class WebtestsResource(_serialization.Model):
     """An azure resource object.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -891,41 +862,35 @@ class WebtestsResource(msrest.serialization.Model):
     :vartype name: str
     :ivar type: Azure resource type.
     :vartype type: str
-    :ivar location: Required. Resource location.
+    :ivar location: Resource location. Required.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        *,
-        location: str,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
-        :keyword location: Required. Resource location.
+        :keyword location: Resource location. Required.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         """
-        super(WebtestsResource, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
@@ -933,7 +898,7 @@ class WebtestsResource(msrest.serialization.Model):
         self.tags = tags
 
 
-class WebTest(WebtestsResource):
+class WebTest(WebtestsResource):  # pylint: disable=too-many-instance-attributes
     """An Application Insights WebTest definition.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -946,12 +911,12 @@ class WebTest(WebtestsResource):
     :vartype name: str
     :ivar type: Azure resource type.
     :vartype type: str
-    :ivar location: Required. Resource location.
+    :ivar location: Resource location. Required.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar kind: The kind of WebTest that this web test watches. Choices are ping and multistep.
-     Possible values include: "ping", "multistep". Default value: "ping".
+     Known values are: "ping" and "multistep".
     :vartype kind: str or ~azure.mgmt.applicationinsights.v2018_05_01_preview.models.WebTestKind
     :ivar synthetic_monitor_id: Unique ID of this WebTest. This is typically the same value as the
      Name field.
@@ -967,8 +932,7 @@ class WebTest(WebtestsResource):
     :ivar timeout: Seconds until this WebTest will timeout and fail. Default value is 30.
     :vartype timeout: int
     :ivar web_test_kind: The kind of web test this is, valid choices are ping, multistep, basic,
-     and standard. Possible values include: "ping", "multistep", "basic", "standard". Default value:
-     "ping".
+     and standard. Known values are: "ping", "multistep", "basic", and "standard".
     :vartype web_test_kind: str or
      ~azure.mgmt.applicationinsights.v2018_05_01_preview.models.WebTestKindEnum
     :ivar retry_enabled: Allow for retries should this WebTest fail.
@@ -993,33 +957,33 @@ class WebTest(WebtestsResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
-        'provisioning_state': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'synthetic_monitor_id': {'key': 'properties.SyntheticMonitorId', 'type': 'str'},
-        'web_test_name': {'key': 'properties.Name', 'type': 'str'},
-        'description': {'key': 'properties.Description', 'type': 'str'},
-        'enabled': {'key': 'properties.Enabled', 'type': 'bool'},
-        'frequency': {'key': 'properties.Frequency', 'type': 'int'},
-        'timeout': {'key': 'properties.Timeout', 'type': 'int'},
-        'web_test_kind': {'key': 'properties.Kind', 'type': 'str'},
-        'retry_enabled': {'key': 'properties.RetryEnabled', 'type': 'bool'},
-        'locations': {'key': 'properties.Locations', 'type': '[WebTestGeolocation]'},
-        'configuration': {'key': 'properties.Configuration', 'type': 'WebTestPropertiesConfiguration'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'request': {'key': 'properties.Request', 'type': 'WebTestPropertiesRequest'},
-        'validation_rules': {'key': 'properties.ValidationRules', 'type': 'WebTestPropertiesValidationRules'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "kind": {"key": "kind", "type": "str"},
+        "synthetic_monitor_id": {"key": "properties.SyntheticMonitorId", "type": "str"},
+        "web_test_name": {"key": "properties.Name", "type": "str"},
+        "description": {"key": "properties.Description", "type": "str"},
+        "enabled": {"key": "properties.Enabled", "type": "bool"},
+        "frequency": {"key": "properties.Frequency", "type": "int"},
+        "timeout": {"key": "properties.Timeout", "type": "int"},
+        "web_test_kind": {"key": "properties.Kind", "type": "str"},
+        "retry_enabled": {"key": "properties.RetryEnabled", "type": "bool"},
+        "locations": {"key": "properties.Locations", "type": "[WebTestGeolocation]"},
+        "configuration": {"key": "properties.Configuration", "type": "WebTestPropertiesConfiguration"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "request": {"key": "properties.Request", "type": "WebTestPropertiesRequest"},
+        "validation_rules": {"key": "properties.ValidationRules", "type": "WebTestPropertiesValidationRules"},
     }
 
     def __init__(
@@ -1027,28 +991,28 @@ class WebTest(WebtestsResource):
         *,
         location: str,
         tags: Optional[Dict[str, str]] = None,
-        kind: Optional[Union[str, "WebTestKind"]] = "ping",
+        kind: Union[str, "_models.WebTestKind"] = "ping",
         synthetic_monitor_id: Optional[str] = None,
         web_test_name: Optional[str] = None,
         description: Optional[str] = None,
         enabled: Optional[bool] = None,
-        frequency: Optional[int] = 300,
-        timeout: Optional[int] = 30,
-        web_test_kind: Optional[Union[str, "WebTestKindEnum"]] = "ping",
+        frequency: int = 300,
+        timeout: int = 30,
+        web_test_kind: Union[str, "_models.WebTestKindEnum"] = "ping",
         retry_enabled: Optional[bool] = None,
-        locations: Optional[List["WebTestGeolocation"]] = None,
-        configuration: Optional["WebTestPropertiesConfiguration"] = None,
-        request: Optional["WebTestPropertiesRequest"] = None,
-        validation_rules: Optional["WebTestPropertiesValidationRules"] = None,
-        **kwargs
-    ):
+        locations: Optional[List["_models.WebTestGeolocation"]] = None,
+        configuration: Optional["_models.WebTestPropertiesConfiguration"] = None,
+        request: Optional["_models.WebTestPropertiesRequest"] = None,
+        validation_rules: Optional["_models.WebTestPropertiesValidationRules"] = None,
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword location: Required. Resource location.
+        :keyword location: Resource location. Required.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword kind: The kind of WebTest that this web test watches. Choices are ping and multistep.
-         Possible values include: "ping", "multistep". Default value: "ping".
+         Known values are: "ping" and "multistep".
         :paramtype kind: str or ~azure.mgmt.applicationinsights.v2018_05_01_preview.models.WebTestKind
         :keyword synthetic_monitor_id: Unique ID of this WebTest. This is typically the same value as
          the Name field.
@@ -1065,8 +1029,7 @@ class WebTest(WebtestsResource):
         :keyword timeout: Seconds until this WebTest will timeout and fail. Default value is 30.
         :paramtype timeout: int
         :keyword web_test_kind: The kind of web test this is, valid choices are ping, multistep, basic,
-         and standard. Possible values include: "ping", "multistep", "basic", "standard". Default value:
-         "ping".
+         and standard. Known values are: "ping", "multistep", "basic", and "standard".
         :paramtype web_test_kind: str or
          ~azure.mgmt.applicationinsights.v2018_05_01_preview.models.WebTestKindEnum
         :keyword retry_enabled: Allow for retries should this WebTest fail.
@@ -1085,7 +1048,7 @@ class WebTest(WebtestsResource):
         :paramtype validation_rules:
          ~azure.mgmt.applicationinsights.v2018_05_01_preview.models.WebTestPropertiesValidationRules
         """
-        super(WebTest, self).__init__(location=location, tags=tags, **kwargs)
+        super().__init__(location=location, tags=tags, **kwargs)
         self.kind = kind
         self.synthetic_monitor_id = synthetic_monitor_id
         self.web_test_name = web_test_name
@@ -1102,37 +1065,33 @@ class WebTest(WebtestsResource):
         self.validation_rules = validation_rules
 
 
-class WebTestGeolocation(msrest.serialization.Model):
-    """Geo-physical location to run a WebTest from. You must specify one or more locations for the test to run from.
+class WebTestGeolocation(_serialization.Model):
+    """Geo-physical location to run a WebTest from. You must specify one or more locations for the
+    test to run from.
 
     :ivar location: Location ID for the WebTest to run from.
     :vartype location: str
     """
 
     _attribute_map = {
-        'location': {'key': 'Id', 'type': 'str'},
+        "location": {"key": "Id", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        location: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, location: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword location: Location ID for the WebTest to run from.
         :paramtype location: str
         """
-        super(WebTestGeolocation, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.location = location
 
 
-class WebTestListResult(msrest.serialization.Model):
+class WebTestListResult(_serialization.Model):
     """A list of 0 or more Application Insights WebTest definitions.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar value: Required. Set of Application Insights WebTest definitions.
+    :ivar value: Set of Application Insights WebTest definitions. Required.
     :vartype value: list[~azure.mgmt.applicationinsights.v2018_05_01_preview.models.WebTest]
     :ivar next_link: The link to get the next part of the returned list of WebTest, should the
      return set be too large for a single request. May be null.
@@ -1140,34 +1099,28 @@ class WebTestListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[WebTest]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[WebTest]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List["WebTest"],
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: List["_models.WebTest"], next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
-        :keyword value: Required. Set of Application Insights WebTest definitions.
+        :keyword value: Set of Application Insights WebTest definitions. Required.
         :paramtype value: list[~azure.mgmt.applicationinsights.v2018_05_01_preview.models.WebTest]
         :keyword next_link: The link to get the next part of the returned list of WebTest, should the
          return set be too large for a single request. May be null.
         :paramtype next_link: str
         """
-        super(WebTestListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class WebTestPropertiesConfiguration(msrest.serialization.Model):
+class WebTestPropertiesConfiguration(_serialization.Model):
     """An XML configuration specification for a WebTest.
 
     :ivar web_test: The XML specification of a WebTest to run against an application.
@@ -1175,24 +1128,19 @@ class WebTestPropertiesConfiguration(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'web_test': {'key': 'WebTest', 'type': 'str'},
+        "web_test": {"key": "WebTest", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        web_test: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, web_test: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword web_test: The XML specification of a WebTest to run against an application.
         :paramtype web_test: str
         """
-        super(WebTestPropertiesConfiguration, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.web_test = web_test
 
 
-class WebTestPropertiesRequest(msrest.serialization.Model):
+class WebTestPropertiesRequest(_serialization.Model):
     """The collection of request properties.
 
     :ivar request_url: Url location to test.
@@ -1210,25 +1158,25 @@ class WebTestPropertiesRequest(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'request_url': {'key': 'RequestUrl', 'type': 'str'},
-        'headers': {'key': 'Headers', 'type': '[HeaderField]'},
-        'http_verb': {'key': 'HttpVerb', 'type': 'str'},
-        'request_body': {'key': 'RequestBody', 'type': 'str'},
-        'parse_dependent_requests': {'key': 'ParseDependentRequests', 'type': 'bool'},
-        'follow_redirects': {'key': 'FollowRedirects', 'type': 'bool'},
+        "request_url": {"key": "RequestUrl", "type": "str"},
+        "headers": {"key": "Headers", "type": "[HeaderField]"},
+        "http_verb": {"key": "HttpVerb", "type": "str"},
+        "request_body": {"key": "RequestBody", "type": "str"},
+        "parse_dependent_requests": {"key": "ParseDependentRequests", "type": "bool"},
+        "follow_redirects": {"key": "FollowRedirects", "type": "bool"},
     }
 
     def __init__(
         self,
         *,
         request_url: Optional[str] = None,
-        headers: Optional[List["HeaderField"]] = None,
+        headers: Optional[List["_models.HeaderField"]] = None,
         http_verb: Optional[str] = None,
         request_body: Optional[str] = None,
         parse_dependent_requests: Optional[bool] = None,
         follow_redirects: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword request_url: Url location to test.
         :paramtype request_url: str
@@ -1244,7 +1192,7 @@ class WebTestPropertiesRequest(msrest.serialization.Model):
         :keyword follow_redirects: Follow redirects for this web test.
         :paramtype follow_redirects: bool
         """
-        super(WebTestPropertiesRequest, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.request_url = request_url
         self.headers = headers
         self.http_verb = http_verb
@@ -1253,7 +1201,7 @@ class WebTestPropertiesRequest(msrest.serialization.Model):
         self.follow_redirects = follow_redirects
 
 
-class WebTestPropertiesValidationRules(msrest.serialization.Model):
+class WebTestPropertiesValidationRules(_serialization.Model):
     """The collection of validation rule properties.
 
     :ivar content_validation: The collection of content validation properties.
@@ -1272,23 +1220,23 @@ class WebTestPropertiesValidationRules(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'content_validation': {'key': 'ContentValidation', 'type': 'WebTestPropertiesValidationRulesContentValidation'},
-        'ssl_check': {'key': 'SSLCheck', 'type': 'bool'},
-        'ssl_cert_remaining_lifetime_check': {'key': 'SSLCertRemainingLifetimeCheck', 'type': 'int'},
-        'expected_http_status_code': {'key': 'ExpectedHttpStatusCode', 'type': 'int'},
-        'ignore_https_status_code': {'key': 'IgnoreHttpsStatusCode', 'type': 'bool'},
+        "content_validation": {"key": "ContentValidation", "type": "WebTestPropertiesValidationRulesContentValidation"},
+        "ssl_check": {"key": "SSLCheck", "type": "bool"},
+        "ssl_cert_remaining_lifetime_check": {"key": "SSLCertRemainingLifetimeCheck", "type": "int"},
+        "expected_http_status_code": {"key": "ExpectedHttpStatusCode", "type": "int"},
+        "ignore_https_status_code": {"key": "IgnoreHttpsStatusCode", "type": "bool"},
     }
 
     def __init__(
         self,
         *,
-        content_validation: Optional["WebTestPropertiesValidationRulesContentValidation"] = None,
+        content_validation: Optional["_models.WebTestPropertiesValidationRulesContentValidation"] = None,
         ssl_check: Optional[bool] = None,
         ssl_cert_remaining_lifetime_check: Optional[int] = None,
         expected_http_status_code: Optional[int] = None,
         ignore_https_status_code: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword content_validation: The collection of content validation properties.
         :paramtype content_validation:
@@ -1304,7 +1252,7 @@ class WebTestPropertiesValidationRules(msrest.serialization.Model):
         :keyword ignore_https_status_code: When set, validation will ignore the status code.
         :paramtype ignore_https_status_code: bool
         """
-        super(WebTestPropertiesValidationRules, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.content_validation = content_validation
         self.ssl_check = ssl_check
         self.ssl_cert_remaining_lifetime_check = ssl_cert_remaining_lifetime_check
@@ -1312,7 +1260,7 @@ class WebTestPropertiesValidationRules(msrest.serialization.Model):
         self.ignore_https_status_code = ignore_https_status_code
 
 
-class WebTestPropertiesValidationRulesContentValidation(msrest.serialization.Model):
+class WebTestPropertiesValidationRulesContentValidation(_serialization.Model):
     """The collection of content validation properties.
 
     :ivar content_match: Content to look for in the return of the WebTest.  Must not be null or
@@ -1326,9 +1274,9 @@ class WebTestPropertiesValidationRulesContentValidation(msrest.serialization.Mod
     """
 
     _attribute_map = {
-        'content_match': {'key': 'ContentMatch', 'type': 'str'},
-        'ignore_case': {'key': 'IgnoreCase', 'type': 'bool'},
-        'pass_if_text_found': {'key': 'PassIfTextFound', 'type': 'bool'},
+        "content_match": {"key": "ContentMatch", "type": "str"},
+        "ignore_case": {"key": "IgnoreCase", "type": "bool"},
+        "pass_if_text_found": {"key": "PassIfTextFound", "type": "bool"},
     }
 
     def __init__(
@@ -1337,8 +1285,8 @@ class WebTestPropertiesValidationRulesContentValidation(msrest.serialization.Mod
         content_match: Optional[str] = None,
         ignore_case: Optional[bool] = None,
         pass_if_text_found: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword content_match: Content to look for in the return of the WebTest.  Must not be null or
          empty.
@@ -1349,7 +1297,7 @@ class WebTestPropertiesValidationRulesContentValidation(msrest.serialization.Mod
          ContentMatch string.  If false, validation will fail if there is a match.
         :paramtype pass_if_text_found: bool
         """
-        super(WebTestPropertiesValidationRulesContentValidation, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.content_match = content_match
         self.ignore_case = ignore_case
         self.pass_if_text_found = pass_if_text_found

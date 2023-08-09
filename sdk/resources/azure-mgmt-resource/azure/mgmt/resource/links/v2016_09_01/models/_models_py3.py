@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import List, Optional, TYPE_CHECKING
+from typing import Any, List, Optional, TYPE_CHECKING
 
 from ... import _serialization
 
@@ -30,7 +30,9 @@ class Operation(_serialization.Model):
         "display": {"key": "display", "type": "OperationDisplay"},
     }
 
-    def __init__(self, *, name: Optional[str] = None, display: Optional["_models.OperationDisplay"] = None, **kwargs):
+    def __init__(
+        self, *, name: Optional[str] = None, display: Optional["_models.OperationDisplay"] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword name: Operation name: {provider}/{resource}/{operation}.
         :paramtype name: str
@@ -69,8 +71,8 @@ class OperationDisplay(_serialization.Model):
         resource: Optional[str] = None,
         operation: Optional[str] = None,
         description: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword provider: Service provider: Microsoft.Resources.
         :paramtype provider: str
@@ -89,7 +91,8 @@ class OperationDisplay(_serialization.Model):
 
 
 class OperationListResult(_serialization.Model):
-    """Result of the request to list Microsoft.Resources operations. It contains a list of operations and a URL link to get the next set of results.
+    """Result of the request to list Microsoft.Resources operations. It contains a list of operations
+    and a URL link to get the next set of results.
 
     :ivar value: List of Microsoft.Resources operations.
     :vartype value: list[~azure.mgmt.resource.links.v2016_09_01.models.Operation]
@@ -102,7 +105,9 @@ class OperationListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Operation"]] = None, next_link: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, value: Optional[List["_models.Operation"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: List of Microsoft.Resources operations.
         :paramtype value: list[~azure.mgmt.resource.links.v2016_09_01.models.Operation]
@@ -142,7 +147,7 @@ class ResourceLink(_serialization.Model):
         "properties": {"key": "properties", "type": "ResourceLinkProperties"},
     }
 
-    def __init__(self, *, properties: Optional["_models.ResourceLinkProperties"] = None, **kwargs):
+    def __init__(self, *, properties: Optional["_models.ResourceLinkProperties"] = None, **kwargs: Any) -> None:
         """
         :keyword properties: Properties for resource link.
         :paramtype properties: ~azure.mgmt.resource.links.v2016_09_01.models.ResourceLinkProperties
@@ -171,7 +176,7 @@ class ResourceLinkFilter(_serialization.Model):
         "target_id": {"key": "targetId", "type": "str"},
     }
 
-    def __init__(self, *, target_id: str, **kwargs):
+    def __init__(self, *, target_id: str, **kwargs: Any) -> None:
         """
         :keyword target_id: The ID of the target resource. Required.
         :paramtype target_id: str
@@ -206,7 +211,7 @@ class ResourceLinkProperties(_serialization.Model):
         "notes": {"key": "notes", "type": "str"},
     }
 
-    def __init__(self, *, target_id: str, notes: Optional[str] = None, **kwargs):
+    def __init__(self, *, target_id: str, notes: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword target_id: The fully qualified ID of the target resource in the link. Required.
         :paramtype target_id: str
@@ -242,7 +247,7 @@ class ResourceLinkResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.ResourceLink"], **kwargs):
+    def __init__(self, *, value: List["_models.ResourceLink"], **kwargs: Any) -> None:
         """
         :keyword value: An array of resource links. Required.
         :paramtype value: list[~azure.mgmt.resource.links.v2016_09_01.models.ResourceLink]

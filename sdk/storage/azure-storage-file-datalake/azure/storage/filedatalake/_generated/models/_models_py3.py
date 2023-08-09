@@ -8,9 +8,15 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import List, Optional, TYPE_CHECKING
+import sys
+from typing import Any, List, Optional, TYPE_CHECKING
 
 from .. import _serialization
+
+if sys.version_info >= (3, 8):
+    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
+else:
+    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -35,8 +41,13 @@ class AclFailedEntry(_serialization.Model):
     }
 
     def __init__(
-        self, *, name: Optional[str] = None, type: Optional[str] = None, error_message: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        name: Optional[str] = None,
+        type: Optional[str] = None,
+        error_message: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name:
         :paramtype name: str
@@ -77,8 +88,8 @@ class BlobHierarchyListSegment(_serialization.Model):
         *,
         blob_items: List["_models.BlobItemInternal"],
         blob_prefixes: Optional[List["_models.BlobPrefix"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword blob_prefixes:
         :paramtype blob_prefixes: list[~azure.storage.filedatalake.models.BlobPrefix]
@@ -139,8 +150,8 @@ class BlobItemInternal(_serialization.Model):
         version_id: Optional[str] = None,
         is_current_version: Optional[bool] = None,
         deletion_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: Required.
         :paramtype name: str
@@ -184,7 +195,7 @@ class BlobPrefix(_serialization.Model):
         "name": {"key": "Name", "type": "str"},
     }
 
-    def __init__(self, *, name: str, **kwargs):
+    def __init__(self, *, name: str, **kwargs: Any) -> None:
         """
         :keyword name: Required.
         :paramtype name: str
@@ -332,8 +343,8 @@ class BlobPropertiesInternal(_serialization.Model):  # pylint: disable=too-many-
         is_sealed: Optional[bool] = None,
         last_accessed_on: Optional[datetime.datetime] = None,
         delete_time: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword creation_time:
         :paramtype creation_time: ~datetime.datetime
@@ -456,9 +467,9 @@ class CpkInfo(_serialization.Model):
         *,
         encryption_key: Optional[str] = None,
         encryption_key_sha256: Optional[str] = None,
-        encryption_algorithm: Optional[str] = None,
-        **kwargs
-    ):
+        encryption_algorithm: Optional[Literal["AES256"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword encryption_key: Optional. Specifies the encryption key to use to encrypt the data
          provided in the request. If not specified, encryption is performed with the root account
@@ -496,8 +507,13 @@ class FileSystem(_serialization.Model):
     }
 
     def __init__(
-        self, *, name: Optional[str] = None, last_modified: Optional[str] = None, e_tag: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        name: Optional[str] = None,
+        last_modified: Optional[str] = None,
+        e_tag: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name:
         :paramtype name: str
@@ -523,7 +539,7 @@ class FileSystemList(_serialization.Model):
         "filesystems": {"key": "filesystems", "type": "[FileSystem]"},
     }
 
-    def __init__(self, *, filesystems: Optional[List["_models.FileSystem"]] = None, **kwargs):
+    def __init__(self, *, filesystems: Optional[List["_models.FileSystem"]] = None, **kwargs: Any) -> None:
         """
         :keyword filesystems:
         :paramtype filesystems: list[~azure.storage.filedatalake.models.FileSystem]
@@ -544,7 +560,7 @@ class LeaseAccessConditions(_serialization.Model):
         "lease_id": {"key": "leaseId", "type": "str"},
     }
 
-    def __init__(self, *, lease_id: Optional[str] = None, **kwargs):
+    def __init__(self, *, lease_id: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword lease_id: If specified, the operation only succeeds if the resource's lease is active
          and matches this ID.
@@ -606,8 +622,8 @@ class ListBlobsHierarchySegmentResponse(_serialization.Model):
         max_results: Optional[int] = None,
         delimiter: Optional[str] = None,
         next_marker: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword service_endpoint: Required.
         :paramtype service_endpoint: str
@@ -666,8 +682,8 @@ class ModifiedAccessConditions(_serialization.Model):
         if_unmodified_since: Optional[datetime.datetime] = None,
         if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword if_modified_since: Specify this header value to operate only on a blob if it has been
          modified since the specified date/time.
@@ -713,6 +729,8 @@ class Path(_serialization.Model):  # pylint: disable=too-many-instance-attribute
     :vartype creation_time: str
     :ivar expiry_time:
     :vartype expiry_time: str
+    :ivar encryption_context:
+    :vartype encryption_context: str
     """
 
     _attribute_map = {
@@ -727,6 +745,7 @@ class Path(_serialization.Model):  # pylint: disable=too-many-instance-attribute
         "encryption_scope": {"key": "EncryptionScope", "type": "str"},
         "creation_time": {"key": "creationTime", "type": "str"},
         "expiry_time": {"key": "expiryTime", "type": "str"},
+        "encryption_context": {"key": "EncryptionContext", "type": "str"},
     }
 
     def __init__(
@@ -743,8 +762,9 @@ class Path(_serialization.Model):  # pylint: disable=too-many-instance-attribute
         encryption_scope: Optional[str] = None,
         creation_time: Optional[str] = None,
         expiry_time: Optional[str] = None,
-        **kwargs
-    ):
+        encryption_context: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name:
         :paramtype name: str
@@ -768,6 +788,8 @@ class Path(_serialization.Model):  # pylint: disable=too-many-instance-attribute
         :paramtype creation_time: str
         :keyword expiry_time:
         :paramtype expiry_time: str
+        :keyword encryption_context:
+        :paramtype encryption_context: str
         """
         super().__init__(**kwargs)
         self.name = name
@@ -781,6 +803,7 @@ class Path(_serialization.Model):  # pylint: disable=too-many-instance-attribute
         self.encryption_scope = encryption_scope
         self.creation_time = creation_time
         self.expiry_time = expiry_time
+        self.encryption_context = encryption_context
 
 
 class PathHTTPHeaders(_serialization.Model):
@@ -827,8 +850,8 @@ class PathHTTPHeaders(_serialization.Model):
         content_type: Optional[str] = None,
         content_md5: Optional[bytes] = None,
         transactional_content_hash: Optional[bytes] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword cache_control: Optional. Sets the blob's cache control. If specified, this property is
          stored with the blob and returned with a read request.
@@ -872,7 +895,7 @@ class PathList(_serialization.Model):
         "paths": {"key": "paths", "type": "[Path]"},
     }
 
-    def __init__(self, *, paths: Optional[List["_models.Path"]] = None, **kwargs):
+    def __init__(self, *, paths: Optional[List["_models.Path"]] = None, **kwargs: Any) -> None:
         """
         :keyword paths:
         :paramtype paths: list[~azure.storage.filedatalake.models.Path]
@@ -908,8 +931,8 @@ class SetAccessControlRecursiveResponse(_serialization.Model):
         files_successful: Optional[int] = None,
         failure_count: Optional[int] = None,
         failed_entries: Optional[List["_models.AclFailedEntry"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword directories_successful:
         :paramtype directories_successful: int
@@ -957,8 +980,8 @@ class SourceModifiedAccessConditions(_serialization.Model):
         source_if_none_match: Optional[str] = None,
         source_if_modified_since: Optional[datetime.datetime] = None,
         source_if_unmodified_since: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword source_if_match: Specify an ETag value to operate only on blobs with a matching value.
         :paramtype source_if_match: str
@@ -990,7 +1013,7 @@ class StorageError(_serialization.Model):
         "error": {"key": "error", "type": "StorageErrorError"},
     }
 
-    def __init__(self, *, error: Optional["_models.StorageErrorError"] = None, **kwargs):
+    def __init__(self, *, error: Optional["_models.StorageErrorError"] = None, **kwargs: Any) -> None:
         """
         :keyword error: The service error response object.
         :paramtype error: ~azure.storage.filedatalake.models.StorageErrorError
@@ -1013,7 +1036,7 @@ class StorageErrorError(_serialization.Model):
         "message": {"key": "Message", "type": "str"},
     }
 
-    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs):
+    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword code: The service error code.
         :paramtype code: str

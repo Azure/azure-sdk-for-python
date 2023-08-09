@@ -1,0 +1,7 @@
+name: test_ws_conn_s3
+type: s3
+target: dummy
+credentials:
+  type: access_key
+  access_key_id: dummy
+  secret_access_key: dummy

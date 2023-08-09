@@ -555,7 +555,7 @@ class DigitalTwinsEndpointOperations:
         :param endpoint_name: Name of Endpoint Resource. Required.
         :type endpoint_name: str
         :param endpoint_description: The DigitalTwinsInstance endpoint metadata and security metadata.
-         Is either a model type or a IO type. Required.
+         Is either a DigitalTwinsEndpointResource type or a IO type. Required.
         :type endpoint_description:
          ~azure.mgmt.digitaltwins.v2020_03_01_preview.models.DigitalTwinsEndpointResource or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
@@ -685,7 +685,7 @@ class DigitalTwinsEndpointOperations:
     @distributed_trace
     def begin_delete(
         self, resource_group_name: str, resource_name: str, endpoint_name: str, **kwargs: Any
-    ) -> LROPoller[None]:
+    ) -> LROPoller[_models.DigitalTwinsEndpointResource]:
         """Delete a DigitalTwinsInstance endpoint.
 
         :param resource_group_name: The name of the resource group that contains the

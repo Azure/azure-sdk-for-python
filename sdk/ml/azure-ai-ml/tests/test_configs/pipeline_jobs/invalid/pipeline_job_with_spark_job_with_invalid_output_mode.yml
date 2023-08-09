@@ -1,0 +1,51 @@
+type: pipeline
+
+description: 'submit a spark job using component sdk'
+
+inputs:
+  iris_data:
+    type: uri_file
+    path: https://azuremlexamples.blob.core.windows.net/datasets/iris.csv
+    mode: direct
+
+jobs:
+  hello_world:
+    type: spark
+
+    inputs:
+      file_input1: ${{parent.inputs.iris_data}}
+      file_input2: ${{parent.inputs.iris_data}}
+
+    outputs:
+      output:
+        type: uri_folder
+
+    code: ../../dsl_pipeline/spark_job_in_pipeline/src
+
+    entry:
+      file: entry.py # file path of the entry file relative to the code root folder
+
+    py_files:
+      - utils.zip
+    jars:
+      - scalaproj.jar
+
+    files:
+      - my_files.txt
+    #archives:
+    #  - my_archive.tar
+    #identity:
+    #  type: managed
+
+    args: >-
+      --file_input1 ${{inputs.file_input1}}
+      --file_input2 ${{inputs.file_input2}}
+      --output ${{outputs.output}}
+
+    compute: azureml:rezas-synapse-10
+    conf:
+      spark.driver.cores: 2
+      spark.driver.memory: "1g"
+      spark.executor.cores: 1
+      spark.executor.memory: "1g"
+      spark.executor.instances: 1

@@ -18,10 +18,7 @@ module_logger = logging.getLogger(__name__)
 
 class EndpointSchema(PathAwareSchema):
     id = fields.Str()
-    name = fields.Str(
-            required=True,
-            validate=validate.Regexp(EndpointConfigurations.NAME_REGEX_PATTERN)
-        )
+    name = fields.Str(required=True, validate=validate.Regexp(EndpointConfigurations.NAME_REGEX_PATTERN))
     description = fields.Str(metadata={"description": "Description of the inference endpoint."})
     tags = fields.Dict()
     provisioning_state = fields.Str(metadata={"description": "Provisioning state for the endpoint."})

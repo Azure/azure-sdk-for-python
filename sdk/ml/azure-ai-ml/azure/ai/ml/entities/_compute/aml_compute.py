@@ -80,6 +80,8 @@ class AmlCompute(Compute):
     :type description: str, optional
     :param size: Compute Size, defaults to None.
     :type size: str, optional
+    :param tags: A set of tags. Contains resource tags defined as key/value pairs.
+    :type tags: Optional[dict[str, str]]
     :param ssh_settings: SSH settings to access the AzureML compute cluster.
     :type ssh_settings: AmlComputeSshSettings, optional
     :param network_settings: Virtual network settings for the AzureML compute cluster.
@@ -114,6 +116,7 @@ class AmlCompute(Compute):
         name: str,
         description: Optional[str] = None,
         size: Optional[str] = None,
+        tags: Optional[dict] = None,
         ssh_public_access_enabled: Optional[bool] = None,
         ssh_settings: Optional[AmlComputeSshSettings] = None,
         min_instances: Optional[int] = None,
@@ -130,6 +133,7 @@ class AmlCompute(Compute):
             name=name,
             description=description,
             location=kwargs.pop("location", None),
+            tags=tags,
             **kwargs,
         )
         self.size = size
@@ -165,6 +169,7 @@ class AmlCompute(Compute):
             id=rest_obj.id,
             description=prop.description,
             location=rest_obj.location,
+            tags=rest_obj.tags if rest_obj.tags else None,
             provisioning_state=prop.provisioning_state,
             provisioning_errors=prop.provisioning_errors[0].error.code
             if (prop.provisioning_errors and len(prop.provisioning_errors) > 0)
@@ -239,4 +244,5 @@ class AmlCompute(Compute):
             location=self.location,
             properties=aml_comp,
             identity=(self.identity._to_compute_rest_object() if self.identity else None),
+            tags=self.tags,
         )

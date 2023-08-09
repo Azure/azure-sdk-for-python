@@ -24,7 +24,6 @@ Cosmos database service.
 """
 
 import json
-from six.moves import xrange
 from azure.cosmos.exceptions import CosmosHttpResponseError
 from azure.cosmos._execution_context import multi_execution_aggregator
 from azure.cosmos._execution_context.base_execution_context import _QueryExecutionContextBase
@@ -197,7 +196,7 @@ class _PipelineExecutionContext(_QueryExecutionContextBase):  # pylint: disable=
         """
 
         results = []
-        for _ in xrange(self._page_size):
+        for _ in range(self._page_size):
             try:
                 results.append(next(self))
             except StopIteration:

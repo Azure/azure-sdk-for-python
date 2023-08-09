@@ -4,7 +4,7 @@
 from abc import ABC
 from typing import Dict, List, Optional, Union
 
-from azure.ai.ml._restclient.v2022_10_01_preview.models import (
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     LogVerbosity,
     NlpLearningRateScheduler,
     SamplingAlgorithmType,
@@ -207,12 +207,11 @@ class AutoMLNLPJob(AutoMLVertical, ABC):
         sampling_algorithm: Union[str, SamplingAlgorithmType],
         early_termination: Optional[EarlyTerminationPolicy] = None,
     ):
-        """
-        Sweep settings for all AutoML NLP tasks.
+        """Sweep settings for all AutoML NLP tasks.
 
-        :param sampling_algorithm: Required. Specifies type of hyperparameter sampling algorithm.
+        :keyword sampling_algorithm: Required. Specifies type of hyperparameter sampling algorithm.
         Possible values include: "Grid", "Random", and "Bayesian".
-        :param early_termination: Optional early termination policy to end poorly performing training candidates.
+        :keyword early_termination: Optional early termination policy to end poorly performing training candidates.
         :return: None.
         """
         if self._sweep:
@@ -235,24 +234,23 @@ class AutoMLNLPJob(AutoMLVertical, ABC):
         warmup_ratio: Optional[float] = None,
         weight_decay: Optional[float] = None,
     ) -> None:
-        """
-        Fix certain training parameters throughout the training procedure for all candidates.
+        """Fix certain training parameters throughout the training procedure for all candidates.
 
-        :param gradient_accumulation_steps: number of steps over which to accumulate gradients before a backward
+        :keyword gradient_accumulation_steps: number of steps over which to accumulate gradients before a backward
         pass. This must be a positive integer.
-        :param learning_rate: initial learning rate. Must be a float in (0, 1).
-        :param learning_rate_scheduler: the type of learning rate scheduler. Must choose from 'linear', 'cosine',
+        :keyword learning_rate: initial learning rate. Must be a float in (0, 1).
+        :keyword learning_rate_scheduler: the type of learning rate scheduler. Must choose from 'linear', 'cosine',
         'cosine_with_restarts', 'polynomial', 'constant', and 'constant_with_warmup'.
-        :param model_name: the model name to use during training. Must choose from 'bert-base-cased',
+        :keyword model_name: the model name to use during training. Must choose from 'bert-base-cased',
         'bert-base-uncased', 'bert-base-multilingual-cased', 'bert-base-german-cased', 'bert-large-cased',
         'bert-large-uncased', 'distilbert-base-cased', 'distilbert-base-uncased', 'roberta-base', 'roberta-large',
         'distilroberta-base', 'xlm-roberta-base', 'xlm-roberta-large', xlnet-base-cased', and 'xlnet-large-cased'.
-        :param number_of_epochs: the number of epochs to train with. Must be a positive integer.
-        :param training_batch_size: the batch size during training. Must be a positive integer.
-        :param validation_batch_size: the batch size during validation. Must be a positive integer.
-        :param warmup_ratio: ratio of total training steps used for a linear warmup from 0 to learning_rate.
+        :keyword number_of_epochs: the number of epochs to train with. Must be a positive integer.
+        :keyword training_batch_size: the batch size during training. Must be a positive integer.
+        :keyword validation_batch_size: the batch size during validation. Must be a positive integer.
+        :keyword warmup_ratio: ratio of total training steps used for a linear warmup from 0 to learning_rate.
         Must be a float in [0, 1].
-        :param weight_decay: value of weight decay when optimizer is sgd, adam, or adamw. This must be a float in
+        :keyword weight_decay: value of weight decay when optimizer is sgd, adam, or adamw. This must be a float in
         the range [0, 1].
         :return: None.
         """
@@ -306,8 +304,7 @@ class AutoMLNLPJob(AutoMLVertical, ABC):
         )
 
     def extend_search_space(self, value: Union[SearchSpace, List[SearchSpace]]) -> None:
-        """
-        Add (a) search space(s) for this AutoML NLP job.
+        """Add (a) search space(s) for this AutoML NLP job.
 
         :param value: either a SearchSpace object or a list of SearchSpace objects with nlp-specific parameters.
         :return: None.
@@ -329,10 +326,8 @@ class AutoMLNLPJob(AutoMLVertical, ABC):
     def _restore_data_inputs(self):
         """Restore MLTableJobInputs to Inputs within data_settings.
 
-        self.training_data and self.validation_data should reflect what
-        user passed in (Input) Once we get response back from service
-        (as MLTableJobInput), we should set responsible ones back to
-        Input
+        self.training_data and self.validation_data should reflect what user passed in (Input) Once we get response back
+        from service (as MLTableJobInput), we should set responsible ones back to Input
         """
         super()._restore_data_inputs()
         self.training_data = self.training_data if self.training_data else None

@@ -1,6 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+import copy
 import hashlib
 import json
 import os
@@ -11,39 +12,31 @@ from unittest import mock
 import msrest
 from marshmallow.exceptions import ValidationError
 
-from azure.ai.ml._restclient.v2022_02_01_preview.models import JobInputType as JobInputType02
-from azure.ai.ml._restclient.v2022_12_01_preview.models import JobInputType as JobInputType10
-from azure.ai.ml._schema._datastore import (
-    AzureBlobSchema,
-    AzureDataLakeGen1Schema,
-    AzureDataLakeGen2Schema,
-    AzureFileSchema,
-)
-from azure.ai.ml._schema._deployment.batch.batch_deployment import BatchDeploymentSchema
-from azure.ai.ml._schema._deployment.online.online_deployment import (
+from .._restclient.v2022_02_01_preview.models import JobInputType as JobInputType02
+from .._restclient.v2023_04_01_preview.models import JobInputType as JobInputType10
+from .._schema._datastore import AzureBlobSchema, AzureDataLakeGen1Schema, AzureDataLakeGen2Schema, AzureFileSchema
+from .._schema._deployment.batch.batch_deployment import BatchDeploymentSchema
+from .._schema._deployment.online.online_deployment import (
     KubernetesOnlineDeploymentSchema,
     ManagedOnlineDeploymentSchema,
 )
-from azure.ai.ml._schema._endpoint.batch.batch_endpoint import BatchEndpointSchema
-from azure.ai.ml._schema._endpoint.online.online_endpoint import (
-    KubernetesOnlineEndpointSchema,
-    ManagedOnlineEndpointSchema,
-)
-from azure.ai.ml._schema._sweep import SweepJobSchema
-from azure.ai.ml._schema.assets.data import DataSchema
-from azure.ai.ml._schema.assets.environment import EnvironmentSchema
-from azure.ai.ml._schema.assets.model import ModelSchema
-from azure.ai.ml._schema.component.command_component import CommandComponentSchema
-from azure.ai.ml._schema.component.parallel_component import ParallelComponentSchema
-from azure.ai.ml._schema.compute.aml_compute import AmlComputeSchema
-from azure.ai.ml._schema.compute.compute_instance import ComputeInstanceSchema
-from azure.ai.ml._schema.compute.virtual_machine_compute import VirtualMachineComputeSchema
-from azure.ai.ml._schema.job import CommandJobSchema, ParallelJobSchema
-from azure.ai.ml._schema.pipeline.pipeline_job import PipelineJobSchema
-from azure.ai.ml._schema.schedule.schedule import ScheduleSchema
-from azure.ai.ml._schema.workspace import WorkspaceSchema
-from azure.ai.ml._utils.utils import is_internal_components_enabled, try_enable_internal_components
-from azure.ai.ml.constants._common import (
+from .._schema._endpoint.batch.batch_endpoint import BatchEndpointSchema
+from .._schema._endpoint.online.online_endpoint import KubernetesOnlineEndpointSchema, ManagedOnlineEndpointSchema
+from .._schema._sweep import SweepJobSchema
+from .._schema.assets.data import DataSchema
+from .._schema.assets.environment import EnvironmentSchema
+from .._schema.assets.model import ModelSchema
+from .._schema.component.command_component import CommandComponentSchema
+from .._schema.component.parallel_component import ParallelComponentSchema
+from .._schema.compute.aml_compute import AmlComputeSchema
+from .._schema.compute.compute_instance import ComputeInstanceSchema
+from .._schema.compute.virtual_machine_compute import VirtualMachineComputeSchema
+from .._schema.job import CommandJobSchema, ParallelJobSchema
+from .._schema.pipeline.pipeline_job import PipelineJobSchema
+from .._schema.schedule.schedule import JobScheduleSchema
+from .._schema.workspace import WorkspaceSchema
+from .._utils.utils import is_internal_components_enabled, try_enable_internal_components
+from ..constants._common import (
     AZUREML_INTERNAL_COMPONENTS_ENV_VAR,
     AZUREML_INTERNAL_COMPONENTS_SCHEMA_PREFIX,
     REF_DOC_YAML_SCHEMA_ERROR_MSG_FORMAT,
@@ -51,9 +44,10 @@ from azure.ai.ml.constants._common import (
     YAMLRefDocLinks,
     YAMLRefDocSchemaNames,
 )
-from azure.ai.ml.constants._endpoint import EndpointYamlFields
-from azure.ai.ml.entities._mixins import RestTranslatableMixin
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+from ..constants._component import NodeType
+from ..constants._endpoint import EndpointYamlFields
+from ..entities._mixins import RestTranslatableMixin
+from ..exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
 # Maps schema class name to formatted error message pointing to Microsoft docs reference page for a schema's YAML
 REF_DOC_ERROR_MESSAGE_MAP = {
@@ -115,8 +109,8 @@ REF_DOC_ERROR_MESSAGE_MAP = {
     PipelineJobSchema: REF_DOC_YAML_SCHEMA_ERROR_MSG_FORMAT.format(
         YAMLRefDocSchemaNames.PIPELINE_JOB, YAMLRefDocLinks.PIPELINE_JOB
     ),
-    ScheduleSchema: REF_DOC_YAML_SCHEMA_ERROR_MSG_FORMAT.format(
-        YAMLRefDocSchemaNames.SCHEDULE, YAMLRefDocLinks.SCHEDULE
+    JobScheduleSchema: REF_DOC_YAML_SCHEMA_ERROR_MSG_FORMAT.format(
+        YAMLRefDocSchemaNames.JOB_SCHEDULE, YAMLRefDocLinks.JOB_SCHEDULE
     ),
     SweepJobSchema: REF_DOC_YAML_SCHEMA_ERROR_MSG_FORMAT.format(
         YAMLRefDocSchemaNames.SWEEP_JOB, YAMLRefDocLinks.SWEEP_JOB
@@ -142,7 +136,7 @@ def find_type_in_override(params_override: Optional[list] = None) -> Optional[st
 
 
 def is_compute_in_override(params_override: Optional[list] = None) -> bool:
-    return any([EndpointYamlFields.COMPUTE in param for param in params_override])
+    return any(EndpointYamlFields.COMPUTE in param for param in params_override)
 
 
 def load_from_dict(schema: Any, data: Dict, context: Dict, additional_message: str = "", **kwargs):
@@ -150,7 +144,7 @@ def load_from_dict(schema: Any, data: Dict, context: Dict, additional_message: s
         return schema(context=context).load(data, **kwargs)
     except ValidationError as e:
         pretty_error = json.dumps(e.normalized_messages(), indent=2)
-        raise ValidationError(decorate_validation_error(schema, pretty_error, additional_message))
+        raise ValidationError(decorate_validation_error(schema, pretty_error, additional_message)) from e
 
 
 def decorate_validation_error(schema: Any, pretty_error: str, additional_message: str = "") -> str:
@@ -205,7 +199,6 @@ def is_empty_target(obj):
 
 def convert_ordered_dict_to_dict(target_object: Union[Dict, List], remove_empty=True) -> Union[Dict, List]:
     """Convert ordered dict to dict. Remove keys with None value.
-
     This is a workaround for rest request must be in dict instead of
     ordered dict.
     """
@@ -243,6 +236,18 @@ def _general_copy(src, dst, make_dirs=True):
         shutil.copy2(src, dst)
 
 
+def _dump_data_binding_expression_in_fields(obj):
+    for key, value in obj.__dict__.items():
+        # PipelineInput is subclass of NodeInput
+        from ._job.pipeline._io import NodeInput
+
+        if isinstance(value, NodeInput):
+            obj.__dict__[key] = str(value)
+        elif isinstance(value, RestTranslatableMixin):
+            _dump_data_binding_expression_in_fields(value)
+    return obj
+
+
 def get_rest_dict_for_node_attrs(target_obj, clear_empty_value=False):
     """Convert object to dict and convert OrderedDict to dict.
     Allow data binding expression as value, disregarding of the type defined in rest object.
@@ -270,6 +275,8 @@ def get_rest_dict_for_node_attrs(target_obj, clear_empty_value=False):
         # note that the rest object may be invalid as data binding expression may not fit
         # rest object structure
         # pylint: disable=protected-access
+        target_obj = _dump_data_binding_expression_in_fields(copy.deepcopy(target_obj))
+
         from azure.ai.ml.entities._credentials import _BaseIdentityConfiguration
 
         if isinstance(target_obj, _BaseIdentityConfiguration):
@@ -340,7 +347,7 @@ def resolve_pipeline_parameters(pipeline_parameters: dict, remove_empty=False):
     """
 
     if pipeline_parameters is None:
-        return
+        return None
     if not isinstance(pipeline_parameters, dict):
         raise ValidationException(
             message="pipeline_parameters must in dict {parameter: value} format.",
@@ -436,7 +443,9 @@ def get_type_from_spec(data: dict, *, valid_keys: Iterable[str]) -> str:
     # we should keep at least 1 place outside _internal to enable internal components
     # and this is the only place
     try_enable_internal_components()
-
+    # todo: refine Hard code for now to support different task type for DataTransfer component
+    if _type == NodeType.DATA_TRANSFER:
+        _type = "_".join([NodeType.DATA_TRANSFER, data.get("task", " ")])
     if _type not in valid_keys:
         if (
             schema
@@ -455,4 +464,20 @@ def get_type_from_spec(data: dict, *, valid_keys: Iterable[str]) -> str:
             no_personal_data_message=msg,
             error_category=ErrorCategory.USER_ERROR,
         )
-    return extract_label(_type)[0]
+    return _type
+
+
+def copy_output_setting(source: Union["Output", "NodeOutput"], target: "NodeOutput"):
+    """Copy node output setting from source to target.
+    Currently only path, name, version will be copied."""
+    # pylint: disable=protected-access
+    from azure.ai.ml.entities._job.pipeline._io import NodeOutput
+
+    if not isinstance(source, NodeOutput):
+        # Only copy when source is an output builder
+        return
+    if source._data:
+        target._data = copy.deepcopy(source._data)
+    # copy pipeline component output's node output to subgraph builder
+    if source._binding_output is not None:
+        target._binding_output = source._binding_output

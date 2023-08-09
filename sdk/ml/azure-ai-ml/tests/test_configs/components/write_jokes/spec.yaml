@@ -9,7 +9,7 @@ code: ./src
 
 environment:
   conda_file: ./conda.yaml
-  image: mcr.microsoft.com/azureml/openmpi4.1.0-cuda11.0.3-cudnn8-ubuntu18.04:20210405.v1
+  image: mcr.microsoft.com/azureml/openmpi4.1.0-cuda11.8-cudnn8-ubuntu22.04:20230227.v1
 
 inputs:
   component_in_number:

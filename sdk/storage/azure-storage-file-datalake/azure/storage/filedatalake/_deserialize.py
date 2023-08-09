@@ -4,9 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 import logging
-from typing import (  # pylint: disable=unused-import
-    TYPE_CHECKING
-)
+from typing import NoReturn, TYPE_CHECKING
 from xml.etree.ElementTree import Element
 
 from azure.core.pipeline.policies import ContentDecodePolicy
@@ -27,6 +25,9 @@ def deserialize_dir_properties(response, obj, headers):
     metadata = deserialize_metadata(response, obj, headers)
     dir_properties = DirectoryProperties(
         metadata=metadata,
+        owner=response.headers.get('x-ms-owner'),
+        group=response.headers.get('x-ms-group'),
+        permissions=response.headers.get('x-ms-permissions'),
         **headers
     )
     return dir_properties
@@ -34,8 +35,13 @@ def deserialize_dir_properties(response, obj, headers):
 
 def deserialize_file_properties(response, obj, headers):
     metadata = deserialize_metadata(response, obj, headers)
+    # DataLake specific headers that are not deserialized in blob are pulled directly from the raw response header
     file_properties = FileProperties(
         metadata=metadata,
+        encryption_context=response.headers.get('x-ms-encryption-context'),
+        owner=response.headers.get('x-ms-owner'),
+        group=response.headers.get('x-ms-group'),
+        permissions=response.headers.get('x-ms-permissions'),
         **headers
     )
     if 'Content-Range' in headers:
@@ -50,11 +56,11 @@ def deserialize_path_properties(path_list):
     return [PathProperties._from_generated(path) for path in path_list] # pylint: disable=protected-access
 
 
-def return_headers_and_deserialized_path_list(response, deserialized, response_headers):  # pylint: disable=unused-argument
+def return_headers_and_deserialized_path_list(response, deserialized, response_headers):  # pylint: disable=name-too-long, unused-argument
     return deserialized.paths if deserialized.paths else {}, normalize_headers(response_headers)
 
 
-def get_deleted_path_properties_from_generated_code(generated):
+def get_deleted_path_properties_from_generated_code(generated):  # pylint: disable=name-too-long
     deleted_path = DeletedPathProperties()
     deleted_path.name = generated.name
     deleted_path.deleted_time = generated.properties.deleted_time
@@ -82,7 +88,7 @@ def get_datalake_service_properties(datalake_properties):
     return datalake_properties
 
 
-def from_blob_properties(blob_properties):
+def from_blob_properties(blob_properties, **additional_args):
     file_props = FileProperties()
     file_props.name = blob_properties.name
     file_props.etag = blob_properties.etag
@@ -96,6 +102,13 @@ def from_blob_properties(blob_properties):
     file_props.deleted_time = blob_properties.deleted_time
     file_props.remaining_retention_days = blob_properties.remaining_retention_days
     file_props.content_settings = blob_properties.content_settings
+
+    # Parse additional Datalake-only properties
+    file_props.encryption_context = additional_args.pop('encryption_context', None)
+    file_props.owner = additional_args.pop('owner', None)
+    file_props.group = additional_args.pop('group', None)
+    file_props.permissions = additional_args.pop('permissions', None)
+
     return file_props
 
 
@@ -108,7 +121,7 @@ def normalize_headers(headers):
     return normalized
 
 
-def process_storage_error(storage_error):   # pylint:disable=too-many-statements
+def process_storage_error(storage_error) -> NoReturn:  # pylint:disable=too-many-statements
     raise_error = HttpResponseError
     serialized = False
     if not storage_error.response:
@@ -206,5 +219,5 @@ def process_storage_error(storage_error):   # pylint:disable=too-many-statements
     try:
         # `from None` prevents us from double printing the exception (suppresses generated layer error context)
         exec("raise error from None")   # pylint: disable=exec-used # nosec
-    except SyntaxError:
-        raise error
+    except SyntaxError as exc:
+        raise error from exc

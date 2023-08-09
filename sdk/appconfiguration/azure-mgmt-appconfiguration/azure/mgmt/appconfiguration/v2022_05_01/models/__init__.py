@@ -45,67 +45,65 @@ from ._models_py3 import SystemData
 from ._models_py3 import TrackedResource
 from ._models_py3 import UserIdentity
 
-
-from ._app_configuration_management_client_enums import (
-    ActionsRequired,
-    ConfigurationResourceType,
-    ConnectionStatus,
-    CreateMode,
-    CreatedByType,
-    IdentityType,
-    ProvisioningState,
-    PublicNetworkAccess,
-)
+from ._app_configuration_management_client_enums import ActionsRequired
+from ._app_configuration_management_client_enums import ConfigurationResourceType
+from ._app_configuration_management_client_enums import ConnectionStatus
+from ._app_configuration_management_client_enums import CreateMode
+from ._app_configuration_management_client_enums import CreatedByType
+from ._app_configuration_management_client_enums import IdentityType
+from ._app_configuration_management_client_enums import ProvisioningState
+from ._app_configuration_management_client_enums import PublicNetworkAccess
 from ._patch import __all__ as _patch_all
-from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
+
 __all__ = [
-    'ApiKey',
-    'ApiKeyListResult',
-    'CheckNameAvailabilityParameters',
-    'ConfigurationStore',
-    'ConfigurationStoreListResult',
-    'ConfigurationStoreUpdateParameters',
-    'DeletedConfigurationStore',
-    'DeletedConfigurationStoreListResult',
-    'EncryptionProperties',
-    'ErrorAdditionalInfo',
-    'ErrorDetails',
-    'ErrorResponse',
-    'KeyValue',
-    'KeyValueListResult',
-    'KeyVaultProperties',
-    'LogSpecification',
-    'MetricDimension',
-    'MetricSpecification',
-    'NameAvailabilityStatus',
-    'OperationDefinition',
-    'OperationDefinitionDisplay',
-    'OperationDefinitionListResult',
-    'OperationProperties',
-    'PrivateEndpoint',
-    'PrivateEndpointConnection',
-    'PrivateEndpointConnectionListResult',
-    'PrivateEndpointConnectionReference',
-    'PrivateLinkResource',
-    'PrivateLinkResourceListResult',
-    'PrivateLinkServiceConnectionState',
-    'RegenerateKeyParameters',
-    'Resource',
-    'ResourceIdentity',
-    'ServiceSpecification',
-    'Sku',
-    'SystemData',
-    'TrackedResource',
-    'UserIdentity',
-    'ActionsRequired',
-    'ConfigurationResourceType',
-    'ConnectionStatus',
-    'CreateMode',
-    'CreatedByType',
-    'IdentityType',
-    'ProvisioningState',
-    'PublicNetworkAccess',
+    "ApiKey",
+    "ApiKeyListResult",
+    "CheckNameAvailabilityParameters",
+    "ConfigurationStore",
+    "ConfigurationStoreListResult",
+    "ConfigurationStoreUpdateParameters",
+    "DeletedConfigurationStore",
+    "DeletedConfigurationStoreListResult",
+    "EncryptionProperties",
+    "ErrorAdditionalInfo",
+    "ErrorDetails",
+    "ErrorResponse",
+    "KeyValue",
+    "KeyValueListResult",
+    "KeyVaultProperties",
+    "LogSpecification",
+    "MetricDimension",
+    "MetricSpecification",
+    "NameAvailabilityStatus",
+    "OperationDefinition",
+    "OperationDefinitionDisplay",
+    "OperationDefinitionListResult",
+    "OperationProperties",
+    "PrivateEndpoint",
+    "PrivateEndpointConnection",
+    "PrivateEndpointConnectionListResult",
+    "PrivateEndpointConnectionReference",
+    "PrivateLinkResource",
+    "PrivateLinkResourceListResult",
+    "PrivateLinkServiceConnectionState",
+    "RegenerateKeyParameters",
+    "Resource",
+    "ResourceIdentity",
+    "ServiceSpecification",
+    "Sku",
+    "SystemData",
+    "TrackedResource",
+    "UserIdentity",
+    "ActionsRequired",
+    "ConfigurationResourceType",
+    "ConnectionStatus",
+    "CreateMode",
+    "CreatedByType",
+    "IdentityType",
+    "ProvisioningState",
+    "PublicNetworkAccess",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

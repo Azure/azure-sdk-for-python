@@ -598,7 +598,7 @@ class DigitalTwinsEndpointOperations:
         :param endpoint_name: Name of Endpoint Resource. Required.
         :type endpoint_name: str
         :param endpoint_description: The DigitalTwinsInstance endpoint metadata and security metadata.
-         Is either a model type or a IO type. Required.
+         Is either a DigitalTwinsEndpointResource type or a IO type. Required.
         :type endpoint_description:
          ~azure.mgmt.digitaltwins.v2021_06_30_preview.models.DigitalTwinsEndpointResource or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.

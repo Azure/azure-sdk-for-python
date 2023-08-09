@@ -1,0 +1,7 @@
+name: test_ws_conn_azure_sql_db
+type: azure_sql_db
+target: dummy
+credentials:
+  type: username_password
+  username: dummy
+  password: dummy

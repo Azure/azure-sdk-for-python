@@ -12,13 +12,17 @@ from ._models_py3 import LiveTokenResponse
 from ._models_py3 import OperationInfo
 from ._models_py3 import OperationLive
 from ._models_py3 import OperationsListResult
-
+from ._patch import __all__ as _patch_all
+from ._patch import *  # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    'ErrorResponseLinkedStorage',
-    'ErrorResponseLinkedStorageError',
-    'LiveTokenResponse',
-    'OperationInfo',
-    'OperationLive',
-    'OperationsListResult',
+    "ErrorResponseLinkedStorage",
+    "ErrorResponseLinkedStorageError",
+    "LiveTokenResponse",
+    "OperationInfo",
+    "OperationLive",
+    "OperationsListResult",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

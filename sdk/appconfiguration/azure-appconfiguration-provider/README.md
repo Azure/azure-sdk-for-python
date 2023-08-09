@@ -21,16 +21,20 @@ Alternatively, get the connection string from the Azure Portal.
 You can create a client with a connection string:
 
 ```python
-config = AzureAppConfigurationProvider.load(connection_string="your-connection-string")
+from azure.appconfiguration.provider import load
+
+config = load(connection_string="your-connection-string")
 ```
 
 or with AAD:
 
 ```python
-config = AzureAppConfigurationProvider.load(endpoint="your-endpoint", credential=DefaultAzureCredential())
+from azure.appconfiguration.provider import load
+
+config = load(endpoint="your-endpoint", credential=DefaultAzureCredential())
 ```
 
-these providers will by default load all configurations with `(No Label)` from your configuration store.
+these providers will by default load all configurations with `(No Label)` from your configuration store into a dictionary of key/values.
 
 ### Features
 
@@ -59,10 +63,13 @@ List of features we are going to add to the Python Provider in the future.
 You can refine or expand the configurations loaded from your store by using `SettingSelector`s. Setting selectors provide a way to pass a key filter and label filter into the provider.
 
 ```python
+from azure.appconfiguration.provider import load, SettingSelector
+from azure.identity import DefaultAzureCredential
+
 selects = {SettingSelector(key_filter="*", label_filter="\0"), SettingSelector(key_filter="*", label_filter="dev")}
-config = AzureAppConfigurationProvider.load(
-    endpoint=endpoint, credential=default_credential, selects=selects)
+config = load(endpoint=endpoint, credential=DefaultAzureCredential(), selects=selects)
 ```
+
 In this example all configuration with empty label and the dev label are loaded. Because the dev selector is listed last, any configurations from dev take priority over those with `(No Label)` when duplicates are found.
 
 ### Trimming Keys
@@ -70,9 +77,11 @@ In this example all configuration with empty label and the dev label are loaded.
 You can trim the prefix off of keys by providing a list of trimmed key prefixes to the provider. For example, if you have the key(s) like `/application/message` in your configuration store, you could trim `/application/` from them.
 
 ```python
-trimmed_key_prefixes={"/application/"}
-config = AzureAppConfigurationProvider.load(
-    endpoint=endpoint, credential=default_credential, trimmed_key_prefixes=trimmed_key_prefixes)
+from azure.appconfiguration.provider import load
+from azure.identity import DefaultAzureCredential
+
+trim_prefixes={"/application/"}
+config = load(endpoint=endpoint, credential=DefaultAzureCredential(), trim_prefixes=trim_prefixes)
 print(config["message"])
 ```
 
@@ -85,18 +94,24 @@ Key Vault References can be resolved by providing credentials to your key vault 
 You can provide `AzureAppConfigurationKeyVaultOptions` with a credential and all key vault references will be resolved with it. The provider will attempt to connect to any key vault referenced with the credential provided.
 
 ```python
-key_vault_options = AzureAppConfigurationKeyVaultOptions(credential=default_credential)
-config = AzureAppConfigurationProvider.load(endpoint=endpoint, credential=default_credential, key_vault_options=key_vault_options)
+from azure.appconfiguration.provider import load, AzureAppConfigurationKeyVaultOptions
+from azure.identity import DefaultAzureCredential
+
+key_vault_options = AzureAppConfigurationKeyVaultOptions(credential=DefaultAzureCredential())
+config = load(endpoint=endpoint, credential=DefaultAzureCredential(), key_vault_options=key_vault_options)
 ```
+
 ### With Clients
 
 You can provide `AzureAppConfigurationKeyVaultOptions` with a list of `SecretClients`.
 
 ```python
+from azure.appconfiguration.provider import load, AzureAppConfigurationKeyVaultOptions
+from azure.identity import DefaultAzureCredential
+
 key_vault_options = AzureAppConfigurationKeyVaultOptions(
-    secret_clients={SecretClient(
-        vault_url=key_vault_uri, credential=default_credential)})
-config = AzureAppConfigurationProvider.load(endpoint=endpoint, credential=default_credential, key_vault_options=key_vault_options)
+    client_configs={key_vault_uri: {'credential': credential}})
+config = load(endpoint=endpoint, credential=DefaultAzureCredential(), key_vault_options=key_vault_options)
 ```
 
 ### Secret Resolver
@@ -104,13 +119,15 @@ config = AzureAppConfigurationProvider.load(endpoint=endpoint, credential=defaul
 If no Credentials or Clients are provided a secret resolver can be used. Secret resolver provides a way to return any value you want to a key vault reference.
 
 ```python
+from azure.appconfiguration.provider import load, AzureAppConfigurationKeyVaultOptions
+from azure.identity import DefaultAzureCredential
+
 def secret_resolver(uri):
     return "From Secret Resolver"
 
 key_vault_options = AzureAppConfigurationKeyVaultOptions(
     secret_resolver=secret_resolver)
-config = AzureAppConfigurationProvider.load(
-    endpoint=endpoint, credential=default_credential, key_vault_options=key_vault_options)
+config = load(endpoint=endpoint, credential=DefaultAzureCredential(), key_vault_options=key_vault_options)
 ```
 
 ## Key concepts
@@ -119,12 +136,18 @@ config = AzureAppConfigurationProvider.load(
 
 ## Next steps
 
+Check out our Django and Flask examples to see how to use the provider in a web application.
+
+### [Django](https://github.com/Azure/AppConfiguration/tree/main/examples/Python/python-django-webapp-sample)
+
+### [Flask](https://github.com/Azure/AppConfiguration/tree/main/examples/Python/python-flask-webapp-sample)
+
 ## Contributing
 
 This project welcomes contributions and suggestions. Most contributions require
 you to agree to a Contributor License Agreement (CLA) declaring that you have
 the right to, and actually do, grant us the rights to use your contribution.
-For details, visit https://cla.microsoft.com.
+For details, visit <https://cla.microsoft.com>.
 
 When you submit a pull request, a CLA-bot will automatically determine whether
 you need to provide a CLA and decorate the PR appropriately (e.g., label,
@@ -133,11 +156,8 @@ need to do this once across all repos using our CLA.
 
 This project has adopted the
 [Microsoft Open Source Code of Conduct][code_of_conduct]. For more information,
-see the Code of Conduct FAQ or contact opencode@microsoft.com with any
+see the Code of Conduct FAQ or contact <opencode@microsoft.com> with any
 additional questions or comments.
 
 [azure_cli]: https://learn.microsoft.com/cli/azure/appconfig
-[cla]: https://cla.microsoft.com
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
-[coc_faq]: https://opensource.microsoft.com/codeofconduct/faq/
-[coc_contact]: mailto:opencode@microsoft.com

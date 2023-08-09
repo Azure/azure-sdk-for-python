@@ -12,10 +12,13 @@ from contextlib import contextmanager
 from io import StringIO
 from pathlib import Path
 from typing import Callable, Dict, List, Optional, Union
+from unittest.mock import patch
 from zipfile import ZipFile
 
 import pydash
 import urllib3
+from azure.core.exceptions import HttpResponseError
+from azure.core.polling import LROPoller
 from devtools_testutils import is_live
 
 from azure.ai.ml import MLClient, load_job
@@ -23,8 +26,6 @@ from azure.ai.ml._scope_dependent_operations import OperationScope
 from azure.ai.ml.entities import Job, PipelineJob
 from azure.ai.ml.operations._job_ops_helper import _wait_before_polling
 from azure.ai.ml.operations._run_history_constants import JobStatus, RunHistoryConstants
-from azure.core.exceptions import HttpResponseError
-from azure.core.polling import LROPoller
 
 _PYTEST_TIMEOUT_METHOD = "signal" if hasattr(signal, "SIGALRM") else "thread"  # use signal when os support SIGALRM
 DEFAULT_TASK_TIMEOUT = 30 * 60  # 30mins
@@ -108,6 +109,7 @@ def prepare_dsl_curated(
                     "properties.jobs.*.trial.properties.isAnonymous",
                     "properties.jobs.*.trial.properties.componentSpec._source",
                     "properties.settings",
+                    "properties.jobs.*.trial.properties.properties.client_component_hash",
                 ]
             )
     else:
@@ -234,7 +236,6 @@ def verify_entity_load_and_dump(
     # TODO once dump functionality audit is complete, this testing should be
     # made more robust, like comparing it to the inputted yaml or something.
     if test_dump_file_path is not None:
-
         # test file pointer-based dump
         with tempfile.TemporaryDirectory() as tmpdirname:
             tmpfilename = f"{tmpdirname}/{test_dump_file_path}"
@@ -291,11 +292,18 @@ def assert_job_cancel(
     *,
     experiment_name=None,
     check_before_cancelled: Callable[[Job], bool] = None,
+    skip_cancel=False,
+    wait_for_completion=False,
 ) -> Job:
     created_job = client.jobs.create_or_update(job, experiment_name=experiment_name)
     if check_before_cancelled is not None:
         assert check_before_cancelled(created_job)
-    cancel_job(client, created_job)
+    if skip_cancel is False:
+        cancel_job(client, created_job)
+    elif wait_for_completion is True:
+        assert wait_until_done(client, created_job) == JobStatus.COMPLETED, (
+            "Job failed. Please check it on studio for more details: %s" % created_job.studio_url
+        )
     return created_job
 
 
@@ -349,13 +357,15 @@ def parse_local_path(origin_path, base_path=None):
 
 @contextmanager
 def build_temp_folder(
-        *,
-        source_base_dir: Union[str, os.PathLike],
-        relative_dirs_to_copy: List[str] = None,
-        relative_files_to_copy: List[str] = None,
-        extra_files_to_create: Dict[str, Optional[str]] = None,
+    *,
+    source_base_dir: Union[str, os.PathLike] = None,
+    relative_dirs_to_copy: List[str] = None,
+    relative_files_to_copy: List[str] = None,
+    extra_files_to_create: Dict[str, Union[None, bytes, str]] = None,
 ) -> str:
     """Build a temporary folder with files and subfolders copied from source_base_dir.
+    Note that the last part of path to upload will be recorded as part of request url in playback mode, so please avoid
+    directly use returned temp folder as component.code.
 
     :param source_base_dir: The base directory to copy files from.
     :type source_base_dir: Union[str, os.PathLike]
@@ -370,7 +380,10 @@ def build_temp_folder(
     :return: The path of the temporary folder.
     :rtype: str
     """
-    source_base_dir = Path(source_base_dir)
+    if source_base_dir is None:
+        source_base_dir = Path.cwd()
+    else:
+        source_base_dir = Path(source_base_dir)
     with tempfile.TemporaryDirectory() as temp_dir:
         if relative_dirs_to_copy:
             for dir_name in relative_dirs_to_copy:
@@ -385,9 +398,14 @@ def build_temp_folder(
                 if content is None:
                     target_file.touch()
                     continue
-                with open(target_file, "w") as f:
-                    if content:
-                        f.write(content)
+                if content is None:
+                    target_file.touch()
+                elif isinstance(content, str):
+                    target_file.write_text(content)
+                elif isinstance(content, bytes):
+                    target_file.write_bytes(content)
+                else:
+                    raise ValueError(f"Unsupported content type {type(content)}")
 
         yield temp_dir
 
@@ -411,3 +429,22 @@ def reload_schema_for_nodes_in_pipeline_job(*, revert_after_yield: bool = True):
     finally:
         if revert_after_yield:
             declared_fields["jobs"] = original_jobs
+
+
+@contextmanager
+def mock_artifact_download_to_temp_directory():
+    with tempfile.TemporaryDirectory() as temp_dir:
+
+        def mock_get_artifacts(**kwargs):
+            version = kwargs.get("version")
+            artifact = Path(temp_dir) / version
+            if version in ["version_1", "version_3"]:
+                version = "version_1"
+            artifact.mkdir(parents=True, exist_ok=True)
+            (artifact / version).mkdir(exist_ok=True)
+            (artifact / version / "file").touch(exist_ok=True)
+            (artifact / f"file_{version}").touch(exist_ok=True)
+            return str(artifact)
+
+        with patch("azure.ai.ml._utils._artifact_utils.ArtifactCache.get", side_effect=mock_get_artifacts):
+            yield temp_dir

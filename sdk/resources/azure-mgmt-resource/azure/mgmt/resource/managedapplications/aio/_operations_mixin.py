@@ -27,12 +27,12 @@ class ApplicationClientOperationsMixin(object):
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either Operation or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.managedapplications.v2018_06_01.models.Operation]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.managedapplications.v2019_07_01.models.Operation]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         api_version = self._get_api_version('list_operations')
-        if api_version == '2018-06-01':
-            from ..v2018_06_01.aio.operations import ApplicationClientOperationsMixin as OperationClass
+        if api_version == '2019-07-01':
+            from ..v2019_07_01.aio.operations import ApplicationClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'list_operations'".format(api_version))
         mixin_instance = OperationClass()

@@ -11,7 +11,10 @@ import datetime
 import sys
 from typing import List, Union, Any, IO, Iterator, Iterable, Optional
 from azure.core.credentials import AzureKeyCredential, TokenCredential
-from azure.core.pipeline.policies import AzureKeyCredentialPolicy, BearerTokenCredentialPolicy
+from azure.core.pipeline.policies import (
+    AzureKeyCredentialPolicy,
+    BearerTokenCredentialPolicy,
+)
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.rest import HttpRequest, HttpResponse
 
@@ -46,6 +49,7 @@ def _authentication_policy(credential, **kwargs):
             "or a token credential from azure.identity".format(type(credential))
         )
     return authentication_policy
+
 
 class PersonalizerAdministrationClient:  # pylint: disable=too-many-public-methods
     """This client contains the operations that apply to Azure Personalizer. Operations allowed by the client are

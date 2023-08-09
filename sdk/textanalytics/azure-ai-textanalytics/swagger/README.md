@@ -10,9 +10,6 @@ autorest --use=@autorest/python@5.19.0 swagger/README.md --python-sdks-folder=<p
 
 We automatically hardcode in that this is `python` and `multiapi`.
 
-After generation, run the [postprocessing](https://github.com/Azure/autorest.python/blob/autorestv3/docs/customizations.md#postprocessing) script to fix linting issues in the runtime library.
-
-`autorest --postprocess --output-folder=<path-to-root-of-package> --perform-load=false --python`
 
 ## Basic
 
@@ -36,7 +33,7 @@ batch:
   - tag: release_3_0
   - tag: release_3_1
   - tag: release_2022_05_01
-  - tag: release_2022_10_01_preview
+  - tag: release_2023_04_01
   - multiapiscript: true
 ```
 
@@ -79,14 +76,14 @@ namespace: azure.ai.textanalytics.v2022_05_01
 output-folder: $(python-sdks-folder)/textanalytics/azure-ai-textanalytics/azure/ai/textanalytics/_generated/v2022_05_01
 ```
 
-## Release v2022_10_01_preview
+## Release v2023_04_01
 
-These settings apply only when `--tag=release_2022_10_01_preview` is specified on the command line.
+These settings apply only when `--tag=release_2023_04_01` is specified on the command line.
 
-```yaml $(tag) == 'release_2022_10_01_preview'
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/527f6d35fb0d85c48210ca0f6f6f42814d63bd33/specification/cognitiveservices/data-plane/Language/preview/2022-10-01-preview/analyzetext.json
-namespace: azure.ai.textanalytics.v2022_10_01_preview
-output-folder: $(python-sdks-folder)/textanalytics/azure-ai-textanalytics/azure/ai/textanalytics/_generated/v2022_10_01_preview
+```yaml $(tag) == 'release_2023_04_01'
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/53240ebc58b3c4e99de723194032064db1d97e63/specification/cognitiveservices/data-plane/Language/stable/2023-04-01/analyzetext.json
+namespace: azure.ai.textanalytics.v2023_04_01
+output-folder: $(python-sdks-folder)/textanalytics/azure-ai-textanalytics/azure/ai/textanalytics/_generated/v2023_04_01
 ```
 
 ### Override Analyze's pager poller for v3.1
@@ -117,7 +114,7 @@ directive:
       $["x-python-custom-default-polling-method-async"] = ".....aio._lro_async.AsyncAnalyzeHealthcareEntitiesLROPollingMethod";
 ```
 
-### Override Analyze's pager poller for 2022_05_01 and 2022_10_01_preview
+### Override Analyze's pager poller for 2022_05_01 and 2023_04_01
 
 ```yaml
 directive:
@@ -192,11 +189,33 @@ directive:
     transform: $.properties.lastUpdatedDateTime["x-ms-client-name"] = "lastUpdateDateTime";
 ```
 
-### Rename DateTimeResolution.date_time_sub_kind property to datetime_subkind
+### Rename enums so we can expose generated types
 
-```yaml
+
+```yaml $(tag) != 'release_3_1'
 directive:
   - from: swagger-document
-    where: $.definitions.DateTimeResolution
-    transform: $.properties.dateTimeSubKind["x-ms-client-name"] = "datetimeSubkind";
+    where: $["definitions"]
+    transform: >
+      $["HealthcareAssertion"]["properties"]["association"]["x-ms-enum"]["name"] = "entityAssociation";
+  - from: swagger-document
+    where: $["definitions"]
+    transform: >
+      $["HealthcareAssertion"]["properties"]["certainty"]["x-ms-enum"]["name"] = "entityCertainty";
+  - from: swagger-document
+    where: $["definitions"]
+    transform: >
+      $["HealthcareAssertion"]["properties"]["conditionality"]["x-ms-enum"]["name"] = "entityConditionality";
+  - from: swagger-document
+    where: $["definitions"]
+    transform: >
+      $["HealthcareAssertion"]["properties"]["conditionality"]["x-ms-enum"]["name"] = "entityConditionality";
+  - from: swagger-document
+    where: $["definitions"]
+    transform: >
+      $["HealthcareRelation"]["properties"]["relationType"]["x-ms-enum"]["name"] = "healthcareEntityRelation";
+  - from: swagger-document
+    where: $["definitions"]
+    transform: >
+      $["PiiCategories"]["items"]["x-ms-enum"]["name"] = "piiEntityCategory";
 ```

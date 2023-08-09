@@ -28,7 +28,7 @@ def run_black(service_dir):
         package_name = os.path.basename(package)
 
         if is_check_enabled(package, "black", True):
-            out = subprocess.Popen([sys.executable, "-m", "black", "-l", "120", "sdk/{}/{}".format(service_dir, package_name)],
+            out = subprocess.Popen([sys.executable, "-m", "black", "--config", os.path.join(root_dir, "eng", "black-pyproject.toml"), os.path.join("sdk", service_dir, package_name)],
                 stdout=subprocess.PIPE,
                 stderr=subprocess.STDOUT,
                 cwd = root_dir
@@ -38,10 +38,15 @@ def run_black(service_dir):
 
             if stderr:
                 results.append((package_name, stderr))
+        
+            if out.returncode > 0:
+                print(f"black ran into an unexpected failure while analyzing the code for {package_name}")
+                if stdout:
+                    print(stdout.decode('utf-8'))
+                exit(out.returncode)
 
-            if stdout:
-                if "reformatted" in stdout.decode('utf-8'):
-                    results.append((package_name, False))
+            if stdout and "reformatted" in stdout.decode('utf-8'):
+                results.append((package_name, False))
             else:
                 print(f"black succeeded against {package_name}")
 
@@ -69,7 +74,7 @@ if __name__ == "__main__":
                 error = "Code needs reformat." if result[1] == False else error
                 logging.error(f"Black run for {result[0]} ran into an issue: {error}")
 
-            raise ValueError("Found difference between formatted code and current commit. Please re-generate with the latest autorest.")
+            raise ValueError("Found difference between formatted code and current commit. Check https://aka.ms/azsdk/python/black for how to fix it.")
         
     else:
         print("Skipping formatting validation")

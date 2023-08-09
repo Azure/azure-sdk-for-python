@@ -13,29 +13,29 @@ from azure.core import CaseInsensitiveEnumMeta
 class ChangeCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The entity that made the change."""
 
-    #: User initiated change
     USER = "User"
-    #: System initiated change
+    """User initiated change"""
     SYSTEM = "System"
+    """System initiated change"""
 
 
 class ChangeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of change that was captured in the resource."""
 
-    #: An existing resource underwent a change
     UPDATE = "Update"
-    #: An existing resource was deleted
+    """An existing resource underwent a change"""
     DELETE = "Delete"
-    #: A newly created resource
+    """An existing resource was deleted"""
     CREATE = "Create"
+    """A newly created resource"""
 
 
 class PropertyChangeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of change that occurred."""
 
-    #: An existing property underwent a change
     UPDATE = "Update"
-    #: A property was newly created
+    """An existing property underwent a change"""
     INSERT = "Insert"
-    #: An existing property was deleted
+    """A property was newly created"""
     REMOVE = "Remove"
+    """An existing property was deleted"""

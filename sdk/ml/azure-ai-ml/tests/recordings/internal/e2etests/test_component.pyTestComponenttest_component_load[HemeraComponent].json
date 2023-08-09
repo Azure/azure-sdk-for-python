@@ -1,0 +1,490 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/codes/1f43a999-6005-a167-6bde-90cc09ac7298/versions?api-version=2023-04-01\u0026hash=00b05eba3481b695209eefd42eccfab14785ac530539323563d8bd14bb97709c\u0026hashVersion=202208",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azure-ai-ml/1.8.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.8.12 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Wed, 31 May 2023 09:43:34 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Request-Context": "appId=cid-v1:2d2e8e63-272e-4b3c-8598-4ee570a0e70d",
+        "Server-Timing": "traceparent;desc=\u002200-89de46df8b80fda0d3cb60951d118a47-393c330acf88c186-00\u0022",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "Vary": [
+          "Accept-Encoding",
+          "Accept-Encoding"
+        ],
+        "x-aml-cluster": "vienna-eastus2-01",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "c695ac6c-654d-4c84-b62c-d62c54902eec",
+        "x-ms-ratelimit-remaining-subscription-reads": "11984",
+        "x-ms-response-type": "standard",
+        "x-ms-routing-request-id": "JAPANEAST:20230531T094335Z:c695ac6c-654d-4c84-b62c-d62c54902eec",
+        "x-request-time": "0.065"
+      },
+      "ResponseBody": {
+        "value": [
+          {
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/codes/1f43a999-6005-a167-6bde-90cc09ac7298/versions/1",
+            "name": "1",
+            "type": "Microsoft.MachineLearningServices/workspaces/codes/versions",
+            "properties": {
+              "description": null,
+              "tags": {},
+              "properties": {
+                "hash_sha256": "00b05eba3481b695209eefd42eccfab14785ac530539323563d8bd14bb97709c",
+                "hash_version": "202208"
+              },
+              "isArchived": false,
+              "isAnonymous": false,
+              "codeUri": "https://amltest5899420437.blob.core.windows.net:443/0bdd51b6-c-ac39df18-c6e8-5eea-adc1-b500c8197a5c/hemera-component",
+              "provisioningState": "Succeeded"
+            },
+            "systemData": {
+              "createdAt": "2023-05-19T10:03:05.5598773\u002B00:00",
+              "createdBy": "Chenyang Zhang",
+              "createdByType": "User",
+              "lastModifiedAt": "2023-05-19T10:03:05.5598773\u002B00:00",
+              "lastModifiedBy": "Chenyang Zhang",
+              "lastModifiedByType": "User"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/codes/1f43a999-6005-a167-6bde-90cc09ac7298/versions/1?api-version=2023-04-01",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azure-ai-ml/1.8.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.8.12 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Wed, 31 May 2023 09:43:35 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Request-Context": "appId=cid-v1:2d2e8e63-272e-4b3c-8598-4ee570a0e70d",
+        "Server-Timing": "traceparent;desc=\u002200-b559007076f941297229c3bc5e1f1683-35d2b4eb8f552d3f-00\u0022",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "Vary": [
+          "Accept-Encoding",
+          "Accept-Encoding"
+        ],
+        "x-aml-cluster": "vienna-eastus2-01",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "80340322-1e0a-4c6c-978f-57b7017e442c",
+        "x-ms-ratelimit-remaining-subscription-reads": "11983",
+        "x-ms-response-type": "standard",
+        "x-ms-routing-request-id": "JAPANEAST:20230531T094336Z:80340322-1e0a-4c6c-978f-57b7017e442c",
+        "x-request-time": "0.039"
+      },
+      "ResponseBody": {
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/codes/1f43a999-6005-a167-6bde-90cc09ac7298/versions/1",
+        "name": "1",
+        "type": "Microsoft.MachineLearningServices/workspaces/codes/versions",
+        "properties": {
+          "description": null,
+          "tags": {},
+          "properties": {
+            "hash_sha256": "0000000000000",
+            "hash_version": "0000000000000"
+          },
+          "isArchived": false,
+          "isAnonymous": false,
+          "codeUri": "https://amltest5899420437.blob.core.windows.net:443/0bdd51b6-c-ac39df18-c6e8-5eea-adc1-b500c8197a5c/hemera-component",
+          "provisioningState": "Succeeded"
+        },
+        "systemData": {
+          "createdAt": "2023-05-19T10:03:05.5598773\u002B00:00",
+          "createdBy": "Chenyang Zhang",
+          "createdByType": "User",
+          "lastModifiedAt": "2023-05-19T10:03:05.5598773\u002B00:00",
+          "lastModifiedBy": "Chenyang Zhang",
+          "lastModifiedByType": "User"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/test_307135946299/versions/0.0.2?api-version=2022-10-01",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "2389",
+        "Content-Type": "application/json",
+        "User-Agent": "azure-ai-ml/1.8.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.8.12 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": {
+        "properties": {
+          "description": "Ads LR DNN Raw Keys Dummy sample.",
+          "properties": {},
+          "tags": {
+            "category": "Component Tutorial",
+            "contact": "amldesigner@microsoft.com"
+          },
+          "isAnonymous": false,
+          "isArchived": false,
+          "componentSpec": {
+            "name": "test_307135946299",
+            "description": "Ads LR DNN Raw Keys Dummy sample.",
+            "tags": {
+              "category": "Component Tutorial",
+              "contact": "amldesigner@microsoft.com"
+            },
+            "version": "0.0.2",
+            "$schema": "https://componentsdk.azureedge.net/jsonschema/HemeraComponent.json",
+            "display_name": "Ads LR DNN Raw Keys",
+            "inputs": {
+              "TrainingDataDir": {
+                "type": "path",
+                "optional": true,
+                "is_resource": true
+              },
+              "ValidationDataDir": {
+                "type": "path",
+                "optional": true,
+                "is_resource": true
+              },
+              "InitialModelDir": {
+                "type": "path",
+                "optional": true,
+                "is_resource": true
+              },
+              "YarnCluster": {
+                "type": "string",
+                "optional": false,
+                "default": "mtprime-bn2-0"
+              },
+              "JobQueue": {
+                "type": "string",
+                "optional": false,
+                "default": "default"
+              },
+              "WorkerCount": {
+                "type": "string",
+                "optional": false,
+                "default": "2.0"
+              },
+              "Cpu": {
+                "type": "string",
+                "optional": false,
+                "default": "2.0"
+              },
+              "Memory": {
+                "type": "string",
+                "optional": false,
+                "default": "10g"
+              },
+              "HdfsRootDir": {
+                "type": "string",
+                "optional": false,
+                "default": "/projects/default/"
+              },
+              "CosmosRootDir": {
+                "type": "string",
+                "optional": false,
+                "default": "https://cosmos09.osdinfra.net/cosmos/dummy/local/root/"
+              }
+            },
+            "outputs": {
+              "output1": {
+                "type": "AnyFile"
+              },
+              "output2": {
+                "type": "AnyFile"
+              }
+            },
+            "type": "HemeraComponent",
+            "code": "azureml:/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/codes/1f43a999-6005-a167-6bde-90cc09ac7298/versions/1",
+            "command": "run.bat [-_TrainingDataDir {inputs.TrainingDataDir}] [-_ValidationDataDir {inputs.ValidationDataDir}] [-_InitialModelDir {inputs.InitialModelDir}] -_CosmosRootDir {inputs.CosmosRootDir} -_PsCount 0 %CLUSTER%={inputs.YarnCluster} -JobQueue {inputs.JobQueue} -_WorkerCount {inputs.WorkerCount} -_Cpu {inputs.Cpu} -_Memory {inputs.Memory} -_HdfsRootDir {inputs.HdfsRootDir} -_ExposedPort \u00223200-3210,3300-3321\u0022 -_NodeLostBlocker -_UsePhysicalIP -_SyncWorker -_EntranceFileName run.py -_StartupArguments \u0022\u0022 -_PythonZipPath \u0022https://dummy/foo/bar.zip\u0022 -_ModelOutputDir {outputs.output1} -_ValidationOutputDir {outputs.output2}",
+            "hemera": {
+              "ref_id": "1bd1525c-082e-4652-a9b2-9c60783ec551"
+            },
+            "_source": "YAML.COMPONENT"
+          }
+        }
+      },
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "3665",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Wed, 31 May 2023 09:43:38 GMT",
+        "Expires": "-1",
+        "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/test_307135946299/versions/0.0.2?api-version=2022-10-01",
+        "Pragma": "no-cache",
+        "Request-Context": "appId=cid-v1:2d2e8e63-272e-4b3c-8598-4ee570a0e70d",
+        "Server-Timing": "traceparent;desc=\u002200-32afee2cf7836e037a0c832f244ebdbd-b8ea30bac119a48f-01\u0022",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "x-aml-cluster": "vienna-eastus2-01",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "cb37ca98-30a4-4246-956b-d6607a8191d0",
+        "x-ms-ratelimit-remaining-subscription-writes": "1194",
+        "x-ms-response-type": "standard",
+        "x-ms-routing-request-id": "JAPANEAST:20230531T094338Z:cb37ca98-30a4-4246-956b-d6607a8191d0",
+        "x-request-time": "0.355"
+      },
+      "ResponseBody": {
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/test_307135946299/versions/0.0.2",
+        "name": "0.0.2",
+        "type": "Microsoft.MachineLearningServices/workspaces/components/versions",
+        "properties": {
+          "description": null,
+          "tags": {
+            "category": "Component Tutorial",
+            "contact": "amldesigner@microsoft.com"
+          },
+          "properties": {},
+          "isArchived": false,
+          "isAnonymous": false,
+          "componentSpec": {
+            "$schema": "https://componentsdk.azureedge.net/jsonschema/HemeraComponent.json",
+            "name": "test_307135946299",
+            "version": "0.0.2",
+            "display_name": "Ads LR DNN Raw Keys",
+            "is_deterministic": "True",
+            "type": "HemeraComponent",
+            "description": "Ads LR DNN Raw Keys Dummy sample.",
+            "tags": {
+              "category": "Component Tutorial",
+              "contact": "amldesigner@microsoft.com"
+            },
+            "inputs": {
+              "TrainingDataDir": {
+                "type": "path",
+                "optional": "True",
+                "is_resource": "True"
+              },
+              "ValidationDataDir": {
+                "type": "path",
+                "optional": "True",
+                "is_resource": "True"
+              },
+              "InitialModelDir": {
+                "type": "path",
+                "optional": "True",
+                "is_resource": "True"
+              },
+              "YarnCluster": {
+                "type": "String",
+                "optional": "False",
+                "default": "mtprime-bn2-0"
+              },
+              "JobQueue": {
+                "type": "String",
+                "optional": "False",
+                "default": "default"
+              },
+              "WorkerCount": {
+                "type": "String",
+                "optional": "False",
+                "default": "2.0"
+              },
+              "Cpu": {
+                "type": "String",
+                "optional": "False",
+                "default": "2.0"
+              },
+              "Memory": {
+                "type": "String",
+                "optional": "False",
+                "default": "10g"
+              },
+              "HdfsRootDir": {
+                "type": "String",
+                "optional": "False",
+                "default": "/projects/default/"
+              },
+              "CosmosRootDir": {
+                "type": "String",
+                "optional": "False",
+                "default": "https://cosmos09.osdinfra.net/cosmos/dummy/local/root/"
+              }
+            },
+            "outputs": {
+              "output1": {
+                "type": "AnyFile"
+              },
+              "output2": {
+                "type": "AnyFile"
+              }
+            },
+            "command": "run.bat [-_TrainingDataDir {inputs.TrainingDataDir}] [-_ValidationDataDir {inputs.ValidationDataDir}] [-_InitialModelDir {inputs.InitialModelDir}] -_CosmosRootDir {inputs.CosmosRootDir} -_PsCount 0 %CLUSTER%={inputs.YarnCluster} -JobQueue {inputs.JobQueue} -_WorkerCount {inputs.WorkerCount} -_Cpu {inputs.Cpu} -_Memory {inputs.Memory} -_HdfsRootDir {inputs.HdfsRootDir} -_ExposedPort \u00223200-3210,3300-3321\u0022 -_NodeLostBlocker -_UsePhysicalIP -_SyncWorker -_EntranceFileName run.py -_StartupArguments \u0022\u0022 -_PythonZipPath \u0022https://dummy/foo/bar.zip\u0022 -_ModelOutputDir {outputs.output1} -_ValidationOutputDir {outputs.output2}",
+            "hemera": {
+              "ref_id": "1bd1525c-082e-4652-a9b2-9c60783ec551"
+            },
+            "code": "azureml:/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/codes/1f43a999-6005-a167-6bde-90cc09ac7298/versions/1"
+          }
+        },
+        "systemData": {
+          "createdAt": "2023-05-31T09:43:38.4052995\u002B00:00",
+          "createdBy": "Chenyang Zhang",
+          "createdByType": "User",
+          "lastModifiedAt": "2023-05-31T09:43:38.4744864\u002B00:00",
+          "lastModifiedBy": "Chenyang Zhang",
+          "lastModifiedByType": "User"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/test_307135946299/versions/0.0.2?api-version=2022-10-01",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azure-ai-ml/1.8.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.8.12 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Wed, 31 May 2023 09:43:39 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Request-Context": "appId=cid-v1:2d2e8e63-272e-4b3c-8598-4ee570a0e70d",
+        "Server-Timing": "traceparent;desc=\u002200-631a137e1ca897935b1082f8d672ddd9-170b3aa16c84b528-00\u0022",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "Vary": [
+          "Accept-Encoding",
+          "Accept-Encoding"
+        ],
+        "x-aml-cluster": "vienna-eastus2-01",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "3cb431ef-3a34-4c4a-8f35-d32912876d9a",
+        "x-ms-ratelimit-remaining-subscription-reads": "11982",
+        "x-ms-response-type": "standard",
+        "x-ms-routing-request-id": "JAPANEAST:20230531T094339Z:3cb431ef-3a34-4c4a-8f35-d32912876d9a",
+        "x-request-time": "0.070"
+      },
+      "ResponseBody": {
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/test_307135946299/versions/0.0.2",
+        "name": "0.0.2",
+        "type": "Microsoft.MachineLearningServices/workspaces/components/versions",
+        "properties": {
+          "description": null,
+          "tags": {
+            "category": "Component Tutorial",
+            "contact": "amldesigner@microsoft.com"
+          },
+          "properties": {},
+          "isArchived": false,
+          "isAnonymous": false,
+          "componentSpec": {
+            "$schema": "https://componentsdk.azureedge.net/jsonschema/HemeraComponent.json",
+            "name": "test_307135946299",
+            "version": "0.0.2",
+            "display_name": "Ads LR DNN Raw Keys",
+            "is_deterministic": "True",
+            "type": "HemeraComponent",
+            "description": "Ads LR DNN Raw Keys Dummy sample.",
+            "tags": {
+              "category": "Component Tutorial",
+              "contact": "amldesigner@microsoft.com"
+            },
+            "inputs": {
+              "TrainingDataDir": {
+                "type": "path",
+                "optional": "True",
+                "is_resource": "True"
+              },
+              "ValidationDataDir": {
+                "type": "path",
+                "optional": "True",
+                "is_resource": "True"
+              },
+              "InitialModelDir": {
+                "type": "path",
+                "optional": "True",
+                "is_resource": "True"
+              },
+              "YarnCluster": {
+                "type": "String",
+                "optional": "False",
+                "default": "mtprime-bn2-0"
+              },
+              "JobQueue": {
+                "type": "String",
+                "optional": "False",
+                "default": "default"
+              },
+              "WorkerCount": {
+                "type": "String",
+                "optional": "False",
+                "default": "2.0"
+              },
+              "Cpu": {
+                "type": "String",
+                "optional": "False",
+                "default": "2.0"
+              },
+              "Memory": {
+                "type": "String",
+                "optional": "False",
+                "default": "10g"
+              },
+              "HdfsRootDir": {
+                "type": "String",
+                "optional": "False",
+                "default": "/projects/default/"
+              },
+              "CosmosRootDir": {
+                "type": "String",
+                "optional": "False",
+                "default": "https://cosmos09.osdinfra.net/cosmos/dummy/local/root/"
+              }
+            },
+            "outputs": {
+              "output1": {
+                "type": "AnyFile"
+              },
+              "output2": {
+                "type": "AnyFile"
+              }
+            },
+            "command": "run.bat [-_TrainingDataDir {inputs.TrainingDataDir}] [-_ValidationDataDir {inputs.ValidationDataDir}] [-_InitialModelDir {inputs.InitialModelDir}] -_CosmosRootDir {inputs.CosmosRootDir} -_PsCount 0 %CLUSTER%={inputs.YarnCluster} -JobQueue {inputs.JobQueue} -_WorkerCount {inputs.WorkerCount} -_Cpu {inputs.Cpu} -_Memory {inputs.Memory} -_HdfsRootDir {inputs.HdfsRootDir} -_ExposedPort \u00223200-3210,3300-3321\u0022 -_NodeLostBlocker -_UsePhysicalIP -_SyncWorker -_EntranceFileName run.py -_StartupArguments \u0022\u0022 -_PythonZipPath \u0022https://dummy/foo/bar.zip\u0022 -_ModelOutputDir {outputs.output1} -_ValidationOutputDir {outputs.output2}",
+            "hemera": {
+              "ref_id": "1bd1525c-082e-4652-a9b2-9c60783ec551"
+            },
+            "code": "azureml:/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/codes/1f43a999-6005-a167-6bde-90cc09ac7298/versions/1"
+          }
+        },
+        "systemData": {
+          "createdAt": "2023-05-31T09:43:38.4052995\u002B00:00",
+          "createdBy": "Chenyang Zhang",
+          "createdByType": "User",
+          "lastModifiedAt": "2023-05-31T09:43:38.4744864\u002B00:00",
+          "lastModifiedBy": "Chenyang Zhang",
+          "lastModifiedByType": "User"
+        }
+      }
+    }
+  ],
+  "Variables": {
+    "component_name": "test_307135946299"
+  }
+}

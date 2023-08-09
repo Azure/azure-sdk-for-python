@@ -3,7 +3,7 @@ FarmBeats is a B2B PaaS offering from Microsoft that makes it easy for AgriFood 
 
 Use FarmBeats client library for Python to do the following.
 
-- Create & update farmers, farms, fields, seasonal fields and boundaries.
+- Create & update parties, farms, fields, seasonal fields and boundaries.
 - Ingest satellite and weather data for areas of interest.
 - Ingest farm operations data covering tilling, planting, harvesting and application of farm inputs.
 
@@ -58,12 +58,12 @@ Basic understanding of below terms will help to get started with FarmBeats clien
 
 ### [Farm Hierarchy][farm_hierarchy]
 Farm hierarchy is a collection of below entities.
-- Farmer - is the custodian of all the agronomic data.
+- Party - is the custodian of all the agronomic data.
 - Farm - is a logical collection of fields and/or seasonal fields. They do not have any area associated with them.
 - Field - is a multi-polygon area. This is expected to be stable across seasons.
 - Seasonal field - is a multi-polygon area. To define a seasonal boundary we need the details of area (boundary), time (season) and crop. New seasonal fields are expected to be created for every growing season.
 - Boundary - is the actual multi-polygon area expressed as a geometry (in geojson). It is normally associated with a field or a seasonal field. Satellite, weather and farm operations data is linked to a boundary.
-- Cascade delete - Agronomic data is stored hierarchically with farmer as the root. The hierarchy includes Farmer -> Farms -> Fields -> Seasonal Fields -> Boundaries -> Associated data (satellite, weather, farm operations). Cascade delete refers to the process of deleting any node and its subtree.
+- Cascade delete - Agronomic data is stored hierarchically with party as the root. The hierarchy includes Party -> Farms -> Fields -> Seasonal Fields -> Boundaries -> Associated data (satellite, weather, farm operations). Cascade delete refers to the process of deleting any node and its subtree.
 
 ### [Scenes][scenes]
 Scenes refers to images normally ingested using satellite APIs. This includes raw bands and derived bands (Ex: NDVI). Scenes may also include spatial outputs of an inference or AI/ML model (Ex: LAI).
@@ -74,28 +74,25 @@ Fam operations includes details pertaining to tilling, planting, application of 
 
 ## Examples
 
-### Create a Farmer
+### Create a Party
 Once you have authenticated and created the client object as shown in the [Authenticate the client](#authenticate-the-client)
-section, you can create a farmer within the FarmBeats resource like this:
+section, you can create a party within the FarmBeats resource like this:
 
 ```python
 from azure.identity import DefaultAzureCredential
 from azure.agrifood.farming import FarmBeatsClient
-from azure.agrifood.farming.models import Farmer
 
 credential = DefaultAzureCredential()
 client = FarmBeatsClient(endpoint="https://<my-account-name>.farmbeats.azure.net", credential=credential)
 
-farmer = client.farmers.create_or_update(
-    farmer_id="farmer-1",
-    farmer=Farmer(
-        name="Contoso Farmer",
-        description="Your custom farmer description here",
-        status="Active",
-        properties={
-            "your-custom-key": "queryable value",
-        }
-    )
+party_id = "party-1"
+
+party = client.parties.create_or_update(
+    party_id=party_id,
+    party={
+        "name": party_name,
+        "description": party_description
+    }
 )
 ```
 
@@ -105,23 +102,19 @@ farmer = client.farmers.create_or_update(
 ```python
 from azure.identity import DefaultAzureCredential
 from azure.agrifood.farming import FarmBeatsClient
-from azure.agrifood.farming.models import Farm
 
 credential = DefaultAzureCredential()
 client = FarmBeatsClient(endpoint="https://<my-account-name>.farmbeats.azure.net", credential=credential)
 
-farmer_id = "farmer-1" # Using farmer from previous example
+party_id = "party-1" # Using party from previous example
 
 farm = client.farms.create_or_update(
-    farmer_id=farmer_id,
+    party_id=party_id,
     farm_id="farm-1",
-    farm=Farm(
-        name="Contoso Westlake Farm",
-        properties={
-            "location": "Westlake",
-            "country": "USA"
-        }
-    )
+    farm={
+        "name": farm_name,
+        "description": farm_description
+    }
 )
 ```
 
@@ -132,50 +125,27 @@ Creating a Season object, spanning from April to August of 2021.
 ```python
 from azure.identity import DefaultAzureCredential
 from azure.agrifood.farming import FarmBeatsClient
-from azure.agrifood.farming.models import Season
-
-from isodate.tzinfo import Utc
-from datetime import datetime
 
 credential = DefaultAzureCredential()
 client = FarmBeatsClient(endpoint="https://<my-account-name>.farmbeats.azure.net", credential=credential)
+
+season_id = "contoso-season"
+season_name = "contoso-season-name"
+season_description = "contoso-season-description"
+year = "2021"
+start_date_time = "2021-01-01T20:08:10.137Z"
+end_date_time = "2021-06-06T20:08:10.137Z"
 
 season = client.seasons.create_or_update(
-    season_id="season-summer-2021",
-    season=Season(
-        start_date_time=datetime(2021, 4, 1, tzinfo=Utc()),
-        end_date_time=datetime(2021, 8, 31, tzinfo=Utc()),
-        name="Summer of 2021",
-        year=2021
+        season_id=season_id,
+        season={
+            "name": season_name,
+            "year": year,
+            "startDateTime": start_date_time,
+            "endDateTime": end_date_time,
+            "description": season_description
+        }
     )
-)
-```
-
-### Create a Seasonal Field
-
-In this example, we create a Seasonal Field, using the Season and Field objects
-created in the preceding examples.
-
-```python
-from azure.identity import DefaultAzureCredential
-from azure.agrifood.farming import FarmBeatsClient
-from azure.agrifood.farming.models import SeasonalField
-
-credential = DefaultAzureCredential()
-client = FarmBeatsClient(endpoint="https://<my-account-name>.farmbeats.azure.net", credential=credential)
-
-farmer_id = "farmer-1"
-farm_id = "farm-1"
-season_id = "season-summer-2021"
-
-seasonal_field = client.seasonal_fields.create_or_update(
-    farmer_id=farmer_id,
-    seasonal_field_id="westlake-summer-2021",
-    seasonal_field=SeasonalField(
-        farm_id=farm_id,
-        season_id=season_id
-    )
-)
 ```
 
 ### Create a Boundary
@@ -185,33 +155,36 @@ Creating a Boundary for the Seasonal Field created in the preceding example.
 ```python
 from azure.identity import DefaultAzureCredential
 from azure.agrifood.farming import FarmBeatsClient
-from azure.agrifood.farming.models import Boundary, Polygon
 
 credential = DefaultAzureCredential()
 client = FarmBeatsClient(endpoint="https://<my-account-name>.farmbeats.azure.net", credential=credential)
 
-farmer_id = "farmer-1"
-seasonal_field_id = "westlake-summer-2021"
+party_id = "party-1"
+boundary_id = "boundary-1"
 
 boundary = client.boundaries.create_or_update(
-    farmer_id=farmer_id,
-    boundary_id="westlake-boundary-1",
-    boundary=Boundary(
-        parent_id=seasonal_field_id,
-        geometry=Polygon(
-            coordinates=[
+    party_id=party_id,
+    boundary_id=boundary_id,
+    boundary={
+        "geometry": {
+            "type": "Polygon",
+            "coordinates":
                 [
-                    [73.70457172393799, 20.545385304358106],
-                    [73.70457172393799, 20.545385304358106],
-                    [73.70448589324951, 20.542411534243367],
-                    [73.70877742767334, 20.541688176010233],
-                    [73.71023654937744, 20.545083911372505],
-                    [73.70663166046143, 20.546992723579137],
-                    [73.70457172393799, 20.545385304358106],
+                    [
+                        [73.70457172393799, 20.545385304358106],
+                        [73.70457172393799, 20.545385304358106],
+                        [73.70448589324951, 20.542411534243367],
+                        [73.70877742767334, 20.541688176010233],
+                        [73.71023654937744, 20.545083911372505],
+                        [73.70663166046143, 20.546992723579137],
+                        [73.70457172393799, 20.545385304358106],
+                    ]
                 ]
-            ]
-        )
-    )
+        },
+        "status": "<string>",
+        "name": "<string>",
+        "description": "<string>"
+    }
 )
 ```
 
@@ -226,7 +199,6 @@ waits for the operation to terminate, and returns the final status.
 ```python
 from azure.identity import DefaultAzureCredential
 from azure.agrifood.farming import FarmBeatsClient
-from azure.agrifood.farming.models import SatelliteDataIngestionJob, SatelliteData
 
 from isodate.tzinfo import Utc
 from datetime import datetime
@@ -234,27 +206,38 @@ from datetime import datetime
 credential = DefaultAzureCredential()
 client = FarmBeatsClient(endpoint="https://<my-account-name>.farmbeats.azure.net", credential=credential)
 
-farmer_id = "farmer-1"
+party_id = "party-1"
 boundary_id = "westlake-boundary-1"
+start_date_time = "2021-01-01T20:08:10.137Z"
+end_date_time = "2021-06-06T20:08:10.137Z"
 
 # Queue the job
 satellite_job_poller = client.scenes.begin_create_satellite_data_ingestion_job(
-    job_id="westlake-boundary-1-lai-jan2020",
-    job=SatelliteDataIngestionJob(
-        farmer_id=farmer_id,
-        boundary_id=boundary_id,
-        start_date_time=datetime(2020, 1, 1, tzinfo=Utc()),
-        end_date_time=datetime(2020, 1, 31, tzinfo=Utc()),
-        data=SatelliteData(
-            image_names=[
-                "LAI"
-            ]
-        )
-    )
+    job_id=job_id,
+    job={
+        "boundaryId": boundary_id,
+        "endDateTime": end_date_time,
+        "partyId": party_id,
+        "startDateTime": start_date_time,
+        "provider": "Microsoft",
+        "source": "Sentinel_2_L2A",
+        "data": {
+            "imageNames": [
+                "NDVI"
+            ],
+            "imageFormats": [
+                "TIF"
+            ],
+            "imageResolution": [10]
+        },
+        "name": "<string>",
+        "description": "<string>"
+    }
 )
 
 # Wait for the job to terminate
 satellite_job = satellite_job_poller.result()
+job_status = satellite_job_poller.status()
 ```
 
 ### Get Ingested Satellite Scenes
@@ -270,20 +253,22 @@ from datetime import datetime
 credential = DefaultAzureCredential()
 client = FarmBeatsClient(endpoint="https://<my-account-name>.farmbeats.azure.net", credential=credential)
 
-farmer_id = "farmer-1"
-boundary_id = "westlake-boundary-1"
+party_id = "party-1"
+boundary_id = "boundary-1"
 
 scenes = client.scenes.list(
-    farmer_id=farmer_id,
+    party_id=party_id,
     boundary_id=boundary_id,
-    start_date_time=datetime(2020, 1, 1, tzinfo=Utc()),
-    end_date_time=datetime(2020, 1, 31, tzinfo=Utc()),
+    start_date_time=start_date_time,
+    end_date_time=end_date_time,
+    provider="Microsoft",
+    source="Sentinel_2_L2A"
 )
 
 for scene in scenes:
-    bands = [image_file.name for image_file in scene.image_files]
+    bands = [image_file["name"] for image_file in scene["imageFiles"]]
     bands_str = ", ".join(bands)
-    print(f"Scene at {scene.scene_date_time} has the bands {bands_str}")
+    print(f"Scene has the bands {bands_str}")
 ```
 
 ## Troubleshooting
@@ -307,25 +292,20 @@ import sys
 import logging
 from azure.identity import DefaultAzureCredential
 from azure.agrifood.farming import FarmBeatsClient
-
 # Create a logger for the 'azure' SDK
 logger = logging.getLogger('azure')
 logger.setLevel(logging.DEBUG)
-
 # Configure a console output
 handler = logging.StreamHandler(stream=sys.stdout)
 logger.addHandler(handler)
-
 endpoint = "https://<my-account-name>.farmbeats.azure.net"
 credential = DefaultAzureCredential()
-
 # This client will log detailed information about its HTTP sessions, at DEBUG level
 client = FarmBeatsClient(endpoint=endpoint, credential=credential, logging_enable=True)
 ```
 
 Similarly, `logging_enable` can enable detailed logging for a single call,
 even when it isn't enabled for the client:
-
 ```python
 client.crops.get(crop_id="crop_id", logging_enable=True)
 ```

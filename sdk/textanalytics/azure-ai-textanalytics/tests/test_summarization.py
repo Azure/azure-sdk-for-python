@@ -10,8 +10,8 @@ from testcase import TextAnalyticsClientPreparer as _TextAnalyticsClientPreparer
 from devtools_testutils import recorded_by_proxy
 from azure.ai.textanalytics import (
     TextAnalyticsClient,
-    ExtractSummaryResult,
-    AbstractSummaryResult
+    ExtractiveSummaryResult,
+    AbstractiveSummaryResult
 )
 
 # pre-apply the client_cls positional argument so it needn't be explicitly passed below
@@ -56,7 +56,7 @@ class TestSummarization(TextAnalyticsTest):
 
         assert len(document_results) == 2
         for result in document_results:
-            assert isinstance(result, ExtractSummaryResult)
+            assert isinstance(result, ExtractiveSummaryResult)
             assert result.statistics
             assert len(result.sentences) == 3 if result.id == 0 else 1
             for sentence in result.sentences:
@@ -100,7 +100,7 @@ class TestSummarization(TextAnalyticsTest):
 
         assert len(document_results) == 1
         for result in document_results:
-            assert isinstance(result, ExtractSummaryResult)
+            assert isinstance(result, ExtractiveSummaryResult)
             assert result.statistics
             assert len(result.sentences) == 5
             previous_score = 1.0
@@ -142,7 +142,7 @@ class TestSummarization(TextAnalyticsTest):
         ).result()
 
         for result in response:
-            assert isinstance(result, AbstractSummaryResult)
+            assert isinstance(result, AbstractiveSummaryResult)
             assert result.statistics is not None
             assert result.id is not None
             for summary in result.summaries:
@@ -176,13 +176,13 @@ class TestSummarization(TextAnalyticsTest):
 
         response = client.begin_abstract_summary(
             docs,
-            max_sentence_count=5,
+            sentence_count=5,
             show_stats=True,
             polling_interval=self._interval(),
         ).result()
 
         for result in response:
-            assert isinstance(result, AbstractSummaryResult)
+            assert isinstance(result, AbstractiveSummaryResult)
             assert result.statistics is not None
             assert result.id is not None
             for summary in result.summaries:

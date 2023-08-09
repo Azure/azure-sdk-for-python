@@ -41,7 +41,7 @@ def build_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2015-04-01"))  # type: str
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2015-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -52,7 +52,7 @@ def build_list_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -72,7 +72,7 @@ class ActivityLogsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~$(python-base-namespace).v2015_04_01.MonitorManagementClient`'s
+        :class:`~azure.mgmt.monitor.v2015_04_01.MonitorManagementClient`'s
         :attr:`activity_logs` attribute.
     """
 
@@ -115,14 +115,14 @@ class ActivityLogsOperations:
         :type select: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either EventData or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~$(python-base-namespace).v2015_04_01.models.EventData]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.monitor.v2015_04_01.models.EventData]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2015-04-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.EventDataCollection]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2015-04-01"))
+        cls: ClsType[_models.EventDataCollection] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -145,12 +145,12 @@ class ActivityLogsOperations:
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             else:
                 request = HttpRequest("GET", next_link)
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
                 request.method = "GET"
             return request
 
@@ -158,14 +158,15 @@ class ActivityLogsOperations:
             deserialized = self._deserialize("EventDataCollection", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                request, stream=False, **kwargs
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -178,4 +179,4 @@ class ActivityLogsOperations:
 
         return ItemPaged(get_next, extract_data)
 
-    list.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Insights/eventtypes/management/values"}  # type: ignore
+    list.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Insights/eventtypes/management/values"}

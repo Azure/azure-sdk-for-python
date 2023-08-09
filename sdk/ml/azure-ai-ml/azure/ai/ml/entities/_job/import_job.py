@@ -109,7 +109,7 @@ class FileImportSource(ImportSource):
 
 
 class ImportJob(Job, JobIOMixin):
-    """Import job
+    """Import job.
 
     :param name: Name of the job.
     :type name: str
@@ -214,7 +214,7 @@ class ImportJob(Job, JobIOMixin):
         """Translate a import job to component.
 
         :param context: Context of import job YAML file.
-        :param kwargs: Extra arguments.
+        :keyword kwargs: Extra arguments.
         :return: Translated import component.
         """
         from azure.ai.ml.entities._component.import_component import ImportComponent
@@ -238,7 +238,7 @@ class ImportJob(Job, JobIOMixin):
         """Translate a import job to a pipeline node.
 
         :param context: Context of import job YAML file.
-        :param kwargs: Extra arguments.
+        :keyword kwargs: Extra arguments.
         :return: Translated import node.
         """
         from azure.ai.ml.entities._builders import Import

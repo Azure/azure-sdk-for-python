@@ -6,26 +6,26 @@ import logging
 from typing import Dict, Optional
 
 from azure.ai.ml._restclient.runhistory.models import ServiceInstanceResult
-from azure.ai.ml.entities._mixins import RestTranslatableMixin
+from azure.ai.ml.entities._mixins import DictMixin, RestTranslatableMixin
 
 module_logger = logging.getLogger(__name__)
 
 
-class ServiceInstance(RestTranslatableMixin):
-    """ServiceInstanceResult.
+class ServiceInstance(RestTranslatableMixin, DictMixin):
+    """Service Instance Result.
 
-    :param type: The type of service
-    :type type: str
-    :param port: The port used by the service.
-    :type port: int
-    :param status: The status.
-    :type status: str
-    :param error: The error message.
-    :type error: str
-    :param endpoint: The endpoint of the service.
-    :type endpoint: str
-    :param properties: The service instance properties.
-    :type properties: dict[str, str]
+    :keyword type: The type of service.
+    :type type: Optional[str]
+    :keyword port: The port used by the service.
+    :type port: Optional[int]
+    :keyword status: The status of the service.
+    :type status: Optional[str]
+    :keyword error: The error message.
+    :type error: Optional[str]
+    :keyword endpoint: The service endpoint.
+    :type endpoint: Optional[str]
+    :keyword properties: The service instance's properties.
+    :type properties: Optional[dict[str, str]]
     """
 
     def __init__(
@@ -38,7 +38,7 @@ class ServiceInstance(RestTranslatableMixin):
         endpoint: Optional[str] = None,
         properties: Optional[Dict[str, str]] = None,
         **kwargs  # pylint: disable=unused-argument
-    ):
+    ) -> None:
         self.type = type
         self.port = port
         self.status = status

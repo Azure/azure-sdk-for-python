@@ -8,50 +8,50 @@
 # Changes may cause incorrect behavior and will be lost if the code is
 # regenerated.
 # --------------------------------------------------------------------------
-from msrest import Serializer, Deserializer
-from typing import TYPE_CHECKING
-import warnings
+from ._serialization import Serializer, Deserializer
+from typing import Any, IO, Iterable, Optional, Union
 
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.paging import ItemPaged
-from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpRequest, HttpResponse
-from azure.core.polling import LROPoller, NoPolling, PollingMethod
-from azure.mgmt.core.exceptions import ARMErrorFormat
-from azure.mgmt.core.polling.arm_polling import ARMPolling
+from azure.core.polling import LROPoller
 
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, Iterable, Optional, TypeVar, Union
+from . import models as _models
 
 
 class EdgeOrderManagementClientOperationsMixin(object):
 
     def begin_create_address(
         self,
-        address_name,  # type: str
-        resource_group_name,  # type: str
-        address_resource,  # type: "_models.AddressResource"
-        **kwargs  # type: Any
-    ):
+        address_name: str,
+        resource_group_name: str,
+        address_resource: Union[_models.AddressResource, IO],
+        **kwargs: Any
+    ) -> LROPoller[_models.AddressResource]:
         """Creates a new address with the specified parameters. Existing address can be updated with this
         API.
 
         :param address_name: The name of the address Resource within the specified resource group.
          address names must be between 3 and 24 characters in length and use any alphanumeric and
-         underscore only.
+         underscore only. Required.
         :type address_name: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
-        :param address_resource: Address details from request body.
-        :type address_resource: ~azure.mgmt.edgeorder.v2021_12_01.models.AddressResource
+        :param address_resource: Address details from request body. Is either a AddressResource type or
+         a IO type. Required.
+        :type address_resource: ~azure.mgmt.edgeorder.v2021_12_01.models.AddressResource or IO
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
+        :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling.
-         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
+         operation to not poll, or pass in your own initialized polling object for a personal polling
+         strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: An instance of LROPoller that returns either AddressResource or the result of cls(response)
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
+        :return: An instance of LROPoller that returns either AddressResource or the result of
+         cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.edgeorder.v2021_12_01.models.AddressResource]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
@@ -65,6 +65,7 @@ class EdgeOrderManagementClientOperationsMixin(object):
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
+        mixin_instance._config.api_version = api_version
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
@@ -72,28 +73,37 @@ class EdgeOrderManagementClientOperationsMixin(object):
 
     def begin_create_order_item(
         self,
-        order_item_name,  # type: str
-        resource_group_name,  # type: str
-        order_item_resource,  # type: "_models.OrderItemResource"
-        **kwargs  # type: Any
-    ):
+        order_item_name: str,
+        resource_group_name: str,
+        order_item_resource: Union[_models.OrderItemResource, IO],
+        **kwargs: Any
+    ) -> LROPoller[_models.OrderItemResource]:
         """Creates an order item. Existing order item cannot be updated with this api and should instead
         be updated with the Update order item API.
 
-        :param order_item_name: The name of the order item.
+        :param order_item_name: The name of the order item. Required.
         :type order_item_name: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
-        :param order_item_resource: Order item details from request body.
-        :type order_item_resource: ~azure.mgmt.edgeorder.v2021_12_01.models.OrderItemResource
+        :param order_item_resource: Order item details from request body. Is either a OrderItemResource
+         type or a IO type. Required.
+        :type order_item_resource: ~azure.mgmt.edgeorder.v2021_12_01.models.OrderItemResource or IO
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
+        :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling.
-         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
+         operation to not poll, or pass in your own initialized polling object for a personal polling
+         strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: An instance of LROPoller that returns either OrderItemResource or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.edgeorder.v2021_12_01.models.OrderItemResource]
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
+        :return: An instance of LROPoller that returns either OrderItemResource or the result of
+         cls(response)
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.mgmt.edgeorder.v2021_12_01.models.OrderItemResource]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         api_version = self._get_api_version('begin_create_order_item')
@@ -106,6 +116,7 @@ class EdgeOrderManagementClientOperationsMixin(object):
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
+        mixin_instance._config.api_version = api_version
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
@@ -113,24 +124,27 @@ class EdgeOrderManagementClientOperationsMixin(object):
 
     def begin_delete_address_by_name(
         self,
-        address_name,  # type: str
-        resource_group_name,  # type: str
-        **kwargs  # type: Any
-    ):
+        address_name: str,
+        resource_group_name: str,
+        **kwargs: Any
+    ) -> LROPoller[None]:
         """Deletes an address.
 
         :param address_name: The name of the address Resource within the specified resource group.
          address names must be between 3 and 24 characters in length and use any alphanumeric and
-         underscore only.
+         underscore only. Required.
         :type address_name: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling.
-         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
+         operation to not poll, or pass in your own initialized polling object for a personal polling
+         strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -145,6 +159,7 @@ class EdgeOrderManagementClientOperationsMixin(object):
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
+        mixin_instance._config.api_version = api_version
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
@@ -152,22 +167,25 @@ class EdgeOrderManagementClientOperationsMixin(object):
 
     def begin_delete_order_item_by_name(
         self,
-        order_item_name,  # type: str
-        resource_group_name,  # type: str
-        **kwargs  # type: Any
-    ):
+        order_item_name: str,
+        resource_group_name: str,
+        **kwargs: Any
+    ) -> LROPoller[None]:
         """Deletes an order item.
 
-        :param order_item_name: The name of the order item.
+        :param order_item_name: The name of the order item. Required.
         :type order_item_name: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling.
-         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
+         operation to not poll, or pass in your own initialized polling object for a personal polling
+         strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -182,6 +200,7 @@ class EdgeOrderManagementClientOperationsMixin(object):
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
+        mixin_instance._config.api_version = api_version
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
@@ -189,25 +208,33 @@ class EdgeOrderManagementClientOperationsMixin(object):
 
     def begin_return_order_item(
         self,
-        order_item_name,  # type: str
-        resource_group_name,  # type: str
-        return_order_item_details,  # type: "_models.ReturnOrderItemDetails"
-        **kwargs  # type: Any
-    ):
+        order_item_name: str,
+        resource_group_name: str,
+        return_order_item_details: Union[_models.ReturnOrderItemDetails, IO],
+        **kwargs: Any
+    ) -> LROPoller[None]:
         """Return order item.
 
-        :param order_item_name: The name of the order item.
+        :param order_item_name: The name of the order item. Required.
         :type order_item_name: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
-        :param return_order_item_details: Return order item CurrentStatus.
-        :type return_order_item_details: ~azure.mgmt.edgeorder.v2021_12_01.models.ReturnOrderItemDetails
+        :param return_order_item_details: Return order item CurrentStatus. Is either a
+         ReturnOrderItemDetails type or a IO type. Required.
+        :type return_order_item_details:
+         ~azure.mgmt.edgeorder.v2021_12_01.models.ReturnOrderItemDetails or IO
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
+        :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling.
-         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
+         operation to not poll, or pass in your own initialized polling object for a personal polling
+         strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -222,6 +249,7 @@ class EdgeOrderManagementClientOperationsMixin(object):
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
+        mixin_instance._config.api_version = api_version
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
@@ -229,32 +257,41 @@ class EdgeOrderManagementClientOperationsMixin(object):
 
     def begin_update_address(
         self,
-        address_name,  # type: str
-        resource_group_name,  # type: str
-        address_update_parameter,  # type: "_models.AddressUpdateParameter"
-        if_match=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
+        address_name: str,
+        resource_group_name: str,
+        address_update_parameter: Union[_models.AddressUpdateParameter, IO],
+        if_match: Optional[str] = None,
+        **kwargs: Any
+    ) -> LROPoller[_models.AddressResource]:
         """Updates the properties of an existing address.
 
         :param address_name: The name of the address Resource within the specified resource group.
          address names must be between 3 and 24 characters in length and use any alphanumeric and
-         underscore only.
+         underscore only. Required.
         :type address_name: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
-        :param address_update_parameter: Address update parameters from request body.
+        :param address_update_parameter: Address update parameters from request body. Is either a
+         AddressUpdateParameter type or a IO type. Required.
         :type address_update_parameter: ~azure.mgmt.edgeorder.v2021_12_01.models.AddressUpdateParameter
+         or IO
         :param if_match: Defines the If-Match condition. The patch will be performed only if the ETag
-         of the job on the server matches this value.
+         of the job on the server matches this value. Default value is None.
         :type if_match: str
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
+        :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling.
-         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
+         operation to not poll, or pass in your own initialized polling object for a personal polling
+         strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: An instance of LROPoller that returns either AddressResource or the result of cls(response)
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
+        :return: An instance of LROPoller that returns either AddressResource or the result of
+         cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.edgeorder.v2021_12_01.models.AddressResource]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
@@ -268,6 +305,7 @@ class EdgeOrderManagementClientOperationsMixin(object):
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
+        mixin_instance._config.api_version = api_version
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
@@ -275,31 +313,41 @@ class EdgeOrderManagementClientOperationsMixin(object):
 
     def begin_update_order_item(
         self,
-        order_item_name,  # type: str
-        resource_group_name,  # type: str
-        order_item_update_parameter,  # type: "_models.OrderItemUpdateParameter"
-        if_match=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
+        order_item_name: str,
+        resource_group_name: str,
+        order_item_update_parameter: Union[_models.OrderItemUpdateParameter, IO],
+        if_match: Optional[str] = None,
+        **kwargs: Any
+    ) -> LROPoller[_models.OrderItemResource]:
         """Updates the properties of an existing order item.
 
-        :param order_item_name: The name of the order item.
+        :param order_item_name: The name of the order item. Required.
         :type order_item_name: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
-        :param order_item_update_parameter: order item update parameters from request body.
-        :type order_item_update_parameter: ~azure.mgmt.edgeorder.v2021_12_01.models.OrderItemUpdateParameter
+        :param order_item_update_parameter: order item update parameters from request body. Is either a
+         OrderItemUpdateParameter type or a IO type. Required.
+        :type order_item_update_parameter:
+         ~azure.mgmt.edgeorder.v2021_12_01.models.OrderItemUpdateParameter or IO
         :param if_match: Defines the If-Match condition. The patch will be performed only if the ETag
-         of the order on the server matches this value.
+         of the order on the server matches this value. Default value is None.
         :type if_match: str
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
+        :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling.
-         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
+         operation to not poll, or pass in your own initialized polling object for a personal polling
+         strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: An instance of LROPoller that returns either OrderItemResource or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.edgeorder.v2021_12_01.models.OrderItemResource]
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
+        :return: An instance of LROPoller that returns either OrderItemResource or the result of
+         cls(response)
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.mgmt.edgeorder.v2021_12_01.models.OrderItemResource]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         api_version = self._get_api_version('begin_update_order_item')
@@ -312,30 +360,36 @@ class EdgeOrderManagementClientOperationsMixin(object):
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
+        mixin_instance._config.api_version = api_version
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.begin_update_order_item(order_item_name, resource_group_name, order_item_update_parameter, if_match, **kwargs)
 
-    def cancel_order_item(
+    def cancel_order_item(  # pylint: disable=inconsistent-return-statements
         self,
-        order_item_name,  # type: str
-        resource_group_name,  # type: str
-        cancellation_reason,  # type: "_models.CancellationReason"
-        **kwargs  # type: Any
-    ):
+        order_item_name: str,
+        resource_group_name: str,
+        cancellation_reason: Union[_models.CancellationReason, IO],
+        **kwargs: Any
+    ) -> None:
         """Cancel order item.
 
-        :param order_item_name: The name of the order item.
+        :param order_item_name: The name of the order item. Required.
         :type order_item_name: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
-        :param cancellation_reason: Reason for cancellation.
-        :type cancellation_reason: ~azure.mgmt.edgeorder.v2021_12_01.models.CancellationReason
+        :param cancellation_reason: Reason for cancellation. Is either a CancellationReason type or a
+         IO type. Required.
+        :type cancellation_reason: ~azure.mgmt.edgeorder.v2021_12_01.models.CancellationReason or IO
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
+        :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :return: None or the result of cls(response)
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         api_version = self._get_api_version('cancel_order_item')
         if api_version == '2020-12-01-preview':
@@ -347,6 +401,7 @@ class EdgeOrderManagementClientOperationsMixin(object):
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
+        mixin_instance._config.api_version = api_version
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
@@ -354,22 +409,23 @@ class EdgeOrderManagementClientOperationsMixin(object):
 
     def get_address_by_name(
         self,
-        address_name,  # type: str
-        resource_group_name,  # type: str
-        **kwargs  # type: Any
-    ):
+        address_name: str,
+        resource_group_name: str,
+        **kwargs: Any
+    ) -> _models.AddressResource:
         """Gets information about the specified address.
 
         :param address_name: The name of the address Resource within the specified resource group.
          address names must be between 3 and 24 characters in length and use any alphanumeric and
-         underscore only.
+         underscore only. Required.
         :type address_name: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: AddressResource, or the result of cls(response)
+        :return: AddressResource or the result of cls(response)
         :rtype: ~azure.mgmt.edgeorder.v2021_12_01.models.AddressResource
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         api_version = self._get_api_version('get_address_by_name')
         if api_version == '2020-12-01-preview':
@@ -381,6 +437,7 @@ class EdgeOrderManagementClientOperationsMixin(object):
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
+        mixin_instance._config.api_version = api_version
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
@@ -388,23 +445,24 @@ class EdgeOrderManagementClientOperationsMixin(object):
 
     def get_order_by_name(
         self,
-        order_name,  # type: str
-        resource_group_name,  # type: str
-        location,  # type: str
-        **kwargs  # type: Any
-    ):
+        order_name: str,
+        resource_group_name: str,
+        location: str,
+        **kwargs: Any
+    ) -> _models.OrderResource:
         """Gets an order.
 
-        :param order_name: The name of the order.
+        :param order_name: The name of the order. Required.
         :type order_name: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
-        :param location: The name of Azure region.
+        :param location: The name of Azure region. Required.
         :type location: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: OrderResource, or the result of cls(response)
+        :return: OrderResource or the result of cls(response)
         :rtype: ~azure.mgmt.edgeorder.v2021_12_01.models.OrderResource
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         api_version = self._get_api_version('get_order_by_name')
         if api_version == '2020-12-01-preview':
@@ -416,6 +474,7 @@ class EdgeOrderManagementClientOperationsMixin(object):
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
+        mixin_instance._config.api_version = api_version
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
@@ -423,26 +482,28 @@ class EdgeOrderManagementClientOperationsMixin(object):
 
     def get_order_item_by_name(
         self,
-        order_item_name,  # type: str
-        resource_group_name,  # type: str
-        expand=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
+        order_item_name: str,
+        resource_group_name: str,
+        expand: Optional[str] = None,
+        **kwargs: Any
+    ) -> _models.OrderItemResource:
         """Gets an order item.
 
-        :param order_item_name: The name of the order item.
+        :param order_item_name: The name of the order item. Required.
         :type order_item_name: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
         :param expand: $expand is supported on device details, forward shipping details and reverse
          shipping details parameters. Each of these can be provided as a comma separated list. Device
          Details for order item provides details on the devices of the product, Forward and Reverse
-         Shipping details provide forward and reverse shipping details respectively.
+         Shipping details provide forward and reverse shipping details respectively. Default value is
+         None.
         :type expand: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: OrderItemResource, or the result of cls(response)
+        :return: OrderItemResource or the result of cls(response)
         :rtype: ~azure.mgmt.edgeorder.v2021_12_01.models.OrderItemResource
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         api_version = self._get_api_version('get_order_item_by_name')
         if api_version == '2020-12-01-preview':
@@ -454,6 +515,7 @@ class EdgeOrderManagementClientOperationsMixin(object):
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
+        mixin_instance._config.api_version = api_version
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
@@ -461,25 +523,26 @@ class EdgeOrderManagementClientOperationsMixin(object):
 
     def list_addresses_at_resource_group_level(
         self,
-        resource_group_name,  # type: str
-        filter=None,  # type: Optional[str]
-        skip_token=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
+        resource_group_name: str,
+        filter: Optional[str] = None,
+        skip_token: Optional[str] = None,
+        **kwargs: Any
+    ) -> Iterable["_models.AddressResource"]:
         """Lists all the addresses available under the given resource group.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
         :param filter: $filter is supported to filter based on shipping address properties. Filter
-         supports only equals operation.
+         supports only equals operation. Default value is None.
         :type filter: str
         :param skip_token: $skipToken is supported on Get list of addresses, which provides the next
-         page in the list of address.
+         page in the list of address. Default value is None.
         :type skip_token: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either AddressResourceList or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.edgeorder.v2021_12_01.models.AddressResourceList]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :return: An iterator like instance of either AddressResource or the result of cls(response)
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.edgeorder.v2021_12_01.models.AddressResource]
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         api_version = self._get_api_version('list_addresses_at_resource_group_level')
         if api_version == '2020-12-01-preview':
@@ -491,6 +554,7 @@ class EdgeOrderManagementClientOperationsMixin(object):
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
+        mixin_instance._config.api_version = api_version
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
@@ -498,22 +562,22 @@ class EdgeOrderManagementClientOperationsMixin(object):
 
     def list_addresses_at_subscription_level(
         self,
-        filter=None,  # type: Optional[str]
-        skip_token=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
+        filter: Optional[str] = None,
+        skip_token: Optional[str] = None,
+        **kwargs: Any
+    ) -> Iterable["_models.AddressResource"]:
         """Lists all the addresses available under the subscription.
 
         :param filter: $filter is supported to filter based on shipping address properties. Filter
-         supports only equals operation.
+         supports only equals operation. Default value is None.
         :type filter: str
         :param skip_token: $skipToken is supported on Get list of addresses, which provides the next
-         page in the list of addresses.
+         page in the list of addresses. Default value is None.
         :type skip_token: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either AddressResourceList or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.edgeorder.v2021_12_01.models.AddressResourceList]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :return: An iterator like instance of either AddressResource or the result of cls(response)
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.edgeorder.v2021_12_01.models.AddressResource]
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         api_version = self._get_api_version('list_addresses_at_subscription_level')
         if api_version == '2020-12-01-preview':
@@ -525,6 +589,7 @@ class EdgeOrderManagementClientOperationsMixin(object):
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
+        mixin_instance._config.api_version = api_version
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
@@ -532,22 +597,27 @@ class EdgeOrderManagementClientOperationsMixin(object):
 
     def list_configurations(
         self,
-        configurations_request,  # type: "_models.ConfigurationsRequest"
-        skip_token=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
+        configurations_request: Union[_models.ConfigurationsRequest, IO],
+        skip_token: Optional[str] = None,
+        **kwargs: Any
+    ) -> Iterable["_models.Configuration"]:
         """This method provides the list of configurations for the given product family, product line and
         product under subscription.
 
-        :param configurations_request: Filters for showing the configurations.
-        :type configurations_request: ~azure.mgmt.edgeorder.v2021_12_01.models.ConfigurationsRequest
+        :param configurations_request: Filters for showing the configurations. Is either a
+         ConfigurationsRequest type or a IO type. Required.
+        :type configurations_request: ~azure.mgmt.edgeorder.v2021_12_01.models.ConfigurationsRequest or
+         IO
         :param skip_token: $skipToken is supported on list of configurations, which provides the next
-         page in the list of configurations.
+         page in the list of configurations. Default value is None.
         :type skip_token: str
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
+        :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either Configurations or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.edgeorder.v2021_12_01.models.Configurations]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :return: An iterator like instance of either Configuration or the result of cls(response)
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.edgeorder.v2021_12_01.models.Configuration]
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         api_version = self._get_api_version('list_configurations')
         if api_version == '2020-12-01-preview':
@@ -559,6 +629,7 @@ class EdgeOrderManagementClientOperationsMixin(object):
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
+        mixin_instance._config.api_version = api_version
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
@@ -566,14 +637,14 @@ class EdgeOrderManagementClientOperationsMixin(object):
 
     def list_operations(
         self,
-        **kwargs  # type: Any
-    ):
+        **kwargs: Any
+    ) -> Iterable["_models.Operation"]:
         """This method gets all the operations that are exposed for customer.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either OperationListResult or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.edgeorder.v2021_12_01.models.OperationListResult]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :return: An iterator like instance of either Operation or the result of cls(response)
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.edgeorder.v2021_12_01.models.Operation]
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         api_version = self._get_api_version('list_operations')
         if api_version == '2020-12-01-preview':
@@ -585,6 +656,7 @@ class EdgeOrderManagementClientOperationsMixin(object):
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
+        mixin_instance._config.api_version = api_version
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
@@ -592,21 +664,22 @@ class EdgeOrderManagementClientOperationsMixin(object):
 
     def list_order_at_resource_group_level(
         self,
-        resource_group_name,  # type: str
-        skip_token=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
+        resource_group_name: str,
+        skip_token: Optional[str] = None,
+        **kwargs: Any
+    ) -> Iterable["_models.OrderResource"]:
         """Lists order at resource group level.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
         :param skip_token: $skipToken is supported on Get list of order, which provides the next page
-         in the list of order.
+         in the list of order. Default value is None.
         :type skip_token: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either OrderResourceList or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.edgeorder.v2021_12_01.models.OrderResourceList]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :return: An iterator like instance of either OrderResource or the result of cls(response)
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.edgeorder.v2021_12_01.models.OrderResource]
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         api_version = self._get_api_version('list_order_at_resource_group_level')
         if api_version == '2020-12-01-preview':
@@ -618,6 +691,7 @@ class EdgeOrderManagementClientOperationsMixin(object):
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
+        mixin_instance._config.api_version = api_version
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
@@ -625,18 +699,18 @@ class EdgeOrderManagementClientOperationsMixin(object):
 
     def list_order_at_subscription_level(
         self,
-        skip_token=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
+        skip_token: Optional[str] = None,
+        **kwargs: Any
+    ) -> Iterable["_models.OrderResource"]:
         """Lists order at subscription level.
 
         :param skip_token: $skipToken is supported on Get list of order, which provides the next page
-         in the list of order.
+         in the list of order. Default value is None.
         :type skip_token: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either OrderResourceList or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.edgeorder.v2021_12_01.models.OrderResourceList]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :return: An iterator like instance of either OrderResource or the result of cls(response)
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.edgeorder.v2021_12_01.models.OrderResource]
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         api_version = self._get_api_version('list_order_at_subscription_level')
         if api_version == '2020-12-01-preview':
@@ -648,6 +722,7 @@ class EdgeOrderManagementClientOperationsMixin(object):
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
+        mixin_instance._config.api_version = api_version
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
@@ -655,31 +730,34 @@ class EdgeOrderManagementClientOperationsMixin(object):
 
     def list_order_items_at_resource_group_level(
         self,
-        resource_group_name,  # type: str
-        filter=None,  # type: Optional[str]
-        expand=None,  # type: Optional[str]
-        skip_token=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
+        resource_group_name: str,
+        filter: Optional[str] = None,
+        expand: Optional[str] = None,
+        skip_token: Optional[str] = None,
+        **kwargs: Any
+    ) -> Iterable["_models.OrderItemResource"]:
         """Lists order item at resource group level.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
         :param filter: $filter is supported to filter based on order id. Filter supports only equals
-         operation.
+         operation. Default value is None.
         :type filter: str
         :param expand: $expand is supported on device details, forward shipping details and reverse
          shipping details parameters. Each of these can be provided as a comma separated list. Device
          Details for order item provides details on the devices of the product, Forward and Reverse
-         Shipping details provide forward and reverse shipping details respectively.
+         Shipping details provide forward and reverse shipping details respectively. Default value is
+         None.
         :type expand: str
         :param skip_token: $skipToken is supported on Get list of order items, which provides the next
-         page in the list of order items.
+         page in the list of order items. Default value is None.
         :type skip_token: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either OrderItemResourceList or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.edgeorder.v2021_12_01.models.OrderItemResourceList]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :return: An iterator like instance of either OrderItemResource or the result of cls(response)
+        :rtype:
+         ~azure.core.paging.ItemPaged[~azure.mgmt.edgeorder.v2021_12_01.models.OrderItemResource]
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         api_version = self._get_api_version('list_order_items_at_resource_group_level')
         if api_version == '2020-12-01-preview':
@@ -691,6 +769,7 @@ class EdgeOrderManagementClientOperationsMixin(object):
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
+        mixin_instance._config.api_version = api_version
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
@@ -698,28 +777,30 @@ class EdgeOrderManagementClientOperationsMixin(object):
 
     def list_order_items_at_subscription_level(
         self,
-        filter=None,  # type: Optional[str]
-        expand=None,  # type: Optional[str]
-        skip_token=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
+        filter: Optional[str] = None,
+        expand: Optional[str] = None,
+        skip_token: Optional[str] = None,
+        **kwargs: Any
+    ) -> Iterable["_models.OrderItemResource"]:
         """Lists order item at subscription level.
 
         :param filter: $filter is supported to filter based on order id. Filter supports only equals
-         operation.
+         operation. Default value is None.
         :type filter: str
         :param expand: $expand is supported on device details, forward shipping details and reverse
          shipping details parameters. Each of these can be provided as a comma separated list. Device
          Details for order item provides details on the devices of the product, Forward and Reverse
-         Shipping details provide forward and reverse shipping details respectively.
+         Shipping details provide forward and reverse shipping details respectively. Default value is
+         None.
         :type expand: str
         :param skip_token: $skipToken is supported on Get list of order items, which provides the next
-         page in the list of order items.
+         page in the list of order items. Default value is None.
         :type skip_token: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either OrderItemResourceList or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.edgeorder.v2021_12_01.models.OrderItemResourceList]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :return: An iterator like instance of either OrderItemResource or the result of cls(response)
+        :rtype:
+         ~azure.core.paging.ItemPaged[~azure.mgmt.edgeorder.v2021_12_01.models.OrderItemResource]
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         api_version = self._get_api_version('list_order_items_at_subscription_level')
         if api_version == '2020-12-01-preview':
@@ -731,6 +812,7 @@ class EdgeOrderManagementClientOperationsMixin(object):
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
+        mixin_instance._config.api_version = api_version
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
@@ -738,25 +820,30 @@ class EdgeOrderManagementClientOperationsMixin(object):
 
     def list_product_families(
         self,
-        product_families_request,  # type: "_models.ProductFamiliesRequest"
-        expand=None,  # type: Optional[str]
-        skip_token=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
+        product_families_request: Union[_models.ProductFamiliesRequest, IO],
+        expand: Optional[str] = None,
+        skip_token: Optional[str] = None,
+        **kwargs: Any
+    ) -> Iterable["_models.ProductFamily"]:
         """This method provides the list of product families for the given subscription.
 
-        :param product_families_request: Filters for showing the product families.
+        :param product_families_request: Filters for showing the product families. Is either a
+         ProductFamiliesRequest type or a IO type. Required.
         :type product_families_request: ~azure.mgmt.edgeorder.v2021_12_01.models.ProductFamiliesRequest
+         or IO
         :param expand: $expand is supported on configurations parameter for product, which provides
-         details on the configurations for the product.
+         details on the configurations for the product. Default value is None.
         :type expand: str
         :param skip_token: $skipToken is supported on list of product families, which provides the next
-         page in the list of product families.
+         page in the list of product families. Default value is None.
         :type skip_token: str
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
+        :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either ProductFamilies or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.edgeorder.v2021_12_01.models.ProductFamilies]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :return: An iterator like instance of either ProductFamily or the result of cls(response)
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.edgeorder.v2021_12_01.models.ProductFamily]
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         api_version = self._get_api_version('list_product_families')
         if api_version == '2020-12-01-preview':
@@ -768,6 +855,7 @@ class EdgeOrderManagementClientOperationsMixin(object):
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
+        mixin_instance._config.api_version = api_version
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
@@ -775,18 +863,20 @@ class EdgeOrderManagementClientOperationsMixin(object):
 
     def list_product_families_metadata(
         self,
-        skip_token=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
+        skip_token: Optional[str] = None,
+        **kwargs: Any
+    ) -> Iterable["_models.ProductFamiliesMetadataDetails"]:
         """This method provides the list of product families metadata for the given subscription.
 
         :param skip_token: $skipToken is supported on list of product families metadata, which provides
-         the next page in the list of product families metadata.
+         the next page in the list of product families metadata. Default value is None.
         :type skip_token: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either ProductFamiliesMetadata or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.edgeorder.v2021_12_01.models.ProductFamiliesMetadata]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :return: An iterator like instance of either ProductFamiliesMetadataDetails or the result of
+         cls(response)
+        :rtype:
+         ~azure.core.paging.ItemPaged[~azure.mgmt.edgeorder.v2021_12_01.models.ProductFamiliesMetadataDetails]
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         api_version = self._get_api_version('list_product_families_metadata')
         if api_version == '2020-12-01-preview':
@@ -798,6 +888,7 @@ class EdgeOrderManagementClientOperationsMixin(object):
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
+        mixin_instance._config.api_version = api_version
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))

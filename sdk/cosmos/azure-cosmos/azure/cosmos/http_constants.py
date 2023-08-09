@@ -85,6 +85,7 @@ class HttpHeaders(object):
     Prefer = "Prefer"
     Location = "Location"
     Referer = "referer"
+    Pragma = "Pragma"
 
     # Query
     Query = "x-ms-documentdb-query"
@@ -92,10 +93,13 @@ class HttpHeaders(object):
     IsQueryPlanRequest = "x-ms-cosmos-is-query-plan-request"
     SupportedQueryFeatures = "x-ms-cosmos-supported-query-features"
     QueryVersion = "x-ms-cosmos-query-version"
+    QueryMetrics = "x-ms-documentdb-query-metrics"
+    QueryExecutionInfo = "x-ms-cosmos-query-execution-info"
 
     # Our custom DocDB headers
     Continuation = "x-ms-continuation"
     PageSize = "x-ms-max-item-count"
+    ResponseContinuationTokenLimitInKb = "x-ms-documentdb-responsecontinuationtokenlimitinkb"  # cspell:disable-line
 
     # Request sender generated. Simply echoed by backend.
     ActivityId = "x-ms-activity-id"
@@ -117,8 +121,11 @@ class HttpHeaders(object):
     EmitVerboseTracesInQuery = "x-ms-documentdb-query-emit-traces"
     SubStatus = "x-ms-substatus"
     AlternateContentPath = "x-ms-alt-content-path"
+    ContentPath = "x-ms-content-path"
     IsContinuationExpected = "x-ms-documentdb-query-iscontinuationexpected"
     PopulateQueryMetrics = "x-ms-documentdb-populatequerymetrics"
+    ResourceQuota = "x-ms-resource-quota"
+    ResourceUsage = "x-ms-resource-usage"
 
     # Quota Info
     MaxEntityCount = "x-ms-root-entity-max-count"
@@ -157,7 +164,7 @@ class HttpHeaders(object):
     OcpResourceProviderRegisteredUri = "ocp-resourceprovider-registered-uri"
 
     # For Document service management operations only. This is in
-    # essence a 'handle' to (long running) operations.
+    # essence a 'handle' to (long-running) operations.
     RequestId = "x-ms-request-id"
 
     # Object returning this determines what constitutes state and what
@@ -178,6 +185,7 @@ class HttpHeaders(object):
     PartitionKey = "x-ms-documentdb-partitionkey"
     EnableCrossPartitionQuery = "x-ms-documentdb-query-enablecrosspartition"
     PartitionKeyRangeID = "x-ms-documentdb-partitionkeyrangeid"
+    PartitionKeyDeletePending = "x-ms-cosmos-is-partition-key-delete-pending"
 
     # Upsert header
     IsUpsert = "x-ms-documentdb-is-upsert"
@@ -205,6 +213,23 @@ class HttpHeaders(object):
     DedicatedGatewayCacheStaleness = "x-ms-dedicatedgateway-max-age"
     IntegratedCacheHit = "x-ms-cosmos-cachehit"
 
+    # Backend headers
+    Server = "Server"
+    StrictTransportSecurity = "Strict-Transport-Security"
+    LSN = "lsn"
+    GatewayVersion = "x-ms-gatewayversion"
+    ServiceVersion = "x-ms-serviceversion"
+    SchemaVersion = "x-ms-schemaversion"
+    QuorumAckedLsn = "x-ms-quorum-acked-lsn" # cspell:disable-line
+    CurrentWriteQuorum = "x-ms-current-write-quorum"
+    CurrentReplicaSetSize = "x-ms-current-replica-set-size"
+    XpRole = "x-ms-xp-role"
+    GlobalCommittedLsn = "x-ms-global-committed-lsn"
+    NumberOfReadRegions = "x-ms-number-of-read-regions"
+    TransportRequestId = "x-ms-transport-request-id"
+    CosmosLsn = "x-ms-cosmos-llsn" # cspell:disable-line
+    CosmosQuorumAckedLsn = "x-ms-cosmos-quorum-acked-llsn" # cspell:disable-line
+    RequestDurationMs = "x-ms-request-duration-ms"
 
 class HttpHeaderPreferenceTokens(object):
     """Constants of http header preference tokens.
@@ -413,6 +438,7 @@ class ResourceType(object):
     Offer = "offers"
     Topology = "topology"
     DatabaseAccount = "databaseaccount"
+    PartitionKey = "partitionkey"
 
     @staticmethod
     def IsCollectionChild(resourceType):
@@ -424,4 +450,5 @@ class ResourceType(object):
             ResourceType.UserDefinedFunction,
             ResourceType.Trigger,
             ResourceType.StoredProcedure,
+            ResourceType.PartitionKey,
         )

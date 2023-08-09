@@ -27,6 +27,7 @@ class ApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Key Vault API versions supported by this package"""
 
     #: this is the default version
+    V7_4 = "7.4"
     V7_3 = "7.3"
     V7_2 = "7.2"
     V7_1 = "7.1"
@@ -34,14 +35,22 @@ class ApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     V2016_10_01 = "2016-10-01"
 
 
-DEFAULT_VERSION = ApiVersion.V7_3
+DEFAULT_VERSION = ApiVersion.V7_4
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
 def _format_api_version(request: "HttpRequest", api_version: str) -> "HttpRequest":
-    """Returns a request copy that includes an api-version query parameter if one wasn't originally present."""
+    """Returns a request copy that includes an api-version query parameter if one wasn't originally present.
+
+    :param request: The HTTP request being sent.
+    :type request: :class:`~azure.core.rest.HttpRequest`
+    :param str api_version: The service API version that the request should include.
+
+    :returns: A copy of the request that includes an api-version query parameter.
+    :rtype: :class:`~azure.core.rest.HttpRequest`
+    """
     request_copy = deepcopy(request)
     params = {"api-version": api_version}  # By default, we want to use the client's API version
     query = urlparse(request_copy.url).query
@@ -100,11 +109,11 @@ class KeyVaultClientBase(object):
                 **kwargs
             )
             self._models = _KeyVaultClient.models(api_version=self.api_version)
-        except ValueError:
+        except ValueError as exc:
             raise NotImplementedError(
                 f"This package doesn't support API version '{self.api_version}'. "
                 + f"Supported versions: {', '.join(v.value for v in ApiVersion)}"
-            )
+            ) from exc
 
     @property
     def vault_url(self) -> str:
@@ -125,7 +134,7 @@ class KeyVaultClientBase(object):
         self._client.close()
 
     @distributed_trace
-    def send_request(self, request: "HttpRequest", **kwargs) -> "HttpResponse":
+    def send_request(self, request: "HttpRequest", *, stream: bool = False, **kwargs) -> "HttpResponse":
         """Runs a network request using the client's existing pipeline.
 
         The request URL can be relative to the vault URL. The service API version used for the request is the same as
@@ -136,6 +145,8 @@ class KeyVaultClientBase(object):
         :param request: The network request you want to make.
         :type request: ~azure.core.rest.HttpRequest
 
+        :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
+
         :return: The response of your network call. Does not do error handling on your response.
         :rtype: ~azure.core.rest.HttpResponse
         """
@@ -144,4 +155,4 @@ class KeyVaultClientBase(object):
             "vaultBaseUrl": _SERIALIZER.url("vault_base_url", self._vault_url, "str", skip_quote=True),
         }
         request_copy.url = self._client._client.format_url(request_copy.url, **path_format_arguments)
-        return self._client._client.send_request(request_copy, **kwargs)
+        return self._client._client.send_request(request_copy, stream=stream, **kwargs)

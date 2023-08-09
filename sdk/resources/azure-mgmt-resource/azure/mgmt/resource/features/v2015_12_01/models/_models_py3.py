@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import List, Optional, TYPE_CHECKING
+from typing import Any, List, Optional, TYPE_CHECKING
 
 from ... import _serialization
 
@@ -31,8 +31,8 @@ class FeatureOperationsListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.FeatureResult"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self, *, value: Optional[List["_models.FeatureResult"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: The array of features.
         :paramtype value: list[~azure.mgmt.resource.features.v2015_12_01.models.FeatureResult]
@@ -55,7 +55,7 @@ class FeatureProperties(_serialization.Model):
         "state": {"key": "state", "type": "str"},
     }
 
-    def __init__(self, *, state: Optional[str] = None, **kwargs):
+    def __init__(self, *, state: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword state: The registration state of the feature for the subscription.
         :paramtype state: str
@@ -91,8 +91,8 @@ class FeatureResult(_serialization.Model):
         properties: Optional["_models.FeatureProperties"] = None,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         type: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name of the feature.
         :paramtype name: str
@@ -124,7 +124,9 @@ class Operation(_serialization.Model):
         "display": {"key": "display", "type": "OperationDisplay"},
     }
 
-    def __init__(self, *, name: Optional[str] = None, display: Optional["_models.OperationDisplay"] = None, **kwargs):
+    def __init__(
+        self, *, name: Optional[str] = None, display: Optional["_models.OperationDisplay"] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword name: Operation name: {provider}/{resource}/{operation}.
         :paramtype name: str
@@ -159,8 +161,8 @@ class OperationDisplay(_serialization.Model):
         provider: Optional[str] = None,
         resource: Optional[str] = None,
         operation: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword provider: Service provider: Microsoft.Features.
         :paramtype provider: str
@@ -176,7 +178,8 @@ class OperationDisplay(_serialization.Model):
 
 
 class OperationListResult(_serialization.Model):
-    """Result of the request to list Microsoft.Features operations. It contains a list of operations and a URL link to get the next set of results.
+    """Result of the request to list Microsoft.Features operations. It contains a list of operations
+    and a URL link to get the next set of results.
 
     :ivar value: List of Microsoft.Features operations.
     :vartype value: list[~azure.mgmt.resource.features.v2015_12_01.models.Operation]
@@ -189,7 +192,9 @@ class OperationListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Operation"]] = None, next_link: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, value: Optional[List["_models.Operation"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: List of Microsoft.Features operations.
         :paramtype value: list[~azure.mgmt.resource.features.v2015_12_01.models.Operation]

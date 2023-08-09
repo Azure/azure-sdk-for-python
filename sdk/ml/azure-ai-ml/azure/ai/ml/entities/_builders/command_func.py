@@ -5,7 +5,7 @@
 # pylint: disable=protected-access
 
 import os
-from typing import Callable, Dict, Optional, Tuple, Union
+from typing import Callable, Dict, List, Optional, Tuple, Union
 
 from azure.ai.ml.constants._common import AssetTypes, LegacyAssetTypes
 from azure.ai.ml.constants._component import ComponentSource
@@ -17,7 +17,12 @@ from azure.ai.ml.entities._credentials import (
     UserIdentityConfiguration,
 )
 from azure.ai.ml.entities._inputs_outputs import Input, Output
-from azure.ai.ml.entities._job.distribution import MpiDistribution, PyTorchDistribution, TensorFlowDistribution
+from azure.ai.ml.entities._job.distribution import (
+    MpiDistribution,
+    PyTorchDistribution,
+    RayDistribution,
+    TensorFlowDistribution,
+)
 from azure.ai.ml.entities._job.job_service import (
     JobService,
     JupyterLabJobService,
@@ -118,12 +123,15 @@ def command(
     experiment_name: Optional[str] = None,
     environment: Optional[Union[str, Environment]] = None,
     environment_variables: Optional[Dict] = None,
-    distribution: Optional[Union[Dict, MpiDistribution, TensorFlowDistribution, PyTorchDistribution]] = None,
+    distribution: Optional[
+        Union[Dict, MpiDistribution, TensorFlowDistribution, PyTorchDistribution, RayDistribution]
+    ] = None,
     compute: Optional[str] = None,
     inputs: Optional[Dict] = None,
     outputs: Optional[Dict] = None,
     instance_count: Optional[int] = None,
     instance_type: Optional[str] = None,
+    locations: Optional[List[str]] = None,
     docker_args: Optional[str] = None,
     shm_size: Optional[str] = None,
     timeout: Optional[int] = None,
@@ -133,69 +141,93 @@ def command(
     services: Optional[
         Dict[str, Union[JobService, JupyterLabJobService, SshJobService, TensorBoardJobService, VsCodeJobService]]
     ] = None,
+    job_tier: Optional[str] = None,
+    priority: Optional[str] = None,
     **kwargs,
 ) -> Command:
-    """Create a Command object which can be used inside dsl.pipeline as a
-    function and can also be created as a standalone command job.
+    """Creates a Command object which can be used inside a dsl.pipeline function or used as a standalone Command job.
 
-    :param name: Name of the command job or component created
-    :type name: str
-    :param description: a friendly description of the command
-    :type description: str
-    :param tags: Tags to be attached to this command
-    :type tags: Dict
-    :param properties: The asset property dictionary.
-    :type properties: dict[str, str]
-    :param display_name: a friendly name
-    :type display_name: str
-    :param experiment_name:  Name of the experiment the job will be created under,
-        if None is provided, default will be set to current directory name. Will be ignored as a pipeline step.
-    :type experiment_name: str
-    :param command: the command string that will be run
-    :type command: str
-    :param environment: the environment to use for this command
-    :type environment: Union[str, azure.ai.ml.entities.Environment]
-    :param environment_variables: environment variables to set on the compute before this command is executed
-    :type environment_variables: dict
-    :param distribution: the distribution mode to use for this command
-    :type distribution:
-        Union[Dict, azure.ai.ml.MpiDistribution, azure.ai.ml.TensorFlowDistribution, azure.ai.ml.PyTorchDistribution]
-    :param compute: the name of the compute where the command job is executed(
-        will not be used if the command is used as a component/function)
-    :type compute: str
-    :param inputs: a dict of inputs used by this command.
-    :type inputs: Dict
-    :param outputs: the outputs of this command
-    :type outputs: Dict
-    :param instance_count: Optional number of instances or nodes used by the compute target. Defaults to 1.
-    :vartype instance_count: int
-    :param instance_type: Optional type of VM used as supported by the compute target.
-    :vartype instance_type: str
-    :param docker_args: Extra arguments to pass to the Docker run command. This would override any
-     parameters that have already been set by the system, or in this section. This parameter is only
-     supported for Azure ML compute types.
-    :vartype docker_args: str
-    :param shm_size: Size of the docker container's shared memory block. This should be in the
-     format of (number)(unit) where number as to be greater than 0 and the unit can be one of
-     b(bytes), k(kilobytes), m(megabytes), or g(gigabytes).
-    :vartype shm_size: str
-    :param timeout: The number in seconds, after which the job will be cancelled.
-    :vartype timeout: int
-    :param code: the code folder to run -- typically a local folder that will be uploaded as the job is submitted
-    :type code: Union[str, os.PathLike]
-    :param identity: Identity that training job will use while running on compute.
-    :type identity: Union[
-        azure.ai.ml.ManagedIdentityConfiguration,
-        azure.ai.ml.AmlTokenConfiguration]
-    :param is_deterministic: Specify whether the command will return same output given same input.
-        If a command (component) is deterministic, when use it as a node/step in a pipeline,
-        it will reuse results from a previous submitted job in current workspace which has same inputs and settings.
-        In this case, this step will not use any compute resource.
-        Default to be True, specify is_deterministic=False if you would like to avoid such reuse behavior.
+    :keyword name: The name of the Command job or component.
+    :type name: Optional[str]
+    :keyword description: The description of the Command. Defaults to None.
+    :type description: Optional[str]
+    :keyword tags: Tag dictionary. Tags can be added, removed, and updated. Defaults to None.
+    :type tags: Optional[dict[str, str]]
+    :keyword properties: The job property dictionary. Defaults to None.
+    :type properties: Optional[dict[str, str]]
+    :keyword display_name: The display name of the job. Defaults to a randomly generated name.
+    :type display_name: Optional[str]
+    :keyword command: The command to be executed. Defaults to None.
+    :type command: Optional[str]
+    :keyword experiment_name: The name of the experiment that the job will be created under. Defaults to current
+        directory name.
+    :type experiment_name: Optional[str]
+    :keyword environment: The environment that the job will run in.
+    :type environment: Optional[Union[str, ~azure.ai.ml.entities.Environment]]
+    :keyword environment_variables: A dictionary of environment variable names and values.
+        These environment variables are set on the process where user script is being executed.
+        Defaults to None.
+    :type environment_variables: Optional[dict[str, str]]
+    :keyword distribution: The configuration for distributed jobs. Defaults to None.
+    :type distribution: Optional[Union[dict, ~azure.ai.ml.PyTorchDistribution, ~azure.ai.ml.MpiDistribution,
+        ~azure.ai.ml.TensorFlowDistribution, ~azure.ai.ml.RayDistribution]]
+    :keyword compute: The compute target the job will run on. Defaults to default compute.
+    :type compute: Optional[str]
+    :keyword inputs: A mapping of input names to input data sources used in the job. Defaults to None.
+    :type inputs: Optional[dict[str, Union[~azure.ai.ml.Input, str, bool, int, float, Enum]]]
+    :keyword outputs: A mapping of output names to output data sources used in the job. Defaults to None.
+    :type outputs: Optional[dict[str, Union[str, ~azure.ai.ml.Output]]]
+    :keyword instance_count: The number of instances or nodes to be used by the compute target. Defaults to 1.
+    :type instance_count: Optional[int]
+    :keyword instance_type: The type of VM to be used by the compute target.
+    :type instance_type: Optional[str]
+    :keyword locations: The list of locations where the job will run.
+    :type locations: Optional[list[str]]
+    :keyword docker_args: Extra arguments to pass to the Docker run command. This would override any
+        parameters that have already been set by the system, or in this section. This parameter is only
+        supported for Azure ML compute types. Defaults to None.
+    :type docker_args: Optional[str]
+    :keyword shm_size: The size of the Docker container's shared memory block. This should be in the
+        format of (number)(unit) where the number has to be greater than 0 and the unit can be one of
+        b(bytes), k(kilobytes), m(megabytes), or g(gigabytes).
+    :type shm_size: Optional[str]
+    :keyword timeout: The number, in seconds, after which the job will be cancelled.
+    :type timeout: Optional[int]
+    :keyword code: The source code to run the job. Can be a local path or "http:", "https:", or "azureml:" url
+        pointing to a remote location.
+    :type code: Optional[Union[str, os.PathLike]]
+    :keyword identity: The identity that the command job will use while running on compute.
+    :type identity: Optional[Union[
+        ~azure.ai.ml.entities.ManagedIdentityConfiguration,
+        ~azure.ai.ml.entities.AmlTokenConfiguration,
+        ~azure.ai.ml.entities.UserIdentityConfiguration]]
+    :keyword is_deterministic: Specifies whether the Command will return the same output given the same input.
+        Defaults to True. When True, if a Command Component is deterministic and has been run before in the
+        current workspace with the same input and settings, it will reuse results from a previously submitted
+        job when used as a node or step in a pipeline. In that scenario, no compute resources will be used.
     :type is_deterministic: bool
-    :param services: Interactive services for the node. This is an experimental parameter, and may change at any time.
-        Please see https://aka.ms/azuremlexperimental for more information.
-    :type services: Dict[str, JobService]
+    :keyword services: The interactive services for the node. Defaults to None. This is an experimental parameter,
+        and may change at any time. Please see https://aka.ms/azuremlexperimental for more information.
+    :type services: Optional[dict[str, Union[~azure.ai.ml.entities.JobService,
+        ~azure.ai.ml.entities.JupyterLabJobService, ~azure.ai.ml.entities.SshJobService,
+        ~azure.ai.ml.entities.TensorBoardJobService, ~azure.ai.ml.entities.VsCodeJobService]]]
+    :keyword job_tier: The job tier. Accepted values are "Spot", "Basic", "Standard", or "Premium".
+    :type job_tier: Optional[str]
+    :keyword priority: The priority of the job on the compute. Accepted values are "low", "medium", and "high".
+        Defaults to "medium".
+    :type priority: Optional[str]
+    :return: A Command object.
+    :rtype: ~azure.ai.ml.entities.Command
+
+    .. admonition:: Example:
+
+
+        .. literalinclude:: ../../../../../samples/ml_samples_command_configurations.py
+            :start-after: [START command_function]
+            :end-before: [END command_function]
+            :language: python
+            :dedent: 8
+            :caption: Creating a Command Job using the command() builder method.
     """
     # pylint: disable=too-many-locals
     inputs = inputs or {}
@@ -242,12 +274,25 @@ def command(
         **kwargs,
     )
 
-    if instance_count is not None or instance_type is not None or docker_args is not None or shm_size is not None:
+    if (
+        locations is not None
+        or instance_count is not None
+        or instance_type is not None
+        or docker_args is not None
+        or shm_size is not None
+    ):
         command_obj.set_resources(
-            instance_count=instance_count, instance_type=instance_type, docker_args=docker_args, shm_size=shm_size
+            locations=locations,
+            instance_count=instance_count,
+            instance_type=instance_type,
+            docker_args=docker_args,
+            shm_size=shm_size,
         )
 
     if timeout is not None:
         command_obj.set_limits(timeout=timeout)
+
+    if job_tier is not None or priority is not None:
+        command_obj.set_queue_settings(job_tier=job_tier, priority=priority)
 
     return command_obj

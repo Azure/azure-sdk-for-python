@@ -19,6 +19,10 @@ class SparkJobEntryMixin:
         )
     )
 
+    def __init__(self, **kwargs):
+        self._entry = None
+        self.entry = kwargs.get("entry", None)
+
     @property
     def entry(self) -> Optional[SparkJobEntry]:
         return self._entry

@@ -1,0 +1,31 @@
+type: pipeline
+
+description: 'submit a shakespear sample and word spark job in pipeline'
+
+inputs:
+  sample_rate: 0.01
+
+outputs:
+  # output type can be uri_file, uri_folder,mltable
+  # mode can only be direct
+  output1:
+    type: uri_file
+    mode: direct
+
+
+jobs:
+  hello_world:
+    type: spark
+    component: file:./invalid_component/src/sample_word.yml
+    inputs:
+      input1:
+        type: uri_file
+        path: ../shakespear_sample/dataset/shakespeare.txt
+      sample_rate: ${{parent.inputs.sample_rate}}
+
+    outputs:
+      output1: ${{parent.outputs.output1}}
+
+    resources:
+      instance_type: standard_e4s_v3
+      runtime_version: 3.2.0

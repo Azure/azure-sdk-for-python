@@ -31,6 +31,7 @@ from .operations import (
     NotebookOperations,
     PipelineOperations,
     PipelineRunOperations,
+    RunNotebookOperations,
     SparkConfigurationOperations,
     SparkJobDefinitionOperations,
     SqlPoolsOperations,
@@ -51,6 +52,8 @@ class ArtifactsClient:  # pylint: disable=client-accepts-api-version-keyword,too
 
     :ivar link_connection: LinkConnectionOperations operations
     :vartype link_connection: azure.synapse.artifacts.aio.operations.LinkConnectionOperations
+    :ivar run_notebook: RunNotebookOperations operations
+    :vartype run_notebook: azure.synapse.artifacts.aio.operations.RunNotebookOperations
     :ivar kql_scripts: KqlScriptsOperations operations
     :vartype kql_scripts: azure.synapse.artifacts.aio.operations.KqlScriptsOperations
     :ivar kql_script: KqlScriptOperations operations
@@ -113,13 +116,14 @@ class ArtifactsClient:  # pylint: disable=client-accepts-api-version-keyword,too
     def __init__(self, credential: "AsyncTokenCredential", endpoint: str, **kwargs: Any) -> None:
         _endpoint = "{endpoint}"
         self._config = ArtifactsClientConfiguration(credential=credential, endpoint=endpoint, **kwargs)
-        self._client = AsyncPipelineClient(base_url=_endpoint, config=self._config, **kwargs)
+        self._client: AsyncPipelineClient = AsyncPipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
         self.link_connection = LinkConnectionOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.run_notebook = RunNotebookOperations(self._client, self._config, self._serialize, self._deserialize)
         self.kql_scripts = KqlScriptsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.kql_script = KqlScriptOperations(self._client, self._config, self._serialize, self._deserialize)
         self.metastore = MetastoreOperations(self._client, self._config, self._serialize, self._deserialize)
@@ -188,5 +192,5 @@ class ArtifactsClient:  # pylint: disable=client-accepts-api-version-keyword,too
         await self._client.__aenter__()
         return self
 
-    async def __aexit__(self, *exc_details) -> None:
+    async def __aexit__(self, *exc_details: Any) -> None:
         await self._client.__aexit__(*exc_details)

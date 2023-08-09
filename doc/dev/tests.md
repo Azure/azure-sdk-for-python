@@ -15,7 +15,6 @@ testing infrastructure, and demonstrates how to write and run tests for a servic
     - [Tox](#tox)
     - [The `devtools_testutils` package](#the-devtools_testutils-package)
     - [Write or run tests](#write-or-run-tests)
-        - [Perform one-time test proxy setup](#perform-one-time-test-proxy-setup)
         - [Set up test resources](#set-up-test-resources)
         - [Configure credentials](#configure-credentials)
         - [Start the test proxy server](#start-the-test-proxy-server)
@@ -23,7 +22,7 @@ testing infrastructure, and demonstrates how to write and run tests for a servic
         - [Write your tests](#write-your-tests)
         - [Configure live or playback testing mode](#configure-live-or-playback-testing-mode)
         - [Run and record tests](#run-and-record-tests)
-        - [Run tests with out-of-repo recordings](#run-tests-with-out-of-repo-recordings)
+        - [Update test recordings](#update-test-recordings)
         - [Sanitize secrets](#sanitize-secrets)
             - [Special case: SAS tokens](#special-case-sas-tokens)
     - [Functional vs. unit tests](#functional-vs-unit-tests)
@@ -123,20 +122,20 @@ If you have print statements in your tests for debugging you can add the `-s` fl
 
 ## Tox
 
-The Python SDK uses the [tox project](https://tox.readthedocs.io/en/latest/) to automate releases, run tests, run linters, and build our documentation. The `tox.ini` file is located at `azure-sdk-for-python/eng/tox/tox.ini` for reference. You do not need to make any changes to the tox file for tox to work with your project. Tox will create a directory (`.tox`) in the head of your branch. The first time you run tox commands it may take several moments, but subsequent runs will be quicker. To install tox run the following command from within your virtual environment.
-`(env) > pip install tox tox-monorepo`.
+The Python SDK uses the [tox project](https://tox.wiki/en/latest/) to automate releases, run tests, run linters, and build our documentation. The `tox.ini` file is located at `azure-sdk-for-python/eng/tox/tox.ini` for reference. You do not need to make any changes to the tox file for tox to work with your project. Tox will create a directory (`.tox`) in the head of your branch. The first time you run tox commands it may take several moments, but subsequent runs will be quicker. To install tox run the following command from within your virtual environment.
+`(env) > pip install tox<5`.
 
 To run a tox command from your directory use the following commands:
 ```cmd
-(env) azure-sdk-for-python\sdk\my-service\my-package> tox -c ../../../eng/tox/tox.ini -e sphinx
-(env) azure-sdk-for-python\sdk\my-service\my-package> tox -c ../../../eng/tox/tox.ini -e pylint
-(env) azure-sdk-for-python\sdk\my-service\my-package> tox -c ../../../eng/tox/tox.ini -e mypy
-(env) azure-sdk-for-python\sdk\my-service\my-package> tox -c ../../../eng/tox/tox.ini -e pyright
-(env) azure-sdk-for-python\sdk\my-service\my-package> tox -c ../../../eng/tox/tox.ini -e verifytypes
-(env) azure-sdk-for-python\sdk\my-service\my-package> tox -c ../../../eng/tox/tox.ini -e whl
-(env) azure-sdk-for-python\sdk\my-service\my-package> tox -c ../../../eng/tox/tox.ini -e sdist
-(env) azure-sdk-for-python\sdk\my-service\my-package> tox -c ../../../eng/tox/tox.ini -e samples
-(env) azure-sdk-for-python\sdk\my-service\my-package> tox -c ../../../eng/tox/tox.ini -e apistub
+(env) azure-sdk-for-python\sdk\my-service\my-package> tox run -e sphinx -c ../../../eng/tox/tox.ini --root . 
+(env) azure-sdk-for-python\sdk\my-service\my-package> tox run -e pylint -c ../../../eng/tox/tox.ini --root . 
+(env) azure-sdk-for-python\sdk\my-service\my-package> tox run -e mypy -c ../../../eng/tox/tox.ini --root . 
+(env) azure-sdk-for-python\sdk\my-service\my-package> tox run -e pyright -c ../../../eng/tox/tox.ini --root . 
+(env) azure-sdk-for-python\sdk\my-service\my-package> tox run -e verifytypes -c ../../../eng/tox/tox.ini --root . 
+(env) azure-sdk-for-python\sdk\my-service\my-package> tox run -e whl -c ../../../eng/tox/tox.ini --root . 
+(env) azure-sdk-for-python\sdk\my-service\my-package> tox run -e sdist -c ../../../eng/tox/tox.ini --root . 
+(env) azure-sdk-for-python\sdk\my-service\my-package> tox run -e samples -c ../../../eng/tox/tox.ini --root . 
+(env) azure-sdk-for-python\sdk\my-service\my-package> tox run -e apistub -c ../../../eng/tox/tox.ini --root . 
 ```
 A quick description of the five commands above:
 * sphinx: documentation generation using the inline comments written in our code
@@ -147,7 +146,7 @@ A quick description of the five commands above:
 * whl: creates a whl package for installing our package
 * sdist: creates a zipped distribution of our files that the end user could install with pip
 * samples: runs all of the samples in the `samples` directory and verifies they are working correctly
-* apistub: runs the [apistubgenerator](https://github.com/Azure/azure-sdk-tools/tree/main/packages/python-packages/api-stub-generator) tool on your code
+* apistub: runs the [apistubgenerator](https://github.com/Azure/azure-sdk-tools/tree/main/packages/python-packages/apiview-stub-generator) tool on your code
 
 ## The `devtools_testutils` package
 
@@ -166,13 +165,6 @@ the
 Newer SDK tests utilize the [Azure SDK Tools Test Proxy][proxy_general_docs] to record and playback HTTP interactions.
 To migrate an existing test suite to use the test proxy, or to learn more about using the test proxy, refer to the
 [test proxy migration guide][proxy_migration_guide].
-
-### Perform one-time test proxy setup
-
-1. Docker (or Podman) is a requirement for using the test proxy. You can install Docker from [docs.docker.com][docker_install], or install Podman at [podman.io][podman]. To use Podman, set an alias for `podman` to replace the `docker` command.
-2. After installing, make sure Docker/Podman is running and is using Linux containers before running tests.
-3. Follow the instructions [here][proxy_cert_docs] to complete setup. You need to trust a certificate on your machine in
-order to communicate with the test proxy over a secure connection.
 
 ### Set up test resources
 
@@ -195,17 +187,17 @@ done in the [Portal][azure_portal] by creating a resource, and at the very last 
 4. Add an `"outputs"` section to `test-resources` that describes any environment variables necessary for accessing
 these resources ([example][kv_test_resources_outputs]).
 
-### Configure credentials
+### Configure test variables
 
-Python SDK tests use a `.env` file to store test credentials. This `.env` file should be placed at either the root of
-`azure-sdk-for-python` in your local file system, or in the directory containing the repo. The `python-dotenv` package
-is used to read this file -- documentation of the package and how to format a `.env` file can be found in the
-[package's README][python-dotenv_readme].
+Python SDK tests use a `.env` file to store test credentials and resource variables. This `.env` file should be placed
+at either the root of `azure-sdk-for-python` in your local file system, or in the directory containing the repo. The
+`python-dotenv` package is used to read this file -- documentation of the package and how to format a `.env` file can
+be found in the [package's README][python-dotenv_readme].
 
 If using a `New-TestResources` script from [/eng/common/TestResources][test_resources], the script should output any
 environment variables necessary to run live tests for the service. After storing these variables in your `.env` file
--- with appropriate formatting -- your credentials and test configuration variables will be set in your environment when
-running tests.
+-- formatted as `VARIABLE=value` on separate lines -- your credentials and test configuration variables will be set in 
+our environment when running tests.
 
 If your service doesn't have a `test-resources` file for test deployment, you'll need to set environment variables
 for `AZURE_SUBSCRIPTION_ID`, `AZURE_TENANT_ID`, `AZURE_CLIENT_ID`, and `AZURE_CLIENT_SECRET` at minimum.
@@ -264,17 +256,23 @@ ServicePreparer = functools.partial(
 ```
 
 The parameters for the `functools.partial` method are:
-* The EnvironmentVariableLoader class
-* The service folder that holds your code (in this example, `sdk/testservice`). This value is used to search your
+
+- The EnvironmentVariableLoader class
+- The service folder that holds your code (in this example, `sdk/testservice`). This value is used to search your
   environment variables for the appropriate values.
-* The remaining arguments are key-value kwargs, with the keys being the environment variables needed for the tests, and
+- The remaining arguments are key-value kwargs, with the keys being the environment variables needed for the tests, and
   the value being a fake value to use in recordings.
-  * These values should have the same formatting as the real values because they are used in playback mode and will need
+  - These values should have the same formatting as the real values because they are used in playback mode and will need
   to pass any client side validation. The fake value should also be a unique value to the other key-value pairs.
 
 A method that's decorated by the ServicePreparer from the example would be called with `testservice_endpoint` and
 `testservice_secret` as keyword arguments. These arguments use the real values from your `.env` file as the variable
 values in live mode, and the fake values specified in the decorator in playback mode.
+
+**Be sure to match the formatting of live values in playback values.** For example, if the actual service endpoint in
+your `.env` file doesn't end with a trailing slash (`/`), adding a trailing slash to your playback endpoint value will
+result in playback errors. The exact value of your live variables will be replaced with the exact value of your playback
+variables in recordings.
 
 > **Note:** The EnvironmentVariableLoader expects environment variables for service tests to be prefixed with the
 > service name (e.g. `KEYVAULT_` for Key Vault tests). You'll need to set environment variables for
@@ -361,32 +359,31 @@ With the `AZURE_TEST_RUN_LIVE` environment variable set to "true", use `pytest` 
 (env) azure-sdk-for-python\sdk\my-service\my-package> pytest tests
 ```
 
-After tests finish running, there should folder called `recordings` inside your package's `tests` directory. Each
-recording in this folder will be a `.json` file that captures the HTTP traffic that was generated while running the test
-matching the file's name. If you set the `AZURE_TEST_RUN_LIVE` environment variable to "false" and re-run tests, they
-should pass again -- this time, in playback mode (i.e. without making actual HTTP requests).
+This will generate test recordings and enable playback testing. Set `AZURE_TEST_RUN_LIVE` to "false" and run tests with
+the same command to verify that playback tests pass.
 
-### Run tests with out-of-repo recordings
+Playback test errors most frequently indicate a need for additional sanitizers and/or matchers (see
+[Sanitize secrets](#sanitize-secrets)). If you encounter any unexpected errors, refer to the
+[test proxy troubleshooting guide][troubleshooting_guide].
 
-If the package being tested stores its recordings outside the `azure-sdk-for-python` repository -- i.e. the
-[recording migration guide][recording_move] has been followed and the package contains an `assets.json` file -- there
-won't be a `recordings` folder in the `tests` directory. Instead, the package's `assets.json` file will point to a tag
-in the `azure-sdk-assets` repository that contains the recordings. This is the preferred recording configuration.
+At this point there should folder called `recordings` inside your package's `tests` directory. Each recording in this
+folder will be a `.json` file that captures the HTTP traffic that was generated while running the test matching the
+file's name.
 
-Running live or playback tests is the same in this configuration as it was in the previous section. The only changes are
-to the process of updating recordings.
+The final step in setting up recordings is to move these files out of the `azure-sdk-for-python` and into the
+`azure-sdk-assets` repository. The [recording migration guide][recording_move] describes how to do so -- this step only
+needs to be completed once, and future test sessions will automatically pull recordings from the assets repo. Your
+library will have an `assets.json` file at its root, which stores the `azure-sdk-assets` tag that contains the current
+set of recordings.
 
 #### Update test recordings
 
 ##### Environment prerequisites
 
 - The targeted library is already migrated to use the test proxy.
-- Git version > 2.25.0 is to on the machine and in the path. Git is used by the script and test proxy.
-- [Docker][docker_install] or [Podman][podman] is installed.
+- Git version > 2.30.0 is to on the machine and in the path. Git is used by the script and test proxy.
 - Global [git config settings][git_setup] are configured for `user.name` and `user.email`.
   - These settings are also set with environment variables `GIT_COMMIT_OWNER` and `GIT_COMMIT_EMAIL`, respectively (in your environment or your local `.env` file).
-- The environment variable `GIT_TOKEN` is set to a valid [personal access token][git_token] for your user (in your environment or your local `.env` file).
-  - This token is necessary for authenticating git requests made in a Docker/Podman container.
 - Membership in the `azure-sdk-write` GitHub group.
 
 Test recordings will be updated if tests are run while `AZURE_TEST_RUN_LIVE` is set to "true" and
@@ -408,15 +405,16 @@ The recording directory in this case is `2Km2Z8755`, the string between the two 
 
 After verifying that your recording updates look correct, you can use the [`manage_recordings.py`][manage_recordings]
 script from `azure-sdk-for-python/scripts` to push these recordings to the `azure-sdk-assets` repo. This script accepts
-a verb and a **relative** path to your package's `assets.json` file. For example, from the root of the
-`azure-sdk-for-python` repo:
+a verb and a **relative** path to your package's `assets.json` file (this path is optional, and is simply `assets.json`
+by default). For example, from the root of the `azure-sdk-for-python` repo:
 ```
-python scripts/manage_recordings.py push sdk/{service}/{package}/assets.json
+python scripts/manage_recordings.py push -p sdk/{service}/{package}/assets.json
 ```
 
 The verbs that can be provided to this script are "push", "restore", and "reset":
 - **push**: pushes recording updates to a new assets repo tag and updates the tag pointer in `assets.json`.
 - **restore**: fetches recordings from the assets repo, based on the tag pointer in `assets.json`.
+- **reset**: discards any pending changes to recordings, based on the tag pointer in `assets.json`.
 
 After pushing your recordings, the `assets.json` file for your package will be updated to point to a new `Tag` that
 contains the updates. Include this `assets.json` update in any pull request to update the recordings pointer in the
@@ -713,8 +711,6 @@ Tests that use the Shared Access Signature (SAS) to authenticate a client should
 [azure_portal]: https://portal.azure.com/
 [azure_recorded_test_case]: https://github.com/Azure/azure-sdk-for-python/blob/7e66e3877519a15c1d4304eb69abf0a2281773/tools/azure-sdk-tools/devtools_testutils/azure_recorded_testcase.py#L44
 
-[docker_install]: https://docs.docker.com/get-docker/
-
 [engsys_wiki]: https://dev.azure.com/azure-sdk/internal/_wiki/wikis/internal.wiki/48/Create-a-new-Live-Test-pipeline?anchor=test-resources.json
 [env_var_loader]: https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/envvariable_loader.py
 
@@ -731,9 +727,8 @@ Tests that use the Shared Access Signature (SAS) to authenticate a client should
 [mgmt_settings_fake]: https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/mgmt_settings_fake.py
 
 [packaging]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/packaging.md
-[podman]: https://podman.io/
 [proxy_cert_docs]: https://github.com/Azure/azure-sdk-tools/blob/main/tools/test-proxy/documentation/test-proxy/trusting-cert-per-language.md
-[proxy_general_docs]: https://github.com/Azure/azure-sdk-tools/blob/main/tools/test-proxy/README.md
+[proxy_general_docs]: https://github.com/Azure/azure-sdk-tools/blob/main/tools/test-proxy/Azure.Sdk.Tools.TestProxy/README.md
 [proxy_migration_guide]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/test_proxy_migration_guide.md
 [py_sanitizers]: https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/sanitizers.py
 [pytest_invocation]: https://pytest.org/latest/how-to/usage.html
@@ -744,3 +739,4 @@ Tests that use the Shared Access Signature (SAS) to authenticate a client should
 
 [test_proxy_startup]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/test_proxy_migration_guide.md#start-the-proxy-server
 [test_resources]: https://github.com/Azure/azure-sdk-for-python/tree/main/eng/common/TestResources#readme
+[troubleshooting_guide]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/test_proxy_troubleshooting.md

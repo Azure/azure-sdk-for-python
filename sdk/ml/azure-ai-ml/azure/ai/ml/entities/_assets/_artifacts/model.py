@@ -5,11 +5,11 @@ from os import PathLike
 from pathlib import Path
 from typing import Any, Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2022_05_01.models import (
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     FlavorData,
-    ModelContainerData,
-    ModelVersionData,
-    ModelVersionDetails,
+    ModelContainer,
+    ModelVersion,
+    ModelVersionProperties,
 )
 from azure.ai.ml._schema import ModelSchema
 from azure.ai.ml._utils._arm_id_utils import AMLNamedArmId, AMLVersionedArmId
@@ -22,39 +22,50 @@ from azure.ai.ml.constants._common import (
     AssetTypes,
 )
 from azure.ai.ml.entities._assets import Artifact
+from azure.ai.ml.entities._assets.intellectual_property import IntellectualProperty
 from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._util import get_md5_string, load_from_dict
 
 from .artifact import ArtifactStorageInfo
 
 
-class Model(Artifact):
+class Model(Artifact):  # pylint: disable=too-many-instance-attributes
     """Model for training and scoring.
 
-    :param name: Name of the resource.
-    :type name: str
-    :param version: Version of the resource.
-    :type version: str
-    :param type: The storage format for this entity. Used for NCD. Possible values include:
-     "custom_model", "mlflow_model", "triton_model".
-    :type type: str
-    :param utc_time_created: Date and time when the model was created, in
-        UTC ISO 8601 format. (e.g. '2020-10-19 17:44:02.096572')
-    :type utc_time_created: str
-    :param flavors: The flavors in which the model can be interpreted.
-        e.g. {sklearn: {sklearn_version: 0.23.2}, python_function: {loader_module: office.plrmodel, python_version: 3.6}
-    :type flavors: Dict[str, Any]
-    :param path: A remote uri or a local path pointing at a model.
-        Example: "azureml://subscriptions/{}/resourcegroups/{}/workspaces/{}/datastores/{}/paths/path_on_datastore/"
-    :type path: str
-    :param description: Description of the resource.
-    :type description: str
-    :param tags: Tag dictionary. Tags can be added, removed, and updated.
-    :type tags: dict[str, str]
-    :param properties: The asset property dictionary.
-    :type properties: dict[str, str]
+    :param name: The name of the model. Defaults to a random GUID.
+    :type name: Optional[str]
+    :param version: The version of the model. Defaults to "1" if either no name or an unregistered name is provided.
+        Otherwise, defaults to autoincrement from the last registered version of the model with that name.
+    :type version: Optional[str]
+    :param type: The storage format for this entity, used for NCD (Novel Class Discovery). Accepted values are
+        "custom_model", "mlflow_model", or "triton_model". Defaults to "custom_model".
+    :type type: Optional[str]
+    :param utc_time_created: The date and time when the model was created, in
+        UTC ISO 8601 format. (e.g. '2020-10-19 17:44:02.096572').
+    :type utc_time_created: Optional[str]
+    :param flavors: The flavors in which the model can be interpreted. Defaults to None.
+    :type flavors: Optional[dict[str, Any]]
+    :param path: A remote uri or a local path pointing to a model. Defaults to None.
+    :type path: Optional[str]
+    :param description: The description of the resource. Defaults to None
+    :type description: Optional[str]
+    :param tags: Tag dictionary. Tags can be added, removed, and updated. Defaults to None.
+    :type tags: Optional[dict[str, str]]
+    :param properties: The asset property dictionary. Defaults to None.
+    :type properties: Optional[dict[str, str]]
+    :param stage: The stage of the resource. Defaults to None.
+    :type stage: Optional[str]
     :param kwargs: A dictionary of additional configuration parameters.
-    :type kwargs: dict
+    :type kwargs: Optional[dict]
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../../../../../../samples/ml_samples_misc.py
+            :start-after: [START model_entity_create]
+            :end-before: [END model_entity_create]
+            :language: python
+            :dedent: 8
+            :caption: Creating a Model object.
     """
 
     def __init__(
@@ -69,9 +80,11 @@ class Model(Artifact):
         description: Optional[str] = None,
         tags: Optional[Dict] = None,
         properties: Optional[Dict] = None,
+        stage: Optional[str] = None,
         **kwargs,
-    ):
+    ) -> None:
         self.job_name = kwargs.pop("job_name", None)
+        self._intellectual_property = kwargs.pop("intellectual_property", None)
         super().__init__(
             name=name,
             version=version,
@@ -85,6 +98,7 @@ class Model(Artifact):
         self.flavors = dict(flavors) if flavors else None
         self._arm_type = ArmConstants.MODEL_VERSION_TYPE
         self.type = type or AssetTypes.CUSTOM_MODEL
+        self.stage = stage
         if self._is_anonymous and self.path:
             _ignore_file = get_ignore_file(self.path)
             _upload_hash = get_object_hash(self.path, _ignore_file)
@@ -110,10 +124,12 @@ class Model(Artifact):
         return ModelSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)  # pylint: disable=no-member
 
     @classmethod
-    def _from_rest_object(cls, model_rest_object: ModelVersionData) -> "Model":
-        rest_model_version: ModelVersionDetails = model_rest_object.properties
+    def _from_rest_object(cls, model_rest_object: ModelVersion) -> "Model":
+        rest_model_version: ModelVersionProperties = model_rest_object.properties
         arm_id = AMLVersionedArmId(arm_id=model_rest_object.id)
-        flavors = {key: flavor.data for key, flavor in rest_model_version.flavors.items()}
+        model_stage = rest_model_version.stage if hasattr(rest_model_version, "stage") else None
+        if hasattr(rest_model_version, "flavors"):
+            flavors = {key: flavor.data for key, flavor in rest_model_version.flavors.items()}
         model = Model(
             id=model_rest_object.id,
             name=arm_id.asset_name,
@@ -123,15 +139,19 @@ class Model(Artifact):
             tags=rest_model_version.tags,
             flavors=flavors,
             properties=rest_model_version.properties,
+            stage=model_stage,
             # pylint: disable=protected-access
             creation_context=SystemData._from_rest_object(model_rest_object.system_data),
             type=rest_model_version.model_type,
             job_name=rest_model_version.job_name,
+            intellectual_property=IntellectualProperty._from_rest_object(rest_model_version.intellectual_property)
+            if rest_model_version.intellectual_property
+            else None,
         )
         return model
 
     @classmethod
-    def _from_container_rest_object(cls, model_container_rest_object: ModelContainerData) -> "Model":
+    def _from_container_rest_object(cls, model_container_rest_object: ModelContainer) -> "Model":
         model = Model(
             name=model_container_rest_object.name,
             version="1",
@@ -146,8 +166,8 @@ class Model(Artifact):
         model.version = None
         return model
 
-    def _to_rest_object(self) -> ModelVersionData:
-        model_version = ModelVersionDetails(
+    def _to_rest_object(self) -> ModelVersion:
+        model_version = ModelVersionProperties(
             description=self.description,
             tags=self.tags,
             properties=self.properties,
@@ -156,14 +176,14 @@ class Model(Artifact):
             else None,  # flatten OrderedDict to dict
             model_type=self.type,
             model_uri=self.path,
+            stage=self.stage,
             is_anonymous=self._is_anonymous,
         )
-        model_version_resource = ModelVersionData(properties=model_version)
+        model_version_resource = ModelVersion(properties=model_version)
 
         return model_version_resource
 
     def _update_path(self, asset_artifact: ArtifactStorageInfo) -> None:
-
         # datastore_arm_id is null for registry scenario, so capture the full_storage_path
         if not asset_artifact.datastore_arm_id and asset_artifact.full_storage_path:
             self.path = asset_artifact.full_storage_path
@@ -184,6 +204,6 @@ class Model(Artifact):
             self._arm_type: {
                 ArmConstants.NAME: self.name,
                 ArmConstants.VERSION: self.version,
-                ArmConstants.PROPERTIES_PARAMETER_NAME: self._serialize.body(properties, "ModelVersionDetails"),
+                ArmConstants.PROPERTIES_PARAMETER_NAME: self._serialize.body(properties, "ModelVersionProperties"),
             }
         }

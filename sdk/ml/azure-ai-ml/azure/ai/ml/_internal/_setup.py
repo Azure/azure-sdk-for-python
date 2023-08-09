@@ -3,13 +3,15 @@
 # ---------------------------------------------------------
 
 # pylint: disable=protected-access
-
 from marshmallow import INCLUDE
 
-from azure.ai.ml._internal._schema.command import CommandSchema, DistributedSchema, ParallelSchema
-from azure.ai.ml._internal._schema.component import NodeType
-from azure.ai.ml._internal._schema.node import HDInsightSchema, InternalBaseNodeSchema, ScopeSchema
-from azure.ai.ml._internal.entities import (
+from .._schema import NestedField
+from ..entities._component.component_factory import component_factory
+from ..entities._job.pipeline._load_component import pipeline_node_factory
+from ._schema.command import CommandSchema, DistributedSchema, ParallelSchema
+from ._schema.component import NodeType
+from ._schema.node import HDInsightSchema, InternalBaseNodeSchema, ScopeSchema
+from .entities import (
     Command,
     DataTransfer,
     Distributed,
@@ -21,9 +23,7 @@ from azure.ai.ml._internal.entities import (
     Scope,
     Starlite,
 )
-from azure.ai.ml._schema import NestedField
-from azure.ai.ml.entities._component.component_factory import component_factory
-from azure.ai.ml.entities._job.pipeline._load_component import pipeline_node_factory
+from .entities.spark import InternalSparkComponent
 
 _registered = False
 
@@ -41,6 +41,11 @@ def _enable_internal_components():
             create_instance_func=lambda: InternalComponent.__new__(InternalComponent),
             create_schema_func=create_schema_func,
         )
+    component_factory.register_type(
+        _type=NodeType.SPARK,
+        create_instance_func=lambda: InternalSparkComponent.__new__(InternalSparkComponent),
+        create_schema_func=InternalSparkComponent._create_schema_for_validation,
+    )
 
 
 def _register_node(_type, node_cls, schema_cls):
@@ -53,7 +58,6 @@ def _register_node(_type, node_cls, schema_cls):
 
 
 def enable_internal_components_in_pipeline(*, force=False):
-    global _registered  # pylint: disable=global-statement
     if _registered and not force:
         return  # already registered
 
@@ -65,11 +69,18 @@ def enable_internal_components_in_pipeline(*, force=False):
 
     # redo the registration for those with specific runsettings
     _register_node(NodeType.DATA_TRANSFER, DataTransfer, InternalBaseNodeSchema)
-    _register_node(NodeType.HEMERA, Hemera, InternalBaseNodeSchema)
-    _register_node(NodeType.STARLITE, Starlite, InternalBaseNodeSchema)
     _register_node(NodeType.COMMAND, Command, CommandSchema)
     _register_node(NodeType.DISTRIBUTED, Distributed, DistributedSchema)
-    _register_node(NodeType.SCOPE, Scope, ScopeSchema)
     _register_node(NodeType.PARALLEL, Parallel, ParallelSchema)
+    _register_node(NodeType.HEMERA, Hemera, InternalBaseNodeSchema)
+    _register_node(NodeType.STARLITE, Starlite, InternalBaseNodeSchema)
+    _register_node(NodeType.SCOPE, Scope, ScopeSchema)
     _register_node(NodeType.HDI, HDInsight, HDInsightSchema)
+
+    # register v2 style 1p only components
+    _register_node(NodeType.HEMERA_V2, Hemera, InternalBaseNodeSchema)
+    _register_node(NodeType.STARLITE_V2, Starlite, InternalBaseNodeSchema)
+    _register_node(NodeType.SCOPE_V2, Scope, ScopeSchema)
+    _register_node(NodeType.HDI_V2, HDInsight, HDInsightSchema)
+    # Ae365exepool and AetherBridge have been registered to InternalBaseNode
     _set_registered(True)

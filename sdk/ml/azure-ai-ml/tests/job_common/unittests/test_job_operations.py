@@ -7,14 +7,15 @@ import jwt
 import pytest
 import vcr
 import yaml
-from azure.ai.ml._azure_environments import _get_aml_resource_id_from_metadata, _resource_to_scopes
-from azure.ai.ml.exceptions import ValidationException
 from azure.core.credentials import AccessToken
+from azure.core.exceptions import HttpResponseError
+from azure.identity import DefaultAzureCredential
 from msrest import Deserializer
 from pytest_mock import MockFixture
 
 from azure.ai.ml import MLClient, load_job
-from azure.ai.ml._restclient.v2022_10_01 import models
+from azure.ai.ml._azure_environments import _get_aml_resource_id_from_metadata, _resource_to_scopes
+from azure.ai.ml._restclient.v2023_04_01_preview import models
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
 from azure.ai.ml.constants._common import AZUREML_PRIVATE_FEATURES_ENV_VAR, AzureMLResourceType
 from azure.ai.ml.entities._builders import Command
@@ -22,13 +23,12 @@ from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
 from azure.ai.ml.entities._job.automl.training_settings import TrainingSettings
 from azure.ai.ml.entities._job.job import Job
 from azure.ai.ml.entities._job.sweep.sweep_job import SweepJob
+from azure.ai.ml.exceptions import ValidationException
 from azure.ai.ml.operations import DatastoreOperations, EnvironmentOperations, JobOperations, WorkspaceOperations
 from azure.ai.ml.operations._code_operations import CodeOperations
 from azure.ai.ml.operations._job_ops_helper import get_git_properties
 from azure.ai.ml.operations._run_history_constants import RunHistoryConstants
 from azure.ai.ml.operations._run_operations import RunOperations
-from azure.core.exceptions import HttpResponseError
-from azure.identity import DefaultAzureCredential
 
 from .test_vcr_utils import before_record_cb, vcr_header_filters
 
@@ -102,7 +102,7 @@ def mock_runs_operation(
 def mock_job_operation(
     mock_workspace_scope: OperationScope,
     mock_operation_config: OperationConfig,
-    mock_aml_services_2022_12_01_preview: Mock,
+    mock_aml_services_2023_02_01_preview: Mock,
     mock_aml_services_run_history: Mock,
     mock_machinelearning_client: Mock,
     mock_code_operation: Mock,
@@ -119,7 +119,7 @@ def mock_job_operation(
     yield JobOperations(
         operation_scope=mock_workspace_scope,
         operation_config=mock_operation_config,
-        service_client_12_2022_preview=mock_aml_services_2022_12_01_preview,
+        service_client_02_2023_preview=mock_aml_services_2023_02_01_preview,
         service_client_run_history=mock_aml_services_run_history,
         all_operations=mock_machinelearning_client._operation_container,
         credential=Mock(spec_set=DefaultAzureCredential),
@@ -133,26 +133,54 @@ class TestJobOperations:
     def test_list(self, mock_job_operation: JobOperations) -> None:
         mock_job_operation.list()
         expected = (mock_job_operation._resource_group_name, mock_job_operation._workspace_name)
-        assert expected in mock_job_operation._operation_2022_12_preview.list.call_args
+        assert expected in mock_job_operation._operation_2023_02_preview.list.call_args
 
     @patch.dict(os.environ, {AZUREML_PRIVATE_FEATURES_ENV_VAR: "True"})
     def test_list_private_preview(self, mock_job_operation: JobOperations) -> None:
         mock_job_operation.list()
         expected = (mock_job_operation._resource_group_name, mock_job_operation._workspace_name)
-        assert expected in mock_job_operation._operation_2022_12_preview.list.call_args
+        assert expected in mock_job_operation._operation_2023_02_preview.list.call_args
 
     @patch.object(Job, "_from_rest_object")
     def test_get(self, mock_method, mock_job_operation: JobOperations) -> None:
         mock_method.return_value = Command(component=None)
         mock_job_operation.get("randon_name")
-        mock_job_operation._operation_2022_12_preview.get.assert_called_once()
+        mock_job_operation._operation_2023_02_preview.get.assert_called_once()
+
+    # use mock_component_hash to avoid passing a Mock object as client key
+    @pytest.mark.usefixtures("mock_component_hash")
+    @patch.object(JobOperations, "_get_job")
+    def test_get_job(self, mock_method, mock_job_operation: JobOperations) -> None:
+        from azure.ai.ml import Input, dsl, load_component
+
+        component = load_component(source="./tests/test_configs/components/helloworld_component.yml")
+        component_input = Input(type="uri_file", path="https://dprepdata.blob.core.windows.net/demo/Titanic.csv")
+
+        @dsl.pipeline()
+        def sub_pipeline():
+            node = component(component_in_path=component_input)
+
+        @dsl.pipeline()
+        def register_both_output():
+            sub_node = sub_pipeline()
+
+        pipeline = register_both_output()
+        pipeline.settings.default_compute = "cpu-cluster"
+        pipeline.jobs["sub_node"]._component = "fake_component"
+
+        # add settings for subgraph node to simulate the result of getting pipeline that submitted with previous sdk
+        pipeline.jobs["sub_node"]["settings"] = {}
+
+        pipeline_job_base = pipeline._to_rest_object()
+        mock_method.return_value = pipeline_job_base
+        mock_job_operation.get(name="random_name")
 
     @patch.object(Job, "_from_rest_object")
     @patch.dict(os.environ, {AZUREML_PRIVATE_FEATURES_ENV_VAR: "True"})
     def test_get_private_preview_flag_returns_latest(self, mock_method, mock_job_operation: JobOperations) -> None:
         mock_method.return_value = Command(component=None)
         mock_job_operation.get("random_name")
-        mock_job_operation._operation_2022_12_preview.get.assert_called_once()
+        mock_job_operation._operation_2023_02_preview.get.assert_called_once()
 
     def test_stream_command_job(self, mock_job_operation: JobOperations) -> None:
         # setup
@@ -163,7 +191,7 @@ class TestJobOperations:
         mock_job_operation.stream("random_name")
 
         # check
-        mock_job_operation._operation_2022_12_preview.get.assert_called_once()
+        mock_job_operation._operation_2023_02_preview.get.assert_called_once()
         mock_job_operation._get_workspace_url.assert_called_once()
         mock_job_operation._stream_logs_until_completion.assert_called_once()
         assert mock_job_operation._runs_operations_client._operation._client._base_url == "TheWorkSpaceUrl"
@@ -176,7 +204,7 @@ class TestJobOperations:
         mock_job_operation.create_or_update(job=job)
         git_props = get_git_properties()
         assert git_props.items() <= job.properties.items()
-        mock_job_operation._operation_2022_12_preview.create_or_update.assert_called_once()
+        mock_job_operation._operation_2023_02_preview.create_or_update.assert_called_once()
         mock_job_operation._credential.get_token.assert_called_once_with("https://ml.azure.com/.default")
 
     @patch.object(Job, "_from_rest_object")
@@ -189,14 +217,16 @@ class TestJobOperations:
 
         with patch.object(mock_job_operation._credential, "get_token") as mock_get_token:
             mock_get_token.return_value = AccessToken(
-                token=jwt.encode({"aud": aml_resource_id}, key="utf-8"), expires_on=1234)
+                token=jwt.encode({"aud": aml_resource_id}, key="utf-8"), expires_on=1234
+            )
             mock_job_operation.create_or_update(job=job)
-            mock_job_operation._operation_2022_12_preview.create_or_update.assert_called_once()
+            mock_job_operation._operation_2023_02_preview.create_or_update.assert_called_once()
             mock_job_operation._credential.get_token.assert_called_once_with(azure_ml_scopes[0])
 
         with patch.object(mock_job_operation._credential, "get_token") as mock_get_token:
             mock_get_token.return_value = AccessToken(
-                token=jwt.encode({"aud": "https://management.azure.com"}, key="utf-8"), expires_on=1234)
+                token=jwt.encode({"aud": "https://management.azure.com"}, key="utf-8"), expires_on=1234
+            )
             with pytest.raises(Exception):
                 mock_job_operation.create_or_update(job=job)
 
@@ -215,15 +245,15 @@ class TestJobOperations:
     def test_archive(self, mock_method, mock_job_operation: JobOperations) -> None:
         mock_method.return_value = Command(component=None)
         mock_job_operation.archive(name="random_name")
-        mock_job_operation._operation_2022_12_preview.get.assert_called_once()
-        mock_job_operation._operation_2022_12_preview.create_or_update.assert_called_once()
+        mock_job_operation._operation_2023_02_preview.get.assert_called_once()
+        mock_job_operation._operation_2023_02_preview.create_or_update.assert_called_once()
 
     @patch.object(Job, "_from_rest_object")
     def test_restore(self, mock_method, mock_job_operation: JobOperations) -> None:
         mock_method.return_value = Command(component=None)
         mock_job_operation.restore(name="random_name")
-        mock_job_operation._operation_2022_12_preview.get.assert_called_once()
-        mock_job_operation._operation_2022_12_preview.create_or_update.assert_called_once()
+        mock_job_operation._operation_2023_02_preview.get.assert_called_once()
+        mock_job_operation._operation_2023_02_preview.create_or_update.assert_called_once()
 
     @pytest.mark.parametrize(
         "corrupt_job_data",
@@ -250,3 +280,8 @@ class TestJobOperations:
             mock_thing.assert_not_called()
             mock_job_operation.create_or_update(job=job)
             mock_thing.assert_called_once()
+
+    def test_download_with_none(self, mock_job_operation: JobOperations) -> None:
+        with pytest.raises(Exception) as ex:
+            mock_job_operation.download(None)
+        assert "None is a invalid input for client.jobs.get()." in ex.value.message

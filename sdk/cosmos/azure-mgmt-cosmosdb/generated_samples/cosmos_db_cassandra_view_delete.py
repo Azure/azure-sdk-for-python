@@ -29,15 +29,14 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.cassandra_resources.begin_delete_cassandra_view(
+    client.cassandra_resources.begin_delete_cassandra_view(
         resource_group_name="rg1",
         account_name="ddb1",
         keyspace_name="keyspacename",
         view_name="viewname",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/preview/2022-08-15-preview/examples/CosmosDBCassandraViewDelete.json
+# x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/preview/2023-03-15-preview/examples/CosmosDBCassandraViewDelete.json
 if __name__ == "__main__":
     main()

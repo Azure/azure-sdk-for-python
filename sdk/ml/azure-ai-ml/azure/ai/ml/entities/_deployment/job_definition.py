@@ -13,7 +13,7 @@ from azure.ai.ml.entities._job.job import Job
 
 @experimental
 class JobDefinition:
-    """Job Definition entity
+    """Job Definition entity.
 
     :param type: Job definition type. Allowed value is: pipeline
     :type type: str

@@ -9,6 +9,7 @@ import logging
 import threading
 import time
 from concurrent.futures import ThreadPoolExecutor, TimeoutError as FuturesTimeoutError
+import queue
 from typing import TYPE_CHECKING
 
 from .._servicebus_receiver import ServiceBusReceiver
@@ -22,11 +23,6 @@ if TYPE_CHECKING:
 
     Renewable = Union[ServiceBusSession, ServiceBusReceivedMessage]
     LockRenewFailureCallback = Callable[[Renewable, Optional[Exception]], None]
-
-try:
-    import queue
-except ImportError:
-    import Queue as queue  # type: ignore
 
 _log = logging.getLogger(__name__)
 

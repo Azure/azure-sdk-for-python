@@ -7,6 +7,7 @@ import logging
 from pathlib import Path
 from typing import List, Optional
 
+from azure.ai.ml.constants._common import DefaultOpenEncoding
 from azure.ai.ml.constants._endpoint import LocalEndpointConstants
 
 from .dockerfile_instructions import Cmd, Copy, From, Run, Workdir
@@ -15,8 +16,7 @@ module_logger = logging.getLogger(__name__)
 
 
 class DockerfileResolver(object):
-    """Represents the contents of a Dockerfile and handles writing the
-    Dockerfile to User's system.
+    """Represents the contents of a Dockerfile and handles writing the Dockerfile to User's system.
 
     :param docker_base_image: name of local endpoint
     :type docker_base_image: str
@@ -69,8 +69,7 @@ class DockerfileResolver(object):
         return self._local_dockerfile_path
 
     def __str__(self) -> str:
-        """Override DockerfileResolver str() built-in func to return the
-        Dockerfile contents as a string.
+        """Override DockerfileResolver str() built-in func to return the Dockerfile contents as a string.
 
         :return: str
         """
@@ -140,15 +139,14 @@ class DockerfileResolver(object):
             )
 
     def write_file(self, directory_path: str, file_prefix: Optional[str] = None) -> None:
-        """Writes this Dockerfile to a file in provided directory and file name
-        prefix.
+        """Writes this Dockerfile to a file in provided directory and file name prefix.
 
         :param directory_path: absolute path of local directory to write Dockerfile.
         :type directory_path: str
-        :param name: name of Dockerfile prefix
-        :type name: str
+        :param file_prefix: name of Dockerfile prefix
+        :type file_prefix: str
         """
         file_name = f"{file_prefix}.Dockerfile" if file_prefix else "Dockerfile"
         self._local_dockerfile_path = str(Path(directory_path, file_name).resolve())
-        with open(self._local_dockerfile_path, "w") as f:
+        with open(self._local_dockerfile_path, "w", encoding=DefaultOpenEncoding.WRITE) as f:
             f.write(f"{str(self)}\n")

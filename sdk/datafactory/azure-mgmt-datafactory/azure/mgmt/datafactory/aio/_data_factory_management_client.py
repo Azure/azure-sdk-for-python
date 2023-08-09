@@ -12,11 +12,12 @@ from typing import Any, Awaitable, TYPE_CHECKING
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core import AsyncARMPipelineClient
 
-from .. import models
+from .. import models as _models
 from .._serialization import Deserializer, Serializer
 from ._configuration import DataFactoryManagementClientConfiguration
 from .operations import (
     ActivityRunsOperations,
+    CredentialOperationsOperations,
     DataFlowDebugSessionOperations,
     DataFlowsOperations,
     DatasetsOperations,
@@ -89,6 +90,9 @@ class DataFactoryManagementClient:  # pylint: disable=client-accepts-api-version
     :ivar managed_private_endpoints: ManagedPrivateEndpointsOperations operations
     :vartype managed_private_endpoints:
      azure.mgmt.datafactory.aio.operations.ManagedPrivateEndpointsOperations
+    :ivar credential_operations: CredentialOperationsOperations operations
+    :vartype credential_operations:
+     azure.mgmt.datafactory.aio.operations.CredentialOperationsOperations
     :ivar private_end_point_connections: PrivateEndPointConnectionsOperations operations
     :vartype private_end_point_connections:
      azure.mgmt.datafactory.aio.operations.PrivateEndPointConnectionsOperations
@@ -125,7 +129,7 @@ class DataFactoryManagementClient:  # pylint: disable=client-accepts-api-version
         )
         self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
-        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
+        client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
@@ -158,6 +162,9 @@ class DataFactoryManagementClient:  # pylint: disable=client-accepts-api-version
             self._client, self._config, self._serialize, self._deserialize
         )
         self.managed_private_endpoints = ManagedPrivateEndpointsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.credential_operations = CredentialOperationsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.private_end_point_connections = PrivateEndPointConnectionsOperations(
@@ -202,5 +209,5 @@ class DataFactoryManagementClient:  # pylint: disable=client-accepts-api-version
         await self._client.__aenter__()
         return self
 
-    async def __aexit__(self, *exc_details) -> None:
+    async def __aexit__(self, *exc_details: Any) -> None:
         await self._client.__aexit__(*exc_details)

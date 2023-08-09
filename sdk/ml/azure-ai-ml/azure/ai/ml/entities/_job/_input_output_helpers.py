@@ -6,24 +6,24 @@ import collections.abc
 import re
 from typing import Any, Dict, Union
 
-from azure.ai.ml._restclient.v2022_12_01_preview.models import CustomModelJobInput as RestCustomModelJobInput
-from azure.ai.ml._restclient.v2022_12_01_preview.models import CustomModelJobOutput as RestCustomModelJobOutput
-from azure.ai.ml._restclient.v2022_12_01_preview.models import InputDeliveryMode
-from azure.ai.ml._restclient.v2022_12_01_preview.models import JobInput as RestJobInput
-from azure.ai.ml._restclient.v2022_12_01_preview.models import JobInputType
-from azure.ai.ml._restclient.v2022_12_01_preview.models import JobOutput as RestJobOutput
-from azure.ai.ml._restclient.v2022_12_01_preview.models import JobOutputType, LiteralJobInput
-from azure.ai.ml._restclient.v2022_12_01_preview.models import MLFlowModelJobInput as RestMLFlowModelJobInput
-from azure.ai.ml._restclient.v2022_12_01_preview.models import MLFlowModelJobOutput as RestMLFlowModelJobOutput
-from azure.ai.ml._restclient.v2022_12_01_preview.models import MLTableJobInput as RestMLTableJobInput
-from azure.ai.ml._restclient.v2022_12_01_preview.models import MLTableJobOutput as RestMLTableJobOutput
-from azure.ai.ml._restclient.v2022_12_01_preview.models import OutputDeliveryMode
-from azure.ai.ml._restclient.v2022_12_01_preview.models import TritonModelJobInput as RestTritonModelJobInput
-from azure.ai.ml._restclient.v2022_12_01_preview.models import TritonModelJobOutput as RestTritonModelJobOutput
-from azure.ai.ml._restclient.v2022_12_01_preview.models import UriFileJobInput as RestUriFileJobInput
-from azure.ai.ml._restclient.v2022_12_01_preview.models import UriFileJobOutput as RestUriFileJobOutput
-from azure.ai.ml._restclient.v2022_12_01_preview.models import UriFolderJobInput as RestUriFolderJobInput
-from azure.ai.ml._restclient.v2022_12_01_preview.models import UriFolderJobOutput as RestUriFolderJobOutput
+from azure.ai.ml._restclient.v2023_04_01_preview.models import CustomModelJobInput as RestCustomModelJobInput
+from azure.ai.ml._restclient.v2023_04_01_preview.models import CustomModelJobOutput as RestCustomModelJobOutput
+from azure.ai.ml._restclient.v2023_04_01_preview.models import InputDeliveryMode
+from azure.ai.ml._restclient.v2023_04_01_preview.models import JobInput as RestJobInput
+from azure.ai.ml._restclient.v2023_04_01_preview.models import JobInputType
+from azure.ai.ml._restclient.v2023_04_01_preview.models import JobOutput as RestJobOutput
+from azure.ai.ml._restclient.v2023_04_01_preview.models import JobOutputType, LiteralJobInput
+from azure.ai.ml._restclient.v2023_04_01_preview.models import MLFlowModelJobInput as RestMLFlowModelJobInput
+from azure.ai.ml._restclient.v2023_04_01_preview.models import MLFlowModelJobOutput as RestMLFlowModelJobOutput
+from azure.ai.ml._restclient.v2023_04_01_preview.models import MLTableJobInput as RestMLTableJobInput
+from azure.ai.ml._restclient.v2023_04_01_preview.models import MLTableJobOutput as RestMLTableJobOutput
+from azure.ai.ml._restclient.v2023_04_01_preview.models import OutputDeliveryMode
+from azure.ai.ml._restclient.v2023_04_01_preview.models import TritonModelJobInput as RestTritonModelJobInput
+from azure.ai.ml._restclient.v2023_04_01_preview.models import TritonModelJobOutput as RestTritonModelJobOutput
+from azure.ai.ml._restclient.v2023_04_01_preview.models import UriFileJobInput as RestUriFileJobInput
+from azure.ai.ml._restclient.v2023_04_01_preview.models import UriFileJobOutput as RestUriFileJobOutput
+from azure.ai.ml._restclient.v2023_04_01_preview.models import UriFolderJobInput as RestUriFolderJobInput
+from azure.ai.ml._restclient.v2023_04_01_preview.models import UriFolderJobOutput as RestUriFolderJobOutput
 from azure.ai.ml._utils.utils import is_data_binding_expression
 from azure.ai.ml.constants import AssetTypes, InputOutputModes, JobType
 from azure.ai.ml.constants._component import IOConstants
@@ -156,7 +156,7 @@ def validate_key_contains_allowed_characters(key: str) -> None:
         )
 
 
-def validate_pipeline_input_key_contains_allowed_characters(key: str) -> None:
+def validate_pipeline_input_key_characters(key: str) -> None:
     # Pipeline input allow '.' to support parameter group in key.
     # Note: ([a-zA-Z_]+[a-zA-Z0-9_]*) is a valid single key,
     # so a valid pipeline key is: ^{single_key}([.]{single_key})*$
@@ -177,13 +177,13 @@ def to_rest_dataset_literal_inputs(
     *,
     job_type,
 ) -> Dict[str, RestJobInput]:
-    """Turns dataset and literal inputs into dictionary of REST JobInput
+    """Turns dataset and literal inputs into dictionary of REST JobInput.
 
     :param inputs: Dictionary of dataset and literal inputs to job
     :type inputs: Dict[str, Union[int, str, float, bool, JobInput]]
     :return: A dictionary mapping input name to a ComponentJobInput or PipelineInput
     :rtype: Dict[str, Union[ComponentJobInput, PipelineInput]]
-    :param job_type: When job_type is pipeline, enable dot('.') in parameter keys to support parameter group.
+    :keyword job_type: When job_type is pipeline, enable dot('.') in parameter keys to support parameter group.
         TODO: Remove this after move name validation to Job's customized validate.
     :type job_type: str
     """
@@ -191,7 +191,7 @@ def to_rest_dataset_literal_inputs(
     # Pack up the inputs into REST format
     for input_name, input_value in inputs.items():
         if job_type == JobType.PIPELINE:
-            validate_pipeline_input_key_contains_allowed_characters(input_name)
+            validate_pipeline_input_key_characters(input_name)
         elif job_type:
             # We pass job_type=None for pipeline node, and want skip this check for nodes.
             validate_key_contains_allowed_characters(input_name)
@@ -290,7 +290,7 @@ def from_rest_inputs_to_dataset_literal(
 
 
 def to_rest_data_outputs(outputs: Dict[str, Output]) -> Dict[str, RestJobOutput]:
-    """Turns job outputs into REST format
+    """Turns job outputs into REST format.
 
     :param outputs: Dictionary of dataset outputs from job
     :type outputs: Dict[str, JobOutput]
@@ -330,7 +330,7 @@ def to_rest_data_outputs(outputs: Dict[str, Output]) -> Dict[str, RestJobOutput]
 
 
 def from_rest_data_outputs(outputs: Dict[str, RestJobOutput]) -> Dict[str, Output]:
-    """Turns REST outputs into the SDK format
+    """Turns REST outputs into the SDK format.
 
     :param outputs: Dictionary of dataset and literal inputs to job
     :type outputs: Dict[str, RestJobOutput]

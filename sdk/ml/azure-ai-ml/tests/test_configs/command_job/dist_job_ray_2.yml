@@ -1,0 +1,15 @@
+command: pip freeze
+environment: azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33
+name: "test1"
+compute: "azureml:testCompute"
+distribution:
+  type: "ray"
+  address: "10.0.0.1:1234"
+  worker_node_additional_args: --disable-usage-stats
+experiment_name: mfe-test1
+properties:
+   test_property: test_value
+resources:
+  instance_count: 2
+limits:
+  timeout: 30

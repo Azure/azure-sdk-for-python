@@ -20,18 +20,25 @@ from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job._input_output_helpers import build_input_output
 from azure.ai.ml.entities._job.job import Job
 from azure.ai.ml.entities._job.pipeline._attr_dict import _AttrDict
-from azure.ai.ml.entities._job.pipeline._io import NodeOutput, PipelineInput, PipelineNodeIOMixin
+from azure.ai.ml.entities._job.pipeline._io import NodeOutput, PipelineInput
+from azure.ai.ml.entities._job.pipeline._io.mixin import NodeWithGroupInputMixin
 from azure.ai.ml.entities._job.pipeline._pipeline_expression import PipelineExpression
 from azure.ai.ml.entities._job.sweep.search_space import SweepDistribution
 from azure.ai.ml.entities._mixins import YamlTranslatableMixin
 from azure.ai.ml.entities._util import convert_ordered_dict_to_dict, resolve_pipeline_parameters
 from azure.ai.ml.entities._validation import MutableValidationResult, SchemaValidatableMixin
-from azure.ai.ml.exceptions import ErrorTarget, ValidationErrorType, ValidationException
+from azure.ai.ml.exceptions import ErrorTarget
 
 module_logger = logging.getLogger(__name__)
 
 
 def parse_inputs_outputs(data):
+    """Parse inputs and outputs from data. If data is a list, parse each item in the list.
+
+    :return: parsed data
+    :rtype: Dict
+    """
+
     if "inputs" in data:
         data["inputs"] = {key: build_input_output(val) for key, val in data["inputs"].items()}
     if "outputs" in data:
@@ -40,7 +47,13 @@ def parse_inputs_outputs(data):
 
 
 def pipeline_node_decorator(func):
-    """Wrap func and add it return value to current DSL pipeline."""
+    """Wrap a function and add its return value to the current DSL pipeline.
+
+    :param func: The function to be wrapped.
+    :type func: callable
+    :return: The wrapped function.
+    :rtype: callable
+    """
 
     @wraps(func)
     def wrapper(*args, **kwargs):
@@ -60,38 +73,48 @@ def pipeline_node_decorator(func):
 
 
 # pylint: disable=too-many-instance-attributes
-class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, SchemaValidatableMixin):
-    """Base class for node in pipeline, used for component version consumption.
-    Can't be instantiated directly.
+class BaseNode(Job, YamlTranslatableMixin, _AttrDict, SchemaValidatableMixin, NodeWithGroupInputMixin):
+    """Base class for node in pipeline, used for component version consumption. Can't be instantiated directly.
 
     You should not instantiate this class directly. Instead, you should
     create from a builder function.
 
-    :param type: Type of pipeline node
+    :param type: Type of pipeline node. Defaults to JobType.COMPONENT.
     :type type: str
     :param component: Id or instance of the component version to be run for the step
-    :type component: Union[Component, str]
-    :param inputs: Inputs to the node.
-    :type inputs: Dict[str, Union[Input, SweepDistribution, str, bool, int, float, Enum, dict]]
+    :type component: Component
+    :param inputs: The inputs for the node.
+    :type inputs: Optional[Dict[str, Union[
+        ~azure.ai.ml.entities._job.pipeline._io.PipelineInput,
+        ~azure.ai.ml.entities._job.pipeline._io.NodeOutput,
+        ~azure.ai.ml.entities.Input,
+        str,
+        bool,
+        int,
+        float,
+        Enum,
+        'Input']]]
     :param outputs: Mapping of output data bindings used in the job.
-    :type outputs: Dict[str, Union[str, Output, dict]]
-    :param name: Name of the node.
-    :type name: str
-    :param description: Description of the node.
-    :type description: str
+    :type outputs: Optional[Dict[str, Union[str, ~azure.ai.ml.entities.Output, 'Output']]]
+    :param name: The name of the node.
+    :type name: Optional[str]
+    :param display_name: The display name of the node.
+    :type display_name: Optional[str]
+    :param description: The description of the node.
+    :type description: Optional[str]
     :param tags: Tag dictionary. Tags can be added, removed, and updated.
-    :type tags: dict[str, str]
-    :param properties: The job property dictionary.
-    :type properties: dict[str, str]
+    :type tags: Optional[Dict]
+    :param properties: The properties of the job.
+    :type properties: Optional[Dict]
     :param comment: Comment of the pipeline node, which will be shown in designer canvas.
-    :type comment: str
-    :param display_name: Display name of the job.
-    :type display_name: str
-    :param compute: Compute definition containing the compute information for the step
-    :type compute: str
-    :param experiment_name:  Name of the experiment the job will be created under,
-        if None is provided, default will be set to current directory name. Will be ignored as a pipeline step.
-    :type experiment_name: str
+    :type comment: Optional[str]
+    :param compute: Compute definition containing the compute information for the step.
+    :type compute: Optional[str]
+    :param experiment_name: Name of the experiment the job will be created under,
+        if None is provided, default will be set to current directory name.
+        Will be ignored as a pipeline step.
+    :type experiment_name: Optional[str]
+    :param kwargs: Additional keyword arguments for future compatibility.
     """
 
     def __init__(
@@ -125,11 +148,12 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
         compute: Optional[str] = None,
         experiment_name: Optional[str] = None,
         **kwargs,
-    ):
+    ) -> None:
         self._init = True
         # property _source can't be set
         kwargs.pop("_source", None)
         _from_component_func = kwargs.pop("_from_component_func", False)
+        self._name = None
         super(BaseNode, self).__init__(
             type=type,
             name=name,
@@ -146,10 +170,6 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
         # initialize io
         inputs = resolve_pipeline_parameters(inputs)
         inputs, outputs = inputs or {}, outputs or {}
-        self._parse_io(inputs, Input)
-        self._validate_io(inputs, self._get_supported_inputs_types())
-        self._parse_io(outputs, Output)
-        self._validate_io(outputs, self._get_supported_outputs_types())
         # parse empty dict to None so we won't pass default mode, type to backend
         # add `isinstance` to avoid converting to expression
         for k, v in inputs.items():
@@ -160,13 +180,13 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
         self._job_inputs, self._job_outputs = inputs, outputs
         if isinstance(component, Component):
             # Build the inputs from component input definition and given inputs, unfilled inputs will be None
-            self._inputs = self._build_inputs_dict(component.inputs, inputs or {})
+            self._inputs = self._build_inputs_dict(inputs or {}, input_definition_dict=component.inputs)
             # Build the outputs from component output definition and given outputs, unfilled outputs will be None
-            self._outputs = self._build_outputs_dict(component.outputs, outputs or {})
+            self._outputs = self._build_outputs_dict(outputs or {}, output_definition_dict=component.outputs)
         else:
             # Build inputs/outputs dict without meta when definition not available
-            self._inputs = self._build_inputs_dict_without_meta(inputs or {})
-            self._outputs = self._build_outputs_dict_without_meta(outputs or {})
+            self._inputs = self._build_inputs_dict(inputs or {})
+            self._outputs = self._build_outputs_dict(outputs or {})
 
         self._component = component
         self._referenced_control_flow_node_instance_id = None
@@ -186,8 +206,43 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
         self._validate_required_input_not_provided = True
         self._init = False
 
+    @property
+    def name(self) -> str:
+        """Get the name of the node.
+
+        :return: The name of the node.
+        :rtype: str
+        """
+        return self._name
+
+    @name.setter
+    def name(self, value):
+        """Set the name of the node.
+
+        :param value: The name to set for the node.
+        :type value: str
+        :return: None
+        """
+        # when name is not lower case, lower it to make sure it's a valid node name
+        if value and value != value.lower():
+            module_logger.warning(
+                "Changing node name %s to lower case: %s since upper case is not allowed node name.",
+                value,
+                value.lower(),
+            )
+            value = value.lower()
+        self._name = value
+
     @classmethod
     def _get_supported_inputs_types(cls):
+        """Get the supported input types for node input.
+
+        :param cls: The class (or instance) to retrieve supported input types for.
+        :type cls: object
+
+        :return: A tuple of supported input types.
+        :rtype: tuple
+        """
         # supported input types for node input
         return (
             PipelineInput,
@@ -203,46 +258,9 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
             PipelineExpression,
         )
 
-    @classmethod
-    def _get_supported_outputs_types(cls):
-        # supported output types for node input
-        return None
-
     @property
     def _skip_required_compute_missing_validation(self):
         return False
-
-    @classmethod
-    def _validate_io(cls, io_dict: dict, allowed_types: Optional[tuple]):
-        if allowed_types is None:
-            return
-        for key, value in io_dict.items():
-            if value is None or isinstance(value, allowed_types):
-                pass
-            else:
-                msg = "Expecting {} for input/output {}, got {} instead."
-                raise ValidationException(
-                    message=msg.format(allowed_types, key, type(value)),
-                    no_personal_data_message=msg.format(allowed_types, "[key]", type(value)),
-                    target=ErrorTarget.PIPELINE,
-                    error_type=ValidationErrorType.INVALID_VALUE,
-                )
-
-    @classmethod
-    def _parse_io(cls, io_dict: dict, parse_cls):
-        for key, value in io_dict.items():
-            # output mode of last node should not affect input mode of next node
-            if isinstance(value, NodeOutput):
-                # value = copy.deepcopy(value)
-                value = value._deepcopy()  # Decoupled input and output
-                io_dict[key] = value
-                value.mode = None
-            elif type(value) == dict:  # pylint: disable=unidiomatic-typecheck
-                # Use type comparison instead of is_instance to skip _GroupAttrDict
-                # when loading from yaml io will be a dict,
-                # like {'job_data_path': '${{parent.inputs.pipeline_job_data_path}}'}
-                # parse dict to allowed type
-                io_dict[key] = parse_cls(**value)
 
     def _initializing(self) -> bool:
         # use this to indicate ongoing init process so all attributes set during init process won't be set as
@@ -253,9 +271,8 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
     def _set_base_path(self, base_path):
         """Set the base path for the node.
 
-        Will be used for schema validation. If not set, will use
-        Path.cwd() as the base path (default logic defined in
-        SchemaValidatableMixin._base_path_for_validation).
+        Will be used for schema validation. If not set, will use Path.cwd() as the base path
+        (default logic defined in SchemaValidatableMixin._base_path_for_validation).
         """
         self._base_path = base_path
 
@@ -291,8 +308,7 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
     def _get_validation_error_target(cls) -> ErrorTarget:
         """Return the error target of this resource.
 
-        Should be overridden by subclass. Value should be in ErrorTarget
-        enum.
+        Should be overridden by subclass. Value should be in ErrorTarget enum.
         """
         return ErrorTarget.PIPELINE
 
@@ -351,12 +367,10 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
         """This private function is used by the CLI to get a plain job object
         so that the CLI can properly serialize the object.
 
-        It is needed as BaseNode._to_dict() dumps objects using pipeline
-        child job schema instead of standalone job schema, for example
-        Command objects dump have a nested component property, which
-        doesn't apply to stand alone command jobs. BaseNode._to_dict()
-        needs to be able to dump to both pipeline child job dict as well
-        as stand alone job dict base on context.
+        It is needed as BaseNode._to_dict() dumps objects using pipeline child job schema instead of standalone job
+        schema, for example Command objects dump have a nested component property, which doesn't apply to stand alone
+        command jobs. BaseNode._to_dict() needs to be able to dump to both pipeline child job dict as well as stand
+        alone job dict base on context.
         """
 
     @classmethod
@@ -366,18 +380,21 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
 
         from azure.ai.ml.entities._job.pipeline._load_component import pipeline_node_factory
 
-        instance: BaseNode = pipeline_node_factory.get_create_instance_func(obj[CommonYamlFields.TYPE])()
+        # todo: refine Hard code for now to support different task type for DataTransfer node
+        _type = obj[CommonYamlFields.TYPE]
+        if _type == NodeType.DATA_TRANSFER:
+            _type = "_".join([NodeType.DATA_TRANSFER, obj.get("task", "")])
+        instance: BaseNode = pipeline_node_factory.get_create_instance_func(_type)()
         init_kwargs = instance._from_rest_object_to_init_params(obj)
         instance.__init__(**init_kwargs)
         return instance
 
     @classmethod
     def _from_rest_object_to_init_params(cls, obj: dict) -> Dict:
-        """Transfer the rest object to a dict containing items to init the
-        node.
+        """Transfer the rest object to a dict containing items to init the node.
 
-        Will be used in _from_rest_object. Please override this method instead of
-        _from_rest_object to make the logic reusable.
+        Will be used in _from_rest_object. Please override this method instead of _from_rest_object to make the logic
+        reusable.
         """
         inputs = obj.get("inputs", {})
         outputs = obj.get("outputs", {})
@@ -403,8 +420,7 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
 
     @classmethod
     def _picked_fields_from_dict_to_rest_object(cls) -> List[str]:
-        """Override this method to add custom fields to be picked from
-        self._to_dict() in self._to_rest_object().
+        """Override this method to add custom fields to be picked from self._to_dict() in self._to_rest_object().
 
         Pick nothing by default.
         """
@@ -434,16 +450,26 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
         )
         # only add comment in REST object when it is set
         if self.comment is not None:
-            rest_obj.update(dict(comment=self.comment))
+            rest_obj.update({"comment": self.comment})
 
         return convert_ordered_dict_to_dict(rest_obj)
 
     @property
     def inputs(self) -> Dict[str, Union[Input, str, bool, int, float]]:
+        """Get the inputs for the object.
+
+        :return: A dictionary containing the inputs for the object.
+        :rtype: Dict[str, Union[~azure.ai.ml.entities.Input, str, bool, int, float]]
+        """
         return self._inputs
 
     @property
     def outputs(self) -> Dict[str, Union[str, Output]]:
+        """Get the outputs of the object.
+
+        :return: A dictionary containing the outputs for the object.
+        :rtype: Dict[str, Union[str, ~azure.ai.ml.entities.Output]]
+        """
         return self._outputs
 
     def __str__(self):
@@ -460,6 +486,7 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
         # only show help when component has definition
         if isinstance(self._component, Component):
             return self._component.__help__()
+        return None
 
     def __bool__(self):
         # _attr_dict will return False if no extra attributes are set
@@ -481,8 +508,7 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
         return telemetry_values
 
     def _register_in_current_pipeline_component_builder(self):
-        """Register this node in current pipeline component builder by adding
-        self to a global stack."""
+        """Register this node in current pipeline component builder by adding self to a global stack."""
         from azure.ai.ml.dsl._pipeline_component_builder import _add_component_to_current_definition_builder
 
         # TODO: would it be better if we make _add_component_to_current_definition_builder a public function of
@@ -495,9 +521,8 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
 
     @classmethod
     def _refine_optional_inputs_with_no_value(cls, node, kwargs):
-        """Refine optional inputs that have no default value and no value is
-        provided when calling command/parallel function This is to align with
-        behavior of calling component to generate a pipeline node."""
+        """Refine optional inputs that have no default value and no value is provided when calling command/parallel
+        function This is to align with behavior of calling component to generate a pipeline node."""
         for key, value in node.inputs.items():
             meta = value._data
             if (

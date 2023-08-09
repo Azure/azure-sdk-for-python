@@ -67,14 +67,14 @@ jobs:
         - bash: |
             set -ev
             source env/bin/activate
-            pip install -e $(Build.SourcesDirectory)/${{ artifact }}
+            python -m pip install -e $(Build.SourcesDirectory)/${{ artifact }}
           displayName: Install ${{ artifact }} 
 
       - ${{ each package_spec in parameters.InjectedPackages }}:
         - bash: |
             set -ev
             source env/bin/activate
-            pip install -e ${{ package_spec }}
+            python -m pip install -e ${{ package_spec }}
           displayName: Install ${{ package_spec }} 
 
       - bash: |

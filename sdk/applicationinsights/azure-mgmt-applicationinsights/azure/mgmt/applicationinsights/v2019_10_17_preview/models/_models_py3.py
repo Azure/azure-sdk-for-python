@@ -1,4 +1,5 @@
 # coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -6,13 +7,23 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, Dict, List, Optional
+import sys
+from typing import Any, Dict, List, Optional, TYPE_CHECKING
 
-from azure.core.exceptions import HttpResponseError
-import msrest.serialization
+from ... import _serialization
+
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
+JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 
-class ErrorFieldContract(msrest.serialization.Model):
+class ErrorFieldContract(_serialization.Model):
     """Error Field contract.
 
     :ivar code: Property level error code.
@@ -24,19 +35,14 @@ class ErrorFieldContract(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        code: Optional[str] = None,
-        message: Optional[str] = None,
-        target: Optional[str] = None,
-        **kwargs
-    ):
+        self, *, code: Optional[str] = None, message: Optional[str] = None, target: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword code: Property level error code.
         :paramtype code: str
@@ -45,13 +51,13 @@ class ErrorFieldContract(msrest.serialization.Model):
         :keyword target: Property name.
         :paramtype target: str
         """
-        super(ErrorFieldContract, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.code = code
         self.message = message
         self.target = target
 
 
-class WorkbookError(msrest.serialization.Model):
+class WorkbookError(_serialization.Model):
     """Error message body that will indicate why the operation failed.
 
     :ivar code: Service-defined error code. This code serves as a sub-status for the HTTP error
@@ -65,9 +71,9 @@ class WorkbookError(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[ErrorFieldContract]'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "details": {"key": "details", "type": "[ErrorFieldContract]"},
     }
 
     def __init__(
@@ -75,9 +81,9 @@ class WorkbookError(msrest.serialization.Model):
         *,
         code: Optional[str] = None,
         message: Optional[str] = None,
-        details: Optional[List["ErrorFieldContract"]] = None,
-        **kwargs
-    ):
+        details: Optional[List["_models.ErrorFieldContract"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword code: Service-defined error code. This code serves as a sub-status for the HTTP error
          code specified in the response.
@@ -88,13 +94,13 @@ class WorkbookError(msrest.serialization.Model):
         :paramtype details:
          list[~azure.mgmt.applicationinsights.v2019_10_17_preview.models.ErrorFieldContract]
         """
-        super(WorkbookError, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.code = code
         self.message = message
         self.details = details
 
 
-class WorkbookTemplateResource(msrest.serialization.Model):
+class WorkbookTemplateResource(_serialization.Model):
     """An azure resource object.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -107,41 +113,35 @@ class WorkbookTemplateResource(msrest.serialization.Model):
     :vartype name: str
     :ivar type: Azure resource type.
     :vartype type: str
-    :ivar location: Required. Resource location.
+    :ivar location: Resource location. Required.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        *,
-        location: str,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
-        :keyword location: Required. Resource location.
+        :keyword location: Resource location. Required.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         """
-        super(WorkbookTemplateResource, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
@@ -162,9 +162,9 @@ class WorkbookTemplate(WorkbookTemplateResource):
     :vartype name: str
     :ivar type: Azure resource type.
     :vartype type: str
-    :ivar location: Required. Resource location.
+    :ivar location: Resource location. Required.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar priority: Priority of the template. Determines which template to open when a workbook
      gallery is opened in viewer mode.
@@ -172,7 +172,7 @@ class WorkbookTemplate(WorkbookTemplateResource):
     :ivar author: Information about the author of the workbook template.
     :vartype author: str
     :ivar template_data: Valid JSON object containing workbook template payload.
-    :vartype template_data: any
+    :vartype template_data: JSON
     :ivar galleries: Workbook galleries supported by the template.
     :vartype galleries:
      list[~azure.mgmt.applicationinsights.v2019_10_17_preview.models.WorkbookTemplateGallery]
@@ -183,23 +183,23 @@ class WorkbookTemplate(WorkbookTemplateResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'priority': {'key': 'properties.priority', 'type': 'int'},
-        'author': {'key': 'properties.author', 'type': 'str'},
-        'template_data': {'key': 'properties.templateData', 'type': 'object'},
-        'galleries': {'key': 'properties.galleries', 'type': '[WorkbookTemplateGallery]'},
-        'localized': {'key': 'properties.localized', 'type': '{[WorkbookTemplateLocalizedGallery]}'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "priority": {"key": "properties.priority", "type": "int"},
+        "author": {"key": "properties.author", "type": "str"},
+        "template_data": {"key": "properties.templateData", "type": "object"},
+        "galleries": {"key": "properties.galleries", "type": "[WorkbookTemplateGallery]"},
+        "localized": {"key": "properties.localized", "type": "{[WorkbookTemplateLocalizedGallery]}"},
     }
 
     def __init__(
@@ -209,15 +209,15 @@ class WorkbookTemplate(WorkbookTemplateResource):
         tags: Optional[Dict[str, str]] = None,
         priority: Optional[int] = None,
         author: Optional[str] = None,
-        template_data: Optional[Any] = None,
-        galleries: Optional[List["WorkbookTemplateGallery"]] = None,
-        localized: Optional[Dict[str, List["WorkbookTemplateLocalizedGallery"]]] = None,
-        **kwargs
-    ):
+        template_data: Optional[JSON] = None,
+        galleries: Optional[List["_models.WorkbookTemplateGallery"]] = None,
+        localized: Optional[Dict[str, List["_models.WorkbookTemplateLocalizedGallery"]]] = None,
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword location: Required. Resource location.
+        :keyword location: Resource location. Required.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword priority: Priority of the template. Determines which template to open when a workbook
          gallery is opened in viewer mode.
@@ -225,7 +225,7 @@ class WorkbookTemplate(WorkbookTemplateResource):
         :keyword author: Information about the author of the workbook template.
         :paramtype author: str
         :keyword template_data: Valid JSON object containing workbook template payload.
-        :paramtype template_data: any
+        :paramtype template_data: JSON
         :keyword galleries: Workbook galleries supported by the template.
         :paramtype galleries:
          list[~azure.mgmt.applicationinsights.v2019_10_17_preview.models.WorkbookTemplateGallery]
@@ -234,7 +234,7 @@ class WorkbookTemplate(WorkbookTemplateResource):
         :paramtype localized: dict[str,
          list[~azure.mgmt.applicationinsights.v2019_10_17_preview.models.WorkbookTemplateLocalizedGallery]]
         """
-        super(WorkbookTemplate, self).__init__(location=location, tags=tags, **kwargs)
+        super().__init__(location=location, tags=tags, **kwargs)
         self.priority = priority
         self.author = author
         self.template_data = template_data
@@ -242,7 +242,7 @@ class WorkbookTemplate(WorkbookTemplateResource):
         self.localized = localized
 
 
-class WorkbookTemplateGallery(msrest.serialization.Model):
+class WorkbookTemplateGallery(_serialization.Model):
     """Gallery information for a workbook template.
 
     :ivar name: Name of the workbook template in the gallery.
@@ -258,11 +258,11 @@ class WorkbookTemplateGallery(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'category': {'key': 'category', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'order': {'key': 'order', 'type': 'int'},
-        'resource_type': {'key': 'resourceType', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "category": {"key": "category", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "order": {"key": "order", "type": "int"},
+        "resource_type": {"key": "resourceType", "type": "str"},
     }
 
     def __init__(
@@ -273,8 +273,8 @@ class WorkbookTemplateGallery(msrest.serialization.Model):
         type: Optional[str] = None,
         order: Optional[int] = None,
         resource_type: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: Name of the workbook template in the gallery.
         :paramtype name: str
@@ -287,7 +287,7 @@ class WorkbookTemplateGallery(msrest.serialization.Model):
         :keyword resource_type: Azure resource type supported by the gallery.
         :paramtype resource_type: str
         """
-        super(WorkbookTemplateGallery, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.category = category
         self.type = type
@@ -295,41 +295,41 @@ class WorkbookTemplateGallery(msrest.serialization.Model):
         self.resource_type = resource_type
 
 
-class WorkbookTemplateLocalizedGallery(msrest.serialization.Model):
+class WorkbookTemplateLocalizedGallery(_serialization.Model):
     """Localized template data and gallery information.
 
     :ivar template_data: Valid JSON object containing workbook template payload.
-    :vartype template_data: any
+    :vartype template_data: JSON
     :ivar galleries: Workbook galleries supported by the template.
     :vartype galleries:
      list[~azure.mgmt.applicationinsights.v2019_10_17_preview.models.WorkbookTemplateGallery]
     """
 
     _attribute_map = {
-        'template_data': {'key': 'templateData', 'type': 'object'},
-        'galleries': {'key': 'galleries', 'type': '[WorkbookTemplateGallery]'},
+        "template_data": {"key": "templateData", "type": "object"},
+        "galleries": {"key": "galleries", "type": "[WorkbookTemplateGallery]"},
     }
 
     def __init__(
         self,
         *,
-        template_data: Optional[Any] = None,
-        galleries: Optional[List["WorkbookTemplateGallery"]] = None,
-        **kwargs
-    ):
+        template_data: Optional[JSON] = None,
+        galleries: Optional[List["_models.WorkbookTemplateGallery"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword template_data: Valid JSON object containing workbook template payload.
-        :paramtype template_data: any
+        :paramtype template_data: JSON
         :keyword galleries: Workbook galleries supported by the template.
         :paramtype galleries:
          list[~azure.mgmt.applicationinsights.v2019_10_17_preview.models.WorkbookTemplateGallery]
         """
-        super(WorkbookTemplateLocalizedGallery, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.template_data = template_data
         self.galleries = galleries
 
 
-class WorkbookTemplatesListResult(msrest.serialization.Model):
+class WorkbookTemplatesListResult(_serialization.Model):
     """WorkbookTemplate list result.
 
     :ivar value: An array of workbook templates.
@@ -338,28 +338,23 @@ class WorkbookTemplatesListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[WorkbookTemplate]'},
+        "value": {"key": "value", "type": "[WorkbookTemplate]"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["WorkbookTemplate"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["_models.WorkbookTemplate"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: An array of workbook templates.
         :paramtype value:
          list[~azure.mgmt.applicationinsights.v2019_10_17_preview.models.WorkbookTemplate]
         """
-        super(WorkbookTemplatesListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
 
 
-class WorkbookTemplateUpdateParameters(msrest.serialization.Model):
+class WorkbookTemplateUpdateParameters(_serialization.Model):
     """The parameters that can be provided when updating workbook template.
 
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar priority: Priority of the template. Determines which template to open when a workbook
      gallery is opened in viewer mode.
@@ -367,7 +362,7 @@ class WorkbookTemplateUpdateParameters(msrest.serialization.Model):
     :ivar author: Information about the author of the workbook template.
     :vartype author: str
     :ivar template_data: Valid JSON object containing workbook template payload.
-    :vartype template_data: any
+    :vartype template_data: JSON
     :ivar galleries: Workbook galleries supported by the template.
     :vartype galleries:
      list[~azure.mgmt.applicationinsights.v2019_10_17_preview.models.WorkbookTemplateGallery]
@@ -378,12 +373,12 @@ class WorkbookTemplateUpdateParameters(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'priority': {'key': 'properties.priority', 'type': 'int'},
-        'author': {'key': 'properties.author', 'type': 'str'},
-        'template_data': {'key': 'properties.templateData', 'type': 'object'},
-        'galleries': {'key': 'properties.galleries', 'type': '[WorkbookTemplateGallery]'},
-        'localized': {'key': 'properties.localized', 'type': '{[WorkbookTemplateLocalizedGallery]}'},
+        "tags": {"key": "tags", "type": "{str}"},
+        "priority": {"key": "properties.priority", "type": "int"},
+        "author": {"key": "properties.author", "type": "str"},
+        "template_data": {"key": "properties.templateData", "type": "object"},
+        "galleries": {"key": "properties.galleries", "type": "[WorkbookTemplateGallery]"},
+        "localized": {"key": "properties.localized", "type": "{[WorkbookTemplateLocalizedGallery]}"},
     }
 
     def __init__(
@@ -392,13 +387,13 @@ class WorkbookTemplateUpdateParameters(msrest.serialization.Model):
         tags: Optional[Dict[str, str]] = None,
         priority: Optional[int] = None,
         author: Optional[str] = None,
-        template_data: Optional[Any] = None,
-        galleries: Optional[List["WorkbookTemplateGallery"]] = None,
-        localized: Optional[Dict[str, List["WorkbookTemplateLocalizedGallery"]]] = None,
-        **kwargs
-    ):
+        template_data: Optional[JSON] = None,
+        galleries: Optional[List["_models.WorkbookTemplateGallery"]] = None,
+        localized: Optional[Dict[str, List["_models.WorkbookTemplateLocalizedGallery"]]] = None,
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword priority: Priority of the template. Determines which template to open when a workbook
          gallery is opened in viewer mode.
@@ -406,7 +401,7 @@ class WorkbookTemplateUpdateParameters(msrest.serialization.Model):
         :keyword author: Information about the author of the workbook template.
         :paramtype author: str
         :keyword template_data: Valid JSON object containing workbook template payload.
-        :paramtype template_data: any
+        :paramtype template_data: JSON
         :keyword galleries: Workbook galleries supported by the template.
         :paramtype galleries:
          list[~azure.mgmt.applicationinsights.v2019_10_17_preview.models.WorkbookTemplateGallery]
@@ -415,7 +410,7 @@ class WorkbookTemplateUpdateParameters(msrest.serialization.Model):
         :paramtype localized: dict[str,
          list[~azure.mgmt.applicationinsights.v2019_10_17_preview.models.WorkbookTemplateLocalizedGallery]]
         """
-        super(WorkbookTemplateUpdateParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.tags = tags
         self.priority = priority
         self.author = author

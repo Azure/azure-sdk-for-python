@@ -1,14 +1,49 @@
 # Release History
 
-## 1.26.4 (Unreleased)
+## 1.29.0 (2023-08-03)
 
 ### Features Added
 
-### Breaking Changes
+- A keyword argument `enable_cae` was added to the `get_token` method of the `TokenCredential` protocol.  #31012
+- `BearerTokenCredentialPolicy` and `AsyncBearerTokenCredentialPolicy` now accept `enable_cae` keyword arguments in their constructors. This is used in determining if [Continuous Access Evaluation (CAE)](https://learn.microsoft.com/azure/active-directory/conditional-access/concept-continuous-access-evaluation) should be enabled for each `get_token` request.  #31012
+
+## 1.28.0 (2023-07-06)
+
+### Features Added
+
+- Added header name parameter to `RequestIdPolicy`. #30772
+- Added `SensitiveHeaderCleanupPolicy` that cleans up sensitive headers if a redirect happens and the new destination is in another domain. #28349
+
+### Other Changes
+
+- Catch aiohttp errors and translate them into azure-core errors.
+
+## 1.27.1 (2023-06-13)
 
 ### Bugs Fixed
 
+- Fix url building for some complex query parameters scenarios  #30707
+
+## 1.27.0 (2023-06-01)
+
+### Features Added
+
+- Added support to use sync credentials in `AsyncBearerTokenCredentialPolicy`. #30381
+- Added "prefix" parameter to AzureKeyCredentialPolicy #29901
+
+### Bugs Fixed
+
+- Improve error message when providing the wrong credential type for AzureKeyCredential  #30380
+
+## 1.26.4 (2023-04-06)
+
+### Features Added
+
+- Updated settings to include OpenTelemetry as a tracer provider.  #29095
+
 ### Other Changes
+
+- Improved typing
 
 ## 1.26.3 (2023-02-02)
 

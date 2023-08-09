@@ -5,15 +5,19 @@
 # -------------------------------------------------------------------------
 import time
 from itertools import product
+from requests import Response
 import azure.core
 from azure.core.credentials import AccessToken, AzureKeyCredential, AzureSasCredential, AzureNamedKeyCredential
 from azure.core.exceptions import ServiceRequestError
 from azure.core.pipeline import Pipeline
+from azure.core.pipeline.transport import HttpTransport, HttpRequest
 from azure.core.pipeline.policies import (
     BearerTokenCredentialPolicy,
+    RedirectPolicy,
     SansIOHTTPPolicy,
     AzureKeyCredentialPolicy,
     AzureSasCredentialPolicy,
+    SensitiveHeaderCleanupPolicy,
 )
 from utils import HTTP_REQUESTS
 
@@ -56,7 +60,10 @@ def test_bearer_policy_send(http_request):
         assert request.http_request is expected_request
         return expected_response
 
-    fake_credential = Mock(get_token=lambda _: AccessToken("", 0))
+    def get_token(*_, **__):
+        return AccessToken("***", 42)
+
+    fake_credential = Mock(get_token=get_token)
     policies = [BearerTokenCredentialPolicy(fake_credential, "scope"), Mock(send=verify_request)]
     response = Pipeline(transport=Mock(), policies=policies).run(expected_request)
 
@@ -95,7 +102,10 @@ def test_bearer_policy_optionally_enforces_https(http_request):
         assert "enforce_https" not in kwargs, "BearerTokenCredentialPolicy didn't pop the 'enforce_https' option"
         return Mock()
 
-    credential = Mock(get_token=lambda *_, **__: AccessToken("***", 42))
+    def get_token(*_, **__):
+        return AccessToken("***", 42)
+
+    credential = Mock(get_token=get_token)
     pipeline = Pipeline(
         transport=Mock(send=assert_option_popped), policies=[BearerTokenCredentialPolicy(credential, "scope")]
     )
@@ -142,7 +152,21 @@ def test_bearer_policy_default_context(http_request):
 
     pipeline.run(http_request("GET", "https://localhost"))
 
-    credential.get_token.assert_called_once_with(expected_scope)
+    credential.get_token.assert_called_once_with(expected_scope, enable_cae=False)
+
+
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+def test_bearer_policy_enable_cae(http_request):
+    """The policy should set enable_cae to True in the get_token request if it is set in constructor."""
+    expected_scope = "scope"
+    token = AccessToken("", 0)
+    credential = Mock(get_token=Mock(return_value=token))
+    policy = BearerTokenCredentialPolicy(credential, expected_scope, enable_cae=True)
+    pipeline = Pipeline(transport=Mock(), policies=[policy])
+
+    pipeline.run(http_request("GET", "https://localhost"))
+
+    credential.get_token.assert_called_once_with(expected_scope, enable_cae=True)
 
 
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
@@ -198,7 +222,7 @@ def test_bearer_policy_cannot_complete_challenge(http_request):
 
     assert response.http_response is expected_response
     assert transport.send.call_count == 1
-    credential.get_token.assert_called_once_with(expected_scope)
+    credential.get_token.assert_called_once_with(expected_scope, enable_cae=False)
 
 
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
@@ -245,6 +269,7 @@ def test_bearer_policy_calls_sansio_methods(http_request):
             raise_the_second_time.calls = 1
             return Mock(status_code=401, headers={"WWW-Authenticate": 'Basic realm="localhost"'})
         raise TestException()
+
     raise_the_second_time.calls = 0
 
     policy = TestPolicy(credential, "scope")
@@ -270,7 +295,7 @@ def test_key_vault_regression(http_request):
     assert policy._credential is credential
 
     headers = {}
-    token = "alphanums" # cspell:disable-line
+    token = "alphanums"  # cspell:disable-line
     policy._update_headers(headers, token)
     assert headers["Authorization"] == "Bearer " + token
 
@@ -299,7 +324,7 @@ def test_azure_key_credential_policy(http_request):
 
 
 def test_azure_key_credential_policy_raises():
-    """Tests AzureKeyCredential and AzureKeyCredentialPolicy raises with non-string input parameters."""
+    """Tests AzureKeyCredential and AzureKeyCredentialPolicy raises with non-compliant input parameters."""
     api_key = 1234
     key_header = 5678
     with pytest.raises(TypeError):
@@ -308,6 +333,9 @@ def test_azure_key_credential_policy_raises():
     credential = AzureKeyCredential(str(api_key))
     with pytest.raises(TypeError):
         credential_policy = AzureKeyCredentialPolicy(credential=credential, name=key_header)
+
+    with pytest.raises(TypeError):
+        credential_policy = AzureKeyCredentialPolicy(credential=str(api_key), name=key_header)
 
 
 def test_azure_key_credential_updates():
@@ -321,30 +349,50 @@ def test_azure_key_credential_updates():
     credential.update(api_key)
     assert credential.key == api_key
 
+
 combinations = [
     ("sig=test_signature", "https://test_sas_credential", "https://test_sas_credential?sig=test_signature"),
     ("?sig=test_signature", "https://test_sas_credential", "https://test_sas_credential?sig=test_signature"),
-    ("sig=test_signature", "https://test_sas_credential?sig=test_signature", "https://test_sas_credential?sig=test_signature"),
-    ("?sig=test_signature", "https://test_sas_credential?sig=test_signature", "https://test_sas_credential?sig=test_signature"),
+    (
+        "sig=test_signature",
+        "https://test_sas_credential?sig=test_signature",
+        "https://test_sas_credential?sig=test_signature",
+    ),
+    (
+        "?sig=test_signature",
+        "https://test_sas_credential?sig=test_signature",
+        "https://test_sas_credential?sig=test_signature",
+    ),
     ("sig=test_signature", "https://test_sas_credential?", "https://test_sas_credential?sig=test_signature"),
     ("?sig=test_signature", "https://test_sas_credential?", "https://test_sas_credential?sig=test_signature"),
-    ("sig=test_signature", "https://test_sas_credential?foo=bar", "https://test_sas_credential?foo=bar&sig=test_signature"),
-    ("?sig=test_signature", "https://test_sas_credential?foo=bar", "https://test_sas_credential?foo=bar&sig=test_signature"),
+    (
+        "sig=test_signature",
+        "https://test_sas_credential?foo=bar",
+        "https://test_sas_credential?foo=bar&sig=test_signature",
+    ),
+    (
+        "?sig=test_signature",
+        "https://test_sas_credential?foo=bar",
+        "https://test_sas_credential?foo=bar&sig=test_signature",
+    ),
 ]
+
 
 @pytest.mark.parametrize("combinations,http_request", product(combinations, HTTP_REQUESTS))
 def test_azure_sas_credential_policy(combinations, http_request):
     """Tests to see if we can create an AzureSasCredentialPolicy"""
     sas, url, expected_url = combinations
+
     def verify_authorization(request):
         assert request.url == expected_url
 
-    transport=Mock(send=verify_authorization)
+    transport = Mock(send=verify_authorization)
     credential = AzureSasCredential(sas)
     credential_policy = AzureSasCredentialPolicy(credential=credential)
     pipeline = Pipeline(transport=transport, policies=[credential_policy])
 
     pipeline.run(http_request("GET", url))
+
 
 def test_azure_sas_credential_updates():
     """Tests AzureSasCredential updates"""
@@ -357,11 +405,13 @@ def test_azure_sas_credential_updates():
     credential.update(sas)
     assert credential.signature == sas
 
+
 def test_azure_sas_credential_policy_raises():
     """Tests AzureSasCredential and AzureSasCredentialPolicy raises with non-string input parameters."""
     sas = 1234
     with pytest.raises(TypeError):
         credential = AzureSasCredential(sas)
+
 
 def test_azure_named_key_credential():
     cred = AzureNamedKeyCredential("sample_name", "samplekey")
@@ -375,6 +425,7 @@ def test_azure_named_key_credential():
     assert cred.named_key.key == "newkey"
     assert isinstance(cred.named_key, tuple)
 
+
 def test_azure_named_key_credential_raises():
     with pytest.raises(TypeError, match="Both name and key must be strings."):
         cred = AzureNamedKeyCredential("sample_name", 123345)
@@ -385,3 +436,178 @@ def test_azure_named_key_credential_raises():
 
     with pytest.raises(TypeError, match="Both name and key must be strings."):
         cred.update(1234, "newkey")
+
+
+def test_bearer_policy_redirect_same_domain():
+    class MockTransport(HttpTransport):
+        def __init__(self):
+            self._first = True
+
+        def __exit__(self, exc_type, exc_val, exc_tb):
+            pass
+
+        def close(self):
+            pass
+
+        def open(self):
+            pass
+
+        def send(self, request, **kwargs):  # type: (PipelineRequest, Any) -> PipelineResponse
+            if self._first:
+                self._first = False
+                assert request.headers["Authorization"] == "Bearer {}".format(auth_headder)
+                response = Response()
+                response.status_code = 301
+                response.headers["location"] = "https://localhost"
+                return response
+            assert request.headers["Authorization"] == "Bearer {}".format(auth_headder)
+            response = Response()
+            response.status_code = 200
+            return response
+
+    auth_headder = "token"
+    expected_scope = "scope"
+    token = AccessToken(auth_headder, 0)
+    credential = Mock(get_token=Mock(return_value=token))
+    auth_policy = BearerTokenCredentialPolicy(credential, expected_scope)
+    redirect_policy = RedirectPolicy()
+    header_clean_up_policy = SensitiveHeaderCleanupPolicy()
+    pipeline = Pipeline(transport=MockTransport(), policies=[redirect_policy, auth_policy, header_clean_up_policy])
+
+    pipeline.run(HttpRequest("GET", "https://localhost"))
+
+
+def test_bearer_policy_redirect_different_domain():
+    class MockTransport(HttpTransport):
+        def __init__(self):
+            self._first = True
+
+        def __exit__(self, exc_type, exc_val, exc_tb):
+            pass
+
+        def close(self):
+            pass
+
+        def open(self):
+            pass
+
+        def send(self, request, **kwargs):  # type: (PipelineRequest, Any) -> PipelineResponse
+            if self._first:
+                self._first = False
+                assert request.headers["Authorization"] == "Bearer {}".format(auth_headder)
+                response = Response()
+                response.status_code = 301
+                response.headers["location"] = "https://localhost1"
+                return response
+            assert not request.headers.get("Authorization")
+            response = Response()
+            response.status_code = 200
+            return response
+
+    auth_headder = "token"
+    expected_scope = "scope"
+    token = AccessToken(auth_headder, 0)
+    credential = Mock(get_token=Mock(return_value=token))
+    auth_policy = BearerTokenCredentialPolicy(credential, expected_scope)
+    redirect_policy = RedirectPolicy()
+    header_clean_up_policy = SensitiveHeaderCleanupPolicy()
+    pipeline = Pipeline(transport=MockTransport(), policies=[redirect_policy, auth_policy, header_clean_up_policy])
+
+    pipeline.run(HttpRequest("GET", "https://localhost"))
+
+
+def test_bearer_policy_redirect_opt_out_clean_up():
+    class MockTransport(HttpTransport):
+        def __init__(self):
+            self._first = True
+
+        def __exit__(self, exc_type, exc_val, exc_tb):
+            pass
+
+        def close(self):
+            pass
+
+        def open(self):
+            pass
+
+        def send(self, request, **kwargs):  # type: (PipelineRequest, Any) -> PipelineResponse
+            if self._first:
+                self._first = False
+                assert request.headers["Authorization"] == "Bearer {}".format(auth_headder)
+                response = Response()
+                response.status_code = 301
+                response.headers["location"] = "https://localhost1"
+                return response
+            assert request.headers["Authorization"] == "Bearer {}".format(auth_headder)
+            response = Response()
+            response.status_code = 200
+            return response
+
+    auth_headder = "token"
+    expected_scope = "scope"
+    token = AccessToken(auth_headder, 0)
+    credential = Mock(get_token=Mock(return_value=token))
+    auth_policy = BearerTokenCredentialPolicy(credential, expected_scope)
+    redirect_policy = RedirectPolicy()
+    header_clean_up_policy = SensitiveHeaderCleanupPolicy(disable_redirect_cleanup=True)
+    pipeline = Pipeline(transport=MockTransport(), policies=[redirect_policy, auth_policy, header_clean_up_policy])
+
+    pipeline.run(HttpRequest("GET", "https://localhost"))
+
+
+def test_bearer_policy_redirect_customize_sensitive_headers():
+    class MockTransport(HttpTransport):
+        def __init__(self):
+            self._first = True
+
+        def __exit__(self, exc_type, exc_val, exc_tb):
+            pass
+
+        def close(self):
+            pass
+
+        def open(self):
+            pass
+
+        def send(self, request, **kwargs):  # type: (PipelineRequest, Any) -> PipelineResponse
+            if self._first:
+                self._first = False
+                assert request.headers["Authorization"] == "Bearer {}".format(auth_headder)
+                response = Response()
+                response.status_code = 301
+                response.headers["location"] = "https://localhost1"
+                return response
+            assert request.headers.get("Authorization")
+            response = Response()
+            response.status_code = 200
+            return response
+
+    auth_headder = "token"
+    expected_scope = "scope"
+    token = AccessToken(auth_headder, 0)
+    credential = Mock(get_token=Mock(return_value=token))
+    auth_policy = BearerTokenCredentialPolicy(credential, expected_scope)
+    redirect_policy = RedirectPolicy()
+    header_clean_up_policy = SensitiveHeaderCleanupPolicy(blocked_redirect_headers=["x-ms-authorization-auxiliary"])
+    pipeline = Pipeline(transport=MockTransport(), policies=[redirect_policy, auth_policy, header_clean_up_policy])
+
+    pipeline.run(HttpRequest("GET", "https://localhost"))
+
+
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+def test_azure_http_credential_policy(http_request):
+    """Tests to see if we can create an AzureHttpKeyCredentialPolicy"""
+
+    prefix = "SharedAccessKey"
+    api_key = "test_key"
+    header_content = f"{prefix} {api_key}"
+
+    def verify_authorization_header(request):
+        assert request.headers["Authorization"] == header_content
+
+    transport = Mock(send=verify_authorization_header)
+    credential = AzureKeyCredential(api_key)
+    credential_policy = AzureKeyCredentialPolicy(credential=credential, name="Authorization", prefix=prefix)
+    pipeline = Pipeline(transport=transport, policies=[credential_policy])
+
+    pipeline.run(http_request("GET", "https://test_key_credential"))

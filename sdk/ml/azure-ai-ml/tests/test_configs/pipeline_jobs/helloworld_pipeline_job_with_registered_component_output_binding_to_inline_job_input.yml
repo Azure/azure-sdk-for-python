@@ -41,5 +41,5 @@ jobs:
       test_data: ${{parent.inputs.pipeline_job_test_input}}
     outputs:
       score_output:
-    environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5
+    environment: azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33
     command: echo "hello" && echo "world" && echo "train" > world.txt

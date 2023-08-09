@@ -16,6 +16,7 @@ from ._models import (
     PolicyModification,
     CertificateModification,
     AttestationPolicyToken,
+    TpmAttestationResult,
 )
 from ._generated.models import AttestationType
 from ._version import VERSION
@@ -34,6 +35,7 @@ __all__ = [
     "PolicyModification",
     "AttestationTokenValidationException",
     "AttestationPolicyToken",
+    "TpmAttestationResult",
 ]
 
 try:

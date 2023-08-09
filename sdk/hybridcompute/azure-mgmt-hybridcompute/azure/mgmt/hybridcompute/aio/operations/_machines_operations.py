@@ -68,7 +68,7 @@ class MachinesOperations:
     async def delete(  # pylint: disable=inconsistent-return-statements
         self, resource_group_name: str, machine_name: str, **kwargs: Any
     ) -> None:
-        """The operation to delete a hybrid machine.
+        """The operation to remove a hybrid machine identity in Azure.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -91,7 +91,7 @@ class MachinesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-08-11-preview"] = kwargs.pop(
+        api_version: Literal["2022-03-10"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
@@ -160,7 +160,7 @@ class MachinesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-08-11-preview"] = kwargs.pop(
+        api_version: Literal["2022-03-10"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[_models.Machine] = kwargs.pop("cls", None)
@@ -216,7 +216,7 @@ class MachinesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-08-11-preview"] = kwargs.pop(
+        api_version: Literal["2022-03-10"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[_models.MachineListResult] = kwargs.pop("cls", None)
@@ -302,7 +302,7 @@ class MachinesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-08-11-preview"] = kwargs.pop(
+        api_version: Literal["2022-03-10"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[_models.MachineListResult] = kwargs.pop("cls", None)

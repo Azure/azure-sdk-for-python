@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from .. import _serialization
 
@@ -44,8 +44,8 @@ class ErrorResponseBody(_serialization.Model):
         message: Optional[str] = None,
         target: Optional[str] = None,
         details: Optional[List["_models.ErrorResponseBody"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword code:
         :paramtype code: str
@@ -96,8 +96,8 @@ class IdentityProperties(_serialization.Model):
         *,
         type: Optional[Union[str, "_models.IdentityType"]] = None,
         user_assigned_identities: Optional[Dict[str, "_models.UserIdentityProperties"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword type: Known values are: "SystemAssigned", "UserAssigned", "SystemAssigned,
          UserAssigned", and "None".
@@ -156,8 +156,8 @@ class NginxCertificate(_serialization.Model):
         properties: Optional["_models.NginxCertificateProperties"] = None,
         tags: Optional[Dict[str, str]] = None,
         location: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword properties:
         :paramtype properties: ~azure.mgmt.nginx.models.NginxCertificateProperties
@@ -191,8 +191,12 @@ class NginxCertificateListResponse(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.NginxCertificate"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        value: Optional[List["_models.NginxCertificate"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value:
         :paramtype value: list[~azure.mgmt.nginx.models.NginxCertificate]
@@ -237,8 +241,8 @@ class NginxCertificateProperties(_serialization.Model):
         key_virtual_path: Optional[str] = None,
         certificate_virtual_path: Optional[str] = None,
         key_vault_secret_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword key_virtual_path:
         :paramtype key_virtual_path: str
@@ -298,8 +302,8 @@ class NginxConfiguration(_serialization.Model):
         properties: Optional["_models.NginxConfigurationProperties"] = None,
         tags: Optional[Dict[str, str]] = None,
         location: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword properties:
         :paramtype properties: ~azure.mgmt.nginx.models.NginxConfigurationProperties
@@ -332,7 +336,7 @@ class NginxConfigurationFile(_serialization.Model):
         "virtual_path": {"key": "virtualPath", "type": "str"},
     }
 
-    def __init__(self, *, content: Optional[str] = None, virtual_path: Optional[str] = None, **kwargs):
+    def __init__(self, *, content: Optional[str] = None, virtual_path: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword content:
         :paramtype content: str
@@ -359,8 +363,12 @@ class NginxConfigurationListResponse(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.NginxConfiguration"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        value: Optional[List["_models.NginxConfiguration"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: Results of a list operation.
         :paramtype value: list[~azure.mgmt.nginx.models.NginxConfiguration]
@@ -383,7 +391,7 @@ class NginxConfigurationPackage(_serialization.Model):
         "data": {"key": "data", "type": "str"},
     }
 
-    def __init__(self, *, data: Optional[str] = None, **kwargs):
+    def __init__(self, *, data: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword data:
         :paramtype data: str
@@ -429,8 +437,8 @@ class NginxConfigurationProperties(_serialization.Model):
         protected_files: Optional[List["_models.NginxConfigurationFile"]] = None,
         package: Optional["_models.NginxConfigurationPackage"] = None,
         root_file: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword files:
         :paramtype files: list[~azure.mgmt.nginx.models.NginxConfigurationFile]
@@ -501,8 +509,8 @@ class NginxDeployment(_serialization.Model):
         tags: Optional[Dict[str, str]] = None,
         sku: Optional["_models.ResourceSku"] = None,
         location: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword identity:
         :paramtype identity: ~azure.mgmt.nginx.models.IdentityProperties
@@ -542,8 +550,8 @@ class NginxDeploymentListResponse(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.NginxDeployment"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self, *, value: Optional[List["_models.NginxDeployment"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value:
         :paramtype value: list[~azure.mgmt.nginx.models.NginxDeployment]
@@ -601,8 +609,8 @@ class NginxDeploymentProperties(_serialization.Model):
         network_profile: Optional["_models.NginxNetworkProfile"] = None,
         enable_diagnostics_support: Optional[bool] = None,
         logging: Optional["_models.NginxLogging"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword managed_resource_group: The managed resource group to deploy VNet injection related
          network resources.
@@ -655,8 +663,8 @@ class NginxDeploymentUpdateParameters(_serialization.Model):
         sku: Optional["_models.ResourceSku"] = None,
         location: Optional[str] = None,
         properties: Optional["_models.NginxDeploymentUpdateProperties"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword identity:
         :paramtype identity: ~azure.mgmt.nginx.models.IdentityProperties
@@ -696,8 +704,8 @@ class NginxDeploymentUpdateProperties(_serialization.Model):
         *,
         enable_diagnostics_support: Optional[bool] = None,
         logging: Optional["_models.NginxLogging"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword enable_diagnostics_support:
         :paramtype enable_diagnostics_support: bool
@@ -728,8 +736,8 @@ class NginxFrontendIPConfiguration(_serialization.Model):
         *,
         public_ip_addresses: Optional[List["_models.NginxPublicIPAddress"]] = None,
         private_ip_addresses: Optional[List["_models.NginxPrivateIPAddress"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword public_ip_addresses:
         :paramtype public_ip_addresses: list[~azure.mgmt.nginx.models.NginxPublicIPAddress]
@@ -752,7 +760,7 @@ class NginxLogging(_serialization.Model):
         "storage_account": {"key": "storageAccount", "type": "NginxStorageAccount"},
     }
 
-    def __init__(self, *, storage_account: Optional["_models.NginxStorageAccount"] = None, **kwargs):
+    def __init__(self, *, storage_account: Optional["_models.NginxStorageAccount"] = None, **kwargs: Any) -> None:
         """
         :keyword storage_account:
         :paramtype storage_account: ~azure.mgmt.nginx.models.NginxStorageAccount
@@ -772,7 +780,7 @@ class NginxNetworkInterfaceConfiguration(_serialization.Model):
         "subnet_id": {"key": "subnetId", "type": "str"},
     }
 
-    def __init__(self, *, subnet_id: Optional[str] = None, **kwargs):
+    def __init__(self, *, subnet_id: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword subnet_id:
         :paramtype subnet_id: str
@@ -804,8 +812,8 @@ class NginxNetworkProfile(_serialization.Model):
         *,
         front_end_ip_configuration: Optional["_models.NginxFrontendIPConfiguration"] = None,
         network_interface_configuration: Optional["_models.NginxNetworkInterfaceConfiguration"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword front_end_ip_configuration:
         :paramtype front_end_ip_configuration: ~azure.mgmt.nginx.models.NginxFrontendIPConfiguration
@@ -842,8 +850,8 @@ class NginxPrivateIPAddress(_serialization.Model):
         private_ip_address: Optional[str] = None,
         private_ip_allocation_method: Optional[Union[str, "_models.NginxPrivateIPAllocationMethod"]] = None,
         subnet_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword private_ip_address:
         :paramtype private_ip_address: str
@@ -870,7 +878,7 @@ class NginxPublicIPAddress(_serialization.Model):
         "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(self, *, id: Optional[str] = None, **kwargs):  # pylint: disable=redefined-builtin
+    def __init__(self, *, id: Optional[str] = None, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
         """
         :keyword id:
         :paramtype id: str
@@ -893,7 +901,9 @@ class NginxStorageAccount(_serialization.Model):
         "container_name": {"key": "containerName", "type": "str"},
     }
 
-    def __init__(self, *, account_name: Optional[str] = None, container_name: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, account_name: Optional[str] = None, container_name: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword account_name:
         :paramtype account_name: str
@@ -932,8 +942,8 @@ class OperationDisplay(_serialization.Model):
         resource: Optional[str] = None,
         operation: Optional[str] = None,
         description: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword provider: Service provider: Nginx.NginxPlus.
         :paramtype provider: str
@@ -966,8 +976,8 @@ class OperationListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.OperationResult"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self, *, value: Optional[List["_models.OperationResult"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: List of operations supported by the Nginx.NginxPlus provider.
         :paramtype value: list[~azure.mgmt.nginx.models.OperationResult]
@@ -1002,8 +1012,8 @@ class OperationResult(_serialization.Model):
         name: Optional[str] = None,
         display: Optional["_models.OperationDisplay"] = None,
         is_data_action: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: Operation name: {provider}/{resource}/{operation}.
         :paramtype name: str
@@ -1029,7 +1039,7 @@ class ResourceProviderDefaultErrorResponse(_serialization.Model):
         "error": {"key": "error", "type": "ErrorResponseBody"},
     }
 
-    def __init__(self, *, error: Optional["_models.ErrorResponseBody"] = None, **kwargs):
+    def __init__(self, *, error: Optional["_models.ErrorResponseBody"] = None, **kwargs: Any) -> None:
         """
         :keyword error:
         :paramtype error: ~azure.mgmt.nginx.models.ErrorResponseBody
@@ -1055,7 +1065,7 @@ class ResourceSku(_serialization.Model):
         "name": {"key": "name", "type": "str"},
     }
 
-    def __init__(self, *, name: str, **kwargs):
+    def __init__(self, *, name: str, **kwargs: Any) -> None:
         """
         :keyword name: Name of the SKU. Required.
         :paramtype name: str
@@ -1101,8 +1111,8 @@ class SystemData(_serialization.Model):
         last_modified_by: Optional[str] = None,
         last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         last_modified_at: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword created_by: The identity that created the resource.
         :paramtype created_by: str
@@ -1149,7 +1159,7 @@ class UserIdentityProperties(_serialization.Model):
         "client_id": {"key": "clientId", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.principal_id = None

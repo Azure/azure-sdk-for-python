@@ -1,0 +1,8 @@
+$schema: https://azuremlschemas.azureedge.net/latest/commandComponent.schema.json
+type: command
+name: component_with_keys_in_inputs
+command: echo ${{inputs.keys}}
+inputs:
+  keys:
+    type: uri_folder
+environment: azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:1

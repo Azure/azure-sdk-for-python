@@ -24,6 +24,7 @@ pr:
     include:
     - sdk/keyvault/
     - sdk/core/
+    - eng/common/testproxy/
 
 extends:
   template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml

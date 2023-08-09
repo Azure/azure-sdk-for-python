@@ -7,9 +7,9 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum
 import datetime
-from typing import Dict, Optional
+from enum import Enum
+from typing import Any, Dict, Optional
 
 from azure.core import CaseInsensitiveEnumMeta
 
@@ -52,8 +52,8 @@ class Attributes(_serialization.Model):
         enabled: Optional[bool] = None,
         not_before: Optional[datetime.datetime] = None,
         expires: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword enabled: Determines whether the object is enabled.
         :paramtype enabled: bool
@@ -87,7 +87,7 @@ class BackupSecretResult(_serialization.Model):
         "value": {"key": "value", "type": "base64"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -139,8 +139,8 @@ class SecretBundle(_serialization.Model):
         content_type: Optional[str] = None,
         attributes: Optional["SecretAttributes"] = None,
         tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: The secret value.
         :paramtype value: str
@@ -164,7 +164,8 @@ class SecretBundle(_serialization.Model):
 
 
 class DeletedSecretBundle(SecretBundle):
-    """A Deleted Secret consisting of its previous id, attributes and its tags, as well as information on when it will be purged.
+    """A Deleted Secret consisting of its previous id, attributes and its tags, as well as information
+    on when it will be purged.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -222,8 +223,8 @@ class DeletedSecretBundle(SecretBundle):
         attributes: Optional["SecretAttributes"] = None,
         tags: Optional[Dict[str, str]] = None,
         recovery_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: The secret value.
         :paramtype value: str
@@ -282,8 +283,8 @@ class SecretItem(_serialization.Model):
         attributes: Optional["SecretAttributes"] = None,
         tags: Optional[Dict[str, str]] = None,
         content_type: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Secret identifier.
         :paramtype id: str
@@ -352,8 +353,8 @@ class DeletedSecretItem(SecretItem):
         tags: Optional[Dict[str, str]] = None,
         content_type: Optional[str] = None,
         recovery_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Secret identifier.
         :paramtype id: str
@@ -395,7 +396,7 @@ class DeletedSecretListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -427,7 +428,7 @@ class Error(_serialization.Model):
         "inner_error": {"key": "innererror", "type": "Error"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.code = None
@@ -452,7 +453,7 @@ class KeyVaultError(_serialization.Model):
         "error": {"key": "error", "type": "Error"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.error = None
@@ -508,8 +509,8 @@ class SecretAttributes(Attributes):
         enabled: Optional[bool] = None,
         not_before: Optional[datetime.datetime] = None,
         expires: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword enabled: Determines whether the object is enabled.
         :paramtype enabled: bool
@@ -545,7 +546,7 @@ class SecretListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -563,7 +564,7 @@ class SecretProperties(_serialization.Model):
         "content_type": {"key": "contentType", "type": "str"},
     }
 
-    def __init__(self, *, content_type: Optional[str] = None, **kwargs):
+    def __init__(self, *, content_type: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword content_type: The media type (MIME type).
         :paramtype content_type: str
@@ -589,7 +590,7 @@ class SecretRestoreParameters(_serialization.Model):
         "secret_bundle_backup": {"key": "value", "type": "base64"},
     }
 
-    def __init__(self, *, secret_bundle_backup: bytes, **kwargs):
+    def __init__(self, *, secret_bundle_backup: bytes, **kwargs: Any) -> None:
         """
         :keyword secret_bundle_backup: The backup blob associated with a secret bundle. Required.
         :paramtype secret_bundle_backup: bytes
@@ -631,8 +632,8 @@ class SecretSetParameters(_serialization.Model):
         tags: Optional[Dict[str, str]] = None,
         content_type: Optional[str] = None,
         secret_attributes: Optional["SecretAttributes"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: The value of the secret. Required.
         :paramtype value: str
@@ -673,8 +674,8 @@ class SecretUpdateParameters(_serialization.Model):
         content_type: Optional[str] = None,
         secret_attributes: Optional["SecretAttributes"] = None,
         tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword content_type: Type of the secret value such as a password.
         :paramtype content_type: str
@@ -695,39 +696,39 @@ class DeletionRecoveryLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     only the system can purge the secret, at the end of the retention interval.
     """
 
-    #: Denotes a vault state in which deletion is an irreversible operation, without the possibility
+    PURGEABLE = "Purgeable"
+    """Denotes a vault state in which deletion is an irreversible operation, without the possibility
     #: for recovery. This level corresponds to no protection being available against a Delete
     #: operation; the data is irretrievably lost upon accepting a Delete operation at the entity level
-    #: or higher (vault, resource group, subscription etc.)
-    PURGEABLE = "Purgeable"
-    #: Denotes a vault state in which deletion is recoverable, and which also permits immediate and
+    #: or higher (vault, resource group, subscription etc.)"""
+    RECOVERABLE_PURGEABLE = "Recoverable+Purgeable"
+    """Denotes a vault state in which deletion is recoverable, and which also permits immediate and
     #: permanent deletion (i.e. purge). This level guarantees the recoverability of the deleted entity
     #: during the retention interval (90 days), unless a Purge operation is requested, or the
-    #: subscription is cancelled. System wil permanently delete it after 90 days, if not recovered
-    RECOVERABLE_PURGEABLE = "Recoverable+Purgeable"
-    #: Denotes a vault state in which deletion is recoverable without the possibility for immediate
+    #: subscription is cancelled. System wil permanently delete it after 90 days, if not recovered"""
+    RECOVERABLE = "Recoverable"
+    """Denotes a vault state in which deletion is recoverable without the possibility for immediate
     #: and permanent deletion (i.e. purge). This level guarantees the recoverability of the deleted
     #: entity during the retention interval(90 days) and while the subscription is still available.
-    #: System wil permanently delete it after 90 days, if not recovered
-    RECOVERABLE = "Recoverable"
-    #: Denotes a vault and subscription state in which deletion is recoverable within retention
+    #: System wil permanently delete it after 90 days, if not recovered"""
+    RECOVERABLE_PROTECTED_SUBSCRIPTION = "Recoverable+ProtectedSubscription"
+    """Denotes a vault and subscription state in which deletion is recoverable within retention
     #: interval (90 days), immediate and permanent deletion (i.e. purge) is not permitted, and in
     #: which the subscription itself  cannot be permanently canceled. System wil permanently delete it
-    #: after 90 days, if not recovered
-    RECOVERABLE_PROTECTED_SUBSCRIPTION = "Recoverable+ProtectedSubscription"
-    #: Denotes a vault state in which deletion is recoverable, and which also permits immediate and
+    #: after 90 days, if not recovered"""
+    CUSTOMIZED_RECOVERABLE_PURGEABLE = "CustomizedRecoverable+Purgeable"
+    """Denotes a vault state in which deletion is recoverable, and which also permits immediate and
     #: permanent deletion (i.e. purge when 7<= SoftDeleteRetentionInDays < 90). This level guarantees
     #: the recoverability of the deleted entity during the retention interval, unless a Purge
-    #: operation is requested, or the subscription is cancelled.
-    CUSTOMIZED_RECOVERABLE_PURGEABLE = "CustomizedRecoverable+Purgeable"
-    #: Denotes a vault state in which deletion is recoverable without the possibility for immediate
+    #: operation is requested, or the subscription is cancelled."""
+    CUSTOMIZED_RECOVERABLE = "CustomizedRecoverable"
+    """Denotes a vault state in which deletion is recoverable without the possibility for immediate
     #: and permanent deletion (i.e. purge when 7<= SoftDeleteRetentionInDays < 90).This level
     #: guarantees the recoverability of the deleted entity during the retention interval and while the
-    #: subscription is still available.
-    CUSTOMIZED_RECOVERABLE = "CustomizedRecoverable"
-    #: Denotes a vault and subscription state in which deletion is recoverable, immediate and
+    #: subscription is still available."""
+    CUSTOMIZED_RECOVERABLE_PROTECTED_SUBSCRIPTION = "CustomizedRecoverable+ProtectedSubscription"
+    """Denotes a vault and subscription state in which deletion is recoverable, immediate and
     #: permanent deletion (i.e. purge) is not permitted, and in which the subscription itself cannot
     #: be permanently canceled when 7<= SoftDeleteRetentionInDays < 90. This level guarantees the
     #: recoverability of the deleted entity during the retention interval, and also reflects the fact
-    #: that the subscription itself cannot be cancelled.
-    CUSTOMIZED_RECOVERABLE_PROTECTED_SUBSCRIPTION = "CustomizedRecoverable+ProtectedSubscription"
+    #: that the subscription itself cannot be cancelled."""

@@ -84,8 +84,8 @@ class PrivateLinkResourcesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-01-01"))  # type: Literal["2021-01-01"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.PrivateLinkResourceListResult]
+        api_version: Literal["2021-01-01"] = kwargs.pop("api_version", _params.pop("api-version", "2021-01-01"))
+        cls: ClsType[_models.PrivateLinkResourceListResult] = kwargs.pop("cls", None)
 
         request = build_list_by_storage_account_request(
             resource_group_name=resource_group_name,
@@ -97,9 +97,9 @@ class PrivateLinkResourcesOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -116,4 +116,6 @@ class PrivateLinkResourcesOperations:
 
         return deserialized
 
-    list_by_storage_account.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/privateLinkResources"}  # type: ignore
+    list_by_storage_account.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/privateLinkResources"
+    }

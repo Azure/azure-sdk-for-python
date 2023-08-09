@@ -12,6 +12,11 @@ parameters:
       - azure-communication-rooms
       - azure-communication-sms
       - azure-communication-jobrouter
+      - azure-communication-callautomation
+  - name: TestResourceDirectories
+    type: object
+    default:
+      - communication/test-resources/
 
 stages:
   - ${{ each service in parameters.Services }}:
@@ -22,6 +27,7 @@ stages:
           # All 5 service stages run in parallel, and with no parallel limits the tests may get throttled.
         MaxParallel: 2
         ServiceDirectory: communication
+        TestResourceDirectories: ${{ parameters.TestResourceDirectories }}
 
         ${{ if contains(service, 'phonenumbers') }}:
           CloudConfig:

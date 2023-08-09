@@ -11,11 +11,11 @@ from typing import Dict, Optional, Union
 import yaml
 
 from azure.ai.ml._exception_helper import log_and_raise_error
-from azure.ai.ml._restclient.v2022_05_01.models import BuildContext as RestBuildContext
-from azure.ai.ml._restclient.v2022_05_01.models import (
-    EnvironmentContainerData,
-    EnvironmentVersionData,
-    EnvironmentVersionDetails,
+from azure.ai.ml._restclient.v2023_04_01_preview.models import BuildContext as RestBuildContext
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    EnvironmentContainer,
+    EnvironmentVersion,
+    EnvironmentVersionProperties,
 )
 from azure.ai.ml._schema import EnvironmentSchema
 from azure.ai.ml._utils._arm_id_utils import AMLVersionedArmId
@@ -23,6 +23,8 @@ from azure.ai.ml._utils._asset_utils import get_ignore_file, get_object_hash
 from azure.ai.ml._utils.utils import dump_yaml, is_url, load_file, load_yaml
 from azure.ai.ml.constants._common import ANONYMOUS_ENV_NAME, BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, ArmConstants
 from azure.ai.ml.entities._assets.asset import Asset
+from azure.ai.ml.entities._assets.intellectual_property import IntellectualProperty
+from azure.ai.ml.entities._mixins import LocalizableMixin
 from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._util import get_md5_string, load_from_dict
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
@@ -63,7 +65,7 @@ class BuildContext:
         return not self.__eq__(other)
 
 
-class Environment(Asset):
+class Environment(Asset, LocalizableMixin):
     """Environment for training.
 
     :param name: Name of the resource.
@@ -104,6 +106,7 @@ class Environment(Asset):
     ):
         inference_config = kwargs.pop("inference_config", None)
         os_type = kwargs.pop("os_type", None)
+        self._intellectual_property = kwargs.pop("intellectual_property", None)
 
         super().__init__(
             name=name,
@@ -186,9 +189,9 @@ class Environment(Asset):
         }
         return load_from_dict(EnvironmentSchema, data, context, **kwargs)
 
-    def _to_rest_object(self) -> EnvironmentVersionData:
+    def _to_rest_object(self) -> EnvironmentVersion:
         self.validate()
-        environment_version = EnvironmentVersionDetails()
+        environment_version = EnvironmentVersionProperties()
         if self.conda_file:
             environment_version.conda_file = self._translated_conda_file
         if self.image:
@@ -208,12 +211,12 @@ class Environment(Asset):
         if self.properties:
             environment_version.properties = self.properties
 
-        environment_version_resource = EnvironmentVersionData(properties=environment_version)
+        environment_version_resource = EnvironmentVersion(properties=environment_version)
 
         return environment_version_resource
 
     @classmethod
-    def _from_rest_object(cls, env_rest_object: EnvironmentVersionData) -> "Environment":
+    def _from_rest_object(cls, env_rest_object: EnvironmentVersion) -> "Environment":
         rest_env_version = env_rest_object.properties
         arm_id = AMLVersionedArmId(arm_id=env_rest_object.id)
 
@@ -232,6 +235,9 @@ class Environment(Asset):
             inference_config=rest_env_version.inference_config,
             build=BuildContext._from_rest_object(rest_env_version.build) if rest_env_version.build else None,
             properties=rest_env_version.properties,
+            intellectual_property=IntellectualProperty._from_rest_object(rest_env_version.intellectual_property)
+            if rest_env_version.intellectual_property
+            else None,
         )
 
         if rest_env_version.conda_file:
@@ -242,7 +248,7 @@ class Environment(Asset):
         return environment
 
     @classmethod
-    def _from_container_rest_object(cls, env_container_rest_object: EnvironmentContainerData) -> "Environment":
+    def _from_container_rest_object(cls, env_container_rest_object: EnvironmentContainer) -> "Environment":
         env = Environment(
             name=env_container_rest_object.name,
             version="1",
@@ -263,7 +269,7 @@ class Environment(Asset):
             self._arm_type: {
                 ArmConstants.NAME: self.name,
                 ArmConstants.VERSION: self.version,
-                ArmConstants.PROPERTIES_PARAMETER_NAME: self._serialize.body(properties, "EnvironmentVersionData"),
+                ArmConstants.PROPERTIES_PARAMETER_NAME: self._serialize.body(properties, "EnvironmentVersion"),
             }
         }
 
@@ -319,6 +325,7 @@ class Environment(Asset):
             and self.inference_config == other.inference_config
             and self._is_anonymous == other._is_anonymous
             and self.os_type == other.os_type
+            and self._intellectual_property == other._intellectual_property
         )
 
     def __ne__(self, other) -> bool:
@@ -344,6 +351,18 @@ class Environment(Asset):
         version_hash = get_md5_string(hash_str)
         self.version = version_hash
         self.name = ANONYMOUS_ENV_NAME
+
+    def _localize(self, base_path: str):
+        """Called on an asset got from service to clean up remote attributes like id, creation_context, etc. and update
+        base_path.
+        """
+        if not getattr(self, "id", None):
+            raise ValueError("Only remote asset can be localize but got a {} without id.".format(type(self)))
+        self._id = None
+        self._creation_context = None
+        self._base_path = base_path
+        if self._is_anonymous:
+            self.name, self.version = None, None
 
 
 # TODO: Remove _DockerBuild and _DockerConfiguration classes once local endpoint moves to using updated env

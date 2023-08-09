@@ -32,11 +32,11 @@ This sample is intended to assist in authenticating with Azure AD via the redis 
 When migrating your existing application code, you need to replace the password input with the Azure AD token.
 Integrate the logic in your application code to fetch an Azure AD access token via the azure-identity library as shown below and replace it with the password configuring/retrieving logic in your application code.
 
-```py
+```python
 import redis
 from azure.identity import DefaultAzureCredential
 
-scope = "https://*.cacheinfra.windows.net:10225/appid/.default"  # The scope will be changed for AAD Public Preview
+scope = "acca5fbb-b7e4-4009-81f1-37e38fd66d78/.default"  # The current scope is for public preview and may change for GA release.
 host = ""  # Required
 port = 6380  # Required
 user_name = ""  # Required
@@ -80,12 +80,13 @@ This sample is intended to assist in authenticating with Azure AD via the redis 
 When migrating your existing application code, you need to replace the password input with the Azure AD token.
 Integrate the logic in your application code to fetch an Azure AD access token via the azure-identity library as shown below and replace it with the password configuring/retrieving logic in your application code.
 
-```py
+```python
+import time
 import logging
 import redis
 from azure.identity import DefaultAzureCredential
 
-scope = "https://*.cacheinfra.windows.net:10225/appid/.default"  # The scope will be changed for AAD Public Preview
+scope = "acca5fbb-b7e4-4009-81f1-37e38fd66d78/.default"  # The current scope is for public preview and may change for GA release.
 host = ""  # Required
 port = 6380  # Required
 user_name = ""  # Required
@@ -96,13 +97,19 @@ def re_authentication():
     token = cred.get_token(scope)
     r = redis.Redis(host=host,
                     port=port,
-                    ssl=True,    # ssl connection is required.
+                    ssl=True,   # ssl connection is required.
                     username=user_name,
                     password=token.token,
                     decode_responses=True)
     max_retry = 3
     for index in range(max_retry):
         try:
+            if _need_refreshing(token):
+                _LOGGER.info("Refreshing token...")
+                tmp_token = cred.get_token(scope)
+                if tmp_token:
+                    token = tmp_token
+                r.execute_command("AUTH", user_name, token.token)
             r.set("Az:key1", "value1")
             t = r.get("Az:key1")
             print(t)
@@ -112,13 +119,17 @@ def re_authentication():
             token = cred.get_token(scope)
             r = redis.Redis(host=host,
                             port=port,
-                            ssl=True,    # ssl connection is required.
+                            ssl=True,   # ssl connection is required.
                             username=user_name,
                             password=token.token,
                             decode_responses=True)
         except Exception:
             _LOGGER.info("Unknown failures.")
             break
+
+
+def _need_refreshing(token, refresh_offset=300):
+    return not token or token.expires_on - time.time() < refresh_offset
 
 if __name__ == '__main__':
     re_authentication()
@@ -131,7 +142,7 @@ if __name__ == '__main__':
 In this error scenario, the username provided and the access token used as password are not compatible.
 To mitigate this error, navigate to your Azure Cache for Redis resource in the Azure portal. Confirm that:
 
-- In **RBAC Rules**, you've assigned the required role to your user/service principal identity.
+- In **Data Access Configuration**, you've assigned the required role to your user/service principal identity.
 - In **Advanced settings**, the **AAD access authorization** box is selected. If not, select it and select the **Save** button.
 
 ##### Permissions not granted / NOPERM Error
@@ -139,5 +150,5 @@ To mitigate this error, navigate to your Azure Cache for Redis resource in the A
 In this error scenario, the authentication was successful, but your registered user/service principal is not granted the RBAC permission to perform the action.
 To mitigate this error, navigate to your Azure Cache for Redis resource in the Azure portal. Confirm that:
 
-- In **RBAC Rules**, you've assigned the appropriate role (Owner, Contributor, Reader) to your user/service principal identity.
+- In **Data Access Configuration**, you've assigned the appropriate role (Owner, Contributor, Reader) to your user/service principal identity.
 - In the event you're using a custom role, ensure the permissions granted under your custom role include the one required for your target action.

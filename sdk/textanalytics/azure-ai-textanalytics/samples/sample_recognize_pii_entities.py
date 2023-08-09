@@ -24,8 +24,6 @@ USAGE:
     2) AZURE_LANGUAGE_KEY - your Language subscription key
 """
 
-import os
-
 
 def sample_recognize_pii_entities() -> None:
     print(
@@ -35,6 +33,7 @@ def sample_recognize_pii_entities() -> None:
         "our customers"
     )
     # [START recognize_pii_entities]
+    import os
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.textanalytics import TextAnalyticsClient
 

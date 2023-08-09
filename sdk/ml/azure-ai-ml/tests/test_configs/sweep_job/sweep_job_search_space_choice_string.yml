@@ -10,7 +10,7 @@ trial:
     --iris-csv ${{inputs.iris_csv}}
     --learning-rate ${{search_space.learning_rate}}
     --boosting ${{search_space.boosting}}
-  environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1
+  environment: azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33
   environment_variables:
     AZUREML_COMPUTE_USE_COMMON_RUNTIME: "true"
 compute: azureml:testCompute

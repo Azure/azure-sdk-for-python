@@ -1,17 +1,77 @@
 # Release History
 
-## 3.2.1 (Unreleased)
+## 3.3.1 (Unreleased)
 
 ### Features Added
 
 ### Breaking Changes
 
 ### Bugs Fixed
+
+### Other Changes
+
+## 3.3.0 (2023-08-08)
+
+This version of the client library defaults to the service API version `2023-07-31`.
+
+### Breaking Changes
+ > Note: The following changes are only breaking from the previous beta. They are not breaking against previous stable versions.
+ 
+- Going forward this library will default to service API version `2023-07-31`.
+- Removed `query_fields` keyword argument from `begin_analyze_document()` and `begin_analyze_document_from_url()`.
+- Removed `kind` property from `DocumentPage`.
+- Removed `images` property from `DocumentPage`.
+- Removed `DocumentImage` model.
+- Removed `annotations` property from `DocumentPage`.
+- Removed `DocumentAnnotation` model.
+- Removed `common_name` property from `DocumentKeyValuePair`.
+- Changed `AnalysisFeature` enum member names and values. Supported enum members are: `OCR_HIGH_RESOLUTION`, `LANGUAGES`, `BARCODES`, `FORMULAS`, `KEY_VALUE_PAIRS`, `STYLE_FONT`.
+- Renamed `custom_neural_document_model_builds` property to `neural_document_model_quota` on `ResourceDetails` model.
+- Renamed `AzureBlobSource` model to `BlobSource`.
+- Renamed `AzureBlobFileListSource` model to `BlobFileListSource`.
+- Marked `neural_document_model_quota` as optional on `ResourceDetails`.
+
+### Other Changes
+- Corrected typing for the `polygon` property on `DocumentWord`, `DocumentSelectionMark`, `DocumentLine`.
+- Corrected typing for `words`, `lines`, and `selection_marks` properties on `DocumentPage`.
+- Renamed the samples directory to `v3.2_and_later/` for samples that support 3.2 and later.
+
+## 3.3.0b1 (2023-04-13)
+
+This version of the client library defaults to the service API version `2023-02-28-preview`.
+
+### Features Added
+
+- Added `features` keyword argument on `begin_analyze_document()` and `begin_analyze_document_from_url()`.
+- Added `query_fields` keyword argument on `begin_analyze_document()` and `begin_analyze_document_from_url()`.
+- Added `AnalysisFeature` enum with optional document analysis feature to enable.
+- Added `file_list` keyword argument on `begin_build_document_model()`.
+- Added the following optional properties on `DocumentStyle` class: `similar_font_family`, `font_style`, `font_weight`, `color`, `background_color`.
+- Added support for custom document classification on `DocumentModelAdministrationClient`: `begin_build_document_classifier`, 
+  `list_document_classifiers`, `get_document_classifier`, and `delete_document_classifier`.
+- Added support for classifying documents on `DocumentAnalysisClient`: `begin_classify_document` and `begin_classify_document_from_url`.
+- Added `ClassifierDocumentTypeDetails` to use with `begin_build_document_classifier()`.
+- Added model `QuotaDetails` and property `custom_neural_document_model_builds` on `ResourceDetails`.
+- Added kind `documentClassifierBuild` to `OperationSummary` and `OperationDetails`.
+- Added property `expires_on` to `DocumentModelDetails` and `DocumentModelSummary`.
+- Added kind `formulaBlock` to `DocumentParagraph`.
+- Added property `common_name` to `DocumentKeyValuePair`.
+- Added property `code` to `CurrencyValue`.
+- Added properties `unit`, `city_district`, `state_district`, `suburb`, `house`, and `level` to `AddressValue`.
+- Added "boolean" `value_type` and `bool` `value` to `DocumentField`.
+- Added properties `annotations`, `images`, `formulas`, and `barcodes` to `DocumentPage`. 
+- Added models `DocumentAnnotation`, `DocumentImage`, `DocumentFormula`, and `DocumentBarcode`.
+
+## 3.2.1 (2023-03-07)
+
+### Bugs Fixed
 - Corrected typing for `invoice` argument in `begin_recognize_invoices()` on async `FormRecognizerClient`.
 - Fixed issue when calling `to_dict()` on `DocumentField` where `value` is not returned for address and currency fields.
 - Corrected typing for `form_type_confidence` property on `RecognizedForm`.
+- Corrected typing for `appearance` property on `FormLine`.
 
 ### Other Changes
+- Improved static typing.
 
 ## 3.2.0 (2022-09-08)
 

@@ -1,5 +1,95 @@
 # Release History
 
+## 24.0.0 (2023-07-21)
+
+### Breaking Changes
+
+  - Removed `HTTP_STATUS499` from enum `ApplicationGatewayCustomErrorStatusCode`
+
+### Features Added
+
+  - Added enum `AdminState`
+  - Model ActiveConnectivityConfiguration has a new parameter resource_guid
+  - Model ActiveDefaultSecurityAdminRule has a new parameter resource_guid
+  - Model ActiveSecurityAdminRule has a new parameter resource_guid
+  - Model AdminRule has a new parameter resource_guid
+  - Model AdminRuleCollection has a new parameter resource_guid
+  - Model ApplicationGateway has a new parameter default_predefined_ssl_policy
+  - Model ConfigurationGroup has a new parameter resource_guid
+  - Model ConnectivityConfiguration has a new parameter resource_guid
+  - Model DefaultAdminRule has a new parameter resource_guid
+  - Model EffectiveConnectivityConfiguration has a new parameter resource_guid
+  - Model EffectiveDefaultSecurityAdminRule has a new parameter resource_guid
+  - Model EffectiveSecurityAdminRule has a new parameter resource_guid
+  - Model NetworkGroup has a new parameter resource_guid
+  - Model NetworkManager has a new parameter resource_guid
+  - Model SecurityAdminConfiguration has a new parameter resource_guid
+  - Model VirtualNetworkGateway has a new parameter admin_state
+
+## 23.1.0 (2023-05-20)
+
+### Features Added
+
+  - Added operation AzureFirewallsOperations.begin_packet_capture
+  - Added operation group NetworkVirtualApplianceConnectionsOperations
+  - Model ApplicationRule has a new parameter http_headers_to_insert
+  - Model BastionHost has a new parameter enable_kerberos
+  - Model NetworkInterface has a new parameter auxiliary_sku
+  - Model NetworkVirtualAppliance has a new parameter additional_nics
+  - Model NetworkVirtualAppliance has a new parameter virtual_appliance_connections
+  - Model PolicySettings has a new parameter file_upload_enforcement
+  - Model PolicySettings has a new parameter log_scrubbing
+  - Model PolicySettings has a new parameter request_body_enforcement
+  - Model PolicySettings has a new parameter request_body_inspect_limit_in_kb
+  - Model PrivateEndpointConnection has a new parameter private_endpoint_location
+  - Model PublicIPAddressDnsSettings has a new parameter domain_name_label_scope
+  - Model VirtualApplianceNicProperties has a new parameter instance_name
+  - Model WebApplicationFirewallCustomRule has a new parameter group_by_user_session
+  - Model WebApplicationFirewallCustomRule has a new parameter rate_limit_duration
+  - Model WebApplicationFirewallCustomRule has a new parameter rate_limit_threshold
+
+## 23.0.1 (2023-04-26)
+
+### Bugs Fixed
+
+  - Fix calling failure for those operations which could be called by client directly #30057
+
+## 23.0.0 (2023-03-29)
+
+### Other Changes
+
+  - Initial stable release with our new combined multiapi package. Package size is now 5% of what it used to be.
+
+### Breaking Changes
+
+  - All query and header parameters are now keyword-only
+  - Removed api version subfolders. This means you can no longer access any `azure.mgmt.network.v20xx_xx_xx` modules.
+  - Removed `.models` method from `NetworkManagementClient`. Instead, import models from `azure.mgmt.network.models`.
+
+## 22.3.0 (2023-03-20)
+
+### Features Added
+
+  - Model ExpressRouteCircuit has a new parameter authorization_status
+  - Model NspAccessRule has a new parameter email_addresses
+  - Model NspAccessRule has a new parameter phone_numbers
+  - Model NspLink has a new parameter remote_perimeter_location
+  - Model NspLinkReference has a new parameter remote_perimeter_location
+  - Model VirtualNetwork has a new parameter flow_logs
+  - Model WebApplicationFirewallCustomRule has a new parameter state
+  - Operation VpnGatewaysOperations.begin_reset has a new optional parameter ip_configuration_id
+
+## 23.0.0b2 (2023-02-20)
+
+### Other Changes
+
+  - Continued package size improvements. The whole package is now 5% of the latest stable release
+
+### Breaking Changes
+
+  - Removed api version subfolders. This means you can no longer access any `azure.mgmt.network.v20xx_xx_xx` modules
+  - Removed `.models` method from `NetworkManagementClient`
+
 ## 23.0.0b1 (2022-12-19)
 
 ### Other Changes

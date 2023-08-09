@@ -1,0 +1,31 @@
+{
+    "id": "/subscriptions/96aede12-2f73-41cb-b983-6d11a904839b/resourceGroups/chenyin-test-master/providers/Microsoft.MachineLearningServices/workspaces/sdk_vnext_cli/components/test_616416612179/versions/1",
+    "name": "1",
+    "type": "Microsoft.MachineLearningServices/workspaces/components/versions",
+    "properties": {
+        "properties": {},
+        "tags": {},
+        "is_anonymous": false,
+        "is_archived": false,
+        "component_spec": {
+            "name": "test_616416612179",
+            "version": "1",
+            "display_name": "Data Transfer Component copy-files",
+            "is_deterministic": "True",
+            "type": "data_transfer",
+            "inputs": {
+                "folder1": {
+                    "type": "uri_folder",
+                    "optional": "False"
+                }
+            },
+            "outputs": {
+                "output_folder": {
+                    "type": "uri_folder"
+                }
+            },
+            "task": "copy_data",
+            "$schema": "http://azureml/sdk-2-0/DataTransferComponent.json"
+        }
+    }
+}

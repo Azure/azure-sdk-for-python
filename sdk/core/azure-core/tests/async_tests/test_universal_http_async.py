@@ -1,4 +1,4 @@
-#--------------------------------------------------------------------------
+# --------------------------------------------------------------------------
 #
 # Copyright (c) Microsoft Corporation. All rights reserved.
 #
@@ -22,12 +22,13 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 #
-#--------------------------------------------------------------------------
+# --------------------------------------------------------------------------
 from azure.core.pipeline.transport import (
     AioHttpTransport,
     AioHttpTransportResponse,
     AsyncioRequestsTransport,
-    TrioRequestsTransport)
+    TrioRequestsTransport,
+)
 
 import aiohttp
 import trio
@@ -35,6 +36,7 @@ import trio
 import pytest
 from utils import HTTP_REQUESTS, AIOHTTP_TRANSPORT_RESPONSES, create_transport_response
 from azure.core.pipeline._tools import is_rest
+
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
@@ -48,6 +50,7 @@ async def test_basic_aiohttp(port, http_request):
     assert sender.session is None
     assert isinstance(response.status_code, int)
 
+
 @pytest.mark.asyncio
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
 async def test_aiohttp_auto_headers(port, http_request):
@@ -56,7 +59,8 @@ async def test_aiohttp_auto_headers(port, http_request):
     async with AioHttpTransport() as sender:
         response = await sender.send(request)
         auto_headers = response.internal_response.request_info.headers
-        assert 'Content-Type' not in auto_headers
+        assert "Content-Type" not in auto_headers
+
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
@@ -69,6 +73,7 @@ async def test_basic_async_requests(port, http_request):
 
     assert isinstance(response.status_code, int)
 
+
 @pytest.mark.asyncio
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
 async def test_conf_async_requests(port, http_request):
@@ -80,9 +85,9 @@ async def test_conf_async_requests(port, http_request):
 
     assert isinstance(response.status_code, int)
 
+
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
 def test_conf_async_trio_requests(port, http_request):
-
     async def do():
         request = http_request("GET", "http://localhost:{}/basic/string".format(port))
         async with TrioRequestsTransport() as sender:
@@ -104,11 +109,7 @@ def _create_aiohttp_response(http_response, body_bytes, headers=None):
 
     req_response = MockAiohttpClientResponse(body_bytes, headers)
 
-    response = create_transport_response(
-        http_response,
-        None, # Don't need a request here
-        req_response
-    )
+    response = create_transport_response(http_response, None, req_response)  # Don't need a request here
     response._content = body_bytes
 
     return response
@@ -120,14 +121,11 @@ async def test_aiohttp_response_text(http_response):
 
     for encoding in ["utf-8", "utf-8-sig", None]:
 
-        res = _create_aiohttp_response(
-            http_response,
-            b'\xef\xbb\xbf56',
-            {'Content-Type': 'text/plain'}
-        )
+        res = _create_aiohttp_response(http_response, b"\xef\xbb\xbf56", {"Content-Type": "text/plain"})
         if is_rest(http_response):
             await res.read()
-        assert res.text(encoding) == '56', "Encoding {} didn't work".format(encoding)
+        assert res.text(encoding) == "56", "Encoding {} didn't work".format(encoding)
+
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("http_response", AIOHTTP_TRANSPORT_RESPONSES)
@@ -144,21 +142,25 @@ async def test_aiohttp_response_decompression(http_response):
         b"\xe4o\xc6T\xdeVw\x9dgL\x7f\xe0n\xc0\x91q\x02'w0b\x98JZe^\x89|\xce\x9b"
         b"\x0e\xcbW\x8a\x97\xf4X\x97\xc8\xbf\xfeYU\x1d\xc2\x85\xfc\xf4@\xb7\xbe"
         b"\xf7+&$\xf6\xa9\x8a\xcb\x96\xdc\xef\xff\xaa\xa1\x1c\xf9$\x01\x00\x00",
-        {'Content-Type': 'text/plain', 'Content-Encoding':"gzip"}
+        {"Content-Type": "text/plain", "Content-Encoding": "gzip"},
     )
     # cSpell:enable
     body = res.body()
-    expect = b'{"id":"e7877039-1376-4dcd-9b0a-192897cff780","createdDateTimeUtc":' \
-             b'"2021-05-07T17:35:36.3121065Z","lastActionDateTimeUtc":' \
-             b'"2021-05-07T17:35:36.3121069Z","status":"NotStarted",' \
-             b'"summary":{"total":0,"failed":0,"success":0,"inProgress":0,' \
-             b'"notYetStarted":0,"cancelled":0,"totalCharacterCharged":0}}'
+    expect = (
+        b'{"id":"e7877039-1376-4dcd-9b0a-192897cff780","createdDateTimeUtc":'
+        b'"2021-05-07T17:35:36.3121065Z","lastActionDateTimeUtc":'
+        b'"2021-05-07T17:35:36.3121069Z","status":"NotStarted",'
+        b'"summary":{"total":0,"failed":0,"success":0,"inProgress":0,'
+        b'"notYetStarted":0,"cancelled":0,"totalCharacterCharged":0}}'
+    )
     assert res.body() == expect, "Decompression didn't work"
+
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("http_response", AIOHTTP_TRANSPORT_RESPONSES)
 async def test_aiohttp_response_decompression_negative(http_response):
     import zlib
+
     # cSpell:disable
     res = _create_aiohttp_response(
         http_response,
@@ -170,19 +172,16 @@ async def test_aiohttp_response_decompression_negative(http_response):
         b"\xe4o\xc6T\xdeVw\x9dgL\x7f\xe0n\xc0\x91q\x02'w0b\x98JZe^\x89|\xce\x9b"
         b"\x0e\xcbW\x8a\x97\xf4X\x97\xc8\xbf\xfeYU\x1d\xc2\x85\xfc\xf4@\xb7\xbe"
         b"\xf7+&$\xf6\xa9\x8a\xcb\x96\xdc\xef\xff\xaa\xa1\x1c\xf9$\x01\x00\x00",
-        {'Content-Type': 'text/plain', 'Content-Encoding':"gzip"}
+        {"Content-Type": "text/plain", "Content-Encoding": "gzip"},
     )
     # cSpell:enable
     with pytest.raises(zlib.error):
         body = res.body()
 
+
 @pytest.mark.parametrize("http_response", AIOHTTP_TRANSPORT_RESPONSES)
 def test_repr(http_response):
-    res = _create_aiohttp_response(
-        http_response,
-        b'\xef\xbb\xbf56',
-        {}
-    )
+    res = _create_aiohttp_response(http_response, b"\xef\xbb\xbf56", {})
     res.content_type = "text/plain"
 
     class_name = "AsyncHttpResponse" if is_rest(http_response) else "AioHttpTransportResponse"

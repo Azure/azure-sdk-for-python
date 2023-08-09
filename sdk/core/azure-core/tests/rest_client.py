@@ -1,4 +1,3 @@
-
 # --------------------------------------------------------------------------
 #
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -31,18 +30,14 @@ from copy import deepcopy
 
 
 class TestRestClientConfiguration(Configuration):
-    def __init__(
-        self, **kwargs
-    ):
+    def __init__(self, **kwargs):
         # type: (...) -> None
         super(TestRestClientConfiguration, self).__init__(**kwargs)
 
         kwargs.setdefault("sdk_moniker", "autorestswaggerbatfileservice/1.0.0b1")
         self._configure(**kwargs)
 
-    def _configure(
-        self, **kwargs
-    ):
+    def _configure(self, **kwargs):
         # type: (...) -> None
         self.user_agent_policy = kwargs.get("user_agent_policy") or policies.UserAgentPolicy(**kwargs)
         self.headers_policy = kwargs.get("headers_policy") or policies.HeadersPolicy(**kwargs)
@@ -54,15 +49,11 @@ class TestRestClientConfiguration(Configuration):
         self.redirect_policy = kwargs.get("redirect_policy") or policies.RedirectPolicy(**kwargs)
         self.authentication_policy = kwargs.get("authentication_policy")
 
-class TestRestClient(object):
 
+class TestRestClient(object):
     def __init__(self, port, **kwargs):
         self._config = TestRestClientConfiguration(**kwargs)
-        self._client = PipelineClient(
-            base_url="http://localhost:{}/".format(port),
-            config=self._config,
-            **kwargs
-        )
+        self._client = PipelineClient(base_url="http://localhost:{}/".format(port), config=self._config, **kwargs)
 
     def send_request(self, request, **kwargs):
         """Runs the network request through the client's chained policies.

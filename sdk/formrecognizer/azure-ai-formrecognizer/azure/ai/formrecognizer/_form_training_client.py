@@ -436,7 +436,7 @@ class FormTrainingClient(FormRecognizerClientBase):
                 **kwargs
             )
         except ValueError:
-            raise ValueError("Method 'begin_create_composed_model' is only available for API version V2_1 and up")
+            raise ValueError("Method 'begin_create_composed_model' is only available for API version V2_1 and up")  # pylint: disable=raise-missing-from
 
     def get_form_recognizer_client(self, **kwargs: Any) -> FormRecognizerClient:
         """Get an instance of a FormRecognizerClient from FormTrainingClient.
@@ -447,8 +447,8 @@ class FormTrainingClient(FormRecognizerClientBase):
 
         _pipeline = Pipeline(
             transport=TransportWrapper(self._client._client._pipeline._transport),
-            policies=self._client._client._pipeline._impl_policies,
-        )  # type: Pipeline
+            policies=self._client._client._pipeline._impl_policies,  # type: ignore
+        )
         client = FormRecognizerClient(
             endpoint=self._endpoint,
             credential=self._credential,
@@ -457,7 +457,7 @@ class FormTrainingClient(FormRecognizerClientBase):
             **kwargs
         )
         # need to share config, but can't pass as a keyword into client
-        client._client._config = self._client._client._config
+        client._client._config = self._client._config
         return client
 
     def close(self) -> None:

@@ -7,13 +7,13 @@
 # --------------------------------------------------------------------------
 
 from ._models import (
-    CommunicationRoom,
     RoomParticipant,
-    ParticipantsCollection
+    ParticipantRole,
+    CommunicationRoom
 )
 
 __all__ = [
-    "CommunicationRoom",
     "RoomParticipant",
-    "ParticipantsCollection"
+    "ParticipantRole",
+    "CommunicationRoom"
 ]

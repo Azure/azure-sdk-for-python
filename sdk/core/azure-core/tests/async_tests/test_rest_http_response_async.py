@@ -14,6 +14,7 @@ from azure.core.rest._aiohttp import RestAioHttpTransportResponse
 from azure.core.exceptions import HttpResponseError
 from utils import readonly_checks
 
+
 @pytest.fixture
 def send_request(client):
     async def _send_request(request):
@@ -21,7 +22,9 @@ def send_request(client):
             response = await client.send_request(request, stream=False)
             response.raise_for_status()
             return response
+
     return _send_request
+
 
 @pytest.mark.asyncio
 async def test_response(send_request, port):
@@ -35,6 +38,7 @@ async def test_response(send_request, port):
     assert response.request.method == "GET"
     assert response.request.url == "http://localhost:{}/basic/string".format(port)
 
+
 @pytest.mark.asyncio
 async def test_response_content(send_request):
     response = await send_request(
@@ -46,6 +50,7 @@ async def test_response_content(send_request):
     assert content == b"Hello, world!"
     assert response.text() == "Hello, world!"
 
+
 @pytest.mark.asyncio
 async def test_response_text(send_request):
     response = await send_request(
@@ -56,8 +61,9 @@ async def test_response_text(send_request):
     content = await response.read()
     assert content == b"Hello, world!"
     assert response.text() == "Hello, world!"
-    assert response.headers["Content-Length"] == '13'
-    assert response.headers['Content-Type'] == "text/plain; charset=utf-8"
+    assert response.headers["Content-Length"] == "13"
+    assert response.headers["Content-Type"] == "text/plain; charset=utf-8"
+
 
 @pytest.mark.asyncio
 async def test_response_html(send_request):
@@ -69,6 +75,7 @@ async def test_response_html(send_request):
     content = await response.read()
     assert content == b"<html><body>Hello, world!</html></body>"
     assert response.text() == "<html><body>Hello, world!</html></body>"
+
 
 @pytest.mark.asyncio
 async def test_raise_for_status(client):
@@ -92,23 +99,21 @@ async def test_raise_for_status(client):
     with pytest.raises(HttpResponseError):
         response.raise_for_status()
 
+
 @pytest.mark.asyncio
 async def test_response_repr(send_request):
-    response = await send_request(
-        HttpRequest("GET", "/basic/string")
-    )
+    response = await send_request(HttpRequest("GET", "/basic/string"))
     assert repr(response) == "<AsyncHttpResponse: 200 OK, Content-Type: text/plain; charset=utf-8>"
+
 
 @pytest.mark.asyncio
 async def test_response_content_type_encoding(send_request):
     """
     Use the charset encoding in the Content-Type header if possible.
     """
-    response = await send_request(
-        request=HttpRequest("GET", "/encoding/latin-1")
-    )
+    response = await send_request(request=HttpRequest("GET", "/encoding/latin-1"))
     assert response.content_type == "text/plain; charset=latin-1"
-    assert response.content == b'Latin 1: \xff'
+    assert response.content == b"Latin 1: \xff"
     assert response.text() == "Latin 1: ÿ"
     assert response.encoding == "latin-1"
 
@@ -118,10 +123,8 @@ async def test_response_autodetect_encoding(send_request):
     """
     Autodetect encoding if there is no Content-Type header.
     """
-    response = await send_request(
-        request=HttpRequest("GET", "/encoding/latin-1")
-    )
-    assert response.text() == u'Latin 1: ÿ'
+    response = await send_request(request=HttpRequest("GET", "/encoding/latin-1"))
+    assert response.text() == "Latin 1: ÿ"
     assert response.encoding == "latin-1"
 
 
@@ -130,9 +133,7 @@ async def test_response_fallback_to_autodetect(send_request):
     """
     Fallback to autodetection if we get an invalid charset in the Content-Type header.
     """
-    response = await send_request(
-        request=HttpRequest("GET", "/encoding/invalid-codec-name")
-    )
+    response = await send_request(request=HttpRequest("GET", "/encoding/invalid-codec-name"))
     assert response.headers["Content-Type"] == "text/plain; charset=invalid-codec-name"
     assert response.text() == "おはようございます。"
     assert response.encoding is None
@@ -168,6 +169,7 @@ async def test_response_no_charset_with_iso_8859_1_content(send_request):
     assert response.text() == "Accented: �sterreich"
     assert response.encoding is None
 
+
 @pytest.mark.asyncio
 async def test_json(send_request):
     response = await send_request(
@@ -175,6 +177,7 @@ async def test_json(send_request):
     )
     assert response.json() == {"greeting": "hello", "recipient": "world"}
     assert response.encoding is None
+
 
 @pytest.mark.asyncio
 async def test_json_with_specified_encoding(send_request):
@@ -184,12 +187,14 @@ async def test_json_with_specified_encoding(send_request):
     assert response.json() == {"greeting": "hello", "recipient": "world"}
     assert response.encoding == "utf-16"
 
+
 @pytest.mark.asyncio
 async def test_emoji(send_request):
     response = await send_request(
         request=HttpRequest("GET", "/encoding/emoji"),
     )
     assert response.text() == "👩"
+
 
 @pytest.mark.asyncio
 async def test_emoji_family_with_skin_tone_modifier(send_request):
@@ -198,6 +203,7 @@ async def test_emoji_family_with_skin_tone_modifier(send_request):
     )
     assert response.text() == "👩🏻‍👩🏽‍👧🏾‍👦🏿 SSN: 859-98-0987"
 
+
 @pytest.mark.asyncio
 async def test_korean_nfc(send_request):
     response = await send_request(
@@ -205,15 +211,15 @@ async def test_korean_nfc(send_request):
     )
     assert response.text() == "아가"
 
+
 @pytest.mark.asyncio
 async def test_urlencoded_content(send_request):
     await send_request(
         request=HttpRequest(
-            "POST",
-            "/urlencoded/pet/add/1",
-            data={ "pet_type": "dog", "pet_food": "meat", "name": "Fido", "pet_age": 42 }
+            "POST", "/urlencoded/pet/add/1", data={"pet_type": "dog", "pet_food": "meat", "name": "Fido", "pet_age": 42}
         ),
     )
+
 
 # @pytest.mark.asyncio
 # async def test_multipart_files_content(send_request):
@@ -223,6 +229,7 @@ async def test_urlencoded_content(send_request):
 #         files={"fileContent": io.BytesIO(b"<file content>")},
 #     )
 #     await send_request(request)
+
 
 @pytest.mark.asyncio
 async def test_send_request_return_pipeline_response(client):
@@ -235,21 +242,23 @@ async def test_send_request_return_pipeline_response(client):
     assert response.http_response.text() == "Hello, world!"
     assert hasattr(response.http_request, "content")
 
+
 @pytest.mark.asyncio
 async def test_text_and_encoding(send_request):
     response = await send_request(
         request=HttpRequest("GET", "/encoding/emoji"),
     )
-    assert response.content == u"👩".encode("utf-8")
-    assert response.text() == u"👩"
+    assert response.content == "👩".encode("utf-8")
+    assert response.text() == "👩"
 
     # try setting encoding as a property
     response.encoding = "utf-16"
-    assert response.text() == u"鿰ꦑ" == response.content.decode(response.encoding)
+    assert response.text() == "鿰ꦑ" == response.content.decode(response.encoding)
 
     # assert latin-1 changes text decoding without changing encoding property
-    assert response.text("latin-1") == 'ð\x9f\x91©' == response.content.decode("latin-1")
+    assert response.text("latin-1") == "ð\x9f\x91©" == response.content.decode("latin-1")
     assert response.encoding == "utf-16"
+
 
 # @pytest.mark.asyncio
 # async def test_multipart_encode_non_seekable_filelike(send_request):
@@ -278,10 +287,12 @@ async def test_text_and_encoding(send_request):
 #     )
 #     await send_request(request)
 
+
 def test_initialize_response_abc():
     with pytest.raises(TypeError) as ex:
         AsyncHttpResponse()
     assert "Can't instantiate abstract class" in str(ex)
+
 
 @pytest.mark.asyncio
 async def test_readonly(send_request):
@@ -290,4 +301,5 @@ async def test_readonly(send_request):
 
     assert isinstance(response, RestAioHttpTransportResponse)
     from azure.core.pipeline.transport import AioHttpTransportResponse
+
     readonly_checks(response, old_response_class=AioHttpTransportResponse)

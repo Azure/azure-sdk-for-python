@@ -11,23 +11,22 @@ from azure.core import CaseInsensitiveEnumMeta
 
 
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of identity that created the resource.
-    """
+    """The type of identity that created the resource."""
 
     USER = "User"
     APPLICATION = "Application"
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
 
+
 class HostType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of host the Custom Locations is referencing (Kubernetes, etc...).
-    """
+    """Type of host the Custom Locations is referencing (Kubernetes, etc...)."""
 
     KUBERNETES = "Kubernetes"
 
+
 class ResourceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The identity type.
-    """
+    """The identity type."""
 
     SYSTEM_ASSIGNED = "SystemAssigned"
     NONE = "None"

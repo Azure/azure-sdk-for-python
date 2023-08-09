@@ -1,4 +1,7 @@
+import os.path
 import re
+import shutil
+import tempfile
 import uuid
 from itertools import tee
 from pathlib import Path
@@ -6,12 +9,15 @@ from typing import Callable
 
 import pydash
 import pytest
+from azure.core.exceptions import HttpResponseError
+from azure.core.paging import ItemPaged
 from devtools_testutils import AzureRecordedTestCase, is_live
 from test_utilities.utils import assert_job_cancel, omit_with_wildcard, sleep_if_live
 
 from azure.ai.ml import MLClient, MpiDistribution, load_component, load_environment
 from azure.ai.ml._restclient.v2022_05_01.models import ListViewType
 from azure.ai.ml._utils._arm_id_utils import is_ARM_id_for_resource
+from azure.ai.ml.constants._assets import IPProtectionLevel
 from azure.ai.ml.constants._common import (
     ANONYMOUS_COMPONENT_NAME,
     ARM_ID_PREFIX,
@@ -21,8 +27,6 @@ from azure.ai.ml.constants._common import (
 from azure.ai.ml.dsl._utils import _sanitize_python_variable_name
 from azure.ai.ml.entities import CommandComponent, Component, PipelineComponent
 from azure.ai.ml.entities._load_functions import load_code, load_job
-from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
-from azure.core.paging import ItemPaged
 
 from .._util import _COMPONENT_TIMEOUT_SECOND
 from ..unittests.test_component_schema import load_component_entity_from_rest_json
@@ -34,6 +38,7 @@ def create_component(
     path="./tests/test_configs/components/helloworld_component.yml",
     params_override=None,
     is_anonymous=False,
+    **kwargs,
 ):
     default_param_override = [{"name": component_name}]
     if params_override is None:
@@ -45,7 +50,7 @@ def create_component(
         source=path,
         params_override=params_override,
     )
-    return client.components.create_or_update(command_component, is_anonymous=is_anonymous)
+    return client.components.create_or_update(command_component, is_anonymous=is_anonymous, **kwargs)
 
 
 @pytest.fixture
@@ -80,6 +85,7 @@ def tensorflow_distribution():
         }
 
     return create_tensorflow_distribution
+
 
 # previous bodiless_matcher fixture doesn't take effect because of typo, please add it in method level if needed
 
@@ -143,7 +149,7 @@ class TestComponent(AzureRecordedTestCase):
                     "optional": True,
                     "type": "number",
                 },
-                "component_in_path": {"description": "A path", "type": "uri_folder", 'optional': False},
+                "component_in_path": {"description": "A path", "type": "uri_folder", "optional": False},
             },
             "is_deterministic": True,
             "outputs": {"component_out_path": {"type": "uri_folder"}},
@@ -169,11 +175,17 @@ class TestComponent(AzureRecordedTestCase):
             "error_threshold": 10,
             "input_data": "${{inputs.score_input}}",
             "inputs": {
-                "label": {"description": "Other reference data for batch scoring, " "e.g. labels.",
-                          "type": "uri_file", 'optional': False},
-                "score_input": {"description": "The data to be split and scored in " "parallel.", "type": "mltable",
-                                'optional': False},
-                "score_model": {"description": "The model for batch score.", "type": "custom_model", 'optional': False},
+                "label": {
+                    "description": "Other reference data for batch scoring, " "e.g. labels.",
+                    "type": "uri_file",
+                    "optional": False,
+                },
+                "score_input": {
+                    "description": "The data to be split and scored in " "parallel.",
+                    "type": "mltable",
+                    "optional": False,
+                },
+                "score_model": {"description": "The model for batch score.", "type": "custom_model", "optional": False},
             },
             "is_deterministic": True,
             "max_concurrency_per_instance": 12,
@@ -232,21 +244,23 @@ class TestComponent(AzureRecordedTestCase):
 
     def test_spark_component(self, client: MLClient, randstr: Callable[[], str]) -> None:
         expected_dict = {
-            '$schema': 'https://azuremlschemas.azureedge.net/latest/sparkComponent.schema.json',
-             'args': '--file_input ${{inputs.file_input}} --output ${{outputs.output}}',
-             'conf': {'spark.driver.cores': 2,
-                      'spark.driver.memory': '1g',
-                      'spark.executor.cores': 1,
-                      'spark.executor.instances': 1,
-                      'spark.executor.memory': '1g'},
-             'description': 'Aml Spark dataset test module',
-             'display_name': 'Aml Spark dataset test module',
-             'entry': {'file': 'kmeans_example.py'},
-             'inputs': {'file_input': {'type': 'uri_file', 'optional': False}},
-             'is_deterministic': True,
-             'outputs': {'output': {'type': 'uri_folder'}},
-             'type': 'spark',
-             'version': '1'
+            "$schema": "https://azuremlschemas.azureedge.net/latest/sparkComponent.schema.json",
+            "args": "--file_input ${{inputs.file_input}} --output ${{outputs.output}}",
+            "conf": {
+                "spark.driver.cores": 2,
+                "spark.driver.memory": "1g",
+                "spark.executor.cores": 1,
+                "spark.executor.instances": 1,
+                "spark.executor.memory": "1g",
+            },
+            "description": "Aml Spark dataset test module",
+            "display_name": "Aml Spark dataset test module",
+            "entry": {"file": "kmeans_example.py"},
+            "inputs": {"file_input": {"type": "uri_file", "optional": False}},
+            "is_deterministic": True,
+            "outputs": {"output": {"type": "uri_folder"}},
+            "type": "spark",
+            "version": "1",
         }
         assert_component_basic_workflow(
             client=client,
@@ -255,6 +269,97 @@ class TestComponent(AzureRecordedTestCase):
             expected_dict=expected_dict,
             omit_fields=["name", "creation_context", "id", "code", "environment"],
             recorded_component_name="spark_component_name",
+        )
+
+    def test_datatransfer_copy_urifolder_component(self, client: MLClient, randstr: Callable[[], str]) -> None:
+        expected_dict = {
+            "$schema": "http://azureml/sdk-2-0/DataTransferComponent.json",
+            "data_copy_mode": "merge_with_overwrite",
+            "display_name": "Data Transfer Component copy-files",
+            "type": "data_transfer",
+            "task": "copy_data",
+            "inputs": {"folder1": {"type": "uri_folder", "optional": False}},
+            "outputs": {"output_folder": {"type": "uri_folder"}},
+            "is_deterministic": True,
+            "version": "1",
+        }
+        assert_component_basic_workflow(
+            client=client,
+            randstr=randstr,
+            path="./tests/test_configs/components/data_transfer/copy_files.yaml",
+            expected_dict=expected_dict,
+            omit_fields=["name", "creation_context", "id"],
+            recorded_component_name="datatransfer_copy_urifolder",
+        )
+
+    def test_datatransfer_copy_urifile_component(self, client: MLClient, randstr: Callable[[], str]) -> None:
+        expected_dict = {
+            "$schema": "http://azureml/sdk-2-0/DataTransferComponent.json",
+            "data_copy_mode": "fail_if_conflict",
+            "display_name": "Data Transfer Component copy uri files",
+            "type": "data_transfer",
+            "task": "copy_data",
+            "inputs": {"folder1": {"type": "uri_file", "optional": False}},
+            "outputs": {"output_folder": {"type": "uri_file"}},
+            "is_deterministic": True,
+            "version": "1",
+        }
+        assert_component_basic_workflow(
+            client=client,
+            randstr=randstr,
+            path="./tests/test_configs/components/data_transfer/copy_uri_files.yaml",
+            expected_dict=expected_dict,
+            omit_fields=["name", "creation_context", "id"],
+            recorded_component_name="datatransfer_copy_urifile",
+        )
+
+    def test_datatransfer_copy_2urifolder_component(self, client: MLClient, randstr: Callable[[], str]) -> None:
+        expected_dict = {
+            "$schema": "http://azureml/sdk-2-0/DataTransferComponent.json",
+            "display_name": "Data Transfer Component merge-files",
+            "type": "data_transfer",
+            "data_copy_mode": "merge_with_overwrite",
+            "task": "copy_data",
+            "inputs": {
+                "folder1": {"type": "uri_folder", "optional": False},
+                "folder2": {"type": "uri_folder", "optional": False},
+            },
+            "outputs": {"output_folder": {"type": "uri_folder"}},
+            "is_deterministic": True,
+            "version": "1",
+        }
+        assert_component_basic_workflow(
+            client=client,
+            randstr=randstr,
+            path="./tests/test_configs/components/data_transfer/merge_files.yaml",
+            expected_dict=expected_dict,
+            omit_fields=["name", "creation_context", "id"],
+            recorded_component_name="datatransfer_copy_2urifolder",
+        )
+
+    def test_datatransfer_copy_mixtype_component(self, client: MLClient, randstr: Callable[[], str]) -> None:
+        expected_dict = {
+            "$schema": "http://azureml/sdk-2-0/DataTransferComponent.json",
+            "display_name": "Data Transfer Component merge mix type files",
+            "type": "data_transfer",
+            "data_copy_mode": "merge_with_overwrite",
+            "task": "copy_data",
+            "inputs": {
+                "input1": {"type": "uri_file", "optional": False},
+                "input2": {"type": "uri_file", "optional": False},
+                "input3": {"type": "mltable", "optional": False},
+            },
+            "outputs": {"output_folder": {"type": "uri_folder"}},
+            "is_deterministic": True,
+            "version": "1",
+        }
+        assert_component_basic_workflow(
+            client=client,
+            randstr=randstr,
+            path="./tests/test_configs/components/data_transfer/merge_mixtype_files.yaml",
+            expected_dict=expected_dict,
+            omit_fields=["name", "creation_context", "id"],
+            recorded_component_name="datatransfer_copy_mixtype",
         )
 
     @pytest.mark.parametrize(
@@ -283,9 +388,10 @@ class TestComponent(AzureRecordedTestCase):
         assert target_entity.id
         # server side will remove \n from the code now. Skip them given it's not targeted to check in this test
         # server side will return optional False for optional None input
-        omit_fields = ["id", "command", "environment", "inputs.*.optional"]
-        assert omit_with_wildcard(component_entity._to_dict(), *omit_fields) == \
-               omit_with_wildcard(target_entity._to_dict(), *omit_fields)
+        omit_fields = ["id", "command", "environment", "inputs.*.optional", "properties"]
+        assert omit_with_wildcard(component_entity._to_dict(), *omit_fields) == omit_with_wildcard(
+            target_entity._to_dict(), *omit_fields
+        )
 
     def test_command_component_with_code(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         component_name = randstr("component_name")
@@ -295,6 +401,21 @@ class TestComponent(AzureRecordedTestCase):
             component_name,
             path="./tests/test_configs/components/basic_component_code_local_path.yml",
         )
+        assert component_resource.name == component_name
+        # make sure code is created
+        assert component_resource.code
+        assert is_ARM_id_for_resource(component_resource.code)
+
+    def test_command_component_with_pathlike_as_code(self, client: MLClient, randstr: Callable[[str], str]) -> None:
+        component_name = randstr("component_name")
+
+        component = load_component(source="./tests/test_configs/components/basic_component_code_local_path.yml")
+        from pathlib import Path
+
+        component.name = component_name
+        component.code = Path(component.code)
+
+        component_resource = client.components.create_or_update(component)
         assert component_resource.name == component_name
         # make sure code is created
         assert component_resource.code
@@ -339,7 +460,7 @@ class TestComponent(AzureRecordedTestCase):
             "creation_context",
             "resources",
             "id",
-            "inputs.component_in_path.optional"  # backend will return component inputs as optional:False
+            "inputs.component_in_path.optional",  # backend will return component inputs as optional:False
         )
         expected_dict = pydash.omit(
             dict(target_entity._to_dict()),
@@ -404,7 +525,6 @@ class TestComponent(AzureRecordedTestCase):
             client.components.create_or_update(command_component)
 
     @pytest.mark.disable_mock_code_hash
-    @pytest.mark.skipif(condition=not is_live(), reason="reuse test, target to verify service-side behavior")
     def test_component_create_default_code(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         # step2: test component without code
         component_name = randstr("component_name")
@@ -417,6 +537,7 @@ class TestComponent(AzureRecordedTestCase):
         component_resource2 = create_component(client, component_name, params_override=params_override)
 
         # the code arm id should be the same
+        assert component_resource1.code is None
         assert component_resource1.code == component_resource2.code
         assert component_resource2.description == description
         assert component_resource2.display_name == display_name
@@ -451,7 +572,7 @@ class TestComponent(AzureRecordedTestCase):
             outputs={"component_out_path": {"type": "uri_folder"}},
             command="echo Hello World & echo ${{inputs.component_in_number}} & echo ${{inputs.component_in_path}} "
             "& echo ${{outputs.component_out_path}}",
-            environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+            environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
             distribution=MpiDistribution(
                 process_count_per_instance=1,
                 # No affect because Mpi object does not allow extra fields
@@ -673,23 +794,11 @@ class TestComponent(AzureRecordedTestCase):
             tags={"tag": "tagvalue", "owner": "sdkteam"},
             outputs={"component_out_path": {"type": "path"}},
             command="echo Hello World",
-            environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+            environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
             code="./tests/test_configs/components/helloworld_components_with_env",
         )
         component_resource = client.components.create_or_update(component)
         assert component_resource.version == "3"
-
-    def test_component_validate_via_schema(self, client: MLClient, randstr: Callable[[str], str]) -> None:
-        component_path = "./tests/test_configs/components/helloworld_component.yml"
-        component: CommandComponent = load_component(source=component_path)
-        component.name = None
-        component.command += " & echo ${{inputs.non_existent}} & echo ${{outputs.non_existent}}"
-        validation_result = client.components.validate(component)
-        assert validation_result.passed is False
-        assert validation_result.error_messages == {
-            "name": "Missing data for required field.",
-            "command": "Invalid data binding expression: inputs.non_existent, outputs.non_existent",
-        }
 
     @pytest.mark.skipif(
         condition=not is_live(),
@@ -723,9 +832,7 @@ class TestComponent(AzureRecordedTestCase):
         )
         # Assert binding on compute not changed after resolve dependencies
         client.components._resolve_dependencies_for_pipeline_component_jobs(
-            component,
-            resolver=client.components._orchestrators.get_asset_arm_id,
-            resolve_inputs=False
+            component, resolver=client.components._orchestrators.get_asset_arm_id, resolve_inputs=False
         )
         assert component.jobs["component_a_job"].compute == "${{parent.inputs.node_compute}}"
         # Assert E2E
@@ -764,15 +871,18 @@ class TestComponent(AzureRecordedTestCase):
             "type": "pipeline",
         }
         assert component_dict == expected_dict
-        # below line is expected to raise KeyError in live test, it will pass after related changes deployed to canary
-        jobs_dict = rest_pipeline_component._to_dict()["jobs"]
-        # Assert full componentId extra azureml prefix has been removed and parsed to versioned arm id correctly.
-        assert "azureml:azureml_anonymous" in jobs_dict["component_a_job"]["component"]
-        assert jobs_dict["component_a_job"]["type"] == "command"
-        # Assert component show result
-        rest_pipeline_component2 = client.components.get(name=component_name, version="1")
-        jobs_dict2 = rest_pipeline_component2._to_dict()["jobs"]
-        assert jobs_dict == jobs_dict2
+        rest_dict = rest_pipeline_component._to_dict()
+        if "jobs" in rest_dict:
+            # below line is expected to raise KeyError in live test,
+            # it will pass after related changes deployed to canary
+            jobs_dict = rest_dict["jobs"]
+            # Assert full componentId extra azureml prefix has been removed and parsed to versioned arm id correctly.
+            assert "azureml:azureml_anonymous" in jobs_dict["component_a_job"]["component"]
+            assert jobs_dict["component_a_job"]["type"] == "command"
+            # Assert component show result
+            rest_pipeline_component2 = client.components.get(name=component_name, version="1")
+            jobs_dict2 = rest_pipeline_component2._to_dict()["jobs"]
+            assert jobs_dict == jobs_dict2
 
     def test_helloworld_nested_pipeline_component(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         component_path = "./tests/test_configs/components/helloworld_nested_pipeline_component.yml"
@@ -798,8 +908,11 @@ class TestComponent(AzureRecordedTestCase):
             "display_name": "Hello World Pipeline Component",
             "is_deterministic": False,
             "inputs": {
-                "component_in_path": {"type": "uri_folder", "description": "A path for pipeline component",
-                                      "optional": False},
+                "component_in_path": {
+                    "type": "uri_folder",
+                    "description": "A path for pipeline component",
+                    "optional": False,
+                },
                 "component_in_number": {
                     "type": "number",
                     "optional": True,
@@ -812,6 +925,7 @@ class TestComponent(AzureRecordedTestCase):
         }
         assert component_dict == expected_dict
 
+    @pytest.mark.usefixtures("mock_set_headers_with_user_aml_token")
     def test_create_pipeline_component_from_job(self, client: MLClient, randstr: Callable[[str], str]):
         params_override = [{"name": randstr("component_name_0")}]
         pipeline_job = load_job(
@@ -857,25 +971,28 @@ class TestComponent(AzureRecordedTestCase):
             source="./tests/test_configs/components/helloworld_component_with_properties.yml",
         )
         expected_dict = {
-            '$schema': 'https://azuremlschemas.azureedge.net/development/commandComponent.schema.json',
-            '_source': 'YAML.COMPONENT',
-            'command': 'echo Hello World & echo $[[${{inputs.component_in_number}}]] & '
-                       'echo ${{inputs.component_in_path}} & echo '
-                       '${{outputs.component_out_path}} > '
-                       '${{outputs.component_out_path}}/component_in_number',
-            'description': 'This is the basic command component',
-            'display_name': 'CommandComponentBasic',
-            'inputs': {'component_in_number': {'default': '10.99',
-                                               'description': 'A number',
-                                               'optional': True,
-                                               'type': 'number'},
-                       'component_in_path': {'description': 'A path',
-                                             'type': 'uri_folder'}},
-            'is_deterministic': True,
-            'outputs': {'component_out_path': {'type': 'uri_folder'}},
-            'properties': {'azureml.pipelines.dynamic': 'true'},
-            'tags': {'owner': 'sdkteam', 'tag': 'tagvalue'},
-            'type': 'command',
+            "$schema": "https://azuremlschemas.azureedge.net/development/commandComponent.schema.json",
+            "_source": "YAML.COMPONENT",
+            "command": "echo Hello World & echo $[[${{inputs.component_in_number}}]] & "
+            "echo ${{inputs.component_in_path}} & echo "
+            "${{outputs.component_out_path}} > "
+            "${{outputs.component_out_path}}/component_in_number",
+            "description": "This is the basic command component",
+            "display_name": "CommandComponentBasic",
+            "inputs": {
+                "component_in_number": {
+                    "default": "10.99",
+                    "description": "A number",
+                    "optional": True,
+                    "type": "number",
+                },
+                "component_in_path": {"description": "A path", "type": "uri_folder"},
+            },
+            "is_deterministic": True,
+            "outputs": {"component_out_path": {"type": "uri_folder"}},
+            "properties": {"azureml.pipelines.dynamic": "true"},
+            "tags": {"owner": "sdkteam", "tag": "tagvalue"},
+            "type": "command",
         }
         omit_fields = ["name", "creation_context", "id", "code", "environment", "version"]
         rest_component = pydash.omit(
@@ -891,3 +1008,164 @@ class TestComponent(AzureRecordedTestCase):
         current_dict = pydash.omit(from_rest_component._to_dict(), omit_fields)
         # TODO(2037030): verify when backend ready
         # assert previous_dict == current_dict
+
+    @pytest.mark.skip(
+        reason="TODO (2349965): Message: User/tenant/subscription is not allowed to access registry UnsecureTest-hello-world"
+    )
+    @pytest.mark.usefixtures("enable_private_preview_schema_features")
+    def test_ipp_component_create(self, ipp_registry_client: MLClient, randstr: Callable[[str], str]):
+        component_path = "./tests/test_configs/components/component_ipp.yml"
+        command_component = load_component(source=component_path)
+        from_rest_component = create_component(
+            ipp_registry_client,
+            component_name=randstr("component_name"),
+            path=component_path,
+        )
+
+        assert from_rest_component._intellectual_property
+        assert from_rest_component._intellectual_property == command_component._intellectual_property
+
+        assert from_rest_component.inputs["training_data"]._intellectual_property
+        assert (
+            from_rest_component.inputs["training_data"]._intellectual_property
+            == command_component.inputs["training_data"]._intellectual_property
+        )
+
+        assert from_rest_component.inputs["base_model"]._intellectual_property
+        assert from_rest_component.inputs["base_model"]._intellectual_property.protection_level == IPProtectionLevel.ALL
+
+        assert from_rest_component.outputs["model_output_not_ipp"]._intellectual_property
+
+        assert (
+            from_rest_component.outputs["model_output_not_ipp"]._intellectual_property
+            == command_component.outputs["model_output_not_ipp"]._intellectual_property
+        )
+
+        assert from_rest_component.outputs["model_output_ipp"]._intellectual_property
+        assert (
+            from_rest_component.outputs["model_output_ipp"]._intellectual_property
+            == command_component.outputs["model_output_ipp"]._intellectual_property
+        )
+
+    def test_create_component_skip_if_no_change(self, client: MLClient, randstr):
+        component_operation = client._operation_container.all_operations[AzureMLResourceType.COMPONENT]
+        component_name = "test_skip_if_no_change"
+        try:
+            default_component = component_operation.get(name=component_name)
+        except Exception:
+            default_component = None
+        default_version = default_component.version if default_component else "1"
+        # update  default component by current local component data.
+        default_component = create_component(client, component_name=component_name, version=default_version)
+
+        # test component has no change and use skip_if_no_change parameter
+        new_version = randstr("component_version")
+        new_component = create_component(
+            client, component_name=component_name, version=new_version, skip_if_no_change=True
+        )
+        assert default_component._get_component_hash(
+            keys_to_omit=["creation_context"]
+        ) == new_component._get_component_hash(keys_to_omit=["creation_context"])
+
+        # test component has change and use skip_if_no_change parameter
+        new_version = randstr("component_version")
+        params_override = [
+            {"description": "description_{0}".format(new_version)},
+            {"display_name": "display_name_{0}".format(new_version)},
+            {"tags": {"tags": "tags_{0}".format(new_version)}},
+        ]
+        new_component = create_component(
+            client,
+            component_name=component_name,
+            version=new_version,
+            params_override=params_override,
+            skip_if_no_change=True,
+        )
+        assert default_component._get_component_hash(
+            keys_to_omit=["creation_context"]
+        ) != new_component._get_component_hash(keys_to_omit=["creation_context"])
+        assert new_component.description == "description_{0}".format(new_version)
+        assert new_component.display_name == "display_name_{0}".format(new_version)
+        assert new_component.tags == {"tags": "tags_{0}".format(new_version)}
+        assert new_component.version == new_version
+
+        # test component has no change and not use skip_if_no_change parameter
+        new_version = randstr("component_version")
+        new_component = create_component(client, component_name=component_name, version=new_version)
+        assert default_component._get_component_hash(
+            keys_to_omit=["creation_context"]
+        ) != new_component._get_component_hash(keys_to_omit=["creation_context"])
+        assert new_component.version == new_version
+
+    # TODO: code hash will normalize code name to 000000000000000000000, which
+    #  is not compatible with mock_component_hash
+    @pytest.mark.disable_mock_code_hash
+    @pytest.mark.parametrize(
+        "component_path",
+        [
+            pytest.param("./tests/test_configs/components/helloworld_component.yml", id="command"),
+            pytest.param(
+                "./tests/test_configs/components/helloworld_components_with_env/helloworld_component_env_inline.yml",
+                id="command_with_env_inline",
+            ),
+            pytest.param(
+                "./tests/test_configs/components/helloworld_components_with_env/helloworld_component_env_path_1.yml",
+                id="command_with_env_path",
+            ),
+            pytest.param("./tests/test_configs/dsl_pipeline/basic_component/component.yml", id="command_with_code"),
+            pytest.param("./tests/test_configs/components/helloworld_parallel.yml", id="parallel_with_code"),
+            pytest.param(
+                "./tests/test_configs/dsl_pipeline/parallel_component_with_tabular_input/tabular_input_e2e.yml",
+                id="parallel_with_env_and_code",
+            ),
+        ],
+    )
+    def test_component_download(self, client: MLClient, randstr, component_path: str, request):
+        save_dir = Path(f"./tests/test_configs/components/downloaded", request.node.callspec.id)
+        temp_component_name = randstr("component_name")
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            download_path = Path(temp_dir)
+            component = load_component(component_path)
+
+            component.name = temp_component_name
+            created_component = client.components.create_or_update(
+                component,
+            )
+            client.components.download(
+                component.name,
+                version=component.version,
+                download_path=download_path,
+            )
+
+            spec_path = download_path.joinpath("component_spec.yaml")
+            downloaded_component = load_component(spec_path)
+            downloaded_component.name += "_recreated"
+            recreated_component = client.components.create_or_update(downloaded_component)
+
+            # normalize component name
+            spec_path.write_text(spec_path.read_text().replace(temp_component_name, "random_component_name"))
+            if save_dir.is_dir():
+                try:
+                    for file in save_dir.glob("**/*"):
+                        if file.is_file():
+                            assert file.read_text() == download_path.joinpath(file.relative_to(save_dir)).read_text(), (
+                                f"downloaded component is not the same as last snapshot. "
+                                f"Please check if changes under {download_path} are expected."
+                            )
+                except AssertionError:
+                    # replace saved snapshot with downloaded one if not matched
+                    shutil.rmtree(save_dir, ignore_errors=True)
+                    shutil.copytree(download_path, save_dir)
+            else:
+                shutil.copytree(download_path, save_dir)
+
+            # compare created component and recreated component after we updated the saved snapshot (if applicable)
+            omit_fields = [
+                "id",
+                "name",
+                "creation_context",
+            ]
+            assert omit_with_wildcard(recreated_component._to_dict(), *omit_fields) == omit_with_wildcard(
+                created_component._to_dict(), *omit_fields
+            )

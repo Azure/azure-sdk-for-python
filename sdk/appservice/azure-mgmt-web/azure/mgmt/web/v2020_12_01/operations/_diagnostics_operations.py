@@ -7,11 +7,18 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
+import sys
 from typing import Any, Callable, Dict, Iterable, Optional, TypeVar
+import urllib.parse
 
-from msrest import Serializer
-
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    ResourceNotModifiedError,
+    map_error,
+)
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpResponse
@@ -21,48 +28,56 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from .. import models as _models
-from .._vendor import MixinABC, _convert_request, _format_url_section
-T = TypeVar('T')
+from ..._serialization import Serializer
+from .._vendor import WebSiteManagementClientMixinABC, _convert_request, _format_url_section
+
+if sys.version_info >= (3, 8):
+    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
+else:
+    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
+T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
+
 def build_list_hosting_environment_detector_responses_request(
-    resource_group_name: str,
-    name: str,
-    subscription_id: str,
-    **kwargs: Any
+    resource_group_name: str, name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-12-01"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
+    api_version: Literal["2020-12-01"] = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/detectors")  # pylint: disable=line-too-long
+    _url = kwargs.pop(
+        "template_url",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/detectors",
+    )  # pylint: disable=line-too-long
     path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
-        "name": _SERIALIZER.url("name", name, 'str'),
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name",
+            resource_group_name,
+            "str",
+            max_length=90,
+            min_length=1,
+            pattern=r"^[-\w\._\(\)]+[^\.]$",
+        ),
+        "name": _SERIALIZER.url("name", name, "str"),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_get_hosting_environment_detector_response_request(
@@ -79,76 +94,81 @@ def build_get_hosting_environment_detector_response_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-12-01"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
+    api_version: Literal["2020-12-01"] = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/detectors/{detectorName}")  # pylint: disable=line-too-long
+    _url = kwargs.pop(
+        "template_url",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/detectors/{detectorName}",
+    )  # pylint: disable=line-too-long
     path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
-        "name": _SERIALIZER.url("name", name, 'str'),
-        "detectorName": _SERIALIZER.url("detector_name", detector_name, 'str'),
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name",
+            resource_group_name,
+            "str",
+            max_length=90,
+            min_length=1,
+            pattern=r"^[-\w\._\(\)]+[^\.]$",
+        ),
+        "name": _SERIALIZER.url("name", name, "str"),
+        "detectorName": _SERIALIZER.url("detector_name", detector_name, "str"),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     if start_time is not None:
-        _params['startTime'] = _SERIALIZER.query("start_time", start_time, 'iso-8601')
+        _params["startTime"] = _SERIALIZER.query("start_time", start_time, "iso-8601")
     if end_time is not None:
-        _params['endTime'] = _SERIALIZER.query("end_time", end_time, 'iso-8601')
+        _params["endTime"] = _SERIALIZER.query("end_time", end_time, "iso-8601")
     if time_grain is not None:
-        _params['timeGrain'] = _SERIALIZER.query("time_grain", time_grain, 'str', pattern=r'PT[1-9][0-9]+[SMH]')
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+        _params["timeGrain"] = _SERIALIZER.query("time_grain", time_grain, "str", pattern=r"PT[1-9][0-9]+[SMH]")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_list_site_detector_responses_request(
-    resource_group_name: str,
-    site_name: str,
-    subscription_id: str,
-    **kwargs: Any
+    resource_group_name: str, site_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-12-01"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
+    api_version: Literal["2020-12-01"] = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/detectors")  # pylint: disable=line-too-long
+    _url = kwargs.pop(
+        "template_url",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/detectors",
+    )  # pylint: disable=line-too-long
     path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
-        "siteName": _SERIALIZER.url("site_name", site_name, 'str'),
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name",
+            resource_group_name,
+            "str",
+            max_length=90,
+            min_length=1,
+            pattern=r"^[-\w\._\(\)]+[^\.]$",
+        ),
+        "siteName": _SERIALIZER.url("site_name", site_name, "str"),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_get_site_detector_response_request(
@@ -165,154 +185,159 @@ def build_get_site_detector_response_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-12-01"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
+    api_version: Literal["2020-12-01"] = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/detectors/{detectorName}")  # pylint: disable=line-too-long
+    _url = kwargs.pop(
+        "template_url",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/detectors/{detectorName}",
+    )  # pylint: disable=line-too-long
     path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
-        "siteName": _SERIALIZER.url("site_name", site_name, 'str'),
-        "detectorName": _SERIALIZER.url("detector_name", detector_name, 'str'),
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name",
+            resource_group_name,
+            "str",
+            max_length=90,
+            min_length=1,
+            pattern=r"^[-\w\._\(\)]+[^\.]$",
+        ),
+        "siteName": _SERIALIZER.url("site_name", site_name, "str"),
+        "detectorName": _SERIALIZER.url("detector_name", detector_name, "str"),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     if start_time is not None:
-        _params['startTime'] = _SERIALIZER.query("start_time", start_time, 'iso-8601')
+        _params["startTime"] = _SERIALIZER.query("start_time", start_time, "iso-8601")
     if end_time is not None:
-        _params['endTime'] = _SERIALIZER.query("end_time", end_time, 'iso-8601')
+        _params["endTime"] = _SERIALIZER.query("end_time", end_time, "iso-8601")
     if time_grain is not None:
-        _params['timeGrain'] = _SERIALIZER.query("time_grain", time_grain, 'str', pattern=r'PT[1-9][0-9]+[SMH]')
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+        _params["timeGrain"] = _SERIALIZER.query("time_grain", time_grain, "str", pattern=r"PT[1-9][0-9]+[SMH]")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_list_site_diagnostic_categories_request(
-    resource_group_name: str,
-    site_name: str,
-    subscription_id: str,
-    **kwargs: Any
+    resource_group_name: str, site_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-12-01"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
+    api_version: Literal["2020-12-01"] = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/diagnostics")  # pylint: disable=line-too-long
+    _url = kwargs.pop(
+        "template_url",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/diagnostics",
+    )  # pylint: disable=line-too-long
     path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
-        "siteName": _SERIALIZER.url("site_name", site_name, 'str'),
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name",
+            resource_group_name,
+            "str",
+            max_length=90,
+            min_length=1,
+            pattern=r"^[-\w\._\(\)]+[^\.]$",
+        ),
+        "siteName": _SERIALIZER.url("site_name", site_name, "str"),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_get_site_diagnostic_category_request(
-    resource_group_name: str,
-    site_name: str,
-    diagnostic_category: str,
-    subscription_id: str,
-    **kwargs: Any
+    resource_group_name: str, site_name: str, diagnostic_category: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-12-01"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
+    api_version: Literal["2020-12-01"] = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/diagnostics/{diagnosticCategory}")  # pylint: disable=line-too-long
+    _url = kwargs.pop(
+        "template_url",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/diagnostics/{diagnosticCategory}",
+    )  # pylint: disable=line-too-long
     path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
-        "siteName": _SERIALIZER.url("site_name", site_name, 'str'),
-        "diagnosticCategory": _SERIALIZER.url("diagnostic_category", diagnostic_category, 'str'),
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name",
+            resource_group_name,
+            "str",
+            max_length=90,
+            min_length=1,
+            pattern=r"^[-\w\._\(\)]+[^\.]$",
+        ),
+        "siteName": _SERIALIZER.url("site_name", site_name, "str"),
+        "diagnosticCategory": _SERIALIZER.url("diagnostic_category", diagnostic_category, "str"),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_list_site_analyses_request(
-    resource_group_name: str,
-    site_name: str,
-    diagnostic_category: str,
-    subscription_id: str,
-    **kwargs: Any
+    resource_group_name: str, site_name: str, diagnostic_category: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-12-01"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
+    api_version: Literal["2020-12-01"] = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/diagnostics/{diagnosticCategory}/analyses")  # pylint: disable=line-too-long
+    _url = kwargs.pop(
+        "template_url",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/diagnostics/{diagnosticCategory}/analyses",
+    )  # pylint: disable=line-too-long
     path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
-        "siteName": _SERIALIZER.url("site_name", site_name, 'str'),
-        "diagnosticCategory": _SERIALIZER.url("diagnostic_category", diagnostic_category, 'str'),
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name",
+            resource_group_name,
+            "str",
+            max_length=90,
+            min_length=1,
+            pattern=r"^[-\w\._\(\)]+[^\.]$",
+        ),
+        "siteName": _SERIALIZER.url("site_name", site_name, "str"),
+        "diagnosticCategory": _SERIALIZER.url("diagnostic_category", diagnostic_category, "str"),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_get_site_analysis_request(
@@ -326,34 +351,38 @@ def build_get_site_analysis_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-12-01"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
+    api_version: Literal["2020-12-01"] = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/diagnostics/{diagnosticCategory}/analyses/{analysisName}")  # pylint: disable=line-too-long
+    _url = kwargs.pop(
+        "template_url",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/diagnostics/{diagnosticCategory}/analyses/{analysisName}",
+    )  # pylint: disable=line-too-long
     path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
-        "siteName": _SERIALIZER.url("site_name", site_name, 'str'),
-        "diagnosticCategory": _SERIALIZER.url("diagnostic_category", diagnostic_category, 'str'),
-        "analysisName": _SERIALIZER.url("analysis_name", analysis_name, 'str'),
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name",
+            resource_group_name,
+            "str",
+            max_length=90,
+            min_length=1,
+            pattern=r"^[-\w\._\(\)]+[^\.]$",
+        ),
+        "siteName": _SERIALIZER.url("site_name", site_name, "str"),
+        "diagnosticCategory": _SERIALIZER.url("diagnostic_category", diagnostic_category, "str"),
+        "analysisName": _SERIALIZER.url("analysis_name", analysis_name, "str"),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_execute_site_analysis_request(
@@ -371,79 +400,83 @@ def build_execute_site_analysis_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-12-01"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
+    api_version: Literal["2020-12-01"] = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/diagnostics/{diagnosticCategory}/analyses/{analysisName}/execute")  # pylint: disable=line-too-long
+    _url = kwargs.pop(
+        "template_url",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/diagnostics/{diagnosticCategory}/analyses/{analysisName}/execute",
+    )  # pylint: disable=line-too-long
     path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
-        "siteName": _SERIALIZER.url("site_name", site_name, 'str'),
-        "diagnosticCategory": _SERIALIZER.url("diagnostic_category", diagnostic_category, 'str'),
-        "analysisName": _SERIALIZER.url("analysis_name", analysis_name, 'str'),
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name",
+            resource_group_name,
+            "str",
+            max_length=90,
+            min_length=1,
+            pattern=r"^[-\w\._\(\)]+[^\.]$",
+        ),
+        "siteName": _SERIALIZER.url("site_name", site_name, "str"),
+        "diagnosticCategory": _SERIALIZER.url("diagnostic_category", diagnostic_category, "str"),
+        "analysisName": _SERIALIZER.url("analysis_name", analysis_name, "str"),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     if start_time is not None:
-        _params['startTime'] = _SERIALIZER.query("start_time", start_time, 'iso-8601')
+        _params["startTime"] = _SERIALIZER.query("start_time", start_time, "iso-8601")
     if end_time is not None:
-        _params['endTime'] = _SERIALIZER.query("end_time", end_time, 'iso-8601')
+        _params["endTime"] = _SERIALIZER.query("end_time", end_time, "iso-8601")
     if time_grain is not None:
-        _params['timeGrain'] = _SERIALIZER.query("time_grain", time_grain, 'str', pattern=r'PT[1-9][0-9]+[SMH]')
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+        _params["timeGrain"] = _SERIALIZER.query("time_grain", time_grain, "str", pattern=r"PT[1-9][0-9]+[SMH]")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="POST",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_list_site_detectors_request(
-    resource_group_name: str,
-    site_name: str,
-    diagnostic_category: str,
-    subscription_id: str,
-    **kwargs: Any
+    resource_group_name: str, site_name: str, diagnostic_category: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-12-01"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
+    api_version: Literal["2020-12-01"] = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/diagnostics/{diagnosticCategory}/detectors")  # pylint: disable=line-too-long
+    _url = kwargs.pop(
+        "template_url",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/diagnostics/{diagnosticCategory}/detectors",
+    )  # pylint: disable=line-too-long
     path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
-        "siteName": _SERIALIZER.url("site_name", site_name, 'str'),
-        "diagnosticCategory": _SERIALIZER.url("diagnostic_category", diagnostic_category, 'str'),
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name",
+            resource_group_name,
+            "str",
+            max_length=90,
+            min_length=1,
+            pattern=r"^[-\w\._\(\)]+[^\.]$",
+        ),
+        "siteName": _SERIALIZER.url("site_name", site_name, "str"),
+        "diagnosticCategory": _SERIALIZER.url("diagnostic_category", diagnostic_category, "str"),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_get_site_detector_request(
@@ -457,34 +490,38 @@ def build_get_site_detector_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-12-01"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
+    api_version: Literal["2020-12-01"] = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/diagnostics/{diagnosticCategory}/detectors/{detectorName}")  # pylint: disable=line-too-long
+    _url = kwargs.pop(
+        "template_url",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/diagnostics/{diagnosticCategory}/detectors/{detectorName}",
+    )  # pylint: disable=line-too-long
     path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
-        "siteName": _SERIALIZER.url("site_name", site_name, 'str'),
-        "diagnosticCategory": _SERIALIZER.url("diagnostic_category", diagnostic_category, 'str'),
-        "detectorName": _SERIALIZER.url("detector_name", detector_name, 'str'),
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name",
+            resource_group_name,
+            "str",
+            max_length=90,
+            min_length=1,
+            pattern=r"^[-\w\._\(\)]+[^\.]$",
+        ),
+        "siteName": _SERIALIZER.url("site_name", site_name, "str"),
+        "diagnosticCategory": _SERIALIZER.url("diagnostic_category", diagnostic_category, "str"),
+        "detectorName": _SERIALIZER.url("detector_name", detector_name, "str"),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_execute_site_detector_request(
@@ -502,79 +539,83 @@ def build_execute_site_detector_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-12-01"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
+    api_version: Literal["2020-12-01"] = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/diagnostics/{diagnosticCategory}/detectors/{detectorName}/execute")  # pylint: disable=line-too-long
+    _url = kwargs.pop(
+        "template_url",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/diagnostics/{diagnosticCategory}/detectors/{detectorName}/execute",
+    )  # pylint: disable=line-too-long
     path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
-        "siteName": _SERIALIZER.url("site_name", site_name, 'str'),
-        "detectorName": _SERIALIZER.url("detector_name", detector_name, 'str'),
-        "diagnosticCategory": _SERIALIZER.url("diagnostic_category", diagnostic_category, 'str'),
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name",
+            resource_group_name,
+            "str",
+            max_length=90,
+            min_length=1,
+            pattern=r"^[-\w\._\(\)]+[^\.]$",
+        ),
+        "siteName": _SERIALIZER.url("site_name", site_name, "str"),
+        "detectorName": _SERIALIZER.url("detector_name", detector_name, "str"),
+        "diagnosticCategory": _SERIALIZER.url("diagnostic_category", diagnostic_category, "str"),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     if start_time is not None:
-        _params['startTime'] = _SERIALIZER.query("start_time", start_time, 'iso-8601')
+        _params["startTime"] = _SERIALIZER.query("start_time", start_time, "iso-8601")
     if end_time is not None:
-        _params['endTime'] = _SERIALIZER.query("end_time", end_time, 'iso-8601')
+        _params["endTime"] = _SERIALIZER.query("end_time", end_time, "iso-8601")
     if time_grain is not None:
-        _params['timeGrain'] = _SERIALIZER.query("time_grain", time_grain, 'str', pattern=r'PT[1-9][0-9]+[SMH]')
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+        _params["timeGrain"] = _SERIALIZER.query("time_grain", time_grain, "str", pattern=r"PT[1-9][0-9]+[SMH]")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="POST",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_list_site_detector_responses_slot_request(
-    resource_group_name: str,
-    site_name: str,
-    slot: str,
-    subscription_id: str,
-    **kwargs: Any
+    resource_group_name: str, site_name: str, slot: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-12-01"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
+    api_version: Literal["2020-12-01"] = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slot}/detectors")  # pylint: disable=line-too-long
+    _url = kwargs.pop(
+        "template_url",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slot}/detectors",
+    )  # pylint: disable=line-too-long
     path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
-        "siteName": _SERIALIZER.url("site_name", site_name, 'str'),
-        "slot": _SERIALIZER.url("slot", slot, 'str'),
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name",
+            resource_group_name,
+            "str",
+            max_length=90,
+            min_length=1,
+            pattern=r"^[-\w\._\(\)]+[^\.]$",
+        ),
+        "siteName": _SERIALIZER.url("site_name", site_name, "str"),
+        "slot": _SERIALIZER.url("slot", slot, "str"),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_get_site_detector_response_slot_request(
@@ -592,161 +633,163 @@ def build_get_site_detector_response_slot_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-12-01"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
+    api_version: Literal["2020-12-01"] = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slot}/detectors/{detectorName}")  # pylint: disable=line-too-long
+    _url = kwargs.pop(
+        "template_url",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slot}/detectors/{detectorName}",
+    )  # pylint: disable=line-too-long
     path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
-        "siteName": _SERIALIZER.url("site_name", site_name, 'str'),
-        "detectorName": _SERIALIZER.url("detector_name", detector_name, 'str'),
-        "slot": _SERIALIZER.url("slot", slot, 'str'),
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name",
+            resource_group_name,
+            "str",
+            max_length=90,
+            min_length=1,
+            pattern=r"^[-\w\._\(\)]+[^\.]$",
+        ),
+        "siteName": _SERIALIZER.url("site_name", site_name, "str"),
+        "detectorName": _SERIALIZER.url("detector_name", detector_name, "str"),
+        "slot": _SERIALIZER.url("slot", slot, "str"),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     if start_time is not None:
-        _params['startTime'] = _SERIALIZER.query("start_time", start_time, 'iso-8601')
+        _params["startTime"] = _SERIALIZER.query("start_time", start_time, "iso-8601")
     if end_time is not None:
-        _params['endTime'] = _SERIALIZER.query("end_time", end_time, 'iso-8601')
+        _params["endTime"] = _SERIALIZER.query("end_time", end_time, "iso-8601")
     if time_grain is not None:
-        _params['timeGrain'] = _SERIALIZER.query("time_grain", time_grain, 'str', pattern=r'PT[1-9][0-9]+[SMH]')
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+        _params["timeGrain"] = _SERIALIZER.query("time_grain", time_grain, "str", pattern=r"PT[1-9][0-9]+[SMH]")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_list_site_diagnostic_categories_slot_request(
-    resource_group_name: str,
-    site_name: str,
-    slot: str,
-    subscription_id: str,
-    **kwargs: Any
+    resource_group_name: str, site_name: str, slot: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-12-01"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
+    api_version: Literal["2020-12-01"] = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slot}/diagnostics")  # pylint: disable=line-too-long
+    _url = kwargs.pop(
+        "template_url",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slot}/diagnostics",
+    )  # pylint: disable=line-too-long
     path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
-        "siteName": _SERIALIZER.url("site_name", site_name, 'str'),
-        "slot": _SERIALIZER.url("slot", slot, 'str'),
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name",
+            resource_group_name,
+            "str",
+            max_length=90,
+            min_length=1,
+            pattern=r"^[-\w\._\(\)]+[^\.]$",
+        ),
+        "siteName": _SERIALIZER.url("site_name", site_name, "str"),
+        "slot": _SERIALIZER.url("slot", slot, "str"),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_get_site_diagnostic_category_slot_request(
-    resource_group_name: str,
-    site_name: str,
-    diagnostic_category: str,
-    slot: str,
-    subscription_id: str,
-    **kwargs: Any
+    resource_group_name: str, site_name: str, diagnostic_category: str, slot: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-12-01"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
+    api_version: Literal["2020-12-01"] = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slot}/diagnostics/{diagnosticCategory}")  # pylint: disable=line-too-long
+    _url = kwargs.pop(
+        "template_url",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slot}/diagnostics/{diagnosticCategory}",
+    )  # pylint: disable=line-too-long
     path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
-        "siteName": _SERIALIZER.url("site_name", site_name, 'str'),
-        "diagnosticCategory": _SERIALIZER.url("diagnostic_category", diagnostic_category, 'str'),
-        "slot": _SERIALIZER.url("slot", slot, 'str'),
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name",
+            resource_group_name,
+            "str",
+            max_length=90,
+            min_length=1,
+            pattern=r"^[-\w\._\(\)]+[^\.]$",
+        ),
+        "siteName": _SERIALIZER.url("site_name", site_name, "str"),
+        "diagnosticCategory": _SERIALIZER.url("diagnostic_category", diagnostic_category, "str"),
+        "slot": _SERIALIZER.url("slot", slot, "str"),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_list_site_analyses_slot_request(
-    resource_group_name: str,
-    site_name: str,
-    diagnostic_category: str,
-    slot: str,
-    subscription_id: str,
-    **kwargs: Any
+    resource_group_name: str, site_name: str, diagnostic_category: str, slot: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-12-01"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
+    api_version: Literal["2020-12-01"] = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slot}/diagnostics/{diagnosticCategory}/analyses")  # pylint: disable=line-too-long
+    _url = kwargs.pop(
+        "template_url",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slot}/diagnostics/{diagnosticCategory}/analyses",
+    )  # pylint: disable=line-too-long
     path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
-        "siteName": _SERIALIZER.url("site_name", site_name, 'str'),
-        "diagnosticCategory": _SERIALIZER.url("diagnostic_category", diagnostic_category, 'str'),
-        "slot": _SERIALIZER.url("slot", slot, 'str'),
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name",
+            resource_group_name,
+            "str",
+            max_length=90,
+            min_length=1,
+            pattern=r"^[-\w\._\(\)]+[^\.]$",
+        ),
+        "siteName": _SERIALIZER.url("site_name", site_name, "str"),
+        "diagnosticCategory": _SERIALIZER.url("diagnostic_category", diagnostic_category, "str"),
+        "slot": _SERIALIZER.url("slot", slot, "str"),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_get_site_analysis_slot_request(
@@ -761,35 +804,39 @@ def build_get_site_analysis_slot_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-12-01"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
+    api_version: Literal["2020-12-01"] = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slot}/diagnostics/{diagnosticCategory}/analyses/{analysisName}")  # pylint: disable=line-too-long
+    _url = kwargs.pop(
+        "template_url",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slot}/diagnostics/{diagnosticCategory}/analyses/{analysisName}",
+    )  # pylint: disable=line-too-long
     path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
-        "siteName": _SERIALIZER.url("site_name", site_name, 'str'),
-        "diagnosticCategory": _SERIALIZER.url("diagnostic_category", diagnostic_category, 'str'),
-        "analysisName": _SERIALIZER.url("analysis_name", analysis_name, 'str'),
-        "slot": _SERIALIZER.url("slot", slot, 'str'),
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name",
+            resource_group_name,
+            "str",
+            max_length=90,
+            min_length=1,
+            pattern=r"^[-\w\._\(\)]+[^\.]$",
+        ),
+        "siteName": _SERIALIZER.url("site_name", site_name, "str"),
+        "diagnosticCategory": _SERIALIZER.url("diagnostic_category", diagnostic_category, "str"),
+        "analysisName": _SERIALIZER.url("analysis_name", analysis_name, "str"),
+        "slot": _SERIALIZER.url("slot", slot, "str"),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_execute_site_analysis_slot_request(
@@ -808,82 +855,85 @@ def build_execute_site_analysis_slot_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-12-01"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
+    api_version: Literal["2020-12-01"] = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slot}/diagnostics/{diagnosticCategory}/analyses/{analysisName}/execute")  # pylint: disable=line-too-long
+    _url = kwargs.pop(
+        "template_url",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slot}/diagnostics/{diagnosticCategory}/analyses/{analysisName}/execute",
+    )  # pylint: disable=line-too-long
     path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
-        "siteName": _SERIALIZER.url("site_name", site_name, 'str'),
-        "diagnosticCategory": _SERIALIZER.url("diagnostic_category", diagnostic_category, 'str'),
-        "analysisName": _SERIALIZER.url("analysis_name", analysis_name, 'str'),
-        "slot": _SERIALIZER.url("slot", slot, 'str'),
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name",
+            resource_group_name,
+            "str",
+            max_length=90,
+            min_length=1,
+            pattern=r"^[-\w\._\(\)]+[^\.]$",
+        ),
+        "siteName": _SERIALIZER.url("site_name", site_name, "str"),
+        "diagnosticCategory": _SERIALIZER.url("diagnostic_category", diagnostic_category, "str"),
+        "analysisName": _SERIALIZER.url("analysis_name", analysis_name, "str"),
+        "slot": _SERIALIZER.url("slot", slot, "str"),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     if start_time is not None:
-        _params['startTime'] = _SERIALIZER.query("start_time", start_time, 'iso-8601')
+        _params["startTime"] = _SERIALIZER.query("start_time", start_time, "iso-8601")
     if end_time is not None:
-        _params['endTime'] = _SERIALIZER.query("end_time", end_time, 'iso-8601')
+        _params["endTime"] = _SERIALIZER.query("end_time", end_time, "iso-8601")
     if time_grain is not None:
-        _params['timeGrain'] = _SERIALIZER.query("time_grain", time_grain, 'str', pattern=r'PT[1-9][0-9]+[SMH]')
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+        _params["timeGrain"] = _SERIALIZER.query("time_grain", time_grain, "str", pattern=r"PT[1-9][0-9]+[SMH]")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="POST",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_list_site_detectors_slot_request(
-    resource_group_name: str,
-    site_name: str,
-    diagnostic_category: str,
-    slot: str,
-    subscription_id: str,
-    **kwargs: Any
+    resource_group_name: str, site_name: str, diagnostic_category: str, slot: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-12-01"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
+    api_version: Literal["2020-12-01"] = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slot}/diagnostics/{diagnosticCategory}/detectors")  # pylint: disable=line-too-long
+    _url = kwargs.pop(
+        "template_url",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slot}/diagnostics/{diagnosticCategory}/detectors",
+    )  # pylint: disable=line-too-long
     path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
-        "siteName": _SERIALIZER.url("site_name", site_name, 'str'),
-        "diagnosticCategory": _SERIALIZER.url("diagnostic_category", diagnostic_category, 'str'),
-        "slot": _SERIALIZER.url("slot", slot, 'str'),
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name",
+            resource_group_name,
+            "str",
+            max_length=90,
+            min_length=1,
+            pattern=r"^[-\w\._\(\)]+[^\.]$",
+        ),
+        "siteName": _SERIALIZER.url("site_name", site_name, "str"),
+        "diagnosticCategory": _SERIALIZER.url("diagnostic_category", diagnostic_category, "str"),
+        "slot": _SERIALIZER.url("slot", slot, "str"),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_get_site_detector_slot_request(
@@ -898,35 +948,39 @@ def build_get_site_detector_slot_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-12-01"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
+    api_version: Literal["2020-12-01"] = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slot}/diagnostics/{diagnosticCategory}/detectors/{detectorName}")  # pylint: disable=line-too-long
+    _url = kwargs.pop(
+        "template_url",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slot}/diagnostics/{diagnosticCategory}/detectors/{detectorName}",
+    )  # pylint: disable=line-too-long
     path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
-        "siteName": _SERIALIZER.url("site_name", site_name, 'str'),
-        "diagnosticCategory": _SERIALIZER.url("diagnostic_category", diagnostic_category, 'str'),
-        "detectorName": _SERIALIZER.url("detector_name", detector_name, 'str'),
-        "slot": _SERIALIZER.url("slot", slot, 'str'),
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name",
+            resource_group_name,
+            "str",
+            max_length=90,
+            min_length=1,
+            pattern=r"^[-\w\._\(\)]+[^\.]$",
+        ),
+        "siteName": _SERIALIZER.url("site_name", site_name, "str"),
+        "diagnosticCategory": _SERIALIZER.url("diagnostic_category", diagnostic_category, "str"),
+        "detectorName": _SERIALIZER.url("detector_name", detector_name, "str"),
+        "slot": _SERIALIZER.url("slot", slot, "str"),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_execute_site_detector_slot_request(
@@ -945,41 +999,46 @@ def build_execute_site_detector_slot_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-12-01"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
+    api_version: Literal["2020-12-01"] = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slot}/diagnostics/{diagnosticCategory}/detectors/{detectorName}/execute")  # pylint: disable=line-too-long
+    _url = kwargs.pop(
+        "template_url",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slot}/diagnostics/{diagnosticCategory}/detectors/{detectorName}/execute",
+    )  # pylint: disable=line-too-long
     path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
-        "siteName": _SERIALIZER.url("site_name", site_name, 'str'),
-        "detectorName": _SERIALIZER.url("detector_name", detector_name, 'str'),
-        "diagnosticCategory": _SERIALIZER.url("diagnostic_category", diagnostic_category, 'str'),
-        "slot": _SERIALIZER.url("slot", slot, 'str'),
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name",
+            resource_group_name,
+            "str",
+            max_length=90,
+            min_length=1,
+            pattern=r"^[-\w\._\(\)]+[^\.]$",
+        ),
+        "siteName": _SERIALIZER.url("site_name", site_name, "str"),
+        "detectorName": _SERIALIZER.url("detector_name", detector_name, "str"),
+        "diagnosticCategory": _SERIALIZER.url("diagnostic_category", diagnostic_category, "str"),
+        "slot": _SERIALIZER.url("slot", slot, "str"),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     if start_time is not None:
-        _params['startTime'] = _SERIALIZER.query("start_time", start_time, 'iso-8601')
+        _params["startTime"] = _SERIALIZER.query("start_time", start_time, "iso-8601")
     if end_time is not None:
-        _params['endTime'] = _SERIALIZER.query("end_time", end_time, 'iso-8601')
+        _params["endTime"] = _SERIALIZER.query("end_time", end_time, "iso-8601")
     if time_grain is not None:
-        _params['timeGrain'] = _SERIALIZER.query("time_grain", time_grain, 'str', pattern=r'PT[1-9][0-9]+[SMH]')
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+        _params["timeGrain"] = _SERIALIZER.query("time_grain", time_grain, "str", pattern=r"PT[1-9][0-9]+[SMH]")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="POST",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
 
 class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
     """
@@ -1000,67 +1059,67 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-
     @distributed_trace
     def list_hosting_environment_detector_responses(
-        self,
-        resource_group_name: str,
-        name: str,
-        **kwargs: Any
-    ) -> Iterable[_models.DetectorResponseCollection]:
+        self, resource_group_name: str, name: str, **kwargs: Any
+    ) -> Iterable["_models.DetectorResponse"]:
         """List Hosting Environment Detector Responses.
 
         List Hosting Environment Detector Responses.
 
-        :param resource_group_name: Name of the resource group to which the resource belongs.
+        :param resource_group_name: Name of the resource group to which the resource belongs. Required.
         :type resource_group_name: str
-        :param name: Site Name.
+        :param name: Site Name. Required.
         :type name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either DetectorResponseCollection or the result of
-         cls(response)
-        :rtype:
-         ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2020_12_01.models.DetectorResponseCollection]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :return: An iterator like instance of either DetectorResponse or the result of cls(response)
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2020_12_01.models.DetectorResponse]
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-12-01"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.DetectorResponseCollection]
+        api_version: Literal["2020-12-01"] = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
+        cls: ClsType[_models.DetectorResponseCollection] = kwargs.pop("cls", None)
 
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_list_hosting_environment_detector_responses_request(
                     resource_group_name=resource_group_name,
                     name=name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list_hosting_environment_detector_responses.metadata['url'],
+                    template_url=self.list_hosting_environment_detector_responses.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             else:
-                
-                request = build_list_hosting_environment_detector_responses_request(
-                    resource_group_name=resource_group_name,
-                    name=name,
-                    subscription_id=self._config.subscription_id,
-                    api_version=api_version,
-                    template_url=next_link,
-                    headers=_headers,
-                    params=_params,
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
                 request.method = "GET"
             return request
 
@@ -1068,16 +1127,15 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
             deserialized = self._deserialize("DetectorResponseCollection", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
-                request,
-                stream=False,
-                **kwargs
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -1088,11 +1146,11 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
 
             return pipeline_response
 
+        return ItemPaged(get_next, extract_data)
 
-        return ItemPaged(
-            get_next, extract_data
-        )
-    list_hosting_environment_detector_responses.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/detectors"}  # type: ignore
+    list_hosting_environment_detector_responses.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/detectors"
+    }
 
     @distributed_trace
     def get_hosting_environment_detector_response(
@@ -1109,11 +1167,11 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
 
         Get Hosting Environment Detector Response.
 
-        :param resource_group_name: Name of the resource group to which the resource belongs.
+        :param resource_group_name: Name of the resource group to which the resource belongs. Required.
         :type resource_group_name: str
-        :param name: App Service Environment Name.
+        :param name: App Service Environment Name. Required.
         :type name: str
-        :param detector_name: Detector Resource Name.
+        :param detector_name: Detector Resource Name. Required.
         :type detector_name: str
         :param start_time: Start Time. Default value is None.
         :type start_time: ~datetime.datetime
@@ -1122,43 +1180,45 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
         :param time_grain: Time Grain. Default value is None.
         :type time_grain: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: DetectorResponse, or the result of cls(response)
+        :return: DetectorResponse or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2020_12_01.models.DetectorResponse
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-12-01"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.DetectorResponse]
+        api_version: Literal["2020-12-01"] = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
+        cls: ClsType[_models.DetectorResponse] = kwargs.pop("cls", None)
 
-        
         request = build_get_hosting_environment_detector_response_request(
             resource_group_name=resource_group_name,
             name=name,
             detector_name=detector_name,
             subscription_id=self._config.subscription_id,
-            api_version=api_version,
             start_time=start_time,
             end_time=end_time,
             time_grain=time_grain,
-            template_url=self.get_hosting_environment_detector_response.metadata['url'],
+            api_version=api_version,
+            template_url=self.get_hosting_environment_detector_response.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -1166,76 +1226,78 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('DetectorResponse', pipeline_response)
+        deserialized = self._deserialize("DetectorResponse", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get_hosting_environment_detector_response.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/detectors/{detectorName}"}  # type: ignore
-
+    get_hosting_environment_detector_response.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/detectors/{detectorName}"
+    }
 
     @distributed_trace
     def list_site_detector_responses(
-        self,
-        resource_group_name: str,
-        site_name: str,
-        **kwargs: Any
-    ) -> Iterable[_models.DetectorResponseCollection]:
+        self, resource_group_name: str, site_name: str, **kwargs: Any
+    ) -> Iterable["_models.DetectorResponse"]:
         """List Site Detector Responses.
 
         List Site Detector Responses.
 
-        :param resource_group_name: Name of the resource group to which the resource belongs.
+        :param resource_group_name: Name of the resource group to which the resource belongs. Required.
         :type resource_group_name: str
-        :param site_name: Site Name.
+        :param site_name: Site Name. Required.
         :type site_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either DetectorResponseCollection or the result of
-         cls(response)
-        :rtype:
-         ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2020_12_01.models.DetectorResponseCollection]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :return: An iterator like instance of either DetectorResponse or the result of cls(response)
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2020_12_01.models.DetectorResponse]
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-12-01"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.DetectorResponseCollection]
+        api_version: Literal["2020-12-01"] = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
+        cls: ClsType[_models.DetectorResponseCollection] = kwargs.pop("cls", None)
 
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_list_site_detector_responses_request(
                     resource_group_name=resource_group_name,
                     site_name=site_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list_site_detector_responses.metadata['url'],
+                    template_url=self.list_site_detector_responses.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             else:
-                
-                request = build_list_site_detector_responses_request(
-                    resource_group_name=resource_group_name,
-                    site_name=site_name,
-                    subscription_id=self._config.subscription_id,
-                    api_version=api_version,
-                    template_url=next_link,
-                    headers=_headers,
-                    params=_params,
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
                 request.method = "GET"
             return request
 
@@ -1243,16 +1305,15 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
             deserialized = self._deserialize("DetectorResponseCollection", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
-                request,
-                stream=False,
-                **kwargs
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -1263,11 +1324,11 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
 
             return pipeline_response
 
+        return ItemPaged(get_next, extract_data)
 
-        return ItemPaged(
-            get_next, extract_data
-        )
-    list_site_detector_responses.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/detectors"}  # type: ignore
+    list_site_detector_responses.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/detectors"
+    }
 
     @distributed_trace
     def get_site_detector_response(
@@ -1284,11 +1345,11 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
 
         Get site detector response.
 
-        :param resource_group_name: Name of the resource group to which the resource belongs.
+        :param resource_group_name: Name of the resource group to which the resource belongs. Required.
         :type resource_group_name: str
-        :param site_name: Site Name.
+        :param site_name: Site Name. Required.
         :type site_name: str
-        :param detector_name: Detector Resource Name.
+        :param detector_name: Detector Resource Name. Required.
         :type detector_name: str
         :param start_time: Start Time. Default value is None.
         :type start_time: ~datetime.datetime
@@ -1297,43 +1358,45 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
         :param time_grain: Time Grain. Default value is None.
         :type time_grain: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: DetectorResponse, or the result of cls(response)
+        :return: DetectorResponse or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2020_12_01.models.DetectorResponse
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-12-01"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.DetectorResponse]
+        api_version: Literal["2020-12-01"] = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
+        cls: ClsType[_models.DetectorResponse] = kwargs.pop("cls", None)
 
-        
         request = build_get_site_detector_response_request(
             resource_group_name=resource_group_name,
             site_name=site_name,
             detector_name=detector_name,
             subscription_id=self._config.subscription_id,
-            api_version=api_version,
             start_time=start_time,
             end_time=end_time,
             time_grain=time_grain,
-            template_url=self.get_site_detector_response.metadata['url'],
+            api_version=api_version,
+            template_url=self.get_site_detector_response.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -1341,76 +1404,78 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('DetectorResponse', pipeline_response)
+        deserialized = self._deserialize("DetectorResponse", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get_site_detector_response.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/detectors/{detectorName}"}  # type: ignore
-
+    get_site_detector_response.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/detectors/{detectorName}"
+    }
 
     @distributed_trace
     def list_site_diagnostic_categories(
-        self,
-        resource_group_name: str,
-        site_name: str,
-        **kwargs: Any
-    ) -> Iterable[_models.DiagnosticCategoryCollection]:
+        self, resource_group_name: str, site_name: str, **kwargs: Any
+    ) -> Iterable["_models.DiagnosticCategory"]:
         """Get Diagnostics Categories.
 
         Get Diagnostics Categories.
 
-        :param resource_group_name: Name of the resource group to which the resource belongs.
+        :param resource_group_name: Name of the resource group to which the resource belongs. Required.
         :type resource_group_name: str
-        :param site_name: Site Name.
+        :param site_name: Site Name. Required.
         :type site_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either DiagnosticCategoryCollection or the result of
-         cls(response)
-        :rtype:
-         ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2020_12_01.models.DiagnosticCategoryCollection]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :return: An iterator like instance of either DiagnosticCategory or the result of cls(response)
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2020_12_01.models.DiagnosticCategory]
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-12-01"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.DiagnosticCategoryCollection]
+        api_version: Literal["2020-12-01"] = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
+        cls: ClsType[_models.DiagnosticCategoryCollection] = kwargs.pop("cls", None)
 
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_list_site_diagnostic_categories_request(
                     resource_group_name=resource_group_name,
                     site_name=site_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list_site_diagnostic_categories.metadata['url'],
+                    template_url=self.list_site_diagnostic_categories.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             else:
-                
-                request = build_list_site_diagnostic_categories_request(
-                    resource_group_name=resource_group_name,
-                    site_name=site_name,
-                    subscription_id=self._config.subscription_id,
-                    api_version=api_version,
-                    template_url=next_link,
-                    headers=_headers,
-                    params=_params,
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
                 request.method = "GET"
             return request
 
@@ -1418,16 +1483,15 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
             deserialized = self._deserialize("DiagnosticCategoryCollection", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
-                request,
-                stream=False,
-                **kwargs
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -1438,65 +1502,63 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
 
             return pipeline_response
 
+        return ItemPaged(get_next, extract_data)
 
-        return ItemPaged(
-            get_next, extract_data
-        )
-    list_site_diagnostic_categories.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/diagnostics"}  # type: ignore
+    list_site_diagnostic_categories.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/diagnostics"
+    }
 
     @distributed_trace
     def get_site_diagnostic_category(
-        self,
-        resource_group_name: str,
-        site_name: str,
-        diagnostic_category: str,
-        **kwargs: Any
+        self, resource_group_name: str, site_name: str, diagnostic_category: str, **kwargs: Any
     ) -> _models.DiagnosticCategory:
         """Get Diagnostics Category.
 
         Get Diagnostics Category.
 
-        :param resource_group_name: Name of the resource group to which the resource belongs.
+        :param resource_group_name: Name of the resource group to which the resource belongs. Required.
         :type resource_group_name: str
-        :param site_name: Site Name.
+        :param site_name: Site Name. Required.
         :type site_name: str
-        :param diagnostic_category: Diagnostic Category.
+        :param diagnostic_category: Diagnostic Category. Required.
         :type diagnostic_category: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: DiagnosticCategory, or the result of cls(response)
+        :return: DiagnosticCategory or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2020_12_01.models.DiagnosticCategory
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-12-01"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.DiagnosticCategory]
+        api_version: Literal["2020-12-01"] = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
+        cls: ClsType[_models.DiagnosticCategory] = kwargs.pop("cls", None)
 
-        
         request = build_get_site_diagnostic_category_request(
             resource_group_name=resource_group_name,
             site_name=site_name,
             diagnostic_category=diagnostic_category,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get_site_diagnostic_category.metadata['url'],
+            template_url=self.get_site_diagnostic_category.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -1504,81 +1566,81 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('DiagnosticCategory', pipeline_response)
+        deserialized = self._deserialize("DiagnosticCategory", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get_site_diagnostic_category.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/diagnostics/{diagnosticCategory}"}  # type: ignore
-
+    get_site_diagnostic_category.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/diagnostics/{diagnosticCategory}"
+    }
 
     @distributed_trace
     def list_site_analyses(
-        self,
-        resource_group_name: str,
-        site_name: str,
-        diagnostic_category: str,
-        **kwargs: Any
-    ) -> Iterable[_models.DiagnosticAnalysisCollection]:
+        self, resource_group_name: str, site_name: str, diagnostic_category: str, **kwargs: Any
+    ) -> Iterable["_models.AnalysisDefinition"]:
         """Get Site Analyses.
 
         Get Site Analyses.
 
-        :param resource_group_name: Name of the resource group to which the resource belongs.
+        :param resource_group_name: Name of the resource group to which the resource belongs. Required.
         :type resource_group_name: str
-        :param site_name: Site Name.
+        :param site_name: Site Name. Required.
         :type site_name: str
-        :param diagnostic_category: Diagnostic Category.
+        :param diagnostic_category: Diagnostic Category. Required.
         :type diagnostic_category: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either DiagnosticAnalysisCollection or the result of
-         cls(response)
-        :rtype:
-         ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2020_12_01.models.DiagnosticAnalysisCollection]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :return: An iterator like instance of either AnalysisDefinition or the result of cls(response)
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2020_12_01.models.AnalysisDefinition]
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-12-01"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.DiagnosticAnalysisCollection]
+        api_version: Literal["2020-12-01"] = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
+        cls: ClsType[_models.DiagnosticAnalysisCollection] = kwargs.pop("cls", None)
 
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_list_site_analyses_request(
                     resource_group_name=resource_group_name,
                     site_name=site_name,
                     diagnostic_category=diagnostic_category,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list_site_analyses.metadata['url'],
+                    template_url=self.list_site_analyses.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             else:
-                
-                request = build_list_site_analyses_request(
-                    resource_group_name=resource_group_name,
-                    site_name=site_name,
-                    diagnostic_category=diagnostic_category,
-                    subscription_id=self._config.subscription_id,
-                    api_version=api_version,
-                    template_url=next_link,
-                    headers=_headers,
-                    params=_params,
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
                 request.method = "GET"
             return request
 
@@ -1586,16 +1648,15 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
             deserialized = self._deserialize("DiagnosticAnalysisCollection", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
-                request,
-                stream=False,
-                **kwargs
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -1606,50 +1667,47 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
 
             return pipeline_response
 
+        return ItemPaged(get_next, extract_data)
 
-        return ItemPaged(
-            get_next, extract_data
-        )
-    list_site_analyses.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/diagnostics/{diagnosticCategory}/analyses"}  # type: ignore
+    list_site_analyses.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/diagnostics/{diagnosticCategory}/analyses"
+    }
 
     @distributed_trace
     def get_site_analysis(
-        self,
-        resource_group_name: str,
-        site_name: str,
-        diagnostic_category: str,
-        analysis_name: str,
-        **kwargs: Any
+        self, resource_group_name: str, site_name: str, diagnostic_category: str, analysis_name: str, **kwargs: Any
     ) -> _models.AnalysisDefinition:
         """Get Site Analysis.
 
         Get Site Analysis.
 
-        :param resource_group_name: Name of the resource group to which the resource belongs.
+        :param resource_group_name: Name of the resource group to which the resource belongs. Required.
         :type resource_group_name: str
-        :param site_name: Site Name.
+        :param site_name: Site Name. Required.
         :type site_name: str
-        :param diagnostic_category: Diagnostic Category.
+        :param diagnostic_category: Diagnostic Category. Required.
         :type diagnostic_category: str
-        :param analysis_name: Analysis Name.
+        :param analysis_name: Analysis Name. Required.
         :type analysis_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: AnalysisDefinition, or the result of cls(response)
+        :return: AnalysisDefinition or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2020_12_01.models.AnalysisDefinition
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-12-01"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.AnalysisDefinition]
+        api_version: Literal["2020-12-01"] = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
+        cls: ClsType[_models.AnalysisDefinition] = kwargs.pop("cls", None)
 
-        
         request = build_get_site_analysis_request(
             resource_group_name=resource_group_name,
             site_name=site_name,
@@ -1657,18 +1715,18 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
             analysis_name=analysis_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get_site_analysis.metadata['url'],
+            template_url=self.get_site_analysis.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -1676,15 +1734,16 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('AnalysisDefinition', pipeline_response)
+        deserialized = self._deserialize("AnalysisDefinition", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get_site_analysis.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/diagnostics/{diagnosticCategory}/analyses/{analysisName}"}  # type: ignore
-
+    get_site_analysis.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/diagnostics/{diagnosticCategory}/analyses/{analysisName}"
+    }
 
     @distributed_trace
     def execute_site_analysis(
@@ -1702,13 +1761,13 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
 
         Execute Analysis.
 
-        :param resource_group_name: Name of the resource group to which the resource belongs.
+        :param resource_group_name: Name of the resource group to which the resource belongs. Required.
         :type resource_group_name: str
-        :param site_name: Site Name.
+        :param site_name: Site Name. Required.
         :type site_name: str
-        :param diagnostic_category: Category Name.
+        :param diagnostic_category: Category Name. Required.
         :type diagnostic_category: str
-        :param analysis_name: Analysis Resource Name.
+        :param analysis_name: Analysis Resource Name. Required.
         :type analysis_name: str
         :param start_time: Start Time. Default value is None.
         :type start_time: ~datetime.datetime
@@ -1717,44 +1776,46 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
         :param time_grain: Time Grain. Default value is None.
         :type time_grain: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: DiagnosticAnalysis, or the result of cls(response)
+        :return: DiagnosticAnalysis or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2020_12_01.models.DiagnosticAnalysis
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-12-01"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.DiagnosticAnalysis]
+        api_version: Literal["2020-12-01"] = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
+        cls: ClsType[_models.DiagnosticAnalysis] = kwargs.pop("cls", None)
 
-        
         request = build_execute_site_analysis_request(
             resource_group_name=resource_group_name,
             site_name=site_name,
             diagnostic_category=diagnostic_category,
             analysis_name=analysis_name,
             subscription_id=self._config.subscription_id,
-            api_version=api_version,
             start_time=start_time,
             end_time=end_time,
             time_grain=time_grain,
-            template_url=self.execute_site_analysis.metadata['url'],
+            api_version=api_version,
+            template_url=self.execute_site_analysis.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -1762,81 +1823,81 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('DiagnosticAnalysis', pipeline_response)
+        deserialized = self._deserialize("DiagnosticAnalysis", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    execute_site_analysis.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/diagnostics/{diagnosticCategory}/analyses/{analysisName}/execute"}  # type: ignore
-
+    execute_site_analysis.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/diagnostics/{diagnosticCategory}/analyses/{analysisName}/execute"
+    }
 
     @distributed_trace
     def list_site_detectors(
-        self,
-        resource_group_name: str,
-        site_name: str,
-        diagnostic_category: str,
-        **kwargs: Any
-    ) -> Iterable[_models.DiagnosticDetectorCollection]:
+        self, resource_group_name: str, site_name: str, diagnostic_category: str, **kwargs: Any
+    ) -> Iterable["_models.DetectorDefinition"]:
         """Get Detectors.
 
         Get Detectors.
 
-        :param resource_group_name: Name of the resource group to which the resource belongs.
+        :param resource_group_name: Name of the resource group to which the resource belongs. Required.
         :type resource_group_name: str
-        :param site_name: Site Name.
+        :param site_name: Site Name. Required.
         :type site_name: str
-        :param diagnostic_category: Diagnostic Category.
+        :param diagnostic_category: Diagnostic Category. Required.
         :type diagnostic_category: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either DiagnosticDetectorCollection or the result of
-         cls(response)
-        :rtype:
-         ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2020_12_01.models.DiagnosticDetectorCollection]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :return: An iterator like instance of either DetectorDefinition or the result of cls(response)
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2020_12_01.models.DetectorDefinition]
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-12-01"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.DiagnosticDetectorCollection]
+        api_version: Literal["2020-12-01"] = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
+        cls: ClsType[_models.DiagnosticDetectorCollection] = kwargs.pop("cls", None)
 
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_list_site_detectors_request(
                     resource_group_name=resource_group_name,
                     site_name=site_name,
                     diagnostic_category=diagnostic_category,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list_site_detectors.metadata['url'],
+                    template_url=self.list_site_detectors.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             else:
-                
-                request = build_list_site_detectors_request(
-                    resource_group_name=resource_group_name,
-                    site_name=site_name,
-                    diagnostic_category=diagnostic_category,
-                    subscription_id=self._config.subscription_id,
-                    api_version=api_version,
-                    template_url=next_link,
-                    headers=_headers,
-                    params=_params,
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
                 request.method = "GET"
             return request
 
@@ -1844,16 +1905,15 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
             deserialized = self._deserialize("DiagnosticDetectorCollection", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
-                request,
-                stream=False,
-                **kwargs
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -1864,50 +1924,47 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
 
             return pipeline_response
 
+        return ItemPaged(get_next, extract_data)
 
-        return ItemPaged(
-            get_next, extract_data
-        )
-    list_site_detectors.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/diagnostics/{diagnosticCategory}/detectors"}  # type: ignore
+    list_site_detectors.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/diagnostics/{diagnosticCategory}/detectors"
+    }
 
     @distributed_trace
     def get_site_detector(
-        self,
-        resource_group_name: str,
-        site_name: str,
-        diagnostic_category: str,
-        detector_name: str,
-        **kwargs: Any
+        self, resource_group_name: str, site_name: str, diagnostic_category: str, detector_name: str, **kwargs: Any
     ) -> _models.DetectorDefinition:
         """Get Detector.
 
         Get Detector.
 
-        :param resource_group_name: Name of the resource group to which the resource belongs.
+        :param resource_group_name: Name of the resource group to which the resource belongs. Required.
         :type resource_group_name: str
-        :param site_name: Site Name.
+        :param site_name: Site Name. Required.
         :type site_name: str
-        :param diagnostic_category: Diagnostic Category.
+        :param diagnostic_category: Diagnostic Category. Required.
         :type diagnostic_category: str
-        :param detector_name: Detector Name.
+        :param detector_name: Detector Name. Required.
         :type detector_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: DetectorDefinition, or the result of cls(response)
+        :return: DetectorDefinition or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2020_12_01.models.DetectorDefinition
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-12-01"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.DetectorDefinition]
+        api_version: Literal["2020-12-01"] = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
+        cls: ClsType[_models.DetectorDefinition] = kwargs.pop("cls", None)
 
-        
         request = build_get_site_detector_request(
             resource_group_name=resource_group_name,
             site_name=site_name,
@@ -1915,18 +1972,18 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
             detector_name=detector_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get_site_detector.metadata['url'],
+            template_url=self.get_site_detector.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -1934,15 +1991,16 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('DetectorDefinition', pipeline_response)
+        deserialized = self._deserialize("DetectorDefinition", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get_site_detector.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/diagnostics/{diagnosticCategory}/detectors/{detectorName}"}  # type: ignore
-
+    get_site_detector.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/diagnostics/{diagnosticCategory}/detectors/{detectorName}"
+    }
 
     @distributed_trace
     def execute_site_detector(
@@ -1960,13 +2018,13 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
 
         Execute Detector.
 
-        :param resource_group_name: Name of the resource group to which the resource belongs.
+        :param resource_group_name: Name of the resource group to which the resource belongs. Required.
         :type resource_group_name: str
-        :param site_name: Site Name.
+        :param site_name: Site Name. Required.
         :type site_name: str
-        :param detector_name: Detector Resource Name.
+        :param detector_name: Detector Resource Name. Required.
         :type detector_name: str
-        :param diagnostic_category: Category Name.
+        :param diagnostic_category: Category Name. Required.
         :type diagnostic_category: str
         :param start_time: Start Time. Default value is None.
         :type start_time: ~datetime.datetime
@@ -1975,44 +2033,46 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
         :param time_grain: Time Grain. Default value is None.
         :type time_grain: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: DiagnosticDetectorResponse, or the result of cls(response)
+        :return: DiagnosticDetectorResponse or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2020_12_01.models.DiagnosticDetectorResponse
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-12-01"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.DiagnosticDetectorResponse]
+        api_version: Literal["2020-12-01"] = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
+        cls: ClsType[_models.DiagnosticDetectorResponse] = kwargs.pop("cls", None)
 
-        
         request = build_execute_site_detector_request(
             resource_group_name=resource_group_name,
             site_name=site_name,
             detector_name=detector_name,
             diagnostic_category=diagnostic_category,
             subscription_id=self._config.subscription_id,
-            api_version=api_version,
             start_time=start_time,
             end_time=end_time,
             time_grain=time_grain,
-            template_url=self.execute_site_detector.metadata['url'],
+            api_version=api_version,
+            template_url=self.execute_site_detector.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -2020,81 +2080,81 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('DiagnosticDetectorResponse', pipeline_response)
+        deserialized = self._deserialize("DiagnosticDetectorResponse", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    execute_site_detector.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/diagnostics/{diagnosticCategory}/detectors/{detectorName}/execute"}  # type: ignore
-
+    execute_site_detector.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/diagnostics/{diagnosticCategory}/detectors/{detectorName}/execute"
+    }
 
     @distributed_trace
     def list_site_detector_responses_slot(
-        self,
-        resource_group_name: str,
-        site_name: str,
-        slot: str,
-        **kwargs: Any
-    ) -> Iterable[_models.DetectorResponseCollection]:
+        self, resource_group_name: str, site_name: str, slot: str, **kwargs: Any
+    ) -> Iterable["_models.DetectorResponse"]:
         """List Site Detector Responses.
 
         List Site Detector Responses.
 
-        :param resource_group_name: Name of the resource group to which the resource belongs.
+        :param resource_group_name: Name of the resource group to which the resource belongs. Required.
         :type resource_group_name: str
-        :param site_name: Site Name.
+        :param site_name: Site Name. Required.
         :type site_name: str
-        :param slot: Slot Name.
+        :param slot: Slot Name. Required.
         :type slot: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either DetectorResponseCollection or the result of
-         cls(response)
-        :rtype:
-         ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2020_12_01.models.DetectorResponseCollection]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :return: An iterator like instance of either DetectorResponse or the result of cls(response)
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2020_12_01.models.DetectorResponse]
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-12-01"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.DetectorResponseCollection]
+        api_version: Literal["2020-12-01"] = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
+        cls: ClsType[_models.DetectorResponseCollection] = kwargs.pop("cls", None)
 
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_list_site_detector_responses_slot_request(
                     resource_group_name=resource_group_name,
                     site_name=site_name,
                     slot=slot,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list_site_detector_responses_slot.metadata['url'],
+                    template_url=self.list_site_detector_responses_slot.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             else:
-                
-                request = build_list_site_detector_responses_slot_request(
-                    resource_group_name=resource_group_name,
-                    site_name=site_name,
-                    slot=slot,
-                    subscription_id=self._config.subscription_id,
-                    api_version=api_version,
-                    template_url=next_link,
-                    headers=_headers,
-                    params=_params,
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
                 request.method = "GET"
             return request
 
@@ -2102,16 +2162,15 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
             deserialized = self._deserialize("DetectorResponseCollection", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
-                request,
-                stream=False,
-                **kwargs
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -2122,11 +2181,11 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
 
             return pipeline_response
 
+        return ItemPaged(get_next, extract_data)
 
-        return ItemPaged(
-            get_next, extract_data
-        )
-    list_site_detector_responses_slot.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slot}/detectors"}  # type: ignore
+    list_site_detector_responses_slot.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slot}/detectors"
+    }
 
     @distributed_trace
     def get_site_detector_response_slot(
@@ -2144,13 +2203,13 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
 
         Get site detector response.
 
-        :param resource_group_name: Name of the resource group to which the resource belongs.
+        :param resource_group_name: Name of the resource group to which the resource belongs. Required.
         :type resource_group_name: str
-        :param site_name: Site Name.
+        :param site_name: Site Name. Required.
         :type site_name: str
-        :param detector_name: Detector Resource Name.
+        :param detector_name: Detector Resource Name. Required.
         :type detector_name: str
-        :param slot: Slot Name.
+        :param slot: Slot Name. Required.
         :type slot: str
         :param start_time: Start Time. Default value is None.
         :type start_time: ~datetime.datetime
@@ -2159,44 +2218,46 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
         :param time_grain: Time Grain. Default value is None.
         :type time_grain: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: DetectorResponse, or the result of cls(response)
+        :return: DetectorResponse or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2020_12_01.models.DetectorResponse
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-12-01"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.DetectorResponse]
+        api_version: Literal["2020-12-01"] = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
+        cls: ClsType[_models.DetectorResponse] = kwargs.pop("cls", None)
 
-        
         request = build_get_site_detector_response_slot_request(
             resource_group_name=resource_group_name,
             site_name=site_name,
             detector_name=detector_name,
             slot=slot,
             subscription_id=self._config.subscription_id,
-            api_version=api_version,
             start_time=start_time,
             end_time=end_time,
             time_grain=time_grain,
-            template_url=self.get_site_detector_response_slot.metadata['url'],
+            api_version=api_version,
+            template_url=self.get_site_detector_response_slot.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -2204,81 +2265,81 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('DetectorResponse', pipeline_response)
+        deserialized = self._deserialize("DetectorResponse", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get_site_detector_response_slot.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slot}/detectors/{detectorName}"}  # type: ignore
-
+    get_site_detector_response_slot.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slot}/detectors/{detectorName}"
+    }
 
     @distributed_trace
     def list_site_diagnostic_categories_slot(
-        self,
-        resource_group_name: str,
-        site_name: str,
-        slot: str,
-        **kwargs: Any
-    ) -> Iterable[_models.DiagnosticCategoryCollection]:
+        self, resource_group_name: str, site_name: str, slot: str, **kwargs: Any
+    ) -> Iterable["_models.DiagnosticCategory"]:
         """Get Diagnostics Categories.
 
         Get Diagnostics Categories.
 
-        :param resource_group_name: Name of the resource group to which the resource belongs.
+        :param resource_group_name: Name of the resource group to which the resource belongs. Required.
         :type resource_group_name: str
-        :param site_name: Site Name.
+        :param site_name: Site Name. Required.
         :type site_name: str
-        :param slot: Slot Name.
+        :param slot: Slot Name. Required.
         :type slot: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either DiagnosticCategoryCollection or the result of
-         cls(response)
-        :rtype:
-         ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2020_12_01.models.DiagnosticCategoryCollection]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :return: An iterator like instance of either DiagnosticCategory or the result of cls(response)
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2020_12_01.models.DiagnosticCategory]
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-12-01"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.DiagnosticCategoryCollection]
+        api_version: Literal["2020-12-01"] = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
+        cls: ClsType[_models.DiagnosticCategoryCollection] = kwargs.pop("cls", None)
 
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_list_site_diagnostic_categories_slot_request(
                     resource_group_name=resource_group_name,
                     site_name=site_name,
                     slot=slot,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list_site_diagnostic_categories_slot.metadata['url'],
+                    template_url=self.list_site_diagnostic_categories_slot.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             else:
-                
-                request = build_list_site_diagnostic_categories_slot_request(
-                    resource_group_name=resource_group_name,
-                    site_name=site_name,
-                    slot=slot,
-                    subscription_id=self._config.subscription_id,
-                    api_version=api_version,
-                    template_url=next_link,
-                    headers=_headers,
-                    params=_params,
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
                 request.method = "GET"
             return request
 
@@ -2286,16 +2347,15 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
             deserialized = self._deserialize("DiagnosticCategoryCollection", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
-                request,
-                stream=False,
-                **kwargs
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -2306,50 +2366,47 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
 
             return pipeline_response
 
+        return ItemPaged(get_next, extract_data)
 
-        return ItemPaged(
-            get_next, extract_data
-        )
-    list_site_diagnostic_categories_slot.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slot}/diagnostics"}  # type: ignore
+    list_site_diagnostic_categories_slot.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slot}/diagnostics"
+    }
 
     @distributed_trace
     def get_site_diagnostic_category_slot(
-        self,
-        resource_group_name: str,
-        site_name: str,
-        diagnostic_category: str,
-        slot: str,
-        **kwargs: Any
+        self, resource_group_name: str, site_name: str, diagnostic_category: str, slot: str, **kwargs: Any
     ) -> _models.DiagnosticCategory:
         """Get Diagnostics Category.
 
         Get Diagnostics Category.
 
-        :param resource_group_name: Name of the resource group to which the resource belongs.
+        :param resource_group_name: Name of the resource group to which the resource belongs. Required.
         :type resource_group_name: str
-        :param site_name: Site Name.
+        :param site_name: Site Name. Required.
         :type site_name: str
-        :param diagnostic_category: Diagnostic Category.
+        :param diagnostic_category: Diagnostic Category. Required.
         :type diagnostic_category: str
-        :param slot: Slot Name.
+        :param slot: Slot Name. Required.
         :type slot: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: DiagnosticCategory, or the result of cls(response)
+        :return: DiagnosticCategory or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2020_12_01.models.DiagnosticCategory
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-12-01"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.DiagnosticCategory]
+        api_version: Literal["2020-12-01"] = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
+        cls: ClsType[_models.DiagnosticCategory] = kwargs.pop("cls", None)
 
-        
         request = build_get_site_diagnostic_category_slot_request(
             resource_group_name=resource_group_name,
             site_name=site_name,
@@ -2357,18 +2414,18 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
             slot=slot,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get_site_diagnostic_category_slot.metadata['url'],
+            template_url=self.get_site_diagnostic_category_slot.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -2376,57 +2433,55 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('DiagnosticCategory', pipeline_response)
+        deserialized = self._deserialize("DiagnosticCategory", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get_site_diagnostic_category_slot.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slot}/diagnostics/{diagnosticCategory}"}  # type: ignore
-
+    get_site_diagnostic_category_slot.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slot}/diagnostics/{diagnosticCategory}"
+    }
 
     @distributed_trace
     def list_site_analyses_slot(
-        self,
-        resource_group_name: str,
-        site_name: str,
-        diagnostic_category: str,
-        slot: str,
-        **kwargs: Any
-    ) -> Iterable[_models.DiagnosticAnalysisCollection]:
+        self, resource_group_name: str, site_name: str, diagnostic_category: str, slot: str, **kwargs: Any
+    ) -> Iterable["_models.AnalysisDefinition"]:
         """Get Site Analyses.
 
         Get Site Analyses.
 
-        :param resource_group_name: Name of the resource group to which the resource belongs.
+        :param resource_group_name: Name of the resource group to which the resource belongs. Required.
         :type resource_group_name: str
-        :param site_name: Site Name.
+        :param site_name: Site Name. Required.
         :type site_name: str
-        :param diagnostic_category: Diagnostic Category.
+        :param diagnostic_category: Diagnostic Category. Required.
         :type diagnostic_category: str
-        :param slot: Slot Name.
+        :param slot: Slot Name. Required.
         :type slot: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either DiagnosticAnalysisCollection or the result of
-         cls(response)
-        :rtype:
-         ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2020_12_01.models.DiagnosticAnalysisCollection]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :return: An iterator like instance of either AnalysisDefinition or the result of cls(response)
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2020_12_01.models.AnalysisDefinition]
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-12-01"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.DiagnosticAnalysisCollection]
+        api_version: Literal["2020-12-01"] = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
+        cls: ClsType[_models.DiagnosticAnalysisCollection] = kwargs.pop("cls", None)
 
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_list_site_analyses_slot_request(
                     resource_group_name=resource_group_name,
                     site_name=site_name,
@@ -2434,28 +2489,28 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
                     slot=slot,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list_site_analyses_slot.metadata['url'],
+                    template_url=self.list_site_analyses_slot.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             else:
-                
-                request = build_list_site_analyses_slot_request(
-                    resource_group_name=resource_group_name,
-                    site_name=site_name,
-                    diagnostic_category=diagnostic_category,
-                    slot=slot,
-                    subscription_id=self._config.subscription_id,
-                    api_version=api_version,
-                    template_url=next_link,
-                    headers=_headers,
-                    params=_params,
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
                 request.method = "GET"
             return request
 
@@ -2463,16 +2518,15 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
             deserialized = self._deserialize("DiagnosticAnalysisCollection", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
-                request,
-                stream=False,
-                **kwargs
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -2483,11 +2537,11 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
 
             return pipeline_response
 
+        return ItemPaged(get_next, extract_data)
 
-        return ItemPaged(
-            get_next, extract_data
-        )
-    list_site_analyses_slot.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slot}/diagnostics/{diagnosticCategory}/analyses"}  # type: ignore
+    list_site_analyses_slot.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slot}/diagnostics/{diagnosticCategory}/analyses"
+    }
 
     @distributed_trace
     def get_site_analysis_slot(
@@ -2503,33 +2557,35 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
 
         Get Site Analysis.
 
-        :param resource_group_name: Name of the resource group to which the resource belongs.
+        :param resource_group_name: Name of the resource group to which the resource belongs. Required.
         :type resource_group_name: str
-        :param site_name: Site Name.
+        :param site_name: Site Name. Required.
         :type site_name: str
-        :param diagnostic_category: Diagnostic Category.
+        :param diagnostic_category: Diagnostic Category. Required.
         :type diagnostic_category: str
-        :param analysis_name: Analysis Name.
+        :param analysis_name: Analysis Name. Required.
         :type analysis_name: str
-        :param slot: Slot - optional.
+        :param slot: Slot - optional. Required.
         :type slot: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: AnalysisDefinition, or the result of cls(response)
+        :return: AnalysisDefinition or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2020_12_01.models.AnalysisDefinition
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-12-01"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.AnalysisDefinition]
+        api_version: Literal["2020-12-01"] = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
+        cls: ClsType[_models.AnalysisDefinition] = kwargs.pop("cls", None)
 
-        
         request = build_get_site_analysis_slot_request(
             resource_group_name=resource_group_name,
             site_name=site_name,
@@ -2538,18 +2594,18 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
             slot=slot,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get_site_analysis_slot.metadata['url'],
+            template_url=self.get_site_analysis_slot.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -2557,15 +2613,16 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('AnalysisDefinition', pipeline_response)
+        deserialized = self._deserialize("AnalysisDefinition", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get_site_analysis_slot.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slot}/diagnostics/{diagnosticCategory}/analyses/{analysisName}"}  # type: ignore
-
+    get_site_analysis_slot.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slot}/diagnostics/{diagnosticCategory}/analyses/{analysisName}"
+    }
 
     @distributed_trace
     def execute_site_analysis_slot(
@@ -2584,15 +2641,15 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
 
         Execute Analysis.
 
-        :param resource_group_name: Name of the resource group to which the resource belongs.
+        :param resource_group_name: Name of the resource group to which the resource belongs. Required.
         :type resource_group_name: str
-        :param site_name: Site Name.
+        :param site_name: Site Name. Required.
         :type site_name: str
-        :param diagnostic_category: Category Name.
+        :param diagnostic_category: Category Name. Required.
         :type diagnostic_category: str
-        :param analysis_name: Analysis Resource Name.
+        :param analysis_name: Analysis Resource Name. Required.
         :type analysis_name: str
-        :param slot: Slot Name.
+        :param slot: Slot Name. Required.
         :type slot: str
         :param start_time: Start Time. Default value is None.
         :type start_time: ~datetime.datetime
@@ -2601,22 +2658,24 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
         :param time_grain: Time Grain. Default value is None.
         :type time_grain: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: DiagnosticAnalysis, or the result of cls(response)
+        :return: DiagnosticAnalysis or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2020_12_01.models.DiagnosticAnalysis
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-12-01"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.DiagnosticAnalysis]
+        api_version: Literal["2020-12-01"] = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
+        cls: ClsType[_models.DiagnosticAnalysis] = kwargs.pop("cls", None)
 
-        
         request = build_execute_site_analysis_slot_request(
             resource_group_name=resource_group_name,
             site_name=site_name,
@@ -2624,22 +2683,22 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
             analysis_name=analysis_name,
             slot=slot,
             subscription_id=self._config.subscription_id,
-            api_version=api_version,
             start_time=start_time,
             end_time=end_time,
             time_grain=time_grain,
-            template_url=self.execute_site_analysis_slot.metadata['url'],
+            api_version=api_version,
+            template_url=self.execute_site_analysis_slot.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -2647,57 +2706,55 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('DiagnosticAnalysis', pipeline_response)
+        deserialized = self._deserialize("DiagnosticAnalysis", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    execute_site_analysis_slot.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slot}/diagnostics/{diagnosticCategory}/analyses/{analysisName}/execute"}  # type: ignore
-
+    execute_site_analysis_slot.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slot}/diagnostics/{diagnosticCategory}/analyses/{analysisName}/execute"
+    }
 
     @distributed_trace
     def list_site_detectors_slot(
-        self,
-        resource_group_name: str,
-        site_name: str,
-        diagnostic_category: str,
-        slot: str,
-        **kwargs: Any
-    ) -> Iterable[_models.DiagnosticDetectorCollection]:
+        self, resource_group_name: str, site_name: str, diagnostic_category: str, slot: str, **kwargs: Any
+    ) -> Iterable["_models.DetectorDefinition"]:
         """Get Detectors.
 
         Get Detectors.
 
-        :param resource_group_name: Name of the resource group to which the resource belongs.
+        :param resource_group_name: Name of the resource group to which the resource belongs. Required.
         :type resource_group_name: str
-        :param site_name: Site Name.
+        :param site_name: Site Name. Required.
         :type site_name: str
-        :param diagnostic_category: Diagnostic Category.
+        :param diagnostic_category: Diagnostic Category. Required.
         :type diagnostic_category: str
-        :param slot: Slot Name.
+        :param slot: Slot Name. Required.
         :type slot: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either DiagnosticDetectorCollection or the result of
-         cls(response)
-        :rtype:
-         ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2020_12_01.models.DiagnosticDetectorCollection]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :return: An iterator like instance of either DetectorDefinition or the result of cls(response)
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2020_12_01.models.DetectorDefinition]
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-12-01"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.DiagnosticDetectorCollection]
+        api_version: Literal["2020-12-01"] = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
+        cls: ClsType[_models.DiagnosticDetectorCollection] = kwargs.pop("cls", None)
 
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_list_site_detectors_slot_request(
                     resource_group_name=resource_group_name,
                     site_name=site_name,
@@ -2705,28 +2762,28 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
                     slot=slot,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list_site_detectors_slot.metadata['url'],
+                    template_url=self.list_site_detectors_slot.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             else:
-                
-                request = build_list_site_detectors_slot_request(
-                    resource_group_name=resource_group_name,
-                    site_name=site_name,
-                    diagnostic_category=diagnostic_category,
-                    slot=slot,
-                    subscription_id=self._config.subscription_id,
-                    api_version=api_version,
-                    template_url=next_link,
-                    headers=_headers,
-                    params=_params,
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
                 request.method = "GET"
             return request
 
@@ -2734,16 +2791,15 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
             deserialized = self._deserialize("DiagnosticDetectorCollection", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
-                request,
-                stream=False,
-                **kwargs
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -2754,11 +2810,11 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
 
             return pipeline_response
 
+        return ItemPaged(get_next, extract_data)
 
-        return ItemPaged(
-            get_next, extract_data
-        )
-    list_site_detectors_slot.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slot}/diagnostics/{diagnosticCategory}/detectors"}  # type: ignore
+    list_site_detectors_slot.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slot}/diagnostics/{diagnosticCategory}/detectors"
+    }
 
     @distributed_trace
     def get_site_detector_slot(
@@ -2774,33 +2830,35 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
 
         Get Detector.
 
-        :param resource_group_name: Name of the resource group to which the resource belongs.
+        :param resource_group_name: Name of the resource group to which the resource belongs. Required.
         :type resource_group_name: str
-        :param site_name: Site Name.
+        :param site_name: Site Name. Required.
         :type site_name: str
-        :param diagnostic_category: Diagnostic Category.
+        :param diagnostic_category: Diagnostic Category. Required.
         :type diagnostic_category: str
-        :param detector_name: Detector Name.
+        :param detector_name: Detector Name. Required.
         :type detector_name: str
-        :param slot: Slot Name.
+        :param slot: Slot Name. Required.
         :type slot: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: DetectorDefinition, or the result of cls(response)
+        :return: DetectorDefinition or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2020_12_01.models.DetectorDefinition
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-12-01"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.DetectorDefinition]
+        api_version: Literal["2020-12-01"] = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
+        cls: ClsType[_models.DetectorDefinition] = kwargs.pop("cls", None)
 
-        
         request = build_get_site_detector_slot_request(
             resource_group_name=resource_group_name,
             site_name=site_name,
@@ -2809,18 +2867,18 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
             slot=slot,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get_site_detector_slot.metadata['url'],
+            template_url=self.get_site_detector_slot.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -2828,15 +2886,16 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('DetectorDefinition', pipeline_response)
+        deserialized = self._deserialize("DetectorDefinition", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get_site_detector_slot.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slot}/diagnostics/{diagnosticCategory}/detectors/{detectorName}"}  # type: ignore
-
+    get_site_detector_slot.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slot}/diagnostics/{diagnosticCategory}/detectors/{detectorName}"
+    }
 
     @distributed_trace
     def execute_site_detector_slot(
@@ -2855,15 +2914,15 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
 
         Execute Detector.
 
-        :param resource_group_name: Name of the resource group to which the resource belongs.
+        :param resource_group_name: Name of the resource group to which the resource belongs. Required.
         :type resource_group_name: str
-        :param site_name: Site Name.
+        :param site_name: Site Name. Required.
         :type site_name: str
-        :param detector_name: Detector Resource Name.
+        :param detector_name: Detector Resource Name. Required.
         :type detector_name: str
-        :param diagnostic_category: Category Name.
+        :param diagnostic_category: Category Name. Required.
         :type diagnostic_category: str
-        :param slot: Slot Name.
+        :param slot: Slot Name. Required.
         :type slot: str
         :param start_time: Start Time. Default value is None.
         :type start_time: ~datetime.datetime
@@ -2872,22 +2931,24 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
         :param time_grain: Time Grain. Default value is None.
         :type time_grain: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: DiagnosticDetectorResponse, or the result of cls(response)
+        :return: DiagnosticDetectorResponse or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2020_12_01.models.DiagnosticDetectorResponse
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-12-01"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.DiagnosticDetectorResponse]
+        api_version: Literal["2020-12-01"] = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
+        cls: ClsType[_models.DiagnosticDetectorResponse] = kwargs.pop("cls", None)
 
-        
         request = build_execute_site_detector_slot_request(
             resource_group_name=resource_group_name,
             site_name=site_name,
@@ -2895,22 +2956,22 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
             diagnostic_category=diagnostic_category,
             slot=slot,
             subscription_id=self._config.subscription_id,
-            api_version=api_version,
             start_time=start_time,
             end_time=end_time,
             time_grain=time_grain,
-            template_url=self.execute_site_detector_slot.metadata['url'],
+            api_version=api_version,
+            template_url=self.execute_site_detector_slot.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -2918,12 +2979,13 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('DiagnosticDetectorResponse', pipeline_response)
+        deserialized = self._deserialize("DiagnosticDetectorResponse", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    execute_site_detector_slot.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slot}/diagnostics/{diagnosticCategory}/detectors/{detectorName}/execute"}  # type: ignore
-
+    execute_site_detector_slot.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slot}/diagnostics/{diagnosticCategory}/detectors/{detectorName}/execute"
+    }

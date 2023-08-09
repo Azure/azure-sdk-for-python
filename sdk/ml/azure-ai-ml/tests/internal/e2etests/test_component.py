@@ -7,7 +7,7 @@ from typing import Callable, Dict, List
 
 import pydash
 import pytest
-from devtools_testutils import AzureRecordedTestCase, set_bodiless_matcher
+from devtools_testutils import AzureRecordedTestCase
 
 from azure.ai.ml import MLClient, load_component
 from azure.ai.ml._internal.entities import InternalComponent
@@ -46,6 +46,7 @@ def load_registered_component(
     component_rest_object = component_entity._to_rest_object()
     return pydash.omit(component_rest_object.properties.component_spec, *omit_fields)
 
+
 # previous bodiless_matcher fixture doesn't take effect because of typo, please add it in method level if needed
 
 
@@ -60,10 +61,18 @@ def load_registered_component(
 @pytest.mark.pipeline_test
 class TestComponent(AzureRecordedTestCase):
     @pytest.mark.parametrize(
-        "yaml_path",
-        list(map(lambda x: x[0], PARAMETERS_TO_TEST)),
+        "yaml_path,inputs,runsettings_dict,pipeline_runsettings_dict",
+        PARAMETERS_TO_TEST,
     )
-    def test_component_create(self, client: MLClient, randstr: Callable[[], str], yaml_path: str) -> None:
+    def test_component_create(
+        self,
+        client: MLClient,
+        randstr: Callable[[], str],
+        yaml_path: str,
+        inputs: Dict,
+        runsettings_dict: Dict,
+        pipeline_runsettings_dict: Dict,
+    ) -> None:
         component_name = randstr("component_name")
         component_resource = create_component(client, component_name, path=yaml_path)
         assert component_resource.name == component_name
@@ -75,17 +84,18 @@ class TestComponent(AzureRecordedTestCase):
         assert component_resource.creation_context
 
     @pytest.mark.parametrize(
-        "yaml_path",
-        list(map(lambda x: x[0], PARAMETERS_TO_TEST)),
+        "yaml_path,inputs,runsettings_dict,pipeline_runsettings_dict",
+        PARAMETERS_TO_TEST,
     )
     def test_component_load(
         self,
         client: MLClient,
-        randstr: Callable[[str], str],
+        randstr: Callable[[], str],
         yaml_path: str,
+        inputs: Dict,
+        runsettings_dict: Dict,
+        pipeline_runsettings_dict: Dict,
     ) -> None:
-        if "ae365" not in yaml_path:
-            return
         omit_fields = ["id", "creation_context", "code", "name"]
         component_name = randstr("component_name")
 
@@ -93,7 +103,7 @@ class TestComponent(AzureRecordedTestCase):
         loaded_dict = load_registered_component(client, component_name, component_resource.version, omit_fields)
 
         base_dir = "./tests/test_configs/internal"
-        json_path = (yaml_path.rsplit(".", 1)[0] + ".json")
+        json_path = yaml_path.rsplit(".", 1)[0] + ".json"
         json_path = os.path.join(base_dir, "loaded_from_rest", os.path.relpath(json_path, base_dir))
         os.makedirs(os.path.dirname(json_path), exist_ok=True)
         if not os.path.isfile(json_path):
@@ -105,10 +115,11 @@ class TestComponent(AzureRecordedTestCase):
 
             # default value for datatransfer
             if expected_dict["type"] == "DataTransferComponent" and "datatransfer" not in expected_dict:
-                expected_dict["datatransfer"] = {
-                    'allow_overwrite': 'True'
-                }
+                expected_dict["datatransfer"] = {"allow_overwrite": "True"}
 
+            # skip environment in arm string
+            if "environment" in loaded_dict and isinstance(loaded_dict["environment"], str):
+                omit_fields.append("environment")
             # TODO: check if loaded environment is expected to be an ordered dict
             assert pydash.omit(loaded_dict, *omit_fields) == pydash.omit(expected_dict, *omit_fields)
 

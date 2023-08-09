@@ -17,15 +17,21 @@ from ._disaster_recovery_configs_operations import DisasterRecoveryConfigsOperat
 from ._consumer_groups_operations import ConsumerGroupsOperations
 from ._schema_registry_operations import SchemaRegistryOperations
 
+from ._patch import __all__ as _patch_all
+from ._patch import *  # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
+
 __all__ = [
-    'ClustersOperations',
-    'ConfigurationOperations',
-    'NamespacesOperations',
-    'PrivateEndpointConnectionsOperations',
-    'PrivateLinkResourcesOperations',
-    'Operations',
-    'EventHubsOperations',
-    'DisasterRecoveryConfigsOperations',
-    'ConsumerGroupsOperations',
-    'SchemaRegistryOperations',
+    "ClustersOperations",
+    "ConfigurationOperations",
+    "NamespacesOperations",
+    "PrivateEndpointConnectionsOperations",
+    "PrivateLinkResourcesOperations",
+    "Operations",
+    "EventHubsOperations",
+    "DisasterRecoveryConfigsOperations",
+    "ConsumerGroupsOperations",
+    "SchemaRegistryOperations",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

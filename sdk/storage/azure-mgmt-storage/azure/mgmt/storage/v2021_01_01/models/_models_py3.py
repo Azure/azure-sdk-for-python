@@ -9,7 +9,7 @@
 
 import datetime
 import sys
-from typing import Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from ... import _serialization
 
@@ -84,8 +84,8 @@ class AccountSasParameters(_serialization.Model):
         protocols: Optional[Union[str, "_models.HttpProtocol"]] = None,
         shared_access_start_time: Optional[datetime.datetime] = None,
         key_to_sign: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword services: The signed services accessible with the account SAS. Possible values
          include: Blob (b), Queue (q), Table (t), File (f). Required. Known values are: "b", "q", "t",
@@ -172,8 +172,8 @@ class ActiveDirectoryProperties(_serialization.Model):
         domain_guid: str,
         domain_sid: str,
         azure_storage_sid: str,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword domain_name: Specifies the primary domain that the AD DNS server is authoritative for.
          Required.
@@ -226,7 +226,7 @@ class Resource(_serialization.Model):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.id = None
@@ -265,7 +265,7 @@ class AzureEntityResource(Resource):
         "etag": {"key": "etag", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.etag = None
@@ -299,8 +299,8 @@ class AzureFilesIdentityBasedAuthentication(_serialization.Model):
         *,
         directory_service_options: Union[str, "_models.DirectoryServiceOptions"],
         active_directory_properties: Optional["_models.ActiveDirectoryProperties"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword directory_service_options: Indicates the directory service used. Required. Known
          values are: "None", "AADDS", and "AD".
@@ -425,8 +425,8 @@ class BlobContainer(AzureEntityResource):  # pylint: disable=too-many-instance-a
         deny_encryption_scope_override: Optional[bool] = None,
         public_access: Optional[Union[str, "_models.PublicAccess"]] = None,
         metadata: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword default_encryption_scope: Default the container to use specified encryption scope for
          all writes.
@@ -497,7 +497,7 @@ class BlobInventoryPolicy(Resource):
         "policy": {"key": "properties.policy", "type": "BlobInventoryPolicySchema"},
     }
 
-    def __init__(self, *, policy: Optional["_models.BlobInventoryPolicySchema"] = None, **kwargs):
+    def __init__(self, *, policy: Optional["_models.BlobInventoryPolicySchema"] = None, **kwargs: Any) -> None:
         """
         :keyword policy: The storage account blob inventory policy object. It is composed of policy
          rules.
@@ -526,7 +526,7 @@ class BlobInventoryPolicyDefinition(_serialization.Model):
         "filters": {"key": "filters", "type": "BlobInventoryPolicyFilter"},
     }
 
-    def __init__(self, *, filters: "_models.BlobInventoryPolicyFilter", **kwargs):
+    def __init__(self, *, filters: "_models.BlobInventoryPolicyFilter", **kwargs: Any) -> None:
         """
         :keyword filters: An object that defines the filter set. Required.
         :paramtype filters: ~azure.mgmt.storage.v2021_01_01.models.BlobInventoryPolicyFilter
@@ -569,8 +569,8 @@ class BlobInventoryPolicyFilter(_serialization.Model):
         prefix_match: Optional[List[str]] = None,
         include_blob_versions: Optional[bool] = None,
         include_snapshots: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword prefix_match: An array of strings for blob prefixes to be matched.
         :paramtype prefix_match: list[str]
@@ -616,7 +616,9 @@ class BlobInventoryPolicyRule(_serialization.Model):
         "definition": {"key": "definition", "type": "BlobInventoryPolicyDefinition"},
     }
 
-    def __init__(self, *, enabled: bool, name: str, definition: "_models.BlobInventoryPolicyDefinition", **kwargs):
+    def __init__(
+        self, *, enabled: bool, name: str, definition: "_models.BlobInventoryPolicyDefinition", **kwargs: Any
+    ) -> None:
         """
         :keyword enabled: Rule is enabled when set to true. Required.
         :paramtype enabled: bool
@@ -670,8 +672,8 @@ class BlobInventoryPolicySchema(_serialization.Model):
         destination: str,
         type: Union[str, "_models.InventoryRuleType"],
         rules: List["_models.BlobInventoryPolicyRule"],
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword enabled: Policy is enabled if set to true. Required.
         :paramtype enabled: bool
@@ -712,7 +714,9 @@ class BlobRestoreParameters(_serialization.Model):
         "blob_ranges": {"key": "blobRanges", "type": "[BlobRestoreRange]"},
     }
 
-    def __init__(self, *, time_to_restore: datetime.datetime, blob_ranges: List["_models.BlobRestoreRange"], **kwargs):
+    def __init__(
+        self, *, time_to_restore: datetime.datetime, blob_ranges: List["_models.BlobRestoreRange"], **kwargs: Any
+    ) -> None:
         """
         :keyword time_to_restore: Restore blob to the specified time. Required.
         :paramtype time_to_restore: ~datetime.datetime
@@ -745,7 +749,7 @@ class BlobRestoreRange(_serialization.Model):
         "end_range": {"key": "endRange", "type": "str"},
     }
 
-    def __init__(self, *, start_range: str, end_range: str, **kwargs):
+    def __init__(self, *, start_range: str, end_range: str, **kwargs: Any) -> None:
         """
         :keyword start_range: Blob start range. This is inclusive. Empty means account start. Required.
         :paramtype start_range: str
@@ -789,7 +793,7 @@ class BlobRestoreStatus(_serialization.Model):
         "parameters": {"key": "parameters", "type": "BlobRestoreParameters"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.status = None
@@ -815,7 +819,7 @@ class BlobServiceItems(_serialization.Model):
         "value": {"key": "value", "type": "[BlobServiceProperties]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -904,8 +908,8 @@ class BlobServiceProperties(Resource):  # pylint: disable=too-many-instance-attr
         restore_policy: Optional["_models.RestorePolicyProperties"] = None,
         container_delete_retention_policy: Optional["_models.DeleteRetentionPolicy"] = None,
         last_access_time_tracking_policy: Optional["_models.LastAccessTimeTrackingPolicy"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword cors: Specifies CORS rules for the Blob service. You can include up to five CorsRule
          elements in the request. If no CorsRule elements are included in the request body, all CORS
@@ -969,7 +973,9 @@ class ChangeFeed(_serialization.Model):
         "retention_in_days": {"key": "retentionInDays", "type": "int"},
     }
 
-    def __init__(self, *, enabled: Optional[bool] = None, retention_in_days: Optional[int] = None, **kwargs):
+    def __init__(
+        self, *, enabled: Optional[bool] = None, retention_in_days: Optional[int] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword enabled: Indicates whether change feed event logging is enabled for the Blob service.
         :paramtype enabled: bool
@@ -1012,7 +1018,7 @@ class CheckNameAvailabilityResult(_serialization.Model):
         "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.name_available = None
@@ -1050,8 +1056,8 @@ class CloudErrorBody(_serialization.Model):
         message: Optional[str] = None,
         target: Optional[str] = None,
         details: Optional[List["_models.CloudErrorBody"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword code: An identifier for the error. Codes are invariant and are intended to be consumed
          programmatically.
@@ -1119,8 +1125,8 @@ class CorsRule(_serialization.Model):
         max_age_in_seconds: int,
         exposed_headers: List[str],
         allowed_headers: List[str],
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword allowed_origins: Required if CorsRule element is present. A list of origin domains
          that will be allowed via CORS, or "*" to allow all domains. Required.
@@ -1159,7 +1165,7 @@ class CorsRules(_serialization.Model):
         "cors_rules": {"key": "corsRules", "type": "[CorsRule]"},
     }
 
-    def __init__(self, *, cors_rules: Optional[List["_models.CorsRule"]] = None, **kwargs):
+    def __init__(self, *, cors_rules: Optional[List["_models.CorsRule"]] = None, **kwargs: Any) -> None:
         """
         :keyword cors_rules: The List of CORS rules. You can include up to five CorsRule elements in
          the request.
@@ -1191,7 +1197,7 @@ class CustomDomain(_serialization.Model):
         "use_sub_domain_name": {"key": "useSubDomainName", "type": "bool"},
     }
 
-    def __init__(self, *, name: str, use_sub_domain_name: Optional[bool] = None, **kwargs):
+    def __init__(self, *, name: str, use_sub_domain_name: Optional[bool] = None, **kwargs: Any) -> None:
         """
         :keyword name: Gets or sets the custom domain name assigned to the storage account. Name is the
          CNAME source. Required.
@@ -1223,7 +1229,7 @@ class DateAfterCreation(_serialization.Model):
         "days_after_creation_greater_than": {"key": "daysAfterCreationGreaterThan", "type": "float"},
     }
 
-    def __init__(self, *, days_after_creation_greater_than: float, **kwargs):
+    def __init__(self, *, days_after_creation_greater_than: float, **kwargs: Any) -> None:
         """
         :keyword days_after_creation_greater_than: Value indicating the age in days after creation.
          Required.
@@ -1234,7 +1240,8 @@ class DateAfterCreation(_serialization.Model):
 
 
 class DateAfterModification(_serialization.Model):
-    """Object to define the number of days after object last modification Or last access. Properties daysAfterModificationGreaterThan and daysAfterLastAccessTimeGreaterThan are mutually exclusive.
+    """Object to define the number of days after object last modification Or last access. Properties
+    daysAfterModificationGreaterThan and daysAfterLastAccessTimeGreaterThan are mutually exclusive.
 
     :ivar days_after_modification_greater_than: Value indicating the age in days after last
      modification.
@@ -1260,8 +1267,8 @@ class DateAfterModification(_serialization.Model):
         *,
         days_after_modification_greater_than: Optional[float] = None,
         days_after_last_access_time_greater_than: Optional[float] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword days_after_modification_greater_than: Value indicating the age in days after last
          modification.
@@ -1277,7 +1284,8 @@ class DateAfterModification(_serialization.Model):
 
 
 class ProxyResource(Resource):
-    """The resource model definition for a Azure Resource Manager proxy resource. It will not have tags and a location.
+    """The resource model definition for a Azure Resource Manager proxy resource. It will not have
+    tags and a location.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -1303,7 +1311,7 @@ class ProxyResource(Resource):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
 
@@ -1356,7 +1364,7 @@ class DeletedAccount(ProxyResource):
         "deletion_time": {"key": "properties.deletionTime", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.storage_account_resource_id = None
@@ -1388,7 +1396,7 @@ class DeletedAccountListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -1418,7 +1426,7 @@ class DeletedShare(_serialization.Model):
         "deleted_share_version": {"key": "deletedShareVersion", "type": "str"},
     }
 
-    def __init__(self, *, deleted_share_name: str, deleted_share_version: str, **kwargs):
+    def __init__(self, *, deleted_share_name: str, deleted_share_version: str, **kwargs: Any) -> None:
         """
         :keyword deleted_share_name: Required. Identify the name of the deleted share that will be
          restored. Required.
@@ -1451,7 +1459,7 @@ class DeleteRetentionPolicy(_serialization.Model):
         "days": {"key": "days", "type": "int"},
     }
 
-    def __init__(self, *, enabled: Optional[bool] = None, days: Optional[int] = None, **kwargs):
+    def __init__(self, *, enabled: Optional[bool] = None, days: Optional[int] = None, **kwargs: Any) -> None:
         """
         :keyword enabled: Indicates whether DeleteRetentionPolicy is enabled.
         :paramtype enabled: bool
@@ -1478,7 +1486,7 @@ class Dimension(_serialization.Model):
         "display_name": {"key": "displayName", "type": "str"},
     }
 
-    def __init__(self, *, name: Optional[str] = None, display_name: Optional[str] = None, **kwargs):
+    def __init__(self, *, name: Optional[str] = None, display_name: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword name: Display name of dimension.
         :paramtype name: str
@@ -1530,8 +1538,8 @@ class Encryption(_serialization.Model):
         require_infrastructure_encryption: Optional[bool] = None,
         key_vault_properties: Optional["_models.KeyVaultProperties"] = None,
         encryption_identity: Optional["_models.EncryptionIdentity"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword services: List of services which support encryption.
         :paramtype services: ~azure.mgmt.storage.v2021_01_01.models.EncryptionServices
@@ -1567,7 +1575,7 @@ class EncryptionIdentity(_serialization.Model):
         "encryption_user_assigned_identity": {"key": "userAssignedIdentity", "type": "str"},
     }
 
-    def __init__(self, *, encryption_user_assigned_identity: Optional[str] = None, **kwargs):
+    def __init__(self, *, encryption_user_assigned_identity: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword encryption_user_assigned_identity: Resource identifier of the UserAssigned identity to
          be associated with server-side encryption on the storage account.
@@ -1638,8 +1646,8 @@ class EncryptionScope(Resource):
         state: Optional[Union[str, "_models.EncryptionScopeState"]] = None,
         key_vault_properties: Optional["_models.EncryptionScopeKeyVaultProperties"] = None,
         require_infrastructure_encryption: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword source: The provider for the encryption scope. Possible values (case-insensitive):
          Microsoft.Storage, Microsoft.KeyVault. Known values are: "Microsoft.Storage" and
@@ -1666,7 +1674,8 @@ class EncryptionScope(Resource):
 
 
 class EncryptionScopeKeyVaultProperties(_serialization.Model):
-    """The key vault properties for the encryption scope. This is a required field if encryption scope 'source' attribute is set to 'Microsoft.KeyVault'.
+    """The key vault properties for the encryption scope. This is a required field if encryption scope
+    'source' attribute is set to 'Microsoft.KeyVault'.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -1692,7 +1701,7 @@ class EncryptionScopeKeyVaultProperties(_serialization.Model):
         "last_key_rotation_timestamp": {"key": "lastKeyRotationTimestamp", "type": "iso-8601"},
     }
 
-    def __init__(self, *, key_uri: Optional[str] = None, **kwargs):
+    def __init__(self, *, key_uri: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword key_uri: The object identifier for a key vault key object. When applied, the
          encryption scope will use the key referenced by the identifier to enable customer-managed key
@@ -1706,7 +1715,8 @@ class EncryptionScopeKeyVaultProperties(_serialization.Model):
 
 
 class EncryptionScopeListResult(_serialization.Model):
-    """List of encryption scopes requested, and if paging is required, a URL to the next page of encryption scopes.
+    """List of encryption scopes requested, and if paging is required, a URL to the next page of
+    encryption scopes.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -1727,7 +1737,7 @@ class EncryptionScopeListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -1763,8 +1773,8 @@ class EncryptionService(_serialization.Model):
     }
 
     def __init__(
-        self, *, enabled: Optional[bool] = None, key_type: Optional[Union[str, "_models.KeyType"]] = None, **kwargs
-    ):
+        self, *, enabled: Optional[bool] = None, key_type: Optional[Union[str, "_models.KeyType"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword enabled: A boolean indicating whether or not the service encrypts the data as it is
          stored.
@@ -1807,8 +1817,8 @@ class EncryptionServices(_serialization.Model):
         file: Optional["_models.EncryptionService"] = None,
         table: Optional["_models.EncryptionService"] = None,
         queue: Optional["_models.EncryptionService"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword blob: The encryption function of the blob storage service.
         :paramtype blob: ~azure.mgmt.storage.v2021_01_01.models.EncryptionService
@@ -1827,7 +1837,8 @@ class EncryptionServices(_serialization.Model):
 
 
 class Endpoints(_serialization.Model):
-    """The URIs that are used to perform a retrieval of a public blob, queue, table, web or dfs object.
+    """The URIs that are used to perform a retrieval of a public blob, queue, table, web or dfs
+    object.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -1876,8 +1887,8 @@ class Endpoints(_serialization.Model):
         *,
         microsoft_endpoints: Optional["_models.StorageAccountMicrosoftEndpoints"] = None,
         internet_endpoints: Optional["_models.StorageAccountInternetEndpoints"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword microsoft_endpoints: Gets the microsoft routing storage endpoints.
         :paramtype microsoft_endpoints:
@@ -1908,7 +1919,7 @@ class ErrorResponse(_serialization.Model):
         "error": {"key": "error", "type": "ErrorResponseBody"},
     }
 
-    def __init__(self, *, error: Optional["_models.ErrorResponseBody"] = None, **kwargs):
+    def __init__(self, *, error: Optional["_models.ErrorResponseBody"] = None, **kwargs: Any) -> None:
         """
         :keyword error: Azure Storage Resource Provider error response body.
         :paramtype error: ~azure.mgmt.storage.v2021_01_01.models.ErrorResponseBody
@@ -1933,7 +1944,7 @@ class ErrorResponseBody(_serialization.Model):
         "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs):
+    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword code: An identifier for the error. Codes are invariant and are intended to be consumed
          programmatically.
@@ -1966,8 +1977,8 @@ class ExtendedLocation(_serialization.Model):
         *,
         name: Optional[str] = None,
         type: Optional[Union[str, "_models.ExtendedLocationTypes"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name of the extended location.
         :paramtype name: str
@@ -1996,7 +2007,7 @@ class FileServiceItems(_serialization.Model):
         "value": {"key": "value", "type": "[FileServiceProperties]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -2054,8 +2065,8 @@ class FileServiceProperties(Resource):
         cors: Optional["_models.CorsRules"] = None,
         share_delete_retention_policy: Optional["_models.DeleteRetentionPolicy"] = None,
         protocol_settings: Optional["_models.ProtocolSettings"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword cors: Specifies CORS rules for the File service. You can include up to five CorsRule
          elements in the request. If no CorsRule elements are included in the request body, all CORS
@@ -2172,8 +2183,8 @@ class FileShare(AzureEntityResource):  # pylint: disable=too-many-instance-attri
         enabled_protocols: Optional[Union[str, "_models.EnabledProtocols"]] = None,
         root_squash: Optional[Union[str, "_models.RootSquashType"]] = None,
         access_tier: Optional[Union[str, "_models.ShareAccessTier"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword metadata: A name-value pair to associate with the share as metadata.
         :paramtype metadata: dict[str, str]
@@ -2306,8 +2317,8 @@ class FileShareItem(AzureEntityResource):  # pylint: disable=too-many-instance-a
         enabled_protocols: Optional[Union[str, "_models.EnabledProtocols"]] = None,
         root_squash: Optional[Union[str, "_models.RootSquashType"]] = None,
         access_tier: Optional[Union[str, "_models.ShareAccessTier"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword metadata: A name-value pair to associate with the share as metadata.
         :paramtype metadata: dict[str, str]
@@ -2343,7 +2354,8 @@ class FileShareItem(AzureEntityResource):  # pylint: disable=too-many-instance-a
 
 
 class FileShareItems(_serialization.Model):
-    """Response schema. Contains list of shares returned, and if paging is requested or required, a URL to next page of shares.
+    """Response schema. Contains list of shares returned, and if paging is requested or required, a
+    URL to next page of shares.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -2364,7 +2376,7 @@ class FileShareItems(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -2372,7 +2384,8 @@ class FileShareItems(_serialization.Model):
 
 
 class GeoReplicationStats(_serialization.Model):
-    """Statistics related to replication for storage account's Blob, Table, Queue and File services. It is only available when geo-redundant replication is enabled for the storage account.
+    """Statistics related to replication for storage account's Blob, Table, Queue and File services.
+    It is only available when geo-redundant replication is enabled for the storage account.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -2404,7 +2417,7 @@ class GeoReplicationStats(_serialization.Model):
         "can_failover": {"key": "canFailover", "type": "bool"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.status = None
@@ -2451,8 +2464,8 @@ class Identity(_serialization.Model):
         *,
         type: Union[str, "_models.IdentityType"],
         user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentity"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword type: The identity type. Required. Known values are: "None", "SystemAssigned",
          "UserAssigned", and "SystemAssigned,UserAssigned".
@@ -2471,7 +2484,8 @@ class Identity(_serialization.Model):
 
 
 class ImmutabilityPolicy(AzureEntityResource):
-    """The ImmutabilityPolicy property of a blob container, including Id, resource name, resource type, Etag.
+    """The ImmutabilityPolicy property of a blob container, including Id, resource name, resource
+    type, Etag.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -2525,8 +2539,8 @@ class ImmutabilityPolicy(AzureEntityResource):
         *,
         immutability_period_since_creation_in_days: Optional[int] = None,
         allow_protected_append_writes: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword immutability_period_since_creation_in_days: The immutability period for the blobs in
          the container since the policy creation, in days.
@@ -2589,8 +2603,8 @@ class ImmutabilityPolicyProperties(_serialization.Model):
         *,
         immutability_period_since_creation_in_days: Optional[int] = None,
         allow_protected_append_writes: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword immutability_period_since_creation_in_days: The immutability period for the blobs in
          the container since the policy creation, in days.
@@ -2631,7 +2645,7 @@ class IPRule(_serialization.Model):
         "action": {"key": "action", "type": "str"},
     }
 
-    def __init__(self, *, ip_address_or_range: str, action: Optional[Literal["Allow"]] = None, **kwargs):
+    def __init__(self, *, ip_address_or_range: str, action: Optional[Literal["Allow"]] = None, **kwargs: Any) -> None:
         """
         :keyword ip_address_or_range: Specifies the IP or IP range in CIDR format. Only IPV4 address is
          allowed. Required.
@@ -2681,8 +2695,8 @@ class KeyVaultProperties(_serialization.Model):
         key_name: Optional[str] = None,
         key_version: Optional[str] = None,
         key_vault_uri: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword key_name: The name of KeyVault key.
         :paramtype key_name: str
@@ -2736,8 +2750,8 @@ class LastAccessTimeTrackingPolicy(_serialization.Model):
         name: Optional[Union[str, "_models.Name"]] = None,
         tracking_granularity_in_days: Optional[int] = None,
         blob_type: Optional[List[str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword enable: When set to true last access time based tracking is enabled. Required.
         :paramtype enable: bool
@@ -2800,8 +2814,8 @@ class LeaseContainerRequest(_serialization.Model):
         break_period: Optional[int] = None,
         lease_duration: Optional[int] = None,
         proposed_lease_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword action: Specifies the lease action. Can be one of the available actions. Required.
          Known values are: "Acquire", "Renew", "Change", "Release", and "Break".
@@ -2841,7 +2855,9 @@ class LeaseContainerResponse(_serialization.Model):
         "lease_time_seconds": {"key": "leaseTimeSeconds", "type": "str"},
     }
 
-    def __init__(self, *, lease_id: Optional[str] = None, lease_time_seconds: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, lease_id: Optional[str] = None, lease_time_seconds: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword lease_id: Returned unique lease ID that must be included with any request to delete
          the container, or to renew, change, or release the lease.
@@ -2881,7 +2897,7 @@ class LegalHold(_serialization.Model):
         "tags": {"key": "tags", "type": "[str]"},
     }
 
-    def __init__(self, *, tags: List[str], **kwargs):
+    def __init__(self, *, tags: List[str], **kwargs: Any) -> None:
         """
         :keyword tags: Each tag should be 3 to 23 alphanumeric characters and is normalized to lower
          case at SRP. Required.
@@ -2915,7 +2931,7 @@ class LegalHoldProperties(_serialization.Model):
         "tags": {"key": "tags", "type": "[TagProperty]"},
     }
 
-    def __init__(self, *, tags: Optional[List["_models.TagProperty"]] = None, **kwargs):
+    def __init__(self, *, tags: Optional[List["_models.TagProperty"]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: The list of LegalHold tags of a blob container.
         :paramtype tags: list[~azure.mgmt.storage.v2021_01_01.models.TagProperty]
@@ -2942,7 +2958,7 @@ class ListAccountSasResponse(_serialization.Model):
         "account_sas_token": {"key": "accountSasToken", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.account_sas_token = None
@@ -2965,7 +2981,7 @@ class ListBlobInventoryPolicy(_serialization.Model):
         "value": {"key": "value", "type": "[BlobInventoryPolicy]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -3081,8 +3097,8 @@ class ListContainerItem(AzureEntityResource):  # pylint: disable=too-many-instan
         deny_encryption_scope_override: Optional[bool] = None,
         public_access: Optional[Union[str, "_models.PublicAccess"]] = None,
         metadata: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword default_encryption_scope: Default the container to use specified encryption scope for
          all writes.
@@ -3116,7 +3132,8 @@ class ListContainerItem(AzureEntityResource):  # pylint: disable=too-many-instan
 
 
 class ListContainerItems(_serialization.Model):
-    """Response schema. Contains list of blobs returned, and if paging is requested or required, a URL to next page of containers.
+    """Response schema. Contains list of blobs returned, and if paging is requested or required, a URL
+    to next page of containers.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -3137,7 +3154,7 @@ class ListContainerItems(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -3174,7 +3191,7 @@ class ListQueue(Resource):
         "metadata": {"key": "properties.metadata", "type": "{str}"},
     }
 
-    def __init__(self, *, metadata: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, metadata: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword metadata: A name-value pair that represents queue metadata.
         :paramtype metadata: dict[str, str]
@@ -3204,7 +3221,7 @@ class ListQueueResource(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -3228,7 +3245,7 @@ class ListQueueServices(_serialization.Model):
         "value": {"key": "value", "type": "[QueueServiceProperties]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -3251,7 +3268,7 @@ class ListServiceSasResponse(_serialization.Model):
         "service_sas_token": {"key": "serviceSasToken", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.service_sas_token = None
@@ -3278,7 +3295,7 @@ class ListTableResource(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -3302,7 +3319,7 @@ class ListTableServices(_serialization.Model):
         "value": {"key": "value", "type": "[TableServiceProperties]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -3343,7 +3360,7 @@ class ManagementPolicy(Resource):
         "policy": {"key": "properties.policy", "type": "ManagementPolicySchema"},
     }
 
-    def __init__(self, *, policy: Optional["_models.ManagementPolicySchema"] = None, **kwargs):
+    def __init__(self, *, policy: Optional["_models.ManagementPolicySchema"] = None, **kwargs: Any) -> None:
         """
         :keyword policy: The Storage Account ManagementPolicy, in JSON format. See more details in:
          https://docs.microsoft.com/en-us/azure/storage/common/storage-lifecycle-managment-concepts.
@@ -3377,8 +3394,8 @@ class ManagementPolicyAction(_serialization.Model):
         base_blob: Optional["_models.ManagementPolicyBaseBlob"] = None,
         snapshot: Optional["_models.ManagementPolicySnapShot"] = None,
         version: Optional["_models.ManagementPolicyVersion"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword base_blob: The management policy action for base blob.
         :paramtype base_blob: ~azure.mgmt.storage.v2021_01_01.models.ManagementPolicyBaseBlob
@@ -3423,8 +3440,8 @@ class ManagementPolicyBaseBlob(_serialization.Model):
         tier_to_archive: Optional["_models.DateAfterModification"] = None,
         delete: Optional["_models.DateAfterModification"] = None,
         enable_auto_tier_to_hot_from_cool: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tier_to_cool: The function to tier blobs to cool storage. Support blobs currently at
          Hot tier.
@@ -3447,7 +3464,8 @@ class ManagementPolicyBaseBlob(_serialization.Model):
 
 
 class ManagementPolicyDefinition(_serialization.Model):
-    """An object that defines the Lifecycle rule. Each definition is made up with a filters set and an actions set.
+    """An object that defines the Lifecycle rule. Each definition is made up with a filters set and an
+    actions set.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -3471,8 +3489,8 @@ class ManagementPolicyDefinition(_serialization.Model):
         *,
         actions: "_models.ManagementPolicyAction",
         filters: Optional["_models.ManagementPolicyFilter"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword actions: An object that defines the action set. Required.
         :paramtype actions: ~azure.mgmt.storage.v2021_01_01.models.ManagementPolicyAction
@@ -3485,7 +3503,8 @@ class ManagementPolicyDefinition(_serialization.Model):
 
 
 class ManagementPolicyFilter(_serialization.Model):
-    """Filters limit rule actions to a subset of blobs within the storage account. If multiple filters are defined, a logical AND is performed on all filters.
+    """Filters limit rule actions to a subset of blobs within the storage account. If multiple filters
+    are defined, a logical AND is performed on all filters.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -3515,8 +3534,8 @@ class ManagementPolicyFilter(_serialization.Model):
         blob_types: List[str],
         prefix_match: Optional[List[str]] = None,
         blob_index_match: Optional[List["_models.TagFilter"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword prefix_match: An array of strings for prefixes to be match.
         :paramtype prefix_match: list[str]
@@ -3569,8 +3588,8 @@ class ManagementPolicyRule(_serialization.Model):
         type: Union[str, "_models.RuleType"],
         definition: "_models.ManagementPolicyDefinition",
         enabled: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword enabled: Rule is enabled if set to true.
         :paramtype enabled: bool
@@ -3590,7 +3609,8 @@ class ManagementPolicyRule(_serialization.Model):
 
 
 class ManagementPolicySchema(_serialization.Model):
-    """The Storage Account ManagementPolicies Rules. See more details in: https://docs.microsoft.com/en-us/azure/storage/common/storage-lifecycle-managment-concepts.
+    """The Storage Account ManagementPolicies Rules. See more details in:
+    https://docs.microsoft.com/en-us/azure/storage/common/storage-lifecycle-managment-concepts.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -3608,7 +3628,7 @@ class ManagementPolicySchema(_serialization.Model):
         "rules": {"key": "rules", "type": "[ManagementPolicyRule]"},
     }
 
-    def __init__(self, *, rules: List["_models.ManagementPolicyRule"], **kwargs):
+    def __init__(self, *, rules: List["_models.ManagementPolicyRule"], **kwargs: Any) -> None:
         """
         :keyword rules: The Storage Account ManagementPolicies Rules. See more details in:
          https://docs.microsoft.com/en-us/azure/storage/common/storage-lifecycle-managment-concepts.
@@ -3644,8 +3664,8 @@ class ManagementPolicySnapShot(_serialization.Model):
         tier_to_cool: Optional["_models.DateAfterCreation"] = None,
         tier_to_archive: Optional["_models.DateAfterCreation"] = None,
         delete: Optional["_models.DateAfterCreation"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tier_to_cool: The function to tier blob snapshot to cool storage. Support blob
          snapshot currently at Hot tier.
@@ -3687,8 +3707,8 @@ class ManagementPolicyVersion(_serialization.Model):
         tier_to_cool: Optional["_models.DateAfterCreation"] = None,
         tier_to_archive: Optional["_models.DateAfterCreation"] = None,
         delete: Optional["_models.DateAfterCreation"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tier_to_cool: The function to tier blob version to cool storage. Support blob version
          currently at Hot tier.
@@ -3752,8 +3772,8 @@ class MetricSpecification(_serialization.Model):
         fill_gap_with_zero: Optional[bool] = None,
         category: Optional[str] = None,
         resource_id_dimension_name_override: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: Name of metric specification.
         :paramtype name: str
@@ -3797,7 +3817,7 @@ class Multichannel(_serialization.Model):
         "enabled": {"key": "enabled", "type": "bool"},
     }
 
-    def __init__(self, *, enabled: Optional[bool] = None, **kwargs):
+    def __init__(self, *, enabled: Optional[bool] = None, **kwargs: Any) -> None:
         """
         :keyword enabled: Indicates whether multichannel is enabled.
         :paramtype enabled: bool
@@ -3847,8 +3867,8 @@ class NetworkRuleSet(_serialization.Model):
         resource_access_rules: Optional[List["_models.ResourceAccessRule"]] = None,
         virtual_network_rules: Optional[List["_models.VirtualNetworkRule"]] = None,
         ip_rules: Optional[List["_models.IPRule"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword bypass: Specifies whether traffic is bypassed for Logging/Metrics/AzureServices.
          Possible values are any combination of Logging|Metrics|AzureServices (For example, "Logging,
@@ -3886,7 +3906,7 @@ class ObjectReplicationPolicies(_serialization.Model):
         "value": {"key": "value", "type": "[ObjectReplicationPolicy]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.ObjectReplicationPolicy"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.ObjectReplicationPolicy"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: The replication policy between two storage accounts.
         :paramtype value: list[~azure.mgmt.storage.v2021_01_01.models.ObjectReplicationPolicy]
@@ -3896,7 +3916,8 @@ class ObjectReplicationPolicies(_serialization.Model):
 
 
 class ObjectReplicationPolicy(Resource):
-    """The replication policy between two storage accounts. Multiple rules can be defined in one policy.
+    """The replication policy between two storage accounts. Multiple rules can be defined in one
+    policy.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -3945,8 +3966,8 @@ class ObjectReplicationPolicy(Resource):
         source_account: Optional[str] = None,
         destination_account: Optional[str] = None,
         rules: Optional[List["_models.ObjectReplicationPolicyRule"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword source_account: Required. Source account name.
         :paramtype source_account: str
@@ -3964,7 +3985,9 @@ class ObjectReplicationPolicy(Resource):
 
 
 class ObjectReplicationPolicyFilter(_serialization.Model):
-    """Filters limit replication to a subset of blobs within the storage account. A logical OR is performed on values in the filter. If multiple filters are defined, a logical AND is performed on all filters.
+    """Filters limit replication to a subset of blobs within the storage account. A logical OR is
+    performed on values in the filter. If multiple filters are defined, a logical AND is performed
+    on all filters.
 
     :ivar prefix_match: Optional. Filters the results to replicate only blobs whose names begin
      with the specified prefix.
@@ -3979,7 +4002,9 @@ class ObjectReplicationPolicyFilter(_serialization.Model):
         "min_creation_time": {"key": "minCreationTime", "type": "str"},
     }
 
-    def __init__(self, *, prefix_match: Optional[List[str]] = None, min_creation_time: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, prefix_match: Optional[List[str]] = None, min_creation_time: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword prefix_match: Optional. Filters the results to replicate only blobs whose names begin
          with the specified prefix.
@@ -4028,8 +4053,8 @@ class ObjectReplicationPolicyRule(_serialization.Model):
         destination_container: str,
         rule_id: Optional[str] = None,
         filters: Optional["_models.ObjectReplicationPolicyFilter"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword rule_id: Rule Id is auto-generated for each new rule on destination account. It is
          required for put policy on source account.
@@ -4075,8 +4100,8 @@ class Operation(_serialization.Model):
         display: Optional["_models.OperationDisplay"] = None,
         origin: Optional[str] = None,
         service_specification: Optional["_models.ServiceSpecification"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: Operation name: {provider}/{resource}/{operation}.
         :paramtype name: str
@@ -4121,8 +4146,8 @@ class OperationDisplay(_serialization.Model):
         resource: Optional[str] = None,
         operation: Optional[str] = None,
         description: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword provider: Service provider: Microsoft Storage.
         :paramtype provider: str
@@ -4141,7 +4166,8 @@ class OperationDisplay(_serialization.Model):
 
 
 class OperationListResult(_serialization.Model):
-    """Result of the request to list Storage operations. It contains a list of operations and a URL link to get the next set of results.
+    """Result of the request to list Storage operations. It contains a list of operations and a URL
+    link to get the next set of results.
 
     :ivar value: List of Storage operations supported by the Storage resource provider.
     :vartype value: list[~azure.mgmt.storage.v2021_01_01.models.Operation]
@@ -4151,7 +4177,7 @@ class OperationListResult(_serialization.Model):
         "value": {"key": "value", "type": "[Operation]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Operation"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.Operation"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: List of Storage operations supported by the Storage resource provider.
         :paramtype value: list[~azure.mgmt.storage.v2021_01_01.models.Operation]
@@ -4177,7 +4203,7 @@ class PrivateEndpoint(_serialization.Model):
         "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.id = None
@@ -4232,8 +4258,8 @@ class PrivateEndpointConnection(Resource):
         *,
         private_endpoint: Optional["_models.PrivateEndpoint"] = None,
         private_link_service_connection_state: Optional["_models.PrivateLinkServiceConnectionState"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword private_endpoint: The resource of private end point.
         :paramtype private_endpoint: ~azure.mgmt.storage.v2021_01_01.models.PrivateEndpoint
@@ -4259,7 +4285,7 @@ class PrivateEndpointConnectionListResult(_serialization.Model):
         "value": {"key": "value", "type": "[PrivateEndpointConnection]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.PrivateEndpointConnection"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.PrivateEndpointConnection"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: Array of private endpoint connections.
         :paramtype value: list[~azure.mgmt.storage.v2021_01_01.models.PrivateEndpointConnection]
@@ -4306,7 +4332,7 @@ class PrivateLinkResource(Resource):
         "required_zone_names": {"key": "properties.requiredZoneNames", "type": "[str]"},
     }
 
-    def __init__(self, *, required_zone_names: Optional[List[str]] = None, **kwargs):
+    def __init__(self, *, required_zone_names: Optional[List[str]] = None, **kwargs: Any) -> None:
         """
         :keyword required_zone_names: The private link resource Private link DNS zone name.
         :paramtype required_zone_names: list[str]
@@ -4328,7 +4354,7 @@ class PrivateLinkResourceListResult(_serialization.Model):
         "value": {"key": "value", "type": "[PrivateLinkResource]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.PrivateLinkResource"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.PrivateLinkResource"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: Array of private link resources.
         :paramtype value: list[~azure.mgmt.storage.v2021_01_01.models.PrivateLinkResource]
@@ -4338,7 +4364,8 @@ class PrivateLinkResourceListResult(_serialization.Model):
 
 
 class PrivateLinkServiceConnectionState(_serialization.Model):
-    """A collection of information about the state of the connection between service consumer and provider.
+    """A collection of information about the state of the connection between service consumer and
+    provider.
 
     :ivar status: Indicates whether the connection has been Approved/Rejected/Removed by the owner
      of the service. Known values are: "Pending", "Approved", and "Rejected".
@@ -4363,8 +4390,8 @@ class PrivateLinkServiceConnectionState(_serialization.Model):
         status: Optional[Union[str, "_models.PrivateEndpointServiceConnectionStatus"]] = None,
         description: Optional[str] = None,
         action_required: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword status: Indicates whether the connection has been Approved/Rejected/Removed by the
          owner of the service. Known values are: "Pending", "Approved", and "Rejected".
@@ -4393,7 +4420,7 @@ class ProtocolSettings(_serialization.Model):
         "smb": {"key": "smb", "type": "SmbSetting"},
     }
 
-    def __init__(self, *, smb: Optional["_models.SmbSetting"] = None, **kwargs):
+    def __init__(self, *, smb: Optional["_models.SmbSetting"] = None, **kwargs: Any) -> None:
         """
         :keyword smb: Setting for SMB protocol.
         :paramtype smb: ~azure.mgmt.storage.v2021_01_01.models.SmbSetting
@@ -4434,7 +4461,7 @@ class QueueServiceProperties(Resource):
         "cors": {"key": "properties.cors", "type": "CorsRules"},
     }
 
-    def __init__(self, *, cors: Optional["_models.CorsRules"] = None, **kwargs):
+    def __init__(self, *, cors: Optional["_models.CorsRules"] = None, **kwargs: Any) -> None:
         """
         :keyword cors: Specifies CORS rules for the Queue service. You can include up to five CorsRule
          elements in the request. If no CorsRule elements are included in the request body, all CORS
@@ -4459,7 +4486,7 @@ class ResourceAccessRule(_serialization.Model):
         "resource_id": {"key": "resourceId", "type": "str"},
     }
 
-    def __init__(self, *, tenant_id: Optional[str] = None, resource_id: Optional[str] = None, **kwargs):
+    def __init__(self, *, tenant_id: Optional[str] = None, resource_id: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword tenant_id: Tenant Id.
         :paramtype tenant_id: str
@@ -4503,7 +4530,7 @@ class RestorePolicyProperties(_serialization.Model):
         "min_restore_time": {"key": "minRestoreTime", "type": "iso-8601"},
     }
 
-    def __init__(self, *, enabled: bool, days: Optional[int] = None, **kwargs):
+    def __init__(self, *, enabled: bool, days: Optional[int] = None, **kwargs: Any) -> None:
         """
         :keyword enabled: Blob restore is enabled if set to true. Required.
         :paramtype enabled: bool
@@ -4546,7 +4573,7 @@ class Restriction(_serialization.Model):
         "reason_code": {"key": "reasonCode", "type": "str"},
     }
 
-    def __init__(self, *, reason_code: Optional[Union[str, "_models.ReasonCode"]] = None, **kwargs):
+    def __init__(self, *, reason_code: Optional[Union[str, "_models.ReasonCode"]] = None, **kwargs: Any) -> None:
         """
         :keyword reason_code: The reason for the restriction. As of now this can be "QuotaId" or
          "NotAvailableForSubscription". Quota Id is set when the SKU has requiredQuotas parameter as the
@@ -4561,7 +4588,8 @@ class Restriction(_serialization.Model):
 
 
 class RoutingPreference(_serialization.Model):
-    """Routing preference defines the type of network, either microsoft or internet routing to be used to deliver the user data, the default option is microsoft routing.
+    """Routing preference defines the type of network, either microsoft or internet routing to be used
+    to deliver the user data, the default option is microsoft routing.
 
     :ivar routing_choice: Routing Choice defines the kind of network routing opted by the user.
      Known values are: "MicrosoftRouting" and "InternetRouting".
@@ -4586,8 +4614,8 @@ class RoutingPreference(_serialization.Model):
         routing_choice: Optional[Union[str, "_models.RoutingChoice"]] = None,
         publish_microsoft_endpoints: Optional[bool] = None,
         publish_internet_endpoints: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword routing_choice: Routing Choice defines the kind of network routing opted by the user.
          Known values are: "MicrosoftRouting" and "InternetRouting".
@@ -4701,8 +4729,8 @@ class ServiceSasParameters(_serialization.Model):  # pylint: disable=too-many-in
         content_encoding: Optional[str] = None,
         content_language: Optional[str] = None,
         content_type: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword canonicalized_resource: The canonical path to the signed resource. Required.
         :paramtype canonicalized_resource: str
@@ -4782,7 +4810,9 @@ class ServiceSpecification(_serialization.Model):
         "metric_specifications": {"key": "metricSpecifications", "type": "[MetricSpecification]"},
     }
 
-    def __init__(self, *, metric_specifications: Optional[List["_models.MetricSpecification"]] = None, **kwargs):
+    def __init__(
+        self, *, metric_specifications: Optional[List["_models.MetricSpecification"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword metric_specifications: Metric specifications of operation.
         :paramtype metric_specifications:
@@ -4819,7 +4849,7 @@ class Sku(_serialization.Model):
         "tier": {"key": "tier", "type": "str"},
     }
 
-    def __init__(self, *, name: Union[str, "_models.SkuName"], **kwargs):
+    def __init__(self, *, name: Union[str, "_models.SkuName"], **kwargs: Any) -> None:
         """
         :keyword name: The SKU name. Required for account creation; optional for update. Note that in
          older versions, SKU name was called accountType. Required. Known values are: "Standard_LRS",
@@ -4833,7 +4863,8 @@ class Sku(_serialization.Model):
 
 
 class SKUCapability(_serialization.Model):
-    """The capability information in the specified SKU, including file encryption, network ACLs, change notification, etc.
+    """The capability information in the specified SKU, including file encryption, network ACLs,
+    change notification, etc.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -4854,7 +4885,7 @@ class SKUCapability(_serialization.Model):
         "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.name = None
@@ -4916,8 +4947,8 @@ class SkuInformation(_serialization.Model):
         *,
         name: Union[str, "_models.SkuName"],
         restrictions: Optional[List["_models.Restriction"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The SKU name. Required for account creation; optional for update. Note that in
          older versions, SKU name was called accountType. Required. Known values are: "Standard_LRS",
@@ -4973,8 +5004,8 @@ class SmbSetting(_serialization.Model):
         authentication_methods: Optional[str] = None,
         kerberos_ticket_encryption: Optional[str] = None,
         channel_encryption: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword multichannel: Multichannel setting. Applies to Premium FileStorage only.
         :paramtype multichannel: ~azure.mgmt.storage.v2021_01_01.models.Multichannel
@@ -5000,7 +5031,8 @@ class SmbSetting(_serialization.Model):
 
 
 class TrackedResource(Resource):
-    """The resource model definition for an Azure Resource Manager tracked top level resource which has 'tags' and a 'location'.
+    """The resource model definition for an Azure Resource Manager tracked top level resource which
+    has 'tags' and a 'location'.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -5035,7 +5067,7 @@ class TrackedResource(Resource):
         "location": {"key": "location", "type": "str"},
     }
 
-    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -5243,8 +5275,8 @@ class StorageAccount(TrackedResource):  # pylint: disable=too-many-instance-attr
         minimum_tls_version: Optional[Union[str, "_models.MinimumTlsVersion"]] = None,
         allow_shared_key_access: Optional[bool] = None,
         enable_nfs_v3: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -5344,7 +5376,7 @@ class StorageAccountCheckNameAvailabilityParameters(_serialization.Model):
 
     type = "Microsoft.Storage/storageAccounts"
 
-    def __init__(self, *, name: str, **kwargs):
+    def __init__(self, *, name: str, **kwargs: Any) -> None:
         """
         :keyword name: The storage account name. Required.
         :paramtype name: str
@@ -5476,8 +5508,8 @@ class StorageAccountCreateParameters(_serialization.Model):  # pylint: disable=t
         minimum_tls_version: Optional[Union[str, "_models.MinimumTlsVersion"]] = None,
         allow_shared_key_access: Optional[bool] = None,
         enable_nfs_v3: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword sku: Required. Gets or sets the SKU name. Required.
         :paramtype sku: ~azure.mgmt.storage.v2021_01_01.models.Sku
@@ -5566,7 +5598,8 @@ class StorageAccountCreateParameters(_serialization.Model):  # pylint: disable=t
 
 
 class StorageAccountInternetEndpoints(_serialization.Model):
-    """The URIs that are used to perform a retrieval of a public blob, file, web or dfs object via a internet routing endpoint.
+    """The URIs that are used to perform a retrieval of a public blob, file, web or dfs object via a
+    internet routing endpoint.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -5594,7 +5627,7 @@ class StorageAccountInternetEndpoints(_serialization.Model):
         "dfs": {"key": "dfs", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.blob = None
@@ -5629,7 +5662,7 @@ class StorageAccountKey(_serialization.Model):
         "permissions": {"key": "permissions", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.key_name = None
@@ -5655,7 +5688,7 @@ class StorageAccountListKeysResult(_serialization.Model):
         "keys": {"key": "keys", "type": "[StorageAccountKey]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.keys = None
@@ -5683,7 +5716,7 @@ class StorageAccountListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -5691,7 +5724,8 @@ class StorageAccountListResult(_serialization.Model):
 
 
 class StorageAccountMicrosoftEndpoints(_serialization.Model):
-    """The URIs that are used to perform a retrieval of a public blob, queue, table, web or dfs object via a microsoft routing endpoint.
+    """The URIs that are used to perform a retrieval of a public blob, queue, table, web or dfs object
+    via a microsoft routing endpoint.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -5727,7 +5761,7 @@ class StorageAccountMicrosoftEndpoints(_serialization.Model):
         "dfs": {"key": "dfs", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.blob = None
@@ -5756,7 +5790,7 @@ class StorageAccountRegenerateKeyParameters(_serialization.Model):
         "key_name": {"key": "keyName", "type": "str"},
     }
 
-    def __init__(self, *, key_name: str, **kwargs):
+    def __init__(self, *, key_name: str, **kwargs: Any) -> None:
         """
         :keyword key_name: The name of storage keys that want to be regenerated, possible values are
          key1, key2, kerb1, kerb2. Required.
@@ -5861,8 +5895,8 @@ class StorageAccountUpdateParameters(_serialization.Model):  # pylint: disable=t
         allow_blob_public_access: Optional[bool] = None,
         minimum_tls_version: Optional[Union[str, "_models.MinimumTlsVersion"]] = None,
         allow_shared_key_access: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword sku: Gets or sets the SKU name. Note that the SKU name cannot be updated to
          Standard_ZRS, Premium_LRS or Premium_ZRS, nor can accounts of those SKU names be updated to any
@@ -5972,7 +6006,7 @@ class StorageQueue(Resource):
         "approximate_message_count": {"key": "properties.approximateMessageCount", "type": "int"},
     }
 
-    def __init__(self, *, metadata: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, metadata: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword metadata: A name-value pair that represents queue metadata.
         :paramtype metadata: dict[str, str]
@@ -5999,7 +6033,7 @@ class StorageSkuListResult(_serialization.Model):
         "value": {"key": "value", "type": "[SkuInformation]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -6042,8 +6076,8 @@ class SystemData(_serialization.Model):
         last_modified_by: Optional[str] = None,
         last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         last_modified_at: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword created_by: The identity that created the resource.
         :paramtype created_by: str
@@ -6100,7 +6134,7 @@ class Table(Resource):
         "table_name": {"key": "properties.tableName", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.table_name = None
@@ -6138,7 +6172,7 @@ class TableServiceProperties(Resource):
         "cors": {"key": "properties.cors", "type": "CorsRules"},
     }
 
-    def __init__(self, *, cors: Optional["_models.CorsRules"] = None, **kwargs):
+    def __init__(self, *, cors: Optional["_models.CorsRules"] = None, **kwargs: Any) -> None:
         """
         :keyword cors: Specifies CORS rules for the Table service. You can include up to five CorsRule
          elements in the request. If no CorsRule elements are included in the request body, all CORS
@@ -6176,7 +6210,7 @@ class TagFilter(_serialization.Model):
         "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(self, *, name: str, op: str, value: str, **kwargs):
+    def __init__(self, *, name: str, op: str, value: str, **kwargs: Any) -> None:
         """
         :keyword name: This is the filter tag name, it can have 1 - 128 characters. Required.
         :paramtype name: str
@@ -6226,7 +6260,7 @@ class TagProperty(_serialization.Model):
         "upn": {"key": "upn", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.tag = None
@@ -6276,7 +6310,7 @@ class UpdateHistoryProperty(_serialization.Model):
         "upn": {"key": "upn", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.update = None
@@ -6317,7 +6351,7 @@ class Usage(_serialization.Model):
         "name": {"key": "name", "type": "UsageName"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.unit = None
@@ -6337,7 +6371,7 @@ class UsageListResult(_serialization.Model):
         "value": {"key": "value", "type": "[Usage]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Usage"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.Usage"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: Gets or sets the list of Storage Resource Usages.
         :paramtype value: list[~azure.mgmt.storage.v2021_01_01.models.Usage]
@@ -6367,7 +6401,7 @@ class UsageName(_serialization.Model):
         "localized_value": {"key": "localizedValue", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -6395,7 +6429,7 @@ class UserAssignedIdentity(_serialization.Model):
         "client_id": {"key": "clientId", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.principal_id = None
@@ -6434,8 +6468,8 @@ class VirtualNetworkRule(_serialization.Model):
         virtual_network_resource_id: str,
         action: Optional[Literal["Allow"]] = None,
         state: Optional[Union[str, "_models.State"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword virtual_network_resource_id: Resource ID of a subnet, for example:
          /subscriptions/{subscriptionId}/resourceGroups/{groupName}/providers/Microsoft.Network/virtualNetworks/{vnetName}/subnets/{subnetName}.

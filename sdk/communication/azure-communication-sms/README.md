@@ -3,7 +3,11 @@
 This package contains a Python SDK for Azure Communication Services for SMS.
 Read more about Azure Communication Services [here](https://docs.microsoft.com/azure/communication-services/overview)
 
-[Source code](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/communication/azure-communication-sms) | [Package (Pypi)](https://pypi.org/project/azure-communication-sms/) | [API reference documentation](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/communication/azure-communication-sms) | [Product documentation](https://docs.microsoft.com/azure/communication-services/quickstarts/telephony-sms/send?pivots=programming-language-python)
+[Source code](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/communication/azure-communication-sms)
+| [Package (Pypi)](https://pypi.org/project/azure-communication-sms/)
+| [Package (Conda)](https://anaconda.org/microsoft/azure-communication/)
+| [API reference documentation](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/communication/azure-communication-sms)
+| [Product documentation](https://docs.microsoft.com/azure/communication-services/quickstarts/telephony-sms/send?pivots=programming-language-python)
 
 ## _Disclaimer_
 
@@ -44,7 +48,7 @@ The following section provides several code snippets covering some of the most c
 To initialize the SMS Client, the connection string can be used to instantiate.
 Alternatively, you can also use Active Directory authentication using DefaultAzureCredential.
 
-```Python
+```python
 from azure.communication.sms import SmsClient
 from azure.identity import DefaultAzureCredential
 
@@ -61,7 +65,7 @@ sms_client = SmsClient(endpoint, DefaultAzureCredential())
 
 Once the client is initialized, the `send` method can be invoked:
 
-```Python
+```python
 from azure.communication.sms import SendSmsOptions
 
 sms_responses = sms_client.send(
@@ -82,7 +86,7 @@ sms_responses = sms_client.send(
 
 Once the client is initialized, the `send` method can be invoked:
 
-```Python
+```python
 from azure.communication.sms import SendSmsOptions
 
 sms_responses = sms_client.send(
@@ -103,7 +107,7 @@ sms_responses = sms_client.send(
 ## Troubleshooting
 SMS operations will throw an exception if the request to the server fails. The SMS client will raise exceptions defined in [Azure Core](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/README.md). Exceptions will not be thrown if the error is caused by an individual message, only if something fails with the overall request. Please use the successful flag to validate each individual result to verify if the message was sent.
 
-```Python
+```python
 try:
     sms_responses = sms_client.send(
         from_="<leased-phone-number>",

@@ -9,6 +9,7 @@ import os
 import re
 import sys
 from pathlib import Path
+from typing import Optional
 
 from azure.ai.ml.dsl._constants import VALID_NAME_CHARS
 from azure.ai.ml.exceptions import ComponentException, ErrorCategory, ErrorTarget
@@ -33,14 +34,13 @@ def is_valid_name(name: str):
 
 
 def _resolve_source_directory():
-    """Resolve source directory as last customer frame's module file dir
-    position."""
+    """Resolve source directory as last customer frame's module file dir position."""
     source_file = _resolve_source_file()
     # Fall back to current working directory if not found
     return os.getcwd() if not source_file else Path(os.path.dirname(source_file)).absolute()
 
 
-def _resolve_source_file():
+def _resolve_source_file() -> Optional[Path]:
     """Resolve source file as last customer frame's module file position."""
     try:
         frame_list = inspect.stack()
@@ -54,7 +54,8 @@ def _resolve_source_file():
                 module = inspect.getmodule(last_frame.frame)
                 return Path(module.__file__).absolute() if module else None
     except Exception:  # pylint: disable=broad-except
-        return None
+        pass
+    return None
 
 
 def _assert_frame_package_name(pattern, frame):
@@ -70,10 +71,8 @@ def _assert_frame_package_name(pattern, frame):
 def _relative_to(path, basedir, raises_if_impossible=False):
     """Compute the relative path under basedir.
 
-    This is a wrapper function of Path.relative_to, by default
-    Path.relative_to raises if path is not under basedir, In this
-    function, it returns None if raises_if_impossible=False, otherwise
-    raises.
+    This is a wrapper function of Path.relative_to, by default Path.relative_to raises if path is not under basedir, In
+    this function, it returns None if raises_if_impossible=False, otherwise raises.
     """
     # The second resolve is to resolve possible win short path.
     path = Path(path).resolve().absolute().resolve()
@@ -162,7 +161,7 @@ def _import_component_with_working_dir(module_name, working_dir=None, force_relo
 
 @contextlib.contextmanager
 def environment_variable_overwrite(key, val):
-    if key in os.environ.keys():
+    if key in os.environ:
         backup_value = os.environ[key]
     else:
         backup_value = None

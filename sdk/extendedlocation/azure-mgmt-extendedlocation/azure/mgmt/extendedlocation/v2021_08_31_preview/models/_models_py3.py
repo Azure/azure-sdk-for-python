@@ -1,4 +1,5 @@
 # coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -7,17 +8,16 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
-from azure.core.exceptions import HttpResponseError
-import msrest.serialization
+from ... import _serialization
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    import __init__ as _models
+    from .. import models as _models
 
 
-class Resource(msrest.serialization.Model):
+class Resource(_serialization.Model):
     """Common fields that are returned in the response for all Azure Resource Manager resources.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -33,31 +33,28 @@ class Resource(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(Resource, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
 
 
 class TrackedResource(Resource):
-    """The resource model definition for an Azure Resource Manager tracked top level resource which has 'tags' and a 'location'.
+    """The resource model definition for an Azure Resource Manager tracked top level resource which
+    has 'tags' and a 'location'.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -71,46 +68,40 @@ class TrackedResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
-    :ivar location: Required. The geo-location where the resource lives.
+    :ivar location: The geo-location where the resource lives. Required.
     :vartype location: str
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        location: str,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
-        :keyword location: Required. The geo-location where the resource lives.
+        :keyword location: The geo-location where the resource lives. Required.
         :paramtype location: str
         """
-        super(TrackedResource, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.tags = tags
         self.location = location
 
 
-class CustomLocation(TrackedResource):
+class CustomLocation(TrackedResource):  # pylint: disable=too-many-instance-attributes
     """Custom Locations definition.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -125,9 +116,9 @@ class CustomLocation(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
-    :ivar location: Required. The geo-location where the resource lives.
+    :ivar location: The geo-location where the resource lives. Required.
     :vartype location: str
     :ivar identity: Identity for the resource.
     :vartype identity: ~azure.mgmt.extendedlocation.v2021_08_31_preview.models.Identity
@@ -145,8 +136,8 @@ class CustomLocation(TrackedResource):
     :ivar host_resource_id: Connected Cluster or AKS Cluster. The Custom Locations RP will perform
      a checkAccess API for listAdminCredentials permissions.
     :vartype host_resource_id: str
-    :ivar host_type: Type of host the Custom Locations is referencing (Kubernetes, etc...). Known
-     values are: "Kubernetes".
+    :ivar host_type: Type of host the Custom Locations is referencing (Kubernetes, etc...).
+     "Kubernetes"
     :vartype host_type: str or ~azure.mgmt.extendedlocation.v2021_08_31_preview.models.HostType
     :ivar namespace: Kubernetes namespace that will be created on the specified cluster.
     :vartype namespace: str
@@ -155,28 +146,28 @@ class CustomLocation(TrackedResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
-        'system_data': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
-        'identity': {'key': 'identity', 'type': 'Identity'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'authentication': {'key': 'properties.authentication', 'type': 'CustomLocationPropertiesAuthentication'},
-        'cluster_extension_ids': {'key': 'properties.clusterExtensionIds', 'type': '[str]'},
-        'display_name': {'key': 'properties.displayName', 'type': 'str'},
-        'host_resource_id': {'key': 'properties.hostResourceId', 'type': 'str'},
-        'host_type': {'key': 'properties.hostType', 'type': 'str'},
-        'namespace': {'key': 'properties.namespace', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+        "identity": {"key": "identity", "type": "Identity"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "authentication": {"key": "properties.authentication", "type": "CustomLocationPropertiesAuthentication"},
+        "cluster_extension_ids": {"key": "properties.clusterExtensionIds", "type": "[str]"},
+        "display_name": {"key": "properties.displayName", "type": "str"},
+        "host_resource_id": {"key": "properties.hostResourceId", "type": "str"},
+        "host_type": {"key": "properties.hostType", "type": "str"},
+        "namespace": {"key": "properties.namespace", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
@@ -192,12 +183,12 @@ class CustomLocation(TrackedResource):
         host_type: Optional[Union[str, "_models.HostType"]] = None,
         namespace: Optional[str] = None,
         provisioning_state: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
-        :keyword location: Required. The geo-location where the resource lives.
+        :keyword location: The geo-location where the resource lives. Required.
         :paramtype location: str
         :keyword identity: Identity for the resource.
         :paramtype identity: ~azure.mgmt.extendedlocation.v2021_08_31_preview.models.Identity
@@ -214,14 +205,14 @@ class CustomLocation(TrackedResource):
          perform a checkAccess API for listAdminCredentials permissions.
         :paramtype host_resource_id: str
         :keyword host_type: Type of host the Custom Locations is referencing (Kubernetes, etc...).
-         Known values are: "Kubernetes".
+         "Kubernetes"
         :paramtype host_type: str or ~azure.mgmt.extendedlocation.v2021_08_31_preview.models.HostType
         :keyword namespace: Kubernetes namespace that will be created on the specified cluster.
         :paramtype namespace: str
         :keyword provisioning_state: Provisioning State for the Custom Location.
         :paramtype provisioning_state: str
         """
-        super(CustomLocation, self).__init__(tags=tags, location=location, **kwargs)
+        super().__init__(tags=tags, location=location, **kwargs)
         self.identity = identity
         self.system_data = None
         self.authentication = authentication
@@ -233,7 +224,7 @@ class CustomLocation(TrackedResource):
         self.provisioning_state = provisioning_state
 
 
-class CustomLocationFindTargetResourceGroupProperties(msrest.serialization.Model):
+class CustomLocationFindTargetResourceGroupProperties(_serialization.Model):
     """The Find Target Resource Group operation request.
 
     :ivar labels: Labels of the custom resource, this is a map of {key,value} pairs.
@@ -241,24 +232,19 @@ class CustomLocationFindTargetResourceGroupProperties(msrest.serialization.Model
     """
 
     _attribute_map = {
-        'labels': {'key': 'labels', 'type': '{str}'},
+        "labels": {"key": "labels", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        *,
-        labels: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, labels: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword labels: Labels of the custom resource, this is a map of {key,value} pairs.
         :paramtype labels: dict[str, str]
         """
-        super(CustomLocationFindTargetResourceGroupProperties, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.labels = labels
 
 
-class CustomLocationFindTargetResourceGroupResult(msrest.serialization.Model):
+class CustomLocationFindTargetResourceGroupResult(_serialization.Model):
     """The Find Target Resource Group operation response.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -275,27 +261,23 @@ class CustomLocationFindTargetResourceGroupResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'matched_resource_sync_rule': {'readonly': True},
-        'target_resource_group': {'readonly': True},
+        "matched_resource_sync_rule": {"readonly": True},
+        "target_resource_group": {"readonly": True},
     }
 
     _attribute_map = {
-        'matched_resource_sync_rule': {'key': 'matchedResourceSyncRule', 'type': 'str'},
-        'target_resource_group': {'key': 'targetResourceGroup', 'type': 'str'},
+        "matched_resource_sync_rule": {"key": "matchedResourceSyncRule", "type": "str"},
+        "target_resource_group": {"key": "targetResourceGroup", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(CustomLocationFindTargetResourceGroupResult, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.matched_resource_sync_rule = None
         self.target_resource_group = None
 
 
-class CustomLocationListResult(msrest.serialization.Model):
+class CustomLocationListResult(_serialization.Model):
     """The List Custom Locations operation response.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -307,27 +289,23 @@ class CustomLocationListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'next_link': {'readonly': True},
-        'value': {'readonly': True},
+        "next_link": {"readonly": True},
+        "value": {"readonly": True},
     }
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'value': {'key': 'value', 'type': '[CustomLocation]'},
+        "next_link": {"key": "nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[CustomLocation]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(CustomLocationListResult, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.next_link = None
         self.value = None
 
 
-class CustomLocationOperation(msrest.serialization.Model):
+class CustomLocationOperation(_serialization.Model):
     """Custom Locations operation.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -349,32 +327,28 @@ class CustomLocationOperation(msrest.serialization.Model):
     """
 
     _validation = {
-        'is_data_action': {'readonly': True},
-        'name': {'readonly': True},
-        'origin': {'readonly': True},
-        'description': {'readonly': True},
-        'operation': {'readonly': True},
-        'provider': {'readonly': True},
-        'resource': {'readonly': True},
+        "is_data_action": {"readonly": True},
+        "name": {"readonly": True},
+        "origin": {"readonly": True},
+        "description": {"readonly": True},
+        "operation": {"readonly": True},
+        "provider": {"readonly": True},
+        "resource": {"readonly": True},
     }
 
     _attribute_map = {
-        'is_data_action': {'key': 'isDataAction', 'type': 'bool'},
-        'name': {'key': 'name', 'type': 'str'},
-        'origin': {'key': 'origin', 'type': 'str'},
-        'description': {'key': 'display.description', 'type': 'str'},
-        'operation': {'key': 'display.operation', 'type': 'str'},
-        'provider': {'key': 'display.provider', 'type': 'str'},
-        'resource': {'key': 'display.resource', 'type': 'str'},
+        "is_data_action": {"key": "isDataAction", "type": "bool"},
+        "name": {"key": "name", "type": "str"},
+        "origin": {"key": "origin", "type": "str"},
+        "description": {"key": "display.description", "type": "str"},
+        "operation": {"key": "display.operation", "type": "str"},
+        "provider": {"key": "display.provider", "type": "str"},
+        "resource": {"key": "display.resource", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(CustomLocationOperation, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.is_data_action = None
         self.name = None
         self.origin = None
@@ -384,48 +358,45 @@ class CustomLocationOperation(msrest.serialization.Model):
         self.resource = None
 
 
-class CustomLocationOperationsList(msrest.serialization.Model):
+class CustomLocationOperationsList(_serialization.Model):
     """Lists of Custom Locations operations.
 
     All required parameters must be populated in order to send to Azure.
 
     :ivar next_link: Next page of operations.
     :vartype next_link: str
-    :ivar value: Required. Array of customLocationOperation.
+    :ivar value: Array of customLocationOperation. Required.
     :vartype value:
      list[~azure.mgmt.extendedlocation.v2021_08_31_preview.models.CustomLocationOperation]
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'value': {'key': 'value', 'type': '[CustomLocationOperation]'},
+        "next_link": {"key": "nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[CustomLocationOperation]"},
     }
 
     def __init__(
-        self,
-        *,
-        value: List["_models.CustomLocationOperation"],
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+        self, *, value: List["_models.CustomLocationOperation"], next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword next_link: Next page of operations.
         :paramtype next_link: str
-        :keyword value: Required. Array of customLocationOperation.
+        :keyword value: Array of customLocationOperation. Required.
         :paramtype value:
          list[~azure.mgmt.extendedlocation.v2021_08_31_preview.models.CustomLocationOperation]
         """
-        super(CustomLocationOperationsList, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.next_link = next_link
         self.value = value
 
 
-class CustomLocationPropertiesAuthentication(msrest.serialization.Model):
-    """This is optional input that contains the authentication that should be used to generate the namespace.
+class CustomLocationPropertiesAuthentication(_serialization.Model):
+    """This is optional input that contains the authentication that should be used to generate the
+    namespace.
 
     :ivar type: The type of the Custom Locations authentication.
     :vartype type: str
@@ -434,30 +405,25 @@ class CustomLocationPropertiesAuthentication(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
+        "type": {"key": "type", "type": "str"},
+        "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        type: Optional[str] = None,
-        value: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, type: Optional[str] = None, value: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword type: The type of the Custom Locations authentication.
         :paramtype type: str
         :keyword value: The kubeconfig value.
         :paramtype value: str
         """
-        super(CustomLocationPropertiesAuthentication, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.type = type
         self.value = value
 
 
 class ProxyResource(Resource):
-    """The resource model definition for a Azure Resource Manager proxy resource. It will not have tags and a location.
+    """The resource model definition for a Azure Resource Manager proxy resource. It will not have
+    tags and a location.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -472,24 +438,20 @@ class ProxyResource(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ProxyResource, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
 
 
 class EnabledResourceType(ProxyResource):
@@ -517,20 +479,23 @@ class EnabledResourceType(ProxyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'cluster_extension_id': {'key': 'properties.clusterExtensionId', 'type': 'str'},
-        'extension_type': {'key': 'properties.extensionType', 'type': 'str'},
-        'types_metadata': {'key': 'properties.typesMetadata', 'type': '[EnabledResourceTypePropertiesTypesMetadataItem]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "cluster_extension_id": {"key": "properties.clusterExtensionId", "type": "str"},
+        "extension_type": {"key": "properties.extensionType", "type": "str"},
+        "types_metadata": {
+            "key": "properties.typesMetadata",
+            "type": "[EnabledResourceTypePropertiesTypesMetadataItem]",
+        },
     }
 
     def __init__(
@@ -539,8 +504,8 @@ class EnabledResourceType(ProxyResource):
         cluster_extension_id: Optional[str] = None,
         extension_type: Optional[str] = None,
         types_metadata: Optional[List["_models.EnabledResourceTypePropertiesTypesMetadataItem"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword cluster_extension_id: Cluster Extension ID.
         :paramtype cluster_extension_id: str
@@ -550,14 +515,14 @@ class EnabledResourceType(ProxyResource):
         :paramtype types_metadata:
          list[~azure.mgmt.extendedlocation.v2021_08_31_preview.models.EnabledResourceTypePropertiesTypesMetadataItem]
         """
-        super(EnabledResourceType, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.system_data = None
         self.cluster_extension_id = cluster_extension_id
         self.extension_type = extension_type
         self.types_metadata = types_metadata
 
 
-class EnabledResourceTypePropertiesTypesMetadataItem(msrest.serialization.Model):
+class EnabledResourceTypePropertiesTypesMetadataItem(_serialization.Model):
     """Metadata of the Resource Type.
 
     :ivar api_version: Api Version of Resource Type.
@@ -569,9 +534,9 @@ class EnabledResourceTypePropertiesTypesMetadataItem(msrest.serialization.Model)
     """
 
     _attribute_map = {
-        'api_version': {'key': 'apiVersion', 'type': 'str'},
-        'resource_provider_namespace': {'key': 'resourceProviderNamespace', 'type': 'str'},
-        'resource_type': {'key': 'resourceType', 'type': 'str'},
+        "api_version": {"key": "apiVersion", "type": "str"},
+        "resource_provider_namespace": {"key": "resourceProviderNamespace", "type": "str"},
+        "resource_type": {"key": "resourceType", "type": "str"},
     }
 
     def __init__(
@@ -580,8 +545,8 @@ class EnabledResourceTypePropertiesTypesMetadataItem(msrest.serialization.Model)
         api_version: Optional[str] = None,
         resource_provider_namespace: Optional[str] = None,
         resource_type: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword api_version: Api Version of Resource Type.
         :paramtype api_version: str
@@ -590,13 +555,13 @@ class EnabledResourceTypePropertiesTypesMetadataItem(msrest.serialization.Model)
         :keyword resource_type: Resource Type.
         :paramtype resource_type: str
         """
-        super(EnabledResourceTypePropertiesTypesMetadataItem, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.api_version = api_version
         self.resource_provider_namespace = resource_provider_namespace
         self.resource_type = resource_type
 
 
-class EnabledResourceTypesListResult(msrest.serialization.Model):
+class EnabledResourceTypesListResult(_serialization.Model):
     """List of EnabledResourceTypes definition.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -609,27 +574,23 @@ class EnabledResourceTypesListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'next_link': {'readonly': True},
-        'value': {'readonly': True},
+        "next_link": {"readonly": True},
+        "value": {"readonly": True},
     }
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'value': {'key': 'value', 'type': '[EnabledResourceType]'},
+        "next_link": {"key": "nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[EnabledResourceType]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(EnabledResourceTypesListResult, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.next_link = None
         self.value = None
 
 
-class ErrorAdditionalInfo(msrest.serialization.Model):
+class ErrorAdditionalInfo(_serialization.Model):
     """The resource management error additional info.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -637,31 +598,27 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
     :ivar type: The additional info type.
     :vartype type: str
     :ivar info: The additional info.
-    :vartype info: any
+    :vartype info: JSON
     """
 
     _validation = {
-        'type': {'readonly': True},
-        'info': {'readonly': True},
+        "type": {"readonly": True},
+        "info": {"readonly": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'info': {'key': 'info', 'type': 'object'},
+        "type": {"key": "type", "type": "str"},
+        "info": {"key": "info", "type": "object"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ErrorAdditionalInfo, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.type = None
         self.info = None
 
 
-class ErrorDetail(msrest.serialization.Model):
+class ErrorDetail(_serialization.Model):
     """The error detail.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -680,28 +637,24 @@ class ErrorDetail(msrest.serialization.Model):
     """
 
     _validation = {
-        'code': {'readonly': True},
-        'message': {'readonly': True},
-        'target': {'readonly': True},
-        'details': {'readonly': True},
-        'additional_info': {'readonly': True},
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[ErrorDetail]'},
-        'additional_info': {'key': 'additionalInfo', 'type': '[ErrorAdditionalInfo]'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[ErrorDetail]"},
+        "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ErrorDetail, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.code = None
         self.message = None
         self.target = None
@@ -709,32 +662,28 @@ class ErrorDetail(msrest.serialization.Model):
         self.additional_info = None
 
 
-class ErrorResponse(msrest.serialization.Model):
-    """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
+class ErrorResponse(_serialization.Model):
+    """Common error response for all Azure Resource Manager APIs to return error details for failed
+    operations. (This also follows the OData error response format.).
 
     :ivar error: The error object.
     :vartype error: ~azure.mgmt.extendedlocation.v2021_08_31_preview.models.ErrorDetail
     """
 
     _attribute_map = {
-        'error': {'key': 'error', 'type': 'ErrorDetail'},
+        "error": {"key": "error", "type": "ErrorDetail"},
     }
 
-    def __init__(
-        self,
-        *,
-        error: Optional["_models.ErrorDetail"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs: Any) -> None:
         """
         :keyword error: The error object.
         :paramtype error: ~azure.mgmt.extendedlocation.v2021_08_31_preview.models.ErrorDetail
         """
-        super(ErrorResponse, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.error = error
 
 
-class Identity(msrest.serialization.Model):
+class Identity(_serialization.Model):
     """Identity for the resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -743,40 +692,35 @@ class Identity(msrest.serialization.Model):
     :vartype principal_id: str
     :ivar tenant_id: The tenant ID of resource.
     :vartype tenant_id: str
-    :ivar type: The identity type. Known values are: "SystemAssigned", "None".
+    :ivar type: The identity type. Known values are: "SystemAssigned" and "None".
     :vartype type: str or
      ~azure.mgmt.extendedlocation.v2021_08_31_preview.models.ResourceIdentityType
     """
 
     _validation = {
-        'principal_id': {'readonly': True},
-        'tenant_id': {'readonly': True},
+        "principal_id": {"readonly": True},
+        "tenant_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'principal_id': {'key': 'principalId', 'type': 'str'},
-        'tenant_id': {'key': 'tenantId', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "principal_id": {"key": "principalId", "type": "str"},
+        "tenant_id": {"key": "tenantId", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        type: Optional[Union[str, "_models.ResourceIdentityType"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, type: Optional[Union[str, "_models.ResourceIdentityType"]] = None, **kwargs: Any) -> None:
         """
-        :keyword type: The identity type. Known values are: "SystemAssigned", "None".
+        :keyword type: The identity type. Known values are: "SystemAssigned" and "None".
         :paramtype type: str or
          ~azure.mgmt.extendedlocation.v2021_08_31_preview.models.ResourceIdentityType
         """
-        super(Identity, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.principal_id = None
         self.tenant_id = None
         self.type = type
 
 
-class MatchExpressionsProperties(msrest.serialization.Model):
+class MatchExpressionsProperties(_serialization.Model):
     """Resource Sync Rules matchExpression property definition.
 
     :ivar key: Key is the label key that the selector applies to.
@@ -789,9 +733,9 @@ class MatchExpressionsProperties(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'key': {'key': 'key', 'type': 'str'},
-        'operator': {'key': 'operator', 'type': 'str'},
-        'values': {'key': 'values', 'type': '[str]'},
+        "key": {"key": "key", "type": "str"},
+        "operator": {"key": "operator", "type": "str"},
+        "values": {"key": "values", "type": "[str]"},
     }
 
     def __init__(
@@ -800,8 +744,8 @@ class MatchExpressionsProperties(msrest.serialization.Model):
         key: Optional[str] = None,
         operator: Optional[str] = None,
         values: Optional[List[str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword key: Key is the label key that the selector applies to.
         :paramtype key: str
@@ -811,18 +755,18 @@ class MatchExpressionsProperties(msrest.serialization.Model):
         :keyword values: The label value.
         :paramtype values: list[str]
         """
-        super(MatchExpressionsProperties, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.key = key
         self.operator = operator
         self.values = values
 
 
-class PatchableCustomLocations(msrest.serialization.Model):
+class PatchableCustomLocations(_serialization.Model):
     """The Custom Locations patchable resource definition.
 
     :ivar identity: Identity for the resource.
     :vartype identity: ~azure.mgmt.extendedlocation.v2021_08_31_preview.models.Identity
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar authentication: This is optional input that contains the authentication that should be
      used to generate the namespace.
@@ -836,8 +780,8 @@ class PatchableCustomLocations(msrest.serialization.Model):
     :ivar host_resource_id: Connected Cluster or AKS Cluster. The Custom Locations RP will perform
      a checkAccess API for listAdminCredentials permissions.
     :vartype host_resource_id: str
-    :ivar host_type: Type of host the Custom Locations is referencing (Kubernetes, etc...). Known
-     values are: "Kubernetes".
+    :ivar host_type: Type of host the Custom Locations is referencing (Kubernetes, etc...).
+     "Kubernetes"
     :vartype host_type: str or ~azure.mgmt.extendedlocation.v2021_08_31_preview.models.HostType
     :ivar namespace: Kubernetes namespace that will be created on the specified cluster.
     :vartype namespace: str
@@ -846,15 +790,15 @@ class PatchableCustomLocations(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'identity': {'key': 'identity', 'type': 'Identity'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'authentication': {'key': 'properties.authentication', 'type': 'CustomLocationPropertiesAuthentication'},
-        'cluster_extension_ids': {'key': 'properties.clusterExtensionIds', 'type': '[str]'},
-        'display_name': {'key': 'properties.displayName', 'type': 'str'},
-        'host_resource_id': {'key': 'properties.hostResourceId', 'type': 'str'},
-        'host_type': {'key': 'properties.hostType', 'type': 'str'},
-        'namespace': {'key': 'properties.namespace', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "identity": {"key": "identity", "type": "Identity"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "authentication": {"key": "properties.authentication", "type": "CustomLocationPropertiesAuthentication"},
+        "cluster_extension_ids": {"key": "properties.clusterExtensionIds", "type": "[str]"},
+        "display_name": {"key": "properties.displayName", "type": "str"},
+        "host_resource_id": {"key": "properties.hostResourceId", "type": "str"},
+        "host_type": {"key": "properties.hostType", "type": "str"},
+        "namespace": {"key": "properties.namespace", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
@@ -869,12 +813,12 @@ class PatchableCustomLocations(msrest.serialization.Model):
         host_type: Optional[Union[str, "_models.HostType"]] = None,
         namespace: Optional[str] = None,
         provisioning_state: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword identity: Identity for the resource.
         :paramtype identity: ~azure.mgmt.extendedlocation.v2021_08_31_preview.models.Identity
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword authentication: This is optional input that contains the authentication that should be
          used to generate the namespace.
@@ -889,14 +833,14 @@ class PatchableCustomLocations(msrest.serialization.Model):
          perform a checkAccess API for listAdminCredentials permissions.
         :paramtype host_resource_id: str
         :keyword host_type: Type of host the Custom Locations is referencing (Kubernetes, etc...).
-         Known values are: "Kubernetes".
+         "Kubernetes"
         :paramtype host_type: str or ~azure.mgmt.extendedlocation.v2021_08_31_preview.models.HostType
         :keyword namespace: Kubernetes namespace that will be created on the specified cluster.
         :paramtype namespace: str
         :keyword provisioning_state: Provisioning State for the Custom Location.
         :paramtype provisioning_state: str
         """
-        super(PatchableCustomLocations, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.identity = identity
         self.tags = tags
         self.authentication = authentication
@@ -908,12 +852,12 @@ class PatchableCustomLocations(msrest.serialization.Model):
         self.provisioning_state = provisioning_state
 
 
-class PatchableResourceSyncRule(msrest.serialization.Model):
+class PatchableResourceSyncRule(_serialization.Model):
     """The Resource Sync Rules patchable resource definition.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar priority: Priority represents a priority of the Resource Sync Rule.
     :vartype priority: int
@@ -939,15 +883,15 @@ class PatchableResourceSyncRule(msrest.serialization.Model):
     """
 
     _validation = {
-        'provisioning_state': {'readonly': True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'priority': {'key': 'properties.priority', 'type': 'int'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'selector': {'key': 'properties.selector', 'type': 'ResourceSyncRulePropertiesSelector'},
-        'target_resource_group': {'key': 'properties.targetResourceGroup', 'type': 'str'},
+        "tags": {"key": "tags", "type": "{str}"},
+        "priority": {"key": "properties.priority", "type": "int"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "selector": {"key": "properties.selector", "type": "ResourceSyncRulePropertiesSelector"},
+        "target_resource_group": {"key": "properties.targetResourceGroup", "type": "str"},
     }
 
     def __init__(
@@ -957,10 +901,10 @@ class PatchableResourceSyncRule(msrest.serialization.Model):
         priority: Optional[int] = None,
         selector: Optional["_models.ResourceSyncRulePropertiesSelector"] = None,
         target_resource_group: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword priority: Priority represents a priority of the Resource Sync Rule.
         :paramtype priority: int
@@ -982,7 +926,7 @@ class PatchableResourceSyncRule(msrest.serialization.Model):
          when creating the resource sync rule.
         :paramtype target_resource_group: str
         """
-        super(PatchableResourceSyncRule, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.tags = tags
         self.priority = priority
         self.provisioning_state = None
@@ -1005,9 +949,9 @@ class ResourceSyncRule(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
-    :ivar location: Required. The geo-location where the resource lives.
+    :ivar location: The geo-location where the resource lives. Required.
     :vartype location: str
     :ivar system_data: Metadata pertaining to creation and last modification of the resource.
     :vartype system_data: ~azure.mgmt.extendedlocation.v2021_08_31_preview.models.SystemData
@@ -1035,25 +979,25 @@ class ResourceSyncRule(TrackedResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
-        'system_data': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
+        "system_data": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'priority': {'key': 'properties.priority', 'type': 'int'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'selector': {'key': 'properties.selector', 'type': 'ResourceSyncRulePropertiesSelector'},
-        'target_resource_group': {'key': 'properties.targetResourceGroup', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "priority": {"key": "properties.priority", "type": "int"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "selector": {"key": "properties.selector", "type": "ResourceSyncRulePropertiesSelector"},
+        "target_resource_group": {"key": "properties.targetResourceGroup", "type": "str"},
     }
 
     def __init__(
@@ -1064,12 +1008,12 @@ class ResourceSyncRule(TrackedResource):
         priority: Optional[int] = None,
         selector: Optional["_models.ResourceSyncRulePropertiesSelector"] = None,
         target_resource_group: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
-        :keyword location: Required. The geo-location where the resource lives.
+        :keyword location: The geo-location where the resource lives. Required.
         :paramtype location: str
         :keyword priority: Priority represents a priority of the Resource Sync Rule.
         :paramtype priority: int
@@ -1091,7 +1035,7 @@ class ResourceSyncRule(TrackedResource):
          when creating the resource sync rule.
         :paramtype target_resource_group: str
         """
-        super(ResourceSyncRule, self).__init__(tags=tags, location=location, **kwargs)
+        super().__init__(tags=tags, location=location, **kwargs)
         self.system_data = None
         self.priority = priority
         self.provisioning_state = None
@@ -1099,7 +1043,7 @@ class ResourceSyncRule(TrackedResource):
         self.target_resource_group = target_resource_group
 
 
-class ResourceSyncRuleListResult(msrest.serialization.Model):
+class ResourceSyncRuleListResult(_serialization.Model):
     """The List Resource Sync Rules operation response.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1111,28 +1055,31 @@ class ResourceSyncRuleListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'next_link': {'readonly': True},
-        'value': {'readonly': True},
+        "next_link": {"readonly": True},
+        "value": {"readonly": True},
     }
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'value': {'key': 'value', 'type': '[ResourceSyncRule]'},
+        "next_link": {"key": "nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[ResourceSyncRule]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ResourceSyncRuleListResult, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.next_link = None
         self.value = None
 
 
-class ResourceSyncRulePropertiesSelector(msrest.serialization.Model):
-    """A label selector is composed of two parts, matchLabels and matchExpressions. The first part, matchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels map is equivalent to an element of matchExpressions, whose key field is 'key', the operator is 'In', and the values array contains only 'value'. The second part, matchExpressions is a list of resource selector requirements. Valid operators include In, NotIn, Exists, and DoesNotExist. The values set must be non-empty in the case of In and NotIn. The values set must be empty in the case of Exists and DoesNotExist. All of the requirements, from both matchLabels and matchExpressions must all be satisfied in order to match.
+class ResourceSyncRulePropertiesSelector(_serialization.Model):
+    """A label selector is composed of two parts, matchLabels and matchExpressions. The first part,
+    matchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels map is
+    equivalent to an element of matchExpressions, whose key field is 'key', the operator is 'In',
+    and the values array contains only 'value'. The second part, matchExpressions is a list of
+    resource selector requirements. Valid operators include In, NotIn, Exists, and DoesNotExist.
+    The values set must be non-empty in the case of In and NotIn. The values set must be empty in
+    the case of Exists and DoesNotExist. All of the requirements, from both matchLabels and
+    matchExpressions must all be satisfied in order to match.
 
     :ivar match_expressions: MatchExpressions is a list of resource selector requirements. Valid
      operators include In, NotIn, Exists, and DoesNotExist. The values set must be non-empty in the
@@ -1146,8 +1093,8 @@ class ResourceSyncRulePropertiesSelector(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'match_expressions': {'key': 'matchExpressions', 'type': '[MatchExpressionsProperties]'},
-        'match_labels': {'key': 'matchLabels', 'type': '{str}'},
+        "match_expressions": {"key": "matchExpressions", "type": "[MatchExpressionsProperties]"},
+        "match_labels": {"key": "matchLabels", "type": "{str}"},
     }
 
     def __init__(
@@ -1155,8 +1102,8 @@ class ResourceSyncRulePropertiesSelector(msrest.serialization.Model):
         *,
         match_expressions: Optional[List["_models.MatchExpressionsProperties"]] = None,
         match_labels: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword match_expressions: MatchExpressions is a list of resource selector requirements. Valid
          operators include In, NotIn, Exists, and DoesNotExist. The values set must be non-empty in the
@@ -1168,18 +1115,18 @@ class ResourceSyncRulePropertiesSelector(msrest.serialization.Model):
          operator is 'In', and the values array contains only 'value'.
         :paramtype match_labels: dict[str, str]
         """
-        super(ResourceSyncRulePropertiesSelector, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.match_expressions = match_expressions
         self.match_labels = match_labels
 
 
-class SystemData(msrest.serialization.Model):
+class SystemData(_serialization.Model):
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
     :vartype created_by: str
     :ivar created_by_type: The type of identity that created the resource. Known values are:
-     "User", "Application", "ManagedIdentity", "Key".
+     "User", "Application", "ManagedIdentity", and "Key".
     :vartype created_by_type: str or
      ~azure.mgmt.extendedlocation.v2021_08_31_preview.models.CreatedByType
     :ivar created_at: The timestamp of resource creation (UTC).
@@ -1187,7 +1134,7 @@ class SystemData(msrest.serialization.Model):
     :ivar last_modified_by: The identity that last modified the resource.
     :vartype last_modified_by: str
     :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
-     are: "User", "Application", "ManagedIdentity", "Key".
+     are: "User", "Application", "ManagedIdentity", and "Key".
     :vartype last_modified_by_type: str or
      ~azure.mgmt.extendedlocation.v2021_08_31_preview.models.CreatedByType
     :ivar last_modified_at: The timestamp of resource last modification (UTC).
@@ -1195,12 +1142,12 @@ class SystemData(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'created_by': {'key': 'createdBy', 'type': 'str'},
-        'created_by_type': {'key': 'createdByType', 'type': 'str'},
-        'created_at': {'key': 'createdAt', 'type': 'iso-8601'},
-        'last_modified_by': {'key': 'lastModifiedBy', 'type': 'str'},
-        'last_modified_by_type': {'key': 'lastModifiedByType', 'type': 'str'},
-        'last_modified_at': {'key': 'lastModifiedAt', 'type': 'iso-8601'},
+        "created_by": {"key": "createdBy", "type": "str"},
+        "created_by_type": {"key": "createdByType", "type": "str"},
+        "created_at": {"key": "createdAt", "type": "iso-8601"},
+        "last_modified_by": {"key": "lastModifiedBy", "type": "str"},
+        "last_modified_by_type": {"key": "lastModifiedByType", "type": "str"},
+        "last_modified_at": {"key": "lastModifiedAt", "type": "iso-8601"},
     }
 
     def __init__(
@@ -1212,13 +1159,13 @@ class SystemData(msrest.serialization.Model):
         last_modified_by: Optional[str] = None,
         last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         last_modified_at: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword created_by: The identity that created the resource.
         :paramtype created_by: str
         :keyword created_by_type: The type of identity that created the resource. Known values are:
-         "User", "Application", "ManagedIdentity", "Key".
+         "User", "Application", "ManagedIdentity", and "Key".
         :paramtype created_by_type: str or
          ~azure.mgmt.extendedlocation.v2021_08_31_preview.models.CreatedByType
         :keyword created_at: The timestamp of resource creation (UTC).
@@ -1226,13 +1173,13 @@ class SystemData(msrest.serialization.Model):
         :keyword last_modified_by: The identity that last modified the resource.
         :paramtype last_modified_by: str
         :keyword last_modified_by_type: The type of identity that last modified the resource. Known
-         values are: "User", "Application", "ManagedIdentity", "Key".
+         values are: "User", "Application", "ManagedIdentity", and "Key".
         :paramtype last_modified_by_type: str or
          ~azure.mgmt.extendedlocation.v2021_08_31_preview.models.CreatedByType
         :keyword last_modified_at: The timestamp of resource last modification (UTC).
         :paramtype last_modified_at: ~datetime.datetime
         """
-        super(SystemData, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.created_by = created_by
         self.created_by_type = created_by_type
         self.created_at = created_at

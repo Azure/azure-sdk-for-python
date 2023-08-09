@@ -11,7 +11,7 @@ from ._custom_entity_store_assignments_operations import CustomEntityStoreAssign
 from ._security_connectors_operations import SecurityConnectorsOperations
 
 from ._patch import __all__ as _patch_all
-from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [

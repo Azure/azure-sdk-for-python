@@ -9,21 +9,18 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING
+from typing import Any, Optional, TYPE_CHECKING
 
 from azure.mgmt.core import ARMPipelineClient
 from azure.profiles import KnownProfiles, ProfileDefinition
 from azure.profiles.multiapiclient import MultiApiClientMixin
-from msrest import Deserializer, Serializer
 
 from ._configuration import DnsManagementClientConfiguration
+from ._serialization import Deserializer, Serializer
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Optional
-
     from azure.core.credentials import TokenCredential
-    from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
 class _SDKClient(object):
     def __init__(self, *args, **kwargs):
@@ -43,9 +40,9 @@ class DnsManagementClient(MultiApiClientMixin, _SDKClient):
     The api-version parameter sets the default API version if the operation
     group is not described in the profile.
 
-    :param credential: Credential needed for the client to connect to Azure.
+    :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param subscription_id: Specifies the Azure subscription ID, which uniquely identifies the Microsoft Azure subscription.
+    :param subscription_id: Specifies the Azure subscription ID, which uniquely identifies the Microsoft Azure subscription. Required.
     :type subscription_id: str
     :param api_version: API version to use if no profile is provided, or if missing in profile.
     :type api_version: str
@@ -67,15 +64,15 @@ class DnsManagementClient(MultiApiClientMixin, _SDKClient):
 
     def __init__(
         self,
-        credential,  # type: "TokenCredential"
-        subscription_id,  # type: str
-        api_version=None, # type: Optional[str]
-        base_url=None,  # type: Optional[str]
-        profile=KnownProfiles.default, # type: KnownProfiles
-        **kwargs  # type: Any
+        credential: "TokenCredential",
+        subscription_id: str,
+        api_version: Optional[str]=None,
+        base_url: str = "https://management.azure.com",
+        profile: KnownProfiles=KnownProfiles.default,
+        **kwargs: Any
     ):
-        if not base_url:
-            base_url = 'https://management.azure.com'
+        if api_version:
+            kwargs.setdefault('api_version', api_version)
         self._config = DnsManagementClientConfiguration(credential, subscription_id, **kwargs)
         self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
         super(DnsManagementClient, self).__init__(
@@ -94,6 +91,7 @@ class DnsManagementClient(MultiApiClientMixin, _SDKClient):
            * 2016-04-01: :mod:`v2016_04_01.models<azure.mgmt.dns.v2016_04_01.models>`
            * 2018-03-01-preview: :mod:`v2018_03_01_preview.models<azure.mgmt.dns.v2018_03_01_preview.models>`
            * 2018-05-01: :mod:`v2018_05_01.models<azure.mgmt.dns.v2018_05_01.models>`
+           * 2023-07-01-preview: :mod:`v2023_07_01_preview.models<azure.mgmt.dns.v2023_07_01_preview.models>`
         """
         if api_version == '2016-04-01':
             from .v2016_04_01 import models
@@ -104,6 +102,9 @@ class DnsManagementClient(MultiApiClientMixin, _SDKClient):
         elif api_version == '2018-05-01':
             from .v2018_05_01 import models
             return models
+        elif api_version == '2023-07-01-preview':
+            from .v2023_07_01_preview import models
+            return models
         raise ValueError("API version {} is not available".format(api_version))
 
     @property
@@ -111,13 +112,31 @@ class DnsManagementClient(MultiApiClientMixin, _SDKClient):
         """Instance depends on the API version:
 
            * 2018-05-01: :class:`DnsResourceReferenceOperations<azure.mgmt.dns.v2018_05_01.operations.DnsResourceReferenceOperations>`
+           * 2023-07-01-preview: :class:`DnsResourceReferenceOperations<azure.mgmt.dns.v2023_07_01_preview.operations.DnsResourceReferenceOperations>`
         """
         api_version = self._get_api_version('dns_resource_reference')
         if api_version == '2018-05-01':
             from .v2018_05_01.operations import DnsResourceReferenceOperations as OperationClass
+        elif api_version == '2023-07-01-preview':
+            from .v2023_07_01_preview.operations import DnsResourceReferenceOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'dns_resource_reference'".format(api_version))
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        self._config.api_version = api_version
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
+
+    @property
+    def dnssec_configs(self):
+        """Instance depends on the API version:
+
+           * 2023-07-01-preview: :class:`DnssecConfigsOperations<azure.mgmt.dns.v2023_07_01_preview.operations.DnssecConfigsOperations>`
+        """
+        api_version = self._get_api_version('dnssec_configs')
+        if api_version == '2023-07-01-preview':
+            from .v2023_07_01_preview.operations import DnssecConfigsOperations as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation group 'dnssec_configs'".format(api_version))
+        self._config.api_version = api_version
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     @property
     def record_sets(self):
@@ -126,6 +145,7 @@ class DnsManagementClient(MultiApiClientMixin, _SDKClient):
            * 2016-04-01: :class:`RecordSetsOperations<azure.mgmt.dns.v2016_04_01.operations.RecordSetsOperations>`
            * 2018-03-01-preview: :class:`RecordSetsOperations<azure.mgmt.dns.v2018_03_01_preview.operations.RecordSetsOperations>`
            * 2018-05-01: :class:`RecordSetsOperations<azure.mgmt.dns.v2018_05_01.operations.RecordSetsOperations>`
+           * 2023-07-01-preview: :class:`RecordSetsOperations<azure.mgmt.dns.v2023_07_01_preview.operations.RecordSetsOperations>`
         """
         api_version = self._get_api_version('record_sets')
         if api_version == '2016-04-01':
@@ -134,9 +154,12 @@ class DnsManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2018_03_01_preview.operations import RecordSetsOperations as OperationClass
         elif api_version == '2018-05-01':
             from .v2018_05_01.operations import RecordSetsOperations as OperationClass
+        elif api_version == '2023-07-01-preview':
+            from .v2023_07_01_preview.operations import RecordSetsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'record_sets'".format(api_version))
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        self._config.api_version = api_version
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     @property
     def zones(self):
@@ -145,6 +168,7 @@ class DnsManagementClient(MultiApiClientMixin, _SDKClient):
            * 2016-04-01: :class:`ZonesOperations<azure.mgmt.dns.v2016_04_01.operations.ZonesOperations>`
            * 2018-03-01-preview: :class:`ZonesOperations<azure.mgmt.dns.v2018_03_01_preview.operations.ZonesOperations>`
            * 2018-05-01: :class:`ZonesOperations<azure.mgmt.dns.v2018_05_01.operations.ZonesOperations>`
+           * 2023-07-01-preview: :class:`ZonesOperations<azure.mgmt.dns.v2023_07_01_preview.operations.ZonesOperations>`
         """
         api_version = self._get_api_version('zones')
         if api_version == '2016-04-01':
@@ -153,9 +177,12 @@ class DnsManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2018_03_01_preview.operations import ZonesOperations as OperationClass
         elif api_version == '2018-05-01':
             from .v2018_05_01.operations import ZonesOperations as OperationClass
+        elif api_version == '2023-07-01-preview':
+            from .v2023_07_01_preview.operations import ZonesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'zones'".format(api_version))
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        self._config.api_version = api_version
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     def close(self):
         self._client.close()

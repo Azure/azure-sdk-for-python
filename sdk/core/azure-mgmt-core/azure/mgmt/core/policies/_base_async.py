@@ -27,31 +27,34 @@ import asyncio
 import json
 import logging
 import uuid
+from typing import TypeVar
 
-from azure.core.pipeline import PipelineRequest
+from azure.core.pipeline import PipelineRequest, PipelineResponse
 from azure.core.pipeline.policies import AsyncHTTPPolicy
 
 from . import ARMAutoResourceProviderRegistrationPolicy
 
 _LOGGER = logging.getLogger(__name__)
 
+AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType")
+HTTPRequestType = TypeVar("HTTPRequestType")
+
 
 class AsyncARMAutoResourceProviderRegistrationPolicy(
     ARMAutoResourceProviderRegistrationPolicy, AsyncHTTPPolicy
-):
-    """Auto register an ARM resource provider if not done yet.
-    """
+):  # pylint: disable=name-too-long
+    """Auto register an ARM resource provider if not done yet."""
 
-    async def send(self, request: PipelineRequest):  # pylint: disable=invalid-overridden-method
+    async def send(  # pylint: disable=invalid-overridden-method
+        self, request: PipelineRequest[HTTPRequestType]
+    ) -> PipelineResponse[HTTPRequestType, AsyncHTTPResponseType]:
         http_request = request.http_request
         response = await self.next.send(request)
         if response.http_response.status_code == 409:
             rp_name = self._check_rp_not_registered_err(response)
             if rp_name:
                 url_prefix = self._extract_subscription_url(http_request.url)
-                register_rp_status = await self._async_register_rp(
-                    request, url_prefix, rp_name
-                )
+                register_rp_status = await self._async_register_rp(request, url_prefix, rp_name)
                 if not register_rp_status:
                     return response
                 # Change the 'x-ms-client-request-id' otherwise the Azure endpoint
@@ -65,28 +68,28 @@ class AsyncARMAutoResourceProviderRegistrationPolicy(
         """Synchronously register the RP is paremeter.
 
         Return False if we have a reason to believe this didn't work
+
+        :param initial_request: The initial request
+        :type initial_request: ~azure.core.pipeline.PipelineRequest
+        :param str url_prefix: The url prefix
+        :param str rp_name: The resource provider name
+        :return: Return False if we have a reason to believe this didn't work
+        :rtype: bool
         """
-        post_url = "{}providers/{}/register?api-version=2016-02-01".format(
-            url_prefix, rp_name
-        )
+        post_url = "{}providers/{}/register?api-version=2016-02-01".format(url_prefix, rp_name)
         get_url = "{}providers/{}?api-version=2016-02-01".format(url_prefix, rp_name)
         _LOGGER.warning(
-            "Resource provider '%s' used by this operation is not "
-            "registered. We are registering for you.",
+            "Resource provider '%s' used by this operation is not registered. We are registering for you.",
             rp_name,
         )
-        post_response = await self.next.send(
-            self._build_next_request(initial_request, "POST", post_url)
-        )
+        post_response = await self.next.send(self._build_next_request(initial_request, "POST", post_url))
         if post_response.http_response.status_code != 200:
             _LOGGER.warning("Registration failed. Please register manually.")
             return False
 
         while True:
             await asyncio.sleep(10)
-            get_response = await self.next.send(
-                self._build_next_request(initial_request, "GET", get_url)
-            )
+            get_response = await self.next.send(self._build_next_request(initial_request, "GET", get_url))
             rp_info = json.loads(get_response.http_response.text())
             if rp_info["registrationState"] == "Registered":
                 _LOGGER.warning("Registration succeeded.")

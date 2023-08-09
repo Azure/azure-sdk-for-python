@@ -29,12 +29,11 @@ def main():
         subscription_id="00000000-1111-2222-3333-444444444444",
     )
 
-    response = client.server_communication_links.delete(
+    client.server_communication_links.delete(
         resource_group_name="sqlcrudtest-7398",
         server_name="sqlcrudtest-4645",
         communication_link_name="link1",
     )
-    print(response)
 
 
 # x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/stable/2014-04-01/examples/ServerCommunicationLinkDelete.json

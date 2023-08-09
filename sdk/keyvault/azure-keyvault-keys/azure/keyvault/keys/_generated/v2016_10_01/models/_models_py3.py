@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from ... import _serialization
 
@@ -28,7 +28,7 @@ class Action(_serialization.Model):
         "action_type": {"key": "action_type", "type": "str"},
     }
 
-    def __init__(self, *, action_type: Optional[Union[str, "_models.ActionType"]] = None, **kwargs):
+    def __init__(self, *, action_type: Optional[Union[str, "_models.ActionType"]] = None, **kwargs: Any) -> None:
         """
         :keyword action_type: The type of the action. Known values are: "EmailContacts" and
          "AutoRenew".
@@ -65,8 +65,8 @@ class AdministratorDetails(_serialization.Model):
         last_name: Optional[str] = None,
         email_address: Optional[str] = None,
         phone: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword first_name: First name.
         :paramtype first_name: str
@@ -120,8 +120,8 @@ class Attributes(_serialization.Model):
         enabled: Optional[bool] = None,
         not_before: Optional[datetime.datetime] = None,
         expires: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword enabled: Determines whether the object is enabled.
         :paramtype enabled: bool
@@ -155,7 +155,7 @@ class BackupKeyResult(_serialization.Model):
         "value": {"key": "value", "type": "base64"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -178,7 +178,7 @@ class BackupSecretResult(_serialization.Model):
         "value": {"key": "value", "type": "base64"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -228,8 +228,8 @@ class CertificateAttributes(Attributes):
         enabled: Optional[bool] = None,
         not_before: Optional[datetime.datetime] = None,
         expires: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword enabled: Determines whether the object is enabled.
         :paramtype enabled: bool
@@ -294,8 +294,8 @@ class CertificateBundle(_serialization.Model):
         content_type: Optional[str] = None,
         attributes: Optional["_models.CertificateAttributes"] = None,
         tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword cer: CER contents of x509 certificate.
         :paramtype cer: bytes
@@ -341,8 +341,8 @@ class CertificateCreateParameters(_serialization.Model):
         certificate_policy: Optional["_models.CertificatePolicy"] = None,
         certificate_attributes: Optional["_models.CertificateAttributes"] = None,
         tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword certificate_policy: The management policy for the certificate.
         :paramtype certificate_policy: ~azure.keyvault.v2016_10_01.models.CertificatePolicy
@@ -396,8 +396,8 @@ class CertificateImportParameters(_serialization.Model):
         certificate_policy: Optional["_models.CertificatePolicy"] = None,
         certificate_attributes: Optional["_models.CertificateAttributes"] = None,
         tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword base64_encoded_certificate: Base64 encoded representation of the certificate object to
          import. This certificate needs to contain the private key. Required.
@@ -435,8 +435,12 @@ class CertificateIssuerItem(_serialization.Model):
     }
 
     def __init__(
-        self, *, id: Optional[str] = None, provider: Optional[str] = None, **kwargs  # pylint: disable=redefined-builtin
-    ):
+        self,
+        *,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        provider: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Certificate Identifier.
         :paramtype id: str
@@ -470,7 +474,7 @@ class CertificateIssuerListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -510,8 +514,8 @@ class CertificateIssuerSetParameters(_serialization.Model):
         credentials: Optional["_models.IssuerCredentials"] = None,
         organization_details: Optional["_models.OrganizationDetails"] = None,
         attributes: Optional["_models.IssuerAttributes"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword provider: The issuer provider. Required.
         :paramtype provider: str
@@ -556,8 +560,8 @@ class CertificateIssuerUpdateParameters(_serialization.Model):
         credentials: Optional["_models.IssuerCredentials"] = None,
         organization_details: Optional["_models.OrganizationDetails"] = None,
         attributes: Optional["_models.IssuerAttributes"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword provider: The issuer provider.
         :paramtype provider: str
@@ -602,8 +606,8 @@ class CertificateItem(_serialization.Model):
         attributes: Optional["_models.CertificateAttributes"] = None,
         tags: Optional[Dict[str, str]] = None,
         x509_thumbprint: Optional[bytes] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Certificate identifier.
         :paramtype id: str
@@ -643,7 +647,7 @@ class CertificateListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -679,8 +683,8 @@ class CertificateMergeParameters(_serialization.Model):
         x509_certificates: List[bytes],
         certificate_attributes: Optional["_models.CertificateAttributes"] = None,
         tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword x509_certificates: The certificate or the certificate chain to merge. Required.
         :paramtype x509_certificates: list[bytes]
@@ -749,8 +753,8 @@ class CertificateOperation(_serialization.Model):
         error: Optional["_models.Error"] = None,
         target: Optional[str] = None,
         request_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword issuer_parameters: Parameters for the issuer of the X509 component of a certificate.
         :paramtype issuer_parameters: ~azure.keyvault.v2016_10_01.models.IssuerParameters
@@ -801,7 +805,7 @@ class CertificateOperationUpdateParameter(_serialization.Model):
         "cancellation_requested": {"key": "cancellation_requested", "type": "bool"},
     }
 
-    def __init__(self, *, cancellation_requested: bool, **kwargs):
+    def __init__(self, *, cancellation_requested: bool, **kwargs: Any) -> None:
         """
         :keyword cancellation_requested: Indicates if cancellation was requested on the certificate
          operation. Required.
@@ -857,8 +861,8 @@ class CertificatePolicy(_serialization.Model):
         lifetime_actions: Optional[List["_models.LifetimeAction"]] = None,
         issuer_parameters: Optional["_models.IssuerParameters"] = None,
         attributes: Optional["_models.CertificateAttributes"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword key_properties: Properties of the key backing a certificate.
         :paramtype key_properties: ~azure.keyvault.v2016_10_01.models.KeyProperties
@@ -908,8 +912,8 @@ class CertificateUpdateParameters(_serialization.Model):
         certificate_policy: Optional["_models.CertificatePolicy"] = None,
         certificate_attributes: Optional["_models.CertificateAttributes"] = None,
         tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword certificate_policy: The management policy for the certificate.
         :paramtype certificate_policy: ~azure.keyvault.v2016_10_01.models.CertificatePolicy
@@ -942,8 +946,13 @@ class Contact(_serialization.Model):
     }
 
     def __init__(
-        self, *, email_address: Optional[str] = None, name: Optional[str] = None, phone: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        email_address: Optional[str] = None,
+        name: Optional[str] = None,
+        phone: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword email_address: Email address.
         :paramtype email_address: str
@@ -978,7 +987,7 @@ class Contacts(_serialization.Model):
         "contact_list": {"key": "contacts", "type": "[Contact]"},
     }
 
-    def __init__(self, *, contact_list: Optional[List["_models.Contact"]] = None, **kwargs):
+    def __init__(self, *, contact_list: Optional[List["_models.Contact"]] = None, **kwargs: Any) -> None:
         """
         :keyword contact_list: The contact list for the vault certificates.
         :paramtype contact_list: list[~azure.keyvault.v2016_10_01.models.Contact]
@@ -989,7 +998,8 @@ class Contacts(_serialization.Model):
 
 
 class DeletedCertificateBundle(CertificateBundle):  # pylint: disable=too-many-instance-attributes
-    """A Deleted Certificate consisting of its previous id, attributes and its tags, as well as information on when it will be purged.
+    """A Deleted Certificate consisting of its previous id, attributes and its tags, as well as
+    information on when it will be purged.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -1053,8 +1063,8 @@ class DeletedCertificateBundle(CertificateBundle):  # pylint: disable=too-many-i
         attributes: Optional["_models.CertificateAttributes"] = None,
         tags: Optional[Dict[str, str]] = None,
         recovery_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword cer: CER contents of x509 certificate.
         :paramtype cer: bytes
@@ -1119,8 +1129,8 @@ class DeletedCertificateItem(CertificateItem):
         tags: Optional[Dict[str, str]] = None,
         x509_thumbprint: Optional[bytes] = None,
         recovery_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Certificate identifier.
         :paramtype id: str
@@ -1162,7 +1172,7 @@ class DeletedCertificateListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -1202,8 +1212,8 @@ class KeyBundle(_serialization.Model):
         key: Optional["_models.JsonWebKey"] = None,
         attributes: Optional["_models.KeyAttributes"] = None,
         tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword key: The Json web key.
         :paramtype key: ~azure.keyvault.v2016_10_01.models.JsonWebKey
@@ -1265,8 +1275,8 @@ class DeletedKeyBundle(KeyBundle):
         attributes: Optional["_models.KeyAttributes"] = None,
         tags: Optional[Dict[str, str]] = None,
         recovery_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword key: The Json web key.
         :paramtype key: ~azure.keyvault.v2016_10_01.models.JsonWebKey
@@ -1317,8 +1327,8 @@ class KeyItem(_serialization.Model):
         kid: Optional[str] = None,
         attributes: Optional["_models.KeyAttributes"] = None,
         tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword kid: Key identifier.
         :paramtype kid: str
@@ -1380,8 +1390,8 @@ class DeletedKeyItem(KeyItem):
         attributes: Optional["_models.KeyAttributes"] = None,
         tags: Optional[Dict[str, str]] = None,
         recovery_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword kid: Key identifier.
         :paramtype kid: str
@@ -1421,7 +1431,7 @@ class DeletedKeyListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -1474,8 +1484,8 @@ class SecretBundle(_serialization.Model):
         content_type: Optional[str] = None,
         attributes: Optional["_models.SecretAttributes"] = None,
         tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: The secret value.
         :paramtype value: str
@@ -1499,7 +1509,8 @@ class SecretBundle(_serialization.Model):
 
 
 class DeletedSecretBundle(SecretBundle):
-    """A Deleted Secret consisting of its previous id, attributes and its tags, as well as information on when it will be purged.
+    """A Deleted Secret consisting of its previous id, attributes and its tags, as well as information
+    on when it will be purged.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -1557,8 +1568,8 @@ class DeletedSecretBundle(SecretBundle):
         attributes: Optional["_models.SecretAttributes"] = None,
         tags: Optional[Dict[str, str]] = None,
         recovery_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: The secret value.
         :paramtype value: str
@@ -1617,8 +1628,8 @@ class SecretItem(_serialization.Model):
         attributes: Optional["_models.SecretAttributes"] = None,
         tags: Optional[Dict[str, str]] = None,
         content_type: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Secret identifier.
         :paramtype id: str
@@ -1687,8 +1698,8 @@ class DeletedSecretItem(SecretItem):
         tags: Optional[Dict[str, str]] = None,
         content_type: Optional[str] = None,
         recovery_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Secret identifier.
         :paramtype id: str
@@ -1730,7 +1741,7 @@ class DeletedSecretListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -1762,7 +1773,7 @@ class Error(_serialization.Model):
         "inner_error": {"key": "innererror", "type": "Error"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.code = None
@@ -1794,7 +1805,7 @@ class IssuerAttributes(_serialization.Model):
         "updated": {"key": "updated", "type": "unix-time"},
     }
 
-    def __init__(self, *, enabled: Optional[bool] = None, **kwargs):
+    def __init__(self, *, enabled: Optional[bool] = None, **kwargs: Any) -> None:
         """
         :keyword enabled: Determines whether the issuer is enabled.
         :paramtype enabled: bool
@@ -1841,8 +1852,8 @@ class IssuerBundle(_serialization.Model):
         credentials: Optional["_models.IssuerCredentials"] = None,
         organization_details: Optional["_models.OrganizationDetails"] = None,
         attributes: Optional["_models.IssuerAttributes"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword provider: The issuer provider.
         :paramtype provider: str
@@ -1875,7 +1886,7 @@ class IssuerCredentials(_serialization.Model):
         "password": {"key": "pwd", "type": "str"},
     }
 
-    def __init__(self, *, account_id: Optional[str] = None, password: Optional[str] = None, **kwargs):
+    def __init__(self, *, account_id: Optional[str] = None, password: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword account_id: The user name/account name/account id.
         :paramtype account_id: str
@@ -1902,7 +1913,7 @@ class IssuerParameters(_serialization.Model):
         "certificate_type": {"key": "cty", "type": "str"},
     }
 
-    def __init__(self, *, name: Optional[str] = None, certificate_type: Optional[str] = None, **kwargs):
+    def __init__(self, *, name: Optional[str] = None, certificate_type: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword name: Name of the referenced issuer object or reserved names; for example, 'Self' or
          'Unknown'.
@@ -1992,8 +2003,8 @@ class JsonWebKey(_serialization.Model):  # pylint: disable=too-many-instance-att
         crv: Optional[Union[str, "_models.JsonWebKeyCurveName"]] = None,
         x: Optional[bytes] = None,
         y: Optional[bytes] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword kid: Key identifier.
         :paramtype kid: str
@@ -2093,8 +2104,8 @@ class KeyAttributes(Attributes):
         enabled: Optional[bool] = None,
         not_before: Optional[datetime.datetime] = None,
         expires: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword enabled: Determines whether the object is enabled.
         :paramtype enabled: bool
@@ -2150,8 +2161,8 @@ class KeyCreateParameters(_serialization.Model):
         key_attributes: Optional["_models.KeyAttributes"] = None,
         tags: Optional[Dict[str, str]] = None,
         curve: Optional[Union[str, "_models.JsonWebKeyCurveName"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword kty: The type of key to create. For valid values, see JsonWebKeyType. Required. Known
          values are: "EC", "EC-HSM", "RSA", "RSA-HSM", and "oct".
@@ -2210,8 +2221,8 @@ class KeyImportParameters(_serialization.Model):
         hsm: Optional[bool] = None,
         key_attributes: Optional["_models.KeyAttributes"] = None,
         tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword hsm: Whether to import as a hardware key (HSM) or software key.
         :paramtype hsm: bool
@@ -2251,7 +2262,7 @@ class KeyListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -2279,7 +2290,7 @@ class KeyOperationResult(_serialization.Model):
         "result": {"key": "value", "type": "base64"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.kid = None
@@ -2308,7 +2319,9 @@ class KeyOperationsParameters(_serialization.Model):
         "value": {"key": "value", "type": "base64"},
     }
 
-    def __init__(self, *, algorithm: Union[str, "_models.JsonWebKeyEncryptionAlgorithm"], value: bytes, **kwargs):
+    def __init__(
+        self, *, algorithm: Union[str, "_models.JsonWebKeyEncryptionAlgorithm"], value: bytes, **kwargs: Any
+    ) -> None:
         """
         :keyword algorithm: algorithm identifier. Required. Known values are: "RSA-OAEP",
          "RSA-OAEP-256", and "RSA1_5".
@@ -2348,8 +2361,8 @@ class KeyProperties(_serialization.Model):
         key_type: Optional[str] = None,
         key_size: Optional[int] = None,
         reuse_key: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword exportable: Indicates if the private key can be exported.
         :paramtype exportable: bool
@@ -2384,7 +2397,7 @@ class KeyRestoreParameters(_serialization.Model):
         "key_bundle_backup": {"key": "value", "type": "base64"},
     }
 
-    def __init__(self, *, key_bundle_backup: bytes, **kwargs):
+    def __init__(self, *, key_bundle_backup: bytes, **kwargs: Any) -> None:
         """
         :keyword key_bundle_backup: The backup blob associated with a key bundle. Required.
         :paramtype key_bundle_backup: bytes
@@ -2417,7 +2430,9 @@ class KeySignParameters(_serialization.Model):
         "value": {"key": "value", "type": "base64"},
     }
 
-    def __init__(self, *, algorithm: Union[str, "_models.JsonWebKeySignatureAlgorithm"], value: bytes, **kwargs):
+    def __init__(
+        self, *, algorithm: Union[str, "_models.JsonWebKeySignatureAlgorithm"], value: bytes, **kwargs: Any
+    ) -> None:
         """
         :keyword algorithm: The signing/verification algorithm identifier. For more information on
          possible algorithm types, see JsonWebKeySignatureAlgorithm. Required. Known values are:
@@ -2456,8 +2471,8 @@ class KeyUpdateParameters(_serialization.Model):
         key_ops: Optional[List[Union[str, "_models.JsonWebKeyOperation"]]] = None,
         key_attributes: Optional["_models.KeyAttributes"] = None,
         tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword key_ops: Json web key operations. For more information on possible key operations, see
          JsonWebKeyOperation.
@@ -2490,7 +2505,7 @@ class KeyVaultError(_serialization.Model):
         "error": {"key": "error", "type": "Error"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.error = None
@@ -2529,8 +2544,8 @@ class KeyVerifyParameters(_serialization.Model):
         algorithm: Union[str, "_models.JsonWebKeySignatureAlgorithm"],
         digest: bytes,
         signature: bytes,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword algorithm: The signing/verification algorithm. For more information on possible
          algorithm types, see JsonWebKeySignatureAlgorithm. Required. Known values are: "PS256",
@@ -2565,7 +2580,7 @@ class KeyVerifyResult(_serialization.Model):
         "value": {"key": "value", "type": "bool"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -2586,8 +2601,8 @@ class LifetimeAction(_serialization.Model):
     }
 
     def __init__(
-        self, *, trigger: Optional["_models.Trigger"] = None, action: Optional["_models.Action"] = None, **kwargs
-    ):
+        self, *, trigger: Optional["_models.Trigger"] = None, action: Optional["_models.Action"] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword trigger: The condition that will execute the action.
         :paramtype trigger: ~azure.keyvault.v2016_10_01.models.Trigger
@@ -2618,8 +2633,8 @@ class OrganizationDetails(_serialization.Model):
         *,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         admin_details: Optional[List["_models.AdministratorDetails"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Id of the organization.
         :paramtype id: str
@@ -2648,7 +2663,7 @@ class PendingCertificateSigningRequestResult(_serialization.Model):
         "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -2678,7 +2693,7 @@ class SasDefinitionAttributes(_serialization.Model):
         "updated": {"key": "updated", "type": "unix-time"},
     }
 
-    def __init__(self, *, enabled: Optional[bool] = None, **kwargs):
+    def __init__(self, *, enabled: Optional[bool] = None, **kwargs: Any) -> None:
         """
         :keyword enabled: the enabled state of the object.
         :paramtype enabled: bool
@@ -2722,7 +2737,7 @@ class SasDefinitionBundle(_serialization.Model):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.id = None
@@ -2761,8 +2776,8 @@ class SasDefinitionCreateParameters(_serialization.Model):
         parameters: Dict[str, str],
         sas_definition_attributes: Optional["_models.SasDefinitionAttributes"] = None,
         tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword parameters: Sas definition creation metadata in the form of key-value pairs. Required.
         :paramtype parameters: dict[str, str]
@@ -2807,7 +2822,7 @@ class SasDefinitionItem(_serialization.Model):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.id = None
@@ -2838,7 +2853,7 @@ class SasDefinitionListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -2868,8 +2883,8 @@ class SasDefinitionUpdateParameters(_serialization.Model):
         parameters: Optional[Dict[str, str]] = None,
         sas_definition_attributes: Optional["_models.SasDefinitionAttributes"] = None,
         tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword parameters: Sas definition update metadata in the form of key-value pairs.
         :paramtype parameters: dict[str, str]
@@ -2929,8 +2944,8 @@ class SecretAttributes(Attributes):
         enabled: Optional[bool] = None,
         not_before: Optional[datetime.datetime] = None,
         expires: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword enabled: Determines whether the object is enabled.
         :paramtype enabled: bool
@@ -2965,7 +2980,7 @@ class SecretListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -2983,7 +2998,7 @@ class SecretProperties(_serialization.Model):
         "content_type": {"key": "contentType", "type": "str"},
     }
 
-    def __init__(self, *, content_type: Optional[str] = None, **kwargs):
+    def __init__(self, *, content_type: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword content_type: The media type (MIME type).
         :paramtype content_type: str
@@ -3009,7 +3024,7 @@ class SecretRestoreParameters(_serialization.Model):
         "secret_bundle_backup": {"key": "value", "type": "base64"},
     }
 
-    def __init__(self, *, secret_bundle_backup: bytes, **kwargs):
+    def __init__(self, *, secret_bundle_backup: bytes, **kwargs: Any) -> None:
         """
         :keyword secret_bundle_backup: The backup blob associated with a secret bundle. Required.
         :paramtype secret_bundle_backup: bytes
@@ -3051,8 +3066,8 @@ class SecretSetParameters(_serialization.Model):
         tags: Optional[Dict[str, str]] = None,
         content_type: Optional[str] = None,
         secret_attributes: Optional["_models.SecretAttributes"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: The value of the secret. Required.
         :paramtype value: str
@@ -3093,8 +3108,8 @@ class SecretUpdateParameters(_serialization.Model):
         content_type: Optional[str] = None,
         secret_attributes: Optional["_models.SecretAttributes"] = None,
         tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword content_type: Type of the secret value such as a password.
         :paramtype content_type: str
@@ -3133,7 +3148,7 @@ class StorageAccountAttributes(_serialization.Model):
         "updated": {"key": "updated", "type": "unix-time"},
     }
 
-    def __init__(self, *, enabled: Optional[bool] = None, **kwargs):
+    def __init__(self, *, enabled: Optional[bool] = None, **kwargs: Any) -> None:
         """
         :keyword enabled: the enabled state of the object.
         :paramtype enabled: bool
@@ -3189,8 +3204,8 @@ class StorageAccountCreateParameters(_serialization.Model):
         regeneration_period: Optional[str] = None,
         storage_account_attributes: Optional["_models.StorageAccountAttributes"] = None,
         tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword resource_id: Storage account resource id. Required.
         :paramtype resource_id: str
@@ -3245,7 +3260,7 @@ class StorageAccountItem(_serialization.Model):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.id = None
@@ -3271,7 +3286,7 @@ class StorageAccountRegenerteKeyParameters(_serialization.Model):
         "key_name": {"key": "keyName", "type": "str"},
     }
 
-    def __init__(self, *, key_name: str, **kwargs):
+    def __init__(self, *, key_name: str, **kwargs: Any) -> None:
         """
         :keyword key_name: The storage account key name. Required.
         :paramtype key_name: str
@@ -3312,8 +3327,8 @@ class StorageAccountUpdateParameters(_serialization.Model):
         regeneration_period: Optional[str] = None,
         storage_account_attributes: Optional["_models.StorageAccountAttributes"] = None,
         tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword active_key_name: The current active storage account key name.
         :paramtype active_key_name: str
@@ -3376,7 +3391,7 @@ class StorageBundle(_serialization.Model):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.id = None
@@ -3410,7 +3425,7 @@ class StorageListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -3440,8 +3455,8 @@ class SubjectAlternativeNames(_serialization.Model):
         emails: Optional[List[str]] = None,
         dns_names: Optional[List[str]] = None,
         upns: Optional[List[str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword emails: Email addresses.
         :paramtype emails: list[str]
@@ -3478,8 +3493,8 @@ class Trigger(_serialization.Model):
     }
 
     def __init__(
-        self, *, lifetime_percentage: Optional[int] = None, days_before_expiry: Optional[int] = None, **kwargs
-    ):
+        self, *, lifetime_percentage: Optional[int] = None, days_before_expiry: Optional[int] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword lifetime_percentage: Percentage of lifetime at which to trigger. Value should be
          between 1 and 99.
@@ -3529,8 +3544,8 @@ class X509CertificateProperties(_serialization.Model):
         subject_alternative_names: Optional["_models.SubjectAlternativeNames"] = None,
         key_usage: Optional[List[Union[str, "_models.KeyUsageType"]]] = None,
         validity_in_months: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword subject: The subject name. Should be a valid X509 distinguished Name.
         :paramtype subject: str

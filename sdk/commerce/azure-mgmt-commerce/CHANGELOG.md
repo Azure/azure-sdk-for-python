@@ -1,5 +1,12 @@
 # Release History
 
+## 6.1.0b1 (2023-02-10)
+
+### Other Changes
+
+  - Added generated samples in github repo
+  - Drop support for python<3.7.0
+
 ## 6.0.0 (2020-12-22)
 
 - GA release

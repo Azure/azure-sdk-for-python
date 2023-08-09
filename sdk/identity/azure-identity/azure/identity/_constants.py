@@ -10,6 +10,9 @@ VSCODE_CREDENTIALS_SECTION = "VS Code Azure"
 DEFAULT_REFRESH_OFFSET = 300
 DEFAULT_TOKEN_REFRESH_RETRY_DELAY = 30
 
+CACHE_NON_CAE_SUFFIX = ".nocae"  # cspell:disable-line
+CACHE_CAE_SUFFIX = ".cae"
+
 
 class AzureAuthorityHosts:
     AZURE_CHINA = "login.chinacloudapi.cn"

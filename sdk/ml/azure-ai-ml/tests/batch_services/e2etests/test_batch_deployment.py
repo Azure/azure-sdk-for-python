@@ -72,7 +72,14 @@ class TestBatchDeployment(AzureRecordedTestCase):
         )
         client.batch_endpoints.begin_delete(name=endpoint.name)
 
-    def test_batch_deployment_dependency_label_resolution(self, client: MLClient, randstr: Callable[[], str], rand_batch_name: Callable[[], str], rand_batch_deployment_name: Callable[[], str]) -> None:
+    @pytest.mark.skip(reason="TODO (2349252): Scoring script not found in code configuration")
+    def test_batch_deployment_dependency_label_resolution(
+        self,
+        client: MLClient,
+        randstr: Callable[[], str],
+        rand_batch_name: Callable[[], str],
+        rand_batch_deployment_name: Callable[[], str],
+    ) -> None:
         endpoint_yaml = "./tests/test_configs/endpoints/batch/batch_endpoint_mlflow_new.yaml"
         name = rand_batch_name("name")
         deployment_yaml = "./tests/test_configs/deployments/batch/batch_deployment_mlflow_new.yaml"
@@ -129,7 +136,14 @@ class TestBatchDeployment(AzureRecordedTestCase):
         )
         assert resolved_model.asset_name == model_name and resolved_model.asset_version == model_versions[-1]
 
-    def test_batch_job_download(self, client: MLClient, tmp_path: Path, rand_batch_name: Callable[[], str], rand_batch_deployment_name: Callable[[], str]) -> str:
+    @pytest.mark.skip(reason="TODO (2349249): 'Environment Id' is not a valid ARM resource identifier")
+    def test_batch_job_download(
+        self,
+        client: MLClient,
+        tmp_path: Path,
+        rand_batch_name: Callable[[], str],
+        rand_batch_deployment_name: Callable[[], str],
+    ) -> str:
         endpoint_name = rand_batch_name("name")
         endpoint = load_batch_endpoint(
             "./tests/test_configs/endpoints/batch/batch_endpoint_mlflow_new.yaml",

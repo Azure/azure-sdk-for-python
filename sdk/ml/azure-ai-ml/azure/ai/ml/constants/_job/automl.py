@@ -4,7 +4,8 @@
 from enum import Enum
 
 # pylint: disable=unused-import
-from azure.ai.ml._restclient.v2022_10_01_preview.models import NlpLearningRateScheduler
+from azure.ai.ml._restclient.v2023_04_01_preview.models import NlpLearningRateScheduler, TrainingMode
+from azure.ai.ml._utils._experimental import experimental
 
 
 class AutoMLConstants:
@@ -52,9 +53,7 @@ class AutoMLTransformerParameterKeys(Enum):
 
 
 class ImageClassificationModelNames(Enum):
-    """
-    Model names that are supported for Image Classification tasks.
-    """
+    """Model names that are supported for Image Classification tasks."""
 
     MOBILENETV2 = "mobilenetv2"
     RESNET18 = "resnet18"
@@ -71,9 +70,7 @@ class ImageClassificationModelNames(Enum):
 
 
 class ImageObjectDetectionModelNames(Enum):
-    """
-    Model names that are supported for Image Object Detection tasks.
-    """
+    """Model names that are supported for Image Object Detection tasks."""
 
     YOLOV5 = "yolov5"
     FASTERRCNN_RESNET18_FPN = "fasterrcnn_resnet18_fpn"
@@ -85,9 +82,7 @@ class ImageObjectDetectionModelNames(Enum):
 
 
 class ImageInstanceSegmentationModelNames(Enum):
-    """
-    Model names that are supported for Image Instance Segmentation tasks.
-    """
+    """Model names that are supported for Image Instance Segmentation tasks."""
 
     MASKRCNN_RESNET18_FPN = "maskrcnn_resnet18_fpn"
     MASKRCNN_RESNET34_FPN = "maskrcnn_resnet34_fpn"
@@ -97,7 +92,8 @@ class ImageInstanceSegmentationModelNames(Enum):
 
 
 class NlpModels(Enum):
-    # Model names for NLP tasks.
+    """Model names that are supported for NLP (Natural Language Processing) tasks."""
+
     BERT_BASE_CASED = "bert-base-cased"
     BERT_BASE_UNCASED = "bert-base-uncased"
     BERT_BASE_MULTILINGUAL_CASED = "bert-base-multilingual-cased"
@@ -113,3 +109,8 @@ class NlpModels(Enum):
     XLM_ROBERTA_LARGE = "xlm-roberta-large"
     XLNET_BASE_CASED = "xlnet-base-cased"
     XLNET_LARGE_CASED = "xlnet-large-cased"
+
+
+TrainingMode.__doc__ = "Mode to enable/disable distributed training."
+TabularTrainingMode = experimental(TrainingMode)
+TabularTrainingMode.__name__ = "TabularTrainingMode"

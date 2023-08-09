@@ -936,6 +936,31 @@ class TestFileAsync(AsyncStorageRecordedTestCase):
 
     @DataLakePreparer()
     @recorded_by_proxy_async
+    async def test_delete_file_oauth(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
+        # Arrange
+        await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+
+        file_name = self._get_file_reference()
+        token_credential = self.generate_oauth_token()
+
+        file_client = DataLakeFileClient(
+            self.dsc.url,
+            self.file_system_name,
+            file_name,
+            credential=token_credential)
+        await file_client.create_file()
+
+        # Act
+        response = await file_client.delete_file()
+
+        # Assert
+        assert response is not None
+
+    @DataLakePreparer()
+    @recorded_by_proxy_async
     async def test_delete_file_with_if_unmodified_since(self, **kwargs):
         datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
         datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
@@ -1354,6 +1379,103 @@ class TestFileAsync(AsyncStorageRecordedTestCase):
 
         # Assert
         assert result == data
+
+    @DataLakePreparer()
+    @recorded_by_proxy_async
+    async def test_create_and_read_file_encryption_context(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
+        # Arrange
+        await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        url = self.account_url(datalake_storage_account_name, 'dfs')
+        self.dsc = DataLakeServiceClient(url, credential=datalake_storage_account_key)
+        self.file_system_name = self.get_resource_name('filesystem')
+        file_name = 'testfile'
+        file_system = self.dsc.get_file_system_client(self.file_system_name)
+        try:
+            await file_system.create_file_system()
+        except:
+            pass
+        file_client = file_system.get_file_client(file_name)
+
+        # Act
+        await file_client.create_file(encryption_context='encryptionContext')
+
+        properties = await file_client.get_file_properties()
+        read_response = await file_client.download_file()
+        path_response = []
+        async for path in file_system.get_paths():
+            path_response.append(path)
+
+        assert properties
+        assert properties['encryption_context'] is not None
+        assert properties['encryption_context'] == 'encryptionContext'
+
+        assert read_response.properties
+        assert read_response.properties['encryption_context'] is not None
+        assert read_response.properties['encryption_context'] == 'encryptionContext'
+
+        assert path_response[0]['encryption_context']
+        assert path_response[0]['encryption_context'] is not None
+        assert path_response[0]['encryption_context'] == 'encryptionContext'
+
+    @DataLakePreparer()
+    @recorded_by_proxy_async
+    async def test_upload_file_encryption_context(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
+        # Arrange
+        await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        url = self.account_url(datalake_storage_account_name, 'dfs')
+        self.dsc = DataLakeServiceClient(url, credential=datalake_storage_account_key)
+        self.file_system_name = self.get_resource_name('filesystem')
+        data = self.get_random_bytes(200 * 1024)
+        file_name = 'testfile'
+        file_system = self.dsc.get_file_system_client(self.file_system_name)
+        try:
+            await file_system.create_file_system()
+        except:
+            pass
+        file_client = file_system.get_file_client(file_name)
+
+        # Act
+        await file_client.upload_data(data, overwrite=True, encryption_context='encryptionContext')
+
+        downloaded_data = await (await file_client.download_file()).readall()
+        properties = await file_client.get_file_properties()
+
+        # Assert
+        assert data == downloaded_data
+        assert properties
+        assert properties['encryption_context'] is not None
+        assert properties['encryption_context'] == 'encryptionContext'
+
+    @DataLakePreparer()
+    @recorded_by_proxy_async
+    async def test_dir_and_file_properties_owner_group_permissions(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
+        await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        # Arrange
+        directory_name = self._get_directory_reference()
+        directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
+        await directory_client.create_directory()
+        file_client1 = directory_client.get_file_client('filename')
+        await file_client1.create_file()
+
+        directory_properties = await directory_client.get_directory_properties()
+        file_properties = await file_client1.get_file_properties()
+
+        # Assert
+        assert directory_properties['owner'] is not None
+        assert directory_properties['group'] is not None
+        assert directory_properties['permissions'] is not None
+        assert file_properties['owner'] is not None
+        assert file_properties['group'] is not None
+        assert file_properties['permissions'] is not None
 
 
 # ------------------------------------------------------------------------------

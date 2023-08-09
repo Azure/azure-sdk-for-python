@@ -52,7 +52,7 @@ class QuotaOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.quota.aio.AzureQuotaExtensionAPI`'s
+        :class:`~azure.mgmt.quota.aio.QuotaMgmtClient`'s
         :attr:`quota` attribute.
     """
 
@@ -99,10 +99,10 @@ class QuotaOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2023-02-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: Literal["2021-03-15-preview"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.CurrentQuotaLimitBase]
+        )
+        cls: ClsType[_models.CurrentQuotaLimitBase] = kwargs.pop("cls", None)
 
         request = build_get_request(
             resource_name=resource_name,
@@ -113,10 +113,11 @@ class QuotaOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -136,7 +137,7 @@ class QuotaOperations:
 
         return deserialized
 
-    get.metadata = {"url": "/{scope}/providers/Microsoft.Quota/quotas/{resourceName}"}  # type: ignore
+    get.metadata = {"url": "/{scope}/providers/Microsoft.Quota/quotas/{resourceName}"}
 
     async def _create_or_update_initial(
         self,
@@ -156,11 +157,11 @@ class QuotaOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2023-02-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: Literal["2021-03-15-preview"]
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[Optional[_models.CurrentQuotaLimitBase]]
+        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Optional[_models.CurrentQuotaLimitBase]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -182,10 +183,11 @@ class QuotaOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -204,7 +206,7 @@ class QuotaOperations:
 
         return deserialized
 
-    _create_or_update_initial.metadata = {"url": "/{scope}/providers/Microsoft.Quota/quotas/{resourceName}"}  # type: ignore
+    _create_or_update_initial.metadata = {"url": "/{scope}/providers/Microsoft.Quota/quotas/{resourceName}"}
 
     @overload
     async def begin_create_or_update(
@@ -344,8 +346,8 @@ class QuotaOperations:
          added after ``/quotas``\ , then it's the target Azure resource URI in the GET operation for the
          specific resource. Required.
         :type scope: str
-        :param create_quota_request: Quota request payload. Is either a model type or a IO type.
-         Required.
+        :param create_quota_request: Quota request payload. Is either a CurrentQuotaLimitBase type or a
+         IO type. Required.
         :type create_quota_request: ~azure.mgmt.quota.models.CurrentQuotaLimitBase or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -366,16 +368,16 @@ class QuotaOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2023-02-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: Literal["2021-03-15-preview"]
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.CurrentQuotaLimitBase]
-        polling = kwargs.pop("polling", True)  # type: Union[bool, AsyncPollingMethod]
+        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.CurrentQuotaLimitBase] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = await self._create_or_update_initial(  # type: ignore
+            raw_result = await self._create_or_update_initial(
                 resource_name=resource_name,
                 scope=scope,
                 create_quota_request=create_quota_request,
@@ -395,10 +397,10 @@ class QuotaOperations:
             return deserialized
 
         if polling is True:
-            polling_method = cast(
+            polling_method: AsyncPollingMethod = cast(
                 AsyncPollingMethod,
                 AsyncARMPolling(lro_delay, lro_options={"final-state-via": "original-uri"}, **kwargs),
-            )  # type: AsyncPollingMethod
+            )
         elif polling is False:
             polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
         else:
@@ -410,9 +412,9 @@ class QuotaOperations:
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    begin_create_or_update.metadata = {"url": "/{scope}/providers/Microsoft.Quota/quotas/{resourceName}"}  # type: ignore
+    begin_create_or_update.metadata = {"url": "/{scope}/providers/Microsoft.Quota/quotas/{resourceName}"}
 
     async def _update_initial(
         self,
@@ -432,11 +434,11 @@ class QuotaOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2023-02-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: Literal["2021-03-15-preview"]
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[Optional[_models.CurrentQuotaLimitBase]]
+        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Optional[_models.CurrentQuotaLimitBase]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -458,10 +460,11 @@ class QuotaOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -480,7 +483,7 @@ class QuotaOperations:
 
         return deserialized
 
-    _update_initial.metadata = {"url": "/{scope}/providers/Microsoft.Quota/quotas/{resourceName}"}  # type: ignore
+    _update_initial.metadata = {"url": "/{scope}/providers/Microsoft.Quota/quotas/{resourceName}"}
 
     @overload
     async def begin_update(
@@ -617,8 +620,8 @@ class QuotaOperations:
          added after ``/quotas``\ , then it's the target Azure resource URI in the GET operation for the
          specific resource. Required.
         :type scope: str
-        :param create_quota_request: Quota requests payload. Is either a model type or a IO type.
-         Required.
+        :param create_quota_request: Quota requests payload. Is either a CurrentQuotaLimitBase type or
+         a IO type. Required.
         :type create_quota_request: ~azure.mgmt.quota.models.CurrentQuotaLimitBase or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -639,16 +642,16 @@ class QuotaOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2023-02-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: Literal["2021-03-15-preview"]
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.CurrentQuotaLimitBase]
-        polling = kwargs.pop("polling", True)  # type: Union[bool, AsyncPollingMethod]
+        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.CurrentQuotaLimitBase] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = await self._update_initial(  # type: ignore
+            raw_result = await self._update_initial(
                 resource_name=resource_name,
                 scope=scope,
                 create_quota_request=create_quota_request,
@@ -668,10 +671,10 @@ class QuotaOperations:
             return deserialized
 
         if polling is True:
-            polling_method = cast(
+            polling_method: AsyncPollingMethod = cast(
                 AsyncPollingMethod,
                 AsyncARMPolling(lro_delay, lro_options={"final-state-via": "original-uri"}, **kwargs),
-            )  # type: AsyncPollingMethod
+            )
         elif polling is False:
             polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
         else:
@@ -683,9 +686,9 @@ class QuotaOperations:
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    begin_update.metadata = {"url": "/{scope}/providers/Microsoft.Quota/quotas/{resourceName}"}  # type: ignore
+    begin_update.metadata = {"url": "/{scope}/providers/Microsoft.Quota/quotas/{resourceName}"}
 
     @distributed_trace
     def list(self, scope: str, **kwargs: Any) -> AsyncIterable["_models.CurrentQuotaLimitBase"]:
@@ -707,10 +710,10 @@ class QuotaOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2023-02-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: Literal["2021-03-15-preview"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.QuotaLimits]
+        )
+        cls: ClsType[_models.QuotaLimits] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -731,7 +734,7 @@ class QuotaOperations:
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -747,7 +750,7 @@ class QuotaOperations:
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
                 request.method = "GET"
             return request
 
@@ -755,14 +758,15 @@ class QuotaOperations:
             deserialized = self._deserialize("QuotaLimits", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                request, stream=False, **kwargs
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -775,4 +779,4 @@ class QuotaOperations:
 
         return AsyncItemPaged(get_next, extract_data)
 
-    list.metadata = {"url": "/{scope}/providers/Microsoft.Quota/quotas"}  # type: ignore
+    list.metadata = {"url": "/{scope}/providers/Microsoft.Quota/quotas"}

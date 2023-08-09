@@ -11,13 +11,13 @@ If you want to contribute to a file that is generated (header contains `Code gen
 
 The Azure SDK team's Python CI leverages the tool `tox` to distribute tests to virtual environments, handle test dependency installation, and coordinate tooling reporting during PR/CI builds. This means that a dev working locally can reproduce _exactly_ what the build machine is doing.
 
-[A Brief Overview of Tox](https://tox.readthedocs.io/en/latest/)
+[A Brief Overview of Tox](https://tox.wiki/en/latest/)
 
 #### A Monorepo and Tox in Harmony
 
 Traditionally, the `tox.ini` file for a package sits _alongside the setup.py_ in source code. The `azure-sdk-for-python` necessarily does not adhere to this policy. There are over one-hundred packages contained here-in. That's a lot of `tox.ini` files to maintain!
 
-Instead, the CI system leverages an tox plugin called `tox-monorepo`. This plugin allows `tox` to act as if the `tox.ini` is located in whatever directory you executed tox in!
+Instead, the CI system leverages the `--root` argument which is new to `tox4`. The `--root` argument allows `tox` to act as if the `tox.ini` is located in whatever directory you specify!
 
 #### Tox Environments
 
@@ -32,26 +32,50 @@ Internally `tox` leverages `virtualenv` to create each test environment's virtua
 
 This means that once the `tox` workflow is in place, all tests will be executed _within a virtual environment._
 
-To see the default environments from a specific `tox.ini` file, use the command `tox -l` in the same directory as the file itself.
+You can use the command `tox list` to list all the environments provided by a `tox.ini` file. You can either use that command in the
+same directory as the file itself, or use the `--conf` argument to specify the path to it directly.
 
-> sdk-for-python/eng/tox> tox -l
 
-```
-
-whl
-sdist
+Sample output of `tox list`:
 
 ```
+sdk-for-python/eng/tox> tox list
+default environments:
+whl              -> Builds a wheel and runs tests
+sdist            -> Builds a source distribution and runs tests
 
-Unfortunately, the command `tox -l` only returns the _default_ test builds. The common `tox.ini` file also supports `pylint` and `mypy` environments.
+additional environments:
+pylint           -> Lints a package with a pinned version of pylint
+next-pylint      -> Lints a package with pylint (version 2.15.8)
+mypy             -> Typechecks a package with mypy (version 1.0.0)
+next-mypy        -> Typechecks a package with the latest version of mypy
+pyright          -> Typechecks a package with pyright (version 1.1.287)
+next-pyright     -> Typechecks a package with the latest version of static type-checker pyright
+verifytypes      -> Verifies the "type completeness" of a package with pyright
+whl_no_aio       -> Builds a wheel without aio and runs tests
+develop          -> Tests a package
+sphinx           -> Builds a package's documentation with sphinx
+depends          -> Ensures all modules in a target package can be successfully imported
+verifywhl        -> Verify directories included in whl and contents in manifest file
+verifysdist      -> Verify directories included in sdist and contents in manifest file. Also ensures that py.typed configuration is correct within the setup.py
+devtest          -> Tests a package against dependencies installed from a dev index
+latestdependency -> Tests a package against the released, upper-bound versions of its azure dependencies
+mindependency    -> Tests a package against the released, lower-bound versions of its azure dependencies
+apistub          -> Generate an api stub of a package ( for https://apiview.dev )
+bandit           -> Runs bandit, a tool to find common security issues, against a package
+samples          -> Runs a package's samples
+breaking         -> Runs the breaking changes checker against a package
+```
 
 ### Example Usage of the common Azure SDK For Python `tox.ini`
 
 Basic usage of `tox` within this monorepo is:
 
-1. `pip install tox<4 tox-monorepo`
-2. `cd` to target package folder
-3. run `tox -c path/to/tox.ini`
+1. `pip install tox<5`
+2. Run `tox run -e ENV_NAME -c path/to/tox.ini --root path/to/python_package`
+  * **Note**: You can use environment variables to provide defaults for tox config values
+    * With `TOX_CONFIG_FILE` set to the absolute path of `tox.ini`, you can avoid needing `-c path/to/tox.ini` in your tox invocations
+    * With `TOX_ROOT_DIR` set to the absolute path to your python package, you can avoid needing `--root path/to/python_package`
 
 The common `tox.ini` location is `eng/tox/tox.ini` within the repository.
 
@@ -59,13 +83,11 @@ If at any time you want to blow away the tox created virtual environments and st
 
 #### Example `azure-core` mypy
 
-1. `cd` to `sdk/core/azure-core`
-2. Run `tox -e mypy -c ../../../eng/tox/tox.ini`
+1. Run `tox run -e mypy -c ../../../eng/tox/tox.ini --root sdk/core/azure-core`
 
 #### Example `azure-storage-blob` tests
 
-1. `cd` to `sdk/storage/azure-storage-blob`
-2. Execute `tox -c ../../../eng/tox/tox.ini`
+2. Execute `tox run -c ../../../eng/tox/tox.ini --root sdk/storage/azure-storage-blob`
 
 Note that we didn't provide an `environment` argument for this example. Reason here is that the _default_ environment selected by our common `tox.ini` file is one that runs `pytest`.
 
@@ -75,7 +97,7 @@ Used for test execution across the spectrum of all the platforms we want to supp
 * Installs the wheel, runs tests using the wheel
 
 ```
-\> tox -e whl -c <path to tox.ini>
+\> tox run -e whl -c <path to tox.ini> --root <path to python package>
 
 ```
 
@@ -87,7 +109,7 @@ Used for the local dev loop.
 
 ```
 
-\> tox -e sdist -c <path to tox.ini>
+\> tox run -e sdist -c <path to tox.ini> --root <path to python package>
 
 ```
 
@@ -95,7 +117,7 @@ Used for the local dev loop.
 Pylint install and run.
 
 ```
-\> tox -e pylint -c <path to tox.ini>
+\> tox run -e pylint -c <path to tox.ini> --root <path to python package>
 ```
 
 
@@ -103,24 +125,24 @@ Pylint install and run.
 Mypy install and run.
 
 ```
-\> tox -e mypy -c <path to tox.ini>
+\> tox run -e mypy -c <path to tox.ini> --root <path to python package>
 ```
 
 #### `sphinx` environment
-Generate shpinx doc for this package.
+Generate sphinx doc for this package.
 
 ```
-\> tox -e sphinx -c <path to tox.ini>
+\> tox run -e sphinx -c <path to tox.ini> --root <path to python package>
 ```
 
 ### Custom Pytest Arguments
 
 `tox` supports custom arguments, and the defined pytest environments within the common `tox.ini` also allow these. Essentially, separate the arguments you want passed to `pytest` by a `--` in your tox invocation.
 
-[Tox Documentation on Positional Arguments](https://tox.readthedocs.io/en/latest/example/general.html#interactively-passing-positional-arguments)
+[Tox Documentation on Positional Arguments](https://tox.wiki/en/latest/config.html#substitutions-for-positional-arguments-in-commands)
 
 **Example: Invoke tox, breaking into the debugger on failure**
-`tox -e whl -c ../../../eng/tox/tox.ini -- --pdb`
+`tox run -e whl -c <path to tox.ini> --root <path to python package> -- --pdb`
 
 ### Performance Testing
 
@@ -150,10 +172,30 @@ a. cd to package root folder
 b. run tox environment devtest
 
 ```
-\> tox -e devtest -c <path to tox.ini>
+\> tox run -e devtest -c <path to tox.ini> --root <path to python package>
 ```
 
 This tox test( devtest) will fail if installed dependent packages are not dev build version.
+
+## Samples
+
+### Third-party dependencies
+
+Third party libraries should only be included in samples when necessary to demonstrate usage of an Azure SDK package; they should not be suggested or endorsed as alternatives to the Azure SDK.
+
+When code samples take dependencies, readers should be able to use the material without significant license burden or research on terms. This goal requires restricting dependencies to certain types of open source or commercial licenses.
+
+Samples may take the following categories of dependencies:
+
+- **Open-source** : Open source offerings that use an [Open Source Initiative (OSI) approved license](https://opensource.org/licenses). Any component whose license isn't OSI-approved is considered a commercial offering. Prefer OSS projects that are members of any of the [OSS foundations that Microsoft is part of](https://opensource.microsoft.com/ecosystem/). Prefer permissive licenses for libraries, like [MIT](https://opensource.org/licenses/MIT) and [Apache 2](https://opensource.org/licenses/Apache-2.0). Copy-left licenses like [GPL](https://opensource.org/licenses/gpl-license) are acceptable for tools, and OSs. [Kubernetes](https://github.com/kubernetes/kubernetes), [Linux](https://github.com/torvalds/linux), and [Newtonsoft.Json](https://github.com/JamesNK/Newtonsoft.Json) are examples of this license type. Links to open source components should be to where the source is hosted, including any applicable license, such as a GitHub repository (or similar).
+
+- **Commercial**: Commercial offerings that enable readers to learn from our content without unnecessary extra costs. Typically, the offering has some form of a community edition, or a free trial sufficient for its use in content. A commercial license may be a form of dual-license, or tiered license. Links to commercial components should be to the commercial site for the software, even if the source software is hosted publicly on GitHub (or similar).
+
+- **Dual licensed**: Commercial offerings that enable readers to choose either license based on their needs. For example, if the offering has an OSS and commercial license, readers can  choose between them. [MySql](https://github.com/mysql/mysql-server) is an example of this license type.
+
+- **Tiered licensed**: Offerings that enable readers to use the license tier that corresponds to their characteristics. For example, tiers may be available for students, hobbyists, or companies with defined revenue  thresholds. For offerings with tiered licenses, strive to limit our use in tutorials to the features available in the lowest tier. This policy enables the widest audience for the article. [Docker](https://www.docker.com/), [IdentityServer](https://duendesoftware.com/products/identityserver), [ImageSharp](https://sixlabors.com/products/imagesharp/), and [Visual Studio](https://visualstudio.com) are examples of this license type.
+
+In general, we prefer taking dependencies on licensed components in the order of the listed categories. In cases where the category may not be well known, we'll document the category so that readers understand the choice that they're making by using that dependency.
 
 ## Code of Conduct
 This project's code of conduct can be found in the

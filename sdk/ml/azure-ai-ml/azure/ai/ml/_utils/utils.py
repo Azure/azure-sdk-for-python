@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=protected-access
+# pylint: disable=protected-access,too-many-lines
 import copy
 import decimal
 import hashlib
@@ -12,14 +12,15 @@ import os
 import random
 import re
 import string
+import tempfile
 import time
 import warnings
 from collections import OrderedDict
-from contextlib import contextmanager
+from contextlib import contextmanager, nullcontext
 from datetime import timedelta
 from functools import singledispatch, wraps
 from os import PathLike
-from pathlib import PosixPath, PureWindowsPath
+from pathlib import Path, PosixPath, PureWindowsPath
 from typing import IO, Any, AnyStr, Callable, Dict, List, Optional, Tuple, Union
 from urllib.parse import urlparse
 from uuid import UUID
@@ -27,18 +28,19 @@ from uuid import UUID
 import isodate
 import pydash
 import yaml
+from azure.core.pipeline.policies import RetryPolicy
 
 from azure.ai.ml._restclient.v2022_05_01.models import ListViewType, ManagedServiceIdentity
 from azure.ai.ml._scope_dependent_operations import OperationScope
 from azure.ai.ml._utils._http_utils import HttpPipeline
 from azure.ai.ml.constants._common import (
     API_URL_KEY,
+    AZUREML_DISABLE_CONCURRENT_COMPONENT_REGISTRATION,
+    AZUREML_DISABLE_ON_DISK_CACHE_ENV_VAR,
     AZUREML_INTERNAL_COMPONENTS_ENV_VAR,
     AZUREML_PRIVATE_FEATURES_ENV_VAR,
-    AZUREML_DISABLE_ON_DISK_CACHE_ENV_VAR,
-    AZUREML_DISABLE_CONCURRENT_COMPONENT_REGISTRATION,
+    DefaultOpenEncoding,
 )
-from azure.core.pipeline.policies import RetryPolicy
 
 module_logger = logging.getLogger(__name__)
 
@@ -58,15 +60,13 @@ def _is_https_url(url: str) -> Union[bool, str]:
     return False
 
 
-def _csv_parser(text: Optional[str], convert: Callable) -> str:
-    if text:
-        if "," in text:
-            txts = []
-            for t in text.split(","):
-                t = convert(t.strip())
-                txts.append(t)
-            return ",".join(txts)
-        return convert(text)
+def _csv_parser(text: Optional[str], convert: Callable) -> Optional[str]:
+    if not text:
+        return None
+    if "," in text:
+        return ",".join(convert(t.strip()) for t in text.split(","))
+
+    return convert(text)
 
 
 def _snake_to_pascal_convert(text: str) -> str:
@@ -80,6 +80,7 @@ def snake_to_pascal(text: Optional[str]) -> str:
 def snake_to_kebab(text: Optional[str]) -> Optional[str]:
     if text:
         return re.sub("_", "-", text)
+    return None
 
 
 # https://stackoverflow.com/questions/1175208
@@ -99,6 +100,7 @@ def snake_to_camel(text: Optional[str]) -> Optional[str]:
     """convert snake name to camel."""
     if text:
         return re.sub("_([a-zA-Z0-9])", lambda m: m.group(1).upper(), text)
+    return None
 
 
 # This is real snake to camel
@@ -119,9 +121,8 @@ def float_to_str(f):
 
 
 def create_requests_pipeline_with_retry(*, requests_pipeline: HttpPipeline, retries: int = 3) -> HttpPipeline:
-    """Creates an HttpPipeline that reuses the same configuration as the
-    supplied pipeline (including the transport), but overwrites the
-    retry policy
+    """Creates an HttpPipeline that reuses the same configuration as the supplied pipeline (including the transport),
+    but overwrites the retry policy.
 
     Args:
         requests_pipeline (HttpPipeline): Pipeline to base new one off of.
@@ -155,7 +156,7 @@ def download_text_from_url(
     requests_pipeline: HttpPipeline,
     timeout: Optional[Union[float, Tuple[float, float]]] = None,
 ) -> str:
-    """Downloads the content from an URL
+    """Downloads the content from an URL.
 
     Args:
         source_uri (str): URI to download
@@ -170,7 +171,7 @@ def download_text_from_url(
         timeout_params = {}
     else:
         connect_timeout, read_timeout = timeout if isinstance(timeout, tuple) else (timeout, timeout)
-        timeout_params = dict(read_timeout=read_timeout, connection_timeout=connect_timeout)
+        timeout_params = {"read_timeout": read_timeout, "connection_timeout": connect_timeout}
 
     response = requests_pipeline.get(source_uri, **timeout_params)
     # Match old behavior from execution service's status API.
@@ -196,9 +197,9 @@ def load_file(file_path: str) -> str:
     # exceptions.py via _get_mfe_url_override
 
     try:
-        with open(file_path, "r") as f:
+        with open(file_path, "r", encoding=DefaultOpenEncoding.READ) as f:
             cfg = f.read()
-    except OSError:  # FileNotFoundError introduced in Python 3
+    except OSError as e:  # FileNotFoundError introduced in Python 3
         msg = "No such file or directory: {}"
         raise ValidationException(
             message=msg.format(file_path),
@@ -206,7 +207,7 @@ def load_file(file_path: str) -> str:
             error_category=ErrorCategory.USER_ERROR,
             target=ErrorTarget.GENERAL,
             error_type=ValidationErrorType.FILE_OR_FOLDER_NOT_FOUND,
-        )
+        ) from e
     return cfg
 
 
@@ -225,9 +226,9 @@ def load_json(file_path: Optional[Union[str, os.PathLike]]) -> Dict:
     # exceptions.py via _get_mfe_url_override
 
     try:
-        with open(file_path, "r") as f:
+        with open(file_path, "r", encoding=DefaultOpenEncoding.READ) as f:
             cfg = json.load(f)
-    except OSError:  # FileNotFoundError introduced in Python 3
+    except OSError as e:  # FileNotFoundError introduced in Python 3
         msg = "No such file or directory: {}"
         raise ValidationException(
             message=msg.format(file_path),
@@ -235,7 +236,7 @@ def load_json(file_path: Optional[Union[str, os.PathLike]]) -> Dict:
             error_category=ErrorCategory.USER_ERROR,
             target=ErrorTarget.GENERAL,
             error_type=ValidationErrorType.FILE_OR_FOLDER_NOT_FOUND,
-        )
+        ) from e
     return cfg
 
 
@@ -245,8 +246,10 @@ def load_yaml(source: Optional[Union[AnyStr, PathLike, IO]]) -> Dict:
     # via CLI, which is then populated through CLArgs.
     """Load a local YAML file.
 
-    :param file_path: The relative or absolute path to the local file.
-    :type file_path: str
+    :param source: Either
+       * The relative or absolute path to the local file.
+       * A readable File-like object
+    :type source: Optional[Union[AnyStr, PathLike, IO]]
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if file or folder cannot be successfully loaded.
         Details will be provided in the error message.
     :return: A dictionary representation of the local file's contents.
@@ -260,12 +263,21 @@ def load_yaml(source: Optional[Union[AnyStr, PathLike, IO]]) -> Dict:
     if source is None:
         return {}
 
-    # pylint: disable=redefined-builtin
-    input = None  # type: IOBase
-    must_open_file = False
-    try:  # check source type by duck-typing it as an IOBase
-        readable = source.readable()
-        if not readable:  # source is misformatted stream or file
+    if isinstance(source, (str, os.PathLike)):
+        try:
+            cm = open(source, "r", encoding=DefaultOpenEncoding.READ)
+        except OSError as e:
+            msg = "No such file or directory: {}"
+            raise ValidationException(
+                message=msg.format(source),
+                no_personal_data_message=msg.format("[file_path]"),
+                error_category=ErrorCategory.USER_ERROR,
+                target=ErrorTarget.GENERAL,
+                error_type=ValidationErrorType.FILE_OR_FOLDER_NOT_FOUND,
+            ) from e
+    else:
+        # source is a subclass of IO
+        if not source.readable():
             msg = "File Permissions Error: The already-open \n\n inputted file is not readable."
             raise ValidationException(
                 message=msg,
@@ -274,54 +286,32 @@ def load_yaml(source: Optional[Union[AnyStr, PathLike, IO]]) -> Dict:
                 target=ErrorTarget.GENERAL,
                 error_type=ValidationErrorType.INVALID_VALUE,
             )
-        # source is an already-open stream or file, we can read() from it directly.
-        input = source
-    except AttributeError:
-        # source has no writable() function, assume it's a string or file path.
-        must_open_file = True
 
-    if must_open_file:  # If supplied a file path, open it.
+        cm = nullcontext(enter_result=source)
+
+    with cm as f:
         try:
-            input = open(source, "r")
-        except OSError:  # FileNotFoundError introduced in Python 3
-            msg = "No such file or directory: {}"
+            return yaml.safe_load(f)
+        except yaml.YAMLError as e:
+            msg = f"Error while parsing yaml file: {source} \n\n {str(e)}"
             raise ValidationException(
-                message=msg.format(source),
-                no_personal_data_message=msg.format("[file_path]"),
+                message=msg,
+                no_personal_data_message="Error while parsing yaml file",
                 error_category=ErrorCategory.USER_ERROR,
                 target=ErrorTarget.GENERAL,
-                error_type=ValidationErrorType.FILE_OR_FOLDER_NOT_FOUND,
-            )
-    # input should now be an readable file or stream. Parse it.
-    cfg = {}
-    try:
-        cfg = yaml.safe_load(input)
-    except yaml.YAMLError as e:
-        msg = f"Error while parsing yaml file: {source} \n\n {str(e)}"
-        raise ValidationException(
-            message=msg,
-            no_personal_data_message="Error while parsing yaml file",
-            error_category=ErrorCategory.USER_ERROR,
-            target=ErrorTarget.GENERAL,
-            error_type=ValidationErrorType.CANNOT_PARSE,
-        )
-    finally:
-        if must_open_file:
-            input.close()
-    return cfg
+                error_type=ValidationErrorType.CANNOT_PARSE,
+            ) from e
 
 
 def dump_yaml(*args, **kwargs):
-    """A thin wrapper over yaml.dump which forces `OrderedDict`s to be
-    serialized as mappings
+    """A thin wrapper over yaml.dump which forces `OrderedDict`s to be serialized as mappings.
 
     Otherwise behaves identically to yaml.dump
     """
 
     class OrderedDumper(yaml.Dumper):
-        """A modified yaml serializer that forces pyyaml to represent
-        an OrderedDict as a mapping instead of a sequence.
-        """
+        """A modified yaml serializer that forces pyyaml to represent an OrderedDict as a mapping instead of a
+        sequence."""
 
     OrderedDumper.add_representer(OrderedDict, yaml.representer.SafeRepresenter.represent_dict)
     return yaml.dump(*args, Dumper=OrderedDumper, **kwargs)
@@ -372,12 +362,21 @@ def dump_yaml_to_file(
                 error_type=ValidationErrorType.MISSING_FIELD,
             )
 
-    # Check inputs
-    output = None  # type: IOBase
-    must_open_file = False
-    try:  # check dest type by duck-typing it as an IOBase
-        writable = dest.writable()
-        if not writable:  # dest is misformatted stream or file
+    if isinstance(dest, (str, os.PathLike)):
+        try:
+            cm = open(dest, "w", encoding=DefaultOpenEncoding.WRITE)
+        except OSError as e:  # FileNotFoundError introduced in Python 3
+            msg = "No such file or directory: {}"
+            raise ValidationException(
+                message=msg.format(dest),
+                no_personal_data_message=msg.format("[file_path]"),
+                error_category=ErrorCategory.USER_ERROR,
+                target=ErrorTarget.GENERAL,
+                error_type=ValidationErrorType.FILE_OR_FOLDER_NOT_FOUND,
+            ) from e
+    else:
+        # dest is a subclass of IO
+        if not dest.writable():  # dest is misformatted stream or file
             msg = "File Permissions Error: The already-open \n\n inputted file is not writable."
             raise ValidationException(
                 message=msg,
@@ -386,53 +385,26 @@ def dump_yaml_to_file(
                 target=ErrorTarget.GENERAL,
                 error_type=ValidationErrorType.CANNOT_PARSE,
             )
-        # dest is an already-open stream or file, we can write() to it directly.
-        output = dest
-    except AttributeError:
-        # dest has no writable() function, assume it's a string or file path.
-        must_open_file = True
+        cm = nullcontext(enter_result=dest)
 
-    if must_open_file:  # If supplied a file path, open it.
+    with cm as f:
         try:
-            output = open(dest, "w")
-        except OSError:  # FileNotFoundError introduced in Python 3
-            msg = "No such file or directory: {}"
+            dump_yaml(data_dict, f, default_flow_style=default_flow_style)
+        except yaml.YAMLError as e:
+            msg = f"Error while parsing yaml file \n\n {str(e)}"
             raise ValidationException(
-                message=msg.format(dest),
-                no_personal_data_message=msg.format("[file_path]"),
+                message=msg,
+                no_personal_data_message="Error while parsing yaml file",
                 error_category=ErrorCategory.USER_ERROR,
                 target=ErrorTarget.GENERAL,
-                error_type=ValidationErrorType.FILE_OR_FOLDER_NOT_FOUND,
-            )
-
-    # Once we have an open file pointer through either method, dump.
-    try:
-        dump_yaml(data_dict, output, default_flow_style=default_flow_style)
-    except yaml.YAMLError as e:
-        msg = f"Error while parsing yaml file \n\n {str(e)}"
-        raise ValidationException(
-            message=msg,
-            no_personal_data_message="Error while parsing yaml file",
-            error_category=ErrorCategory.USER_ERROR,
-            target=ErrorTarget.GENERAL,
-            error_type=ValidationErrorType.CANNOT_PARSE,
-        )
-    finally:
-        # close the file only if we opened it as part of this function.
-        if must_open_file:
-            output.close()
+                error_type=ValidationErrorType.CANNOT_PARSE,
+            ) from e
 
 
 def dict_eq(dict1: Dict[str, Any], dict2: Dict[str, Any]) -> bool:
     if not dict1 and not dict2:
         return True
     return dict1 == dict2
-
-
-def get_http_response_and_deserialized_from_pipeline_response(
-    pipeline_response: Any, deserialized: Any
-) -> Tuple[Any, Any]:
-    return pipeline_response.http_response, deserialized
 
 
 def xor(a: Any, b: Any) -> bool:
@@ -477,8 +449,7 @@ def resolve_short_datastore_url(value: Union[PathLike, str], workspace: Operatio
 
 def is_mlflow_uri(value: Union[PathLike, str]) -> bool:
     try:
-        if urlparse(str(value)).scheme == "runs":
-            return value
+        return urlparse(str(value)).scheme == "runs"
     except ValueError:
         return False
 
@@ -505,7 +476,6 @@ def validate_ml_flow_folder(path: str, model_type: string) -> None:
 
 # modified from: https://stackoverflow.com/a/33245493/8093897
 def is_valid_uuid(test_uuid: str) -> bool:
-
     try:
         uuid_obj = UUID(test_uuid, version=4)
     except ValueError:
@@ -548,6 +518,25 @@ def from_iso_duration_format_ms(duration: Optional[str]) -> int:
     return from_iso_duration_format(duration) * 1000 if duration else None
 
 
+def to_iso_duration_format_days(time_in_days: Optional[int]) -> str:
+    return isodate.duration_isoformat(timedelta(days=time_in_days)) if time_in_days else None
+
+
+@singledispatch
+def from_iso_duration_format_days(duration: Optional[Any] = None) -> int:  # pylint: disable=unused-argument
+    return None
+
+
+@from_iso_duration_format_days.register(str)
+def _(duration: str) -> int:
+    return int(isodate.parse_duration(duration).days)
+
+
+@from_iso_duration_format_days.register(timedelta)
+def _(duration: timedelta) -> int:
+    return int(duration.days)
+
+
 def _get_mfe_base_url_from_discovery_service(
     workspace_operations: Any, workspace_name: str, requests_pipeline: HttpPipeline
 ) -> str:
@@ -583,7 +572,6 @@ def _get_mfe_base_url_from_batch_endpoint(endpoint: "BatchEndpoint") -> str:
 # Allows to use a modified client with a provided url
 @contextmanager
 def modified_operation_client(operation_to_modify, url_to_use):
-
     original_api_base_url = None
     try:
         # Modify the operation
@@ -623,7 +611,7 @@ def convert_identity_dict(
             if identity.user_assigned_identities:
                 if isinstance(identity.user_assigned_identities, dict):  # if the identity is already in right format
                     return identity
-                ids = dict()
+                ids = {}
                 for id in identity.user_assigned_identities:  # pylint: disable=redefined-builtin
                     ids[id["resource_id"]] = {}
                 identity.user_assigned_identities = ids
@@ -661,8 +649,7 @@ def map_single_brackets_and_warn(command: str):
 
 
 def transform_dict_keys(data: Dict, casing_transform: Callable[[str], str], exclude_keys=None) -> Dict:
-    """Convert all keys of a nested dictionary according to the passed
-    casing_transform function."""
+    """Convert all keys of a nested dictionary according to the passed casing_transform function."""
     transformed_dict = {}
     for key in data.keys():
         # Modify the environment_variables separately: don't transform values in environment_variables.
@@ -729,14 +716,11 @@ def get_list_view_type(include_archived: bool, archived_only: bool) -> ListViewT
 def is_data_binding_expression(
     value: str, binding_prefix: Union[str, List[str]] = "", is_singular: bool = True
 ) -> bool:
-    """Check if a value is a data-binding expression with specific binding
-    target(prefix). Note that the function will return False if the value is
-    not a str. For example, if binding_prefix is ["parent", "jobs"], then
-    input_value is a data-binding expression only if the binding target starts
-    with "parent.jobs", like "${{parent.jobs.xxx}}" if is_singular is False,
-    return True even if input_value includes non-binding part or multiple
-    binding targets, like "${{parent.jobs.xxx}}_extra" and
-    "${{parent.jobs.xxx}}_{{parent.jobs.xxx}}".
+    """Check if a value is a data-binding expression with specific binding target(prefix). Note that the function will
+    return False if the value is not a str. For example, if binding_prefix is ["parent", "jobs"], then input_value is a
+    data-binding expression only if the binding target starts with "parent.jobs", like "${{parent.jobs.xxx}}" if
+    is_singular is False, return True even if input_value includes non-binding part or multiple binding targets, like
+    "${{parent.jobs.xxx}}_extra" and "${{parent.jobs.xxx}}_{{parent.jobs.xxx}}".
 
     :param value: Value to check.
     :param binding_prefix: Prefix to check for.
@@ -749,9 +733,8 @@ def is_data_binding_expression(
 def get_all_data_binding_expressions(
     value: str, binding_prefix: Union[str, List[str]] = "", is_singular: bool = True
 ) -> List[str]:
-    """Get all data-binding expressions in a value with specific binding
-    target(prefix). Note that the function will return an empty list if the
-    value is not a str.
+    """Get all data-binding expressions in a value with specific binding target(prefix). Note that the function will
+    return an empty list if the value is not a str.
 
     :param value: Value to extract.
     :param binding_prefix: Prefix to filter.
@@ -776,7 +759,7 @@ def is_on_disk_cache_enabled():
     return os.getenv(AZUREML_DISABLE_ON_DISK_CACHE_ENV_VAR) not in ["True", "true", True]
 
 
-def is_concurrent_component_registration_enabled():
+def is_concurrent_component_registration_enabled():  # pylint: disable=name-too-long
     return os.getenv(AZUREML_DISABLE_CONCURRENT_COMPONENT_REGISTRATION) not in ["True", "true", True]
 
 
@@ -785,10 +768,11 @@ def is_internal_components_enabled():
 
 
 def try_enable_internal_components(*, force=False):
-    """Try to enable internal components for the current process.
-    This is the only function outside _internal that references _internal
+    """Try to enable internal components for the current process. This is the only function outside _internal that
+    references _internal.
 
-    :param force: Force enable internal components even if enabled before.
+    :keyword force: Force enable internal components even if enabled before.
+    :type force: bool
     """
     if is_internal_components_enabled():
         from azure.ai.ml._internal import enable_internal_components_in_pipeline
@@ -797,8 +781,7 @@ def try_enable_internal_components(*, force=False):
 
 
 def is_valid_node_name(name):
-    """Return True if the string is a valid Python identifier in lower ASCII
-    range, False otherwise.
+    """Return True if the string is a valid Python identifier in lower ASCII range, False otherwise.
 
     The regular expression match pattern is r"^[a-z_][a-z0-9_]*".
     """
@@ -872,21 +855,18 @@ def _is_user_error_from_status_code(http_status_code):
 def _str_to_bool(s):
     """Returns True if literal 'true' is passed, otherwise returns False.
 
-    Can be used as a type for argument in argparse, return argument's
-    boolean value according to it's literal value.
+    Can be used as a type for argument in argparse, return argument's boolean value according to it's literal value.
     """
     if not isinstance(s, str):
         return False
     return s.lower() == "true"
 
 
-def _is_user_error_from_exception_type(e: Union[Exception, None]):
-    """Determine whether if an exception is user error from it's exception
-    type."""
+def _is_user_error_from_exception_type(e: Optional[Exception]) -> bool:
+    """Determine whether if an exception is user error from it's exception type."""
     # Connection error happens on user's network failure, should be user error.
     # For OSError/IOError with error no 28: "No space left on device" should be sdk user error
-    if isinstance(e, (ConnectionError, KeyboardInterrupt)) or (isinstance(e, (IOError, OSError)) and e.errno == 28):
-        return True
+    return isinstance(e, (ConnectionError, KeyboardInterrupt)) or (isinstance(e, (IOError, OSError)) and e.errno == 28)
 
 
 class DockerProxy:
@@ -895,10 +875,10 @@ class DockerProxy:
             import docker  # pylint: disable=import-error
 
             return getattr(docker, name)
-        except ModuleNotFoundError:
+        except ModuleNotFoundError as e:
             raise Exception(
                 "Please install docker in the current python environment with `pip install docker` and try again."
-            )
+            ) from e
 
 
 def get_all_enum_values_iter(enum_type):
@@ -914,7 +894,7 @@ def write_to_shared_file(file_path: Union[str, PathLike], content: str):
     :param file_path: Path to the file.
     :param content: Content to write to the file.
     """
-    with open(file_path, "w") as f:
+    with open(file_path, "w", encoding=DefaultOpenEncoding.WRITE) as f:
         f.write(content)
 
     # share_mode means read/write for owner, group and others
@@ -924,3 +904,105 @@ def write_to_shared_file(file_path: Union[str, PathLike], content: str):
             os.chmod(file_path, share_mode)
         except PermissionError:
             pass
+
+
+def _get_valid_dot_keys_with_wildcard_impl(
+    left_reversed_parts, root, *, validate_func=None, cur_node=None, processed_parts=None
+):
+    if len(left_reversed_parts) == 0:
+        if validate_func is None or validate_func(root, processed_parts):
+            return [".".join(processed_parts)]
+        return []
+
+    if cur_node is None:
+        cur_node = root
+    if not isinstance(cur_node, dict):
+        return []
+    if processed_parts is None:
+        processed_parts = []
+
+    key: str = left_reversed_parts.pop()
+    result = []
+    if key == "*":
+        for next_key in cur_node:
+            if not isinstance(next_key, str):
+                continue
+            processed_parts.append(next_key)
+            result.extend(
+                _get_valid_dot_keys_with_wildcard_impl(
+                    left_reversed_parts,
+                    root,
+                    validate_func=validate_func,
+                    cur_node=cur_node[next_key],
+                    processed_parts=processed_parts,
+                )
+            )
+            processed_parts.pop()
+    elif key in cur_node:
+        processed_parts.append(key)
+        result = _get_valid_dot_keys_with_wildcard_impl(
+            left_reversed_parts,
+            root,
+            validate_func=validate_func,
+            cur_node=cur_node[key],
+            processed_parts=processed_parts,
+        )
+        processed_parts.pop()
+
+    left_reversed_parts.append(key)
+    return result
+
+
+def get_valid_dot_keys_with_wildcard(
+    root: Dict[str, Any],
+    dot_key_wildcard: str,
+    *,
+    validate_func: Optional[Callable[[List[str], Dict[str, Any]], bool]] = None,
+):
+    """Get all valid dot keys with wildcard. Only "x.*.x" and "x.*" is supported for now.
+
+    A valid dot key should satisfy the following conditions:
+    1) It should be a valid dot key in the root node.
+    2) It should satisfy the validation function.
+
+    :param root: Root node.
+    :type root: Dict[str, Any]
+    :param dot_key_wildcard: Dot key with wildcard, e.g. "a.*.c".
+    :type dot_key_wildcard: str
+    :keyword validate_func: Validation function. It takes two parameters: the root node and the dot key parts.
+    If None, no validation will be performed.
+    :type validate_func: Optional[Callable[[List[str], Dict[str, Any]], bool]]
+    :return: List of valid dot keys.
+    """
+    left_reversed_parts = dot_key_wildcard.split(".")[::-1]
+    return _get_valid_dot_keys_with_wildcard_impl(left_reversed_parts, root, validate_func=validate_func)
+
+
+def get_base_directory_for_cache() -> Path:
+    return Path(tempfile.gettempdir()).joinpath("azure-ai-ml")
+
+
+def get_versioned_base_directory_for_cache() -> Path:
+    # import here to avoid circular import
+    from azure.ai.ml._version import VERSION
+
+    return get_base_directory_for_cache().joinpath(VERSION)
+
+
+def extract_name_and_version(azureml_id: str) -> Dict[str, str]:
+    """Extract name and version from azureml id.
+
+    :param azureml_id: AzureML id.
+    :type azureml_id: str
+    :return: A dict of name and version.
+    :rtype: Dict[str, str]
+    """
+    if not isinstance(azureml_id, str):
+        raise ValueError("azureml_id should be a string but got {}: {}.".format(type(azureml_id), azureml_id))
+    if azureml_id.count(":") != 1:
+        raise ValueError("azureml_id should be in the format of name:version but got {}.".format(azureml_id))
+    name, version = azureml_id.split(":")
+    return {
+        "name": name,
+        "version": version,
+    }

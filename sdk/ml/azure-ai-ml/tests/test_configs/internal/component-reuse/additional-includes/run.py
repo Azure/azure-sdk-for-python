@@ -12,5 +12,5 @@ from library3.hello import say_hello
 # print(sys.path)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     say_hello()

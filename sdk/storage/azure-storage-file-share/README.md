@@ -7,7 +7,12 @@ Azure file shares can be used to:
 * "Lift and shift" applications
 * Simplify cloud development with shared application settings, diagnostic share, and Dev/Test/Debug tools
 
-[Source code](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share/azure/storage/fileshare) | [Package (PyPI)](https://pypi.org/project/azure-storage-file-share/) | [API reference documentation](https://aka.ms/azsdk-python-storage-fileshare-ref) | [Product documentation](https://docs.microsoft.com/azure/storage/) | [Samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share/samples)
+[Source code](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share/azure/storage/fileshare)
+| [Package (PyPI)](https://pypi.org/project/azure-storage-file-share/)
+| [Package (Conda)](https://anaconda.org/microsoft/azure-storage/)
+| [API reference documentation](https://aka.ms/azsdk-python-storage-fileshare-ref)
+| [Product documentation](https://docs.microsoft.com/azure/storage/)
+| [Samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share/samples)
 
 ## Getting started
 
@@ -172,7 +177,7 @@ Create a file share to store your files
 ```python
 from azure.storage.fileshare import ShareClient
 
-share = ShareClient.from_connection_string(conn_str="<connection_string>", share_name="my_share")
+share = ShareClient.from_connection_string(conn_str="<connection_string>", share_name="myshare")
 share.create_share()
 ```
 
@@ -181,7 +186,7 @@ Use the async client to create a file share
 ```python
 from azure.storage.fileshare.aio import ShareClient
 
-share = ShareClient.from_connection_string(conn_str="<connection_string>", share_name="my_share")
+share = ShareClient.from_connection_string(conn_str="<connection_string>", share_name="myshare")
 await share.create_share()
 ```
 
@@ -191,7 +196,7 @@ Upload a file to the share
 ```python
 from azure.storage.fileshare import ShareFileClient
 
-file_client = ShareFileClient.from_connection_string(conn_str="<connection_string>", share_name="my_share", file_path="my_file")
+file_client = ShareFileClient.from_connection_string(conn_str="<connection_string>", share_name="myshare", file_path="my_file")
 
 with open("./SampleSource.txt", "rb") as source_file:
     file_client.upload_file(source_file)
@@ -202,7 +207,7 @@ Upload a file asynchronously
 ```python
 from azure.storage.fileshare.aio import ShareFileClient
 
-file_client = ShareFileClient.from_connection_string(conn_str="<connection_string>", share_name="my_share", file_path="my_file")
+file_client = ShareFileClient.from_connection_string(conn_str="<connection_string>", share_name="myshare", file_path="my_file")
 
 with open("./SampleSource.txt", "rb") as source_file:
     await file_client.upload_file(source_file)
@@ -214,7 +219,7 @@ Download a file from the share
 ```python
 from azure.storage.fileshare import ShareFileClient
 
-file_client = ShareFileClient.from_connection_string(conn_str="<connection_string>", share_name="my_share", file_path="my_file")
+file_client = ShareFileClient.from_connection_string(conn_str="<connection_string>", share_name="myshare", file_path="my_file")
 
 with open("DEST_FILE", "wb") as file_handle:
     data = file_client.download_file()
@@ -226,7 +231,7 @@ Download a file asynchronously
 ```python
 from azure.storage.fileshare.aio import ShareFileClient
 
-file_client = ShareFileClient.from_connection_string(conn_str="<connection_string>", share_name="my_share", file_path="my_file")
+file_client = ShareFileClient.from_connection_string(conn_str="<connection_string>", share_name="myshare", file_path="my_file")
 
 with open("DEST_FILE", "wb") as file_handle:
     data = await file_client.download_file()
@@ -239,7 +244,7 @@ List all directories and files under a parent directory
 ```python
 from azure.storage.fileshare import ShareDirectoryClient
 
-parent_dir = ShareDirectoryClient.from_connection_string(conn_str="<connection_string>", share_name="my_share", directory_path="parent_dir")
+parent_dir = ShareDirectoryClient.from_connection_string(conn_str="<connection_string>", share_name="myshare", directory_path="parent_dir")
 
 my_list = list(parent_dir.list_directories_and_files())
 print(my_list)
@@ -250,7 +255,7 @@ List contents of a directory asynchronously
 ```python
 from azure.storage.fileshare.aio import ShareDirectoryClient
 
-parent_dir = ShareDirectoryClient.from_connection_string(conn_str="<connection_string>", share_name="my_share", directory_path="parent_dir")
+parent_dir = ShareDirectoryClient.from_connection_string(conn_str="<connection_string>", share_name="myshare", directory_path="parent_dir")
 
 my_files = []
 async for item in parent_dir.list_directories_and_files():
@@ -334,7 +339,7 @@ service_client = ShareServiceClient.from_connection_string("your_connection_stri
 
 Similarly, `logging_enable` can enable detailed logging for a single operation,
 even when it isn't enabled for the client:
-```py
+```python
 service_client.get_service_properties(logging_enable=True)
 ```
 

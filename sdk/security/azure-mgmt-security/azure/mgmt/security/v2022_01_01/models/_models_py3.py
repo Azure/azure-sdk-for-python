@@ -48,7 +48,7 @@ class Resource(_serialization.Model):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.id = None
@@ -115,8 +115,9 @@ class Alert(Resource):  # pylint: disable=too-many-instance-attributes
     :vartype alert_uri: str
     :ivar time_generated_utc: The UTC time the alert was generated in ISO8601 format.
     :vartype time_generated_utc: ~datetime.datetime
-    :ivar product_name: The name of the product which published this alert (Azure Security Center,
-     Azure ATP, Microsoft Defender ATP, O365 ATP, MCAS, and so on).
+    :ivar product_name: The name of the product which published this alert (Microsoft Sentinel,
+     Microsoft Defender for Identity, Microsoft Defender for Endpoint, Microsoft Defender for
+     Office, Microsoft Defender for Cloud Apps, and so on).
     :vartype product_name: str
     :ivar processing_end_time_utc: The UTC processing end time of the alert in ISO8601 format.
     :vartype processing_end_time_utc: ~datetime.datetime
@@ -210,8 +211,8 @@ class Alert(Resource):  # pylint: disable=too-many-instance-attributes
         *,
         extended_properties: Optional[Dict[str, str]] = None,
         supporting_evidence: Optional["_models.AlertPropertiesSupportingEvidence"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword extended_properties: Custom properties for the alert.
         :paramtype extended_properties: dict[str, str]
@@ -271,7 +272,7 @@ class AlertEntity(_serialization.Model):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, *, additional_properties: Optional[Dict[str, JSON]] = None, **kwargs):
+    def __init__(self, *, additional_properties: Optional[Dict[str, JSON]] = None, **kwargs: Any) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -302,7 +303,7 @@ class AlertList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Alert"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.Alert"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: describes security alert properties.
         :paramtype value: list[~azure.mgmt.security.v2022_01_01.models.Alert]
@@ -333,7 +334,7 @@ class AlertPropertiesSupportingEvidence(_serialization.Model):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, *, additional_properties: Optional[Dict[str, JSON]] = None, **kwargs):
+    def __init__(self, *, additional_properties: Optional[Dict[str, JSON]] = None, **kwargs: Any) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -370,7 +371,7 @@ class AlertSimulatorRequestProperties(_serialization.Model):
 
     _subtype_map = {"kind": {"Bundles": "AlertSimulatorBundlesRequestProperties"}}
 
-    def __init__(self, *, additional_properties: Optional[Dict[str, Any]] = None, **kwargs):
+    def __init__(self, *, additional_properties: Optional[Dict[str, Any]] = None, **kwargs: Any) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -378,7 +379,7 @@ class AlertSimulatorRequestProperties(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.additional_properties = additional_properties
-        self.kind = None  # type: Optional[str]
+        self.kind: Optional[str] = None
 
 
 class AlertSimulatorBundlesRequestProperties(AlertSimulatorRequestProperties):
@@ -410,8 +411,8 @@ class AlertSimulatorBundlesRequestProperties(AlertSimulatorRequestProperties):
         *,
         additional_properties: Optional[Dict[str, Any]] = None,
         bundles: Optional[List[Union[str, "_models.BundleType"]]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -420,7 +421,7 @@ class AlertSimulatorBundlesRequestProperties(AlertSimulatorRequestProperties):
         :paramtype bundles: list[str or ~azure.mgmt.security.v2022_01_01.models.BundleType]
         """
         super().__init__(additional_properties=additional_properties, **kwargs)
-        self.kind = "Bundles"  # type: str
+        self.kind: str = "Bundles"
         self.bundles = bundles
 
 
@@ -435,7 +436,9 @@ class AlertSimulatorRequestBody(_serialization.Model):
         "properties": {"key": "properties", "type": "AlertSimulatorRequestProperties"},
     }
 
-    def __init__(self, *, properties: Optional["_models.AlertSimulatorRequestProperties"] = None, **kwargs):
+    def __init__(
+        self, *, properties: Optional["_models.AlertSimulatorRequestProperties"] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword properties: Alert Simulator request body data.
         :paramtype properties: ~azure.mgmt.security.v2022_01_01.models.AlertSimulatorRequestProperties
@@ -445,7 +448,8 @@ class AlertSimulatorRequestBody(_serialization.Model):
 
 
 class ResourceIdentifier(_serialization.Model):
-    """A resource identifier for an alert which can be used to direct the alert to the right product exposure group (tenant, workspace, subscription etc.).
+    """A resource identifier for an alert which can be used to direct the alert to the right product
+    exposure group (tenant, workspace, subscription etc.).
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     AzureResourceIdentifier, LogAnalyticsIdentifier
@@ -467,10 +471,10 @@ class ResourceIdentifier(_serialization.Model):
 
     _subtype_map = {"type": {"AzureResource": "AzureResourceIdentifier", "LogAnalytics": "LogAnalyticsIdentifier"}}
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.type = None  # type: Optional[str]
+        self.type: Optional[str] = None
 
 
 class AzureResourceIdentifier(ResourceIdentifier):
@@ -497,10 +501,10 @@ class AzureResourceIdentifier(ResourceIdentifier):
         "azure_resource_id": {"key": "azureResourceId", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.type = "AzureResource"  # type: str
+        self.type: str = "AzureResource"
         self.azure_resource_id = None
 
 
@@ -537,7 +541,7 @@ class CloudErrorBody(_serialization.Model):
         "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.code = None
@@ -568,7 +572,7 @@ class ErrorAdditionalInfo(_serialization.Model):
         "info": {"key": "info", "type": "object"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.type = None
@@ -617,10 +621,10 @@ class LogAnalyticsIdentifier(ResourceIdentifier):
         "agent_id": {"key": "agentId", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.type = "LogAnalytics"  # type: str
+        self.type: str = "LogAnalytics"
         self.workspace_id = None
         self.workspace_subscription_id = None
         self.workspace_resource_group = None

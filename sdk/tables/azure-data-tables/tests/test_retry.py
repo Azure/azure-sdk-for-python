@@ -25,25 +25,27 @@ from requests.exceptions import ReadTimeout
 
 class RetryRequestTransport(RequestsTransport):
     """Transport to test retry"""
+
     def __init__(self, *args, **kwargs):
         super(RetryRequestTransport, self).__init__(*args, **kwargs)
         self.count = 0
 
     def send(self, request, **kwargs):
         self.count += 1
-        assert 'connection_timeout' in kwargs.keys()
-        assert 'read_timeout' in kwargs.keys()
+        assert "connection_timeout" in kwargs.keys()
+        assert "read_timeout" in kwargs.keys()
         timeout_error = ReadTimeout("Read timed out", request=request)
         raise ServiceResponseError(timeout_error, error=timeout_error)
 
+
 # --Test Class -----------------------------------------------------------------
 class TestStorageRetry(AzureRecordedTestCase, TableTestCase):
-    def _set_up(self, tables_storage_account_name, tables_primary_storage_account_key, url='table', default_table=True, **kwargs):
-        self.table_name = self.get_resource_name('uttable')
+    def _set_up(
+        self, tables_storage_account_name, tables_primary_storage_account_key, url="table", default_table=True, **kwargs
+    ):
+        self.table_name = self.get_resource_name("uttable")
         self.ts = TableServiceClient(
-            self.account_url(tables_storage_account_name, url),
-            credential=tables_primary_storage_account_key,
-            **kwargs
+            self.account_url(tables_storage_account_name, url), credential=tables_primary_storage_account_key, **kwargs
         )
         self.table = self.ts.get_table_client(self.table_name)
         if self.is_live and default_table:
@@ -79,7 +81,7 @@ class TestStorageRetry(AzureRecordedTestCase, TableTestCase):
         try:
             callback = ResponseCallback(status=201, new_status=500).override_status
 
-            new_table_name = self.get_resource_name('uttable')
+            new_table_name = self.get_resource_name("uttable")
             # The initial create will return 201, but we overwrite it with 500 and retry.
             # The retry will then get a 409 conflict.
             with pytest.raises(ResourceExistsError):
@@ -96,8 +98,8 @@ class TestStorageRetry(AzureRecordedTestCase, TableTestCase):
             tables_primary_storage_account_key,
             default_table=False,
             retry_mode=RetryMode.Exponential,
-            retry_backoff_factor=1
-            )
+            retry_backoff_factor=1,
+        )
 
         callback = ResponseCallback(status=200, new_status=408).override_first_status
         try:
@@ -117,7 +119,8 @@ class TestStorageRetry(AzureRecordedTestCase, TableTestCase):
             transport=retry_transport,
             default_table=False,
             retry_mode=RetryMode.Fixed,
-            retry_backoff_factor=1)
+            retry_backoff_factor=1,
+        )
 
         with pytest.raises(AzureError) as error:
             self.ts.get_service_properties(connection_timeout=11, read_timeout=0.000000000001)
@@ -125,14 +128,16 @@ class TestStorageRetry(AzureRecordedTestCase, TableTestCase):
         # 3 retries + 1 original == 4
         assert retry_transport.count == 4
         # This call should succeed on the server side, but fail on the client side due to socket timeout
-        assert 'Read timed out' in str(error.value)
+        assert "Read timed out" in str(error.value)
 
     @tables_decorator
     @recorded_by_proxy
     def test_no_retry(self, tables_storage_account_name, tables_primary_storage_account_key):
-        self._set_up(tables_storage_account_name, tables_primary_storage_account_key, retry_total=0, default_table=False)
+        self._set_up(
+            tables_storage_account_name, tables_primary_storage_account_key, retry_total=0, default_table=False
+        )
 
-        new_table_name = self.get_resource_name('uttable')
+        new_table_name = self.get_resource_name("uttable")
 
         # Force the create call to 'timeout' with a 408
         callback = ResponseCallback(status=201, new_status=500).override_status
@@ -141,9 +146,11 @@ class TestStorageRetry(AzureRecordedTestCase, TableTestCase):
             with pytest.raises(HttpResponseError) as error:
                 self.ts.create_table(new_table_name, raw_response_hook=callback)
             assert error.value.response.status_code == 500
-            assert error.value.reason == 'Created'
+            assert error.value.reason == "Created"
 
         finally:
             self.ts.delete_table(new_table_name)
             self._tear_down()
+
+
 # ------------------------------------------------------------------------------

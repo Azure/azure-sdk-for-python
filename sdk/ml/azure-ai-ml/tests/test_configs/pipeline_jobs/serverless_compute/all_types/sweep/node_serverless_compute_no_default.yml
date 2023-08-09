@@ -1,0 +1,37 @@
+$schema: https://azuremlschemas.azureedge.net/latest/pipelineJob.schema.json
+type: pipeline
+display_name: Sweep - node serverless compute with no default
+experiment_name: Serverless in Pipeline
+jobs:
+  node_compute:
+    type: sweep
+    trial: ./component.yml
+    search_space:
+      whom:
+        type: choice
+        values: ["Microsoft", "World", "Python"]
+    limits:
+      max_concurrent_trials: 1
+      max_total_trials: 3
+    sampling_algorithm: grid
+    objective:
+      goal: minimize
+      primary_metric: metric
+    compute: azureml:cpu-cluster
+  node_serverless:
+    type: sweep
+    trial: ./component.yml
+    search_space:
+      whom:
+        type: choice
+        values: ["Microsoft", "World", "Python"]
+    limits:
+      max_concurrent_trials: 1
+      max_total_trials: 3
+    sampling_algorithm: grid
+    objective:
+      goal: minimize
+      primary_metric: metric
+    compute: azureml:serverless
+    resources:
+      instance_type: Standard_D3_v2

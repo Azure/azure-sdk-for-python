@@ -1,0 +1,13 @@
+$schema: http://azureml/sdk-2-0/DataTransferComponent.json
+name: datatransfer_copy_uri_files
+display_name: Data Transfer Component copy uri files
+
+type: data_transfer
+task: copy_data
+inputs:
+  input1:
+    type: uri_file
+outputs:
+  output_folder:
+    type: uri_file
+data_copy_mode: fail_if_conflict

@@ -11,41 +11,44 @@ from azure.core import CaseInsensitiveEnumMeta
 
 
 class AzureResourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of the Azure resource the hostname is assigned to.
-    """
+    """Type of the Azure resource the hostname is assigned to."""
 
     WEBSITE = "Website"
     TRAFFIC_MANAGER = "TrafficManager"
 
+
 class CustomHostNameDnsRecordType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of the DNS record.
-    """
+    """Type of the DNS record."""
 
     C_NAME = "CName"
     A = "A"
 
+
 class DnsType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Current DNS type
-    """
+    """Current DNS type."""
 
     AZURE_DNS = "AzureDns"
     DEFAULT_DOMAIN_REGISTRAR_DNS = "DefaultDomainRegistrarDns"
 
+
 class DomainPatchResourcePropertiesDomainNotRenewableReasonsItem(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """DomainPatchResourcePropertiesDomainNotRenewableReasonsItem."""
 
     REGISTRATION_STATUS_NOT_SUPPORTED_FOR_RENEWAL = "RegistrationStatusNotSupportedForRenewal"
     EXPIRATION_NOT_IN_RENEWAL_TIME_RANGE = "ExpirationNotInRenewalTimeRange"
     SUBSCRIPTION_NOT_ACTIVE = "SubscriptionNotActive"
+
 
 class DomainPropertiesDomainNotRenewableReasonsItem(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """DomainPropertiesDomainNotRenewableReasonsItem."""
 
     REGISTRATION_STATUS_NOT_SUPPORTED_FOR_RENEWAL = "RegistrationStatusNotSupportedForRenewal"
     EXPIRATION_NOT_IN_RENEWAL_TIME_RANGE = "ExpirationNotInRenewalTimeRange"
     SUBSCRIPTION_NOT_ACTIVE = "SubscriptionNotActive"
 
+
 class DomainStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Domain registration status.
-    """
+    """Domain registration status."""
 
     ACTIVE = "Active"
     AWAITING = "Awaiting"
@@ -69,6 +72,7 @@ class DomainStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     UPDATED = "Updated"
     JSON_CONVERTER_FAILED = "JsonConverterFailed"
 
+
 class DomainType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Valid values are Regular domain: Azure will charge the full price of domain registration,
     SoftDeleted: Purchasing this domain will simply restore it and this operation will not cost
@@ -78,16 +82,16 @@ class DomainType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     REGULAR = "Regular"
     SOFT_DELETED = "SoftDeleted"
 
+
 class HostNameType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of the hostname.
-    """
+    """Type of the hostname."""
 
     VERIFIED = "Verified"
     MANAGED = "Managed"
 
+
 class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Domain provisioning state.
-    """
+    """Domain provisioning state."""
 
     SUCCEEDED = "Succeeded"
     FAILED = "Failed"

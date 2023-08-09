@@ -1,0 +1,156 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "176",
+        "Content-Type": "application/x-www-form-urlencoded",
+        "User-Agent": "azsdk-python-identity/1.12.0b2 Python/3.9.0 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": "client_id=00000000-0000-0000-0000-000000000000\u0026client_secret=00000000-0000-0000-0000-000000000000\u0026grant_type=client_credentials\u0026scope=https%3A%2F%2Fpurview.azure.net%2F.default",
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-store, no-cache",
+        "Content-Length": "93",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Tue, 21 Feb 2023 06:07:02 GMT",
+        "Expires": "-1",
+        "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
+        "Pragma": "no-cache",
+        "Set-Cookie": "[set-cookie;]",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-ests-server": "2.1.14649.20 - SCUS ProdSlices",
+        "X-XSS-Protection": "0"
+      },
+      "ResponseBody": {
+        "token_type": "Bearer",
+        "expires_in": 3599,
+        "ext_expires_in": 3599,
+        "access_token": "access_token"
+      }
+    },
+    {
+      "RequestUri": "https://test-create-account.purview.azure.com/workflow/workflows?api-version=2022-05-01-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-purview-workflow/1.0.0b1 Python/3.9.0 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Length": "2610",
+        "Content-Type": "application/json",
+        "Date": "Tue, 21 Feb 2023 06:07:03 GMT",
+        "Server": "MicrosoftPurview",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "x-ms-correlation-request-id": "742c96cd-4d77-406b-8ea8-1b55c0a813a0"
+      },
+      "ResponseBody": {
+        "value": [
+          {
+            "id": "47de85f0-b835-415b-8db2-280aed78965e",
+            "triggers": [
+              {
+                "type": "when_term_creation_is_requested",
+                "underGlossaryHierarchy": "/glossaries/d167f7c5-cfa9-4e1a-b511-a0ff148226e1"
+              }
+            ],
+            "createdTime": "2022-11-30T08:42:49.447391319Z",
+            "createdBy": "242ee032-7ed5-46d7-93c4-26feb17ee419",
+            "lastUpdateTime": "2022-12-01T04:30:35.440865856Z",
+            "updatedBy": "83ffc40f-f670-49b0-a17e-30c7f74f209a",
+            "name": "CreateTerm16424820221130",
+            "isEnabled": false,
+            "description": ""
+          },
+          {
+            "id": "8f8a7faa-71f2-4d7c-bbca-1d83ec61f0f8",
+            "triggers": [
+              {
+                "type": "when_term_creation_is_requested",
+                "underGlossaryHierarchy": "/glossaries/d167f7c5-cfa9-4e1a-b511-a0ff148226e1"
+              }
+            ],
+            "createdTime": "2022-12-05T02:38:29.316491561Z",
+            "createdBy": "83ffc40f-f670-49b0-a17e-30c7f74f209a",
+            "lastUpdateTime": "2022-12-19T07:54:30.579892807Z",
+            "updatedBy": "83ffc40f-f670-49b0-a17e-30c7f74f209a",
+            "name": "CreateTerm10382820221205",
+            "isEnabled": false,
+            "description": ""
+          },
+          {
+            "id": "d8b7594f-ffa3-468e-8574-8bbb75ba2ac1",
+            "triggers": [
+              {
+                "type": "when_term_creation_is_requested"
+              }
+            ],
+            "createdTime": "2022-12-05T02:41:56.260246220Z",
+            "createdBy": "83ffc40f-f670-49b0-a17e-30c7f74f209a",
+            "lastUpdateTime": "2023-02-13T02:33:50.827001441Z",
+            "updatedBy": "83ffc40f-f670-49b0-a17e-30c7f74f209a",
+            "name": "CreateTerm10415520221205",
+            "isEnabled": false,
+            "description": ""
+          },
+          {
+            "id": "771bb3e3-240f-4c9e-b9e4-dc00177eb931",
+            "triggers": [
+              {
+                "type": "when_term_creation_is_requested",
+                "underGlossaryHierarchy": "/glossaries/5dae5e5b-5aa6-48f1-9e46-26fe7328de71"
+              }
+            ],
+            "createdTime": "2023-02-13T03:49:44.982674759Z",
+            "createdBy": "ebd5d73f-ebd1-40bc-8f63-6d3724957d15",
+            "lastUpdateTime": "2023-02-13T03:53:45.454402683Z",
+            "updatedBy": "83ffc40f-f670-49b0-a17e-30c7f74f209a",
+            "name": "CreateTerm11494320230213",
+            "isEnabled": false,
+            "description": ""
+          },
+          {
+            "id": "f916492c-7823-4a1a-a58e-acae52622850",
+            "triggers": [
+              {
+                "type": "when_term_creation_is_requested",
+                "underGlossaryHierarchy": "/glossaries/5dae5e5b-5aa6-48f1-9e46-26fe7328de71"
+              }
+            ],
+            "createdTime": "2023-02-13T07:10:13.610267872Z",
+            "createdBy": "ebd5d73f-ebd1-40bc-8f63-6d3724957d15",
+            "lastUpdateTime": "2023-02-15T08:29:12.856011329Z",
+            "updatedBy": "83ffc40f-f670-49b0-a17e-30c7f74f209a",
+            "name": "CreateTerm15101320230213",
+            "isEnabled": false,
+            "description": ""
+          },
+          {
+            "id": "333faa86-3552-49cf-a042-eb7c988cc519",
+            "triggers": [
+              {
+                "type": "when_term_creation_is_requested",
+                "underGlossaryHierarchy": "/glossaries/5dae5e5b-5aa6-48f1-9e46-26fe7328de71"
+              }
+            ],
+            "createdTime": "2023-02-16T09:23:52.909386052Z",
+            "createdBy": "ebd5d73f-ebd1-40bc-8f63-6d3724957d15",
+            "lastUpdateTime": "2023-02-16T09:23:52.909386052Z",
+            "updatedBy": "ebd5d73f-ebd1-40bc-8f63-6d3724957d15",
+            "name": "CreateTerm17235220230216",
+            "isEnabled": true,
+            "description": ""
+          }
+        ]
+      }
+    }
+  ],
+  "Variables": {}
+}

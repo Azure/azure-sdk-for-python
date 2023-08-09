@@ -14,9 +14,9 @@ import logging
 import sys
 
 from ci_tools.environment_exclusions import (
-    is_ignored_package,
-    is_check_enabled,
+    is_check_enabled, is_typing_ignored
 )
+from ci_tools.variables import in_ci
 
 logging.getLogger().setLevel(logging.INFO)
 
@@ -33,23 +33,34 @@ if __name__ == "__main__":
         required=True,
     )
 
+    parser.add_argument(
+        "--next",
+        default=False,
+        help="Next version of pyright is being tested.",
+        required=False
+    )
+
     args = parser.parse_args()
     package_name = os.path.basename(os.path.abspath(args.target_package))
-    if not is_check_enabled(args.target_package, "pyright") or is_ignored_package(package_name):
-        logging.info(
-            f"Package {package_name} opts-out of pyright check. See https://aka.ms/python/typing-guide for information."
-        )
-        exit(0)
+
+    if not args.next and in_ci():
+        if not is_check_enabled(args.target_package, "pyright") or is_typing_ignored(package_name):
+            logging.info(
+                f"Package {package_name} opts-out of pyright check. See https://aka.ms/python/typing-guide for information."
+            )
+            exit(0)
 
     paths = [
         os.path.join(args.target_package, "azure"),
         os.path.join(args.target_package, "samples"),
     ]
-    if not is_check_enabled(args.target_package, "type_check_samples"):
-        logging.info(
-            f"Package {package_name} opts-out of pyright check on samples."
-        )
-        paths = paths[:-1]
+
+    if not args.next and in_ci():
+        if not is_check_enabled(args.target_package, "type_check_samples"):
+            logging.info(
+                f"Package {package_name} opts-out of pyright check on samples."
+            )
+            paths = paths[:-1]
 
     commands = [
         sys.executable,

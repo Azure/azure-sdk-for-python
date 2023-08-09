@@ -38,7 +38,7 @@ def build_list_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2015-07-01"))  # type: str
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2015-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -59,7 +59,7 @@ class Operations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~$(python-base-namespace).v2015_07_01.MonitorManagementClient`'s
+        :class:`~azure.mgmt.monitor.v2015_07_01.MonitorManagementClient`'s
         :attr:`operations` attribute.
     """
 
@@ -78,7 +78,7 @@ class Operations:
 
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: OperationListResult or the result of cls(response)
-        :rtype: ~$(python-base-namespace).v2015_07_01.models.OperationListResult
+        :rtype: ~azure.mgmt.monitor.v2015_07_01.models.OperationListResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -92,8 +92,8 @@ class Operations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2015-07-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.OperationListResult]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2015-07-01"))
+        cls: ClsType[_models.OperationListResult] = kwargs.pop("cls", None)
 
         request = build_list_request(
             api_version=api_version,
@@ -102,10 +102,11 @@ class Operations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -122,4 +123,4 @@ class Operations:
 
         return deserialized
 
-    list.metadata = {"url": "/providers/Microsoft.Insights/operations"}  # type: ignore
+    list.metadata = {"url": "/providers/Microsoft.Insights/operations"}

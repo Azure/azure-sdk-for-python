@@ -35,7 +35,7 @@
       "status":"Preparing",
       "code_id":"/subscriptions/d511f82f-71ba-49a4-8233-d7be8a3650f4/resourceGroups/RLTesting/providers/Microsoft.MachineLearningServices/workspaces/AnkitWS/codes//versions/",
       "command":"pip freeze",
-      "environment_id":"/subscriptions/d511f82f-71ba-49a4-8233-d7be8a3650f4/resourceGroups/RLTesting/providers/Microsoft.MachineLearningServices/workspaces/AnkitWS/environments/AzureML-sklearn-0.24-ubuntu18.04-py37-cpu/versions/1",
+      "environment_id":"/subscriptions/d511f82f-71ba-49a4-8233-d7be8a3650f4/resourceGroups/RLTesting/providers/Microsoft.MachineLearningServices/workspaces/AnkitWS/environments/AzureML-sklearn-1.0-ubuntu20.04-py38-cpu/versions/1",
       "input_data_bindings":{
 
       },

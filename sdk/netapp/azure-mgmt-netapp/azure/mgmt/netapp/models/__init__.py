@@ -13,10 +13,11 @@ from ._models_py3 import Backup
 from ._models_py3 import BackupPatch
 from ._models_py3 import BackupPoliciesList
 from ._models_py3 import BackupPolicy
-from ._models_py3 import BackupPolicyDetails
 from ._models_py3 import BackupPolicyPatch
+from ._models_py3 import BackupRestoreFiles
 from ._models_py3 import BackupStatus
 from ._models_py3 import BackupsList
+from ._models_py3 import BreakFileLocksRequest
 from ._models_py3 import BreakReplicationRequest
 from ._models_py3 import CapacityPool
 from ._models_py3 import CapacityPoolList
@@ -26,14 +27,19 @@ from ._models_py3 import CloudErrorBody
 from ._models_py3 import DailySchedule
 from ._models_py3 import Dimension
 from ._models_py3 import EncryptionIdentity
+from ._models_py3 import ErrorAdditionalInfo
+from ._models_py3 import ErrorDetail
+from ._models_py3 import ErrorResponse
 from ._models_py3 import ExportPolicyRule
 from ._models_py3 import FilePathAvailabilityRequest
+from ._models_py3 import GetGroupIdListForLDAPUserRequest
+from ._models_py3 import GetGroupIdListForLDAPUserResponse
 from ._models_py3 import HourlySchedule
-from ._models_py3 import Identity
 from ._models_py3 import KeyVaultProperties
 from ._models_py3 import LdapSearchScopeOpt
 from ._models_py3 import ListReplications
 from ._models_py3 import LogSpecification
+from ._models_py3 import ManagedServiceIdentity
 from ._models_py3 import MetricSpecification
 from ._models_py3 import MonthlySchedule
 from ._models_py3 import MountTarget
@@ -77,8 +83,6 @@ from ._models_py3 import SubvolumesList
 from ._models_py3 import SystemData
 from ._models_py3 import TrackedResource
 from ._models_py3 import UserAssignedIdentity
-from ._models_py3 import Vault
-from ._models_py3 import VaultList
 from ._models_py3 import Volume
 from ._models_py3 import VolumeBackupProperties
 from ._models_py3 import VolumeBackups
@@ -113,10 +117,11 @@ from ._net_app_management_client_enums import EnableSubvolumes
 from ._net_app_management_client_enums import EncryptionKeySource
 from ._net_app_management_client_enums import EncryptionType
 from ._net_app_management_client_enums import EndpointType
-from ._net_app_management_client_enums import IdentityType
+from ._net_app_management_client_enums import FileAccessLogs
 from ._net_app_management_client_enums import InAvailabilityReasonType
 from ._net_app_management_client_enums import KeySource
 from ._net_app_management_client_enums import KeyVaultStatus
+from ._net_app_management_client_enums import ManagedServiceIdentityType
 from ._net_app_management_client_enums import MetricAggregationType
 from ._net_app_management_client_enums import MirrorState
 from ._net_app_management_client_enums import NetworkFeatures
@@ -132,7 +137,7 @@ from ._net_app_management_client_enums import SmbNonBrowsable
 from ._net_app_management_client_enums import Type
 from ._net_app_management_client_enums import VolumeStorageToNetworkProximity
 from ._patch import __all__ as _patch_all
-from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
@@ -143,10 +148,11 @@ __all__ = [
     "BackupPatch",
     "BackupPoliciesList",
     "BackupPolicy",
-    "BackupPolicyDetails",
     "BackupPolicyPatch",
+    "BackupRestoreFiles",
     "BackupStatus",
     "BackupsList",
+    "BreakFileLocksRequest",
     "BreakReplicationRequest",
     "CapacityPool",
     "CapacityPoolList",
@@ -156,14 +162,19 @@ __all__ = [
     "DailySchedule",
     "Dimension",
     "EncryptionIdentity",
+    "ErrorAdditionalInfo",
+    "ErrorDetail",
+    "ErrorResponse",
     "ExportPolicyRule",
     "FilePathAvailabilityRequest",
+    "GetGroupIdListForLDAPUserRequest",
+    "GetGroupIdListForLDAPUserResponse",
     "HourlySchedule",
-    "Identity",
     "KeyVaultProperties",
     "LdapSearchScopeOpt",
     "ListReplications",
     "LogSpecification",
+    "ManagedServiceIdentity",
     "MetricSpecification",
     "MonthlySchedule",
     "MountTarget",
@@ -207,8 +218,6 @@ __all__ = [
     "SystemData",
     "TrackedResource",
     "UserAssignedIdentity",
-    "Vault",
-    "VaultList",
     "Volume",
     "VolumeBackupProperties",
     "VolumeBackups",
@@ -242,10 +251,11 @@ __all__ = [
     "EncryptionKeySource",
     "EncryptionType",
     "EndpointType",
-    "IdentityType",
+    "FileAccessLogs",
     "InAvailabilityReasonType",
     "KeySource",
     "KeyVaultStatus",
+    "ManagedServiceIdentityType",
     "MetricAggregationType",
     "MirrorState",
     "NetworkFeatures",

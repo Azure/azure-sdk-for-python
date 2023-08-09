@@ -66,7 +66,6 @@ class PageIterator(Iterator[Iterator[ReturnType]]):
         self._current_page: Optional[Iterable[ReturnType]] = None
 
     def __iter__(self) -> Iterator[Iterator[ReturnType]]:
-        """Return 'self'."""
         return self
 
     def __next__(self) -> Iterator[ReturnType]:
@@ -98,13 +97,9 @@ class ItemPaged(Iterator[ReturnType]):
         self._args = args
         self._kwargs = kwargs
         self._page_iterator: Optional[Iterator[ReturnType]] = None
-        self._page_iterator_class = self._kwargs.pop(
-            "page_iterator_class", PageIterator
-        )
+        self._page_iterator_class = self._kwargs.pop("page_iterator_class", PageIterator)
 
-    def by_page(
-        self, continuation_token: Optional[str] = None
-    ) -> Iterator[Iterator[ReturnType]]:
+    def by_page(self, continuation_token: Optional[str] = None) -> Iterator[Iterator[ReturnType]]:
         """Get an iterator of pages of objects, instead of an iterator of objects.
 
         :param str continuation_token:
@@ -112,18 +107,14 @@ class ItemPaged(Iterator[ReturnType]):
             continuation_token field of a previous generator object. If specified,
             this generator will begin returning results from this point.
         :returns: An iterator of pages (themselves iterator of objects)
+        :rtype: iterator[iterator[ReturnType]]
         """
-        return self._page_iterator_class(
-            continuation_token=continuation_token, *self._args, **self._kwargs
-        )
+        return self._page_iterator_class(continuation_token=continuation_token, *self._args, **self._kwargs)
 
     def __repr__(self) -> str:
-        return "<iterator object azure.core.paging.ItemPaged at {}>".format(
-            hex(id(self))
-        )
+        return "<iterator object azure.core.paging.ItemPaged at {}>".format(hex(id(self)))
 
     def __iter__(self) -> Iterator[ReturnType]:
-        """Return 'self'."""
         return self
 
     def __next__(self) -> ReturnType:

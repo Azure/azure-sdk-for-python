@@ -3,12 +3,12 @@
 # ---------------------------------------------------------
 
 # pylint: disable=protected-access
-import copy
 from copy import deepcopy
 
 import yaml
 from marshmallow import INCLUDE, fields, post_load, pre_dump
 
+from azure.ai.ml._schema._utils.utils import _resolve_group_inputs_for_component
 from azure.ai.ml._schema.assets.asset import AnonymousAssetSchema
 from azure.ai.ml._schema.component.component import ComponentSchema
 from azure.ai.ml._schema.component.input_output import OutputPortSchema, PrimitiveOutputSchema
@@ -26,6 +26,9 @@ from azure.ai.ml._schema.pipeline.automl_node import AutoMLNodeSchema
 from azure.ai.ml._schema.pipeline.component_job import (
     BaseNodeSchema,
     CommandSchema,
+    DataTransferCopySchema,
+    DataTransferExportSchema,
+    DataTransferImportSchema,
     ImportSchema,
     ParallelSchema,
     SparkSchema,
@@ -35,12 +38,23 @@ from azure.ai.ml._schema.pipeline.component_job import (
 from azure.ai.ml._schema.pipeline.condition_node import ConditionNodeSchema
 from azure.ai.ml._schema.pipeline.control_flow_job import DoWhileSchema, ParallelForSchema
 from azure.ai.ml._schema.pipeline.pipeline_command_job import PipelineCommandJobSchema
+from azure.ai.ml._schema.pipeline.pipeline_datatransfer_job import (
+    PipelineDataTransferCopyJobSchema,
+    PipelineDataTransferExportJobSchema,
+    PipelineDataTransferImportJobSchema,
+)
 from azure.ai.ml._schema.pipeline.pipeline_import_job import PipelineImportJobSchema
 from azure.ai.ml._schema.pipeline.pipeline_parallel_job import PipelineParallelJobSchema
 from azure.ai.ml._schema.pipeline.pipeline_spark_job import PipelineSparkJobSchema
 from azure.ai.ml._utils.utils import is_private_preview_enabled
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, AzureMLResourceType
-from azure.ai.ml.constants._component import ComponentSource, ControlFlowType, NodeType
+from azure.ai.ml.constants._component import (
+    CONTROL_FLOW_TYPES,
+    ComponentSource,
+    ControlFlowType,
+    DataTransferTaskType,
+    NodeType,
+)
 
 
 class NodeNameStr(PipelineNodeNameStr):
@@ -79,6 +93,29 @@ def PipelineJobsField():
         pipeline_enable_job_type[ControlFlowType.IF_ELSE] = [NestedField(ConditionNodeSchema, unknown=INCLUDE)]
         pipeline_enable_job_type[ControlFlowType.PARALLEL_FOR] = [NestedField(ParallelForSchema, unknown=INCLUDE)]
 
+    # Todo: Put data_transfer logic to the last to avoid error message conflict, open a item to track:
+    #  https://msdata.visualstudio.com/Vienna/_workitems/edit/2244262/
+    pipeline_enable_job_type[NodeType.DATA_TRANSFER] = [
+        TypeSensitiveUnionField(
+            {
+                DataTransferTaskType.COPY_DATA: [
+                    NestedField(DataTransferCopySchema, unknown=INCLUDE),
+                    NestedField(PipelineDataTransferCopyJobSchema),
+                ],
+                DataTransferTaskType.IMPORT_DATA: [
+                    NestedField(DataTransferImportSchema, unknown=INCLUDE),
+                    NestedField(PipelineDataTransferImportJobSchema),
+                ],
+                DataTransferTaskType.EXPORT_DATA: [
+                    NestedField(DataTransferExportSchema, unknown=INCLUDE),
+                    NestedField(PipelineDataTransferExportJobSchema),
+                ],
+            },
+            type_field_name="task",
+            unknown=INCLUDE,
+        )
+    ]
+
     pipeline_job_field = fields.Dict(
         keys=NodeNameStr(),
         values=TypeSensitiveUnionField(pipeline_enable_job_type),
@@ -89,11 +126,11 @@ def PipelineJobsField():
 def _post_load_pipeline_jobs(context, data: dict) -> dict:
     """Silently convert Job in pipeline jobs to node."""
     from azure.ai.ml.entities._builders import parse_inputs_outputs
+    from azure.ai.ml.entities._builders.condition_node import ConditionNode
     from azure.ai.ml.entities._builders.do_while import DoWhile
     from azure.ai.ml.entities._builders.parallel_for import ParallelFor
     from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
     from azure.ai.ml.entities._job.pipeline._component_translatable import ComponentTranslatableMixin
-    from azure.ai.ml.entities._builders.condition_node import ConditionNode
 
     # parse inputs/outputs
     data = parse_inputs_outputs(data)
@@ -107,17 +144,24 @@ def _post_load_pipeline_jobs(context, data: dict) -> dict:
                 job_instance = AutoMLJob._create_instance_from_schema_dict(
                     loaded_data=job_instance,
                 )
-            elif job_instance.get("type") == ControlFlowType.IF_ELSE:
-                # Convert to if-else node.
-                job_instance = ConditionNode._create_instance_from_schema_dict(loaded_data=job_instance)
-            elif job_instance.get("type") == ControlFlowType.DO_WHILE:
-                # Convert to do-while node.
-                job_instance = DoWhile._create_instance_from_schema_dict(pipeline_jobs=jobs, loaded_data=job_instance)
-            elif job_instance.get("type") == ControlFlowType.PARALLEL_FOR:
-                # Convert to do-while node.
-                job_instance = ParallelFor._create_instance_from_schema_dict(
-                    pipeline_jobs=jobs, loaded_data=job_instance
-                )
+            elif job_instance.get("type") in CONTROL_FLOW_TYPES:
+                # Set source to yaml job for control flow node.
+                job_instance["_source"] = ComponentSource.YAML_JOB
+
+                job_type = job_instance.get("type")
+                if job_type == ControlFlowType.IF_ELSE:
+                    # Convert to if-else node.
+                    job_instance = ConditionNode._create_instance_from_schema_dict(loaded_data=job_instance)
+                elif job_instance.get("type") == ControlFlowType.DO_WHILE:
+                    # Convert to do-while node.
+                    job_instance = DoWhile._create_instance_from_schema_dict(
+                        pipeline_jobs=jobs, loaded_data=job_instance
+                    )
+                elif job_instance.get("type") == ControlFlowType.PARALLEL_FOR:
+                    # Convert to do-while node.
+                    job_instance = ParallelFor._create_instance_from_schema_dict(
+                        pipeline_jobs=jobs, loaded_data=job_instance
+                    )
             jobs[key] = job_instance
 
     for key, job_instance in jobs.items():
@@ -128,20 +172,15 @@ def _post_load_pipeline_jobs(context, data: dict) -> dict:
                 context=context,
                 pipeline_job_dict=data,
             )
-            job_instance.component._source = ComponentSource.YAML_JOB
-            job_instance._source = job_instance.component._source
+            if job_instance.type == NodeType.DATA_TRANSFER and job_instance.task != DataTransferTaskType.COPY_DATA:
+                job_instance._source = ComponentSource.BUILTIN
+            else:
+                job_instance.component._source = ComponentSource.YAML_JOB
+                job_instance._source = job_instance.component._source
             jobs[key] = job_instance
         # update job instance name to key
         job_instance.name = key
     return data
-
-
-def _resolve_pipeline_component_inputs(component, **kwargs):  # pylint: disable=unused-argument
-    # Try resolve object's inputs & outputs and return a resolved new object
-    result = copy.copy(component)
-    # Flatten group inputs
-    result._inputs = component._get_flattened_inputs()
-    return result
 
 
 class PipelineComponentSchema(ComponentSchema):
@@ -153,15 +192,11 @@ class PipelineComponentSchema(ComponentSchema):
         keys=fields.Str(),
         values=UnionField(
             [
-                NestedField(PrimitiveOutputSchema),
+                NestedField(PrimitiveOutputSchema, unknown=INCLUDE),
                 NestedField(OutputPortSchema),
             ]
         ),
     )
-
-    @pre_dump
-    def resolve_pipeline_component_inputs(self, component, **kwargs):  # pylint: disable=unused-argument, no-self-use
-        return _resolve_pipeline_component_inputs(component, **kwargs)
 
     @post_load
     def make(self, data, **kwargs):  # pylint: disable=unused-argument
@@ -210,7 +245,7 @@ class PipelineComponentFileRefField(FileRefField):
         # Update base_path to parent path of component file.
         component_schema_context = deepcopy(self.context)
         # pylint: disable=no-member
-        value = _resolve_pipeline_component_inputs(value)
+        value = _resolve_group_inputs_for_component(value)
         return _AnonymousPipelineComponentSchema(context=component_schema_context)._serialize(value, **kwargs)
 
     def _deserialize(self, value, attr, data, **kwargs):
@@ -250,7 +285,7 @@ class PipelineSchema(BaseNodeSchema):
     type = StringTransformedEnum(allowed_values=[NodeType.PIPELINE])
 
     @post_load
-    def make(self, data, **kwargs) -> "Pipeline":  # pylint: disable=no-self-use
+    def make(self, data, **kwargs) -> "Pipeline":
         from azure.ai.ml.entities._builders import parse_inputs_outputs
         from azure.ai.ml.entities._builders.pipeline import Pipeline
 
@@ -258,5 +293,5 @@ class PipelineSchema(BaseNodeSchema):
         return Pipeline(**data)  # pylint: disable=abstract-class-instantiated
 
     @pre_dump
-    def resolve_inputs_outputs(self, data, **kwargs):  # pylint: disable=no-self-use
+    def resolve_inputs_outputs(self, data, **kwargs):
         return _resolve_inputs_outputs(data)

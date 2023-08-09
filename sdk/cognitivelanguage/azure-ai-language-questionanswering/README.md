@@ -2,7 +2,14 @@
 
 Question Answering is a cloud-based API service that lets you create a conversational question-and-answer layer over your existing data. Use it to build a knowledge base by extracting questions and answers from your semi-structured content, including FAQ, manuals, and documents. Answer users’ questions with the best answers from the QnAs in your knowledge base—automatically. Your knowledge base gets smarter, too, as it continually learns from users' behavior.
 
-[Source code][questionanswering_client_src] | [Package (PyPI)][questionanswering_pypi_package] | [API reference documentation][questionanswering_refdocs] | [Product documentation][questionanswering_docs] | [Samples][questionanswering_samples] | [Analysis REST API documentation][questionanswering_rest_docs] | [Authoring REST API documentation][questionanswering_rest_docs_authoring]
+[Source code][questionanswering_client_src]
+| [Package (PyPI)][questionanswering_pypi_package]
+| [Package (Conda)](https://anaconda.org/microsoft/azure-ai-language-questionanswering/)
+| [API reference documentation][questionanswering_refdocs]
+| [Product documentation][questionanswering_docs]
+| [Samples][questionanswering_samples]
+| [Analysis REST API documentation][questionanswering_rest_docs]
+| [Authoring REST API documentation][questionanswering_rest_docs_authoring]
 
 ## _Disclaimer_
 

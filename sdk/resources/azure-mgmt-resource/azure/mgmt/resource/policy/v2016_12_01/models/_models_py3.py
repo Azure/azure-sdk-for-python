@@ -71,8 +71,8 @@ class PolicyAssignment(_serialization.Model):
         scope: Optional[str] = None,
         parameters: Optional[JSON] = None,
         description: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword type: The type of the policy assignment.
         :paramtype type: str
@@ -115,8 +115,12 @@ class PolicyAssignmentListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.PolicyAssignment"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        value: Optional[List["_models.PolicyAssignment"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: An array of policy assignments.
         :paramtype value: list[~azure.mgmt.resource.policy.v2016_12_01.models.PolicyAssignment]
@@ -182,8 +186,8 @@ class PolicyDefinition(_serialization.Model):
         policy_rule: Optional[JSON] = None,
         metadata: Optional[JSON] = None,
         parameters: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword policy_type: The type of policy definition. Possible values are NotSpecified, BuiltIn,
          and Custom. Known values are: "NotSpecified", "BuiltIn", and "Custom".
@@ -229,8 +233,12 @@ class PolicyDefinitionListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.PolicyDefinition"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        value: Optional[List["_models.PolicyDefinition"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: An array of policy definitions.
         :paramtype value: list[~azure.mgmt.resource.policy.v2016_12_01.models.PolicyDefinition]

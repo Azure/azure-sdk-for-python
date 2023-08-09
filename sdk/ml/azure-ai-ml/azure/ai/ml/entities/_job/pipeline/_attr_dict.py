@@ -13,8 +13,7 @@ V = TypeVar("V")
 
 
 class _AttrDict(Generic[K, V], dict, ABC):
-    """This class is used for accessing values with instance.some_key. It
-    supports the following scenarios:
+    """This class is used for accessing values with instance.some_key. It supports the following scenarios:
 
     1. Setting arbitrary attribute, eg: obj.resource_layout.node_count = 2
       1.1 Setting same nested filed twice will return same object, eg:
@@ -50,17 +49,17 @@ class _AttrDict(Generic[K, V], dict, ABC):
             self._key_restriction = True
         self._logger = logging.getLogger("attr_dict")
 
-    def _initializing(self) -> bool:  # pylint: disable=no-self-use
+    def _initializing(self) -> bool:
         # use this to indicate ongoing init process, sub class need to make sure this return True during init process.
         return False
 
     def _get_attrs(self) -> dict:
-        """Get all arbitrary attributes which has been set, empty values are
-        excluded.
+        """Get all arbitrary attributes which has been set, empty values are excluded.
 
         :return: A dict which contains all arbitrary attributes set by user.
         :rtype: dict
         """
+
         # TODO: check this
         def remove_empty_values(data):
             if not isinstance(data, dict):
@@ -71,8 +70,7 @@ class _AttrDict(Generic[K, V], dict, ABC):
         return remove_empty_values(self)
 
     def _is_arbitrary_attr(self, attr_name: str) -> bool:
-        """Checks if a given attribute name should be treat as arbitrary
-        attribute.
+        """Checks if a given attribute name should be treat as arbitrary attribute.
 
         Attributes inside _AttrDict can be non-arbitrary attribute or arbitrary attribute.
         Non-arbitrary attributes are normal attributes like other object which stores in self.__dict__.
@@ -93,7 +91,7 @@ class _AttrDict(Generic[K, V], dict, ABC):
         if self._initializing():
             return False
         # If there's key restriction, only keys in it can be set as arbitrary attribute.
-        if self._key_restriction and attr_name not in self._allowed_keys.keys():
+        if self._key_restriction and attr_name not in self._allowed_keys:
             return False
         # Attributes already in attribute dict will not be set as arbitrary attribute.
         try:
@@ -115,14 +113,14 @@ class _AttrDict(Generic[K, V], dict, ABC):
             self.__setattr__(key, result)
             return result
 
-    def __setattr__(self, key: K, value: V):
+    def __setattr__(self, key: K, value: V) -> None:
         if not self._is_arbitrary_attr(key):
             super().__setattr__(key, value)
         else:
             self._logger.debug("setting %s to %s", key, value)
-            return super().__setitem__(key, value)
+            super().__setitem__(key, value)
 
-    def __setitem__(self, key: K, value: V):
+    def __setitem__(self, key: K, value: V) -> None:
         self.__setattr__(key, value)
 
     def __getitem__(self, item: V):
@@ -144,11 +142,10 @@ def has_attr_safe(obj, attr):
     return has_attr
 
 
-def try_get_non_arbitrary_attr_for_potential_attr_dict(obj, attr):
+def try_get_non_arbitrary_attr(obj, attr):
     """Try to get non-arbitrary attribute for potential attribute dict.
 
-    Will not create target attribute if it is an arbitrary attribute in
-    _AttrDict.
+    Will not create target attribute if it is an arbitrary attribute in _AttrDict.
     """
     if has_attr_safe(obj, attr):
         return obj[attr] if isinstance(obj, dict) else getattr(obj, attr)

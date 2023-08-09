@@ -8,8 +8,9 @@ from pathlib import Path
 from typing import Iterable, Tuple
 
 from azure.ai.ml._artifacts._artifact_utilities import download_artifact_from_storage_url
-from azure.ai.ml._utils._arm_id_utils import parse_name_version
+from azure.ai.ml._utils._arm_id_utils import parse_name_version, parse_name_label
 from azure.ai.ml._utils.utils import dump_yaml, is_url
+from azure.ai.ml.constants._common import DefaultOpenEncoding
 from azure.ai.ml.entities import OnlineDeployment
 from azure.ai.ml.entities._assets.environment import BuildContext, Environment
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, RequiredLocalArtifactsNotFoundError, ValidationException
@@ -36,12 +37,20 @@ def get_environment_artifacts(
     """
     # Validate environment for local endpoint
     if _environment_contains_cloud_artifacts(deployment=deployment):
-        name, version = parse_name_version(deployment.environment)
-        environment_asset = environment_operations.get(name=name, version=version)
+        if isinstance(deployment.environment, Environment):
+            environment_asset = deployment.environment
+        else:
+            name, version = parse_name_version(deployment.environment)
+            label = None
+            if not version:
+                name, label = parse_name_label(deployment.environment)
+            environment_asset = environment_operations.get(name=name, version=version, label=label)
+
         if not _cloud_environment_is_valid(environment=environment_asset):
             msg = (
                 "Cloud environment must have environment.image "
                 "or the environment.build.path set to work for local endpoints."
+                " Note: Curated environments are not supported for local deployments."
             )
             raise ValidationException(
                 message=msg,
@@ -79,10 +88,10 @@ def _get_cloud_environment_artifacts(
             blob_url=environment_asset.build.path,
             destination=download_path,
             datastore_operation=environment_operations._datastore_operation,
-            datastore_name=None,
+            datastore_name="workspaceartifactstore",
         )
         dockerfile_path = Path(environment_build_directory, environment_asset.build.dockerfile_path)
-        dockerfile_contents = dockerfile_path.read_text()
+        dockerfile_contents = dockerfile_path.read_text(encoding=DefaultOpenEncoding.READ)
         return (
             None,
             None,
@@ -118,12 +127,10 @@ def _get_local_environment_artifacts(base_path: str, environment: Environment):
             None,
             environment.inference_config,
         )
-
-    dockerfile_contents = None
     if environment.build and environment.build.dockerfile_path:
         absolute_build_directory = Path(base_path, environment.build.path).resolve()
         absolute_dockerfile_path = Path(absolute_build_directory, environment.build.dockerfile_path).resolve()
-        dockerfile_contents = absolute_dockerfile_path.read_text()
+        dockerfile_contents = absolute_dockerfile_path.read_text(encoding=DefaultOpenEncoding.READ)
         return (
             None,
             None,
@@ -132,6 +139,8 @@ def _get_local_environment_artifacts(base_path: str, environment: Environment):
             dockerfile_contents,
             environment.inference_config,
         )
+
+    return None
 
 
 def _local_environment_is_valid(deployment: OnlineDeployment):
@@ -156,4 +165,4 @@ def _cloud_environment_is_valid(environment: Environment):
 
 
 def _environment_contains_cloud_artifacts(deployment: OnlineDeployment):
-    return isinstance(deployment.environment, str)
+    return isinstance(deployment.environment, str) or deployment.environment.id is not None

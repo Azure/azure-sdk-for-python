@@ -47,6 +47,16 @@ class AzureSearchIndexWriteBehaviorType(str, Enum, metaclass=CaseInsensitiveEnum
     UPLOAD = "Upload"
 
 
+class AzureStorageAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type used for authentication. Type: string."""
+
+    ANONYMOUS = "Anonymous"
+    ACCOUNT_KEY = "AccountKey"
+    SAS_URI = "SasUri"
+    SERVICE_PRINCIPAL = "ServicePrincipal"
+    MSI = "Msi"
+
+
 class BigDataPoolReferenceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Big data pool reference type."""
 
@@ -92,6 +102,14 @@ class CompressionCodec(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     LZ4 = "lz4"
     TAR = "tar"
     TAR_G_ZIP = "tarGZip"
+
+
+class ConfigurationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of the spark config."""
+
+    DEFAULT = "Default"
+    CUSTOMIZED = "Customized"
+    ARTIFACT = "Artifact"
 
 
 class CopyBehaviorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -786,6 +804,12 @@ class SparkAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     USERNAME = "Username"
     USERNAME_AND_PASSWORD = "UsernameAndPassword"
     WINDOWS_AZURE_HD_INSIGHT_SERVICE = "WindowsAzureHDInsightService"
+
+
+class SparkConfigurationReferenceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Spark configuration reference type."""
+
+    SPARK_CONFIGURATION_REFERENCE = "SparkConfigurationReference"
 
 
 class SparkJobReferenceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

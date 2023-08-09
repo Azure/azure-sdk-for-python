@@ -22,13 +22,13 @@ from azure.core.credentials import AzureKeyCredential
 
 async def main():
     try:
-        endpoint = os.environ['PERSONALIZER_ENDPOINT_SINGLE_SLOT']
+        endpoint = os.environ["PERSONALIZER_ENDPOINT_SINGLE_SLOT"]
     except KeyError:
         print("PERSONALIZER_ENDPOINT_SINGLE_SLOT must be set.")
         sys.exit(1)
 
     try:
-        api_key = os.environ['PERSONALIZER_API_KEY_SINGLE_SLOT']
+        api_key = os.environ["PERSONALIZER_API_KEY_SINGLE_SLOT"]
     except KeyError:
         print("PERSONALIZER_API_KEY_SINGLE_SLOT must be set.")
         sys.exit(1)
@@ -73,8 +73,11 @@ async def main():
 
     print("Sending rank request")
     rank_response = await client.rank(request)
-    print("Rank returned response with event id {} and recommended {} as the best action"
-          .format(rank_response.get("eventId"), rank_response.get("rewardActionId")))
+    print(
+        "Rank returned response with event id {} and recommended {} as the best action".format(
+            rank_response.get("eventId"), rank_response.get("rewardActionId")
+        )
+    )
 
     # The event response will be determined by how the user interacted with the action that was presented to them.
     # Let us say that they like the action. So we associate a reward of 1.

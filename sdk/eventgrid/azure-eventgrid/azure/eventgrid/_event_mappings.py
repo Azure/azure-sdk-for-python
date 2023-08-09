@@ -88,6 +88,12 @@ class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     AcsChatThreadWithUserDeletedEventName = 'Microsoft.Communication.ChatThreadWithUserDeleted'
 
+    AcsEmailDeliveryReportReceivedEventName = 'Microsoft.Communication.EmailDeliveryReportReceived'
+
+    AcsEmailEngagementTrackingReportReceivedEventName = 'Microsoft.Communication.EmailEngagementTrackingReportReceived'
+
+    AcsIncomingCallEventName = 'Microsoft.Communication.IncomingCall'
+
     AcsRecordingFileStatusUpdatedEventName = 'Microsoft.Communication.RecordingFileStatusUpdated'
 
     AcsSmsDeliveryReportReceivedEventName = 'Microsoft.Communication.SMSDeliveryReportReceived'
@@ -96,17 +102,39 @@ class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     AcsUserDisconnectedEventName = 'Microsoft.Communication.UserDisconnected'
 
-    ApiManagementApiCreatedEventName = 'Microsoft.ApiManagement.ApiCreated'
+    ApiManagementApiCreatedEventName = 'Microsoft.ApiManagement.APICreated'
 
-    ApiManagementApiDeletedEventName = 'Microsoft.ApiManagement.ApiDeleted'
+    ApiManagementApiDeletedEventName = 'Microsoft.ApiManagement.APIDeleted'
 
-    ApiManagementApiReleaseCreatedEventName = 'Microsoft.ApiManagement.ApiReleaseCreated'
+    ApiManagementApiReleaseCreatedEventName = 'Microsoft.ApiManagement.APIReleaseCreated'
 
-    ApiManagementApiReleaseDeletedEventName = 'Microsoft.ApiManagement.ApiReleaseDeleted'
+    ApiManagementApiReleaseDeletedEventName = 'Microsoft.ApiManagement.APIReleaseDeleted'
 
-    ApiManagementApiReleaseUpdatedEventName = 'Microsoft.ApiManagement.ApiReleaseUpdated'
+    ApiManagementApiReleaseUpdatedEventName = 'Microsoft.ApiManagement.APIReleaseUpdated'
 
-    ApiManagementApiUpdatedEventName = 'Microsoft.ApiManagement.ApiUpdated'
+    ApiManagementApiUpdatedEventName = 'Microsoft.ApiManagement.APIUpdated'
+
+    ApiManagementGatewayApiAddedEventName = 'Microsoft.ApiManagement.GatewayAPIAdded'
+
+    ApiManagementGatewayApiRemovedEventName = 'Microsoft.ApiManagement.GatewayAPIRemoved'
+
+    ApiManagementGatewayCertificateAuthorityCreatedEventName = 'Microsoft.ApiManagement.GatewayCertificateAuthorityCreated'
+
+    ApiManagementGatewayCertificateAuthorityDeletedEventName = 'Microsoft.ApiManagement.GatewayCertificateAuthorityDeleted'
+
+    ApiManagementGatewayCertificateAuthorityUpdatedEventName = 'Microsoft.ApiManagement.GatewayCertificateAuthorityUpdated'
+
+    ApiManagementGatewayCreatedEventName = 'Microsoft.ApiManagement.GatewayCreated'
+
+    ApiManagementGatewayDeletedEventName = 'Microsoft.ApiManagement.GatewayDeleted'
+
+    ApiManagementGatewayHostnameConfigurationCreatedEventName = 'Microsoft.ApiManagement.GatewayHostnameConfigurationCreated'
+
+    ApiManagementGatewayHostnameConfigurationDeletedEventName = 'Microsoft.ApiManagement.GatewayHostnameConfigurationDeleted'
+
+    ApiManagementGatewayHostnameConfigurationUpdatedEventName = 'Microsoft.ApiManagement.GatewayHostnameConfigurationUpdated'
+
+    ApiManagementGatewayUpdatedEventName = 'Microsoft.ApiManagement.GatewayUpdated'
 
     ApiManagementProductCreatedEventName = 'Microsoft.ApiManagement.ProductCreated'
 
@@ -138,7 +166,23 @@ class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     ContainerRegistryImagePushedEventName = 'Microsoft.ContainerRegistry.ImagePushed'
 
+    ContainerServiceClusterSupportEndedEventName = 'Microsoft.ContainerService.ClusterSupportEnded'
+
+    ContainerServiceClusterSupportEndingEventName = 'Microsoft.ContainerService.ClusterSupportEnding'
+
     ContainerServiceNewKubernetesVersionAvailableEventName = 'Microsoft.ContainerService.NewKubernetesVersionAvailable'
+
+    ContainerServiceNodePoolRollingFailedEventName = 'Microsoft.ContainerService.NodePoolRollingFailed'
+
+    ContainerServiceNodePoolRollingStartedEventName = 'Microsoft.ContainerService.NodePoolRollingStarted'
+
+    ContainerServiceNodePoolRollingSucceededEventName = 'Microsoft.ContainerService.NodePoolRollingSucceeded'
+
+    DataBoxCopyCompletedEventName = 'Microsoft.DataBox.CopyCompleted'
+
+    DataBoxCopyStartedEventName = 'Microsoft.DataBox.CopyStarted'
+
+    DataBoxOrderCompletedEventName = 'Microsoft.DataBox.OrderCompleted'
 
     EventHubCaptureFileCreatedEventName = 'Microsoft.EventHub.CaptureFileCreated'
 
@@ -146,6 +190,8 @@ class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     HealthcareDicomImageCreatedEventName = 'Microsoft.HealthcareApis.DicomImageCreated'
 
     HealthcareDicomImageDeletedEventName = 'Microsoft.HealthcareApis.DicomImageDeleted'
+
+    HealthcareDicomImageUpdatedEventName = 'Microsoft.HealthcareApis.DicomImageUpdated'
 
     # spell-checker:ignore Fhir
     HealthcareFhirResourceCreatedEventName = 'Microsoft.HealthcareApis.FhirResourceCreated'
@@ -314,6 +360,10 @@ class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     StorageDirectoryRenamedEventName = 'Microsoft.Storage.DirectoryRenamed'
 
     StorageLifecyclePolicyCompletedEventName = 'Microsoft.Storage.LifecyclePolicyCompleted'
+
+    StorageTaskCompletedEventName = 'Microsoft.Storage.StorageTaskCompleted'
+
+    StorageTaskQueuedEventName = 'Microsoft.Storage.StorageTaskQueued'
 
     SubscriptionDeletedEventName = 'Microsoft.EventGrid.SubscriptionDeletedEvent'
 

@@ -15,7 +15,7 @@ from ._blob_containers_operations import BlobContainersOperations
 from ._management_policies_operations import ManagementPoliciesOperations
 
 from ._patch import __all__ as _patch_all
-from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [

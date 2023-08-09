@@ -47,4 +47,3 @@ class SignatureAlgorithm(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     es384 = "ES384"  #: ECDSA using P-384 and SHA-384
     es512 = "ES512"  #: ECDSA using P-521 and SHA-512
     es256_k = "ES256K"  #: ECDSA using P-256K and SHA-256
-    eddsa = "EdDSA"  #: Edwards-Curve Digital Signature Algorithm, as described in https://tools.ietf.org/html/rfc8032

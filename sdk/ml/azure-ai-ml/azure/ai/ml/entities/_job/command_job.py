@@ -9,8 +9,8 @@ import logging
 from pathlib import Path
 from typing import Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2022_12_01_preview.models import CommandJob as RestCommandJob
-from azure.ai.ml._restclient.v2022_12_01_preview.models import JobBase
+from azure.ai.ml._restclient.v2023_04_01_preview.models import CommandJob as RestCommandJob
+from azure.ai.ml._restclient.v2023_04_01_preview.models import JobBase
 from azure.ai.ml._schema.job.command_job import CommandJobSchema
 from azure.ai.ml._utils.utils import map_single_brackets_and_warn
 from azure.ai.ml.constants import JobType
@@ -31,8 +31,8 @@ from azure.ai.ml.entities._job._input_output_helpers import (
 )
 from azure.ai.ml.entities._job.distribution import DistributionConfiguration
 from azure.ai.ml.entities._job.job_service import (
-    JobServiceBase,
     JobService,
+    JobServiceBase,
     JupyterLabJobService,
     SshJobService,
     TensorBoardJobService,
@@ -47,6 +47,7 @@ from .job_io_mixin import JobIOMixin
 from .job_limits import CommandJobLimits
 from .job_resource_configuration import JobResourceConfiguration
 from .parameterized_command import ParameterizedCommand
+from .queue_settings import QueueSettings
 
 module_logger = logging.getLogger(__name__)
 
@@ -54,56 +55,62 @@ module_logger = logging.getLogger(__name__)
 class CommandJob(Job, ParameterizedCommand, JobIOMixin):
     """Command job.
 
-    :param name: Name of the job.
+    :keyword name: The name of the job.
     :type name: str
-    :param description: Description of the job.
+    :keyword description: The job description.
     :type description: str
-    :param tags: Tag dictionary. Tags can be added, removed, and updated.
+    :keyword tags: Tag dictionary. Tags can be added, removed, and updated.
     :type tags: dict[str, str]
-    :param display_name: Display name of the job.
+    :keyword display_name: The job display name.
     :type display_name: str
-    :param properties: The asset property dictionary.
+    :keyword properties: A dictionary of properties for the job.
     :type properties: dict[str, str]
-    :param experiment_name:  Name of the experiment the job will be created under.
-        If None is provided, default will be set to current directory name.
+    :keyword experiment_name: The name of the experiment that the job will be created under. Defaults to current
+        directory name.
     :type experiment_name: str
-    :param services: Information on services associated with the job, readonly.
-    :type services: dict[str, JobService]
-    :param inputs: Inputs to the command.
-    :type inputs: dict[str, Union[azure.ai.ml.Input, str, bool, int, float]]
-    :param outputs: Mapping of output data bindings used in the job.
-    :type outputs: dict[str, azure.ai.ml.Output]
-    :param command: Command to be executed in training.
+    :keyword services: Read-only information on services associated with the job.
+    :type services: Optional[dict[str, ~azure.ai.ml.entities.JobService]]
+    :keyword inputs: Mapping of output data bindings used in the command.
+    :type inputs: Optional[dict[str, Union[~azure.ai.ml.Input, str, bool, int, float]]]
+    :keyword outputs: Mapping of output data bindings used in the job.
+    :type outputs: Optional[dict[str, ~azure.ai.ml.Output]]
+    :keyword command: The command to be executed.
     :type command: str
-    :param compute: The compute target the job runs on.
+    :keyword compute: The compute target the job runs on.
     :type compute: str
-    :param resources: Compute Resource configuration for the job.
+    :keyword resources: The compute resource configuration for the job.
     :type resources: ~azure.ai.ml.entities.ResourceConfiguration
-    :param code: A local path or http:, https:, azureml: url pointing to a remote location.
+    :keyword code: A local path or "http:", "https:", or "azureml:" url pointing to a remote location.
     :type code: str
-    :param distribution: Distribution configuration for distributed training.
-    :type distribution: Union[
-        azure.ai.ml.PyTorchDistribution,
-        azure.ai.ml.MpiDistribution,
-        azure.ai.ml.TensorFlowDistribution]
-    :param environment: Environment that training job will run in.
-    :type environment: Union[azure.ai.ml.entities.Environment, str]
-    :param identity: Identity that training job will use while running on compute.
-    :type identity: Union[
-        azure.ai.ml.ManagedIdentityConfiguration,
-        azure.ai.ml.AmlTokenConfiguration,
-        azure.ai.ml.UserIdentityConfiguration]
-    :param limits: Command Job limit.
-    :type limits: ~azure.ai.ml.entities.CommandJobLimits
-    :param kwargs: A dictionary of additional configuration parameters.
+    :keyword distribution: The distribution configuration for distributed jobs.
+    :type distribution: Union[~azure.ai.ml.PyTorchDistribution, ~azure.ai.ml.MpiDistribution,
+        ~azure.ai.ml.TensorFlowDistribution, ~azure.ai.ml.RayDistribution]
+    :keyword environment: The environment that the job will run in.
+    :type environment: Union[~azure.ai.ml.entities.Environment, str]
+    :keyword identity: The identity that the job will use while running on compute.
+    :type identity: Optional[Union[~azure.ai.ml.ManagedIdentityConfiguration, ~azure.ai.ml.AmlTokenConfiguration,
+        ~azure.ai.ml.UserIdentityConfiguration]]
+    :keyword limits: The limits for the job.
+    :type limits: Optional[~azure.ai.ml.entities.CommandJobLimits]
+    :keyword kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
+
+    .. admonition:: Example:
+
+
+        .. literalinclude:: ../../../../../samples/ml_samples_command_configurations.py
+            :start-after: [START command_job_definition]
+            :end-before: [END command_job_definition]
+            :language: python
+            :dedent: 8
+            :caption: Configuring a CommandJob.
     """
 
     def __init__(
         self,
         *,
         inputs: Optional[Dict[str, Union[Input, str, bool, int, float]]] = None,
-        outputs: Optional[Dict[str, Union[Output]]] = None,
+        outputs: Optional[Dict[str, Output]] = None,
         limits: Optional[CommandJobLimits] = None,
         identity: Optional[
             Union[ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]
@@ -112,7 +119,7 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
             Dict[str, Union[JobService, JupyterLabJobService, SshJobService, TensorBoardJobService, VsCodeJobService]]
         ] = None,
         **kwargs,
-    ):
+    ) -> None:
         kwargs[TYPE] = JobType.COMMAND
         self._parameters = kwargs.pop("parameters", {})
 
@@ -129,7 +136,7 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
         """MLFlow parameters.
 
         :return: MLFlow parameters logged in job.
-        :rtype: Dict[str, str]
+        :rtype: dict[str, str]
         """
         return self._parameters
 
@@ -173,6 +180,7 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
             resources=resources._to_rest_object() if resources else None,
             limits=self.limits._to_rest_object() if self.limits else None,
             services=JobServiceBase._to_rest_job_services(self.services),
+            queue_settings=self.queue_settings._to_rest_object() if self.queue_settings else None,
         )
         result = JobBase(properties=properties)
         result.name = self.name
@@ -212,6 +220,7 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
             limits=CommandJobLimits._from_rest_object(rest_command_job.limits),
             inputs=from_rest_inputs_to_dataset_literal(rest_command_job.inputs),
             outputs=from_rest_data_outputs(rest_command_job.outputs),
+            queue_settings=QueueSettings._from_rest_object(rest_command_job.queue_settings),
         )
         # Handle special case of local job
         if (
@@ -227,7 +236,7 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
         """Translate a command job to component.
 
         :param context: Context of command job YAML file.
-        :param kwargs: Extra arguments.
+        :keyword kwargs: Extra arguments.
         :return: Translated command component.
         """
         from azure.ai.ml.entities import CommandComponent
@@ -254,7 +263,7 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
         """Translate a command job to a pipeline node.
 
         :param context: Context of command job YAML file.
-        :param kwargs: Extra arguments.
+        :keyword kwargs: Extra arguments.
         :return: Translated command component.
         """
         from azure.ai.ml.entities._builders import Command
@@ -275,18 +284,10 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
             services=self.services,
             properties=self.properties,
             identity=self.identity,
+            queue_settings=self.queue_settings,
         )
 
     def _validate(self) -> None:
-        if self.compute is None:
-            msg = "compute is required"
-            raise ValidationException(
-                message=msg,
-                no_personal_data_message=msg,
-                target=ErrorTarget.JOB,
-                error_category=ErrorCategory.USER_ERROR,
-                error_type=ValidationErrorType.MISSING_FIELD,
-            )
         if self.command is None:
             msg = "command is required"
             raise ValidationException(

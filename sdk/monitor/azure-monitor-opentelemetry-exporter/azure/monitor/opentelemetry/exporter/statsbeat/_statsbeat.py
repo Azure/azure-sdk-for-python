@@ -61,6 +61,7 @@ def collect_statsbeat_metrics(exporter) -> None:
                 exporter._endpoint,
                 exporter._disable_offline_storage,
                 long_interval_threshold,
+                exporter._credential is not None,
             )
         # Export some initial stats on program start
         _STATSBEAT_METER_PROVIDER.force_flush()

@@ -23,9 +23,6 @@
 database service.
 """
 
-from six.moves import xrange
-
-
 class Partition(object):
     """A class that holds the hash value and node name for a partition.
     """
@@ -56,7 +53,7 @@ class Partition(object):
 
         # The hash byte array that is returned from ComputeHash method has the MSB at the end of the array
         # so comparing the bytes from the end for compare operations.
-        for i in xrange(0, len(self.hash_value)):
+        for i in range(0, len(self.hash_value)):
             if self.hash_value[len(self.hash_value) - i - 1] < other_hash_value[len(self.hash_value) - i - 1]:
                 return -1
             if self.hash_value[len(self.hash_value) - i - 1] > other_hash_value[len(self.hash_value) - i - 1]:

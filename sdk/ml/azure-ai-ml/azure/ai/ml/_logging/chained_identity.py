@@ -14,8 +14,7 @@ _PRINT_STACK = os.environ.get("_AZUREML_TRACE_STACK", False)
 
 
 class ChainedIdentity(object):
-    """A mixin that provides structured, chained logging for objects and
-    contexts."""
+    """A mixin that provides structured, chained logging for objects and contexts."""
 
     DELIM = "#"
 
@@ -36,7 +35,9 @@ class ChainedIdentity(object):
         try:
             super(ChainedIdentity, self).__init__(**kwargs)
         except TypeError as type_error:
-            raise TypeError("{}. Found key word arguments: {}.".format(",".join(type_error.args), kwargs.keys()))
+            raise TypeError(
+                "{}. Found key word arguments: {}.".format(",".join(type_error.args), kwargs.keys())
+            ) from type_error
 
     @property
     def identity(self) -> str:

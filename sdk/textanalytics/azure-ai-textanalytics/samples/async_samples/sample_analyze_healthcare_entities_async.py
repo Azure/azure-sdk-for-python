@@ -22,7 +22,6 @@ USAGE:
     2) AZURE_LANGUAGE_KEY - your Language subscription key
 """
 
-from __future__ import annotations
 import asyncio
 
 
@@ -38,6 +37,7 @@ async def sample_analyze_healthcare_entities_async() -> None:
 
     # [START analyze_healthcare_entities_async]
     import os
+    import typing
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.textanalytics import HealthcareEntityRelation
     from azure.ai.textanalytics.aio import TextAnalyticsClient
@@ -106,7 +106,7 @@ async def sample_analyze_healthcare_entities_async() -> None:
     import re
     from collections import defaultdict
 
-    medication_to_dosage: dict[str, int] = defaultdict(int)
+    medication_to_dosage: typing.Dict[str, int] = defaultdict(int)
 
     for relation in dosage_of_medication_relations:
         # The DosageOfMedication relation should only contain the dosage and medication roles

@@ -1,4 +1,5 @@
 # coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -6,13 +7,23 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, List, Optional
+import sys
+from typing import Any, List, Optional, TYPE_CHECKING
 
-from azure.core.exceptions import HttpResponseError
-import msrest.serialization
+from ... import _serialization
+
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
+JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 
-class ErrorResponseLinkedStorage(msrest.serialization.Model):
+class ErrorResponseLinkedStorage(_serialization.Model):
     """ErrorResponseLinkedStorage.
 
     :ivar error: Error response indicates Insights service is not able to process the incoming
@@ -22,27 +33,23 @@ class ErrorResponseLinkedStorage(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'error': {'key': 'error', 'type': 'ErrorResponseLinkedStorageError'},
+        "error": {"key": "error", "type": "ErrorResponseLinkedStorageError"},
     }
 
-    def __init__(
-        self,
-        *,
-        error: Optional["ErrorResponseLinkedStorageError"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, error: Optional["_models.ErrorResponseLinkedStorageError"] = None, **kwargs: Any) -> None:
         """
         :keyword error: Error response indicates Insights service is not able to process the incoming
          request. The reason is provided in the error message.
         :paramtype error:
          ~azure.mgmt.applicationinsights.v2020_06_02_preview.models.ErrorResponseLinkedStorageError
         """
-        super(ErrorResponseLinkedStorage, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.error = error
 
 
-class ErrorResponseLinkedStorageError(msrest.serialization.Model):
-    """Error response indicates Insights service is not able to process the incoming request. The reason is provided in the error message.
+class ErrorResponseLinkedStorageError(_serialization.Model):
+    """Error response indicates Insights service is not able to process the incoming request. The
+    reason is provided in the error message.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -53,27 +60,23 @@ class ErrorResponseLinkedStorageError(msrest.serialization.Model):
     """
 
     _validation = {
-        'code': {'readonly': True},
-        'message': {'readonly': True},
+        "code": {"readonly": True},
+        "message": {"readonly": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ErrorResponseLinkedStorageError, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.code = None
         self.message = None
 
 
-class LiveTokenResponse(msrest.serialization.Model):
+class LiveTokenResponse(_serialization.Model):
     """The response to a live token query.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -83,24 +86,20 @@ class LiveTokenResponse(msrest.serialization.Model):
     """
 
     _validation = {
-        'live_token': {'readonly': True},
+        "live_token": {"readonly": True},
     }
 
     _attribute_map = {
-        'live_token': {'key': 'liveToken', 'type': 'str'},
+        "live_token": {"key": "liveToken", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(LiveTokenResponse, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.live_token = None
 
 
-class OperationInfo(msrest.serialization.Model):
+class OperationInfo(_serialization.Model):
     """Information about an operation.
 
     :ivar provider: Name of the provider.
@@ -114,10 +113,10 @@ class OperationInfo(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'provider': {'key': 'provider', 'type': 'str'},
-        'resource': {'key': 'resource', 'type': 'str'},
-        'operation': {'key': 'operation', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
+        "provider": {"key": "provider", "type": "str"},
+        "resource": {"key": "resource", "type": "str"},
+        "operation": {"key": "operation", "type": "str"},
+        "description": {"key": "description", "type": "str"},
     }
 
     def __init__(
@@ -127,8 +126,8 @@ class OperationInfo(msrest.serialization.Model):
         resource: Optional[str] = None,
         operation: Optional[str] = None,
         description: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword provider: Name of the provider.
         :paramtype provider: str
@@ -139,14 +138,14 @@ class OperationInfo(msrest.serialization.Model):
         :keyword description: Description of the operation.
         :paramtype description: str
         """
-        super(OperationInfo, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.provider = provider
         self.resource = resource
         self.operation = operation
         self.description = description
 
 
-class OperationLive(msrest.serialization.Model):
+class OperationLive(_serialization.Model):
     """Represents an operation returned by the GetOperations request.
 
     :ivar name: Name of the operation.
@@ -156,25 +155,25 @@ class OperationLive(msrest.serialization.Model):
     :ivar origin: Origin of the operation.
     :vartype origin: str
     :ivar properties: Properties of the operation.
-    :vartype properties: any
+    :vartype properties: JSON
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'display': {'key': 'display', 'type': 'OperationInfo'},
-        'origin': {'key': 'origin', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'object'},
+        "name": {"key": "name", "type": "str"},
+        "display": {"key": "display", "type": "OperationInfo"},
+        "origin": {"key": "origin", "type": "str"},
+        "properties": {"key": "properties", "type": "object"},
     }
 
     def __init__(
         self,
         *,
         name: Optional[str] = None,
-        display: Optional["OperationInfo"] = None,
+        display: Optional["_models.OperationInfo"] = None,
         origin: Optional[str] = None,
-        properties: Optional[Any] = None,
-        **kwargs
-    ):
+        properties: Optional[JSON] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: Name of the operation.
         :paramtype name: str
@@ -183,16 +182,16 @@ class OperationLive(msrest.serialization.Model):
         :keyword origin: Origin of the operation.
         :paramtype origin: str
         :keyword properties: Properties of the operation.
-        :paramtype properties: any
+        :paramtype properties: JSON
         """
-        super(OperationLive, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.display = display
         self.origin = origin
         self.properties = properties
 
 
-class OperationsListResult(msrest.serialization.Model):
+class OperationsListResult(_serialization.Model):
     """Result of the List Operations operation.
 
     :ivar value: A collection of operations.
@@ -202,17 +201,13 @@ class OperationsListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[OperationLive]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[OperationLive]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["OperationLive"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+        self, *, value: Optional[List["_models.OperationLive"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: A collection of operations.
         :paramtype value:
@@ -220,6 +215,6 @@ class OperationsListResult(msrest.serialization.Model):
         :keyword next_link: URL to get the next set of operation list results if there are any.
         :paramtype next_link: str
         """
-        super(OperationsListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link

@@ -3,25 +3,18 @@
 # ---------------------------------------------------------
 from marshmallow import fields
 
-from azure.ai.ml._internal._schema.node import InternalBaseNodeSchema, NodeType
-from azure.ai.ml._schema import AnonymousEnvironmentSchema, ArmVersionedStr, NestedField, RegistryStr, UnionField
-from azure.ai.ml._schema.core.fields import DumpableEnumField
-from azure.ai.ml._schema.job import ParameterizedCommandSchema, ParameterizedParallelSchema
-from azure.ai.ml._schema.job.job_limits import CommandJobLimitsSchema
-from azure.ai.ml.constants._common import AzureMLResourceType
+from ..._schema import NestedField
+from ..._schema.core.fields import DumpableEnumField, EnvironmentField
+from ..._schema.job import ParameterizedCommandSchema, ParameterizedParallelSchema
+from ..._schema.job.job_limits import CommandJobLimitsSchema
+from .._schema.node import InternalBaseNodeSchema, NodeType
 
 
 class CommandSchema(InternalBaseNodeSchema, ParameterizedCommandSchema):
     class Meta:
         exclude = ["code", "distribution"]  # internal command doesn't have code & distribution
 
-    environment = UnionField(
-        [
-            RegistryStr(azureml_type=AzureMLResourceType.ENVIRONMENT),
-            NestedField(AnonymousEnvironmentSchema),
-            ArmVersionedStr(azureml_type=AzureMLResourceType.ENVIRONMENT, allow_default_version=True),
-        ],
-    )
+    environment = EnvironmentField()
     type = DumpableEnumField(allowed_values=[NodeType.COMMAND])
     limits = NestedField(CommandJobLimitsSchema)
 

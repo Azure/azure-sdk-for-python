@@ -78,9 +78,7 @@ class TestPyodideTransportClass:
         """Utility fixture for less typing."""
         return mock_pyodide_module.http.pyfetch
 
-    def create_mock_response(
-            self, body: bytes, headers: dict, status: int, status_text: str
-    ) -> mock.Mock:
+    def create_mock_response(self, body: bytes, headers: dict, status: int, status_text: str) -> mock.Mock:
         """Create a mock response object that mimics `pyodide.http.FetchResponse`"""
         mock_response = mock.Mock()
         mock_response.body = body
@@ -106,9 +104,7 @@ class TestPyodideTransportClass:
         method = "POST"
         headers = {"key": "value"}
         data = b"data"
-        request = HttpRequest(
-            method=method, url=PLACEHOLDER_ENDPOINT, headers=headers, data=data
-        )
+        request = HttpRequest(method=method, url=PLACEHOLDER_ENDPOINT, headers=headers, data=data)
         response_body = b"0123"
         response_headers = {"header": "value"}
         response_status = 200
@@ -167,4 +163,5 @@ class TestPyodideTransportClass:
         """
         # Use patch so we don't clutter up the `sys.modules` namespace.
         import azure.core.experimental.transport as transport
+
         assert transport.PyodideTransport

@@ -14,7 +14,7 @@ DESCRIPTION:
 USAGE:
     python send_email_to_single_recipient_sample.py
     Set the environment variable with your own value before running the sample:
-    1) COMMUNICATION_CONNECTION_STRING - the connection string in your ACS resource
+    1) COMMUNICATION_CONNECTION_STRING_EMAIL - the connection string in your ACS resource
     2) SENDER_ADDRESS - the address found in the linked domain that will send the email
     3) RECIPIENT_ADDRESS - the address that will receive the email
     4) SECOND_RECIPIENT_ADDRESS - the second address that will receive the email
@@ -48,26 +48,27 @@ class EmailMultipleRecipientSampleAsync(object):
             },
             "recipients": {
                 "to": [
-                    {"email": self.recipient_address, "displayName": "Customer Name"},
-                    {"email": self.second_recipient_address, "displayName": "Customer Name 2"}
+                    {"address": self.recipient_address, "displayName": "Customer Name"},
+                    {"address": self.second_recipient_address, "displayName": "Customer Name 2"}
                 ],
                 "cc": [
-                    {"email": self.recipient_address, "displayName": "Customer Name"},
-                    {"email": self.second_recipient_address, "displayName": "Customer Name 2"}
+                    {"address": self.recipient_address, "displayName": "Customer Name"},
+                    {"address": self.second_recipient_address, "displayName": "Customer Name 2"}
                 ],
                 "bcc": [
-                    {"email": self.recipient_address, "displayName": "Customer Name"},
-                    {"email": self.second_recipient_address, "displayName": "Customer Name 2"}
+                    {"address": self.recipient_address, "displayName": "Customer Name"},
+                    {"address": self.second_recipient_address, "displayName": "Customer Name 2"}
                 ]
             },
-            "sender": self.sender_address
+            "senderAddress": self.sender_address
         }
 
         async with email_client:
             try:
                 # sending the email message
-                response = await email_client.send(message)
-                print("Message ID: " + response['messageId'])
+                poller = await email_client.begin_send(message)
+                response = await poller.result()
+                print("Operation ID: " + response['id'])
             except HttpResponseError as ex:
                 print(ex)
                 pass

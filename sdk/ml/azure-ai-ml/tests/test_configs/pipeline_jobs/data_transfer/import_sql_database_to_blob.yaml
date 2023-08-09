@@ -1,0 +1,34 @@
+$schema: http://azureml/sdk-2-0/PipelineJob.json
+type: pipeline
+
+description: 'pipeline with data transfer components'
+settings:
+  default_compute: azureml:serverless
+inputs:
+  query_source_snowflake: select top(10) Name from SalesLT.ProductCategory
+
+jobs:
+  snowflake_blob:
+    type: data_transfer
+    task: import_data
+    source:
+      type: database
+      query: ${{parent.inputs.query_source_snowflake}}
+      connection: azureml:my_azuresqldb_connection
+    outputs:
+      sink:
+        type: mltable
+    compute: azureml:serverless
+
+  snowflake_blob_node_input:
+    type: data_transfer
+    task: import_data
+    source:
+      type: database
+      query: select top(10) Name from SalesLT.ProductCategory
+      connection: azureml:my_azuresqldb_connection
+    outputs:
+      sink:
+        type: mltable
+
+

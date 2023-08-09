@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import List, Optional, TYPE_CHECKING, Union
+from typing import Any, List, Optional, TYPE_CHECKING, Union
 
 from ... import _serialization
 
@@ -138,8 +138,8 @@ class AccessReviewDecision(_serialization.Model):  # pylint: disable=too-many-in
         *,
         decision: Optional[Union[str, "_models.AccessReviewResult"]] = None,
         justification: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword decision: The decision on the approval step. This value is initially set to
          NotReviewed. Approvers can take action of Approve/Deny. Known values are: "Approve", "Deny",
@@ -167,7 +167,7 @@ class AccessReviewDecision(_serialization.Model):  # pylint: disable=too-many-in
         self.principal_type_properties_reviewed_by_principal_type = None
         self.principal_name_properties_reviewed_by_principal_name = None
         self.user_principal_name_properties_reviewed_by_user_principal_name = None
-        self.type_properties_target_type = None  # type: Optional[str]
+        self.type_properties_target_type: Optional[str] = None
 
 
 class AccessReviewDecisionListResult(_serialization.Model):
@@ -185,8 +185,12 @@ class AccessReviewDecisionListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.AccessReviewDecision"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        value: Optional[List["_models.AccessReviewDecision"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: Access Review Decision list.
         :paramtype value:
@@ -287,8 +291,8 @@ class AccessReviewDecisionProperties(_serialization.Model):  # pylint: disable=t
         *,
         decision: Optional[Union[str, "_models.AccessReviewResult"]] = None,
         justification: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword decision: The decision on the approval step. This value is initially set to
          NotReviewed. Approvers can take action of Approve/Deny. Known values are: "Approve", "Deny",
@@ -313,7 +317,7 @@ class AccessReviewDecisionProperties(_serialization.Model):  # pylint: disable=t
         self.principal_type_reviewed_by_principal_type = None
         self.principal_name_reviewed_by_principal_name = None
         self.user_principal_name_reviewed_by_user_principal_name = None
-        self.type = None  # type: Optional[str]
+        self.type: Optional[str] = None
 
 
 class AccessReviewDecisionTarget(_serialization.Model):
@@ -339,10 +343,10 @@ class AccessReviewDecisionTarget(_serialization.Model):
 
     _subtype_map = {"type": {"servicePrincipal": "ServicePrincipalDecisionTarget", "user": "UserDecisionTarget"}}
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.type = None  # type: Optional[str]
+        self.type: Optional[str] = None
 
 
 class AccessReviewDefaultSettings(_serialization.Model):  # pylint: disable=too-many-instance-attributes
@@ -448,8 +452,8 @@ class AccessReviewDefaultSettings(_serialization.Model):  # pylint: disable=too-
             Union[str, "_models.AccessReviewRecurrencePatternType"]
         ] = None,
         interval: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword mail_notifications_enabled: Flag to indicate whether sending mails to reviewers and
          the review creator is enabled.
@@ -560,8 +564,8 @@ class AccessReviewInstance(_serialization.Model):
         *,
         start_date_time: Optional[datetime.datetime] = None,
         end_date_time: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword start_date_time: The DateTime when the review instance is scheduled to be start.
         :paramtype start_date_time: ~datetime.datetime
@@ -592,8 +596,12 @@ class AccessReviewInstanceListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.AccessReviewInstance"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        value: Optional[List["_models.AccessReviewInstance"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: Access Review Instance list.
         :paramtype value:
@@ -628,7 +636,7 @@ class AccessReviewReviewer(_serialization.Model):
         "principal_type": {"key": "principalType", "type": "str"},
     }
 
-    def __init__(self, *, principal_id: Optional[str] = None, **kwargs):
+    def __init__(self, *, principal_id: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword principal_id: The id of the reviewer(user/servicePrincipal).
         :paramtype principal_id: str
@@ -825,8 +833,8 @@ class AccessReviewScheduleDefinition(_serialization.Model):  # pylint: disable=t
             Union[str, "_models.AccessReviewRecurrencePatternType"]
         ] = None,
         interval: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword display_name: The display name for the schedule definition.
         :paramtype display_name: str
@@ -943,8 +951,8 @@ class AccessReviewScheduleDefinitionListResult(_serialization.Model):
         *,
         value: Optional[List["_models.AccessReviewScheduleDefinition"]] = None,
         next_link: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: Access Review Schedule Definition list.
         :paramtype value:
@@ -1116,8 +1124,8 @@ class AccessReviewScheduleDefinitionProperties(_serialization.Model):  # pylint:
         end_date: Optional[datetime.datetime] = None,
         type_settings_recurrence_pattern_type: Optional[Union[str, "_models.AccessReviewRecurrencePatternType"]] = None,
         interval: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword display_name: The display name for the schedule definition.
         :paramtype display_name: str
@@ -1293,8 +1301,8 @@ class AccessReviewScheduleSettings(_serialization.Model):  # pylint: disable=too
         end_date: Optional[datetime.datetime] = None,
         type_recurrence_pattern_type: Optional[Union[str, "_models.AccessReviewRecurrencePatternType"]] = None,
         interval: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword mail_notifications_enabled: Flag to indicate whether sending mails to reviewers and
          the review creator is enabled.
@@ -1370,7 +1378,7 @@ class ErrorDefinition(_serialization.Model):
         "error": {"key": "error", "type": "ErrorDefinitionProperties"},
     }
 
-    def __init__(self, *, error: Optional["_models.ErrorDefinitionProperties"] = None, **kwargs):
+    def __init__(self, *, error: Optional["_models.ErrorDefinitionProperties"] = None, **kwargs: Any) -> None:
         """
         :keyword error: Error of the list gateway status.
         :paramtype error:
@@ -1400,7 +1408,7 @@ class ErrorDefinitionProperties(_serialization.Model):
         "code": {"key": "code", "type": "str"},
     }
 
-    def __init__(self, *, code: Optional[str] = None, **kwargs):
+    def __init__(self, *, code: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword code: Error code of list gateway.
         :paramtype code: str
@@ -1437,8 +1445,8 @@ class Operation(_serialization.Model):
         is_data_action: Optional[bool] = None,
         display: Optional["_models.OperationDisplay"] = None,
         origin: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: Name of the operation.
         :paramtype name: str
@@ -1485,7 +1493,7 @@ class OperationDisplay(_serialization.Model):
         "description": {"key": "description", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.provider = None
@@ -1508,7 +1516,9 @@ class OperationListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Operation"]] = None, next_link: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, value: Optional[List["_models.Operation"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: The collection value.
         :paramtype value: list[~azure.mgmt.authorization.v2018_05_01_preview.models.Operation]
@@ -1552,10 +1562,10 @@ class ServicePrincipalDecisionTarget(AccessReviewDecisionTarget):
         "app_id": {"key": "appId", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.type = "servicePrincipal"  # type: str
+        self.type: str = "servicePrincipal"
         self.principal_id = None
         self.principal_name = None
         self.app_id = None
@@ -1593,10 +1603,10 @@ class UserDecisionTarget(AccessReviewDecisionTarget):
         "user_principal_name": {"key": "userPrincipalName", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.type = "user"  # type: str
+        self.type: str = "user"
         self.principal_id = None
         self.principal_name = None
         self.user_principal_name = None

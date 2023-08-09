@@ -50,6 +50,14 @@ pip install azure.appconfiguration.provider
 | connection_string_sample.py | demos connecting to app configuration with a Connection String |
 | key_vault_reference_sample.py | demos resolving key vault references with App Configuration |
 
+## Next steps
+
+Check out our Django and Flask examples to see how to use the provider in a web application.
+
+### [Django](https://github.com/Azure/AppConfiguration/tree/main/examples/Python/python-django-webapp-sample)
+
+### [Flask](https://github.com/Azure/AppConfiguration/tree/main/examples/Python/python-flask-webapp-sample)
+
 <!-- LINKS -->
 [azure_sub]: https://azure.microsoft.com/free/
 [azure_cli]: https://docs.microsoft.com/cli/azure

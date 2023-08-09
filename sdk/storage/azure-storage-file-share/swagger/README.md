@@ -16,7 +16,7 @@ autorest --v3 --python
 
 ### Settings
 ``` yaml
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/storage/data-plane/Microsoft.FileStorage/preview/2021-12-02/file.json
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/storage/data-plane/Microsoft.FileStorage/preview/2023-01-03/file.json
 output-folder: ../azure/storage/fileshare/_generated
 namespace: azure.storage.fileshare
 no-namespace-folders: true
@@ -147,4 +147,33 @@ directive:
         $[newName] = $[oldName];
         delete $[oldName];
     }
+```
+
+## Remove ShareName, Directory, and FileName - we have direct URIs
+
+This directive is necessary for Python (also this directive is copied from .net) because we removed our call to
+_format_url_section in our generated code. We also add dummy query parameters to avoid collisions.
+
+```yaml
+directive:
+- from: swagger-document
+  where: $["x-ms-paths"]
+  transform: >
+   Object.keys($).map(id => {
+     if (id.includes('/{shareName}/{directory}/{fileName}'))
+     {
+       $[id.replace('/{shareName}/{directory}/{fileName}', '?dummyFile')] = $[id];
+       delete $[id];
+     }
+     else if (id.includes('/{shareName}/{directory}'))
+     {
+       $[id.replace('/{shareName}/{directory}', '?dummyDir')] = $[id];
+       delete $[id];
+     }
+     else if (id.includes('/{shareName}'))
+     {
+       $[id.replace('/{shareName}', '?dummyShare')] = $[id];
+       delete $[id];
+     }
+   });
 ```

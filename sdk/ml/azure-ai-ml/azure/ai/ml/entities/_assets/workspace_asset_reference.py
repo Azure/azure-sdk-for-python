@@ -19,6 +19,7 @@ from azure.ai.ml.entities._util import load_from_dict
 class WorkspaceAssetReference(Asset):
     """Workspace Model Reference.
 
+    This is for SDK internal use only, might be deprecated in the future.
     :param name: Model name
     :type name: str
     :param version: Model version
@@ -73,7 +74,6 @@ class WorkspaceAssetReference(Asset):
 
     @classmethod
     def _from_rest_object(cls, resource_object: ResourceManagementAssetReferenceData) -> "WorkspaceAssetReference":
-
         resource_management = WorkspaceAssetReference(
             name=resource_object.properties.destination_name,
             version=resource_object.properties.destination_version,

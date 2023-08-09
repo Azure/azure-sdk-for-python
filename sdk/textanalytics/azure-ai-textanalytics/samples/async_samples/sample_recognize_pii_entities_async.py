@@ -24,7 +24,6 @@ USAGE:
     2) AZURE_LANGUAGE_KEY - your Language subscription key
 """
 
-import os
 import asyncio
 
 
@@ -36,6 +35,7 @@ async def sample_recognize_pii_entities_async() -> None:
         "our customers"
     )
     # [START recognize_pii_entities_async]
+    import os
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.textanalytics.aio import TextAnalyticsClient
 

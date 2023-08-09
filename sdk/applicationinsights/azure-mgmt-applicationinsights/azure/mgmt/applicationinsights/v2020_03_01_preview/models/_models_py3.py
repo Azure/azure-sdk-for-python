@@ -1,4 +1,5 @@
 # coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -6,13 +7,16 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Optional
+from typing import Any, Optional, TYPE_CHECKING
 
-from azure.core.exceptions import HttpResponseError
-import msrest.serialization
+from ... import _serialization
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
 
 
-class Resource(msrest.serialization.Model):
+class Resource(_serialization.Model):
     """Common fields that are returned in the response for all Azure Resource Manager resources.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -28,31 +32,28 @@ class Resource(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(Resource, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
 
 
 class ProxyResource(Resource):
-    """The resource model definition for a Azure Resource Manager proxy resource. It will not have tags and a location.
+    """The resource model definition for a Azure Resource Manager proxy resource. It will not have
+    tags and a location.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -67,24 +68,20 @@ class ProxyResource(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ProxyResource, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
 
 
 class ComponentLinkedStorageAccounts(ProxyResource):
@@ -105,33 +102,28 @@ class ComponentLinkedStorageAccounts(ProxyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'linked_storage_account': {'key': 'properties.linkedStorageAccount', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "linked_storage_account": {"key": "properties.linkedStorageAccount", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        linked_storage_account: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, linked_storage_account: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword linked_storage_account: Linked storage account resource ID.
         :paramtype linked_storage_account: str
         """
-        super(ComponentLinkedStorageAccounts, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.linked_storage_account = linked_storage_account
 
 
-class ComponentLinkedStorageAccountsPatch(msrest.serialization.Model):
+class ComponentLinkedStorageAccountsPatch(_serialization.Model):
     """An Application Insights component linked storage accounts patch.
 
     :ivar linked_storage_account: Linked storage account resource ID.
@@ -139,24 +131,19 @@ class ComponentLinkedStorageAccountsPatch(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'linked_storage_account': {'key': 'properties.linkedStorageAccount', 'type': 'str'},
+        "linked_storage_account": {"key": "properties.linkedStorageAccount", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        linked_storage_account: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, linked_storage_account: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword linked_storage_account: Linked storage account resource ID.
         :paramtype linked_storage_account: str
         """
-        super(ComponentLinkedStorageAccountsPatch, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.linked_storage_account = linked_storage_account
 
 
-class ErrorResponseLinkedStorage(msrest.serialization.Model):
+class ErrorResponseLinkedStorage(_serialization.Model):
     """ErrorResponseLinkedStorage.
 
     :ivar error: Error response indicates Insights service is not able to process the incoming
@@ -166,27 +153,23 @@ class ErrorResponseLinkedStorage(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'error': {'key': 'error', 'type': 'ErrorResponseLinkedStorageError'},
+        "error": {"key": "error", "type": "ErrorResponseLinkedStorageError"},
     }
 
-    def __init__(
-        self,
-        *,
-        error: Optional["ErrorResponseLinkedStorageError"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, error: Optional["_models.ErrorResponseLinkedStorageError"] = None, **kwargs: Any) -> None:
         """
         :keyword error: Error response indicates Insights service is not able to process the incoming
          request. The reason is provided in the error message.
         :paramtype error:
          ~azure.mgmt.applicationinsights.v2020_03_01_preview.models.ErrorResponseLinkedStorageError
         """
-        super(ErrorResponseLinkedStorage, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.error = error
 
 
-class ErrorResponseLinkedStorageError(msrest.serialization.Model):
-    """Error response indicates Insights service is not able to process the incoming request. The reason is provided in the error message.
+class ErrorResponseLinkedStorageError(_serialization.Model):
+    """Error response indicates Insights service is not able to process the incoming request. The
+    reason is provided in the error message.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -197,21 +180,17 @@ class ErrorResponseLinkedStorageError(msrest.serialization.Model):
     """
 
     _validation = {
-        'code': {'readonly': True},
-        'message': {'readonly': True},
+        "code": {"readonly": True},
+        "message": {"readonly": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ErrorResponseLinkedStorageError, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.code = None
         self.message = None

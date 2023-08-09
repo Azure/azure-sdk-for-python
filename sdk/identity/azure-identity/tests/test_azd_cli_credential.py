@@ -85,7 +85,7 @@ def test_cannot_execute_shell():
 def test_not_logged_in():
     """When the CLI isn't logged in, the credential should raise CredentialUnavailableError"""
 
-    stderr = "ERROR: not logged in, run `azd login` to login"
+    stderr = "ERROR: not logged in, run `azd auth login` to login"
     with mock.patch("shutil.which", return_value="azd"):
         with mock.patch(CHECK_OUTPUT, raise_called_process_error(1, stderr=stderr)):
             with pytest.raises(CredentialUnavailableError, match=NOT_LOGGED_IN):
@@ -134,9 +134,14 @@ def test_timeout():
     from subprocess import TimeoutExpired
 
     with mock.patch("shutil.which", return_value="azd"):
-        with mock.patch(CHECK_OUTPUT, mock.Mock(side_effect=TimeoutExpired("", 42))):
+        with mock.patch(CHECK_OUTPUT, mock.Mock(side_effect=TimeoutExpired("", 42))) as check_output_mock:
             with pytest.raises(CredentialUnavailableError):
-                AzureDeveloperCliCredential().get_token("scope")
+                AzureDeveloperCliCredential(process_timeout=42).get_token("scope")
+
+    # Ensure custom timeout is passed to subprocess
+    _, kwargs = check_output_mock.call_args
+    assert "timeout" in kwargs
+    assert kwargs["timeout"] == 42
 
 
 def test_multitenant_authentication_class():
@@ -169,6 +174,7 @@ def test_multitenant_authentication_class():
 
             token = AzureDeveloperCliCredential(tenant_id=second_tenant).get_token("scope")
             assert token.token == second_token
+
 
 def test_multitenant_authentication():
     default_tenant = "first-tenant"
@@ -206,6 +212,7 @@ def test_multitenant_authentication():
             token = credential.get_token("scope")
             assert token.token == first_token
 
+
 def test_multitenant_authentication_not_allowed():
     expected_tenant = "expected-tenant"
     expected_token = "***"
@@ -229,8 +236,6 @@ def test_multitenant_authentication_not_allowed():
             token = credential.get_token("scope")
             assert token.token == expected_token
 
-            with mock.patch.dict(
-                "os.environ", {EnvironmentVariables.AZURE_IDENTITY_DISABLE_MULTITENANTAUTH: "true"}
-            ):
+            with mock.patch.dict("os.environ", {EnvironmentVariables.AZURE_IDENTITY_DISABLE_MULTITENANTAUTH: "true"}):
                 token = credential.get_token("scope", tenant_id="un" + expected_tenant)
             assert token.token == expected_token

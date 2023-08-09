@@ -5,4 +5,4 @@
 # license information.
 # --------------------------------------------------------------------------
 from .v7_0.models import *
-from .v7_3.models import *
+from .v7_4.models import *

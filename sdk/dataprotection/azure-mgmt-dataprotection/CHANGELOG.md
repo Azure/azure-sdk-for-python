@@ -1,5 +1,47 @@
 # Release History
 
+## 1.2.0 (2023-07-21)
+
+### Features Added
+
+  - Model AzureBackupJob has a new parameter rehydration_priority
+  - Model AzureBackupRecoveryPointBasedRestoreRequest has a new parameter identity_details
+  - Model AzureBackupRecoveryTimeBasedRestoreRequest has a new parameter identity_details
+  - Model AzureBackupRestoreRequest has a new parameter identity_details
+  - Model AzureBackupRestoreWithRehydrationRequest has a new parameter identity_details
+  - Model BackupInstance has a new parameter identity_details
+  - Model BackupVault has a new parameter secure_score
+  - Model Datasource has a new parameter resource_properties
+  - Model DatasourceSet has a new parameter resource_properties
+  - Model DeletedBackupInstance has a new parameter identity_details
+  - Model DppIdentityDetails has a new parameter user_assigned_identities
+  - Model FeatureSettings has a new parameter cross_region_restore_settings
+  - Model KubernetesClusterBackupDatasourceParameters has a new parameter backup_hook_references
+  - Model KubernetesClusterRestoreCriteria has a new parameter restore_hook_references
+
+## 1.1.0 (2023-06-16)
+
+### Features Added
+
+  - Added operation group DppResourceGuardProxyOperations
+
+## 1.0.0 (2023-02-15)
+
+### Features Added
+
+  - Model AzureBackupDiscreteRecoveryPoint has a new parameter expiry_time
+  - Model BackupVault has a new parameter feature_settings
+  - Model PatchBackupVaultInput has a new parameter feature_settings
+  - Model TargetDetails has a new parameter target_resource_arm_id
+
+### Breaking Changes
+
+  - Client name is changed from `DataProtectionClient` to `DataProtectionMgmtClient`
+  - Model ResourceGuardResource no longer has parameter identity
+  - Removed operation group BackupInstancesExtensionRoutingOperations
+  - Removed operation group DppResourceGuardProxyOperations
+  - Renamed operation BackupVaultsOperations.delete to BackupVaultsOperations.begin_delete
+
 ## 1.0.0b4 (2023-01-17)
 
 ### Features Added

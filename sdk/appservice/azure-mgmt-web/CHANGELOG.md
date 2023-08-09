@@ -1,5 +1,47 @@
 # Release History
 
+## 7.1.0 (2023-04-20)
+
+### Features Added
+
+  - Added operation StaticSitesOperations.create_or_update_basic_auth
+  - Added operation StaticSitesOperations.create_or_update_build_database_connection
+  - Added operation StaticSitesOperations.create_or_update_database_connection
+  - Added operation StaticSitesOperations.delete_build_database_connection
+  - Added operation StaticSitesOperations.delete_database_connection
+  - Added operation StaticSitesOperations.get_basic_auth
+  - Added operation StaticSitesOperations.get_build_database_connection
+  - Added operation StaticSitesOperations.get_build_database_connection_with_details
+  - Added operation StaticSitesOperations.get_build_database_connections
+  - Added operation StaticSitesOperations.get_build_database_connections_with_details
+  - Added operation StaticSitesOperations.get_database_connection
+  - Added operation StaticSitesOperations.get_database_connection_with_details
+  - Added operation StaticSitesOperations.get_database_connections
+  - Added operation StaticSitesOperations.get_database_connections_with_details
+  - Added operation StaticSitesOperations.list_basic_auth
+  - Added operation StaticSitesOperations.update_build_database_connection
+  - Added operation StaticSitesOperations.update_database_connection
+  - Added operation WebAppsOperations.deploy_workflow_artifacts
+  - Added operation WebAppsOperations.deploy_workflow_artifacts_slot
+  - Added operation WebAppsOperations.get_instance_workflow_slot
+  - Added operation WebAppsOperations.get_workflow
+  - Added operation WebAppsOperations.list_instance_workflows_slot
+  - Added operation WebAppsOperations.list_workflows
+  - Added operation WebAppsOperations.list_workflows_connections
+  - Added operation WebAppsOperations.list_workflows_connections_slot
+  - Model Site has a new parameter managed_environment_id
+  - Model SiteConfig has a new parameter elastic_web_app_scale_limit
+  - Model SiteConfig has a new parameter ip_security_restrictions_default_action
+  - Model SiteConfig has a new parameter metadata
+  - Model SiteConfig has a new parameter scm_ip_security_restrictions_default_action
+  - Model SiteConfigResource has a new parameter elastic_web_app_scale_limit
+  - Model SiteConfigResource has a new parameter ip_security_restrictions_default_action
+  - Model SiteConfigResource has a new parameter metadata
+  - Model SiteConfigResource has a new parameter scm_ip_security_restrictions_default_action
+  - Model StaticSiteARMResource has a new parameter database_connections
+  - Model StaticSiteBuildARMResource has a new parameter database_connections
+  - Model StaticSitePatchResource has a new parameter database_connections
+
 ## 7.0.0 (2022-07-04)
 
 **Features**

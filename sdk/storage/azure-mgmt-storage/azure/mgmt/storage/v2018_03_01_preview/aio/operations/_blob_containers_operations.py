@@ -97,10 +97,10 @@ class BlobContainersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2018-03-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", "2018-03-01-preview")
-        )  # type: Literal["2018-03-01-preview"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.ListContainerItems]
+        )
+        cls: ClsType[_models.ListContainerItems] = kwargs.pop("cls", None)
 
         request = build_list_request(
             resource_group_name=resource_group_name,
@@ -112,9 +112,9 @@ class BlobContainersOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -131,7 +131,9 @@ class BlobContainersOperations:
 
         return deserialized
 
-    list.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/blobServices/default/containers"}  # type: ignore
+    list.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/blobServices/default/containers"
+    }
 
     @overload
     async def create(
@@ -234,8 +236,8 @@ class BlobContainersOperations:
          letters and dash (-) only. Every dash (-) character must be immediately preceded and followed
          by a letter or number. Required.
         :type container_name: str
-        :param blob_container: Properties of the blob container to create. Is either a model type or a
-         IO type. Required.
+        :param blob_container: Properties of the blob container to create. Is either a BlobContainer
+         type or a IO type. Required.
         :type blob_container: ~azure.mgmt.storage.v2018_03_01_preview.models.BlobContainer or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -256,11 +258,11 @@ class BlobContainersOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2018-03-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", "2018-03-01-preview")
-        )  # type: Literal["2018-03-01-preview"]
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.BlobContainer]
+        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.BlobContainer] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -284,9 +286,9 @@ class BlobContainersOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -303,7 +305,9 @@ class BlobContainersOperations:
 
         return deserialized
 
-    create.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/blobServices/default/containers/{containerName}"}  # type: ignore
+    create.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/blobServices/default/containers/{containerName}"
+    }
 
     @overload
     async def update(
@@ -403,8 +407,8 @@ class BlobContainersOperations:
          letters and dash (-) only. Every dash (-) character must be immediately preceded and followed
          by a letter or number. Required.
         :type container_name: str
-        :param blob_container: Properties to update for the blob container. Is either a model type or a
-         IO type. Required.
+        :param blob_container: Properties to update for the blob container. Is either a BlobContainer
+         type or a IO type. Required.
         :type blob_container: ~azure.mgmt.storage.v2018_03_01_preview.models.BlobContainer or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -425,11 +429,11 @@ class BlobContainersOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2018-03-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", "2018-03-01-preview")
-        )  # type: Literal["2018-03-01-preview"]
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.BlobContainer]
+        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.BlobContainer] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -453,9 +457,9 @@ class BlobContainersOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -472,7 +476,9 @@ class BlobContainersOperations:
 
         return deserialized
 
-    update.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/blobServices/default/containers/{containerName}"}  # type: ignore
+    update.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/blobServices/default/containers/{containerName}"
+    }
 
     @distributed_trace_async
     async def get(
@@ -508,10 +514,10 @@ class BlobContainersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2018-03-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", "2018-03-01-preview")
-        )  # type: Literal["2018-03-01-preview"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.BlobContainer]
+        )
+        cls: ClsType[_models.BlobContainer] = kwargs.pop("cls", None)
 
         request = build_get_request(
             resource_group_name=resource_group_name,
@@ -524,9 +530,9 @@ class BlobContainersOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -543,7 +549,9 @@ class BlobContainersOperations:
 
         return deserialized
 
-    get.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/blobServices/default/containers/{containerName}"}  # type: ignore
+    get.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/blobServices/default/containers/{containerName}"
+    }
 
     @distributed_trace_async
     async def delete(  # pylint: disable=inconsistent-return-statements
@@ -579,10 +587,10 @@ class BlobContainersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2018-03-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", "2018-03-01-preview")
-        )  # type: Literal["2018-03-01-preview"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        )
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_delete_request(
             resource_group_name=resource_group_name,
@@ -595,9 +603,9 @@ class BlobContainersOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -610,7 +618,9 @@ class BlobContainersOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-    delete.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/blobServices/default/containers/{containerName}"}  # type: ignore
+    delete.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/blobServices/default/containers/{containerName}"
+    }
 
     @overload
     async def set_legal_hold(
@@ -714,7 +724,7 @@ class BlobContainersOperations:
          by a letter or number. Required.
         :type container_name: str
         :param legal_hold: The LegalHold property that will be set to a blob container. Is either a
-         model type or a IO type. Required.
+         LegalHold type or a IO type. Required.
         :type legal_hold: ~azure.mgmt.storage.v2018_03_01_preview.models.LegalHold or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -735,11 +745,11 @@ class BlobContainersOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2018-03-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", "2018-03-01-preview")
-        )  # type: Literal["2018-03-01-preview"]
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.LegalHold]
+        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.LegalHold] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -763,9 +773,9 @@ class BlobContainersOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -782,7 +792,9 @@ class BlobContainersOperations:
 
         return deserialized
 
-    set_legal_hold.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/blobServices/default/containers/{containerName}/setLegalHold"}  # type: ignore
+    set_legal_hold.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/blobServices/default/containers/{containerName}/setLegalHold"
+    }
 
     @overload
     async def clear_legal_hold(
@@ -883,7 +895,7 @@ class BlobContainersOperations:
          by a letter or number. Required.
         :type container_name: str
         :param legal_hold: The LegalHold property that will be clear from a blob container. Is either a
-         model type or a IO type. Required.
+         LegalHold type or a IO type. Required.
         :type legal_hold: ~azure.mgmt.storage.v2018_03_01_preview.models.LegalHold or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -904,11 +916,11 @@ class BlobContainersOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2018-03-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", "2018-03-01-preview")
-        )  # type: Literal["2018-03-01-preview"]
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.LegalHold]
+        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.LegalHold] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -932,9 +944,9 @@ class BlobContainersOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -951,7 +963,9 @@ class BlobContainersOperations:
 
         return deserialized
 
-    clear_legal_hold.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/blobServices/default/containers/{containerName}/clearLegalHold"}  # type: ignore
+    clear_legal_hold.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/blobServices/default/containers/{containerName}/clearLegalHold"
+    }
 
     @overload
     async def create_or_update_immutability_policy(
@@ -1081,7 +1095,7 @@ class BlobContainersOperations:
          omitted, this operation will always be applied. Default value is None.
         :type if_match: str
         :param parameters: The ImmutabilityPolicy Properties that will be created or updated to a blob
-         container. Is either a model type or a IO type. Default value is None.
+         container. Is either a ImmutabilityPolicy type or a IO type. Default value is None.
         :type parameters: ~azure.mgmt.storage.v2018_03_01_preview.models.ImmutabilityPolicy or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -1102,11 +1116,11 @@ class BlobContainersOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2018-03-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", "2018-03-01-preview")
-        )  # type: Literal["2018-03-01-preview"]
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.ImmutabilityPolicy]
+        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ImmutabilityPolicy] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -1135,9 +1149,9 @@ class BlobContainersOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -1157,7 +1171,9 @@ class BlobContainersOperations:
 
         return deserialized
 
-    create_or_update_immutability_policy.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/blobServices/default/containers/{containerName}/immutabilityPolicies/{immutabilityPolicyName}"}  # type: ignore
+    create_or_update_immutability_policy.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/blobServices/default/containers/{containerName}/immutabilityPolicies/{immutabilityPolicyName}"
+    }
 
     @distributed_trace_async
     async def get_immutability_policy(
@@ -1207,10 +1223,10 @@ class BlobContainersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2018-03-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", "2018-03-01-preview")
-        )  # type: Literal["2018-03-01-preview"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.ImmutabilityPolicy]
+        )
+        cls: ClsType[_models.ImmutabilityPolicy] = kwargs.pop("cls", None)
 
         request = build_get_immutability_policy_request(
             resource_group_name=resource_group_name,
@@ -1225,9 +1241,9 @@ class BlobContainersOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -1247,7 +1263,9 @@ class BlobContainersOperations:
 
         return deserialized
 
-    get_immutability_policy.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/blobServices/default/containers/{containerName}/immutabilityPolicies/{immutabilityPolicyName}"}  # type: ignore
+    get_immutability_policy.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/blobServices/default/containers/{containerName}/immutabilityPolicies/{immutabilityPolicyName}"
+    }
 
     @distributed_trace_async
     async def delete_immutability_policy(
@@ -1299,10 +1317,10 @@ class BlobContainersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2018-03-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", "2018-03-01-preview")
-        )  # type: Literal["2018-03-01-preview"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.ImmutabilityPolicy]
+        )
+        cls: ClsType[_models.ImmutabilityPolicy] = kwargs.pop("cls", None)
 
         request = build_delete_immutability_policy_request(
             resource_group_name=resource_group_name,
@@ -1317,9 +1335,9 @@ class BlobContainersOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -1339,7 +1357,9 @@ class BlobContainersOperations:
 
         return deserialized
 
-    delete_immutability_policy.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/blobServices/default/containers/{containerName}/immutabilityPolicies/{immutabilityPolicyName}"}  # type: ignore
+    delete_immutability_policy.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/blobServices/default/containers/{containerName}/immutabilityPolicies/{immutabilityPolicyName}"
+    }
 
     @distributed_trace_async
     async def lock_immutability_policy(
@@ -1380,10 +1400,10 @@ class BlobContainersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2018-03-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", "2018-03-01-preview")
-        )  # type: Literal["2018-03-01-preview"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.ImmutabilityPolicy]
+        )
+        cls: ClsType[_models.ImmutabilityPolicy] = kwargs.pop("cls", None)
 
         request = build_lock_immutability_policy_request(
             resource_group_name=resource_group_name,
@@ -1397,9 +1417,9 @@ class BlobContainersOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -1419,7 +1439,9 @@ class BlobContainersOperations:
 
         return deserialized
 
-    lock_immutability_policy.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/blobServices/default/containers/{containerName}/immutabilityPolicies/default/lock"}  # type: ignore
+    lock_immutability_policy.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/blobServices/default/containers/{containerName}/immutabilityPolicies/default/lock"
+    }
 
     @overload
     async def extend_immutability_policy(
@@ -1540,7 +1562,7 @@ class BlobContainersOperations:
          omitted, this operation will always be applied. Required.
         :type if_match: str
         :param parameters: The ImmutabilityPolicy Properties that will be extended for a blob
-         container. Is either a model type or a IO type. Default value is None.
+         container. Is either a ImmutabilityPolicy type or a IO type. Default value is None.
         :type parameters: ~azure.mgmt.storage.v2018_03_01_preview.models.ImmutabilityPolicy or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -1561,11 +1583,11 @@ class BlobContainersOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2018-03-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", "2018-03-01-preview")
-        )  # type: Literal["2018-03-01-preview"]
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.ImmutabilityPolicy]
+        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ImmutabilityPolicy] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -1593,9 +1615,9 @@ class BlobContainersOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -1615,7 +1637,9 @@ class BlobContainersOperations:
 
         return deserialized
 
-    extend_immutability_policy.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/blobServices/default/containers/{containerName}/immutabilityPolicies/default/extend"}  # type: ignore
+    extend_immutability_policy.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/blobServices/default/containers/{containerName}/immutabilityPolicies/default/extend"
+    }
 
     @overload
     async def lease(
@@ -1715,8 +1739,8 @@ class BlobContainersOperations:
          letters and dash (-) only. Every dash (-) character must be immediately preceded and followed
          by a letter or number. Required.
         :type container_name: str
-        :param parameters: Lease Container request body. Is either a model type or a IO type. Default
-         value is None.
+        :param parameters: Lease Container request body. Is either a LeaseContainerRequest type or a IO
+         type. Default value is None.
         :type parameters: ~azure.mgmt.storage.v2018_03_01_preview.models.LeaseContainerRequest or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -1737,11 +1761,11 @@ class BlobContainersOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2018-03-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", "2018-03-01-preview")
-        )  # type: Literal["2018-03-01-preview"]
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.LeaseContainerResponse]
+        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.LeaseContainerResponse] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -1768,9 +1792,9 @@ class BlobContainersOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -1787,4 +1811,6 @@ class BlobContainersOperations:
 
         return deserialized
 
-    lease.metadata = {"url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/blobServices/default/containers/{containerName}/lease"}  # type: ignore
+    lease.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/blobServices/default/containers/{containerName}/lease"
+    }

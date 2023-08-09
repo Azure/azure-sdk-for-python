@@ -1,14 +1,24 @@
 # Release History
 
-## 12.4.3 (Unreleased)
+## 12.4.4 (Unreleased)
 
 ### Features Added
+* Enabled to specify resource type `container` in account SAS access.
 
 ### Breaking Changes
 
 ### Bugs Fixed
 
 ### Other Changes
+* Bumped minimum dependency on `azure-core` to `>=1.27.1`. ([#28918](https://github.com/Azure/azure-sdk-for-python/issues/28918))
+
+## 12.4.3 (2023-06-13)
+
+### Bugs Fixed
+* Fixed a bug in getting error attribute values when operations failed. ([#27410](https://github.com/Azure/azure-sdk-for-python/issues/27410))
+
+### Other Changes
+* Adjusted dependency on `isodate` to `<1.0.0,>=0.6.1`.
 
 ## 12.4.2 (2023-02-07)
 

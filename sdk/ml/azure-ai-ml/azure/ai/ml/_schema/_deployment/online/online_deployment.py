@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=unused-argument,no-self-use
+# pylint: disable=unused-argument
 
 import logging
 from typing import Any
@@ -48,6 +48,7 @@ class OnlineDeploymentSchema(DeploymentSchema):
     )
     model_mount_path = fields.Str()
     instance_type = fields.Str()
+    data_collector = ExperimentalField(NestedField(DataCollectorSchema))
 
 
 class KubernetesOnlineDeploymentSchema(OnlineDeploymentSchema):
@@ -66,8 +67,8 @@ class ManagedOnlineDeploymentSchema(OnlineDeploymentSchema):
     egress_public_network_access = StringTransformedEnum(
         allowed_values=[PublicNetworkAccess.ENABLED, PublicNetworkAccess.DISABLED]
     )
-    data_collector = ExperimentalField(NestedField(DataCollectorSchema))
     private_network_connection = ExperimentalField(fields.Bool())
+    data_collector = NestedField(DataCollectorSchema)
 
     @post_load
     def make(self, data: Any, **kwargs: Any) -> Any:

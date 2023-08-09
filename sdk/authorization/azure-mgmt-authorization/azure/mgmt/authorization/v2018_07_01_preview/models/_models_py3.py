@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import List, Optional, TYPE_CHECKING
+from typing import Any, List, Optional, TYPE_CHECKING
 
 from ... import _serialization
 
@@ -80,8 +80,8 @@ class DenyAssignment(_serialization.Model):  # pylint: disable=too-many-instance
         principals: Optional[List["_models.Principal"]] = None,
         exclude_principals: Optional[List["_models.Principal"]] = None,
         is_system_protected: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword deny_assignment_name: The display name of the deny assignment.
         :paramtype deny_assignment_name: str
@@ -143,8 +143,8 @@ class DenyAssignmentFilter(_serialization.Model):
         deny_assignment_name: Optional[str] = None,
         principal_id: Optional[str] = None,
         gdpr_export_principal_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword deny_assignment_name: Return deny assignment with specified name.
         :paramtype deny_assignment_name: str
@@ -176,8 +176,8 @@ class DenyAssignmentListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.DenyAssignment"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self, *, value: Optional[List["_models.DenyAssignment"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: Deny assignment list.
         :paramtype value: list[~azure.mgmt.authorization.v2018_07_01_preview.models.DenyAssignment]
@@ -217,8 +217,8 @@ class DenyAssignmentPermission(_serialization.Model):
         not_actions: Optional[List[str]] = None,
         data_actions: Optional[List[str]] = None,
         not_data_actions: Optional[List[str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword actions: Actions to which the deny assignment does not grant access.
         :paramtype actions: list[str]
@@ -258,7 +258,7 @@ class ErrorAdditionalInfo(_serialization.Model):
         "info": {"key": "info", "type": "object"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.type = None
@@ -299,7 +299,7 @@ class ErrorDetail(_serialization.Model):
         "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.code = None
@@ -310,7 +310,8 @@ class ErrorDetail(_serialization.Model):
 
 
 class ErrorResponse(_serialization.Model):
-    """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
+    """Common error response for all Azure Resource Manager APIs to return error details for failed
+    operations. (This also follows the OData error response format.).
 
     :ivar error: The error object.
     :vartype error: ~azure.mgmt.authorization.v2018_07_01_preview.models.ErrorDetail
@@ -320,7 +321,7 @@ class ErrorResponse(_serialization.Model):
         "error": {"key": "error", "type": "ErrorDetail"},
     }
 
-    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs):
+    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs: Any) -> None:
         """
         :keyword error: The error object.
         :paramtype error: ~azure.mgmt.authorization.v2018_07_01_preview.models.ErrorDetail
@@ -356,8 +357,8 @@ class Principal(_serialization.Model):
         display_name: Optional[str] = None,
         type: Optional[str] = None,
         email: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: The id of the principal made changes.
         :paramtype id: str

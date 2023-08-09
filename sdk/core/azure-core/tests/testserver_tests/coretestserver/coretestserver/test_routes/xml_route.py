@@ -12,9 +12,10 @@ from flask import (
 )
 from .helpers import assert_with_message
 
-xml_api = Blueprint('xml_api', __name__)
+xml_api = Blueprint("xml_api", __name__)
 
-@xml_api.route('/basic', methods=['GET', 'PUT'])
+
+@xml_api.route("/basic", methods=["GET", "PUT"])
 def basic():
     basic_body = """<?xml version='1.0' encoding='UTF-8'?>
 <slideshow
@@ -32,15 +33,15 @@ def basic():
     </slide>
 </slideshow>"""
 
-    if request.method == 'GET':
+    if request.method == "GET":
         return Response(basic_body, status=200)
-    elif request.method == 'PUT':
+    elif request.method == "PUT":
         assert_with_message("content length", str(len(request.data)), request.headers["Content-Length"])
         parsed_xml = ET.fromstring(request.data.decode("utf-8"))
         assert_with_message("tag", "slideshow", parsed_xml.tag)
         attributes = parsed_xml.attrib
-        assert_with_message("title attribute", "Sample Slide Show", attributes['title'])
-        assert_with_message("date attribute", "Date of publication", attributes['date'])
-        assert_with_message("author attribute", "Yours Truly", attributes['author'])
+        assert_with_message("title attribute", "Sample Slide Show", attributes["title"])
+        assert_with_message("date attribute", "Date of publication", attributes["date"])
+        assert_with_message("author attribute", "Yours Truly", attributes["author"])
         return Response(status=200)
     return Response("You have passed in method '{}' that is not 'GET' or 'PUT'".format(request.method), status=400)

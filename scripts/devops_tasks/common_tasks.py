@@ -9,19 +9,14 @@
 # package targeting during release.
 
 import glob
-from subprocess import check_call, CalledProcessError, Popen
 import os
 import errno
-import shutil
 import sys
 import logging
-import ast
-import textwrap
-import io
-import re
-import fnmatch
-import platform
-from typing import Tuple, Iterable
+
+from subprocess import check_call, CalledProcessError, Popen
+from argparse import Namespace
+from typing import Iterable
 
 # Assumes the presence of setuptools
 from pkg_resources import parse_version, parse_requirements, Requirement, WorkingSet, working_set
@@ -36,7 +31,6 @@ from ci_tools.parsing import parse_require, ParsedSetup
 
 DEV_REQ_FILE = "dev_requirements.txt"
 NEW_DEV_REQ_FILE = "new_dev_requirements.txt"
-
 
 logging.getLogger().setLevel(logging.INFO)
 
@@ -105,18 +99,18 @@ def run_check_call(
 
 
 # This function generates code coverage parameters
-def create_code_coverage_params(parsed_args, package_name):
+def create_code_coverage_params(parsed_args: Namespace, package_path: str):
     coverage_args = []
     if parsed_args.disablecov:
         logging.info("Code coverage disabled as per the flag(--disablecov)")
         coverage_args.append("--no-cov")
     else:
-        current_package_name = package_name.replace("-", ".")
-        coverage_args.append("--cov={}".format(current_package_name))
+        namespace = ParsedSetup.from_path(package_path).namespace
+        coverage_args.append("--cov={}".format(namespace))
         coverage_args.append("--cov-append")
         logging.info(
             "Code coverage is enabled for package {0}, pytest arguements: {1}".format(
-                current_package_name, coverage_args
+                namespace, coverage_args
             )
         )
     return coverage_args
@@ -137,31 +131,6 @@ def is_error_code_5_allowed(target_pkg, pkg_name):
     else:
         return False
 
-def find_whl(package_name, version, whl_directory):
-    if not os.path.exists(whl_directory):
-        logging.error("Whl directory is incorrect")
-        exit(1)
-
-    parsed_version = parse(version)
-
-    logging.info("Searching whl for package {0}-{1}".format(package_name, parsed_version.base_version))
-    whl_name_format = "{0}-{1}*.whl".format(package_name.replace("-", "_"), parsed_version.base_version)
-    whls = []
-    for root, dirnames, filenames in os.walk(whl_directory):
-        for filename in fnmatch.filter(filenames, whl_name_format):
-            whls.append(os.path.join(root, filename))
-
-    whls = [os.path.relpath(w, whl_directory) for w in whls]
-
-    if not whls:
-        logging.error(
-            "whl is not found in whl directory {0} for package {1}-{2}".format(
-                whl_directory, package_name, parsed_version.base_version
-            )
-        )
-        exit(1)
-
-    return whls[0]
 
 # This method installs package from a pre-built whl
 def install_package_from_whl(package_whl_path, working_dir, python_sym_link=sys.executable):

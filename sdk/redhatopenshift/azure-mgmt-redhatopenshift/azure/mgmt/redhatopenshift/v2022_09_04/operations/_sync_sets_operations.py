@@ -542,7 +542,7 @@ class SyncSetsOperations:
         :type resource_name: str
         :param child_resource_name: The name of the SyncSet resource. Required.
         :type child_resource_name: str
-        :param parameters: The SyncSet resource. Is either a model type or a IO type. Required.
+        :param parameters: The SyncSet resource. Is either a SyncSet type or a IO type. Required.
         :type parameters: ~azure.mgmt.redhatopenshift.v2022_09_04.models.SyncSet or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -766,7 +766,7 @@ class SyncSetsOperations:
         :type resource_name: str
         :param child_resource_name: The name of the SyncSet resource. Required.
         :type child_resource_name: str
-        :param parameters: The SyncSet resource. Is either a model type or a IO type. Required.
+        :param parameters: The SyncSet resource. Is either a SyncSetUpdate type or a IO type. Required.
         :type parameters: ~azure.mgmt.redhatopenshift.v2022_09_04.models.SyncSetUpdate or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.

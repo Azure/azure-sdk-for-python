@@ -1,5 +1,30 @@
 # Release History
 
+## 3.1.0 (2023-03-20)
+
+### Features Added
+
+  - Model AzureBlobFSLinkedService has a new parameter sas_token
+  - Model AzureBlobFSLinkedService has a new parameter sas_uri
+
+## 3.0.0 (2023-02-20)
+
+### Features Added
+
+  - Added operation group CredentialOperationsOperations
+  - Model AzureBlobStorageLinkedService has a new parameter authentication_type
+  - Model AzureBlobStorageLinkedService has a new parameter container_uri
+  - Model IntegrationRuntimeComputeProperties has a new parameter copy_compute_scale_properties
+  - Model IntegrationRuntimeComputeProperties has a new parameter pipeline_external_compute_scale_properties
+  - Model SynapseSparkJobDefinitionActivity has a new parameter configuration_type
+  - Model SynapseSparkJobDefinitionActivity has a new parameter scan_folder
+  - Model SynapseSparkJobDefinitionActivity has a new parameter spark_config
+  - Model SynapseSparkJobDefinitionActivity has a new parameter target_spark_configuration
+
+### Breaking Changes
+
+  - Parameter export_settings of model SnowflakeSource is now required
+
 ## 2.10.0 (2022-11-22)
 
 ### Features Added

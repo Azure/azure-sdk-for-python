@@ -22,8 +22,6 @@ USAGE:
     2) AZURE_LANGUAGE_KEY - your Language subscription key
 """
 
-from __future__ import annotations
-
 
 def sample_analyze_healthcare_entities() -> None:
 
@@ -37,6 +35,7 @@ def sample_analyze_healthcare_entities() -> None:
 
     # [START analyze_healthcare_entities]
     import os
+    import typing
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.textanalytics import TextAnalyticsClient, HealthcareEntityRelation
 
@@ -104,7 +103,7 @@ def sample_analyze_healthcare_entities() -> None:
     import re
     from collections import defaultdict
 
-    medication_to_dosage: dict[str, int] = defaultdict(int)
+    medication_to_dosage: typing.Dict[str, int] = defaultdict(int)
 
     for relation in dosage_of_medication_relations:
         # The DosageOfMedication relation should only contain the dosage and medication roles

@@ -151,10 +151,10 @@ class MaintenanceOperationResultCodeTypes(str, Enum, metaclass=CaseInsensitiveEn
 class OperatingSystemStateTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The OS State."""
 
-    #: Generalized image. Needs to be provisioned during deployment time.
     GENERALIZED = "Generalized"
-    #: Specialized image. Contains already provisioned OS Disk.
+    """Generalized image. Needs to be provisioned during deployment time."""
     SPECIALIZED = "Specialized"
+    """Specialized image. Contains already provisioned OS Disk."""
 
 
 class OperatingSystemTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):

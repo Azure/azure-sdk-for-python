@@ -15,9 +15,6 @@ class EventPerfTest(_PerfTestBase):
 
     def __init__(self, arguments):
         super().__init__(arguments)
-        if self.args.profile:
-            raise NotImplementedError("Profiler support for event tests pending.")
-
         if self.args.sync:
             self._condition = threading.Condition()
         else:
@@ -89,7 +86,7 @@ class EventPerfTest(_PerfTestBase):
         except TypeError:
             pass
 
-    def run_all_sync(self, duration: int) -> None:
+    def run_all_sync(self, duration: int, *, run_profiler: bool = False, **kwargs) -> None:
         """
         Run all sync tests, including both warmup and duration.
         """
@@ -97,9 +94,15 @@ class EventPerfTest(_PerfTestBase):
             self._completed_operations.reset()
             self._last_completion_time = 0.0
             self._start_time = time.time()
+            if run_profiler:
+                self._profile.enable()
             self._condition.wait(timeout=duration)
+            if run_profiler:
+                self._profile.disable()
+                self._save_profile("sync", output_path=self.args.profile_path)
+                self._print_profile_stats()
 
-    async def run_all_async(self, duration: int) -> None:
+    async def run_all_async(self, duration: int, *, run_profiler: bool = False, **kwargs) -> None:
         """
         Run all async tests, including both warmup and duration.
         """
@@ -107,10 +110,17 @@ class EventPerfTest(_PerfTestBase):
             self._completed_operations.reset()
             self._last_completion_time = 0.0
             self._start_time = time.time()
+            if run_profiler:
+                self._profile.enable()
             try:
                 await asyncio.wait_for(self._condition.wait(), timeout=duration)
             except asyncio.TimeoutError:
                 pass
+            finally:
+                if run_profiler:
+                    self._profile.disable()
+                    self._save_profile("async", output_path=self.args.profile_path)
+                    self._print_profile_stats()
 
     def start_events_sync(self) -> None:
         """

@@ -83,8 +83,13 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
 
         :param vault_base_url: The vault name, for example https://myvault.vault.azure.net. Required.
         :type vault_base_url: str
-        :param maxresults: Maximum number of results to return in a page. If not specified the service
-         will return up to 25 results. Default value is None.
+        :param maxresults: Specifies the maximum number of results to return in a page. Setting
+         maxresults to a value less than 1 or greater than 25 results in error response code 400 (Bad
+         Request). If there are additional results to return, then the service returns a nextLink
+         containing a skip token for pagination. In certain cases, the service might return fewer
+         results than specified by maxresults (even 0 results) and also return a nextLink. Clients
+         should not make any assumptions on the minimum number of results per page, and should enumerate
+         all pages until the nextLink becomes null. Default value is None.
         :type maxresults: int
         :param include_pending: Specifies whether to include certificates which are not completely
          provisioned. Default value is None.
@@ -97,8 +102,8 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "7.3"))  # type: Literal["7.3"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.CertificateListResult]
+        api_version: Literal["7.3"] = kwargs.pop("api_version", _params.pop("api-version", "7.3"))
+        cls: ClsType[_models.CertificateListResult] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -123,7 +128,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
                 path_format_arguments = {
                     "vaultBaseUrl": self._serialize.url("vault_base_url", vault_base_url, "str", skip_quote=True),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(request.url, **path_format_arguments)
 
             else:
                 # make call to next link with the client's api-version
@@ -142,7 +147,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
                 path_format_arguments = {
                     "vaultBaseUrl": self._serialize.url("vault_base_url", vault_base_url, "str", skip_quote=True),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(request.url, **path_format_arguments)
                 request.method = "GET"
             return request
 
@@ -150,13 +155,13 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
             deserialized = self._deserialize("CertificateListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
                 request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
@@ -170,7 +175,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
 
         return AsyncItemPaged(get_next, extract_data)
 
-    get_certificates.metadata = {"url": "/certificates"}  # type: ignore
+    get_certificates.metadata = {"url": "/certificates"}
 
     @distributed_trace_async
     async def delete_certificate(
@@ -202,8 +207,8 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "7.3"))  # type: Literal["7.3"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.DeletedCertificateBundle]
+        api_version: Literal["7.3"] = kwargs.pop("api_version", _params.pop("api-version", "7.3"))
+        cls: ClsType[_models.DeletedCertificateBundle] = kwargs.pop("cls", None)
 
         request = build_delete_certificate_request(
             certificate_name=certificate_name,
@@ -216,9 +221,9 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         path_format_arguments = {
             "vaultBaseUrl": self._serialize.url("vault_base_url", vault_base_url, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -236,7 +241,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
 
         return deserialized
 
-    delete_certificate.metadata = {"url": "/certificates/{certificate-name}"}  # type: ignore
+    delete_certificate.metadata = {"url": "/certificates/{certificate-name}"}
 
     @overload
     async def set_certificate_contacts(
@@ -293,7 +298,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
 
         :param vault_base_url: The vault name, for example https://myvault.vault.azure.net. Required.
         :type vault_base_url: str
-        :param contacts: The contacts for the key vault certificate. Is either a model type or a IO
+        :param contacts: The contacts for the key vault certificate. Is either a Contacts type or a IO
          type. Required.
         :type contacts: ~azure.keyvault.v7_3.models.Contacts or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
@@ -315,9 +320,9 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "7.3"))  # type: Literal["7.3"]
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.Contacts]
+        api_version: Literal["7.3"] = kwargs.pop("api_version", _params.pop("api-version", "7.3"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.Contacts] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -340,9 +345,9 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         path_format_arguments = {
             "vaultBaseUrl": self._serialize.url("vault_base_url", vault_base_url, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -360,7 +365,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
 
         return deserialized
 
-    set_certificate_contacts.metadata = {"url": "/certificates/contacts"}  # type: ignore
+    set_certificate_contacts.metadata = {"url": "/certificates/contacts"}
 
     @distributed_trace_async
     async def get_certificate_contacts(self, vault_base_url: str, **kwargs: Any) -> _models.Contacts:
@@ -387,8 +392,8 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "7.3"))  # type: Literal["7.3"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.Contacts]
+        api_version: Literal["7.3"] = kwargs.pop("api_version", _params.pop("api-version", "7.3"))
+        cls: ClsType[_models.Contacts] = kwargs.pop("cls", None)
 
         request = build_get_certificate_contacts_request(
             api_version=api_version,
@@ -400,9 +405,9 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         path_format_arguments = {
             "vaultBaseUrl": self._serialize.url("vault_base_url", vault_base_url, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -420,7 +425,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
 
         return deserialized
 
-    get_certificate_contacts.metadata = {"url": "/certificates/contacts"}  # type: ignore
+    get_certificate_contacts.metadata = {"url": "/certificates/contacts"}
 
     @distributed_trace_async
     async def delete_certificate_contacts(self, vault_base_url: str, **kwargs: Any) -> _models.Contacts:
@@ -447,8 +452,8 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "7.3"))  # type: Literal["7.3"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.Contacts]
+        api_version: Literal["7.3"] = kwargs.pop("api_version", _params.pop("api-version", "7.3"))
+        cls: ClsType[_models.Contacts] = kwargs.pop("cls", None)
 
         request = build_delete_certificate_contacts_request(
             api_version=api_version,
@@ -460,9 +465,9 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         path_format_arguments = {
             "vaultBaseUrl": self._serialize.url("vault_base_url", vault_base_url, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -480,7 +485,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
 
         return deserialized
 
-    delete_certificate_contacts.metadata = {"url": "/certificates/contacts"}  # type: ignore
+    delete_certificate_contacts.metadata = {"url": "/certificates/contacts"}
 
     @distributed_trace
     def get_certificate_issuers(
@@ -494,8 +499,13 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
 
         :param vault_base_url: The vault name, for example https://myvault.vault.azure.net. Required.
         :type vault_base_url: str
-        :param maxresults: Maximum number of results to return in a page. If not specified the service
-         will return up to 25 results. Default value is None.
+        :param maxresults: Specifies the maximum number of results to return in a page. Setting
+         maxresults to a value less than 1 or greater than 25 results in error response code 400 (Bad
+         Request). If there are additional results to return, then the service returns a nextLink
+         containing a skip token for pagination. In certain cases, the service might return fewer
+         results than specified by maxresults (even 0 results) and also return a nextLink. Clients
+         should not make any assumptions on the minimum number of results per page, and should enumerate
+         all pages until the nextLink becomes null. Default value is None.
         :type maxresults: int
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either CertificateIssuerItem or the result of
@@ -507,8 +517,8 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "7.3"))  # type: Literal["7.3"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.CertificateIssuerListResult]
+        api_version: Literal["7.3"] = kwargs.pop("api_version", _params.pop("api-version", "7.3"))
+        cls: ClsType[_models.CertificateIssuerListResult] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -532,7 +542,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
                 path_format_arguments = {
                     "vaultBaseUrl": self._serialize.url("vault_base_url", vault_base_url, "str", skip_quote=True),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(request.url, **path_format_arguments)
 
             else:
                 # make call to next link with the client's api-version
@@ -551,7 +561,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
                 path_format_arguments = {
                     "vaultBaseUrl": self._serialize.url("vault_base_url", vault_base_url, "str", skip_quote=True),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(request.url, **path_format_arguments)
                 request.method = "GET"
             return request
 
@@ -559,13 +569,13 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
             deserialized = self._deserialize("CertificateIssuerListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
                 request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
@@ -579,7 +589,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
 
         return AsyncItemPaged(get_next, extract_data)
 
-    get_certificate_issuers.metadata = {"url": "/certificates/issuers"}  # type: ignore
+    get_certificate_issuers.metadata = {"url": "/certificates/issuers"}
 
     @overload
     async def set_certificate_issuer(
@@ -598,7 +608,9 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
 
         :param vault_base_url: The vault name, for example https://myvault.vault.azure.net. Required.
         :type vault_base_url: str
-        :param issuer_name: The name of the issuer. Required.
+        :param issuer_name: The name of the issuer. The value you provide may be copied globally for
+         the purpose of running the service. The value provided should not include personally
+         identifiable or sensitive information. Required.
         :type issuer_name: str
         :param parameter: Certificate issuer set parameter. Required.
         :type parameter: ~azure.keyvault.v7_3.models.CertificateIssuerSetParameters
@@ -628,7 +640,9 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
 
         :param vault_base_url: The vault name, for example https://myvault.vault.azure.net. Required.
         :type vault_base_url: str
-        :param issuer_name: The name of the issuer. Required.
+        :param issuer_name: The name of the issuer. The value you provide may be copied globally for
+         the purpose of running the service. The value provided should not include personally
+         identifiable or sensitive information. Required.
         :type issuer_name: str
         :param parameter: Certificate issuer set parameter. Required.
         :type parameter: IO
@@ -656,10 +670,12 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
 
         :param vault_base_url: The vault name, for example https://myvault.vault.azure.net. Required.
         :type vault_base_url: str
-        :param issuer_name: The name of the issuer. Required.
+        :param issuer_name: The name of the issuer. The value you provide may be copied globally for
+         the purpose of running the service. The value provided should not include personally
+         identifiable or sensitive information. Required.
         :type issuer_name: str
-        :param parameter: Certificate issuer set parameter. Is either a model type or a IO type.
-         Required.
+        :param parameter: Certificate issuer set parameter. Is either a CertificateIssuerSetParameters
+         type or a IO type. Required.
         :type parameter: ~azure.keyvault.v7_3.models.CertificateIssuerSetParameters or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -680,9 +696,9 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "7.3"))  # type: Literal["7.3"]
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.IssuerBundle]
+        api_version: Literal["7.3"] = kwargs.pop("api_version", _params.pop("api-version", "7.3"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.IssuerBundle] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -706,9 +722,9 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         path_format_arguments = {
             "vaultBaseUrl": self._serialize.url("vault_base_url", vault_base_url, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -726,7 +742,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
 
         return deserialized
 
-    set_certificate_issuer.metadata = {"url": "/certificates/issuers/{issuer-name}"}  # type: ignore
+    set_certificate_issuer.metadata = {"url": "/certificates/issuers/{issuer-name}"}
 
     @overload
     async def update_certificate_issuer(
@@ -805,8 +821,8 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         :type vault_base_url: str
         :param issuer_name: The name of the issuer. Required.
         :type issuer_name: str
-        :param parameter: Certificate issuer update parameter. Is either a model type or a IO type.
-         Required.
+        :param parameter: Certificate issuer update parameter. Is either a
+         CertificateIssuerUpdateParameters type or a IO type. Required.
         :type parameter: ~azure.keyvault.v7_3.models.CertificateIssuerUpdateParameters or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -827,9 +843,9 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "7.3"))  # type: Literal["7.3"]
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.IssuerBundle]
+        api_version: Literal["7.3"] = kwargs.pop("api_version", _params.pop("api-version", "7.3"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.IssuerBundle] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -853,9 +869,9 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         path_format_arguments = {
             "vaultBaseUrl": self._serialize.url("vault_base_url", vault_base_url, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -873,7 +889,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
 
         return deserialized
 
-    update_certificate_issuer.metadata = {"url": "/certificates/issuers/{issuer-name}"}  # type: ignore
+    update_certificate_issuer.metadata = {"url": "/certificates/issuers/{issuer-name}"}
 
     @distributed_trace_async
     async def get_certificate_issuer(
@@ -905,8 +921,8 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "7.3"))  # type: Literal["7.3"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.IssuerBundle]
+        api_version: Literal["7.3"] = kwargs.pop("api_version", _params.pop("api-version", "7.3"))
+        cls: ClsType[_models.IssuerBundle] = kwargs.pop("cls", None)
 
         request = build_get_certificate_issuer_request(
             issuer_name=issuer_name,
@@ -919,9 +935,9 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         path_format_arguments = {
             "vaultBaseUrl": self._serialize.url("vault_base_url", vault_base_url, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -939,7 +955,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
 
         return deserialized
 
-    get_certificate_issuer.metadata = {"url": "/certificates/issuers/{issuer-name}"}  # type: ignore
+    get_certificate_issuer.metadata = {"url": "/certificates/issuers/{issuer-name}"}
 
     @distributed_trace_async
     async def delete_certificate_issuer(
@@ -970,8 +986,8 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "7.3"))  # type: Literal["7.3"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.IssuerBundle]
+        api_version: Literal["7.3"] = kwargs.pop("api_version", _params.pop("api-version", "7.3"))
+        cls: ClsType[_models.IssuerBundle] = kwargs.pop("cls", None)
 
         request = build_delete_certificate_issuer_request(
             issuer_name=issuer_name,
@@ -984,9 +1000,9 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         path_format_arguments = {
             "vaultBaseUrl": self._serialize.url("vault_base_url", vault_base_url, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -1004,7 +1020,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
 
         return deserialized
 
-    delete_certificate_issuer.metadata = {"url": "/certificates/issuers/{issuer-name}"}  # type: ignore
+    delete_certificate_issuer.metadata = {"url": "/certificates/issuers/{issuer-name}"}
 
     @overload
     async def create_certificate(
@@ -1023,7 +1039,9 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
 
         :param vault_base_url: The vault name, for example https://myvault.vault.azure.net. Required.
         :type vault_base_url: str
-        :param certificate_name: The name of the certificate. Required.
+        :param certificate_name: The name of the certificate. The value you provide may be copied
+         globally for the purpose of running the service. The value provided should not include
+         personally identifiable or sensitive information. Required.
         :type certificate_name: str
         :param parameters: The parameters to create a certificate. Required.
         :type parameters: ~azure.keyvault.v7_3.models.CertificateCreateParameters
@@ -1053,7 +1071,9 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
 
         :param vault_base_url: The vault name, for example https://myvault.vault.azure.net. Required.
         :type vault_base_url: str
-        :param certificate_name: The name of the certificate. Required.
+        :param certificate_name: The name of the certificate. The value you provide may be copied
+         globally for the purpose of running the service. The value provided should not include
+         personally identifiable or sensitive information. Required.
         :type certificate_name: str
         :param parameters: The parameters to create a certificate. Required.
         :type parameters: IO
@@ -1081,10 +1101,12 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
 
         :param vault_base_url: The vault name, for example https://myvault.vault.azure.net. Required.
         :type vault_base_url: str
-        :param certificate_name: The name of the certificate. Required.
+        :param certificate_name: The name of the certificate. The value you provide may be copied
+         globally for the purpose of running the service. The value provided should not include
+         personally identifiable or sensitive information. Required.
         :type certificate_name: str
-        :param parameters: The parameters to create a certificate. Is either a model type or a IO type.
-         Required.
+        :param parameters: The parameters to create a certificate. Is either a
+         CertificateCreateParameters type or a IO type. Required.
         :type parameters: ~azure.keyvault.v7_3.models.CertificateCreateParameters or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -1105,9 +1127,9 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "7.3"))  # type: Literal["7.3"]
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.CertificateOperation]
+        api_version: Literal["7.3"] = kwargs.pop("api_version", _params.pop("api-version", "7.3"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.CertificateOperation] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -1131,9 +1153,9 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         path_format_arguments = {
             "vaultBaseUrl": self._serialize.url("vault_base_url", vault_base_url, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -1151,7 +1173,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
 
         return deserialized
 
-    create_certificate.metadata = {"url": "/certificates/{certificate-name}/create"}  # type: ignore
+    create_certificate.metadata = {"url": "/certificates/{certificate-name}/create"}
 
     @overload
     async def import_certificate(
@@ -1172,7 +1194,9 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
 
         :param vault_base_url: The vault name, for example https://myvault.vault.azure.net. Required.
         :type vault_base_url: str
-        :param certificate_name: The name of the certificate. Required.
+        :param certificate_name: The name of the certificate. The value you provide may be copied
+         globally for the purpose of running the service. The value provided should not include
+         personally identifiable or sensitive information. Required.
         :type certificate_name: str
         :param parameters: The parameters to import the certificate. Required.
         :type parameters: ~azure.keyvault.v7_3.models.CertificateImportParameters
@@ -1204,7 +1228,9 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
 
         :param vault_base_url: The vault name, for example https://myvault.vault.azure.net. Required.
         :type vault_base_url: str
-        :param certificate_name: The name of the certificate. Required.
+        :param certificate_name: The name of the certificate. The value you provide may be copied
+         globally for the purpose of running the service. The value provided should not include
+         personally identifiable or sensitive information. Required.
         :type certificate_name: str
         :param parameters: The parameters to import the certificate. Required.
         :type parameters: IO
@@ -1234,10 +1260,12 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
 
         :param vault_base_url: The vault name, for example https://myvault.vault.azure.net. Required.
         :type vault_base_url: str
-        :param certificate_name: The name of the certificate. Required.
+        :param certificate_name: The name of the certificate. The value you provide may be copied
+         globally for the purpose of running the service. The value provided should not include
+         personally identifiable or sensitive information. Required.
         :type certificate_name: str
-        :param parameters: The parameters to import the certificate. Is either a model type or a IO
-         type. Required.
+        :param parameters: The parameters to import the certificate. Is either a
+         CertificateImportParameters type or a IO type. Required.
         :type parameters: ~azure.keyvault.v7_3.models.CertificateImportParameters or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -1258,9 +1286,9 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "7.3"))  # type: Literal["7.3"]
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.CertificateBundle]
+        api_version: Literal["7.3"] = kwargs.pop("api_version", _params.pop("api-version", "7.3"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.CertificateBundle] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -1284,9 +1312,9 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         path_format_arguments = {
             "vaultBaseUrl": self._serialize.url("vault_base_url", vault_base_url, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -1304,7 +1332,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
 
         return deserialized
 
-    import_certificate.metadata = {"url": "/certificates/{certificate-name}/import"}  # type: ignore
+    import_certificate.metadata = {"url": "/certificates/{certificate-name}/import"}
 
     @distributed_trace
     def get_certificate_versions(
@@ -1319,8 +1347,13 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         :type vault_base_url: str
         :param certificate_name: The name of the certificate. Required.
         :type certificate_name: str
-        :param maxresults: Maximum number of results to return in a page. If not specified the service
-         will return up to 25 results. Default value is None.
+        :param maxresults: Specifies the maximum number of results to return in a page. Setting
+         maxresults to a value less than 1 or greater than 25 results in error response code 400 (Bad
+         Request). If there are additional results to return, then the service returns a nextLink
+         containing a skip token for pagination. In certain cases, the service might return fewer
+         results than specified by maxresults (even 0 results) and also return a nextLink. Clients
+         should not make any assumptions on the minimum number of results per page, and should enumerate
+         all pages until the nextLink becomes null. Default value is None.
         :type maxresults: int
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either CertificateItem or the result of cls(response)
@@ -1330,8 +1363,8 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "7.3"))  # type: Literal["7.3"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.CertificateListResult]
+        api_version: Literal["7.3"] = kwargs.pop("api_version", _params.pop("api-version", "7.3"))
+        cls: ClsType[_models.CertificateListResult] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -1356,7 +1389,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
                 path_format_arguments = {
                     "vaultBaseUrl": self._serialize.url("vault_base_url", vault_base_url, "str", skip_quote=True),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(request.url, **path_format_arguments)
 
             else:
                 # make call to next link with the client's api-version
@@ -1375,7 +1408,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
                 path_format_arguments = {
                     "vaultBaseUrl": self._serialize.url("vault_base_url", vault_base_url, "str", skip_quote=True),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(request.url, **path_format_arguments)
                 request.method = "GET"
             return request
 
@@ -1383,13 +1416,13 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
             deserialized = self._deserialize("CertificateListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
                 request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
@@ -1403,7 +1436,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
 
         return AsyncItemPaged(get_next, extract_data)
 
-    get_certificate_versions.metadata = {"url": "/certificates/{certificate-name}/versions"}  # type: ignore
+    get_certificate_versions.metadata = {"url": "/certificates/{certificate-name}/versions"}
 
     @distributed_trace_async
     async def get_certificate_policy(
@@ -1434,8 +1467,8 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "7.3"))  # type: Literal["7.3"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.CertificatePolicy]
+        api_version: Literal["7.3"] = kwargs.pop("api_version", _params.pop("api-version", "7.3"))
+        cls: ClsType[_models.CertificatePolicy] = kwargs.pop("cls", None)
 
         request = build_get_certificate_policy_request(
             certificate_name=certificate_name,
@@ -1448,9 +1481,9 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         path_format_arguments = {
             "vaultBaseUrl": self._serialize.url("vault_base_url", vault_base_url, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -1468,7 +1501,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
 
         return deserialized
 
-    get_certificate_policy.metadata = {"url": "/certificates/{certificate-name}/policy"}  # type: ignore
+    get_certificate_policy.metadata = {"url": "/certificates/{certificate-name}/policy"}
 
     @overload
     async def update_certificate_policy(
@@ -1547,8 +1580,8 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         :type vault_base_url: str
         :param certificate_name: The name of the certificate in the given vault. Required.
         :type certificate_name: str
-        :param certificate_policy: The policy for the certificate. Is either a model type or a IO type.
-         Required.
+        :param certificate_policy: The policy for the certificate. Is either a CertificatePolicy type
+         or a IO type. Required.
         :type certificate_policy: ~azure.keyvault.v7_3.models.CertificatePolicy or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -1569,9 +1602,9 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "7.3"))  # type: Literal["7.3"]
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.CertificatePolicy]
+        api_version: Literal["7.3"] = kwargs.pop("api_version", _params.pop("api-version", "7.3"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.CertificatePolicy] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -1595,9 +1628,9 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         path_format_arguments = {
             "vaultBaseUrl": self._serialize.url("vault_base_url", vault_base_url, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -1615,7 +1648,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
 
         return deserialized
 
-    update_certificate_policy.metadata = {"url": "/certificates/{certificate-name}/policy"}  # type: ignore
+    update_certificate_policy.metadata = {"url": "/certificates/{certificate-name}/policy"}
 
     @overload
     async def update_certificate(
@@ -1706,8 +1739,8 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         :type certificate_name: str
         :param certificate_version: The version of the certificate. Required.
         :type certificate_version: str
-        :param parameters: The parameters for certificate update. Is either a model type or a IO type.
-         Required.
+        :param parameters: The parameters for certificate update. Is either a
+         CertificateUpdateParameters type or a IO type. Required.
         :type parameters: ~azure.keyvault.v7_3.models.CertificateUpdateParameters or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -1728,9 +1761,9 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "7.3"))  # type: Literal["7.3"]
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.CertificateBundle]
+        api_version: Literal["7.3"] = kwargs.pop("api_version", _params.pop("api-version", "7.3"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.CertificateBundle] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -1755,9 +1788,9 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         path_format_arguments = {
             "vaultBaseUrl": self._serialize.url("vault_base_url", vault_base_url, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -1775,7 +1808,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
 
         return deserialized
 
-    update_certificate.metadata = {"url": "/certificates/{certificate-name}/{certificate-version}"}  # type: ignore
+    update_certificate.metadata = {"url": "/certificates/{certificate-name}/{certificate-version}"}
 
     @distributed_trace_async
     async def get_certificate(
@@ -1809,8 +1842,8 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "7.3"))  # type: Literal["7.3"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.CertificateBundle]
+        api_version: Literal["7.3"] = kwargs.pop("api_version", _params.pop("api-version", "7.3"))
+        cls: ClsType[_models.CertificateBundle] = kwargs.pop("cls", None)
 
         request = build_get_certificate_request(
             certificate_name=certificate_name,
@@ -1824,9 +1857,9 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         path_format_arguments = {
             "vaultBaseUrl": self._serialize.url("vault_base_url", vault_base_url, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -1844,7 +1877,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
 
         return deserialized
 
-    get_certificate.metadata = {"url": "/certificates/{certificate-name}/{certificate-version}"}  # type: ignore
+    get_certificate.metadata = {"url": "/certificates/{certificate-name}/{certificate-version}"}
 
     @overload
     async def update_certificate_operation(
@@ -1923,8 +1956,8 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         :type vault_base_url: str
         :param certificate_name: The name of the certificate. Required.
         :type certificate_name: str
-        :param certificate_operation: The certificate operation response. Is either a model type or a
-         IO type. Required.
+        :param certificate_operation: The certificate operation response. Is either a
+         CertificateOperationUpdateParameter type or a IO type. Required.
         :type certificate_operation: ~azure.keyvault.v7_3.models.CertificateOperationUpdateParameter or
          IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
@@ -1946,9 +1979,9 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "7.3"))  # type: Literal["7.3"]
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.CertificateOperation]
+        api_version: Literal["7.3"] = kwargs.pop("api_version", _params.pop("api-version", "7.3"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.CertificateOperation] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -1972,9 +2005,9 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         path_format_arguments = {
             "vaultBaseUrl": self._serialize.url("vault_base_url", vault_base_url, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -1992,7 +2025,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
 
         return deserialized
 
-    update_certificate_operation.metadata = {"url": "/certificates/{certificate-name}/pending"}  # type: ignore
+    update_certificate_operation.metadata = {"url": "/certificates/{certificate-name}/pending"}
 
     @distributed_trace_async
     async def get_certificate_operation(
@@ -2023,8 +2056,8 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "7.3"))  # type: Literal["7.3"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.CertificateOperation]
+        api_version: Literal["7.3"] = kwargs.pop("api_version", _params.pop("api-version", "7.3"))
+        cls: ClsType[_models.CertificateOperation] = kwargs.pop("cls", None)
 
         request = build_get_certificate_operation_request(
             certificate_name=certificate_name,
@@ -2037,9 +2070,9 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         path_format_arguments = {
             "vaultBaseUrl": self._serialize.url("vault_base_url", vault_base_url, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -2057,7 +2090,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
 
         return deserialized
 
-    get_certificate_operation.metadata = {"url": "/certificates/{certificate-name}/pending"}  # type: ignore
+    get_certificate_operation.metadata = {"url": "/certificates/{certificate-name}/pending"}
 
     @distributed_trace_async
     async def delete_certificate_operation(
@@ -2089,8 +2122,8 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "7.3"))  # type: Literal["7.3"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.CertificateOperation]
+        api_version: Literal["7.3"] = kwargs.pop("api_version", _params.pop("api-version", "7.3"))
+        cls: ClsType[_models.CertificateOperation] = kwargs.pop("cls", None)
 
         request = build_delete_certificate_operation_request(
             certificate_name=certificate_name,
@@ -2103,9 +2136,9 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         path_format_arguments = {
             "vaultBaseUrl": self._serialize.url("vault_base_url", vault_base_url, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -2123,7 +2156,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
 
         return deserialized
 
-    delete_certificate_operation.metadata = {"url": "/certificates/{certificate-name}/pending"}  # type: ignore
+    delete_certificate_operation.metadata = {"url": "/certificates/{certificate-name}/pending"}
 
     @overload
     async def merge_certificate(
@@ -2205,8 +2238,8 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         :type vault_base_url: str
         :param certificate_name: The name of the certificate. Required.
         :type certificate_name: str
-        :param parameters: The parameters to merge certificate. Is either a model type or a IO type.
-         Required.
+        :param parameters: The parameters to merge certificate. Is either a CertificateMergeParameters
+         type or a IO type. Required.
         :type parameters: ~azure.keyvault.v7_3.models.CertificateMergeParameters or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -2227,9 +2260,9 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "7.3"))  # type: Literal["7.3"]
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.CertificateBundle]
+        api_version: Literal["7.3"] = kwargs.pop("api_version", _params.pop("api-version", "7.3"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.CertificateBundle] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -2253,9 +2286,9 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         path_format_arguments = {
             "vaultBaseUrl": self._serialize.url("vault_base_url", vault_base_url, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -2273,7 +2306,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
 
         return deserialized
 
-    merge_certificate.metadata = {"url": "/certificates/{certificate-name}/pending/merge"}  # type: ignore
+    merge_certificate.metadata = {"url": "/certificates/{certificate-name}/pending/merge"}
 
     @distributed_trace_async
     async def backup_certificate(
@@ -2305,8 +2338,8 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "7.3"))  # type: Literal["7.3"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.BackupCertificateResult]
+        api_version: Literal["7.3"] = kwargs.pop("api_version", _params.pop("api-version", "7.3"))
+        cls: ClsType[_models.BackupCertificateResult] = kwargs.pop("cls", None)
 
         request = build_backup_certificate_request(
             certificate_name=certificate_name,
@@ -2319,9 +2352,9 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         path_format_arguments = {
             "vaultBaseUrl": self._serialize.url("vault_base_url", vault_base_url, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -2339,7 +2372,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
 
         return deserialized
 
-    backup_certificate.metadata = {"url": "/certificates/{certificate-name}/backup"}  # type: ignore
+    backup_certificate.metadata = {"url": "/certificates/{certificate-name}/backup"}
 
     @overload
     async def restore_certificate(
@@ -2401,8 +2434,8 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
 
         :param vault_base_url: The vault name, for example https://myvault.vault.azure.net. Required.
         :type vault_base_url: str
-        :param parameters: The parameters to restore the certificate. Is either a model type or a IO
-         type. Required.
+        :param parameters: The parameters to restore the certificate. Is either a
+         CertificateRestoreParameters type or a IO type. Required.
         :type parameters: ~azure.keyvault.v7_3.models.CertificateRestoreParameters or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -2423,9 +2456,9 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "7.3"))  # type: Literal["7.3"]
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.CertificateBundle]
+        api_version: Literal["7.3"] = kwargs.pop("api_version", _params.pop("api-version", "7.3"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.CertificateBundle] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -2448,9 +2481,9 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         path_format_arguments = {
             "vaultBaseUrl": self._serialize.url("vault_base_url", vault_base_url, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -2468,7 +2501,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
 
         return deserialized
 
-    restore_certificate.metadata = {"url": "/certificates/restore"}  # type: ignore
+    restore_certificate.metadata = {"url": "/certificates/restore"}
 
     @distributed_trace
     def get_deleted_certificates(
@@ -2487,8 +2520,13 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
 
         :param vault_base_url: The vault name, for example https://myvault.vault.azure.net. Required.
         :type vault_base_url: str
-        :param maxresults: Maximum number of results to return in a page. If not specified the service
-         will return up to 25 results. Default value is None.
+        :param maxresults: Specifies the maximum number of results to return in a page. Setting
+         maxresults to a value less than 1 or greater than 25 results in error response code 400 (Bad
+         Request). If there are additional results to return, then the service returns a nextLink
+         containing a skip token for pagination. In certain cases, the service might return fewer
+         results than specified by maxresults (even 0 results) and also return a nextLink. Clients
+         should not make any assumptions on the minimum number of results per page, and should enumerate
+         all pages until the nextLink becomes null. Default value is None.
         :type maxresults: int
         :param include_pending: Specifies whether to include certificates which are not completely
          provisioned. Default value is None.
@@ -2503,8 +2541,8 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "7.3"))  # type: Literal["7.3"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.DeletedCertificateListResult]
+        api_version: Literal["7.3"] = kwargs.pop("api_version", _params.pop("api-version", "7.3"))
+        cls: ClsType[_models.DeletedCertificateListResult] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -2529,7 +2567,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
                 path_format_arguments = {
                     "vaultBaseUrl": self._serialize.url("vault_base_url", vault_base_url, "str", skip_quote=True),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(request.url, **path_format_arguments)
 
             else:
                 # make call to next link with the client's api-version
@@ -2548,7 +2586,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
                 path_format_arguments = {
                     "vaultBaseUrl": self._serialize.url("vault_base_url", vault_base_url, "str", skip_quote=True),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(request.url, **path_format_arguments)
                 request.method = "GET"
             return request
 
@@ -2556,13 +2594,13 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
             deserialized = self._deserialize("DeletedCertificateListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
                 request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
@@ -2576,7 +2614,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
 
         return AsyncItemPaged(get_next, extract_data)
 
-    get_deleted_certificates.metadata = {"url": "/deletedcertificates"}  # type: ignore
+    get_deleted_certificates.metadata = {"url": "/deletedcertificates"}
 
     @distributed_trace_async
     async def get_deleted_certificate(
@@ -2608,8 +2646,8 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "7.3"))  # type: Literal["7.3"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.DeletedCertificateBundle]
+        api_version: Literal["7.3"] = kwargs.pop("api_version", _params.pop("api-version", "7.3"))
+        cls: ClsType[_models.DeletedCertificateBundle] = kwargs.pop("cls", None)
 
         request = build_get_deleted_certificate_request(
             certificate_name=certificate_name,
@@ -2622,9 +2660,9 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         path_format_arguments = {
             "vaultBaseUrl": self._serialize.url("vault_base_url", vault_base_url, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -2642,7 +2680,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
 
         return deserialized
 
-    get_deleted_certificate.metadata = {"url": "/deletedcertificates/{certificate-name}"}  # type: ignore
+    get_deleted_certificate.metadata = {"url": "/deletedcertificates/{certificate-name}"}
 
     @distributed_trace_async
     async def purge_deleted_certificate(  # pylint: disable=inconsistent-return-statements
@@ -2674,8 +2712,8 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "7.3"))  # type: Literal["7.3"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        api_version: Literal["7.3"] = kwargs.pop("api_version", _params.pop("api-version", "7.3"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_purge_deleted_certificate_request(
             certificate_name=certificate_name,
@@ -2688,9 +2726,9 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         path_format_arguments = {
             "vaultBaseUrl": self._serialize.url("vault_base_url", vault_base_url, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -2704,7 +2742,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         if cls:
             return cls(pipeline_response, None, {})
 
-    purge_deleted_certificate.metadata = {"url": "/deletedcertificates/{certificate-name}"}  # type: ignore
+    purge_deleted_certificate.metadata = {"url": "/deletedcertificates/{certificate-name}"}
 
     @distributed_trace_async
     async def recover_deleted_certificate(
@@ -2737,8 +2775,8 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "7.3"))  # type: Literal["7.3"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.CertificateBundle]
+        api_version: Literal["7.3"] = kwargs.pop("api_version", _params.pop("api-version", "7.3"))
+        cls: ClsType[_models.CertificateBundle] = kwargs.pop("cls", None)
 
         request = build_recover_deleted_certificate_request(
             certificate_name=certificate_name,
@@ -2751,9 +2789,9 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         path_format_arguments = {
             "vaultBaseUrl": self._serialize.url("vault_base_url", vault_base_url, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -2771,4 +2809,4 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
 
         return deserialized
 
-    recover_deleted_certificate.metadata = {"url": "/deletedcertificates/{certificate-name}/recover"}  # type: ignore
+    recover_deleted_certificate.metadata = {"url": "/deletedcertificates/{certificate-name}/recover"}

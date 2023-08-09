@@ -1,16 +1,35 @@
 # Release History
 
-## 1.0.0 (Unreleased)
+## 1.0.3 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.0.2 (2023-06-15)
+
+### Bugs Fixed
+
+- Fixed issue preventing custom authentication policies or credential scopes to be passed to the client. ([#30739](https://github.com/Azure/azure-sdk-for-python/pull/30739/))
+
+## 1.0.1 (2023-04-11)
+
+### Bugs Fixed
+  - Fixed an issue where log entry sizes were miscalculated when chunking. ([#29584](https://github.com/Azure/azure-sdk-for-python/pull/29584))
+
+## 1.0.0 (2023-02-16)
 
 ### Features Added
   - Added new `on_error` parameter to the `upload` method to allow users to handle errors in their own way.
-    - An `UploadLogsError` class was added to encapsulate information about the error. An instance of this class is passed to the `on_error` callback.
+    - An `LogsUploadError` class was added to encapsulate information about the error. An instance of this class is passed to the `on_error` callback.
   - Added IO support for upload. Now IO streams can be passed in using the `logs` parameter. ([#28373](https://github.com/Azure/azure-sdk-for-python/pull/28373))
 
 ### Breaking Changes
   - Removed support for max_concurrency
-
-### Bugs Fixed
 
 ### Other Changes
   - Removed `msrest` dependency.

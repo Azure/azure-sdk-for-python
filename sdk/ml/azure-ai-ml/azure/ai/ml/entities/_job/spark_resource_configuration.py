@@ -2,9 +2,9 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from typing import Optional
+from typing import Optional, Union
 
-from azure.ai.ml._restclient.v2022_12_01_preview.models import (
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     SparkResourceConfiguration as RestSparkResourceConfiguration,
 )
 from azure.ai.ml.entities._mixins import DictMixin, RestTranslatableMixin
@@ -12,6 +12,24 @@ from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationExcepti
 
 
 class SparkResourceConfiguration(RestTranslatableMixin, DictMixin):
+    """Compute resource configuration for Spark component or job.
+
+    :keyword instance_type: The type of VM to be used by the compute target.
+    :type instance_type: Optional[str]
+    :keyword runtime_version: The Spark runtime version.
+    :type runtime_version: Optional[str]
+
+    .. admonition:: Example:
+
+
+        .. literalinclude:: ../../../../../samples/ml_samples_spark_configurations.py
+            :start-after: [START spark_resource_configuration]
+            :end-before: [END spark_resource_configuration]
+            :language: python
+            :dedent: 8
+            :caption: Configuring a SparkJob with SparkResourceConfiguration.
+    """
+
     instance_type_list = [
         "standard_e4s_v3",
         "standard_e8s_v3",
@@ -20,7 +38,7 @@ class SparkResourceConfiguration(RestTranslatableMixin, DictMixin):
         "standard_e64s_v3",
     ]
 
-    def __init__(self, *, instance_type: Optional[str] = None, runtime_version: Optional[str] = None):
+    def __init__(self, *, instance_type: Optional[str] = None, runtime_version: Optional[str] = None) -> None:
         self.instance_type = instance_type
         self.runtime_version = runtime_version
 
@@ -28,9 +46,13 @@ class SparkResourceConfiguration(RestTranslatableMixin, DictMixin):
         return RestSparkResourceConfiguration(instance_type=self.instance_type, runtime_version=self.runtime_version)
 
     @classmethod
-    def _from_rest_object(cls, obj: Optional[RestSparkResourceConfiguration]) -> Optional["SparkResourceConfiguration"]:
+    def _from_rest_object(
+        cls, obj: Union[dict, None, RestSparkResourceConfiguration]
+    ) -> Optional["SparkResourceConfiguration"]:
         if obj is None:
             return None
+        if isinstance(obj, dict):
+            return SparkResourceConfiguration(**obj)
         return SparkResourceConfiguration(instance_type=obj.instance_type, runtime_version=obj.runtime_version)
 
     def _validate(self):
@@ -53,8 +75,8 @@ class SparkResourceConfiguration(RestTranslatableMixin, DictMixin):
 
         # runtime_version type is either float or str
         if isinstance(self.runtime_version, float):
-            if self.runtime_version < 3.1 or self.runtime_version >= 3.3:
-                msg = "runtime version should be either 3.1 or 3.2"
+            if self.runtime_version < 3.2 or self.runtime_version >= 3.4:
+                msg = "runtime version should be either 3.2 or 3.3"
                 raise ValidationException(
                     message=msg,
                     no_personal_data_message=msg,
@@ -66,10 +88,10 @@ class SparkResourceConfiguration(RestTranslatableMixin, DictMixin):
             try:
                 for runtime in runtime_arr:
                     int(runtime)
-            except ValueError:
-                raise ValueError("runtime_version should only contain numbers")
+            except ValueError as e:
+                raise ValueError("runtime_version should only contain numbers") from e
             if len(runtime_arr) <= 1:
-                msg = "runtime version should be either 3.1 or 3.2"
+                msg = "runtime version should be either 3.2 or 3.3"
                 raise ValidationException(
                     message=msg,
                     no_personal_data_message=msg,
@@ -78,8 +100,8 @@ class SparkResourceConfiguration(RestTranslatableMixin, DictMixin):
                 )
             first_number = int(runtime_arr[0])
             second_number = int(runtime_arr[1])
-            if first_number != 3 or second_number not in (1, 2):
-                msg = "runtime version should be either 3.1 or 3.2"
+            if first_number != 3 or second_number not in (2, 3):
+                msg = "runtime version should be either 3.2 or 3.3"
                 raise ValidationException(
                     message=msg,
                     no_personal_data_message=msg,

@@ -70,7 +70,7 @@ from ._security_center_enums import SecuritySolutionStatus
 from ._security_center_enums import UnmaskedIpLoggingStatus
 from ._security_center_enums import ValueType
 from ._patch import __all__ as _patch_all
-from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [

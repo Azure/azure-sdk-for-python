@@ -14,9 +14,6 @@ DESCRIPTION:
     Abstractive summarization generates a summary that may not use the same words as those in
     the document, but captures the main idea.
 
-    The abstractive summarization feature is part of a gated preview. Request access here:
-    https://aka.ms/applyforgatedsummarizationfeatures
-
 USAGE:
     python sample_abstract_summary.py
 
@@ -26,11 +23,9 @@ USAGE:
 """
 
 
-import os
-
-
 def sample_abstractive_summarization() -> None:
     # [START abstract_summary]
+    import os
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.textanalytics import TextAnalyticsClient
 
@@ -69,7 +64,7 @@ def sample_abstractive_summarization() -> None:
             [print(f"{summary.text}\n") for summary in result.summaries]
         elif result.is_error is True:
             print("...Is an error with code '{}' and message '{}'".format(
-                result.code, result.message
+                result.error.code, result.error.message
             ))
     # [END abstract_summary]
 

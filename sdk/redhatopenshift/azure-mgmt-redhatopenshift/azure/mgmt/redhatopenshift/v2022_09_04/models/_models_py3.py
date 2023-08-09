@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from ... import _serialization
 
@@ -40,8 +40,8 @@ class APIServerProfile(_serialization.Model):
         visibility: Optional[Union[str, "_models.Visibility"]] = None,
         url: Optional[str] = None,
         ip: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword visibility: API server visibility. Known values are: "Private" and "Public".
         :paramtype visibility: str or ~azure.mgmt.redhatopenshift.v2022_09_04.models.Visibility
@@ -86,8 +86,8 @@ class CloudErrorBody(_serialization.Model):
         message: Optional[str] = None,
         target: Optional[str] = None,
         details: Optional[List["_models.CloudErrorBody"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword code: An identifier for the error. Codes are invariant and are intended to be consumed
          programmatically.
@@ -141,8 +141,8 @@ class ClusterProfile(_serialization.Model):
         version: Optional[str] = None,
         resource_group_id: Optional[str] = None,
         fips_validated_modules: Optional[Union[str, "_models.FipsValidatedModules"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword pull_secret: The pull secret for the cluster.
         :paramtype pull_secret: str
@@ -176,7 +176,7 @@ class ConsoleProfile(_serialization.Model):
         "url": {"key": "url", "type": "str"},
     }
 
-    def __init__(self, *, url: Optional[str] = None, **kwargs):
+    def __init__(self, *, url: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword url: The URL to access the cluster console.
         :paramtype url: str
@@ -212,8 +212,8 @@ class Display(_serialization.Model):
         resource: Optional[str] = None,
         operation: Optional[str] = None,
         description: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword provider: Friendly name of the resource provider.
         :paramtype provider: str
@@ -254,8 +254,8 @@ class IngressProfile(_serialization.Model):
         name: Optional[str] = None,
         visibility: Optional[Union[str, "_models.Visibility"]] = None,
         ip: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The ingress profile name.
         :paramtype name: str
@@ -302,7 +302,7 @@ class Resource(_serialization.Model):
         "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.id = None
@@ -312,7 +312,8 @@ class Resource(_serialization.Model):
 
 
 class ProxyResource(Resource):
-    """The resource model definition for a Azure Resource Manager proxy resource. It will not have tags and a location.
+    """The resource model definition for a Azure Resource Manager proxy resource. It will not have
+    tags and a location.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -343,7 +344,7 @@ class ProxyResource(Resource):
         "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
 
@@ -383,7 +384,7 @@ class MachinePool(ProxyResource):
         "resources": {"key": "properties.resources", "type": "str"},
     }
 
-    def __init__(self, *, resources: Optional[str] = None, **kwargs):
+    def __init__(self, *, resources: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword resources:
         :paramtype resources: str
@@ -407,8 +408,8 @@ class MachinePoolList(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.MachinePool"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self, *, value: Optional[List["_models.MachinePool"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: The list of Machine Pools.
         :paramtype value: list[~azure.mgmt.redhatopenshift.v2022_09_04.models.MachinePool]
@@ -440,7 +441,7 @@ class MachinePoolUpdate(_serialization.Model):
         "resources": {"key": "properties.resources", "type": "str"},
     }
 
-    def __init__(self, *, resources: Optional[str] = None, **kwargs):
+    def __init__(self, *, resources: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword resources:
         :paramtype resources: str
@@ -480,8 +481,8 @@ class MasterProfile(_serialization.Model):
         subnet_id: Optional[str] = None,
         encryption_at_host: Optional[Union[str, "_models.EncryptionAtHost"]] = None,
         disk_encryption_set_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword vm_size: The size of the master VMs.
         :paramtype vm_size: str
@@ -516,7 +517,7 @@ class NetworkProfile(_serialization.Model):
         "service_cidr": {"key": "serviceCidr", "type": "str"},
     }
 
-    def __init__(self, *, pod_cidr: Optional[str] = None, service_cidr: Optional[str] = None, **kwargs):
+    def __init__(self, *, pod_cidr: Optional[str] = None, service_cidr: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword pod_cidr: The CIDR used for OpenShift/Kubernetes Pods.
         :paramtype pod_cidr: str
@@ -529,7 +530,8 @@ class NetworkProfile(_serialization.Model):
 
 
 class TrackedResource(Resource):
-    """The resource model definition for an Azure Resource Manager tracked top level resource which has 'tags' and a 'location'.
+    """The resource model definition for an Azure Resource Manager tracked top level resource which
+    has 'tags' and a 'location'.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -569,7 +571,7 @@ class TrackedResource(Resource):
         "location": {"key": "location", "type": "str"},
     }
 
-    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -666,8 +668,8 @@ class OpenShiftCluster(TrackedResource):  # pylint: disable=too-many-instance-at
         worker_profiles: Optional[List["_models.WorkerProfile"]] = None,
         apiserver_profile: Optional["_models.APIServerProfile"] = None,
         ingress_profiles: Optional[List["_models.IngressProfile"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -719,7 +721,7 @@ class OpenShiftClusterAdminKubeconfig(_serialization.Model):
         "kubeconfig": {"key": "kubeconfig", "type": "str"},
     }
 
-    def __init__(self, *, kubeconfig: Optional[str] = None, **kwargs):
+    def __init__(self, *, kubeconfig: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword kubeconfig: The base64-encoded kubeconfig file.
         :paramtype kubeconfig: str
@@ -742,7 +744,9 @@ class OpenShiftClusterCredentials(_serialization.Model):
         "kubeadmin_password": {"key": "kubeadminPassword", "type": "str"},
     }
 
-    def __init__(self, *, kubeadmin_username: Optional[str] = None, kubeadmin_password: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, kubeadmin_username: Optional[str] = None, kubeadmin_password: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword kubeadmin_username: The username for the kubeadmin user.
         :paramtype kubeadmin_username: str
@@ -769,8 +773,12 @@ class OpenShiftClusterList(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.OpenShiftCluster"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        value: Optional[List["_models.OpenShiftCluster"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: The list of OpenShift clusters.
         :paramtype value: list[~azure.mgmt.redhatopenshift.v2022_09_04.models.OpenShiftCluster]
@@ -845,8 +853,8 @@ class OpenShiftClusterUpdate(_serialization.Model):  # pylint: disable=too-many-
         worker_profiles: Optional[List["_models.WorkerProfile"]] = None,
         apiserver_profile: Optional["_models.APIServerProfile"] = None,
         ingress_profiles: Optional[List["_models.IngressProfile"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: The resource tags.
         :paramtype tags: dict[str, str]
@@ -922,7 +930,7 @@ class OpenShiftVersion(ProxyResource):
         "version": {"key": "properties.version", "type": "str"},
     }
 
-    def __init__(self, *, version: Optional[str] = None, **kwargs):
+    def __init__(self, *, version: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword version: Version represents the version to create the cluster at.
         :paramtype version: str
@@ -946,8 +954,12 @@ class OpenShiftVersionList(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.OpenShiftVersion"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        value: Optional[List["_models.OpenShiftVersion"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: The List of available versions.
         :paramtype value: list[~azure.mgmt.redhatopenshift.v2022_09_04.models.OpenShiftVersion]
@@ -983,8 +995,8 @@ class Operation(_serialization.Model):
         name: Optional[str] = None,
         display: Optional["_models.Display"] = None,
         origin: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: Operation name: {provider}/{resource}/{operation}.
         :paramtype name: str
@@ -1014,7 +1026,9 @@ class OperationList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Operation"]] = None, next_link: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, value: Optional[List["_models.Operation"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: List of operations supported by the resource provider.
         :paramtype value: list[~azure.mgmt.redhatopenshift.v2022_09_04.models.Operation]
@@ -1061,7 +1075,7 @@ class Secret(ProxyResource):
         "secret_resources": {"key": "properties.secretResources", "type": "str"},
     }
 
-    def __init__(self, *, secret_resources: Optional[str] = None, **kwargs):
+    def __init__(self, *, secret_resources: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword secret_resources: The Secrets Resources.
         :paramtype secret_resources: str
@@ -1084,7 +1098,9 @@ class SecretList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Secret"]] = None, next_link: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, value: Optional[List["_models.Secret"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: The list of secrets.
         :paramtype value: list[~azure.mgmt.redhatopenshift.v2022_09_04.models.Secret]
@@ -1116,7 +1132,7 @@ class SecretUpdate(_serialization.Model):
         "secret_resources": {"key": "properties.secretResources", "type": "str"},
     }
 
-    def __init__(self, *, secret_resources: Optional[str] = None, **kwargs):
+    def __init__(self, *, secret_resources: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword secret_resources: The Secrets Resources.
         :paramtype secret_resources: str
@@ -1140,7 +1156,7 @@ class ServicePrincipalProfile(_serialization.Model):
         "client_secret": {"key": "clientSecret", "type": "str"},
     }
 
-    def __init__(self, *, client_id: Optional[str] = None, client_secret: Optional[str] = None, **kwargs):
+    def __init__(self, *, client_id: Optional[str] = None, client_secret: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword client_id: The client ID used for the cluster.
         :paramtype client_id: str
@@ -1187,7 +1203,7 @@ class SyncIdentityProvider(ProxyResource):
         "resources": {"key": "properties.resources", "type": "str"},
     }
 
-    def __init__(self, *, resources: Optional[str] = None, **kwargs):
+    def __init__(self, *, resources: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword resources:
         :paramtype resources: str
@@ -1211,8 +1227,12 @@ class SyncIdentityProviderList(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.SyncIdentityProvider"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        value: Optional[List["_models.SyncIdentityProvider"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: The list of sync identity providers.
         :paramtype value: list[~azure.mgmt.redhatopenshift.v2022_09_04.models.SyncIdentityProvider]
@@ -1244,7 +1264,7 @@ class SyncIdentityProviderUpdate(_serialization.Model):
         "resources": {"key": "properties.resources", "type": "str"},
     }
 
-    def __init__(self, *, resources: Optional[str] = None, **kwargs):
+    def __init__(self, *, resources: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword resources:
         :paramtype resources: str
@@ -1289,7 +1309,7 @@ class SyncSet(ProxyResource):
         "resources": {"key": "properties.resources", "type": "str"},
     }
 
-    def __init__(self, *, resources: Optional[str] = None, **kwargs):
+    def __init__(self, *, resources: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword resources: Resources represents the SyncSets configuration.
         :paramtype resources: str
@@ -1312,7 +1332,9 @@ class SyncSetList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.SyncSet"]] = None, next_link: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, value: Optional[List["_models.SyncSet"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: The list of syncsets.
         :paramtype value: list[~azure.mgmt.redhatopenshift.v2022_09_04.models.SyncSet]
@@ -1344,7 +1366,7 @@ class SyncSetUpdate(_serialization.Model):
         "resources": {"key": "properties.resources", "type": "str"},
     }
 
-    def __init__(self, *, resources: Optional[str] = None, **kwargs):
+    def __init__(self, *, resources: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword resources: Resources represents the SyncSets configuration.
         :paramtype resources: str
@@ -1392,8 +1414,8 @@ class SystemData(_serialization.Model):
         last_modified_by: Optional[str] = None,
         last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         last_modified_at: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword created_by: The identity that created the resource.
         :paramtype created_by: str
@@ -1462,8 +1484,8 @@ class WorkerProfile(_serialization.Model):
         count: Optional[int] = None,
         encryption_at_host: Optional[Union[str, "_models.EncryptionAtHost"]] = None,
         disk_encryption_set_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The worker profile name.
         :paramtype name: str

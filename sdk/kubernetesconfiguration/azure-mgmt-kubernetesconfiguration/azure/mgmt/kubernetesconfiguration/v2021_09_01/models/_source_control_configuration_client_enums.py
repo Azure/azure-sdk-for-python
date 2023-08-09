@@ -7,40 +7,42 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
-from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class CreatedByType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of identity that created the resource.
-    """
+class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of identity that created the resource."""
 
     USER = "User"
     APPLICATION = "Application"
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
 
-class Enum0(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class Enum0(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum0."""
 
     MICROSOFT_CONTAINER_SERVICE = "Microsoft.ContainerService"
     MICROSOFT_KUBERNETES = "Microsoft.Kubernetes"
 
-class Enum1(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class Enum1(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum1."""
 
     MANAGED_CLUSTERS = "managedClusters"
     CONNECTED_CLUSTERS = "connectedClusters"
 
-class LevelType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Level of the status.
-    """
+
+class LevelType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Level of the status."""
 
     ERROR = "Error"
     WARNING = "Warning"
     INFORMATION = "Information"
 
-class ProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The provisioning state of the extension resource.
-    """
+
+class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The provisioning state of the extension resource."""
 
     SUCCEEDED = "Succeeded"
     FAILED = "Failed"

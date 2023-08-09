@@ -3,6 +3,8 @@ type: amlcompute
 description: some_desc_aml
 size: Standard_DS2_v2
 location: eastus
+tags:
+   test: "true"
 ssh_public_access_enabled: true
 ssh_settings:
    admin_username: azureuser

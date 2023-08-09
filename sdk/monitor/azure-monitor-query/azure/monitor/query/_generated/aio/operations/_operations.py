@@ -30,6 +30,10 @@ from ...operations._operations import (
     build_query_batch_request,
     build_query_execute_request,
     build_query_get_request,
+    build_query_resource_execute_request,
+    build_query_resource_execute_xms_request,
+    build_query_resource_get_request,
+    build_query_resource_get_xms_request,
 )
 
 if sys.version_info >= (3, 9):
@@ -153,8 +157,9 @@ class QueryOperations:
         )
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -368,7 +373,7 @@ class QueryOperations:
         :type workspace_id: str
         :param body: The Analytics query. Learn more about the `Analytics query syntax
          <https://azure.microsoft.com/documentation/articles/app-insights-analytics-reference/>`_. Is
-         either a model type or a IO type. Required.
+         either a JSON type or a IO type. Required.
         :type body: JSON or IO
         :keyword prefer: Optional. The prefer header to set server timeout, query statistics and
          visualization information. Default value is None.
@@ -382,6 +387,18 @@ class QueryOperations:
 
         Example:
             .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                body = {
+                    "query": "str",  # The query to execute. Required.
+                    "timespan": "str",  # Optional. Optional. The timespan over which to query
+                      data. This is an ISO8601 time period value.  This timespan is applied in addition
+                      to any that are specified in the query expression.
+                    "workspaces": [
+                        "str"  # Optional. A list of workspaces that are included in the
+                          query.
+                    ]
+                }
 
                 # response body for status code(s): 200
                 response == {
@@ -463,8 +480,446 @@ class QueryOperations:
         )
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if response.content:
+            deserialized = response.json()
+        else:
+            deserialized = None
+
+        if cls:
+            return cls(pipeline_response, cast(JSON, deserialized), {})
+
+        return cast(JSON, deserialized)
+
+    @distributed_trace_async
+    async def resource_get(
+        self, resource_id: str, *, query: str, timespan: Optional[datetime.timedelta] = None, **kwargs: Any
+    ) -> JSON:
+        """Execute an Analytics query using resource URI.
+
+        Executes an Analytics query for data in the context of a resource. `Here
+        <https://docs.microsoft.com/azure/azure-monitor/logs/api/azure-resource-queries>`_ is an
+        example for using POST with an Analytics query.
+
+        :param resource_id: The identifier of the resource. Required.
+        :type resource_id: str
+        :keyword query: The Analytics query. Learn more about the `Analytics query syntax
+         <https://azure.microsoft.com/documentation/articles/app-insights-analytics-reference/>`_.
+         Required.
+        :paramtype query: str
+        :keyword timespan: Optional. The timespan over which to query data. This is an ISO8601 time
+         period value.  This timespan is applied in addition to any that are specified in the query
+         expression. Default value is None.
+        :paramtype timespan: ~datetime.timedelta
+        :return: JSON object
+        :rtype: JSON
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "tables": [
+                        {
+                            "columns": [
+                                {
+                                    "name": "str",  # The name of this column.
+                                      Required.
+                                    "type": "str"  # The data type of this
+                                      column. Required. Known values are: "bool", "datetime",
+                                      "dynamic", "int", "long", "real", "string", "guid", "decimal",
+                                      and "timespan".
+                                }
+                            ],
+                            "name": "str",  # The name of the table. Required.
+                            "rows": [
+                                [
+                                    {}  # The resulting rows from this query.
+                                      Required.
+                                ]
+                            ]
+                        }
+                    ],
+                    "error": {
+                        "code": "str",  # A machine readable error code. Required.
+                        "message": "str",  # A human readable error message. Required.
+                        "details": [
+                            {
+                                "code": "str",  # The error's code. Required.
+                                "message": "str",  # A human readable error message.
+                                  Required.
+                                "resources": [
+                                    "str"  # Optional. Indicates resources which
+                                      were responsible for the error.
+                                ],
+                                "target": "str",  # Optional. Indicates which
+                                  property in the request is responsible for the error.
+                                "value": "str"  # Optional. Indicates which value in
+                                  'target' is responsible for the error.
+                            }
+                        ],
+                        "innererror": ...
+                    },
+                    "render": {},  # Optional. Visualization data in JSON format.
+                    "statistics": {}  # Optional. Statistics represented in JSON format.
+                }
+        """
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
+
+        request = build_query_resource_get_request(
+            resource_id=resource_id,
+            query=query,
+            timespan=timespan,
+            headers=_headers,
+            params=_params,
+        )
+        request.url = self._client.format_url(request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if response.content:
+            deserialized = response.json()
+        else:
+            deserialized = None
+
+        if cls:
+            return cls(pipeline_response, cast(JSON, deserialized), {})
+
+        return cast(JSON, deserialized)
+
+    @overload
+    async def resource_execute(
+        self,
+        resource_id: str,
+        body: JSON,
+        *,
+        prefer: Optional[str] = None,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> JSON:
+        """Execute an Analytics query using resource ID.
+
+        Executes an Analytics query for data in the context of a resource. `Here
+        <https://docs.microsoft.com/azure/azure-monitor/logs/api/azure-resource-queries>`_ is an
+        example for using POST with an Analytics query.
+
+        :param resource_id: The identifier of the resource. Required.
+        :type resource_id: str
+        :param body: The Analytics query. Learn more about the `Analytics query syntax
+         <https://azure.microsoft.com/documentation/articles/app-insights-analytics-reference/>`_.
+         Required.
+        :type body: JSON
+        :keyword prefer: Optional. The prefer header to set server timeout, query statistics and
+         visualization information. Default value is None.
+        :paramtype prefer: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: JSON object
+        :rtype: JSON
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                body = {
+                    "query": "str",  # The query to execute. Required.
+                    "timespan": "str",  # Optional. Optional. The timespan over which to query
+                      data. This is an ISO8601 time period value.  This timespan is applied in addition
+                      to any that are specified in the query expression.
+                    "workspaces": [
+                        "str"  # Optional. A list of workspaces that are included in the
+                          query.
+                    ]
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "tables": [
+                        {
+                            "columns": [
+                                {
+                                    "name": "str",  # The name of this column.
+                                      Required.
+                                    "type": "str"  # The data type of this
+                                      column. Required. Known values are: "bool", "datetime",
+                                      "dynamic", "int", "long", "real", "string", "guid", "decimal",
+                                      and "timespan".
+                                }
+                            ],
+                            "name": "str",  # The name of the table. Required.
+                            "rows": [
+                                [
+                                    {}  # The resulting rows from this query.
+                                      Required.
+                                ]
+                            ]
+                        }
+                    ],
+                    "error": {
+                        "code": "str",  # A machine readable error code. Required.
+                        "message": "str",  # A human readable error message. Required.
+                        "details": [
+                            {
+                                "code": "str",  # The error's code. Required.
+                                "message": "str",  # A human readable error message.
+                                  Required.
+                                "resources": [
+                                    "str"  # Optional. Indicates resources which
+                                      were responsible for the error.
+                                ],
+                                "target": "str",  # Optional. Indicates which
+                                  property in the request is responsible for the error.
+                                "value": "str"  # Optional. Indicates which value in
+                                  'target' is responsible for the error.
+                            }
+                        ],
+                        "innererror": ...
+                    },
+                    "render": {},  # Optional. Visualization data in JSON format.
+                    "statistics": {}  # Optional. Statistics represented in JSON format.
+                }
+        """
+
+    @overload
+    async def resource_execute(
+        self,
+        resource_id: str,
+        body: IO,
+        *,
+        prefer: Optional[str] = None,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> JSON:
+        """Execute an Analytics query using resource ID.
+
+        Executes an Analytics query for data in the context of a resource. `Here
+        <https://docs.microsoft.com/azure/azure-monitor/logs/api/azure-resource-queries>`_ is an
+        example for using POST with an Analytics query.
+
+        :param resource_id: The identifier of the resource. Required.
+        :type resource_id: str
+        :param body: The Analytics query. Learn more about the `Analytics query syntax
+         <https://azure.microsoft.com/documentation/articles/app-insights-analytics-reference/>`_.
+         Required.
+        :type body: IO
+        :keyword prefer: Optional. The prefer header to set server timeout, query statistics and
+         visualization information. Default value is None.
+        :paramtype prefer: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: JSON object
+        :rtype: JSON
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "tables": [
+                        {
+                            "columns": [
+                                {
+                                    "name": "str",  # The name of this column.
+                                      Required.
+                                    "type": "str"  # The data type of this
+                                      column. Required. Known values are: "bool", "datetime",
+                                      "dynamic", "int", "long", "real", "string", "guid", "decimal",
+                                      and "timespan".
+                                }
+                            ],
+                            "name": "str",  # The name of the table. Required.
+                            "rows": [
+                                [
+                                    {}  # The resulting rows from this query.
+                                      Required.
+                                ]
+                            ]
+                        }
+                    ],
+                    "error": {
+                        "code": "str",  # A machine readable error code. Required.
+                        "message": "str",  # A human readable error message. Required.
+                        "details": [
+                            {
+                                "code": "str",  # The error's code. Required.
+                                "message": "str",  # A human readable error message.
+                                  Required.
+                                "resources": [
+                                    "str"  # Optional. Indicates resources which
+                                      were responsible for the error.
+                                ],
+                                "target": "str",  # Optional. Indicates which
+                                  property in the request is responsible for the error.
+                                "value": "str"  # Optional. Indicates which value in
+                                  'target' is responsible for the error.
+                            }
+                        ],
+                        "innererror": ...
+                    },
+                    "render": {},  # Optional. Visualization data in JSON format.
+                    "statistics": {}  # Optional. Statistics represented in JSON format.
+                }
+        """
+
+    @distributed_trace_async
+    async def resource_execute(
+        self, resource_id: str, body: Union[JSON, IO], *, prefer: Optional[str] = None, **kwargs: Any
+    ) -> JSON:
+        """Execute an Analytics query using resource ID.
+
+        Executes an Analytics query for data in the context of a resource. `Here
+        <https://docs.microsoft.com/azure/azure-monitor/logs/api/azure-resource-queries>`_ is an
+        example for using POST with an Analytics query.
+
+        :param resource_id: The identifier of the resource. Required.
+        :type resource_id: str
+        :param body: The Analytics query. Learn more about the `Analytics query syntax
+         <https://azure.microsoft.com/documentation/articles/app-insights-analytics-reference/>`_. Is
+         either a JSON type or a IO type. Required.
+        :type body: JSON or IO
+        :keyword prefer: Optional. The prefer header to set server timeout, query statistics and
+         visualization information. Default value is None.
+        :paramtype prefer: str
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
+        :paramtype content_type: str
+        :return: JSON object
+        :rtype: JSON
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                body = {
+                    "query": "str",  # The query to execute. Required.
+                    "timespan": "str",  # Optional. Optional. The timespan over which to query
+                      data. This is an ISO8601 time period value.  This timespan is applied in addition
+                      to any that are specified in the query expression.
+                    "workspaces": [
+                        "str"  # Optional. A list of workspaces that are included in the
+                          query.
+                    ]
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "tables": [
+                        {
+                            "columns": [
+                                {
+                                    "name": "str",  # The name of this column.
+                                      Required.
+                                    "type": "str"  # The data type of this
+                                      column. Required. Known values are: "bool", "datetime",
+                                      "dynamic", "int", "long", "real", "string", "guid", "decimal",
+                                      and "timespan".
+                                }
+                            ],
+                            "name": "str",  # The name of the table. Required.
+                            "rows": [
+                                [
+                                    {}  # The resulting rows from this query.
+                                      Required.
+                                ]
+                            ]
+                        }
+                    ],
+                    "error": {
+                        "code": "str",  # A machine readable error code. Required.
+                        "message": "str",  # A human readable error message. Required.
+                        "details": [
+                            {
+                                "code": "str",  # The error's code. Required.
+                                "message": "str",  # A human readable error message.
+                                  Required.
+                                "resources": [
+                                    "str"  # Optional. Indicates resources which
+                                      were responsible for the error.
+                                ],
+                                "target": "str",  # Optional. Indicates which
+                                  property in the request is responsible for the error.
+                                "value": "str"  # Optional. Indicates which value in
+                                  'target' is responsible for the error.
+                            }
+                        ],
+                        "innererror": ...
+                    },
+                    "render": {},  # Optional. Visualization data in JSON format.
+                    "statistics": {}  # Optional. Statistics represented in JSON format.
+                }
+        """
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _json = None
+        _content = None
+        if isinstance(body, (IO, bytes)):
+            _content = body
+        else:
+            _json = body
+
+        request = build_query_resource_execute_request(
+            resource_id=resource_id,
+            prefer=prefer,
+            content_type=content_type,
+            json=_json,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        request.url = self._client.format_url(request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -525,8 +980,10 @@ class QueryOperations:
                                 "str": "str"  # Optional. Dictionary of
                                   :code:`<string>`.
                             },
-                            "method": "str",  # Optional. "POST"
-                            "path": "str"  # Optional. "/query"
+                            "method": "POST",  # Optional. Default value is "POST". An
+                              single request in a batch. Required.
+                            "path": "/query"  # Optional. Default value is "/query". An
+                              single request in a batch. Required.
                         }
                     ]
                 }
@@ -701,7 +1158,7 @@ class QueryOperations:
         <https://dev.loganalytics.io/documentation/Using-the-API>`_ is an example for using POST with
         an Analytics query.
 
-        :param body: The batch request body. Is either a model type or a IO type. Required.
+        :param body: The batch request body. Is either a JSON type or a IO type. Required.
         :type body: JSON or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -712,6 +1169,36 @@ class QueryOperations:
 
         Example:
             .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                body = {
+                    "requests": [
+                        {
+                            "body": {
+                                "query": "str",  # The query to execute. Required.
+                                "timespan": "str",  # Optional. Optional. The
+                                  timespan over which to query data. This is an ISO8601 time period
+                                  value.  This timespan is applied in addition to any that are
+                                  specified in the query expression.
+                                "workspaces": [
+                                    "str"  # Optional. A list of workspaces that
+                                      are included in the query.
+                                ]
+                            },
+                            "id": "str",  # The error details. Required.
+                            "workspace": "str",  # Workspace Id to be included in the
+                              query. Required.
+                            "headers": {
+                                "str": "str"  # Optional. Dictionary of
+                                  :code:`<string>`.
+                            },
+                            "method": "POST",  # Optional. Default value is "POST". An
+                              single request in a batch. Required.
+                            "path": "/query"  # Optional. Default value is "/query". An
+                              single request in a batch. Required.
+                        }
+                    ]
+                }
 
                 # response body for status code(s): 200
                 response == {
@@ -814,8 +1301,446 @@ class QueryOperations:
         )
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if response.content:
+            deserialized = response.json()
+        else:
+            deserialized = None
+
+        if cls:
+            return cls(pipeline_response, cast(JSON, deserialized), {})
+
+        return cast(JSON, deserialized)
+
+    @distributed_trace_async
+    async def resource_get_xms(
+        self, resource_id: str, *, query: str, timespan: Optional[datetime.timedelta] = None, **kwargs: Any
+    ) -> JSON:
+        """Execute an Analytics query using resource URI.
+
+        Executes an Analytics query for data in the context of a resource. `Here
+        <https://docs.microsoft.com/azure/azure-monitor/logs/api/azure-resource-queries>`_ is an
+        example for using POST with an Analytics query.
+
+        :param resource_id: The identifier of the resource. Required.
+        :type resource_id: str
+        :keyword query: The Analytics query. Learn more about the `Analytics query syntax
+         <https://azure.microsoft.com/documentation/articles/app-insights-analytics-reference/>`_.
+         Required.
+        :paramtype query: str
+        :keyword timespan: Optional. The timespan over which to query data. This is an ISO8601 time
+         period value.  This timespan is applied in addition to any that are specified in the query
+         expression. Default value is None.
+        :paramtype timespan: ~datetime.timedelta
+        :return: JSON object
+        :rtype: JSON
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "tables": [
+                        {
+                            "columns": [
+                                {
+                                    "name": "str",  # The name of this column.
+                                      Required.
+                                    "type": "str"  # The data type of this
+                                      column. Required. Known values are: "bool", "datetime",
+                                      "dynamic", "int", "long", "real", "string", "guid", "decimal",
+                                      and "timespan".
+                                }
+                            ],
+                            "name": "str",  # The name of the table. Required.
+                            "rows": [
+                                [
+                                    {}  # The resulting rows from this query.
+                                      Required.
+                                ]
+                            ]
+                        }
+                    ],
+                    "error": {
+                        "code": "str",  # A machine readable error code. Required.
+                        "message": "str",  # A human readable error message. Required.
+                        "details": [
+                            {
+                                "code": "str",  # The error's code. Required.
+                                "message": "str",  # A human readable error message.
+                                  Required.
+                                "resources": [
+                                    "str"  # Optional. Indicates resources which
+                                      were responsible for the error.
+                                ],
+                                "target": "str",  # Optional. Indicates which
+                                  property in the request is responsible for the error.
+                                "value": "str"  # Optional. Indicates which value in
+                                  'target' is responsible for the error.
+                            }
+                        ],
+                        "innererror": ...
+                    },
+                    "render": {},  # Optional. Visualization data in JSON format.
+                    "statistics": {}  # Optional. Statistics represented in JSON format.
+                }
+        """
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
+
+        request = build_query_resource_get_xms_request(
+            resource_id=resource_id,
+            query=query,
+            timespan=timespan,
+            headers=_headers,
+            params=_params,
+        )
+        request.url = self._client.format_url(request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if response.content:
+            deserialized = response.json()
+        else:
+            deserialized = None
+
+        if cls:
+            return cls(pipeline_response, cast(JSON, deserialized), {})
+
+        return cast(JSON, deserialized)
+
+    @overload
+    async def resource_execute_xms(
+        self,
+        resource_id: str,
+        body: JSON,
+        *,
+        prefer: Optional[str] = None,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> JSON:
+        """Execute an Analytics query using resource ID.
+
+        Executes an Analytics query for data in the context of a resource. `Here
+        <https://docs.microsoft.com/azure/azure-monitor/logs/api/azure-resource-queries>`_ is an
+        example for using POST with an Analytics query.
+
+        :param resource_id: The identifier of the resource. Required.
+        :type resource_id: str
+        :param body: The Analytics query. Learn more about the `Analytics query syntax
+         <https://azure.microsoft.com/documentation/articles/app-insights-analytics-reference/>`_.
+         Required.
+        :type body: JSON
+        :keyword prefer: Optional. The prefer header to set server timeout, query statistics and
+         visualization information. Default value is None.
+        :paramtype prefer: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: JSON object
+        :rtype: JSON
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                body = {
+                    "query": "str",  # The query to execute. Required.
+                    "timespan": "str",  # Optional. Optional. The timespan over which to query
+                      data. This is an ISO8601 time period value.  This timespan is applied in addition
+                      to any that are specified in the query expression.
+                    "workspaces": [
+                        "str"  # Optional. A list of workspaces that are included in the
+                          query.
+                    ]
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "tables": [
+                        {
+                            "columns": [
+                                {
+                                    "name": "str",  # The name of this column.
+                                      Required.
+                                    "type": "str"  # The data type of this
+                                      column. Required. Known values are: "bool", "datetime",
+                                      "dynamic", "int", "long", "real", "string", "guid", "decimal",
+                                      and "timespan".
+                                }
+                            ],
+                            "name": "str",  # The name of the table. Required.
+                            "rows": [
+                                [
+                                    {}  # The resulting rows from this query.
+                                      Required.
+                                ]
+                            ]
+                        }
+                    ],
+                    "error": {
+                        "code": "str",  # A machine readable error code. Required.
+                        "message": "str",  # A human readable error message. Required.
+                        "details": [
+                            {
+                                "code": "str",  # The error's code. Required.
+                                "message": "str",  # A human readable error message.
+                                  Required.
+                                "resources": [
+                                    "str"  # Optional. Indicates resources which
+                                      were responsible for the error.
+                                ],
+                                "target": "str",  # Optional. Indicates which
+                                  property in the request is responsible for the error.
+                                "value": "str"  # Optional. Indicates which value in
+                                  'target' is responsible for the error.
+                            }
+                        ],
+                        "innererror": ...
+                    },
+                    "render": {},  # Optional. Visualization data in JSON format.
+                    "statistics": {}  # Optional. Statistics represented in JSON format.
+                }
+        """
+
+    @overload
+    async def resource_execute_xms(
+        self,
+        resource_id: str,
+        body: IO,
+        *,
+        prefer: Optional[str] = None,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> JSON:
+        """Execute an Analytics query using resource ID.
+
+        Executes an Analytics query for data in the context of a resource. `Here
+        <https://docs.microsoft.com/azure/azure-monitor/logs/api/azure-resource-queries>`_ is an
+        example for using POST with an Analytics query.
+
+        :param resource_id: The identifier of the resource. Required.
+        :type resource_id: str
+        :param body: The Analytics query. Learn more about the `Analytics query syntax
+         <https://azure.microsoft.com/documentation/articles/app-insights-analytics-reference/>`_.
+         Required.
+        :type body: IO
+        :keyword prefer: Optional. The prefer header to set server timeout, query statistics and
+         visualization information. Default value is None.
+        :paramtype prefer: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: JSON object
+        :rtype: JSON
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "tables": [
+                        {
+                            "columns": [
+                                {
+                                    "name": "str",  # The name of this column.
+                                      Required.
+                                    "type": "str"  # The data type of this
+                                      column. Required. Known values are: "bool", "datetime",
+                                      "dynamic", "int", "long", "real", "string", "guid", "decimal",
+                                      and "timespan".
+                                }
+                            ],
+                            "name": "str",  # The name of the table. Required.
+                            "rows": [
+                                [
+                                    {}  # The resulting rows from this query.
+                                      Required.
+                                ]
+                            ]
+                        }
+                    ],
+                    "error": {
+                        "code": "str",  # A machine readable error code. Required.
+                        "message": "str",  # A human readable error message. Required.
+                        "details": [
+                            {
+                                "code": "str",  # The error's code. Required.
+                                "message": "str",  # A human readable error message.
+                                  Required.
+                                "resources": [
+                                    "str"  # Optional. Indicates resources which
+                                      were responsible for the error.
+                                ],
+                                "target": "str",  # Optional. Indicates which
+                                  property in the request is responsible for the error.
+                                "value": "str"  # Optional. Indicates which value in
+                                  'target' is responsible for the error.
+                            }
+                        ],
+                        "innererror": ...
+                    },
+                    "render": {},  # Optional. Visualization data in JSON format.
+                    "statistics": {}  # Optional. Statistics represented in JSON format.
+                }
+        """
+
+    @distributed_trace_async
+    async def resource_execute_xms(
+        self, resource_id: str, body: Union[JSON, IO], *, prefer: Optional[str] = None, **kwargs: Any
+    ) -> JSON:
+        """Execute an Analytics query using resource ID.
+
+        Executes an Analytics query for data in the context of a resource. `Here
+        <https://docs.microsoft.com/azure/azure-monitor/logs/api/azure-resource-queries>`_ is an
+        example for using POST with an Analytics query.
+
+        :param resource_id: The identifier of the resource. Required.
+        :type resource_id: str
+        :param body: The Analytics query. Learn more about the `Analytics query syntax
+         <https://azure.microsoft.com/documentation/articles/app-insights-analytics-reference/>`_. Is
+         either a JSON type or a IO type. Required.
+        :type body: JSON or IO
+        :keyword prefer: Optional. The prefer header to set server timeout, query statistics and
+         visualization information. Default value is None.
+        :paramtype prefer: str
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
+        :paramtype content_type: str
+        :return: JSON object
+        :rtype: JSON
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                body = {
+                    "query": "str",  # The query to execute. Required.
+                    "timespan": "str",  # Optional. Optional. The timespan over which to query
+                      data. This is an ISO8601 time period value.  This timespan is applied in addition
+                      to any that are specified in the query expression.
+                    "workspaces": [
+                        "str"  # Optional. A list of workspaces that are included in the
+                          query.
+                    ]
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "tables": [
+                        {
+                            "columns": [
+                                {
+                                    "name": "str",  # The name of this column.
+                                      Required.
+                                    "type": "str"  # The data type of this
+                                      column. Required. Known values are: "bool", "datetime",
+                                      "dynamic", "int", "long", "real", "string", "guid", "decimal",
+                                      and "timespan".
+                                }
+                            ],
+                            "name": "str",  # The name of the table. Required.
+                            "rows": [
+                                [
+                                    {}  # The resulting rows from this query.
+                                      Required.
+                                ]
+                            ]
+                        }
+                    ],
+                    "error": {
+                        "code": "str",  # A machine readable error code. Required.
+                        "message": "str",  # A human readable error message. Required.
+                        "details": [
+                            {
+                                "code": "str",  # The error's code. Required.
+                                "message": "str",  # A human readable error message.
+                                  Required.
+                                "resources": [
+                                    "str"  # Optional. Indicates resources which
+                                      were responsible for the error.
+                                ],
+                                "target": "str",  # Optional. Indicates which
+                                  property in the request is responsible for the error.
+                                "value": "str"  # Optional. Indicates which value in
+                                  'target' is responsible for the error.
+                            }
+                        ],
+                        "innererror": ...
+                    },
+                    "render": {},  # Optional. Visualization data in JSON format.
+                    "statistics": {}  # Optional. Statistics represented in JSON format.
+                }
+        """
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _json = None
+        _content = None
+        if isinstance(body, (IO, bytes)):
+            _content = body
+        else:
+            _json = body
+
+        request = build_query_resource_execute_xms_request(
+            resource_id=resource_id,
+            prefer=prefer,
+            content_type=content_type,
+            json=_json,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        request.url = self._client.format_url(request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1230,8 +2155,9 @@ class MetadataOperations:
         )
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1628,8 +2554,9 @@ class MetadataOperations:
         )
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response

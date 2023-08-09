@@ -312,7 +312,8 @@ class MachinePoolsOperations:
         :type resource_name: str
         :param child_resource_name: The name of the MachinePool resource. Required.
         :type child_resource_name: str
-        :param parameters: The MachinePool resource. Is either a model type or a IO type. Required.
+        :param parameters: The MachinePool resource. Is either a MachinePool type or a IO type.
+         Required.
         :type parameters: ~azure.mgmt.redhatopenshift.v2022_09_04.models.MachinePool or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -536,7 +537,8 @@ class MachinePoolsOperations:
         :type resource_name: str
         :param child_resource_name: The name of the MachinePool resource. Required.
         :type child_resource_name: str
-        :param parameters: The MachinePool resource. Is either a model type or a IO type. Required.
+        :param parameters: The MachinePool resource. Is either a MachinePoolUpdate type or a IO type.
+         Required.
         :type parameters: ~azure.mgmt.redhatopenshift.v2022_09_04.models.MachinePoolUpdate or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.

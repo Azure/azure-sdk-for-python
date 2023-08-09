@@ -1,10 +1,13 @@
 # Setup Python Development Environment - Advanced
 In this document we will provide additional information about the test environments:
 
-- [Test Mixin Classes](#test-mixin-classes)
-- [Resource Preparers](#preparers)
-- [Examples with Preparers](#examples-with-preparers)
-- [mgmt_settings_real.py](#mgmt_settings_real-file)
+- [Setup Python Development Environment - Advanced](#setup-python-development-environment---advanced)
+    - [Test Mixin Classes](#test-mixin-classes)
+    - [Preparers](#preparers)
+    - [Examples with Preparers](#examples-with-preparers)
+        - [Example 2: Basic Preparer Usage with Storage](#example-2-basic-preparer-usage-with-storage)
+        - [Example 3: Cached Preparer Usage](#example-3-cached-preparer-usage)
+    - [mgmt\_settings\_real file](#mgmt_settings_real-file)
 
 ## Test Mixin Classes
 Many of our test suites use a mixin class to reduce re-writing code in multiple test files. For example, in the Tables test suite there is a `_shared` directory containing two of these mixin classes, a [sync one](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/tables/azure-data-tables/tests/_shared/testcase.py) and an [async version](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/tables/azure-data-tables/tests/_shared/asynctestcase.py). These classes will often have ways to create connection strings from an account name and key, formulate the account url, configure logging, or validate service responses. In order for these mixin classes to be used by both the functional and unit tests they should inherit from `object`. For example:
@@ -74,8 +77,8 @@ class TestTablesUnit(TablesTestMixin):
         assert client.account_url == "https://{}.tables.core.windows.net/".format(account)
 ```
 
-
 ## Preparers
+
 The Azure SDK team has created some in house tools to help with easier testing. These additional tools are located in the `devtools_testutils` package that was installed with your `dev_requirements.txt`. In this package are the preparers that will be commonly used throughout the repository to test various resources. A preparer is a way to programmatically create fresh resources to run our tests against and then deleting them after running a test suite. These help guarantee standardized behavior by starting each test group from a fresh resource and account.
 
 If this situation is a requirement for your tests, you can opt to create a new preparer for your service from the management plane library for a service. There are already a few preparers built in the [devtools_testutils](https://github.com/Azure/azure-sdk-for-python/tree/main/tools/azure-sdk-tools/devtools_testutils). Most prepares will start with the [`ResourceGroupPreparer`](https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/resource_testcase.py#L29-L99) to first create a resource group for your service.
@@ -86,8 +89,6 @@ To build your own preparer you will need to use the management plane library to 
 |-|-|-|
 | Resource Group | [link](https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/resource_testcase.py#L57-L85) | [link](https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/resource_testcase.py#L87-L99) |
 | Storage Account | [link](https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/storage_testcase.py#L53-L102) | [link](https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/storage_testcase.py#L104-L107) |
-| KeyVault | [link](https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/keyvault_preparer.py#L84-L131) | [link](https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/keyvault_preparer.py#L133-L138) |
-
 
 ## Examples with Preparers
 
@@ -107,7 +108,7 @@ from devtools_testutils import (
 class ExampleStorageTestCase(AzureTestCase):
 
     @ResourceGroupPreparer()
-    @StorageAcountPreparer()
+    @StorageAccountPreparer()
     def test_create_table(self, resource_group, location, storage_account, storage_account_key):
         account_url = self.account_url(storage_account, "table")
         client = self.create_client_from_credential(TableServiceClient, storage_account_key, account_url=account_url)
@@ -141,7 +142,7 @@ from devtools_testutils import (
 class ExampleStorageTestCase(AzureTestCase):
 
     @CachedResourceGroupPreparer(name_prefix="storagetest")
-    @CachedStorageAcountPreparer(name_prefix="storagetest")
+    @CachedStorageAccountPreparer(name_prefix="storagetest")
     def test_create_table(self, resource_group, location, storage_account, storage_account_key):
         account_url = self.account_url(storage_account, "table")
         client = self.create_client_from_credential(TableServiceClient, storage_account_key, account_url=account_url)
@@ -152,7 +153,7 @@ class ExampleStorageTestCase(AzureTestCase):
         assert valid_table_name == table.table_name
 
     @CachedResourceGroupPreparer(name_prefix="storagetest")
-    @CachedStorageAcountPreparer(name_prefix="storagetest")
+    @CachedStorageAccountPreparer(name_prefix="storagetest")
     def test_create_table_if_exists (self, resource_group, location, storage_account, storage_account_key):
         account_url = self.account_url(storage_account, "table")
         client = self.create_client_from_credential(TableServiceClient, storage_account_key, account_url=account_url)

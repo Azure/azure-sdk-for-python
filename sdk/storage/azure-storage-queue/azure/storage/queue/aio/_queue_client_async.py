@@ -240,7 +240,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncrypt
         headers = kwargs.pop("headers", {})
         headers.update(add_metadata_headers(metadata))  # type: ignore
         try:
-            return await self._client.queue.set_metadata(  # type: ignore
+            await self._client.queue.set_metadata(  # type: ignore
                 timeout=timeout, headers=headers, cls=return_response_headers, **kwargs
             )
         except HttpResponseError as error:
@@ -424,8 +424,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncrypt
             process_storage_error(error)
 
     @distributed_trace_async
-    async def receive_message(self, **kwargs):
-        # type: (Optional[Any]) -> QueueMessage
+    async def receive_message(self, **kwargs: Any) -> Optional[QueueMessage]:
         """Removes one message from the front of the queue.
 
         When the message is retrieved from the queue, the response includes the message
@@ -438,9 +437,9 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncrypt
         decrypted before being returned.
 
         :keyword int visibility_timeout:
-            If not specified, the default value is 0. Specifies the
+            If not specified, the default value is 30. Specifies the
             new visibility timeout value, in seconds, relative to server time.
-            The value must be larger than or equal to 0, and cannot be
+            The value must be larger than or equal to 1, and cannot be
             larger than 7 days. The visibility timeout of a message cannot be
             set to a value later than the expiry time. visibility_timeout
             should be set to a value smaller than the time-to-live value.
@@ -451,8 +450,8 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncrypt
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-queue
             #other-client--per-operation-configuration>`_.
         :return:
-            Returns a message from the Queue.
-        :rtype: ~azure.storage.queue.QueueMessage
+            Returns a message from the Queue or None if the Queue is empty.
+        :rtype: ~azure.storage.queue.QueueMessage or None
 
         .. admonition:: Example:
 

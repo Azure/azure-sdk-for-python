@@ -23,9 +23,7 @@ namespace_name = PACKAGE_NAME.replace("-", ".")
 
 # Version extraction inspired from 'requests'
 with open(os.path.join(package_folder_path, "_version.py"), "r") as fd:
-    version = re.search(
-        r'^VERSION\s*=\s*[\'"]([^\'"]*)[\'"]', fd.read(), re.MULTILINE
-    ).group(1)
+    version = re.search(r'^VERSION\s*=\s*[\'"]([^\'"]*)[\'"]', fd.read(), re.MULTILINE).group(1)
 
 if not version:
     raise RuntimeError("Cannot find version information")
@@ -41,7 +39,7 @@ exclude_packages = [
     "samples",
     # Exclude packages that will be covered by PEP420 or nspkg
     "azure",
-    "azure.appconfiguration"
+    "azure.appconfiguration",
 ]
 if sys.version_info < (3, 5, 3):
     exclude_packages.extend(["*.aio", "*.aio.*"])
@@ -58,7 +56,7 @@ setup(
     author_email="azpysdkhelp@microsoft.com",
     url="https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/appconfiguration/azure-appconfiguration-provider",
     classifiers=[
-        "Development Status :: 4 - Beta",
+        "Development Status :: 5 - Production/Stable",
         "Programming Language :: Python",
         "Programming Language :: Python :: 3 :: Only",
         "Programming Language :: Python :: 3",
@@ -66,6 +64,7 @@ setup(
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
         "License :: OSI Approved :: MIT License",
     ],
     zip_safe=False,
@@ -73,8 +72,8 @@ setup(
     python_requires=">=3.6",
     install_requires=[
         "msrest>=0.6.21",
-        "azure-core<2.0.0,>=1.2.2",
-        "azure-appconfiguration<2.0.0,>=1.3.0",
+        "azure-core<2.0.0,>=1.25.0",
+        "azure-appconfiguration<2.0.0,>=1.4.0",
         "azure-keyvault-secrets<5.0.0,>=4.3.0",
     ],
 )

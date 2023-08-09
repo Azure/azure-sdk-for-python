@@ -1,0 +1,100 @@
+parameters:
+  - name: BeforePublishSteps
+    type: object
+    default: []
+  - name: TestPipeline
+    type: boolean
+    default: false
+  - name: ServiceDirectory
+    type: string
+    default: ''
+  - name: Artifacts
+    type: object
+    default: []
+  - name: DevFeedName
+    type: string
+    default: 'public/azure-sdk-for-python'
+# The variable TargetingString is set by template `eng/pipelines/templates/steps/targeting-string-resolve.yml`. This template is invoked from yml files:
+#     eng/pipelines/templates/jobs/ci.tests.yml
+#     eng/pipelines/templates/jobs/ci.yml
+#     eng/pipelines/templates/jobs/live.test.yml
+
+# Please use `$(TargetingString)` to refer to the python packages glob string. This was previously `${{ parameters.BuildTargetingString }}`.
+steps:
+  - template: /eng/common/pipelines/templates/steps/set-test-pipeline-version.yml
+    parameters:
+      PackageName: "azure-template"
+      ServiceDirectory: "template"
+      TestPipeline: ${{ parameters.TestPipeline }}
+
+  - template: /eng/common/pipelines/templates/steps/set-default-branch.yml
+
+  - script: |
+      echo "##vso[build.addbuildtag]Scheduled"
+    displayName: 'Tag scheduled builds'
+    condition: and(eq(variables['Build.SourceBranchName'], variables['DefaultBranch']), eq(variables['Build.Reason'],'Schedule'))
+
+  - task: UsePythonVersion@0
+    displayName: 'Use Python $(PythonVersion)'
+    inputs:
+      versionSpec: $(PythonVersion)
+
+  - script: |
+      python -m pip install setuptools==58.3.0
+      python -m pip install -r eng/ci_tools.txt
+    displayName: 'Prep Environment'
+
+  - template: set-dev-build.yml
+    parameters:
+      ServiceDirectory: ${{ parameters.ServiceDirectory }}
+
+  - task: Powershell@2
+    inputs:
+      filePath: $(Build.SourcesDirectory)/eng/common/scripts/Save-Package-Properties.ps1
+      arguments: >
+        -ServiceDirectory ${{parameters.ServiceDirectory}}
+        -OutDirectory $(Build.ArtifactStagingDirectory)/PackageInfo
+        -AddDevVersion
+      pwsh: true
+      workingDirectory: $(Pipeline.Workspace)
+    displayName: Update package properties with dev version
+    condition: and(succeeded(),eq(variables['SetDevVersion'],'true'))
+
+  - pwsh: |
+      sdk_build -d "$(Build.ArtifactStagingDirectory)" "$(TargetingString)" --service=${{parameters.ServiceDirectory}} --inactive
+    displayName: 'Generate Packages'
+    condition: succeededOrFailed()
+
+  - script: |
+      twine check $(Build.ArtifactStagingDirectory)/**/*.whl
+      twine check $(Build.ArtifactStagingDirectory)/**/*.zip
+    displayName: 'Verify Readme'
+
+  - ${{if eq(variables['System.TeamProject'], 'internal') }}:
+    - template: auth-dev-feed.yml
+      parameters:
+        DevFeedName: ${{ parameters.DevFeedName }}
+
+  - ${{ parameters.BeforePublishSteps }}
+
+  - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
+    parameters:
+      ArtifactPath: '$(Build.ArtifactStagingDirectory)'
+      ArtifactName: 'packages'
+
+  - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
+    parameters:
+      ArtifactPath: '$(Build.SourcesDirectory)/.logs'
+      ArtifactName: 'build_logs'
+
+  - ${{if eq(variables['System.TeamProject'], 'internal') }}:
+    - task: AzureArtifacts.manifest-generator-task.manifest-generator-task.ManifestGeneratorTask@0
+      displayName: 'Generate BOM'
+      condition: succeededOrFailed()
+      inputs:
+        BuildDropPath: $(Build.ArtifactStagingDirectory)
+
+    - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
+      parameters:
+        ArtifactPath: '$(Build.ArtifactStagingDirectory)/_manifest'
+        ArtifactName: 'packages_manifest'

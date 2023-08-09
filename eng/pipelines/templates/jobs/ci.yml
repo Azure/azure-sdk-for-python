@@ -61,12 +61,17 @@ parameters:
   - name: TestProxy
     type: boolean
     default: false
+  - name: GenerateApiReviewForManualOnly
+    type: boolean
+    default: false
 
 jobs:
   - job: 'Build'
     timeoutInMinutes: 90
     variables:
-    - template: ../variables/globals.yml
+      Codeql.Enabled: true
+      Codeql.BuildIdentifier: ${{ parameters.ServiceDirectory }}
+      Codeql.SkipTaskAutoInjection: false
 
     pool:
       name: azsdk-pool-mms-ubuntu-2004-general
@@ -77,7 +82,33 @@ jobs:
       parameters:
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
 
-    - template: ../steps/build-artifacts.yml
+    - template: ../steps/build-package-artifacts.yml
+      parameters:
+        ServiceDirectory: ${{ parameters.ServiceDirectory }}
+        BeforePublishSteps: ${{ parameters.BeforePublishSteps }}
+        TestPipeline: ${{ parameters.TestPipeline }}
+        Artifacts: ${{ parameters.Artifacts }}
+
+  - job: 'Build_Extended'
+    displayName: Build Extended
+    dependsOn: 
+      - 'Build'
+    timeoutInMinutes: 90
+    variables:
+      Codeql.Enabled: true
+      Codeql.BuildIdentifier: ${{ parameters.ServiceDirectory }}
+      Codeql.SkipTaskAutoInjection: false
+
+    pool:
+      name: azsdk-pool-mms-ubuntu-2004-general
+      vmImage: MMSUbuntu20.04
+
+    steps:
+    - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
+      parameters:
+        BuildTargetingString: ${{ parameters.BuildTargetingString }}
+
+    - template: ../steps/build-extended-artifacts.yml
       parameters:
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
         BeforePublishSteps: ${{ parameters.BeforePublishSteps }}
@@ -96,11 +127,8 @@ jobs:
 
     timeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
 
-    variables:
-    - template: ../variables/globals.yml
-
     dependsOn:
-      - 'Build'
+      - 'Build_Extended'
 
     pool:
       name: azsdk-pool-mms-ubuntu-2004-general
@@ -133,6 +161,7 @@ jobs:
         Artifacts: ${{ parameters.Artifacts }}
         VerifyAutorest: ${{ parameters.VerifyAutorest }}
         ValidateFormatting: ${{ parameters.ValidateFormatting }}
+        GenerateApiReviewForManualOnly: ${{ parameters.GenerateApiReviewForManualOnly }}
 
   - job: Compliance
     pool:
@@ -179,7 +208,7 @@ jobs:
             GenerateVMJobs: true
       PreGenerationSteps:
         - pwsh: |
-            pip install "./tools/azure-sdk-tools[build]"
+            python -m pip install "./tools/azure-sdk-tools[build]"
           displayName: 'Prep Environment'
         - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
           parameters:

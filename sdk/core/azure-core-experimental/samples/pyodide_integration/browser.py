@@ -81,12 +81,9 @@ class PyodideTransportIntegrationTestSuite(AsyncTestSuite):
         data = b"".join([x async for x in response.iter_bytes()])
         assert data == b"hello world\n"
 
-
     async def test_sentiment_analysis(self):
         """Test that sentiment analysis works."""
-        results = await self.text_analytics_client.analyze_sentiment(
-            ["good great amazing"]
-        )
+        results = await self.text_analytics_client.analyze_sentiment(["good great amazing"])
         assert len(results) == 1
         result = results[0]
         assert result.sentiment == "positive"

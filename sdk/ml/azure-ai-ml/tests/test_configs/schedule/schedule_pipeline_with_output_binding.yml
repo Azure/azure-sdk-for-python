@@ -1,0 +1,12 @@
+$schema:  http://azureml/sdk-2-0/Schedule.json
+name: schedule_pipeline_with_output_binding
+display_name: Schedule pipeline with output binding
+description: Schedule pipeline with output binding
+
+trigger:
+  type: cron
+  expression: "15 10 * * 1"
+  time_zone: "Pacific Standard Time" # optional - default will be UTC
+
+create_job:
+  job: ../pipeline_jobs/pipeline_job_with_pipeline_component.yml

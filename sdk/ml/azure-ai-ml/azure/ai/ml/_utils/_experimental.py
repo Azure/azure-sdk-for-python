@@ -72,16 +72,14 @@ def _add_method_docstring(func=None):
 
 
 def _add_note_to_docstring(doc_string, note):
-    """Adds experimental note to docstring at the top and correctly indents
-    original docstring."""
+    """Adds experimental note to docstring at the top and correctly indents original docstring."""
     indent = _get_indentation_size(doc_string)
     doc_string = doc_string.rjust(len(doc_string) + indent)
     return note + doc_string
 
 
 def _get_indentation_size(doc_string):
-    """Finds the minimum indentation of all non-blank lines after the first
-    line."""
+    """Finds the minimum indentation of all non-blank lines after the first line."""
     lines = doc_string.expandtabs().splitlines()
     indent = sys.maxsize
     for line in lines[1:]:
@@ -105,7 +103,6 @@ def _should_skip_warning():
 
 
 def _is_warning_cached(warning_msg):
-
     # use cache to make sure we only print same warning message once under same session
     # this prevents duplicated warnings got printed when user does a loop call on a method or a class
     if warning_msg in _warning_cache:

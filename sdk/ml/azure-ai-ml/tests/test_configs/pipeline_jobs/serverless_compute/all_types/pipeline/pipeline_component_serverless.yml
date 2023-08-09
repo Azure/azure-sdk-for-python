@@ -1,0 +1,10 @@
+$schema: https://azuremlschemas.azureedge.net/development/pipelineComponent.schema.json
+type: pipeline
+name: simple_pipeline_component_with_serverless
+jobs:
+  node_serverless:
+    type: command
+    component: ./component.yml
+    compute: azureml:serverless
+    resources:
+      instance_type: Standard_D3_v2

@@ -7,6 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
+import sys
 from typing import Any, Callable, Dict, List, Optional, TypeVar, Union
 
 from azure.core.exceptions import (
@@ -25,8 +26,12 @@ from azure.core.utils import case_insensitive_dict
 
 from .. import models as _models
 from .._serialization import Serializer
-from .._vendor import _convert_request, _format_url_section
+from .._vendor import _convert_request
 
+if sys.version_info >= (3, 8):
+    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
+else:
+    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
@@ -45,17 +50,17 @@ def build_create_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    resource = kwargs.pop("resource", _params.pop("resource", "filesystem"))  # type: str
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-06-08"))  # type: str
+    resource: Literal["filesystem"] = kwargs.pop("resource", _params.pop("resource", "filesystem"))
+    version: Literal["2023-05-03"] = kwargs.pop("version", _headers.pop("x-ms-version", "2023-05-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = kwargs.pop("template_url", "{url}/{filesystem}")
+    _url = kwargs.pop("template_url", "{url}")
     path_format_arguments = {
         "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["resource"] = _SERIALIZER.query("resource", resource, "str")
@@ -86,17 +91,17 @@ def build_set_properties_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    resource = kwargs.pop("resource", _params.pop("resource", "filesystem"))  # type: str
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-06-08"))  # type: str
+    resource: Literal["filesystem"] = kwargs.pop("resource", _params.pop("resource", "filesystem"))
+    version: Literal["2023-05-03"] = kwargs.pop("version", _headers.pop("x-ms-version", "2023-05-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = kwargs.pop("template_url", "{url}/{filesystem}")
+    _url = kwargs.pop("template_url", "{url}")
     path_format_arguments = {
         "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["resource"] = _SERIALIZER.query("resource", resource, "str")
@@ -124,17 +129,17 @@ def build_get_properties_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    resource = kwargs.pop("resource", _params.pop("resource", "filesystem"))  # type: str
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-06-08"))  # type: str
+    resource: Literal["filesystem"] = kwargs.pop("resource", _params.pop("resource", "filesystem"))
+    version: Literal["2023-05-03"] = kwargs.pop("version", _headers.pop("x-ms-version", "2023-05-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = kwargs.pop("template_url", "{url}/{filesystem}")
+    _url = kwargs.pop("template_url", "{url}")
     path_format_arguments = {
         "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["resource"] = _SERIALIZER.query("resource", resource, "str")
@@ -162,17 +167,17 @@ def build_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    resource = kwargs.pop("resource", _params.pop("resource", "filesystem"))  # type: str
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-06-08"))  # type: str
+    resource: Literal["filesystem"] = kwargs.pop("resource", _params.pop("resource", "filesystem"))
+    version: Literal["2023-05-03"] = kwargs.pop("version", _headers.pop("x-ms-version", "2023-05-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = kwargs.pop("template_url", "{url}/{filesystem}")
+    _url = kwargs.pop("template_url", "{url}")
     path_format_arguments = {
         "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["resource"] = _SERIALIZER.query("resource", resource, "str")
@@ -207,17 +212,17 @@ def build_list_paths_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    resource = kwargs.pop("resource", _params.pop("resource", "filesystem"))  # type: str
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-06-08"))  # type: str
+    resource: Literal["filesystem"] = kwargs.pop("resource", _params.pop("resource", "filesystem"))
+    version: Literal["2023-05-03"] = kwargs.pop("version", _headers.pop("x-ms-version", "2023-05-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = kwargs.pop("template_url", "{url}/{filesystem}")
+    _url = kwargs.pop("template_url", "{url}")
     path_format_arguments = {
         "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["resource"] = _SERIALIZER.query("resource", resource, "str")
@@ -249,8 +254,8 @@ def build_list_blob_hierarchy_segment_request(
     delimiter: Optional[str] = None,
     marker: Optional[str] = None,
     max_results: Optional[int] = None,
-    include: Optional[List[Union[str, "_models.ListBlobsIncludeItem"]]] = None,
-    showonly: str = "deleted",
+    include: Optional[List[Union[str, _models.ListBlobsIncludeItem]]] = None,
+    showonly: Literal["deleted"] = "deleted",
     timeout: Optional[int] = None,
     request_id_parameter: Optional[str] = None,
     **kwargs: Any
@@ -258,18 +263,18 @@ def build_list_blob_hierarchy_segment_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    restype = kwargs.pop("restype", _params.pop("restype", "container"))  # type: str
-    comp = kwargs.pop("comp", _params.pop("comp", "list"))  # type: str
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-06-08"))  # type: str
+    restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
+    comp: Literal["list"] = kwargs.pop("comp", _params.pop("comp", "list"))
+    version: Literal["2023-05-03"] = kwargs.pop("version", _headers.pop("x-ms-version", "2023-05-03"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
-    _url = kwargs.pop("template_url", "{url}/{filesystem}")
+    _url = kwargs.pop("template_url", "{url}")
     path_format_arguments = {
         "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["restype"] = _SERIALIZER.query("restype", restype, "str")
@@ -364,7 +369,7 @@ class FileSystemOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_create_request(
             url=self._config.url,
@@ -378,10 +383,11 @@ class FileSystemOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -404,7 +410,7 @@ class FileSystemOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    create.metadata = {"url": "{url}/{filesystem}"}  # type: ignore
+    create.metadata = {"url": "{url}"}
 
     @distributed_trace
     def set_properties(  # pylint: disable=inconsistent-return-statements
@@ -457,7 +463,7 @@ class FileSystemOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         _if_modified_since = None
         _if_unmodified_since = None
@@ -479,10 +485,11 @@ class FileSystemOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -502,7 +509,7 @@ class FileSystemOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    set_properties.metadata = {"url": "{url}/{filesystem}"}  # type: ignore
+    set_properties.metadata = {"url": "{url}"}
 
     @distributed_trace
     def get_properties(  # pylint: disable=inconsistent-return-statements
@@ -537,7 +544,7 @@ class FileSystemOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_get_properties_request(
             url=self._config.url,
@@ -550,10 +557,11 @@ class FileSystemOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -577,7 +585,7 @@ class FileSystemOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    get_properties.metadata = {"url": "{url}/{filesystem}"}  # type: ignore
+    get_properties.metadata = {"url": "{url}"}
 
     @distributed_trace
     def delete(  # pylint: disable=inconsistent-return-statements
@@ -626,7 +634,7 @@ class FileSystemOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         _if_modified_since = None
         _if_unmodified_since = None
@@ -647,10 +655,11 @@ class FileSystemOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -668,7 +677,7 @@ class FileSystemOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    delete.metadata = {"url": "{url}/{filesystem}"}  # type: ignore
+    delete.metadata = {"url": "{url}"}
 
     @distributed_trace
     def list_paths(
@@ -733,7 +742,7 @@ class FileSystemOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.PathList]
+        cls: ClsType[_models.PathList] = kwargs.pop("cls", None)
 
         request = build_list_paths_request(
             url=self._config.url,
@@ -751,10 +760,11 @@ class FileSystemOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -779,7 +789,7 @@ class FileSystemOperations:
 
         return deserialized
 
-    list_paths.metadata = {"url": "{url}/{filesystem}"}  # type: ignore
+    list_paths.metadata = {"url": "{url}"}
 
     @distributed_trace
     def list_blob_hierarchy_segment(
@@ -788,8 +798,8 @@ class FileSystemOperations:
         delimiter: Optional[str] = None,
         marker: Optional[str] = None,
         max_results: Optional[int] = None,
-        include: Optional[List[Union[str, "_models.ListBlobsIncludeItem"]]] = None,
-        showonly: str = "deleted",
+        include: Optional[List[Union[str, _models.ListBlobsIncludeItem]]] = None,
+        showonly: Literal["deleted"] = "deleted",
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
         **kwargs: Any
@@ -852,9 +862,9 @@ class FileSystemOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        restype = kwargs.pop("restype", _params.pop("restype", "container"))  # type: str
-        comp = kwargs.pop("comp", _params.pop("comp", "list"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.ListBlobsHierarchySegmentResponse]
+        restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
+        comp: Literal["list"] = kwargs.pop("comp", _params.pop("comp", "list"))
+        cls: ClsType[_models.ListBlobsHierarchySegmentResponse] = kwargs.pop("cls", None)
 
         request = build_list_blob_hierarchy_segment_request(
             url=self._config.url,
@@ -874,10 +884,11 @@ class FileSystemOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -903,4 +914,4 @@ class FileSystemOperations:
 
         return deserialized
 
-    list_blob_hierarchy_segment.metadata = {"url": "{url}/{filesystem}"}  # type: ignore
+    list_blob_hierarchy_segment.metadata = {"url": "{url}"}

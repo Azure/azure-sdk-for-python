@@ -40,7 +40,8 @@ from ._container_client_async import ContainerClient
 from ._models import ContainerPropertiesPaged, FilteredBlobPaged
 
 if TYPE_CHECKING:
-    from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
+    from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
+    from azure.core.credentials_async import AsyncTokenCredential
     from datetime import datetime
     from .._shared.models import UserDelegationKey
     from ._lease_async import BlobLeaseClient
@@ -117,7 +118,7 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase, St
 
     def __init__(
             self, account_url: str,
-            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]] = None,  # pylint: disable=line-too-long
             **kwargs: Any
         ) -> None:
         kwargs['retry_policy'] = kwargs.get('retry_policy') or ExponentialRetry(**kwargs)
@@ -624,6 +625,7 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase, St
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`_.
+        :returns: The recovered soft-deleted ContainerClient.
         :rtype: ~azure.storage.blob.aio.ContainerClient
         """
         new_name = kwargs.pop('new_name', None)
@@ -678,7 +680,9 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase, St
     def get_blob_client(
             self, container,  # type: Union[ContainerProperties, str]
             blob,  # type: Union[BlobProperties, str]
-            snapshot=None  # type: Optional[Union[Dict[str, Any], str]]
+            snapshot=None,  # type: Optional[Union[Dict[str, Any], str]]
+            *,
+            version_id=None  # type: Optional[str]
         ):
         # type: (...) -> BlobClient
         """Get a client to interact with the specified blob.
@@ -698,6 +702,8 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase, St
             or a dictionary output returned by
             :func:`~azure.storage.blob.aio.BlobClient.create_snapshot()`.
         :type snapshot: str or dict(str, Any)
+        :keyword str version_id: The version id parameter is an opaque DateTime value that, when present,
+            specifies the version of the blob to operate on.
         :returns: A BlobClient.
         :rtype: ~azure.storage.blob.aio.BlobClient
 
@@ -728,4 +734,5 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase, St
             credential=self.credential, api_version=self.api_version, _configuration=self._config,
             _pipeline=_pipeline, _location_mode=self._location_mode, _hosts=self._hosts,
             require_encryption=self.require_encryption, encryption_version=self.encryption_version,
-            key_encryption_key=self.key_encryption_key, key_resolver_function=self.key_resolver_function)
+            key_encryption_key=self.key_encryption_key, key_resolver_function=self.key_resolver_function,
+            version_id=version_id)

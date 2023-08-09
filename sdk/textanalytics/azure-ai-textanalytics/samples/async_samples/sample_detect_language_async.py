@@ -23,7 +23,6 @@ USAGE:
     2) AZURE_LANGUAGE_KEY - your Language subscription key
 """
 
-import os
 import asyncio
 
 
@@ -34,6 +33,7 @@ async def sample_detect_language_async() -> None:
         "they are in for more accurate translation. This is the step we will be covering in this sample\n"
     )
     # [START detect_language_async]
+    import os
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.textanalytics.aio import TextAnalyticsClient
 

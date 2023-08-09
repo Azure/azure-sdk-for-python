@@ -20,7 +20,7 @@ equivalent using `azure-identity`.
 
 `azure-common` uses `ServicePrincipalCredentials` to authenticate a service principal:
 
-```py
+```python
 from azure.common.credentials import ServicePrincipalCredentials
 
 credential = ServicePrincipalCredentials(client_id, client_secret, tenant=tenant_id)
@@ -28,7 +28,7 @@ credential = ServicePrincipalCredentials(client_id, client_secret, tenant=tenant
 
 `azure-identity` uses [`ClientSecretCredential`][client_secret_cred] :
 
-```py
+```python
 from azure.identity import ClientSecretCredential
 
 credential = ClientSecretCredential(tenant_id, client_id, client_secret)
@@ -41,7 +41,7 @@ credential = ClientSecretCredential(tenant_id, client_id, client_secret)
 integrate with the Azure CLI for authentication. This code works with older
 versions of `azure-mgmt-resource` such as 10.0.0:
 
-```py
+```python
 from azure.common.client_factory import get_client_from_cli_profile
 from azure.mgmt.resource import SubscriptionClient
 
@@ -52,7 +52,7 @@ subscription_client = get_client_from_cli_profile(SubscriptionClient)
 [`AzureCliCredential`][cli_cred]. This code works with newer versions of
 `azure-mgmt-resource`, starting with 15.0.0:
 
-```py
+```python
 from azure.identity import AzureCliCredential
 from azure.mgmt.resource import SubscriptionClient
 

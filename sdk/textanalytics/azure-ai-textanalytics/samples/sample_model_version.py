@@ -24,11 +24,10 @@ USAGE:
     2) AZURE_LANGUAGE_KEY - your Language subscription key
 """
 
-import os
-
 
 def sample_model_version() -> None:
     print("--------------Choosing model_version sample--------------")
+    import os
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.textanalytics import TextAnalyticsClient, RecognizeEntitiesAction
 
@@ -67,7 +66,7 @@ def sample_model_version() -> None:
                 print(f"......Entity '{entity.text}' has category '{entity.category}'")
         elif action_result.is_error is True:
             print("......Is an error with code '{}' and message '{}'".format(
-                action_result.code, action_result.message
+                action_result.error.code, action_result.error.message
             ))
 
 

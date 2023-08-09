@@ -1,5 +1,4 @@
-import multiprocessing
-import uuid
+from dataclasses import field
 from functools import partial
 from pathlib import Path
 from typing import Callable, Union
@@ -8,20 +7,27 @@ import pytest
 from devtools_testutils import AzureRecordedTestCase
 from mock import mock
 from pytest_mock import MockFixture
-
-from azure.ai.ml.operations._operation_orchestrator import OperationOrchestrator
-from test_utilities.utils import _PYTEST_TIMEOUT_METHOD, assert_job_cancel, submit_and_cancel_new_dsl_pipeline, \
-    omit_with_wildcard
-
-from azure.ai.ml import (
-    Input,
-    MLClient,
-    dsl,
-    load_component,
+from test_utilities.utils import (
+    _PYTEST_TIMEOUT_METHOD,
+    assert_job_cancel,
+    omit_with_wildcard,
+    submit_and_cancel_new_dsl_pipeline,
 )
+
+from azure.ai.ml import Input, MLClient, dsl, load_component
 from azure.ai.ml.constants._common import AssetTypes
-from azure.ai.ml.entities import CommandComponent, Command, Choice, Sweep, Component, Environment, PipelineComponent
-from azure.ai.ml.entities import PipelineJob
+from azure.ai.ml.dsl._group_decorator import group
+from azure.ai.ml.entities import (
+    Choice,
+    Command,
+    CommandComponent,
+    Component,
+    Environment,
+    PipelineComponent,
+    PipelineJob,
+    Sweep,
+)
+from azure.ai.ml.operations._operation_orchestrator import OperationOrchestrator
 
 from .._util import _DSL_TIMEOUT_SECOND
 
@@ -59,11 +65,25 @@ def _get_component_in_first_child(_with_jobs: Union[PipelineJob, PipelineCompone
     return client.components.get(_name, _version)
 
 
+@group
+class SubGroup:
+    integer: int = None
+    number: float = None
+
+
+@group
+class Group:
+    number: float = None
+    sub1: SubGroup = None
+    sub2: SubGroup = None
+
+
 @pytest.mark.usefixtures(
     "enable_environment_id_arm_expansion",
     "enable_pipeline_private_preview_features",
     "mock_code_hash",
     "mock_component_hash",
+    "mock_set_headers_with_user_aml_token",
     "recorded_test",
 )
 @pytest.mark.timeout(timeout=_DSL_TIMEOUT_SECOND, method=_PYTEST_TIMEOUT_METHOD)
@@ -79,15 +99,20 @@ class TestDSLPipelineWithSpecificNodes(AzureRecordedTestCase):
             component_func1 = load_component(source=path)
             component_func1(component_in_path=component_in_path, component_in_number=1)
 
-            component_func2 = load_component(source=path, params_override=[{
-                "name": "another_component_name",
-                "version": "another_component_version",
-            }])
+            component_func2 = load_component(
+                source=path,
+                params_override=[
+                    {
+                        "name": "another_component_name",
+                        "version": "another_component_version",
+                    }
+                ],
+            )
             component_func2(component_in_path=component_in_path, component_in_number=1)
 
-            component_func3 = load_component(source=path, params_override=[{
-                "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:2"
-            }])
+            component_func3 = load_component(
+                source=path, params_override=[{"environment": "azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:32"}]
+            )
             component_func3(component_in_path=component_in_path, component_in_number=1)
 
             component_func4 = load_component(source=path)
@@ -103,6 +128,7 @@ class TestDSLPipelineWithSpecificNodes(AzureRecordedTestCase):
         def pipeline_root(job_in_path: Input):
             pipeline_mid(job_in_path)
             pipeline_mid(job_in_path)
+
         return pipeline_root
 
     @staticmethod
@@ -221,9 +247,7 @@ class TestDSLPipelineWithSpecificNodes(AzureRecordedTestCase):
         pipeline_root = self._generate_multi_layer_pipeline_func()
 
         _submit_and_cancel = partial(
-            submit_and_cancel_new_dsl_pipeline,
-            client=client,
-            job_in_path=Input(path=input_data_path)
+            submit_and_cancel_new_dsl_pipeline, client=client, job_in_path=Input(path=input_data_path)
         )
 
         def _mock_get_component_arm_id(_component: Component) -> str:
@@ -236,18 +260,14 @@ class TestDSLPipelineWithSpecificNodes(AzureRecordedTestCase):
             return _component.id
 
         with mock.patch.object(
-            OperationOrchestrator,
-            "_get_component_arm_id",
-            side_effect=_mock_get_component_arm_id
+            OperationOrchestrator, "_get_component_arm_id", side_effect=_mock_get_component_arm_id
         ) as mock_resolve:
             _submit_and_cancel(pipeline_root)
             # pipeline_leaf, pipeline_mid and 3 command components will be resolved
             assert mock_resolve.call_count == 5
 
         with mock.patch.object(
-            OperationOrchestrator,
-            "_get_component_arm_id",
-            side_effect=_mock_get_component_arm_id
+            OperationOrchestrator, "_get_component_arm_id", side_effect=_mock_get_component_arm_id
         ) as mock_resolve:
             _submit_and_cancel(pipeline_root)
             # no more requests to resolve components as local cache is hit
@@ -258,9 +278,7 @@ class TestDSLPipelineWithSpecificNodes(AzureRecordedTestCase):
         leaf_subgraph = pipeline_job.jobs["pipeline_mid"].component.jobs["pipeline_leaf"].component
         leaf_subgraph.jobs["another_component_name"].component.command += " & echo updated2"
         with mock.patch.object(
-            OperationOrchestrator,
-            "_get_component_arm_id",
-            side_effect=_mock_get_component_arm_id
+            OperationOrchestrator, "_get_component_arm_id", side_effect=_mock_get_component_arm_id
         ) as mock_resolve:
             assert_job_cancel(pipeline_job, client)
             # updated command component and its parents (pipeline_leaf and pipeline_mid) will be resolved
@@ -293,11 +311,86 @@ class TestDSLPipelineWithSpecificNodes(AzureRecordedTestCase):
         # TODO: test with multiple pipelines after server-side return jobs for pipeline component
         for _ in range(0, 0):
             assert omit_with_wildcard(base._to_dict(), *omit_fields) == omit_with_wildcard(
-                treat._to_dict(), *omit_fields)
+                treat._to_dict(), *omit_fields
+            )
             base = _get_component_in_first_child(base, client)
             treat = _get_component_in_first_child(treat, client)
 
         # The last layer contains the command components
         omit_fields.pop()
-        assert omit_with_wildcard(base._to_dict(), *omit_fields) == omit_with_wildcard(
-            treat._to_dict(), *omit_fields)
+        assert omit_with_wildcard(base._to_dict(), *omit_fields) == omit_with_wildcard(treat._to_dict(), *omit_fields)
+
+    @pytest.mark.parametrize(
+        "group_param_input, use_remote_component",
+        [
+            pytest.param(
+                Group(
+                    number=1.0,
+                    sub1=SubGroup(integer=1),
+                ),
+                False,
+                id="strong-typed-group",
+            ),
+            pytest.param(
+                {
+                    "number": 1.0,
+                    "sub1": {"integer": 1},
+                },
+                False,
+                id="dict-group",
+            ),
+            pytest.param(
+                Group(
+                    number=1.0,
+                    sub1=SubGroup(integer=1),
+                ),
+                True,
+                id="strong-typed-group-remote",
+            ),
+            pytest.param(
+                {
+                    "number": 1.0,
+                    "sub1": {"integer": 1},
+                },
+                True,
+                id="dict-group-remote",
+            ),
+        ],
+    )
+    def test_dsl_pipeline_with_param_group_in_command_component(
+        self,
+        client,
+        group_param_input,
+        use_remote_component: bool,
+        randstr: Callable[[str], str],
+    ):
+        command_func = load_component("./tests/test_configs/components/helloworld_component_with_parameter_group.yml")
+        input_data_path = "./tests/test_configs/data/"
+
+        if use_remote_component:
+            command_func.name = randstr("component_name")
+            command_func = client.components.create_or_update(
+                command_func,
+            )
+
+        @dsl.pipeline
+        def pipeline_with_command(input_data):
+            command_node = command_func(
+                component_in_path=input_data,
+                component_in_group=group_param_input,
+            )
+            return command_node.outputs
+
+        pipeline: PipelineJob = pipeline_with_command(
+            input_data=Input(
+                path=input_data_path,
+                type=AssetTypes.URI_FOLDER,
+            ),
+        )
+        pipeline.settings.default_compute = "cpu-cluster"
+        created_pipeline = client.jobs.create_or_update(pipeline)
+        assert created_pipeline.jobs["command_node"]._to_rest_inputs() == {
+            "component_in_path": {"job_input_type": "literal", "value": "${{parent.inputs.input_data}}"},
+            "component_in_group.number": {"job_input_type": "literal", "value": "1.0"},
+            "component_in_group.sub1.integer": {"job_input_type": "literal", "value": "1"},
+        }

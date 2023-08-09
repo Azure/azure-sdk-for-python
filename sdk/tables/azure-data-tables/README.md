@@ -6,7 +6,11 @@ The Azure Tables client can be used to access Azure Storage or Cosmos accounts. 
 
 Please note, this package is a replacement for [`azure-cosmosdb-tables`](https://github.com/Azure/azure-cosmos-table-python/tree/master/azure-cosmosdb-table) which is now deprecated. See the [migration guide][migration_guide] for more details.
 
-[Source code][source_code] | [Package (PyPI)][Tables_pypi] | [API reference documentation][Tables_ref_docs] | [Samples][Tables_samples]
+[Source code][source_code]
+| [Package (PyPI)][Tables_pypi]
+| [Package (Conda)](https://anaconda.org/microsoft/azure-data-tables/)
+| [API reference documentation][Tables_ref_docs]
+| [Samples][Tables_samples]
 
 ## _Disclaimer_
 

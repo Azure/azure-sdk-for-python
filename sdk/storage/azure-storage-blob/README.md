@@ -9,7 +9,12 @@ Blob storage is ideal for:
 * Storing data for backup and restore, disaster recovery, and archiving
 * Storing data for analysis by an on-premises or Azure-hosted service
 
-[Source code](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob/azure/storage/blob) | [Package (PyPI)](https://pypi.org/project/azure-storage-blob/) | [API reference documentation](https://aka.ms/azsdk-python-storage-blob-ref) | [Product documentation](https://docs.microsoft.com/azure/storage/) | [Samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob/samples)
+[Source code](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob/azure/storage/blob)
+| [Package (PyPI)](https://pypi.org/project/azure-storage-blob/)
+| [Package (Conda)](https://anaconda.org/microsoft/azure-storage/)
+| [API reference documentation](https://aka.ms/azsdk-python-storage-blob-ref)
+| [Product documentation](https://docs.microsoft.com/azure/storage/)
+| [Samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob/samples)
 
 
 ## Getting started
@@ -219,7 +224,7 @@ Create a container from where you can upload or download blobs.
 ```python
 from azure.storage.blob import ContainerClient
 
-container_client = ContainerClient.from_connection_string(conn_str="<connection_string>", container_name="my_container")
+container_client = ContainerClient.from_connection_string(conn_str="<connection_string>", container_name="mycontainer")
 
 container_client.create_container()
 ```
@@ -229,7 +234,7 @@ Use the async client to upload a blob
 ```python
 from azure.storage.blob.aio import ContainerClient
 
-container_client = ContainerClient.from_connection_string(conn_str="<connection_string>", container_name="my_container")
+container_client = ContainerClient.from_connection_string(conn_str="<connection_string>", container_name="mycontainer")
 
 await container_client.create_container()
 ```
@@ -240,7 +245,7 @@ Upload a blob to your container
 ```python
 from azure.storage.blob import BlobClient
 
-blob = BlobClient.from_connection_string(conn_str="<connection_string>", container_name="my_container", blob_name="my_blob")
+blob = BlobClient.from_connection_string(conn_str="<connection_string>", container_name="mycontainer", blob_name="my_blob")
 
 with open("./SampleSource.txt", "rb") as data:
     blob.upload_blob(data)
@@ -251,7 +256,7 @@ Use the async client to upload a blob
 ```python
 from azure.storage.blob.aio import BlobClient
 
-blob = BlobClient.from_connection_string(conn_str="<connection_string>", container_name="my_container", blob_name="my_blob")
+blob = BlobClient.from_connection_string(conn_str="<connection_string>", container_name="mycontainer", blob_name="my_blob")
 
 with open("./SampleSource.txt", "rb") as data:
     await blob.upload_blob(data)
@@ -263,7 +268,7 @@ Download a blob from your container
 ```python
 from azure.storage.blob import BlobClient
 
-blob = BlobClient.from_connection_string(conn_str="my_connection_string", container_name="my_container", blob_name="my_blob")
+blob = BlobClient.from_connection_string(conn_str="<connection_string>", container_name="mycontainer", blob_name="my_blob")
 
 with open("./BlockDestination.txt", "wb") as my_blob:
     blob_data = blob.download_blob()
@@ -275,7 +280,7 @@ Download a blob asynchronously
 ```python
 from azure.storage.blob.aio import BlobClient
 
-blob = BlobClient.from_connection_string(conn_str="my_connection_string", container_name="my_container", blob_name="my_blob")
+blob = BlobClient.from_connection_string(conn_str="<connection_string>", container_name="mycontainer", blob_name="my_blob")
 
 with open("./BlockDestination.txt", "wb") as my_blob:
     stream = await blob.download_blob()
@@ -289,7 +294,7 @@ List the blobs in your container
 ```python
 from azure.storage.blob import ContainerClient
 
-container = ContainerClient.from_connection_string(conn_str="my_connection_string", container_name="my_container")
+container = ContainerClient.from_connection_string(conn_str="<connection_string>", container_name="mycontainer")
 
 blob_list = container.list_blobs()
 for blob in blob_list:
@@ -301,7 +306,7 @@ List the blobs asynchronously
 ```python
 from azure.storage.blob.aio import ContainerClient
 
-container = ContainerClient.from_connection_string(conn_str="my_connection_string", container_name="my_container")
+container = ContainerClient.from_connection_string(conn_str="<connection_string>", container_name="mycontainer")
 
 blob_list = []
 async for blob in container.list_blobs():
@@ -398,7 +403,7 @@ service_client = BlobServiceClient.from_connection_string("your_connection_strin
 
 Similarly, `logging_enable` can enable detailed logging for a single operation,
 even when it isn't enabled for the client:
-```py
+```python
 service_client.get_service_stats(logging_enable=True)
 ```
 

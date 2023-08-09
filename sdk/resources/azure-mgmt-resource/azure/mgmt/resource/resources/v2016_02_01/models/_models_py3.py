@@ -42,7 +42,7 @@ class AliasPathType(_serialization.Model):
         "api_versions": {"key": "apiVersions", "type": "[str]"},
     }
 
-    def __init__(self, *, path: Optional[str] = None, api_versions: Optional[List[str]] = None, **kwargs):
+    def __init__(self, *, path: Optional[str] = None, api_versions: Optional[List[str]] = None, **kwargs: Any) -> None:
         """
         :keyword path: The path of an alias.
         :paramtype path: str
@@ -68,7 +68,9 @@ class AliasType(_serialization.Model):
         "paths": {"key": "paths", "type": "[AliasPathType]"},
     }
 
-    def __init__(self, *, name: Optional[str] = None, paths: Optional[List["_models.AliasPathType"]] = None, **kwargs):
+    def __init__(
+        self, *, name: Optional[str] = None, paths: Optional[List["_models.AliasPathType"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword name: The alias name.
         :paramtype name: str
@@ -103,8 +105,8 @@ class BasicDependency(_serialization.Model):
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         resource_type: Optional[str] = None,
         resource_name: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: The ID of the dependency.
         :paramtype id: str
@@ -130,7 +132,7 @@ class DebugSetting(_serialization.Model):
         "detail_level": {"key": "detailLevel", "type": "str"},
     }
 
-    def __init__(self, *, detail_level: Optional[str] = None, **kwargs):
+    def __init__(self, *, detail_level: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword detail_level: The debug detail level.
         :paramtype detail_level: str
@@ -166,8 +168,8 @@ class Dependency(_serialization.Model):
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         resource_type: Optional[str] = None,
         resource_name: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword depends_on: The list of dependencies.
         :paramtype depends_on: list[~azure.mgmt.resource.resources.v2016_02_01.models.BasicDependency]
@@ -196,7 +198,7 @@ class Deployment(_serialization.Model):
         "properties": {"key": "properties", "type": "DeploymentProperties"},
     }
 
-    def __init__(self, *, properties: Optional["_models.DeploymentProperties"] = None, **kwargs):
+    def __init__(self, *, properties: Optional["_models.DeploymentProperties"] = None, **kwargs: Any) -> None:
         """
         :keyword properties: The deployment properties.
         :paramtype properties: ~azure.mgmt.resource.resources.v2016_02_01.models.DeploymentProperties
@@ -216,7 +218,7 @@ class DeploymentExportResult(_serialization.Model):
         "template": {"key": "template", "type": "object"},
     }
 
-    def __init__(self, *, template: Optional[JSON] = None, **kwargs):
+    def __init__(self, *, template: Optional[JSON] = None, **kwargs: Any) -> None:
         """
         :keyword template: The template content.
         :paramtype template: JSON
@@ -252,7 +254,9 @@ class DeploymentExtended(_serialization.Model):
         "properties": {"key": "properties", "type": "DeploymentPropertiesExtended"},
     }
 
-    def __init__(self, *, name: str, properties: Optional["_models.DeploymentPropertiesExtended"] = None, **kwargs):
+    def __init__(
+        self, *, name: str, properties: Optional["_models.DeploymentPropertiesExtended"] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name of the deployment. Required.
         :paramtype name: str
@@ -277,7 +281,7 @@ class DeploymentExtendedFilter(_serialization.Model):
         "provisioning_state": {"key": "provisioningState", "type": "str"},
     }
 
-    def __init__(self, *, provisioning_state: Optional[str] = None, **kwargs):
+    def __init__(self, *, provisioning_state: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword provisioning_state: The provisioning state.
         :paramtype provisioning_state: str
@@ -301,8 +305,12 @@ class DeploymentListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.DeploymentExtended"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        value: Optional[List["_models.DeploymentExtended"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: The list of deployments.
         :paramtype value: list[~azure.mgmt.resource.resources.v2016_02_01.models.DeploymentExtended]
@@ -338,8 +346,8 @@ class DeploymentOperation(_serialization.Model):
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         operation_id: Optional[str] = None,
         properties: Optional["_models.DeploymentOperationProperties"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Full deployment operation id.
         :paramtype id: str
@@ -398,8 +406,8 @@ class DeploymentOperationProperties(_serialization.Model):
         target_resource: Optional["_models.TargetResource"] = None,
         request: Optional["_models.HttpMessage"] = None,
         response: Optional["_models.HttpMessage"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword provisioning_state: The state of the provisioning.
         :paramtype provisioning_state: str
@@ -444,8 +452,12 @@ class DeploymentOperationsListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.DeploymentOperation"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        value: Optional[List["_models.DeploymentOperation"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: The list of deployments.
         :paramtype value: list[~azure.mgmt.resource.resources.v2016_02_01.models.DeploymentOperation]
@@ -500,8 +512,8 @@ class DeploymentProperties(_serialization.Model):
         parameters: Optional[JSON] = None,
         parameters_link: Optional["_models.ParametersLink"] = None,
         debug_setting: Optional["_models.DebugSetting"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword template: The template content. It can be a JObject or a well formed JSON string. Use
          only one of Template or TemplateLink.
@@ -597,8 +609,8 @@ class DeploymentPropertiesExtended(_serialization.Model):  # pylint: disable=too
         parameters_link: Optional["_models.ParametersLink"] = None,
         mode: Optional[Union[str, "_models.DeploymentMode"]] = None,
         debug_setting: Optional["_models.DebugSetting"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword provisioning_state: The state of the provisioning.
         :paramtype provisioning_state: str
@@ -664,8 +676,8 @@ class DeploymentValidateResult(_serialization.Model):
         *,
         error: Optional["_models.ResourceManagementErrorWithDetails"] = None,
         properties: Optional["_models.DeploymentPropertiesExtended"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword error: Validation error.
         :paramtype error:
@@ -700,7 +712,7 @@ class ErrorAdditionalInfo(_serialization.Model):
         "info": {"key": "info", "type": "object"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.type = None
@@ -708,7 +720,8 @@ class ErrorAdditionalInfo(_serialization.Model):
 
 
 class ErrorResponse(_serialization.Model):
-    """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
+    """Common error response for all Azure Resource Manager APIs to return error details for failed
+    operations. (This also follows the OData error response format.).
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -741,7 +754,7 @@ class ErrorResponse(_serialization.Model):
         "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.code = None
@@ -768,7 +781,7 @@ class ExportTemplateRequest(_serialization.Model):
         "options": {"key": "options", "type": "str"},
     }
 
-    def __init__(self, *, resources: Optional[List[str]] = None, options: Optional[str] = None, **kwargs):
+    def __init__(self, *, resources: Optional[List[str]] = None, options: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword resources: The IDs of the resources to filter the export by. To export all resources,
          supply an array with single entry '*'.
@@ -814,7 +827,7 @@ class Resource(_serialization.Model):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, *, location: Optional[str] = None, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, location: Optional[str] = None, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword location: Resource location.
         :paramtype location: str
@@ -889,8 +902,8 @@ class GenericResource(Resource):  # pylint: disable=too-many-instance-attributes
         managed_by: Optional[str] = None,
         sku: Optional["_models.Sku"] = None,
         identity: Optional["_models.Identity"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location.
         :paramtype location: str
@@ -993,8 +1006,8 @@ class GenericResourceExpanded(GenericResource):  # pylint: disable=too-many-inst
         managed_by: Optional[str] = None,
         sku: Optional["_models.Sku"] = None,
         identity: Optional["_models.Identity"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location.
         :paramtype location: str
@@ -1052,8 +1065,8 @@ class GenericResourceFilter(_serialization.Model):
         resource_type: Optional[str] = None,
         tagname: Optional[str] = None,
         tagvalue: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword resource_type: The resource type.
         :paramtype resource_type: str
@@ -1079,7 +1092,7 @@ class HttpMessage(_serialization.Model):
         "content": {"key": "content", "type": "object"},
     }
 
-    def __init__(self, *, content: Optional[JSON] = None, **kwargs):
+    def __init__(self, *, content: Optional[JSON] = None, **kwargs: Any) -> None:
         """
         :keyword content: HTTP message content.
         :paramtype content: JSON
@@ -1112,7 +1125,7 @@ class Identity(_serialization.Model):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, *, type: Optional[Literal["SystemAssigned"]] = None, **kwargs):
+    def __init__(self, *, type: Optional[Literal["SystemAssigned"]] = None, **kwargs: Any) -> None:
         """
         :keyword type: The identity type. Default value is "SystemAssigned".
         :paramtype type: str
@@ -1143,7 +1156,7 @@ class ParametersLink(_serialization.Model):
         "content_version": {"key": "contentVersion", "type": "str"},
     }
 
-    def __init__(self, *, uri: str, content_version: Optional[str] = None, **kwargs):
+    def __init__(self, *, uri: str, content_version: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword uri: URI referencing the template. Required.
         :paramtype uri: str
@@ -1182,8 +1195,8 @@ class Plan(_serialization.Model):
         publisher: Optional[str] = None,
         product: Optional[str] = None,
         promotion_code: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The plan ID.
         :paramtype name: str
@@ -1229,8 +1242,8 @@ class Provider(_serialization.Model):
         namespace: Optional[str] = None,
         registration_state: Optional[str] = None,
         resource_types: Optional[List["_models.ProviderResourceType"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: The provider id.
         :paramtype id: str
@@ -1263,7 +1276,9 @@ class ProviderListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Provider"]] = None, next_link: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, value: Optional[List["_models.Provider"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: The list of resource providers.
         :paramtype value: list[~azure.mgmt.resource.resources.v2016_02_01.models.Provider]
@@ -1306,8 +1321,8 @@ class ProviderResourceType(_serialization.Model):
         aliases: Optional[List["_models.AliasType"]] = None,
         api_versions: Optional[List[str]] = None,
         properties: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword resource_type: The resource type.
         :paramtype resource_type: str
@@ -1369,8 +1384,8 @@ class ResourceGroup(_serialization.Model):
         name: Optional[str] = None,
         properties: Optional["_models.ResourceGroupProperties"] = None,
         tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The Name of the resource group.
         :paramtype name: str
@@ -1412,8 +1427,8 @@ class ResourceGroupExportResult(_serialization.Model):
         *,
         template: Optional[JSON] = None,
         error: Optional["_models.ResourceManagementErrorWithDetails"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword template: The template content.
         :paramtype template: JSON
@@ -1440,7 +1455,7 @@ class ResourceGroupFilter(_serialization.Model):
         "tag_value": {"key": "tagValue", "type": "str"},
     }
 
-    def __init__(self, *, tag_name: Optional[str] = None, tag_value: Optional[str] = None, **kwargs):
+    def __init__(self, *, tag_name: Optional[str] = None, tag_value: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword tag_name: The tag name.
         :paramtype tag_name: str
@@ -1472,7 +1487,7 @@ class ResourceGroupListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, next_link: str, value: Optional[List["_models.ResourceGroup"]] = None, **kwargs):
+    def __init__(self, *, next_link: str, value: Optional[List["_models.ResourceGroup"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: The list of resource groups.
         :paramtype value: list[~azure.mgmt.resource.resources.v2016_02_01.models.ResourceGroup]
@@ -1501,7 +1516,7 @@ class ResourceGroupProperties(_serialization.Model):
         "provisioning_state": {"key": "provisioningState", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.provisioning_state = None
@@ -1527,7 +1542,9 @@ class ResourceListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, next_link: str, value: Optional[List["_models.GenericResourceExpanded"]] = None, **kwargs):
+    def __init__(
+        self, *, next_link: str, value: Optional[List["_models.GenericResourceExpanded"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: The list of resources.
         :paramtype value:
@@ -1575,8 +1592,8 @@ class ResourceManagementErrorWithDetails(_serialization.Model):
         message: str,
         target: Optional[str] = None,
         details: Optional[List["_models.ResourceManagementErrorWithDetails"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword code: The error code returned from the server. Required.
         :paramtype code: str
@@ -1626,8 +1643,8 @@ class ResourceProviderOperationDisplayProperties(_serialization.Model):
         resource: Optional[str] = None,
         operation: Optional[str] = None,
         description: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword publisher: Operation description.
         :paramtype publisher: str
@@ -1662,7 +1679,9 @@ class ResourcesMoveInfo(_serialization.Model):
         "target_resource_group": {"key": "targetResourceGroup", "type": "str"},
     }
 
-    def __init__(self, *, resources: Optional[List[str]] = None, target_resource_group: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, resources: Optional[List[str]] = None, target_resource_group: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword resources: The ids of the resources.
         :paramtype resources: list[str]
@@ -1709,8 +1728,8 @@ class Sku(_serialization.Model):
         family: Optional[str] = None,
         model: Optional[str] = None,
         capacity: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The sku name.
         :paramtype name: str
@@ -1745,7 +1764,7 @@ class SubResource(_serialization.Model):
         "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(self, *, id: Optional[str] = None, **kwargs):  # pylint: disable=redefined-builtin
+    def __init__(self, *, id: Optional[str] = None, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
         """
         :keyword id: Resource Id.
         :paramtype id: str
@@ -1768,7 +1787,7 @@ class TagCount(_serialization.Model):
         "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(self, *, type: Optional[str] = None, value: Optional[str] = None, **kwargs):
+    def __init__(self, *, type: Optional[str] = None, value: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword type: Type of count.
         :paramtype type: str
@@ -1812,8 +1831,8 @@ class TagDetails(_serialization.Model):
         tag_name: Optional[str] = None,
         count: Optional["_models.TagCount"] = None,
         values: Optional[List["_models.TagValue"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tag_name: The tag name.
         :paramtype tag_name: str
@@ -1849,7 +1868,7 @@ class TagsListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, next_link: str, value: Optional[List["_models.TagDetails"]] = None, **kwargs):
+    def __init__(self, *, next_link: str, value: Optional[List["_models.TagDetails"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: The list of tags.
         :paramtype value: list[~azure.mgmt.resource.resources.v2016_02_01.models.TagDetails]
@@ -1884,7 +1903,9 @@ class TagValue(_serialization.Model):
         "count": {"key": "count", "type": "TagCount"},
     }
 
-    def __init__(self, *, tag_value: Optional[str] = None, count: Optional["_models.TagCount"] = None, **kwargs):
+    def __init__(
+        self, *, tag_value: Optional[str] = None, count: Optional["_models.TagCount"] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword tag_value: The tag value.
         :paramtype tag_value: str
@@ -1920,8 +1941,8 @@ class TargetResource(_serialization.Model):
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         resource_name: Optional[str] = None,
         resource_type: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: The ID of the resource.
         :paramtype id: str
@@ -1937,7 +1958,8 @@ class TargetResource(_serialization.Model):
 
 
 class TemplateHashResult(_serialization.Model):
-    """Result of the request to calculate template hash. It contains a string of minified template and its hash.
+    """Result of the request to calculate template hash. It contains a string of minified template and
+    its hash.
 
     :ivar minified_template: The minified template string.
     :vartype minified_template: str
@@ -1950,7 +1972,9 @@ class TemplateHashResult(_serialization.Model):
         "template_hash": {"key": "templateHash", "type": "str"},
     }
 
-    def __init__(self, *, minified_template: Optional[str] = None, template_hash: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, minified_template: Optional[str] = None, template_hash: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword minified_template: The minified template string.
         :paramtype minified_template: str
@@ -1982,7 +2006,7 @@ class TemplateLink(_serialization.Model):
         "content_version": {"key": "contentVersion", "type": "str"},
     }
 
-    def __init__(self, *, uri: str, content_version: Optional[str] = None, **kwargs):
+    def __init__(self, *, uri: str, content_version: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword uri: URI referencing the template. Required.
         :paramtype uri: str

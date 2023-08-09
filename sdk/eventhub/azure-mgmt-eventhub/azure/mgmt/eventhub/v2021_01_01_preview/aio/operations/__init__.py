@@ -14,12 +14,18 @@ from ._event_hubs_operations import EventHubsOperations
 from ._disaster_recovery_configs_operations import DisasterRecoveryConfigsOperations
 from ._consumer_groups_operations import ConsumerGroupsOperations
 
+from ._patch import __all__ as _patch_all
+from ._patch import *  # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
+
 __all__ = [
-    'NamespacesOperations',
-    'PrivateEndpointConnectionsOperations',
-    'PrivateLinkResourcesOperations',
-    'Operations',
-    'EventHubsOperations',
-    'DisasterRecoveryConfigsOperations',
-    'ConsumerGroupsOperations',
+    "NamespacesOperations",
+    "PrivateEndpointConnectionsOperations",
+    "PrivateLinkResourcesOperations",
+    "Operations",
+    "EventHubsOperations",
+    "DisasterRecoveryConfigsOperations",
+    "ConsumerGroupsOperations",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

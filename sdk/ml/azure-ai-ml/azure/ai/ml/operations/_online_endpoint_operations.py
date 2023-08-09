@@ -19,7 +19,7 @@ from azure.ai.ml._scope_dependent_operations import (
     _ScopeDependentOperations,
 )
 
-# from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
+from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._azureml_polling import AzureMLPolling
 from azure.ai.ml._utils._endpoint_utils import validate_response
 from azure.ai.ml._utils._http_utils import HttpPipeline
@@ -39,11 +39,11 @@ from azure.core.tracing.decorator import distributed_trace
 from ._operation_orchestrator import OperationOrchestrator
 
 ops_logger = OpsLogger(__name__)
-module_logger = ops_logger.module_logger
+logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
 
 
 def _strip_zeroes_from_traffic(traffic: Dict[str, str]) -> Dict[str, str]:
-    return {k: v for k, v in traffic.items() if v and int(v) != 0}
+    return {k.lower(): v for k, v in traffic.items() if v and int(v) != 0}
 
 
 class OnlineEndpointOperations(_ScopeDependentOperations):
@@ -65,7 +65,7 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
         **kwargs: Dict,
     ):
         super(OnlineEndpointOperations, self).__init__(operation_scope, operation_config)
-        # ops_logger.update_info(kwargs)
+        ops_logger.update_info(kwargs)
         self._online_operation = service_client_02_2022_preview.online_endpoints
         self._online_deployment_operation = service_client_02_2022_preview.online_deployments
         self._all_operations = all_operations
@@ -76,11 +76,11 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
         self._requests_pipeline: HttpPipeline = kwargs.pop("requests_pipeline")
 
     @distributed_trace
-    # @monitor_with_activity(logger, "OnlineEndpoint.List", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "OnlineEndpoint.List", ActivityType.PUBLICAPI)
     def list(self, *, local: bool = False) -> ItemPaged[OnlineEndpoint]:
         """List endpoints of the workspace.
 
-        :param local: (Optional) Flag to indicate whether to interact with endpoints in local Docker environment.
+        :keyword local: (Optional) Flag to indicate whether to interact with endpoints in local Docker environment.
             Default: False
         :type local: bool
         :return: A list of endpoints
@@ -96,7 +96,7 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
         )
 
     @distributed_trace
-    # @monitor_with_activity(logger, "OnlineEndpoint.ListKeys", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "OnlineEndpoint.ListKeys", ActivityType.PUBLICAPI)
     def get_keys(self, name: str) -> Union[EndpointAuthKeys, EndpointAuthToken]:
         """Get the auth credentials.
 
@@ -109,7 +109,7 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
         return self._get_online_credentials(name=name)
 
     @distributed_trace
-    # @monitor_with_activity(logger, "OnlineEndpoint.Get", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "OnlineEndpoint.Get", ActivityType.PUBLICAPI)
     def get(
         self,
         name: str,
@@ -120,7 +120,7 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
 
         :param name: Name of the endpoint.
         :type name: str
-        :param local: Indicates whether to interact with endpoints in local Docker environment. Defaults to False.
+        :keyword local: Indicates whether to interact with endpoints in local Docker environment. Defaults to False.
         :type local: Optional[bool]
         :raises ~azure.ai.ml.exceptions.LocalEndpointNotFoundError: Raised if local endpoint resource does not exist.
         :return: Endpoint object retrieved from the service.
@@ -157,13 +157,13 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
         return converted_endpoint
 
     @distributed_trace
-    # @monitor_with_activity(logger, "OnlineEndpoint.BeginDelete", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "OnlineEndpoint.BeginDelete", ActivityType.PUBLICAPI)
     def begin_delete(self, name: Optional[str] = None, *, local: bool = False) -> LROPoller[None]:
         """Delete an Online Endpoint.
 
         :param name: Name of the endpoint.
         :type name: str
-        :param local: Whether to interact with the endpoint in local Docker environment. Defaults to False.
+        :keyword local: Whether to interact with the endpoint in local Docker environment. Defaults to False.
         :type local: bool
         :raises ~azure.ai.ml.exceptions.LocalEndpointNotFoundError: Raised if local endpoint resource does not exist.
         :return: A poller to track the operation status if remote, else returns None if local.
@@ -193,13 +193,13 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
         return delete_poller
 
     @distributed_trace
-    # @monitor_with_activity(logger, "OnlineEndpoint.BeginDeleteOrUpdate", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "OnlineEndpoint.BeginDeleteOrUpdate", ActivityType.PUBLICAPI)
     def begin_create_or_update(self, endpoint: OnlineEndpoint, *, local: bool = False) -> LROPoller[OnlineEndpoint]:
         """Create or update an endpoint.
 
         :param endpoint: The endpoint entity.
         :type endpoint: ~azure.ai.ml.entities.OnlineEndpoint
-        :param local: Whether to interact with the endpoint in local Docker environment. Defaults to False.
+        :keyword local: Whether to interact with the endpoint in local Docker environment. Defaults to False.
         :type local: bool
         :raises ~azure.ai.ml.exceptions.ValidationException: Raised if OnlineEndpoint cannot be successfully validated.
             Details will be provided in the error message.
@@ -256,7 +256,7 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
                 raise ex
 
     @distributed_trace
-    # @monitor_with_activity(logger, "OnlineEndpoint.BeginGenerateKeys", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "OnlineEndpoint.BeginGenerateKeys", ActivityType.PUBLICAPI)
     def begin_regenerate_keys(
         self,
         name: str,
@@ -267,7 +267,7 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
 
         :param name: The endpoint name.
         :type name: The endpoint type. Defaults to ONLINE_ENDPOINT_TYPE.
-        :param key_type: One of "primary", "secondary". Defaults to "primary".
+        :keyword key_type: One of "primary", "secondary". Defaults to "primary".
         :type key_type: str
         :return: A poller to track the operation status.
         :rtype: ~azure.core.polling.LROPoller[None]
@@ -291,7 +291,7 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
         )
 
     @distributed_trace
-    # @monitor_with_activity(logger, "OnlineEndpoint.Invoke", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "OnlineEndpoint.Invoke", ActivityType.PUBLICAPI)
     def invoke(
         self,
         endpoint_name: str,
@@ -307,14 +307,14 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
 
         :param endpoint_name: The endpoint name
         :type endpoint_name: str
-        :param request_file: File containing the request payload. This is only valid for online endpoint.
+        :keyword request_file: File containing the request payload. This is only valid for online endpoint.
         :type request_file: Optional[str]
-        :param deployment_name: Name of a specific deployment to invoke. This is optional.
+        :keyword deployment_name: Name of a specific deployment to invoke. This is optional.
             By default requests are routed to any of the deployments according to the traffic rules.
         :type deployment_name: Optional[str]
-        :param input_data: To use a pre-registered data asset, pass str in format
+        :keyword input_data: To use a pre-registered data asset, pass str in format
         :type input_data: Optional[Union[str, Data]]
-        :param local: Indicates whether to interact with endpoints in local Docker environment. Defaults to False.
+        :keyword local: Indicates whether to interact with endpoints in local Docker environment. Defaults to False.
         :type local: Optional[bool]
         :raises ~azure.ai.ml.exceptions.LocalEndpointNotFoundError: Raised if local endpoint resource does not exist.
         :raises ~azure.ai.ml.exceptions.MultipleLocalDeploymentsFoundError: Raised if there are multiple deployments

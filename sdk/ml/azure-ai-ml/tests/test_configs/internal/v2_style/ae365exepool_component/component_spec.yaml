@@ -1,0 +1,97 @@
+$schema: https://componentsdk.azureedge.net/jsonschema/AE365ExePoolComponent.json
+name: microsoft_com_azureml_samples_ae365exepool_cax_eyes_on_module
+version: 0.0.1
+display_name: CAX EyesOn Module [ND] v1.6
+type: ae365exepool
+description: Use this auto-approved module to download data on EyesOn machine and interact with it for Compliant Annotation purpose.
+tags: {category: Component Tutorial, contact: amldesigner@microsoft.com}
+inputs:
+  ComplianceCluster:
+    type: string
+    description: compliance cluster name
+    default: "MsResearch-EyesOn-Annotation"
+    optional: false
+  HeronId:
+    type: string
+    description: Heron ID
+    default: ""
+    optional: false
+  localoutputfolderEnc:
+    type: string
+    description: local output folder for encrypted data
+    default: ""
+    optional: true
+  localoutputfolderDec:
+    type: string
+    description: local output folder for decrypted data
+    default: ""
+    optional: true
+  TimeoutSeconds:
+    type: integer
+    description: timeout in seconds
+    default: 500000
+    optional: true
+  hitappid:
+    type: integer
+    description: hitapp id
+    default: 31346
+    optional: true
+  projectname:
+    type: string
+    description: project name
+    default: "LatestE2Etemplate"
+    optional: true
+  judges:
+    type: string
+    description: judges
+    default: "juwang;bradwall"
+    optional: true
+  annotationsMayIncludeCustomerContent:
+    type: string
+    description: annotations may include customer content
+    default: "1"
+    optional: true
+  TaskGroupId:
+    type: integer
+    description: task group id
+    default: 86891
+    optional: true
+  GoldHitRTADataType:
+    type: string
+    description: gold hit rta data type
+    enum:
+    - Gold
+    - RTA
+    - Qualification
+    - Preview
+    default: ""
+    optional: true
+  taskFileTimestamp:
+    type: string
+    description: task file timestamp
+    default: "2021.12.21.23.55.00"
+    optional: true
+  DataToLookAt:
+    type: AnyFile
+    optional: false
+  GoldHitRTAData:
+    type: AnyFile
+    optional: true
+outputs:
+  outputfolderEnc:
+    type: AnyDirectory
+  outputfolderDec:
+    type: AnyDirectory
+  OriginalHitData:
+    type: AnyDirectory
+command: >-
+  cax.eyesonmodule.exe input=${{inputs.DataToLookAt}} inputGoldHitRta=$[[${{inputs.GoldHitRTAData}}]]
+  localoutputfolderEnc=$[[${{inputs.localoutputfolderEnc}}]] localoutputfolderDec=$[[${{inputs.localoutputfolderDec}}]]
+  timeoutSeconds=$[[${{inputs.TimeoutSeconds}}]] hitappid=$[[${{inputs.hitappid}}]] projectname=$[[${{inputs.projectname}}]]
+  judges=$[[${{inputs.judges}}]] outputfolderEnc=${{outputs.outputfolderEnc}} outputfolderDec=${{outputs.outputfolderDec}}
+  annotationsMayIncludeCustomerContent=$[[${{inputs.annotationsMayIncludeCustomerContent}}]] taskGroupId=$[[${{inputs.TaskGroupId}}]]
+  goldHitRTADataType=$[[${{inputs.GoldHitRTADataType}}]] outputfolderForOriginalHitData=${{outputs.OriginalHitData}}
+  taskFileTimestamp=$[[${{inputs.taskFileTimestamp}}]]
+ae365exepool:
+  ref_id: 654ec0ba-bed3-48eb-a594-efd0e9275e0d
+

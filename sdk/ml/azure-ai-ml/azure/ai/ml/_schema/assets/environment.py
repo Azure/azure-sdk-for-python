@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=unused-argument,no-self-use
+# pylint: disable=unused-argument
 
 import logging
 
@@ -13,7 +13,8 @@ from azure.ai.ml._restclient.v2022_05_01.models import (
     OperatingSystemType,
     Route,
 )
-from azure.ai.ml._schema.core.fields import NestedField, UnionField, LocalPathField
+from azure.ai.ml._schema.core.fields import ExperimentalField, NestedField, UnionField, LocalPathField
+from azure.ai.ml._schema.core.intellectual_property import IntellectualPropertySchema
 
 from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
 from azure.ai.ml.constants._common import (
@@ -75,9 +76,7 @@ class _BaseEnvironmentSchema(AssetSchema):
     )
     build = NestedField(
         BuildContextSchema,
-        metadata={
-            "description": "Docker build context to create the environment. Mutually exclusive with image"
-        },
+        metadata={"description": "Docker build context to create the environment. Mutually exclusive with image"},
     )
     image = fields.Str()
     conda_file = UnionField([fields.Raw(), fields.Str()])
@@ -93,6 +92,7 @@ class _BaseEnvironmentSchema(AssetSchema):
         },
         required=False,
     )
+    intellectual_property = ExperimentalField(NestedField(IntellectualPropertySchema), dump_only=True)
 
     @pre_load
     def pre_load(self, data, **kwargs):
@@ -101,9 +101,7 @@ class _BaseEnvironmentSchema(AssetSchema):
         # validates that "channels" and "dependencies" are not included in the data creation.
         # These properties should only be on environment conda files not in the environment creation file
         if "channels" in data or "dependencies" in data:
-            environmentMessage = CREATE_ENVIRONMENT_ERROR_MESSAGE.format(
-                YAMLRefDocLinks.ENVIRONMENT
-            )
+            environmentMessage = CREATE_ENVIRONMENT_ERROR_MESSAGE.format(YAMLRefDocLinks.ENVIRONMENT)
             raise ValidationError(environmentMessage)
         return data
 
@@ -112,6 +110,10 @@ class _BaseEnvironmentSchema(AssetSchema):
         from azure.ai.ml.entities._assets import Environment
 
         if isinstance(data, Environment):
+            if data._intellectual_property:  # pylint: disable=protected-access
+                ipp_field = data._intellectual_property  # pylint: disable=protected-access
+                if ipp_field:
+                    setattr(data, "intellectual_property", ipp_field)
             return data
         if data is None or not hasattr(data, "get"):
             raise ValidationError("Environment cannot be None")
@@ -126,7 +128,7 @@ class _BaseEnvironmentSchema(AssetSchema):
         except FileNotFoundError as e:
             # Environment.__init__() will raise FileNotFoundError if build.path is not found when trying to calculate
             # the hash for anonymous. Raise ValidationError instead to collect all errors in schema validation.
-            raise ValidationError("Environment file not found: {}".format(e))
+            raise ValidationError("Environment file not found: {}".format(e)) from e
         return obj
 
 
@@ -138,13 +140,11 @@ class EnvironmentSchema(_BaseEnvironmentSchema):
 class AnonymousEnvironmentSchema(_BaseEnvironmentSchema, AnonymousAssetSchema):
     @pre_load
     def trim_dump_only(self, data, **kwargs):
-        """trim_dump_only in PathAwareSchema removes all properties which are
-        dump only.
+        """trim_dump_only in PathAwareSchema removes all properties which are dump only.
 
-        By the time we reach this schema name and version properties are
-        removed so no warning is shown. This method overrides
-        trim_dump_only in PathAwareSchema to check for name and version
-        and raise warning if present. And then calls the it
+        By the time we reach this schema name and version properties are removed so no warning is shown. This method
+        overrides trim_dump_only in PathAwareSchema to check for name and version and raise warning if present. And then
+        calls the it
         """
         if isinstance(data, str) or data is None:
             return data

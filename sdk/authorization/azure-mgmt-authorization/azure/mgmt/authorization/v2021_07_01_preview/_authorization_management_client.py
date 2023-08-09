@@ -12,7 +12,7 @@ from typing import Any, TYPE_CHECKING
 from azure.core.rest import HttpRequest, HttpResponse
 from azure.mgmt.core import ARMPipelineClient
 
-from . import models
+from . import models as _models
 from .._serialization import Deserializer, Serializer
 from ._configuration import AuthorizationManagementClientConfiguration
 from .operations import (
@@ -95,45 +95,47 @@ class AuthorizationManagementClient:  # pylint: disable=client-accepts-api-versi
         self._config = AuthorizationManagementClientConfiguration(
             credential=credential, subscription_id=subscription_id, **kwargs
         )
-        self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        self._client: ARMPipelineClient = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
-        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
+        client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
+        self.operations = Operations(
+            self._client, self._config, self._serialize, self._deserialize, "2021-07-01-preview"
+        )
         self.access_review_schedule_definitions = AccessReviewScheduleDefinitionsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2021-07-01-preview"
         )
         self.access_review_instances = AccessReviewInstancesOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2021-07-01-preview"
         )
         self.access_review_instance = AccessReviewInstanceOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2021-07-01-preview"
         )
         self.access_review_instance_decisions = AccessReviewInstanceDecisionsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2021-07-01-preview"
         )
         self.access_review_instance_contacted_reviewers = AccessReviewInstanceContactedReviewersOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2021-07-01-preview"
         )
         self.access_review_default_settings = AccessReviewDefaultSettingsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2021-07-01-preview"
         )
         self.access_review_schedule_definitions_assigned_for_my_approval = (
             AccessReviewScheduleDefinitionsAssignedForMyApprovalOperations(
-                self._client, self._config, self._serialize, self._deserialize
+                self._client, self._config, self._serialize, self._deserialize, "2021-07-01-preview"
             )
         )
         self.access_review_instances_assigned_for_my_approval = AccessReviewInstancesAssignedForMyApprovalOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2021-07-01-preview"
         )
         self.access_review_instance_my_decisions = AccessReviewInstanceMyDecisionsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2021-07-01-preview"
         )
         self.tenant_level_access_review_instance_contacted_reviewers = (
             TenantLevelAccessReviewInstanceContactedReviewersOperations(
-                self._client, self._config, self._serialize, self._deserialize
+                self._client, self._config, self._serialize, self._deserialize, "2021-07-01-preview"
             )
         )
 
@@ -159,15 +161,12 @@ class AuthorizationManagementClient:  # pylint: disable=client-accepts-api-versi
         request_copy.url = self._client.format_url(request_copy.url)
         return self._client.send_request(request_copy, **kwargs)
 
-    def close(self):
-        # type: () -> None
+    def close(self) -> None:
         self._client.close()
 
-    def __enter__(self):
-        # type: () -> AuthorizationManagementClient
+    def __enter__(self) -> "AuthorizationManagementClient":
         self._client.__enter__()
         return self
 
-    def __exit__(self, *exc_details):
-        # type: (Any) -> None
+    def __exit__(self, *exc_details: Any) -> None:
         self._client.__exit__(*exc_details)

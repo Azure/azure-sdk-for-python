@@ -3,8 +3,6 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-import cProfile
-import os
 import aiohttp
 import time
 from typing import Optional, Any, Dict, List
@@ -61,7 +59,7 @@ class BatchPerfTest(_PerfTestBase):
             await self._start_recording()
             self._test_proxy_policy.recording_id = self._recording_id
             self._test_proxy_policy.mode = "record"
-            
+
             # Record one call to run()
             if self.args.sync:
                 self.run_batch_sync()
@@ -78,6 +76,7 @@ class BatchPerfTest(_PerfTestBase):
         Pre-cleanup called once per parallel test instance.
         Used by base classes to cleanup state (like test-proxy) before all derived class cleanup runs.
         """
+        # cSpell:ignore inmemory
         # Only stop playback if it was successfully started
         if self._test_proxy_policy and self._test_proxy_policy.mode == 'playback':
             headers = {
@@ -119,7 +118,7 @@ class BatchPerfTest(_PerfTestBase):
 
     def run_batch_sync(self) -> int:
         """
-        Run cumultive operation(s) - i.e. an operation that results in more than a single logical result.
+        Run cumulative operation(s) - i.e. an operation that results in more than a single logical result.
         :returns: The number of completed results.
         :rtype: int
         """
@@ -127,69 +126,50 @@ class BatchPerfTest(_PerfTestBase):
 
     async def run_batch_async(self) -> int:
         """
-        Run cumultive operation(s) - i.e. an operation that results in more than a single logical result.
+        Run cumulative operation(s) - i.e. an operation that results in more than a single logical result.
         :returns: The number of completed results.
         :rtype: int
         """
         raise NotImplementedError("run_batch_async must be implemented for {}".format(self.__class__.__name__))
 
-    def run_all_sync(self, duration: int) -> None:
+    def run_all_sync(self, duration: int, *, run_profiler: bool = False, **kwargs) -> None:
         """
         Run all sync tests, including both warmup and duration.
         """
         self._completed_operations = 0
         self._last_completion_time = 0.0
         starttime = time.time()
-        if self.args.profile:
-            # If the profiler is used, ignore the duration and run once.
-            import cProfile
-            profile = cProfile.Profile()
+        if run_profiler:
             try:
-                profile.enable()
+                self._profile.enable()
                 self._completed_operations += self.run_batch_sync()
             finally:
-                profile.disable()
+                self._profile.disable()
             self._last_completion_time = time.time() - starttime
-            self._save_profile(profile, "sync")
+            self._save_profile("sync", output_path=self.args.profile_path)
+            self._print_profile_stats()
         else:
             while self._last_completion_time < duration:
                 self._completed_operations += self.run_batch_sync()
                 self._last_completion_time = time.time() - starttime
 
-    async def run_all_async(self, duration: int) -> None:
+    async def run_all_async(self, duration: int, *, run_profiler: bool = False, **kwargs) -> None:
         """
         Run all async tests, including both warmup and duration.
         """
         self._completed_operations = 0
         self._last_completion_time = 0.0
         starttime = time.time()
-        if self.args.profile:
-            # If the profiler is used, ignore the duration and run once. 
-            import cProfile
-            profile = cProfile.Profile()
+        if run_profiler:
             try:
-                profile.enable()
+                self._profile.enable()
                 self._completed_operations += await self.run_batch_async()
             finally:
-                profile.disable()
+                self._profile.disable()
             self._last_completion_time = time.time() - starttime
-            self._save_profile(profile, "async")
+            self._save_profile("async", output_path=self.args.profile_path)
+            self._print_profile_stats()
         else:
             while self._last_completion_time < duration:
                 self._completed_operations += await self.run_batch_async()
                 self._last_completion_time = time.time() - starttime
-
-    def _save_profile(self, profile: cProfile.Profile, sync: str) -> None:
-        """
-        Dump the profiler data to file in the current working directory.
-        """
-        if profile:
-            profile_name = "{}/cProfile-{}-{}-{}.pstats".format(
-                os.getcwd(),
-                self.__class__.__name__,
-                self._parallel_index,
-                sync)
-            print("Dumping profile data to {}".format(profile_name))
-            profile.dump_stats(profile_name)
-        else:
-            print("No profile generated.")

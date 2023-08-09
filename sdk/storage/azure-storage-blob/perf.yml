@@ -1,4 +1,8 @@
 parameters:
+- name: LanguageVersion
+  displayName: LanguageVersion (3.7, 3.8, 3.9, 3.10, 3.11)
+  type: string
+  default: '3.11'
 - name: PackageVersions
   displayName: PackageVersions (regex of package versions to run)
   type: string
@@ -23,8 +27,9 @@ parameters:
 extends:
   template: /eng/pipelines/templates/jobs/perf.yml
   parameters:
+    TimeoutInMinutes: 720
+    LanguageVersion: ${{ parameters.LanguageVersion }}
     ServiceDirectory: storage/azure-storage-blob
-    Services: "^storage-blob$"
     PackageVersions: ${{ parameters.PackageVersions }}
     Tests: ${{ parameters.Tests }}
     Arguments: ${{ parameters.Arguments }}

@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=unused-argument,no-self-use
+# pylint: disable=unused-argument
 
 from marshmallow import fields
 from marshmallow.decorators import post_load, pre_dump
@@ -17,6 +17,7 @@ from azure.ai.ml.entities._credentials import IdentityConfiguration, ManagedIden
 class UserAssignedIdentitySchema(metaclass=PatchedSchemaMeta):
     principal_id = fields.Str(required=False)
     client_id = fields.Str(required=False)
+    resource_id = fields.Str(required=False)
 
     @post_load
     def make(self, data, **kwargs):
@@ -48,7 +49,8 @@ class IdentitySchema(metaclass=PatchedSchemaMeta):
 
     @post_load
     def make(self, data, **kwargs):
-        data["user_assigned_identities"] = self.uai_dict2list(data.pop("user_assigned_identities"))
+        if data.get("user_assigned_identities", False):
+            data["user_assigned_identities"] = self.uai_dict2list(data.pop("user_assigned_identities"))
         data["type"] = snake_to_camel(data.pop("type"))
         return IdentityConfiguration(**data)
 

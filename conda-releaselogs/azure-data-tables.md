@@ -1,5 +1,17 @@
 # Azure Tables client library for Python (conda)
 
+## 2023.06.01
+
+### Packages included
+
+- azure-data-tables-12.4.2
+
+## 2023.03.01
+
+### Packages included
+
+- azure-data-tables-12.4.2
+
 ## 2022.12.01
 
 ### Packages included

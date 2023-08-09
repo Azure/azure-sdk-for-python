@@ -1,0 +1,329 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/jobs/test_220259600609?api-version=2023-02-01-preview",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "1032",
+        "Content-Type": "application/json",
+        "User-Agent": "azure-ai-ml/1.5.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.7.8 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": {
+        "properties": {
+          "properties": {},
+          "tags": {},
+          "computeId": "/subscriptions/79a1ba0c-35bb-436b-bff2-3074d5ff1f89/resourceGroups/Runtime/providers/Microsoft.MachineLearningServices/virtualclusters/centeuapvc",
+          "displayName": "test_220259600609",
+          "experimentName": "azure-ai-ml",
+          "isArchived": false,
+          "jobType": "Command",
+          "command": "echo \u0022test\u0022",
+          "distribution": {
+            "distributionType": "PyTorch",
+            "processCountPerInstance": 1
+          },
+          "environmentId": "azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
+          "environmentVariables": {
+            "JOB_EXECUTION_MODE": "Basic",
+            "AZUREML_COMPUTE_USE_COMMON_RUNTIME": "true"
+          },
+          "inputs": {},
+          "outputs": {},
+          "queueSettings": {
+            "jobTier": "Premium",
+            "priority": 2
+          },
+          "resources": {
+            "instanceCount": 2,
+            "instanceType": "Singularity.NC6_v3",
+            "locations": [
+              "westus",
+              "eastus"
+            ],
+            "properties": {
+              "AISuperComputer": {
+                "interactive": false,
+                "imageVersion": "",
+                "tensorboardLogDirectory": "/scratch/tensorboard_logs",
+                "scalePolicy": {
+                  "autoScaleIntervalInSec": 120,
+                  "maxInstanceTypeCount": 1,
+                  "minInstanceTypeCount": 1
+                }
+              }
+            }
+          }
+        }
+      },
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "2750",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 09 Mar 2023 17:37:25 GMT",
+        "Expires": "-1",
+        "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/jobs/test_220259600609?api-version=2023-02-01-preview",
+        "Pragma": "no-cache",
+        "request-context": "appId=cid-v1:512cc15a-13b5-415b-bfd0-dce7accb6bb1",
+        "Server-Timing": "traceparent;desc=\u002200-d173f6da9cb5a467fb78ea9ec5da374d-2df7bd652895058a-01\u0022",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "x-aml-cluster": "vienna-test-westus2-01",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "4309d97c-e936-4cb1-870a-4e4ad86580e8",
+        "x-ms-ratelimit-remaining-subscription-writes": "1199",
+        "x-ms-response-type": "standard",
+        "x-ms-routing-request-id": "WESTUS2:20230309T173726Z:4309d97c-e936-4cb1-870a-4e4ad86580e8",
+        "x-request-time": "5.184"
+      },
+      "ResponseBody": {
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/jobs/test_220259600609",
+        "name": "test_220259600609",
+        "type": "Microsoft.MachineLearningServices/workspaces/jobs",
+        "properties": {
+          "description": null,
+          "tags": {},
+          "properties": {
+            "_azureml.ComputeTargetType": "singularity",
+            "azureml.SLATier": "Premium",
+            "azureml.EnableAzmlInt": "true",
+            "azureml.VC": "/subscriptions/79a1ba0c-35bb-436b-bff2-3074d5ff1f89/resourcegroups/runtime/providers/microsoft.machinelearningservices/virtualclusters/centeuapvc",
+            "azureml.ComputeType": "Singularity",
+            "azureml.AutoScale": "true",
+            "azureml.InstanceType": "Singularity.NC6_v3",
+            "azureml.AutoScaleIntervalInSeconds": "120"
+          },
+          "displayName": "test_220259600609",
+          "status": "Starting",
+          "experimentName": "azure-ai-ml",
+          "services": {
+            "Tracking": {
+              "jobServiceType": "Tracking",
+              "port": null,
+              "endpoint": "azureml://master.api.azureml-test.ms/mlflow/v1.0/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000?",
+              "status": null,
+              "errorMessage": null,
+              "properties": null,
+              "nodes": null
+            },
+            "Studio": {
+              "jobServiceType": "Studio",
+              "port": null,
+              "endpoint": "https://ml.azure.com/runs/test_220259600609?wsid=/subscriptions/00000000-0000-0000-0000-000000000/resourcegroups/00000/workspaces/00000",
+              "status": null,
+              "errorMessage": null,
+              "properties": null,
+              "nodes": null
+            }
+          },
+          "computeId": "/subscriptions/79a1ba0c-35bb-436b-bff2-3074d5ff1f89/resourceGroups/Runtime/providers/Microsoft.MachineLearningServices/virtualclusters/centeuapvc",
+          "isArchived": false,
+          "identity": null,
+          "componentId": null,
+          "notificationSetting": null,
+          "jobType": "Command",
+          "resources": {
+            "instanceCount": 2,
+            "instanceType": "Singularity.NC6_v3",
+            "locations": [
+              "westus",
+              "eastus"
+            ],
+            "properties": {
+              "AISuperComputer": {
+                "interactive": false,
+                "imageVersion": "",
+                "tensorboardLogDirectory": "/scratch/tensorboard_logs",
+                "scalePolicy": {
+                  "autoScaleIntervalInSec": 120,
+                  "maxInstanceTypeCount": 1,
+                  "minInstanceTypeCount": 1
+                }
+              }
+            },
+            "shmSize": "2g",
+            "dockerArgs": null
+          },
+          "codeId": null,
+          "command": "echo \u0022test\u0022",
+          "environmentId": "azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
+          "inputs": {},
+          "outputs": {
+            "default": {
+              "description": null,
+              "uri": "azureml://datastores/workspaceartifactstore/ExperimentRun/dcid.test_220259600609",
+              "assetName": null,
+              "assetVersion": null,
+              "mode": "ReadWriteMount",
+              "jobOutputType": "uri_folder"
+            }
+          },
+          "distribution": {
+            "distributionType": "PyTorch",
+            "processCountPerInstance": 1
+          },
+          "autologgerSettings": null,
+          "limits": null,
+          "environmentVariables": {
+            "JOB_EXECUTION_MODE": "Basic",
+            "AZUREML_COMPUTE_USE_COMMON_RUNTIME": "true"
+          },
+          "parameters": {},
+          "queueSettings": {
+            "jobTier": "Premium",
+            "priority": 2
+          }
+        },
+        "systemData": {
+          "createdAt": "2023-03-09T17:37:25.8201511\u002B00:00",
+          "createdBy": "Firstname Lastname",
+          "createdByType": "User"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/jobs/test_220259600609?api-version=2023-02-01-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azure-ai-ml/1.5.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.7.8 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 09 Mar 2023 17:37:28 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "request-context": "appId=cid-v1:512cc15a-13b5-415b-bfd0-dce7accb6bb1",
+        "Server-Timing": "traceparent;desc=\u002200-e018c9b4c40403f7faf7be8fc873d431-e5af86ed4425d5a3-01\u0022",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "Vary": [
+          "Accept-Encoding",
+          "Accept-Encoding"
+        ],
+        "x-aml-cluster": "vienna-test-westus2-01",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "728fdfaa-0d28-43aa-9c4f-64d2f6a372c4",
+        "x-ms-ratelimit-remaining-subscription-reads": "11999",
+        "x-ms-response-type": "standard",
+        "x-ms-routing-request-id": "WESTUS2:20230309T173728Z:728fdfaa-0d28-43aa-9c4f-64d2f6a372c4",
+        "x-request-time": "0.117"
+      },
+      "ResponseBody": {
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/jobs/test_220259600609",
+        "name": "test_220259600609",
+        "type": "Microsoft.MachineLearningServices/workspaces/jobs",
+        "properties": {
+          "description": null,
+          "tags": {},
+          "properties": {
+            "_azureml.ComputeTargetType": "singularity",
+            "azureml.SLATier": "Premium",
+            "azureml.EnableAzmlInt": "true",
+            "azureml.VC": "/subscriptions/79a1ba0c-35bb-436b-bff2-3074d5ff1f89/resourcegroups/runtime/providers/microsoft.machinelearningservices/virtualclusters/centeuapvc",
+            "azureml.ComputeType": "Singularity",
+            "azureml.AutoScale": "true",
+            "azureml.InstanceType": "Singularity.NC6_v3",
+            "azureml.AutoScaleIntervalInSeconds": "120"
+          },
+          "displayName": "test_220259600609",
+          "status": "Preparing",
+          "experimentName": "azure-ai-ml",
+          "services": {
+            "Tracking": {
+              "jobServiceType": "Tracking",
+              "port": null,
+              "endpoint": "azureml://master.api.azureml-test.ms/mlflow/v1.0/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000?",
+              "status": null,
+              "errorMessage": null,
+              "properties": null,
+              "nodes": null
+            },
+            "Studio": {
+              "jobServiceType": "Studio",
+              "port": null,
+              "endpoint": "https://ml.azure.com/runs/test_220259600609?wsid=/subscriptions/00000000-0000-0000-0000-000000000/resourcegroups/00000/workspaces/00000",
+              "status": null,
+              "errorMessage": null,
+              "properties": null,
+              "nodes": null
+            }
+          },
+          "computeId": "/subscriptions/79a1ba0c-35bb-436b-bff2-3074d5ff1f89/resourceGroups/Runtime/providers/Microsoft.MachineLearningServices/virtualclusters/centeuapvc",
+          "isArchived": false,
+          "identity": null,
+          "componentId": null,
+          "notificationSetting": null,
+          "jobType": "Command",
+          "resources": {
+            "instanceCount": 2,
+            "instanceType": "Singularity.NC6_v3",
+            "locations": [
+              "westus",
+              "eastus"
+            ],
+            "properties": {
+              "AISuperComputer": {
+                "interactive": false,
+                "imageVersion": "",
+                "tensorboardLogDirectory": "/scratch/tensorboard_logs",
+                "scalePolicy": {
+                  "autoScaleIntervalInSec": 120,
+                  "maxInstanceTypeCount": 1,
+                  "minInstanceTypeCount": 1
+                }
+              }
+            },
+            "shmSize": "2g",
+            "dockerArgs": null
+          },
+          "codeId": null,
+          "command": "echo \u0022test\u0022",
+          "environmentId": "azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
+          "inputs": {},
+          "outputs": {
+            "default": {
+              "description": null,
+              "uri": "azureml://datastores/workspaceartifactstore/ExperimentRun/dcid.test_220259600609",
+              "assetName": null,
+              "assetVersion": null,
+              "mode": "ReadWriteMount",
+              "jobOutputType": "uri_folder"
+            }
+          },
+          "distribution": {
+            "distributionType": "PyTorch",
+            "processCountPerInstance": 1
+          },
+          "autologgerSettings": null,
+          "limits": null,
+          "environmentVariables": {
+            "JOB_EXECUTION_MODE": "Basic",
+            "AZUREML_COMPUTE_USE_COMMON_RUNTIME": "true"
+          },
+          "parameters": {},
+          "queueSettings": {
+            "jobTier": "Premium",
+            "priority": 2
+          }
+        },
+        "systemData": {
+          "createdAt": "2023-03-09T17:37:25.8201511\u002B00:00",
+          "createdBy": "Firstname Lastname",
+          "createdByType": "User"
+        }
+      }
+    }
+  ],
+  "Variables": {
+    "job_name": "test_220259600609"
+  }
+}

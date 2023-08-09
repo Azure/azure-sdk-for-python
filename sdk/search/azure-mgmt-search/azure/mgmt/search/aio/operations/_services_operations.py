@@ -87,11 +87,11 @@ class ServicesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2022-09-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: Literal["2020-03-13"]
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.SearchService]
+        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.SearchService] = kwargs.pop("cls", None)
 
         _client_request_id = None
         if search_management_request_options is not None:
@@ -118,9 +118,9 @@ class ServicesOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -137,11 +137,13 @@ class ServicesOperations:
             deserialized = self._deserialize("SearchService", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
-    _create_or_update_initial.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Search/searchServices/{searchServiceName}"}  # type: ignore
+    _create_or_update_initial.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Search/searchServices/{searchServiceName}"
+    }
 
     @overload
     async def begin_create_or_update(
@@ -154,7 +156,7 @@ class ServicesOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.SearchService]:
-        """Creates or updates a Search service in the given resource group. If the Search service already
+        """Creates or updates a search service in the given resource group. If the search service already
         exists, all properties will be updated with the given values.
 
         :param resource_group_name: The name of the resource group within the current subscription. You
@@ -167,7 +169,7 @@ class ServicesOperations:
          of the service URI (https://:code:`<name>`.search.windows.net). You cannot change the service
          name after the service is created. Required.
         :type search_service_name: str
-        :param service: The definition of the Search service to create or update. Required.
+        :param service: The definition of the search service to create or update. Required.
         :type service: ~azure.mgmt.search.models.SearchService
         :param search_management_request_options: Parameter group. Default value is None.
         :type search_management_request_options:
@@ -200,7 +202,7 @@ class ServicesOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.SearchService]:
-        """Creates or updates a Search service in the given resource group. If the Search service already
+        """Creates or updates a search service in the given resource group. If the search service already
         exists, all properties will be updated with the given values.
 
         :param resource_group_name: The name of the resource group within the current subscription. You
@@ -213,7 +215,7 @@ class ServicesOperations:
          of the service URI (https://:code:`<name>`.search.windows.net). You cannot change the service
          name after the service is created. Required.
         :type search_service_name: str
-        :param service: The definition of the Search service to create or update. Required.
+        :param service: The definition of the search service to create or update. Required.
         :type service: IO
         :param search_management_request_options: Parameter group. Default value is None.
         :type search_management_request_options:
@@ -244,7 +246,7 @@ class ServicesOperations:
         search_management_request_options: Optional[_models.SearchManagementRequestOptions] = None,
         **kwargs: Any
     ) -> AsyncLROPoller[_models.SearchService]:
-        """Creates or updates a Search service in the given resource group. If the Search service already
+        """Creates or updates a search service in the given resource group. If the search service already
         exists, all properties will be updated with the given values.
 
         :param resource_group_name: The name of the resource group within the current subscription. You
@@ -257,7 +259,7 @@ class ServicesOperations:
          of the service URI (https://:code:`<name>`.search.windows.net). You cannot change the service
          name after the service is created. Required.
         :type search_service_name: str
-        :param service: The definition of the Search service to create or update. Is either a model
+        :param service: The definition of the search service to create or update. Is either a model
          type or a IO type. Required.
         :type service: ~azure.mgmt.search.models.SearchService or IO
         :param search_management_request_options: Parameter group. Default value is None.
@@ -282,16 +284,16 @@ class ServicesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2022-09-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: Literal["2020-03-13"]
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.SearchService]
-        polling = kwargs.pop("polling", True)  # type: Union[bool, AsyncPollingMethod]
+        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.SearchService] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = await self._create_or_update_initial(  # type: ignore
+            raw_result = await self._create_or_update_initial(
                 resource_group_name=resource_group_name,
                 search_service_name=search_service_name,
                 service=service,
@@ -312,7 +314,7 @@ class ServicesOperations:
             return deserialized
 
         if polling is True:
-            polling_method = cast(AsyncPollingMethod, AsyncARMPolling(lro_delay, **kwargs))  # type: AsyncPollingMethod
+            polling_method: AsyncPollingMethod = cast(AsyncPollingMethod, AsyncARMPolling(lro_delay, **kwargs))
         elif polling is False:
             polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
         else:
@@ -324,30 +326,32 @@ class ServicesOperations:
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    begin_create_or_update.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Search/searchServices/{searchServiceName}"}  # type: ignore
+    begin_create_or_update.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Search/searchServices/{searchServiceName}"
+    }
 
     @overload
     async def update(
         self,
         resource_group_name: str,
         search_service_name: str,
-        service: _models.SearchService,
+        service: _models.SearchServiceUpdate,
         search_management_request_options: Optional[_models.SearchManagementRequestOptions] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.SearchService:
-        """Updates an existing Search service in the given resource group.
+        """Updates an existing search service in the given resource group.
 
         :param resource_group_name: The name of the resource group within the current subscription. You
          can obtain this value from the Azure Resource Manager API or the portal. Required.
         :type resource_group_name: str
         :param search_service_name: The name of the Azure Cognitive Search service to update. Required.
         :type search_service_name: str
-        :param service: The definition of the Search service to update. Required.
-        :type service: ~azure.mgmt.search.models.SearchService
+        :param service: The definition of the search service to update. Required.
+        :type service: ~azure.mgmt.search.models.SearchServiceUpdate
         :param search_management_request_options: Parameter group. Default value is None.
         :type search_management_request_options:
          ~azure.mgmt.search.models.SearchManagementRequestOptions
@@ -371,14 +375,14 @@ class ServicesOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.SearchService:
-        """Updates an existing Search service in the given resource group.
+        """Updates an existing search service in the given resource group.
 
         :param resource_group_name: The name of the resource group within the current subscription. You
          can obtain this value from the Azure Resource Manager API or the portal. Required.
         :type resource_group_name: str
         :param search_service_name: The name of the Azure Cognitive Search service to update. Required.
         :type search_service_name: str
-        :param service: The definition of the Search service to update. Required.
+        :param service: The definition of the search service to update. Required.
         :type service: IO
         :param search_management_request_options: Parameter group. Default value is None.
         :type search_management_request_options:
@@ -397,20 +401,20 @@ class ServicesOperations:
         self,
         resource_group_name: str,
         search_service_name: str,
-        service: Union[_models.SearchService, IO],
+        service: Union[_models.SearchServiceUpdate, IO],
         search_management_request_options: Optional[_models.SearchManagementRequestOptions] = None,
         **kwargs: Any
     ) -> _models.SearchService:
-        """Updates an existing Search service in the given resource group.
+        """Updates an existing search service in the given resource group.
 
         :param resource_group_name: The name of the resource group within the current subscription. You
          can obtain this value from the Azure Resource Manager API or the portal. Required.
         :type resource_group_name: str
         :param search_service_name: The name of the Azure Cognitive Search service to update. Required.
         :type search_service_name: str
-        :param service: The definition of the Search service to update. Is either a model type or a IO
+        :param service: The definition of the search service to update. Is either a model type or a IO
          type. Required.
-        :type service: ~azure.mgmt.search.models.SearchService or IO
+        :type service: ~azure.mgmt.search.models.SearchServiceUpdate or IO
         :param search_management_request_options: Parameter group. Default value is None.
         :type search_management_request_options:
          ~azure.mgmt.search.models.SearchManagementRequestOptions
@@ -433,11 +437,11 @@ class ServicesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2022-09-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: Literal["2020-03-13"]
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.SearchService]
+        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.SearchService] = kwargs.pop("cls", None)
 
         _client_request_id = None
         if search_management_request_options is not None:
@@ -448,7 +452,7 @@ class ServicesOperations:
         if isinstance(service, (IO, bytes)):
             _content = service
         else:
-            _json = self._serialize.body(service, "SearchService")
+            _json = self._serialize.body(service, "SearchServiceUpdate")
 
         request = build_update_request(
             resource_group_name=resource_group_name,
@@ -464,9 +468,9 @@ class ServicesOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -483,7 +487,9 @@ class ServicesOperations:
 
         return deserialized
 
-    update.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Search/searchServices/{searchServiceName}"}  # type: ignore
+    update.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Search/searchServices/{searchServiceName}"
+    }
 
     @distributed_trace_async
     async def get(
@@ -493,7 +499,7 @@ class ServicesOperations:
         search_management_request_options: Optional[_models.SearchManagementRequestOptions] = None,
         **kwargs: Any
     ) -> _models.SearchService:
-        """Gets the Search service with the given name in the given resource group.
+        """Gets the search service with the given name in the given resource group.
 
         :param resource_group_name: The name of the resource group within the current subscription. You
          can obtain this value from the Azure Resource Manager API or the portal. Required.
@@ -520,10 +526,10 @@ class ServicesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2022-09-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: Literal["2020-03-13"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.SearchService]
+        )
+        cls: ClsType[_models.SearchService] = kwargs.pop("cls", None)
 
         _client_request_id = None
         if search_management_request_options is not None:
@@ -540,9 +546,9 @@ class ServicesOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -559,7 +565,9 @@ class ServicesOperations:
 
         return deserialized
 
-    get.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Search/searchServices/{searchServiceName}"}  # type: ignore
+    get.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Search/searchServices/{searchServiceName}"
+    }
 
     @distributed_trace_async
     async def delete(  # pylint: disable=inconsistent-return-statements
@@ -569,7 +577,7 @@ class ServicesOperations:
         search_management_request_options: Optional[_models.SearchManagementRequestOptions] = None,
         **kwargs: Any
     ) -> None:
-        """Deletes a Search service in the given resource group, along with its associated resources.
+        """Deletes a search service in the given resource group, along with its associated resources.
 
         :param resource_group_name: The name of the resource group within the current subscription. You
          can obtain this value from the Azure Resource Manager API or the portal. Required.
@@ -596,10 +604,10 @@ class ServicesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2022-09-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: Literal["2020-03-13"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        )
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         _client_request_id = None
         if search_management_request_options is not None:
@@ -616,9 +624,9 @@ class ServicesOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -631,7 +639,9 @@ class ServicesOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-    delete.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Search/searchServices/{searchServiceName}"}  # type: ignore
+    delete.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Search/searchServices/{searchServiceName}"
+    }
 
     @distributed_trace
     def list_by_resource_group(
@@ -656,10 +666,10 @@ class ServicesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2022-09-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: Literal["2020-03-13"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.SearchServiceListResult]
+        )
+        cls: ClsType[_models.SearchServiceListResult] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -685,7 +695,7 @@ class ServicesOperations:
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -701,7 +711,7 @@ class ServicesOperations:
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
                 request.method = "GET"
             return request
 
@@ -709,13 +719,13 @@ class ServicesOperations:
             deserialized = self._deserialize("SearchServiceListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
                 request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
@@ -728,7 +738,9 @@ class ServicesOperations:
 
         return AsyncItemPaged(get_next, extract_data)
 
-    list_by_resource_group.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Search/searchServices"}  # type: ignore
+    list_by_resource_group.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Search/searchServices"
+    }
 
     @distributed_trace
     def list_by_subscription(
@@ -747,10 +759,10 @@ class ServicesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2022-09-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: Literal["2020-03-13"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.SearchServiceListResult]
+        )
+        cls: ClsType[_models.SearchServiceListResult] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -775,7 +787,7 @@ class ServicesOperations:
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -791,7 +803,7 @@ class ServicesOperations:
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
                 request.method = "GET"
             return request
 
@@ -799,13 +811,13 @@ class ServicesOperations:
             deserialized = self._deserialize("SearchServiceListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
                 request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
@@ -818,7 +830,7 @@ class ServicesOperations:
 
         return AsyncItemPaged(get_next, extract_data)
 
-    list_by_subscription.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Search/searchServices"}  # type: ignore
+    list_by_subscription.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Search/searchServices"}
 
     @distributed_trace_async
     async def check_name_availability(
@@ -827,11 +839,11 @@ class ServicesOperations:
         search_management_request_options: Optional[_models.SearchManagementRequestOptions] = None,
         **kwargs: Any
     ) -> _models.CheckNameAvailabilityOutput:
-        """Checks whether or not the given Search service name is available for use. Search service names
+        """Checks whether or not the given search service name is available for use. Search service names
         must be globally unique since they are part of the service URI
         (https://:code:`<name>`.search.windows.net).
 
-        :param name: The Search service name to validate. Search service names must only contain
+        :param name: The search service name to validate. Search service names must only contain
          lowercase letters, digits or dashes, cannot use dash as the first two or last one characters,
          cannot contain consecutive dashes, and must be between 2 and 60 characters in length. Required.
         :type name: str
@@ -858,12 +870,12 @@ class ServicesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2022-09-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: Literal["2020-03-13"]
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))  # type: str
-        type = kwargs.pop("type", "searchServices")  # type: Literal["searchServices"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.CheckNameAvailabilityOutput]
+        )
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))
+        type: Literal["searchServices"] = kwargs.pop("type", "searchServices")
+        cls: ClsType[_models.CheckNameAvailabilityOutput] = kwargs.pop("cls", None)
 
         _client_request_id = None
         if search_management_request_options is not None:
@@ -882,9 +894,9 @@ class ServicesOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -901,4 +913,6 @@ class ServicesOperations:
 
         return deserialized
 
-    check_name_availability.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Search/checkNameAvailability"}  # type: ignore
+    check_name_availability.metadata = {
+        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Search/checkNameAvailability"
+    }

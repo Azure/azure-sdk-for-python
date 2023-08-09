@@ -23,6 +23,7 @@ import os
 
 import pytest
 
+
 class TestOpencensusWrapper(unittest.TestCase):
     def test_span_passed_in(self):
         with ContextHelper():
@@ -141,10 +142,7 @@ class TestOpencensusWrapper(unittest.TestCase):
             trace = tracer_module.Tracer(sampler=AlwaysOnSampler())
             parent = trace.start_span()
             wrapped_class = OpenCensusSpan(
-                links=[Link(
-                    headers= {"traceparent": "00-2578531519ed94423ceae67588eff2c9-231ebdc614cb9ddd-01"}
-                    )
-                ]
+                links=[Link(headers={"traceparent": "00-2578531519ed94423ceae67588eff2c9-231ebdc614cb9ddd-01"})]
             )
             assert len(wrapped_class.span_instance.links) == 1
             link = wrapped_class.span_instance.links[0]
@@ -157,9 +155,10 @@ class TestOpencensusWrapper(unittest.TestCase):
             trace = tracer_module.Tracer(sampler=AlwaysOnSampler())
             parent = trace.start_span()
             wrapped_class = OpenCensusSpan(
-                links=[Link(
-                    headers= {"traceparent": "00-2578531519ed94423ceae67588eff2c9-231ebdc614cb9ddd-01"},
-                    attributes=attributes
+                links=[
+                    Link(
+                        headers={"traceparent": "00-2578531519ed94423ceae67588eff2c9-231ebdc614cb9ddd-01"},
+                        attributes=attributes,
                     )
                 ]
             )
@@ -168,7 +167,6 @@ class TestOpencensusWrapper(unittest.TestCase):
             assert link.attributes is not None
             assert link.trace_id == "2578531519ed94423ceae67588eff2c9"
             assert link.span_id == "231ebdc614cb9ddd"
-
 
     def test_set_http_attributes(self):
         with ContextHelper():

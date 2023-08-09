@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from typing import Any, AsyncIterable, Callable, Dict, IO, Optional, TypeVar, Union, cast, overload
-from urllib.parse import parse_qs, urljoin, urlparse
+import urllib.parse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import (
@@ -47,7 +47,7 @@ class PrivateLinkScopedResourcesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~$(python-base-namespace).v2019_10_17.aio.MonitorManagementClient`'s
+        :class:`~azure.mgmt.monitor.v2019_10_17.aio.MonitorManagementClient`'s
         :attr:`private_link_scoped_resources` attribute.
     """
 
@@ -73,7 +73,7 @@ class PrivateLinkScopedResourcesOperations:
         :type name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ScopedResource or the result of cls(response)
-        :rtype: ~$(python-base-namespace).v2019_10_17.models.ScopedResource
+        :rtype: ~azure.mgmt.monitor.v2019_10_17.models.ScopedResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -87,8 +87,8 @@ class PrivateLinkScopedResourcesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-10-17-preview"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.ScopedResource]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-10-17-preview"))
+        cls: ClsType[_models.ScopedResource] = kwargs.pop("cls", None)
 
         request = build_get_request(
             resource_group_name=resource_group_name,
@@ -101,10 +101,11 @@ class PrivateLinkScopedResourcesOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -120,7 +121,9 @@ class PrivateLinkScopedResourcesOperations:
 
         return deserialized
 
-    get.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights/privateLinkScopes/{scopeName}/scopedResources/{name}"}  # type: ignore
+    get.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights/privateLinkScopes/{scopeName}/scopedResources/{name}"
+    }
 
     async def _create_or_update_initial(
         self,
@@ -141,9 +144,9 @@ class PrivateLinkScopedResourcesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-10-17-preview"))  # type: str
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[Optional[_models.ScopedResource]]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-10-17-preview"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Optional[_models.ScopedResource]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -167,10 +170,11 @@ class PrivateLinkScopedResourcesOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -191,7 +195,9 @@ class PrivateLinkScopedResourcesOperations:
 
         return deserialized
 
-    _create_or_update_initial.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights/privateLinkScopes/{scopeName}/scopedResources/{name}"}  # type: ignore
+    _create_or_update_initial.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights/privateLinkScopes/{scopeName}/scopedResources/{name}"
+    }
 
     @overload
     async def begin_create_or_update(
@@ -214,7 +220,7 @@ class PrivateLinkScopedResourcesOperations:
         :param name: The name of the scoped resource object. Required.
         :type name: str
         :param parameters: Required.
-        :type parameters: ~$(python-base-namespace).v2019_10_17.models.ScopedResource
+        :type parameters: ~azure.mgmt.monitor.v2019_10_17.models.ScopedResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -229,7 +235,7 @@ class PrivateLinkScopedResourcesOperations:
         :return: An instance of AsyncLROPoller that returns either ScopedResource or the result of
          cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~$(python-base-namespace).v2019_10_17.models.ScopedResource]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.monitor.v2019_10_17.models.ScopedResource]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -269,7 +275,7 @@ class PrivateLinkScopedResourcesOperations:
         :return: An instance of AsyncLROPoller that returns either ScopedResource or the result of
          cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~$(python-base-namespace).v2019_10_17.models.ScopedResource]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.monitor.v2019_10_17.models.ScopedResource]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -291,8 +297,8 @@ class PrivateLinkScopedResourcesOperations:
         :type scope_name: str
         :param name: The name of the scoped resource object. Required.
         :type name: str
-        :param parameters: Is either a model type or a IO type. Required.
-        :type parameters: ~$(python-base-namespace).v2019_10_17.models.ScopedResource or IO
+        :param parameters: Is either a ScopedResource type or a IO type. Required.
+        :type parameters: ~azure.mgmt.monitor.v2019_10_17.models.ScopedResource or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -307,20 +313,20 @@ class PrivateLinkScopedResourcesOperations:
         :return: An instance of AsyncLROPoller that returns either ScopedResource or the result of
          cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~$(python-base-namespace).v2019_10_17.models.ScopedResource]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.monitor.v2019_10_17.models.ScopedResource]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-10-17-preview"))  # type: str
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.ScopedResource]
-        polling = kwargs.pop("polling", True)  # type: Union[bool, AsyncPollingMethod]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-10-17-preview"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ScopedResource] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = await self._create_or_update_initial(  # type: ignore
+            raw_result = await self._create_or_update_initial(
                 resource_group_name=resource_group_name,
                 scope_name=scope_name,
                 name=name,
@@ -341,7 +347,7 @@ class PrivateLinkScopedResourcesOperations:
             return deserialized
 
         if polling is True:
-            polling_method = cast(AsyncPollingMethod, AsyncARMPolling(lro_delay, **kwargs))  # type: AsyncPollingMethod
+            polling_method: AsyncPollingMethod = cast(AsyncPollingMethod, AsyncARMPolling(lro_delay, **kwargs))
         elif polling is False:
             polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
         else:
@@ -353,9 +359,11 @@ class PrivateLinkScopedResourcesOperations:
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    begin_create_or_update.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights/privateLinkScopes/{scopeName}/scopedResources/{name}"}  # type: ignore
+    begin_create_or_update.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights/privateLinkScopes/{scopeName}/scopedResources/{name}"
+    }
 
     async def _delete_initial(  # pylint: disable=inconsistent-return-statements
         self, resource_group_name: str, scope_name: str, name: str, **kwargs: Any
@@ -371,8 +379,8 @@ class PrivateLinkScopedResourcesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-10-17-preview"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-10-17-preview"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_delete_request(
             resource_group_name=resource_group_name,
@@ -385,10 +393,11 @@ class PrivateLinkScopedResourcesOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -400,7 +409,9 @@ class PrivateLinkScopedResourcesOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-    _delete_initial.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights/privateLinkScopes/{scopeName}/scopedResources/{name}"}  # type: ignore
+    _delete_initial.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights/privateLinkScopes/{scopeName}/scopedResources/{name}"
+    }
 
     @distributed_trace_async
     async def begin_delete(
@@ -430,11 +441,11 @@ class PrivateLinkScopedResourcesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-10-17-preview"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
-        polling = kwargs.pop("polling", True)  # type: Union[bool, AsyncPollingMethod]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-10-17-preview"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = await self._delete_initial(  # type: ignore
                 resource_group_name=resource_group_name,
@@ -453,7 +464,7 @@ class PrivateLinkScopedResourcesOperations:
                 return cls(pipeline_response, None, {})
 
         if polling is True:
-            polling_method = cast(AsyncPollingMethod, AsyncARMPolling(lro_delay, **kwargs))  # type: AsyncPollingMethod
+            polling_method: AsyncPollingMethod = cast(AsyncPollingMethod, AsyncARMPolling(lro_delay, **kwargs))
         elif polling is False:
             polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
         else:
@@ -465,9 +476,11 @@ class PrivateLinkScopedResourcesOperations:
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    begin_delete.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights/privateLinkScopes/{scopeName}/scopedResources/{name}"}  # type: ignore
+    begin_delete.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights/privateLinkScopes/{scopeName}/scopedResources/{name}"
+    }
 
     @distributed_trace
     def list_by_private_link_scope(
@@ -483,14 +496,14 @@ class PrivateLinkScopedResourcesOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ScopedResource or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~$(python-base-namespace).v2019_10_17.models.ScopedResource]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.monitor.v2019_10_17.models.ScopedResource]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-10-17-preview"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.ScopedResourceListResult]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-10-17-preview"))
+        cls: ClsType[_models.ScopedResourceListResult] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -513,16 +526,23 @@ class PrivateLinkScopedResourcesOperations:
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             else:
                 # make call to next link with the client's api-version
-                _parsed_next_link = urlparse(next_link)
-                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
                 request.method = "GET"
             return request
 
@@ -530,14 +550,15 @@ class PrivateLinkScopedResourcesOperations:
             deserialized = self._deserialize("ScopedResourceListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                request, stream=False, **kwargs
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -549,4 +570,6 @@ class PrivateLinkScopedResourcesOperations:
 
         return AsyncItemPaged(get_next, extract_data)
 
-    list_by_private_link_scope.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights/privateLinkScopes/{scopeName}/scopedResources"}  # type: ignore
+    list_by_private_link_scope.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights/privateLinkScopes/{scopeName}/scopedResources"
+    }

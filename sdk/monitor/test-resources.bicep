@@ -231,7 +231,7 @@ resource dataCollectionRule 'Microsoft.Insights/dataCollectionRules@2021-09-01-p
 }
 
 output APPLICATIONINSIGHTS_CONNECTION_STRING string = applicationInsightsComponent.properties.ConnectionString
-output METRICS_RESOURCE_ID string = primaryWorkspace.id
+output METRICS_RESOURCE_ID string = applicationInsightsComponent.id
 output AZURE_MONITOR_WORKSPACE_ID string = primaryWorkspace.properties.customerId
 output AZURE_MONITOR_SECONDARY_WORKSPACE_ID string = secondaryWorkspace.properties.customerId
 output AZURE_MONITOR_DCE string = dataCollectionEndpoint.properties.logsIngestion.endpoint

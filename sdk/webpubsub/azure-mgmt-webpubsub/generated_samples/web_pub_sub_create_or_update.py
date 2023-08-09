@@ -34,6 +34,7 @@ def main():
         resource_name="myWebPubSubService",
         parameters={
             "identity": {"type": "SystemAssigned"},
+            "kind": "WebPubSub",
             "location": "eastus",
             "properties": {
                 "disableAadAuth": False,
@@ -42,7 +43,16 @@ def main():
                     "categories": [{"enabled": "true", "name": "ConnectivityLogs"}],
                     "enabled": "false",
                 },
-                "networkACLs": {"defaultAction": "Deny", "publicNetwork": {"allow": ["ClientConnection"]}},
+                "networkACLs": {
+                    "defaultAction": "Deny",
+                    "privateEndpoints": [
+                        {
+                            "allow": ["ServerConnection"],
+                            "name": "mywebpubsubservice.1fa229cd-bf3f-47f0-8c49-afb36723997e",
+                        }
+                    ],
+                    "publicNetwork": {"allow": ["ClientConnection"]},
+                },
                 "publicNetworkAccess": "Enabled",
                 "tls": {"clientCertEnabled": False},
             },
@@ -53,6 +63,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/webpubsub/resource-manager/Microsoft.SignalRService/preview/2022-08-01-preview/examples/WebPubSub_CreateOrUpdate.json
+# x-ms-original-file: specification/webpubsub/resource-manager/Microsoft.SignalRService/preview/2023-06-01-preview/examples/WebPubSub_CreateOrUpdate.json
 if __name__ == "__main__":
     main()

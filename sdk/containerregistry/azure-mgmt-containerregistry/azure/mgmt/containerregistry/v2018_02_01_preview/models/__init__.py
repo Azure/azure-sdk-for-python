@@ -39,63 +39,65 @@ from ._models_py3 import SourceRepositoryProperties
 from ._models_py3 import SourceRepositoryUpdateParameters
 from ._models_py3 import SourceUploadDefinition
 
-
-from ._container_registry_management_client_enums import (
-    BaseImageDependencyType,
-    BaseImageTriggerType,
-    BuildArgumentType,
-    BuildStatus,
-    BuildStepType,
-    BuildTaskStatus,
-    BuildType,
-    OsType,
-    ProvisioningState,
-    SourceControlType,
-    TokenType,
-)
+from ._container_registry_management_client_enums import BaseImageDependencyType
+from ._container_registry_management_client_enums import BaseImageTriggerType
+from ._container_registry_management_client_enums import BuildArgumentType
+from ._container_registry_management_client_enums import BuildStatus
+from ._container_registry_management_client_enums import BuildStepType
+from ._container_registry_management_client_enums import BuildTaskStatus
+from ._container_registry_management_client_enums import BuildType
+from ._container_registry_management_client_enums import OsType
+from ._container_registry_management_client_enums import ProvisioningState
+from ._container_registry_management_client_enums import SourceControlType
+from ._container_registry_management_client_enums import TokenType
+from ._patch import __all__ as _patch_all
+from ._patch import *  # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    'BaseImageDependency',
-    'Build',
-    'BuildArgument',
-    'BuildArgumentList',
-    'BuildFilter',
-    'BuildGetLogResult',
-    'BuildListResult',
-    'BuildStep',
-    'BuildStepList',
-    'BuildStepProperties',
-    'BuildStepPropertiesUpdateParameters',
-    'BuildStepUpdateParameters',
-    'BuildTask',
-    'BuildTaskBuildRequest',
-    'BuildTaskFilter',
-    'BuildTaskListResult',
-    'BuildTaskUpdateParameters',
-    'BuildUpdateParameters',
-    'DockerBuildStep',
-    'DockerBuildStepUpdateParameters',
-    'GitCommitTrigger',
-    'ImageDescriptor',
-    'ImageUpdateTrigger',
-    'PlatformProperties',
-    'ProxyResource',
-    'QueueBuildRequest',
-    'QuickBuildRequest',
-    'Resource',
-    'SourceControlAuthInfo',
-    'SourceRepositoryProperties',
-    'SourceRepositoryUpdateParameters',
-    'SourceUploadDefinition',
-    'BaseImageDependencyType',
-    'BaseImageTriggerType',
-    'BuildArgumentType',
-    'BuildStatus',
-    'BuildStepType',
-    'BuildTaskStatus',
-    'BuildType',
-    'OsType',
-    'ProvisioningState',
-    'SourceControlType',
-    'TokenType',
+    "BaseImageDependency",
+    "Build",
+    "BuildArgument",
+    "BuildArgumentList",
+    "BuildFilter",
+    "BuildGetLogResult",
+    "BuildListResult",
+    "BuildStep",
+    "BuildStepList",
+    "BuildStepProperties",
+    "BuildStepPropertiesUpdateParameters",
+    "BuildStepUpdateParameters",
+    "BuildTask",
+    "BuildTaskBuildRequest",
+    "BuildTaskFilter",
+    "BuildTaskListResult",
+    "BuildTaskUpdateParameters",
+    "BuildUpdateParameters",
+    "DockerBuildStep",
+    "DockerBuildStepUpdateParameters",
+    "GitCommitTrigger",
+    "ImageDescriptor",
+    "ImageUpdateTrigger",
+    "PlatformProperties",
+    "ProxyResource",
+    "QueueBuildRequest",
+    "QuickBuildRequest",
+    "Resource",
+    "SourceControlAuthInfo",
+    "SourceRepositoryProperties",
+    "SourceRepositoryUpdateParameters",
+    "SourceUploadDefinition",
+    "BaseImageDependencyType",
+    "BaseImageTriggerType",
+    "BuildArgumentType",
+    "BuildStatus",
+    "BuildStepType",
+    "BuildTaskStatus",
+    "BuildType",
+    "OsType",
+    "ProvisioningState",
+    "SourceControlType",
+    "TokenType",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

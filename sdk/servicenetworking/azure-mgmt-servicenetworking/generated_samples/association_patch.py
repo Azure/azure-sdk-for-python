@@ -31,9 +31,16 @@ def main():
 
     response = client.associations_interface.update(
         resource_group_name="rg1",
-        traffic_controller_name="TC1",
-        association_name="associatedvnet-1",
-        properties={"properties": {"associationType": "subnets", "subnet": {"id": "subnetFullRef"}}},
+        traffic_controller_name="tc1",
+        association_name="as1",
+        properties={
+            "properties": {
+                "associationType": "subnets",
+                "subnet": {
+                    "id": "/subscriptions/subid/resourceGroups/rg1/providers/Microsoft.Network/virtualNetworks/vnet-tc/subnets/tc-subnet"
+                },
+            }
+        },
     )
     print(response)
 

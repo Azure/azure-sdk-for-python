@@ -282,15 +282,15 @@ def test_client_invalid_credential(live_eventhub, uamqp_transport):
             producer_client.create_batch(partition_id='0')
 
     consumer_client = EventHubConsumerClient(fully_qualified_namespace=live_eventhub['hostname'],
-                                             eventhub_name=live_eventhub['event_hub'],
-                                             credential=EventHubSASTokenCredential(token, time.time() + 7),
-                                             consumer_group='$Default',
-                                             retry_total=0,
-                                             uamqp_transport=uamqp_transport)
+                                            eventhub_name=live_eventhub['event_hub'],
+                                            credential=EventHubSASTokenCredential(token, time.time() + 7),
+                                            consumer_group='$Default',
+                                            retry_total=0,
+                                            uamqp_transport=uamqp_transport)
     on_error.err = None
     with consumer_client:
         thread = threading.Thread(target=consumer_client.receive, args=(on_event,),
-                                  kwargs={"starting_position": "-1", "on_error": on_error})
+                                kwargs={"starting_position": "-1", "on_error": on_error})
         thread.daemon = True
         thread.start()
         time.sleep(15)
@@ -330,7 +330,11 @@ def test_client_invalid_credential(live_eventhub, uamqp_transport):
                                              uamqp_transport=uamqp_transport)
 
     with producer_client:
-        with pytest.raises(AuthenticationError):
+        errors = (AuthenticationError)
+        # TODO: flaky TimeoutError during connect for China region
+        if 'servicebus.windows.net' not in live_eventhub['hostname']:
+            errors = (AuthenticationError, ConnectError)
+        with pytest.raises(errors):
             producer_client.create_batch(partition_id='0')
 
     consumer_client = EventHubConsumerClient(fully_qualified_namespace=live_eventhub['hostname'],

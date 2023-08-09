@@ -1,0 +1,58 @@
+$schema: http://azureml/sdk-2-0/PipelineJob.json
+type: pipeline
+
+description: 'pipeline with data transfer components'
+settings:
+  default_compute: azureml:serverless
+inputs:
+  path_source_s3: test1/*
+  query_source_sql: select top(10) Name from SalesLT.ProductCategory
+
+outputs:
+  merged_blob:
+    type: uri_folder
+
+jobs:
+    snowflake_blob:
+      type: data_transfer
+      task: import_data
+      source:
+        type: database
+        query: ${{parent.inputs.query_source_sql}}
+        connection: azureml:my_azuresqldb_connection
+      outputs:
+        sink:
+          type: mltable
+
+    s3_blob:
+      type: data_transfer
+      task: import_data
+      source:
+        type: file_system
+        path: ${{parent.inputs.path_source_s3}}
+        connection: azureml:my-s3-connection
+      outputs:
+        sink:
+          type: uri_folder
+
+    merge_files:
+      type: data_transfer
+      task: copy_data
+      component: ../../components/data_transfer/merge_files.yaml
+      inputs:
+        folder1: ${{parent.jobs.s3_blob.outputs.sink}}
+        folder2: ${{parent.jobs.snowflake_blob.outputs.sink}}
+      outputs:
+        output_folder: ${{parent.outputs.merged_blob}}
+
+    blob_azuresql:
+      type: data_transfer
+      task: export_data
+      inputs:
+        source:
+          type: uri_file
+          path: ./export_database/data/testFile_ForSqlDB.parquet
+      sink:
+        type: database
+        table_name: dbo.Persons
+        connection: azureml:my_export_azuresqldb_connection

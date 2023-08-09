@@ -6,20 +6,19 @@ from typing import Dict, List, Union
 
 from marshmallow import INCLUDE, Schema
 
-from azure.ai.ml import MpiDistribution, PyTorchDistribution, TensorFlowDistribution
-from azure.ai.ml._internal._schema.component import NodeType
-from azure.ai.ml._internal.entities.component import InternalComponent
-from azure.ai.ml._internal.entities.node import InternalBaseNode
-from azure.ai.ml._restclient.v2022_12_01_preview.models import CommandJobLimits as RestCommandJobLimits
-from azure.ai.ml._restclient.v2022_12_01_preview.models import JobResourceConfiguration as RestJobResourceConfiguration
-from azure.ai.ml._schema import PathAwareSchema
-from azure.ai.ml._schema.core.fields import DistributionField
-from azure.ai.ml.entities import CommandJobLimits, JobResourceConfiguration
-from azure.ai.ml.entities._util import get_rest_dict_for_node_attrs
+from ... import MpiDistribution, PyTorchDistribution, TensorFlowDistribution, RayDistribution
+from ..._schema import PathAwareSchema
+from ..._schema.core.fields import DistributionField
+from ...entities import CommandJobLimits, JobResourceConfiguration
+from ...entities._util import get_rest_dict_for_node_attrs
+from .._schema.component import NodeType
+from ..entities.component import InternalComponent
+from ..entities.node import InternalBaseNode
 
 
 class Command(InternalBaseNode):
     """Node of internal command components in pipeline with specific run settings.
+
     Different from azure.ai.ml.entities.Command, type of this class is CommandComponent.
     """
 
@@ -94,10 +93,10 @@ class Command(InternalBaseNode):
     def _to_rest_object(self, **kwargs) -> dict:
         rest_obj = super()._to_rest_object(**kwargs)
         rest_obj.update(
-            dict(
-                limits=get_rest_dict_for_node_attrs(self.limits, clear_empty_value=True),
-                resources=get_rest_dict_for_node_attrs(self.resources, clear_empty_value=True),
-            )
+            {
+                "limits": get_rest_dict_for_node_attrs(self.limits, clear_empty_value=True),
+                "resources": get_rest_dict_for_node_attrs(self.resources, clear_empty_value=True),
+            }
         )
         return rest_obj
 
@@ -106,13 +105,11 @@ class Command(InternalBaseNode):
         obj = InternalBaseNode._from_rest_object_to_init_params(obj)
 
         if "resources" in obj and obj["resources"]:
-            resources = RestJobResourceConfiguration.from_dict(obj["resources"])
-            obj["resources"] = JobResourceConfiguration._from_rest_object(resources)
+            obj["resources"] = JobResourceConfiguration._from_rest_object(obj["resources"])
 
         # handle limits
         if "limits" in obj and obj["limits"]:
-            rest_limits = RestCommandJobLimits.from_dict(obj["limits"])
-            obj["limits"] = CommandJobLimits()._from_rest_object(rest_limits)
+            obj["limits"] = CommandJobLimits._from_rest_object(obj["limits"])
         return obj
 
 
@@ -139,14 +136,14 @@ class Distributed(Command):
     @property
     def distribution(
         self,
-    ) -> Union[PyTorchDistribution, MpiDistribution, TensorFlowDistribution]:
+    ) -> Union[PyTorchDistribution, MpiDistribution, TensorFlowDistribution, RayDistribution]:
         """The distribution config of component, e.g. distribution={'type': 'mpi'}."""
         return self._distribution
 
     @distribution.setter
     def distribution(
         self,
-        value: Union[Dict, PyTorchDistribution, TensorFlowDistribution, MpiDistribution],
+        value: Union[Dict, PyTorchDistribution, TensorFlowDistribution, MpiDistribution, RayDistribution],
     ):
         if isinstance(value, dict):
             dist_schema = DistributionField(unknown=INCLUDE)
@@ -167,8 +164,8 @@ class Distributed(Command):
         rest_obj = super()._to_rest_object(**kwargs)
         distribution = self.distribution._to_rest_object() if self.distribution else None  # pylint: disable=no-member
         rest_obj.update(
-            dict(
-                distribution=get_rest_dict_for_node_attrs(distribution),
-            )
+            {
+                "distribution": get_rest_dict_for_node_attrs(distribution),
+            }
         )
         return rest_obj

@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Dict, List, Optional, TYPE_CHECKING
+from typing import Any, Dict, List, Optional, TYPE_CHECKING
 
 from ... import _serialization
 
@@ -49,7 +49,7 @@ class ChangeAttributes(_serialization.Model):
         "new_resource_snapshot_id": {"key": "newResourceSnapshotId", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.correlation_id = None
@@ -90,7 +90,7 @@ class ChangeBase(_serialization.Model):
         "new_value": {"key": "newValue", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.property_change_type = None
@@ -137,8 +137,8 @@ class ChangeProperties(_serialization.Model):
         *,
         change_attributes: Optional["_models.ChangeAttributes"] = None,
         changes: Optional[Dict[str, "_models.ChangeBase"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword change_attributes: Details about the change resource.
         :paramtype change_attributes: ~azure.mgmt.resource.changes.v2022_05_01.models.ChangeAttributes
@@ -169,8 +169,12 @@ class ChangeResourceListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, next_link: Optional[str] = None, value: Optional[List["_models.ChangeResourceResult"]] = None, **kwargs
-    ):
+        self,
+        *,
+        next_link: Optional[str] = None,
+        value: Optional[List["_models.ChangeResourceResult"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword next_link: The link used to get the next page of Change Resources.
         :paramtype next_link: str
@@ -209,7 +213,7 @@ class Resource(_serialization.Model):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.id = None
@@ -247,7 +251,7 @@ class ChangeResourceResult(Resource):
         "properties": {"key": "properties", "type": "ChangeProperties"},
     }
 
-    def __init__(self, *, properties: Optional["_models.ChangeProperties"] = None, **kwargs):
+    def __init__(self, *, properties: Optional["_models.ChangeProperties"] = None, **kwargs: Any) -> None:
         """
         :keyword properties: The properties of a change.
         :paramtype properties: ~azure.mgmt.resource.changes.v2022_05_01.models.ChangeProperties
@@ -277,7 +281,7 @@ class ErrorAdditionalInfo(_serialization.Model):
         "info": {"key": "info", "type": "object"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.type = None
@@ -318,7 +322,7 @@ class ErrorDetail(_serialization.Model):
         "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.code = None
@@ -329,7 +333,8 @@ class ErrorDetail(_serialization.Model):
 
 
 class ErrorResponse(_serialization.Model):
-    """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
+    """Common error response for all Azure Resource Manager APIs to return error details for failed
+    operations. (This also follows the OData error response format.).
 
     :ivar error: The error object.
     :vartype error: ~azure.mgmt.resource.changes.v2022_05_01.models.ErrorDetail
@@ -339,7 +344,7 @@ class ErrorResponse(_serialization.Model):
         "error": {"key": "error", "type": "ErrorDetail"},
     }
 
-    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs):
+    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs: Any) -> None:
         """
         :keyword error: The error object.
         :paramtype error: ~azure.mgmt.resource.changes.v2022_05_01.models.ErrorDetail

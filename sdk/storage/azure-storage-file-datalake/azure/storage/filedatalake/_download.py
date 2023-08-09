@@ -24,7 +24,11 @@ class StorageStreamDownloader(object):
     def __init__(self, downloader):
         self._downloader = downloader
         self.name = self._downloader.name
-        self.properties = from_blob_properties(self._downloader.properties)  # pylint: disable=protected-access
+
+        # Parse additional Datalake-only properties
+        encryption_context = self._downloader._response.response.headers.get('x-ms-encryption-context')  # pylint: disable=line-too-long,protected-access
+
+        self.properties = from_blob_properties(self._downloader.properties, encryption_context=encryption_context)  # pylint: disable=protected-access
         self.size = self._downloader.size
 
     def __len__(self):
@@ -33,6 +37,7 @@ class StorageStreamDownloader(object):
     def chunks(self) -> Iterator[bytes]:
         """Iterate over chunks in the download stream.
 
+        :returns: An iterator containing the chunks in the download stream.
         :rtype: Iterator[bytes]
         """
         return self._downloader.chunks()
@@ -42,7 +47,7 @@ class StorageStreamDownloader(object):
         Read up to size bytes from the stream and return them. If size
         is unspecified or is -1, all bytes will be read.
 
-        :param size:
+        :param int size:
             The number of bytes to download from the stream. Leave unspecified
             or set to -1 to download all bytes.
         :returns:
@@ -55,6 +60,7 @@ class StorageStreamDownloader(object):
         """Download the contents of this file.
 
         This operation is blocking until all data is downloaded.
+        :returns: The contents of the specified file.
         :rtype: bytes
         """
         return self._downloader.readall()
@@ -62,7 +68,7 @@ class StorageStreamDownloader(object):
     def readinto(self, stream: IO[bytes]) -> int:
         """Download the contents of this file to a stream.
 
-        :param stream:
+        :param IO[bytes] stream:
             The stream to download to. This can be an open file-handle,
             or any writable stream. The stream must be seekable if the download
             uses more than one parallel connection.

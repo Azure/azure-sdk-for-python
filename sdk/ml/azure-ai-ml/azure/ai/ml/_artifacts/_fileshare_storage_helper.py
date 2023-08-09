@@ -11,6 +11,9 @@ import time
 from pathlib import Path, PurePosixPath
 from typing import Any, Dict, Optional, Tuple, Union
 
+from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
+from azure.storage.fileshare import ShareDirectoryClient, ShareFileClient
+
 from azure.ai.ml._artifacts._constants import (
     ARTIFACT_ORIGIN,
     FILE_SIZE_WARNING,
@@ -24,11 +27,9 @@ from azure.ai.ml._utils._asset_utils import (
     _build_metadata_dict,
     generate_asset_id,
     get_directory_size,
-    traverse_directory,
+    get_upload_files_from_folder,
 )
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, MlException
-from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
-from azure.storage.fileshare import ShareDirectoryClient, ShareFileClient
 
 module_logger = logging.getLogger(__name__)
 
@@ -171,11 +172,7 @@ class FileStorageClient:
         prefix = "" if dest == "" else dest + "/"
         prefix += os.path.basename(source) + "/"
 
-        upload_paths = []
-        for root, _, files in os.walk(source_path):
-            upload_paths += list(traverse_directory(root, files, source_path, prefix, ignore_file))
-
-        upload_paths = sorted(upload_paths)
+        upload_paths = sorted(get_upload_files_from_folder(source_path, prefix, ignore_file=ignore_file))
         self.total_file_count = len(upload_paths)
 
         for root, _, files in os.walk(source):
@@ -344,11 +341,11 @@ def recursive_download(
             sub_client = client.get_subdirectory_client(f["name"])
             destination = "/".join((destination, f["name"]))
             recursive_download(sub_client, destination=destination, max_concurrency=max_concurrency)
-    except Exception:
+    except Exception as e:
         msg = f"Saving fileshare directory with prefix {starts_with} was unsuccessful."
         raise MlException(
             message=msg.format(starts_with),
             no_personal_data_message=msg.format("[prefix]"),
             target=ErrorTarget.ARTIFACT,
             error_category=ErrorCategory.SYSTEM_ERROR,
-        )
+        ) from e

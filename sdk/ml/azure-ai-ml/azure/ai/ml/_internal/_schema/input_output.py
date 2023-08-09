@@ -4,9 +4,9 @@
 
 from marshmallow import fields, post_dump, post_load
 
-from azure.ai.ml._schema import PatchedSchemaMeta, StringTransformedEnum, UnionField
-from azure.ai.ml._schema.component.input_output import InputPortSchema, ParameterSchema
-from azure.ai.ml._schema.core.fields import DumpableEnumField, PrimitiveValueField
+from ..._schema import PatchedSchemaMeta, StringTransformedEnum, UnionField
+from ..._schema.component.input_output import InputPortSchema, ParameterSchema
+from ..._schema.core.fields import DumpableEnumField, PrimitiveValueField
 
 SUPPORTED_INTERNAL_PARAM_TYPES = [
     "integer",
@@ -17,6 +17,8 @@ SUPPORTED_INTERNAL_PARAM_TYPES = [
     "String",
     "float",
     "Float",
+    "double",
+    "Double",
 ]
 
 
@@ -34,7 +36,7 @@ class InternalInputPortSchema(InputPortSchema):
     datastore_mode = fields.Str()
 
     @post_dump(pass_original=True)
-    def resolve_list_type(self, data, original_data, **kwargs):  # pylint: disable=unused-argument, no-self-use
+    def resolve_list_type(self, data, original_data, **kwargs):  # pylint: disable=unused-argument
         if isinstance(original_data.type, list):
             data["type"] = original_data.type
         return data
@@ -82,7 +84,7 @@ class InternalEnumParameterSchema(ParameterSchema):
 
     @post_dump
     @post_load
-    def enum_value_to_string(self, data, **kwargs):  # pylint: disable=unused-argument, disable=no-self-use
+    def enum_value_to_string(self, data, **kwargs):  # pylint: disable=unused-argument
         if "enum" in data:
             data["enum"] = list(map(str, data["enum"]))
         if "default" in data and data["default"] is not None:

@@ -22,10 +22,8 @@ from azure.ai.ml.constants._compute import (
     DUPLICATE_APPLICATION_ERROR,
     INVALID_VALUE_ERROR,
 )
-from azure.ai.ml._utils._experimental import experimental
 
 
-@experimental
 class ImageSettings:
     """Specifies an image configuration for a Custom Application.
 
@@ -44,7 +42,6 @@ class ImageSettings:
         return ImageSettings(reference=obj.reference)
 
 
-@experimental
 class EndpointsSettings:
     """Specifies an endpoint configuration for a Custom Application.
 
@@ -55,9 +52,7 @@ class EndpointsSettings:
     """
 
     def __init__(self, *, target: int, published: int):
-        EndpointsSettings._validate_endpoint_settings(
-            target=target, published=published
-        )
+        EndpointsSettings._validate_endpoint_settings(target=target, published=published)
         self.target = target
         self.published = published
 
@@ -93,7 +88,6 @@ class EndpointsSettings:
                 )
 
 
-@experimental
 class VolumeSettings:
     """Specifies the Bind Mount settings for a Custom Application.
 
@@ -120,7 +114,6 @@ class VolumeSettings:
         return VolumeSettings(source=obj.source, target=obj.target)
 
 
-@experimental
 class CustomApplications:
     """Specifies the custom service application configuration.
 
@@ -165,9 +158,7 @@ class CustomApplications:
         environment_variables = None
         if self.environment_variables:
             environment_variables = {
-                name: RestEnvironmentVariable(
-                    type=RestEnvironmentVariableType.LOCAL, value=value
-                )
+                name: RestEnvironmentVariable(type=RestEnvironmentVariableType.LOCAL, value=value)
                 for name, value in self.environment_variables.items()
             }
 
@@ -181,12 +172,8 @@ class CustomApplications:
             endpoints=endpoints,
             environment_variables=environment_variables,
             volumes=volumes,
-            docker=(
-                Docker(privileged=True)
-                if self.type == CustomApplicationDefaults.DOCKER
-                else None
-            ),
-            additional_properties=self.additional_properties,
+            docker=Docker(privileged=True),
+            additional_properties={**{"type": self.type}, **self.additional_properties},
         )
 
     @classmethod
@@ -212,7 +199,8 @@ class CustomApplications:
             endpoints=endpoints,
             environment_variables=environment_variables,
             bind_mounts=bind_mounts,
-            additional_properties=obj.additional_properties,
+            type=obj.additional_properties.pop("type", CustomApplicationDefaults.DOCKER),
+            **obj.additional_properties,
         )
 
 
@@ -228,9 +216,7 @@ def validate_custom_applications(custom_apps: List[CustomApplications]):
             error_category=ErrorCategory.USER_ERROR,
         )
 
-    published_ports = [
-        endpoint.published for app in custom_apps for endpoint in app.endpoints
-    ]
+    published_ports = [endpoint.published for app in custom_apps for endpoint in app.endpoints]
 
     if len(set(published_ports)) != len(published_ports):
         raise ValidationException(

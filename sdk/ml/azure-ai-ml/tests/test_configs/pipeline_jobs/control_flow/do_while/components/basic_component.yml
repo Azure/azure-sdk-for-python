@@ -36,7 +36,7 @@ environment:
           - mldesigner==0.0.71974906
           - mlflow
           - azureml-mlflow
-  image: mcr.microsoft.com/azureml/openmpi3.1.2-ubuntu18.04
+  image: mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu22.04
 
 code: ./basic_component
 command: >-
