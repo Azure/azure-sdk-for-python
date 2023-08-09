@@ -912,12 +912,13 @@ class JobOperations(_ScopeDependentOperations):
     ) -> Dict[str, str]:
         """Gets the URIs to the specified named outputs of job.
 
-        :param str job_name: Run ID of the job
-        :param Optional[Union[Iterable[str], str]] output_names: Either an
-               output name, or an iterable of output names. If omitted, all
-               outputs are returned.
-        :return Dict[str, str]: Map of output_names to URIs. Note that
-            URIs that could not be found will not be present in the map.
+        :param job_name: Run ID of the job
+        :type job_name: str
+        :param output_names: Either an output name, or an iterable of output names. If omitted, all outputs are
+            returned.
+        :type output_names: Optional[Union[Iterable[str], str]]
+        :return: Map of output_names to URIs. Note that URIs that could not be found will not be present in the map.
+        :rtype: Dict[str, str]
         """
 
         if isinstance(output_names, str):

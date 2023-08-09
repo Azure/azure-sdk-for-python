@@ -271,11 +271,16 @@ def download_artifact(
 ) -> str:
     """Download datastore path to local file or directory.
 
-    :param Union[str, os.PathLike] starts_with: Prefix of blobs to download
-    :param str destination: Path that files will be written to
-    :param DatastoreOperations datastore_operation: Datastore operations
-    :param Optional[str] datastore_name: name of datastore
-    :param Dict datastore_info: the return value of invoking get_datastore_info
+    :param starts_with: Prefix of blobs to download
+    :type starts_with: Union[str, os.PathLike]
+    :param destination: Path that files will be written to
+    :type destination: str
+    :param datastore_operation: Datastore operations
+    :type datastore_operation: DatastoreOperations
+    :param datastore_name: name of datastore
+    :type datastore_name: Optional[str]
+    :param datastore_info: the return value of invoking get_datastore_info
+    :type datastore_info: Optional[Dict], optional
     :return: Path that files were written to
     :rtype: str
     """

@@ -301,13 +301,16 @@ class MutableValidationResult(ValidationResult):
 
     def resolve_location_for_diagnostics(self, source_path: str, resolve_value: bool = False):
         """Resolve location/value for diagnostics based on the source path where the validatable object is loaded.
+
         Location includes local path of the exact file (can be different from the source path) & line number of the
         invalid field. Value of a diagnostic is resolved from the validatable object in transfering to a dict by
         default; however, when the validatable object is not available for the validation result, validation result is
         created from marshmallow.ValidationError.messages e.g., it can be resolved from the source path.
 
-        param source_path: The path of the source file. type source_path: str param resolve_value: Whether to resolve
-        the value of the invalid field from source file. type resolve_value: bool
+        :param source_path: The path of the source file.
+        :type source_path: str
+        :param resolve_value: Whether to resolve the value of the invalid field from source file.
+        :type resolve_value: bool
         """
         resolver = _YamlLocationResolver(source_path)
         for diagnostic in self._errors + self._warnings:
