@@ -11,6 +11,7 @@ from azure.core.pipeline.transport import AioHttpTransport, HttpRequest
 from azure.keyvault.keys import KeyReleasePolicy
 from azure.keyvault.keys._shared.client_base import DEFAULT_VERSION, ApiVersion
 from devtools_testutils import AzureRecordedTestCase
+from _test_case import HSM_SUPPORTED_VERSIONS
 
 
 async def get_attestation_token(attestation_uri):
@@ -42,10 +43,9 @@ def get_test_parameters(only_hsm=False, only_vault=False, api_versions=None):
     """generates a list of parameter pairs for test case parameterization, where [x, y] = [api_version, is_hsm]"""
     combinations = []
     versions = api_versions or ApiVersion
-    hsm_supported_versions = {ApiVersion.V7_2, ApiVersion.V7_3, ApiVersion.V7_4}
 
     for api_version in versions:
-        if not only_vault and api_version in hsm_supported_versions:
+        if not only_vault and api_version in HSM_SUPPORTED_VERSIONS:
             combinations.append([api_version, True])
         if not only_hsm:
             combinations.append([api_version, False])
@@ -53,7 +53,7 @@ def get_test_parameters(only_hsm=False, only_vault=False, api_versions=None):
 
 
 def is_public_cloud():
-    return ".microsoftonline.com" in os.getenv("AZURE_AUTHORITY_HOST", "")
+    return ".microsoftonline.com" in os.getenv("AZURE_AUTHORITY_HOST", "https://login.microsoftonline.com/")
 
 
 class AsyncKeysClientPreparer(AzureRecordedTestCase):
