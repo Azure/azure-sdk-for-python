@@ -10,6 +10,7 @@
 #### Bugs Fixed
 
 #### Other Changes
+* Renamed `response_continuation_token_limit_in_kb` to `continuation_token_limit` for GA. See [PR 31532](https://github.com/Azure/azure-sdk-for-python/pull/31532).
 
 ### 4.4.1b1 (2023-07-25)
 
