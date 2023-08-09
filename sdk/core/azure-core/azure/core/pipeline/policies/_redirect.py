@@ -73,7 +73,7 @@ class RedirectPolicyBase:
 
     REDIRECT_HEADERS_BLACKLIST = frozenset(["Authorization"])
 
-    def __init__(self, **kwargs: Any):
+    def __init__(self, **kwargs: Any) -> None:
         self.allow: bool = kwargs.get("permit_redirects", True)
         self.max_redirects: int = kwargs.get("redirect_max", 30)
 
