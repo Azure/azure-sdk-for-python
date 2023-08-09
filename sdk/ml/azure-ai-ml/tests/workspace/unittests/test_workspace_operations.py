@@ -27,9 +27,6 @@ def mock_workspace_operation(
     mock_credential: Mock,
     mock_aml_services_workspace_dataplane: Mock,
 ) -> WorkspaceOperations:
-    import debugpy
-    debugpy.connect(("localhost", 5678))
-    debugpy.breakpoint()
     yield WorkspaceOperations(
         operation_scope=mock_workspace_scope,
         service_client=mock_aml_services_2023_06_01_preview,
