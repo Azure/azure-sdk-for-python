@@ -119,8 +119,6 @@ def fl_scatter_gather(
     :keyword _create_default_mappings_if_needed:
         If True, try to automatically create input/output mappings if they're unset.
     :type _create_default_mappings_if_needed: bool, optional
-    :param kwargs: Additional keyword arguments to be passed to the `FLScatterGather` constructor.
-    :type kwargs: dict
     :return: The federated learning scatter-gather subgraph node.
     :rtype: ~azure.ai.ml.entities._builders.fl_scatter_gather.FLScatterGather
 

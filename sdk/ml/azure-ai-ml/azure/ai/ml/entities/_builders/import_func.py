@@ -53,8 +53,6 @@ def import_job(
         In this case, this step will not use any compute resource.
         Defaults to True.
     :type is_deterministic: bool
-    :param kwargs: Additional keyword arguments.
-    :type kwargs: dict
     :returns: The Import object.
     :rtype: ~azure.ai.ml.entities._builders.import_node.Import
     """

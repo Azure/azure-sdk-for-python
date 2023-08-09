@@ -172,9 +172,8 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
             silo components are then merged by an internal helper component. The merged values
             are then inputted into the user-provided aggregation component. Returns the executed aggregation component.
 
-            :param silo_inputs: A dictionary of names and Inputs to be injected into each executed silo step.
-                    This dictionary is merged with silo-specific inputs before each executed.
-            :type silo_inputs: dict
+            Kwargs are a dictionary of names and Inputs to be injected into each executed silo step. This dictionary is
+            merged with silo-specific inputs before each executed.
             """
 
             silo_outputs = []

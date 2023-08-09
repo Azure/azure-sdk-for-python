@@ -287,8 +287,6 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):
         :type docker_args: str, optional
         :keyword shm_size: Size of the Docker container's shared memory block.
         :type shm_size: str, optional
-        :param kwargs: Additional keyword arguments.
-        :type kwargs: dict
         """
         if self.resources is None:
             self.resources = JobResourceConfiguration()
