@@ -27,14 +27,16 @@ class DoWhile(LoopNode):
     pipeline yml containing do_while node. Please do not manually initialize this class.
 
     :param body: Pipeline job for the do-while loop body.
-    :type body: Pipeline
+    :type body: ~azure.ai.ml.entities._builders.pipeline.Pipeline
     :param condition: Boolean type control output of body as do-while loop condition.
-    :type condition: Output
-    :param mapping: Output-Input mapping for reach round of the do-while loop.
-                    Key is the last round output of the body. Value is the input port for current body.
-    :type mapping: Dict[Union[str, Output], Union[str, Input, List]]
-    :param limits: limits in running the do-while node.
-    :type limits: DoWhileJobLimits
+    :type condition: ~azure.ai.ml.entities.Output
+    :param mapping: Output-Input mapping for each round of the do-while loop.
+        Key is the last round output of the body. Value is the input port for the current body.
+    :type mapping: dict[Union[str, ~azure.ai.ml.entities.Output],
+        Union[str, ~azure.ai.ml.entities.Input, list]]
+    :param limits: Limits in running the do-while node.
+    :type limits: Union[dict, ~azure.ai.ml.entities._job.job_limits.DoWhileJobLimits], optional
+    :raises ValidationError: If the initialization parameters are not of valid types.
     """
 
     def __init__(
@@ -45,7 +47,7 @@ class DoWhile(LoopNode):
         mapping: Dict[Union[str, Output], Union[str, Input, List]],
         limits: Optional[Union[dict, DoWhileJobLimits]] = None,
         **kwargs,
-    ):
+    ) -> None:
         # validate init params are valid type
         validate_attribute_type(attrs_to_check=locals(), attr_type_map=self._attr_type_map())
 
@@ -65,14 +67,30 @@ class DoWhile(LoopNode):
 
     @property
     def mapping(self):
+        """Get the output-input mapping for each round of the do-while loop.
+
+        :return: Output-Input mapping for each round of the do-while loop.
+        :rtype: dict[Union[str, ~azure.ai.ml.entities.Output],
+            Union[str, ~azure.ai.ml.entities.Input, list]]
+        """
         return self._mapping
 
     @property
     def condition(self):
+        """Get the boolean type control output of the body as the do-while loop condition.
+
+        :return: Control output of the body as the do-while loop condition.
+        :rtype: ~azure.ai.ml.entities.Output
+        """
         return self._condition
 
     @property
     def limits(self):
+        """Get the limits in running the do-while node.
+
+        :return: Limits in running the do-while node.
+        :rtype: Union[dict, ~azure.ai.ml.entities._job.job_limits.DoWhileJobLimits]
+        """
         return self._limits
 
     @classmethod
@@ -165,9 +183,13 @@ class DoWhile(LoopNode):
         max_iteration_count: int,
         **kwargs,  # pylint: disable=unused-argument
     ):
-        """Set max iteration count for do while job.
+        """
+        Set the maximum iteration count for the do-while job.
 
         The range of the iteration count is (0, 1000].
+
+        :param max_iteration_count: The maximum iteration count for the do-while job.
+        :type max_iteration_count: int
         """
         if isinstance(self.limits, DoWhileJobLimits):
             self.limits._max_iteration_count = max_iteration_count  # pylint: disable=protected-access
@@ -222,12 +244,12 @@ class DoWhile(LoopNode):
             if validation_result.passed:
                 # Check condition is a control output.
                 condition_name = self.condition if isinstance(self.condition, str) else self.condition._port_name
-                if not self.body._outputs[condition_name].is_control:
+                if not self.body._outputs[condition_name]._is_control_or_primitive_type:
                     validation_result.append_error(
                         yaml_path="condition",
                         message=(
-                            f"{condition_name} is not a control output. "
-                            "The condition of dowhile must be the control output of the body."
+                            f"{condition_name} is not a control output and is not primitive type. "
+                            "The condition of dowhile must be the control output or primitive type of the body."
                         ),
                     )
         return validation_result.try_raise(self._get_validation_error_target(), raise_error=raise_error)
@@ -266,7 +288,7 @@ class DoWhile(LoopNode):
                     output, self.body.outputs, port_type="output", yaml_path="mapping"
                 )
                 if validate_results.passed:
-                    is_control_output = self.body._outputs[output_name].is_control
+                    is_control_output = self.body._outputs[output_name]._is_control_or_primitive_type
                     inputs = inputs if isinstance(inputs, list) else [inputs]
                     for item in inputs:
                         input_validate_results = self._validate_port(

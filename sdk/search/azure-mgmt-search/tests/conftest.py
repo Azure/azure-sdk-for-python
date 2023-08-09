@@ -41,6 +41,7 @@ if sys.version_info < (3, 5) or platform.python_implementation() == "PyPy":
 
 load_dotenv()
 
+
 @pytest.fixture(scope="session", autouse=True)
 def add_sanitizers(test_proxy):
     subscription_id = os.environ.get("AZURE_SUBSCRIPTION_ID", "00000000-0000-0000-0000-000000000000")
@@ -56,3 +57,4 @@ def add_sanitizers(test_proxy):
     add_body_key_sanitizer(json_path="$..access_token", value="access_token")
     add_body_key_sanitizer(json_path="$..primaryKey", value="primaryKey")
     add_body_key_sanitizer(json_path="$..secondaryKey", value="secondaryKey")
+    add_body_key_sanitizer(json_path="$..key", value="key")

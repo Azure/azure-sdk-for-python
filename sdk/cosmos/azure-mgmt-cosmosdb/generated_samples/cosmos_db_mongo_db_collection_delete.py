@@ -29,15 +29,14 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.mongo_db_resources.begin_delete_mongo_db_collection(
+    client.mongo_db_resources.begin_delete_mongo_db_collection(
         resource_group_name="rg1",
         account_name="ddb1",
         database_name="databaseName",
         collection_name="collectionName",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/stable/2023-04-15/examples/CosmosDBMongoDBCollectionDelete.json
+# x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/preview/2023-03-15-preview/examples/CosmosDBMongoDBCollectionDelete.json
 if __name__ == "__main__":
     main()

@@ -23,6 +23,9 @@ logger = logging.getLogger(__name__)
 
 class KeyVaultOperationPoller(LROPoller):
     """Poller for long running operations where calling result() doesn't wait for operation to complete.
+
+    :param polling_method: The poller's polling method.
+    :type polling_method: ~azure.core.polling.PollingMethod
     """
 
     # pylint: disable=arguments-differ
@@ -35,6 +38,7 @@ class KeyVaultOperationPoller(LROPoller):
         """Returns a representation of the final resource without waiting for the operation to complete.
 
         :returns: The deserialized resource of the long running operation
+        :rtype: Any
 
         :raises ~azure.core.exceptions.HttpResponseError: Server problem with the query.
         """
@@ -79,6 +83,13 @@ class DeleteRecoverPollingMethod(PollingMethod):
 
     Similarly, while recovering a deleted resource, Key Vault will respond 404 to GET requests for the non-deleted
     resource; when it responds 2xx, the resource exists in the non-deleted collection, i.e. its recovery is complete.
+
+    :param command: A callable to invoke when polling.
+    :type command: Callable
+    :param final_resource: The final resource returned by the polling operation.
+    :type final_resource: Any
+    :param bool finished: Whether or not the polling operation is completed.
+    :param int interval: The polling interval, in seconds.
     """
     def __init__(self, command: "Callable", final_resource: "Any", finished: bool, interval: int = 2) -> None:
         self._command = command

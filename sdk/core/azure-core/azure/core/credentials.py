@@ -33,6 +33,8 @@ class TokenCredential(Protocol):
         :keyword str claims: Additional claims required in the token, such as those returned in a resource
             provider's claims challenge following an authorization failure.
         :keyword str tenant_id: Optional tenant to include in the token request.
+        :keyword bool enable_cae: Indicates whether to enable Continuous Access Evaluation (CAE) for the requested
+            token. Defaults to False.
 
         :rtype: AccessToken
         :return: An AccessToken instance containing the token string and its expiration time in Unix time.
@@ -69,6 +71,7 @@ class AzureKeyCredential:
         """The value of the configured key.
 
         :rtype: str
+        :return: The value of the configured key.
         """
         return self._key
 
@@ -106,6 +109,7 @@ class AzureSasCredential:
         """The value of the configured shared access signature.
 
         :rtype: str
+        :return: The value of the configured shared access signature.
         """
         return self._signature
 
@@ -144,6 +148,7 @@ class AzureNamedKeyCredential:
         """The value of the configured name.
 
         :rtype: AzureNamedKey
+        :return: The value of the configured name.
         """
         return self._credential
 

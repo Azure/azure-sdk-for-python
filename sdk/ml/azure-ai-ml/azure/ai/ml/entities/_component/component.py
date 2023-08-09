@@ -29,11 +29,12 @@ from ...constants._common import (
 from ...constants._component import ComponentSource, IOConstants, NodeType
 from ...entities._assets.asset import Asset
 from ...entities._inputs_outputs import Input, Output
-from ...entities._mixins import TelemetryMixin, YamlTranslatableMixin
+from ...entities._mixins import LocalizableMixin, TelemetryMixin, YamlTranslatableMixin
 from ...entities._system_data import SystemData
 from ...entities._util import find_type_in_override
 from ...entities._validation import MutableValidationResult, RemoteValidatableMixin, SchemaValidatableMixin
 from ...exceptions import ErrorCategory, ErrorTarget, ValidationException
+from .._inputs_outputs import GroupInput
 
 # pylint: disable=protected-access, redefined-builtin
 # disable redefined-builtin to use id/type as argument name
@@ -48,6 +49,7 @@ class Component(
     TelemetryMixin,
     YamlTranslatableMixin,
     SchemaValidatableMixin,
+    LocalizableMixin,
 ):
     """Base class for component version, used to define a component. Can't be instantiated directly.
 
@@ -55,10 +57,9 @@ class Component(
     :type name: str
     :param version: Version of the resource.
     :type version: str
-    :param id:  Global id of the resource, Azure Resource Manager ID.
+    :param id: Global ID of the resource, Azure Resource Manager ID.
     :type id: str
-    :param type:  Type of the command, supported is 'command'.
-    :param type:  Type of the command, supported is 'command'.
+    :param type: Type of the command, supported is 'command'.
     :type type: str
     :param description: Description of the resource.
     :type description: str
@@ -68,18 +69,19 @@ class Component(
     :type properties: dict
     :param display_name: Display name of the component.
     :type display_name: str
-    :param is_deterministic: Whether the component is deterministic.
+    :param is_deterministic: Whether the component is deterministic. Defaults to True.
     :type is_deterministic: bool
     :param inputs: Inputs of the component.
     :type inputs: dict
     :param outputs: Outputs of the component.
     :type outputs: dict
-    :param yaml_str: The yaml string of the component.
+    :param yaml_str: The YAML string of the component.
     :type yaml_str: str
     :param _schema: Schema of the component.
     :type _schema: str
     :param creation_context: Creation metadata of the component.
     :type creation_context: ~azure.ai.ml.entities.SystemData
+    :param kwargs: Additional parameters for the component.
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Component cannot be successfully validated.
         Details will be provided in the error message.
     """
@@ -103,7 +105,7 @@ class Component(
         _schema: Optional[str] = None,
         creation_context: Optional[SystemData] = None,
         **kwargs,
-    ):
+    ) -> None:
         self._intellectual_property = kwargs.pop("intellectual_property", None)
         # Setting this before super init because when asset init version, _auto_increment_version's value may change
         self._auto_increment_version = kwargs.pop("auto_increment", False)
@@ -209,10 +211,20 @@ class Component(
 
     @property
     def version(self) -> str:
+        """Version of the component.
+
+        :return: Version of the component.
+        :rtype: str
+        """
         return self._version
 
     @version.setter
     def version(self, value: str) -> None:
+        """Set the version of the component.
+
+        :param value: The version of the component.
+        :type value: str
+        """
         if value:
             if not isinstance(value, str):
                 msg = f"Component version must be a string, not type {type(value)}."
@@ -282,6 +294,10 @@ class Component(
                 component_io[name] = port if isinstance(port, Input) else Input(**port)
             else:
                 component_io[name] = port if isinstance(port, Output) else Output(**port)
+
+        if is_input:
+            # Restore flattened parameters to group
+            return GroupInput.restore_flattened_inputs(component_io)
         return component_io
 
     @classmethod
@@ -515,6 +531,16 @@ class Component(
 
         # TODO: handle other_parameters and remove override from subclass
         return component_schema_dict
+
+    def _localize(self, base_path: str):
+        """Called on an asset got from service to clean up remote attributes like id, creation_context, etc. and update
+        base_path.
+        """
+        if not getattr(self, "id", None):
+            raise ValueError("Only remote asset can be localize but got a {} without id.".format(type(self)))
+        self._id = None
+        self._creation_context = None
+        self._base_path = base_path
 
     def _get_telemetry_values(self, *args, **kwargs):  # pylint: disable=unused-argument
         # Note: the is_anonymous is not reliable here, create_or_update will log is_anonymous from parameter.

@@ -2,13 +2,14 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import Any, Optional
+from __future__ import annotations
+from typing import Any, Optional, AsyncContextManager
 from typing_extensions import Protocol, runtime_checkable
 from .credentials import AccessToken as _AccessToken
 
 
 @runtime_checkable
-class AsyncTokenCredential(Protocol):
+class AsyncTokenCredential(Protocol, AsyncContextManager["AsyncTokenCredential"]):
     """Protocol for classes able to provide OAuth tokens."""
 
     async def get_token(
@@ -21,16 +22,12 @@ class AsyncTokenCredential(Protocol):
         :keyword str claims: Additional claims required in the token, such as those returned in a resource
             provider's claims challenge following an authorization failure.
         :keyword str tenant_id: Optional tenant to include in the token request.
+        :keyword bool enable_cae: Indicates whether to enable Continuous Access Evaluation (CAE) for the requested
+            token. Defaults to False.
 
         :rtype: AccessToken
         :return: An AccessToken instance containing the token string and its expiration time in Unix time.
         """
 
     async def close(self) -> None:
-        pass
-
-    async def __aenter__(self):
-        pass
-
-    async def __aexit__(self, exc_type, exc_value, traceback) -> None:
         pass

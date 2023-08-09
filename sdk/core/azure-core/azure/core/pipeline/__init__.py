@@ -24,10 +24,10 @@
 #
 # --------------------------------------------------------------------------
 
-from typing import TypeVar, Generic, Dict, Any
+from typing import TypeVar, Generic, Dict, Any, Tuple, List, Optional, overload
 
-HTTPResponseType = TypeVar("HTTPResponseType")
-HTTPRequestType = TypeVar("HTTPRequestType")
+HTTPResponseType = TypeVar("HTTPResponseType", covariant=True)  # pylint: disable=typevar-name-incorrect-variance
+HTTPRequestType = TypeVar("HTTPRequestType", covariant=True)  # pylint: disable=typevar-name-incorrect-variance
 
 
 class PipelineContext(Dict[str, Any]):
@@ -39,23 +39,24 @@ class PipelineContext(Dict[str, Any]):
     the pipeline.
 
     :param transport: The HTTP transport type.
-    :param kwargs: Developer-defined keyword arguments.
+    :type transport: ~azure.core.pipeline.transport.HttpTransport or ~azure.core.pipeline.transport.AsyncHttpTransport
+    :param any kwargs: Developer-defined keyword arguments.
     """
 
     _PICKLE_CONTEXT = {"deserialized_data"}
 
-    def __init__(self, transport, **kwargs):  # pylint: disable=super-init-not-called
-        self.transport = transport
+    def __init__(self, transport: Any, **kwargs: Any) -> None:  # pylint: disable=super-init-not-called
+        self.transport: Optional[Any] = transport
         self.options = kwargs
         self._protected = ["transport", "options"]
 
-    def __getstate__(self):
+    def __getstate__(self) -> Dict[str, Any]:
         state = self.__dict__.copy()
         # Remove the unpicklable entries.
         del state["transport"]
         return state
 
-    def __reduce__(self):
+    def __reduce__(self) -> Tuple[Any, ...]:
         reduced = super(PipelineContext, self).__reduce__()
         saved_context = {}
         for key, value in self.items():
@@ -64,45 +65,62 @@ class PipelineContext(Dict[str, Any]):
         # 1 is for from __reduce__ spec of pickle (generic args for recreation)
         # 2 is how dict is implementing __reduce__ (dict specific)
         # tuple are read-only, we use a list in the meantime
-        reduced = list(reduced)
-        dict_reduced_result = list(reduced[1])
+        reduced_as_list: List[Any] = list(reduced)
+        dict_reduced_result = list(reduced_as_list[1])
         dict_reduced_result[2] = saved_context
-        reduced[1] = tuple(dict_reduced_result)
-        return tuple(reduced)
+        reduced_as_list[1] = tuple(dict_reduced_result)
+        return tuple(reduced_as_list)
 
-    def __setstate__(self, state):
+    def __setstate__(self, state: Dict[str, Any]) -> None:
         self.__dict__.update(state)
         # Re-create the unpickable entries
         self.transport = None
 
-    def __setitem__(self, key, item):
+    def __setitem__(self, key: str, item: Any) -> None:
         # If reloaded from pickle, _protected might not be here until restored by pickle
         # this explains the hasattr test
         if hasattr(self, "_protected") and key in self._protected:
             raise ValueError("Context value {} cannot be overwritten.".format(key))
         return super(PipelineContext, self).__setitem__(key, item)
 
-    def __delitem__(self, key):
+    def __delitem__(self, key: str) -> None:
         if key in self._protected:
             raise ValueError("Context value {} cannot be deleted.".format(key))
         return super(PipelineContext, self).__delitem__(key)
 
-    def clear(self):
+    def clear(self) -> None:  # pylint: disable=docstring-missing-return, docstring-missing-rtype
         """Context objects cannot be cleared.
 
         :raises: TypeError
         """
         raise TypeError("Context objects cannot be cleared.")
 
-    def update(self, *args, **kwargs):
+    def update(  # pylint: disable=docstring-missing-return, docstring-missing-rtype, docstring-missing-param
+        self, *args: Any, **kwargs: Any
+    ) -> None:
         """Context objects cannot be updated.
 
         :raises: TypeError
         """
         raise TypeError("Context objects cannot be updated.")
 
-    def pop(self, *args):
-        """Removes specified key and returns the value."""
+    @overload
+    def pop(self, __key: str) -> Any:
+        ...
+
+    @overload
+    def pop(self, __key: str, __default: Optional[Any]) -> Any:
+        ...
+
+    def pop(self, *args: Any) -> Any:
+        """Removes specified key and returns the value.
+
+        :param args: The key to remove.
+        :type args: str
+        :return: The value for this key.
+        :rtype: any
+        :raises: ValueError If the key is in the protected list.
+        """
         if args and args[0] in self._protected:
             raise ValueError("Context value {} cannot be popped.".format(args[0]))
         return super(PipelineContext, self).pop(*args)

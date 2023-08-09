@@ -20,7 +20,11 @@ from azure.ai.ml._utils.utils import (
     is_private_preview_enabled,
     write_to_shared_file,
 )
-from azure.ai.ml.constants._common import AZUREML_COMPONENT_REGISTRATION_MAX_WORKERS, AzureMLResourceType
+from azure.ai.ml.constants._common import (
+    AZUREML_COMPONENT_REGISTRATION_MAX_WORKERS,
+    AzureMLResourceType,
+    DefaultOpenEncoding,
+)
 from azure.ai.ml.entities import Component
 from azure.ai.ml.entities._builders import BaseNode
 from azure.ai.ml.entities._component.code import ComponentCodeMixin
@@ -95,34 +99,17 @@ class CachedNodeResolver(object):
     def __init__(
         self,
         resolver: Callable[[Union[Component, str]], str],
-        subscription_id: Optional[str],
-        resource_group_name: Optional[str],
-        workspace_name: Optional[str],
-        registry_name: Optional[str],
+        client_key: str,
     ):
         self._resolver = resolver
         self._cache: Dict[str, _CacheContent] = {}
         self._nodes_to_resolve: List[BaseNode] = []
 
-        self._client_hash = self._get_client_hash(subscription_id, resource_group_name, workspace_name, registry_name)
+        hash_obj = hashlib.sha256()
+        hash_obj.update(client_key.encode("utf-8"))
+        self._client_hash = hash_obj.hexdigest()
         # the same client share 1 lock
         self._lock = _node_resolution_lock[self._client_hash]
-
-    @staticmethod
-    def _get_client_hash(
-        subscription_id: Optional[str],
-        resource_group_name: Optional[str],
-        workspace_name: Optional[str],
-        registry_name: Optional[str],
-    ) -> str:
-        """Get a hash for used client.
-
-        Works for both workspace client and registry client.
-        """
-        object_hash = hashlib.sha256()
-        for s in [subscription_id, resource_group_name, workspace_name, registry_name]:
-            object_hash.update(str(s).encode("utf-8"))
-        return object_hash.hexdigest()
 
     @staticmethod
     def _get_component_registration_max_workers():
@@ -232,7 +219,7 @@ class CachedNodeResolver(object):
         on_disk_cache_path = self._get_on_disk_cache_path(on_disk_hash)
         if on_disk_cache_path.is_file() and time.time() - on_disk_cache_path.stat().st_ctime < EXPIRE_TIME_IN_SECONDS:
             try:
-                return on_disk_cache_path.read_text().strip()
+                return on_disk_cache_path.read_text(encoding=DefaultOpenEncoding.READ).strip()
             except (OSError, PermissionError) as e:
                 logger.warning(
                     "Failed to read on-disk cache for component due to %s. "

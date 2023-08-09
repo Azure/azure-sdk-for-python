@@ -14,6 +14,8 @@ from azure.servicebus import ServiceBusClient
 from devtools_testutils import is_live
 
 from _shared.asynctestcase import AsyncCommunicationTestCase
+from azure.communication.callautomation import CommunicationIdentifierKind
+from azure.communication.callautomation._shared.models import identifier_from_raw_id
 
 
 class CallAutomationAutomatedLiveTestBase(AsyncCommunicationTestCase):
@@ -31,12 +33,20 @@ class CallAutomationAutomatedLiveTestBase(AsyncCommunicationTestCase):
         s1 = f"{s[:12]}-{s[12:16]}-{s[16:20]}-{s[20:24]}-{s[24:36]}"
         s2 = f"{s[36:44]}-{s[44:48]}-{s[48:52]}-{s[52:56]}-{s[56:]}"
         return f"{s1}_{s2}"
-    
-    def _parse_ids_from_identifier(self, identifier: str) -> str:
+
+    def _format_phonenumber_string(self, s) -> str:
+        return s.replace(":+", "u002B")
+
+    def _parse_ids_from_identifier(self, identifier) -> str:
         if identifier is None:
             raise ValueError("Identifier cannot be None")
-        return self._format_string(''.join(filter(str.isalnum, identifier)))
-    
+        elif identifier.kind == CommunicationIdentifierKind.COMMUNICATION_USER:
+            return self._format_string(''.join(filter(str.isalnum, identifier.raw_id)))
+        elif identifier.kind == CommunicationIdentifierKind.PHONE_NUMBER:
+            return self._format_phonenumber_string(identifier.raw_id)
+        else:
+            raise ValueError("Identifier type not supported")
+
     def _message_handler(self, message: Any) -> bool:
         if not message:
             raise ValueError("Body cannot be empty")
@@ -47,8 +57,10 @@ class CallAutomationAutomatedLiveTestBase(AsyncCommunicationTestCase):
         if "incomingCallContext" in mapper:
             incoming_call_context = mapper["incomingCallContext"]
             from_id = mapper["from"]["rawId"]
+            from_identifier = identifier_from_raw_id(from_id)
             to_id = mapper["to"]["rawId"]
-            unique_id = self._parse_ids_from_identifier(from_id) + self._parse_ids_from_identifier(to_id)
+            to_identifier = identifier_from_raw_id(to_id)
+            unique_id = self._parse_ids_from_identifier(from_identifier) + self._parse_ids_from_identifier(to_identifier)
             self.incoming_call_context_store[unique_id] = incoming_call_context
             return True
         else:
@@ -56,7 +68,10 @@ class CallAutomationAutomatedLiveTestBase(AsyncCommunicationTestCase):
                 mapper = mapper[0]
             if mapper["type"]:
                 print('MAPPER: ' + mapper["type"])
-                self.event_store[mapper["data"]["callConnectionId"]] = mapper["type"].split(".")[-1]
+                call_connection_id = mapper["data"]["callConnectionId"]
+                if call_connection_id not in self.event_store:
+                    self.event_store[call_connection_id] = {}
+                self.event_store[call_connection_id][mapper["type"].split(".")[-1]] = mapper
             return False
     
     def service_bus_with_new_call(self, caller, receiver) -> str:
@@ -71,7 +86,7 @@ class CallAutomationAutomatedLiveTestBase(AsyncCommunicationTestCase):
         :return: a unique_id that can be used to identify the ServiceBus queue.
         :rtype: str
         """
-        unique_id = self._parse_ids_from_identifier(caller.raw_id) + self._parse_ids_from_identifier(receiver.raw_id)
+        unique_id = self._parse_ids_from_identifier(caller) + self._parse_ids_from_identifier(receiver)
         if is_live():
             dispatcher_url = f"{self.dispatcher_endpoint}/api/servicebuscallback/subscribe?q={unique_id}"
             response = requests.post(dispatcher_url)
@@ -83,7 +98,18 @@ class CallAutomationAutomatedLiveTestBase(AsyncCommunicationTestCase):
             service_bus_client = ServiceBusClient.from_connection_string(self.servicebus_connection_str)
             self.processor_store[unique_id] = service_bus_client
         return unique_id
-    
+
+    def clean_old_messages(self, unique_id) -> None:
+        """Clean old messages from previous run in ServiceBus queue. Used for Phone number users.
+        :param unique_id: Identifier used to get ServiceBus message queue.
+        :type unique_id: str
+        """
+        if is_live():
+            service_bus_receiver = self.processor_store[unique_id].get_queue_receiver(queue_name=unique_id)
+            received_messages = service_bus_receiver.receive_messages(max_wait_time=2, max_message_count=300)
+            for msg in received_messages:
+                service_bus_receiver.complete_message(msg)
+
     def wait_for_messages(self, unique_id, time_out) -> None:
         """Create new ServiceBus client.
         Checks the Service Bus queue specified by the unique_id for messages and stores them in the event_store.
@@ -114,7 +140,7 @@ class CallAutomationAutomatedLiveTestBase(AsyncCommunicationTestCase):
                 if not received_messages:
                     time.sleep(1)
 
-    def check_for_event(self, event_type: str, call_connection_id: str) -> bool:
+    def check_for_event(self, event_type: str, call_connection_id: str) -> Any:
         """Check for events.
         Checks the event_store for any events that have been received from the Service Bus queue with the specified event_type and call_connection_id.
 
@@ -126,9 +152,10 @@ class CallAutomationAutomatedLiveTestBase(AsyncCommunicationTestCase):
         :return: None if no events are found. The event object if an event is found.
         :rtype: Optional[Any]
         """
-        if self.event_store[call_connection_id] == event_type:
-            return True
-        return False
+        if call_connection_id in self.event_store and event_type in self.event_store[call_connection_id]:
+            event = self.event_store[call_connection_id][event_type]
+            return event
+        return None
     
     def load_persisted_events(self, test_name) -> None:
         """

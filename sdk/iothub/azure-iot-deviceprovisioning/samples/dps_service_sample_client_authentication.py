@@ -12,6 +12,10 @@ DESCRIPTION:
     These samples demonstrate authenticating a client via a connection string,
     shared access key, or by generating a sas token with which the returned signature
     can be used with the credential parameter of any DeviceProvisioningClient
+PREREQUISITES:
+    In order to use certain Azure Identity credential objects in this sample, 
+    you will need to install the azure-identity package: 
+        `pip install azure-identity`
 USAGE:
     python dps_service_sample_client_authentication.py
     Set the environment variables with your own values before running the sample:

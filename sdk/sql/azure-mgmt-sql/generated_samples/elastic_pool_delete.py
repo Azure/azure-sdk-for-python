@@ -29,12 +29,11 @@ def main():
         subscription_id="00000000-1111-2222-3333-444444444444",
     )
 
-    response = client.elastic_pools.begin_delete(
+    client.elastic_pools.begin_delete(
         resource_group_name="sqlcrudtest-3129",
         server_name="sqlcrudtest-228",
         elastic_pool_name="sqlcrudtest-3851",
     ).result()
-    print(response)
 
 
 # x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2022-08-01-preview/examples/ElasticPoolDelete.json

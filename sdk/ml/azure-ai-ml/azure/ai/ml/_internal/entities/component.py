@@ -17,6 +17,7 @@ from ..._restclient.v2022_10_01.models import ComponentVersion, ComponentVersion
 from ..._schema import PathAwareSchema
 from ..._utils._arm_id_utils import parse_name_label
 from ..._utils._asset_utils import IgnoreFile
+from ...constants._common import DefaultOpenEncoding
 from ...entities import Component
 from ...entities._assets import Code
 from ...entities._component._additional_includes import AdditionalIncludesMixin
@@ -174,7 +175,7 @@ class InternalComponent(Component, AdditionalIncludesMixin):
         """
         additional_includes_config_path = yaml_path.with_suffix(_ADDITIONAL_INCLUDES_SUFFIX)
         if additional_includes_config_path.is_file():
-            with open(additional_includes_config_path) as f:
+            with open(additional_includes_config_path, encoding=DefaultOpenEncoding.READ) as f:
                 file_content = f.read()
                 try:
                     configs = yaml.safe_load(file_content)
@@ -201,14 +202,30 @@ class InternalComponent(Component, AdditionalIncludesMixin):
         return Path(self._source_path).parent
 
     def _get_origin_code_value(self) -> Union[str, PathLike, None]:
-        return self.code or Path(".").as_posix()
+        return super()._get_origin_code_value() or "."
 
     # endregion
+
+    def _to_ordered_dict_for_yaml_dump(self) -> Dict:
+        """Dump the component content into a sorted yaml string."""
+
+        obj = super()._to_ordered_dict_for_yaml_dump()
+        # dict dumped base on schema will transfer code to an absolute path, while we want to keep its original value
+        if "code" in obj:
+            if not self.code:
+                del obj["code"]
+            else:
+                obj["code"] = self.code
+        return obj
 
     @property
     def _additional_includes(self):
         """This property is kept for compatibility with old mldesigner sdk."""
-        return self._generate_additional_includes_obj()
+        obj = self._generate_additional_includes_obj()
+        from azure.ai.ml._internal.entities._additional_includes import InternalAdditionalIncludes
+
+        obj.__class__ = InternalAdditionalIncludes
+        return obj
 
     # region SchemaValidatableMixin
     @classmethod

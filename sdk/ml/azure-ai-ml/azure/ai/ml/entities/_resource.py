@@ -3,8 +3,8 @@
 # ---------------------------------------------------------
 
 
-import os
 import abc
+import os
 from os import PathLike
 from pathlib import Path
 from typing import IO, AnyStr, Dict, Optional, Union
@@ -19,23 +19,25 @@ from ._system_data import SystemData
 
 
 class Resource(abc.ABC):
-    """Base class for entity classes, can't be instantiated directly.
+    """Base class for entity classes.
 
-    Resource abstract object that serves as a base for creating resources.
-    Helper class that provides a standard way to create an abc.ABC using inheritance.
+    Resource is an abstract object that serves as a base for creating resources. It contains common properties and
+    methods for all resources.
 
-    :param name: Name of the resource.
+    This class should not be instantiated directly. Instead, use one of its subclasses.
+
+    :param name: The name of the resource.
     :type name: str
-    :param description: Description of the resource, defaults to None
-    :type description: typing.Optional[str]
-    :param tags: Tags can be added, removed, and updated., defaults to None
-    :type tags: typing.Optional[typing.Dict]
-    :param properties: The asset property dictionary, defaults to None
-    :type properties: typing.Optional[typing.Dict]
-    :keyword print_as_yaml: If set to true, then printing out this resource will produce a YAML-formatted object.
-        False will force a more-compact printing style. By default, the YAML output is only used in jupyter
+    :param description: The description of the resource.
+    :type description: Optional[str]
+    :param tags: Tags can be added, removed, and updated.
+    :type tags: Optional[dict]
+    :param properties: The resource's property dictionary.
+    :type properties: Optional[dict]
+    :keyword print_as_yaml: Specifies if the the resource should print out as a YAML-formatted object. If False,
+        the resource will print out in a more-compact style. By default, the YAML output is only used in Jupyter
         notebooks. Be aware that some bookkeeping values are shown only in the non-YAML output.
-    :paramtype print_as_yaml: bool
+    :type print_as_yaml: bool
     """
 
     def __init__(
@@ -45,22 +47,8 @@ class Resource(abc.ABC):
         tags: Optional[Dict] = None,
         properties: Optional[Dict] = None,
         **kwargs,
-    ):
-        """Class Resource constructor.
+    ) -> None:
 
-        :param name: Name of the resource.
-        :type name: str
-        :param description: Description of the resource, defaults to None
-        :type description: typing.Optional[str]
-        :param tags: Tags can be added, removed, and updated., defaults to None
-        :type tags: typing.Optional[typing.Dict]
-        :param properties: The asset property dictionary, defaults to None
-        :type properties: typing.Optional[typing.Dict]
-        :keyword print_as_yaml: If set to true, then printing out this resource will produce a YAML-formatted object.
-            False will force a more-compact printing style. By default, the YAML output is only used in jupyter
-            notebooks. Be aware that some bookkeeping values are shown only in the non-YAML output.
-        :paramtype print_as_yaml: bool
-        """
         self.name = name
         self.description = description
         self.tags = dict(tags) if tags else {}
@@ -92,27 +80,27 @@ class Resource(abc.ABC):
 
     @property
     def id(self) -> Optional[str]:
-        """Resource ID.
+        """The resource ID.
 
-        :return: Global id of the resource, Azure Resource Manager ID
-        :rtype: typing.Optional[str]
+        :return: The global ID of the resource, an Azure Resource Manager (ARM) ID.
+        :rtype: Optional[str]
         """
         return self._id
 
     @property
     def creation_context(self) -> Optional[SystemData]:
-        """Creation context.
+        """The creation context of the resource.
 
-        :return: Creation metadata of the resource.
-        :rtype: typing.Optional[~azure.ai.ml.entities.SystemData]
+        :return: The creation metadata for the resource.
+        :rtype: Optional[~azure.ai.ml.entities.SystemData]
         """
         return self._creation_context
 
     @property
     def base_path(self) -> str:
-        """Base path of the resource.
+        """The base path of the resource.
 
-        :return: Base path of the resource
+        :return: The base path of the resource.
         :rtype: str
         """
         return self._base_path
@@ -121,13 +109,10 @@ class Resource(abc.ABC):
     def dump(self, dest: Union[str, PathLike, IO[AnyStr]], **kwargs) -> None:
         """Dump the object content into a file.
 
-        :param dest: The destination to receive this object's data.
-            Must be either a path to a local file, or an already-open file stream.
-            If dest is a file path, a new file will be created,
-            and an exception is raised if the file exists.
-            If dest is an open file, the file will be written to directly,
-            and an exception will be raised if the file is not writable.
-        :type dest: typing.Union[str, os.PathLike, typing.IO[typing.AnyStr]]
+        :param dest: The local path or file stream to write the YAML content to.
+            If dest is a file path, a new file will be created.
+            If dest is an open file, the file will be written to directly.
+        :type dest: Union[PathLike, str, IO[AnyStr]]
         """
 
     @classmethod
@@ -163,7 +148,7 @@ class Resource(abc.ABC):
         :type yaml_path: typing.Optional[typing.Union[typing.PathLike, str]]
         :param params_override: Parameters to override, defaults to None
         :type params_override: typing.Optional[list]
-        :param kwargs: A dictionary of additional configuration parameters.
+        :keyword kwargs: A dictionary of additional configuration parameters.
         :type kwargs: dict
         :return: Resource
         :rtype: Resource
@@ -176,7 +161,7 @@ class Resource(abc.ABC):
     ):
         """Get arm resource.
 
-        :param kwargs: A dictionary of additional configuration parameters.
+        :keyword kwargs: A dictionary of additional configuration parameters.
         :type kwargs: dict
 
         :return: Resource
@@ -193,7 +178,7 @@ class Resource(abc.ABC):
     def _get_arm_resource_and_params(self, **kwargs):
         """Get arm resource and parameters.
 
-        :param kwargs: A dictionary of additional configuration parameters.
+        :keyword kwargs: A dictionary of additional configuration parameters.
         :type kwargs: dict
 
         :return: Resource and parameters

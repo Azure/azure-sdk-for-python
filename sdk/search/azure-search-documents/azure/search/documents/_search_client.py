@@ -33,6 +33,7 @@ from ._headers_mixin import HeadersMixin
 from ._utils import get_authentication_policy
 from ._version import SDK_MONIKER
 
+
 class SearchClient(HeadersMixin):
     """A client to interact with an existing Azure search index.
 
@@ -60,11 +61,7 @@ class SearchClient(HeadersMixin):
     _ODATA_ACCEPT = "application/json;odata.metadata=none"  # type: str
 
     def __init__(
-            self,
-            endpoint: str,
-            index_name: str,
-            credential: Union[AzureKeyCredential, TokenCredential],
-            **kwargs
+        self, endpoint: str, index_name: str, credential: Union[AzureKeyCredential, TokenCredential], **kwargs: Any
     ) -> None:
         self._api_version = kwargs.pop("api_version", DEFAULT_VERSION)
         self._endpoint = endpoint
@@ -93,9 +90,7 @@ class SearchClient(HeadersMixin):
             )
 
     def __repr__(self) -> str:
-        return "<SearchClient [endpoint={}, index={}]>".format(
-            repr(self._endpoint), repr(self._index_name)
-        )[:1024]
+        return "<SearchClient [endpoint={}, index={}]>".format(repr(self._endpoint), repr(self._index_name))[:1024]
 
     def close(self) -> None:
         """Close the :class:`~azure.search.documents.SearchClient` session."""
@@ -105,6 +100,7 @@ class SearchClient(HeadersMixin):
     def get_document_count(self, **kwargs: Any) -> int:
         """Return the number of documents in the Azure search index.
 
+        :return: The count of documents in the index
         :rtype: int
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
@@ -116,9 +112,10 @@ class SearchClient(HeadersMixin):
 
         :param key: The primary key value for the document to retrieve
         :type key: str
-        :param selected_fields: a allowlist of fields to include in the results
-        :type selected_fields: List[str]
-        :rtype:  Dict
+        :param selected_fields: an allow-list of fields to include in the results
+        :type selected_fields: list[str]
+        :return: The document as stored in the Azure search index
+        :rtype:  dict
 
         .. admonition:: Example:
 
@@ -130,48 +127,47 @@ class SearchClient(HeadersMixin):
                 :caption: Get a specific document from the search index.
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        result = self._client.documents.get(
-            key=key, selected_fields=selected_fields, **kwargs
-        )
+        result = self._client.documents.get(key=key, selected_fields=selected_fields, **kwargs)
         return cast(dict, result)
 
     @distributed_trace
     def search(
-            self,
-            search_text: str,
-            *,
-            include_total_count: Optional[bool] = None,
-            facets: Optional[List[str]] = None,
-            filter: Optional[str] = None,
-            highlight_fields: Optional[str] = None,
-            highlight_post_tag: Optional[str] = None,
-            highlight_pre_tag: Optional[str] = None,
-            minimum_coverage: Optional[float] = None,
-            order_by: Optional[List[str]] = None,
-            query_type: Optional[Union[str, QueryType]] = None,
-            scoring_parameters: Optional[List[str]] = None,
-            scoring_profile: Optional[str] = None,
-            search_fields: Optional[List[str]] = None,
-            search_mode: Optional[Union[str, SearchMode]] = None,
-            query_language: Optional[Union[str, QueryLanguage]] = None,
-            query_speller: Optional[Union[str, QuerySpellerType]] = None,
-            query_answer: Optional[Union[str, QueryAnswerType]] = None,
-            query_answer_count: Optional[int] = None,
-            query_answer_threshold: Optional[float] = None,
-            query_caption: Optional[Union[str, QueryCaptionType]] = None,
-            query_caption_highlight: Optional[bool] = None,
-            semantic_fields: Optional[List[str]] = None,
-            semantic_configuration_name: Optional[str] = None,
-            select: Optional[List[str]] = None,
-            skip: Optional[int] = None,
-            top: Optional[int] = None,
-            scoring_statistics: Optional[Union[str, ScoringStatistics]] = None,
-            session_id: Optional[str] = None,
-            vector:Optional[Vector] = None,
-            semantic_error_handling: Optional[Union[str, SemanticErrorHandling]] = None,
-            semantic_max_wait_in_milliseconds: Optional[int] = None,
-            debug: Optional[Union[str, QueryDebugMode]] = None,
-            **kwargs: Any) -> SearchItemPaged[Dict]:
+        self,
+        search_text: str,
+        *,
+        include_total_count: Optional[bool] = None,
+        facets: Optional[List[str]] = None,
+        filter: Optional[str] = None,
+        highlight_fields: Optional[str] = None,
+        highlight_post_tag: Optional[str] = None,
+        highlight_pre_tag: Optional[str] = None,
+        minimum_coverage: Optional[float] = None,
+        order_by: Optional[List[str]] = None,
+        query_type: Optional[Union[str, QueryType]] = None,
+        scoring_parameters: Optional[List[str]] = None,
+        scoring_profile: Optional[str] = None,
+        search_fields: Optional[List[str]] = None,
+        search_mode: Optional[Union[str, SearchMode]] = None,
+        query_language: Optional[Union[str, QueryLanguage]] = None,
+        query_speller: Optional[Union[str, QuerySpellerType]] = None,
+        query_answer: Optional[Union[str, QueryAnswerType]] = None,
+        query_answer_count: Optional[int] = None,
+        query_answer_threshold: Optional[float] = None,
+        query_caption: Optional[Union[str, QueryCaptionType]] = None,
+        query_caption_highlight: Optional[bool] = None,
+        semantic_fields: Optional[List[str]] = None,
+        semantic_configuration_name: Optional[str] = None,
+        select: Optional[List[str]] = None,
+        skip: Optional[int] = None,
+        top: Optional[int] = None,
+        scoring_statistics: Optional[Union[str, ScoringStatistics]] = None,
+        session_id: Optional[str] = None,
+        vectors: Optional[List[Vector]] = None,
+        semantic_error_handling: Optional[Union[str, SemanticErrorHandling]] = None,
+        semantic_max_wait_in_milliseconds: Optional[int] = None,
+        debug: Optional[Union[str, QueryDebugMode]] = None,
+        **kwargs: Any
+    ) -> SearchItemPaged[Dict]:
         # pylint:disable=too-many-locals, disable=redefined-builtin
         """Search the Azure search index for documents.
 
@@ -180,7 +176,7 @@ class SearchClient(HeadersMixin):
         :keyword bool include_total_count: A value that specifies whether to fetch the total count of
          results. Default is false. Setting this value to true may have a performance impact. Note that
          the count returned is an approximation.
-        :keyword List[str] facets: The list of facet expressions to apply to the search query. Each facet
+        :keyword list[str] facets: The list of facet expressions to apply to the search query. Each facet
          expression contains a field name, optionally followed by a comma-separated list of name:value
          pairs.
         :keyword str filter: The OData $filter expression to apply to the search query.
@@ -194,7 +190,7 @@ class SearchClient(HeadersMixin):
          must be covered by a search query in order for the query to be reported as a success. This
          parameter can be useful for ensuring search availability even for services with only one
          replica. The default is 100.
-        :keyword List[str] order_by: The list of OData $orderby expressions by which to sort the results. Each
+        :keyword list[str] order_by: The list of OData $orderby expressions by which to sort the results. Each
          expression can be either a field name or a call to either the geo.distance() or the
          search.score() functions. Each expression can be followed by asc to indicate ascending, and
          desc to indicate descending. The default is ascending order. Ties will be broken by the match
@@ -204,13 +200,13 @@ class SearchClient(HeadersMixin):
          'simple'. Use 'full' if your query uses the Lucene query syntax. Possible values include:
          'simple', 'full', "semantic".
         :paramtype query_type: str or ~azure.search.documents.models.QueryType
-        :keyword List[str] scoring_parameters: The list of parameter values to be used in scoring functions (for
+        :keyword list[str] scoring_parameters: The list of parameter values to be used in scoring functions (for
          example, referencePointParameter) using the format name-values. For example, if the scoring
          profile defines a function with a parameter called 'mylocation' the parameter string would be
          "mylocation--122.2,44.8" (without the quotes).
         :keyword str scoring_profile: The name of a scoring profile to evaluate match scores for matching
          documents in order to sort the results.
-        :keyword List[str] search_fields: The list of field names to which to scope the full-text search. When
+        :keyword list[str] search_fields: The list of field names to which to scope the full-text search. When
          using fielded search (fieldName:searchExpression) in a full Lucene query, the field names of
          each fielded search expression take precedence over any field names listed in this parameter.
         :keyword search_mode: A value that specifies whether any or all of the search terms must be
@@ -243,11 +239,11 @@ class SearchClient(HeadersMixin):
         :keyword bool query_caption_highlight: This parameter is only valid if the query type is 'semantic' when
          query caption is set to 'extractive'. Determines whether highlighting is enabled.
          Defaults to 'true'.
-        :keyword List[str] semantic_fields: The list of field names used for semantic search.
+        :keyword list[str] semantic_fields: The list of field names used for semantic search.
         :keyword semantic_configuration_name: The name of the semantic configuration that will be used when
          processing documents for queries of type semantic.
         :paramtype semantic_configuration_name: str
-        :keyword List[str] select: The list of fields to retrieve. If unspecified, all fields marked as retrievable
+        :keyword list[str] select: The list of fields to retrieve. If unspecified, all fields marked as retrievable
          in the schema are included.
         :keyword int skip: The number of search results to skip. This value cannot be greater than 100,000.
          If you need to scan documents in sequence, but cannot use $skip due to this limitation,
@@ -277,8 +273,8 @@ class SearchClient(HeadersMixin):
         :keyword debug: Enables a debugging tool that can be used to further explore your Semantic search
          results. Known values are: "disabled", "speller", "semantic", and "all".
         :paramtype debug: str or ~azure.search.documents.models.QueryDebugMode
-        :keyword vector: The query parameters for vector and hybrid search queries.
-        :paramtype vector: str or ~azure.search.documents.models.Vector
+        :keyword vectors: The query parameters for multi-vector search queries.
+        :paramtype vectors: list[Vector]
         :rtype:  SearchItemPaged[Dict]
 
         .. admonition:: Example:
@@ -312,15 +308,13 @@ class SearchClient(HeadersMixin):
         filter_arg = filter
         search_fields_str = ",".join(search_fields) if search_fields else None
 
-        answers = query_answer if not query_answer_count else '{}|count-{}'.format(
-            query_answer, query_answer_count
-        )
-        answers = answers if not query_answer_threshold else '{}|threshold-{}'.format(
-            answers, query_answer_threshold
-        )
+        answers = query_answer if not query_answer_count else "{}|count-{}".format(query_answer, query_answer_count)
+        answers = answers if not query_answer_threshold else "{}|threshold-{}".format(answers, query_answer_threshold)
 
-        captions = query_caption if not query_caption_highlight else '{}|highlight-{}'.format(
-            query_caption, query_caption_highlight
+        captions = (
+            query_caption
+            if not query_caption_highlight
+            else "{}|highlight-{}".format(query_caption, query_caption_highlight)
         )
 
         semantic_configuration = semantic_configuration_name
@@ -351,7 +345,7 @@ class SearchClient(HeadersMixin):
             top=top,
             session_id=session_id,
             scoring_statistics=scoring_statistics,
-            vector=vector,
+            vectors=vectors,
             semantic_error_handling=semantic_error_handling,
             semantic_max_wait_in_milliseconds=semantic_max_wait_in_milliseconds,
             debug=debug,
@@ -361,25 +355,24 @@ class SearchClient(HeadersMixin):
 
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         kwargs["api_version"] = self._api_version
-        return SearchItemPaged(
-            self._client, query, kwargs, page_iterator_class=SearchPageIterator
-        )
+        return SearchItemPaged(self._client, query, kwargs, page_iterator_class=SearchPageIterator)
 
     @distributed_trace
     def suggest(
-            self,
-            search_text: str,
-            suggester_name: str,
-            *,
-            use_fuzzy_matching: Optional[bool] = None,
-            highlight_post_tag: Optional[str] = None,
-            highlight_pre_tag: Optional[str] = None,
-            minimum_coverage: Optional[float] = None,
-            order_by: Optional[List[str]] = None,
-            search_fields: Optional[List[str]] = None,
-            select: Optional[List[str]] = None,
-            top: Optional[int] = None,
-            **kwargs) -> List[Dict]:
+        self,
+        search_text: str,
+        suggester_name: str,
+        *,
+        use_fuzzy_matching: Optional[bool] = None,
+        highlight_post_tag: Optional[str] = None,
+        highlight_pre_tag: Optional[str] = None,
+        minimum_coverage: Optional[float] = None,
+        order_by: Optional[List[str]] = None,
+        search_fields: Optional[List[str]] = None,
+        select: Optional[List[str]] = None,
+        top: Optional[int] = None,
+        **kwargs
+    ) -> List[Dict]:
         """Get search suggestion results from the Azure search index.
 
         :param str search_text: Required. The search text to use to suggest documents. Must be at least 1
@@ -400,19 +393,20 @@ class SearchClient(HeadersMixin):
          must be covered by a suggestions query in order for the query to be reported as a success. This
          parameter can be useful for ensuring search availability even for services with only one
          replica. The default is 80.
-        :keyword List[str] order_by: The list of OData $orderby expressions by which to sort the results. Each
+        :keyword list[str] order_by: The list of OData $orderby expressions by which to sort the results. Each
          expression can be either a field name or a call to either the geo.distance() or the
          search.score() functions. Each expression can be followed by asc to indicate ascending, or desc
          to indicate descending. The default is ascending order. Ties will be broken by the match scores
          of documents. If no $orderby is specified, the default sort order is descending by document
          match score. There can be at most 32 $orderby clauses.
-        :keyword List[str] search_fields: The list of field names to search for the specified search text. Target
+        :keyword list[str] search_fields: The list of field names to search for the specified search text. Target
          fields must be included in the specified suggester.
-        :keyword List[str] select: The list of fields to retrieve. If unspecified, only the key field will be
+        :keyword list[str] select: The list of fields to retrieve. If unspecified, only the key field will be
          included in the results.
         :keyword int top: The number of suggestions to retrieve. The value must be a number between 1 and
          100. The default is 5.
-        :rtype:  List[Dict]
+        :return: List of documents.
+        :rtype:  list[Dict]
 
         .. admonition:: Example:
 
@@ -441,26 +435,25 @@ class SearchClient(HeadersMixin):
         if isinstance(select, list):
             query.select(select)
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        response = self._client.documents.suggest_post(
-            suggest_request=query.request, **kwargs
-        )
+        response = self._client.documents.suggest_post(suggest_request=query.request, **kwargs)
         results = [r.as_dict() for r in response.results]
         return results
 
     @distributed_trace
     def autocomplete(
-            self,
-            search_text: str,
-            suggester_name: str,
-            *,
-            mode: Optional[Union[str, AutocompleteMode]] = None,
-            use_fuzzy_matching: Optional[bool] = None,
-            highlight_post_tag: Optional[str] = None,
-            highlight_pre_tag: Optional[str] = None,
-            minimum_coverage: Optional[float] = None,
-            search_fields: Optional[List[str]] = None,
-            top: Optional[int] = None,
-            **kwargs) -> List[Dict]:
+        self,
+        search_text: str,
+        suggester_name: str,
+        *,
+        mode: Optional[Union[str, AutocompleteMode]] = None,
+        use_fuzzy_matching: Optional[bool] = None,
+        highlight_post_tag: Optional[str] = None,
+        highlight_pre_tag: Optional[str] = None,
+        minimum_coverage: Optional[float] = None,
+        search_fields: Optional[List[str]] = None,
+        top: Optional[int] = None,
+        **kwargs
+    ) -> List[Dict]:
         """Get search auto-completion results from the Azure search index.
 
         :param str search_text: The search text on which to base autocomplete results.
@@ -485,7 +478,7 @@ class SearchClient(HeadersMixin):
          must be covered by an autocomplete query in order for the query to be reported as a success.
          This parameter can be useful for ensuring search availability even for services with only one
          replica. The default is 80.
-        :keyword List[str] search_fields: The list of field names to consider when querying for auto-completed
+        :keyword list[str] search_fields: The list of field names to consider when querying for auto-completed
          terms. Target fields must be included in the specified suggester.
         :keyword int top: The number of auto-completed terms to retrieve. This must be a value between 1 and
          100. The default is 5.
@@ -517,12 +510,11 @@ class SearchClient(HeadersMixin):
         )
 
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        response = self._client.documents.autocomplete_post(
-            autocomplete_request=query.request, **kwargs
-        )
+        response = self._client.documents.autocomplete_post(autocomplete_request=query.request, **kwargs)
         results = [r.as_dict() for r in response.results]
         return results
 
+    # pylint:disable=client-method-missing-tracing-decorator
     def upload_documents(self, documents: List[Dict], **kwargs: Any) -> List[IndexingResult]:
         """Upload documents to the Azure search index.
 
@@ -531,8 +523,9 @@ class SearchClient(HeadersMixin):
         replaced in the update case.
 
         :param documents: A list of documents to upload.
-        :type documents: List[Dict]
-        :rtype:  List[IndexingResult]
+        :type documents: list[dict]
+        :return: List of IndexingResult
+        :rtype:  list[IndexingResult]
 
         .. admonition:: Example:
 
@@ -550,6 +543,7 @@ class SearchClient(HeadersMixin):
         results = self.index_documents(batch, **kwargs)
         return cast(List[IndexingResult], results)
 
+    # pylint:disable=client-method-missing-tracing-decorator, delete-operation-wrong-return-type
     def delete_documents(self, documents: List[Dict], **kwargs: Any) -> List[IndexingResult]:
         """Delete documents from the Azure search index
 
@@ -563,8 +557,9 @@ class SearchClient(HeadersMixin):
         result in a 200 status code.
 
         :param documents: A list of documents to delete.
-        :type documents: List[Dict]
-        :rtype:  List[IndexingResult]
+        :type documents: list[dict]
+        :return: List of IndexingResult
+        :rtype:  list[IndexingResult]
 
         .. admonition:: Example:
 
@@ -582,6 +577,7 @@ class SearchClient(HeadersMixin):
         results = self.index_documents(batch, **kwargs)
         return cast(List[IndexingResult], results)
 
+    # pylint:disable=client-method-missing-tracing-decorator
     def merge_documents(self, documents: List[Dict], **kwargs: Any) -> List[IndexingResult]:
         """Merge documents in to existing documents in the Azure search index.
 
@@ -591,8 +587,9 @@ class SearchClient(HeadersMixin):
         to collections of primitive and complex types.
 
         :param documents: A list of documents to merge.
-        :type documents: List[Dict]
-        :rtype:  List[IndexingResult]
+        :type documents: list[dict]
+        :return: List of IndexingResult
+        :rtype:  list[IndexingResult]
 
         .. admonition:: Example:
 
@@ -610,6 +607,7 @@ class SearchClient(HeadersMixin):
         results = self.index_documents(batch, **kwargs)
         return cast(List[IndexingResult], results)
 
+    # pylint:disable=client-method-missing-tracing-decorator
     def merge_or_upload_documents(self, documents: List[Dict], **kwargs: Any) -> List[IndexingResult]:
         """Merge documents in to existing documents in the Azure search index,
         or upload them if they do not yet exist.
@@ -619,8 +617,9 @@ class SearchClient(HeadersMixin):
         behaves like `upload_documents` with a new document.
 
         :param documents: A list of documents to merge or upload.
-        :type documents: List[Dict]
-        :rtype:  List[IndexingResult]
+        :type documents: list[dict]
+        :return: List of IndexingResult
+        :rtype:  list[IndexingResult]
         """
         batch = IndexDocumentsBatch()
         batch.add_merge_or_upload_actions(documents)
@@ -635,7 +634,8 @@ class SearchClient(HeadersMixin):
 
         :param batch: A batch of document operations to perform.
         :type batch: IndexDocumentsBatch
-        :rtype:  List[IndexingResult]
+        :return: List of IndexingResult
+        :rtype:  list[IndexingResult]
         :raises :class:`~azure.search.documents.RequestEntityTooLargeError`
         """
         return self._index_documents_actions(actions=batch.actions, **kwargs)
@@ -646,9 +646,7 @@ class SearchClient(HeadersMixin):
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         batch = IndexBatch(actions=actions)
         try:
-            batch_response = self._client.documents.index(
-                batch=batch, error_map=error_map, **kwargs
-            )
+            batch_response = self._client.documents.index(batch=batch, error_map=error_map, **kwargs)
             return cast(List[IndexingResult], batch_response.results)
         except RequestEntityTooLargeError:
             if len(actions) == 1:
@@ -658,25 +656,21 @@ class SearchClient(HeadersMixin):
                 actions=actions[:pos], error_map=error_map, **kwargs
             )
             if batch_response_first_half:
-                result_first_half = cast(
-                    List[IndexingResult], batch_response_first_half.results
-                )
+                result_first_half = cast(List[IndexingResult], batch_response_first_half.results)
             else:
                 result_first_half = []
             batch_response_second_half = self._index_documents_actions(
                 actions=actions[pos:], error_map=error_map, **kwargs
             )
             if batch_response_second_half:
-                result_second_half = cast(
-                    List[IndexingResult], batch_response_second_half.results
-                )
+                result_second_half = cast(List[IndexingResult], batch_response_second_half.results)
             else:
                 result_second_half = []
             return result_first_half.extend(result_second_half)
 
-    def __enter__(self):
+    def __enter__(self) -> "SearchClient":
         self._client.__enter__()  # pylint:disable=no-member
         return self
 
-    def __exit__(self, *args):
+    def __exit__(self, *args) -> None:
         self._client.__exit__(*args)

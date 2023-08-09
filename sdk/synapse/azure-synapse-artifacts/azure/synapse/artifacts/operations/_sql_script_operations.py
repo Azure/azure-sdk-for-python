@@ -37,7 +37,7 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_get_sql_scripts_by_workspace_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
+def build_get_sql_scripts_by_workspace_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -56,7 +56,7 @@ def build_get_sql_scripts_by_workspace_request(**kwargs: Any) -> HttpRequest:  #
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_create_or_update_sql_script_request(  # pylint: disable=name-too-long
+def build_create_or_update_sql_script_request(
     sql_script_name: str, *, if_match: Optional[str] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})

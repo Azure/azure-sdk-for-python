@@ -67,8 +67,10 @@ class AzureResourceBase(_serialization.Model):
 class DenySettings(_serialization.Model):
     """Defines how resources deployed by the deployment stack are locked.
 
-    :ivar mode: denySettings Mode. Known values are: "denyDelete", "denyWriteAndDelete", and
-     "none".
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar mode: denySettings Mode. Required. Known values are: "denyDelete", "denyWriteAndDelete",
+     and "none".
     :vartype mode: str or
      ~azure.mgmt.resource.deploymentstacks.v2022_08_01_preview.models.DenySettingsMode
     :ivar excluded_principals: List of AAD principal IDs excluded from the lock. Up to 5 principals
@@ -85,6 +87,10 @@ class DenySettings(_serialization.Model):
     :vartype apply_to_child_scopes: bool
     """
 
+    _validation = {
+        "mode": {"required": True},
+    }
+
     _attribute_map = {
         "mode": {"key": "mode", "type": "str"},
         "excluded_principals": {"key": "excludedPrincipals", "type": "[str]"},
@@ -95,15 +101,15 @@ class DenySettings(_serialization.Model):
     def __init__(
         self,
         *,
-        mode: Optional[Union[str, "_models.DenySettingsMode"]] = None,
+        mode: Union[str, "_models.DenySettingsMode"],
         excluded_principals: Optional[List[str]] = None,
         excluded_actions: Optional[List[str]] = None,
         apply_to_child_scopes: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword mode: denySettings Mode. Known values are: "denyDelete", "denyWriteAndDelete", and
-         "none".
+        :keyword mode: denySettings Mode. Required. Known values are: "denyDelete",
+         "denyWriteAndDelete", and "none".
         :paramtype mode: str or
          ~azure.mgmt.resource.deploymentstacks.v2022_08_01_preview.models.DenySettingsMode
         :keyword excluded_principals: List of AAD principal IDs excluded from the lock. Up to 5

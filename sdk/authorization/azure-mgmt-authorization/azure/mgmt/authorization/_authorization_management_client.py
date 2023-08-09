@@ -71,11 +71,6 @@ class AuthorizationManagementClient(MultiApiClientMixin, _SDKClient):
             'access_review_instances_assigned_for_my_approval': '2021-12-01-preview',
             'access_review_schedule_definitions': '2021-12-01-preview',
             'access_review_schedule_definitions_assigned_for_my_approval': '2021-12-01-preview',
-            'alert_configurations': '2021-12-01-preview',
-            'alert_definitions': '2021-12-01-preview',
-            'alert_incidents': '2021-12-01-preview',
-            'alert_operation': '2021-12-01-preview',
-            'alerts': '2021-12-01-preview',
             'classic_administrators': '2015-07-01',
             'eligible_child_resources': '2020-10-01',
             'global_administrator': '2015-07-01',
@@ -119,6 +114,8 @@ class AuthorizationManagementClient(MultiApiClientMixin, _SDKClient):
         profile: KnownProfiles=KnownProfiles.default,
         **kwargs: Any
     ):
+        if api_version:
+            kwargs.setdefault('api_version', api_version)
         self._config = AuthorizationManagementClientConfiguration(credential, subscription_id, **kwargs)
         self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
         super(AuthorizationManagementClient, self).__init__(
@@ -149,6 +146,9 @@ class AuthorizationManagementClient(MultiApiClientMixin, _SDKClient):
            * 2021-07-01-preview: :mod:`v2021_07_01_preview.models<azure.mgmt.authorization.v2021_07_01_preview.models>`
            * 2021-12-01-preview: :mod:`v2021_12_01_preview.models<azure.mgmt.authorization.v2021_12_01_preview.models>`
            * 2022-04-01: :mod:`v2022_04_01.models<azure.mgmt.authorization.v2022_04_01.models>`
+           * 2022-04-01-preview: :mod:`v2022_04_01_preview.models<azure.mgmt.authorization.v2022_04_01_preview.models>`
+           * 2022-05-01-preview: :mod:`v2022_05_01_preview.models<azure.mgmt.authorization.v2022_05_01_preview.models>`
+           * 2022-08-01-preview: :mod:`v2022_08_01_preview.models<azure.mgmt.authorization.v2022_08_01_preview.models>`
         """
         if api_version == '2015-06-01':
             from .v2015_06_01 import models
@@ -195,6 +195,15 @@ class AuthorizationManagementClient(MultiApiClientMixin, _SDKClient):
         elif api_version == '2022-04-01':
             from .v2022_04_01 import models
             return models
+        elif api_version == '2022-04-01-preview':
+            from .v2022_04_01_preview import models
+            return models
+        elif api_version == '2022-05-01-preview':
+            from .v2022_05_01_preview import models
+            return models
+        elif api_version == '2022-08-01-preview':
+            from .v2022_08_01_preview import models
+            return models
         raise ValueError("API version {} is not available".format(api_version))
 
     @property
@@ -218,7 +227,7 @@ class AuthorizationManagementClient(MultiApiClientMixin, _SDKClient):
         else:
             raise ValueError("API version {} does not have operation group 'access_review_default_settings'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     @property
     def access_review_history_definition(self):
@@ -232,7 +241,7 @@ class AuthorizationManagementClient(MultiApiClientMixin, _SDKClient):
         else:
             raise ValueError("API version {} does not have operation group 'access_review_history_definition'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     @property
     def access_review_history_definition_instance(self):
@@ -246,7 +255,7 @@ class AuthorizationManagementClient(MultiApiClientMixin, _SDKClient):
         else:
             raise ValueError("API version {} does not have operation group 'access_review_history_definition_instance'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     @property
     def access_review_history_definition_instances(self):
@@ -260,7 +269,7 @@ class AuthorizationManagementClient(MultiApiClientMixin, _SDKClient):
         else:
             raise ValueError("API version {} does not have operation group 'access_review_history_definition_instances'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     @property
     def access_review_history_definitions(self):
@@ -274,7 +283,7 @@ class AuthorizationManagementClient(MultiApiClientMixin, _SDKClient):
         else:
             raise ValueError("API version {} does not have operation group 'access_review_history_definitions'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     @property
     def access_review_instance(self):
@@ -297,7 +306,7 @@ class AuthorizationManagementClient(MultiApiClientMixin, _SDKClient):
         else:
             raise ValueError("API version {} does not have operation group 'access_review_instance'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     @property
     def access_review_instance_contacted_reviewers(self):
@@ -314,7 +323,7 @@ class AuthorizationManagementClient(MultiApiClientMixin, _SDKClient):
         else:
             raise ValueError("API version {} does not have operation group 'access_review_instance_contacted_reviewers'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     @property
     def access_review_instance_decisions(self):
@@ -337,7 +346,7 @@ class AuthorizationManagementClient(MultiApiClientMixin, _SDKClient):
         else:
             raise ValueError("API version {} does not have operation group 'access_review_instance_decisions'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     @property
     def access_review_instance_my_decisions(self):
@@ -360,7 +369,7 @@ class AuthorizationManagementClient(MultiApiClientMixin, _SDKClient):
         else:
             raise ValueError("API version {} does not have operation group 'access_review_instance_my_decisions'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     @property
     def access_review_instances(self):
@@ -383,7 +392,7 @@ class AuthorizationManagementClient(MultiApiClientMixin, _SDKClient):
         else:
             raise ValueError("API version {} does not have operation group 'access_review_instances'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     @property
     def access_review_instances_assigned_for_my_approval(self):
@@ -406,7 +415,7 @@ class AuthorizationManagementClient(MultiApiClientMixin, _SDKClient):
         else:
             raise ValueError("API version {} does not have operation group 'access_review_instances_assigned_for_my_approval'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     @property
     def access_review_schedule_definitions(self):
@@ -429,7 +438,7 @@ class AuthorizationManagementClient(MultiApiClientMixin, _SDKClient):
         else:
             raise ValueError("API version {} does not have operation group 'access_review_schedule_definitions'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     @property
     def access_review_schedule_definitions_assigned_for_my_approval(self):
@@ -452,77 +461,77 @@ class AuthorizationManagementClient(MultiApiClientMixin, _SDKClient):
         else:
             raise ValueError("API version {} does not have operation group 'access_review_schedule_definitions_assigned_for_my_approval'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     @property
     def alert_configurations(self):
         """Instance depends on the API version:
 
-           * 2021-12-01-preview: :class:`AlertConfigurationsOperations<azure.mgmt.authorization.v2021_12_01_preview.operations.AlertConfigurationsOperations>`
+           * 2022-08-01-preview: :class:`AlertConfigurationsOperations<azure.mgmt.authorization.v2022_08_01_preview.operations.AlertConfigurationsOperations>`
         """
         api_version = self._get_api_version('alert_configurations')
-        if api_version == '2021-12-01-preview':
-            from .v2021_12_01_preview.operations import AlertConfigurationsOperations as OperationClass
+        if api_version == '2022-08-01-preview':
+            from .v2022_08_01_preview.operations import AlertConfigurationsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'alert_configurations'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     @property
     def alert_definitions(self):
         """Instance depends on the API version:
 
-           * 2021-12-01-preview: :class:`AlertDefinitionsOperations<azure.mgmt.authorization.v2021_12_01_preview.operations.AlertDefinitionsOperations>`
+           * 2022-08-01-preview: :class:`AlertDefinitionsOperations<azure.mgmt.authorization.v2022_08_01_preview.operations.AlertDefinitionsOperations>`
         """
         api_version = self._get_api_version('alert_definitions')
-        if api_version == '2021-12-01-preview':
-            from .v2021_12_01_preview.operations import AlertDefinitionsOperations as OperationClass
+        if api_version == '2022-08-01-preview':
+            from .v2022_08_01_preview.operations import AlertDefinitionsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'alert_definitions'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     @property
     def alert_incidents(self):
         """Instance depends on the API version:
 
-           * 2021-12-01-preview: :class:`AlertIncidentsOperations<azure.mgmt.authorization.v2021_12_01_preview.operations.AlertIncidentsOperations>`
+           * 2022-08-01-preview: :class:`AlertIncidentsOperations<azure.mgmt.authorization.v2022_08_01_preview.operations.AlertIncidentsOperations>`
         """
         api_version = self._get_api_version('alert_incidents')
-        if api_version == '2021-12-01-preview':
-            from .v2021_12_01_preview.operations import AlertIncidentsOperations as OperationClass
+        if api_version == '2022-08-01-preview':
+            from .v2022_08_01_preview.operations import AlertIncidentsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'alert_incidents'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     @property
     def alert_operation(self):
         """Instance depends on the API version:
 
-           * 2021-12-01-preview: :class:`AlertOperationOperations<azure.mgmt.authorization.v2021_12_01_preview.operations.AlertOperationOperations>`
+           * 2022-08-01-preview: :class:`AlertOperationOperations<azure.mgmt.authorization.v2022_08_01_preview.operations.AlertOperationOperations>`
         """
         api_version = self._get_api_version('alert_operation')
-        if api_version == '2021-12-01-preview':
-            from .v2021_12_01_preview.operations import AlertOperationOperations as OperationClass
+        if api_version == '2022-08-01-preview':
+            from .v2022_08_01_preview.operations import AlertOperationOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'alert_operation'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     @property
     def alerts(self):
         """Instance depends on the API version:
 
-           * 2021-12-01-preview: :class:`AlertsOperations<azure.mgmt.authorization.v2021_12_01_preview.operations.AlertsOperations>`
+           * 2022-08-01-preview: :class:`AlertsOperations<azure.mgmt.authorization.v2022_08_01_preview.operations.AlertsOperations>`
         """
         api_version = self._get_api_version('alerts')
-        if api_version == '2021-12-01-preview':
-            from .v2021_12_01_preview.operations import AlertsOperations as OperationClass
+        if api_version == '2022-08-01-preview':
+            from .v2022_08_01_preview.operations import AlertsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'alerts'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     @property
     def classic_administrators(self):
@@ -539,7 +548,7 @@ class AuthorizationManagementClient(MultiApiClientMixin, _SDKClient):
         else:
             raise ValueError("API version {} does not have operation group 'classic_administrators'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     @property
     def deny_assignments(self):
@@ -556,7 +565,7 @@ class AuthorizationManagementClient(MultiApiClientMixin, _SDKClient):
         else:
             raise ValueError("API version {} does not have operation group 'deny_assignments'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     @property
     def eligible_child_resources(self):
@@ -573,7 +582,7 @@ class AuthorizationManagementClient(MultiApiClientMixin, _SDKClient):
         else:
             raise ValueError("API version {} does not have operation group 'eligible_child_resources'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     @property
     def global_administrator(self):
@@ -587,7 +596,7 @@ class AuthorizationManagementClient(MultiApiClientMixin, _SDKClient):
         else:
             raise ValueError("API version {} does not have operation group 'global_administrator'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     @property
     def operations(self):
@@ -613,7 +622,7 @@ class AuthorizationManagementClient(MultiApiClientMixin, _SDKClient):
         else:
             raise ValueError("API version {} does not have operation group 'operations'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     @property
     def permissions(self):
@@ -622,6 +631,7 @@ class AuthorizationManagementClient(MultiApiClientMixin, _SDKClient):
            * 2015-07-01: :class:`PermissionsOperations<azure.mgmt.authorization.v2015_07_01.operations.PermissionsOperations>`
            * 2018-01-01-preview: :class:`PermissionsOperations<azure.mgmt.authorization.v2018_01_01_preview.operations.PermissionsOperations>`
            * 2022-04-01: :class:`PermissionsOperations<azure.mgmt.authorization.v2022_04_01.operations.PermissionsOperations>`
+           * 2022-05-01-preview: :class:`PermissionsOperations<azure.mgmt.authorization.v2022_05_01_preview.operations.PermissionsOperations>`
         """
         api_version = self._get_api_version('permissions')
         if api_version == '2015-07-01':
@@ -630,10 +640,12 @@ class AuthorizationManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2018_01_01_preview.operations import PermissionsOperations as OperationClass
         elif api_version == '2022-04-01':
             from .v2022_04_01.operations import PermissionsOperations as OperationClass
+        elif api_version == '2022-05-01-preview':
+            from .v2022_05_01_preview.operations import PermissionsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'permissions'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     @property
     def provider_operations_metadata(self):
@@ -653,7 +665,7 @@ class AuthorizationManagementClient(MultiApiClientMixin, _SDKClient):
         else:
             raise ValueError("API version {} does not have operation group 'provider_operations_metadata'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     @property
     def role_assignment_approval(self):
@@ -667,7 +679,7 @@ class AuthorizationManagementClient(MultiApiClientMixin, _SDKClient):
         else:
             raise ValueError("API version {} does not have operation group 'role_assignment_approval'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     @property
     def role_assignment_approval_step(self):
@@ -681,7 +693,7 @@ class AuthorizationManagementClient(MultiApiClientMixin, _SDKClient):
         else:
             raise ValueError("API version {} does not have operation group 'role_assignment_approval_step'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     @property
     def role_assignment_approval_steps(self):
@@ -695,7 +707,7 @@ class AuthorizationManagementClient(MultiApiClientMixin, _SDKClient):
         else:
             raise ValueError("API version {} does not have operation group 'role_assignment_approval_steps'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     @property
     def role_assignment_metrics(self):
@@ -709,7 +721,7 @@ class AuthorizationManagementClient(MultiApiClientMixin, _SDKClient):
         else:
             raise ValueError("API version {} does not have operation group 'role_assignment_metrics'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     @property
     def role_assignment_schedule_instances(self):
@@ -726,7 +738,7 @@ class AuthorizationManagementClient(MultiApiClientMixin, _SDKClient):
         else:
             raise ValueError("API version {} does not have operation group 'role_assignment_schedule_instances'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     @property
     def role_assignment_schedule_requests(self):
@@ -734,16 +746,19 @@ class AuthorizationManagementClient(MultiApiClientMixin, _SDKClient):
 
            * 2020-10-01: :class:`RoleAssignmentScheduleRequestsOperations<azure.mgmt.authorization.v2020_10_01.operations.RoleAssignmentScheduleRequestsOperations>`
            * 2020-10-01-preview: :class:`RoleAssignmentScheduleRequestsOperations<azure.mgmt.authorization.v2020_10_01_preview.operations.RoleAssignmentScheduleRequestsOperations>`
+           * 2022-04-01-preview: :class:`RoleAssignmentScheduleRequestsOperations<azure.mgmt.authorization.v2022_04_01_preview.operations.RoleAssignmentScheduleRequestsOperations>`
         """
         api_version = self._get_api_version('role_assignment_schedule_requests')
         if api_version == '2020-10-01':
             from .v2020_10_01.operations import RoleAssignmentScheduleRequestsOperations as OperationClass
         elif api_version == '2020-10-01-preview':
             from .v2020_10_01_preview.operations import RoleAssignmentScheduleRequestsOperations as OperationClass
+        elif api_version == '2022-04-01-preview':
+            from .v2022_04_01_preview.operations import RoleAssignmentScheduleRequestsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'role_assignment_schedule_requests'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     @property
     def role_assignment_schedules(self):
@@ -760,7 +775,7 @@ class AuthorizationManagementClient(MultiApiClientMixin, _SDKClient):
         else:
             raise ValueError("API version {} does not have operation group 'role_assignment_schedules'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     @property
     def role_assignments(self):
@@ -789,7 +804,7 @@ class AuthorizationManagementClient(MultiApiClientMixin, _SDKClient):
         else:
             raise ValueError("API version {} does not have operation group 'role_assignments'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     @property
     def role_definitions(self):
@@ -798,6 +813,7 @@ class AuthorizationManagementClient(MultiApiClientMixin, _SDKClient):
            * 2015-07-01: :class:`RoleDefinitionsOperations<azure.mgmt.authorization.v2015_07_01.operations.RoleDefinitionsOperations>`
            * 2018-01-01-preview: :class:`RoleDefinitionsOperations<azure.mgmt.authorization.v2018_01_01_preview.operations.RoleDefinitionsOperations>`
            * 2022-04-01: :class:`RoleDefinitionsOperations<azure.mgmt.authorization.v2022_04_01.operations.RoleDefinitionsOperations>`
+           * 2022-05-01-preview: :class:`RoleDefinitionsOperations<azure.mgmt.authorization.v2022_05_01_preview.operations.RoleDefinitionsOperations>`
         """
         api_version = self._get_api_version('role_definitions')
         if api_version == '2015-07-01':
@@ -806,10 +822,12 @@ class AuthorizationManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2018_01_01_preview.operations import RoleDefinitionsOperations as OperationClass
         elif api_version == '2022-04-01':
             from .v2022_04_01.operations import RoleDefinitionsOperations as OperationClass
+        elif api_version == '2022-05-01-preview':
+            from .v2022_05_01_preview.operations import RoleDefinitionsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'role_definitions'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     @property
     def role_eligibility_schedule_instances(self):
@@ -826,7 +844,7 @@ class AuthorizationManagementClient(MultiApiClientMixin, _SDKClient):
         else:
             raise ValueError("API version {} does not have operation group 'role_eligibility_schedule_instances'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     @property
     def role_eligibility_schedule_requests(self):
@@ -834,16 +852,19 @@ class AuthorizationManagementClient(MultiApiClientMixin, _SDKClient):
 
            * 2020-10-01: :class:`RoleEligibilityScheduleRequestsOperations<azure.mgmt.authorization.v2020_10_01.operations.RoleEligibilityScheduleRequestsOperations>`
            * 2020-10-01-preview: :class:`RoleEligibilityScheduleRequestsOperations<azure.mgmt.authorization.v2020_10_01_preview.operations.RoleEligibilityScheduleRequestsOperations>`
+           * 2022-04-01-preview: :class:`RoleEligibilityScheduleRequestsOperations<azure.mgmt.authorization.v2022_04_01_preview.operations.RoleEligibilityScheduleRequestsOperations>`
         """
         api_version = self._get_api_version('role_eligibility_schedule_requests')
         if api_version == '2020-10-01':
             from .v2020_10_01.operations import RoleEligibilityScheduleRequestsOperations as OperationClass
         elif api_version == '2020-10-01-preview':
             from .v2020_10_01_preview.operations import RoleEligibilityScheduleRequestsOperations as OperationClass
+        elif api_version == '2022-04-01-preview':
+            from .v2022_04_01_preview.operations import RoleEligibilityScheduleRequestsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'role_eligibility_schedule_requests'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     @property
     def role_eligibility_schedules(self):
@@ -860,7 +881,7 @@ class AuthorizationManagementClient(MultiApiClientMixin, _SDKClient):
         else:
             raise ValueError("API version {} does not have operation group 'role_eligibility_schedules'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     @property
     def role_management_policies(self):
@@ -877,7 +898,7 @@ class AuthorizationManagementClient(MultiApiClientMixin, _SDKClient):
         else:
             raise ValueError("API version {} does not have operation group 'role_management_policies'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     @property
     def role_management_policy_assignments(self):
@@ -894,7 +915,7 @@ class AuthorizationManagementClient(MultiApiClientMixin, _SDKClient):
         else:
             raise ValueError("API version {} does not have operation group 'role_management_policy_assignments'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     @property
     def scope_access_review_default_settings(self):
@@ -908,7 +929,7 @@ class AuthorizationManagementClient(MultiApiClientMixin, _SDKClient):
         else:
             raise ValueError("API version {} does not have operation group 'scope_access_review_default_settings'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     @property
     def scope_access_review_history_definition(self):
@@ -922,7 +943,7 @@ class AuthorizationManagementClient(MultiApiClientMixin, _SDKClient):
         else:
             raise ValueError("API version {} does not have operation group 'scope_access_review_history_definition'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     @property
     def scope_access_review_history_definition_instance(self):
@@ -936,7 +957,7 @@ class AuthorizationManagementClient(MultiApiClientMixin, _SDKClient):
         else:
             raise ValueError("API version {} does not have operation group 'scope_access_review_history_definition_instance'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     @property
     def scope_access_review_history_definition_instances(self):
@@ -950,7 +971,7 @@ class AuthorizationManagementClient(MultiApiClientMixin, _SDKClient):
         else:
             raise ValueError("API version {} does not have operation group 'scope_access_review_history_definition_instances'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     @property
     def scope_access_review_history_definitions(self):
@@ -964,7 +985,7 @@ class AuthorizationManagementClient(MultiApiClientMixin, _SDKClient):
         else:
             raise ValueError("API version {} does not have operation group 'scope_access_review_history_definitions'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     @property
     def scope_access_review_instance(self):
@@ -978,7 +999,7 @@ class AuthorizationManagementClient(MultiApiClientMixin, _SDKClient):
         else:
             raise ValueError("API version {} does not have operation group 'scope_access_review_instance'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     @property
     def scope_access_review_instance_contacted_reviewers(self):
@@ -992,7 +1013,7 @@ class AuthorizationManagementClient(MultiApiClientMixin, _SDKClient):
         else:
             raise ValueError("API version {} does not have operation group 'scope_access_review_instance_contacted_reviewers'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     @property
     def scope_access_review_instance_decisions(self):
@@ -1006,7 +1027,7 @@ class AuthorizationManagementClient(MultiApiClientMixin, _SDKClient):
         else:
             raise ValueError("API version {} does not have operation group 'scope_access_review_instance_decisions'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     @property
     def scope_access_review_instances(self):
@@ -1020,7 +1041,7 @@ class AuthorizationManagementClient(MultiApiClientMixin, _SDKClient):
         else:
             raise ValueError("API version {} does not have operation group 'scope_access_review_instances'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     @property
     def scope_access_review_schedule_definitions(self):
@@ -1034,7 +1055,7 @@ class AuthorizationManagementClient(MultiApiClientMixin, _SDKClient):
         else:
             raise ValueError("API version {} does not have operation group 'scope_access_review_schedule_definitions'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     @property
     def scope_role_assignment_approval(self):
@@ -1048,7 +1069,7 @@ class AuthorizationManagementClient(MultiApiClientMixin, _SDKClient):
         else:
             raise ValueError("API version {} does not have operation group 'scope_role_assignment_approval'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     @property
     def scope_role_assignment_approval_step(self):
@@ -1062,7 +1083,7 @@ class AuthorizationManagementClient(MultiApiClientMixin, _SDKClient):
         else:
             raise ValueError("API version {} does not have operation group 'scope_role_assignment_approval_step'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     @property
     def scope_role_assignment_approval_steps(self):
@@ -1076,7 +1097,7 @@ class AuthorizationManagementClient(MultiApiClientMixin, _SDKClient):
         else:
             raise ValueError("API version {} does not have operation group 'scope_role_assignment_approval_steps'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     @property
     def tenant_level_access_review_instance_contacted_reviewers(self):
@@ -1093,7 +1114,7 @@ class AuthorizationManagementClient(MultiApiClientMixin, _SDKClient):
         else:
             raise ValueError("API version {} does not have operation group 'tenant_level_access_review_instance_contacted_reviewers'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     def close(self):
         self._client.close()

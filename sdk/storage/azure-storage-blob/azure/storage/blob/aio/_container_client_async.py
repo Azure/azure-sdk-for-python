@@ -213,7 +213,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase, Storag
             kwargs['source_lease_id'] = lease
         try:
             renamed_container = ContainerClient(
-                "{}://{}".format(self.scheme, self.primary_hostname), container_name=new_name,
+                f"{self.scheme}://{self.primary_hostname}", container_name=new_name,
                 credential=self.credential, api_version=self.api_version, _configuration=self._config,
                 _pipeline=self._pipeline, _location_mode=self._location_mode, _hosts=self._hosts,
                 require_encryption=self.require_encryption, encryption_version=self.encryption_version,
@@ -414,6 +414,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase, Storag
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`_.
         :returns: boolean
+        :rtype: bool
         """
         try:
             await self._client.container.get_properties(**kwargs)
@@ -511,7 +512,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase, Storag
         else:
             _pipeline = self._pipeline  # pylint: disable = protected-access
         return BlobServiceClient(
-            "{}://{}".format(self.scheme, self.primary_hostname),
+            f"{self.scheme}://{self.primary_hostname}",
             credential=self._raw_credential, api_version=self.api_version, _configuration=self._config,
             _location_mode=self._location_mode, _hosts=self._hosts, require_encryption=self.require_encryption,
             encryption_version=self.encryption_version, key_encryption_key=self.key_encryption_key,
@@ -1247,7 +1248,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase, Storag
                 :caption: Deleting multiple blobs.
         """
         if len(blobs) == 0:
-            return iter(list())
+            return iter([])
 
         reqs, options = self._generate_delete_blobs_options(*blobs, **kwargs)
 
@@ -1379,7 +1380,9 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase, Storag
 
     def get_blob_client(
             self, blob,  # type: Union[BlobProperties, str]
-            snapshot=None  # type: str
+            snapshot=None,  # type: str
+            *,
+            version_id=None  # type: Optional[str]
         ):
         # type: (...) -> BlobClient
         """Get a client to interact with the specified blob.
@@ -1392,6 +1395,8 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase, Storag
         :param str snapshot:
             The optional blob snapshot on which to operate. This can be the snapshot ID string
             or the response returned from :func:`~BlobClient.create_snapshot()`.
+        :keyword str version_id: The version id parameter is an opaque DateTime value that, when present,
+            specifies the version of the blob to operate on.
         :returns: A BlobClient.
         :rtype: ~azure.storage.blob.aio.BlobClient
 
@@ -1414,4 +1419,5 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase, Storag
             credential=self.credential, api_version=self.api_version, _configuration=self._config,
             _pipeline=_pipeline, _location_mode=self._location_mode, _hosts=self._hosts,
             require_encryption=self.require_encryption, encryption_version=self.encryption_version,
-            key_encryption_key=self.key_encryption_key, key_resolver_function=self.key_resolver_function)
+            key_encryption_key=self.key_encryption_key, key_resolver_function=self.key_resolver_function,
+            version_id=version_id)

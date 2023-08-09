@@ -4,7 +4,7 @@
 # ------------------------------------
 import asyncio
 import logging
-from typing import Optional, TYPE_CHECKING, Any
+from typing import Any, Optional, TYPE_CHECKING
 
 from azure.core.exceptions import ClientAuthenticationError
 from azure.core.credentials import AccessToken
@@ -26,7 +26,7 @@ class ChainedTokenCredential(AsyncContextManager):
     valid token received.
 
     :param credentials: credential instances to form the chain
-    :type credentials: :class:`azure.core.credentials.AsyncTokenCredential`
+    :type credentials: ~azure.core.credentials.AsyncTokenCredential
 
     .. admonition:: Example:
 
@@ -50,7 +50,9 @@ class ChainedTokenCredential(AsyncContextManager):
 
         await asyncio.gather(*(credential.close() for credential in self.credentials))
 
-    async def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
+    async def get_token(
+        self, *scopes: str, claims: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs: Any
+    ) -> AccessToken:
         """Asynchronously request a token from each credential, in order, returning the first token received.
 
         If no credential provides a token, raises :class:`azure.core.exceptions.ClientAuthenticationError`
@@ -61,13 +63,19 @@ class ChainedTokenCredential(AsyncContextManager):
         :param str scopes: desired scopes for the access token. This method requires at least one scope.
             For more information about scopes, see
             https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
+        :keyword str claims: additional claims required in the token, such as those returned in a resource provider's
+            claims challenge following an authorization failure.
+        :keyword str tenant_id: optional tenant to include in the token request.
+
+        :return: An access token with the desired scopes.
+        :rtype: ~azure.core.credentials.AccessToken
         :raises ~azure.core.exceptions.ClientAuthenticationError: no credential in the chain provided a token
         """
         within_credential_chain.set(True)
         history = []
         for credential in self.credentials:
             try:
-                token = await credential.get_token(*scopes, **kwargs)
+                token = await credential.get_token(*scopes, claims=claims, tenant_id=tenant_id, **kwargs)
                 _LOGGER.info("%s acquired a token from %s", self.__class__.__name__, credential.__class__.__name__)
                 self._successful_credential = credential
                 return token
@@ -88,7 +96,11 @@ class ChainedTokenCredential(AsyncContextManager):
 
         within_credential_chain.set(False)
         attempts = _get_error_message(history)
-        message = self.__class__.__name__ + " failed to retrieve a token from the included credentials." + attempts \
-                  + "\nTo mitigate this issue, please refer to the troubleshooting guidelines here at " \
-                    "https://aka.ms/azsdk/python/identity/defaultazurecredential/troubleshoot."
+        message = (
+            self.__class__.__name__
+            + " failed to retrieve a token from the included credentials."
+            + attempts
+            + "\nTo mitigate this issue, please refer to the troubleshooting guidelines here at "
+            "https://aka.ms/azsdk/python/identity/defaultazurecredential/troubleshoot."
+        )
         raise ClientAuthenticationError(message=message)

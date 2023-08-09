@@ -111,7 +111,7 @@ class AutoMLImage(AutoMLVertical, ABC):
     ) -> None:
         """Limit settings for all AutoML Image Verticals.
 
-        :param timeout_minutes: AutoML job timeout.
+        :keyword timeout_minutes: AutoML job timeout.
         :type timeout_minutes: ~datetime.timedelta
         """
         self._limits = self._limits or ImageLimitSettings()
@@ -131,12 +131,12 @@ class AutoMLImage(AutoMLVertical, ABC):
     ) -> None:
         """Sweep settings for all AutoML Image Verticals.
 
-        :param sampling_algorithm: Required. [Required] Type of the hyperparameter sampling
+        :keyword sampling_algorithm: Required. [Required] Type of the hyperparameter sampling
          algorithms. Possible values include: "Grid", "Random", "Bayesian".
         :type sampling_algorithm: Union[str, ~azure.mgmt.machinelearningservices.models.SamplingAlgorithmType.RANDOM,
         ~azure.mgmt.machinelearningservices.models.SamplingAlgorithmType.GRID,
         ~azure.mgmt.machinelearningservices.models.SamplingAlgorithmType.BAYESIAN]
-        :param early_termination: Type of early termination policy.
+        :keyword early_termination: Type of early termination policy.
         :type early_termination: Union[
         ~azure.mgmt.machinelearningservices.models.BanditPolicy,
         ~azure.mgmt.machinelearningservices.models.MedianStoppingPolicy,

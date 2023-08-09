@@ -8,18 +8,22 @@
 
 """
 FILE: sync_token_async_samples.py
+
 DESCRIPTION:
     This sample demos update_sync_token for the AzureAppConfigurationClient
+
 USAGE: python sync_token_async_samples.py
+
+    Set the environment variables with your own values before running the sample:
+    1) APPCONFIGURATION_CONNECTION_STRING: Connection String used to access the Azure App Configuration.
 """
 import asyncio
-from typing import Any, Dict, List
+import os
 from azure.appconfiguration.aio import AzureAppConfigurationClient
-from util import get_connection_string
 
 
-async def handle_event_grid_notifications(event_grid_events: List[Dict[str, Any]]) -> None:
-    CONNECTION_STRING = get_connection_string()
+async def handle_event_grid_notifications(event_grid_events):
+    CONNECTION_STRING = os.environ["APPCONFIGURATION_CONNECTION_STRING"]
 
     all_keys = []
 

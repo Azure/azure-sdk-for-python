@@ -29,12 +29,11 @@ def main():
         subscription_id="00000000-1111-2222-3333-444444444444",
     )
 
-    response = client.managed_instance_keys.begin_delete(
+    client.managed_instance_keys.begin_delete(
         resource_group_name="sqlcrudtest-7398",
         managed_instance_name="sqlcrudtest-4645",
         key_name="someVault_someKey_01234567890123456789012345678901",
     ).result()
-    print(response)
 
 
 # x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2020-11-01-preview/examples/ManagedInstanceKeyDelete.json

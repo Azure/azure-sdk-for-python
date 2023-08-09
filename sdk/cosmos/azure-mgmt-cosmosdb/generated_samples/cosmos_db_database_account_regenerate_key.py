@@ -29,14 +29,13 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.database_accounts.begin_regenerate_key(
+    client.database_accounts.begin_regenerate_key(
         resource_group_name="rg1",
         account_name="ddb1",
         key_to_regenerate={"keyKind": "primary"},
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/stable/2023-04-15/examples/CosmosDBDatabaseAccountRegenerateKey.json
+# x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/preview/2023-03-15-preview/examples/CosmosDBDatabaseAccountRegenerateKey.json
 if __name__ == "__main__":
     main()

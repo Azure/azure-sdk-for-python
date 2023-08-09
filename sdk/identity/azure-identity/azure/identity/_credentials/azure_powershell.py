@@ -6,14 +6,14 @@ import base64
 import logging
 import subprocess
 import sys
-from typing import List, Tuple, Optional, Any
+from typing import Any, List, Tuple, Optional
 
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
 
 from .azure_cli import get_safe_working_dir
 from .. import CredentialUnavailableError
-from .._internal import _scopes_to_resource, resolve_tenant
+from .._internal import _scopes_to_resource, resolve_tenant, within_dac
 from .._internal.decorators import log_get_token
 
 
@@ -60,12 +60,13 @@ class AzurePowerShellCredential:
             :dedent: 4
             :caption: Create an AzurePowerShellCredential.
     """
+
     def __init__(
         self,
         *,
         tenant_id: str = "",
         additionally_allowed_tenants: Optional[List[str]] = None,
-        process_timeout: int = 10
+        process_timeout: int = 10,
     ) -> None:
 
         self.tenant_id = tenant_id
@@ -82,7 +83,13 @@ class AzurePowerShellCredential:
         """Calling this method is unnecessary."""
 
     @log_get_token("AzurePowerShellCredential")
-    def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
+    def get_token(
+        self,
+        *scopes: str,
+        claims: Optional[str] = None,  # pylint:disable=unused-argument
+        tenant_id: Optional[str] = None,
+        **kwargs: Any,
+    ) -> AccessToken:
         """Request an access token for `scopes`.
 
         This method is called automatically by Azure SDK clients. Applications calling this method directly must
@@ -91,9 +98,11 @@ class AzurePowerShellCredential:
         :param str scopes: desired scope for the access token. This credential allows only one scope per request.
             For more information about scopes, see
             https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
+        :keyword str claims: not used by this credential; any value provided will be ignored.
         :keyword str tenant_id: optional tenant to include in the token request.
 
-        :rtype: :class:`azure.core.credentials.AccessToken`
+        :return: An access token with the desired scopes.
+        :rtype: ~azure.core.credentials.AccessToken
 
         :raises ~azure.identity.CredentialUnavailableError: the credential was unable to invoke Azure PowerShell, or
           no account is authenticated
@@ -102,8 +111,9 @@ class AzurePowerShellCredential:
         """
         tenant_id = resolve_tenant(
             default_tenant=self.tenant_id,
+            tenant_id=tenant_id,
             additionally_allowed_tenants=self._additionally_allowed_tenants,
-            **kwargs
+            **kwargs,
         )
         command_line = get_command_line(scopes, tenant_id)
         output = run_command_line(command_line, self._process_timeout)
@@ -132,8 +142,9 @@ def run_command_line(command_line: List[str], timeout: int) -> str:
             proc.kill()
         error = CredentialUnavailableError(
             message="Failed to invoke PowerShell.\n"
-                    "To mitigate this issue, please refer to the troubleshooting guidelines here at "
-                    "https://aka.ms/azsdk/python/identity/powershellcredential/troubleshoot.")
+            "To mitigate this issue, please refer to the troubleshooting guidelines here at "
+            "https://aka.ms/azsdk/python/identity/powershellcredential/troubleshoot."
+        )
         raise error from ex
 
     raise_for_error(proc.returncode, stdout, stderr)
@@ -142,7 +153,7 @@ def run_command_line(command_line: List[str], timeout: int) -> str:
 
 def start_process(args: List[str]) -> "subprocess.Popen":
     working_directory = get_safe_working_dir()
-    proc = subprocess.Popen(
+    proc = subprocess.Popen(  # pylint:disable=consider-using-with
         args,
         cwd=working_directory,
         stdout=subprocess.PIPE,
@@ -158,6 +169,8 @@ def parse_token(output: str) -> AccessToken:
             _, token, expires_on = line.split("%")
             return AccessToken(token, int(expires_on))
 
+    if within_dac.get():
+        raise CredentialUnavailableError(message='Unexpected output from Get-AzAccessToken: "{}"'.format(output))
     raise ClientAuthenticationError(message='Unexpected output from Get-AzAccessToken: "{}"'.format(output))
 
 

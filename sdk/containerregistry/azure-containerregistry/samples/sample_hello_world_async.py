@@ -25,8 +25,6 @@ USAGE:
     2) CONTAINERREGISTRY_TENANT_ID - The service principal's tenant ID
     3) CONTAINERREGISTRY_CLIENT_ID - The service principal's client ID
     4) CONTAINERREGISTRY_CLIENT_SECRET - The service principal's client secret
-    5) CONTAINERREGISTRY_RESOURCE_GROUP - The resource group name
-    6) CONTAINERREGISTRY_REGISTRY_NAME - The registry name
 """
 import asyncio
 import os
@@ -43,11 +41,11 @@ class HelloWorldAsync(object):
         self.credential = get_credential(self.authority, is_async=True)
 
     async def basic_sample(self):
-        load_registry()
+        load_registry(self.endpoint)
         # Instantiate an instance of ContainerRegistryClient
         # [START create_registry_client]
         async with ContainerRegistryClient(self.endpoint, self.credential) as client:
-        # [END create_registry_client]
+            # [END create_registry_client]
             # Iterate through all the repositories
             async for repository_name in client.list_repository_names():
                 print(repository_name)
@@ -55,13 +53,10 @@ class HelloWorldAsync(object):
                     print("Tags of repository library/hello-world:")
                     async for tag in client.list_tag_properties(repository_name):
                         print(tag.name)
-                        
+
                         # Make sure will have the permission to delete the repository later
                         await client.update_manifest_properties(
-                            repository_name,
-                            tag.name,
-                            can_write=True,
-                            can_delete=True
+                            repository_name, tag.name, can_write=True, can_delete=True
                         )
 
                     print("Deleting " + repository_name)
