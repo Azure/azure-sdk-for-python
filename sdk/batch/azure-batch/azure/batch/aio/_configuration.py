@@ -27,13 +27,13 @@ class BatchServiceClientConfiguration(Configuration):  # pylint: disable=too-man
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :keyword api_version: The API version to use for this operation. Default value is
-     "2023-05-01.17.0". Note that overriding this default value may result in unsupported behavior.
+     "2022-10-01.16.0". Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
     def __init__(self, credential: "AsyncTokenCredential", **kwargs: Any) -> None:
         super(BatchServiceClientConfiguration, self).__init__(**kwargs)
-        api_version: str = kwargs.pop("api_version", "2023-05-01.17.0")
+        api_version: str = kwargs.pop("api_version", "2022-10-01.16.0")
 
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")

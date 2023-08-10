@@ -29,9 +29,9 @@ from ._models import BatchJobUpdateParameters
 from ._models import BatchNode
 from ._models import BatchNodeEndpointConfiguration
 from ._models import BatchNodeError
+from ._models import BatchNodeGetRemoteLoginSettingsResult
 from ._models import BatchNodeIdentityReference
 from ._models import BatchNodeInformation
-from ._models import BatchNodeRemoteLoginSettingsResult
 from ._models import BatchNodeUser
 from ._models import BatchPool
 from ._models import BatchPoolCreateParameters
@@ -226,9 +226,9 @@ __all__ = [
     "BatchNode",
     "BatchNodeEndpointConfiguration",
     "BatchNodeError",
+    "BatchNodeGetRemoteLoginSettingsResult",
     "BatchNodeIdentityReference",
     "BatchNodeInformation",
-    "BatchNodeRemoteLoginSettingsResult",
     "BatchNodeUser",
     "BatchPool",
     "BatchPoolCreateParameters",
