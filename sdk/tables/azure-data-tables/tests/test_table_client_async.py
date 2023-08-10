@@ -206,6 +206,7 @@ class TestTableClientAsync(AzureRecordedTestCase, AsyncTableTestCase):
             with pytest.raises(ClientAuthenticationError):
                 await service_client.create_table_if_not_exists(table_name="TestInsert")
 
+    @pytest.mark.live_test_only
     @tables_decorator_async
     @recorded_by_proxy_async
     async def test_table_client_with_named_key_credential(
@@ -256,6 +257,7 @@ class TestTableClientAsync(AzureRecordedTestCase, AsyncTableTestCase):
                 pass
             await client.delete_table()
 
+    @pytest.mark.live_test_only
     @tables_decorator_async
     @recorded_by_proxy_async
     async def test_table_service_client_with_named_key_credential(
@@ -288,6 +290,7 @@ class TestTableClientAsync(AzureRecordedTestCase, AsyncTableTestCase):
                 await client.create_table(f"{table_name}2")
             assert "The table specified does not exist." in str(ex.value)
 
+    @pytest.mark.live_test_only
     @tables_decorator_async
     @recorded_by_proxy_async
     async def test_table_client_with_sas_token_credential(
@@ -340,6 +343,7 @@ class TestTableClientAsync(AzureRecordedTestCase, AsyncTableTestCase):
         ex_msg = "You cannot use AzureSasCredential when the resource URI also contains a Shared Access Signature."
         assert ex_msg == str(ex.value)
 
+    @pytest.mark.live_test_only
     @tables_decorator_async
     @recorded_by_proxy_async
     async def test_table_service_client_with_sas_token_credential(
@@ -381,6 +385,7 @@ class TestTableClientAsync(AzureRecordedTestCase, AsyncTableTestCase):
         ex_msg = "You cannot use AzureSasCredential when the resource URI also contains a Shared Access Signature."
         assert ex_msg == str(ex.value)
 
+    @pytest.mark.live_test_only
     @tables_decorator_async
     @recorded_by_proxy_async
     async def test_table_client_with_token_credential(
@@ -432,6 +437,7 @@ class TestTableClientAsync(AzureRecordedTestCase, AsyncTableTestCase):
                 pass
             await client.delete_table()
 
+    @pytest.mark.live_test_only
     @tables_decorator_async
     @recorded_by_proxy_async
     async def test_table_service_client_with_token_credential(
@@ -468,6 +474,7 @@ class TestTableClientAsync(AzureRecordedTestCase, AsyncTableTestCase):
                 count += 1
             assert count == 1
 
+    @pytest.mark.live_test_only
     @tables_decorator_async
     @recorded_by_proxy
     async def test_table_client_without_credential(
@@ -507,6 +514,7 @@ class TestTableClientAsync(AzureRecordedTestCase, AsyncTableTestCase):
             assert table.name == table_name
             await client.delete_table()
 
+    @pytest.mark.live_test_only
     @tables_decorator_async
     @recorded_by_proxy
     async def test_table_service_client_without_credential(

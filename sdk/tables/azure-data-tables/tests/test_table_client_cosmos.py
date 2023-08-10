@@ -234,6 +234,7 @@ class TestTableClientCosmos(AzureRecordedTestCase, TableTestCase):
                 pass
             client.delete_table()
 
+    @pytest.mark.live_test_only
     @cosmos_decorator
     @recorded_by_proxy
     def test_table_service_client_with_named_key_credential(
@@ -263,6 +264,7 @@ class TestTableClientCosmos(AzureRecordedTestCase, TableTestCase):
             assert len(list(result)) == 1
             client.delete_table(table_name)
 
+    @pytest.mark.live_test_only
     @cosmos_decorator
     @recorded_by_proxy
     def test_table_client_with_sas_token_credential(
@@ -319,6 +321,7 @@ class TestTableClientCosmos(AzureRecordedTestCase, TableTestCase):
         ex_msg = "You cannot use AzureSasCredential when the resource URI also contains a Shared Access Signature."
         assert ex_msg == str(ex.value)
 
+    @pytest.mark.live_test_only
     @cosmos_decorator
     @recorded_by_proxy
     def test_table_service_client_with_sas_token_credential(
@@ -360,6 +363,7 @@ class TestTableClientCosmos(AzureRecordedTestCase, TableTestCase):
         ex_msg = "You cannot use AzureSasCredential when the resource URI also contains a Shared Access Signature."
         assert ex_msg == str(ex.value)
 
+    @pytest.mark.live_test_only
     @cosmos_decorator
     @recorded_by_proxy
     def test_table_client_with_token_credential(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
@@ -399,6 +403,7 @@ class TestTableClientCosmos(AzureRecordedTestCase, TableTestCase):
             ex_msg = "Authorization header doesn't confirm to the required format. Please verify and try again."
             assert ex_msg in str(ex.value)
 
+    @pytest.mark.live_test_only
     @cosmos_decorator
     @recorded_by_proxy
     def test_table_service_client_with_token_credential(
@@ -428,6 +433,7 @@ class TestTableClientCosmos(AzureRecordedTestCase, TableTestCase):
                 client.create_table(table_name)
             assert "Request url is invalid." in str(ex.value)
 
+    @pytest.mark.live_test_only
     @cosmos_decorator
     @recorded_by_proxy
     def test_table_client_without_credential(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
@@ -465,6 +471,7 @@ class TestTableClientCosmos(AzureRecordedTestCase, TableTestCase):
             assert table.name == table_name
             client.delete_table()
 
+    @pytest.mark.live_test_only
     @cosmos_decorator
     @recorded_by_proxy
     def test_table_service_client_without_credential(
