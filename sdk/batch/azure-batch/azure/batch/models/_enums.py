@@ -209,6 +209,8 @@ class ContainerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     DOCKER_COMPATIBLE = "dockerCompatible"
     """A Docker compatible container technology will be used to launch the containers."""
+    CRI_COMPATIBLE = "criCompatible"
+    """A CRI based technology will be used to launch the containers."""
 
 
 class ContainerWorkingDirectory(str, Enum, metaclass=CaseInsensitiveEnumMeta):

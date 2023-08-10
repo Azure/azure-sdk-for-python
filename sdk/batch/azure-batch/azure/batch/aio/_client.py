@@ -19,7 +19,6 @@ from .operations import (
     ApplicationsOperations,
     BatchNodesOperations,
     CertificatesOperations,
-    FileOperations,
     JobOperations,
     JobScheduleOperations,
     PoolOperations,
@@ -44,8 +43,6 @@ class BatchServiceClient:  # pylint: disable=client-accepts-api-version-keyword,
     :vartype job: azure.batch.aio.operations.JobOperations
     :ivar certificates: CertificatesOperations operations
     :vartype certificates: azure.batch.aio.operations.CertificatesOperations
-    :ivar file: FileOperations operations
-    :vartype file: azure.batch.aio.operations.FileOperations
     :ivar job_schedule: JobScheduleOperations operations
     :vartype job_schedule: azure.batch.aio.operations.JobScheduleOperations
     :ivar task: TaskOperations operations
@@ -57,13 +54,15 @@ class BatchServiceClient:  # pylint: disable=client-accepts-api-version-keyword,
     :keyword endpoint: Service host. Required.
     :paramtype endpoint: str
     :keyword api_version: The API version to use for this operation. Default value is
-     "2022-10-01.16.0". Note that overriding this default value may result in unsupported behavior.
+     "2023-05-01.17.0". Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
     def __init__(self, credential: "AsyncTokenCredential", *, endpoint: str, **kwargs: Any) -> None:
         self._config = BatchServiceClientConfiguration(credential=credential, **kwargs)
-        self._client: AsyncPipelineClient = AsyncPipelineClient(base_url=endpoint, config=self._config, **kwargs)
+        self._client: AsyncPipelineClient = AsyncPipelineClient(
+            base_url=endpoint, config=self._config, request_id_header_name="client-request-id", **kwargs
+        )
 
         self._serialize = Serializer()
         self._deserialize = Deserializer()
@@ -73,7 +72,6 @@ class BatchServiceClient:  # pylint: disable=client-accepts-api-version-keyword,
         self.account = AccountOperations(self._client, self._config, self._serialize, self._deserialize)
         self.job = JobOperations(self._client, self._config, self._serialize, self._deserialize)
         self.certificates = CertificatesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.file = FileOperations(self._client, self._config, self._serialize, self._deserialize)
         self.job_schedule = JobScheduleOperations(self._client, self._config, self._serialize, self._deserialize)
         self.task = TaskOperations(self._client, self._config, self._serialize, self._deserialize)
         self.batch_nodes = BatchNodesOperations(self._client, self._config, self._serialize, self._deserialize)

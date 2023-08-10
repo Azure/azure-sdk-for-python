@@ -13,18 +13,19 @@ import sys
 from typing import Any, AsyncIterable, Callable, Dict, IO, List, Optional, TypeVar, Union, overload
 import urllib.parse
 
+from azure.core import MatchConditions
 from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import (
     ClientAuthenticationError,
     HttpResponseError,
     ResourceExistsError,
+    ResourceModifiedError,
     ResourceNotFoundError,
     ResourceNotModifiedError,
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import AsyncHttpResponse
-from azure.core.rest import HttpRequest
+from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
@@ -37,14 +38,18 @@ from ...operations._operations import (
     build_applications_get_request,
     build_applications_list_request,
     build_batch_nodes_add_user_request,
+    build_batch_nodes_delete_file_from_batch_node_request,
     build_batch_nodes_delete_user_request,
     build_batch_nodes_disable_scheduling_request,
     build_batch_nodes_enable_scheduling_request,
     build_batch_nodes_get_extensions_request,
+    build_batch_nodes_get_file_from_batch_node_request,
+    build_batch_nodes_get_file_properties_from_batch_node_request,
     build_batch_nodes_get_remote_desktop_request,
     build_batch_nodes_get_remote_login_settings_request,
     build_batch_nodes_get_request,
     build_batch_nodes_list_extensions_request,
+    build_batch_nodes_list_files_from_batch_node_request,
     build_batch_nodes_list_request,
     build_batch_nodes_reboot_request,
     build_batch_nodes_reimage_request,
@@ -55,19 +60,10 @@ from ...operations._operations import (
     build_certificates_delete_request,
     build_certificates_get_request,
     build_certificates_list_request,
-    build_file_delete_from_batch_node_request,
-    build_file_delete_from_task_request,
-    build_file_get_from_batch_node_request,
-    build_file_get_from_task_request,
-    build_file_get_properties_from_batch_node_request,
-    build_file_get_properties_from_task_request,
-    build_file_list_from_batch_node_request,
-    build_file_list_from_task_request,
     build_job_create_request,
     build_job_delete_request,
     build_job_disable_request,
     build_job_enable_request,
-    build_job_get_all_lifetime_statistics_request,
     build_job_get_request,
     build_job_get_task_counts_request,
     build_job_list_from_job_schedule_request,
@@ -92,7 +88,6 @@ from ...operations._operations import (
     build_pool_enable_auto_scale_request,
     build_pool_evaluate_auto_scale_request,
     build_pool_exists_request,
-    build_pool_get_all_lifetime_statistics_request,
     build_pool_get_request,
     build_pool_list_request,
     build_pool_list_usage_metrics_request,
@@ -103,10 +98,14 @@ from ...operations._operations import (
     build_pool_update_properties_request,
     build_task_add_collection_request,
     build_task_create_request,
+    build_task_delete_file_from_task_request,
     build_task_delete_request,
+    build_task_get_file_from_task_request,
+    build_task_get_file_properties_from_task_request,
     build_task_get_request,
-    build_task_get_subtasks_request,
+    build_task_list_files_from_task_request,
     build_task_list_request,
+    build_task_list_subtasks_request,
     build_task_reactivate_request,
     build_task_terminate_request,
     build_task_update_request,
@@ -145,8 +144,6 @@ class ApplicationsOperations:
         maxresults: Optional[int] = None,
         ocp_date: Optional[str] = None,
         time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
         **kwargs: Any
     ) -> AsyncIterable["_models.Application"]:
         """Lists all of the applications available in the specified Account.
@@ -167,13 +164,6 @@ class ApplicationsOperations:
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
         :return: An iterator like instance of Application
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.batch.models.Application]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -198,8 +188,6 @@ class ApplicationsOperations:
                     maxresults=maxresults,
                     ocp_date=ocp_date,
                     time_out=time_out,
-                    client_request_id=client_request_id,
-                    return_client_request_id=return_client_request_id,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -240,6 +228,8 @@ class ApplicationsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
+                if _stream:
+                    await response.read()  # Load the body in memory and close the socket
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 error = _deserialize(_models.BatchError, response.json())
                 raise HttpResponseError(response=response, model=error)
@@ -250,14 +240,7 @@ class ApplicationsOperations:
 
     @distributed_trace_async
     async def get(
-        self,
-        application_id: str,
-        *,
-        time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
-        ocp_date: Optional[str] = None,
-        **kwargs: Any
+        self, application_id: str, *, time_out: Optional[int] = None, ocp_date: Optional[str] = None, **kwargs: Any
     ) -> _models.Application:
         """Gets information about the specified Application.
 
@@ -272,13 +255,6 @@ class ApplicationsOperations:
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -305,8 +281,6 @@ class ApplicationsOperations:
         request = build_applications_get_request(
             application_id=application_id,
             time_out=time_out,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
             api_version=self._config.api_version,
             headers=_headers,
@@ -322,6 +296,8 @@ class ApplicationsOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.BatchError, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -367,8 +343,6 @@ class PoolOperations:
         maxresults: Optional[int] = None,
         ocp_date: Optional[str] = None,
         time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
         starttime: Optional[datetime.datetime] = None,
         endtime: Optional[datetime.datetime] = None,
         filter: Optional[str] = None,
@@ -394,13 +368,6 @@ class PoolOperations:
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
         :keyword starttime: The earliest time from which to include metrics. This must be at least two
          and
          a half hours before the current time. If not specified this defaults to the
@@ -439,8 +406,6 @@ class PoolOperations:
                     maxresults=maxresults,
                     ocp_date=ocp_date,
                     time_out=time_out,
-                    client_request_id=client_request_id,
-                    return_client_request_id=return_client_request_id,
                     starttime=starttime,
                     endtime=endtime,
                     filter=filter,
@@ -484,6 +449,8 @@ class PoolOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
+                if _stream:
+                    await response.read()  # Load the body in memory and close the socket
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 error = _deserialize(_models.BatchError, response.json())
                 raise HttpResponseError(response=response, model=error)
@@ -493,102 +460,11 @@ class PoolOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
-    async def get_all_lifetime_statistics(
-        self,
-        *,
-        time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
-        ocp_date: Optional[str] = None,
-        **kwargs: Any
-    ) -> _models.PoolStatistics:
-        """Gets lifetime summary statistics for all of the Pools in the specified Account.
-
-        Statistics are aggregated across all Pools that have ever existed in the
-        Account, from Account creation to the last update time of the statistics. The
-        statistics may not be immediately available. The Batch service performs
-        periodic roll-up of statistics. The typical delay is about 30 minutes.
-
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API
-         directly. Default value is None.
-        :paramtype ocp_date: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
-        :return: PoolStatistics. The PoolStatistics is compatible with MutableMapping
-        :rtype: ~azure.batch.models.PoolStatistics
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.PoolStatistics] = kwargs.pop("cls", None)
-
-        request = build_pool_get_all_lifetime_statistics_request(
-            time_out=time_out,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
-            ocp_date=ocp_date,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        request.url = self._client.format_url(request.url)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.BatchError, response.json())
-            raise HttpResponseError(response=response, model=error)
-
-        response_headers = {}
-        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
-        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
-        response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
-        response_headers["last-modified"] = self._deserialize("str", response.headers.get("last-modified"))
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.PoolStatistics, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
     async def create(  # pylint: disable=inconsistent-return-statements
         self,
         parameters: _models.BatchPoolCreateParameters,
         *,
         time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -603,13 +479,6 @@ class PoolOperations:
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -643,8 +512,6 @@ class PoolOperations:
 
         request = build_pool_create_request(
             time_out=time_out,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -662,6 +529,8 @@ class PoolOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.BatchError, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -683,8 +552,6 @@ class PoolOperations:
         maxresults: Optional[int] = None,
         ocp_date: Optional[str] = None,
         time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
         filter: Optional[str] = None,
         select: Optional[str] = None,
         expand: Optional[str] = None,
@@ -704,13 +571,6 @@ class PoolOperations:
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
         :keyword filter: An OData $filter clause. For more information on constructing this filter, see
          https://docs.microsoft.com/en-us/rest/api/batchservice/odata-filters-in-batch#list-pools.
          Default value is None.
@@ -743,8 +603,6 @@ class PoolOperations:
                     maxresults=maxresults,
                     ocp_date=ocp_date,
                     time_out=time_out,
-                    client_request_id=client_request_id,
-                    return_client_request_id=return_client_request_id,
                     filter=filter,
                     select=select,
                     expand=expand,
@@ -788,6 +646,8 @@ class PoolOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
+                if _stream:
+                    await response.read()  # Load the body in memory and close the socket
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 error = _deserialize(_models.BatchError, response.json())
                 raise HttpResponseError(response=response, model=error)
@@ -802,13 +662,11 @@ class PoolOperations:
         pool_id: str,
         *,
         time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """Deletes a Pool from the specified Account.
@@ -831,37 +689,25 @@ class PoolOperations:
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
-         client.
-         The operation will be performed only if the resource's current ETag on the
-         service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
-         the client.
-         The operation will be performed only if the resource's current ETag on the
-         service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
-         known to the
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
+         to the
          client. The operation will be performed only if the resource on the service has
          been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_modified_since: str
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
+        :paramtype if_unmodified_since: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: None
@@ -874,6 +720,12 @@ class PoolOperations:
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
         }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
@@ -884,13 +736,11 @@ class PoolOperations:
         request = build_pool_delete_request(
             pool_id=pool_id,
             time_out=time_out,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
-            if__match=if__match,
-            if__none__match=if__none__match,
-            if__modified__since=if__modified__since,
-            if__unmodified__since=if__unmodified__since,
+            etag=etag,
+            match_condition=match_condition,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -905,6 +755,8 @@ class PoolOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.BatchError, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -922,13 +774,11 @@ class PoolOperations:
         pool_id: str,
         *,
         time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
         **kwargs: Any
     ) -> bool:
         """Gets basic properties of a Pool.
@@ -938,37 +788,25 @@ class PoolOperations:
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
-         client.
-         The operation will be performed only if the resource's current ETag on the
-         service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
-         the client.
-         The operation will be performed only if the resource's current ETag on the
-         service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
-         known to the
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
+         to the
          client. The operation will be performed only if the resource on the service has
          been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_modified_since: str
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
+        :paramtype if_unmodified_since: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: bool
@@ -981,6 +819,12 @@ class PoolOperations:
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
         }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
@@ -991,13 +835,11 @@ class PoolOperations:
         request = build_pool_exists_request(
             pool_id=pool_id,
             time_out=time_out,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
-            if__match=if__match,
-            if__none__match=if__none__match,
-            if__modified__since=if__modified__since,
-            if__unmodified__since=if__unmodified__since,
+            etag=etag,
+            match_condition=match_condition,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -1012,6 +854,8 @@ class PoolOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 404]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.BatchError, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -1033,13 +877,11 @@ class PoolOperations:
         pool_id: str,
         *,
         time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
         select: Optional[str] = None,
         expand: Optional[str] = None,
         **kwargs: Any
@@ -1051,37 +893,25 @@ class PoolOperations:
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
-         client.
-         The operation will be performed only if the resource's current ETag on the
-         service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
-         the client.
-         The operation will be performed only if the resource's current ETag on the
-         service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
-         known to the
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
+         to the
          client. The operation will be performed only if the resource on the service has
          been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_modified_since: str
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
+        :paramtype if_unmodified_since: str
         :keyword select: An OData $select clause. Default value is None.
         :paramtype select: str
         :keyword expand: An OData $expand clause. Default value is None.
@@ -1098,6 +928,12 @@ class PoolOperations:
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
         }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
@@ -1108,13 +944,11 @@ class PoolOperations:
         request = build_pool_get_request(
             pool_id=pool_id,
             time_out=time_out,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
-            if__match=if__match,
-            if__none__match=if__none__match,
-            if__modified__since=if__modified__since,
-            if__unmodified__since=if__unmodified__since,
+            etag=etag,
+            match_condition=match_condition,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
             select=select,
             expand=expand,
             api_version=self._config.api_version,
@@ -1131,6 +965,8 @@ class PoolOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.BatchError, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -1155,16 +991,14 @@ class PoolOperations:
     async def patch(  # pylint: disable=inconsistent-return-statements
         self,
         pool_id: str,
-        parameters: _models.BatchPoolUpdateParameters,
+        parameters: _models.BatchPoolPatchParameters,
         *,
         time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """Updates the properties of the specified Pool.
@@ -1176,41 +1010,29 @@ class PoolOperations:
         :param pool_id: The ID of the Pool to get. Required.
         :type pool_id: str
         :param parameters: The parameters for the request. Required.
-        :type parameters: ~azure.batch.models.BatchPoolUpdateParameters
+        :type parameters: ~azure.batch.models.BatchPoolPatchParameters
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
-         client.
-         The operation will be performed only if the resource's current ETag on the
-         service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
-         the client.
-         The operation will be performed only if the resource's current ETag on the
-         service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
-         known to the
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
+         to the
          client. The operation will be performed only if the resource on the service has
          been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_modified_since: str
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
+        :paramtype if_unmodified_since: str
         :keyword content_type: Type of content. Default value is "application/json;
          odata=minimalmetadata".
         :paramtype content_type: str
@@ -1226,6 +1048,12 @@ class PoolOperations:
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
         }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -1241,13 +1069,11 @@ class PoolOperations:
         request = build_pool_patch_request(
             pool_id=pool_id,
             time_out=time_out,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
-            if__match=if__match,
-            if__none__match=if__none__match,
-            if__modified__since=if__modified__since,
-            if__unmodified__since=if__unmodified__since,
+            etag=etag,
+            match_condition=match_condition,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -1264,6 +1090,8 @@ class PoolOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.BatchError, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -1280,14 +1108,7 @@ class PoolOperations:
 
     @distributed_trace_async
     async def disable_auto_scale(  # pylint: disable=inconsistent-return-statements
-        self,
-        pool_id: str,
-        *,
-        time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
-        ocp_date: Optional[str] = None,
-        **kwargs: Any
+        self, pool_id: str, *, time_out: Optional[int] = None, ocp_date: Optional[str] = None, **kwargs: Any
     ) -> None:
         """Disables automatic scaling for a Pool.
 
@@ -1298,13 +1119,6 @@ class PoolOperations:
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -1331,8 +1145,6 @@ class PoolOperations:
         request = build_pool_disable_auto_scale_request(
             pool_id=pool_id,
             time_out=time_out,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
             api_version=self._config.api_version,
             headers=_headers,
@@ -1348,6 +1160,8 @@ class PoolOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.BatchError, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -1369,13 +1183,11 @@ class PoolOperations:
         parameters: _models.BatchPoolEnableAutoScaleParameters,
         *,
         time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """Enables automatic scaling for a Pool.
@@ -1394,37 +1206,25 @@ class PoolOperations:
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
-         client.
-         The operation will be performed only if the resource's current ETag on the
-         service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
-         the client.
-         The operation will be performed only if the resource's current ETag on the
-         service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
-         known to the
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
+         to the
          client. The operation will be performed only if the resource on the service has
          been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_modified_since: str
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
+        :paramtype if_unmodified_since: str
         :keyword content_type: Type of content. Default value is "application/json;
          odata=minimalmetadata".
         :paramtype content_type: str
@@ -1440,6 +1240,12 @@ class PoolOperations:
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
         }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -1455,13 +1261,11 @@ class PoolOperations:
         request = build_pool_enable_auto_scale_request(
             pool_id=pool_id,
             time_out=time_out,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
-            if__match=if__match,
-            if__none__match=if__none__match,
-            if__modified__since=if__modified__since,
-            if__unmodified__since=if__unmodified__since,
+            etag=etag,
+            match_condition=match_condition,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -1478,6 +1282,8 @@ class PoolOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.BatchError, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -1499,8 +1305,6 @@ class PoolOperations:
         parameters: _models.BatchPoolEvaluateAutoScaleParameters,
         *,
         time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
         **kwargs: Any
     ) -> _models.AutoScaleRun:
@@ -1518,13 +1322,6 @@ class PoolOperations:
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -1559,8 +1356,6 @@ class PoolOperations:
         request = build_pool_evaluate_auto_scale_request(
             pool_id=pool_id,
             time_out=time_out,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -1578,6 +1373,8 @@ class PoolOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.BatchError, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -1606,13 +1403,11 @@ class PoolOperations:
         parameters: _models.BatchPoolResizeParameters,
         *,
         time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """Changes the number of Compute Nodes that are assigned to a Pool.
@@ -1632,37 +1427,25 @@ class PoolOperations:
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
-         client.
-         The operation will be performed only if the resource's current ETag on the
-         service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
-         the client.
-         The operation will be performed only if the resource's current ETag on the
-         service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
-         known to the
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
+         to the
          client. The operation will be performed only if the resource on the service has
          been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_modified_since: str
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
+        :paramtype if_unmodified_since: str
         :keyword content_type: Type of content. Default value is "application/json;
          odata=minimalmetadata".
         :paramtype content_type: str
@@ -1678,6 +1461,12 @@ class PoolOperations:
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
         }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -1693,13 +1482,11 @@ class PoolOperations:
         request = build_pool_resize_request(
             pool_id=pool_id,
             time_out=time_out,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
-            if__match=if__match,
-            if__none__match=if__none__match,
-            if__modified__since=if__modified__since,
-            if__unmodified__since=if__unmodified__since,
+            etag=etag,
+            match_condition=match_condition,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -1716,6 +1503,8 @@ class PoolOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.BatchError, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -1736,13 +1525,11 @@ class PoolOperations:
         pool_id: str,
         *,
         time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """Stops an ongoing resize operation on the Pool.
@@ -1760,37 +1547,25 @@ class PoolOperations:
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
-         client.
-         The operation will be performed only if the resource's current ETag on the
-         service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
-         the client.
-         The operation will be performed only if the resource's current ETag on the
-         service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
-         known to the
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
+         to the
          client. The operation will be performed only if the resource on the service has
          been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_modified_since: str
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
+        :paramtype if_unmodified_since: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: None
@@ -1803,6 +1578,12 @@ class PoolOperations:
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
         }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
@@ -1813,13 +1594,11 @@ class PoolOperations:
         request = build_pool_stop_resize_request(
             pool_id=pool_id,
             time_out=time_out,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
-            if__match=if__match,
-            if__none__match=if__none__match,
-            if__modified__since=if__modified__since,
-            if__unmodified__since=if__unmodified__since,
+            etag=etag,
+            match_condition=match_condition,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -1834,6 +1613,8 @@ class PoolOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.BatchError, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -1852,11 +1633,9 @@ class PoolOperations:
     async def update_properties(  # pylint: disable=inconsistent-return-statements
         self,
         pool_id: str,
-        parameters: _models.BatchPool,
+        parameters: _models.BatchPoolUpdateParameters,
         *,
         time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -1869,17 +1648,10 @@ class PoolOperations:
         :param pool_id: The ID of the Pool to update. Required.
         :type pool_id: str
         :param parameters: The parameters for the request. Required.
-        :type parameters: ~azure.batch.models.BatchPool
+        :type parameters: ~azure.batch.models.BatchPoolUpdateParameters
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -1914,8 +1686,6 @@ class PoolOperations:
         request = build_pool_update_properties_request(
             pool_id=pool_id,
             time_out=time_out,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -1933,6 +1703,8 @@ class PoolOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.BatchError, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -1954,13 +1726,11 @@ class PoolOperations:
         parameters: _models.NodeRemoveParameters,
         *,
         time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """Removes Compute Nodes from the specified Pool.
@@ -1976,37 +1746,25 @@ class PoolOperations:
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
-         client.
-         The operation will be performed only if the resource's current ETag on the
-         service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
-         the client.
-         The operation will be performed only if the resource's current ETag on the
-         service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
-         known to the
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
+         to the
          client. The operation will be performed only if the resource on the service has
          been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_modified_since: str
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
+        :paramtype if_unmodified_since: str
         :keyword content_type: Type of content. Default value is "application/json;
          odata=minimalmetadata".
         :paramtype content_type: str
@@ -2022,6 +1780,12 @@ class PoolOperations:
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
         }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -2037,13 +1801,11 @@ class PoolOperations:
         request = build_pool_remove_nodes_request(
             pool_id=pool_id,
             time_out=time_out,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
-            if__match=if__match,
-            if__none__match=if__none__match,
-            if__modified__since=if__modified__since,
-            if__unmodified__since=if__unmodified__since,
+            etag=etag,
+            match_condition=match_condition,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -2060,6 +1822,8 @@ class PoolOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.BatchError, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -2099,8 +1863,6 @@ class AccountOperations:
         maxresults: Optional[int] = None,
         ocp_date: Optional[str] = None,
         time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
         filter: Optional[str] = None,
         **kwargs: Any
     ) -> AsyncIterable["_models.ImageInformation"]:
@@ -2118,13 +1880,6 @@ class AccountOperations:
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
         :keyword filter: An OData $filter clause. For more information on constructing this filter, see
         https://docs.microsoft.com/en-us/rest/api/batchservice/odata-filters-in-batch#list-support-images.
          Default value is None.
@@ -2153,8 +1908,6 @@ class AccountOperations:
                     maxresults=maxresults,
                     ocp_date=ocp_date,
                     time_out=time_out,
-                    client_request_id=client_request_id,
-                    return_client_request_id=return_client_request_id,
                     filter=filter,
                     api_version=self._config.api_version,
                     headers=_headers,
@@ -2196,6 +1949,8 @@ class AccountOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
+                if _stream:
+                    await response.read()  # Load the body in memory and close the socket
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 error = _deserialize(_models.BatchError, response.json())
                 raise HttpResponseError(response=response, model=error)
@@ -2211,8 +1966,6 @@ class AccountOperations:
         maxresults: Optional[int] = None,
         ocp_date: Optional[str] = None,
         time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
         filter: Optional[str] = None,
         **kwargs: Any
     ) -> AsyncIterable["_models.PoolNodeCounts"]:
@@ -2230,13 +1983,6 @@ class AccountOperations:
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
         :keyword filter: An OData $filter clause. For more information on constructing this filter, see
         https://docs.microsoft.com/en-us/rest/api/batchservice/odata-filters-in-batch#list-support-images.
          Default value is None.
@@ -2265,8 +2011,6 @@ class AccountOperations:
                     maxresults=maxresults,
                     ocp_date=ocp_date,
                     time_out=time_out,
-                    client_request_id=client_request_id,
-                    return_client_request_id=return_client_request_id,
                     filter=filter,
                     api_version=self._config.api_version,
                     headers=_headers,
@@ -2308,6 +2052,8 @@ class AccountOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
+                if _stream:
+                    await response.read()  # Load the body in memory and close the socket
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 error = _deserialize(_models.BatchError, response.json())
                 raise HttpResponseError(response=response, model=error)
@@ -2335,107 +2081,16 @@ class JobOperations:
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
-    async def get_all_lifetime_statistics(
-        self,
-        *,
-        time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
-        ocp_date: Optional[str] = None,
-        **kwargs: Any
-    ) -> _models.JobStatistics:
-        """Gets lifetime summary statistics for all of the Jobs in the specified Account.
-
-        Statistics are aggregated across all Jobs that have ever existed in the
-        Account, from Account creation to the last update time of the statistics. The
-        statistics may not be immediately available. The Batch service performs
-        periodic roll-up of statistics. The typical delay is about 30 minutes.
-
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API
-         directly. Default value is None.
-        :paramtype ocp_date: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
-        :return: JobStatistics. The JobStatistics is compatible with MutableMapping
-        :rtype: ~azure.batch.models.JobStatistics
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.JobStatistics] = kwargs.pop("cls", None)
-
-        request = build_job_get_all_lifetime_statistics_request(
-            time_out=time_out,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
-            ocp_date=ocp_date,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        request.url = self._client.format_url(request.url)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.BatchError, response.json())
-            raise HttpResponseError(response=response, model=error)
-
-        response_headers = {}
-        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
-        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
-        response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
-        response_headers["last-modified"] = self._deserialize("str", response.headers.get("last-modified"))
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.JobStatistics, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
     async def delete(  # pylint: disable=inconsistent-return-statements
         self,
         job_id: str,
         *,
         time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """Deletes a Job.
@@ -2454,37 +2109,25 @@ class JobOperations:
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
-         client.
-         The operation will be performed only if the resource's current ETag on the
-         service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
-         the client.
-         The operation will be performed only if the resource's current ETag on the
-         service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
-         known to the
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
+         to the
          client. The operation will be performed only if the resource on the service has
          been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_modified_since: str
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
+        :paramtype if_unmodified_since: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: None
@@ -2497,6 +2140,12 @@ class JobOperations:
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
         }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
@@ -2507,13 +2156,11 @@ class JobOperations:
         request = build_job_delete_request(
             job_id=job_id,
             time_out=time_out,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
-            if__match=if__match,
-            if__none__match=if__none__match,
-            if__modified__since=if__modified__since,
-            if__unmodified__since=if__unmodified__since,
+            etag=etag,
+            match_condition=match_condition,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -2528,6 +2175,8 @@ class JobOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.BatchError, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -2545,13 +2194,11 @@ class JobOperations:
         job_id: str,
         *,
         time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
         select: Optional[str] = None,
         expand: Optional[str] = None,
         **kwargs: Any
@@ -2565,37 +2212,25 @@ class JobOperations:
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
-         client.
-         The operation will be performed only if the resource's current ETag on the
-         service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
-         the client.
-         The operation will be performed only if the resource's current ETag on the
-         service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
-         known to the
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
+         to the
          client. The operation will be performed only if the resource on the service has
          been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_modified_since: str
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
+        :paramtype if_unmodified_since: str
         :keyword select: An OData $select clause. Default value is None.
         :paramtype select: str
         :keyword expand: An OData $expand clause. Default value is None.
@@ -2612,6 +2247,12 @@ class JobOperations:
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
         }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
@@ -2622,13 +2263,11 @@ class JobOperations:
         request = build_job_get_request(
             job_id=job_id,
             time_out=time_out,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
-            if__match=if__match,
-            if__none__match=if__none__match,
-            if__modified__since=if__modified__since,
-            if__unmodified__since=if__unmodified__since,
+            etag=etag,
+            match_condition=match_condition,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
             select=select,
             expand=expand,
             api_version=self._config.api_version,
@@ -2645,6 +2284,8 @@ class JobOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.BatchError, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -2672,13 +2313,11 @@ class JobOperations:
         parameters: _models.BatchJobUpdateParameters,
         *,
         time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """Updates the properties of the specified Job.
@@ -2694,37 +2333,25 @@ class JobOperations:
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
-         client.
-         The operation will be performed only if the resource's current ETag on the
-         service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
-         the client.
-         The operation will be performed only if the resource's current ETag on the
-         service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
-         known to the
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
+         to the
          client. The operation will be performed only if the resource on the service has
          been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_modified_since: str
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
+        :paramtype if_unmodified_since: str
         :keyword content_type: Type of content. Default value is "application/json;
          odata=minimalmetadata".
         :paramtype content_type: str
@@ -2740,6 +2367,12 @@ class JobOperations:
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
         }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -2755,13 +2388,11 @@ class JobOperations:
         request = build_job_patch_request(
             job_id=job_id,
             time_out=time_out,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
-            if__match=if__match,
-            if__none__match=if__none__match,
-            if__modified__since=if__modified__since,
-            if__unmodified__since=if__unmodified__since,
+            etag=etag,
+            match_condition=match_condition,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -2778,6 +2409,8 @@ class JobOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.BatchError, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -2799,13 +2432,11 @@ class JobOperations:
         parameters: _models.BatchJob,
         *,
         time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """Updates the properties of the specified Job.
@@ -2821,37 +2452,25 @@ class JobOperations:
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
-         client.
-         The operation will be performed only if the resource's current ETag on the
-         service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
-         the client.
-         The operation will be performed only if the resource's current ETag on the
-         service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
-         known to the
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
+         to the
          client. The operation will be performed only if the resource on the service has
          been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_modified_since: str
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
+        :paramtype if_unmodified_since: str
         :keyword content_type: Type of content. Default value is "application/json;
          odata=minimalmetadata".
         :paramtype content_type: str
@@ -2867,6 +2486,12 @@ class JobOperations:
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
         }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -2882,13 +2507,11 @@ class JobOperations:
         request = build_job_update_request(
             job_id=job_id,
             time_out=time_out,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
-            if__match=if__match,
-            if__none__match=if__none__match,
-            if__modified__since=if__modified__since,
-            if__unmodified__since=if__unmodified__since,
+            etag=etag,
+            match_condition=match_condition,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -2905,6 +2528,8 @@ class JobOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.BatchError, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -2926,13 +2551,11 @@ class JobOperations:
         parameters: _models.BatchJobDisableParameters,
         *,
         time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """Disables the specified Job, preventing new Tasks from running.
@@ -2953,37 +2576,25 @@ class JobOperations:
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
-         client.
-         The operation will be performed only if the resource's current ETag on the
-         service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
-         the client.
-         The operation will be performed only if the resource's current ETag on the
-         service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
-         known to the
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
+         to the
          client. The operation will be performed only if the resource on the service has
          been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_modified_since: str
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
+        :paramtype if_unmodified_since: str
         :keyword content_type: Type of content. Default value is "application/json;
          odata=minimalmetadata".
         :paramtype content_type: str
@@ -2999,6 +2610,12 @@ class JobOperations:
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
         }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -3014,13 +2631,11 @@ class JobOperations:
         request = build_job_disable_request(
             job_id=job_id,
             time_out=time_out,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
-            if__match=if__match,
-            if__none__match=if__none__match,
-            if__modified__since=if__modified__since,
-            if__unmodified__since=if__unmodified__since,
+            etag=etag,
+            match_condition=match_condition,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -3037,6 +2652,8 @@ class JobOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.BatchError, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -3057,13 +2674,11 @@ class JobOperations:
         job_id: str,
         *,
         time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """Enables the specified Job, allowing new Tasks to run.
@@ -3080,37 +2695,25 @@ class JobOperations:
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
-         client.
-         The operation will be performed only if the resource's current ETag on the
-         service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
-         the client.
-         The operation will be performed only if the resource's current ETag on the
-         service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
-         known to the
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
+         to the
          client. The operation will be performed only if the resource on the service has
          been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_modified_since: str
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
+        :paramtype if_unmodified_since: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: None
@@ -3123,6 +2726,12 @@ class JobOperations:
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
         }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
@@ -3133,13 +2742,11 @@ class JobOperations:
         request = build_job_enable_request(
             job_id=job_id,
             time_out=time_out,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
-            if__match=if__match,
-            if__none__match=if__none__match,
-            if__modified__since=if__modified__since,
-            if__unmodified__since=if__unmodified__since,
+            etag=etag,
+            match_condition=match_condition,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -3154,6 +2761,8 @@ class JobOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.BatchError, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -3175,13 +2784,11 @@ class JobOperations:
         parameters: Optional[_models.BatchJobTerminateParameters] = None,
         *,
         time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> None:
@@ -3201,37 +2808,25 @@ class JobOperations:
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
-         client.
-         The operation will be performed only if the resource's current ETag on the
-         service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
-         the client.
-         The operation will be performed only if the resource's current ETag on the
-         service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
-         known to the
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
+         to the
          client. The operation will be performed only if the resource on the service has
          been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_modified_since: str
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
+        :paramtype if_unmodified_since: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3249,13 +2844,11 @@ class JobOperations:
         parameters: Optional[JSON] = None,
         *,
         time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> None:
@@ -3275,37 +2868,25 @@ class JobOperations:
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
-         client.
-         The operation will be performed only if the resource's current ETag on the
-         service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
-         the client.
-         The operation will be performed only if the resource's current ETag on the
-         service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
-         known to the
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
+         to the
          client. The operation will be performed only if the resource on the service has
          been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_modified_since: str
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
+        :paramtype if_unmodified_since: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3323,13 +2904,11 @@ class JobOperations:
         parameters: Optional[IO] = None,
         *,
         time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> None:
@@ -3349,37 +2928,25 @@ class JobOperations:
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
-         client.
-         The operation will be performed only if the resource's current ETag on the
-         service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
-         the client.
-         The operation will be performed only if the resource's current ETag on the
-         service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
-         known to the
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
+         to the
          client. The operation will be performed only if the resource on the service has
          been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_modified_since: str
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
+        :paramtype if_unmodified_since: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3397,13 +2964,11 @@ class JobOperations:
         parameters: Optional[Union[_models.BatchJobTerminateParameters, JSON, IO]] = None,
         *,
         time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """Terminates the specified Job, marking it as completed.
@@ -3423,37 +2988,25 @@ class JobOperations:
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
-         client.
-         The operation will be performed only if the resource's current ETag on the
-         service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
-         the client.
-         The operation will be performed only if the resource's current ETag on the
-         service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
-         known to the
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
+         to the
          client. The operation will be performed only if the resource on the service has
          been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_modified_since: str
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
+        :paramtype if_unmodified_since: str
         :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
          value is None.
         :paramtype content_type: str
@@ -3469,6 +3022,12 @@ class JobOperations:
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
         }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -3490,13 +3049,11 @@ class JobOperations:
         request = build_job_terminate_request(
             job_id=job_id,
             time_out=time_out,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
-            if__match=if__match,
-            if__none__match=if__none__match,
-            if__modified__since=if__modified__since,
-            if__unmodified__since=if__unmodified__since,
+            etag=etag,
+            match_condition=match_condition,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -3513,6 +3070,8 @@ class JobOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.BatchError, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -3533,8 +3092,6 @@ class JobOperations:
         parameters: _models.BatchJobCreateParameters,
         *,
         time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -3555,13 +3112,6 @@ class JobOperations:
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -3595,8 +3145,6 @@ class JobOperations:
 
         request = build_job_create_request(
             time_out=time_out,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -3614,6 +3162,8 @@ class JobOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.BatchError, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -3635,8 +3185,6 @@ class JobOperations:
         maxresults: Optional[int] = None,
         ocp_date: Optional[str] = None,
         time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
         filter: Optional[str] = None,
         select: Optional[str] = None,
         expand: Optional[str] = None,
@@ -3656,13 +3204,6 @@ class JobOperations:
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
         :keyword filter: An OData $filter clause. For more information on constructing this filter, see
          https://docs.microsoft.com/en-us/rest/api/batchservice/odata-filters-in-batch#list-jobs.
          Default value is None.
@@ -3695,8 +3236,6 @@ class JobOperations:
                     maxresults=maxresults,
                     ocp_date=ocp_date,
                     time_out=time_out,
-                    client_request_id=client_request_id,
-                    return_client_request_id=return_client_request_id,
                     filter=filter,
                     select=select,
                     expand=expand,
@@ -3740,6 +3279,8 @@ class JobOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
+                if _stream:
+                    await response.read()  # Load the body in memory and close the socket
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 error = _deserialize(_models.BatchError, response.json())
                 raise HttpResponseError(response=response, model=error)
@@ -3756,8 +3297,6 @@ class JobOperations:
         maxresults: Optional[int] = None,
         ocp_date: Optional[str] = None,
         time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
         filter: Optional[str] = None,
         select: Optional[str] = None,
         expand: Optional[str] = None,
@@ -3780,13 +3319,6 @@ class JobOperations:
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
         :keyword filter: An OData $filter clause. For more information on constructing this filter, see
         https://docs.microsoft.com/en-us/rest/api/batchservice/odata-filters-in-batch#list-jobs-in-a-job-schedule.
          Default value is None.
@@ -3820,8 +3352,6 @@ class JobOperations:
                     maxresults=maxresults,
                     ocp_date=ocp_date,
                     time_out=time_out,
-                    client_request_id=client_request_id,
-                    return_client_request_id=return_client_request_id,
                     filter=filter,
                     select=select,
                     expand=expand,
@@ -3865,6 +3395,8 @@ class JobOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
+                if _stream:
+                    await response.read()  # Load the body in memory and close the socket
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 error = _deserialize(_models.BatchError, response.json())
                 raise HttpResponseError(response=response, model=error)
@@ -3881,8 +3413,6 @@ class JobOperations:
         maxresults: Optional[int] = None,
         ocp_date: Optional[str] = None,
         time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
         filter: Optional[str] = None,
         select: Optional[str] = None,
         **kwargs: Any
@@ -3909,13 +3439,6 @@ class JobOperations:
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
         :keyword filter: An OData $filter clause. For more information on constructing this filter, see
         https://docs.microsoft.com/en-us/rest/api/batchservice/odata-filters-in-batch#list-job-preparation-and-release-status.
          Default value is None.
@@ -3948,8 +3471,6 @@ class JobOperations:
                     maxresults=maxresults,
                     ocp_date=ocp_date,
                     time_out=time_out,
-                    client_request_id=client_request_id,
-                    return_client_request_id=return_client_request_id,
                     filter=filter,
                     select=select,
                     api_version=self._config.api_version,
@@ -3994,6 +3515,8 @@ class JobOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
+                if _stream:
+                    await response.read()  # Load the body in memory and close the socket
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 error = _deserialize(_models.BatchError, response.json())
                 raise HttpResponseError(response=response, model=error)
@@ -4004,14 +3527,7 @@ class JobOperations:
 
     @distributed_trace_async
     async def get_task_counts(
-        self,
-        job_id: str,
-        *,
-        time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
-        ocp_date: Optional[str] = None,
-        **kwargs: Any
+        self, job_id: str, *, time_out: Optional[int] = None, ocp_date: Optional[str] = None, **kwargs: Any
     ) -> _models.TaskCountsResult:
         """Gets the Task counts for the specified Job.
 
@@ -4025,13 +3541,6 @@ class JobOperations:
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -4058,8 +3567,6 @@ class JobOperations:
         request = build_job_get_task_counts_request(
             job_id=job_id,
             time_out=time_out,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
             api_version=self._config.api_version,
             headers=_headers,
@@ -4075,6 +3582,8 @@ class JobOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.BatchError, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -4117,8 +3626,6 @@ class CertificatesOperations:
         parameters: _models.Certificate,
         *,
         time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -4131,13 +3638,6 @@ class CertificatesOperations:
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -4171,8 +3671,6 @@ class CertificatesOperations:
 
         request = build_certificates_create_request(
             time_out=time_out,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -4190,6 +3688,8 @@ class CertificatesOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.BatchError, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -4211,8 +3711,6 @@ class CertificatesOperations:
         maxresults: Optional[int] = None,
         ocp_date: Optional[str] = None,
         time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
         filter: Optional[str] = None,
         select: Optional[str] = None,
         **kwargs: Any
@@ -4231,13 +3729,6 @@ class CertificatesOperations:
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
         :keyword filter: An OData $filter clause. For more information on constructing this filter, see
         https://docs.microsoft.com/en-us/rest/api/batchservice/odata-filters-in-batch#list-certificates.
          Default value is None.
@@ -4268,8 +3759,6 @@ class CertificatesOperations:
                     maxresults=maxresults,
                     ocp_date=ocp_date,
                     time_out=time_out,
-                    client_request_id=client_request_id,
-                    return_client_request_id=return_client_request_id,
                     filter=filter,
                     select=select,
                     api_version=self._config.api_version,
@@ -4312,6 +3801,8 @@ class CertificatesOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
+                if _stream:
+                    await response.read()  # Load the body in memory and close the socket
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 error = _deserialize(_models.BatchError, response.json())
                 raise HttpResponseError(response=response, model=error)
@@ -4327,8 +3818,6 @@ class CertificatesOperations:
         thumbprint: str,
         *,
         time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -4350,13 +3839,6 @@ class CertificatesOperations:
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -4384,8 +3866,6 @@ class CertificatesOperations:
             thumbprint_algorithm=thumbprint_algorithm,
             thumbprint=thumbprint,
             time_out=time_out,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
             api_version=self._config.api_version,
             headers=_headers,
@@ -4401,6 +3881,8 @@ class CertificatesOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.BatchError, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -4422,8 +3904,6 @@ class CertificatesOperations:
         thumbprint: str,
         *,
         time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -4447,13 +3927,6 @@ class CertificatesOperations:
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -4481,8 +3954,6 @@ class CertificatesOperations:
             thumbprint_algorithm=thumbprint_algorithm,
             thumbprint=thumbprint,
             time_out=time_out,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
             api_version=self._config.api_version,
             headers=_headers,
@@ -4498,6 +3969,8 @@ class CertificatesOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.BatchError, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -4518,8 +3991,6 @@ class CertificatesOperations:
         thumbprint: str,
         *,
         time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
         select: Optional[str] = None,
         **kwargs: Any
@@ -4534,13 +4005,6 @@ class CertificatesOperations:
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -4570,8 +4034,6 @@ class CertificatesOperations:
             thumbprint_algorithm=thumbprint_algorithm,
             thumbprint=thumbprint,
             time_out=time_out,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
             select=select,
             api_version=self._config.api_version,
@@ -4588,6 +4050,8 @@ class CertificatesOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.BatchError, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -4607,936 +4071,6 @@ class CertificatesOperations:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
         return deserialized  # type: ignore
-
-
-class FileOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.batch.aio.BatchServiceClient`'s
-        :attr:`file` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @distributed_trace_async
-    async def delete_from_task(  # pylint: disable=inconsistent-return-statements
-        self,
-        job_id: str,
-        task_id: str,
-        file_path: str,
-        *,
-        time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
-        ocp_date: Optional[str] = None,
-        recursive: Optional[bool] = None,
-        **kwargs: Any
-    ) -> None:
-        """Deletes the specified Task file from the Compute Node where the Task ran.
-
-        Deletes the specified Task file from the Compute Node where the Task ran.
-
-        :param job_id: The ID of the Job that contains the Task. Required.
-        :type job_id: str
-        :param task_id: The ID of the Task whose file you want to retrieve. Required.
-        :type task_id: str
-        :param file_path: The path to the Task file that you want to get the content of. Required.
-        :type file_path: str
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API
-         directly. Default value is None.
-        :paramtype ocp_date: str
-        :keyword recursive: Whether to delete children of a directory. If the filePath parameter
-         represents
-         a directory instead of a file, you can set recursive to true to delete the
-         directory and all of the files and subdirectories in it. If recursive is false
-         then the directory must be empty or deletion will fail. Default value is None.
-        :paramtype recursive: bool
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        request = build_file_delete_from_task_request(
-            job_id=job_id,
-            task_id=task_id,
-            file_path=file_path,
-            time_out=time_out,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
-            ocp_date=ocp_date,
-            recursive=recursive,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        request.url = self._client.format_url(request.url)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.BatchError, response.json())
-            raise HttpResponseError(response=response, model=error)
-
-        response_headers = {}
-        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
-        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
-
-        if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    @distributed_trace_async
-    async def get_from_task(
-        self,
-        job_id: str,
-        task_id: str,
-        file_path: str,
-        *,
-        time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
-        ocp_date: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
-        ocp_range: Optional[str] = None,
-        **kwargs: Any
-    ) -> bytes:
-        """Returns the content of the specified Task file.
-
-        :param job_id: The ID of the Job that contains the Task. Required.
-        :type job_id: str
-        :param task_id: The ID of the Task whose file you want to retrieve. Required.
-        :type task_id: str
-        :param file_path: The path to the Task file that you want to get the content of. Required.
-        :type file_path: str
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API
-         directly. Default value is None.
-        :paramtype ocp_date: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
-         known to the
-         client. The operation will be performed only if the resource on the service has
-         been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
-         known to the
-         client. The operation will be performed only if the resource on the service has
-         not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
-        :keyword ocp_range: The byte range to be retrieved. The default is to retrieve the entire file.
-         The
-         format is bytes=startRange-endRange. Default value is None.
-        :paramtype ocp_range: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
-        :return: bytes
-        :rtype: bytes
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[bytes] = kwargs.pop("cls", None)
-
-        request = build_file_get_from_task_request(
-            job_id=job_id,
-            task_id=task_id,
-            file_path=file_path,
-            time_out=time_out,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
-            ocp_date=ocp_date,
-            if__modified__since=if__modified__since,
-            if__unmodified__since=if__unmodified__since,
-            ocp_range=ocp_range,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        request.url = self._client.format_url(request.url)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.BatchError, response.json())
-            raise HttpResponseError(response=response, model=error)
-
-        response_headers = {}
-        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
-        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
-        response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
-        response_headers["last-modified"] = self._deserialize("str", response.headers.get("last-modified"))
-        response_headers["ocp-creation-time"] = self._deserialize("str", response.headers.get("ocp-creation-time"))
-        response_headers["ocp-batch-file-isdirectory"] = self._deserialize(
-            "bool", response.headers.get("ocp-batch-file-isdirectory")
-        )
-        response_headers["ocp-batch-file-url"] = self._deserialize("str", response.headers.get("ocp-batch-file-url"))
-        response_headers["ocp-batch-file-mode"] = self._deserialize("str", response.headers.get("ocp-batch-file-mode"))
-        response_headers["content-length"] = self._deserialize("int", response.headers.get("content-length"))
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(bytes, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    async def get_properties_from_task(
-        self,
-        job_id: str,
-        task_id: str,
-        file_path: str,
-        *,
-        time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
-        ocp_date: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
-        **kwargs: Any
-    ) -> bool:
-        """Gets the properties of the specified Task file.
-
-        :param job_id: The ID of the Job that contains the Task. Required.
-        :type job_id: str
-        :param task_id: The ID of the Task whose file you want to retrieve. Required.
-        :type task_id: str
-        :param file_path: The path to the Task file that you want to get the content of. Required.
-        :type file_path: str
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API
-         directly. Default value is None.
-        :paramtype ocp_date: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
-         known to the
-         client. The operation will be performed only if the resource on the service has
-         been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
-         known to the
-         client. The operation will be performed only if the resource on the service has
-         not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
-        :return: bool
-        :rtype: bool
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        request = build_file_get_properties_from_task_request(
-            job_id=job_id,
-            task_id=task_id,
-            file_path=file_path,
-            time_out=time_out,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
-            ocp_date=ocp_date,
-            if__modified__since=if__modified__since,
-            if__unmodified__since=if__unmodified__since,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        request.url = self._client.format_url(request.url)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.BatchError, response.json())
-            raise HttpResponseError(response=response, model=error)
-
-        response_headers = {}
-        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
-        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
-        response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
-        response_headers["last-modified"] = self._deserialize("str", response.headers.get("last-modified"))
-        response_headers["ocp-creation-time"] = self._deserialize("str", response.headers.get("ocp-creation-time"))
-        response_headers["ocp-batch-file-isdirectory"] = self._deserialize(
-            "bool", response.headers.get("ocp-batch-file-isdirectory")
-        )
-        response_headers["ocp-batch-file-url"] = self._deserialize("str", response.headers.get("ocp-batch-file-url"))
-        response_headers["ocp-batch-file-mode"] = self._deserialize("str", response.headers.get("ocp-batch-file-mode"))
-        response_headers["content-length"] = self._deserialize("int", response.headers.get("content-length"))
-
-        if cls:
-            return cls(pipeline_response, None, response_headers)
-        return 200 <= response.status_code <= 299
-
-    @distributed_trace_async
-    async def delete_from_batch_node(  # pylint: disable=inconsistent-return-statements
-        self,
-        pool_id: str,
-        node_id: str,
-        file_path: str,
-        *,
-        time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
-        ocp_date: Optional[str] = None,
-        recursive: Optional[bool] = None,
-        **kwargs: Any
-    ) -> None:
-        """Deletes the specified file from the Compute Node.
-
-        Deletes the specified file from the Compute Node.
-
-        :param pool_id: The ID of the Pool that contains the Compute Node. Required.
-        :type pool_id: str
-        :param node_id: The ID of the Compute Node from which you want to delete the file. Required.
-        :type node_id: str
-        :param file_path: The path to the file or directory that you want to delete. Required.
-        :type file_path: str
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API
-         directly. Default value is None.
-        :paramtype ocp_date: str
-        :keyword recursive: Whether to delete children of a directory. If the filePath parameter
-         represents
-         a directory instead of a file, you can set recursive to true to delete the
-         directory and all of the files and subdirectories in it. If recursive is false
-         then the directory must be empty or deletion will fail. Default value is None.
-        :paramtype recursive: bool
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        request = build_file_delete_from_batch_node_request(
-            pool_id=pool_id,
-            node_id=node_id,
-            file_path=file_path,
-            time_out=time_out,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
-            ocp_date=ocp_date,
-            recursive=recursive,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        request.url = self._client.format_url(request.url)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.BatchError, response.json())
-            raise HttpResponseError(response=response, model=error)
-
-        response_headers = {}
-        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
-        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
-
-        if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    @distributed_trace_async
-    async def get_from_batch_node(
-        self,
-        pool_id: str,
-        node_id: str,
-        file_path: str,
-        *,
-        time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
-        ocp_date: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
-        ocp_range: Optional[str] = None,
-        **kwargs: Any
-    ) -> bytes:
-        """Returns the content of the specified Compute Node file.
-
-        :param pool_id: The ID of the Pool that contains the Compute Node. Required.
-        :type pool_id: str
-        :param node_id: The ID of the Compute Node from which you want to delete the file. Required.
-        :type node_id: str
-        :param file_path: The path to the file or directory that you want to delete. Required.
-        :type file_path: str
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API
-         directly. Default value is None.
-        :paramtype ocp_date: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
-         known to the
-         client. The operation will be performed only if the resource on the service has
-         been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
-         known to the
-         client. The operation will be performed only if the resource on the service has
-         not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
-        :keyword ocp_range: The byte range to be retrieved. The default is to retrieve the entire file.
-         The
-         format is bytes=startRange-endRange. Default value is None.
-        :paramtype ocp_range: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
-        :return: bytes
-        :rtype: bytes
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[bytes] = kwargs.pop("cls", None)
-
-        request = build_file_get_from_batch_node_request(
-            pool_id=pool_id,
-            node_id=node_id,
-            file_path=file_path,
-            time_out=time_out,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
-            ocp_date=ocp_date,
-            if__modified__since=if__modified__since,
-            if__unmodified__since=if__unmodified__since,
-            ocp_range=ocp_range,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        request.url = self._client.format_url(request.url)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.BatchError, response.json())
-            raise HttpResponseError(response=response, model=error)
-
-        response_headers = {}
-        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
-        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
-        response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
-        response_headers["last-modified"] = self._deserialize("str", response.headers.get("last-modified"))
-        response_headers["ocp-creation-time"] = self._deserialize("str", response.headers.get("ocp-creation-time"))
-        response_headers["ocp-batch-file-isdirectory"] = self._deserialize(
-            "bool", response.headers.get("ocp-batch-file-isdirectory")
-        )
-        response_headers["ocp-batch-file-url"] = self._deserialize("str", response.headers.get("ocp-batch-file-url"))
-        response_headers["ocp-batch-file-mode"] = self._deserialize("str", response.headers.get("ocp-batch-file-mode"))
-        response_headers["content-length"] = self._deserialize("int", response.headers.get("content-length"))
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(bytes, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    async def get_properties_from_batch_node(
-        self,
-        pool_id: str,
-        node_id: str,
-        file_path: str,
-        *,
-        time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
-        ocp_date: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
-        **kwargs: Any
-    ) -> bool:
-        """Gets the properties of the specified Compute Node file.
-
-        :param pool_id: The ID of the Pool that contains the Compute Node. Required.
-        :type pool_id: str
-        :param node_id: The ID of the Compute Node from which you want to delete the file. Required.
-        :type node_id: str
-        :param file_path: The path to the file or directory that you want to delete. Required.
-        :type file_path: str
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API
-         directly. Default value is None.
-        :paramtype ocp_date: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
-         known to the
-         client. The operation will be performed only if the resource on the service has
-         been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
-         known to the
-         client. The operation will be performed only if the resource on the service has
-         not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
-        :return: bool
-        :rtype: bool
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        request = build_file_get_properties_from_batch_node_request(
-            pool_id=pool_id,
-            node_id=node_id,
-            file_path=file_path,
-            time_out=time_out,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
-            ocp_date=ocp_date,
-            if__modified__since=if__modified__since,
-            if__unmodified__since=if__unmodified__since,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        request.url = self._client.format_url(request.url)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.BatchError, response.json())
-            raise HttpResponseError(response=response, model=error)
-
-        response_headers = {}
-        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
-        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
-        response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
-        response_headers["last-modified"] = self._deserialize("str", response.headers.get("last-modified"))
-        response_headers["ocp-creation-time"] = self._deserialize("str", response.headers.get("ocp-creation-time"))
-        response_headers["ocp-batch-file-isdirectory"] = self._deserialize(
-            "bool", response.headers.get("ocp-batch-file-isdirectory")
-        )
-        response_headers["ocp-batch-file-url"] = self._deserialize("str", response.headers.get("ocp-batch-file-url"))
-        response_headers["ocp-batch-file-mode"] = self._deserialize("str", response.headers.get("ocp-batch-file-mode"))
-        response_headers["content-length"] = self._deserialize("int", response.headers.get("content-length"))
-
-        if cls:
-            return cls(pipeline_response, None, response_headers)
-        return 200 <= response.status_code <= 299
-
-    @distributed_trace
-    def list_from_task(
-        self,
-        job_id: str,
-        task_id: str,
-        *,
-        maxresults: Optional[int] = None,
-        ocp_date: Optional[str] = None,
-        time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
-        filter: Optional[str] = None,
-        recursive: Optional[bool] = None,
-        **kwargs: Any
-    ) -> AsyncIterable["_models.NodeFile"]:
-        """Lists the files in a Task's directory on its Compute Node.
-
-        Lists the files in a Task's directory on its Compute Node.
-
-        :param job_id: The ID of the Job that contains the Task. Required.
-        :type job_id: str
-        :param task_id: The ID of the Task whose files you want to list. Required.
-        :type task_id: str
-        :keyword maxresults: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype maxresults: int
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API
-         directly. Default value is None.
-        :paramtype ocp_date: str
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
-        :keyword filter: An OData $filter clause. For more information on constructing this filter, see
-         https://docs.microsoft.com/en-us/rest/api/batchservice/odata-filters-in-batch#list-task-files.
-         Default value is None.
-        :paramtype filter: str
-        :keyword recursive: Whether to list children of the Task directory. This parameter can be used
-         in
-         combination with the filter parameter to list specific type of files. Default value is None.
-        :paramtype recursive: bool
-        :return: An iterator like instance of NodeFile
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.batch.models.NodeFile]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[List[_models.NodeFile]] = kwargs.pop("cls", None)
-
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(next_link=None):
-            if not next_link:
-
-                request = build_file_list_from_task_request(
-                    job_id=job_id,
-                    task_id=task_id,
-                    maxresults=maxresults,
-                    ocp_date=ocp_date,
-                    time_out=time_out,
-                    client_request_id=client_request_id,
-                    return_client_request_id=return_client_request_id,
-                    filter=filter,
-                    recursive=recursive,
-                    api_version=self._config.api_version,
-                    headers=_headers,
-                    params=_params,
-                )
-                request.url = self._client.format_url(request.url)
-
-            else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
-                request.url = self._client.format_url(request.url)
-
-            return request
-
-        async def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.NodeFile], deserialized["value"])
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("odata.nextLink") or None, AsyncList(list_of_elem)
-
-        async def get_next(next_link=None):
-            request = prepare_request(next_link)
-
-            _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _deserialize(_models.BatchError, response.json())
-                raise HttpResponseError(response=response, model=error)
-
-            return pipeline_response
-
-        return AsyncItemPaged(get_next, extract_data)
-
-    @distributed_trace
-    def list_from_batch_node(
-        self,
-        pool_id: str,
-        node_id: str,
-        *,
-        maxresults: Optional[int] = None,
-        ocp_date: Optional[str] = None,
-        time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
-        filter: Optional[str] = None,
-        recursive: Optional[bool] = None,
-        **kwargs: Any
-    ) -> AsyncIterable["_models.NodeFile"]:
-        """Lists all of the files in Task directories on the specified Compute Node.
-
-        Lists all of the files in Task directories on the specified Compute Node.
-
-        :param pool_id: The ID of the Pool that contains the Compute Node. Required.
-        :type pool_id: str
-        :param node_id: The ID of the Compute Node whose files you want to list. Required.
-        :type node_id: str
-        :keyword maxresults: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype maxresults: int
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API
-         directly. Default value is None.
-        :paramtype ocp_date: str
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
-        :keyword filter: An OData $filter clause. For more information on constructing this filter, see
-        https://docs.microsoft.com/en-us/rest/api/batchservice/odata-filters-in-batch#list-compute-node-files.
-         Default value is None.
-        :paramtype filter: str
-        :keyword recursive: Whether to list children of a directory. Default value is None.
-        :paramtype recursive: bool
-        :return: An iterator like instance of NodeFile
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.batch.models.NodeFile]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[List[_models.NodeFile]] = kwargs.pop("cls", None)
-
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(next_link=None):
-            if not next_link:
-
-                request = build_file_list_from_batch_node_request(
-                    pool_id=pool_id,
-                    node_id=node_id,
-                    maxresults=maxresults,
-                    ocp_date=ocp_date,
-                    time_out=time_out,
-                    client_request_id=client_request_id,
-                    return_client_request_id=return_client_request_id,
-                    filter=filter,
-                    recursive=recursive,
-                    api_version=self._config.api_version,
-                    headers=_headers,
-                    params=_params,
-                )
-                request.url = self._client.format_url(request.url)
-
-            else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
-                request.url = self._client.format_url(request.url)
-
-            return request
-
-        async def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.NodeFile], deserialized["value"])
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("odata.nextLink") or None, AsyncList(list_of_elem)
-
-        async def get_next(next_link=None):
-            request = prepare_request(next_link)
-
-            _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _deserialize(_models.BatchError, response.json())
-                raise HttpResponseError(response=response, model=error)
-
-            return pipeline_response
-
-        return AsyncItemPaged(get_next, extract_data)
 
 
 class JobScheduleOperations:
@@ -5562,13 +4096,11 @@ class JobScheduleOperations:
         job_schedule_id: str,
         *,
         time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
         **kwargs: Any
     ) -> bool:
         """Checks the specified Job Schedule exists.
@@ -5580,37 +4112,25 @@ class JobScheduleOperations:
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
-         client.
-         The operation will be performed only if the resource's current ETag on the
-         service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
-         the client.
-         The operation will be performed only if the resource's current ETag on the
-         service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
-         known to the
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
+         to the
          client. The operation will be performed only if the resource on the service has
          been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_modified_since: str
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
+        :paramtype if_unmodified_since: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: bool
@@ -5623,6 +4143,12 @@ class JobScheduleOperations:
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
         }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
@@ -5633,13 +4159,11 @@ class JobScheduleOperations:
         request = build_job_schedule_exists_request(
             job_schedule_id=job_schedule_id,
             time_out=time_out,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
-            if__match=if__match,
-            if__none__match=if__none__match,
-            if__modified__since=if__modified__since,
-            if__unmodified__since=if__unmodified__since,
+            etag=etag,
+            match_condition=match_condition,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -5654,6 +4178,8 @@ class JobScheduleOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 404]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.BatchError, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -5675,13 +4201,11 @@ class JobScheduleOperations:
         job_schedule_id: str,
         *,
         time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """Deletes a Job Schedule from the specified Account.
@@ -5697,37 +4221,25 @@ class JobScheduleOperations:
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
-         client.
-         The operation will be performed only if the resource's current ETag on the
-         service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
-         the client.
-         The operation will be performed only if the resource's current ETag on the
-         service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
-         known to the
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
+         to the
          client. The operation will be performed only if the resource on the service has
          been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_modified_since: str
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
+        :paramtype if_unmodified_since: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: None
@@ -5740,6 +4252,12 @@ class JobScheduleOperations:
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
         }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
@@ -5750,13 +4268,11 @@ class JobScheduleOperations:
         request = build_job_schedule_delete_request(
             job_schedule_id=job_schedule_id,
             time_out=time_out,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
-            if__match=if__match,
-            if__none__match=if__none__match,
-            if__modified__since=if__modified__since,
-            if__unmodified__since=if__unmodified__since,
+            etag=etag,
+            match_condition=match_condition,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -5771,6 +4287,8 @@ class JobScheduleOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.BatchError, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -5788,13 +4306,11 @@ class JobScheduleOperations:
         job_schedule_id: str,
         *,
         time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
         select: Optional[str] = None,
         expand: Optional[str] = None,
         **kwargs: Any
@@ -5806,37 +4322,25 @@ class JobScheduleOperations:
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
-         client.
-         The operation will be performed only if the resource's current ETag on the
-         service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
-         the client.
-         The operation will be performed only if the resource's current ETag on the
-         service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
-         known to the
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
+         to the
          client. The operation will be performed only if the resource on the service has
          been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_modified_since: str
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
+        :paramtype if_unmodified_since: str
         :keyword select: An OData $select clause. Default value is None.
         :paramtype select: str
         :keyword expand: An OData $expand clause. Default value is None.
@@ -5853,6 +4357,12 @@ class JobScheduleOperations:
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
         }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
@@ -5863,13 +4373,11 @@ class JobScheduleOperations:
         request = build_job_schedule_get_request(
             job_schedule_id=job_schedule_id,
             time_out=time_out,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
-            if__match=if__match,
-            if__none__match=if__none__match,
-            if__modified__since=if__modified__since,
-            if__unmodified__since=if__unmodified__since,
+            etag=etag,
+            match_condition=match_condition,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
             select=select,
             expand=expand,
             api_version=self._config.api_version,
@@ -5886,6 +4394,8 @@ class JobScheduleOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.BatchError, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -5913,13 +4423,11 @@ class JobScheduleOperations:
         parameters: _models.BatchJobScheduleUpdateParameters,
         *,
         time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """Updates the properties of the specified Job Schedule.
@@ -5937,37 +4445,25 @@ class JobScheduleOperations:
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
-         client.
-         The operation will be performed only if the resource's current ETag on the
-         service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
-         the client.
-         The operation will be performed only if the resource's current ETag on the
-         service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
-         known to the
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
+         to the
          client. The operation will be performed only if the resource on the service has
          been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_modified_since: str
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
+        :paramtype if_unmodified_since: str
         :keyword content_type: Type of content. Default value is "application/json;
          odata=minimalmetadata".
         :paramtype content_type: str
@@ -5983,6 +4479,12 @@ class JobScheduleOperations:
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
         }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -5998,13 +4500,11 @@ class JobScheduleOperations:
         request = build_job_schedule_patch_request(
             job_schedule_id=job_schedule_id,
             time_out=time_out,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
-            if__match=if__match,
-            if__none__match=if__none__match,
-            if__modified__since=if__modified__since,
-            if__unmodified__since=if__unmodified__since,
+            etag=etag,
+            match_condition=match_condition,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -6021,6 +4521,8 @@ class JobScheduleOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.BatchError, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -6042,13 +4544,11 @@ class JobScheduleOperations:
         parameters: _models.BatchJobSchedule,
         *,
         time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """Updates the properties of the specified Job Schedule.
@@ -6066,37 +4566,25 @@ class JobScheduleOperations:
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
-         client.
-         The operation will be performed only if the resource's current ETag on the
-         service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
-         the client.
-         The operation will be performed only if the resource's current ETag on the
-         service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
-         known to the
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
+         to the
          client. The operation will be performed only if the resource on the service has
          been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_modified_since: str
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
+        :paramtype if_unmodified_since: str
         :keyword content_type: Type of content. Default value is "application/json;
          odata=minimalmetadata".
         :paramtype content_type: str
@@ -6112,6 +4600,12 @@ class JobScheduleOperations:
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
         }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -6127,13 +4621,11 @@ class JobScheduleOperations:
         request = build_job_schedule_update_request(
             job_schedule_id=job_schedule_id,
             time_out=time_out,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
-            if__match=if__match,
-            if__none__match=if__none__match,
-            if__modified__since=if__modified__since,
-            if__unmodified__since=if__unmodified__since,
+            etag=etag,
+            match_condition=match_condition,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -6150,6 +4642,8 @@ class JobScheduleOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.BatchError, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -6170,13 +4664,11 @@ class JobScheduleOperations:
         job_schedule_id: str,
         *,
         time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """Disables a Job Schedule.
@@ -6188,37 +4680,25 @@ class JobScheduleOperations:
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
-         client.
-         The operation will be performed only if the resource's current ETag on the
-         service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
-         the client.
-         The operation will be performed only if the resource's current ETag on the
-         service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
-         known to the
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
+         to the
          client. The operation will be performed only if the resource on the service has
          been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_modified_since: str
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
+        :paramtype if_unmodified_since: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: None
@@ -6231,6 +4711,12 @@ class JobScheduleOperations:
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
         }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
@@ -6241,13 +4727,11 @@ class JobScheduleOperations:
         request = build_job_schedule_disable_request(
             job_schedule_id=job_schedule_id,
             time_out=time_out,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
-            if__match=if__match,
-            if__none__match=if__none__match,
-            if__modified__since=if__modified__since,
-            if__unmodified__since=if__unmodified__since,
+            etag=etag,
+            match_condition=match_condition,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -6262,6 +4746,8 @@ class JobScheduleOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.BatchError, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -6282,13 +4768,11 @@ class JobScheduleOperations:
         job_schedule_id: str,
         *,
         time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """Enables a Job Schedule.
@@ -6300,37 +4784,25 @@ class JobScheduleOperations:
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
-         client.
-         The operation will be performed only if the resource's current ETag on the
-         service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
-         the client.
-         The operation will be performed only if the resource's current ETag on the
-         service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
-         known to the
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
+         to the
          client. The operation will be performed only if the resource on the service has
          been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_modified_since: str
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
+        :paramtype if_unmodified_since: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: None
@@ -6343,6 +4815,12 @@ class JobScheduleOperations:
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
         }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
@@ -6353,13 +4831,11 @@ class JobScheduleOperations:
         request = build_job_schedule_enable_request(
             job_schedule_id=job_schedule_id,
             time_out=time_out,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
-            if__match=if__match,
-            if__none__match=if__none__match,
-            if__modified__since=if__modified__since,
-            if__unmodified__since=if__unmodified__since,
+            etag=etag,
+            match_condition=match_condition,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -6374,6 +4850,8 @@ class JobScheduleOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.BatchError, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -6394,13 +4872,11 @@ class JobScheduleOperations:
         job_schedule_id: str,
         *,
         time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """Terminates a Job Schedule.
@@ -6412,37 +4888,25 @@ class JobScheduleOperations:
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
-         client.
-         The operation will be performed only if the resource's current ETag on the
-         service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
-         the client.
-         The operation will be performed only if the resource's current ETag on the
-         service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
-         known to the
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
+         to the
          client. The operation will be performed only if the resource on the service has
          been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_modified_since: str
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
+        :paramtype if_unmodified_since: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: None
@@ -6455,6 +4919,12 @@ class JobScheduleOperations:
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
         }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
@@ -6465,13 +4935,11 @@ class JobScheduleOperations:
         request = build_job_schedule_terminate_request(
             job_schedule_id=job_schedule_id,
             time_out=time_out,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
-            if__match=if__match,
-            if__none__match=if__none__match,
-            if__modified__since=if__modified__since,
-            if__unmodified__since=if__unmodified__since,
+            etag=etag,
+            match_condition=match_condition,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -6486,6 +4954,8 @@ class JobScheduleOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.BatchError, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -6506,8 +4976,6 @@ class JobScheduleOperations:
         cloud_job_schedule: _models.BatchJobScheduleCreateParameters,
         *,
         time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -6520,13 +4988,6 @@ class JobScheduleOperations:
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -6560,8 +5021,6 @@ class JobScheduleOperations:
 
         request = build_job_schedule_create_request(
             time_out=time_out,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -6579,6 +5038,8 @@ class JobScheduleOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.BatchError, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -6600,8 +5061,6 @@ class JobScheduleOperations:
         maxresults: Optional[int] = None,
         ocp_date: Optional[str] = None,
         time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
         filter: Optional[str] = None,
         select: Optional[str] = None,
         expand: Optional[str] = None,
@@ -6621,13 +5080,6 @@ class JobScheduleOperations:
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
         :keyword filter: An OData $filter clause. For more information on constructing this filter, see
         https://docs.microsoft.com/en-us/rest/api/batchservice/odata-filters-in-batch#list-job-schedules.
          Default value is None.
@@ -6660,8 +5112,6 @@ class JobScheduleOperations:
                     maxresults=maxresults,
                     ocp_date=ocp_date,
                     time_out=time_out,
-                    client_request_id=client_request_id,
-                    return_client_request_id=return_client_request_id,
                     filter=filter,
                     select=select,
                     expand=expand,
@@ -6705,6 +5155,8 @@ class JobScheduleOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
+                if _stream:
+                    await response.read()  # Load the body in memory and close the socket
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 error = _deserialize(_models.BatchError, response.json())
                 raise HttpResponseError(response=response, model=error)
@@ -6738,8 +5190,6 @@ class TaskOperations:
         task: _models.BatchTaskCreateParameters,
         *,
         time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -6756,13 +5206,6 @@ class TaskOperations:
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -6797,8 +5240,6 @@ class TaskOperations:
         request = build_task_create_request(
             job_id=job_id,
             time_out=time_out,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -6816,6 +5257,8 @@ class TaskOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.BatchError, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -6838,8 +5281,6 @@ class TaskOperations:
         maxresults: Optional[int] = None,
         ocp_date: Optional[str] = None,
         time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
         filter: Optional[str] = None,
         select: Optional[str] = None,
         expand: Optional[str] = None,
@@ -6863,13 +5304,6 @@ class TaskOperations:
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
         :keyword filter: An OData $filter clause. For more information on constructing this filter, see
          https://docs.microsoft.com/en-us/rest/api/batchservice/odata-filters-in-batch#list-tasks.
          Default value is None.
@@ -6903,8 +5337,6 @@ class TaskOperations:
                     maxresults=maxresults,
                     ocp_date=ocp_date,
                     time_out=time_out,
-                    client_request_id=client_request_id,
-                    return_client_request_id=return_client_request_id,
                     filter=filter,
                     select=select,
                     expand=expand,
@@ -6948,6 +5380,8 @@ class TaskOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
+                if _stream:
+                    await response.read()  # Load the body in memory and close the socket
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 error = _deserialize(_models.BatchError, response.json())
                 raise HttpResponseError(response=response, model=error)
@@ -6963,8 +5397,6 @@ class TaskOperations:
         collection: _models.BatchTaskCollection,
         *,
         time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
         **kwargs: Any
     ) -> _models.TaskAddCollectionResult:
@@ -6992,13 +5424,6 @@ class TaskOperations:
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -7033,8 +5458,6 @@ class TaskOperations:
         request = build_task_add_collection_request(
             job_id=job_id,
             time_out=time_out,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -7052,6 +5475,8 @@ class TaskOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.BatchError, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -7077,13 +5502,11 @@ class TaskOperations:
         task_id: str,
         *,
         time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """Deletes a Task from the specified Job.
@@ -7101,37 +5524,25 @@ class TaskOperations:
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
-         client.
-         The operation will be performed only if the resource's current ETag on the
-         service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
-         the client.
-         The operation will be performed only if the resource's current ETag on the
-         service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
-         known to the
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
+         to the
          client. The operation will be performed only if the resource on the service has
          been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_modified_since: str
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
+        :paramtype if_unmodified_since: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: None
@@ -7144,6 +5555,12 @@ class TaskOperations:
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
         }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
@@ -7155,13 +5572,11 @@ class TaskOperations:
             job_id=job_id,
             task_id=task_id,
             time_out=time_out,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
-            if__match=if__match,
-            if__none__match=if__none__match,
-            if__modified__since=if__modified__since,
-            if__unmodified__since=if__unmodified__since,
+            etag=etag,
+            match_condition=match_condition,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -7176,6 +5591,8 @@ class TaskOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.BatchError, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -7194,13 +5611,11 @@ class TaskOperations:
         task_id: str,
         *,
         time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
         select: Optional[str] = None,
         expand: Optional[str] = None,
         **kwargs: Any
@@ -7218,37 +5633,25 @@ class TaskOperations:
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
-         client.
-         The operation will be performed only if the resource's current ETag on the
-         service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
-         the client.
-         The operation will be performed only if the resource's current ETag on the
-         service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
-         known to the
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
+         to the
          client. The operation will be performed only if the resource on the service has
          been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_modified_since: str
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
+        :paramtype if_unmodified_since: str
         :keyword select: An OData $select clause. Default value is None.
         :paramtype select: str
         :keyword expand: An OData $expand clause. Default value is None.
@@ -7265,6 +5668,12 @@ class TaskOperations:
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
         }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
@@ -7276,13 +5685,11 @@ class TaskOperations:
             job_id=job_id,
             task_id=task_id,
             time_out=time_out,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
-            if__match=if__match,
-            if__none__match=if__none__match,
-            if__modified__since=if__modified__since,
-            if__unmodified__since=if__unmodified__since,
+            etag=etag,
+            match_condition=match_condition,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
             select=select,
             expand=expand,
             api_version=self._config.api_version,
@@ -7299,6 +5706,8 @@ class TaskOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.BatchError, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -7328,13 +5737,11 @@ class TaskOperations:
         parameters: _models.BatchTask,
         *,
         time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """Updates the properties of the specified Task.
@@ -7348,37 +5755,25 @@ class TaskOperations:
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
-         client.
-         The operation will be performed only if the resource's current ETag on the
-         service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
-         the client.
-         The operation will be performed only if the resource's current ETag on the
-         service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
-         known to the
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
+         to the
          client. The operation will be performed only if the resource on the service has
          been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_modified_since: str
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
+        :paramtype if_unmodified_since: str
         :keyword content_type: Type of content. Default value is "application/json;
          odata=minimalmetadata".
         :paramtype content_type: str
@@ -7394,6 +5789,12 @@ class TaskOperations:
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
         }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -7410,13 +5811,11 @@ class TaskOperations:
             job_id=job_id,
             task_id=task_id,
             time_out=time_out,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
-            if__match=if__match,
-            if__none__match=if__none__match,
-            if__modified__since=if__modified__since,
-            if__unmodified__since=if__unmodified__since,
+            etag=etag,
+            match_condition=match_condition,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -7433,6 +5832,8 @@ class TaskOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.BatchError, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -7448,14 +5849,12 @@ class TaskOperations:
             return cls(pipeline_response, None, response_headers)
 
     @distributed_trace_async
-    async def get_subtasks(
+    async def list_subtasks(
         self,
         job_id: str,
         task_id: str,
         *,
         time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
         select: Optional[str] = None,
         **kwargs: Any
@@ -7472,13 +5871,6 @@ class TaskOperations:
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -7505,12 +5897,10 @@ class TaskOperations:
 
         cls: ClsType[_models.BatchTaskListSubtasksResult] = kwargs.pop("cls", None)
 
-        request = build_task_get_subtasks_request(
+        request = build_task_list_subtasks_request(
             job_id=job_id,
             task_id=task_id,
             time_out=time_out,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
             select=select,
             api_version=self._config.api_version,
@@ -7527,6 +5917,8 @@ class TaskOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.BatchError, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -7554,13 +5946,11 @@ class TaskOperations:
         task_id: str,
         *,
         time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """Terminates the specified Task.
@@ -7576,37 +5966,25 @@ class TaskOperations:
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
-         client.
-         The operation will be performed only if the resource's current ETag on the
-         service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
-         the client.
-         The operation will be performed only if the resource's current ETag on the
-         service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
-         known to the
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
+         to the
          client. The operation will be performed only if the resource on the service has
          been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_modified_since: str
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
+        :paramtype if_unmodified_since: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: None
@@ -7619,6 +5997,12 @@ class TaskOperations:
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
         }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
@@ -7630,13 +6014,11 @@ class TaskOperations:
             job_id=job_id,
             task_id=task_id,
             time_out=time_out,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
-            if__match=if__match,
-            if__none__match=if__none__match,
-            if__modified__since=if__modified__since,
-            if__unmodified__since=if__unmodified__since,
+            etag=etag,
+            match_condition=match_condition,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -7651,6 +6033,8 @@ class TaskOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.BatchError, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -7672,13 +6056,11 @@ class TaskOperations:
         task_id: str,
         *,
         time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """Reactivates a Task, allowing it to run again even if its retry count has been
@@ -7699,37 +6081,124 @@ class TaskOperations:
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
-         client.
-         The operation will be performed only if the resource's current ETag on the
-         service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
-         the client.
-         The operation will be performed only if the resource's current ETag on the
-         service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
-         known to the
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
+         to the
          client. The operation will be performed only if the resource on the service has
          been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_modified_since: str
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
+        :paramtype if_unmodified_since: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        request = build_task_reactivate_request(
+            job_id=job_id,
+            task_id=task_id,
+            time_out=time_out,
+            ocp_date=ocp_date,
+            etag=etag,
+            match_condition=match_condition,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        request.url = self._client.format_url(request.url)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _deserialize(_models.BatchError, response.json())
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
+        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
+        response_headers["last-modified"] = self._deserialize("str", response.headers.get("last-modified"))
+        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
+
+        if cls:
+            return cls(pipeline_response, None, response_headers)
+
+    @distributed_trace_async
+    async def delete_file_from_task(  # pylint: disable=inconsistent-return-statements
+        self,
+        job_id: str,
+        task_id: str,
+        file_path: str,
+        *,
+        time_out: Optional[int] = None,
+        ocp_date: Optional[str] = None,
+        recursive: Optional[bool] = None,
+        **kwargs: Any
+    ) -> None:
+        """Deletes the specified Task file from the Compute Node where the Task ran.
+
+        Deletes the specified Task file from the Compute Node where the Task ran.
+
+        :param job_id: The ID of the Job that contains the Task. Required.
+        :type job_id: str
+        :param task_id: The ID of the Task whose file you want to retrieve. Required.
+        :type task_id: str
+        :param file_path: The path to the Task file that you want to get the content of. Required.
+        :type file_path: str
+        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
+         applications can be returned. Default value is None.
+        :paramtype time_out: int
+        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
+         current system clock time; set it explicitly if you are calling the REST API
+         directly. Default value is None.
+        :paramtype ocp_date: str
+        :keyword recursive: Whether to delete children of a directory. If the filePath parameter
+         represents
+         a directory instead of a file, you can set recursive to true to delete the
+         directory and all of the files and subdirectories in it. If recursive is false
+         then the directory must be empty or deletion will fail. Default value is None.
+        :paramtype recursive: bool
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: None
@@ -7749,17 +6218,13 @@ class TaskOperations:
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_task_reactivate_request(
+        request = build_task_delete_file_from_task_request(
             job_id=job_id,
             task_id=task_id,
+            file_path=file_path,
             time_out=time_out,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
-            if__match=if__match,
-            if__none__match=if__none__match,
-            if__modified__since=if__modified__since,
-            if__unmodified__since=if__unmodified__since,
+            recursive=recursive,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -7773,7 +6238,107 @@ class TaskOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [204]:
+        if response.status_code not in [200]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _deserialize(_models.BatchError, response.json())
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
+        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+
+        if cls:
+            return cls(pipeline_response, None, response_headers)
+
+    @distributed_trace_async
+    async def get_file_from_task(
+        self,
+        job_id: str,
+        task_id: str,
+        file_path: str,
+        *,
+        time_out: Optional[int] = None,
+        ocp_date: Optional[str] = None,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
+        ocp_range: Optional[str] = None,
+        **kwargs: Any
+    ) -> bytes:
+        """Returns the content of the specified Task file.
+
+        :param job_id: The ID of the Job that contains the Task. Required.
+        :type job_id: str
+        :param task_id: The ID of the Task whose file you want to retrieve. Required.
+        :type task_id: str
+        :param file_path: The path to the Task file that you want to get the content of. Required.
+        :type file_path: str
+        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
+         applications can be returned. Default value is None.
+        :paramtype time_out: int
+        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
+         current system clock time; set it explicitly if you are calling the REST API
+         directly. Default value is None.
+        :paramtype ocp_date: str
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
+         to the
+         client. The operation will be performed only if the resource on the service has
+         been modified since the specified time. Default value is None.
+        :paramtype if_modified_since: str
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
+         known to the
+         client. The operation will be performed only if the resource on the service has
+         not been modified since the specified time. Default value is None.
+        :paramtype if_unmodified_since: str
+        :keyword ocp_range: The byte range to be retrieved. The default is to retrieve the entire file.
+         The
+         format is bytes=startRange-endRange. Default value is None.
+        :paramtype ocp_range: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
+        :return: bytes
+        :rtype: bytes
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[bytes] = kwargs.pop("cls", None)
+
+        request = build_task_get_file_from_task_request(
+            job_id=job_id,
+            task_id=task_id,
+            file_path=file_path,
+            time_out=time_out,
+            ocp_date=ocp_date,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
+            ocp_range=ocp_range,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        request.url = self._client.format_url(request.url)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.BatchError, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -7783,10 +6348,242 @@ class TaskOperations:
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
         response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
         response_headers["last-modified"] = self._deserialize("str", response.headers.get("last-modified"))
-        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
+        response_headers["ocp-creation-time"] = self._deserialize("str", response.headers.get("ocp-creation-time"))
+        response_headers["ocp-batch-file-isdirectory"] = self._deserialize(
+            "bool", response.headers.get("ocp-batch-file-isdirectory")
+        )
+        response_headers["ocp-batch-file-url"] = self._deserialize("str", response.headers.get("ocp-batch-file-url"))
+        response_headers["ocp-batch-file-mode"] = self._deserialize("str", response.headers.get("ocp-batch-file-mode"))
+        response_headers["content-length"] = self._deserialize("int", response.headers.get("content-length"))
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(bytes, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def get_file_properties_from_task(
+        self,
+        job_id: str,
+        task_id: str,
+        file_path: str,
+        *,
+        time_out: Optional[int] = None,
+        ocp_date: Optional[str] = None,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
+        **kwargs: Any
+    ) -> bool:
+        """Gets the properties of the specified Task file.
+
+        :param job_id: The ID of the Job that contains the Task. Required.
+        :type job_id: str
+        :param task_id: The ID of the Task whose file you want to retrieve. Required.
+        :type task_id: str
+        :param file_path: The path to the Task file that you want to get the content of. Required.
+        :type file_path: str
+        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
+         applications can be returned. Default value is None.
+        :paramtype time_out: int
+        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
+         current system clock time; set it explicitly if you are calling the REST API
+         directly. Default value is None.
+        :paramtype ocp_date: str
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
+         to the
+         client. The operation will be performed only if the resource on the service has
+         been modified since the specified time. Default value is None.
+        :paramtype if_modified_since: str
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
+         known to the
+         client. The operation will be performed only if the resource on the service has
+         not been modified since the specified time. Default value is None.
+        :paramtype if_unmodified_since: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
+        :return: bool
+        :rtype: bool
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        request = build_task_get_file_properties_from_task_request(
+            job_id=job_id,
+            task_id=task_id,
+            file_path=file_path,
+            time_out=time_out,
+            ocp_date=ocp_date,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        request.url = self._client.format_url(request.url)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _deserialize(_models.BatchError, response.json())
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
+        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
+        response_headers["last-modified"] = self._deserialize("str", response.headers.get("last-modified"))
+        response_headers["ocp-creation-time"] = self._deserialize("str", response.headers.get("ocp-creation-time"))
+        response_headers["ocp-batch-file-isdirectory"] = self._deserialize(
+            "bool", response.headers.get("ocp-batch-file-isdirectory")
+        )
+        response_headers["ocp-batch-file-url"] = self._deserialize("str", response.headers.get("ocp-batch-file-url"))
+        response_headers["ocp-batch-file-mode"] = self._deserialize("str", response.headers.get("ocp-batch-file-mode"))
+        response_headers["content-length"] = self._deserialize("int", response.headers.get("content-length"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)
+        return 200 <= response.status_code <= 299
+
+    @distributed_trace
+    def list_files_from_task(
+        self,
+        job_id: str,
+        task_id: str,
+        *,
+        maxresults: Optional[int] = None,
+        ocp_date: Optional[str] = None,
+        time_out: Optional[int] = None,
+        filter: Optional[str] = None,
+        recursive: Optional[bool] = None,
+        **kwargs: Any
+    ) -> AsyncIterable["_models.NodeFile"]:
+        """Lists the files in a Task's directory on its Compute Node.
+
+        Lists the files in a Task's directory on its Compute Node.
+
+        :param job_id: The ID of the Job that contains the Task. Required.
+        :type job_id: str
+        :param task_id: The ID of the Task whose files you want to list. Required.
+        :type task_id: str
+        :keyword maxresults: The maximum number of items to return in the response. A maximum of 1000
+         applications can be returned. Default value is None.
+        :paramtype maxresults: int
+        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
+         current system clock time; set it explicitly if you are calling the REST API
+         directly. Default value is None.
+        :paramtype ocp_date: str
+        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
+         applications can be returned. Default value is None.
+        :paramtype time_out: int
+        :keyword filter: An OData $filter clause. For more information on constructing this filter, see
+         https://docs.microsoft.com/en-us/rest/api/batchservice/odata-filters-in-batch#list-task-files.
+         Default value is None.
+        :paramtype filter: str
+        :keyword recursive: Whether to list children of the Task directory. This parameter can be used
+         in
+         combination with the filter parameter to list specific type of files. Default value is None.
+        :paramtype recursive: bool
+        :return: An iterator like instance of NodeFile
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.batch.models.NodeFile]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.NodeFile]] = kwargs.pop("cls", None)
+
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                request = build_task_list_files_from_task_request(
+                    job_id=job_id,
+                    task_id=task_id,
+                    maxresults=maxresults,
+                    ocp_date=ocp_date,
+                    time_out=time_out,
+                    filter=filter,
+                    recursive=recursive,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                request.url = self._client.format_url(request.url)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
+                request.url = self._client.format_url(request.url)
+
+            return request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(List[_models.NodeFile], deserialized["value"])
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("odata.nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                if _stream:
+                    await response.read()  # Load the body in memory and close the socket
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _deserialize(_models.BatchError, response.json())
+                raise HttpResponseError(response=response, model=error)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
 
 
 class BatchNodesOperations:
@@ -7814,8 +6611,6 @@ class BatchNodesOperations:
         parameters: _models.BatchNodeUser,
         *,
         time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -7833,13 +6628,6 @@ class BatchNodesOperations:
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -7875,8 +6663,6 @@ class BatchNodesOperations:
             pool_id=pool_id,
             node_id=node_id,
             time_out=time_out,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -7894,6 +6680,8 @@ class BatchNodesOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.BatchError, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -7916,8 +6704,6 @@ class BatchNodesOperations:
         user_name: str,
         *,
         time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -7935,13 +6721,6 @@ class BatchNodesOperations:
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -7970,8 +6749,6 @@ class BatchNodesOperations:
             node_id=node_id,
             user_name=user_name,
             time_out=time_out,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
             api_version=self._config.api_version,
             headers=_headers,
@@ -7987,6 +6764,8 @@ class BatchNodesOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.BatchError, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -8007,8 +6786,6 @@ class BatchNodesOperations:
         parameters: _models.NodeUpdateUserParameters,
         *,
         time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -8030,13 +6807,6 @@ class BatchNodesOperations:
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -8073,8 +6843,6 @@ class BatchNodesOperations:
             node_id=node_id,
             user_name=user_name,
             time_out=time_out,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -8092,6 +6860,8 @@ class BatchNodesOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.BatchError, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -8113,8 +6883,6 @@ class BatchNodesOperations:
         node_id: str,
         *,
         time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
         select: Optional[str] = None,
         **kwargs: Any
@@ -8130,13 +6898,6 @@ class BatchNodesOperations:
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -8166,8 +6927,6 @@ class BatchNodesOperations:
             pool_id=pool_id,
             node_id=node_id,
             time_out=time_out,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
             select=select,
             api_version=self._config.api_version,
@@ -8184,6 +6943,8 @@ class BatchNodesOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.BatchError, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -8212,8 +6973,6 @@ class BatchNodesOperations:
         parameters: Optional[_models.NodeRebootParameters] = None,
         *,
         time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -8230,13 +6989,6 @@ class BatchNodesOperations:
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -8275,8 +7027,6 @@ class BatchNodesOperations:
             pool_id=pool_id,
             node_id=node_id,
             time_out=time_out,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -8294,6 +7044,8 @@ class BatchNodesOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.BatchError, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -8316,8 +7068,6 @@ class BatchNodesOperations:
         parameters: Optional[_models.NodeReimageParameters] = None,
         *,
         time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -8336,13 +7086,6 @@ class BatchNodesOperations:
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -8381,8 +7124,6 @@ class BatchNodesOperations:
             pool_id=pool_id,
             node_id=node_id,
             time_out=time_out,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -8400,6 +7141,8 @@ class BatchNodesOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.BatchError, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -8422,8 +7165,6 @@ class BatchNodesOperations:
         parameters: Optional[_models.NodeDisableSchedulingParameters] = None,
         *,
         time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
@@ -8443,13 +7184,6 @@ class BatchNodesOperations:
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -8472,8 +7206,6 @@ class BatchNodesOperations:
         parameters: Optional[JSON] = None,
         *,
         time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
@@ -8493,13 +7225,6 @@ class BatchNodesOperations:
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -8522,8 +7247,6 @@ class BatchNodesOperations:
         parameters: Optional[IO] = None,
         *,
         time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
@@ -8543,13 +7266,6 @@ class BatchNodesOperations:
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -8572,8 +7288,6 @@ class BatchNodesOperations:
         parameters: Optional[Union[_models.NodeDisableSchedulingParameters, JSON, IO]] = None,
         *,
         time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -8593,13 +7307,6 @@ class BatchNodesOperations:
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -8641,8 +7348,6 @@ class BatchNodesOperations:
             pool_id=pool_id,
             node_id=node_id,
             time_out=time_out,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -8660,6 +7365,8 @@ class BatchNodesOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.BatchError, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -8681,8 +7388,6 @@ class BatchNodesOperations:
         node_id: str,
         *,
         time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -8699,13 +7404,6 @@ class BatchNodesOperations:
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -8733,8 +7431,6 @@ class BatchNodesOperations:
             pool_id=pool_id,
             node_id=node_id,
             time_out=time_out,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
             api_version=self._config.api_version,
             headers=_headers,
@@ -8750,6 +7446,8 @@ class BatchNodesOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.BatchError, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -8771,11 +7469,9 @@ class BatchNodesOperations:
         node_id: str,
         *,
         time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
         **kwargs: Any
-    ) -> _models.BatchNodeGetRemoteLoginSettingsResult:
+    ) -> _models.BatchNodeRemoteLoginSettingsResult:
         """Gets the settings required for remote login to a Compute Node.
 
         Before you can remotely login to a Compute Node using the remote login
@@ -8792,22 +7488,15 @@ class BatchNodesOperations:
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
-        :return: BatchNodeGetRemoteLoginSettingsResult. The BatchNodeGetRemoteLoginSettingsResult is
+        :return: BatchNodeRemoteLoginSettingsResult. The BatchNodeRemoteLoginSettingsResult is
          compatible with MutableMapping
-        :rtype: ~azure.batch.models.BatchNodeGetRemoteLoginSettingsResult
+        :rtype: ~azure.batch.models.BatchNodeRemoteLoginSettingsResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -8821,14 +7510,12 @@ class BatchNodesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.BatchNodeGetRemoteLoginSettingsResult] = kwargs.pop("cls", None)
+        cls: ClsType[_models.BatchNodeRemoteLoginSettingsResult] = kwargs.pop("cls", None)
 
         request = build_batch_nodes_get_remote_login_settings_request(
             pool_id=pool_id,
             node_id=node_id,
             time_out=time_out,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
             api_version=self._config.api_version,
             headers=_headers,
@@ -8844,6 +7531,8 @@ class BatchNodesOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.BatchError, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -8857,7 +7546,7 @@ class BatchNodesOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.BatchNodeGetRemoteLoginSettingsResult, response.json())
+            deserialized = _deserialize(_models.BatchNodeRemoteLoginSettingsResult, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -8871,8 +7560,6 @@ class BatchNodesOperations:
         node_id: str,
         *,
         time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
         **kwargs: Any
     ) -> bytes:
@@ -8891,13 +7578,6 @@ class BatchNodesOperations:
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -8925,8 +7605,6 @@ class BatchNodesOperations:
             pool_id=pool_id,
             node_id=node_id,
             time_out=time_out,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
             api_version=self._config.api_version,
             headers=_headers,
@@ -8942,6 +7620,8 @@ class BatchNodesOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.BatchError, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -8970,8 +7650,6 @@ class BatchNodesOperations:
         parameters: _models.UploadBatchServiceLogsConfiguration,
         *,
         time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
         **kwargs: Any
     ) -> _models.UploadBatchServiceLogsResult:
@@ -8993,13 +7671,6 @@ class BatchNodesOperations:
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -9036,8 +7707,6 @@ class BatchNodesOperations:
             pool_id=pool_id,
             node_id=node_id,
             time_out=time_out,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -9055,6 +7724,8 @@ class BatchNodesOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.BatchError, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -9081,8 +7752,6 @@ class BatchNodesOperations:
         maxresults: Optional[int] = None,
         ocp_date: Optional[str] = None,
         time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
         filter: Optional[str] = None,
         select: Optional[str] = None,
         **kwargs: Any
@@ -9103,13 +7772,6 @@ class BatchNodesOperations:
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
         :keyword filter: An OData $filter clause. For more information on constructing this filter, see
         https://docs.microsoft.com/en-us/rest/api/batchservice/odata-filters-in-batch#list-nodes-in-a-pool.
          Default value is None.
@@ -9141,8 +7803,6 @@ class BatchNodesOperations:
                     maxresults=maxresults,
                     ocp_date=ocp_date,
                     time_out=time_out,
-                    client_request_id=client_request_id,
-                    return_client_request_id=return_client_request_id,
                     filter=filter,
                     select=select,
                     api_version=self._config.api_version,
@@ -9185,6 +7845,8 @@ class BatchNodesOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
+                if _stream:
+                    await response.read()  # Load the body in memory and close the socket
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 error = _deserialize(_models.BatchError, response.json())
                 raise HttpResponseError(response=response, model=error)
@@ -9201,8 +7863,6 @@ class BatchNodesOperations:
         extension_name: str,
         *,
         time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
         select: Optional[str] = None,
         **kwargs: Any
@@ -9222,13 +7882,6 @@ class BatchNodesOperations:
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -9259,8 +7912,6 @@ class BatchNodesOperations:
             node_id=node_id,
             extension_name=extension_name,
             time_out=time_out,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
             select=select,
             api_version=self._config.api_version,
@@ -9277,6 +7928,8 @@ class BatchNodesOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.BatchError, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -9306,8 +7959,6 @@ class BatchNodesOperations:
         maxresults: Optional[int] = None,
         ocp_date: Optional[str] = None,
         time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
         select: Optional[str] = None,
         **kwargs: Any
     ) -> AsyncIterable["_models.NodeVMExtension"]:
@@ -9329,13 +7980,6 @@ class BatchNodesOperations:
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
         :keyword select: An OData $select clause. Default value is None.
         :paramtype select: str
         :return: An iterator like instance of NodeVMExtension
@@ -9364,8 +8008,6 @@ class BatchNodesOperations:
                     maxresults=maxresults,
                     ocp_date=ocp_date,
                     time_out=time_out,
-                    client_request_id=client_request_id,
-                    return_client_request_id=return_client_request_id,
                     select=select,
                     api_version=self._config.api_version,
                     headers=_headers,
@@ -9407,6 +8049,427 @@ class BatchNodesOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
+                if _stream:
+                    await response.read()  # Load the body in memory and close the socket
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _deserialize(_models.BatchError, response.json())
+                raise HttpResponseError(response=response, model=error)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @distributed_trace_async
+    async def delete_file_from_batch_node(  # pylint: disable=inconsistent-return-statements
+        self,
+        pool_id: str,
+        node_id: str,
+        file_path: str,
+        *,
+        time_out: Optional[int] = None,
+        ocp_date: Optional[str] = None,
+        recursive: Optional[bool] = None,
+        **kwargs: Any
+    ) -> None:
+        """Deletes the specified file from the Compute Node.
+
+        Deletes the specified file from the Compute Node.
+
+        :param pool_id: The ID of the Pool that contains the Compute Node. Required.
+        :type pool_id: str
+        :param node_id: The ID of the Compute Node from which you want to delete the file. Required.
+        :type node_id: str
+        :param file_path: The path to the file or directory that you want to delete. Required.
+        :type file_path: str
+        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
+         applications can be returned. Default value is None.
+        :paramtype time_out: int
+        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
+         current system clock time; set it explicitly if you are calling the REST API
+         directly. Default value is None.
+        :paramtype ocp_date: str
+        :keyword recursive: Whether to delete children of a directory. If the filePath parameter
+         represents
+         a directory instead of a file, you can set recursive to true to delete the
+         directory and all of the files and subdirectories in it. If recursive is false
+         then the directory must be empty or deletion will fail. Default value is None.
+        :paramtype recursive: bool
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        request = build_batch_nodes_delete_file_from_batch_node_request(
+            pool_id=pool_id,
+            node_id=node_id,
+            file_path=file_path,
+            time_out=time_out,
+            ocp_date=ocp_date,
+            recursive=recursive,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        request.url = self._client.format_url(request.url)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _deserialize(_models.BatchError, response.json())
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
+        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+
+        if cls:
+            return cls(pipeline_response, None, response_headers)
+
+    @distributed_trace_async
+    async def get_file_from_batch_node(
+        self,
+        pool_id: str,
+        node_id: str,
+        file_path: str,
+        *,
+        time_out: Optional[int] = None,
+        ocp_date: Optional[str] = None,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
+        ocp_range: Optional[str] = None,
+        **kwargs: Any
+    ) -> bytes:
+        """Returns the content of the specified Compute Node file.
+
+        :param pool_id: The ID of the Pool that contains the Compute Node. Required.
+        :type pool_id: str
+        :param node_id: The ID of the Compute Node from which you want to delete the file. Required.
+        :type node_id: str
+        :param file_path: The path to the file or directory that you want to delete. Required.
+        :type file_path: str
+        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
+         applications can be returned. Default value is None.
+        :paramtype time_out: int
+        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
+         current system clock time; set it explicitly if you are calling the REST API
+         directly. Default value is None.
+        :paramtype ocp_date: str
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
+         to the
+         client. The operation will be performed only if the resource on the service has
+         been modified since the specified time. Default value is None.
+        :paramtype if_modified_since: str
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
+         known to the
+         client. The operation will be performed only if the resource on the service has
+         not been modified since the specified time. Default value is None.
+        :paramtype if_unmodified_since: str
+        :keyword ocp_range: The byte range to be retrieved. The default is to retrieve the entire file.
+         The
+         format is bytes=startRange-endRange. Default value is None.
+        :paramtype ocp_range: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
+        :return: bytes
+        :rtype: bytes
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[bytes] = kwargs.pop("cls", None)
+
+        request = build_batch_nodes_get_file_from_batch_node_request(
+            pool_id=pool_id,
+            node_id=node_id,
+            file_path=file_path,
+            time_out=time_out,
+            ocp_date=ocp_date,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
+            ocp_range=ocp_range,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        request.url = self._client.format_url(request.url)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _deserialize(_models.BatchError, response.json())
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
+        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
+        response_headers["last-modified"] = self._deserialize("str", response.headers.get("last-modified"))
+        response_headers["ocp-creation-time"] = self._deserialize("str", response.headers.get("ocp-creation-time"))
+        response_headers["ocp-batch-file-isdirectory"] = self._deserialize(
+            "bool", response.headers.get("ocp-batch-file-isdirectory")
+        )
+        response_headers["ocp-batch-file-url"] = self._deserialize("str", response.headers.get("ocp-batch-file-url"))
+        response_headers["ocp-batch-file-mode"] = self._deserialize("str", response.headers.get("ocp-batch-file-mode"))
+        response_headers["content-length"] = self._deserialize("int", response.headers.get("content-length"))
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(bytes, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def get_file_properties_from_batch_node(
+        self,
+        pool_id: str,
+        node_id: str,
+        file_path: str,
+        *,
+        time_out: Optional[int] = None,
+        ocp_date: Optional[str] = None,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
+        **kwargs: Any
+    ) -> bool:
+        """Gets the properties of the specified Compute Node file.
+
+        :param pool_id: The ID of the Pool that contains the Compute Node. Required.
+        :type pool_id: str
+        :param node_id: The ID of the Compute Node from which you want to delete the file. Required.
+        :type node_id: str
+        :param file_path: The path to the file or directory that you want to delete. Required.
+        :type file_path: str
+        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
+         applications can be returned. Default value is None.
+        :paramtype time_out: int
+        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
+         current system clock time; set it explicitly if you are calling the REST API
+         directly. Default value is None.
+        :paramtype ocp_date: str
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
+         to the
+         client. The operation will be performed only if the resource on the service has
+         been modified since the specified time. Default value is None.
+        :paramtype if_modified_since: str
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
+         known to the
+         client. The operation will be performed only if the resource on the service has
+         not been modified since the specified time. Default value is None.
+        :paramtype if_unmodified_since: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
+        :return: bool
+        :rtype: bool
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        request = build_batch_nodes_get_file_properties_from_batch_node_request(
+            pool_id=pool_id,
+            node_id=node_id,
+            file_path=file_path,
+            time_out=time_out,
+            ocp_date=ocp_date,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        request.url = self._client.format_url(request.url)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _deserialize(_models.BatchError, response.json())
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
+        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
+        response_headers["last-modified"] = self._deserialize("str", response.headers.get("last-modified"))
+        response_headers["ocp-creation-time"] = self._deserialize("str", response.headers.get("ocp-creation-time"))
+        response_headers["ocp-batch-file-isdirectory"] = self._deserialize(
+            "bool", response.headers.get("ocp-batch-file-isdirectory")
+        )
+        response_headers["ocp-batch-file-url"] = self._deserialize("str", response.headers.get("ocp-batch-file-url"))
+        response_headers["ocp-batch-file-mode"] = self._deserialize("str", response.headers.get("ocp-batch-file-mode"))
+        response_headers["content-length"] = self._deserialize("int", response.headers.get("content-length"))
+
+        if cls:
+            return cls(pipeline_response, None, response_headers)
+        return 200 <= response.status_code <= 299
+
+    @distributed_trace
+    def list_files_from_batch_node(
+        self,
+        pool_id: str,
+        node_id: str,
+        *,
+        maxresults: Optional[int] = None,
+        ocp_date: Optional[str] = None,
+        time_out: Optional[int] = None,
+        filter: Optional[str] = None,
+        recursive: Optional[bool] = None,
+        **kwargs: Any
+    ) -> AsyncIterable["_models.NodeFile"]:
+        """Lists all of the files in Task directories on the specified Compute Node.
+
+        Lists all of the files in Task directories on the specified Compute Node.
+
+        :param pool_id: The ID of the Pool that contains the Compute Node. Required.
+        :type pool_id: str
+        :param node_id: The ID of the Compute Node whose files you want to list. Required.
+        :type node_id: str
+        :keyword maxresults: The maximum number of items to return in the response. A maximum of 1000
+         applications can be returned. Default value is None.
+        :paramtype maxresults: int
+        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
+         current system clock time; set it explicitly if you are calling the REST API
+         directly. Default value is None.
+        :paramtype ocp_date: str
+        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
+         applications can be returned. Default value is None.
+        :paramtype time_out: int
+        :keyword filter: An OData $filter clause. For more information on constructing this filter, see
+        https://docs.microsoft.com/en-us/rest/api/batchservice/odata-filters-in-batch#list-compute-node-files.
+         Default value is None.
+        :paramtype filter: str
+        :keyword recursive: Whether to list children of a directory. Default value is None.
+        :paramtype recursive: bool
+        :return: An iterator like instance of NodeFile
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.batch.models.NodeFile]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.NodeFile]] = kwargs.pop("cls", None)
+
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                request = build_batch_nodes_list_files_from_batch_node_request(
+                    pool_id=pool_id,
+                    node_id=node_id,
+                    maxresults=maxresults,
+                    ocp_date=ocp_date,
+                    time_out=time_out,
+                    filter=filter,
+                    recursive=recursive,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                request.url = self._client.format_url(request.url)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
+                request.url = self._client.format_url(request.url)
+
+            return request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(List[_models.NodeFile], deserialized["value"])
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("odata.nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                if _stream:
+                    await response.read()  # Load the body in memory and close the socket
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 error = _deserialize(_models.BatchError, response.json())
                 raise HttpResponseError(response=response, model=error)

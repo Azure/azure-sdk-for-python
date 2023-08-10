@@ -11,7 +11,6 @@ from ._operations import PoolOperations
 from ._operations import AccountOperations
 from ._operations import JobOperations
 from ._operations import CertificatesOperations
-from ._operations import FileOperations
 from ._operations import JobScheduleOperations
 from ._operations import TaskOperations
 from ._operations import BatchNodesOperations
@@ -26,7 +25,6 @@ __all__ = [
     "AccountOperations",
     "JobOperations",
     "CertificatesOperations",
-    "FileOperations",
     "JobScheduleOperations",
     "TaskOperations",
     "BatchNodesOperations",
