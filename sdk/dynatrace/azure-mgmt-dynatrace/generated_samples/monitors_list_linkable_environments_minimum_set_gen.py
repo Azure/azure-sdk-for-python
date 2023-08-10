@@ -14,7 +14,7 @@ from azure.mgmt.dynatrace import DynatraceObservabilityMgmtClient
     pip install azure-identity
     pip install azure-mgmt-dynatrace
 # USAGE
-    python monitors_get_account_credentials_minimum_set_gen.py
+    python monitors_list_linkable_environments_minimum_set_gen.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,13 +29,19 @@ def main():
         subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
-    response = client.monitors.get_account_credentials(
+    response = client.monitors.list_linkable_environments(
         resource_group_name="myResourceGroup",
         monitor_name="myMonitor",
+        request={
+            "region": "East US",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "userPrincipal": "alice@microsoft.com",
+        },
     )
-    print(response)
+    for item in response:
+        print(item)
 
 
-# x-ms-original-file: specification/dynatrace/resource-manager/Dynatrace.Observability/stable/2021-09-01/examples/Monitors_GetAccountCredentials_MinimumSet_Gen.json
+# x-ms-original-file: specification/dynatrace/resource-manager/Dynatrace.Observability/stable/2023-04-27/examples/Monitors_ListLinkableEnvironments_MinimumSet_Gen.json
 if __name__ == "__main__":
     main()

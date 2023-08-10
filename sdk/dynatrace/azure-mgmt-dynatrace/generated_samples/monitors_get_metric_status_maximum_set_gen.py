@@ -14,7 +14,7 @@ from azure.mgmt.dynatrace import DynatraceObservabilityMgmtClient
     pip install azure-identity
     pip install azure-mgmt-dynatrace
 # USAGE
-    python tag_rules_update_maximum_set_gen.py
+    python monitors_get_metric_status_maximum_set_gen.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -26,29 +26,16 @@ from azure.mgmt.dynatrace import DynatraceObservabilityMgmtClient
 def main():
     client = DynatraceObservabilityMgmtClient(
         credential=DefaultAzureCredential(),
-        subscription_id="00000000-0000-0000-0000-000000000000",
+        subscription_id="nqmcgifgaqlf",
     )
 
-    response = client.tag_rules.update(
-        resource_group_name="myResourceGroup",
-        monitor_name="myMonitor",
-        rule_set_name="default",
-        resource={
-            "logRules": {
-                "filteringTags": [
-                    {"action": "Include", "name": "Environment", "value": "Prod"},
-                    {"action": "Exclude", "name": "Environment", "value": "Dev"},
-                ],
-                "sendAadLogs": "Enabled",
-                "sendActivityLogs": "Enabled",
-                "sendSubscriptionLogs": "Enabled",
-            },
-            "metricRules": {"filteringTags": [{"action": "Include", "name": "Environment", "value": "Prod"}]},
-        },
+    response = client.monitors.get_metric_status(
+        resource_group_name="rgDynatrace",
+        monitor_name="fhcjxnxumkdlgpwanewtkdnyuz",
     )
     print(response)
 
 
-# x-ms-original-file: specification/dynatrace/resource-manager/Dynatrace.Observability/stable/2021-09-01/examples/TagRules_Update_MaximumSet_Gen.json
+# x-ms-original-file: specification/dynatrace/resource-manager/Dynatrace.Observability/stable/2023-04-27/examples/Monitors_GetMetricStatus_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

@@ -32,29 +32,11 @@ def main():
     response = client.monitors.update(
         resource_group_name="myResourceGroup",
         monitor_name="myMonitor",
-        resource={
-            "dynatraceEnvironmentProperties": {"accountInfo": {}, "environmentInfo": {}, "singleSignOnProperties": {}},
-            "marketplaceSubscriptionStatus": "Active",
-            "monitoringStatus": "Enabled",
-            "planData": {
-                "billingCycle": "Monthly",
-                "effectiveDate": "2019-08-30T15:14:33+02:00",
-                "planDetails": "dynatraceapitestplan",
-                "usageType": "Committed",
-            },
-            "tags": {"Environment": "Dev"},
-            "userInfo": {
-                "country": "westus2",
-                "emailAddress": "alice@microsoft.com",
-                "firstName": "Alice",
-                "lastName": "Bobab",
-                "phoneNumber": "123456",
-            },
-        },
+        resource={"tags": {"Environment": "Dev"}},
     )
     print(response)
 
 
-# x-ms-original-file: specification/dynatrace/resource-manager/Dynatrace.Observability/stable/2021-09-01/examples/Monitors_Update_MaximumSet_Gen.json
+# x-ms-original-file: specification/dynatrace/resource-manager/Dynatrace.Observability/stable/2023-04-27/examples/Monitors_Update_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

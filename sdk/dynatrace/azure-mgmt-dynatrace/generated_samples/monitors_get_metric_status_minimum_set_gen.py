@@ -14,7 +14,7 @@ from azure.mgmt.dynatrace import DynatraceObservabilityMgmtClient
     pip install azure-identity
     pip install azure-mgmt-dynatrace
 # USAGE
-    python monitors_get_minimum_set_gen.py
+    python monitors_get_metric_status_minimum_set_gen.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -26,16 +26,16 @@ from azure.mgmt.dynatrace import DynatraceObservabilityMgmtClient
 def main():
     client = DynatraceObservabilityMgmtClient(
         credential=DefaultAzureCredential(),
-        subscription_id="00000000-0000-0000-0000-000000000000",
+        subscription_id="nqmcgifgaqlf",
     )
 
-    response = client.monitors.get(
-        resource_group_name="myResourceGroup",
-        monitor_name="myMonitor",
+    response = client.monitors.get_metric_status(
+        resource_group_name="rgDynatrace",
+        monitor_name="fhcjxnxumkdlgpwanewtkdnyuz",
     )
     print(response)
 
 
-# x-ms-original-file: specification/dynatrace/resource-manager/Dynatrace.Observability/stable/2023-04-27/examples/Monitors_Get_MinimumSet_Gen.json
+# x-ms-original-file: specification/dynatrace/resource-manager/Dynatrace.Observability/stable/2023-04-27/examples/Monitors_GetMetricStatus_MinimumSet_Gen.json
 if __name__ == "__main__":
     main()
