@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/connections/e2etest_wps_conn_test_805699089930?api-version=2022-12-01-preview",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/connections/e2etest_wps_conn_test_59468987575?api-version=2023-06-01-preview",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -9,7 +9,7 @@
         "Connection": "keep-alive",
         "Content-Length": "130",
         "Content-Type": "application/json",
-        "User-Agent": "azure-ai-ml/1.6.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.10.6 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azure-ai-ml/1.9.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.10.8 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.31)"
       },
       "RequestBody": {
         "properties": {
@@ -26,30 +26,29 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 15 Mar 2023 15:02:31 GMT",
+        "Date": "Mon, 31 Jul 2023 16:02:14 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
-        "request-context": "appId=cid-v1:512cc15a-13b5-415b-bfd0-dce7accb6bb1",
-        "Server-Timing": "traceparent;desc=\u002200-27a9d2667827889b6f6be8525ec6a6a1-201114e18b1940c2-01\u0022",
+        "Request-Context": "appId=cid-v1:2d2e8e63-272e-4b3c-8598-4ee570a0e70d",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "Vary": [
           "Accept-Encoding",
           "Accept-Encoding"
         ],
-        "x-aml-cluster": "vienna-test-westus2-01",
+        "x-aml-cluster": "vienna-eastus2-01",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "e04a5ce4-de5e-40e6-b795-5176aa82bc1e",
+        "x-ms-correlation-request-id": "e780c362-a8b5-45ae-8971-f6bf465ea0c1",
         "x-ms-ratelimit-remaining-subscription-writes": "1197",
         "x-ms-response-type": "standard",
-        "x-ms-routing-request-id": "WESTCENTRALUS:20230315T150231Z:e04a5ce4-de5e-40e6-b795-5176aa82bc1e",
-        "x-request-time": "1.183"
+        "x-ms-routing-request-id": "CANADACENTRAL:20230731T160214Z:e780c362-a8b5-45ae-8971-f6bf465ea0c1",
+        "x-request-time": "0.225"
       },
       "ResponseBody": {
         "tags": null,
         "location": null,
-        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/connections/e2etest_wps_conn_test_805699089930",
-        "name": "e2etest_wps_conn_test_805699089930",
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/connections/e2etest_wps_conn_test_59468987575",
+        "name": "e2etest_wps_conn_test_59468987575",
         "type": "Microsoft.MachineLearningServices/workspaces/connections",
         "properties": {
           "authType": "PAT",
@@ -57,26 +56,34 @@
           "category": "Git",
           "expiryTime": null,
           "target": "https://test-git-feed.com",
-          "metadata": null
+          "metadata": {}
         },
-        "systemData": null
+        "systemData": {
+          "createdAt": "2023-07-31T16:02:14.7172333Z",
+          "createdBy": "milesholland@microsoft.com",
+          "createdByType": "User",
+          "lastModifiedAt": "2023-07-31T16:02:14.7172333Z",
+          "lastModifiedBy": "milesholland@microsoft.com",
+          "lastModifiedByType": "User"
+        }
       }
     },
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/connections/e2etest_wps_conn_test_805699089930?api-version=2022-12-01-preview",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/connections/e2etest_wps_conn_test_59468987575?api-version=2023-06-01-preview",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "138",
+        "Content-Length": "154",
         "Content-Type": "application/json",
-        "User-Agent": "azure-ai-ml/1.6.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.10.6 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azure-ai-ml/1.9.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.10.8 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.31)"
       },
       "RequestBody": {
         "properties": {
           "authType": "PAT",
           "category": "Git",
+          "metadata": {},
           "target": "https://test-git-feed.com",
           "credentials": {
             "pat": "dummpy_pat_update"
@@ -88,30 +95,29 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 15 Mar 2023 15:02:32 GMT",
+        "Date": "Mon, 31 Jul 2023 16:02:15 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
-        "request-context": "appId=cid-v1:512cc15a-13b5-415b-bfd0-dce7accb6bb1",
-        "Server-Timing": "traceparent;desc=\u002200-d2b6d8f005d8f174a17690e8f6e1af3c-4871d393ccab7c52-01\u0022",
+        "Request-Context": "appId=cid-v1:2d2e8e63-272e-4b3c-8598-4ee570a0e70d",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "Vary": [
           "Accept-Encoding",
           "Accept-Encoding"
         ],
-        "x-aml-cluster": "vienna-test-westus2-01",
+        "x-aml-cluster": "vienna-eastus2-01",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "3a945651-7e8c-4af0-a22c-7dd790b29dc9",
+        "x-ms-correlation-request-id": "3709bc21-5063-4aa2-aedc-aff5e69b81ac",
         "x-ms-ratelimit-remaining-subscription-writes": "1196",
         "x-ms-response-type": "standard",
-        "x-ms-routing-request-id": "WESTCENTRALUS:20230315T150232Z:3a945651-7e8c-4af0-a22c-7dd790b29dc9",
-        "x-request-time": "0.269"
+        "x-ms-routing-request-id": "CANADACENTRAL:20230731T160215Z:3709bc21-5063-4aa2-aedc-aff5e69b81ac",
+        "x-request-time": "0.658"
       },
       "ResponseBody": {
         "tags": null,
         "location": null,
-        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/connections/e2etest_wps_conn_test_805699089930",
-        "name": "e2etest_wps_conn_test_805699089930",
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/connections/e2etest_wps_conn_test_59468987575",
+        "name": "e2etest_wps_conn_test_59468987575",
         "type": "Microsoft.MachineLearningServices/workspaces/connections",
         "properties": {
           "authType": "PAT",
@@ -119,19 +125,26 @@
           "category": "Git",
           "expiryTime": null,
           "target": "https://test-git-feed.com",
-          "metadata": null
+          "metadata": {}
         },
-        "systemData": null
+        "systemData": {
+          "createdAt": "2023-07-31T16:02:15.1078884Z",
+          "createdBy": "milesholland@microsoft.com",
+          "createdByType": "User",
+          "lastModifiedAt": "2023-07-31T16:02:15.1078884Z",
+          "lastModifiedBy": "milesholland@microsoft.com",
+          "lastModifiedByType": "User"
+        }
       }
     },
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/connections/e2etest_wps_conn_test_805699089930?api-version=2022-12-01-preview",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/connections/e2etest_wps_conn_test_59468987575?api-version=2023-06-01-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azure-ai-ml/1.6.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.10.6 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azure-ai-ml/1.9.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.10.8 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.31)"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -139,30 +152,29 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 15 Mar 2023 15:02:32 GMT",
+        "Date": "Mon, 31 Jul 2023 16:02:15 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
-        "request-context": "appId=cid-v1:512cc15a-13b5-415b-bfd0-dce7accb6bb1",
-        "Server-Timing": "traceparent;desc=\u002200-717832d323093d8d58cfdffb56f2ca1f-5db3e6f295c0d0ae-01\u0022",
+        "Request-Context": "appId=cid-v1:2d2e8e63-272e-4b3c-8598-4ee570a0e70d",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "Vary": [
           "Accept-Encoding",
           "Accept-Encoding"
         ],
-        "x-aml-cluster": "vienna-test-westus2-01",
+        "x-aml-cluster": "vienna-eastus2-01",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "e914f192-45e7-46d9-8642-39bdd484cbf3",
+        "x-ms-correlation-request-id": "6ed7381a-b2ce-4985-8fe7-0689315e7985",
         "x-ms-ratelimit-remaining-subscription-reads": "11996",
         "x-ms-response-type": "standard",
-        "x-ms-routing-request-id": "WESTCENTRALUS:20230315T150232Z:e914f192-45e7-46d9-8642-39bdd484cbf3",
-        "x-request-time": "0.021"
+        "x-ms-routing-request-id": "CANADACENTRAL:20230731T160215Z:6ed7381a-b2ce-4985-8fe7-0689315e7985",
+        "x-request-time": "0.028"
       },
       "ResponseBody": {
         "tags": null,
         "location": null,
-        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/connections/e2etest_wps_conn_test_805699089930",
-        "name": "e2etest_wps_conn_test_805699089930",
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/connections/e2etest_wps_conn_test_59468987575",
+        "name": "e2etest_wps_conn_test_59468987575",
         "type": "Microsoft.MachineLearningServices/workspaces/connections",
         "properties": {
           "authType": "PAT",
@@ -170,50 +182,56 @@
           "category": "Git",
           "expiryTime": null,
           "target": "https://test-git-feed.com",
-          "metadata": null
+          "metadata": {}
         },
-        "systemData": null
+        "systemData": {
+          "createdAt": "2023-07-31T16:02:15.1078884Z",
+          "createdBy": "milesholland@microsoft.com",
+          "createdByType": "User",
+          "lastModifiedAt": "2023-07-31T16:02:15.1078884Z",
+          "lastModifiedBy": "milesholland@microsoft.com",
+          "lastModifiedByType": "User"
+        }
       }
     },
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/connections/e2etest_wps_conn_test_805699089930?api-version=2022-12-01-preview",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/connections/e2etest_wps_conn_test_59468987575?api-version=2023-06-01-preview",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "Content-Length": "0",
-        "User-Agent": "azure-ai-ml/1.6.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.10.6 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azure-ai-ml/1.9.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.10.8 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.31)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
         "Content-Length": "0",
-        "Date": "Wed, 15 Mar 2023 15:02:33 GMT",
+        "Date": "Mon, 31 Jul 2023 16:02:15 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
-        "request-context": "appId=cid-v1:512cc15a-13b5-415b-bfd0-dce7accb6bb1",
-        "Server-Timing": "traceparent;desc=\u002200-a568a9fb1f9ea09acfdb3782047d15f1-6299cd56bb99fbad-01\u0022",
+        "Request-Context": "appId=cid-v1:2d2e8e63-272e-4b3c-8598-4ee570a0e70d",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-        "x-aml-cluster": "vienna-test-westus2-01",
+        "x-aml-cluster": "vienna-eastus2-01",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "47a0ea0f-97cc-4725-83f8-65f679f99f97",
+        "x-ms-correlation-request-id": "6f2df6ae-2f08-4c7b-b1b7-ad7a5d2a64ac",
         "x-ms-ratelimit-remaining-subscription-deletes": "14998",
         "x-ms-response-type": "standard",
-        "x-ms-routing-request-id": "WESTCENTRALUS:20230315T150233Z:47a0ea0f-97cc-4725-83f8-65f679f99f97",
-        "x-request-time": "0.287"
+        "x-ms-routing-request-id": "CANADACENTRAL:20230731T160216Z:6f2df6ae-2f08-4c7b-b1b7-ad7a5d2a64ac",
+        "x-request-time": "0.164"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/connections/e2etest_wps_conn_test_805699089930?api-version=2022-12-01-preview",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/connections/e2etest_wps_conn_test_59468987575?api-version=2023-06-01-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azure-ai-ml/1.6.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.10.6 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azure-ai-ml/1.9.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.10.8 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.31)"
       },
       "RequestBody": null,
       "StatusCode": 404,
@@ -221,25 +239,25 @@
         "Cache-Control": "no-cache",
         "Content-Length": "688",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 15 Mar 2023 15:02:33 GMT",
+        "Date": "Mon, 31 Jul 2023 16:02:15 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
-        "request-context": "appId=cid-v1:512cc15a-13b5-415b-bfd0-dce7accb6bb1",
+        "Request-Context": "appId=cid-v1:2d2e8e63-272e-4b3c-8598-4ee570a0e70d",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Vary": "Accept-Encoding",
-        "x-aml-cluster": "vienna-test-westus2-01",
+        "x-aml-cluster": "vienna-eastus2-01",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "160d1de4-577d-45cd-ad4a-73d6bd6d49a8",
+        "x-ms-correlation-request-id": "34719d4f-5d58-45f5-bbf3-47af743e65a8",
         "x-ms-ratelimit-remaining-subscription-reads": "11995",
         "x-ms-response-type": "error",
-        "x-ms-routing-request-id": "WESTCENTRALUS:20230315T150233Z:160d1de4-577d-45cd-ad4a-73d6bd6d49a8",
-        "x-request-time": "0.038"
+        "x-ms-routing-request-id": "CANADACENTRAL:20230731T160216Z:34719d4f-5d58-45f5-bbf3-47af743e65a8",
+        "x-request-time": "0.037"
       },
       "ResponseBody": {
         "error": {
           "code": "UserError",
           "severity": null,
-          "message": "Connection e2etest_wps_conn_test_805699089930 can\u0027t be found in this workspace",
+          "message": "Connection e2etest_wps_conn_test_59468987575 can\u0027t be found in this workspace",
           "messageFormat": null,
           "messageParameters": null,
           "referenceCode": null,
@@ -254,23 +272,23 @@
           "additionalInfo": null
         },
         "correlation": {
-          "operation": "6adb629774ff8e25f4a02e8117c7b171",
-          "request": "a189b3547e467941"
+          "operation": "780f2a9e22503d83979242c8d6f75047",
+          "request": "b7d87517fe07bcde"
         },
-        "environment": "master",
-        "location": "westus2",
-        "time": "2023-03-15T15:02:33.2675796\u002B00:00",
+        "environment": "eastus2",
+        "location": "eastus2",
+        "time": "2023-07-31T16:02:16.4171561\u002B00:00",
         "componentName": "account-rp"
       }
     },
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/connections?category=Git\u0026api-version=2022-12-01-preview",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/connections?category=Git\u0026api-version=2023-06-01-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azure-ai-ml/1.6.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.10.6 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azure-ai-ml/1.9.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.10.8 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.31)"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -278,28 +296,445 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 15 Mar 2023 15:02:33 GMT",
+        "Date": "Mon, 31 Jul 2023 16:02:16 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
-        "request-context": "appId=cid-v1:512cc15a-13b5-415b-bfd0-dce7accb6bb1",
-        "Server-Timing": "traceparent;desc=\u002200-033a12d09416a8b4d02d5d22b2108656-f89e28b5eb4efe99-01\u0022",
+        "Request-Context": "appId=cid-v1:2d2e8e63-272e-4b3c-8598-4ee570a0e70d",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
-        "Vary": "Accept-Encoding",
-        "x-aml-cluster": "vienna-test-westus2-01",
+        "Vary": [
+          "Accept-Encoding",
+          "Accept-Encoding"
+        ],
+        "x-aml-cluster": "vienna-eastus2-01",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "d3da2013-3bbb-4f97-8c14-2a4f1f68e758",
+        "x-ms-correlation-request-id": "7359f654-f03f-4d71-bfd9-6151af1287a5",
         "x-ms-ratelimit-remaining-subscription-reads": "11994",
         "x-ms-response-type": "standard",
-        "x-ms-routing-request-id": "WESTCENTRALUS:20230315T150233Z:d3da2013-3bbb-4f97-8c14-2a4f1f68e758",
-        "x-request-time": "0.016"
+        "x-ms-routing-request-id": "CANADACENTRAL:20230731T160216Z:7359f654-f03f-4d71-bfd9-6151af1287a5",
+        "x-request-time": "0.029"
       },
       "ResponseBody": {
-        "value": []
+        "value": [
+          {
+            "tags": null,
+            "location": null,
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/connections/e2etest_wps_conn_test_498820302179",
+            "name": "e2etest_wps_conn_test_498820302179",
+            "type": "Microsoft.MachineLearningServices/workspaces/connections",
+            "properties": {
+              "authType": "PAT",
+              "credentials": null,
+              "category": "Git",
+              "expiryTime": null,
+              "target": "https://test-git-feed.com",
+              "metadata": {}
+            },
+            "systemData": {
+              "createdAt": "2023-07-20T19:43:03.2249702Z",
+              "createdBy": "milesholland@microsoft.com",
+              "createdByType": "User",
+              "lastModifiedAt": "2023-07-20T19:43:03.2249702Z",
+              "lastModifiedBy": "milesholland@microsoft.com",
+              "lastModifiedByType": "User"
+            }
+          },
+          {
+            "tags": null,
+            "location": null,
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/connections/e2etest_wps_conn_test_664497690644",
+            "name": "e2etest_wps_conn_test_664497690644",
+            "type": "Microsoft.MachineLearningServices/workspaces/connections",
+            "properties": {
+              "authType": "UsernamePassword",
+              "credentials": null,
+              "category": "Git",
+              "expiryTime": null,
+              "target": "https://test-git-feed.com",
+              "metadata": {}
+            },
+            "systemData": {
+              "createdAt": "2023-07-20T19:43:05.2249093Z",
+              "createdBy": "milesholland@microsoft.com",
+              "createdByType": "User",
+              "lastModifiedAt": "2023-07-20T19:43:05.2249093Z",
+              "lastModifiedBy": "milesholland@microsoft.com",
+              "lastModifiedByType": "User"
+            }
+          },
+          {
+            "tags": null,
+            "location": null,
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/connections/e2etest_wps_conn_test_657904037709",
+            "name": "e2etest_wps_conn_test_657904037709",
+            "type": "Microsoft.MachineLearningServices/workspaces/connections",
+            "properties": {
+              "authType": "PAT",
+              "credentials": null,
+              "category": "Git",
+              "expiryTime": null,
+              "target": "https://test-git-feed.com",
+              "metadata": {}
+            },
+            "systemData": {
+              "createdAt": "2023-07-20T20:01:37.8513535Z",
+              "createdBy": "milesholland@microsoft.com",
+              "createdByType": "User",
+              "lastModifiedAt": "2023-07-20T20:01:37.8513535Z",
+              "lastModifiedBy": "milesholland@microsoft.com",
+              "lastModifiedByType": "User"
+            }
+          },
+          {
+            "tags": null,
+            "location": null,
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/connections/e2etest_wps_conn_test_284334639882",
+            "name": "e2etest_wps_conn_test_284334639882",
+            "type": "Microsoft.MachineLearningServices/workspaces/connections",
+            "properties": {
+              "authType": "UsernamePassword",
+              "credentials": null,
+              "category": "Git",
+              "expiryTime": null,
+              "target": "https://test-git-feed.com",
+              "metadata": {}
+            },
+            "systemData": {
+              "createdAt": "2023-07-20T20:01:39.9138743Z",
+              "createdBy": "milesholland@microsoft.com",
+              "createdByType": "User",
+              "lastModifiedAt": "2023-07-20T20:01:39.9138743Z",
+              "lastModifiedBy": "milesholland@microsoft.com",
+              "lastModifiedByType": "User"
+            }
+          },
+          {
+            "tags": null,
+            "location": null,
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/connections/e2etest_wps_conn_test_250712732846",
+            "name": "e2etest_wps_conn_test_250712732846",
+            "type": "Microsoft.MachineLearningServices/workspaces/connections",
+            "properties": {
+              "authType": "PAT",
+              "credentials": null,
+              "category": "Git",
+              "expiryTime": null,
+              "target": "https://test-git-feed.com",
+              "metadata": {}
+            },
+            "systemData": {
+              "createdAt": "2023-07-20T20:02:25.8641454Z",
+              "createdBy": "milesholland@microsoft.com",
+              "createdByType": "User",
+              "lastModifiedAt": "2023-07-20T20:02:25.8641454Z",
+              "lastModifiedBy": "milesholland@microsoft.com",
+              "lastModifiedByType": "User"
+            }
+          },
+          {
+            "tags": null,
+            "location": null,
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/connections/e2etest_wps_conn_test_896459571063",
+            "name": "e2etest_wps_conn_test_896459571063",
+            "type": "Microsoft.MachineLearningServices/workspaces/connections",
+            "properties": {
+              "authType": "UsernamePassword",
+              "credentials": null,
+              "category": "Git",
+              "expiryTime": null,
+              "target": "https://test-git-feed.com",
+              "metadata": {}
+            },
+            "systemData": {
+              "createdAt": "2023-07-20T20:02:27.6454084Z",
+              "createdBy": "milesholland@microsoft.com",
+              "createdByType": "User",
+              "lastModifiedAt": "2023-07-20T20:02:27.6454084Z",
+              "lastModifiedBy": "milesholland@microsoft.com",
+              "lastModifiedByType": "User"
+            }
+          },
+          {
+            "tags": null,
+            "location": null,
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/connections/e2etest_wps_conn_test_37293657365",
+            "name": "e2etest_wps_conn_test_37293657365",
+            "type": "Microsoft.MachineLearningServices/workspaces/connections",
+            "properties": {
+              "authType": "PAT",
+              "credentials": null,
+              "category": "Git",
+              "expiryTime": null,
+              "target": "https://test-git-feed.com",
+              "metadata": {}
+            },
+            "systemData": {
+              "createdAt": "2023-07-20T20:07:57.0196769Z",
+              "createdBy": "milesholland@microsoft.com",
+              "createdByType": "User",
+              "lastModifiedAt": "2023-07-20T20:07:57.0196769Z",
+              "lastModifiedBy": "milesholland@microsoft.com",
+              "lastModifiedByType": "User"
+            }
+          },
+          {
+            "tags": null,
+            "location": null,
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/connections/e2etest_wps_conn_test_747974020906",
+            "name": "e2etest_wps_conn_test_747974020906",
+            "type": "Microsoft.MachineLearningServices/workspaces/connections",
+            "properties": {
+              "authType": "UsernamePassword",
+              "credentials": null,
+              "category": "Git",
+              "expiryTime": null,
+              "target": "https://test-git-feed.com",
+              "metadata": {}
+            },
+            "systemData": {
+              "createdAt": "2023-07-20T20:07:59.0820581Z",
+              "createdBy": "milesholland@microsoft.com",
+              "createdByType": "User",
+              "lastModifiedAt": "2023-07-20T20:07:59.0820581Z",
+              "lastModifiedBy": "milesholland@microsoft.com",
+              "lastModifiedByType": "User"
+            }
+          },
+          {
+            "tags": null,
+            "location": null,
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/connections/e2etest_wps_conn_test_17725773706",
+            "name": "e2etest_wps_conn_test_17725773706",
+            "type": "Microsoft.MachineLearningServices/workspaces/connections",
+            "properties": {
+              "authType": "PAT",
+              "credentials": null,
+              "category": "Git",
+              "expiryTime": null,
+              "target": "https://test-git-feed.com",
+              "metadata": {}
+            },
+            "systemData": {
+              "createdAt": "2023-07-25T17:14:12.1308675Z",
+              "createdBy": "milesholland@microsoft.com",
+              "createdByType": "User",
+              "lastModifiedAt": "2023-07-25T17:14:12.1308675Z",
+              "lastModifiedBy": "milesholland@microsoft.com",
+              "lastModifiedByType": "User"
+            }
+          },
+          {
+            "tags": null,
+            "location": null,
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/connections/e2etest_wps_conn_test_373657280782",
+            "name": "e2etest_wps_conn_test_373657280782",
+            "type": "Microsoft.MachineLearningServices/workspaces/connections",
+            "properties": {
+              "authType": "UsernamePassword",
+              "credentials": null,
+              "category": "Git",
+              "expiryTime": null,
+              "target": "https://test-git-feed.com",
+              "metadata": {}
+            },
+            "systemData": {
+              "createdAt": "2023-07-25T17:14:14.0058947Z",
+              "createdBy": "milesholland@microsoft.com",
+              "createdByType": "User",
+              "lastModifiedAt": "2023-07-25T17:14:14.0058947Z",
+              "lastModifiedBy": "milesholland@microsoft.com",
+              "lastModifiedByType": "User"
+            }
+          },
+          {
+            "tags": null,
+            "location": null,
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/connections/e2etest_wps_conn_test_69605884047",
+            "name": "e2etest_wps_conn_test_69605884047",
+            "type": "Microsoft.MachineLearningServices/workspaces/connections",
+            "properties": {
+              "authType": "PAT",
+              "credentials": null,
+              "category": "Git",
+              "expiryTime": null,
+              "target": "https://test-git-feed.com",
+              "metadata": {}
+            },
+            "systemData": {
+              "createdAt": "2023-07-28T19:31:58.6732576Z",
+              "createdBy": "milesholland@microsoft.com",
+              "createdByType": "User",
+              "lastModifiedAt": "2023-07-28T19:31:58.6732576Z",
+              "lastModifiedBy": "milesholland@microsoft.com",
+              "lastModifiedByType": "User"
+            }
+          },
+          {
+            "tags": null,
+            "location": null,
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/connections/e2etest_wps_conn_test_375849864107",
+            "name": "e2etest_wps_conn_test_375849864107",
+            "type": "Microsoft.MachineLearningServices/workspaces/connections",
+            "properties": {
+              "authType": "UsernamePassword",
+              "credentials": null,
+              "category": "Git",
+              "expiryTime": null,
+              "target": "https://test-git-feed.com",
+              "metadata": {}
+            },
+            "systemData": {
+              "createdAt": "2023-07-28T19:32:01.0326755Z",
+              "createdBy": "milesholland@microsoft.com",
+              "createdByType": "User",
+              "lastModifiedAt": "2023-07-28T19:32:01.0326755Z",
+              "lastModifiedBy": "milesholland@microsoft.com",
+              "lastModifiedByType": "User"
+            }
+          },
+          {
+            "tags": null,
+            "location": null,
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/connections/e2etest_wps_conn_test_901481685300",
+            "name": "e2etest_wps_conn_test_901481685300",
+            "type": "Microsoft.MachineLearningServices/workspaces/connections",
+            "properties": {
+              "authType": "PAT",
+              "credentials": null,
+              "category": "Git",
+              "expiryTime": null,
+              "target": "https://test-git-feed.com",
+              "metadata": {}
+            },
+            "systemData": {
+              "createdAt": "2023-07-28T19:32:33.1484189Z",
+              "createdBy": "milesholland@microsoft.com",
+              "createdByType": "User",
+              "lastModifiedAt": "2023-07-28T19:32:33.1484189Z",
+              "lastModifiedBy": "milesholland@microsoft.com",
+              "lastModifiedByType": "User"
+            }
+          },
+          {
+            "tags": null,
+            "location": null,
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/connections/e2etest_wps_conn_test_410466685630",
+            "name": "e2etest_wps_conn_test_410466685630",
+            "type": "Microsoft.MachineLearningServices/workspaces/connections",
+            "properties": {
+              "authType": "UsernamePassword",
+              "credentials": null,
+              "category": "Git",
+              "expiryTime": null,
+              "target": "https://test-git-feed.com",
+              "metadata": {}
+            },
+            "systemData": {
+              "createdAt": "2023-07-28T19:32:35.2578093Z",
+              "createdBy": "milesholland@microsoft.com",
+              "createdByType": "User",
+              "lastModifiedAt": "2023-07-28T19:32:35.2578093Z",
+              "lastModifiedBy": "milesholland@microsoft.com",
+              "lastModifiedByType": "User"
+            }
+          },
+          {
+            "tags": null,
+            "location": null,
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/connections/e2etest_wps_conn_test_974777352713",
+            "name": "e2etest_wps_conn_test_974777352713",
+            "type": "Microsoft.MachineLearningServices/workspaces/connections",
+            "properties": {
+              "authType": "PAT",
+              "credentials": null,
+              "category": "Git",
+              "expiryTime": null,
+              "target": "https://test-git-feed.com",
+              "metadata": {}
+            },
+            "systemData": {
+              "createdAt": "2023-07-28T19:42:07.2664798Z",
+              "createdBy": "milesholland@microsoft.com",
+              "createdByType": "User",
+              "lastModifiedAt": "2023-07-28T19:42:07.2664798Z",
+              "lastModifiedBy": "milesholland@microsoft.com",
+              "lastModifiedByType": "User"
+            }
+          },
+          {
+            "tags": null,
+            "location": null,
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/connections/e2etest_wps_conn_test_772278864476",
+            "name": "e2etest_wps_conn_test_772278864476",
+            "type": "Microsoft.MachineLearningServices/workspaces/connections",
+            "properties": {
+              "authType": "UsernamePassword",
+              "credentials": null,
+              "category": "Git",
+              "expiryTime": null,
+              "target": "https://test-git-feed.com",
+              "metadata": {}
+            },
+            "systemData": {
+              "createdAt": "2023-07-28T19:42:09.3446666Z",
+              "createdBy": "milesholland@microsoft.com",
+              "createdByType": "User",
+              "lastModifiedAt": "2023-07-28T19:42:09.3446666Z",
+              "lastModifiedBy": "milesholland@microsoft.com",
+              "lastModifiedByType": "User"
+            }
+          },
+          {
+            "tags": null,
+            "location": null,
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/connections/e2etest_wps_conn_test_782722731612",
+            "name": "e2etest_wps_conn_test_782722731612",
+            "type": "Microsoft.MachineLearningServices/workspaces/connections",
+            "properties": {
+              "authType": "PAT",
+              "credentials": null,
+              "category": "Git",
+              "expiryTime": null,
+              "target": "https://test-git-feed.com",
+              "metadata": {}
+            },
+            "systemData": {
+              "createdAt": "2023-07-28T19:42:52.2106951Z",
+              "createdBy": "milesholland@microsoft.com",
+              "createdByType": "User",
+              "lastModifiedAt": "2023-07-28T19:42:52.2106951Z",
+              "lastModifiedBy": "milesholland@microsoft.com",
+              "lastModifiedByType": "User"
+            }
+          },
+          {
+            "tags": null,
+            "location": null,
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/connections/e2etest_wps_conn_test_638778968373",
+            "name": "e2etest_wps_conn_test_638778968373",
+            "type": "Microsoft.MachineLearningServices/workspaces/connections",
+            "properties": {
+              "authType": "UsernamePassword",
+              "credentials": null,
+              "category": "Git",
+              "expiryTime": null,
+              "target": "https://test-git-feed.com",
+              "metadata": {}
+            },
+            "systemData": {
+              "createdAt": "2023-07-28T19:42:54.3045153Z",
+              "createdBy": "milesholland@microsoft.com",
+              "createdByType": "User",
+              "lastModifiedAt": "2023-07-28T19:42:54.3045153Z",
+              "lastModifiedBy": "milesholland@microsoft.com",
+              "lastModifiedByType": "User"
+            }
+          }
+        ]
       }
     }
   ],
   "Variables": {
-    "wps_connection_name": "test_805699089930"
+    "wps_connection_name": "test_59468987575"
   }
 }

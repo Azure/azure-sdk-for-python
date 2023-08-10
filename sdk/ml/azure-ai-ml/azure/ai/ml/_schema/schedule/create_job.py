@@ -5,16 +5,15 @@
 import copy
 
 import yaml
-from marshmallow import INCLUDE, fields, ValidationError, post_load, pre_load
+from marshmallow import INCLUDE, ValidationError, fields, post_load, pre_load
 
-from azure.ai.ml._schema import AnonymousEnvironmentSchema, CommandJobSchema
+from azure.ai.ml._schema import CommandJobSchema
 from azure.ai.ml._schema.core.fields import (
     ArmStr,
-    ArmVersionedStr,
     ComputeField,
+    EnvironmentField,
     FileRefField,
     NestedField,
-    RegistryStr,
     StringTransformedEnum,
     UnionField,
 )
@@ -129,23 +128,10 @@ class CommandCreateJobSchema(BaseCreateJobSchema, CommandJobSchema):
         # code and command can not be set during runtime
         exclude = ["code", "command"]
 
-    environment = UnionField(
-        [
-            NestedField(AnonymousEnvironmentSchema),
-            RegistryStr(azureml_type=AzureMLResourceType.ENVIRONMENT),
-            ArmVersionedStr(azureml_type=AzureMLResourceType.ENVIRONMENT, allow_default_version=True),
-        ],
-    )
+    environment = EnvironmentField()
 
 
 class SparkCreateJobSchema(BaseCreateJobSchema):
     type = StringTransformedEnum(allowed_values=[JobType.SPARK])
     conf = fields.Dict(keys=fields.Str(), values=fields.Raw())
-    environment = UnionField(
-        [
-            NestedField(AnonymousEnvironmentSchema),
-            RegistryStr(azureml_type=AzureMLResourceType.ENVIRONMENT),
-            ArmVersionedStr(azureml_type=AzureMLResourceType.ENVIRONMENT, allow_default_version=True),
-        ],
-        allow_none=True,
-    )
+    environment = EnvironmentField(allow_none=True)
