@@ -138,6 +138,15 @@ class ModelPackageInput:
     :type mode: Optional[str]
     :param mount_path: The mount path for the input.
     :type mount_path: Optional[str]
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../../../../../../../samples/ml_samples_misc.py
+            :start-after: [START model_package_input_entity_create]
+            :end-before: [END model_package_input_entity_create]
+            :language: python
+            :dedent: 8
+            :caption: Create a Model Package Input object.
     """
 
     def __init__(
@@ -192,6 +201,15 @@ class ModelPackage(Resource, PackageRequest):
     :type model_configuration: Optional[~azure.ai.ml.entities.ModelConfiguration]
     :param tags: The tags of the model package.
     :type tags: Optiona[dict[str, str]]
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../../../../../../../samples/ml_samples_misc.py
+            :start-after: [START model_package_entity_create]
+            :end-before: [END model_package_entity_create]
+            :language: python
+            :dedent: 8
+            :caption: Create a Model Package object.
     """
 
     def __init__(

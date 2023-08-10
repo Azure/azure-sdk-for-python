@@ -4,11 +4,11 @@
 
 from typing import Dict, Optional
 
+from azure.ai.ml._schema._deployment.batch.model_batch_deployment_settings import ModelBatchDeploymentSettingsSchema
+from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 from azure.ai.ml.constants._deployment import BatchDeploymentOutputAction
 from azure.ai.ml.entities._deployment.deployment_settings import BatchRetrySettings
-from azure.ai.ml._utils._experimental import experimental
-from azure.ai.ml._schema._deployment.batch.model_batch_deployment_settings import ModelBatchDeploymentSettingsSchema
 
 
 @experimental
@@ -39,6 +39,15 @@ class ModelBatchDeploymentSettings:
     :type error_threshold: int, optional
     :param logging_level: Logging level for batch inference operation, defaults to "info"
     :type logging_level: str, optional
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../../../../../samples/ml_samples_misc.py
+            :start-after: [START model_batch_deployment_settings_entity_create]
+            :end-before: [END model_batch_deployment_settings_entity_create]
+            :language: python
+            :dedent: 8
+            :caption: Creating a Model Batch Deployment Settings object.
     """
 
     def __init__(
