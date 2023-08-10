@@ -19,7 +19,6 @@ from azure.data.tables.aio import TableServiceClient, TableClient
 from azure.data.tables._constants import DEFAULT_STORAGE_ENDPOINT_SUFFIX
 
 from _shared.asynctestcase import AsyncTableTestCase
-from preparers import tables_decorator
 from async_preparers import tables_decorator_async
 from test_table_client import validate_standard_account_endpoints
 
@@ -209,7 +208,91 @@ class TestTableClientAsync(AzureRecordedTestCase, AsyncTableTestCase):
 
     @tables_decorator_async
     @recorded_by_proxy_async
-    async def test_client_with_sas_token(self, tables_storage_account_name, tables_primary_storage_account_key):
+    async def test_table_client_with_named_key_credential(
+        self, tables_storage_account_name, tables_primary_storage_account_key
+    ):
+        base_url = self.account_url(tables_storage_account_name, "table")
+        table_name = self.get_resource_name("mytable")
+        sas_token = self.generate_sas(
+            generate_account_sas,
+            tables_primary_storage_account_key,
+            resource_types=ResourceTypes.from_string("sco"),
+            permission=AccountSasPermissions.from_string("rwdlacu"),
+            expiry=datetime.utcnow() + timedelta(hours=1),
+        )
+        sas_url = f"{base_url}/{table_name}?{sas_token}"
+
+        async with TableClient.from_table_url(
+            f"{base_url}/{table_name}", credential=tables_primary_storage_account_key
+        ) as client:
+            table = await client.create_table()
+            assert table.name == table_name
+
+        conn_str = f"AccountName={tables_storage_account_name};AccountKey={tables_primary_storage_account_key.named_key.key};EndpointSuffix=core.windows.net"
+        async with TableClient.from_connection_string(conn_str, table_name) as client:
+            entities = client.query_entities(
+                query_filter="PartitionKey eq @pk",
+                parameters={"pk": "dummy-pk"},
+            )
+            async for e in entities:
+                pass
+
+        async with TableClient(sas_url, table_name, credential=tables_primary_storage_account_key) as client:
+            entities = client.query_entities(
+                query_filter="PartitionKey eq @pk",
+                parameters={"pk": "dummy-pk"},
+            )
+            with pytest.raises(HttpResponseError) as ex:
+                async for e in entities:
+                    pass
+            assert "The requested operation is not implemented on the specified resource." in str(ex.value)
+
+        async with TableClient.from_table_url(sas_url, credential=tables_primary_storage_account_key) as client:
+            entities = client.query_entities(
+                query_filter="PartitionKey eq @pk",
+                parameters={"pk": "dummy-pk"},
+            )
+            async for e in entities:
+                pass
+            await client.delete_table()
+
+    @tables_decorator_async
+    @recorded_by_proxy_async
+    async def test_table_service_client_with_named_key_credential(
+        self, tables_storage_account_name, tables_primary_storage_account_key
+    ):
+        base_url = self.account_url(tables_storage_account_name, "table")
+        table_name = self.get_resource_name("mytable")
+        sas_token = self.generate_sas(
+            generate_account_sas,
+            tables_primary_storage_account_key,
+            resource_types=ResourceTypes.from_string("sco"),
+            permission=AccountSasPermissions.from_string("rwdlacu"),
+            expiry=datetime.utcnow() + timedelta(hours=1),
+        )
+        sas_url = f"{base_url}/{table_name}?{sas_token}"
+        name_filter = "TableName eq '{}'".format(table_name)
+        conn_str = f"AccountName={tables_storage_account_name};AccountKey={tables_primary_storage_account_key.named_key.key};EndpointSuffix=core.windows.net"
+
+        async with TableServiceClient.from_connection_string(conn_str) as client:
+            await client.create_table(table_name)
+            count = 0
+            result = client.query_tables(name_filter)
+            async for table in result:
+                count += 1
+            assert count == 1
+            await client.delete_table(table_name)
+
+        async with TableServiceClient(sas_url, credential=tables_primary_storage_account_key) as client:
+            with pytest.raises(ResourceNotFoundError) as ex:
+                await client.create_table(f"{table_name}2")
+            assert "The table specified does not exist." in str(ex.value)
+
+    @tables_decorator_async
+    @recorded_by_proxy_async
+    async def test_table_client_with_sas_token_credential(
+        self, tables_storage_account_name, tables_primary_storage_account_key
+    ):
         base_url = self.account_url(tables_storage_account_name, "table")
         table_name = self.get_resource_name("mytable")
         sas_token = self.generate_sas(
@@ -220,22 +303,9 @@ class TestTableClientAsync(AzureRecordedTestCase, AsyncTableTestCase):
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
 
-        async with TableServiceClient(base_url, credential=AzureSasCredential(sas_token)) as client:
-            await client.create_table(table_name)
-            name_filter = "TableName eq '{}'".format(table_name)
-            count = 0
-            result = client.query_tables(name_filter)
-            async for table in result:
-                count += 1
-            assert count == 1
-
         async with TableClient(base_url, table_name, credential=AzureSasCredential(sas_token)) as client:
-            entities = client.query_entities(
-                query_filter="PartitionKey eq @pk",
-                parameters={"pk": "dummy-pk"},
-            )
-            async for e in entities:
-                pass
+            table = await client.create_table()
+            assert table.name == table_name
 
         async with TableClient.from_table_url(
             f"{base_url}/{table_name}", credential=AzureSasCredential(sas_token)
@@ -247,60 +317,90 @@ class TestTableClientAsync(AzureRecordedTestCase, AsyncTableTestCase):
             async for e in entities:
                 pass
 
-        sas_url = f"{base_url}/{table_name}?{sas_token}"
-        async with TableClient.from_table_url(sas_url) as client:
+        conn_str = (
+            f"AccountName={tables_storage_account_name};SharedAccessSignature={AzureSasCredential(sas_token).signature}"
+        )
+        async with TableClient.from_connection_string(conn_str, table_name) as client:
             entities = client.query_entities(
                 query_filter="PartitionKey eq @pk",
                 parameters={"pk": "dummy-pk"},
             )
             async for e in entities:
                 pass
+
+        sas_url = f"{base_url}/{table_name}?{sas_token}"
+
+        with pytest.raises(ValueError) as ex:
+            TableClient(sas_url, table_name, credential=AzureSasCredential(sas_token))
+        ex_msg = "You cannot use AzureSasCredential when the resource URI also contains a Shared Access Signature."
+        assert ex_msg == str(ex.value)
 
         with pytest.raises(ValueError) as ex:
             client = TableClient.from_table_url(sas_url, credential=AzureSasCredential(sas_token))
         ex_msg = "You cannot use AzureSasCredential when the resource URI also contains a Shared Access Signature."
         assert ex_msg == str(ex.value)
 
-        async with TableClient.from_table_url(sas_url, credential=tables_primary_storage_account_key) as client:
-            entities = client.query_entities(
-                query_filter="PartitionKey eq @pk",
-                parameters={"pk": "dummy-pk"},
-            )
-            async for e in entities:
-                pass
-
-        async with TableClient.from_table_url(sas_url, credential=self.get_token_credential()) as client:
-            entities = client.query_entities(
-                query_filter="PartitionKey eq @pk",
-                parameters={"pk": "dummy-pk"},
-            )
-            async for e in entities:
-                pass
-            await client.delete_table()
-
     @tables_decorator_async
     @recorded_by_proxy_async
-    async def test_client_with_token_credential(self, tables_storage_account_name, tables_primary_storage_account_key):
+    async def test_table_service_client_with_sas_token_credential(
+        self, tables_storage_account_name, tables_primary_storage_account_key
+    ):
         base_url = self.account_url(tables_storage_account_name, "table")
         table_name = self.get_resource_name("mytable")
-        default_azure_credential = self.get_token_credential()
+        sas_token = self.generate_sas(
+            generate_account_sas,
+            tables_primary_storage_account_key,
+            resource_types=ResourceTypes.from_string("sco"),
+            permission=AccountSasPermissions.from_string("rwdlacu"),
+            expiry=datetime.utcnow() + timedelta(hours=1),
+        )
+        name_filter = "TableName eq '{}'".format(table_name)
 
-        async with TableServiceClient(base_url, credential=default_azure_credential) as client:
+        async with TableServiceClient(base_url, credential=AzureSasCredential(sas_token)) as client:
             await client.create_table(table_name)
-            name_filter = "TableName eq '{}'".format(table_name)
             count = 0
             result = client.query_tables(name_filter)
             async for table in result:
                 count += 1
             assert count == 1
 
+        conn_str = (
+            f"AccountName={tables_storage_account_name};SharedAccessSignature={AzureSasCredential(sas_token).signature}"
+        )
+        async with TableServiceClient.from_connection_string(conn_str) as client:
+            count = 0
+            result = client.query_tables(name_filter)
+            async for table in result:
+                count += 1
+            assert count == 1
+            await client.delete_table(table_name)
+
+        sas_url = f"{base_url}/{table_name}?{sas_token}"
+        with pytest.raises(ValueError) as ex:
+            TableServiceClient(sas_url, credential=AzureSasCredential(sas_token))
+        ex_msg = "You cannot use AzureSasCredential when the resource URI also contains a Shared Access Signature."
+        assert ex_msg == str(ex.value)
+
+    @tables_decorator_async
+    @recorded_by_proxy_async
+    async def test_table_client_with_token_credential(
+        self, tables_storage_account_name, tables_primary_storage_account_key
+    ):
+        base_url = self.account_url(tables_storage_account_name, "table")
+        table_name = self.get_resource_name("mytable")
+        default_azure_credential = self.get_token_credential()
+        sas_token = self.generate_sas(
+            generate_account_sas,
+            tables_primary_storage_account_key,
+            resource_types=ResourceTypes.from_string("sco"),
+            permission=AccountSasPermissions.from_string("rwdlacu"),
+            expiry=datetime.utcnow() + timedelta(hours=1),
+        )
+        sas_url = f"{base_url}/{table_name}?{sas_token}"
+
         async with TableClient(base_url, table_name, credential=default_azure_credential) as client:
-            entities = client.query_entities(
-                query_filter="PartitionKey eq @pk",
-                parameters={"pk": "dummy-pk"},
-            )
-            async for e in entities:
-                pass
+            table = await client.create_table()
+            assert table.name == table_name
 
         async with TableClient.from_table_url(
             f"{base_url}/{table_name}", credential=default_azure_credential
@@ -312,11 +412,77 @@ class TestTableClientAsync(AzureRecordedTestCase, AsyncTableTestCase):
             async for e in entities:
                 pass
 
-    @tables_decorator
-    @recorded_by_proxy
-    def test_client_without_credential(self, tables_storage_account_name, tables_primary_storage_account_key):
+        async with TableClient(sas_url, table_name, credential=default_azure_credential) as client:
+            entities = client.query_entities(
+                query_filter="PartitionKey eq @pk",
+                parameters={"pk": "dummy-pk"},
+            )
+            with pytest.raises(HttpResponseError) as ex:
+                async for e in entities:
+                    pass
+            ex_msg = "The requested operation is not implemented on the specified resource."
+            assert ex_msg in str(ex.value)
+
+        async with TableClient.from_table_url(f"{sas_url}/{table_name}", credential=default_azure_credential) as client:
+            entities = client.query_entities(
+                query_filter="PartitionKey eq @pk",
+                parameters={"pk": "dummy-pk"},
+            )
+            async for e in entities:
+                pass
+            await client.delete_table()
+
+    @tables_decorator_async
+    @recorded_by_proxy_async
+    async def test_table_service_client_with_token_credential(
+        self, tables_storage_account_name, tables_primary_storage_account_key
+    ):
         base_url = self.account_url(tables_storage_account_name, "table")
         table_name = self.get_resource_name("mytable")
+        default_azure_credential = self.get_token_credential()
+        name_filter = "TableName eq '{}'".format(table_name)
+        sas_token = self.generate_sas(
+            generate_account_sas,
+            tables_primary_storage_account_key,
+            resource_types=ResourceTypes.from_string("sco"),
+            permission=AccountSasPermissions.from_string("rwdlacu"),
+            expiry=datetime.utcnow() + timedelta(hours=1),
+        )
+        sas_url = f"{base_url}/{table_name}?{sas_token}"
+
+        async with TableServiceClient(base_url, credential=default_azure_credential) as client:
+            await client.create_table(table_name)
+            name_filter = "TableName eq '{}'".format(table_name)
+            count = 0
+            result = client.query_tables(name_filter)
+            async for table in result:
+                count += 1
+            assert count == 1
+
+        async with TableServiceClient(sas_url, credential=default_azure_credential) as client:
+            await client.create_table(table_name)
+            name_filter = "TableName eq '{}'".format(table_name)
+            count = 0
+            result = client.query_tables(name_filter)
+            async for table in result:
+                count += 1
+            assert count == 1
+
+    @tables_decorator_async
+    @recorded_by_proxy
+    async def test_table_client_without_credential(
+        self, tables_storage_account_name, tables_primary_storage_account_key
+    ):
+        base_url = self.account_url(tables_storage_account_name, "table")
+        table_name = self.get_resource_name("mytable")
+        sas_token = self.generate_sas(
+            generate_account_sas,
+            tables_primary_storage_account_key,
+            resource_types=ResourceTypes.from_string("sco"),
+            permission=AccountSasPermissions.from_string("rwdlacu"),
+            expiry=datetime.utcnow() + timedelta(hours=1),
+        )
+        sas_url = f"{base_url}/{table_name}?{sas_token}"
 
         with pytest.raises(ValueError) as ex:
             client = TableServiceClient(base_url)
@@ -326,9 +492,45 @@ class TestTableClientAsync(AzureRecordedTestCase, AsyncTableTestCase):
             client = TableClient(base_url, table_name)
         assert str(ex.value) == "You need to provide either an AzureSasCredential or AzureNamedKeyCredential"
 
+        async with TableClient(sas_url, table_name) as client:
+            with pytest.raises(ResourceNotFoundError) as ex:
+                await client.create_table()
+            assert "The table specified does not exist." in str(ex.value)
+
+        async with TableClient.from_table_url(f"{sas_url}/{table_name}") as client:
+            with pytest.raises(ClientAuthenticationError) as ex:
+                await client.create_table()
+        assert "Server failed to authenticate the request." in str(ex.value)
+
+        async with TableClient.from_table_url(sas_url) as client:
+            table = await client.create_table()
+            assert table.name == table_name
+            await client.delete_table()
+
+    @tables_decorator_async
+    @recorded_by_proxy
+    async def test_table_service_client_without_credential(
+        self, tables_storage_account_name, tables_primary_storage_account_key
+    ):
+        base_url = self.account_url(tables_storage_account_name, "table")
+        table_name = self.get_resource_name("mytable")
+        sas_token = self.generate_sas(
+            generate_account_sas,
+            tables_primary_storage_account_key,
+            resource_types=ResourceTypes.from_string("sco"),
+            permission=AccountSasPermissions.from_string("rwdlacu"),
+            expiry=datetime.utcnow() + timedelta(hours=1),
+        )
+        sas_url = f"{base_url}/{table_name}?{sas_token}"
+
         with pytest.raises(ValueError) as ex:
-            client = TableClient.from_table_url(f"{base_url}/{table_name}")
+            TableServiceClient(base_url)
         assert str(ex.value) == "You need to provide either an AzureSasCredential or AzureNamedKeyCredential"
+
+        async with TableServiceClient(sas_url) as client:
+            with pytest.raises(ResourceNotFoundError) as ex:
+                await client.create_table(table_name)
+            assert "The table specified does not exist." in str(ex.value)
 
 
 class TestTableClientAsyncUnitTests(AsyncTableTestCase):
