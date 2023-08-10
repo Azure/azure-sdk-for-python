@@ -889,6 +889,8 @@ class TestTableBatchAsync(AzureRecordedTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
     
+    # Playback doesn't work as test proxy issue: https://github.com/Azure/azure-sdk-tools/issues/2900
+    @pytest.mark.live_test_only
     @tables_decorator_async
     @recorded_by_proxy_async
     async def test_empty_batch(self, tables_storage_account_name, tables_primary_storage_account_key):

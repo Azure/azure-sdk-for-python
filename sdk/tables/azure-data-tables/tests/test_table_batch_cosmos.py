@@ -690,6 +690,8 @@ class TestTableBatchCosmos(AzureRecordedTestCase, TableTestCase):
         finally:
             self._tear_down()
 
+    # Playback doesn't work as test proxy issue: https://github.com/Azure/azure-sdk-tools/issues/2900
+    @pytest.mark.live_test_only
     @cosmos_decorator
     @recorded_by_proxy
     def test_empty_batch(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
