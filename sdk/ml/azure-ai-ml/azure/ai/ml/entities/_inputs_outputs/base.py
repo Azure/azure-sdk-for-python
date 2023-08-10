@@ -24,7 +24,3 @@ class _InputOutputBase(DictMixin, RestTranslatableMixin):
     def _is_literal(self) -> bool:
         """Returns True if this input is literal input."""
         return self.type in SUPPORTED_PARAM_TYPES
-
-    @property
-    def _is_control_or_primitive_type(self):
-        return getattr(self, "is_control", None) or getattr(self, "_is_primitive_type", None)
