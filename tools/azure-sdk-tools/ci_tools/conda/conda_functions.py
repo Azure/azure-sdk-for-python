@@ -22,7 +22,7 @@ from shutil import rmtree
 from typing import List, Any
 from subprocess import check_call
 from ci_tools.variables import discover_repo_root, get_artifact_directory, in_ci
-from subprocess import check_call, CalledProcessError
+from subprocess import check_call, CalledProcessError, check_output
 
 from .CondaConfiguration import CondaConfiguration, CheckoutConfiguration
 
@@ -324,12 +324,23 @@ def prep_directory(path: str) -> str:
     return path
 
 
+def get_output(command: str, working_directory: str) -> None:
+    try:
+        command = shlex.split(command)
+        wd = working_directory.replace("\\", "/")
+        output = check_output(command, stderr=subprocess.STDOUT, cwd=wd)
+        print(str(output))
+    except CalledProcessError as e:
+        print(e)
+        raise
+
 def invoke_command(command: str, working_directory: str) -> None:
     try:
         command = shlex.split(command)
         wd = working_directory.replace("\\", "/")
         check_call(command, stderr=subprocess.STDOUT, cwd=wd)
     except CalledProcessError as e:
+        print(e)
         raise
 
 
@@ -491,7 +502,7 @@ def build_conda_packages(conda_configurations: List[CondaConfiguration], repo_ro
 
     for conda_build in conda_configurations:
         conda_build_folder = os.path.join(conda_sdist_dir, conda_build.name).replace("\\", "/")
-        invoke_command(
+        get_output(
             f'conda run --prefix "{conda_env_dir}" conda-build . --output-folder "{conda_output_dir}" -c "{conda_output_dir}"',
             conda_build_folder,
         )
