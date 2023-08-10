@@ -88,6 +88,15 @@ class Environment(Asset, LocalizableMixin):
     :type datastore: str
     :param kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../../../../../samples/ml_samples_misc.py
+            :start-after: [START env_entity_create]
+            :end-before: [END env_entity_create]
+            :language: python
+            :dedent: 8
+            :caption: Create a Environment object.
     """
 
     def __init__(

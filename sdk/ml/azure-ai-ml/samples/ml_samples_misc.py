@@ -347,6 +347,21 @@ class MiscConfigurationOptions(object):
         )
         # [END ssh_job_service_configuration]
 
+        # [START env_entity_create]
+        from azure.ai.ml.entities._assets.environment import Environment
+
+        environment = Environment(
+            name="env-name",
+            version="2.0",
+            description="env-description",
+            image="env-image",
+            conda_file="conda-file-path",
+            tags={"tag1": "value1", "tag2": "value2"},
+            properties={"prop1": "value1", "prop2": "value2"},
+            datastore="datastore",
+        )
+        # [END env_entity_create]
+
         # [START env_operations_create_or_update]
         from azure.ai.ml.entities import BuildContext, Environment
 
