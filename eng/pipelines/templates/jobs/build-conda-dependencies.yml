@@ -1,0 +1,46 @@
+parameters:
+  - name: CondaArtifacts
+    type: object
+    default: []
+
+jobs:
+- job: 'Build Windows Dependencies'
+  timeoutInMinutes: 90
+  pool:
+    name: azsdk-pool-mms-win-2022-general
+    vmImage: MMS2022
+  steps:
+    - template: ../steps/build-conda-artifacts.yml
+      parameters:
+        CondaArtifacts: ${{ parameters.CondaArtifacts }}
+        ArtifactName: windows_
+
+- job: 'Build Linux Dependencies'
+  timeoutInMinutes: 90
+  pool:
+    name: azsdk-pool-mms-ubuntu-2004-general
+    vmImage: MMSUbuntu20.04
+  steps:
+    - bash: |
+        apt-get install -y build-essential
+      displayName: Install Requirements
+
+    - template: ../steps/build-conda-artifacts.yml
+      parameters:
+        CondaArtifacts: ${{ parameters.CondaArtifacts }}
+        ArtifactName: linux_
+
+- job: 'Build Mac Dependencies'
+  timeoutInMinutes: 90
+  pool:
+    name: Azure Pipelines
+    vmImage: macos-11
+  steps:
+    - bash: |
+        apt-get install -y build-essential
+      displayName: Install Requirements
+
+    - template: ../steps/build-conda-artifacts.yml
+      parameters:
+        CondaArtifacts: ${{ parameters.CondaArtifacts }}
+        ArtifactName: mac_

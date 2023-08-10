@@ -122,10 +122,14 @@ class CondaConfiguration:
     @classmethod
     def from_json(cls, raw_json_blob: dict):
         name = raw_json_blob["name"]
-        common_root = raw_json_blob["common_root"] if raw_json_blob["common_root"] else "azure"
+        common_root = None
+        service = None
+
+        if "common_root" in raw_json_blob:
+            common_root = raw_json_blob["common_root"]
+
         in_batch = str_to_bool(raw_json_blob["in_batch"])
         checkout_config = parse_checkout_config(raw_json_blob["checkout"])
-        service = None
 
         if "service" in raw_json_blob:
             service = raw_json_blob["service"]

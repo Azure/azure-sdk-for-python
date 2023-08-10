@@ -28,6 +28,7 @@ from .CondaConfiguration import CondaConfiguration, CheckoutConfiguration
 
 # from package disutils
 from distutils.dir_util import copy_tree
+import urllib.request
 
 CONDA_ENV_NAME = "azure-build-env"
 
@@ -246,8 +247,8 @@ def create_combined_sdist(
     repo_root = discover_repo_root()
     environment_config = os.path.join(repo_root, "conda", "conda-recipes", "conda_env.yml")
 
-    
     singular_dependency = len(get_pkgs_from_build_directory(config_assembly_folder, conda_build.name)) == 0
+
     if not singular_dependency:
         create_sdist_skeleton(config_assembly_folder, conda_build.name, conda_build.common_root)
         create_setup_files(
@@ -261,16 +262,34 @@ def create_combined_sdist(
     # todo: support multi dependency for download URI
     if conda_build.checkout[0].download_uri:
         if singular_dependency:
-            assembled_sdist = next(iter([os.path.join(config_assembled_folder, a) for a in os.listdir(config_assembled_folder) if os.path.isfile(os.path.join(config_assembled_folder, a)) and conda_build.name in a]))
+            assembled_sdist = next(
+                iter(
+                    [
+                        os.path.join(config_assembled_folder, a)
+                        for a in os.listdir(config_assembled_folder)
+                        if os.path.isfile(os.path.join(config_assembled_folder, a)) and conda_build.name in a
+                    ]
+                )
+            )
             return assembled_sdist
         else:
-            raise NotImplementedError("todo: This script does not yet support downloading and extracting multiple packages.")
+            raise NotImplementedError(
+                "todo: This script does not yet support downloading and extracting multiple packages."
+            )
 
     targeted_folder_for_assembly = os.path.join(config_assembly_folder, conda_build.name)
 
     create_package(targeted_folder_for_assembly, config_assembled_folder)
 
-    assembled_sdist = next(iter([os.path.join(config_assembled_folder, a) for a in os.listdir(config_assembled_folder) if os.path.isfile(os.path.join(config_assembled_folder, a)) and conda_build.name in a]))
+    assembled_sdist = next(
+        iter(
+            [
+                os.path.join(config_assembled_folder, a)
+                for a in os.listdir(config_assembled_folder)
+                if os.path.isfile(os.path.join(config_assembled_folder, a)) and conda_build.name in a
+            ]
+        )
+    )
 
     return assembled_sdist
 
@@ -333,22 +352,35 @@ def get_git_source(
     shutil.move(code_source, code_destination)
 
 
-def download_pypi_source() -> None:
-    raise NotImplementedError("")
+def download_pypi_source(target_folder: str, target_uri: str) -> str:
+    basename = os.path.basename(target_uri)
+    file_name = os.path.join(target_folder, basename)
+
+    with urllib.request.urlopen(target_uri) as response, open(file_name, "wb") as out_file:
+        shutil.copyfileobj(response, out_file)
+
+    return file_name
 
 
-def get_package_source(checkout_config: CheckoutConfiguration, download_folder: str, assembly_location: str, output_folder: str, dependency_count: int) -> None:
+def get_package_source(
+    checkout_config: CheckoutConfiguration,
+    download_folder: str,
+    assembly_location: str,
+    output_folder: str,
+    dependency_count: int,
+) -> None:
     """
     To create a source distribution of
     """
+    breakpoint()
     if checkout_config.download_uri:
         # if we have a single package, we can simply use the source distribution _as is_ rather than
-        # repackaging it
+        # repackaging it. so we download and move it directly to assembled
         if dependency_count == 1:
-            pass
+            return download_pypi_source(output_folder, checkout_config.download_uri)
+        # in case of multiple external packages, we need to unzip the code into the same format as we do for a git clone
         else:
             raise NotImplementedError("todo: Download with multiple target packages not yet implemented.")
-
 
     elif checkout_config.checkout_path:
         get_git_source(
@@ -362,7 +394,6 @@ def get_package_source(checkout_config: CheckoutConfiguration, download_folder: 
         raise ValueError(
             "Unable to handle a checkoutConfiguraiton that doesn't git clone OR download from pypi for sdist code."
         )
-
 
 
 def assemble_source(conda_configurations: List[CondaConfiguration], repo_root: str) -> None:
@@ -395,7 +426,13 @@ def assemble_source(conda_configurations: List[CondaConfiguration], repo_root: s
         # ...
         for checkout_config in conda_build.checkout:
             print(f" - getting code for {checkout_config.package}.")
-            get_package_source(checkout_config, config_download_folder, config_assembly_folder, sdist_output_dir, len(conda_build.checkout))
+            get_package_source(
+                checkout_config,
+                config_download_folder,
+                config_assembly_folder,
+                sdist_output_dir,
+                len(conda_build.checkout),
+            )
 
         # the output of above loop is the following folder structure:
         #   <sdist_assembly_area>/<conda_configuration_name>
@@ -405,8 +442,8 @@ def assemble_source(conda_configurations: List[CondaConfiguration], repo_root: s
         #       /azure-storage-queue
         #       /azure-storage-file-datalake
         #       /azure-storage-fileshare
-        # 
-        # In the case of a specified download URI, simply find it and return it 
+        #
+        # In the case of a specified download URI, simply find it and return it
         conda_build.created_sdist_path = create_combined_sdist(
             conda_build, config_assembly_folder, sdist_output_dir
         ).replace("\\", "/")
