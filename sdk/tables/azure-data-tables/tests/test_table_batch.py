@@ -964,7 +964,7 @@ class TestTableBatch(AzureRecordedTestCase, TableTestCase):
 
         finally:
             self._tear_down()
-    
+
     # Playback doesn't work as test proxy issue: https://github.com/Azure/azure-sdk-tools/issues/2900
     @pytest.mark.live_test_only
     @tables_decorator
