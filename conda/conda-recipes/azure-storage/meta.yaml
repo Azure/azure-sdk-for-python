@@ -8,8 +8,6 @@ source:
   url: {{ environ.get('STORAGE_SOURCE_DISTRIBUTION', '') }}
 
 build:
-  script_env:
-    - STORAGE_SOURCE_DISTRIBUTION
   noarch: python
   number: 0
   script: "{{ PYTHON }} -m pip install . -vv"

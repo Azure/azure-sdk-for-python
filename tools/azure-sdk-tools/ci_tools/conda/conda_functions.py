@@ -298,10 +298,7 @@ def invoke_command(command: str, working_directory: str) -> None:
     try:
         command = shlex.split(command)
         wd = working_directory.replace("\\", "/")
-        print(command)
-        print(f"in working directory {wd}")
-
-        check_call(command, stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT, cwd=wd)
+        check_call(command, stderr=subprocess.STDOUT, cwd=wd)
     except CalledProcessError as e:
         raise
 
@@ -402,10 +399,9 @@ def assemble_source(conda_configurations: List[CondaConfiguration], repo_root: s
 
         summary = get_summary(conda_build)
 
+        sdist = os.path.basename(conda_build.created_sdist_path)
         meta_yml_content = meta_yml_content.replace("{{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}", version)
-        meta_yml_content = re.sub(
-            r"^\s*url\:.*", f'  url: "{conda_build.created_sdist_path}"', meta_yml_content, flags=re.MULTILINE
-        )
+        meta_yml_content = re.sub(r"^\s*url\:.*", f'  url: "./{sdist}"', meta_yml_content, flags=re.MULTILINE)
         meta_yml_content = re.sub(
             r"\{\{\senviron\.get\(\'.*_SUMMARY\'\,\s\'\'\)\s*\}\}", f"{summary}", meta_yml_content, flags=re.MULTILINE
         )
@@ -430,15 +426,22 @@ def prep_and_create_environment(environment_dir: str) -> None:
 def build_conda_packages(conda_configurations: List[CondaConfiguration], repo_root: str):
     """Conda builds each individually assembled conda package folder."""
     conda_output_dir = prep_directory(os.path.join(repo_root, "conda", "output")).replace("\\", "/")
-    conda_sdist_dir = prep_directory(os.path.join(repo_root, "conda", "assembled")).replace("\\", "/")
+    conda_sdist_dir = os.path.join(repo_root, "conda", "assembled").replace("\\", "/")
     conda_env_dir = prep_directory(os.path.join(repo_root, "conda", "conda-env")).replace("\\", "/")
 
     prep_and_create_environment(conda_env_dir)
+    invoke_command(f"conda index {conda_output_dir}", repo_root)
+
+    # if there is no repodata, the channel hasn't been created yet
+    invoke_command(
+        f'conda run --prefix "{conda_env_dir}" conda-build . --output-folder "{conda_output_dir}" -c "file:{conda_output_dir}"',
+        conda_build_folder,
+    )
 
     for conda_build in conda_configurations:
         conda_build_folder = os.path.join(conda_sdist_dir, conda_build.name).replace("\\", "/")
         invoke_command(
-            f'conda run --prefix "{conda_env_dir}" conda-build . --output-folder "{conda_output_dir}"',
+            f'conda run --prefix "{conda_env_dir}" conda-build . --output-folder "{conda_output_dir}" -c "file:{conda_output_dir}"',
             conda_build_folder,
         )
 
