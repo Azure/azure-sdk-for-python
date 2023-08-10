@@ -3,13 +3,12 @@ from test_utilities.utils import verify_entity_load_and_dump
 
 import azure.ai.ml._schema._datastore as DatastoreSchemaDir
 from azure.ai.ml import load_datastore
-from azure.ai.ml._restclient.v2023_04_01_preview.models import OneLakeDatastore as RestOneLakeDatastore
-from azure.ai.ml._restclient.v2022_10_01_preview import models as models_preview
-from azure.ai.ml._restclient.v2022_10_01.models import AzureBlobDatastore as RestAzureBlobDatastore
-from azure.ai.ml._restclient.v2022_10_01.models import AzureDataLakeGen1Datastore as RestAzureDataLakeGen1Datastore
-from azure.ai.ml._restclient.v2022_10_01.models import AzureDataLakeGen2Datastore as RestAzureDataLakeGen2Datastore
-from azure.ai.ml._restclient.v2022_10_01.models import AzureFileDatastore as RestAzureFileDatastore
-from azure.ai.ml._restclient.v2022_10_01.models import NoneDatastoreCredentials, ServicePrincipalDatastoreCredentials
+from azure.ai.ml._restclient.v2023_04_01_preview import models as models_preview
+from azure.ai.ml._restclient.v2023_04_01_preview.models import AzureBlobDatastore as RestAzureBlobDatastore
+from azure.ai.ml._restclient.v2023_04_01_preview.models import AzureDataLakeGen1Datastore as RestAzureDataLakeGen1Datastore
+from azure.ai.ml._restclient.v2023_04_01_preview.models import AzureDataLakeGen2Datastore as RestAzureDataLakeGen2Datastore
+from azure.ai.ml._restclient.v2023_04_01_preview.models import AzureFileDatastore as RestAzureFileDatastore
+from azure.ai.ml._restclient.v2023_04_01_preview.models import NoneDatastoreCredentials, ServicePrincipalDatastoreCredentials
 from azure.ai.ml._utils.utils import load_yaml
 from azure.ai.ml.constants._common import DATASTORE_SCHEMA_TYPES
 from azure.ai.ml.entities import (
@@ -270,7 +269,7 @@ class TestDatastore:
         datastore_resource.name = internal_ds.name
         ds_properties = datastore_resource.properties
         assert ds_properties
-        assert isinstance(ds_properties, RestOneLakeDatastore)
+        assert isinstance(ds_properties, models_preview.OneLakeDatastore)
         assert ds_properties.one_lake_workspace_name == cfg["one_lake_workspace_name"]
         assert ds_properties.endpoint == cfg["endpoint"]
         self.assert_rest_internal_service_principal_equal(ds_properties.credentials, internal_credentials)

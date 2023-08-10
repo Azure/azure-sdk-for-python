@@ -6,8 +6,9 @@
 
 from typing import Optional
 
-from azure.ai.ml._restclient.v2022_10_01_preview import models as models_preview
-from azure.ai.ml._restclient.v2022_10_01 import models
+# keeping redundant models_preview import to keep preview features separate
+from azure.ai.ml._restclient.v2023_04_01_preview import models as models_preview
+from azure.ai.ml._restclient.v2023_04_01_preview import models
 from azure.ai.ml.entities._credentials import (
     AccountKeyConfiguration,
     CertificateConfiguration,
