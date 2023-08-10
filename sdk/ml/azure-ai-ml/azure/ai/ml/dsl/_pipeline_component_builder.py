@@ -12,10 +12,7 @@ from inspect import Parameter, signature
 from typing import Callable, Union
 
 from azure.ai.ml._utils._func_utils import get_outputs_and_locals
-from azure.ai.ml._utils.utils import (
-    is_valid_node_name,
-    parse_args_description_from_docstring,
-)
+from azure.ai.ml._utils.utils import is_valid_node_name, parse_args_description_from_docstring
 from azure.ai.ml.constants._component import ComponentSource, IOConstants
 from azure.ai.ml.constants._job.pipeline import COMPONENT_IO_KEYWORDS
 from azure.ai.ml.dsl._utils import _sanitize_python_variable_name
@@ -248,13 +245,7 @@ class PipelineComponentBuilder:
             if value._meta is not None:
                 meta = value._meta
             else:
-                meta = Output(
-                    type=value.type,
-                    path=value.path,
-                    mode=value.mode,
-                    description=value.description,
-                    is_control=value.is_control,
-                )
+                meta = Output(type=value.type, path=value.path, mode=value.mode, description=value.description)
 
             # Hack: map internal output type to pipeline output type
             def _map_internal_output_type(_meta):
@@ -264,12 +255,7 @@ class PipelineComponentBuilder:
                 return _meta.map_pipeline_output_type()
 
             # Note: Here we set PipelineOutput as Pipeline's output definition as we need output binding.
-            output_meta = Output(
-                type=_map_internal_output_type(meta),
-                description=meta.description,
-                mode=meta.mode,
-                is_control=meta.is_control,
-            )
+            output_meta = Output(type=_map_internal_output_type(meta), description=meta.description, mode=meta.mode)
             pipeline_output = PipelineOutput(
                 port_name=key,
                 data=None,

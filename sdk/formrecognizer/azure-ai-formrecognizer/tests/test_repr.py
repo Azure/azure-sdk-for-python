@@ -439,6 +439,53 @@ def doc_type_info():
     assert repr(model) == model_repr
     return model, model_repr
 
+
+@pytest.fixture
+def blob_file_list_source():
+    model = _models.BlobFileListSource(
+            container_url="https://test.blob.core.windows.net/blob-sas-url",
+            file_list="filelist.jsonl",
+    )
+    model_repr = f"BlobFileListSource(container_url=https://test.blob.core.windows.net/blob-sas-url, file_list=filelist.jsonl)"
+
+    assert repr(model) == model_repr
+    return model, model_repr
+
+
+@pytest.fixture
+def blob_source():
+    model = _models.BlobSource(
+            container_url="https://test.blob.core.windows.net/blob-sas-url",
+            prefix="prefix",
+    )
+    model_repr = f"BlobSource(container_url=https://test.blob.core.windows.net/blob-sas-url, prefix=prefix)"
+
+    assert repr(model) == model_repr
+    return model, model_repr
+
+
+@pytest.fixture
+def classifier_document_type_details(blob_source):
+    model = _models.ClassifierDocumentTypeDetails(
+            source=blob_source[0],
+    )
+    model_repr = f"ClassifierDocumentTypeDetails(source_kind=azureBlob, source={blob_source[1]})"
+
+    assert repr(model) == model_repr
+    return model, model_repr
+
+
+@pytest.fixture
+def classifier_document_type_details_file_list(blob_file_list_source):
+    model = _models.ClassifierDocumentTypeDetails(
+            source=blob_file_list_source[0],
+    )
+    model_repr = f"ClassifierDocumentTypeDetails(source_kind=azureBlobFileList, source={blob_file_list_source[1]})"
+
+    assert repr(model) == model_repr
+    return model, model_repr
+
+
 @pytest.fixture
 def document_model(doc_type_info):
     model = _models.DocumentModelDetails(
@@ -573,6 +620,23 @@ class TestRepr():
             )
         assert repr(model) == model_repr
 
+
+    def test_document_classifier_details(self, classifier_document_type_details, classifier_document_type_details_file_list):
+        model = _models.DocumentClassifierDetails(
+                api_version="2023-07-31",
+                description="my description",
+                created_on=datetime.datetime(2021, 9, 16, 10, 10, 59, 342380),
+                expires_on=datetime.datetime(2024, 9, 16, 10, 10, 59, 342380),
+                classifier_id="custom-classifier",
+                doc_types={
+                    "form-A": classifier_document_type_details[0],
+                    "form-B": classifier_document_type_details_file_list[0],
+                }
+        )
+        model_repr = f"DocumentClassifierDetails(classifier_id=custom-classifier, description=my description, created_on={datetime.datetime(2021, 9, 16, 10, 10, 59, 342380)}, expires_on={datetime.datetime(2024, 9, 16, 10, 10, 59, 342380)}, api_version=2023-07-31, doc_types={{'form-A': {classifier_document_type_details[1]}, 'form-B': {classifier_document_type_details_file_list[1]}}})"
+        assert repr(model) == model_repr
+
+
     def test_model_operation(self, document_analysis_error, document_model):
         model = _models.OperationDetails(
                 api_version="2022-08-31",
@@ -674,13 +738,13 @@ class TestRepr():
             custom_document_models=_models.CustomDocumentModelsDetails(
                 limit=5000, count=10
             ),
-            custom_neural_document_model_builds=_models.QuotaDetails(
+            neural_document_model_quota=_models.QuotaDetails(
                 used=0,
                 quota=20,
                 quota_resets_on=datetime.datetime(2024, 9, 16, 10, 10, 59, 342380)
             )
         )
-        model_repr = "ResourceDetails(custom_document_models={}, custom_neural_document_model_builds={})".format(
+        model_repr = "ResourceDetails(custom_document_models={}, neural_document_model_quota={})".format(
             "CustomDocumentModelsDetails(count=10, limit=5000)",
             "QuotaDetails(used=0, quota=20, quota_resets_on=2024-09-16 10:10:59.342380)"
         )

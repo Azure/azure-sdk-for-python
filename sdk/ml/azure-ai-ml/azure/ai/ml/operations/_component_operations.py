@@ -8,6 +8,8 @@ import time
 import types
 from functools import partial
 from inspect import Parameter, signature
+from os import PathLike
+from pathlib import Path
 from typing import Any, Callable, Dict, Iterable, List, Optional, Union
 
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
@@ -41,12 +43,12 @@ from azure.ai.ml.constants._common import (
     AzureMLResourceType,
     LROConfigurations,
 )
-from azure.ai.ml.entities import Component, ValidationResult
+from azure.ai.ml.entities import Component, Environment, ValidationResult
 from azure.ai.ml.exceptions import ComponentException, ErrorCategory, ErrorTarget, ValidationException
 
 from .._utils._cache_utils import CachedNodeResolver
 from .._utils._experimental import experimental
-from .._utils.utils import is_data_binding_expression
+from .._utils.utils import extract_name_and_version, is_data_binding_expression
 from ..entities._builders import BaseNode
 from ..entities._builders.condition_node import ConditionNode
 from ..entities._builders.control_flow_node import LoopNode
@@ -232,6 +234,83 @@ class ComponentOperations(_ScopeDependentOperations):
         :return: The specified component object.
         :rtype: ~azure.ai.ml.entities.Component
         """
+        return self._get(name=name, version=version, label=label)
+
+    def _localize_code(self, component: Component, base_dir: Path) -> None:
+        if not isinstance(component, ComponentCodeMixin):
+            return
+        code = component._get_origin_code_value()
+        if not isinstance(code, str):
+            return
+        # registry code will keep the "azureml:" prefix can be used directly
+        if code.startswith("azureml://registries"):
+            return
+
+        target_code_value = "./code"
+        self._code_operations.download(
+            **extract_name_and_version(code), download_path=base_dir.joinpath(target_code_value)
+        )
+
+        setattr(component, component._get_code_field_name(), target_code_value)
+
+    def _localize_environment(self, component: Component, base_dir: Path) -> None:
+        from azure.ai.ml.entities import ParallelComponent
+
+        if hasattr(component, "environment"):
+            parent = component
+        elif isinstance(component, ParallelComponent):
+            parent = component.task
+        else:
+            return
+
+        # environment can be None
+        if not isinstance(parent.environment, str):
+            return
+        # registry environment will keep the "azureml:" prefix can be used directly
+        if parent.environment.startswith("azureml://registries"):
+            return
+
+        environment = self._environment_operations.get(**extract_name_and_version(parent.environment))
+        environment._localize(base_path=base_dir.absolute().as_posix())
+        parent.environment = environment
+
+    @experimental
+    @monitor_with_telemetry_mixin(logger, "Component.Download", ActivityType.PUBLICAPI)
+    def download(self, name: str, download_path: Union[PathLike, str] = ".", *, version: str = None) -> None:
+        """Download the specified component and its dependencies to local. Local component can be used to create
+        the component in another workspace or for offline development.
+
+        :param name: Name of the code component.
+        :type name: str
+        :param Union[PathLike, str] download_path: Local path as download destination,
+            defaults to current working directory of the current user. Will be created if not exists.
+        :type download_path: str
+        :param version: Version of the component.
+        :type version: Optional[str]
+        :raises ~OSError: Raised if download_path is pointing to an existing directory that is not empty.
+            identified and retrieved. Details will be provided in the error message.
+        :return: The specified component object.
+        :rtype: ~azure.ai.ml.entities.Component
+        """
+        download_path = Path(download_path)
+        component = self._get(name=name, version=version)
+        self._resolve_azureml_id(component)
+
+        output_dir = Path(download_path)
+        if output_dir.is_dir():
+            # an OSError will be raised if the directory is not empty
+            output_dir.rmdir()
+        output_dir.mkdir(parents=True)
+        # download code
+        self._localize_code(component, output_dir)
+
+        # download environment
+        self._localize_environment(component, output_dir)
+
+        component._localize(output_dir.absolute().as_posix())
+        (output_dir / "component_spec.yaml").write_text(component._to_yaml())
+
+    def _get(self, name: str, version: Optional[str] = None, label: Optional[str] = None) -> Component:
         if version and label:
             msg = "Cannot specify both version and label."
             raise ValidationException(
@@ -253,11 +332,7 @@ class ComponentOperations(_ScopeDependentOperations):
 
         result = self._get_component_version(name, version)
         component = Component._from_rest_object(result)
-        self._resolve_dependencies_for_pipeline_component_jobs(
-            component,
-            resolver=self._orchestrators.resolve_azureml_id,
-            resolve_inputs=False,
-        )
+        self._resolve_azureml_id(component, jobs_only=True)
         return component
 
     @experimental
@@ -458,10 +533,9 @@ class ComponentOperations(_ScopeDependentOperations):
         else:
             component = Component._from_rest_object(result)
 
-        self._resolve_dependencies_for_pipeline_component_jobs(
-            component,
-            resolver=self._orchestrators.resolve_azureml_id,
-            resolve_inputs=False,
+        self._resolve_azureml_id(
+            component=component,
+            jobs_only=True,
         )
         return component
 
@@ -551,49 +625,74 @@ class ComponentOperations(_ScopeDependentOperations):
 
         if isinstance(component, str):
             return
-        if hasattr(component, "environment"):
+        potential_parents = [component]
+        if hasattr(component, "task"):
+            potential_parents.append(component.task)
+        for parent in potential_parents:
             # for internal component, environment may be a dict or InternalEnvironment object
             # in these two scenarios, we don't need to resolve the environment;
             # Note for not directly importing InternalEnvironment and check with `isinstance`:
             #   import from azure.ai.ml._internal will enable internal component feature for all users,
             #   therefore, use type().__name__ to avoid import and execute type check
-            if (
-                not isinstance(component.environment, dict)
-                and not type(component.environment).__name__ == "InternalEnvironment"
-            ):
-                component.environment = resolver(component.environment, azureml_type=AzureMLResourceType.ENVIRONMENT)
+            if not hasattr(parent, "environment"):
+                continue
+            if isinstance(parent.environment, dict):
+                continue
+            if type(parent.environment).__name__ == "InternalEnvironment":
+                continue
+            if not isinstance(parent.environment, (str, Environment)):
+                continue
+            parent.environment = resolver(parent.environment, azureml_type=AzureMLResourceType.ENVIRONMENT)
+
+    def _resolve_azureml_id(self, component: Component, jobs_only: bool = False) -> None:
+        # TODO: remove the parameter `jobs_only`. Some tests are expecting an arm id after resolving for now.
+        resolver = self._orchestrators.resolve_azureml_id
+        self._resolve_dependencies_for_component(component, resolver, resolve_jobs_inputs=True, jobs_only=jobs_only)
 
     def _resolve_arm_id_or_upload_dependencies(self, component: Component) -> None:
-        if isinstance(component, AutoMLComponent):
-            # no extra dependency for automl component
-            return
-
-        # type check for potential Job type, which is unexpected here.
-        if not isinstance(component, Component):
-            msg = f"Non supported component type: {type(component)}"
-            raise ValidationException(
-                message=msg,
-                target=ErrorTarget.COMPONENT,
-                no_personal_data_message=msg,
-                error_category=ErrorCategory.USER_ERROR,
-            )
-
-        get_arm_id_and_fill_back = OperationOrchestrator(
+        resolver = OperationOrchestrator(
             self._all_operations, self._operation_scope, self._operation_config
         ).get_asset_arm_id
 
-        # resolve component's code
-        _try_resolve_code_for_component(component=component, get_arm_id_and_fill_back=get_arm_id_and_fill_back)
-        # resolve component's environment
-        self._try_resolve_environment_for_component(
-            component=component,
-            resolver=get_arm_id_and_fill_back,
-            _="",
-        )
+        self._resolve_dependencies_for_component(component, resolver)
+
+    def _resolve_dependencies_for_component(
+        self,
+        component: Component,
+        resolver: Callable,
+        *,
+        resolve_jobs_inputs: bool = False,
+        jobs_only: bool = False,
+    ) -> None:
+        # for now, many tests are expecting long arm id instead of short id for environment and code
+        if not jobs_only:
+            if isinstance(component, AutoMLComponent):
+                # no extra dependency for automl component
+                return
+
+            # type check for potential Job type, which is unexpected here.
+            if not isinstance(component, Component):
+                msg = f"Non supported component type: {type(component)}"
+                raise ValidationException(
+                    message=msg,
+                    target=ErrorTarget.COMPONENT,
+                    no_personal_data_message=msg,
+                    error_category=ErrorCategory.USER_ERROR,
+                )
+
+            # resolve component's code
+            _try_resolve_code_for_component(component=component, resolver=resolver)
+            # resolve component's environment
+            self._try_resolve_environment_for_component(
+                component=component,
+                resolver=resolver,
+                _="",
+            )
 
         self._resolve_dependencies_for_pipeline_component_jobs(
             component,
-            resolver=get_arm_id_and_fill_back,
+            resolver=resolver,
+            resolve_inputs=resolve_jobs_inputs,
         )
 
     def _resolve_inputs_for_pipeline_component_jobs(self, jobs: Dict[str, Any], base_path: str):
@@ -622,13 +721,13 @@ class ComponentOperations(_ScopeDependentOperations):
     @classmethod
     def _resolve_binding_on_supported_fields_for_node(cls, node):
         """Resolve all PipelineInput(binding from sdk) on supported fields to string."""
-        from azure.ai.ml.entities._job.pipeline._attr_dict import try_get_non_arbitrary_attr_for_potential_attr_dict
+        from azure.ai.ml.entities._job.pipeline._attr_dict import try_get_non_arbitrary_attr
         from azure.ai.ml.entities._job.pipeline._io import PipelineInput
 
         # compute binding to pipeline input is supported on node.
         supported_fields = ["compute", "compute_name"]
         for field_name in supported_fields:
-            val = try_get_non_arbitrary_attr_for_potential_attr_dict(node, field_name)
+            val = try_get_non_arbitrary_attr(node, field_name)
             if isinstance(val, PipelineInput):
                 # Put binding string to field
                 setattr(node, field_name, val._data_binding())
@@ -665,7 +764,7 @@ class ComponentOperations(_ScopeDependentOperations):
         if node.task.code:
             _try_resolve_code_for_component(
                 component,
-                get_arm_id_and_fill_back=resolver,
+                resolver=resolver,
             )
             node.task.code = component.code
         if node.task.environment:
@@ -943,9 +1042,11 @@ def _refine_component(component_func: types.FunctionType) -> Component:
     )
 
 
-def _try_resolve_code_for_component(component: Component, get_arm_id_and_fill_back: Callable) -> None:
+def _try_resolve_code_for_component(component: Component, resolver: Callable) -> None:
     if isinstance(component, ComponentCodeMixin):
         with component._build_code() as code:
             if code is None:
+                code = component._get_origin_code_value()
+            if code is None:
                 return
-            component.code = get_arm_id_and_fill_back(code, azureml_type=AzureMLResourceType.CODE)
+            component.code = resolver(code, azureml_type=AzureMLResourceType.CODE)

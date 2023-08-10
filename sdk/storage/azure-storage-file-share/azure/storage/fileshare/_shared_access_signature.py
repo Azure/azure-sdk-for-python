@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import (
+from typing import (  # pylint: disable=unused-import
     Union, Optional, Any, List, TYPE_CHECKING
 )
 

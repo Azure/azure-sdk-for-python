@@ -54,7 +54,9 @@ class SilentAuthenticationCredential:
     def __exit__(self, *args):
         self._client.__exit__(*args)
 
-    def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
+    def get_token(
+        self, *scopes: str, claims: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs: Any
+    ) -> AccessToken:
         if not scopes:
             raise ValueError('"get_token" requires at least one scope')
 
@@ -70,7 +72,7 @@ class SilentAuthenticationCredential:
                     raise CredentialUnavailableError(message="Shared token cache unavailable")
                 raise ClientAuthenticationError(message="Shared token cache unavailable")
 
-        return self._acquire_token_silent(*scopes, **kwargs)
+        return self._acquire_token_silent(*scopes, claims=claims, tenant_id=tenant_id, **kwargs)
 
     def _initialize_cache(self, is_cae: bool = False) -> Optional[TokenCache]:
 

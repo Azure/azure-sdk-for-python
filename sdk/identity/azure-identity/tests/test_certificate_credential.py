@@ -299,7 +299,10 @@ def test_token_cache_persistent(cert_path, cert_password):
 
     access_token = "foo token"
 
-    def send(request, **_):
+    def send(request, **kwargs):
+        # ensure the `claims` and `tenant_id` keywords from credential's `get_token` method don't make it to transport
+        assert "claims" not in kwargs
+        assert "tenant_id" not in kwargs
         parsed = urlparse(request.url)
         tenant = parsed.path.split("/")[1]
         if "/oauth2/v2.0/token" not in parsed.path:
@@ -337,7 +340,10 @@ def test_token_cache_memory(cert_path, cert_password):
     """The credential should default to in-memory cache if no persistence options are provided."""
     access_token = "foo token"
 
-    def send(request, **_):
+    def send(request, **kwargs):
+        # ensure the `claims` and `tenant_id` keywords from credential's `get_token` method don't make it to transport
+        assert "claims" not in kwargs
+        assert "tenant_id" not in kwargs
         parsed = urlparse(request.url)
         tenant = parsed.path.split("/")[1]
         if "/oauth2/v2.0/token" not in parsed.path:
@@ -427,7 +433,10 @@ def test_multitenant_authentication(cert_path, cert_password):
     second_tenant = "second-tenant"
     second_token = first_token * 2
 
-    def send(request, **_):
+    def send(request, **kwargs):
+        # ensure the `claims` and `tenant_id` keywords from credential's `get_token` method don't make it to transport
+        assert "claims" not in kwargs
+        assert "tenant_id" not in kwargs
         parsed = urlparse(request.url)
         tenant = parsed.path.split("/")[1]
         assert tenant in (first_tenant, second_tenant, "common"), 'unexpected tenant "{}"'.format(tenant)
@@ -464,7 +473,10 @@ def test_multitenant_authentication_backcompat(cert_path, cert_password):
     expected_tenant = "expected-tenant"
     expected_token = "***"
 
-    def send(request, **_):
+    def send(request, **kwargs):
+        # ensure the `claims` and `tenant_id` keywords from credential's `get_token` method don't make it to transport
+        assert "claims" not in kwargs
+        assert "tenant_id" not in kwargs
         parsed = urlparse(request.url)
         if "/oauth2/v2.0/token" not in parsed.path:
             return get_discovery_response("https://{}/{}".format(parsed.netloc, expected_tenant))

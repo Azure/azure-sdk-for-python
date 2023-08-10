@@ -407,12 +407,6 @@ def dict_eq(dict1: Dict[str, Any], dict2: Dict[str, Any]) -> bool:
     return dict1 == dict2
 
 
-def get_http_response_and_deserialized_from_pipeline_response(
-    pipeline_response: Any, deserialized: Any
-) -> Tuple[Any, Any]:
-    return pipeline_response.http_response, deserialized
-
-
 def xor(a: Any, b: Any) -> bool:
     return bool(a) != bool(b)
 
@@ -765,7 +759,7 @@ def is_on_disk_cache_enabled():
     return os.getenv(AZUREML_DISABLE_ON_DISK_CACHE_ENV_VAR) not in ["True", "true", True]
 
 
-def is_concurrent_component_registration_enabled():
+def is_concurrent_component_registration_enabled():  # pylint: disable=name-too-long
     return os.getenv(AZUREML_DISABLE_CONCURRENT_COMPONENT_REGISTRATION) not in ["True", "true", True]
 
 
@@ -993,3 +987,22 @@ def get_versioned_base_directory_for_cache() -> Path:
     from azure.ai.ml._version import VERSION
 
     return get_base_directory_for_cache().joinpath(VERSION)
+
+
+def extract_name_and_version(azureml_id: str) -> Dict[str, str]:
+    """Extract name and version from azureml id.
+
+    :param azureml_id: AzureML id.
+    :type azureml_id: str
+    :return: A dict of name and version.
+    :rtype: Dict[str, str]
+    """
+    if not isinstance(azureml_id, str):
+        raise ValueError("azureml_id should be a string but got {}: {}.".format(type(azureml_id), azureml_id))
+    if azureml_id.count(":") != 1:
+        raise ValueError("azureml_id should be in the format of name:version but got {}.".format(azureml_id))
+    name, version = azureml_id.split(":")
+    return {
+        "name": name,
+        "version": version,
+    }

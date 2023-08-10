@@ -114,7 +114,9 @@ class ManagedIdentityCredential(AsyncContextManager):
             await self._credential.close()
 
     @log_get_token_async
-    async def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
+    async def get_token(
+        self, *scopes: str, claims: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs: Any
+    ) -> AccessToken:
         """Asynchronously request an access token for `scopes`.
 
         This method is called automatically by Azure SDK clients.
@@ -122,6 +124,8 @@ class ManagedIdentityCredential(AsyncContextManager):
         :param str scopes: desired scope for the access token. This credential allows only one scope per request.
             For more information about scopes, see
             https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
+        :keyword str claims: not used by this credential; any value provided will be ignored.
+        :keyword str tenant_id: not used by this credential; any value provided will be ignored.
 
         :return: An access token with the desired scopes.
         :rtype: ~azure.core.credentials.AccessToken
@@ -134,4 +138,4 @@ class ManagedIdentityCredential(AsyncContextManager):
                 "Visit https://aka.ms/azsdk/python/identity/managedidentitycredential/troubleshoot to "
                 "troubleshoot this issue."
             )
-        return await self._credential.get_token(*scopes, **kwargs)
+        return await self._credential.get_token(*scopes, claims=claims, tenant_id=tenant_id, **kwargs)
