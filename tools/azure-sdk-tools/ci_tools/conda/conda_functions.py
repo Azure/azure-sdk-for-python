@@ -372,7 +372,6 @@ def get_package_source(
     """
     To create a source distribution of
     """
-    breakpoint()
     if checkout_config.download_uri:
         # if we have a single package, we can simply use the source distribution _as is_ rather than
         # repackaging it. so we download and move it directly to assembled

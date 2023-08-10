@@ -11,6 +11,14 @@ jobs:
     name: azsdk-pool-mms-win-2022-general
     vmImage: MMS2022
   steps:
+    - bash: |
+        echo "##vso[task.prependpath]$CONDA/bin"
+      displayName: 'Prepend PATH with Conda'
+
+    - pwsh: |
+        conda --version
+      displayName: 'Attempt Conda Output'
+
     - template: ../steps/build-conda-artifacts.yml
       parameters:
         ArtifactPrefix: windows_
@@ -53,6 +61,9 @@ jobs:
         pipeline: 119 # azure-uamqp-python - openssl
         project: '29ec6040-b234-4e31-b139-33dc4287b756' # public
 
+    - script: sudo ls /Applications/
+      displayName: 'List All apps'
+      
     - script: sudo xcode-select --switch /Applications/Xcode_11.3.1.app
       displayName: 'Select Xcode 11.3.1'
 
