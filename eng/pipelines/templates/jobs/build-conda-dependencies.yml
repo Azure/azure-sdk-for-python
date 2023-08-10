@@ -12,8 +12,9 @@ jobs:
   steps:
     - template: ../steps/build-conda-artifacts.yml
       parameters:
+        ArtifactPrefix: windows_
         CondaArtifacts: ${{ parameters.CondaArtifacts }}
-        ArtifactName: windows_
+        
 
 - job: 'Build Linux Dependencies'
   timeoutInMinutes: 90
@@ -27,8 +28,8 @@ jobs:
 
     - template: ../steps/build-conda-artifacts.yml
       parameters:
+        ArtifactPrefix: linux_
         CondaArtifacts: ${{ parameters.CondaArtifacts }}
-        ArtifactName: linux_
 
 - job: 'Build Mac Dependencies'
   timeoutInMinutes: 90
@@ -42,5 +43,5 @@ jobs:
 
     - template: ../steps/build-conda-artifacts.yml
       parameters:
+        ArtifactPrefix: mac_
         CondaArtifacts: ${{ parameters.CondaArtifacts }}
-        ArtifactName: mac_
