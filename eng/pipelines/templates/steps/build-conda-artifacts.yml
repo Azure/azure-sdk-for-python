@@ -7,10 +7,6 @@ parameters:
     default: ''
 
 steps:
-  - bash: |
-      echo "##vso[task.prependpath]$CONDA/bin"
-    displayName: 'Prepend PATH with Conda'
-
   - task: UsePythonVersion@0
     displayName: 'Use Python $(PythonVersion)'
     inputs:
