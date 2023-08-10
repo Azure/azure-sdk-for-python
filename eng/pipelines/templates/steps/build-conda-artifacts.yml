@@ -32,12 +32,12 @@ steps:
   - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
     parameters:
       ArtifactPath: '$(Build.SourcesDirectory)/conda/assembled'
-      ArtifactName: '${{ ArtifactPrefix }}distributions'
+      ArtifactName: '${{ parameters.ArtifactPrefix }}distributions'
 
   - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
     parameters:
       ArtifactPath: '$(Build.SourcesDirectory)/conda/output'
-      ArtifactName: '${{ ArtifactPrefix }}conda'
+      ArtifactName: '${{ parameters.ArtifactPrefix }}conda'
 
   # - ${{if eq(variables['System.TeamProject'], 'internal') }}:
   #   - task: AzureArtifacts.manifest-generator-task.manifest-generator-task.ManifestGeneratorTask@0
