@@ -67,4 +67,9 @@ setup(
         "typing-extensions>=4.3.0; python_version<'3.8.0'",
     ],
     python_requires=">=3.7",
+    extras_require={
+        "jsonencoder": [
+            "jsonschema<5.0.0,>=4.10.3",
+        ],
+    },
 )
