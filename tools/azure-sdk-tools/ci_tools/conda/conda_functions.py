@@ -423,7 +423,7 @@ def prep_and_create_environment(environment_dir: str) -> None:
 
     invoke_command(f'conda env create --prefix "{environment_dir}"', environment_dir)
     invoke_command(
-        f'conda install --yes --quiet --prefix "{environment_dir}" conda-build conda-verify typing-extensions',
+        f'conda install --yes --quiet --prefix "{environment_dir}" conda-build conda-verify typing-extensions conda-index',
         environment_dir,
     )
 
@@ -435,7 +435,8 @@ def build_conda_packages(conda_configurations: List[CondaConfiguration], repo_ro
     conda_env_dir = prep_directory(os.path.join(repo_root, "conda", "conda-env")).replace("\\", "/")
 
     prep_and_create_environment(conda_env_dir)
-    invoke_command(f"conda index {conda_output_dir}", repo_root)
+
+    invoke_command(f'conda run --prefix "{conda_env_dir}" conda index {conda_output_dir}', repo_root)
 
     for conda_build in conda_configurations:
         conda_build_folder = os.path.join(conda_sdist_dir, conda_build.name).replace("\\", "/")
