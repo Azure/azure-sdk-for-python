@@ -39,6 +39,7 @@ from azure.ai.ml._vendor.azure_resources.operations import DeploymentsOperations
 from azure.ai.ml.constants._common import (
     DEFAULT_COMPONENT_VERSION,
     DEFAULT_LABEL_NAME,
+    DefaultOpenEncoding,
     AzureMLResourceType,
     LROConfigurations,
 )
@@ -307,7 +308,7 @@ class ComponentOperations(_ScopeDependentOperations):
         self._localize_environment(component, output_dir)
 
         component._localize(output_dir.absolute().as_posix())
-        (output_dir / "component_spec.yaml").write_text(component._to_yaml())
+        (output_dir / "component_spec.yaml").write_text(component._to_yaml(), encoding=DefaultOpenEncoding.WRITE)
 
     def _get(self, name: str, version: Optional[str] = None, label: Optional[str] = None) -> Component:
         if version and label:
