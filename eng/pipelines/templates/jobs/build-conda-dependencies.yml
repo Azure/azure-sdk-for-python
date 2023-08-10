@@ -12,10 +12,11 @@ jobs:
     vmImage: MMS2022
   steps:
     - bash: |
-        echo "##vso[task.prependpath]$CONDA/bin"
+        echo "##vso[task.prependpath]$(CONDA)/bin"
       displayName: 'Prepend PATH with Conda'
 
     - pwsh: |
+        Get-ChildItem -Recurse $(CONDA) | % { $_.FullName } 
         conda --version
       displayName: 'Attempt Conda Output'
 
