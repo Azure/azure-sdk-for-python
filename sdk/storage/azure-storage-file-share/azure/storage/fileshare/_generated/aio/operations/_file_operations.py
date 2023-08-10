@@ -196,8 +196,9 @@ class FileOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -237,7 +238,7 @@ class FileOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    create.metadata = {"url": "{url}/{shareName}/{directory}/{fileName}"}
+    create.metadata = {"url": "{url}"}
 
     @distributed_trace_async
     async def download(
@@ -301,8 +302,9 @@ class FileOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=True, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -444,7 +446,7 @@ class FileOperations:
 
         return deserialized  # type: ignore
 
-    download.metadata = {"url": "{url}/{shareName}/{directory}/{fileName}"}
+    download.metadata = {"url": "{url}"}
 
     @distributed_trace_async
     async def get_properties(  # pylint: disable=inconsistent-return-statements
@@ -504,8 +506,9 @@ class FileOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -567,7 +570,7 @@ class FileOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    get_properties.metadata = {"url": "{url}/{shareName}/{directory}/{fileName}"}
+    get_properties.metadata = {"url": "{url}"}
 
     @distributed_trace_async
     async def delete(  # pylint: disable=inconsistent-return-statements
@@ -621,8 +624,9 @@ class FileOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -640,7 +644,7 @@ class FileOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    delete.metadata = {"url": "{url}/{shareName}/{directory}/{fileName}"}
+    delete.metadata = {"url": "{url}"}
 
     @distributed_trace_async
     async def set_http_headers(  # pylint: disable=inconsistent-return-statements
@@ -762,8 +766,9 @@ class FileOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -803,7 +808,7 @@ class FileOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    set_http_headers.metadata = {"url": "{url}/{shareName}/{directory}/{fileName}"}
+    set_http_headers.metadata = {"url": "{url}"}
 
     @distributed_trace_async
     async def set_metadata(  # pylint: disable=inconsistent-return-statements
@@ -867,8 +872,9 @@ class FileOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -890,7 +896,7 @@ class FileOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    set_metadata.metadata = {"url": "{url}/{shareName}/{directory}/{fileName}"}
+    set_metadata.metadata = {"url": "{url}"}
 
     @distributed_trace_async
     async def acquire_lease(  # pylint: disable=inconsistent-return-statements
@@ -965,8 +971,9 @@ class FileOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -990,7 +997,7 @@ class FileOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    acquire_lease.metadata = {"url": "{url}/{shareName}/{directory}/{fileName}"}
+    acquire_lease.metadata = {"url": "{url}"}
 
     @distributed_trace_async
     async def release_lease(  # pylint: disable=inconsistent-return-statements
@@ -1053,8 +1060,9 @@ class FileOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1077,7 +1085,7 @@ class FileOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    release_lease.metadata = {"url": "{url}/{shareName}/{directory}/{fileName}"}
+    release_lease.metadata = {"url": "{url}"}
 
     @distributed_trace_async
     async def change_lease(  # pylint: disable=inconsistent-return-statements
@@ -1150,8 +1158,9 @@ class FileOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1175,7 +1184,7 @@ class FileOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    change_lease.metadata = {"url": "{url}/{shareName}/{directory}/{fileName}"}
+    change_lease.metadata = {"url": "{url}"}
 
     @distributed_trace_async
     async def break_lease(  # pylint: disable=inconsistent-return-statements
@@ -1246,8 +1255,9 @@ class FileOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1271,7 +1281,7 @@ class FileOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    break_lease.metadata = {"url": "{url}/{shareName}/{directory}/{fileName}"}
+    break_lease.metadata = {"url": "{url}"}
 
     @distributed_trace_async
     async def upload_range(  # pylint: disable=inconsistent-return-statements
@@ -1372,8 +1382,9 @@ class FileOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1400,7 +1411,7 @@ class FileOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    upload_range.metadata = {"url": "{url}/{shareName}/{directory}/{fileName}"}
+    upload_range.metadata = {"url": "{url}"}
 
     @distributed_trace_async
     async def upload_range_from_url(  # pylint: disable=inconsistent-return-statements
@@ -1510,8 +1521,9 @@ class FileOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1540,7 +1552,7 @@ class FileOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    upload_range_from_url.metadata = {"url": "{url}/{shareName}/{directory}/{fileName}"}
+    upload_range_from_url.metadata = {"url": "{url}"}
 
     @distributed_trace_async
     async def get_range_list(
@@ -1614,8 +1626,9 @@ class FileOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1640,7 +1653,7 @@ class FileOperations:
 
         return deserialized
 
-    get_range_list.metadata = {"url": "{url}/{shareName}/{directory}/{fileName}"}
+    get_range_list.metadata = {"url": "{url}"}
 
     @distributed_trace_async
     async def start_copy(  # pylint: disable=inconsistent-return-statements
@@ -1749,8 +1762,9 @@ class FileOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1772,7 +1786,7 @@ class FileOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    start_copy.metadata = {"url": "{url}/{shareName}/{directory}/{fileName}"}
+    start_copy.metadata = {"url": "{url}"}
 
     @distributed_trace_async
     async def abort_copy(  # pylint: disable=inconsistent-return-statements
@@ -1844,8 +1858,9 @@ class FileOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1863,7 +1878,7 @@ class FileOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    abort_copy.metadata = {"url": "{url}/{shareName}/{directory}/{fileName}"}
+    abort_copy.metadata = {"url": "{url}"}
 
     @distributed_trace_async
     async def list_handles(
@@ -1932,8 +1947,9 @@ class FileOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1956,7 +1972,7 @@ class FileOperations:
 
         return deserialized
 
-    list_handles.metadata = {"url": "{url}/{shareName}/{directory}/{fileName}"}
+    list_handles.metadata = {"url": "{url}"}
 
     @distributed_trace_async
     async def force_close_handles(  # pylint: disable=inconsistent-return-statements
@@ -2024,8 +2040,9 @@ class FileOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2050,7 +2067,7 @@ class FileOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    force_close_handles.metadata = {"url": "{url}/{shareName}/{directory}/{fileName}"}
+    force_close_handles.metadata = {"url": "{url}"}
 
     @distributed_trace_async
     async def rename(  # pylint: disable=inconsistent-return-statements
@@ -2182,8 +2199,9 @@ class FileOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2223,4 +2241,4 @@ class FileOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    rename.metadata = {"url": "{url}/{shareName}/{directory}/{fileName}"}
+    rename.metadata = {"url": "{url}"}

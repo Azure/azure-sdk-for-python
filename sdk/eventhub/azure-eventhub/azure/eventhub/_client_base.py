@@ -312,7 +312,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
         self._auto_reconnect = kwargs.get("auto_reconnect", True)
         self._auth_uri = f"sb://{self._address.hostname}{self._address.path}"
         self._config = Configuration(
-            uamqp_transport=uamqp_transport,
+            amqp_transport=self._amqp_transport,
             hostname=self._address.hostname,
             **kwargs,
         )
@@ -454,12 +454,6 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
                     raise last_exception
             finally:
                 mgmt_client.close()
-
-    def _add_span_request_attributes(self, span):
-        span.add_attribute("component", "eventhubs")
-        span.add_attribute("az.namespace", "Microsoft.EventHub")
-        span.add_attribute("message_bus.destination", self._address.path)
-        span.add_attribute("peer.address", self._address.hostname)
 
     def _get_eventhub_properties(self) -> Dict[str, Any]:
         mgmt_msg = self._amqp_transport.build_message(

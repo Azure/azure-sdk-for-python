@@ -53,7 +53,7 @@ async def _Request(global_endpoint_manager, request_params, connection_policy, p
     # pylint: disable=protected-access
 
     connection_timeout = connection_policy.RequestTimeout
-    connection_timeout = kwargs.pop("connection_timeout", connection_timeout / 1000.0)
+    connection_timeout = kwargs.pop("connection_timeout", connection_timeout)
 
     # Every request tries to perform a refresh
     client_timeout = kwargs.get('timeout')

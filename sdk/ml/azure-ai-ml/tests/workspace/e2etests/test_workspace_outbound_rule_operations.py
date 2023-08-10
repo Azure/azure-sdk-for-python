@@ -5,18 +5,15 @@ from typing import Callable
 
 import pytest
 from devtools_testutils import AzureRecordedTestCase, is_live
-from test_utilities.utils import verify_entity_load_and_dump
 
 from azure.ai.ml import MLClient, load_workspace
-from azure.ai.ml._utils.utils import camel_to_snake
-from azure.ai.ml.entities._workspace.workspace import Workspace
+from azure.ai.ml.entities._workspace.workspace import Workspace, ManagedNetwork
 from azure.ai.ml.entities._workspace.networking import (
     FqdnDestination,
     PrivateEndpointDestination,
     ServiceTagDestination,
 )
-from azure.core.paging import ItemPaged
-from azure.ai.ml.constants._workspace import IsolationMode, OutboundRuleCategory, OutboundRuleType
+from azure.ai.ml.constants._workspace import IsolationMode, OutboundRuleCategory
 from azure.core.polling import LROPoller
 
 
@@ -33,7 +30,7 @@ class TestWorkspaceOutboundRules(AzureRecordedTestCase):
         reason="ARM template makes playback complex, so the test is flaky when run against recording",
     )
     def test_workspace_create_with_managed_network_list_show_remove_rules(
-        self, client: MLClient, randstr: Callable[[], str]
+        self, client: MLClient, randstr: Callable[[], str], location: str
     ) -> None:
         # resource name key word
         wps_name = f"e2etest_{randstr('wps_name')}_mvnet"
@@ -42,7 +39,7 @@ class TestWorkspaceOutboundRules(AzureRecordedTestCase):
         wps_display_name = f"{wps_name} display name"
         params_override = [
             {"name": wps_name},
-            # {"location": location}, # using master for now
+            {"location": location},
             {"description": wps_description},
             {"display_name": wps_display_name},
         ]
@@ -54,7 +51,7 @@ class TestWorkspaceOutboundRules(AzureRecordedTestCase):
         workspace = workspace_poller.result()
         assert isinstance(workspace, Workspace)
         assert workspace.name == wps_name
-        # assert workspace.location == location # using master for now
+        assert workspace.location == location
         assert workspace.description == wps_description
         assert workspace.display_name == wps_display_name
         assert workspace.managed_network.isolation_mode == IsolationMode.ALLOW_ONLY_APPROVED_OUTBOUND
@@ -151,3 +148,43 @@ class TestWorkspaceOutboundRules(AzureRecordedTestCase):
         # verify that request was accepted by checking if poller is returned
         assert poller
         assert isinstance(poller, LROPoller)
+
+    @pytest.mark.e2etest
+    @pytest.mark.mlc
+    @pytest.mark.skipif(
+        condition=not is_live(),
+        reason="ARM template makes playback complex, so the test is flaky when run against recording",
+    )
+    def test_workspace_create_with_managed_network_provision_network(
+        self, client: MLClient, randstr: Callable[[], str], location: str
+    ) -> None:
+        # resource name key word
+        wps_name = f"e2etest_{randstr('wps_name')}_mvnet"
+
+        wps_description = f"{wps_name} description"
+        wps_display_name = f"{wps_name} display name"
+        params_override = [
+            {"name": wps_name},
+            {"location": location},
+            {"description": wps_description},
+            {"display_name": wps_display_name},
+        ]
+        wps = load_workspace(None, params_override=params_override)
+        wps.managed_network = ManagedNetwork(IsolationMode.ALLOW_INTERNET_OUTBOUND)
+
+        # test creation
+        workspace_poller = client.workspaces.begin_create(workspace=wps)
+        assert isinstance(workspace_poller, LROPoller)
+        workspace = workspace_poller.result()
+        assert isinstance(workspace, Workspace)
+        assert workspace.name == wps_name
+        assert workspace.location == location
+        assert workspace.description == wps_description
+        assert workspace.display_name == wps_display_name
+        assert workspace.managed_network.isolation_mode == IsolationMode.ALLOW_INTERNET_OUTBOUND
+
+        provisioning_output = client.workspaces.begin_provision_network(
+            workspace_name=workspace.name, include_spark=False
+        ).result()
+        assert provisioning_output.status == "Active"
+        assert provisioning_output.spark_ready == False

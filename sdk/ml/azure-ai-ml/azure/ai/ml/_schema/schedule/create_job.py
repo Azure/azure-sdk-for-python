@@ -5,22 +5,20 @@
 import copy
 
 import yaml
-from marshmallow import INCLUDE, ValidationError, post_load, pre_load
+from marshmallow import INCLUDE, ValidationError, fields, post_load, pre_load
 
-from azure.ai.ml._schema import AnonymousEnvironmentSchema, CommandJobSchema
+from azure.ai.ml._schema import CommandJobSchema
 from azure.ai.ml._schema.core.fields import (
     ArmStr,
-    ArmVersionedStr,
     ComputeField,
+    EnvironmentField,
     FileRefField,
     NestedField,
-    RegistryStr,
     StringTransformedEnum,
     UnionField,
 )
 from azure.ai.ml._schema.job import BaseJobSchema
 from azure.ai.ml._schema.job.input_output_fields_provider import InputsField, OutputsField
-from azure.ai.ml._schema.job.parameterized_spark import SparkConfSchema
 from azure.ai.ml._schema.pipeline.settings import PipelineJobSettingsSchema
 from azure.ai.ml._utils.utils import load_file, merge_dict
 from azure.ai.ml.constants import JobType
@@ -130,23 +128,10 @@ class CommandCreateJobSchema(BaseCreateJobSchema, CommandJobSchema):
         # code and command can not be set during runtime
         exclude = ["code", "command"]
 
-    environment = UnionField(
-        [
-            NestedField(AnonymousEnvironmentSchema),
-            RegistryStr(azureml_type=AzureMLResourceType.ENVIRONMENT),
-            ArmVersionedStr(azureml_type=AzureMLResourceType.ENVIRONMENT, allow_default_version=True),
-        ],
-    )
+    environment = EnvironmentField()
 
 
 class SparkCreateJobSchema(BaseCreateJobSchema):
     type = StringTransformedEnum(allowed_values=[JobType.SPARK])
-    conf = NestedField(SparkConfSchema, unknown=INCLUDE)
-    environment = UnionField(
-        [
-            NestedField(AnonymousEnvironmentSchema),
-            RegistryStr(azureml_type=AzureMLResourceType.ENVIRONMENT),
-            ArmVersionedStr(azureml_type=AzureMLResourceType.ENVIRONMENT, allow_default_version=True),
-        ],
-        allow_none=True,
-    )
+    conf = fields.Dict(keys=fields.Str(), values=fields.Raw())
+    environment = EnvironmentField(allow_none=True)

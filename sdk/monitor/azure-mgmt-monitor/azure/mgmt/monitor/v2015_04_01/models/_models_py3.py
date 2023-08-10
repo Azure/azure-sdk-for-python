@@ -92,13 +92,13 @@ class AlertRuleResource(Resource):  # pylint: disable=too-many-instance-attribut
     :ivar is_enabled: the flag that indicates whether the alert rule is enabled. Required.
     :vartype is_enabled: bool
     :ivar condition: the condition that results in the alert rule being activated. Required.
-    :vartype condition: ~$(python-base-namespace).v2015_04_01.models.RuleCondition
+    :vartype condition: ~azure.mgmt.monitor.v2015_04_01.models.RuleCondition
     :ivar action: action that is performed when the alert rule becomes active, and when an alert
      condition is resolved.
-    :vartype action: ~$(python-base-namespace).v2015_04_01.models.RuleAction
+    :vartype action: ~azure.mgmt.monitor.v2015_04_01.models.RuleAction
     :ivar actions: the array of actions that are performed when the alert rule becomes active, and
      when an alert condition is resolved.
-    :vartype actions: list[~$(python-base-namespace).v2015_04_01.models.RuleAction]
+    :vartype actions: list[~azure.mgmt.monitor.v2015_04_01.models.RuleAction]
     :ivar last_updated_time: Last time the rule was updated in ISO8601 format.
     :vartype last_updated_time: ~datetime.datetime
     """
@@ -159,13 +159,13 @@ class AlertRuleResource(Resource):  # pylint: disable=too-many-instance-attribut
         :keyword is_enabled: the flag that indicates whether the alert rule is enabled. Required.
         :paramtype is_enabled: bool
         :keyword condition: the condition that results in the alert rule being activated. Required.
-        :paramtype condition: ~$(python-base-namespace).v2015_04_01.models.RuleCondition
+        :paramtype condition: ~azure.mgmt.monitor.v2015_04_01.models.RuleCondition
         :keyword action: action that is performed when the alert rule becomes active, and when an alert
          condition is resolved.
-        :paramtype action: ~$(python-base-namespace).v2015_04_01.models.RuleAction
+        :paramtype action: ~azure.mgmt.monitor.v2015_04_01.models.RuleAction
         :keyword actions: the array of actions that are performed when the alert rule becomes active,
          and when an alert condition is resolved.
-        :paramtype actions: list[~$(python-base-namespace).v2015_04_01.models.RuleAction]
+        :paramtype actions: list[~azure.mgmt.monitor.v2015_04_01.models.RuleAction]
         """
         super().__init__(location=location, tags=tags, **kwargs)
         self.name_properties_name = name_properties_name
@@ -182,7 +182,7 @@ class AlertRuleResourceCollection(_serialization.Model):
     """Represents a collection of alert rule resources.
 
     :ivar value: the values for the alert rule resources.
-    :vartype value: list[~$(python-base-namespace).v2015_04_01.models.AlertRuleResource]
+    :vartype value: list[~azure.mgmt.monitor.v2015_04_01.models.AlertRuleResource]
     """
 
     _attribute_map = {
@@ -192,7 +192,7 @@ class AlertRuleResourceCollection(_serialization.Model):
     def __init__(self, *, value: Optional[List["_models.AlertRuleResource"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: the values for the alert rule resources.
-        :paramtype value: list[~$(python-base-namespace).v2015_04_01.models.AlertRuleResource]
+        :paramtype value: list[~azure.mgmt.monitor.v2015_04_01.models.AlertRuleResource]
         """
         super().__init__(**kwargs)
         self.value = value
@@ -214,13 +214,13 @@ class AlertRuleResourcePatch(_serialization.Model):
     :ivar is_enabled: the flag that indicates whether the alert rule is enabled.
     :vartype is_enabled: bool
     :ivar condition: the condition that results in the alert rule being activated.
-    :vartype condition: ~$(python-base-namespace).v2015_04_01.models.RuleCondition
+    :vartype condition: ~azure.mgmt.monitor.v2015_04_01.models.RuleCondition
     :ivar action: action that is performed when the alert rule becomes active, and when an alert
      condition is resolved.
-    :vartype action: ~$(python-base-namespace).v2015_04_01.models.RuleAction
+    :vartype action: ~azure.mgmt.monitor.v2015_04_01.models.RuleAction
     :ivar actions: the array of actions that are performed when the alert rule becomes active, and
      when an alert condition is resolved.
-    :vartype actions: list[~$(python-base-namespace).v2015_04_01.models.RuleAction]
+    :vartype actions: list[~azure.mgmt.monitor.v2015_04_01.models.RuleAction]
     :ivar last_updated_time: Last time the rule was updated in ISO8601 format.
     :vartype last_updated_time: ~datetime.datetime
     """
@@ -267,13 +267,13 @@ class AlertRuleResourcePatch(_serialization.Model):
         :keyword is_enabled: the flag that indicates whether the alert rule is enabled.
         :paramtype is_enabled: bool
         :keyword condition: the condition that results in the alert rule being activated.
-        :paramtype condition: ~$(python-base-namespace).v2015_04_01.models.RuleCondition
+        :paramtype condition: ~azure.mgmt.monitor.v2015_04_01.models.RuleCondition
         :keyword action: action that is performed when the alert rule becomes active, and when an alert
          condition is resolved.
-        :paramtype action: ~$(python-base-namespace).v2015_04_01.models.RuleAction
+        :paramtype action: ~azure.mgmt.monitor.v2015_04_01.models.RuleAction
         :keyword actions: the array of actions that are performed when the alert rule becomes active,
          and when an alert condition is resolved.
-        :paramtype actions: list[~$(python-base-namespace).v2015_04_01.models.RuleAction]
+        :paramtype actions: list[~azure.mgmt.monitor.v2015_04_01.models.RuleAction]
         """
         super().__init__(**kwargs)
         self.tags = tags
@@ -298,9 +298,9 @@ class AutoscaleNotification(_serialization.Model):
      Required. Default value is "Scale".
     :vartype operation: str
     :ivar email: the email notification.
-    :vartype email: ~$(python-base-namespace).v2015_04_01.models.EmailNotification
+    :vartype email: ~azure.mgmt.monitor.v2015_04_01.models.EmailNotification
     :ivar webhooks: the collection of webhook notifications.
-    :vartype webhooks: list[~$(python-base-namespace).v2015_04_01.models.WebhookNotification]
+    :vartype webhooks: list[~azure.mgmt.monitor.v2015_04_01.models.WebhookNotification]
     """
 
     _validation = {
@@ -324,9 +324,9 @@ class AutoscaleNotification(_serialization.Model):
     ) -> None:
         """
         :keyword email: the email notification.
-        :paramtype email: ~$(python-base-namespace).v2015_04_01.models.EmailNotification
+        :paramtype email: ~azure.mgmt.monitor.v2015_04_01.models.EmailNotification
         :keyword webhooks: the collection of webhook notifications.
-        :paramtype webhooks: list[~$(python-base-namespace).v2015_04_01.models.WebhookNotification]
+        :paramtype webhooks: list[~azure.mgmt.monitor.v2015_04_01.models.WebhookNotification]
         """
         super().__init__(**kwargs)
         self.email = email
@@ -341,16 +341,16 @@ class AutoscaleProfile(_serialization.Model):
     :ivar name: the name of the profile. Required.
     :vartype name: str
     :ivar capacity: the number of instances that can be used during this profile. Required.
-    :vartype capacity: ~$(python-base-namespace).v2015_04_01.models.ScaleCapacity
+    :vartype capacity: ~azure.mgmt.monitor.v2015_04_01.models.ScaleCapacity
     :ivar rules: the collection of rules that provide the triggers and parameters for the scaling
      action. A maximum of 10 rules can be specified. Required.
-    :vartype rules: list[~$(python-base-namespace).v2015_04_01.models.ScaleRule]
+    :vartype rules: list[~azure.mgmt.monitor.v2015_04_01.models.ScaleRule]
     :ivar fixed_date: the specific date-time for the profile. This element is not used if the
      Recurrence element is used.
-    :vartype fixed_date: ~$(python-base-namespace).v2015_04_01.models.TimeWindow
+    :vartype fixed_date: ~azure.mgmt.monitor.v2015_04_01.models.TimeWindow
     :ivar recurrence: the repeating times at which this profile begins. This element is not used if
      the FixedDate element is used.
-    :vartype recurrence: ~$(python-base-namespace).v2015_04_01.models.Recurrence
+    :vartype recurrence: ~azure.mgmt.monitor.v2015_04_01.models.Recurrence
     """
 
     _validation = {
@@ -381,16 +381,16 @@ class AutoscaleProfile(_serialization.Model):
         :keyword name: the name of the profile. Required.
         :paramtype name: str
         :keyword capacity: the number of instances that can be used during this profile. Required.
-        :paramtype capacity: ~$(python-base-namespace).v2015_04_01.models.ScaleCapacity
+        :paramtype capacity: ~azure.mgmt.monitor.v2015_04_01.models.ScaleCapacity
         :keyword rules: the collection of rules that provide the triggers and parameters for the
          scaling action. A maximum of 10 rules can be specified. Required.
-        :paramtype rules: list[~$(python-base-namespace).v2015_04_01.models.ScaleRule]
+        :paramtype rules: list[~azure.mgmt.monitor.v2015_04_01.models.ScaleRule]
         :keyword fixed_date: the specific date-time for the profile. This element is not used if the
          Recurrence element is used.
-        :paramtype fixed_date: ~$(python-base-namespace).v2015_04_01.models.TimeWindow
+        :paramtype fixed_date: ~azure.mgmt.monitor.v2015_04_01.models.TimeWindow
         :keyword recurrence: the repeating times at which this profile begins. This element is not used
          if the FixedDate element is used.
-        :paramtype recurrence: ~$(python-base-namespace).v2015_04_01.models.Recurrence
+        :paramtype recurrence: ~azure.mgmt.monitor.v2015_04_01.models.Recurrence
         """
         super().__init__(**kwargs)
         self.name = name
@@ -419,10 +419,9 @@ class AutoscaleSettingResource(Resource):  # pylint: disable=too-many-instance-a
     :vartype tags: dict[str, str]
     :ivar profiles: the collection of automatic scaling profiles that specify different scaling
      parameters for different time periods. A maximum of 20 profiles can be specified. Required.
-    :vartype profiles: list[~$(python-base-namespace).v2015_04_01.models.AutoscaleProfile]
+    :vartype profiles: list[~azure.mgmt.monitor.v2015_04_01.models.AutoscaleProfile]
     :ivar notifications: the collection of notifications.
-    :vartype notifications:
-     list[~$(python-base-namespace).v2015_04_01.models.AutoscaleNotification]
+    :vartype notifications: list[~azure.mgmt.monitor.v2015_04_01.models.AutoscaleNotification]
     :ivar enabled: the enabled flag. Specifies whether automatic scaling is enabled for the
      resource. The default value is 'false'.
     :vartype enabled: bool
@@ -478,10 +477,9 @@ class AutoscaleSettingResource(Resource):  # pylint: disable=too-many-instance-a
         :paramtype tags: dict[str, str]
         :keyword profiles: the collection of automatic scaling profiles that specify different scaling
          parameters for different time periods. A maximum of 20 profiles can be specified. Required.
-        :paramtype profiles: list[~$(python-base-namespace).v2015_04_01.models.AutoscaleProfile]
+        :paramtype profiles: list[~azure.mgmt.monitor.v2015_04_01.models.AutoscaleProfile]
         :keyword notifications: the collection of notifications.
-        :paramtype notifications:
-         list[~$(python-base-namespace).v2015_04_01.models.AutoscaleNotification]
+        :paramtype notifications: list[~azure.mgmt.monitor.v2015_04_01.models.AutoscaleNotification]
         :keyword enabled: the enabled flag. Specifies whether automatic scaling is enabled for the
          resource. The default value is 'false'.
         :paramtype enabled: bool
@@ -509,7 +507,7 @@ class AutoscaleSettingResourceCollection(_serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar value: the values for the autoscale setting resources. Required.
-    :vartype value: list[~$(python-base-namespace).v2015_04_01.models.AutoscaleSettingResource]
+    :vartype value: list[~azure.mgmt.monitor.v2015_04_01.models.AutoscaleSettingResource]
     :ivar next_link: URL to get the next set of results.
     :vartype next_link: str
     """
@@ -528,7 +526,7 @@ class AutoscaleSettingResourceCollection(_serialization.Model):
     ) -> None:
         """
         :keyword value: the values for the autoscale setting resources. Required.
-        :paramtype value: list[~$(python-base-namespace).v2015_04_01.models.AutoscaleSettingResource]
+        :paramtype value: list[~azure.mgmt.monitor.v2015_04_01.models.AutoscaleSettingResource]
         :keyword next_link: URL to get the next set of results.
         :paramtype next_link: str
         """
@@ -544,10 +542,9 @@ class AutoscaleSettingResourcePatch(_serialization.Model):
     :vartype tags: dict[str, str]
     :ivar profiles: the collection of automatic scaling profiles that specify different scaling
      parameters for different time periods. A maximum of 20 profiles can be specified.
-    :vartype profiles: list[~$(python-base-namespace).v2015_04_01.models.AutoscaleProfile]
+    :vartype profiles: list[~azure.mgmt.monitor.v2015_04_01.models.AutoscaleProfile]
     :ivar notifications: the collection of notifications.
-    :vartype notifications:
-     list[~$(python-base-namespace).v2015_04_01.models.AutoscaleNotification]
+    :vartype notifications: list[~azure.mgmt.monitor.v2015_04_01.models.AutoscaleNotification]
     :ivar enabled: the enabled flag. Specifies whether automatic scaling is enabled for the
      resource. The default value is 'false'.
     :vartype enabled: bool
@@ -592,10 +589,9 @@ class AutoscaleSettingResourcePatch(_serialization.Model):
         :paramtype tags: dict[str, str]
         :keyword profiles: the collection of automatic scaling profiles that specify different scaling
          parameters for different time periods. A maximum of 20 profiles can be specified.
-        :paramtype profiles: list[~$(python-base-namespace).v2015_04_01.models.AutoscaleProfile]
+        :paramtype profiles: list[~azure.mgmt.monitor.v2015_04_01.models.AutoscaleProfile]
         :keyword notifications: the collection of notifications.
-        :paramtype notifications:
-         list[~$(python-base-namespace).v2015_04_01.models.AutoscaleNotification]
+        :paramtype notifications: list[~azure.mgmt.monitor.v2015_04_01.models.AutoscaleNotification]
         :keyword enabled: the enabled flag. Specifies whether automatic scaling is enabled for the
          resource. The default value is 'false'.
         :paramtype enabled: bool
@@ -696,7 +692,7 @@ class EventCategoryCollection(_serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar value: the list that includes the Azure event categories. Required.
-    :vartype value: list[~$(python-base-namespace).v2015_04_01.models.LocalizableString]
+    :vartype value: list[~azure.mgmt.monitor.v2015_04_01.models.LocalizableString]
     """
 
     _validation = {
@@ -710,7 +706,7 @@ class EventCategoryCollection(_serialization.Model):
     def __init__(self, *, value: List["_models.LocalizableString"], **kwargs: Any) -> None:
         """
         :keyword value: the list that includes the Azure event categories. Required.
-        :paramtype value: list[~$(python-base-namespace).v2015_04_01.models.LocalizableString]
+        :paramtype value: list[~azure.mgmt.monitor.v2015_04_01.models.LocalizableString]
         """
         super().__init__(**kwargs)
         self.value = value
@@ -722,7 +718,7 @@ class EventData(_serialization.Model):  # pylint: disable=too-many-instance-attr
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar authorization: The sender authorization information.
-    :vartype authorization: ~$(python-base-namespace).v2015_04_01.models.SenderAuthorization
+    :vartype authorization: ~azure.mgmt.monitor.v2015_04_01.models.SenderAuthorization
     :ivar claims: key value pairs to identify ARM permissions.
     :vartype claims: dict[str, str]
     :ivar caller: the email address of the user who has performed the operation, the UPN claim or
@@ -740,43 +736,43 @@ class EventData(_serialization.Model):  # pylint: disable=too-many-instance-attr
     :vartype correlation_id: str
     :ivar event_name: the event name. This value should not be confused with OperationName. For
      practical purposes, OperationName might be more appealing to end users.
-    :vartype event_name: ~$(python-base-namespace).v2015_04_01.models.LocalizableString
+    :vartype event_name: ~azure.mgmt.monitor.v2015_04_01.models.LocalizableString
     :ivar category: the event category.
-    :vartype category: ~$(python-base-namespace).v2015_04_01.models.LocalizableString
+    :vartype category: ~azure.mgmt.monitor.v2015_04_01.models.LocalizableString
     :ivar http_request: the HTTP request info. Usually includes the 'clientRequestId',
      'clientIpAddress' (IP address of the user who initiated the event) and 'method' (HTTP method
      e.g. PUT).
-    :vartype http_request: ~$(python-base-namespace).v2015_04_01.models.HttpRequestInfo
+    :vartype http_request: ~azure.mgmt.monitor.v2015_04_01.models.HttpRequestInfo
     :ivar level: the event level. Known values are: "Critical", "Error", "Warning",
      "Informational", and "Verbose".
-    :vartype level: str or ~$(python-base-namespace).v2015_04_01.models.EventLevel
+    :vartype level: str or ~azure.mgmt.monitor.v2015_04_01.models.EventLevel
     :ivar resource_group_name: the resource group name of the impacted resource.
     :vartype resource_group_name: str
     :ivar resource_provider_name: the resource provider name of the impacted resource.
-    :vartype resource_provider_name: ~$(python-base-namespace).v2015_04_01.models.LocalizableString
+    :vartype resource_provider_name: ~azure.mgmt.monitor.v2015_04_01.models.LocalizableString
     :ivar resource_id: the resource uri that uniquely identifies the resource that caused this
      event.
     :vartype resource_id: str
     :ivar resource_type: the resource type.
-    :vartype resource_type: ~$(python-base-namespace).v2015_04_01.models.LocalizableString
+    :vartype resource_type: ~azure.mgmt.monitor.v2015_04_01.models.LocalizableString
     :ivar operation_id: It is usually a GUID shared among the events corresponding to single
      operation. This value should not be confused with EventName.
     :vartype operation_id: str
     :ivar operation_name: the operation name.
-    :vartype operation_name: ~$(python-base-namespace).v2015_04_01.models.LocalizableString
+    :vartype operation_name: ~azure.mgmt.monitor.v2015_04_01.models.LocalizableString
     :ivar properties: the set of <Key, Value> pairs (usually a Dictionary<String, String>) that
      includes details about the event.
     :vartype properties: dict[str, str]
     :ivar status: a string describing the status of the operation. Some typical values are:
      Started, In progress, Succeeded, Failed, Resolved.
-    :vartype status: ~$(python-base-namespace).v2015_04_01.models.LocalizableString
+    :vartype status: ~azure.mgmt.monitor.v2015_04_01.models.LocalizableString
     :ivar sub_status: the event sub status. Most of the time, when included, this captures the HTTP
      status code of the REST call. Common values are: OK (HTTP Status Code: 200), Created (HTTP
      Status Code: 201), Accepted (HTTP Status Code: 202), No Content (HTTP Status Code: 204), Bad
      Request(HTTP Status Code: 400), Not Found (HTTP Status Code: 404), Conflict (HTTP Status Code:
      409), Internal Server Error (HTTP Status Code: 500), Service Unavailable (HTTP Status
      Code:503), Gateway Timeout (HTTP Status Code: 504).
-    :vartype sub_status: ~$(python-base-namespace).v2015_04_01.models.LocalizableString
+    :vartype sub_status: ~azure.mgmt.monitor.v2015_04_01.models.LocalizableString
     :ivar event_timestamp: the timestamp of when the event was generated by the Azure service
      processing the request corresponding the event. It in ISO 8601 format.
     :vartype event_timestamp: ~datetime.datetime
@@ -880,7 +876,7 @@ class EventDataCollection(_serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar value: this list that includes the Azure audit logs. Required.
-    :vartype value: list[~$(python-base-namespace).v2015_04_01.models.EventData]
+    :vartype value: list[~azure.mgmt.monitor.v2015_04_01.models.EventData]
     :ivar next_link: Provides the link to retrieve the next set of events.
     :vartype next_link: str
     """
@@ -897,7 +893,7 @@ class EventDataCollection(_serialization.Model):
     def __init__(self, *, value: List["_models.EventData"], next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword value: this list that includes the Azure audit logs. Required.
-        :paramtype value: list[~$(python-base-namespace).v2015_04_01.models.EventData]
+        :paramtype value: list[~azure.mgmt.monitor.v2015_04_01.models.EventData]
         :keyword next_link: Provides the link to retrieve the next set of events.
         :paramtype next_link: str
         """
@@ -999,7 +995,7 @@ class RuleCondition(_serialization.Model):
     :vartype odata_type: str
     :ivar data_source: the resource from which the rule collects its data. For this type dataSource
      will always be of type RuleMetricDataSource.
-    :vartype data_source: ~$(python-base-namespace).v2015_04_01.models.RuleDataSource
+    :vartype data_source: ~azure.mgmt.monitor.v2015_04_01.models.RuleDataSource
     """
 
     _validation = {
@@ -1023,7 +1019,7 @@ class RuleCondition(_serialization.Model):
         """
         :keyword data_source: the resource from which the rule collects its data. For this type
          dataSource will always be of type RuleMetricDataSource.
-        :paramtype data_source: ~$(python-base-namespace).v2015_04_01.models.RuleDataSource
+        :paramtype data_source: ~azure.mgmt.monitor.v2015_04_01.models.RuleDataSource
         """
         super().__init__(**kwargs)
         self.odata_type: Optional[str] = None
@@ -1042,7 +1038,7 @@ class LocationThresholdRuleCondition(RuleCondition):
     :vartype odata_type: str
     :ivar data_source: the resource from which the rule collects its data. For this type dataSource
      will always be of type RuleMetricDataSource.
-    :vartype data_source: ~$(python-base-namespace).v2015_04_01.models.RuleDataSource
+    :vartype data_source: ~azure.mgmt.monitor.v2015_04_01.models.RuleDataSource
     :ivar window_size: the period of time (in ISO 8601 duration format) that is used to monitor
      alert activity based on the threshold. If specified then it must be between 5 minutes and 1
      day.
@@ -1075,7 +1071,7 @@ class LocationThresholdRuleCondition(RuleCondition):
         """
         :keyword data_source: the resource from which the rule collects its data. For this type
          dataSource will always be of type RuleMetricDataSource.
-        :paramtype data_source: ~$(python-base-namespace).v2015_04_01.models.RuleDataSource
+        :paramtype data_source: ~azure.mgmt.monitor.v2015_04_01.models.RuleDataSource
         :keyword window_size: the period of time (in ISO 8601 duration format) that is used to monitor
          alert activity based on the threshold. If specified then it must be between 5 minutes and 1
          day.
@@ -1095,7 +1091,7 @@ class ManagementEventAggregationCondition(_serialization.Model):
 
     :ivar operator: the condition operator. Known values are: "GreaterThan", "GreaterThanOrEqual",
      "LessThan", and "LessThanOrEqual".
-    :vartype operator: str or ~$(python-base-namespace).v2015_04_01.models.ConditionOperator
+    :vartype operator: str or ~azure.mgmt.monitor.v2015_04_01.models.ConditionOperator
     :ivar threshold: The threshold value that activates the alert.
     :vartype threshold: float
     :ivar window_size: the period of time (in ISO 8601 duration format) that is used to monitor
@@ -1121,7 +1117,7 @@ class ManagementEventAggregationCondition(_serialization.Model):
         """
         :keyword operator: the condition operator. Known values are: "GreaterThan",
          "GreaterThanOrEqual", "LessThan", and "LessThanOrEqual".
-        :paramtype operator: str or ~$(python-base-namespace).v2015_04_01.models.ConditionOperator
+        :paramtype operator: str or ~azure.mgmt.monitor.v2015_04_01.models.ConditionOperator
         :keyword threshold: The threshold value that activates the alert.
         :paramtype threshold: float
         :keyword window_size: the period of time (in ISO 8601 duration format) that is used to monitor
@@ -1147,12 +1143,12 @@ class ManagementEventRuleCondition(RuleCondition):
     :vartype odata_type: str
     :ivar data_source: the resource from which the rule collects its data. For this type dataSource
      will always be of type RuleMetricDataSource.
-    :vartype data_source: ~$(python-base-namespace).v2015_04_01.models.RuleDataSource
+    :vartype data_source: ~azure.mgmt.monitor.v2015_04_01.models.RuleDataSource
     :ivar aggregation: How the data that is collected should be combined over time and when the
      alert is activated. Note that for management event alerts aggregation is optional – if it is
      not provided then any event will cause the alert to activate.
     :vartype aggregation:
-     ~$(python-base-namespace).v2015_04_01.models.ManagementEventAggregationCondition
+     ~azure.mgmt.monitor.v2015_04_01.models.ManagementEventAggregationCondition
     """
 
     _validation = {
@@ -1175,12 +1171,12 @@ class ManagementEventRuleCondition(RuleCondition):
         """
         :keyword data_source: the resource from which the rule collects its data. For this type
          dataSource will always be of type RuleMetricDataSource.
-        :paramtype data_source: ~$(python-base-namespace).v2015_04_01.models.RuleDataSource
+        :paramtype data_source: ~azure.mgmt.monitor.v2015_04_01.models.RuleDataSource
         :keyword aggregation: How the data that is collected should be combined over time and when the
          alert is activated. Note that for management event alerts aggregation is optional – if it is
          not provided then any event will cause the alert to activate.
         :paramtype aggregation:
-         ~$(python-base-namespace).v2015_04_01.models.ManagementEventAggregationCondition
+         ~azure.mgmt.monitor.v2015_04_01.models.ManagementEventAggregationCondition
         """
         super().__init__(data_source=data_source, **kwargs)
         self.odata_type: str = "Microsoft.Azure.Management.Insights.Models.ManagementEventRuleCondition"
@@ -1206,7 +1202,7 @@ class MetricTrigger(_serialization.Model):  # pylint: disable=too-many-instance-
     :vartype time_grain: ~datetime.timedelta
     :ivar statistic: the metric statistic type. How the metrics from multiple instances are
      combined. Required. Known values are: "Average", "Min", "Max", "Sum", and "Count".
-    :vartype statistic: str or ~$(python-base-namespace).v2015_04_01.models.MetricStatisticType
+    :vartype statistic: str or ~azure.mgmt.monitor.v2015_04_01.models.MetricStatisticType
     :ivar time_window: the range of time in which instance data is collected. This value must be
      greater than the delay in metric collection, which can vary from resource-to-resource. Must be
      between 12 hours and 5 minutes. Required.
@@ -1214,18 +1210,16 @@ class MetricTrigger(_serialization.Model):  # pylint: disable=too-many-instance-
     :ivar time_aggregation: time aggregation type. How the data that is collected should be
      combined over time. The default value is Average. Required. Known values are: "Average",
      "Minimum", "Maximum", "Total", "Count", and "Last".
-    :vartype time_aggregation: str or
-     ~$(python-base-namespace).v2015_04_01.models.TimeAggregationType
+    :vartype time_aggregation: str or ~azure.mgmt.monitor.v2015_04_01.models.TimeAggregationType
     :ivar operator: the operator that is used to compare the metric data and the threshold.
      Required. Known values are: "Equals", "NotEquals", "GreaterThan", "GreaterThanOrEqual",
      "LessThan", and "LessThanOrEqual".
-    :vartype operator: str or ~$(python-base-namespace).v2015_04_01.models.ComparisonOperationType
+    :vartype operator: str or ~azure.mgmt.monitor.v2015_04_01.models.ComparisonOperationType
     :ivar threshold: the threshold of the metric that triggers the scale action. Required.
     :vartype threshold: float
     :ivar dimensions: List of dimension conditions. For example:
      [{"DimensionName":"AppName","Operator":"Equals","Values":["App1"]},{"DimensionName":"Deployment","Operator":"Equals","Values":["default"]}].
-    :vartype dimensions:
-     list[~$(python-base-namespace).v2015_04_01.models.ScaleRuleMetricDimension]
+    :vartype dimensions: list[~azure.mgmt.monitor.v2015_04_01.models.ScaleRuleMetricDimension]
     :ivar divide_per_instance: a value indicating whether metric should divide per instance.
     :vartype divide_per_instance: bool
     """
@@ -1289,7 +1283,7 @@ class MetricTrigger(_serialization.Model):  # pylint: disable=too-many-instance-
         :paramtype time_grain: ~datetime.timedelta
         :keyword statistic: the metric statistic type. How the metrics from multiple instances are
          combined. Required. Known values are: "Average", "Min", "Max", "Sum", and "Count".
-        :paramtype statistic: str or ~$(python-base-namespace).v2015_04_01.models.MetricStatisticType
+        :paramtype statistic: str or ~azure.mgmt.monitor.v2015_04_01.models.MetricStatisticType
         :keyword time_window: the range of time in which instance data is collected. This value must be
          greater than the delay in metric collection, which can vary from resource-to-resource. Must be
          between 12 hours and 5 minutes. Required.
@@ -1297,19 +1291,16 @@ class MetricTrigger(_serialization.Model):  # pylint: disable=too-many-instance-
         :keyword time_aggregation: time aggregation type. How the data that is collected should be
          combined over time. The default value is Average. Required. Known values are: "Average",
          "Minimum", "Maximum", "Total", "Count", and "Last".
-        :paramtype time_aggregation: str or
-         ~$(python-base-namespace).v2015_04_01.models.TimeAggregationType
+        :paramtype time_aggregation: str or ~azure.mgmt.monitor.v2015_04_01.models.TimeAggregationType
         :keyword operator: the operator that is used to compare the metric data and the threshold.
          Required. Known values are: "Equals", "NotEquals", "GreaterThan", "GreaterThanOrEqual",
          "LessThan", and "LessThanOrEqual".
-        :paramtype operator: str or
-         ~$(python-base-namespace).v2015_04_01.models.ComparisonOperationType
+        :paramtype operator: str or ~azure.mgmt.monitor.v2015_04_01.models.ComparisonOperationType
         :keyword threshold: the threshold of the metric that triggers the scale action. Required.
         :paramtype threshold: float
         :keyword dimensions: List of dimension conditions. For example:
          [{"DimensionName":"AppName","Operator":"Equals","Values":["App1"]},{"DimensionName":"Deployment","Operator":"Equals","Values":["default"]}].
-        :paramtype dimensions:
-         list[~$(python-base-namespace).v2015_04_01.models.ScaleRuleMetricDimension]
+        :paramtype dimensions: list[~azure.mgmt.monitor.v2015_04_01.models.ScaleRuleMetricDimension]
         :keyword divide_per_instance: a value indicating whether metric should divide per instance.
         :paramtype divide_per_instance: bool
         """
@@ -1334,7 +1325,7 @@ class Operation(_serialization.Model):
     :ivar name: Operation name: {provider}/{resource}/{operation}.
     :vartype name: str
     :ivar display: Display metadata associated with the operation.
-    :vartype display: ~$(python-base-namespace).v2015_04_01.models.OperationDisplay
+    :vartype display: ~azure.mgmt.monitor.v2015_04_01.models.OperationDisplay
     """
 
     _attribute_map = {
@@ -1349,7 +1340,7 @@ class Operation(_serialization.Model):
         :keyword name: Operation name: {provider}/{resource}/{operation}.
         :paramtype name: str
         :keyword display: Display metadata associated with the operation.
-        :paramtype display: ~$(python-base-namespace).v2015_04_01.models.OperationDisplay
+        :paramtype display: ~azure.mgmt.monitor.v2015_04_01.models.OperationDisplay
         """
         super().__init__(**kwargs)
         self.name = name
@@ -1400,7 +1391,7 @@ class OperationListResult(_serialization.Model):
     and a URL link to get the next set of results.
 
     :ivar value: List of operations supported by the Microsoft.Insights provider.
-    :vartype value: list[~$(python-base-namespace).v2015_04_01.models.Operation]
+    :vartype value: list[~azure.mgmt.monitor.v2015_04_01.models.Operation]
     :ivar next_link: URL to get the next set of operation list results if there are any.
     :vartype next_link: str
     """
@@ -1415,7 +1406,7 @@ class OperationListResult(_serialization.Model):
     ) -> None:
         """
         :keyword value: List of operations supported by the Microsoft.Insights provider.
-        :paramtype value: list[~$(python-base-namespace).v2015_04_01.models.Operation]
+        :paramtype value: list[~azure.mgmt.monitor.v2015_04_01.models.Operation]
         :keyword next_link: URL to get the next set of operation list results if there are any.
         :paramtype next_link: str
         """
@@ -1435,9 +1426,9 @@ class Recurrence(_serialization.Model):
      set a daily schedule, set **schedule** to every day of the week. The frequency property
      specifies that the schedule is repeated weekly. Required. Known values are: "None", "Second",
      "Minute", "Hour", "Day", "Week", "Month", and "Year".
-    :vartype frequency: str or ~$(python-base-namespace).v2015_04_01.models.RecurrenceFrequency
+    :vartype frequency: str or ~azure.mgmt.monitor.v2015_04_01.models.RecurrenceFrequency
     :ivar schedule: the scheduling constraints for when the profile begins. Required.
-    :vartype schedule: ~$(python-base-namespace).v2015_04_01.models.RecurrentSchedule
+    :vartype schedule: ~azure.mgmt.monitor.v2015_04_01.models.RecurrentSchedule
     """
 
     _validation = {
@@ -1463,9 +1454,9 @@ class Recurrence(_serialization.Model):
          example, to set a daily schedule, set **schedule** to every day of the week. The frequency
          property specifies that the schedule is repeated weekly. Required. Known values are: "None",
          "Second", "Minute", "Hour", "Day", "Week", "Month", and "Year".
-        :paramtype frequency: str or ~$(python-base-namespace).v2015_04_01.models.RecurrenceFrequency
+        :paramtype frequency: str or ~azure.mgmt.monitor.v2015_04_01.models.RecurrenceFrequency
         :keyword schedule: the scheduling constraints for when the profile begins. Required.
-        :paramtype schedule: ~$(python-base-namespace).v2015_04_01.models.RecurrentSchedule
+        :paramtype schedule: ~azure.mgmt.monitor.v2015_04_01.models.RecurrentSchedule
         """
         super().__init__(**kwargs)
         self.frequency = frequency
@@ -1789,8 +1780,7 @@ class RuleManagementEventDataSource(RuleDataSource):  # pylint: disable=too-many
     :ivar sub_status: the substatus.
     :vartype sub_status: str
     :ivar claims: the claims.
-    :vartype claims:
-     ~$(python-base-namespace).v2015_04_01.models.RuleManagementEventClaimsDataSource
+    :vartype claims: ~azure.mgmt.monitor.v2015_04_01.models.RuleManagementEventClaimsDataSource
     """
 
     _validation = {
@@ -1862,8 +1852,7 @@ class RuleManagementEventDataSource(RuleDataSource):  # pylint: disable=too-many
         :keyword sub_status: the substatus.
         :paramtype sub_status: str
         :keyword claims: the claims.
-        :paramtype claims:
-         ~$(python-base-namespace).v2015_04_01.models.RuleManagementEventClaimsDataSource
+        :paramtype claims: ~azure.mgmt.monitor.v2015_04_01.models.RuleManagementEventClaimsDataSource
         """
         super().__init__(
             resource_uri=resource_uri,
@@ -2005,10 +1994,10 @@ class ScaleAction(_serialization.Model):
 
     :ivar direction: the scale direction. Whether the scaling action increases or decreases the
      number of instances. Required. Known values are: "None", "Increase", and "Decrease".
-    :vartype direction: str or ~$(python-base-namespace).v2015_04_01.models.ScaleDirection
+    :vartype direction: str or ~azure.mgmt.monitor.v2015_04_01.models.ScaleDirection
     :ivar type: the type of action that should occur when the scale rule fires. Required. Known
      values are: "ChangeCount", "PercentChangeCount", "ExactCount", and "ServiceAllowedNextValue".
-    :vartype type: str or ~$(python-base-namespace).v2015_04_01.models.ScaleType
+    :vartype type: str or ~azure.mgmt.monitor.v2015_04_01.models.ScaleType
     :ivar value: the number of instances that are involved in the scaling action. This value must
      be 1 or greater. The default value is 1.
     :vartype value: str
@@ -2042,10 +2031,10 @@ class ScaleAction(_serialization.Model):
         """
         :keyword direction: the scale direction. Whether the scaling action increases or decreases the
          number of instances. Required. Known values are: "None", "Increase", and "Decrease".
-        :paramtype direction: str or ~$(python-base-namespace).v2015_04_01.models.ScaleDirection
+        :paramtype direction: str or ~azure.mgmt.monitor.v2015_04_01.models.ScaleDirection
         :keyword type: the type of action that should occur when the scale rule fires. Required. Known
          values are: "ChangeCount", "PercentChangeCount", "ExactCount", and "ServiceAllowedNextValue".
-        :paramtype type: str or ~$(python-base-namespace).v2015_04_01.models.ScaleType
+        :paramtype type: str or ~azure.mgmt.monitor.v2015_04_01.models.ScaleType
         :keyword value: the number of instances that are involved in the scaling action. This value
          must be 1 or greater. The default value is 1.
         :paramtype value: str
@@ -2112,9 +2101,9 @@ class ScaleRule(_serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar metric_trigger: the trigger that results in a scaling action. Required.
-    :vartype metric_trigger: ~$(python-base-namespace).v2015_04_01.models.MetricTrigger
+    :vartype metric_trigger: ~azure.mgmt.monitor.v2015_04_01.models.MetricTrigger
     :ivar scale_action: the parameters for the scaling action. Required.
-    :vartype scale_action: ~$(python-base-namespace).v2015_04_01.models.ScaleAction
+    :vartype scale_action: ~azure.mgmt.monitor.v2015_04_01.models.ScaleAction
     """
 
     _validation = {
@@ -2132,9 +2121,9 @@ class ScaleRule(_serialization.Model):
     ) -> None:
         """
         :keyword metric_trigger: the trigger that results in a scaling action. Required.
-        :paramtype metric_trigger: ~$(python-base-namespace).v2015_04_01.models.MetricTrigger
+        :paramtype metric_trigger: ~azure.mgmt.monitor.v2015_04_01.models.MetricTrigger
         :keyword scale_action: the parameters for the scaling action. Required.
-        :paramtype scale_action: ~$(python-base-namespace).v2015_04_01.models.ScaleAction
+        :paramtype scale_action: ~azure.mgmt.monitor.v2015_04_01.models.ScaleAction
         """
         super().__init__(**kwargs)
         self.metric_trigger = metric_trigger
@@ -2152,7 +2141,7 @@ class ScaleRuleMetricDimension(_serialization.Model):
      being equal to any of the values. 'NotEquals' being not equal to all of the values. Required.
      Known values are: "Equals" and "NotEquals".
     :vartype operator: str or
-     ~$(python-base-namespace).v2015_04_01.models.ScaleRuleMetricDimensionOperationType
+     ~azure.mgmt.monitor.v2015_04_01.models.ScaleRuleMetricDimensionOperationType
     :ivar values: list of dimension values. For example: ["App1","App2"]. Required.
     :vartype values: list[str]
     """
@@ -2184,7 +2173,7 @@ class ScaleRuleMetricDimension(_serialization.Model):
          'Equals' being equal to any of the values. 'NotEquals' being not equal to all of the values.
          Required. Known values are: "Equals" and "NotEquals".
         :paramtype operator: str or
-         ~$(python-base-namespace).v2015_04_01.models.ScaleRuleMetricDimensionOperationType
+         ~azure.mgmt.monitor.v2015_04_01.models.ScaleRuleMetricDimensionOperationType
         :keyword values: list of dimension values. For example: ["App1","App2"]. Required.
         :paramtype values: list[str]
         """
@@ -2242,10 +2231,10 @@ class ThresholdRuleCondition(RuleCondition):
     :vartype odata_type: str
     :ivar data_source: the resource from which the rule collects its data. For this type dataSource
      will always be of type RuleMetricDataSource.
-    :vartype data_source: ~$(python-base-namespace).v2015_04_01.models.RuleDataSource
+    :vartype data_source: ~azure.mgmt.monitor.v2015_04_01.models.RuleDataSource
     :ivar operator: the operator used to compare the data and the threshold. Required. Known values
      are: "GreaterThan", "GreaterThanOrEqual", "LessThan", and "LessThanOrEqual".
-    :vartype operator: str or ~$(python-base-namespace).v2015_04_01.models.ConditionOperator
+    :vartype operator: str or ~azure.mgmt.monitor.v2015_04_01.models.ConditionOperator
     :ivar threshold: the threshold value that activates the alert. Required.
     :vartype threshold: float
     :ivar window_size: the period of time (in ISO 8601 duration format) that is used to monitor
@@ -2256,7 +2245,7 @@ class ThresholdRuleCondition(RuleCondition):
      be combined over time. The default value is the PrimaryAggregationType of the Metric. Known
      values are: "Average", "Minimum", "Maximum", "Total", and "Last".
     :vartype time_aggregation: str or
-     ~$(python-base-namespace).v2015_04_01.models.TimeAggregationOperator
+     ~azure.mgmt.monitor.v2015_04_01.models.TimeAggregationOperator
     """
 
     _validation = {
@@ -2287,10 +2276,10 @@ class ThresholdRuleCondition(RuleCondition):
         """
         :keyword data_source: the resource from which the rule collects its data. For this type
          dataSource will always be of type RuleMetricDataSource.
-        :paramtype data_source: ~$(python-base-namespace).v2015_04_01.models.RuleDataSource
+        :paramtype data_source: ~azure.mgmt.monitor.v2015_04_01.models.RuleDataSource
         :keyword operator: the operator used to compare the data and the threshold. Required. Known
          values are: "GreaterThan", "GreaterThanOrEqual", "LessThan", and "LessThanOrEqual".
-        :paramtype operator: str or ~$(python-base-namespace).v2015_04_01.models.ConditionOperator
+        :paramtype operator: str or ~azure.mgmt.monitor.v2015_04_01.models.ConditionOperator
         :keyword threshold: the threshold value that activates the alert. Required.
         :paramtype threshold: float
         :keyword window_size: the period of time (in ISO 8601 duration format) that is used to monitor
@@ -2301,7 +2290,7 @@ class ThresholdRuleCondition(RuleCondition):
          should be combined over time. The default value is the PrimaryAggregationType of the Metric.
          Known values are: "Average", "Minimum", "Maximum", "Total", and "Last".
         :paramtype time_aggregation: str or
-         ~$(python-base-namespace).v2015_04_01.models.TimeAggregationOperator
+         ~azure.mgmt.monitor.v2015_04_01.models.TimeAggregationOperator
         """
         super().__init__(data_source=data_source, **kwargs)
         self.odata_type: str = "Microsoft.Azure.Management.Insights.Models.ThresholdRuleCondition"

@@ -5,39 +5,29 @@
 # ------------------------------------
 import logging
 import os
-import pytest
+import json
+from io import BytesIO
 
 from azure.containerregistry import ContainerRegistryClient
 from azure.containerregistry._helpers import _is_tag
+from azure.identity import AzureAuthorityHosts, ClientSecretCredential
 
-from azure.mgmt.containerregistry import ContainerRegistryManagementClient
-from azure.mgmt.containerregistry.models import ImportImageParameters, ImportSource, ImportMode
-from azure.identity import DefaultAzureCredential, AzureAuthorityHosts, ClientSecretCredential
-
-from devtools_testutils import AzureRecordedTestCase, is_live, FakeTokenCredential
+from devtools_testutils import AzureRecordedTestCase, FakeTokenCredential
 
 logger = logging.getLogger()
 
 
 class ContainerRegistryTestClass(AzureRecordedTestCase):
-    def import_image(self, endpoint, repository, tags, is_anonymous=False):
+    def import_image(self, endpoint, repository, tags):
         # repository must be a docker hub repository
         # tags is a List of repository/tag combos in the format <repository>:<tag>
         if not self.is_live:
             return
-        authority = get_authority(endpoint)
-        import_image(authority, repository, tags, is_anonymous=is_anonymous)
+        import_image(endpoint, repository, tags)
 
     def get_credential(self, authority=None, **kwargs):
         if self.is_live:
-            if authority != AzureAuthorityHosts.AZURE_PUBLIC_CLOUD:
-                return ClientSecretCredential(
-                    tenant_id=os.environ.get("CONTAINERREGISTRY_TENANT_ID"),
-                    client_id=os.environ.get("CONTAINERREGISTRY_CLIENT_ID"),
-                    client_secret=os.environ.get("CONTAINERREGISTRY_CLIENT_SECRET"),
-                    authority=authority
-                )
-            return DefaultAzureCredential(**kwargs)
+            return get_credential(authority)
         return FakeTokenCredential()
 
     def create_registry_client(self, endpoint, **kwargs):
@@ -70,9 +60,6 @@ class ContainerRegistryTestClass(AzureRecordedTestCase):
     def create_fully_qualified_reference(self, registry, repository, digest):
         return f"{registry}/{repository}{':' if _is_tag(digest) else '@'}{digest.split(':')[-1]}"
 
-    def is_public_endpoint(self, endpoint):
-        return ".azurecr.io" in endpoint
-    
     def upload_oci_manifest_prerequisites(self, repo, client):
         layer = "654b93f61054e4ce90ed203bb8d556a6200d5f906cf3eca0620738d6dc18cbed"
         config = "config.json"
@@ -81,7 +68,7 @@ class ContainerRegistryTestClass(AzureRecordedTestCase):
         client.upload_blob(repo, open(os.path.join(base_path, config), "rb"))
         # upload layers
         client.upload_blob(repo, open(os.path.join(base_path, layer), "rb"))
-    
+
     def upload_docker_manifest_prerequisites(self, repo, client):
         layer = "2db29710123e3e53a794f2694094b9b4338aa9ee5c40b930cb8063a1be392c54"
         config = "config.json"
@@ -93,6 +80,10 @@ class ContainerRegistryTestClass(AzureRecordedTestCase):
 
     def get_test_directory(self):
         return os.path.join(os.getcwd(), "tests")
+
+
+def is_public_endpoint(endpoint):
+    return ".azurecr.io" in endpoint
 
 
 def get_authority(endpoint: str) -> str:
@@ -107,6 +98,7 @@ def get_authority(endpoint: str) -> str:
         return AzureAuthorityHosts.AZURE_GOVERNMENT
     raise ValueError(f"Endpoint ({endpoint}) could not be understood")
 
+
 def get_audience(authority: str) -> str:
     if authority == AzureAuthorityHosts.AZURE_PUBLIC_CLOUD:
         logger.warning("Public cloud auth audience")
@@ -118,65 +110,49 @@ def get_audience(authority: str) -> str:
         logger.warning("US Gov cloud auth audience")
         return "https://management.usgovcloudapi.net"
 
-def import_image(authority, repository, tags, is_anonymous=False):
+
+def get_credential(authority: str, **kwargs):
+    return ClientSecretCredential(
+        tenant_id=os.environ.get("CONTAINERREGISTRY_TENANT_ID"),
+        client_id=os.environ.get("CONTAINERREGISTRY_CLIENT_ID"),
+        client_secret=os.environ.get("CONTAINERREGISTRY_CLIENT_SECRET"),
+        authority=authority,
+    )
+
+
+def import_image(endpoint, repository, tags):
+    authority = get_authority(endpoint)
     logger.warning(f"Import image authority: {authority}")
-    if is_anonymous:
-        registry_name = os.environ.get("CONTAINERREGISTRY_ANONREGISTRY_NAME")
-    else:
-        registry_name = os.environ.get("CONTAINERREGISTRY_REGISTRY_NAME")
-    sub_id = os.environ.get("CONTAINERREGISTRY_SUBSCRIPTION_ID")
-    tenant_id=os.environ.get("CONTAINERREGISTRY_TENANT_ID")
-    client_id=os.environ.get("CONTAINERREGISTRY_CLIENT_ID")
-    client_secret=os.environ.get("CONTAINERREGISTRY_CLIENT_SECRET")
-    credential = ClientSecretCredential(
-        tenant_id=tenant_id, client_id=client_id, client_secret=client_secret, authority=authority
-    )
-    audience = get_audience(authority)
-    scope = [audience + "/.default"]
-    mgmt_client = ContainerRegistryManagementClient(
-        credential, sub_id, api_version="2019-05-01", base_url=audience, credential_scopes=scope
-    )
-    logger.warning(f"LOGGING: {sub_id}{tenant_id}")
-    registry_uri = "registry.hub.docker.com"
-    rg_name = os.environ.get("CONTAINERREGISTRY_RESOURCE_GROUP")
+    credential = get_credential(authority)
 
-    import_source = ImportSource(source_image=repository, registry_uri=registry_uri)
-
-    import_params = ImportImageParameters(mode=ImportMode.Force, source=import_source, target_tags=tags)
-
-    result = mgmt_client.registries.begin_import_image(
-        rg_name,
-        registry_name,
-        parameters=import_params,
-    )
-
-    result.wait()
-
-@pytest.fixture(scope="session")
-def load_registry():
-    if not is_live():
-        return
-    authority = get_authority(os.environ.get("CONTAINERREGISTRY_ENDPOINT"))
-    authority_anon = get_authority(os.environ.get("CONTAINERREGISTRY_ANONREGISTRY_ENDPOINT"))
-    repos = [
-        "library/hello-world",
-        "library/alpine",
-        "library/busybox",
-    ]
-    tags = [
-        [
-            "library/hello-world:latest",
-            "library/hello-world:v1",
-            "library/hello-world:v2",
-            "library/hello-world:v3",
-            "library/hello-world:v4",
-        ],
-        ["library/alpine"],
-        ["library/busybox"],
-    ]
-    for repo, tag in zip(repos, tags):
-        try:
-            import_image(authority, repo, tag)
-            import_image(authority_anon, repo, tag, is_anonymous=True)
-        except Exception as e:
-            print(e)
+    with ContainerRegistryClient(endpoint, credential) as client:
+        # Upload a layer
+        layer = BytesIO(b"Sample layer")
+        layer_digest, layer_size = client.upload_blob(repository, layer)
+        logger.info(f"Uploaded layer: digest - {layer_digest}, size - {layer_size}")
+        # Upload a config
+        config = BytesIO(json.dumps({"sample config": "content"}).encode())
+        config_digest, config_size = client.upload_blob(repository, config)
+        logger.info(f"Uploaded config: digest - {config_digest}, size - {config_size}")
+        # Upload images
+        oci_manifest = {
+            "config": {
+                "mediaType": "application/vnd.oci.image.config.v1+json",
+                "digest": config_digest,
+                "sizeInBytes": config_size,
+            },
+            "schemaVersion": 2,
+            "layers": [
+                {
+                    "mediaType": "application/vnd.oci.image.layer.v1.tar",
+                    "digest": layer_digest,
+                    "size": layer_size,
+                    "annotations": {
+                        "org.opencontainers.image.ref.name": "artifact.txt",
+                    },
+                },
+            ],
+        }
+        for tag in tags:
+            manifest_digest = client.set_manifest(repository, oci_manifest, tag=tag)
+            logger.info(f"Uploaded manifest: digest - {manifest_digest}")

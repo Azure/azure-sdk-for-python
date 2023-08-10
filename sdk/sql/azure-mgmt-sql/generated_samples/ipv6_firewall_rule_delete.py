@@ -29,14 +29,13 @@ def main():
         subscription_id="00000000-1111-2222-3333-444444444444",
     )
 
-    response = client.ipv6_firewall_rules.delete(
+    client.ipv6_firewall_rules.delete(
         resource_group_name="firewallrulecrudtest-9886",
         server_name="firewallrulecrudtest-2368",
         firewall_rule_name="firewallrulecrudtest-7011",
     )
-    print(response)
 
 
-# x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2021-11-01-preview/examples/IPv6FirewallRuleDelete.json
+# x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2022-11-01-preview/examples/IPv6FirewallRuleDelete.json
 if __name__ == "__main__":
     main()

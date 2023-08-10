@@ -1,5 +1,11 @@
 # Release History
 
+## 6.0.1 (2023-05-04)
+
+### Other Changes
+
+  - Fixed annotation about namespace
+
 ## 6.0.0 (2023-03-20)
 
 ### Features Added

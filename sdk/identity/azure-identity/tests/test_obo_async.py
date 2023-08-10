@@ -34,6 +34,7 @@ missing_variables = [
     if var not in os.environ
 ]
 
+
 class TestOboAsync(RecordedTestCase):
     def load_settings(self):
         if is_live():
@@ -56,7 +57,6 @@ class TestOboAsync(RecordedTestCase):
                 "tenant_id": "tenant",
                 "username": "username",
             }
-
 
     @pytest.mark.manual
     @pytest.mark.skipif(any(missing_variables), reason="No value for environment variables")
@@ -88,14 +88,18 @@ class TestOboAsync(RecordedTestCase):
             client_id, self.obo_settings["username"], self.obo_settings["password"], tenant_id=tenant_id
         )
         assertion = user_credential.get_token(self.obo_settings["scope"]).token
-        credential = OnBehalfOfCredential(tenant_id, client_id, client_certificate=self.obo_settings["cert_bytes"], user_assertion=assertion)
+        credential = OnBehalfOfCredential(
+            tenant_id, client_id, client_certificate=self.obo_settings["cert_bytes"], user_assertion=assertion
+        )
         await credential.get_token(self.obo_settings["scope"])
 
 
 @pytest.mark.asyncio
 async def test_close():
     transport = AsyncMockTransport()
-    credential = OnBehalfOfCredential("tenant-id", "client-id", client_secret="client-secret", user_assertion="assertion", transport=transport)
+    credential = OnBehalfOfCredential(
+        "tenant-id", "client-id", client_secret="client-secret", user_assertion="assertion", transport=transport
+    )
 
     await credential.close()
 
@@ -105,7 +109,9 @@ async def test_close():
 @pytest.mark.asyncio
 async def test_context_manager():
     transport = AsyncMockTransport()
-    credential = OnBehalfOfCredential("tenant-id", "client-id", client_secret="client-secret", user_assertion="assertion", transport=transport)
+    credential = OnBehalfOfCredential(
+        "tenant-id", "client-id", client_secret="client-secret", user_assertion="assertion", transport=transport
+    )
 
     async with credential:
         assert transport.__aenter__.call_count == 1
@@ -122,7 +128,10 @@ async def test_multitenant_authentication():
     second_tenant = "second-tenant"
     second_token = first_token * 2
 
-    async def send(request, **_):
+    async def send(request, **kwargs):
+        # ensure the `claims` and `tenant_id` keywords from credential's `get_token` method don't make it to transport
+        assert "claims" not in kwargs
+        assert "tenant_id" not in kwargs
         assert request.headers["User-Agent"].startswith(USER_AGENT)
         parsed = urlparse(request.url)
         tenant = parsed.path.split("/")[1]
@@ -137,7 +146,7 @@ async def test_multitenant_authentication():
         client_secret="secret",
         user_assertion="assertion",
         transport=transport,
-        additionally_allowed_tenants=['*']
+        additionally_allowed_tenants=["*"],
     )
     token = await credential.get_token("scope")
     assert token.token == first_token
@@ -168,20 +177,30 @@ async def test_authority(authority):
     expected_authority = "https://{}/{}".format(expected_netloc, tenant_id)
     expected_token = "***"
 
-    async def send(request, **_):
+    async def send(request, **kwargs):
+        # ensure the `claims` and `tenant_id` keywords from credential's `get_token` method don't make it to transport
+        assert "claims" not in kwargs
+        assert "tenant_id" not in kwargs
         assert request.url.startswith(expected_authority)
         return mock_response(json_payload=build_aad_response(access_token=expected_token))
 
     transport = Mock(send=send)
     credential = OnBehalfOfCredential(
-        tenant_id, "client-id", client_secret="secret", user_assertion="assertion", authority=authority, transport=transport
+        tenant_id,
+        "client-id",
+        client_secret="secret",
+        user_assertion="assertion",
+        authority=authority,
+        transport=transport,
     )
     token = await credential.get_token("scope")
     assert token.token == expected_token
 
     # authority can be configured via environment variable
     with patch.dict("os.environ", {EnvironmentVariables.AZURE_AUTHORITY_HOST: authority}, clear=True):
-        credential = OnBehalfOfCredential(tenant_id, "client-id", client_secret="secret", user_assertion="assertion", transport=transport)
+        credential = OnBehalfOfCredential(
+            tenant_id, "client-id", client_secret="secret", user_assertion="assertion", transport=transport
+        )
     token = await credential.get_token("scope")
     assert token.token == expected_token
 
@@ -190,7 +209,10 @@ async def test_authority(authority):
 async def test_policies_configurable():
     policy = Mock(spec_set=SansIOHTTPPolicy, on_request=Mock(), on_exception=lambda _: False)
 
-    async def send(request, **_):
+    async def send(request, **kwargs):
+        # ensure the `claims` and `tenant_id` keywords from credential's `get_token` method don't make it to transport
+        assert "claims" not in kwargs
+        assert "tenant_id" not in kwargs
         parsed = urlparse(request.url)
         tenant = parsed.path.split("/")[1]
         if "/oauth2/v2.0/token" not in parsed.path:
@@ -222,7 +244,10 @@ async def test_refresh_token():
     refresh_token = "refresh-token"
     requests = 0
 
-    async def send(request, **_):
+    async def send(request, **kwargs):
+        # ensure the `claims` and `tenant_id` keywords from credential's `get_token` method don't make it to transport
+        assert "claims" not in kwargs
+        assert "tenant_id" not in kwargs
         nonlocal requests
         assert requests < 3, "unexpected request"
         requests += 1
@@ -235,7 +260,9 @@ async def test_refresh_token():
             assert request.body["refresh_token"] == refresh_token
             return mock_response(json_payload=build_aad_response(access_token=second_token))
 
-    credential = OnBehalfOfCredential("tenant-id", "client-id", client_secret="secret", user_assertion="assertion", transport=Mock(send=send))
+    credential = OnBehalfOfCredential(
+        "tenant-id", "client-id", client_secret="secret", user_assertion="assertion", transport=Mock(send=send)
+    )
     token = await credential.get_token("scope")
     assert token.token == first_token
 
@@ -259,15 +286,19 @@ def test_tenant_id_validation():
 @pytest.mark.asyncio
 async def test_no_scopes():
     """The credential should raise ValueError when get_token is called with no scopes"""
-    credential = OnBehalfOfCredential("tenant-id", "client-id", client_secret="client-secret", user_assertion="assertion")
+    credential = OnBehalfOfCredential(
+        "tenant-id", "client-id", client_secret="client-secret", user_assertion="assertion"
+    )
     with pytest.raises(ValueError):
         await credential.get_token()
+
 
 @pytest.mark.asyncio
 async def test_no_user_assertion():
     """The credential should raise ValueError when ctoring with no user_assertion"""
     with pytest.raises(TypeError):
         credential = OnBehalfOfCredential("tenant-id", "client-id", client_secret="client-secret")
+
 
 @pytest.mark.asyncio
 async def test_no_client_credential():

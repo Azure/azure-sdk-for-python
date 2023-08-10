@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from marshmallow import fields, post_dump, pre_load, pre_dump
+from marshmallow import fields, post_dump, pre_dump, pre_load
 
 from azure.ai.ml._schema.component.input_output import InputPortSchema, OutputPortSchema, ParameterSchema
 from azure.ai.ml._schema.core.fields import (
@@ -13,9 +13,10 @@ from azure.ai.ml._schema.core.fields import (
     UnionField,
 )
 from azure.ai.ml._schema.core.intellectual_property import IntellectualPropertySchema
-from azure.ai.ml.constants._common import AzureMLResourceType
 from azure.ai.ml._utils.utils import is_private_preview_enabled
+from azure.ai.ml.constants._common import AzureMLResourceType
 
+from .._utils.utils import _resolve_group_inputs_for_component
 from ..assets.asset import AssetSchema
 from ..core.fields import RegistryStr
 
@@ -61,13 +62,13 @@ class ComponentSchema(AssetSchema):
         super().__init__(*args, **kwargs)
 
     @pre_load
-    def convert_version_to_str(self, data, **kwargs):  # pylint: disable=unused-argument, no-self-use
+    def convert_version_to_str(self, data, **kwargs):  # pylint: disable=unused-argument
         if isinstance(data, dict) and data.get("version", None):
             data["version"] = str(data["version"])
         return data
 
     @pre_dump
-    def add_private_fields_to_dump(self, data, **kwargs):  # pylint: disable=unused-argument,no-self-use
+    def add_private_fields_to_dump(self, data, **kwargs):  # pylint: disable=unused-argument
         # The ipp field is set on the component object as "_intellectual_property".
         # We need to set it as "intellectual_property" before dumping so that Marshmallow
         # can pick up the field correctly on dump and show it back to the user.
@@ -77,7 +78,7 @@ class ComponentSchema(AssetSchema):
         return data
 
     @post_dump
-    def convert_input_value_to_str(self, data, **kwargs):  # pylint:disable=unused-argument, no-self-use
+    def convert_input_value_to_str(self, data, **kwargs):  # pylint:disable=unused-argument
         if isinstance(data, dict) and data.get("inputs", None):
             input_dict = data["inputs"]
             for input_value in input_dict.values():
@@ -88,3 +89,7 @@ class ComponentSchema(AssetSchema):
                         if input_value.get(key, None) is not None:
                             input_value[key] = str(input_value[key])
         return data
+
+    @pre_dump
+    def flatten_group_inputs(self, data, **kwargs):  # pylint: disable=unused-argument
+        return _resolve_group_inputs_for_component(data)

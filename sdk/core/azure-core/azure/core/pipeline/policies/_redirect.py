@@ -26,15 +26,36 @@
 """
 This module is the requests implementation of Pipeline ABC
 """
+from typing import Optional, TypeVar
 import logging
 from urllib.parse import urlparse
 
 from azure.core.exceptions import TooManyRedirectsError
-
+from azure.core.pipeline import PipelineResponse, PipelineRequest
+from azure.core.pipeline.transport import HttpResponse as LegacyHttpResponse, HttpRequest as LegacyHttpRequest
+from azure.core.rest import HttpResponse, HttpRequest
 from ._base import HTTPPolicy, RequestHistory
+from ._utils import get_domain
 
+HTTPResponseType = TypeVar("HTTPResponseType", HttpResponse, LegacyHttpResponse)
+HTTPRequestType = TypeVar("HTTPRequestType", HttpRequest, LegacyHttpRequest)
 
 _LOGGER = logging.getLogger(__name__)
+
+
+def domain_changed(original_domain: Optional[str], url: str) -> bool:
+    """Checks if the domain has changed.
+    :param str original_domain: The original domain.
+    :param str url: The new url.
+    :rtype: bool
+    :return: Whether the domain has changed.
+    """
+    domain = get_domain(url)
+    if not original_domain:
+        return False
+    if original_domain == domain:
+        return False
+    return True
 
 
 class RedirectPolicyBase:
@@ -44,8 +65,8 @@ class RedirectPolicyBase:
     REDIRECT_HEADERS_BLACKLIST = frozenset(["Authorization"])
 
     def __init__(self, **kwargs):
-        self.allow = kwargs.get("permit_redirects", True)
-        self.max_redirects = kwargs.get("redirect_max", 30)
+        self.allow: bool = kwargs.get("permit_redirects", True)
+        self.max_redirects: int = kwargs.get("redirect_max", 30)
 
         remove_headers = set(kwargs.get("redirect_remove_headers", []))
         self._remove_headers_on_redirect = remove_headers.union(self.REDIRECT_HEADERS_BLACKLIST)
@@ -55,13 +76,18 @@ class RedirectPolicyBase:
 
     @classmethod
     def no_redirects(cls):
-        """Disable redirects."""
+        """Disable redirects.
+
+        :return: A redirect policy with redirects disabled.
+        :rtype: ~azure.core.pipeline.policies.RedirectPolicy or ~azure.core.pipeline.policies.AsyncRedirectPolicy
+        """
         return cls(permit_redirects=False)
 
     def configure_redirects(self, options):
         """Configures the redirect settings.
 
         :param options: Keyword arguments from context.
+        :type options: dict
         :return: A dict containing redirect settings and a history of redirects.
         :rtype: dict
         """
@@ -79,6 +105,7 @@ class RedirectPolicyBase:
         :return: Truthy redirect location string if we got a redirect status
          code and valid location. ``None`` if redirect status and no
          location. ``False`` if not a redirect status code.
+        :rtype: str or bool or None
         """
         if response.http_response.status_code in [301, 302]:
             if response.http_request.method in [
@@ -122,7 +149,7 @@ class RedirectPolicyBase:
         return settings["redirects"] >= 0
 
 
-class RedirectPolicy(RedirectPolicyBase, HTTPPolicy):
+class RedirectPolicy(RedirectPolicyBase, HTTPPolicy[HTTPRequestType, HTTPResponseType]):
     """A redirect policy.
 
     A redirect policy in the pipeline can be configured directly or per operation.
@@ -140,7 +167,7 @@ class RedirectPolicy(RedirectPolicyBase, HTTPPolicy):
             :caption: Configuring a redirect policy.
     """
 
-    def send(self, request):
+    def send(self, request: PipelineRequest[HTTPRequestType]) -> PipelineResponse[HTTPRequestType, HTTPResponseType]:
         """Sends the PipelineRequest object to the next policy.
         Uses redirect settings to send request to redirect endpoint if necessary.
 
@@ -152,12 +179,19 @@ class RedirectPolicy(RedirectPolicyBase, HTTPPolicy):
         """
         retryable = True
         redirect_settings = self.configure_redirects(request.context.options)
+        original_domain = get_domain(request.http_request.url) if redirect_settings["allow"] else None
         while retryable:
             response = self.next.send(request)
             redirect_location = self.get_redirect_location(response)
             if redirect_location and redirect_settings["allow"]:
                 retryable = self.increment(redirect_settings, response, redirect_location)
                 request.http_request = response.http_request
+                if domain_changed(original_domain, request.http_request.url):
+                    # "insecure_domain_change" is used to indicate that a redirect
+                    # has occurred to a different domain. This tells the SensitiveHeaderCleanupPolicy
+                    # to clean up sensitive headers. We need to remove it before sending the request
+                    # to the transport layer.
+                    request.context.options["insecure_domain_change"] = True
                 continue
             return response
 

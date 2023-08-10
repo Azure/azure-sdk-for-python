@@ -25,12 +25,7 @@ class AadClient(AadClientBase):
         self.__exit__()
 
     def obtain_token_by_authorization_code(
-            self,
-            scopes: Iterable[str],
-            code: str,
-            redirect_uri: str,
-            client_secret: Optional[str] = None,
-            **kwargs: Any
+        self, scopes: Iterable[str], code: str, redirect_uri: str, client_secret: Optional[str] = None, **kwargs: Any
     ) -> AccessToken:
         request = self._get_auth_code_request(
             scopes=scopes, code=code, redirect_uri=redirect_uri, client_secret=client_secret, **kwargs
@@ -38,52 +33,33 @@ class AadClient(AadClientBase):
         return self._run_pipeline(request, **kwargs)
 
     def obtain_token_by_client_certificate(
-            self,
-            scopes: Iterable[str],
-            certificate: AadClientCertificate,
-            **kwargs: Any
+        self, scopes: Iterable[str], certificate: AadClientCertificate, **kwargs: Any
     ) -> AccessToken:
         request = self._get_client_certificate_request(scopes, certificate, **kwargs)
         return self._run_pipeline(request, **kwargs)
 
-    def obtain_token_by_client_secret(
-            self,
-            scopes: Iterable[str],
-            secret: str,
-            **kwargs: Any
-    ) -> AccessToken:
+    def obtain_token_by_client_secret(self, scopes: Iterable[str], secret: str, **kwargs: Any) -> AccessToken:
         request = self._get_client_secret_request(scopes, secret, **kwargs)
         return self._run_pipeline(request, **kwargs)
 
-    def obtain_token_by_jwt_assertion(
-            self,
-            scopes: Iterable[str],
-            assertion: str,
-            **kwargs: Any
-    ) -> AccessToken:
+    def obtain_token_by_jwt_assertion(self, scopes: Iterable[str], assertion: str, **kwargs: Any) -> AccessToken:
         request = self._get_jwt_assertion_request(scopes, assertion)
         return self._run_pipeline(request, **kwargs)
 
-    def obtain_token_by_refresh_token(
-            self,
-            scopes: Iterable[str],
-            refresh_token: str,
-            **kwargs: Any
-    ) -> AccessToken:
+    def obtain_token_by_refresh_token(self, scopes: Iterable[str], refresh_token: str, **kwargs: Any) -> AccessToken:
         request = self._get_refresh_token_request(scopes, refresh_token, **kwargs)
         return self._run_pipeline(request, **kwargs)
 
     def obtain_token_on_behalf_of(
-            self,
-            scopes: Iterable[str],
-            client_credential: Union[str, AadClientCertificate],
-            user_assertion: str,
-            **kwargs: Any
+        self,
+        scopes: Iterable[str],
+        client_credential: Union[str, AadClientCertificate],
+        user_assertion: str,
+        **kwargs: Any
     ) -> AccessToken:
         # no need for an implementation, non-async OnBehalfOfCredential acquires tokens through MSAL
         raise NotImplementedError()
 
-    # pylint:disable=no-self-use
     def _build_pipeline(self, **kwargs: Any) -> Pipeline:
         return build_pipeline(**kwargs)
 
@@ -94,4 +70,4 @@ class AadClient(AadClientBase):
         kwargs.pop("claims", None)
         now = int(time.time())
         response = self._pipeline.run(request, retry_on_methods=self._POST, **kwargs)
-        return self._process_response(response, now)
+        return self._process_response(response, now, **kwargs)

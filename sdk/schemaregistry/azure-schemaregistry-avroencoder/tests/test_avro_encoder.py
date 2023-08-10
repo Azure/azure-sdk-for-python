@@ -41,7 +41,7 @@ from devtools_testutils import AzureTestCase
 SchemaRegistryEnvironmentVariableLoader = functools.partial(
     EnvironmentVariableLoader,
     "schemaregistry",
-    schemaregistry_avro_fully_qualified_namespace="fake_resource_avro.servicebus.windows.net/",
+    schemaregistry_avro_fully_qualified_namespace="fake_resource_avro.servicebus.windows.net",
     schemaregistry_group="fakegroup"
 )
 

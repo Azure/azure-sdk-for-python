@@ -107,8 +107,7 @@ class ManagementGroupDiagnosticSettingsResource(ManagementGroupProxyOnlyResource
      will be selected.
     :vartype event_hub_name: str
     :ivar logs: The list of logs settings.
-    :vartype logs:
-     list[~$(python-base-namespace).v2020_01_01_preview.models.ManagementGroupLogSettings]
+    :vartype logs: list[~azure.mgmt.monitor.v2020_01_01_preview.models.ManagementGroupLogSettings]
     :ivar workspace_id: The full ARM resource ID of the Log Analytics workspace to which you would
      like to send Diagnostic Logs. Example:
      /subscriptions/4b9e8510-67ab-4e9a-95a9-e2f1e570ea9c/resourceGroups/insights-integration/providers/Microsoft.OperationalInsights/workspaces/viruela2.
@@ -162,7 +161,7 @@ class ManagementGroupDiagnosticSettingsResource(ManagementGroupProxyOnlyResource
         :paramtype event_hub_name: str
         :keyword logs: The list of logs settings.
         :paramtype logs:
-         list[~$(python-base-namespace).v2020_01_01_preview.models.ManagementGroupLogSettings]
+         list[~azure.mgmt.monitor.v2020_01_01_preview.models.ManagementGroupLogSettings]
         :keyword workspace_id: The full ARM resource ID of the Log Analytics workspace to which you
          would like to send Diagnostic Logs. Example:
          /subscriptions/4b9e8510-67ab-4e9a-95a9-e2f1e570ea9c/resourceGroups/insights-integration/providers/Microsoft.OperationalInsights/workspaces/viruela2.
@@ -182,7 +181,7 @@ class ManagementGroupDiagnosticSettingsResourceCollection(_serialization.Model):
 
     :ivar value: The collection of management group diagnostic settings resources.
     :vartype value:
-     list[~$(python-base-namespace).v2020_01_01_preview.models.ManagementGroupDiagnosticSettingsResource]
+     list[~azure.mgmt.monitor.v2020_01_01_preview.models.ManagementGroupDiagnosticSettingsResource]
     """
 
     _attribute_map = {
@@ -195,7 +194,7 @@ class ManagementGroupDiagnosticSettingsResourceCollection(_serialization.Model):
         """
         :keyword value: The collection of management group diagnostic settings resources.
         :paramtype value:
-         list[~$(python-base-namespace).v2020_01_01_preview.models.ManagementGroupDiagnosticSettingsResource]
+         list[~azure.mgmt.monitor.v2020_01_01_preview.models.ManagementGroupDiagnosticSettingsResource]
         """
         super().__init__(**kwargs)
         self.value = value

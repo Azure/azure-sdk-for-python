@@ -51,7 +51,7 @@ class TestFeatureStoreEntityOperations:
         name_only = "some_name"
         version = "1"
         featurestoreEntity = FeatureStoreEntity(
-            name=name_only, version=version, index_columns=[DataColumn(name="test", type=DataColumnType.string)]
+            name=name_only, version=version, index_columns=[DataColumn(name="test", type=DataColumnType.STRING)]
         )
         with patch.object(ItemPaged, "next"), patch.object(
             FeatureStoreEntity, "_from_rest_object", return_value=featurestoreEntity
@@ -64,9 +64,9 @@ class TestFeatureStoreEntityOperations:
     def test_archive_version(self, mock_feature_store_entity_operations: FeatureStoreEntityOperations):
         name = "random_name"
         featureStoreEntity_version = Mock(
-            FeaturestoreEntityVersion(properties=Mock(FeaturestoreEntityVersionProperties(is_archived=False)))
+            FeaturestoreEntityVersion(properties=Mock(FeaturestoreEntityVersionProperties()))
         )
-        featureStoreEntity_version.properties.is_archived = False
+        featureStoreEntity_version.properties.stage = "Development"
         version = "1"
         mock_feature_store_entity_operations._operation.get.return_value = featureStoreEntity_version
         mock_feature_store_entity_operations.archive(name=name, version=version)
@@ -83,6 +83,7 @@ class TestFeatureStoreEntityOperations:
         featureStoreEntity_version = Mock(
             FeaturestoreEntityVersion(properties=Mock(FeaturestoreEntityVersionProperties()))
         )
+        featureStoreEntity_version.properties.stage = "Archived"
         version = "1"
         mock_feature_store_entity_operations._operation.get.return_value = featureStoreEntity_version
         mock_feature_store_entity_operations.restore(name=name, version=version)

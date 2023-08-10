@@ -1,12 +1,20 @@
 # Release History
 
-## 1.2.0 (Unreleased)
+## 1.2.1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.2.0 (2023-05-09)
 
 ### Features Added
 
 - Add the `query_resource` method to `LogsQueryClient` to allow users to query Azure resources directly without the context of a workspace. ([#29365](https://github.com/Azure/azure-sdk-for-python/pull/29365))
-
-### Breaking Changes
 
 ### Bugs Fixed
 

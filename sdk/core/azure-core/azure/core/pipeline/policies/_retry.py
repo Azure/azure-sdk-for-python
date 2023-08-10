@@ -1,4 +1,3 @@
-# pylint: disable=no-self-use
 # --------------------------------------------------------------------------
 #
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -24,14 +23,14 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-"""
-This module is the requests implementation of Pipeline ABC
-"""
+from typing import TypeVar
 from io import SEEK_SET, UnsupportedOperation
 import logging
 import time
 from enum import Enum
-from azure.core.pipeline import PipelineResponse
+from azure.core.pipeline import PipelineResponse, PipelineRequest
+from azure.core.pipeline.transport import HttpResponse as LegacyHttpResponse, HttpRequest as LegacyHttpRequest
+from azure.core.rest import HttpResponse, HttpRequest
 from azure.core.exceptions import (
     AzureError,
     ClientAuthenticationError,
@@ -44,6 +43,9 @@ from azure.core.exceptions import (
 from ._base import HTTPPolicy, RequestHistory
 from . import _utils
 from ..._enum_meta import CaseInsensitiveEnumMeta
+
+HTTPResponseType = TypeVar("HTTPResponseType", HttpResponse, LegacyHttpResponse)
+HTTPRequestType = TypeVar("HTTPRequestType", HttpRequest, LegacyHttpRequest)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -80,13 +82,18 @@ class RetryPolicyBase:
 
     @classmethod
     def no_retries(cls):
-        """Disable retries."""
+        """Disable retries.
+
+        :return: A retry policy with retries disabled.
+        :rtype: ~azure.core.pipeline.policies.RetryPolicy or ~azure.core.pipeline.policies.AsyncRetryPolicy
+        """
         return cls(retry_total=0)
 
     def configure_retries(self, options):
         """Configures the retry settings.
 
         :param options: keyword arguments from context.
+        :type options: dict
         :return: A dict containing settings and history for retries.
         :rtype: dict
         """
@@ -120,11 +127,12 @@ class RetryPolicyBase:
             backoff_value = settings["backoff"] * (2 ** (consecutive_errors_len - 1))
         return min(settings["max_backoff"], backoff_value)
 
-    def parse_retry_after(self, retry_after):
+    def parse_retry_after(self, retry_after: str) -> float:
         """Helper to parse Retry-After and get value in seconds.
 
         :param str retry_after: Retry-After header
         :rtype: float
+        :return: Value of Retry-After in seconds.
         """
         return _utils.parse_retry_after(retry_after)
 
@@ -141,12 +149,22 @@ class RetryPolicyBase:
     def _is_connection_error(self, err):
         """Errors when we're fairly sure that the server did not receive the
         request, so it should be safe to retry.
+
+        :param err: The error raised by the pipeline.
+        :type err: ~azure.core.exceptions.AzureError
+        :return: True if connection error, False if not.
+        :rtype: bool
         """
         return isinstance(err, ServiceRequestError)
 
     def _is_read_error(self, err):
         """Errors that occur after the request has been started, so we should
         assume that the server began processing it.
+
+        :param err: The error raised by the pipeline.
+        :type err: ~azure.core.exceptions.AzureError
+        :return: True if read error, False if not.
+        :rtype: bool
         """
         return isinstance(err, ServiceResponseError)
 
@@ -222,10 +240,12 @@ class RetryPolicyBase:
         """Increment the retry counters.
 
         :param settings: The retry settings.
+        :type settings: dict
         :param response: A pipeline response object.
         :type response: ~azure.core.pipeline.PipelineResponse
         :param error: An error encountered during the request, or
          None if the response was received successfully.
+        :type error: ~azure.core.exceptions.AzureError
         :return: Whether any retry attempt is available
          True if more retry attempts available, False otherwise
         :rtype: bool
@@ -248,7 +268,7 @@ class RetryPolicyBase:
 
         else:
             # Incrementing because of a server error like a 500 in
-            # status_forcelist and a the given method is in the allowlist
+            # status_forcelist and the given method is in the allowlist
             if response:
                 settings["status"] -= 1
                 if hasattr(response, "http_request") and hasattr(response, "http_response"):
@@ -339,7 +359,7 @@ class RetryPolicyBase:
         retry_settings["file_positions"] = file_positions
 
 
-class RetryPolicy(RetryPolicyBase, HTTPPolicy):
+class RetryPolicy(RetryPolicyBase, HTTPPolicy[HTTPRequestType, HTTPResponseType]):
     """A retry policy.
 
     The retry policy in the pipeline can be configured directly, or tweaked on a per-call basis.
@@ -386,6 +406,9 @@ class RetryPolicy(RetryPolicyBase, HTTPPolicy):
         :param response: The PipelineResponse object.
         :type response: ~azure.core.pipeline.PipelineResponse
         :param transport: The HTTP transport type.
+        :type transport: ~azure.core.pipeline.transport.HttpTransport
+        :return: Whether a sleep was done or not
+        :rtype: bool
         """
         retry_after = self.get_retry_after(response)
         if retry_after:
@@ -398,6 +421,7 @@ class RetryPolicy(RetryPolicyBase, HTTPPolicy):
 
         :param dict settings: The retry settings.
         :param transport: The HTTP transport type.
+        :type transport: ~azure.core.pipeline.transport.HttpTransport
         """
         backoff = self.get_backoff_time(settings)
         if backoff <= 0:
@@ -414,6 +438,7 @@ class RetryPolicy(RetryPolicyBase, HTTPPolicy):
 
         :param dict settings: The retry settings.
         :param transport: The HTTP transport type.
+        :type transport: ~azure.core.pipeline.transport.HttpTransport
         :param response: The PipelineResponse object.
         :type response: ~azure.core.pipeline.PipelineResponse
         """
@@ -423,7 +448,7 @@ class RetryPolicy(RetryPolicyBase, HTTPPolicy):
                 return
         self._sleep_backoff(settings, transport)
 
-    def send(self, request):
+    def send(self, request: PipelineRequest[HTTPRequestType]) -> PipelineResponse[HTTPRequestType, HTTPResponseType]:
         """Sends the PipelineRequest object to the next policy. Uses retry settings if necessary.
 
         :param request: The PipelineRequest object
@@ -442,8 +467,8 @@ class RetryPolicy(RetryPolicyBase, HTTPPolicy):
         is_response_error = True
 
         while retry_active:
+            start_time = time.time()
             try:
-                start_time = time.time()
                 self._configure_timeout(request, absolute_timeout, is_response_error)
                 response = self.next.send(request)
                 if self.is_retry(retry_settings, response):
@@ -472,6 +497,8 @@ class RetryPolicy(RetryPolicyBase, HTTPPolicy):
                 end_time = time.time()
                 if absolute_timeout:
                     absolute_timeout -= end_time - start_time
+        if not response:
+            raise AzureError("Maximum retries exceeded.")
 
         self.update_context(response.context, retry_settings)
         return response

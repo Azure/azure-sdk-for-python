@@ -488,6 +488,19 @@ class TestCommandJob(AzureRecordedTestCase):
         assert job.outputs.test3.name == "test3_output"
         assert job.outputs.test3.version == "3"
 
+    @pytest.mark.e2etest
+    def test_ray_command_job(self, randstr: Callable[[], str], client: MLClient) -> None:
+        job = client.jobs.create_or_update(
+            load_job(
+                source="./tests/test_configs/command_job/command_job_dist_ray.yml",
+                params_override=[{"name": randstr("job_name")}],
+            )
+        )
+
+        job_status = wait_until_done(client=client, job=job)
+
+        assert job_status == JobStatus.COMPLETED
+
 
 def check_tid_in_url(client: MLClient, job: Job) -> None:
     # test that TID is placed in the URL only in live mode

@@ -27,7 +27,7 @@ class MonitorManagementClient:  # pylint: disable=client-accepts-api-version-key
 
     :ivar metric_namespaces: MetricNamespacesOperations operations
     :vartype metric_namespaces:
-     $(python-base-namespace).v2017_12_01_preview.aio.operations.MetricNamespacesOperations
+     azure.mgmt.monitor.v2017_12_01_preview.aio.operations.MetricNamespacesOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param base_url: Service URL. Default value is "https://management.azure.com".

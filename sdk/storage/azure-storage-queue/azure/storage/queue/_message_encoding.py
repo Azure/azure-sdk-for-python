@@ -117,7 +117,7 @@ class TextBase64DecodePolicy(MessageDecodePolicy):
             raise DecodeError(
                 message="Message content is not valid base 64.",
                 response=response,
-                error=error)
+                error=error) from error
 
 
 class BinaryBase64EncodePolicy(MessageEncodePolicy):
@@ -149,7 +149,7 @@ class BinaryBase64DecodePolicy(MessageDecodePolicy):
             raise DecodeError(
                 message="Message content is not valid base 64.",
                 response=response,
-                error=error)
+                error=error) from error
 
 
 class NoEncodePolicy(MessageEncodePolicy):

@@ -28,7 +28,7 @@ The in-memory token cache provided by the Azure Identity library can be used by 
 | macOS            | Keychain          |
 | Windows          | DPAPI             |
 
-Users can enable the cache to fall back to storing data in plaintext by setting the `allow_unencrypted_storage argument` to `True` in `TokenCachePersistenceOptions`. Enabling this does not disable encryption, but does allow plaintext storage as a fallback if encryption attempts fail. This is substantially less secure since tokens aren't encrypted to the current user, and anyone with access to the system could potentially access tokens from the cache. As such, enabling this setting is not recommended.
+Users can enable the cache to fall back to storing data in plaintext by setting the `allow_unencrypted_storage` argument to `True` in `TokenCachePersistenceOptions`. Enabling this does not disable encryption, but does allow plaintext storage as a fallback if encryption attempts fail. This is substantially less secure since tokens aren't encrypted to the current user, and anyone with access to the system could potentially access tokens from the cache. As such, enabling this setting is not recommended.
 
 With persistent disk token caching enabled, the library first determines if a valid access token for the requested resource is already stored in the persistent cache. If a valid token is found, it's returned to the app without the need to make another request to Azure AD. Additionally, the tokens are preserved across app runs, which:
 
@@ -40,7 +40,7 @@ With persistent disk token caching enabled, the library first determines if a va
 
 The sample showcases how to activate persistence token caching in the credentials offered by the Azure Identity library. You need to specify `TokenCachePersistenceOptions` when creating the credential to activate persistent token caching.
 
-```python 
+```python
 ClientSecretCredential(
     "tenant", "client-id", "secret", cache_persistence_options=TokenCachePersistenceOptions()
 )
@@ -88,7 +88,7 @@ The following table indicates the state of in-memory and persistent caching in e
 | `AzureDeveloperCliCredential`  | Not Supported                                                          | Not Supported                 |
 | `AzurePowershellCredential`    | Not Supported                                                          | Not Supported                 |
 | `ClientAssertionCredential`    | Supported                                                              | Not Supported                 |
-| `ClientCertificateCredential`  | Supported                                                              | Supported                     |
+| `CertificateCredential`        | Supported                                                              | Supported                     |
 | `ClientSecretCredential`       | Supported                                                              | Supported                     |
 | `DefaultAzureCredential`       | Supported if the target credential in the credential chain supports it | Not Supported                 |
 | `DeviceCodeCredential`         | Supported                                                              | Supported                     |

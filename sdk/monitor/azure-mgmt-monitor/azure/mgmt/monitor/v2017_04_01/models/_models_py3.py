@@ -20,7 +20,7 @@ class ActionGroupList(_serialization.Model):
     """A list of action groups.
 
     :ivar value: The list of action groups.
-    :vartype value: list[~$(python-base-namespace).v2017_04_01.models.ActionGroupResource]
+    :vartype value: list[~azure.mgmt.monitor.v2017_04_01.models.ActionGroupResource]
     :ivar next_link: Provides the link to retrieve the next set of elements.
     :vartype next_link: str
     """
@@ -39,7 +39,7 @@ class ActionGroupList(_serialization.Model):
     ) -> None:
         """
         :keyword value: The list of action groups.
-        :paramtype value: list[~$(python-base-namespace).v2017_04_01.models.ActionGroupResource]
+        :paramtype value: list[~azure.mgmt.monitor.v2017_04_01.models.ActionGroupResource]
         :keyword next_link: Provides the link to retrieve the next set of elements.
         :paramtype next_link: str
         """
@@ -148,21 +148,21 @@ class ActionGroupResource(Resource):  # pylint: disable=too-many-instance-attrib
      enabled, then none of its receivers will receive communications.
     :vartype enabled: bool
     :ivar email_receivers: The list of email receivers that are part of this action group.
-    :vartype email_receivers: list[~$(python-base-namespace).v2017_04_01.models.EmailReceiver]
+    :vartype email_receivers: list[~azure.mgmt.monitor.v2017_04_01.models.EmailReceiver]
     :ivar sms_receivers: The list of SMS receivers that are part of this action group.
-    :vartype sms_receivers: list[~$(python-base-namespace).v2017_04_01.models.SmsReceiver]
+    :vartype sms_receivers: list[~azure.mgmt.monitor.v2017_04_01.models.SmsReceiver]
     :ivar webhook_receivers: The list of webhook receivers that are part of this action group.
-    :vartype webhook_receivers: list[~$(python-base-namespace).v2017_04_01.models.WebhookReceiver]
+    :vartype webhook_receivers: list[~azure.mgmt.monitor.v2017_04_01.models.WebhookReceiver]
     :ivar itsm_receivers: The list of ITSM receivers that are part of this action group.
-    :vartype itsm_receivers: list[~$(python-base-namespace).v2017_04_01.models.ItsmReceiver]
+    :vartype itsm_receivers: list[~azure.mgmt.monitor.v2017_04_01.models.ItsmReceiver]
     :ivar azure_app_push_receivers: The list of AzureAppPush receivers that are part of this action
      group.
     :vartype azure_app_push_receivers:
-     list[~$(python-base-namespace).v2017_04_01.models.AzureAppPushReceiver]
+     list[~azure.mgmt.monitor.v2017_04_01.models.AzureAppPushReceiver]
     :ivar automation_runbook_receivers: The list of AutomationRunbook receivers that are part of
      this action group.
     :vartype automation_runbook_receivers:
-     list[~$(python-base-namespace).v2017_04_01.models.AutomationRunbookReceiver]
+     list[~azure.mgmt.monitor.v2017_04_01.models.AutomationRunbookReceiver]
     """
 
     _validation = {
@@ -219,22 +219,21 @@ class ActionGroupResource(Resource):  # pylint: disable=too-many-instance-attrib
          enabled, then none of its receivers will receive communications.
         :paramtype enabled: bool
         :keyword email_receivers: The list of email receivers that are part of this action group.
-        :paramtype email_receivers: list[~$(python-base-namespace).v2017_04_01.models.EmailReceiver]
+        :paramtype email_receivers: list[~azure.mgmt.monitor.v2017_04_01.models.EmailReceiver]
         :keyword sms_receivers: The list of SMS receivers that are part of this action group.
-        :paramtype sms_receivers: list[~$(python-base-namespace).v2017_04_01.models.SmsReceiver]
+        :paramtype sms_receivers: list[~azure.mgmt.monitor.v2017_04_01.models.SmsReceiver]
         :keyword webhook_receivers: The list of webhook receivers that are part of this action group.
-        :paramtype webhook_receivers:
-         list[~$(python-base-namespace).v2017_04_01.models.WebhookReceiver]
+        :paramtype webhook_receivers: list[~azure.mgmt.monitor.v2017_04_01.models.WebhookReceiver]
         :keyword itsm_receivers: The list of ITSM receivers that are part of this action group.
-        :paramtype itsm_receivers: list[~$(python-base-namespace).v2017_04_01.models.ItsmReceiver]
+        :paramtype itsm_receivers: list[~azure.mgmt.monitor.v2017_04_01.models.ItsmReceiver]
         :keyword azure_app_push_receivers: The list of AzureAppPush receivers that are part of this
          action group.
         :paramtype azure_app_push_receivers:
-         list[~$(python-base-namespace).v2017_04_01.models.AzureAppPushReceiver]
+         list[~azure.mgmt.monitor.v2017_04_01.models.AzureAppPushReceiver]
         :keyword automation_runbook_receivers: The list of AutomationRunbook receivers that are part of
          this action group.
         :paramtype automation_runbook_receivers:
-         list[~$(python-base-namespace).v2017_04_01.models.AutomationRunbookReceiver]
+         list[~azure.mgmt.monitor.v2017_04_01.models.AutomationRunbookReceiver]
         """
         super().__init__(location=location, tags=tags, **kwargs)
         self.group_short_name = group_short_name
@@ -290,7 +289,7 @@ class ActivityLogAlertActionList(_serialization.Model):
 
     :ivar action_groups: The list of activity log alerts.
     :vartype action_groups:
-     list[~$(python-base-namespace).v2017_04_01.models.ActivityLogAlertActionGroup]
+     list[~azure.mgmt.monitor.v2017_04_01.models.ActivityLogAlertActionGroup]
     """
 
     _attribute_map = {
@@ -303,7 +302,7 @@ class ActivityLogAlertActionList(_serialization.Model):
         """
         :keyword action_groups: The list of activity log alerts.
         :paramtype action_groups:
-         list[~$(python-base-namespace).v2017_04_01.models.ActivityLogAlertActionGroup]
+         list[~azure.mgmt.monitor.v2017_04_01.models.ActivityLogAlertActionGroup]
         """
         super().__init__(**kwargs)
         self.action_groups = action_groups
@@ -315,8 +314,7 @@ class ActivityLogAlertAllOfCondition(_serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar all_of: The list of activity log alert conditions. Required.
-    :vartype all_of:
-     list[~$(python-base-namespace).v2017_04_01.models.ActivityLogAlertLeafCondition]
+    :vartype all_of: list[~azure.mgmt.monitor.v2017_04_01.models.ActivityLogAlertLeafCondition]
     """
 
     _validation = {
@@ -330,8 +328,7 @@ class ActivityLogAlertAllOfCondition(_serialization.Model):
     def __init__(self, *, all_of: List["_models.ActivityLogAlertLeafCondition"], **kwargs: Any) -> None:
         """
         :keyword all_of: The list of activity log alert conditions. Required.
-        :paramtype all_of:
-         list[~$(python-base-namespace).v2017_04_01.models.ActivityLogAlertLeafCondition]
+        :paramtype all_of: list[~azure.mgmt.monitor.v2017_04_01.models.ActivityLogAlertLeafCondition]
         """
         super().__init__(**kwargs)
         self.all_of = all_of
@@ -382,7 +379,7 @@ class ActivityLogAlertList(_serialization.Model):
     """A list of activity log alerts.
 
     :ivar value: The list of activity log alerts.
-    :vartype value: list[~$(python-base-namespace).v2017_04_01.models.ActivityLogAlertResource]
+    :vartype value: list[~azure.mgmt.monitor.v2017_04_01.models.ActivityLogAlertResource]
     :ivar next_link: Provides the link to retrieve the next set of elements.
     :vartype next_link: str
     """
@@ -401,7 +398,7 @@ class ActivityLogAlertList(_serialization.Model):
     ) -> None:
         """
         :keyword value: The list of activity log alerts.
-        :paramtype value: list[~$(python-base-namespace).v2017_04_01.models.ActivityLogAlertResource]
+        :paramtype value: list[~azure.mgmt.monitor.v2017_04_01.models.ActivityLogAlertResource]
         :keyword next_link: Provides the link to retrieve the next set of elements.
         :paramtype next_link: str
         """
@@ -463,9 +460,9 @@ class ActivityLogAlertResource(Resource):
      is not enabled, then none of its actions will be activated.
     :vartype enabled: bool
     :ivar condition: The condition that will cause this alert to activate.
-    :vartype condition: ~$(python-base-namespace).v2017_04_01.models.ActivityLogAlertAllOfCondition
+    :vartype condition: ~azure.mgmt.monitor.v2017_04_01.models.ActivityLogAlertAllOfCondition
     :ivar actions: The actions that will activate when the condition is met.
-    :vartype actions: ~$(python-base-namespace).v2017_04_01.models.ActivityLogAlertActionList
+    :vartype actions: ~azure.mgmt.monitor.v2017_04_01.models.ActivityLogAlertActionList
     :ivar description: A description of this activity log alert.
     :vartype description: str
     """
@@ -515,10 +512,9 @@ class ActivityLogAlertResource(Resource):
          alert is not enabled, then none of its actions will be activated.
         :paramtype enabled: bool
         :keyword condition: The condition that will cause this alert to activate.
-        :paramtype condition:
-         ~$(python-base-namespace).v2017_04_01.models.ActivityLogAlertAllOfCondition
+        :paramtype condition: ~azure.mgmt.monitor.v2017_04_01.models.ActivityLogAlertAllOfCondition
         :keyword actions: The actions that will activate when the condition is met.
-        :paramtype actions: ~$(python-base-namespace).v2017_04_01.models.ActivityLogAlertActionList
+        :paramtype actions: ~azure.mgmt.monitor.v2017_04_01.models.ActivityLogAlertActionList
         :keyword description: A description of this activity log alert.
         :paramtype description: str
         """
@@ -650,7 +646,7 @@ class EmailReceiver(_serialization.Model):
     :vartype email_address: str
     :ivar status: The receiver status of the e-mail. Known values are: "NotSpecified", "Enabled",
      and "Disabled".
-    :vartype status: str or ~$(python-base-namespace).v2017_04_01.models.ReceiverStatus
+    :vartype status: str or ~azure.mgmt.monitor.v2017_04_01.models.ReceiverStatus
     """
 
     _validation = {
@@ -813,7 +809,7 @@ class SmsReceiver(_serialization.Model):
     :vartype phone_number: str
     :ivar status: The status of the receiver. Known values are: "NotSpecified", "Enabled", and
      "Disabled".
-    :vartype status: str or ~$(python-base-namespace).v2017_04_01.models.ReceiverStatus
+    :vartype status: str or ~azure.mgmt.monitor.v2017_04_01.models.ReceiverStatus
     """
 
     _validation = {

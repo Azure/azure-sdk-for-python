@@ -49,16 +49,26 @@ class EarlyTerminationPolicy(ABC, RestTranslatableMixin):
 
 
 class BanditPolicy(EarlyTerminationPolicy):
-    """Defines an early termination policy based on slack criteria, and a frequency and delay interval for evaluation.
+    """Defines an early termination policy based on slack criteria and a frequency and delay interval for evaluation.
 
-    :param delay_evaluation: Number of intervals by which to delay the first evaluation.
+    :keyword delay_evaluation: Number of intervals by which to delay the first evaluation. Defaults to 0.
     :type delay_evaluation: int
-    :param evaluation_interval: Interval (number of runs) between policy evaluations.
+    :keyword evaluation_interval: Interval (number of runs) between policy evaluations. Defaults to 0.
     :type evaluation_interval: int
-    :param slack_amount: Absolute distance allowed from the best performing run.
+    :keyword slack_amount: Absolute distance allowed from the best performing run. Defaults to 0.
     :type slack_amount: float
-    :param slack_factor: Ratio of the allowed distance from the best performing run.
+    :keyword slack_factor: Ratio of the allowed distance from the best performing run. Defaults to 0.
     :type slack_factor: float
+
+    .. admonition:: Example:
+
+
+        .. literalinclude:: ../../../../../../samples/ml_samples_sweep_configurations.py
+            :start-after: [START configure_sweep_job_bandit_policy]
+            :end-before: [END configure_sweep_job_bandit_policy]
+            :language: python
+            :dedent: 8
+            :caption: Configuring BanditPolicy early termination of a hyperparameter sweep on a Command job.
     """
 
     def __init__(
@@ -93,12 +103,22 @@ class BanditPolicy(EarlyTerminationPolicy):
 
 
 class MedianStoppingPolicy(EarlyTerminationPolicy):
-    """Defines an early termination policy based on running averages of the primary metric of all runs.
+    """Defines an early termination policy based on a running average of the primary metric of all runs.
 
-    :param delay_evaluation: Number of intervals by which to delay the first evaluation.
+    :keyword delay_evaluation: Number of intervals by which to delay the first evaluation. Defaults to 0.
     :type delay_evaluation: int
-    :param evaluation_interval: Interval (number of runs) between policy evaluations.
+    :keyword evaluation_interval: Interval (number of runs) between policy evaluations. Defaults to 1.
     :type evaluation_interval: int
+
+    .. admonition:: Example:
+
+
+        .. literalinclude:: ../../../../../../samples/ml_samples_sweep_configurations.py
+            :start-after: [START configure_sweep_job_median_stopping_policy]
+            :end-before: [END configure_sweep_job_median_stopping_policy]
+            :language: python
+            :dedent: 8
+            :caption: Configuring an early termination policy for a hyperparameter sweep job using MedianStoppingPolicy
     """
 
     def __init__(
@@ -126,12 +146,23 @@ class MedianStoppingPolicy(EarlyTerminationPolicy):
 class TruncationSelectionPolicy(EarlyTerminationPolicy):
     """Defines an early termination policy that cancels a given percentage of runs at each evaluation interval.
 
-    :param delay_evaluation: Number of intervals by which to delay the first evaluation.
+    :keyword delay_evaluation: Number of intervals by which to delay the first evaluation. Defaults to 0.
     :type delay_evaluation: int
-    :param evaluation_interval: Interval (number of runs) between policy evaluations.
+    :keyword evaluation_interval: Interval (number of runs) between policy evaluations. Defaults to 0.
     :type evaluation_interval: int
-    :param truncation_percentage: The percentage of runs to cancel at each evaluation interval.
+    :keyword truncation_percentage: The percentage of runs to cancel at each evaluation interval. Defaults to 0.
     :type truncation_percentage: int
+
+    .. admonition:: Example:
+
+
+        .. literalinclude:: ../../../../../../samples/ml_samples_sweep_configurations.py
+            :start-after: [START configure_sweep_job_truncation_selection_policy]
+            :end-before: [END configure_sweep_job_truncation_selection_policy]
+            :language: python
+            :dedent: 8
+            :caption: Configuring an early termination policy for a hyperparameter sweep job
+            using TruncationStoppingPolicy
     """
 
     def __init__(

@@ -26,28 +26,28 @@ from azure.mgmt.databox import DataBoxManagementClient
 def main():
     client = DataBoxManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="fa68082f-8ff7-4a25-95c7-ce9da541242f",
+        subscription_id="YourSubscriptionId",
     )
 
     response = client.jobs.begin_create(
-        resource_group_name="SdkRg7478",
-        job_name="SdkJob9640",
+        resource_group_name="YourResourceGroupName",
+        job_name="TestJobName1",
         job_resource={
             "location": "westus",
             "properties": {
                 "details": {
                     "contactDetails": {
-                        "contactName": "Public SDK Test",
-                        "emailList": ["testing@microsoft.com"],
-                        "phone": "1234567890",
-                        "phoneExtension": "1234",
+                        "contactName": "XXXX XXXX",
+                        "emailList": ["xxxx@xxxx.xxx"],
+                        "phone": "0000000000",
+                        "phoneExtension": "",
                     },
                     "dataImportDetails": [
                         {
                             "accountDetails": {
                                 "dataAccountType": "StorageAccount",
                                 "sharePassword": "<sharePassword>",
-                                "storageAccountId": "/subscriptions/fa68082f-8ff7-4a25-95c7-ce9da541242f/resourceGroups/databoxbvt1/providers/Microsoft.Storage/storageAccounts/databoxbvttestaccount2",
+                                "storageAccountId": "/subscriptions/YourSubscriptionId/resourceGroups/YourResourceGroupName/providers/Microsoft.Storage/storageAccounts/YourStorageAccountName",
                             }
                         }
                     ],
@@ -55,13 +55,13 @@ def main():
                     "jobDetailsType": "DataBox",
                     "shippingAddress": {
                         "addressType": "Commercial",
-                        "city": "San Francisco",
-                        "companyName": "Microsoft",
-                        "country": "US",
-                        "postalCode": "94107",
-                        "stateOrProvince": "CA",
-                        "streetAddress1": "16 TOWNSEND ST",
-                        "streetAddress2": "Unit 1",
+                        "city": "XXXX XXXX",
+                        "companyName": "XXXX XXXX",
+                        "country": "XX",
+                        "postalCode": "00000",
+                        "stateOrProvince": "XX",
+                        "streetAddress1": "XXXX XXXX",
+                        "streetAddress2": "XXXX XXXX",
                     },
                 },
                 "transferType": "ImportToAzure",

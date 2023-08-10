@@ -89,7 +89,7 @@ steps:
       CustomCondition: '${{ parameters.RunCoverage }}'
 
   - pwsh: |
-      python -m pip install coverage==4.5.4
+      python -m pip install coverage==7.2.5
       python scripts/devops_tasks/create_coverage.py
     displayName: Create Coverage Report
     condition: and(succeeded(), ${{ parameters.RunCoverage }})

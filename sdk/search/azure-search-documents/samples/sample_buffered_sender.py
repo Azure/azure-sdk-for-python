@@ -31,23 +31,21 @@ from azure.search.documents import SearchIndexingBufferedSender
 
 def sample_batching_client():
     DOCUMENT = {
-        'Category': 'Hotel',
-        'HotelId': '1000',
-        'Rating': 4.0,
-        'Rooms': [],
-        'HotelName': 'Azure Inn',
+        "category": "Hotel",
+        "hotelId": "1000",
+        "rating": 4.0,
+        "rooms": [],
+        "hotelName": "Azure Inn",
     }
 
-    with SearchIndexingBufferedSender(
-            service_endpoint,
-            index_name,
-            AzureKeyCredential(key)) as batch_client:
+    with SearchIndexingBufferedSender(service_endpoint, index_name, AzureKeyCredential(key)) as batch_client:
         # add upload actions
         batch_client.upload_documents(documents=[DOCUMENT])
         # add merge actions
-        batch_client.merge_documents(documents=[{"HotelId": "1000", "Rating": 4.5}])
+        batch_client.merge_documents(documents=[{"hotelId": "1000", "rating": 4.5}])
         # add delete actions
-        batch_client.delete_documents(documents=[{"HotelId": "1000"}])
+        batch_client.delete_documents(documents=[{"hotelId": "1000"}])
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     sample_batching_client()

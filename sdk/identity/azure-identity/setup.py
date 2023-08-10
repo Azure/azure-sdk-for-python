@@ -62,6 +62,5 @@ setup(
         "cryptography>=2.5",
         "msal<2.0.0,>=1.20.0",
         "msal-extensions<2.0.0,>=0.3.0",
-        "six>=1.12.0",
     ],
 )

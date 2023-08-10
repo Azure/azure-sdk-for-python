@@ -10,7 +10,7 @@ from logging.handlers import RotatingFileHandler
 from opencensus.ext.azure.log_exporter import AzureLogHandler
 
 
-def get_base_logger(log_filename, logger_name, level=logging.INFO, print_console=False, log_format=None,
+def get_base_logger(log_filename, logger_name, level=logging.ERROR, print_console=False, log_format=None,
                     log_file_max_bytes=20 * 1024 * 1024, log_file_backup_count=3):
     logger = logging.getLogger(logger_name)
     logger.setLevel(level)
@@ -25,7 +25,7 @@ def get_base_logger(log_filename, logger_name, level=logging.INFO, print_console
     return logger
 
 
-def get_logger(log_filename, logger_name, level=logging.DEBUG, print_console=False, log_format=None,
+def get_logger(log_filename, logger_name, level=logging.ERROR, print_console=False, log_format=None,
                log_file_max_bytes=20 * 1024 * 1024, log_file_backup_count=3):
     stress_logger = logging.getLogger(logger_name)
     stress_logger.setLevel(level)
@@ -44,7 +44,7 @@ def get_logger(log_filename, logger_name, level=logging.DEBUG, print_console=Fal
     return stress_logger
 
 
-def get_azure_logger(logger_name, level=logging.INFO):
+def get_azure_logger(logger_name, level=logging.ERROR):
     logger = logging.getLogger("azure_logger_" + logger_name)
     logger.setLevel(level)
     # oc will automatically search for the ENV VAR 'APPLICATIONINSIGHTS_CONNECTION_STRING'

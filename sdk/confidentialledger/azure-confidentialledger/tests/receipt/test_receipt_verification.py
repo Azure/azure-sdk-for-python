@@ -362,7 +362,9 @@ def test_receipt_verification_with_valid_application_claims_returns_successfully
     # Check that verify_receipt does not throw any exception
     # with a valid receipt, service certificate, and application claims
     try:
-        verify_receipt(input_receipt, input_service_cert, input_claims)
+        verify_receipt(
+            input_receipt, input_service_cert, application_claims=input_claims
+        )
     except Exception as e:
         pytest.fail(
             f"verify_receipt threw an exception with a valid receipt, service certificate, and application claims {e}"
@@ -391,4 +393,6 @@ def test_receipt_verification_with_invalid_application_claims_throws_exception(
     with pytest.raises(
         ValueError,
     ):
-        verify_receipt(input_receipt, input_service_cert, input_claims)
+        verify_receipt(
+            input_receipt, input_service_cert, application_claims=input_claims
+        )

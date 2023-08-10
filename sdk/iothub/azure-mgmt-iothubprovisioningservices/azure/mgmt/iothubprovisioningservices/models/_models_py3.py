@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from .. import _serialization
 
@@ -31,7 +31,9 @@ class AsyncOperationResult(_serialization.Model):
         "error": {"key": "error", "type": "ErrorMessage"},
     }
 
-    def __init__(self, *, status: Optional[str] = None, error: Optional["_models.ErrorMessage"] = None, **kwargs):
+    def __init__(
+        self, *, status: Optional[str] = None, error: Optional["_models.ErrorMessage"] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword status: current status of a long running operation.
         :paramtype status: str
@@ -59,7 +61,7 @@ class CertificateBodyDescription(_serialization.Model):
         "is_verified": {"key": "isVerified", "type": "bool"},
     }
 
-    def __init__(self, *, certificate: Optional[str] = None, is_verified: Optional[bool] = None, **kwargs):
+    def __init__(self, *, certificate: Optional[str] = None, is_verified: Optional[bool] = None, **kwargs: Any) -> None:
         """
         :keyword certificate: Base-64 representation of the X509 leaf certificate .cer file or just
          .pem file content.
@@ -84,7 +86,7 @@ class CertificateListDescription(_serialization.Model):
         "value": {"key": "value", "type": "[CertificateResponse]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.CertificateResponse"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.CertificateResponse"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: The array of Certificate objects.
         :paramtype value: list[~azure.mgmt.iothubprovisioningservices.models.CertificateResponse]
@@ -133,7 +135,9 @@ class CertificateProperties(_serialization.Model):
         "updated": {"key": "updated", "type": "rfc-1123"},
     }
 
-    def __init__(self, *, is_verified: Optional[bool] = None, certificate: Optional[bytes] = None, **kwargs):
+    def __init__(
+        self, *, is_verified: Optional[bool] = None, certificate: Optional[bytes] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword is_verified: Determines whether certificate has been verified.
         :paramtype is_verified: bool
@@ -187,7 +191,7 @@ class CertificateResponse(_serialization.Model):
         "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
-    def __init__(self, *, properties: Optional["_models.CertificateProperties"] = None, **kwargs):
+    def __init__(self, *, properties: Optional["_models.CertificateProperties"] = None, **kwargs: Any) -> None:
         """
         :keyword properties: properties of a certificate.
         :paramtype properties: ~azure.mgmt.iothubprovisioningservices.models.CertificateProperties
@@ -207,7 +211,7 @@ class ErrorDetails(_serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar code: The error code.
-    :vartype code: str
+    :vartype code: int
     :ivar http_status_code: The HTTP status code.
     :vartype http_status_code: str
     :ivar message: The error message.
@@ -224,13 +228,13 @@ class ErrorDetails(_serialization.Model):
     }
 
     _attribute_map = {
-        "code": {"key": "code", "type": "str"},
+        "code": {"key": "code", "type": "int"},
         "http_status_code": {"key": "httpStatusCode", "type": "str"},
         "message": {"key": "message", "type": "str"},
         "details": {"key": "details", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.code = None
@@ -257,8 +261,8 @@ class ErrorMessage(_serialization.Model):
     }
 
     def __init__(
-        self, *, code: Optional[str] = None, message: Optional[str] = None, details: Optional[str] = None, **kwargs
-    ):
+        self, *, code: Optional[str] = None, message: Optional[str] = None, details: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword code: standard error code.
         :paramtype code: str
@@ -304,7 +308,7 @@ class GroupIdInformation(_serialization.Model):
         "properties": {"key": "properties", "type": "GroupIdInformationProperties"},
     }
 
-    def __init__(self, *, properties: "_models.GroupIdInformationProperties", **kwargs):
+    def __init__(self, *, properties: "_models.GroupIdInformationProperties", **kwargs: Any) -> None:
         """
         :keyword properties: The properties for a group information object. Required.
         :paramtype properties:
@@ -340,8 +344,8 @@ class GroupIdInformationProperties(_serialization.Model):
         group_id: Optional[str] = None,
         required_members: Optional[List[str]] = None,
         required_zone_names: Optional[List[str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword group_id: The group id.
         :paramtype group_id: str
@@ -357,7 +361,8 @@ class GroupIdInformationProperties(_serialization.Model):
 
 
 class IotDpsPropertiesDescription(_serialization.Model):  # pylint: disable=too-many-instance-attributes
-    """the service specific properties of a provisioning service, including keys, linked iot hubs, current state, and system generated properties such as hostname and idScope.
+    """the service specific properties of a provisioning service, including keys, linked iot hubs,
+    current state, and system generated properties such as hostname and idScope.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -396,6 +401,9 @@ class IotDpsPropertiesDescription(_serialization.Model):  # pylint: disable=too-
      Indicates if the DPS instance has Data Residency enabled, removing the cross geo-pair disaster
      recovery.
     :vartype enable_data_residency: bool
+    :ivar portal_operations_host_name: Portal endpoint to enable CORS for this provisioning
+     service.
+    :vartype portal_operations_host_name: str
     """
 
     _validation = {
@@ -420,6 +428,7 @@ class IotDpsPropertiesDescription(_serialization.Model):  # pylint: disable=too-
             "type": "[SharedAccessSignatureAuthorizationRuleAccessRightsDescription]",
         },
         "enable_data_residency": {"key": "enableDataResidency", "type": "bool"},
+        "portal_operations_host_name": {"key": "portalOperationsHostName", "type": "str"},
     }
 
     def __init__(
@@ -436,8 +445,9 @@ class IotDpsPropertiesDescription(_serialization.Model):  # pylint: disable=too-
             List["_models.SharedAccessSignatureAuthorizationRuleAccessRightsDescription"]
         ] = None,
         enable_data_residency: Optional[bool] = None,
-        **kwargs
-    ):
+        portal_operations_host_name: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword state: Current state of the provisioning service. Known values are: "Activating",
          "Active", "Deleting", "Deleted", "ActivationFailed", "DeletionFailed", "Transitioning",
@@ -468,6 +478,9 @@ class IotDpsPropertiesDescription(_serialization.Model):  # pylint: disable=too-
          Indicates if the DPS instance has Data Residency enabled, removing the cross geo-pair disaster
          recovery.
         :paramtype enable_data_residency: bool
+        :keyword portal_operations_host_name: Portal endpoint to enable CORS for this provisioning
+         service.
+        :paramtype portal_operations_host_name: str
         """
         super().__init__(**kwargs)
         self.state = state
@@ -482,6 +495,7 @@ class IotDpsPropertiesDescription(_serialization.Model):  # pylint: disable=too-
         self.id_scope = None
         self.authorization_policies = authorization_policies
         self.enable_data_residency = enable_data_residency
+        self.portal_operations_host_name = portal_operations_host_name
 
 
 class IotDpsSkuDefinition(_serialization.Model):
@@ -495,7 +509,7 @@ class IotDpsSkuDefinition(_serialization.Model):
         "name": {"key": "name", "type": "str"},
     }
 
-    def __init__(self, *, name: Optional[Union[str, "_models.IotDpsSku"]] = None, **kwargs):
+    def __init__(self, *, name: Optional[Union[str, "_models.IotDpsSku"]] = None, **kwargs: Any) -> None:
         """
         :keyword name: Sku name. "S1"
         :paramtype name: str or ~azure.mgmt.iothubprovisioningservices.models.IotDpsSku
@@ -524,7 +538,7 @@ class IotDpsSkuDefinitionListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.IotDpsSkuDefinition"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.IotDpsSkuDefinition"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: The list of SKUs.
         :paramtype value: list[~azure.mgmt.iothubprovisioningservices.models.IotDpsSkuDefinition]
@@ -558,8 +572,8 @@ class IotDpsSkuInfo(_serialization.Model):
     }
 
     def __init__(
-        self, *, name: Optional[Union[str, "_models.IotDpsSku"]] = None, capacity: Optional[int] = None, **kwargs
-    ):
+        self, *, name: Optional[Union[str, "_models.IotDpsSku"]] = None, capacity: Optional[int] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword name: Sku name. "S1"
         :paramtype name: str or ~azure.mgmt.iothubprovisioningservices.models.IotDpsSku
@@ -612,8 +626,8 @@ class IotHubDefinitionDescription(_serialization.Model):
         location: str,
         apply_allocation_policy: Optional[bool] = None,
         allocation_weight: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword apply_allocation_policy: flag for applying allocationPolicy or not for a given iot
          hub.
@@ -671,8 +685,8 @@ class IpFilterRule(_serialization.Model):
         action: Union[str, "_models.IpFilterActionType"],
         ip_mask: str,
         target: Optional[Union[str, "_models.IpFilterTargetType"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword filter_name: The name of the IP filter rule. Required.
         :paramtype filter_name: str
@@ -691,6 +705,71 @@ class IpFilterRule(_serialization.Model):
         self.action = action
         self.ip_mask = ip_mask
         self.target = target
+
+
+class ManagedServiceIdentity(_serialization.Model):
+    """Managed service identity (system assigned and/or user assigned identities).
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar principal_id: The service principal ID of the system assigned identity. This property
+     will only be provided for a system assigned identity.
+    :vartype principal_id: str
+    :ivar tenant_id: The tenant ID of the system assigned identity. This property will only be
+     provided for a system assigned identity.
+    :vartype tenant_id: str
+    :ivar type: Type of managed service identity (where both SystemAssigned and UserAssigned types
+     are allowed). Required. Known values are: "None", "SystemAssigned", "UserAssigned", and
+     "SystemAssigned,UserAssigned".
+    :vartype type: str or ~azure.mgmt.iothubprovisioningservices.models.ManagedServiceIdentityType
+    :ivar user_assigned_identities: The set of user assigned identities associated with the
+     resource. The userAssignedIdentities dictionary keys will be ARM resource ids in the form:
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}.
+     The dictionary values can be empty objects ({}) in requests.
+    :vartype user_assigned_identities: dict[str,
+     ~azure.mgmt.iothubprovisioningservices.models.UserAssignedIdentity]
+    """
+
+    _validation = {
+        "principal_id": {"readonly": True},
+        "tenant_id": {"readonly": True},
+        "type": {"required": True},
+    }
+
+    _attribute_map = {
+        "principal_id": {"key": "principalId", "type": "str"},
+        "tenant_id": {"key": "tenantId", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "user_assigned_identities": {"key": "userAssignedIdentities", "type": "{UserAssignedIdentity}"},
+    }
+
+    def __init__(
+        self,
+        *,
+        type: Union[str, "_models.ManagedServiceIdentityType"],
+        user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentity"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword type: Type of managed service identity (where both SystemAssigned and UserAssigned
+         types are allowed). Required. Known values are: "None", "SystemAssigned", "UserAssigned", and
+         "SystemAssigned,UserAssigned".
+        :paramtype type: str or
+         ~azure.mgmt.iothubprovisioningservices.models.ManagedServiceIdentityType
+        :keyword user_assigned_identities: The set of user assigned identities associated with the
+         resource. The userAssignedIdentities dictionary keys will be ARM resource ids in the form:
+         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}.
+         The dictionary values can be empty objects ({}) in requests.
+        :paramtype user_assigned_identities: dict[str,
+         ~azure.mgmt.iothubprovisioningservices.models.UserAssignedIdentity]
+        """
+        super().__init__(**kwargs)
+        self.principal_id = None
+        self.tenant_id = None
+        self.type = type
+        self.user_assigned_identities = user_assigned_identities
 
 
 class NameAvailabilityInfo(_serialization.Model):
@@ -717,8 +796,8 @@ class NameAvailabilityInfo(_serialization.Model):
         name_available: Optional[bool] = None,
         reason: Optional[Union[str, "_models.NameUnavailabilityReason"]] = None,
         message: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name_available: specifies if a name is available or not.
         :paramtype name_available: bool
@@ -755,7 +834,7 @@ class Operation(_serialization.Model):
         "display": {"key": "display", "type": "OperationDisplay"},
     }
 
-    def __init__(self, *, display: Optional["_models.OperationDisplay"] = None, **kwargs):
+    def __init__(self, *, display: Optional["_models.OperationDisplay"] = None, **kwargs: Any) -> None:
         """
         :keyword display: The object that represents the operation.
         :paramtype display: ~azure.mgmt.iothubprovisioningservices.models.OperationDisplay
@@ -790,7 +869,7 @@ class OperationDisplay(_serialization.Model):
         "operation": {"key": "operation", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.provider = None
@@ -815,7 +894,7 @@ class OperationInputs(_serialization.Model):
         "name": {"key": "name", "type": "str"},
     }
 
-    def __init__(self, *, name: str, **kwargs):
+    def __init__(self, *, name: str, **kwargs: Any) -> None:
         """
         :keyword name: The name of the Provisioning Service to check. Required.
         :paramtype name: str
@@ -825,7 +904,8 @@ class OperationInputs(_serialization.Model):
 
 
 class OperationListResult(_serialization.Model):
-    """Result of the request to list provisioning service operations. It contains a list of operations and a URL link to get the next set of results.
+    """Result of the request to list provisioning service operations. It contains a list of operations
+    and a URL link to get the next set of results.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -846,7 +926,7 @@ class OperationListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -870,7 +950,7 @@ class PrivateEndpoint(_serialization.Model):
         "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.id = None
@@ -912,7 +992,7 @@ class PrivateEndpointConnection(_serialization.Model):
         "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
-    def __init__(self, *, properties: "_models.PrivateEndpointConnectionProperties", **kwargs):
+    def __init__(self, *, properties: "_models.PrivateEndpointConnectionProperties", **kwargs: Any) -> None:
         """
         :keyword properties: The properties of a private endpoint connection. Required.
         :paramtype properties:
@@ -956,8 +1036,8 @@ class PrivateEndpointConnectionProperties(_serialization.Model):
         *,
         private_link_service_connection_state: "_models.PrivateLinkServiceConnectionState",
         private_endpoint: Optional["_models.PrivateEndpoint"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword private_endpoint: The private endpoint property of a private endpoint connection.
         :paramtype private_endpoint: ~azure.mgmt.iothubprovisioningservices.models.PrivateEndpoint
@@ -982,7 +1062,7 @@ class PrivateLinkResources(_serialization.Model):
         "value": {"key": "value", "type": "[GroupIdInformation]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.GroupIdInformation"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.GroupIdInformation"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: The list of available private link resources for a provisioning service.
         :paramtype value: list[~azure.mgmt.iothubprovisioningservices.models.GroupIdInformation]
@@ -1024,8 +1104,8 @@ class PrivateLinkServiceConnectionState(_serialization.Model):
         status: Union[str, "_models.PrivateLinkServiceConnectionStatus"],
         description: str,
         actions_required: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword status: The status of a private endpoint connection. Required. Known values are:
          "Pending", "Approved", "Rejected", and "Disconnected".
@@ -1058,6 +1138,10 @@ class Resource(_serialization.Model):
     :vartype type: str
     :ivar location: The resource location. Required.
     :vartype location: str
+    :ivar resourcegroup: The resource group of the resource.
+    :vartype resourcegroup: str
+    :ivar subscriptionid: The subscription id of the resource.
+    :vartype subscriptionid: str
     :ivar tags: The resource tags.
     :vartype tags: dict[str, str]
     """
@@ -1074,13 +1158,27 @@ class Resource(_serialization.Model):
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
         "location": {"key": "location", "type": "str"},
+        "resourcegroup": {"key": "resourcegroup", "type": "str"},
+        "subscriptionid": {"key": "subscriptionid", "type": "str"},
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(
+        self,
+        *,
+        location: str,
+        resourcegroup: Optional[str] = None,
+        subscriptionid: Optional[str] = None,
+        tags: Optional[Dict[str, str]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: The resource location. Required.
         :paramtype location: str
+        :keyword resourcegroup: The resource group of the resource.
+        :paramtype resourcegroup: str
+        :keyword subscriptionid: The subscription id of the resource.
+        :paramtype subscriptionid: str
         :keyword tags: The resource tags.
         :paramtype tags: dict[str, str]
         """
@@ -1089,10 +1187,12 @@ class Resource(_serialization.Model):
         self.name = None
         self.type = None
         self.location = location
+        self.resourcegroup = resourcegroup
+        self.subscriptionid = subscriptionid
         self.tags = tags
 
 
-class ProvisioningServiceDescription(Resource):
+class ProvisioningServiceDescription(Resource):  # pylint: disable=too-many-instance-attributes
     """The description of the provisioning service.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1107,6 +1207,10 @@ class ProvisioningServiceDescription(Resource):
     :vartype type: str
     :ivar location: The resource location. Required.
     :vartype location: str
+    :ivar resourcegroup: The resource group of the resource.
+    :vartype resourcegroup: str
+    :ivar subscriptionid: The subscription id of the resource.
+    :vartype subscriptionid: str
     :ivar tags: The resource tags.
     :vartype tags: dict[str, str]
     :ivar etag: The Etag field is *not* required. If it is provided in the response body, it must
@@ -1118,6 +1222,8 @@ class ProvisioningServiceDescription(Resource):
     :vartype sku: ~azure.mgmt.iothubprovisioningservices.models.IotDpsSkuInfo
     :ivar system_data: Metadata pertaining to creation and last modification of the resource.
     :vartype system_data: ~azure.mgmt.iothubprovisioningservices.models.SystemData
+    :ivar identity: The managed identities for a provisioning service.
+    :vartype identity: ~azure.mgmt.iothubprovisioningservices.models.ManagedServiceIdentity
     """
 
     _validation = {
@@ -1135,11 +1241,14 @@ class ProvisioningServiceDescription(Resource):
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
         "location": {"key": "location", "type": "str"},
+        "resourcegroup": {"key": "resourcegroup", "type": "str"},
+        "subscriptionid": {"key": "subscriptionid", "type": "str"},
         "tags": {"key": "tags", "type": "{str}"},
         "etag": {"key": "etag", "type": "str"},
         "properties": {"key": "properties", "type": "IotDpsPropertiesDescription"},
         "sku": {"key": "sku", "type": "IotDpsSkuInfo"},
         "system_data": {"key": "systemData", "type": "SystemData"},
+        "identity": {"key": "identity", "type": "ManagedServiceIdentity"},
     }
 
     def __init__(
@@ -1148,13 +1257,20 @@ class ProvisioningServiceDescription(Resource):
         location: str,
         properties: "_models.IotDpsPropertiesDescription",
         sku: "_models.IotDpsSkuInfo",
+        resourcegroup: Optional[str] = None,
+        subscriptionid: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         etag: Optional[str] = None,
-        **kwargs
-    ):
+        identity: Optional["_models.ManagedServiceIdentity"] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: The resource location. Required.
         :paramtype location: str
+        :keyword resourcegroup: The resource group of the resource.
+        :paramtype resourcegroup: str
+        :keyword subscriptionid: The subscription id of the resource.
+        :paramtype subscriptionid: str
         :keyword tags: The resource tags.
         :paramtype tags: dict[str, str]
         :keyword etag: The Etag field is *not* required. If it is provided in the response body, it
@@ -1165,12 +1281,17 @@ class ProvisioningServiceDescription(Resource):
          ~azure.mgmt.iothubprovisioningservices.models.IotDpsPropertiesDescription
         :keyword sku: Sku info for a provisioning Service. Required.
         :paramtype sku: ~azure.mgmt.iothubprovisioningservices.models.IotDpsSkuInfo
+        :keyword identity: The managed identities for a provisioning service.
+        :paramtype identity: ~azure.mgmt.iothubprovisioningservices.models.ManagedServiceIdentity
         """
-        super().__init__(location=location, tags=tags, **kwargs)
+        super().__init__(
+            location=location, resourcegroup=resourcegroup, subscriptionid=subscriptionid, tags=tags, **kwargs
+        )
         self.etag = etag
         self.properties = properties
         self.sku = sku
         self.system_data = None
+        self.identity = identity
 
 
 class ProvisioningServiceDescriptionListResult(_serialization.Model):
@@ -1194,7 +1315,9 @@ class ProvisioningServiceDescriptionListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.ProvisioningServiceDescription"]] = None, **kwargs):
+    def __init__(
+        self, *, value: Optional[List["_models.ProvisioningServiceDescription"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: List of provisioning service descriptions.
         :paramtype value:
@@ -1241,8 +1364,8 @@ class SharedAccessSignatureAuthorizationRuleAccessRightsDescription(_serializati
         rights: Union[str, "_models.AccessRightsDescription"],
         primary_key: Optional[str] = None,
         secondary_key: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword key_name: Name of the key. Required.
         :paramtype key_name: str
@@ -1287,8 +1410,8 @@ class SharedAccessSignatureAuthorizationRuleListResult(_serialization.Model):
         self,
         *,
         value: Optional[List["_models.SharedAccessSignatureAuthorizationRuleAccessRightsDescription"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: The list of shared access policies.
         :paramtype value:
@@ -1337,8 +1460,8 @@ class SystemData(_serialization.Model):
         last_modified_by: Optional[str] = None,
         last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         last_modified_at: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword created_by: The identity that created the resource.
         :paramtype created_by: str
@@ -1366,7 +1489,8 @@ class SystemData(_serialization.Model):
 
 
 class TagsResource(_serialization.Model):
-    """A container holding only the Tags for a resource, allowing the user to update the tags on a Provisioning Service instance.
+    """A container holding only the Tags for a resource, allowing the user to update the tags on a
+    Provisioning Service instance.
 
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
@@ -1376,13 +1500,41 @@ class TagsResource(_serialization.Model):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         """
         super().__init__(**kwargs)
         self.tags = tags
+
+
+class UserAssignedIdentity(_serialization.Model):
+    """User assigned identity properties.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar principal_id: The principal ID of the assigned identity.
+    :vartype principal_id: str
+    :ivar client_id: The client ID of the assigned identity.
+    :vartype client_id: str
+    """
+
+    _validation = {
+        "principal_id": {"readonly": True},
+        "client_id": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "principal_id": {"key": "principalId", "type": "str"},
+        "client_id": {"key": "clientId", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.principal_id = None
+        self.client_id = None
 
 
 class VerificationCodeRequest(_serialization.Model):
@@ -1397,7 +1549,7 @@ class VerificationCodeRequest(_serialization.Model):
         "certificate": {"key": "certificate", "type": "str"},
     }
 
-    def __init__(self, *, certificate: Optional[str] = None, **kwargs):
+    def __init__(self, *, certificate: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword certificate: base-64 representation of X509 certificate .cer file or just .pem file
          content.
@@ -1440,7 +1592,9 @@ class VerificationCodeResponse(_serialization.Model):
         "properties": {"key": "properties", "type": "VerificationCodeResponseProperties"},
     }
 
-    def __init__(self, *, properties: Optional["_models.VerificationCodeResponseProperties"] = None, **kwargs):
+    def __init__(
+        self, *, properties: Optional["_models.VerificationCodeResponseProperties"] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword properties:
         :paramtype properties:
@@ -1498,8 +1652,8 @@ class VerificationCodeResponseProperties(_serialization.Model):
         certificate: Optional[bytes] = None,
         created: Optional[str] = None,
         updated: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword verification_code: Verification code.
         :paramtype verification_code: str

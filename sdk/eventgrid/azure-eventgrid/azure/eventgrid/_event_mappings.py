@@ -92,6 +92,8 @@ class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     AcsEmailEngagementTrackingReportReceivedEventName = 'Microsoft.Communication.EmailEngagementTrackingReportReceived'
 
+    AcsIncomingCallEventName = 'Microsoft.Communication.IncomingCall'
+
     AcsRecordingFileStatusUpdatedEventName = 'Microsoft.Communication.RecordingFileStatusUpdated'
 
     AcsSmsDeliveryReportReceivedEventName = 'Microsoft.Communication.SMSDeliveryReportReceived'
@@ -164,7 +166,17 @@ class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     ContainerRegistryImagePushedEventName = 'Microsoft.ContainerRegistry.ImagePushed'
 
+    ContainerServiceClusterSupportEndedEventName = 'Microsoft.ContainerService.ClusterSupportEnded'
+
+    ContainerServiceClusterSupportEndingEventName = 'Microsoft.ContainerService.ClusterSupportEnding'
+
     ContainerServiceNewKubernetesVersionAvailableEventName = 'Microsoft.ContainerService.NewKubernetesVersionAvailable'
+
+    ContainerServiceNodePoolRollingFailedEventName = 'Microsoft.ContainerService.NodePoolRollingFailed'
+
+    ContainerServiceNodePoolRollingStartedEventName = 'Microsoft.ContainerService.NodePoolRollingStarted'
+
+    ContainerServiceNodePoolRollingSucceededEventName = 'Microsoft.ContainerService.NodePoolRollingSucceeded'
 
     DataBoxCopyCompletedEventName = 'Microsoft.DataBox.CopyCompleted'
 
@@ -178,6 +190,8 @@ class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     HealthcareDicomImageCreatedEventName = 'Microsoft.HealthcareApis.DicomImageCreated'
 
     HealthcareDicomImageDeletedEventName = 'Microsoft.HealthcareApis.DicomImageDeleted'
+
+    HealthcareDicomImageUpdatedEventName = 'Microsoft.HealthcareApis.DicomImageUpdated'
 
     # spell-checker:ignore Fhir
     HealthcareFhirResourceCreatedEventName = 'Microsoft.HealthcareApis.FhirResourceCreated'

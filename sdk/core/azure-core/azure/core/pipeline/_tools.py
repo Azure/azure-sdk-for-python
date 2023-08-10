@@ -31,7 +31,16 @@ if TYPE_CHECKING:
 
 
 def await_result(func, *args, **kwargs):
-    """If func returns an awaitable, raise that this runner can't handle it."""
+    """If func returns an awaitable, raise that this runner can't handle it.
+
+    :param func: The function to run.
+    :type func: callable
+    :param args: The positional arguments to pass to the function.
+    :type args: list
+    :rtype: any
+    :return: The result of the function
+    :raises: TypeError
+    """
     result = func(*args, **kwargs)
     if hasattr(result, "__await__"):
         raise TypeError("Policy {} returned awaitable object in non-async pipeline.".format(func))
@@ -45,6 +54,11 @@ def is_rest(obj) -> bool:
     in a ResponseNotRead error if you're checking the value on a response
     that has not been read in yet. To get around this, we also have added
     a check for is_stream_consumed, which is an exclusive property on our new responses.
+
+    :param obj: The object to check.
+    :type obj: any
+    :rtype: bool
+    :return: Whether the object is a rest request / response.
     """
     return hasattr(obj, "is_stream_consumed") or hasattr(obj, "content")
 
@@ -53,6 +67,9 @@ def handle_non_stream_rest_response(response: "RestHttpResponse") -> None:
     """Handle reading and closing of non stream rest responses.
     For our new rest responses, we have to call .read() and .close() for our non-stream
     responses. This way, we load in the body for users to access.
+
+    :param response: The response to read and close.
+    :type response: ~azure.core.rest.HttpResponse
     """
     try:
         response.read()

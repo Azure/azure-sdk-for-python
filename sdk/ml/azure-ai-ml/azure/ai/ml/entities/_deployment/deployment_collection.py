@@ -7,8 +7,10 @@ from typing import Dict
 from azure.ai.ml._schema._deployment.online.deployment_collection_schema import DeploymentCollectionSchema
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 from azure.ai.ml._restclient.v2023_04_01_preview.models import Collection as RestCollection
+from azure.ai.ml._utils._experimental import experimental
 
 
+@experimental
 class DeploymentCollection:
     """Collection entity
 

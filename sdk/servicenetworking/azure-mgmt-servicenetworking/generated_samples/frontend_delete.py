@@ -31,8 +31,8 @@ def main():
 
     response = client.frontends_interface.begin_delete(
         resource_group_name="rg1",
-        traffic_controller_name="TC1",
-        frontend_name="publicIp1",
+        traffic_controller_name="tc1",
+        frontend_name="fe1",
     ).result()
     print(response)
 

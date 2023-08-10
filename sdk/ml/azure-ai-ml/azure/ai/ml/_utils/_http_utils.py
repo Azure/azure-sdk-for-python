@@ -2,7 +2,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=no-self-use
 
 from functools import wraps
 from typing import Any, Callable, Optional
@@ -21,7 +20,10 @@ from azure.core.pipeline.policies import (
     RetryPolicy,
     UserAgentPolicy,
 )
-from azure.core.pipeline.transport import HttpTransport, RequestsTransport
+from azure.core.pipeline.transport import HttpTransport
+from azure.core.pipeline.transport import (  # pylint: disable=non-abstract-transport-import,no-name-in-module
+    RequestsTransport,
+)
 from azure.core.rest import HttpRequest, HttpResponse
 
 
@@ -46,7 +48,7 @@ def _request_function(f: Callable[["HttpPipeline"], None]):
             Accepts the same parameters as azure.core.rest.HttpRequest, except for the method.
             All other kwargs are forwarded to azure.core.Pipeline.run
 
-            :param bool stream: Whether to stream the response, defaults to False
+            :keyword bool stream: Whether to stream the response, defaults to False
             :return HttpResponse:
             """
             request = HttpRequest(
@@ -116,6 +118,9 @@ class HttpPipeline(Pipeline):
         config.polling_interval = kwargs.get("polling_interval", 30)
 
         super().__init__(
+            # RequestsTransport normally should not be imported outside of azure.core, since transports
+            # are meant to be user configurable.
+            # RequestsTransport is only used in this file as the default transport when not user specified.
             transport=transport or RequestsTransport(**kwargs),
             policies=[
                 config.headers_policy,
@@ -146,34 +151,27 @@ class HttpPipeline(Pipeline):
     @_request_function
     def delete(self) -> None:
         """Sends a DELETE request."""
-        ...
 
     @_request_function
     def get(self) -> None:
         """Sends a GET request."""
-        ...
 
     @_request_function
     def head(self) -> None:
         """Sends a HEAD request."""
-        ...
 
     @_request_function
     def options(self) -> None:
         """Sends a OPTIONS request."""
-        ...
 
     @_request_function
     def patch(self) -> None:
         """Sends a PATCH request."""
-        ...
 
     @_request_function
     def post(self) -> None:
         """Sends a POST request."""
-        ...
 
     @_request_function
     def put(self) -> None:
         """Sends a PUT request."""
-        ...

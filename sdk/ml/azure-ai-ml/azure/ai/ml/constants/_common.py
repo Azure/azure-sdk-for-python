@@ -137,7 +137,6 @@ API_URL_KEY = "api"
 ANONYMOUS_ENV_NAME = "CliV2AnonymousEnvironment"
 SKIP_VALIDATION_MESSAGE = "To skip this validation use the --skip-validation param"
 MLTABLE_METADATA_SCHEMA_URL_FALLBACK = "https://azuremlschemasprod.azureedge.net/latest/MLTable.schema.json"
-INVOCATION_ZIP_FILE = "invocation.zip"
 INVOCATION_BAT_FILE = "Invocation.bat"
 INVOCATION_BASH_FILE = "Invocation.sh"
 AZUREML_RUN_SETUP_DIR = "azureml-setup"
@@ -183,6 +182,15 @@ SPARK_ENVIRONMENT_WARNING_MESSAGE = (
     "Spark job will only install the packages defined in the Conda configuration. It "
     "will not create a docker container using the image defined in the environment."
 )
+
+
+class DefaultOpenEncoding:
+    """Enum that captures SDK's default values for the encoding param of open(...)"""
+
+    READ = "utf-8-sig"
+    """SDK Default Encoding when reading a file"""
+    WRITE = "utf-8"
+    """SDK Default Encoding when writing a file"""
 
 
 class AzureMLResourceType:
@@ -232,6 +240,8 @@ class AzureMLResourceType:
     """Feature store entity resource type."""
     FEATURE_STORE = "feature_store"
     """Feature store resource type."""
+    WORKSPACE_HUB = "workspace_hub"
+    """WorkspaceHub resource type."""
 
     NAMED_TYPES = {
         JOB,
@@ -297,6 +307,7 @@ class ArmConstants:
     BASE_TYPE = "base"
     WORKSPACE_BASE = "workspace_base"
     WORKSPACE_PARAM = "workspace_param"
+    WORKSPACE_PROJECT = "workspace_project"
 
     OPERATION_CREATE = "create"
     OPERATION_UPDATE = "update"
@@ -453,6 +464,7 @@ class YAMLRefDocLinks:
     FEATURE_STORE = "https://aka.ms/ml-cli-v2-featurestore-yaml-reference"
     FEATURE_SET = "https://aka.ms/ml-cli-v2-featureset-yaml-reference"
     FEATURE_STORE_ENTITY = "https://aka.ms/ml-cli-v2-featurestore-entity-yaml-reference"
+    WORKSPACEHUB = "https://aka.ms/ml-cli-v2-workspace-hub-entity-yaml-reference"
 
 
 class YAMLRefDocSchemaNames:
@@ -852,11 +864,6 @@ class InferenceServerType:
     CUSTOM = "custom"
 
 
-class IPProtectionLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    ALL = "all"
-    NONE = "none"
-
-
 class AzureDevopsArtifactsType:
     ARTIFACT = "artifact"
 
@@ -864,6 +871,7 @@ class AzureDevopsArtifactsType:
 class ScheduleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     JOB = "job"
     MONITOR = "monitor"
+    DATA_IMPORT = "data_import"
 
 
 class AutoDeleteCondition(str, Enum, metaclass=CaseInsensitiveEnumMeta):

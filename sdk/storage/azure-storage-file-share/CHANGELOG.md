@@ -1,14 +1,20 @@
 # Release History
 
-## 12.12.1 (Unreleased)
+## 12.14.0b1 (2023-08-08)
 
 ### Features Added
+- Added support for service versions 2023-05-03 and 2023-08-03.
 
-### Breaking Changes
+## 12.13.0 (2023-07-11)
 
-### Bugs Fixed
+### Features Added
+- Stable release of features from 12.13.0b1
 
-### Other Changes
+## 12.13.0b1 (2023-05-30)
+
+### Features Added
+- Added support for service version 2023-01-03.
+- Added `access_rights` property to `Handle`.
 
 ## 12.12.0 (2023-04-12)
 

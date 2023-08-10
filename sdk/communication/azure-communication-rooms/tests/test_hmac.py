@@ -5,14 +5,9 @@
 # license information.
 # --------------------------------------------------------------------------
 
-import unittest
 from azure.communication.rooms._shared.policy import HMACCredentialsPolicy
-from devtools_testutils import AzureTestCase
 
-class HMACTest(AzureTestCase):
-    def setUp(self):
-        super(HMACTest, self).setUp()
-
+class TestHMAC():
     def test_correct_hmac(self):
         auth_policy = HMACCredentialsPolicy("contoso.communicationservices.azure.com", "pw==")
 

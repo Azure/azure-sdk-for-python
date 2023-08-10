@@ -27,6 +27,9 @@ extends:
   template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
     ServiceDirectory: containerservice
+    TestProxy: true
     Artifacts:
     - name: azure-mgmt-containerservice
       safeName: azuremgmtcontainerservice
+    - name: azure-mgmt-containerservicefleet
+      safeName: azuremgmtcontainerservicefleet

@@ -26,6 +26,10 @@ def _to_utc_datetime(value):
 
 def _rfc_1123_to_datetime(rfc_1123: str) -> Optional[datetime]:
     """Converts an RFC 1123 date string to a UTC datetime.
+
+    :param str rfc_1123: The time and date in RFC 1123 format.
+    :returns: The time and date in UTC datetime format.
+    :rtype: datetime
     """
     if not rfc_1123:
         return None
@@ -35,6 +39,10 @@ def _rfc_1123_to_datetime(rfc_1123: str) -> Optional[datetime]:
 def _filetime_to_datetime(filetime: str) -> Optional[datetime]:
     """Converts an MS filetime string to a UTC datetime. "0" indicates None.
     If parsing MS Filetime fails, tries RFC 1123 as backup.
+
+    :param str filetime: The time and date in MS filetime format.
+    :returns: The time and date in UTC datetime format.
+    :rtype: datetime
     """
     if not filetime:
         return None

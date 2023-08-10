@@ -9,6 +9,7 @@ import functools
 import json
 import logging
 import os
+from unittest.mock import Mock, patch
 
 from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
@@ -785,6 +786,25 @@ class TestKeyVaultKey(KeyVaultTestCase, KeysTestCase):
         )
         response = await client.send_request(request)
         assert response.json()["key"]["kid"] == key.id
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("api_version,is_hsm", only_vault_latest)
+    @AsyncKeysClientPreparer()
+    @recorded_by_proxy_async
+    async def test_40x_handling(self, client, **kwargs):
+        """Ensure 404 and 409 responses are raised with azure-core exceptions instead of generated KV ones"""
+
+        # Test that 404 is raised correctly by fetching a nonexistent key
+        with pytest.raises(ResourceNotFoundError):
+            await client.get_key("key-that-does-not-exist")
+
+        # Test that 409 is raised correctly (`create_key` shouldn't actually trigger this, but for raising behavior)
+        async def run(*_, **__):
+            return Mock(http_response=Mock(status_code=409))
+        with patch.object(client._client._client._pipeline, "run", run):
+            with pytest.raises(ResourceExistsError):
+                await client.create_key("...", "RSA")
+        await client.close()
 
 
 @pytest.mark.asyncio

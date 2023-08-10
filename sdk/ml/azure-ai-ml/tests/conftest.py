@@ -1,5 +1,4 @@
 import base64
-import hashlib
 import json
 import os
 import random
@@ -9,11 +8,10 @@ import time
 import uuid
 from collections import namedtuple
 from datetime import datetime
-from functools import partial
 from importlib import reload
 from os import getenv
 from pathlib import Path
-from typing import Callable, Optional, Tuple, Union
+from typing import Callable, Tuple, Union
 from unittest.mock import Mock, patch
 
 import pytest
@@ -123,6 +121,8 @@ def add_sanitizers(test_proxy, fake_datastore_key):
         regex='\\/az-ml-artifacts\\/([^/\\s"]{36})\\/',
         group_for_replace="1",
     )
+    feature_store_name = os.environ.get("ML_FEATURE_STORE_NAME", "env_feature_store_name_note_present")
+    add_general_regex_sanitizer(regex=feature_store_name, value="00000")
     # masks signature in SAS uri
     add_general_regex_sanitizer(value="000000000000000000000000000000000000", regex=_query_param_regex("sig"))
 
@@ -164,6 +164,7 @@ def sanitized_environment_variables(environment_variables, fake_datastore_key) -
         "ML_SUBSCRIPTION_ID": "00000000-0000-0000-0000-000000000",
         "ML_RESOURCE_GROUP": "00000",
         "ML_WORKSPACE_NAME": "00000",
+        "ML_FEATURE_STORE_NAME": "00000",
         "ML_TEST_STORAGE_ACCOUNT_NAME": "teststorageaccount",
         "ML_TEST_STORAGE_ACCOUNT_PRIMARY_KEY": fake_datastore_key,
         "ML_TEST_STORAGE_ACCOUNT_SECONDARY_KEY": fake_datastore_key,
@@ -258,6 +259,11 @@ def mock_aml_services_2023_02_01_preview(mocker: MockFixture) -> Mock:
 @pytest.fixture
 def mock_aml_services_2023_04_01_preview(mocker: MockFixture) -> Mock:
     return mocker.patch("azure.ai.ml._restclient.v2023_04_01_preview")
+
+
+@pytest.fixture
+def mock_aml_services_2023_06_01_preview(mocker: MockFixture) -> Mock:
+    return mocker.patch("azure.ai.ml._restclient.v2023_06_01_preview")
 
 
 @pytest.fixture
@@ -357,6 +363,15 @@ def e2e_ws_scope(sanitized_environment_variables: dict) -> OperationScope:
 
 
 @pytest.fixture
+def e2e_fs_scope(sanitized_environment_variables: dict) -> OperationScope:
+    return OperationScope(
+        subscription_id=sanitized_environment_variables["ML_SUBSCRIPTION_ID"],
+        resource_group_name=sanitized_environment_variables["ML_RESOURCE_GROUP"],
+        workspace_name=sanitized_environment_variables["ML_FEATURE_STORE_NAME"],
+    )
+
+
+@pytest.fixture
 def client(e2e_ws_scope: OperationScope, auth: ClientSecretCredential) -> MLClient:
     """return a machine learning client using default e2e testing workspace"""
     return MLClient(
@@ -364,6 +379,19 @@ def client(e2e_ws_scope: OperationScope, auth: ClientSecretCredential) -> MLClie
         subscription_id=e2e_ws_scope.subscription_id,
         resource_group_name=e2e_ws_scope.resource_group_name,
         workspace_name=e2e_ws_scope.workspace_name,
+        logging_enable=getenv(E2E_TEST_LOGGING_ENABLED),
+        cloud="AzureCloud",
+    )
+
+
+@pytest.fixture
+def feature_store_client(e2e_fs_scope: OperationScope, auth: ClientSecretCredential) -> MLClient:
+    """return a machine learning client using default e2e testing feature store"""
+    return MLClient(
+        credential=auth,
+        subscription_id=e2e_fs_scope.subscription_id,
+        resource_group_name=e2e_fs_scope.resource_group_name,
+        workspace_name=e2e_fs_scope.workspace_name,
         logging_enable=getenv(E2E_TEST_LOGGING_ENABLED),
         cloud="AzureCloud",
     )
@@ -639,26 +667,6 @@ def generate_component_hash(*args, **kwargs):
     return dict_hash
 
 
-def get_client_hash_with_request_node_name(
-    subscription_id: Optional[str],
-    resource_group_name: Optional[str],
-    workspace_name: Optional[str],
-    registry_name: Optional[str],
-    random_seed: str,
-):
-    """Generate a hash for the client."""
-    object_hash = hashlib.sha256()
-    for s in [
-        subscription_id,
-        resource_group_name,
-        workspace_name,
-        registry_name,
-        random_seed,
-    ]:
-        object_hash.update(str(s).encode("utf-8"))
-    return object_hash.hexdigest()
-
-
 def clear_on_disk_cache(cached_resolver):
     """Clear on disk cache for current client."""
     cached_resolver._lock.acquire()
@@ -699,26 +707,30 @@ def mock_component_hash(mocker: MockFixture, request: FixtureRequest):
     #   and test2 in workspace B, the version in recordings can be different.
     # So we use a random (probably unique) on-disk cache base directory for each test, and on-disk cache operations
     # will be thread-safe when concurrently running different tests.
-    mocker.patch(
-        "azure.ai.ml._utils._cache_utils.CachedNodeResolver._get_client_hash",
-        side_effect=partial(get_client_hash_with_request_node_name, random_seed=uuid.uuid4().hex),
-    )
+    involved_client_keys = set()
+    if not is_live_and_not_recording():
+        # Get client id will involve a new request to server, which is specifically tested in some tests.
+        # We mock it in playback mode to avoid changing recordings for most tests.
+        mock_workspace_id, mock_registry_id = uuid.uuid4().hex, uuid.uuid4().hex
+        mocker.patch(
+            "azure.ai.ml.operations._component_operations.ComponentOperations._get_workspace_key",
+            return_value=mock_workspace_id,
+        )
+        mocker.patch(
+            "azure.ai.ml.operations._component_operations.ComponentOperations._get_registry_key",
+            return_value=mock_registry_id,
+        )
+        involved_client_keys = {mock_workspace_id, mock_registry_id}
 
     # Collect involved resolvers before yield, as fixtures may be destroyed after yield.
     from azure.ai.ml._utils._cache_utils import CachedNodeResolver
 
     involved_resolvers = []
-    for client_fixture_name in ["client", "registry_client"]:
-        if client_fixture_name not in request.fixturenames:
-            continue
-        client: MLClient = request.getfixturevalue(client_fixture_name)
+    for client_key in involved_client_keys:
         involved_resolvers.append(
             CachedNodeResolver(
                 resolver=None,
-                subscription_id=client.subscription_id,
-                resource_group_name=client.resource_group_name,
-                workspace_name=client.workspace_name,
-                registry_name=client._operation_scope.registry_name,
+                client_key=client_key,
             )
         )
 

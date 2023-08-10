@@ -2,16 +2,16 @@
     "chosen_version": "2015-01-01",
     "total_api_version_list": ["2015-01-01"],
     "client": {
-        "name": "MicrosoftResourceHealth",
-        "filename": "_microsoft_resource_health",
+        "name": "ResourceHealthMgmtClient",
+        "filename": "_resource_health_mgmt_client",
         "description": "The Resource Health Client.",
         "host_value": "\"https://management.azure.com\"",
         "parameterized_host_template": null,
         "azure_arm": true,
         "has_lro_operations": false,
         "client_side_validation": false,
-        "sync_imports": "{\"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}}, \"regular\": {\"azurecore\": {\"azure.mgmt.core\": [\"ARMPipelineClient\"], \"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"]}, \"local\": {\"._configuration\": [\"MicrosoftResourceHealthConfiguration\"], \".._serialization\": [\"Deserializer\", \"Serializer\"]}}, \"typing\": {\"azurecore\": {\"azure.core.credentials\": [\"TokenCredential\"]}}}",
-        "async_imports": "{\"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}}, \"regular\": {\"azurecore\": {\"azure.mgmt.core\": [\"AsyncARMPipelineClient\"], \"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"]}, \"local\": {\"._configuration\": [\"MicrosoftResourceHealthConfiguration\"], \"..._serialization\": [\"Deserializer\", \"Serializer\"]}}, \"typing\": {\"azurecore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"]}}}"
+        "sync_imports": "{\"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}}, \"regular\": {\"azurecore\": {\"azure.mgmt.core\": [\"ARMPipelineClient\"], \"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"]}, \"local\": {\"._configuration\": [\"ResourceHealthMgmtClientConfiguration\"], \".._serialization\": [\"Deserializer\", \"Serializer\"]}}, \"typing\": {\"azurecore\": {\"azure.core.credentials\": [\"TokenCredential\"]}}}",
+        "async_imports": "{\"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}}, \"regular\": {\"azurecore\": {\"azure.mgmt.core\": [\"AsyncARMPipelineClient\"], \"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"]}, \"local\": {\"._configuration\": [\"ResourceHealthMgmtClientConfiguration\"], \"..._serialization\": [\"Deserializer\", \"Serializer\"]}}, \"typing\": {\"azurecore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"]}}}"
     },
     "global_parameters": {
         "sync": {

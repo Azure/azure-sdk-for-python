@@ -59,24 +59,23 @@ class Condition(_serialization.Model):
     :ivar time_aggregation: Aggregation type. Required. Known values are: "Count", "Average",
      "Minimum", "Maximum", and "Total".
     :vartype time_aggregation: str or
-     ~$(python-base-namespace).v2020_05_01_preview.models.TimeAggregation
+     ~azure.mgmt.monitor.v2020_05_01_preview.models.TimeAggregation
     :ivar metric_measure_column: The column containing the metric measure number.
     :vartype metric_measure_column: str
     :ivar resource_id_column: The column containing the resource id. The content of the column must
      be a uri formatted as resource id.
     :vartype resource_id_column: str
     :ivar dimensions: List of Dimensions conditions.
-    :vartype dimensions: list[~$(python-base-namespace).v2020_05_01_preview.models.Dimension]
+    :vartype dimensions: list[~azure.mgmt.monitor.v2020_05_01_preview.models.Dimension]
     :ivar operator: The criteria operator. Required. Known values are: "Equals", "GreaterThan",
      "GreaterThanOrEqual", "LessThan", and "LessThanOrEqual".
-    :vartype operator: str or
-     ~$(python-base-namespace).v2020_05_01_preview.models.ConditionOperator
+    :vartype operator: str or ~azure.mgmt.monitor.v2020_05_01_preview.models.ConditionOperator
     :ivar threshold: the criteria threshold value that activates the alert. Required.
     :vartype threshold: float
     :ivar failing_periods: The minimum number of violations required within the selected lookback
      time window required to raise an alert.
     :vartype failing_periods:
-     ~$(python-base-namespace).v2020_05_01_preview.models.ConditionFailingPeriods
+     ~azure.mgmt.monitor.v2020_05_01_preview.models.ConditionFailingPeriods
     """
 
     _validation = {
@@ -115,24 +114,23 @@ class Condition(_serialization.Model):
         :keyword time_aggregation: Aggregation type. Required. Known values are: "Count", "Average",
          "Minimum", "Maximum", and "Total".
         :paramtype time_aggregation: str or
-         ~$(python-base-namespace).v2020_05_01_preview.models.TimeAggregation
+         ~azure.mgmt.monitor.v2020_05_01_preview.models.TimeAggregation
         :keyword metric_measure_column: The column containing the metric measure number.
         :paramtype metric_measure_column: str
         :keyword resource_id_column: The column containing the resource id. The content of the column
          must be a uri formatted as resource id.
         :paramtype resource_id_column: str
         :keyword dimensions: List of Dimensions conditions.
-        :paramtype dimensions: list[~$(python-base-namespace).v2020_05_01_preview.models.Dimension]
+        :paramtype dimensions: list[~azure.mgmt.monitor.v2020_05_01_preview.models.Dimension]
         :keyword operator: The criteria operator. Required. Known values are: "Equals", "GreaterThan",
          "GreaterThanOrEqual", "LessThan", and "LessThanOrEqual".
-        :paramtype operator: str or
-         ~$(python-base-namespace).v2020_05_01_preview.models.ConditionOperator
+        :paramtype operator: str or ~azure.mgmt.monitor.v2020_05_01_preview.models.ConditionOperator
         :keyword threshold: the criteria threshold value that activates the alert. Required.
         :paramtype threshold: float
         :keyword failing_periods: The minimum number of violations required within the selected
          lookback time window required to raise an alert.
         :paramtype failing_periods:
-         ~$(python-base-namespace).v2020_05_01_preview.models.ConditionFailingPeriods
+         ~azure.mgmt.monitor.v2020_05_01_preview.models.ConditionFailingPeriods
         """
         super().__init__(**kwargs)
         self.query = query
@@ -189,8 +187,7 @@ class Dimension(_serialization.Model):
     :vartype name: str
     :ivar operator: Operator for dimension values. Required. Known values are: "Include" and
      "Exclude".
-    :vartype operator: str or
-     ~$(python-base-namespace).v2020_05_01_preview.models.DimensionOperator
+    :vartype operator: str or ~azure.mgmt.monitor.v2020_05_01_preview.models.DimensionOperator
     :ivar values: List of dimension values. Required.
     :vartype values: list[str]
     """
@@ -215,8 +212,7 @@ class Dimension(_serialization.Model):
         :paramtype name: str
         :keyword operator: Operator for dimension values. Required. Known values are: "Include" and
          "Exclude".
-        :paramtype operator: str or
-         ~$(python-base-namespace).v2020_05_01_preview.models.DimensionOperator
+        :paramtype operator: str or ~azure.mgmt.monitor.v2020_05_01_preview.models.DimensionOperator
         :keyword values: List of dimension values. Required.
         :paramtype values: list[str]
         """
@@ -258,7 +254,7 @@ class ErrorContract(_serialization.Model):
     """Describes the format of Error response.
 
     :ivar error: The error details.
-    :vartype error: ~$(python-base-namespace).v2020_05_01_preview.models.ErrorResponse
+    :vartype error: ~azure.mgmt.monitor.v2020_05_01_preview.models.ErrorResponse
     """
 
     _attribute_map = {
@@ -268,7 +264,7 @@ class ErrorContract(_serialization.Model):
     def __init__(self, *, error: Optional["_models.ErrorResponse"] = None, **kwargs: Any) -> None:
         """
         :keyword error: The error details.
-        :paramtype error: ~$(python-base-namespace).v2020_05_01_preview.models.ErrorResponse
+        :paramtype error: ~azure.mgmt.monitor.v2020_05_01_preview.models.ErrorResponse
         """
         super().__init__(**kwargs)
         self.error = error
@@ -287,10 +283,10 @@ class ErrorResponse(_serialization.Model):
     :ivar target: The error target.
     :vartype target: str
     :ivar details: The error details.
-    :vartype details: list[~$(python-base-namespace).v2020_05_01_preview.models.ErrorResponse]
+    :vartype details: list[~azure.mgmt.monitor.v2020_05_01_preview.models.ErrorResponse]
     :ivar additional_info: The error additional info.
     :vartype additional_info:
-     list[~$(python-base-namespace).v2020_05_01_preview.models.ErrorAdditionalInfo]
+     list[~azure.mgmt.monitor.v2020_05_01_preview.models.ErrorAdditionalInfo]
     """
 
     _validation = {
@@ -358,7 +354,7 @@ class ScheduledQueryRuleCriteria(_serialization.Model):
     """The rule criteria that defines the conditions of the scheduled query rule.
 
     :ivar all_of: A list of conditions to evaluate against the specified scopes.
-    :vartype all_of: list[~$(python-base-namespace).v2020_05_01_preview.models.Condition]
+    :vartype all_of: list[~azure.mgmt.monitor.v2020_05_01_preview.models.Condition]
     """
 
     _attribute_map = {
@@ -368,7 +364,7 @@ class ScheduledQueryRuleCriteria(_serialization.Model):
     def __init__(self, *, all_of: Optional[List["_models.Condition"]] = None, **kwargs: Any) -> None:
         """
         :keyword all_of: A list of conditions to evaluate against the specified scopes.
-        :paramtype all_of: list[~$(python-base-namespace).v2020_05_01_preview.models.Condition]
+        :paramtype all_of: list[~azure.mgmt.monitor.v2020_05_01_preview.models.Condition]
         """
         super().__init__(**kwargs)
         self.all_of = all_of
@@ -462,7 +458,7 @@ class ScheduledQueryRuleResource(TrackedResource):  # pylint: disable=too-many-i
     :vartype display_name: str
     :ivar severity: Severity of the alert. Should be an integer between [0-4]. Value of 0 is
      severest. Known values are: 0, 1, 2, 3, and 4.
-    :vartype severity: float or ~$(python-base-namespace).v2020_05_01_preview.models.AlertSeverity
+    :vartype severity: float or ~azure.mgmt.monitor.v2020_05_01_preview.models.AlertSeverity
     :ivar enabled: The flag which indicates whether this scheduled query rule is enabled. Value
      should be true or false.
     :vartype enabled: bool
@@ -483,13 +479,12 @@ class ScheduledQueryRuleResource(TrackedResource):  # pylint: disable=too-many-i
      machine in the resource group which meet the alert criteria.
     :vartype target_resource_types: list[str]
     :ivar criteria: The rule criteria that defines the conditions of the scheduled query rule.
-    :vartype criteria:
-     ~$(python-base-namespace).v2020_05_01_preview.models.ScheduledQueryRuleCriteria
+    :vartype criteria: ~azure.mgmt.monitor.v2020_05_01_preview.models.ScheduledQueryRuleCriteria
     :ivar mute_actions_duration: Mute actions for the chosen period of time (in ISO 8601 duration
      format) after the alert is fired.
     :vartype mute_actions_duration: ~datetime.timedelta
     :ivar actions:
-    :vartype actions: list[~$(python-base-namespace).v2020_05_01_preview.models.Action]
+    :vartype actions: list[~azure.mgmt.monitor.v2020_05_01_preview.models.Action]
     """
 
     _validation = {
@@ -557,8 +552,7 @@ class ScheduledQueryRuleResource(TrackedResource):  # pylint: disable=too-many-i
         :paramtype display_name: str
         :keyword severity: Severity of the alert. Should be an integer between [0-4]. Value of 0 is
          severest. Known values are: 0, 1, 2, 3, and 4.
-        :paramtype severity: float or
-         ~$(python-base-namespace).v2020_05_01_preview.models.AlertSeverity
+        :paramtype severity: float or ~azure.mgmt.monitor.v2020_05_01_preview.models.AlertSeverity
         :keyword enabled: The flag which indicates whether this scheduled query rule is enabled. Value
          should be true or false.
         :paramtype enabled: bool
@@ -579,13 +573,12 @@ class ScheduledQueryRuleResource(TrackedResource):  # pylint: disable=too-many-i
          machine in the resource group which meet the alert criteria.
         :paramtype target_resource_types: list[str]
         :keyword criteria: The rule criteria that defines the conditions of the scheduled query rule.
-        :paramtype criteria:
-         ~$(python-base-namespace).v2020_05_01_preview.models.ScheduledQueryRuleCriteria
+        :paramtype criteria: ~azure.mgmt.monitor.v2020_05_01_preview.models.ScheduledQueryRuleCriteria
         :keyword mute_actions_duration: Mute actions for the chosen period of time (in ISO 8601
          duration format) after the alert is fired.
         :paramtype mute_actions_duration: ~datetime.timedelta
         :keyword actions:
-        :paramtype actions: list[~$(python-base-namespace).v2020_05_01_preview.models.Action]
+        :paramtype actions: list[~azure.mgmt.monitor.v2020_05_01_preview.models.Action]
         """
         super().__init__(tags=tags, location=location, **kwargs)
         self.kind = None
@@ -610,8 +603,7 @@ class ScheduledQueryRuleResourceCollection(_serialization.Model):
     """Represents a collection of scheduled query rule resources.
 
     :ivar value: The values for the scheduled query rule resources.
-    :vartype value:
-     list[~$(python-base-namespace).v2020_05_01_preview.models.ScheduledQueryRuleResource]
+    :vartype value: list[~azure.mgmt.monitor.v2020_05_01_preview.models.ScheduledQueryRuleResource]
     """
 
     _attribute_map = {
@@ -622,7 +614,7 @@ class ScheduledQueryRuleResourceCollection(_serialization.Model):
         """
         :keyword value: The values for the scheduled query rule resources.
         :paramtype value:
-         list[~$(python-base-namespace).v2020_05_01_preview.models.ScheduledQueryRuleResource]
+         list[~azure.mgmt.monitor.v2020_05_01_preview.models.ScheduledQueryRuleResource]
         """
         super().__init__(**kwargs)
         self.value = value
@@ -645,7 +637,7 @@ class ScheduledQueryRuleResourcePatch(_serialization.Model):  # pylint: disable=
     :vartype display_name: str
     :ivar severity: Severity of the alert. Should be an integer between [0-4]. Value of 0 is
      severest. Known values are: 0, 1, 2, 3, and 4.
-    :vartype severity: float or ~$(python-base-namespace).v2020_05_01_preview.models.AlertSeverity
+    :vartype severity: float or ~azure.mgmt.monitor.v2020_05_01_preview.models.AlertSeverity
     :ivar enabled: The flag which indicates whether this scheduled query rule is enabled. Value
      should be true or false.
     :vartype enabled: bool
@@ -666,13 +658,12 @@ class ScheduledQueryRuleResourcePatch(_serialization.Model):  # pylint: disable=
      machine in the resource group which meet the alert criteria.
     :vartype target_resource_types: list[str]
     :ivar criteria: The rule criteria that defines the conditions of the scheduled query rule.
-    :vartype criteria:
-     ~$(python-base-namespace).v2020_05_01_preview.models.ScheduledQueryRuleCriteria
+    :vartype criteria: ~azure.mgmt.monitor.v2020_05_01_preview.models.ScheduledQueryRuleCriteria
     :ivar mute_actions_duration: Mute actions for the chosen period of time (in ISO 8601 duration
      format) after the alert is fired.
     :vartype mute_actions_duration: ~datetime.timedelta
     :ivar actions:
-    :vartype actions: list[~$(python-base-namespace).v2020_05_01_preview.models.Action]
+    :vartype actions: list[~azure.mgmt.monitor.v2020_05_01_preview.models.Action]
     """
 
     _validation = {
@@ -725,8 +716,7 @@ class ScheduledQueryRuleResourcePatch(_serialization.Model):  # pylint: disable=
         :paramtype display_name: str
         :keyword severity: Severity of the alert. Should be an integer between [0-4]. Value of 0 is
          severest. Known values are: 0, 1, 2, 3, and 4.
-        :paramtype severity: float or
-         ~$(python-base-namespace).v2020_05_01_preview.models.AlertSeverity
+        :paramtype severity: float or ~azure.mgmt.monitor.v2020_05_01_preview.models.AlertSeverity
         :keyword enabled: The flag which indicates whether this scheduled query rule is enabled. Value
          should be true or false.
         :paramtype enabled: bool
@@ -747,13 +737,12 @@ class ScheduledQueryRuleResourcePatch(_serialization.Model):  # pylint: disable=
          machine in the resource group which meet the alert criteria.
         :paramtype target_resource_types: list[str]
         :keyword criteria: The rule criteria that defines the conditions of the scheduled query rule.
-        :paramtype criteria:
-         ~$(python-base-namespace).v2020_05_01_preview.models.ScheduledQueryRuleCriteria
+        :paramtype criteria: ~azure.mgmt.monitor.v2020_05_01_preview.models.ScheduledQueryRuleCriteria
         :keyword mute_actions_duration: Mute actions for the chosen period of time (in ISO 8601
          duration format) after the alert is fired.
         :paramtype mute_actions_duration: ~datetime.timedelta
         :keyword actions:
-        :paramtype actions: list[~$(python-base-namespace).v2020_05_01_preview.models.Action]
+        :paramtype actions: list[~azure.mgmt.monitor.v2020_05_01_preview.models.Action]
         """
         super().__init__(**kwargs)
         self.tags = tags

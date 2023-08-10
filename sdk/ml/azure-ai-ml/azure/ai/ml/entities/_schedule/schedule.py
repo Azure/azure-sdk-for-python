@@ -2,8 +2,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 # pylint: disable=protected-access
-import typing
 import logging
+import typing
 from os import PathLike
 from pathlib import Path
 from typing import IO, AnyStr, Dict, Optional, Union
@@ -12,8 +12,8 @@ from azure.ai.ml._restclient.v2023_04_01_preview.models import JobBase as RestJo
 from azure.ai.ml._restclient.v2023_04_01_preview.models import JobScheduleAction
 from azure.ai.ml._restclient.v2023_04_01_preview.models import PipelineJob as RestPipelineJob
 from azure.ai.ml._restclient.v2023_04_01_preview.models import Schedule as RestSchedule
-from azure.ai.ml._restclient.v2023_04_01_preview.models import ScheduleProperties
 from azure.ai.ml._restclient.v2023_04_01_preview.models import ScheduleActionType as RestScheduleActionType
+from azure.ai.ml._restclient.v2023_04_01_preview.models import ScheduleProperties
 from azure.ai.ml._schema.schedule.schedule import JobScheduleSchema
 from azure.ai.ml._utils.utils import camel_to_snake, dump_yaml_to_file, is_private_preview_enabled
 from azure.ai.ml.constants import JobType
@@ -34,21 +34,25 @@ from .trigger import CronTrigger, RecurrenceTrigger, TriggerBase
 module_logger = logging.getLogger(__name__)
 
 
-class Schedule(Resource):
-    """JobSchedule object.
+class Schedule(YamlTranslatableMixin, SchemaValidatableMixin, Resource):
+    """Schedule object used to create and manage schedules.
 
-    :param name: Name of the schedule.
+    This class should not be instantiated directly. Instead, please use the subclasses.
+
+    :keyword name: The name of the schedule.
     :type name: str
-    :param trigger: Trigger of the schedule.
-    :type trigger: Union[CronTrigger, RecurrenceTrigger]
-    :param display_name: Display name of the schedule.
-    :type display_name: str
-    :param description: Description of the schedule, defaults to None
-    :type description: str
-    :param tags: Tag dictionary. Tags can be added, removed, and updated.
-    :type tags: dict[str, str]
-    :param properties: The job property dictionary.
-    :type properties: dict[str, str]
+    :keyword trigger: The schedule trigger configuration.
+    :type trigger: Union[~azure.ai.ml.entities.CronTrigger, ~azure.ai.ml.entities.RecurrenceTrigger]
+    :keyword display_name: The display name of the schedule.
+    :type display_name: Optional[str]
+    :keyword description: The description of the schedule.
+    :type description: Optional[str]
+    :keyword tags: Tag dictionary. Tags can be added, removed, and updated.
+    :type tags: Optional[dict]]
+    :keyword properties: A dictionary of properties to associate with the schedule.
+    :type properties: Optional[dict[str, str]]
+    :keyword kwargs: Additional keyword arguments passed to the Resource constructor.
+    :type kwargs: dict
     """
 
     def __init__(
@@ -61,7 +65,7 @@ class Schedule(Resource):
         tags: Optional[Dict] = None,
         properties: Optional[Dict] = None,
         **kwargs,
-    ):
+    ) -> None:
         is_enabled = kwargs.pop("is_enabled", None)
         provisioning_state = kwargs.pop("provisioning_state", None)
         super().__init__(name=name, description=description, tags=tags, properties=properties, **kwargs)
@@ -71,26 +75,36 @@ class Schedule(Resource):
         self._provisioning_state = provisioning_state
         self._type = None
 
+    def dump(self, dest: Union[str, PathLike, IO[AnyStr]], **kwargs) -> None:
+        """Dump the schedule content into a file in YAML format.
+
+        :param dest: The local path or file stream to write the YAML content to.
+            If dest is a file path, a new file will be created.
+            If dest is an open file, the file will be written to directly.
+        :type dest: Union[PathLike, str, IO[AnyStr]]
+        :keyword kwargs: Additional arguments to pass to the YAML serializer.
+        :type kwargs: dict
+        :raises FileExistsError: Raised if dest is a file path and the file already exists.
+        :raises IOError: Raised if dest is an open file and the file is not writable.
+        """
+        path = kwargs.pop("path", None)
+        yaml_serialized = self._to_dict()
+        dump_yaml_to_file(dest, yaml_serialized, default_flow_style=False, path=path, **kwargs)
+
+    @classmethod
+    def _get_validation_error_target(cls) -> ErrorTarget:
+        return ErrorTarget.SCHEDULE
+
     @classmethod
     def _resolve_cls_and_type(cls, data, params_override):  # pylint: disable=unused-argument
+        from azure.ai.ml.entities._data_import.schedule import ImportDataSchedule
         from azure.ai.ml.entities._monitoring.schedule import MonitorSchedule
 
         if "create_monitor" in data:
             return MonitorSchedule, None
+        if "import_data" in data:
+            return ImportDataSchedule, None
         return JobSchedule, None
-
-    @classmethod
-    def _from_rest_object(cls, obj: RestSchedule) -> "Schedule":
-
-        if obj.properties.action.action_type == RestScheduleActionType.CREATE_JOB:
-            return JobSchedule._from_rest_object(obj)
-        msg = f"Unsupported schedule type {obj.properties.action.action_type}"
-        raise ScheduleException(
-            message=msg,
-            no_personal_data_message=msg,
-            target=ErrorTarget.SCHEDULE,
-            error_category=ErrorCategory.SYSTEM_ERROR,
-        )
 
     @property
     def create_job(self) -> None:  # pylint: disable=useless-return
@@ -103,43 +117,48 @@ class Schedule(Resource):
         module_logger.warning("create_job is not a valid property of %s", str(type(self)))
 
     @property
-    def is_enabled(self):
-        """
-        Return the schedule is enabled or not.
+    def is_enabled(self) -> bool:
+        """Specifies if the schedule is enabled or not.
 
-        :return: Enabled status.
+        :return: True if the schedule is enabled, False otherwise.
         :rtype: bool
         """
         return self._is_enabled
 
     @property
-    def provisioning_state(self):
-        """
-        Return the schedule's provisioning state. Possible values include:
+    def provisioning_state(self) -> str:
+        """Returns the schedule's provisioning state. The possible values include
         "Creating", "Updating", "Deleting", "Succeeded", "Failed", "Canceled".
 
-        :return: Provisioning state.
+        :return: The schedule's provisioning state.
         :rtype: str
         """
         return self._provisioning_state
 
     @property
     def type(self) -> str:
-        """Type of the schedule, supported are 'job' and 'monitor'.
+        """The schedule type. Accepted values are 'job' and 'monitor'.
 
-        :return: Type of the schedule.
+        :return: The schedule type.
         :rtype: str
         """
         return self._type
 
+    def _to_dict(self) -> Dict:
+        """Convert the resource to a dictionary."""
+        return self._dump_for_validation()
+
     @classmethod
     def _from_rest_object(cls, obj: RestSchedule) -> "Schedule":
+        from azure.ai.ml.entities._data_import.schedule import ImportDataSchedule
         from azure.ai.ml.entities._monitoring.schedule import MonitorSchedule
 
         if obj.properties.action.action_type == RestScheduleActionType.CREATE_JOB:
             return JobSchedule._from_rest_object(obj)
         if obj.properties.action.action_type == RestScheduleActionType.CREATE_MONITOR:
             return MonitorSchedule._from_rest_object(obj)
+        if obj.properties.action.action_type == RestScheduleActionType.IMPORT_DATA:
+            return ImportDataSchedule._from_rest_object(obj)
         msg = f"Unsupported schedule type {obj.properties.action.action_type}"
         raise ScheduleException(
             message=msg,
@@ -149,23 +168,32 @@ class Schedule(Resource):
         )
 
 
-class JobSchedule(YamlTranslatableMixin, SchemaValidatableMixin, RestTranslatableMixin, Schedule, TelemetryMixin):
-    """JobSchedule object.
+class JobSchedule(RestTranslatableMixin, Schedule, TelemetryMixin):
+    """Class for managing job schedules.
 
-    :param name: Name of the schedule.
+    :keyword name: The name of the schedule.
     :type name: str
-    :param trigger: Trigger of the schedule.
-    :type trigger: Union[CronTrigger, RecurrenceTrigger]
-    :param create_job: The schedule action job definition, or the existing job name.
-    :type create_job: Union[Job, str]
-    :param display_name: Display name of the schedule.
-    :type display_name: str
-    :param description: Description of the schedule, defaults to None
-    :type description: str
-    :param tags: Tag dictionary. Tags can be added, removed, and updated.
-    :type tags: dict[str, str]
-    :param properties: The job property dictionary.
-    :type properties: dict[str, str]
+    :keyword trigger: The trigger configuration for the schedule.
+    :type trigger: Union[~azure.ai.ml.entities.CronTrigger, ~azure.ai.ml.entities.RecurrenceTrigger]
+    :keyword create_job: The job definition or an existing job name.
+    :type create_job: Union[~azure.ai.ml.entities.Job, str]
+    :keyword display_name: The display name of the schedule.
+    :type display_name: Optional[str]
+    :keyword description: The description of the schedule.
+    :type description: Optional[str]
+    :keyword tags: Tag dictionary. Tags can be added, removed, and updated.
+    :type tags: Optional[dict[str, str]]
+    :keyword properties: A dictionary of properties to associate with the schedule.
+    :type properties: Optional[dict[str, str]]
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../../../../../samples/ml_samples_misc.py
+            :start-after: [START job_schedule_configuration]
+            :end-before: [END job_schedule_configuration]
+            :language: python
+            :dedent: 8
+            :caption: Configuring a JobSchedule.
     """
 
     def __init__(
@@ -179,7 +207,7 @@ class JobSchedule(YamlTranslatableMixin, SchemaValidatableMixin, RestTranslatabl
         tags: Optional[Dict] = None,
         properties: Optional[Dict] = None,
         **kwargs,
-    ):
+    ) -> None:
         super().__init__(
             name=name,
             trigger=trigger,
@@ -194,18 +222,19 @@ class JobSchedule(YamlTranslatableMixin, SchemaValidatableMixin, RestTranslatabl
 
     @property
     def create_job(self) -> Union[Job, str]:
-        """
-        Return the schedule's action job definition, or the existing job name.
+        """Return the job associated with the schedule.
 
-        :return: Create job.
-        :rtype: Union[Job, str]
+        :return: The job definition or an existing job name.
+        :rtype: Union[~azure.ai.ml.entities.Job, str]
         """
         return self._create_job
 
     @create_job.setter
     def create_job(self, value: Union[Job, str]) -> None:
-        """
-        Sets the schedule's action to a job definition or an existing job name.
+        """Sets the job that will be run when the schedule is triggered.
+
+        :param value: The job definition or an existing job name.
+        :type value: Union[~azure.ai.ml.entities.Job, str]
         """
         self._create_job = value
 
@@ -289,28 +318,9 @@ class JobSchedule(YamlTranslatableMixin, SchemaValidatableMixin, RestTranslatabl
         schedule.create_job = create_job
         return schedule
 
-    def dump(self, dest: Union[str, PathLike, IO[AnyStr]], **kwargs) -> None:
-        """Dump the schedule content into a file in yaml format.
-
-        :param dest: The destination to receive this schedule's content.
-            Must be either a path to a local file, or an already-open file stream.
-            If dest is a file path, a new file will be created,
-            and an exception is raised if the file exists.
-            If dest is an open file, the file will be written to directly,
-            and an exception will be raised if the file is not writable.
-        :type dest: Union[str, PathLike, IO[AnyStr]]
-        """
-        path = kwargs.pop("path", None)
-        yaml_serialized = self._to_dict()
-        dump_yaml_to_file(dest, yaml_serialized, default_flow_style=False, path=path, **kwargs)
-
     @classmethod
     def _create_schema_for_validation(cls, context):
         return JobScheduleSchema(context=context)
-
-    @classmethod
-    def _get_validation_error_target(cls) -> ErrorTarget:
-        return ErrorTarget.SCHEDULE
 
     def _customized_validate(self) -> MutableValidationResult:
         """Validate the resource with customized logic."""
@@ -407,10 +417,6 @@ class JobSchedule(YamlTranslatableMixin, SchemaValidatableMixin, RestTranslatabl
                 trigger=self.trigger._to_rest_object(),
             )
         )
-
-    def _to_dict(self) -> Dict:
-        """Convert the resource to a dictionary."""
-        return self._dump_for_validation()
 
     def __str__(self):
         try:

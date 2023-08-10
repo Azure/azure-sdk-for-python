@@ -14,14 +14,12 @@ def is_retryable_status_code(status_code: int) -> bool:
 
 
 def get_authentication_policy(credential, *, is_async: bool = False, **kwargs):
-    audience = kwargs.get('audience', None)
+    audience = kwargs.get("audience", None)
     if not audience:
         audience = DEFAULT_AUDIENCE
-    scope = audience.rstrip('/') + '/.default'
+    scope = audience.rstrip("/") + "/.default"
     _policy = BearerTokenCredentialPolicy if not is_async else AsyncBearerTokenCredentialPolicy
-    authentication_policy = _policy(
-        credential, scope
-    )
+    authentication_policy = _policy(credential, scope)
     return authentication_policy
 
 
@@ -34,6 +32,7 @@ def odata(statement: str, **kwargs: Any) -> str:
 
     :param statement: An OData query string to prepare
     :type statement: str
+    :return: The prepared OData query string
     :rtype: str
 
     .. admonition:: Example:
@@ -43,11 +42,9 @@ def odata(statement: str, **kwargs: Any) -> str:
 
 
     """
-    kw = dict(kwargs)
-    for key in kw:
-        value = kw[key]
+    for key, value in kwargs.items():
         if isinstance(value, str):
             value = value.replace("'", "''")
-            if "'{{{}}}'".format(key) not in statement:
-                kw[key] = "'{}'".format(value)
-    return statement.format(**kw)
+            if f"'{{{key}}}'" not in statement:
+                kwargs[key] = f"'{value}'"
+    return statement.format(**kwargs)

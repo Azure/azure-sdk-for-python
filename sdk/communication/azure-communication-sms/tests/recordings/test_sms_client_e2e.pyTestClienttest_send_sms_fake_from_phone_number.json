@@ -8,9 +8,9 @@
         "Accept-Encoding": "gzip, deflate",
         "Authorization": "Sanitized",
         "Connection": "keep-alive",
-        "Content-Length": "231",
+        "Content-Length": "211",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-communication-sms/1.1.0 Python/3.9.13 (Windows-10-10.0.22621-SP0)",
+        "User-Agent": "azsdk-python-communication-sms/1.1.0 Python/3.10.11 (Windows-10-10.0.22621-SP0)",
         "x-ms-client-request-id": "sanitized",
         "x-ms-content-sha256": "sanitized",
         "x-ms-date": "sanitized",
@@ -22,7 +22,7 @@
           {
             "to": "sanitized",
             "repeatabilityRequestId": "sanitized",
-            "repeatabilityFirstSent": "Fri, 13 Jan 2023 15:07:31 GMT"
+            "repeatabilityFirstSent": "sanitized"
           }
         ],
         "message": "Hello World via SMS",
@@ -40,12 +40,12 @@
         "Transfer-Encoding": "chunked",
         "X-Azure-Ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Processing-Time": "24ms"
+        "X-Processing-Time": "107ms"
       },
       "ResponseBody": {
         "error": {
-          "code": "InternalError",
-          "message": "The server encountered an internal error."
+          "code": "Unauthorized",
+          "message": ""
         }
       }
     }

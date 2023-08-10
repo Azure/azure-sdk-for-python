@@ -3,6 +3,7 @@
 # ---------------------------------------------------------
 import argparse
 import contextlib
+import glob
 import json
 import os
 import re
@@ -88,24 +89,34 @@ def run_simple(
     extra_params,
     *,
     is_live_and_recording,
-    log_file_path=None,
+    log_file_path,
+    log_suffix=None,
     log_in_json=False,
 ):
     print(f"Running {len(tests_to_run)} tests under {working_dir}: ")
     for test_name in tests_to_run:
         print(test_name)
 
-    if log_in_json or log_file_path is None:
+    if log_file_path and log_suffix:
+        log_file_path = log_file_path.with_suffix(log_file_path.suffix + log_suffix)
+
+    if log_in_json:
+        if log_file_path is None:
+            raise ValueError("log_file_path must be specified when log_in_json is True")
         stdout = None
+        json_log_file_path = log_file_path.with_suffix(log_file_path.suffix + ".log")
     else:
-        stdout = open(log_file_path, "wb")
+        stdout = open(log_file_path.with_suffix(log_file_path.suffix + ".txt"), "wb")
+        json_log_file_path = None
+
     with update_dot_env_file(
         {"AZURE_TEST_RUN_LIVE": is_live_and_recording, "AZURE_SKIP_LIVE_RECORDING": not is_live_and_recording},
     ):
         for test_class, keyword_param in reorganize_tests(tests_to_run):
             tmp_extra_params = extra_params + keyword_param
             if log_in_json:
-                temp_log_file_path = log_file_path.with_stem("temp")
+                # use a temp json file to avoid overwriting the final log file
+                temp_log_file_path = json_log_file_path.with_stem("temp")
                 tmp_extra_params += ["--report-log", temp_log_file_path.as_posix()]
 
             subprocess.run(
@@ -120,10 +131,14 @@ def run_simple(
                 stdout=stdout,
             )
             if log_in_json:
-                with open(log_file_path, "a", encoding="utf-8") as f:
+                # append temp json file to the final log file
+                with open(json_log_file_path, "a", encoding="utf-8") as f:
                     f.write(temp_log_file_path.read_text())
     if stdout is not None:
         stdout.close()
+        print(log_file_path.with_suffix(log_file_path.suffix + ".txt").read_text())
+
+    return json_log_file_path
 
 
 def reorganize_tests(tests_to_run):
@@ -168,39 +183,57 @@ def reorganize_tests(tests_to_run):
         yield test_class, keyword_param
 
 
-def run_tests(tests_to_run, extras, *, skip_first_run=False, record_mismatch=False, is_live_and_recording=False):
-    working_dir = Path(__file__).parent.parent
-    log_file_path = working_dir / "scripts" / "tmp" / "pytest_first_run.log"
-    log_file_path.parent.mkdir(parents=True, exist_ok=True)
-    if record_mismatch and not skip_first_run:
-        # reset the log file
-        log_file_path.unlink(missing_ok=True)
+def get_base_log_path(working_dir, *, create_new=True):
+    log_dir = working_dir / "scripts" / "tmp"
+    if not create_new:
+        logs = sorted(glob.glob(str(log_dir / "pytest.*.first.log")))
+        if len(logs) == 0:
+            raise RuntimeError("No previous run log file found")
+        return Path(logs[-1][: -len(".first.log")])
+    else:
+        log_file_path = log_dir / "pytest.{}".format(datetime.now().strftime("%Y%m%d%H%M%S"))
+        log_file_path.parent.mkdir(parents=True, exist_ok=True)
+        return log_file_path
 
-    if not (record_mismatch and skip_first_run):
-        # first run
-        run_simple(
+
+def get_failed_tests(log_file_path):
+    tests_failed_with_recording_mismatch = []
+    failed_tests = []
+    with open(log_file_path, "r") as f:
+        for line in f:
+            node = json.loads(line)
+            if "outcome" not in node:
+                continue
+            if node["outcome"] != "failed":
+                continue
+            test_name = location_to_test_name(node["location"])
+            failed_tests.append(test_name)
+            msg = node["longrepr"]["reprcrash"]["message"]
+            if "NotFound" in msg:
+                tests_failed_with_recording_mismatch.append(test_name)
+    return failed_tests, tests_failed_with_recording_mismatch
+
+
+def run_tests(tests_to_run, extras, *, skip_first_run=False, record_mismatch=False):
+    working_dir = Path(__file__).parent.parent
+    log_file_path = get_base_log_path(working_dir, create_new=not skip_first_run)
+
+    if skip_first_run:
+        json_log_file_path = log_file_path.with_suffix(log_file_path.suffix + ".first.log")
+    else:
+        json_log_file_path = run_simple(
             tests_to_run,
             working_dir,
             extras + ["--disable-warnings", "--disable-pytest-warnings"],
-            # first run in record-mismatch mode is always in playback mode
-            is_live_and_recording=is_live_and_recording and not record_mismatch,
-            log_file_path=log_file_path if record_mismatch else None,
-            log_in_json=record_mismatch,
+            # first run is always in playback mode
+            is_live_and_recording=False,
+            log_file_path=log_file_path,
+            log_in_json=True,
+            log_suffix=".first",
         )
 
     if record_mismatch:
-        tests_failed_with_recording_mismatch = []
-        with open(log_file_path, "r") as f:
-            for line in f:
-                node = json.loads(line)
-                if "outcome" not in node:
-                    continue
-                if node["outcome"] != "failed":
-                    continue
-                msg = node["longrepr"]["reprcrash"]["message"]
-                if "ResourceNotFoundError" in msg:
-                    tests_failed_with_recording_mismatch.append(location_to_test_name(node["location"]))
-
+        failed_tests, tests_failed_with_recording_mismatch = get_failed_tests(json_log_file_path)
         if tests_failed_with_recording_mismatch:
             print("Re-do live mode recording for tests: \n", json.dumps(tests_failed_with_recording_mismatch, indent=2))
             run_simple(
@@ -208,19 +241,22 @@ def run_tests(tests_to_run, extras, *, skip_first_run=False, record_mismatch=Fal
                 working_dir,
                 extra_params=["--tb=line"],
                 is_live_and_recording=True,
+                log_suffix=".record",
+                log_file_path=log_file_path,
             )
 
-            # re-run the original tests to check if they are still failures and output the log
-            run_simple(
-                tests_to_run,
-                working_dir,
-                extras + ["--disable-warnings", "--disable-pytest-warnings"],
-                is_live_and_recording=False,
-                log_file_path=working_dir
-                / "scripts"
-                / "tmp"
-                / "pytest.{}.log".format(datetime.now().strftime("%Y%m%d%H%M%S")),
+            print(
+                "Rerun playback mode for failed tests: \n", json.dumps(tests_failed_with_recording_mismatch, indent=2)
             )
+            run_simple(
+                failed_tests,
+                working_dir,
+                extra_params=extras + ["--disable-warnings", "--disable-pytest-warnings"],
+                is_live_and_recording=False,
+                log_file_path=log_file_path,
+                log_suffix=".final",
+            )
+            print(log_file_path.with_suffix(log_file_path.suffix + ".final.log").read_text())
 
 
 if __name__ == "__main__":
@@ -263,6 +299,9 @@ if __name__ == "__main__":
         _tests = load_tests_from_file(_args.file)
     elif _args.name:
         _tests = [_args.name]
+    elif _args.skip_first_run and _args.record_mismatch:
+        # load failed tests from last run log
+        _tests = []
     else:
         raise ValueError("Must specify either --file or --name")
     run_tests(

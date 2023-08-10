@@ -63,31 +63,51 @@ def _get_datastore_name(*, datastore_name: Optional[str] = WORKSPACE_BLOB_STORE)
     return datastore_name
 
 
-def get_datastore_info(operations: DatastoreOperations, name: str) -> Dict[str, str]:
-    """Get datastore account, type, and auth information."""
+def get_datastore_info(
+    operations: DatastoreOperations,
+    name: str,
+    *,
+    credential=None,
+    **kwargs,
+) -> Dict[str, str]:
+    """Get datastore account, type, and auth information.
+
+    :param operations: DatastoreOperations object
+    :type operations: DatastoreOperations
+    :param name: Name of the datastore. If not provided, the default datastore will be used.
+    :type name: str
+    :param credential: Local credential to use for authentication. If not provided, will try to get
+        credentials from the datastore, which requires authorization to perform action
+        'Microsoft.MachineLearningServices/workspaces/datastores/listSecrets/action' over target datastore.
+    :type credential: str
+    """
     datastore_info = {}
     if name:
-        datastore = operations.get(name, include_secrets=True)
+        datastore = operations.get(name, include_secrets=credential is None)
     else:
-        datastore = operations.get_default(include_secrets=True)
+        datastore = operations.get_default(include_secrets=credential is None)
 
     storage_endpoint = _get_storage_endpoint_from_metadata()
-    credentials = datastore.credentials
     datastore_info["storage_type"] = datastore.type
     datastore_info["storage_account"] = datastore.account_name
     datastore_info["account_url"] = STORAGE_ACCOUNT_URLS[datastore.type].format(
         datastore.account_name, storage_endpoint
     )
-    if isinstance(credentials, AccountKeyConfiguration):
-        datastore_info["credential"] = credentials.account_key
+    if credential is not None:
+        datastore_info["credential"] = credential
     else:
-        try:
-            datastore_info["credential"] = credentials.sas_token
-        except Exception as e:  # pylint: disable=broad-except
-            if not hasattr(credentials, "sas_token"):
-                datastore_info["credential"] = operations._credential
-            else:
-                raise e
+        credential = datastore.credentials
+
+        if isinstance(credential, AccountKeyConfiguration):
+            datastore_info["credential"] = credential.account_key
+        else:
+            try:
+                datastore_info["credential"] = credential.sas_token
+            except Exception as e:  # pylint: disable=broad-except
+                if not hasattr(credential, "sas_token"):
+                    datastore_info["credential"] = operations._credential
+                else:
+                    raise e
 
     if datastore.type == DatastoreType.AZURE_BLOB:
         datastore_info["container_name"] = str(datastore.container_name)
@@ -98,6 +118,10 @@ def get_datastore_info(operations: DatastoreOperations, name: str) -> Dict[str, 
             f"Datastore type {datastore.type} is not supported for uploads. "
             f"Supported types are {DatastoreType.AZURE_BLOB} and {DatastoreType.AZURE_DATA_LAKE_GEN2}."
         )
+
+    for override_param_name, value in kwargs.items():
+        if override_param_name in datastore_info:
+            datastore_info[override_param_name] = value
 
     return datastore_info
 
@@ -408,7 +432,7 @@ def _check_and_upload_path(
             datastore_name=datastore_name,
             asset_name=artifact.name,
             asset_version=str(artifact.version),
-            asset_hash=artifact._upload_hash if hasattr(artifact, "_upload_hash") else None,
+            asset_hash=getattr(artifact, "_upload_hash", None),
             sas_uri=sas_uri,
             artifact_type=artifact_type,
             show_progress=show_progress,
@@ -450,13 +474,13 @@ def _check_and_upload_env_build_context(
     return environment
 
 
-def _get_snapshot_path_info(artifact) -> Tuple[str, str, str]:
+def _get_snapshot_path_info(artifact) -> Tuple[Path, IgnoreFile, str]:
     """
     Validate an Artifact's local path and get its resolved path, ignore file, and hash. If no local path, return None.
     :param artifact: Artifact object
     :type artifact: azure.ai.ml.entities._assets._artifacts.artifact.Artifact
     :return: Artifact's path, ignorefile, and hash
-    :rtype: Tuple[str, str, str]
+    :rtype: Tuple[os.PathLike, IgnoreFile, str]
     """
     if (
         hasattr(artifact, "local_path")
@@ -479,7 +503,12 @@ def _get_snapshot_path_info(artifact) -> Tuple[str, str, str]:
 
     _validate_path(path, _type=ErrorTarget.CODE)
 
-    ignore_file = get_ignore_file(path)
+    # to align with _check_and_upload_path, we need to try getting the ignore file from the artifact first
+    ignore_file = getattr(artifact, "_ignore_file", get_ignore_file(path))
+    # Note that we haven't used getattr(artifact, "_upload_hash", get_content_hash(path, ignore_file)) here, which
+    # is aligned with _check_and_upload_path. Current guess is that content_hash is what we used in blob, so we must
+    # use it to retrieve the artifact.
+    # TODO: Core SDK team to provide more information on this
     asset_hash = get_content_hash(path, ignore_file)
 
     return path, ignore_file, asset_hash

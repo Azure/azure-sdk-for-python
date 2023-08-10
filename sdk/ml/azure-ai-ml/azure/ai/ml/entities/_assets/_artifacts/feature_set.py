@@ -6,27 +6,23 @@
 
 from os import PathLike
 from pathlib import Path
-
 from typing import Dict, List, Optional, Union
 
 from azure.ai.ml._restclient.v2023_02_01_preview.models import (
-    FeaturesetVersion,
-    FeaturesetVersionProperties,
     FeaturesetContainer,
     FeaturesetContainerProperties,
+    FeaturesetVersion,
+    FeaturesetVersionProperties,
 )
 from azure.ai.ml._schema._feature_set.feature_set_schema import FeatureSetSchema
-from azure.ai.ml.entities._util import load_from_dict
 from azure.ai.ml._utils._arm_id_utils import AMLNamedArmId, get_arm_id_object_from_id
 from azure.ai.ml._utils._experimental import experimental
-from azure.ai.ml.constants._common import (
-    BASE_PATH_CONTEXT_KEY,
-    LONG_URI_FORMAT,
-    PARAMS_OVERRIDE_KEY,
-)
+from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, LONG_URI_FORMAT, PARAMS_OVERRIDE_KEY
 from azure.ai.ml.entities._assets import Artifact
 from azure.ai.ml.entities._feature_set.feature_set_specification import FeatureSetSpecification
 from azure.ai.ml.entities._feature_set.materialization_settings import MaterializationSettings
+from azure.ai.ml.entities._util import load_from_dict
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
 from .artifact import ArtifactStorageInfo
 
@@ -40,7 +36,7 @@ class FeatureSet(Artifact):
         version: str,
         entities: List[str],
         specification: FeatureSetSpecification,
-        stage: Optional[str] = None,
+        stage: Optional[str] = "Development",
         description: Optional[str] = None,
         materialization_settings: Optional[MaterializationSettings] = None,
         tags: Optional[Dict] = None,
@@ -56,6 +52,8 @@ class FeatureSet(Artifact):
         :type entities: list[str]
         :param specification: Specifies the feature spec details.
         :type specification: ~azure.ai.ml.entities.FeatureSetSpecification
+        :param stage: Feature set stage. Allowed values: Development, Production, Archived
+        :type stage: str
         :param description: Description of the resource.
         :type description: str
         :param tags: Tag dictionary. Tags can be added, removed, and updated.
@@ -73,6 +71,15 @@ class FeatureSet(Artifact):
             path=specification.path,
             **kwargs,
         )
+        if stage and stage not in ["Development", "Production", "Archived"]:
+            msg = f"Stage must be Development, Production, or Archived, found {stage}"
+            raise ValidationException(
+                message=msg,
+                no_personal_data_message=msg,
+                error_type=ValidationErrorType.INVALID_VALUE,
+                target=ErrorTarget.FEATURE_SET,
+                error_category=ErrorCategory.USER_ERROR,
+            )
         self.entities = entities
         self.specification = specification
         self.stage = stage
@@ -111,6 +118,7 @@ class FeatureSet(Artifact):
             ),
             specification=FeatureSetSpecification._from_rest_object(featureset_rest_object_details.specification),
             stage=featureset_rest_object_details.stage,
+            properties=featureset_rest_object_details.properties,
         )
         return featureset
 

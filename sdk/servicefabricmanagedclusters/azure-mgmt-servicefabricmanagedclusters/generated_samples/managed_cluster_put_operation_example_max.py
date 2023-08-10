@@ -40,6 +40,15 @@ def main():
                 "adminUserName": "vmadmin",
                 "allowRdpAccess": True,
                 "applicationTypeVersionsCleanupPolicy": {"maxUnusedVersionsToKeep": 3},
+                "auxiliarySubnets": [
+                    {
+                        "enableIpv6": True,
+                        "name": "testSubnet1",
+                        "networkSecurityGroupId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/resRg/providers/Microsoft.Network/networkSecurityGroups/sn1",
+                        "privateEndpointNetworkPolicies": "enabled",
+                        "privateLinkServiceNetworkPolicies": "enabled",
+                    }
+                ],
                 "clientConnectionPort": 19000,
                 "clusterCodeVersion": "7.1.168.9494",
                 "clusterUpgradeMode": "Manual",
@@ -100,7 +109,10 @@ def main():
                         "sourcePortRange": "*",
                     },
                 ],
+                "serviceEndpoints": [{"locations": ["eastus2", "usnorth"], "service": "Microsoft.Storage"}],
+                "useCustomVnet": True,
                 "zonalResiliency": True,
+                "zonalUpdateMode": "Fast",
             },
             "sku": {"name": "Basic"},
             "tags": {},
@@ -109,6 +121,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/servicefabricmanagedclusters/resource-manager/Microsoft.ServiceFabric/preview/2022-08-01-preview/examples/ManagedClusterPutOperation_example_max.json
+# x-ms-original-file: specification/servicefabricmanagedclusters/resource-manager/Microsoft.ServiceFabric/preview/2023-02-01-preview/examples/ManagedClusterPutOperation_example_max.json
 if __name__ == "__main__":
     main()

@@ -1,12 +1,12 @@
-[![Build Status](https://dev.azure.com/azure-sdk/public/_apis/build/status/azure-sdk-for-python.client?branchName=master)](https://dev.azure.com/azure-sdk/public/_build/latest?definitionId=46?branchName=master)
+[![Build Status](https://dev.azure.com/azure-sdk/public/_apis/build/status/472?branchName=main)](https://dev.azure.com/azure-sdk/public/_build/latest?definitionId=472)
 
 # Azure Template Package client library for Python
 
-This template package matches necessary patterns that the development team has established to create a unified sdk functional from Python 2.7 onwards. The packages contained herein can be installed singly or as part of the `azure` namespace. Any other introductory text should go here.
+This template package matches necessary patterns that the development team has established to create a unified SDK. The packages contained herein can be installed singly or as part of the `azure` namespace. Any other introductory text should go here.
 
-This package has been tested with Python 2.7, 3.5, 3.6, 3.7 and 3.8
+This package has been tested with Python 3.7+.
 
-For a more complete set of Azure libraries, see https://aka.ms/azsdk/python/all
+For a more complete set of Azure libraries, see https://aka.ms/azsdk/python/all.
 
 # Getting started
 

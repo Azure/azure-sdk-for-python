@@ -234,7 +234,6 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin
         :type cors: list(~azure.storage.queue.CorsRule)
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :rtype: None
 
         .. admonition:: Example:
 
@@ -253,7 +252,7 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin
             cors=cors
         )
         try:
-            return await self._client.service.set_properties(props, timeout=timeout, **kwargs)
+            await self._client.service.set_properties(props, timeout=timeout, **kwargs)
         except HttpResponseError as error:
             process_storage_error(error)
 
@@ -328,6 +327,7 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin
         :type metadata: Dict[str, str]
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
+        :return: A QueueClient for the newly created Queue.
         :rtype: ~azure.storage.queue.aio.QueueClient
 
         .. admonition:: Example:

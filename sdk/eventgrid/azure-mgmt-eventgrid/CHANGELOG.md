@@ -1,5 +1,40 @@
 # Release History
 
+## 10.3.0b2 (2023-05-19)
+
+### Features Added
+
+  - Added operation group CaCertificatesOperations
+  - Added operation group ClientGroupsOperations
+  - Added operation group ClientsOperations
+  - Added operation group NamespaceTopicEventSubscriptionsOperations
+  - Added operation group NamespaceTopicsOperations
+  - Added operation group NamespacesOperations
+  - Added operation group PartnerDestinationsOperations
+  - Added operation group PermissionBindingsOperations
+  - Added operation group TopicSpacesOperations
+  - Model Channel has a new parameter partner_destination_info
+  - Model ChannelUpdateParameters has a new parameter partner_destination_info
+  - Model Domain has a new parameter event_type_info
+  - Model Domain has a new parameter minimum_tls_version_allowed
+  - Model Domain has a new parameter sku
+  - Model DomainUpdateParameters has a new parameter event_type_info
+  - Model DomainUpdateParameters has a new parameter minimum_tls_version_allowed
+  - Model DomainUpdateParameters has a new parameter sku
+  - Model PartnerNamespace has a new parameter minimum_tls_version_allowed
+  - Model PartnerNamespaceUpdateParameters has a new parameter minimum_tls_version_allowed
+  - Model Topic has a new parameter event_type_info
+  - Model Topic has a new parameter extended_location
+  - Model Topic has a new parameter kind
+  - Model Topic has a new parameter minimum_tls_version_allowed
+  - Model Topic has a new parameter sku
+  - Model TopicTypeInfo has a new parameter are_regional_and_global_sources_supported
+  - Model TopicUpdateParameters has a new parameter event_type_info
+  - Model TopicUpdateParameters has a new parameter minimum_tls_version_allowed
+  - Model TopicUpdateParameters has a new parameter sku
+  - Model VerifiedPartner has a new parameter partner_destination_details
+  - Model WebHookEventSubscriptionDestination has a new parameter minimum_tls_version_allowed
+
 ## 10.3.0b1 (2022-11-30)
 
 ### Other Changes

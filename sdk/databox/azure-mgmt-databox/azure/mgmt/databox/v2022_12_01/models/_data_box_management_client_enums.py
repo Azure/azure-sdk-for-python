@@ -210,6 +210,15 @@ class FilterFileType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Filter file is of the type AzureFiles."""
 
 
+class HardwareEncryption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Defines Hardware level encryption (Only for disk)."""
+
+    ENABLED = "Enabled"
+    """Hardware-based encryption is enabled."""
+    DISABLED = "Disabled"
+    """Hardware-based encryption is enabled."""
+
+
 class JobDeliveryType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Delivery type of Job."""
 

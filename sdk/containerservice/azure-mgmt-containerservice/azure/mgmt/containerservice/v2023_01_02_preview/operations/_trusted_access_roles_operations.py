@@ -27,7 +27,7 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from .. import models as _models
 from ..._serialization import Serializer
-from .._vendor import _convert_request, _format_url_section
+from .._vendor import _convert_request
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
@@ -53,7 +53,7 @@ def build_list_request(location: str, subscription_id: str, **kwargs: Any) -> Ht
         "location": _SERIALIZER.url("location", location, "str", min_length=1),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -82,6 +82,7 @@ class TrustedAccessRolesOperations:
         self._config = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        self._api_version = input_args.pop(0) if input_args else kwargs.pop("api_version")
 
     @distributed_trace
     def list(self, location: str, **kwargs: Any) -> Iterable["_models.TrustedAccessRole"]:
@@ -100,7 +101,9 @@ class TrustedAccessRolesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-01-02-preview"))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._api_version or "2023-01-02-preview")
+        )
         cls: ClsType[_models.TrustedAccessRoleListResult] = kwargs.pop("cls", None)
 
         error_map = {

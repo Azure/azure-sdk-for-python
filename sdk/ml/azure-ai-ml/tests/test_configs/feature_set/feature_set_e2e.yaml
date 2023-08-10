@@ -1,0 +1,9 @@
+name: test-featureset
+version: "1"
+entities: ["azureml:test:1"]
+specification:
+  path: "./"
+stage: Development
+description: Test featureset
+tags:
+  t1: v1

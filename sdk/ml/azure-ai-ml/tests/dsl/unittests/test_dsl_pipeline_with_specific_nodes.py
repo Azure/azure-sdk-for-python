@@ -7,32 +7,14 @@ from test_utilities.utils import omit_with_wildcard, parse_local_path
 from azure.ai.ml import Input, Output, command, dsl, load_component, spark
 from azure.ai.ml.automl import classification, regression
 from azure.ai.ml.constants._common import AssetTypes, InputOutputModes
-from azure.ai.ml.constants._component import DataTransferTaskType, DataCopyMode
+from azure.ai.ml.constants._component import DataCopyMode
+from azure.ai.ml.data_transfer import Database, FileSystem, copy_data, export_data, import_data
 from azure.ai.ml.dsl._load_import import to_component
-from azure.ai.ml.data_transfer import copy_data, import_data, export_data
-from azure.ai.ml.data_transfer import Database, FileSystem
-from azure.ai.ml.entities import (
-    CommandComponent,
-    CommandJob,
-    Data,
-    ParallelTask,
-    PipelineJob,
-    SparkJob,
-)
-from azure.ai.ml.entities._builders import (
-    Command,
-    Parallel,
-    Spark,
-    Sweep,
-    DataTransferImport,
-)
+from azure.ai.ml.entities import CommandComponent, CommandJob, Data, ParallelTask, PipelineJob, SparkJob
+from azure.ai.ml.entities._builders import Command, DataTransferImport, Parallel, Spark, Sweep
 from azure.ai.ml.entities._component.parallel_component import ParallelComponent
 from azure.ai.ml.entities._job.automl.tabular import ClassificationJob
-from azure.ai.ml.entities._job.data_transfer.data_transfer_job import (
-    DataTransferCopyJob,
-    DataTransferImportJob,
-    DataTransferExportJob,
-)
+from azure.ai.ml.entities._job.data_transfer.data_transfer_job import DataTransferCopyJob
 from azure.ai.ml.entities._job.job_service import (
     JobService,
     JupyterLabJobService,
@@ -40,7 +22,6 @@ from azure.ai.ml.entities._job.job_service import (
     TensorBoardJobService,
     VsCodeJobService,
 )
-from azure.ai.ml.exceptions import ValidationException
 from azure.ai.ml.parallel import ParallelJob, RunFunction, parallel_run_function
 from azure.ai.ml.sweep import (
     BanditPolicy,
@@ -1598,8 +1579,8 @@ class TestDSLPipelineWithSpecificNodes:
         pipeline1 = pipeline(iris_data)
         result = pipeline1._validate()
         assert (
-            "jobs.node" in result.error_messages
-            and result.error_messages["jobs.node"]
+            "jobs.node.conf" in result.error_messages
+            and result.error_messages["jobs.node.conf"]
             == "Should not specify min or max executors when dynamic allocation is disabled."
         )
 

@@ -1,14 +1,24 @@
 # Release History
 
-## 12.16.1 (Unreleased)
+## 12.18.0b1 (2023-08-08)
 
 ### Features Added
+- Added support for service versions 2023-05-03 and 2023-08-03.
+- Added `version_id` as a client constructor parameter to `BlobClient`. This change makes `BlobClient`s version-aware, such that
+all APIs that accept `version_id` will operate on the version ID provided during client construction by default.
+- Added optional keyword `version_id` to `get_blob_client` APIs which, if provided, will result in a version-aware `BlobClient` in which
+all APIs that accept `version_id` will operate on the version ID provided to the `get_blob_client` API call by default.
 
-### Breaking Changes
+## 12.17.0 (2023-07-11)
 
-### Bugs Fixed
+### Features Added
+- Stable release of features from 12.17.0b1
 
-### Other Changes
+## 12.17.0b1 (2023-05-30)
+
+### Features Added
+- Added support for service version 2023-01-03.
+- Content length limit increased from 4 MiB to 100 MiB for `append_block` and `append_block_from_url` APIs and their async equivalents.
 
 ## 12.16.0 (2023-04-12)
 

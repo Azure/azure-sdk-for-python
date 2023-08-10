@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-from typing import Optional, Callable, TYPE_CHECKING, Union, Awaitable, Mapping, Any
+from typing import Optional, Callable, TYPE_CHECKING, Union, Awaitable, Mapping, Any, NamedTuple
 from ._constants import EMPTY_LABEL
 
 if TYPE_CHECKING:
@@ -13,12 +13,12 @@ if TYPE_CHECKING:
 
 class AzureAppConfigurationKeyVaultOptions:
     def __init__(
-            self,
-            *,
-            credential: Optional[Union["TokenCredential", "AsyncTokenCredential"]] = None,
-            client_configs: Optional[Mapping[str, Mapping[str, Any]]] = None,
-            secret_resolver: Optional[Union[Callable[[str], str], Callable[[str], Awaitable[str]]]] = None
-        ):
+        self,
+        *,
+        credential: Optional[Union["TokenCredential", "AsyncTokenCredential"]] = None,
+        client_configs: Optional[Mapping[str, Mapping[str, Any]]] = None,
+        secret_resolver: Optional[Union[Callable[[str], str], Callable[[str], Awaitable[str]]]] = None
+    ):
         """
         Options for connecting to Key Vault.
 
@@ -53,3 +53,8 @@ class SettingSelector:
     def __init__(self, *, key_filter: str, label_filter: Optional[str] = EMPTY_LABEL):
         self.key_filter = key_filter
         self.label_filter = label_filter
+
+
+class SentinelKey(NamedTuple):
+    key: str
+    label: str = EMPTY_LABEL

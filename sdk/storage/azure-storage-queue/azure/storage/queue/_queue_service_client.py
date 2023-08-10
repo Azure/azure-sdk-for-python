@@ -123,6 +123,7 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             Credentials provided here will take precedence over those in the connection string.
             If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
             should be the storage account key.
+        :paramtype credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
         :returns: A Queue service client.
         :rtype: ~azure.storage.queue.QueueClient
 
@@ -233,7 +234,6 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         :type cors: list(~azure.storage.queue.CorsRule)
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :rtype: None
 
         .. admonition:: Example:
 
@@ -327,6 +327,7 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         :type metadata: Dict[str, str]
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
+        :return: A QueueClient for the newly created Queue.
         :rtype: ~azure.storage.queue.QueueClient
 
         .. admonition:: Example:

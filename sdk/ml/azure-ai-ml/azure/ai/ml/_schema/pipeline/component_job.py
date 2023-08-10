@@ -2,13 +2,12 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=no-self-use,protected-access
+# pylint: disable=protected-access
 
 import logging
 
 from marshmallow import INCLUDE, ValidationError, fields, post_dump, post_load, pre_dump, validates
 
-from ..._schema.assets.environment import AnonymousEnvironmentSchema
 from ..._schema.component import (
     AnonymousCommandComponentSchema,
     AnonymousDataTransferCopyComponentSchema,
@@ -32,6 +31,7 @@ from .._utils.data_binding_expression import support_data_binding_expression_for
 from ..core.fields import (
     ArmVersionedStr,
     ComputeField,
+    EnvironmentField,
     NestedField,
     RegistryStr,
     StringTransformedEnum,
@@ -163,13 +163,7 @@ class CommandSchema(BaseNodeSchema, ParameterizedCommandSchema):
         },
         load_only=True,
     )
-    environment = UnionField(
-        [
-            RegistryStr(azureml_type=AzureMLResourceType.ENVIRONMENT),
-            NestedField(AnonymousEnvironmentSchema),
-            ArmVersionedStr(azureml_type=AzureMLResourceType.ENVIRONMENT, allow_default_version=True),
-        ],
-    )
+    environment = EnvironmentField()
     services = fields.Dict(
         keys=fields.Str(),
         values=UnionField(
@@ -205,7 +199,7 @@ class CommandSchema(BaseNodeSchema, ParameterizedCommandSchema):
         except ValidationException as e:
             # It may raise ValidationError during initialization, command._validate_io e.g. raise ValidationError
             # instead in marshmallow function, so it won't break SchemaValidatable._schema_validate
-            raise ValidationError(e.message)
+            raise ValidationError(e.message) from e
         return command_node
 
     @pre_dump
@@ -371,7 +365,7 @@ class SparkSchema(BaseNodeSchema, ParameterizedSparkSchema):
         except ValidationException as e:
             # It may raise ValidationError during initialization, command._validate_io e.g. raise ValidationError
             # instead in marshmallow function, so it won't break SchemaValidatable._schema_validate
-            raise ValidationError(e.message)
+            raise ValidationError(e.message) from e
         return spark_node
 
     @pre_dump
@@ -414,7 +408,7 @@ class DataTransferCopySchema(BaseNodeSchema):
         except ValidationException as e:
             # It may raise ValidationError during initialization, data_transfer._validate_io e.g. raise ValidationError
             # instead in marshmallow function, so it won't break SchemaValidatable._schema_validate
-            raise ValidationError(e.message)
+            raise ValidationError(e.message) from e
         return data_transfer_node
 
     @pre_dump
@@ -465,7 +459,7 @@ class DataTransferImportSchema(BaseNodeSchema):
         except ValidationException as e:
             # It may raise ValidationError during initialization, data_transfer._validate_io e.g. raise ValidationError
             # instead in marshmallow function, so it won't break SchemaValidatable._schema_validate
-            raise ValidationError(e.message)
+            raise ValidationError(e.message) from e
         return data_transfer_node
 
     @pre_dump
@@ -516,7 +510,7 @@ class DataTransferExportSchema(BaseNodeSchema):
         except ValidationException as e:
             # It may raise ValidationError during initialization, data_transfer._validate_io e.g. raise ValidationError
             # instead in marshmallow function, so it won't break SchemaValidatable._schema_validate
-            raise ValidationError(e.message)
+            raise ValidationError(e.message) from e
         return data_transfer_node
 
     @pre_dump

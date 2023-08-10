@@ -18,10 +18,10 @@ import glob
 import shutil
 from pkg_resources import parse_version
 
-from tox_helper_tasks import find_whl, find_sdist, get_pip_list_output
+from tox_helper_tasks import get_pip_list_output
 from ci_tools.parsing import ParsedSetup, parse_require
 from ci_tools.build import create_package
-from ci_tools.functions import get_package_from_repo
+from ci_tools.functions import get_package_from_repo, find_whl, find_sdist, discover_prebuilt_package
 
 logging.getLogger().setLevel(logging.INFO)
 
@@ -46,6 +46,15 @@ def discover_packages(setuppy_path, args):
     packages = []
     if os.getenv("PREBUILT_WHEEL_DIR") is not None and not args.force_create:
         packages = discover_prebuilt_package(os.getenv("PREBUILT_WHEEL_DIR"), setuppy_path, args.package_type)
+        pkg = ParsedSetup.from_path(setuppy_path)
+
+        if not packages:
+            logging.error(
+                "Package is missing in prebuilt directory {0} for package {1} and version {2}".format(
+                    os.getenv("PREBUILT_WHEEL_DIR"), pkg.name, pkg.version
+                )
+            )
+            exit(1)
     else:
         packages = build_and_discover_package(
             setuppy_path,
@@ -53,25 +62,6 @@ def discover_packages(setuppy_path, args):
             args.target_setup,
             args.package_type,
         )
-    return packages
-
-
-def discover_prebuilt_package(dist_directory, setuppy_path, package_type):
-    packages = []
-    pkg = ParsedSetup.from_path(setuppy_path)
-    if package_type == "wheel":
-        prebuilt_package = find_whl(dist_directory, pkg.name, pkg.version)
-    else:
-        prebuilt_package = find_sdist(dist_directory, pkg.name, pkg.version)
-
-    if prebuilt_package is None:
-        logging.error(
-            "Package is missing in prebuilt directory {0} for package {1} and version {2}".format(
-                dist_directory, pkg.name, pkg.version
-            )
-        )
-        exit(1)
-    packages.append(prebuilt_package)
     return packages
 
 

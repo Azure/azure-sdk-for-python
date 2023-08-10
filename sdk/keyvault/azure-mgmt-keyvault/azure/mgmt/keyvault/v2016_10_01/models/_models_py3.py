@@ -536,7 +536,7 @@ class Sku(_serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar family: SKU family name. Required. "A"
+    :ivar family: SKU family name. "A"
     :vartype family: str or ~azure.mgmt.keyvault.v2016_10_01.models.SkuFamily
     :ivar name: SKU name to specify whether the key vault is a standard vault or a premium vault.
      Required. Known values are: "standard" and "premium".
@@ -554,10 +554,10 @@ class Sku(_serialization.Model):
     }
 
     def __init__(
-        self, *, family: Union[str, "_models.SkuFamily"], name: Union[str, "_models.SkuName"], **kwargs: Any
+        self, *, family: Union[str, "_models.SkuFamily"] = "A", name: Union[str, "_models.SkuName"], **kwargs: Any
     ) -> None:
         """
-        :keyword family: SKU family name. Required. "A"
+        :keyword family: SKU family name. "A"
         :paramtype family: str or ~azure.mgmt.keyvault.v2016_10_01.models.SkuFamily
         :keyword name: SKU name to specify whether the key vault is a standard vault or a premium
          vault. Required. Known values are: "standard" and "premium".

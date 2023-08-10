@@ -30,12 +30,7 @@ import re
 from utils import HTTP_REQUESTS
 from azure.core.pipeline._tools import is_rest
 import types
-import unittest
-
-try:
-    from unittest import mock
-except ImportError:
-    import mock
+from unittest import mock
 
 import pytest
 
@@ -47,6 +42,7 @@ from azure.core import AsyncPipelineClient
 from azure.core.pipeline import PipelineResponse, AsyncPipeline, PipelineContext
 from azure.core.pipeline.transport import AsyncioRequestsTransportResponse, AsyncHttpTransport
 
+from azure.core.polling.base_polling import LROBasePolling
 from azure.core.polling.async_base_polling import (
     AsyncLROBasePolling,
 )
@@ -283,6 +279,63 @@ async def test_post_resource_location(async_pipeline_client_builder, deserializa
     assert result["location_result"] == True
 
 
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "http_request,http_response", request_and_responses_product(ASYNCIO_REQUESTS_TRANSPORT_RESPONSES)
+)
+async def test_post_direct_success(async_pipeline_client_builder, deserialization_cb, http_request, http_response):
+
+    # ResourceLocation
+
+    # The initial response contains both Location and Operation-Location, a 202 and a success body
+    initial_response = TestBasePolling.mock_send(
+        http_request,
+        http_response,
+        "POST",
+        202,
+        {
+            "operation-location": "http://example.org/async_monitor",
+        },
+        {"status": "succeeded"},
+    )
+
+    async def send(request, **kwargs):
+        pytest.fail("No requests allowed")
+
+    client = async_pipeline_client_builder(send)
+
+    poll = async_poller(client, initial_response, deserialization_cb, AsyncLROBasePolling(0))
+    result = await poll
+    assert result["status"] == "succeeded"
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "http_request,http_response", request_and_responses_product(ASYNCIO_REQUESTS_TRANSPORT_RESPONSES)
+)
+async def test_post_fail(async_pipeline_client_builder, deserialization_cb, http_request, http_response):
+
+    # ResourceLocation
+
+    # The initial response contains both Location and Operation-Location, a 202 and a success body
+    initial_response = TestBasePolling.mock_send(
+        http_request,
+        http_response,
+        "POST",
+        500,
+        {"status": "failed"},
+    )
+
+    async def send(request, **kwargs):
+        pytest.fail("No requests allowed")
+
+    client = async_pipeline_client_builder(send)
+
+    with pytest.raises(HttpResponseError):
+        poll = async_poller(client, initial_response, deserialization_cb, AsyncLROBasePolling(0))
+        result = await poll
+
+
 class TestBasePolling(object):
 
     convert = re.compile("([a-z0-9])([A-Z])")
@@ -293,7 +346,11 @@ class TestBasePolling(object):
             headers = {}
         response = Response()
         response._content_consumed = True
-        response._content = json.dumps(body).encode("ascii") if body is not None else None
+        #  "requests" never returns None for content. Make sure it's empty bytes at worst
+        # In [4]: r=requests.get("https://httpbin.org/status/200")
+        # In [5]: r.content
+        # Out[5]: b''
+        response._content = json.dumps(body).encode("ascii") if body is not None else b""
         response.request = Request()
         response.request.method = method
         response.request.url = RESOURCE_URL
@@ -366,7 +423,6 @@ class TestBasePolling(object):
         response = create_transport_response(http_response, request, response)
         if is_rest(http_response):
             response.body()
-
         return PipelineResponse(request, response, None)  # context
 
     @staticmethod
@@ -746,3 +802,57 @@ async def test_final_get_via_location(port, http_request, deserialization_cb):
     )
     result = await poller.result()
     assert result == {"returnedFrom": "locationHeaderUrl"}
+
+
+"""Reproduce the bad design of azure-mgmt-core 1.0.0-1.4.0"""
+
+
+class ARMPolling(LROBasePolling):
+    pass
+
+
+class AsyncARMPolling(ARMPolling, AsyncLROBasePolling):
+    pass
+
+
+@pytest.mark.asyncio
+async def test_async_polling_inheritance(async_pipeline_client_builder, deserialization_cb):
+    rest_http = request_and_responses_product(ASYNCIO_REQUESTS_TRANSPORT_RESPONSES)[1]
+
+    async def send(request, **kwargs):
+        assert request.method == "GET"
+
+        if request.url == "http://example.org/location":
+            return TestBasePolling.mock_send(
+                rest_http[0], rest_http[1], "GET", 200, body={"success": True}
+            ).http_response
+        elif request.url == "http://example.org/async_monitor":
+            return TestBasePolling.mock_send(
+                rest_http[0], rest_http[1], "GET", 200, body={"status": "Succeeded"}
+            ).http_response
+        else:
+            pytest.fail("No other query allowed")
+
+    client = async_pipeline_client_builder(send)
+
+    initial_response = TestBasePolling.mock_send(
+        rest_http[0],
+        rest_http[1],
+        "POST",
+        200,
+        {
+            "location": "http://example.org/location",
+            "operation-location": "http://example.org/async_monitor",
+        },
+        "",
+    )
+
+    polling = AsyncARMPolling()
+    polling.initialize(
+        client=client,
+        initial_response=initial_response,
+        deserialization_callback=deserialization_cb,
+    )
+    await polling.run()
+    resource = polling.resource()
+    assert resource["success"]

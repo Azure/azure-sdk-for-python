@@ -29,7 +29,7 @@ def main():
         subscription_id="00000000-1111-2222-3333-444444444444",
     )
 
-    response = client.databases.rename(
+    client.databases.rename(
         resource_group_name="Default-SQL-SouthEastAsia",
         server_name="testsvr",
         database_name="testdb",
@@ -37,7 +37,6 @@ def main():
             "id": "/subscriptions/00000000-1111-2222-3333-444444444444/resourceGroups/Default-SQL-SouthEastAsia/providers/Microsoft.Sql/servers/testsvr/databases/newtestdb"
         },
     )
-    print(response)
 
 
 # x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2022-08-01-preview/examples/RenameDatabase.json

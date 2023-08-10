@@ -15,7 +15,7 @@ from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationSc
 from azure.ai.ml.exceptions import ValidationException
 
 
-# from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
+from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._feature_store_utils import (
     _archive_or_restore,
 )
@@ -23,9 +23,10 @@ from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml.entities._feature_store_entity.feature_store_entity import FeatureStoreEntity
 from azure.core.polling import LROPoller
 from azure.core.paging import ItemPaged
+from azure.core.tracing.decorator import distributed_trace
 
 ops_logger = OpsLogger(__name__)
-module_logger = ops_logger.module_logger
+logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
 
 
 class FeatureStoreEntityOperations(_ScopeDependentOperations):
@@ -50,18 +51,20 @@ class FeatureStoreEntityOperations(_ScopeDependentOperations):
         self._service_client = service_client
         self._init_kwargs = kwargs
 
-    # @monitor_with_activity(logger, "FeatureStoreEntity.List", ActivityType.PUBLICAPI)
+    @distributed_trace
+    @monitor_with_activity(logger, "FeatureStoreEntity.List", ActivityType.PUBLICAPI)
     def list(
         self,
-        *,
         name: Optional[str] = None,
+        *,
         list_view_type: ListViewType = ListViewType.ACTIVE_ONLY,
+        **kwargs: Dict,
     ) -> ItemPaged[FeatureStoreEntity]:
         """List the FeatureStoreEntity assets of the workspace.
 
         :param name: Name of a specific FeatureStoreEntity asset, optional.
         :type name: Optional[str]
-        :param list_view_type: View type for including/excluding (for example) archived FeatureStoreEntity assets.
+        :keyword list_view_type: View type for including/excluding (for example) archived FeatureStoreEntity assets.
         Default: ACTIVE_ONLY.
         :type list_view_type: Optional[ListViewType]
         :return: An iterator like instance of FeatureStoreEntity objects
@@ -74,25 +77,29 @@ class FeatureStoreEntityOperations(_ScopeDependentOperations):
                 cls=lambda objs: [FeatureStoreEntity._from_rest_object(obj) for obj in objs],
                 list_view_type=list_view_type,
                 **self._scope_kwargs,
+                **kwargs,
             )
         return self._container_operation.list(
             workspace_name=self._workspace_name,
             cls=lambda objs: [FeatureStoreEntity._from_container_rest_object(obj) for obj in objs],
             list_view_type=list_view_type,
             **self._scope_kwargs,
+            **kwargs,
         )
 
-    def _get(self, name: str, version: str = None) -> FeaturestoreEntityVersion:
+    def _get(self, name: str, version: str = None, **kwargs: Dict) -> FeaturestoreEntityVersion:
         return self._operation.get(
             resource_group_name=self._resource_group_name,
             workspace_name=self._workspace_name,
             name=name,
             version=version,
             **self._init_kwargs,
+            **kwargs,
         )
 
-    # @monitor_with_activity(logger, "FeatureStoreEntity.Get", ActivityType.PUBLICAPI)
-    def get(self, name: str, version: str) -> FeatureStoreEntity:
+    @distributed_trace
+    @monitor_with_activity(logger, "FeatureStoreEntity.Get", ActivityType.PUBLICAPI)
+    def get(self, name: str, version: str, **kwargs: Dict) -> FeatureStoreEntity:
         """Get the specified FeatureStoreEntity asset.
 
         :param name: Name of FeatureStoreEntity asset.
@@ -105,13 +112,16 @@ class FeatureStoreEntityOperations(_ScopeDependentOperations):
         :rtype: ~azure.ai.ml.entities.FeatureStoreEntity
         """
         try:
-            feature_store_entity_version_resource = self._get(name, version)
+            feature_store_entity_version_resource = self._get(name, version, **kwargs)
             return FeatureStoreEntity._from_rest_object(feature_store_entity_version_resource)
         except (ValidationException, SchemaValidationError) as ex:
             log_and_raise_error(ex)
 
-    # @monitor_with_activity(logger, "FeatureStoreEntity.BeginCreateOrUpdate", ActivityType.PUBLICAPI)
-    def begin_create_or_update(self, feature_store_entity: FeatureStoreEntity) -> LROPoller[FeatureStoreEntity]:
+    @distributed_trace
+    @monitor_with_activity(logger, "FeatureStoreEntity.BeginCreateOrUpdate", ActivityType.PUBLICAPI)
+    def begin_create_or_update(
+        self, feature_store_entity: FeatureStoreEntity, **kwargs: Dict
+    ) -> LROPoller[FeatureStoreEntity]:
         """Create or update FeatureStoreEntity
 
         :param feature_store_entity: FeatureStoreEntity definition.
@@ -128,15 +138,16 @@ class FeatureStoreEntityOperations(_ScopeDependentOperations):
             version=feature_store_entity.version,
             body=feature_store_entity_resource,
             cls=lambda response, deserialized, headers: FeatureStoreEntity._from_rest_object(deserialized),
+            **kwargs,
         )
 
-    # @monitor_with_activity(logger, "FeatureStoreEntity.Archive", ActivityType.PUBLICAPI)
+    @distributed_trace
+    @monitor_with_activity(logger, "FeatureStoreEntity.Archive", ActivityType.PUBLICAPI)
     def archive(
         self,
-        *,
         name: str,
         version: str,
-        **kwargs,  # pylint:disable=unused-argument
+        **kwargs: Dict,
     ) -> None:
         """Archive a FeatureStoreEntity asset.
 
@@ -153,15 +164,16 @@ class FeatureStoreEntityOperations(_ScopeDependentOperations):
             is_archived=True,
             name=name,
             version=version,
+            **kwargs,
         )
 
-    # @monitor_with_activity(logger, "FeatureStoreEntity.Restore", ActivityType.PUBLICAPI)
+    @distributed_trace
+    @monitor_with_activity(logger, "FeatureStoreEntity.Restore", ActivityType.PUBLICAPI)
     def restore(
         self,
-        *,
         name: str,
         version: str,
-        **kwargs,  # pylint:disable=unused-argument
+        **kwargs: Dict,  # pylint:disable=unused-argument
     ) -> None:
         """Restore an archived FeatureStoreEntity asset.
 
@@ -178,4 +190,5 @@ class FeatureStoreEntityOperations(_ScopeDependentOperations):
             is_archived=False,
             name=name,
             version=version,
+            **kwargs,
         )

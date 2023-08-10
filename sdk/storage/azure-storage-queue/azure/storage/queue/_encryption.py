@@ -25,6 +25,7 @@ from cryptography.hazmat.primitives.ciphers.modes import CBC
 from cryptography.hazmat.primitives.padding import PKCS7
 
 from azure.core.exceptions import HttpResponseError
+from azure.core.utils import CaseInsensitiveDict
 
 from ._version import VERSION
 from ._shared import encode_base64, decode_base64_to_bytes
@@ -95,7 +96,6 @@ class _WrappedContentKey:
         :param str key_id:
             The key-encryption-key identifier string.
         '''
-
         _validate_not_none('algorithm', algorithm)
         _validate_not_none('encrypted_key', encrypted_key)
         _validate_not_none('key_id', key_id)
@@ -142,7 +142,6 @@ class _EncryptionAgent:
         :param str protocol:
             The protocol version used for encryption.
         '''
-
         _validate_not_none('encryption_algorithm', encryption_algorithm)
         _validate_not_none('protocol', protocol)
 
@@ -177,7 +176,6 @@ class _EncryptionData:
         :param Dict[str, Any] key_wrapping_metadata:
             A dict containing metadata related to the key wrapping.
         '''
-
         _validate_not_none('encryption_agent', encryption_agent)
         _validate_not_none('wrapped_content_key', wrapped_content_key)
 
@@ -197,20 +195,20 @@ class _EncryptionData:
 
 
 class GCMBlobEncryptionStream:
-    """
+    '''
     A stream that performs AES-GCM encryption on the given data as
     it's streamed. Data is read and encrypted in regions. The stream
     will use the same encryption key and will generate a guaranteed unique
     nonce for each encryption region.
-    """
+    '''
     def __init__(
         self, content_encryption_key: bytes,
         data_stream: BinaryIO,
     ) -> None:
-        """
+        '''
         :param bytes content_encryption_key: The encryption key to use.
         :param BinaryIO data_stream: The data stream to read data from.
-        """
+        '''
         self.content_encryption_key = content_encryption_key
         self.data_stream = data_stream
 
@@ -223,6 +221,8 @@ class GCMBlobEncryptionStream:
         Read data from the stream. Specify -1 to read all available data.
 
         :param int size: The amount of data to read. Defaults to -1 for all data.
+        :return: The bytes read.
+        :rtype: bytes
         """
         result = BytesIO()
         remaining = sys.maxsize if size == -1 else size
@@ -254,6 +254,8 @@ class GCMBlobEncryptionStream:
         includes the data in the form: nonce + ciphertext + tag.
 
         :param bytes data: The data to encrypt.
+        :return: The encrypted bytes.
+        :rtype: bytes
         """
         # Each region MUST use a different nonce
         nonce = self.nonce_counter.to_bytes(_GCM_NONCE_LENGTH, 'big')
@@ -271,6 +273,8 @@ def is_encryption_v2(encryption_data: Optional[_EncryptionData]) -> Optional[Uni
     Determine whether the given encryption data signifies version 2.0.
 
     :param Optional[_EncryptionData] encryption_data: The encryption data. Will return False if this is None.
+    :return: True, if the encryption data indicates encryption V2, false otherwise.
+    :rtype: bool
     """
     # If encryption_data is None, assume no encryption
     return encryption_data and encryption_data.encryption_agent.protocol == _ENCRYPTION_PROTOCOL_V2
@@ -283,6 +287,8 @@ def get_adjusted_upload_size(length: int, encryption_version: str) -> int:
 
     :param int length: The plaintext data length.
     :param str encryption_version: The version of encryption being used.
+    :return: The new upload size to use.
+    :rtype: int
     """
     if encryption_version == _ENCRYPTION_PROTOCOL_V1:
         return length + (16 - (length % 16))
@@ -319,6 +325,7 @@ def get_adjusted_download_range_and_offset(
     :param int length: The user-requested length. Only used for V1.
     :param Optional[_EncryptionData] encryption_data: The encryption data to determine version and sizes.
     :return: (new start, new end), (start offset, end offset)
+    :rtype: Tuple[Tuple[int, int], Tuple[int, int]]
     """
     start_offset, end_offset = 0, 0
     if encryption_data is None:
@@ -381,9 +388,13 @@ def parse_encryption_data(metadata: Dict[str, Any]) -> Optional[_EncryptionData]
     not exist or there are parsing errors, this function will just return None.
 
     :param Dict[str, Any] metadata: The blob metadata parsed from the response.
+    :return: The encryption data or None
+    :rtype: Optional[_EncryptionData]
     """
     try:
-        return _dict_to_encryption_data(loads(metadata['encryptiondata']))
+        # Use case insensitive dict as key needs to be case-insensitive
+        case_insensitive_metadata = CaseInsensitiveDict(metadata)
+        return _dict_to_encryption_data(loads(case_insensitive_metadata['encryptiondata']))
     except:  # pylint: disable=bare-except
         return None
 
@@ -395,6 +406,8 @@ def adjust_blob_size_for_encryption(size: int, encryption_data: Optional[_Encryp
 
     :param int size: The original blob size.
     :param Optional[_EncryptionData] encryption_data: The encryption data to determine version and sizes.
+    :return: The new blob size.
+    :rtype: int
     """
     if is_encryption_v2(encryption_data):
         if encryption_data is not None:
@@ -484,8 +497,8 @@ def _dict_to_encryption_data(encryption_data_dict: Dict[str, Any]) -> _Encryptio
         protocol = encryption_data_dict['EncryptionAgent']['Protocol']
         if protocol not in [_ENCRYPTION_PROTOCOL_V1, _ENCRYPTION_PROTOCOL_V2]:
             raise ValueError("Unsupported encryption version.")
-    except KeyError:
-        raise ValueError("Unsupported encryption version.")
+    except KeyError as exc:
+        raise ValueError("Unsupported encryption version.") from exc
     wrapped_content_key = encryption_data_dict['WrappedContentKey']
     wrapped_content_key = _WrappedContentKey(wrapped_content_key['Algorithm'],
                                              decode_base64_to_bytes(wrapped_content_key['EncryptedKey']),
@@ -531,7 +544,6 @@ def _generate_AES_CBC_cipher(cek: bytes, iv: bytes) -> Cipher:
     :return: A cipher for encrypting in AES256 CBC.
     :rtype: ~cryptography.hazmat.primitives.ciphers.Cipher
     '''
-
     backend = default_backend()
     algorithm = AES(cek)
     mode = CBC(iv)
@@ -557,7 +569,6 @@ def _validate_and_unwrap_cek(
     :return: the content_encryption_key stored in the encryption_data object.
     :rtype: bytes
     '''
-
     _validate_not_none('encrypted_key', encryption_data.wrapped_content_key.encrypted_key)
 
     # Validate we have the right info for the specified version
@@ -694,7 +705,6 @@ def encrypt_blob(blob: bytes, key_encryption_key: object, version: str) -> Tuple
     :return: A tuple of json-formatted string containing the encryption metadata and the encrypted blob data.
     :rtype: (str, bytes)
     '''
-
     _validate_not_none('blob', blob)
     _validate_not_none('key_encryption_key', key_encryption_key)
     _validate_key_encryption_key_wrap(key_encryption_key)
@@ -804,11 +814,11 @@ def decrypt_blob(  # pylint: disable=too-many-locals,too-many-statements
     """
     try:
         encryption_data = _dict_to_encryption_data(loads(response_headers['x-ms-meta-encryptiondata']))
-    except:  # pylint: disable=bare-except
+    except Exception as exc:  # pylint: disable=broad-except
         if require_encryption:
             raise ValueError(
-                'Encryption required, but received data does not contain appropriate metatadata.' + \
-                'Data was either not encrypted or metadata has been lost.')
+                'Encryption required, but received data does not contain appropriate metadata.' + \
+                'Data was either not encrypted or metadata has been lost.') from exc
 
         return content
 
@@ -900,6 +910,8 @@ def decrypt_blob(  # pylint: disable=too-many-locals,too-many-statements
         return decrypted_content[start_offset:end_offset]
     raise ValueError('Specified encryption version is not supported.')
 
+    raise ValueError('Specified encryption version is not supported.')
+
 
 def get_blob_encryptor_and_padder(
     cek: bytes,
@@ -934,7 +946,6 @@ def encrypt_queue_message(message: str, key_encryption_key: object, version: str
     :return: A json-formatted string containing the encrypted message and the encryption metadata.
     :rtype: str
     '''
-
     _validate_not_none('message', message)
     _validate_not_none('key_encryption_key', key_encryption_key)
     _validate_key_encryption_key_wrap(key_encryption_key)
@@ -996,6 +1007,8 @@ def decrypt_queue_message(
     If no encryption metadata is present, will return the unaltered message.
     :param str message:
         The JSON formatted QueueEncryptedMessage contents with all associated metadata.
+    :param Any response:
+        The pipeline response used to generate an error with.
     :param bool require_encryption:
         If set, will enforce that the retrieved messages are encrypted and decrypt them.
     :param object key_encryption_key:
@@ -1015,16 +1028,16 @@ def decrypt_queue_message(
     try:
         message_dict = loads(message)
 
-        encryption_data = _dict_to_encryption_data(message_dict['EncryptionData'])
-        decoded_data = decode_base64_to_bytes(message_dict['EncryptedMessageContents'])
-    except (KeyError, ValueError):
+        encryption_data = _dict_to_encryption_data(message['EncryptionData'])
+        decoded_data = decode_base64_to_bytes(message['EncryptedMessageContents'])
+    except (KeyError, ValueError) as exc:
         # Message was not json formatted and so was not encrypted
         # or the user provided a json formatted message
         # or the metadata was malformed.
         if require_encryption:
             raise ValueError(
                 'Encryption required, but received message does not contain appropriate metatadata. ' + \
-                'Message was either not encrypted or metadata was incorrect.')
+                'Message was either not encrypted or metadata was incorrect.') from exc
 
         return message_dict
     try:
@@ -1033,4 +1046,4 @@ def decrypt_queue_message(
         raise HttpResponseError(
             message="Decryption failed.",
             response=response,
-            error=error)
+            error=error) from error
