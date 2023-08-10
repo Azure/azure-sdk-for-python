@@ -19,6 +19,13 @@ stages:
     - template: ../jobs/build-conda-dependencies.yml
       parameters:
         CondaArtifacts:
+        - name: azure-core
+          common_root: azure
+          in_batch: ${{ parameters.release_azure_core }}
+          checkout:
+          - package: azure-core
+            checkout_path: sdk/core
+            version: 1.24.0
         - name: msrest
           in_batch: true
           checkout:
