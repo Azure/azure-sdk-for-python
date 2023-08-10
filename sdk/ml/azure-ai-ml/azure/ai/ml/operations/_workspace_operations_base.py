@@ -93,8 +93,9 @@ class WorkspaceOperationsBase:
                 workspace.tags.pop("createdByToolkit")
             existing_workspace.tags.update(workspace.tags)
             workspace.tags = existing_workspace.tags
-            workspace.container_registry = workspace.container_registry or existing_workspace.container_registry
-            workspace.application_insights = workspace.application_insights or existing_workspace.application_insights
+            if workspace._kind != PROJECT_WORKSPACE_KIND:
+                workspace.container_registry = workspace.container_registry or existing_workspace.container_registry
+                workspace.application_insights = workspace.application_insights or existing_workspace.application_insights
             workspace.identity = workspace.identity or existing_workspace.identity
             workspace.primary_user_assigned_identity = (
                 workspace.primary_user_assigned_identity or existing_workspace.primary_user_assigned_identity
