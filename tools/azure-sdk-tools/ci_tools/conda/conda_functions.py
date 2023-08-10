@@ -261,7 +261,9 @@ def create_combined_sdist(
 
     create_package(targeted_folder_for_assembly, config_assembled_folder)
 
-    return os.path.join(config_assembled_folder, os.listdir(config_assembled_folder)[0])
+    assembled_sdist = next(iter([os.path.join(config_assembled_folder, a) for a in os.listdir(config_assembled_folder) if os.path.isfile(os.path.join(config_assembled_folder, a)) and conda_build.name in a]))
+
+    return assembled_sdist
 
 
 def get_summary(conda_config: CondaConfiguration):
@@ -370,8 +372,10 @@ def assemble_source(conda_configurations: List[CondaConfiguration], repo_root: s
 
         config_download_folder = prep_directory(os.path.join(sdist_download_area, conda_build.name))
         config_assembly_folder = prep_directory(os.path.join(sdist_assembly_area, conda_build.name))
+        # our base assembled folder will contain the tar.gz list, placing the meta.yaml recipe one level
+        # deeper and named for the package name
         config_assembled_folder = prep_directory(os.path.join(sdist_output_dir, conda_build.name))
-        generated_yml = os.path.join(sdist_output_dir, conda_build.name, "meta.yaml")
+        generated_yml = os.path.join(config_assembled_folder, "meta.yaml")
 
         # <Code Location 1> -> /conda/downloaded/run_configuration_package/<downloaded-package-name-1>/
         # <Code Location 2> -> /conda/downloaded/run_configuration_package/<downloaded-package-name-2>/
@@ -389,7 +393,7 @@ def assemble_source(conda_configurations: List[CondaConfiguration], repo_root: s
         #       /azure-storage-file-datalake
         #       /azure-storage-fileshare
         conda_build.created_sdist_path = create_combined_sdist(
-            conda_build, config_assembly_folder, config_assembled_folder
+            conda_build, config_assembly_folder, sdist_output_dir
         ).replace("\\", "/")
         print(f"Generated Sdist for artifact {conda_build.name} is present at {conda_build.created_sdist_path}")
 
@@ -400,8 +404,9 @@ def assemble_source(conda_configurations: List[CondaConfiguration], repo_root: s
         summary = get_summary(conda_build)
 
         sdist = os.path.basename(conda_build.created_sdist_path)
+
         meta_yml_content = meta_yml_content.replace("{{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}", version)
-        meta_yml_content = re.sub(r"^\s*url\:.*", f'  url: "./{sdist}"', meta_yml_content, flags=re.MULTILINE)
+        meta_yml_content = re.sub(r"^\s*url\:.*", f'  url: "../{sdist}"', meta_yml_content, flags=re.MULTILINE)
         meta_yml_content = re.sub(
             r"\{\{\senviron\.get\(\'.*_SUMMARY\'\,\s\'\'\)\s*\}\}", f"{summary}", meta_yml_content, flags=re.MULTILINE
         )
@@ -432,16 +437,10 @@ def build_conda_packages(conda_configurations: List[CondaConfiguration], repo_ro
     prep_and_create_environment(conda_env_dir)
     invoke_command(f"conda index {conda_output_dir}", repo_root)
 
-    # if there is no repodata, the channel hasn't been created yet
-    invoke_command(
-        f'conda run --prefix "{conda_env_dir}" conda-build . --output-folder "{conda_output_dir}" -c "file:{conda_output_dir}"',
-        conda_build_folder,
-    )
-
     for conda_build in conda_configurations:
         conda_build_folder = os.path.join(conda_sdist_dir, conda_build.name).replace("\\", "/")
         invoke_command(
-            f'conda run --prefix "{conda_env_dir}" conda-build . --output-folder "{conda_output_dir}" -c "file:{conda_output_dir}"',
+            f'conda run --prefix "{conda_env_dir}" conda-build . --output-folder "{conda_output_dir}" -c "{conda_output_dir}"',
             conda_build_folder,
         )
 
