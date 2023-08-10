@@ -348,6 +348,12 @@ class MiscConfigurationOptions(object):
         # [END ssh_job_service_configuration]
 
         # [START env_entity_create]
+        from azure.ai.ml.entities._assets._artifacts._package.base_environment_source import BaseEnvironment
+
+        base_environment = BaseEnvironment(type="base-env-type", resource_id="base-env-resource-id")
+        # [END env_entity_create]
+
+        # [START env_entity_create]
         from azure.ai.ml.entities._assets.environment import Environment
 
         environment = Environment(
