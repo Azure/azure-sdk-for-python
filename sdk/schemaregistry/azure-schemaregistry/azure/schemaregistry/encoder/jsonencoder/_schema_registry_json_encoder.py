@@ -59,11 +59,10 @@ _LOGGER = logging.getLogger(__name__)
 
 class JsonSchemaEncoder(object):
     """
-    JsonSchemaEncoder provides the ability to encode and decode content according
-    to the given JSON schema. It would automatically register, get, and cache the schema.
+    JsonSchemaEncoder provides the ability to encode and decode content according to the given JSON schema.
+     It will check the registry for the pre-registered schema and cache the schema locally.
 
-    :keyword client: Required. The schema registry client which is used to register schema
-     and retrieve schema from the service.
+    :keyword client: Required. The schema registry client which is used to retrieve schema from the service.
     :paramtype client: ~azure.schemaregistry.SchemaRegistryClient
     :keyword validate: Required. Used for validation in encode and decode.
      If a JsonSchemaDraftIdentifier value or equivalent string is provided, the corresponding validator from
@@ -164,14 +163,16 @@ class JsonSchemaEncoder(object):
         :keyword schema_id: None.
         :paramtype schema_id: None
         :keyword message_type: The message class to construct the message. Must be a subtype of the
-         azure.schemaregistry.encoder.MessageType protocol.
+         azure.schemaregistry.MessageType protocol.
         :paramtype message_type: type[MessageType]
         :keyword request_options: The keyword arguments for http requests to be passed to the client.
         :paramtype request_options: dict[str, any] or None
         :returns: The MessageType object with encoded content and content type.
         :rtype: MessageType
-        :raises ~azure.schemaregistry.encoder.InvalidContentError:
-            Indicates an issue with encoding content or validating it with the schema.
+        :raises: ~azure.schemaregistry.encoder.InvalidContentError if there is an issue with encoding content
+         or validating it against the schema.
+        :raises: ~azure.core.exceptions.HttpResponseError if there is an issue with the request to get the schema
+         from the registry.
         """
 
     @overload
@@ -200,14 +201,16 @@ class JsonSchemaEncoder(object):
          for validation. `schema` must not be passed.
         :paramtype schema_id: str
         :keyword message_type: The message class to construct the message. Must be a subtype of the
-         azure.schemaregistry.encoder.MessageType protocol.
+         azure.schemaregistry.MessageType protocol.
         :paramtype message_type: type[MessageType]
         :keyword request_options: The keyword arguments for http requests to be passed to the client.
         :paramtype request_options: dict[str, any] or None
         :returns: The MessageType object with encoded content and content type.
         :rtype: MessageType
-        :raises ~azure.schemaregistry.encoder.InvalidContentError:
-            Indicates an issue with encoding content or validating it with the schema.
+        :raises: ~azure.schemaregistry.encoder.InvalidContentError if there is an issue with encoding content
+         or validating it against the schema.
+        :raises: ~azure.core.exceptions.HttpResponseError if there is an issue with the request to get the schema
+         from the registry.
         """
 
     @overload
@@ -237,8 +240,10 @@ class JsonSchemaEncoder(object):
         :paramtype request_options: dict[str, any] or None
         :returns: TypedDict of encoded content and content type.
         :rtype: MessageContent
-        :raises ~azure.schemaregistry.encoder.InvalidContentError:
-            Indicates an issue with encoding content or validating it with the schema.
+        :raises: ~azure.schemaregistry.encoder.InvalidContentError if there is an issue with encoding content
+         or validating it against the schema.
+        :raises: ~azure.core.exceptions.HttpResponseError if there is an issue with the request to get the schema
+         from the registry.
         """
 
     @overload
@@ -269,8 +274,10 @@ class JsonSchemaEncoder(object):
         :paramtype request_options: dict[str, any] or None
         :returns: TypedDict of encoded content and content type.
         :rtype: MessageContent
-        :raises ~azure.schemaregistry.encoder.InvalidContentError:
-            Indicates an issue with encoding content or validating it with the schema.
+        :raises: ~azure.schemaregistry.encoder.InvalidContentError if there is an issue with encoding content
+         or validating it against the schema.
+        :raises: ~azure.core.exceptions.HttpResponseError if there is an issue with the request to get the schema
+         from the registry.
         """
 
     def encode(
@@ -299,16 +306,18 @@ class JsonSchemaEncoder(object):
         :keyword schema_id: The schema ID corresponding to the pre-registered schema to be used
          for validation. Exactly one of `schema` or `schema_id` must be passed.
         :paramtype schema_id: str or None
-        :keyword message_type: The message class to construct the message. Must be a subtype of the
-         azure.schemaregistry.encoder.MessageType protocol.
+        :keyword message_type: The message class to construct the message. If passed, must be a subtype of the
+         azure.schemaregistry.MessageType protocol.
         :paramtype message_type: type[MessageType] or None
         :keyword request_options: The keyword arguments for http requests to be passed to the client.
         :paramtype request_options: dict[str, any] or None
-        :returns: The encoded content and content type if `message_type` is not set, otherwise the
+        :returns: TypedDict of encoded content and content type if `message_type` is not set, otherwise the
          constructed message object.
         :rtype: MessageType or MessageContent
-        :raises ~azure.schemaregistry.encoder.InvalidContentError:
-            Indicates an issue with encoding content or validating it with the schema.
+        :raises: ~azure.schemaregistry.encoder.InvalidContentError if there is an issue with encoding content
+         or validating it against the schema.
+        :raises: ~azure.core.exceptions.HttpResponseError if there is an issue with the request to get the schema
+         from the registry.
         """
         request_options = request_options or {}
 
@@ -380,8 +389,10 @@ class JsonSchemaEncoder(object):
         :paramtype request_options: dict[str, any] or None
         :returns: The decoded content.
         :rtype: dict[str, any]
-        :raises ~azure.schemaregistry.encoder.jsonencoder.InvalidContentError:
-            Indicates an issue with decoding content or validating it with the schema.
+        :raises: ~azure.schemaregistry.encoder.jsonencoder.InvalidContentError if there is
+         an issue with decoding content or validating it with the schema.
+        :raises: ~azure.core.exceptions.HttpResponseError if there is an issue with the request to get the schema
+         from the registry.
         """
         schema_id, content = parse_message(message)
         cache_misses = (
