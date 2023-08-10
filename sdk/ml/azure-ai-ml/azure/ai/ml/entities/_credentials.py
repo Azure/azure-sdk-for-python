@@ -783,6 +783,7 @@ class AccessKeyConfiguration(RestTranslatableMixin, DictMixin):
             return NotImplemented
         return self.access_key_id == other.access_key_id and self.secret_access_key == other.secret_access_key
 
+
 @experimental
 class ApiKeyConfiguration(RestTranslatableMixin, DictMixin):
     """Api Key Credentials.
