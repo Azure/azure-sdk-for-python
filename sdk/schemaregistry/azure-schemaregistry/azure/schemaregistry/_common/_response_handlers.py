@@ -40,9 +40,7 @@ if TYPE_CHECKING:
     from azure.core.rest import HttpResponse, AsyncHttpResponse
 
 
-def _parse_schema_properties_dict(
-    response_headers: Mapping[str, Union[str, int]]
-) -> Dict[str, Union[str, int]]:
+def _parse_schema_properties_dict(response_headers: Mapping[str, Union[str, int]]) -> Dict[str, Union[str, int]]:
     return {
         "id": response_headers["Schema-Id"],
         "group_name": response_headers["Schema-Group-Name"],
@@ -82,8 +80,6 @@ def prepare_schema_result(  # pylint:disable=unused-argument
     response_headers: Mapping[str, Union[str, int]],
 ) -> Tuple[Union["HttpResponse", "AsyncHttpResponse"], Dict[str, Union[int, str]]]:
     properties_dict = _parse_schema_properties_dict(response_headers)
-    properties_dict["format"] = _get_format(
-        cast(str, response_headers.get("Content-Type"))
-    )
+    properties_dict["format"] = _get_format(cast(str, response_headers.get("Content-Type")))
     pipeline_response.http_response.raise_for_status()
     return pipeline_response.http_response, properties_dict

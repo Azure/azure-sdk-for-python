@@ -148,9 +148,7 @@ class SchemaRegistryClient(object):
         ...
 
     @overload
-    async def get_schema(
-        self, *, group_name: str, name: str, version: int, **kwargs: Any
-    ) -> Schema:
+    async def get_schema(self, *, group_name: str, name: str, version: int, **kwargs: Any) -> Schema:
         ...
 
     @distributed_trace_async
@@ -265,14 +263,14 @@ class SchemaRegistryClient(object):
         format = get_case_insensitive_format(format)
         http_request_kwargs = get_http_request_kwargs(kwargs)
         # ignoring return type because the generated client operations are not annotated w/ cls return type
-        schema_properties: Dict[str, Union[int, str]] = (
-            await self._generated_client.schema.query_id_by_content(  # type: ignore
-                group_name=group_name,
-                schema_name=name,
-                schema_content=cast(IO[Any], definition),
-                content_type=kwargs.pop("content_type", get_content_type(format)),
-                cls=partial(prepare_schema_properties_result, format),
-                **http_request_kwargs,
-            )
+        schema_properties: Dict[
+            str, Union[int, str]
+        ] = await self._generated_client.schema.query_id_by_content(  # type: ignore
+            group_name=group_name,
+            schema_name=name,
+            schema_content=cast(IO[Any], definition),
+            content_type=kwargs.pop("content_type", get_content_type(format)),
+            cls=partial(prepare_schema_properties_result, format),
+            **http_request_kwargs,
         )
         return SchemaProperties(**schema_properties)

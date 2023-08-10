@@ -47,7 +47,7 @@ from ._utils import (  # pylint: disable=import-error
     decode_content,
     get_loaded_schema,
     get_jsonschema_validator,
-    MessageType
+    MessageType,
 )
 
 if TYPE_CHECKING:
@@ -115,11 +115,7 @@ class JsonSchemaEncoder(object):
         :rtype: str
         """
         schema_id = self._schema_registry_client.get_schema_properties(
-            cast(str, self._schema_group),
-            schema_name,
-            schema_str,
-            SchemaFormat.JSON.value,
-            **kwargs
+            cast(str, self._schema_group), schema_name, schema_str, SchemaFormat.JSON.value, **kwargs
         ).id
         return schema_id
 
@@ -133,9 +129,7 @@ class JsonSchemaEncoder(object):
         :return: Schema content
         :rtype: str
         """
-        schema_str = self._schema_registry_client.get_schema(
-            schema_id, **kwargs
-        ).definition
+        schema_str = self._schema_registry_client.get_schema(schema_id, **kwargs).definition
         return schema_str
 
     @overload
@@ -323,17 +317,11 @@ class JsonSchemaEncoder(object):
 
         # If schema_id, get schema for validation. If schema, get schema_id for content type.
         if schema_id and not schema:
-            cache_misses = (
-                self._get_schema.cache_info().misses  # pylint: disable=no-value-for-parameter
-            )
+            cache_misses = self._get_schema.cache_info().misses  # pylint: disable=no-value-for-parameter
             schema_str = self._get_schema(schema_id, **request_options)
-            new_cache_misses = (
-                self._get_schema.cache_info().misses  # pylint: disable=no-value-for-parameter
-            )
+            new_cache_misses = self._get_schema.cache_info().misses  # pylint: disable=no-value-for-parameter
             if new_cache_misses > cache_misses:
-                cache_info = (
-                    self._get_schema.cache_info()  # pylint: disable=no-value-for-parameter
-                )
+                cache_info = self._get_schema.cache_info()  # pylint: disable=no-value-for-parameter
                 _LOGGER.info(
                     "New entry has been added to schema cache. Cache info: %s",
                     str(cache_info),
@@ -344,19 +332,11 @@ class JsonSchemaEncoder(object):
                 raise TypeError("'group_name' is required in constructor, if 'schema' is passed to encode.")
 
             schema_fullname, schema_str, schema_dict = get_loaded_schema(schema, content)
-            cache_misses = (
-                self._get_schema_id.cache_info().misses  # pylint: disable=no-value-for-parameter
-            )
-            schema_id = self._get_schema_id(
-                schema_fullname, schema_str, **request_options
-            )
-            new_cache_misses = (
-                self._get_schema_id.cache_info().misses  # pylint: disable=no-value-for-parameter
-            )
+            cache_misses = self._get_schema_id.cache_info().misses  # pylint: disable=no-value-for-parameter
+            schema_id = self._get_schema_id(schema_fullname, schema_str, **request_options)
+            new_cache_misses = self._get_schema_id.cache_info().misses  # pylint: disable=no-value-for-parameter
             if new_cache_misses > cache_misses:
-                cache_info = (
-                    self._get_schema_id.cache_info()  # pylint: disable=no-value-for-parameter
-                )
+                cache_info = self._get_schema_id.cache_info()  # pylint: disable=no-value-for-parameter
                 _LOGGER.info(
                     "New entry has been added to schema ID cache. Cache info: %s",
                     str(cache_info),
@@ -395,27 +375,17 @@ class JsonSchemaEncoder(object):
          from the registry.
         """
         schema_id, content = parse_message(message)
-        cache_misses = (
-            self._get_schema.cache_info().misses  # pylint: disable=no-value-for-parameter
-        )
+        cache_misses = self._get_schema.cache_info().misses  # pylint: disable=no-value-for-parameter
         request_options = request_options or {}
         schema_definition = self._get_schema(schema_id, **request_options)
-        new_cache_misses = (
-            self._get_schema.cache_info().misses  # pylint: disable=no-value-for-parameter
-        )
+        new_cache_misses = self._get_schema.cache_info().misses  # pylint: disable=no-value-for-parameter
         if new_cache_misses > cache_misses:
-            cache_info = (
-                self._get_schema.cache_info()  # pylint: disable=no-value-for-parameter
-            )
+            cache_info = self._get_schema.cache_info()  # pylint: disable=no-value-for-parameter
             _LOGGER.info(
                 "New entry has been added to schema cache. Cache info: %s",
                 str(cache_info),
             )
 
         return decode_content(
-            content=content,
-            schema_id=schema_id,
-            schema_definition=schema_definition,
-            validate=self._validate,
-            **kwargs
+            content=content, schema_id=schema_id, schema_definition=schema_definition, validate=self._validate, **kwargs
         )

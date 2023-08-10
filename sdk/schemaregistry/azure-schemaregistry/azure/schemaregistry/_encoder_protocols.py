@@ -21,6 +21,7 @@ class SchemaContentValidate(Protocol):
     :returns: None if valid.
     :raises: Exception if content is invalid against provided schema.
     """
+
     def __call__(self, schema: Mapping[str, Any], content: Mapping[str, Any]) -> None:
         """
         Validates content against provided schema. If invalid, raises Exception.
@@ -49,9 +50,7 @@ class MessageType(Protocol):
     """Message Types that set and get content and content type values internally."""
 
     @classmethod
-    def from_message_content(
-        cls, content: bytes, content_type: str, **kwargs: Any
-    ) -> "MessageType":
+    def from_message_content(cls, content: bytes, content_type: str, **kwargs: Any) -> "MessageType":
         """Creates an object that is a subtype of MessageType, given content type and
          a content value to be set on the object.
 
@@ -201,7 +200,6 @@ class SchemaEncoder(Protocol):
         :returns: TypedDict of encoded content and content type.
         :rtype: MessageContent
         """
-
 
     def encode(
         self,

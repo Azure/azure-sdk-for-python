@@ -142,7 +142,6 @@ class SchemaEncoder(Protocol):
         :rtype: MessageContent
         """
 
-
     async def encode(
         self,
         content: Mapping[str, Any],

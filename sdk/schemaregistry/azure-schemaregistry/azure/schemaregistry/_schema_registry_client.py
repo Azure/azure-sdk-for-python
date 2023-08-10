@@ -70,9 +70,7 @@ class SchemaRegistryClient(object):
 
     """
 
-    def __init__(
-        self, fully_qualified_namespace: str, credential: TokenCredential, **kwargs: Any
-    ) -> None:
+    def __init__(self, fully_qualified_namespace: str, credential: TokenCredential, **kwargs: Any) -> None:
         api_version = kwargs.pop("api_version", DEFAULT_VERSION)
         self._generated_client = AzureSchemaRegistry(
             credential=credential,
@@ -146,9 +144,7 @@ class SchemaRegistryClient(object):
         ...
 
     @overload
-    def get_schema(
-        self, *, group_name: str, name: str, version: int, **kwargs: Any
-    ) -> Schema:
+    def get_schema(self, *, group_name: str, name: str, version: int, **kwargs: Any) -> Schema:
         ...
 
     @distributed_trace
@@ -263,14 +259,14 @@ class SchemaRegistryClient(object):
         format = get_case_insensitive_format(format)
         http_request_kwargs = get_http_request_kwargs(kwargs)
         # ignoring return type because the generated client operations are not annotated w/ cls return type
-        schema_properties: Dict[str, Union[int, str]] = (
-            self._generated_client.schema.query_id_by_content(  # type: ignore
-                group_name=group_name,
-                schema_name=name,
-                schema_content=cast(IO[Any], definition),
-                content_type=kwargs.pop("content_type", get_content_type(format)),
-                cls=partial(prepare_schema_properties_result, format),
-                **http_request_kwargs,
-            )
+        schema_properties: Dict[
+            str, Union[int, str]
+        ] = self._generated_client.schema.query_id_by_content(  # type: ignore
+            group_name=group_name,
+            schema_name=name,
+            schema_content=cast(IO[Any], definition),
+            content_type=kwargs.pop("content_type", get_content_type(format)),
+            cls=partial(prepare_schema_properties_result, format),
+            **http_request_kwargs,
         )
         return SchemaProperties(**schema_properties)

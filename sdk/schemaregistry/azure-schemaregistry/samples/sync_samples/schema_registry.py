@@ -60,20 +60,14 @@ JSON_SCHEMA = {
     "title": "Person",
     "type": "object",
     "properties": {
-        "firstName": {
-            "type": "string",
-            "description": "The person's first name."
-        },
-        "lastName": {
-            "type": "string",
-            "description": "The person's last name."
-        },
+        "firstName": {"type": "string", "description": "The person's first name."},
+        "lastName": {"type": "string", "description": "The person's last name."},
         "age": {
             "description": "Age in years which must be equal to or greater than zero.",
             "type": "integer",
-            "minimum": 0
-        }
-    }
+            "minimum": 0,
+        },
+    },
 }
 NEW_JSON_SCHEMA = {
     "$id": "https://example.com/person.schema.json",
@@ -81,20 +75,14 @@ NEW_JSON_SCHEMA = {
     "title": "Person2",
     "type": "object",
     "properties": {
-        "firstName": {
-            "type": "string",
-            "description": "The person's first name."
-        },
-        "lastName": {
-            "type": "string",
-            "description": "The person's last name."
-        },
+        "firstName": {"type": "string", "description": "The person's first name."},
+        "lastName": {"type": "string", "description": "The person's last name."},
         "age": {
             "description": "Age in years which must be equal to or greater than zero.",
             "type": "integer",
-            "minimum": 0
-        }
-    }
+            "minimum": 0,
+        },
+    },
 }
 
 DEFINITION = json.dumps(JSON_SCHEMA, separators=(",", ":"))
@@ -120,17 +108,13 @@ def get_schema_by_id(client, schema_id):
 def get_schema_by_version(client, group_name, name, version):
     print("Getting schema by version...")
     schema = client.get_schema(group_name=group_name, name=name, version=version)
-    print(
-        f"The schema string of schema id: {schema.properties.id} is {schema.definition}"
-    )
+    print(f"The schema string of schema id: {schema.properties.id} is {schema.definition}")
     print(f"Schema properties are {schema.properties}")
     return schema.definition
 
 
 def get_old_schema_by_version(client, group_name, name, new_definition):
-    updated_schema_properties = client.register_schema(
-        group_name, name, new_definition, FORMAT
-    )
+    updated_schema_properties = client.register_schema(group_name, name, new_definition, FORMAT)
     print(f"Registered new schema of version: {updated_schema_properties.version}")
     old_version = updated_schema_properties.version - 1
     schema = client.get_schema(group_name=group_name, name=name, version=old_version)
@@ -140,9 +124,7 @@ def get_old_schema_by_version(client, group_name, name, new_definition):
 
 def get_schema_id(client, group_name, name, definition, format):
     print("Getting schema id...")
-    schema_properties = client.get_schema_properties(
-        group_name, name, definition, format
-    )
+    schema_properties = client.get_schema_properties(group_name, name, definition, format)
     print(f"The schema id is: {schema_properties.id}")
     print(f"Schema properties are {schema_properties}")
     return schema_properties.id
@@ -154,16 +136,8 @@ if __name__ == "__main__":
         fully_qualified_namespace=SCHEMAREGISTRY_FQN, credential=token_credential
     )
     with schema_registry_client:
-        schema_properties = register_schema(
-            schema_registry_client, GROUP_NAME, NAME, DEFINITION, FORMAT
-        )
+        schema_properties = register_schema(schema_registry_client, GROUP_NAME, NAME, DEFINITION, FORMAT)
         schema_str = get_schema_by_id(schema_registry_client, schema_properties.id)
-        schema_str = get_schema_by_version(
-            schema_registry_client, GROUP_NAME, NAME, schema_properties.version
-        )
-        schema_str = get_old_schema_by_version(
-            schema_registry_client, GROUP_NAME, NAME, NEW_DEFINITION
-        )
-        schema_id = get_schema_id(
-            schema_registry_client, GROUP_NAME, NAME, DEFINITION, FORMAT
-        )
+        schema_str = get_schema_by_version(schema_registry_client, GROUP_NAME, NAME, schema_properties.version)
+        schema_str = get_old_schema_by_version(schema_registry_client, GROUP_NAME, NAME, NEW_DEFINITION)
+        schema_id = get_schema_id(schema_registry_client, GROUP_NAME, NAME, DEFINITION, FORMAT)
