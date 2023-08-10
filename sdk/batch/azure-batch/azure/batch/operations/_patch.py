@@ -334,8 +334,8 @@ def build_new_get_properties_from_batch_node(original_get):
         client_request_id: Optional[str] = None,
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
         **kwargs: Any
     ) -> HttpResponse:
         """Gets the properties of the specified Compute Node file.
@@ -364,7 +364,7 @@ def build_new_get_properties_from_batch_node(original_get):
 
         get_response = original_get(self=self, pool_id=pool_id, node_id=node_id, file_path=file_path, 
         time_out=time_out, client_request_id=client_request_id, return_client_request_id=return_client_request_id,
-        ocp_date=ocp_date, if__modified__since=if__modified__since, if__unmodified__since=if__unmodified__since, **kwargs)
+        ocp_date=ocp_date, if_modified_since=if_modified_since, if_unmodified_since=if_unmodified_since, **kwargs)
         return get_response[0].http_response
 
     new_get_properties_from_batch_node.metadata = {"url": "/pools/{poolId}/nodes/{nodeId}/files/{filePath}"}  # type: ignore
@@ -381,8 +381,8 @@ def build_new_get_properties_from_task(original_get):
         client_request_id: Optional[str] = None,
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
         **kwargs: Any
     ) -> HttpResponse:
         """Gets the properties of the specified Task file.
@@ -410,7 +410,7 @@ def build_new_get_properties_from_task(original_get):
 
         get_response = original_get(self=self, job_id=job_id, task_id=task_id, file_path=file_path, time_out=time_out,
         client_request_id=client_request_id, return_client_request_id=return_client_request_id, ocp_date=ocp_date, 
-        if__modified__since=if__modified__since, if__unmodified__since=if__unmodified__since, **kwargs)
+        if_modified_since=if_modified_since, if_unmodified_since=if_unmodified_since, **kwargs)
         return get_response[0].http_response
 
     new_get_properties_from_task.metadata = {"url": "/jobs/{jobId}/tasks/{taskId}/files/{filePath}"}  # type: ignore
@@ -429,8 +429,8 @@ def build_new_get_from_task(original_get):
         client_request_id: Optional[str] = None,
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
         ocp_range: Optional[str] = None,
         **kwargs: Any
     ) -> Iterable[bytes]:
@@ -456,16 +456,16 @@ def build_new_get_from_task(original_get):
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_modified_since: str
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
+        :paramtype if_unmodified_since: str
         :keyword ocp_range: The byte range to be retrieved. The default is to retrieve the entire file.
          The
          format is bytes=startRange-endRange. Default value is None.
@@ -482,7 +482,7 @@ def build_new_get_from_task(original_get):
 
         get_response = original_get(self=self, job_id=job_id, task_id=task_id, file_path=file_path, time_out=time_out,
         client_request_id=client_request_id, return_client_request_id=return_client_request_id, ocp_date=ocp_date, 
-        if__modified__since=if__modified__since, if__unmodified__since=if__unmodified__since, ocp_range=ocp_range, **kwargs)
+        if_modified_since=if_modified_since, if_unmodified_since=if_unmodified_since, ocp_range=ocp_range, **kwargs)
         return get_response
 
     new_get_from_task.metadata = {"url": "/jobs/{jobId}/tasks/{taskId}/files/{filePath}"}  # type: ignore
@@ -500,8 +500,8 @@ def build_new_get_from_batch_node(original_get):
         client_request_id: Optional[str] = None,
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
         ocp_range: Optional[str] = None,
         **kwargs: Any
     ) -> Iterable[bytes]:
@@ -527,16 +527,16 @@ def build_new_get_from_batch_node(original_get):
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_modified_since: str
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
+        :paramtype if_unmodified_since: str
         :keyword ocp_range: The byte range to be retrieved. The default is to retrieve the entire file.
          The
          format is bytes=startRange-endRange. Default value is None.
@@ -553,7 +553,7 @@ def build_new_get_from_batch_node(original_get):
 
         get_response = original_get(self=self, pool_id=pool_id, node_id=node_id, file_path=file_path, time_out=time_out,
         client_request_id=client_request_id, return_client_request_id=return_client_request_id, ocp_date=ocp_date, 
-        if__modified__since=if__modified__since, if__unmodified__since=if__unmodified__since, ocp_range=ocp_range, **kwargs)
+        if_modified_since=if_modified_since, if_unmodified_since=if_unmodified_since, ocp_range=ocp_range, **kwargs)
         return get_response
 
     new_get_from_batch_node.metadata = {"url": "/jobs/{jobId}/tasks/{taskId}/files/{filePath}"}  # type: ignore

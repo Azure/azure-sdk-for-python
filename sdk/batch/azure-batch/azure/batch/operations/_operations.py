@@ -298,7 +298,7 @@ def build_pool_delete_request(
     client_request_id: Optional[str] = None,
     return_client_request_id: Optional[bool] = None,
     ocp_date: Optional[str] = None,
-    if__match: Optional[str] = None,
+    if_match: Optional[str] = None,
     if_none_match: Optional[str] = None,
     if_modified_since: Optional[str] = None,
     if_unmodified_since: Optional[str] = None,
@@ -330,8 +330,8 @@ def build_pool_delete_request(
         )
     if ocp_date is not None:
         _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "str")
-    if if__match is not None:
-        _headers["if-match"] = _SERIALIZER.header("if__match", if__match, "str")
+    if if_match is not None:
+        _headers["if-match"] = _SERIALIZER.header("if_match", if_match, "str")
     if if_none_match is not None:
         _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
     if if_modified_since is not None:
@@ -349,7 +349,7 @@ def build_pool_exists_request(
     client_request_id: Optional[str] = None,
     return_client_request_id: Optional[bool] = None,
     ocp_date: Optional[str] = None,
-    if__match: Optional[str] = None,
+    if_match: Optional[str] = None,
     if_none_match: Optional[str] = None,
     if_modified_since: Optional[str] = None,
     if_unmodified_since: Optional[str] = None,
@@ -381,8 +381,8 @@ def build_pool_exists_request(
         )
     if ocp_date is not None:
         _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "str")
-    if if__match is not None:
-        _headers["if-match"] = _SERIALIZER.header("if__match", if__match, "str")
+    if if_match is not None:
+        _headers["if-match"] = _SERIALIZER.header("if_match", if_match, "str")
     if if_none_match is not None:
         _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
     if if_modified_since is not None:
@@ -400,7 +400,7 @@ def build_pool_get_request(
     client_request_id: Optional[str] = None,
     return_client_request_id: Optional[bool] = None,
     ocp_date: Optional[str] = None,
-    if__match: Optional[str] = None,
+    if_match: Optional[str] = None,
     if_none_match: Optional[str] = None,
     if_modified_since: Optional[str] = None,
     if_unmodified_since: Optional[str] = None,
@@ -440,8 +440,8 @@ def build_pool_get_request(
         )
     if ocp_date is not None:
         _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "str")
-    if if__match is not None:
-        _headers["if-match"] = _SERIALIZER.header("if__match", if__match, "str")
+    if if_match is not None:
+        _headers["if-match"] = _SERIALIZER.header("if_match", if_match, "str")
     if if_none_match is not None:
         _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
     if if_modified_since is not None:
@@ -460,7 +460,7 @@ def build_pool_patch_request(
     client_request_id: Optional[str] = None,
     return_client_request_id: Optional[bool] = None,
     ocp_date: Optional[str] = None,
-    if__match: Optional[str] = None,
+    if_match: Optional[str] = None,
     if_none_match: Optional[str] = None,
     if_modified_since: Optional[str] = None,
     if_unmodified_since: Optional[str] = None,
@@ -493,8 +493,8 @@ def build_pool_patch_request(
         )
     if ocp_date is not None:
         _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "str")
-    if if__match is not None:
-        _headers["if-match"] = _SERIALIZER.header("if__match", if__match, "str")
+    if if_match is not None:
+        _headers["if-match"] = _SERIALIZER.header("if_match", if_match, "str")
     if if_none_match is not None:
         _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
     if if_modified_since is not None:
@@ -552,7 +552,7 @@ def build_pool_enable_auto_scale_request(
     client_request_id: Optional[str] = None,
     return_client_request_id: Optional[bool] = None,
     ocp_date: Optional[str] = None,
-    if__match: Optional[str] = None,
+    if_match: Optional[str] = None,
     if_none_match: Optional[str] = None,
     if_modified_since: Optional[str] = None,
     if_unmodified_since: Optional[str] = None,
@@ -585,8 +585,8 @@ def build_pool_enable_auto_scale_request(
         )
     if ocp_date is not None:
         _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "str")
-    if if__match is not None:
-        _headers["if-match"] = _SERIALIZER.header("if__match", if__match, "str")
+    if if_match is not None:
+        _headers["if-match"] = _SERIALIZER.header("if_match", if_match, "str")
     if if_none_match is not None:
         _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
     if if_modified_since is not None:
@@ -649,7 +649,7 @@ def build_pool_resize_request(
     client_request_id: Optional[str] = None,
     return_client_request_id: Optional[bool] = None,
     ocp_date: Optional[str] = None,
-    if__match: Optional[str] = None,
+    if_match: Optional[str] = None,
     if_none_match: Optional[str] = None,
     if_modified_since: Optional[str] = None,
     if_unmodified_since: Optional[str] = None,
@@ -682,8 +682,8 @@ def build_pool_resize_request(
         )
     if ocp_date is not None:
         _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "str")
-    if if__match is not None:
-        _headers["if-match"] = _SERIALIZER.header("if__match", if__match, "str")
+    if if_match is not None:
+        _headers["if-match"] = _SERIALIZER.header("if_match", if_match, "str")
     if if_none_match is not None:
         _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
     if if_modified_since is not None:
@@ -702,7 +702,7 @@ def build_pool_stop_resize_request(
     client_request_id: Optional[str] = None,
     return_client_request_id: Optional[bool] = None,
     ocp_date: Optional[str] = None,
-    if__match: Optional[str] = None,
+    if_match: Optional[str] = None,
     if_none_match: Optional[str] = None,
     if_modified_since: Optional[str] = None,
     if_unmodified_since: Optional[str] = None,
@@ -734,8 +734,8 @@ def build_pool_stop_resize_request(
         )
     if ocp_date is not None:
         _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "str")
-    if if__match is not None:
-        _headers["if-match"] = _SERIALIZER.header("if__match", if__match, "str")
+    if if_match is not None:
+        _headers["if-match"] = _SERIALIZER.header("if_match", if_match, "str")
     if if_none_match is not None:
         _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
     if if_modified_since is not None:
@@ -794,7 +794,7 @@ def build_pool_remove_nodes_request(
     client_request_id: Optional[str] = None,
     return_client_request_id: Optional[bool] = None,
     ocp_date: Optional[str] = None,
-    if__match: Optional[str] = None,
+    if_match: Optional[str] = None,
     if_none_match: Optional[str] = None,
     if_modified_since: Optional[str] = None,
     if_unmodified_since: Optional[str] = None,
@@ -827,8 +827,8 @@ def build_pool_remove_nodes_request(
         )
     if ocp_date is not None:
         _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "str")
-    if if__match is not None:
-        _headers["if-match"] = _SERIALIZER.header("if__match", if__match, "str")
+    if if_match is not None:
+        _headers["if-match"] = _SERIALIZER.header("if_match", if_match, "str")
     if if_none_match is not None:
         _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
     if if_modified_since is not None:
@@ -967,7 +967,7 @@ def build_job_delete_request(
     client_request_id: Optional[str] = None,
     return_client_request_id: Optional[bool] = None,
     ocp_date: Optional[str] = None,
-    if__match: Optional[str] = None,
+    if_match: Optional[str] = None,
     if_none_match: Optional[str] = None,
     if_modified_since: Optional[str] = None,
     if_unmodified_since: Optional[str] = None,
@@ -999,8 +999,8 @@ def build_job_delete_request(
         )
     if ocp_date is not None:
         _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "str")
-    if if__match is not None:
-        _headers["if-match"] = _SERIALIZER.header("if__match", if__match, "str")
+    if if_match is not None:
+        _headers["if-match"] = _SERIALIZER.header("if_match", if_match, "str")
     if if_none_match is not None:
         _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
     if if_modified_since is not None:
@@ -1018,7 +1018,7 @@ def build_job_get_request(
     client_request_id: Optional[str] = None,
     return_client_request_id: Optional[bool] = None,
     ocp_date: Optional[str] = None,
-    if__match: Optional[str] = None,
+    if_match: Optional[str] = None,
     if_none_match: Optional[str] = None,
     if_modified_since: Optional[str] = None,
     if_unmodified_since: Optional[str] = None,
@@ -1058,8 +1058,8 @@ def build_job_get_request(
         )
     if ocp_date is not None:
         _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "str")
-    if if__match is not None:
-        _headers["if-match"] = _SERIALIZER.header("if__match", if__match, "str")
+    if if_match is not None:
+        _headers["if-match"] = _SERIALIZER.header("if_match", if_match, "str")
     if if_none_match is not None:
         _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
     if if_modified_since is not None:
@@ -1078,7 +1078,7 @@ def build_job_patch_request(
     client_request_id: Optional[str] = None,
     return_client_request_id: Optional[bool] = None,
     ocp_date: Optional[str] = None,
-    if__match: Optional[str] = None,
+    if_match: Optional[str] = None,
     if_none_match: Optional[str] = None,
     if_modified_since: Optional[str] = None,
     if_unmodified_since: Optional[str] = None,
@@ -1111,8 +1111,8 @@ def build_job_patch_request(
         )
     if ocp_date is not None:
         _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "str")
-    if if__match is not None:
-        _headers["if-match"] = _SERIALIZER.header("if__match", if__match, "str")
+    if if_match is not None:
+        _headers["if-match"] = _SERIALIZER.header("if_match", if_match, "str")
     if if_none_match is not None:
         _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
     if if_modified_since is not None:
@@ -1131,7 +1131,7 @@ def build_job_update_request(
     client_request_id: Optional[str] = None,
     return_client_request_id: Optional[bool] = None,
     ocp_date: Optional[str] = None,
-    if__match: Optional[str] = None,
+    if_match: Optional[str] = None,
     if_none_match: Optional[str] = None,
     if_modified_since: Optional[str] = None,
     if_unmodified_since: Optional[str] = None,
@@ -1164,8 +1164,8 @@ def build_job_update_request(
         )
     if ocp_date is not None:
         _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "str")
-    if if__match is not None:
-        _headers["if-match"] = _SERIALIZER.header("if__match", if__match, "str")
+    if if_match is not None:
+        _headers["if-match"] = _SERIALIZER.header("if_match", if_match, "str")
     if if_none_match is not None:
         _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
     if if_modified_since is not None:
@@ -1184,7 +1184,7 @@ def build_job_disable_request(
     client_request_id: Optional[str] = None,
     return_client_request_id: Optional[bool] = None,
     ocp_date: Optional[str] = None,
-    if__match: Optional[str] = None,
+    if_match: Optional[str] = None,
     if_none_match: Optional[str] = None,
     if_modified_since: Optional[str] = None,
     if_unmodified_since: Optional[str] = None,
@@ -1217,8 +1217,8 @@ def build_job_disable_request(
         )
     if ocp_date is not None:
         _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "str")
-    if if__match is not None:
-        _headers["if-match"] = _SERIALIZER.header("if__match", if__match, "str")
+    if if_match is not None:
+        _headers["if-match"] = _SERIALIZER.header("if_match", if_match, "str")
     if if_none_match is not None:
         _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
     if if_modified_since is not None:
@@ -1237,7 +1237,7 @@ def build_job_enable_request(
     client_request_id: Optional[str] = None,
     return_client_request_id: Optional[bool] = None,
     ocp_date: Optional[str] = None,
-    if__match: Optional[str] = None,
+    if_match: Optional[str] = None,
     if_none_match: Optional[str] = None,
     if_modified_since: Optional[str] = None,
     if_unmodified_since: Optional[str] = None,
@@ -1269,8 +1269,8 @@ def build_job_enable_request(
         )
     if ocp_date is not None:
         _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "str")
-    if if__match is not None:
-        _headers["if-match"] = _SERIALIZER.header("if__match", if__match, "str")
+    if if_match is not None:
+        _headers["if-match"] = _SERIALIZER.header("if_match", if_match, "str")
     if if_none_match is not None:
         _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
     if if_modified_since is not None:
@@ -1288,7 +1288,7 @@ def build_job_terminate_request(
     client_request_id: Optional[str] = None,
     return_client_request_id: Optional[bool] = None,
     ocp_date: Optional[str] = None,
-    if__match: Optional[str] = None,
+    if_match: Optional[str] = None,
     if_none_match: Optional[str] = None,
     if_modified_since: Optional[str] = None,
     if_unmodified_since: Optional[str] = None,
@@ -1321,8 +1321,8 @@ def build_job_terminate_request(
         )
     if ocp_date is not None:
         _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "str")
-    if if__match is not None:
-        _headers["if-match"] = _SERIALIZER.header("if__match", if__match, "str")
+    if if_match is not None:
+        _headers["if-match"] = _SERIALIZER.header("if_match", if_match, "str")
     if if_none_match is not None:
         _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
     if if_modified_since is not None:
@@ -2187,7 +2187,7 @@ def build_job_schedule_exists_request(
     client_request_id: Optional[str] = None,
     return_client_request_id: Optional[bool] = None,
     ocp_date: Optional[str] = None,
-    if__match: Optional[str] = None,
+    if_match: Optional[str] = None,
     if_none_match: Optional[str] = None,
     if_modified_since: Optional[str] = None,
     if_unmodified_since: Optional[str] = None,
@@ -2219,8 +2219,8 @@ def build_job_schedule_exists_request(
         )
     if ocp_date is not None:
         _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "str")
-    if if__match is not None:
-        _headers["if-match"] = _SERIALIZER.header("if__match", if__match, "str")
+    if if_match is not None:
+        _headers["if-match"] = _SERIALIZER.header("if_match", if_match, "str")
     if if_none_match is not None:
         _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
     if if_modified_since is not None:
@@ -2238,7 +2238,7 @@ def build_job_schedule_delete_request(
     client_request_id: Optional[str] = None,
     return_client_request_id: Optional[bool] = None,
     ocp_date: Optional[str] = None,
-    if__match: Optional[str] = None,
+    if_match: Optional[str] = None,
     if_none_match: Optional[str] = None,
     if_modified_since: Optional[str] = None,
     if_unmodified_since: Optional[str] = None,
@@ -2270,8 +2270,8 @@ def build_job_schedule_delete_request(
         )
     if ocp_date is not None:
         _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "str")
-    if if__match is not None:
-        _headers["if-match"] = _SERIALIZER.header("if__match", if__match, "str")
+    if if_match is not None:
+        _headers["if-match"] = _SERIALIZER.header("if_match", if_match, "str")
     if if_none_match is not None:
         _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
     if if_modified_since is not None:
@@ -2289,7 +2289,7 @@ def build_job_schedule_get_request(
     client_request_id: Optional[str] = None,
     return_client_request_id: Optional[bool] = None,
     ocp_date: Optional[str] = None,
-    if__match: Optional[str] = None,
+    if_match: Optional[str] = None,
     if_none_match: Optional[str] = None,
     if_modified_since: Optional[str] = None,
     if_unmodified_since: Optional[str] = None,
@@ -2329,8 +2329,8 @@ def build_job_schedule_get_request(
         )
     if ocp_date is not None:
         _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "str")
-    if if__match is not None:
-        _headers["if-match"] = _SERIALIZER.header("if__match", if__match, "str")
+    if if_match is not None:
+        _headers["if-match"] = _SERIALIZER.header("if_match", if_match, "str")
     if if_none_match is not None:
         _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
     if if_modified_since is not None:
@@ -2349,7 +2349,7 @@ def build_job_schedule_patch_request(
     client_request_id: Optional[str] = None,
     return_client_request_id: Optional[bool] = None,
     ocp_date: Optional[str] = None,
-    if__match: Optional[str] = None,
+    if_match: Optional[str] = None,
     if_none_match: Optional[str] = None,
     if_modified_since: Optional[str] = None,
     if_unmodified_since: Optional[str] = None,
@@ -2382,8 +2382,8 @@ def build_job_schedule_patch_request(
         )
     if ocp_date is not None:
         _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "str")
-    if if__match is not None:
-        _headers["if-match"] = _SERIALIZER.header("if__match", if__match, "str")
+    if if_match is not None:
+        _headers["if-match"] = _SERIALIZER.header("if_match", if_match, "str")
     if if_none_match is not None:
         _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
     if if_modified_since is not None:
@@ -2402,7 +2402,7 @@ def build_job_schedule_update_request(
     client_request_id: Optional[str] = None,
     return_client_request_id: Optional[bool] = None,
     ocp_date: Optional[str] = None,
-    if__match: Optional[str] = None,
+    if_match: Optional[str] = None,
     if_none_match: Optional[str] = None,
     if_modified_since: Optional[str] = None,
     if_unmodified_since: Optional[str] = None,
@@ -2435,8 +2435,8 @@ def build_job_schedule_update_request(
         )
     if ocp_date is not None:
         _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "str")
-    if if__match is not None:
-        _headers["if-match"] = _SERIALIZER.header("if__match", if__match, "str")
+    if if_match is not None:
+        _headers["if-match"] = _SERIALIZER.header("if_match", if_match, "str")
     if if_none_match is not None:
         _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
     if if_modified_since is not None:
@@ -2455,7 +2455,7 @@ def build_job_schedule_disable_request(
     client_request_id: Optional[str] = None,
     return_client_request_id: Optional[bool] = None,
     ocp_date: Optional[str] = None,
-    if__match: Optional[str] = None,
+    if_match: Optional[str] = None,
     if_none_match: Optional[str] = None,
     if_modified_since: Optional[str] = None,
     if_unmodified_since: Optional[str] = None,
@@ -2487,8 +2487,8 @@ def build_job_schedule_disable_request(
         )
     if ocp_date is not None:
         _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "str")
-    if if__match is not None:
-        _headers["if-match"] = _SERIALIZER.header("if__match", if__match, "str")
+    if if_match is not None:
+        _headers["if-match"] = _SERIALIZER.header("if_match", if_match, "str")
     if if_none_match is not None:
         _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
     if if_modified_since is not None:
@@ -2506,7 +2506,7 @@ def build_job_schedule_enable_request(
     client_request_id: Optional[str] = None,
     return_client_request_id: Optional[bool] = None,
     ocp_date: Optional[str] = None,
-    if__match: Optional[str] = None,
+    if_match: Optional[str] = None,
     if_none_match: Optional[str] = None,
     if_modified_since: Optional[str] = None,
     if_unmodified_since: Optional[str] = None,
@@ -2538,8 +2538,8 @@ def build_job_schedule_enable_request(
         )
     if ocp_date is not None:
         _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "str")
-    if if__match is not None:
-        _headers["if-match"] = _SERIALIZER.header("if__match", if__match, "str")
+    if if_match is not None:
+        _headers["if-match"] = _SERIALIZER.header("if_match", if_match, "str")
     if if_none_match is not None:
         _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
     if if_modified_since is not None:
@@ -2557,7 +2557,7 @@ def build_job_schedule_terminate_request(
     client_request_id: Optional[str] = None,
     return_client_request_id: Optional[bool] = None,
     ocp_date: Optional[str] = None,
-    if__match: Optional[str] = None,
+    if_match: Optional[str] = None,
     if_none_match: Optional[str] = None,
     if_modified_since: Optional[str] = None,
     if_unmodified_since: Optional[str] = None,
@@ -2589,8 +2589,8 @@ def build_job_schedule_terminate_request(
         )
     if ocp_date is not None:
         _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "str")
-    if if__match is not None:
-        _headers["if-match"] = _SERIALIZER.header("if__match", if__match, "str")
+    if if_match is not None:
+        _headers["if-match"] = _SERIALIZER.header("if_match", if_match, "str")
     if if_none_match is not None:
         _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
     if if_modified_since is not None:
@@ -2831,7 +2831,7 @@ def build_task_delete_request(
     client_request_id: Optional[str] = None,
     return_client_request_id: Optional[bool] = None,
     ocp_date: Optional[str] = None,
-    if__match: Optional[str] = None,
+    if_match: Optional[str] = None,
     if_none_match: Optional[str] = None,
     if_modified_since: Optional[str] = None,
     if_unmodified_since: Optional[str] = None,
@@ -2864,8 +2864,8 @@ def build_task_delete_request(
         )
     if ocp_date is not None:
         _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "str")
-    if if__match is not None:
-        _headers["if-match"] = _SERIALIZER.header("if__match", if__match, "str")
+    if if_match is not None:
+        _headers["if-match"] = _SERIALIZER.header("if_match", if_match, "str")
     if if_none_match is not None:
         _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
     if if_modified_since is not None:
@@ -2884,7 +2884,7 @@ def build_task_get_request(
     client_request_id: Optional[str] = None,
     return_client_request_id: Optional[bool] = None,
     ocp_date: Optional[str] = None,
-    if__match: Optional[str] = None,
+    if_match: Optional[str] = None,
     if_none_match: Optional[str] = None,
     if_modified_since: Optional[str] = None,
     if_unmodified_since: Optional[str] = None,
@@ -2925,8 +2925,8 @@ def build_task_get_request(
         )
     if ocp_date is not None:
         _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "str")
-    if if__match is not None:
-        _headers["if-match"] = _SERIALIZER.header("if__match", if__match, "str")
+    if if_match is not None:
+        _headers["if-match"] = _SERIALIZER.header("if_match", if_match, "str")
     if if_none_match is not None:
         _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
     if if_modified_since is not None:
@@ -2946,7 +2946,7 @@ def build_task_update_request(
     client_request_id: Optional[str] = None,
     return_client_request_id: Optional[bool] = None,
     ocp_date: Optional[str] = None,
-    if__match: Optional[str] = None,
+    if_match: Optional[str] = None,
     if_none_match: Optional[str] = None,
     if_modified_since: Optional[str] = None,
     if_unmodified_since: Optional[str] = None,
@@ -2980,8 +2980,8 @@ def build_task_update_request(
         )
     if ocp_date is not None:
         _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "str")
-    if if__match is not None:
-        _headers["if-match"] = _SERIALIZER.header("if__match", if__match, "str")
+    if if_match is not None:
+        _headers["if-match"] = _SERIALIZER.header("if_match", if_match, "str")
     if if_none_match is not None:
         _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
     if if_modified_since is not None:
@@ -3048,7 +3048,7 @@ def build_task_terminate_request(
     client_request_id: Optional[str] = None,
     return_client_request_id: Optional[bool] = None,
     ocp_date: Optional[str] = None,
-    if__match: Optional[str] = None,
+    if_match: Optional[str] = None,
     if_none_match: Optional[str] = None,
     if_modified_since: Optional[str] = None,
     if_unmodified_since: Optional[str] = None,
@@ -3081,8 +3081,8 @@ def build_task_terminate_request(
         )
     if ocp_date is not None:
         _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "str")
-    if if__match is not None:
-        _headers["if-match"] = _SERIALIZER.header("if__match", if__match, "str")
+    if if_match is not None:
+        _headers["if-match"] = _SERIALIZER.header("if_match", if_match, "str")
     if if_none_match is not None:
         _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
     if if_modified_since is not None:
@@ -3101,7 +3101,7 @@ def build_task_reactivate_request(
     client_request_id: Optional[str] = None,
     return_client_request_id: Optional[bool] = None,
     ocp_date: Optional[str] = None,
-    if__match: Optional[str] = None,
+    if_match: Optional[str] = None,
     if_none_match: Optional[str] = None,
     if_modified_since: Optional[str] = None,
     if_unmodified_since: Optional[str] = None,
@@ -3134,8 +3134,8 @@ def build_task_reactivate_request(
         )
     if ocp_date is not None:
         _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "str")
-    if if__match is not None:
-        _headers["if-match"] = _SERIALIZER.header("if__match", if__match, "str")
+    if if_match is not None:
+        _headers["if-match"] = _SERIALIZER.header("if_match", if_match, "str")
     if if_none_match is not None:
         _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
     if if_modified_since is not None:
@@ -4463,7 +4463,7 @@ class PoolOperations:
         client_request_id: Optional[str] = None,
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
+        if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
         if_modified_since: Optional[str] = None,
         if_unmodified_since: Optional[str] = None,
@@ -4500,11 +4500,11 @@ class PoolOperations:
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
+        :keyword if_match: An ETag value associated with the version of the resource known to the
          client.
          The operation will be performed only if the resource's current ETag on the
          service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
+        :paramtype if_match: str
         :keyword if_none_match: An ETag value associated with the version of the resource known to the
          client.
          The operation will be performed only if the resource's current ETag on the
@@ -4545,7 +4545,7 @@ class PoolOperations:
             client_request_id=client_request_id,
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
-            if__match=if__match,
+            if_match=if_match,
             if_none_match=if_none_match,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
@@ -4583,7 +4583,7 @@ class PoolOperations:
         client_request_id: Optional[str] = None,
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
+        if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
         if_modified_since: Optional[str] = None,
         if_unmodified_since: Optional[str] = None,
@@ -4607,11 +4607,11 @@ class PoolOperations:
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
+        :keyword if_match: An ETag value associated with the version of the resource known to the
          client.
          The operation will be performed only if the resource's current ETag on the
          service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
+        :paramtype if_match: str
         :keyword if_none_match: An ETag value associated with the version of the resource known to the
          client.
          The operation will be performed only if the resource's current ETag on the
@@ -4652,7 +4652,7 @@ class PoolOperations:
             client_request_id=client_request_id,
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
-            if__match=if__match,
+            if_match=if_match,
             if_none_match=if_none_match,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
@@ -4694,7 +4694,7 @@ class PoolOperations:
         client_request_id: Optional[str] = None,
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
+        if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
         if_modified_since: Optional[str] = None,
         if_unmodified_since: Optional[str] = None,
@@ -4720,11 +4720,11 @@ class PoolOperations:
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
+        :keyword if_match: An ETag value associated with the version of the resource known to the
          client.
          The operation will be performed only if the resource's current ETag on the
          service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
+        :paramtype if_match: str
         :keyword if_none_match: An ETag value associated with the version of the resource known to the
          client.
          The operation will be performed only if the resource's current ETag on the
@@ -4769,7 +4769,7 @@ class PoolOperations:
             client_request_id=client_request_id,
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
-            if__match=if__match,
+            if_match=if_match,
             if_none_match=if_none_match,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
@@ -4819,7 +4819,7 @@ class PoolOperations:
         client_request_id: Optional[str] = None,
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
+        if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
         if_modified_since: Optional[str] = None,
         if_unmodified_since: Optional[str] = None,
@@ -4849,11 +4849,11 @@ class PoolOperations:
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
+        :keyword if_match: An ETag value associated with the version of the resource known to the
          client.
          The operation will be performed only if the resource's current ETag on the
          service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
+        :paramtype if_match: str
         :keyword if_none_match: An ETag value associated with the version of the resource known to the
          client.
          The operation will be performed only if the resource's current ETag on the
@@ -4902,7 +4902,7 @@ class PoolOperations:
             client_request_id=client_request_id,
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
-            if__match=if__match,
+            if_match=if_match,
             if_none_match=if_none_match,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
@@ -5030,7 +5030,7 @@ class PoolOperations:
         client_request_id: Optional[str] = None,
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
+        if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
         if_modified_since: Optional[str] = None,
         if_unmodified_since: Optional[str] = None,
@@ -5063,11 +5063,11 @@ class PoolOperations:
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
+        :keyword if_match: An ETag value associated with the version of the resource known to the
          client.
          The operation will be performed only if the resource's current ETag on the
          service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
+        :paramtype if_match: str
         :keyword if_none_match: An ETag value associated with the version of the resource known to the
          client.
          The operation will be performed only if the resource's current ETag on the
@@ -5116,7 +5116,7 @@ class PoolOperations:
             client_request_id=client_request_id,
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
-            if__match=if__match,
+            if_match=if_match,
             if_none_match=if_none_match,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
@@ -5267,7 +5267,7 @@ class PoolOperations:
         client_request_id: Optional[str] = None,
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
+        if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
         if_modified_since: Optional[str] = None,
         if_unmodified_since: Optional[str] = None,
@@ -5301,11 +5301,11 @@ class PoolOperations:
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
+        :keyword if_match: An ETag value associated with the version of the resource known to the
          client.
          The operation will be performed only if the resource's current ETag on the
          service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
+        :paramtype if_match: str
         :keyword if_none_match: An ETag value associated with the version of the resource known to the
          client.
          The operation will be performed only if the resource's current ETag on the
@@ -5354,7 +5354,7 @@ class PoolOperations:
             client_request_id=client_request_id,
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
-            if__match=if__match,
+            if_match=if_match,
             if_none_match=if_none_match,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
@@ -5397,7 +5397,7 @@ class PoolOperations:
         client_request_id: Optional[str] = None,
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
+        if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
         if_modified_since: Optional[str] = None,
         if_unmodified_since: Optional[str] = None,
@@ -5429,11 +5429,11 @@ class PoolOperations:
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
+        :keyword if_match: An ETag value associated with the version of the resource known to the
          client.
          The operation will be performed only if the resource's current ETag on the
          service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
+        :paramtype if_match: str
         :keyword if_none_match: An ETag value associated with the version of the resource known to the
          client.
          The operation will be performed only if the resource's current ETag on the
@@ -5474,7 +5474,7 @@ class PoolOperations:
             client_request_id=client_request_id,
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
-            if__match=if__match,
+            if_match=if_match,
             if_none_match=if_none_match,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
@@ -5615,7 +5615,7 @@ class PoolOperations:
         client_request_id: Optional[str] = None,
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
+        if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
         if_modified_since: Optional[str] = None,
         if_unmodified_since: Optional[str] = None,
@@ -5645,11 +5645,11 @@ class PoolOperations:
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
+        :keyword if_match: An ETag value associated with the version of the resource known to the
          client.
          The operation will be performed only if the resource's current ETag on the
          service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
+        :paramtype if_match: str
         :keyword if_none_match: An ETag value associated with the version of the resource known to the
          client.
          The operation will be performed only if the resource's current ETag on the
@@ -5698,7 +5698,7 @@ class PoolOperations:
             client_request_id=client_request_id,
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
-            if__match=if__match,
+            if_match=if_match,
             if_none_match=if_none_match,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
@@ -6090,7 +6090,7 @@ class JobOperations:
         client_request_id: Optional[str] = None,
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
+        if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
         if_modified_since: Optional[str] = None,
         if_unmodified_since: Optional[str] = None,
@@ -6123,11 +6123,11 @@ class JobOperations:
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
+        :keyword if_match: An ETag value associated with the version of the resource known to the
          client.
          The operation will be performed only if the resource's current ETag on the
          service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
+        :paramtype if_match: str
         :keyword if_none_match: An ETag value associated with the version of the resource known to the
          client.
          The operation will be performed only if the resource's current ETag on the
@@ -6168,7 +6168,7 @@ class JobOperations:
             client_request_id=client_request_id,
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
-            if__match=if__match,
+            if_match=if_match,
             if_none_match=if_none_match,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
@@ -6206,7 +6206,7 @@ class JobOperations:
         client_request_id: Optional[str] = None,
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
+        if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
         if_modified_since: Optional[str] = None,
         if_unmodified_since: Optional[str] = None,
@@ -6234,11 +6234,11 @@ class JobOperations:
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
+        :keyword if_match: An ETag value associated with the version of the resource known to the
          client.
          The operation will be performed only if the resource's current ETag on the
          service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
+        :paramtype if_match: str
         :keyword if_none_match: An ETag value associated with the version of the resource known to the
          client.
          The operation will be performed only if the resource's current ETag on the
@@ -6283,7 +6283,7 @@ class JobOperations:
             client_request_id=client_request_id,
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
-            if__match=if__match,
+            if_match=if_match,
             if_none_match=if_none_match,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
@@ -6333,7 +6333,7 @@ class JobOperations:
         client_request_id: Optional[str] = None,
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
+        if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
         if_modified_since: Optional[str] = None,
         if_unmodified_since: Optional[str] = None,
@@ -6363,11 +6363,11 @@ class JobOperations:
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
+        :keyword if_match: An ETag value associated with the version of the resource known to the
          client.
          The operation will be performed only if the resource's current ETag on the
          service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
+        :paramtype if_match: str
         :keyword if_none_match: An ETag value associated with the version of the resource known to the
          client.
          The operation will be performed only if the resource's current ETag on the
@@ -6416,7 +6416,7 @@ class JobOperations:
             client_request_id=client_request_id,
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
-            if__match=if__match,
+            if_match=if_match,
             if_none_match=if_none_match,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
@@ -6460,7 +6460,7 @@ class JobOperations:
         client_request_id: Optional[str] = None,
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
+        if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
         if_modified_since: Optional[str] = None,
         if_unmodified_since: Optional[str] = None,
@@ -6490,11 +6490,11 @@ class JobOperations:
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
+        :keyword if_match: An ETag value associated with the version of the resource known to the
          client.
          The operation will be performed only if the resource's current ETag on the
          service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
+        :paramtype if_match: str
         :keyword if_none_match: An ETag value associated with the version of the resource known to the
          client.
          The operation will be performed only if the resource's current ETag on the
@@ -6543,7 +6543,7 @@ class JobOperations:
             client_request_id=client_request_id,
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
-            if__match=if__match,
+            if_match=if_match,
             if_none_match=if_none_match,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
@@ -6587,7 +6587,7 @@ class JobOperations:
         client_request_id: Optional[str] = None,
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
+        if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
         if_modified_since: Optional[str] = None,
         if_unmodified_since: Optional[str] = None,
@@ -6622,11 +6622,11 @@ class JobOperations:
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
+        :keyword if_match: An ETag value associated with the version of the resource known to the
          client.
          The operation will be performed only if the resource's current ETag on the
          service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
+        :paramtype if_match: str
         :keyword if_none_match: An ETag value associated with the version of the resource known to the
          client.
          The operation will be performed only if the resource's current ETag on the
@@ -6675,7 +6675,7 @@ class JobOperations:
             client_request_id=client_request_id,
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
-            if__match=if__match,
+            if_match=if_match,
             if_none_match=if_none_match,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
@@ -6718,7 +6718,7 @@ class JobOperations:
         client_request_id: Optional[str] = None,
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
+        if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
         if_modified_since: Optional[str] = None,
         if_unmodified_since: Optional[str] = None,
@@ -6749,11 +6749,11 @@ class JobOperations:
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
+        :keyword if_match: An ETag value associated with the version of the resource known to the
          client.
          The operation will be performed only if the resource's current ETag on the
          service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
+        :paramtype if_match: str
         :keyword if_none_match: An ETag value associated with the version of the resource known to the
          client.
          The operation will be performed only if the resource's current ETag on the
@@ -6794,7 +6794,7 @@ class JobOperations:
             client_request_id=client_request_id,
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
-            if__match=if__match,
+            if_match=if_match,
             if_none_match=if_none_match,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
@@ -6836,7 +6836,7 @@ class JobOperations:
         client_request_id: Optional[str] = None,
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
+        if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
         if_modified_since: Optional[str] = None,
         if_unmodified_since: Optional[str] = None,
@@ -6870,11 +6870,11 @@ class JobOperations:
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
+        :keyword if_match: An ETag value associated with the version of the resource known to the
          client.
          The operation will be performed only if the resource's current ETag on the
          service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
+        :paramtype if_match: str
         :keyword if_none_match: An ETag value associated with the version of the resource known to the
          client.
          The operation will be performed only if the resource's current ETag on the
@@ -6910,7 +6910,7 @@ class JobOperations:
         client_request_id: Optional[str] = None,
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
+        if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
         if_modified_since: Optional[str] = None,
         if_unmodified_since: Optional[str] = None,
@@ -6944,11 +6944,11 @@ class JobOperations:
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
+        :keyword if_match: An ETag value associated with the version of the resource known to the
          client.
          The operation will be performed only if the resource's current ETag on the
          service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
+        :paramtype if_match: str
         :keyword if_none_match: An ETag value associated with the version of the resource known to the
          client.
          The operation will be performed only if the resource's current ETag on the
@@ -6984,7 +6984,7 @@ class JobOperations:
         client_request_id: Optional[str] = None,
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
+        if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
         if_modified_since: Optional[str] = None,
         if_unmodified_since: Optional[str] = None,
@@ -7018,11 +7018,11 @@ class JobOperations:
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
+        :keyword if_match: An ETag value associated with the version of the resource known to the
          client.
          The operation will be performed only if the resource's current ETag on the
          service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
+        :paramtype if_match: str
         :keyword if_none_match: An ETag value associated with the version of the resource known to the
          client.
          The operation will be performed only if the resource's current ETag on the
@@ -7058,7 +7058,7 @@ class JobOperations:
         client_request_id: Optional[str] = None,
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
+        if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
         if_modified_since: Optional[str] = None,
         if_unmodified_since: Optional[str] = None,
@@ -7092,11 +7092,11 @@ class JobOperations:
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
+        :keyword if_match: An ETag value associated with the version of the resource known to the
          client.
          The operation will be performed only if the resource's current ETag on the
          service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
+        :paramtype if_match: str
         :keyword if_none_match: An ETag value associated with the version of the resource known to the
          client.
          The operation will be performed only if the resource's current ETag on the
@@ -7151,7 +7151,7 @@ class JobOperations:
             client_request_id=client_request_id,
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
-            if__match=if__match,
+            if_match=if_match,
             if_none_match=if_none_match,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
@@ -9223,7 +9223,7 @@ class JobScheduleOperations:
         client_request_id: Optional[str] = None,
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
+        if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
         if_modified_since: Optional[str] = None,
         if_unmodified_since: Optional[str] = None,
@@ -9249,11 +9249,11 @@ class JobScheduleOperations:
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
+        :keyword if_match: An ETag value associated with the version of the resource known to the
          client.
          The operation will be performed only if the resource's current ETag on the
          service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
+        :paramtype if_match: str
         :keyword if_none_match: An ETag value associated with the version of the resource known to the
          client.
          The operation will be performed only if the resource's current ETag on the
@@ -9294,7 +9294,7 @@ class JobScheduleOperations:
             client_request_id=client_request_id,
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
-            if__match=if__match,
+            if_match=if_match,
             if_none_match=if_none_match,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
@@ -9336,7 +9336,7 @@ class JobScheduleOperations:
         client_request_id: Optional[str] = None,
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
+        if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
         if_modified_since: Optional[str] = None,
         if_unmodified_since: Optional[str] = None,
@@ -9366,11 +9366,11 @@ class JobScheduleOperations:
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
+        :keyword if_match: An ETag value associated with the version of the resource known to the
          client.
          The operation will be performed only if the resource's current ETag on the
          service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
+        :paramtype if_match: str
         :keyword if_none_match: An ETag value associated with the version of the resource known to the
          client.
          The operation will be performed only if the resource's current ETag on the
@@ -9411,7 +9411,7 @@ class JobScheduleOperations:
             client_request_id=client_request_id,
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
-            if__match=if__match,
+            if_match=if_match,
             if_none_match=if_none_match,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
@@ -9449,7 +9449,7 @@ class JobScheduleOperations:
         client_request_id: Optional[str] = None,
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
+        if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
         if_modified_since: Optional[str] = None,
         if_unmodified_since: Optional[str] = None,
@@ -9475,11 +9475,11 @@ class JobScheduleOperations:
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
+        :keyword if_match: An ETag value associated with the version of the resource known to the
          client.
          The operation will be performed only if the resource's current ETag on the
          service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
+        :paramtype if_match: str
         :keyword if_none_match: An ETag value associated with the version of the resource known to the
          client.
          The operation will be performed only if the resource's current ETag on the
@@ -9524,7 +9524,7 @@ class JobScheduleOperations:
             client_request_id=client_request_id,
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
-            if__match=if__match,
+            if_match=if_match,
             if_none_match=if_none_match,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
@@ -9574,7 +9574,7 @@ class JobScheduleOperations:
         client_request_id: Optional[str] = None,
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
+        if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
         if_modified_since: Optional[str] = None,
         if_unmodified_since: Optional[str] = None,
@@ -9606,11 +9606,11 @@ class JobScheduleOperations:
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
+        :keyword if_match: An ETag value associated with the version of the resource known to the
          client.
          The operation will be performed only if the resource's current ETag on the
          service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
+        :paramtype if_match: str
         :keyword if_none_match: An ETag value associated with the version of the resource known to the
          client.
          The operation will be performed only if the resource's current ETag on the
@@ -9659,7 +9659,7 @@ class JobScheduleOperations:
             client_request_id=client_request_id,
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
-            if__match=if__match,
+            if_match=if_match,
             if_none_match=if_none_match,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
@@ -9703,7 +9703,7 @@ class JobScheduleOperations:
         client_request_id: Optional[str] = None,
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
+        if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
         if_modified_since: Optional[str] = None,
         if_unmodified_since: Optional[str] = None,
@@ -9735,11 +9735,11 @@ class JobScheduleOperations:
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
+        :keyword if_match: An ETag value associated with the version of the resource known to the
          client.
          The operation will be performed only if the resource's current ETag on the
          service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
+        :paramtype if_match: str
         :keyword if_none_match: An ETag value associated with the version of the resource known to the
          client.
          The operation will be performed only if the resource's current ETag on the
@@ -9788,7 +9788,7 @@ class JobScheduleOperations:
             client_request_id=client_request_id,
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
-            if__match=if__match,
+            if_match=if_match,
             if_none_match=if_none_match,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
@@ -9831,7 +9831,7 @@ class JobScheduleOperations:
         client_request_id: Optional[str] = None,
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
+        if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
         if_modified_since: Optional[str] = None,
         if_unmodified_since: Optional[str] = None,
@@ -9857,11 +9857,11 @@ class JobScheduleOperations:
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
+        :keyword if_match: An ETag value associated with the version of the resource known to the
          client.
          The operation will be performed only if the resource's current ETag on the
          service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
+        :paramtype if_match: str
         :keyword if_none_match: An ETag value associated with the version of the resource known to the
          client.
          The operation will be performed only if the resource's current ETag on the
@@ -9902,7 +9902,7 @@ class JobScheduleOperations:
             client_request_id=client_request_id,
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
-            if__match=if__match,
+            if_match=if_match,
             if_none_match=if_none_match,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
@@ -9943,7 +9943,7 @@ class JobScheduleOperations:
         client_request_id: Optional[str] = None,
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
+        if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
         if_modified_since: Optional[str] = None,
         if_unmodified_since: Optional[str] = None,
@@ -9969,11 +9969,11 @@ class JobScheduleOperations:
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
+        :keyword if_match: An ETag value associated with the version of the resource known to the
          client.
          The operation will be performed only if the resource's current ETag on the
          service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
+        :paramtype if_match: str
         :keyword if_none_match: An ETag value associated with the version of the resource known to the
          client.
          The operation will be performed only if the resource's current ETag on the
@@ -10014,7 +10014,7 @@ class JobScheduleOperations:
             client_request_id=client_request_id,
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
-            if__match=if__match,
+            if_match=if_match,
             if_none_match=if_none_match,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
@@ -10055,7 +10055,7 @@ class JobScheduleOperations:
         client_request_id: Optional[str] = None,
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
+        if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
         if_modified_since: Optional[str] = None,
         if_unmodified_since: Optional[str] = None,
@@ -10081,11 +10081,11 @@ class JobScheduleOperations:
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
+        :keyword if_match: An ETag value associated with the version of the resource known to the
          client.
          The operation will be performed only if the resource's current ETag on the
          service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
+        :paramtype if_match: str
         :keyword if_none_match: An ETag value associated with the version of the resource known to the
          client.
          The operation will be performed only if the resource's current ETag on the
@@ -10126,7 +10126,7 @@ class JobScheduleOperations:
             client_request_id=client_request_id,
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
-            if__match=if__match,
+            if_match=if_match,
             if_none_match=if_none_match,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
@@ -10738,7 +10738,7 @@ class TaskOperations:
         client_request_id: Optional[str] = None,
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
+        if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
         if_modified_since: Optional[str] = None,
         if_unmodified_since: Optional[str] = None,
@@ -10770,11 +10770,11 @@ class TaskOperations:
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
+        :keyword if_match: An ETag value associated with the version of the resource known to the
          client.
          The operation will be performed only if the resource's current ETag on the
          service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
+        :paramtype if_match: str
         :keyword if_none_match: An ETag value associated with the version of the resource known to the
          client.
          The operation will be performed only if the resource's current ETag on the
@@ -10816,7 +10816,7 @@ class TaskOperations:
             client_request_id=client_request_id,
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
-            if__match=if__match,
+            if_match=if_match,
             if_none_match=if_none_match,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
@@ -10855,7 +10855,7 @@ class TaskOperations:
         client_request_id: Optional[str] = None,
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
+        if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
         if_modified_since: Optional[str] = None,
         if_unmodified_since: Optional[str] = None,
@@ -10887,11 +10887,11 @@ class TaskOperations:
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
+        :keyword if_match: An ETag value associated with the version of the resource known to the
          client.
          The operation will be performed only if the resource's current ETag on the
          service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
+        :paramtype if_match: str
         :keyword if_none_match: An ETag value associated with the version of the resource known to the
          client.
          The operation will be performed only if the resource's current ETag on the
@@ -10937,7 +10937,7 @@ class TaskOperations:
             client_request_id=client_request_id,
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
-            if__match=if__match,
+            if_match=if_match,
             if_none_match=if_none_match,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
@@ -10989,7 +10989,7 @@ class TaskOperations:
         client_request_id: Optional[str] = None,
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
+        if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
         if_modified_since: Optional[str] = None,
         if_unmodified_since: Optional[str] = None,
@@ -11017,11 +11017,11 @@ class TaskOperations:
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
+        :keyword if_match: An ETag value associated with the version of the resource known to the
          client.
          The operation will be performed only if the resource's current ETag on the
          service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
+        :paramtype if_match: str
         :keyword if_none_match: An ETag value associated with the version of the resource known to the
          client.
          The operation will be performed only if the resource's current ETag on the
@@ -11071,7 +11071,7 @@ class TaskOperations:
             client_request_id=client_request_id,
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
-            if__match=if__match,
+            if_match=if_match,
             if_none_match=if_none_match,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
@@ -11215,7 +11215,7 @@ class TaskOperations:
         client_request_id: Optional[str] = None,
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
+        if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
         if_modified_since: Optional[str] = None,
         if_unmodified_since: Optional[str] = None,
@@ -11245,11 +11245,11 @@ class TaskOperations:
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
+        :keyword if_match: An ETag value associated with the version of the resource known to the
          client.
          The operation will be performed only if the resource's current ETag on the
          service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
+        :paramtype if_match: str
         :keyword if_none_match: An ETag value associated with the version of the resource known to the
          client.
          The operation will be performed only if the resource's current ETag on the
@@ -11291,7 +11291,7 @@ class TaskOperations:
             client_request_id=client_request_id,
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
-            if__match=if__match,
+            if_match=if_match,
             if_none_match=if_none_match,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
@@ -11333,7 +11333,7 @@ class TaskOperations:
         client_request_id: Optional[str] = None,
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
+        if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
         if_modified_since: Optional[str] = None,
         if_unmodified_since: Optional[str] = None,
@@ -11368,11 +11368,11 @@ class TaskOperations:
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
+        :keyword if_match: An ETag value associated with the version of the resource known to the
          client.
          The operation will be performed only if the resource's current ETag on the
          service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
+        :paramtype if_match: str
         :keyword if_none_match: An ETag value associated with the version of the resource known to the
          client.
          The operation will be performed only if the resource's current ETag on the
@@ -11414,7 +11414,7 @@ class TaskOperations:
             client_request_id=client_request_id,
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
-            if__match=if__match,
+            if_match=if_match,
             if_none_match=if_none_match,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,

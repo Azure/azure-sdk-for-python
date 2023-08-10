@@ -805,10 +805,10 @@ class PoolOperations:
         client_request_id: Optional[str] = None,
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
+        if_match: Optional[str] = None,
+        if_none_match: Optional[str] = None,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """Deletes a Pool from the specified Account.
@@ -842,26 +842,26 @@ class PoolOperations:
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
+        :keyword if_match: An ETag value associated with the version of the resource known to the
          client.
          The operation will be performed only if the resource's current ETag on the
          service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
+        :paramtype if_match: str
+        :keyword if_none_match: An ETag value associated with the version of the resource known to
          the client.
          The operation will be performed only if the resource's current ETag on the
          service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_none_match: str
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_modified_since: str
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
+        :paramtype if_unmodified_since: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: None
@@ -887,10 +887,10 @@ class PoolOperations:
             client_request_id=client_request_id,
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
-            if__match=if__match,
-            if__none__match=if__none__match,
-            if__modified__since=if__modified__since,
-            if__unmodified__since=if__unmodified__since,
+            if_match=if_match,
+            if_none_match=if_none_match,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -925,10 +925,10 @@ class PoolOperations:
         client_request_id: Optional[str] = None,
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
+        if_match: Optional[str] = None,
+        if_none_match: Optional[str] = None,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
         **kwargs: Any
     ) -> bool:
         """Gets basic properties of a Pool.
@@ -949,26 +949,26 @@ class PoolOperations:
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
+        :keyword if_match: An ETag value associated with the version of the resource known to the
          client.
          The operation will be performed only if the resource's current ETag on the
          service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
+        :paramtype if_match: str
+        :keyword if_none_match: An ETag value associated with the version of the resource known to
          the client.
          The operation will be performed only if the resource's current ETag on the
          service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_none_match: str
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_modified_since: str
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
+        :paramtype if_unmodified_since: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: bool
@@ -994,10 +994,10 @@ class PoolOperations:
             client_request_id=client_request_id,
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
-            if__match=if__match,
-            if__none__match=if__none__match,
-            if__modified__since=if__modified__since,
-            if__unmodified__since=if__unmodified__since,
+            if_match=if_match,
+            if_none_match=if_none_match,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -1036,10 +1036,10 @@ class PoolOperations:
         client_request_id: Optional[str] = None,
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
+        if_match: Optional[str] = None,
+        if_none_match: Optional[str] = None,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
         select: Optional[str] = None,
         expand: Optional[str] = None,
         **kwargs: Any
@@ -1062,26 +1062,26 @@ class PoolOperations:
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
+        :keyword if_match: An ETag value associated with the version of the resource known to the
          client.
          The operation will be performed only if the resource's current ETag on the
          service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
+        :paramtype if_match: str
+        :keyword if_none_match: An ETag value associated with the version of the resource known to
          the client.
          The operation will be performed only if the resource's current ETag on the
          service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_none_match: str
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_modified_since: str
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
+        :paramtype if_unmodified_since: str
         :keyword select: An OData $select clause. Default value is None.
         :paramtype select: str
         :keyword expand: An OData $expand clause. Default value is None.
@@ -1111,10 +1111,10 @@ class PoolOperations:
             client_request_id=client_request_id,
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
-            if__match=if__match,
-            if__none__match=if__none__match,
-            if__modified__since=if__modified__since,
-            if__unmodified__since=if__unmodified__since,
+            if_match=if_match,
+            if_none_match=if_none_match,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
             select=select,
             expand=expand,
             api_version=self._config.api_version,
@@ -1161,10 +1161,10 @@ class PoolOperations:
         client_request_id: Optional[str] = None,
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
+        if_match: Optional[str] = None,
+        if_none_match: Optional[str] = None,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """Updates the properties of the specified Pool.
@@ -1191,26 +1191,26 @@ class PoolOperations:
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
+        :keyword if_match: An ETag value associated with the version of the resource known to the
          client.
          The operation will be performed only if the resource's current ETag on the
          service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
+        :paramtype if_match: str
+        :keyword if_none_match: An ETag value associated with the version of the resource known to
          the client.
          The operation will be performed only if the resource's current ETag on the
          service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_none_match: str
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_modified_since: str
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
+        :paramtype if_unmodified_since: str
         :keyword content_type: Type of content. Default value is "application/json;
          odata=minimalmetadata".
         :paramtype content_type: str
@@ -1244,10 +1244,10 @@ class PoolOperations:
             client_request_id=client_request_id,
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
-            if__match=if__match,
-            if__none__match=if__none__match,
-            if__modified__since=if__modified__since,
-            if__unmodified__since=if__unmodified__since,
+            if_match=if_match,
+            if_none_match=if_none_match,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -1372,10 +1372,10 @@ class PoolOperations:
         client_request_id: Optional[str] = None,
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
+        if_match: Optional[str] = None,
+        if_none_match: Optional[str] = None,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """Enables automatic scaling for a Pool.
@@ -1405,26 +1405,26 @@ class PoolOperations:
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
+        :keyword if_match: An ETag value associated with the version of the resource known to the
          client.
          The operation will be performed only if the resource's current ETag on the
          service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
+        :paramtype if_match: str
+        :keyword if_none_match: An ETag value associated with the version of the resource known to
          the client.
          The operation will be performed only if the resource's current ETag on the
          service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_none_match: str
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_modified_since: str
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
+        :paramtype if_unmodified_since: str
         :keyword content_type: Type of content. Default value is "application/json;
          odata=minimalmetadata".
         :paramtype content_type: str
@@ -1458,10 +1458,10 @@ class PoolOperations:
             client_request_id=client_request_id,
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
-            if__match=if__match,
-            if__none__match=if__none__match,
-            if__modified__since=if__modified__since,
-            if__unmodified__since=if__unmodified__since,
+            if_match=if_match,
+            if_none_match=if_none_match,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -1609,10 +1609,10 @@ class PoolOperations:
         client_request_id: Optional[str] = None,
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
+        if_match: Optional[str] = None,
+        if_none_match: Optional[str] = None,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """Changes the number of Compute Nodes that are assigned to a Pool.
@@ -1643,26 +1643,26 @@ class PoolOperations:
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
+        :keyword if_match: An ETag value associated with the version of the resource known to the
          client.
          The operation will be performed only if the resource's current ETag on the
          service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
+        :paramtype if_match: str
+        :keyword if_none_match: An ETag value associated with the version of the resource known to
          the client.
          The operation will be performed only if the resource's current ETag on the
          service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_none_match: str
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_modified_since: str
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
+        :paramtype if_unmodified_since: str
         :keyword content_type: Type of content. Default value is "application/json;
          odata=minimalmetadata".
         :paramtype content_type: str
@@ -1696,10 +1696,10 @@ class PoolOperations:
             client_request_id=client_request_id,
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
-            if__match=if__match,
-            if__none__match=if__none__match,
-            if__modified__since=if__modified__since,
-            if__unmodified__since=if__unmodified__since,
+            if_match=if_match,
+            if_none_match=if_none_match,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -1739,10 +1739,10 @@ class PoolOperations:
         client_request_id: Optional[str] = None,
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
+        if_match: Optional[str] = None,
+        if_none_match: Optional[str] = None,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """Stops an ongoing resize operation on the Pool.
@@ -1771,26 +1771,26 @@ class PoolOperations:
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
+        :keyword if_match: An ETag value associated with the version of the resource known to the
          client.
          The operation will be performed only if the resource's current ETag on the
          service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
+        :paramtype if_match: str
+        :keyword if_none_match: An ETag value associated with the version of the resource known to
          the client.
          The operation will be performed only if the resource's current ETag on the
          service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_none_match: str
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_modified_since: str
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
+        :paramtype if_unmodified_since: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: None
@@ -1816,10 +1816,10 @@ class PoolOperations:
             client_request_id=client_request_id,
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
-            if__match=if__match,
-            if__none__match=if__none__match,
-            if__modified__since=if__modified__since,
-            if__unmodified__since=if__unmodified__since,
+            if_match=if_match,
+            if_none_match=if_none_match,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -1957,10 +1957,10 @@ class PoolOperations:
         client_request_id: Optional[str] = None,
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
+        if_match: Optional[str] = None,
+        if_none_match: Optional[str] = None,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """Removes Compute Nodes from the specified Pool.
@@ -1987,26 +1987,26 @@ class PoolOperations:
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
+        :keyword if_match: An ETag value associated with the version of the resource known to the
          client.
          The operation will be performed only if the resource's current ETag on the
          service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
+        :paramtype if_match: str
+        :keyword if_none_match: An ETag value associated with the version of the resource known to
          the client.
          The operation will be performed only if the resource's current ETag on the
          service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_none_match: str
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_modified_since: str
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
+        :paramtype if_unmodified_since: str
         :keyword content_type: Type of content. Default value is "application/json;
          odata=minimalmetadata".
         :paramtype content_type: str
@@ -2040,10 +2040,10 @@ class PoolOperations:
             client_request_id=client_request_id,
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
-            if__match=if__match,
-            if__none__match=if__none__match,
-            if__modified__since=if__modified__since,
-            if__unmodified__since=if__unmodified__since,
+            if_match=if_match,
+            if_none_match=if_none_match,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -2432,10 +2432,10 @@ class JobOperations:
         client_request_id: Optional[str] = None,
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
+        if_match: Optional[str] = None,
+        if_none_match: Optional[str] = None,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """Deletes a Job.
@@ -2465,26 +2465,26 @@ class JobOperations:
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
+        :keyword if_match: An ETag value associated with the version of the resource known to the
          client.
          The operation will be performed only if the resource's current ETag on the
          service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
+        :paramtype if_match: str
+        :keyword if_none_match: An ETag value associated with the version of the resource known to
          the client.
          The operation will be performed only if the resource's current ETag on the
          service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_none_match: str
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_modified_since: str
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
+        :paramtype if_unmodified_since: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: None
@@ -2510,10 +2510,10 @@ class JobOperations:
             client_request_id=client_request_id,
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
-            if__match=if__match,
-            if__none__match=if__none__match,
-            if__modified__since=if__modified__since,
-            if__unmodified__since=if__unmodified__since,
+            if_match=if_match,
+            if_none_match=if_none_match,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -2548,10 +2548,10 @@ class JobOperations:
         client_request_id: Optional[str] = None,
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
+        if_match: Optional[str] = None,
+        if_none_match: Optional[str] = None,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
         select: Optional[str] = None,
         expand: Optional[str] = None,
         **kwargs: Any
@@ -2576,26 +2576,26 @@ class JobOperations:
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
+        :keyword if_match: An ETag value associated with the version of the resource known to the
          client.
          The operation will be performed only if the resource's current ETag on the
          service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
+        :paramtype if_match: str
+        :keyword if_none_match: An ETag value associated with the version of the resource known to
          the client.
          The operation will be performed only if the resource's current ETag on the
          service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_none_match: str
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_modified_since: str
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
+        :paramtype if_unmodified_since: str
         :keyword select: An OData $select clause. Default value is None.
         :paramtype select: str
         :keyword expand: An OData $expand clause. Default value is None.
@@ -2625,10 +2625,10 @@ class JobOperations:
             client_request_id=client_request_id,
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
-            if__match=if__match,
-            if__none__match=if__none__match,
-            if__modified__since=if__modified__since,
-            if__unmodified__since=if__unmodified__since,
+            if_match=if_match,
+            if_none_match=if_none_match,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
             select=select,
             expand=expand,
             api_version=self._config.api_version,
@@ -2675,10 +2675,10 @@ class JobOperations:
         client_request_id: Optional[str] = None,
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
+        if_match: Optional[str] = None,
+        if_none_match: Optional[str] = None,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """Updates the properties of the specified Job.
@@ -2705,26 +2705,26 @@ class JobOperations:
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
+        :keyword if_match: An ETag value associated with the version of the resource known to the
          client.
          The operation will be performed only if the resource's current ETag on the
          service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
+        :paramtype if_match: str
+        :keyword if_none_match: An ETag value associated with the version of the resource known to
          the client.
          The operation will be performed only if the resource's current ETag on the
          service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_none_match: str
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_modified_since: str
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
+        :paramtype if_unmodified_since: str
         :keyword content_type: Type of content. Default value is "application/json;
          odata=minimalmetadata".
         :paramtype content_type: str
@@ -2758,10 +2758,10 @@ class JobOperations:
             client_request_id=client_request_id,
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
-            if__match=if__match,
-            if__none__match=if__none__match,
-            if__modified__since=if__modified__since,
-            if__unmodified__since=if__unmodified__since,
+            if_match=if_match,
+            if_none_match=if_none_match,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -2802,10 +2802,10 @@ class JobOperations:
         client_request_id: Optional[str] = None,
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
+        if_match: Optional[str] = None,
+        if_none_match: Optional[str] = None,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """Updates the properties of the specified Job.
@@ -2832,26 +2832,26 @@ class JobOperations:
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
+        :keyword if_match: An ETag value associated with the version of the resource known to the
          client.
          The operation will be performed only if the resource's current ETag on the
          service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
+        :paramtype if_match: str
+        :keyword if_none_match: An ETag value associated with the version of the resource known to
          the client.
          The operation will be performed only if the resource's current ETag on the
          service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_none_match: str
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_modified_since: str
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
+        :paramtype if_unmodified_since: str
         :keyword content_type: Type of content. Default value is "application/json;
          odata=minimalmetadata".
         :paramtype content_type: str
@@ -2885,10 +2885,10 @@ class JobOperations:
             client_request_id=client_request_id,
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
-            if__match=if__match,
-            if__none__match=if__none__match,
-            if__modified__since=if__modified__since,
-            if__unmodified__since=if__unmodified__since,
+            if_match=if_match,
+            if_none_match=if_none_match,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -2929,10 +2929,10 @@ class JobOperations:
         client_request_id: Optional[str] = None,
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
+        if_match: Optional[str] = None,
+        if_none_match: Optional[str] = None,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """Disables the specified Job, preventing new Tasks from running.
@@ -2964,26 +2964,26 @@ class JobOperations:
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
+        :keyword if_match: An ETag value associated with the version of the resource known to the
          client.
          The operation will be performed only if the resource's current ETag on the
          service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
+        :paramtype if_match: str
+        :keyword if_none_match: An ETag value associated with the version of the resource known to
          the client.
          The operation will be performed only if the resource's current ETag on the
          service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_none_match: str
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_modified_since: str
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
+        :paramtype if_unmodified_since: str
         :keyword content_type: Type of content. Default value is "application/json;
          odata=minimalmetadata".
         :paramtype content_type: str
@@ -3017,10 +3017,10 @@ class JobOperations:
             client_request_id=client_request_id,
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
-            if__match=if__match,
-            if__none__match=if__none__match,
-            if__modified__since=if__modified__since,
-            if__unmodified__since=if__unmodified__since,
+            if_match=if_match,
+            if_none_match=if_none_match,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -3060,10 +3060,10 @@ class JobOperations:
         client_request_id: Optional[str] = None,
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
+        if_match: Optional[str] = None,
+        if_none_match: Optional[str] = None,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """Enables the specified Job, allowing new Tasks to run.
@@ -3091,26 +3091,26 @@ class JobOperations:
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
+        :keyword if_match: An ETag value associated with the version of the resource known to the
          client.
          The operation will be performed only if the resource's current ETag on the
          service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
+        :paramtype if_match: str
+        :keyword if_none_match: An ETag value associated with the version of the resource known to
          the client.
          The operation will be performed only if the resource's current ETag on the
          service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_none_match: str
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_modified_since: str
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
+        :paramtype if_unmodified_since: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: None
@@ -3136,10 +3136,10 @@ class JobOperations:
             client_request_id=client_request_id,
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
-            if__match=if__match,
-            if__none__match=if__none__match,
-            if__modified__since=if__modified__since,
-            if__unmodified__since=if__unmodified__since,
+            if_match=if_match,
+            if_none_match=if_none_match,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -3178,10 +3178,10 @@ class JobOperations:
         client_request_id: Optional[str] = None,
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
+        if_match: Optional[str] = None,
+        if_none_match: Optional[str] = None,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> None:
@@ -3212,26 +3212,26 @@ class JobOperations:
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
+        :keyword if_match: An ETag value associated with the version of the resource known to the
          client.
          The operation will be performed only if the resource's current ETag on the
          service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
+        :paramtype if_match: str
+        :keyword if_none_match: An ETag value associated with the version of the resource known to
          the client.
          The operation will be performed only if the resource's current ETag on the
          service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_none_match: str
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_modified_since: str
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
+        :paramtype if_unmodified_since: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3252,10 +3252,10 @@ class JobOperations:
         client_request_id: Optional[str] = None,
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
+        if_match: Optional[str] = None,
+        if_none_match: Optional[str] = None,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> None:
@@ -3286,26 +3286,26 @@ class JobOperations:
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
+        :keyword if_match: An ETag value associated with the version of the resource known to the
          client.
          The operation will be performed only if the resource's current ETag on the
          service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
+        :paramtype if_match: str
+        :keyword if_none_match: An ETag value associated with the version of the resource known to
          the client.
          The operation will be performed only if the resource's current ETag on the
          service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_none_match: str
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_modified_since: str
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
+        :paramtype if_unmodified_since: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3326,10 +3326,10 @@ class JobOperations:
         client_request_id: Optional[str] = None,
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
+        if_match: Optional[str] = None,
+        if_none_match: Optional[str] = None,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> None:
@@ -3360,26 +3360,26 @@ class JobOperations:
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
+        :keyword if_match: An ETag value associated with the version of the resource known to the
          client.
          The operation will be performed only if the resource's current ETag on the
          service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
+        :paramtype if_match: str
+        :keyword if_none_match: An ETag value associated with the version of the resource known to
          the client.
          The operation will be performed only if the resource's current ETag on the
          service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_none_match: str
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_modified_since: str
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
+        :paramtype if_unmodified_since: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3400,10 +3400,10 @@ class JobOperations:
         client_request_id: Optional[str] = None,
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
+        if_match: Optional[str] = None,
+        if_none_match: Optional[str] = None,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """Terminates the specified Job, marking it as completed.
@@ -3434,26 +3434,26 @@ class JobOperations:
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
+        :keyword if_match: An ETag value associated with the version of the resource known to the
          client.
          The operation will be performed only if the resource's current ETag on the
          service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
+        :paramtype if_match: str
+        :keyword if_none_match: An ETag value associated with the version of the resource known to
          the client.
          The operation will be performed only if the resource's current ETag on the
          service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_none_match: str
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_modified_since: str
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
+        :paramtype if_unmodified_since: str
         :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
          value is None.
         :paramtype content_type: str
@@ -3493,10 +3493,10 @@ class JobOperations:
             client_request_id=client_request_id,
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
-            if__match=if__match,
-            if__none__match=if__none__match,
-            if__modified__since=if__modified__since,
-            if__unmodified__since=if__unmodified__since,
+            if_match=if_match,
+            if_none_match=if_none_match,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -4734,8 +4734,8 @@ class FileOperations:
         client_request_id: Optional[str] = None,
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
         ocp_range: Optional[str] = None,
         **kwargs: Any
     ) -> bytes:
@@ -4761,16 +4761,16 @@ class FileOperations:
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_modified_since: str
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
+        :paramtype if_unmodified_since: str
         :keyword ocp_range: The byte range to be retrieved. The default is to retrieve the entire file.
          The
          format is bytes=startRange-endRange. Default value is None.
@@ -4802,8 +4802,8 @@ class FileOperations:
             client_request_id=client_request_id,
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
-            if__modified__since=if__modified__since,
-            if__unmodified__since=if__unmodified__since,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
             ocp_range=ocp_range,
             api_version=self._config.api_version,
             headers=_headers,
@@ -4857,8 +4857,8 @@ class FileOperations:
         client_request_id: Optional[str] = None,
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
         **kwargs: Any
     ) -> bool:
         """Gets the properties of the specified Task file.
@@ -4883,16 +4883,16 @@ class FileOperations:
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_modified_since: str
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
+        :paramtype if_unmodified_since: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: bool
@@ -4920,8 +4920,8 @@ class FileOperations:
             client_request_id=client_request_id,
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
-            if__modified__since=if__modified__since,
-            if__unmodified__since=if__unmodified__since,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -5065,8 +5065,8 @@ class FileOperations:
         client_request_id: Optional[str] = None,
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
         ocp_range: Optional[str] = None,
         **kwargs: Any
     ) -> bytes:
@@ -5092,16 +5092,16 @@ class FileOperations:
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_modified_since: str
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
+        :paramtype if_unmodified_since: str
         :keyword ocp_range: The byte range to be retrieved. The default is to retrieve the entire file.
          The
          format is bytes=startRange-endRange. Default value is None.
@@ -5133,8 +5133,8 @@ class FileOperations:
             client_request_id=client_request_id,
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
-            if__modified__since=if__modified__since,
-            if__unmodified__since=if__unmodified__since,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
             ocp_range=ocp_range,
             api_version=self._config.api_version,
             headers=_headers,
@@ -5188,8 +5188,8 @@ class FileOperations:
         client_request_id: Optional[str] = None,
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
         **kwargs: Any
     ) -> bool:
         """Gets the properties of the specified Compute Node file.
@@ -5214,16 +5214,16 @@ class FileOperations:
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_modified_since: str
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
+        :paramtype if_unmodified_since: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: bool
@@ -5251,8 +5251,8 @@ class FileOperations:
             client_request_id=client_request_id,
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
-            if__modified__since=if__modified__since,
-            if__unmodified__since=if__unmodified__since,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -5565,10 +5565,10 @@ class JobScheduleOperations:
         client_request_id: Optional[str] = None,
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
+        if_match: Optional[str] = None,
+        if_none_match: Optional[str] = None,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
         **kwargs: Any
     ) -> bool:
         """Checks the specified Job Schedule exists.
@@ -5591,26 +5591,26 @@ class JobScheduleOperations:
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
+        :keyword if_match: An ETag value associated with the version of the resource known to the
          client.
          The operation will be performed only if the resource's current ETag on the
          service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
+        :paramtype if_match: str
+        :keyword if_none_match: An ETag value associated with the version of the resource known to
          the client.
          The operation will be performed only if the resource's current ETag on the
          service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_none_match: str
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_modified_since: str
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
+        :paramtype if_unmodified_since: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: bool
@@ -5636,10 +5636,10 @@ class JobScheduleOperations:
             client_request_id=client_request_id,
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
-            if__match=if__match,
-            if__none__match=if__none__match,
-            if__modified__since=if__modified__since,
-            if__unmodified__since=if__unmodified__since,
+            if_match=if_match,
+            if_none_match=if_none_match,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -5678,10 +5678,10 @@ class JobScheduleOperations:
         client_request_id: Optional[str] = None,
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
+        if_match: Optional[str] = None,
+        if_none_match: Optional[str] = None,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """Deletes a Job Schedule from the specified Account.
@@ -5708,26 +5708,26 @@ class JobScheduleOperations:
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
+        :keyword if_match: An ETag value associated with the version of the resource known to the
          client.
          The operation will be performed only if the resource's current ETag on the
          service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
+        :paramtype if_match: str
+        :keyword if_none_match: An ETag value associated with the version of the resource known to
          the client.
          The operation will be performed only if the resource's current ETag on the
          service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_none_match: str
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_modified_since: str
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
+        :paramtype if_unmodified_since: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: None
@@ -5753,10 +5753,10 @@ class JobScheduleOperations:
             client_request_id=client_request_id,
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
-            if__match=if__match,
-            if__none__match=if__none__match,
-            if__modified__since=if__modified__since,
-            if__unmodified__since=if__unmodified__since,
+            if_match=if_match,
+            if_none_match=if_none_match,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -5791,10 +5791,10 @@ class JobScheduleOperations:
         client_request_id: Optional[str] = None,
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
+        if_match: Optional[str] = None,
+        if_none_match: Optional[str] = None,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
         select: Optional[str] = None,
         expand: Optional[str] = None,
         **kwargs: Any
@@ -5817,26 +5817,26 @@ class JobScheduleOperations:
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
+        :keyword if_match: An ETag value associated with the version of the resource known to the
          client.
          The operation will be performed only if the resource's current ETag on the
          service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
+        :paramtype if_match: str
+        :keyword if_none_match: An ETag value associated with the version of the resource known to
          the client.
          The operation will be performed only if the resource's current ETag on the
          service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_none_match: str
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_modified_since: str
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
+        :paramtype if_unmodified_since: str
         :keyword select: An OData $select clause. Default value is None.
         :paramtype select: str
         :keyword expand: An OData $expand clause. Default value is None.
@@ -5866,10 +5866,10 @@ class JobScheduleOperations:
             client_request_id=client_request_id,
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
-            if__match=if__match,
-            if__none__match=if__none__match,
-            if__modified__since=if__modified__since,
-            if__unmodified__since=if__unmodified__since,
+            if_match=if_match,
+            if_none_match=if_none_match,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
             select=select,
             expand=expand,
             api_version=self._config.api_version,
@@ -5916,10 +5916,10 @@ class JobScheduleOperations:
         client_request_id: Optional[str] = None,
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
+        if_match: Optional[str] = None,
+        if_none_match: Optional[str] = None,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """Updates the properties of the specified Job Schedule.
@@ -5948,26 +5948,26 @@ class JobScheduleOperations:
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
+        :keyword if_match: An ETag value associated with the version of the resource known to the
          client.
          The operation will be performed only if the resource's current ETag on the
          service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
+        :paramtype if_match: str
+        :keyword if_none_match: An ETag value associated with the version of the resource known to
          the client.
          The operation will be performed only if the resource's current ETag on the
          service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_none_match: str
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_modified_since: str
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
+        :paramtype if_unmodified_since: str
         :keyword content_type: Type of content. Default value is "application/json;
          odata=minimalmetadata".
         :paramtype content_type: str
@@ -6001,10 +6001,10 @@ class JobScheduleOperations:
             client_request_id=client_request_id,
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
-            if__match=if__match,
-            if__none__match=if__none__match,
-            if__modified__since=if__modified__since,
-            if__unmodified__since=if__unmodified__since,
+            if_match=if_match,
+            if_none_match=if_none_match,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -6045,10 +6045,10 @@ class JobScheduleOperations:
         client_request_id: Optional[str] = None,
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
+        if_match: Optional[str] = None,
+        if_none_match: Optional[str] = None,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """Updates the properties of the specified Job Schedule.
@@ -6077,26 +6077,26 @@ class JobScheduleOperations:
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
+        :keyword if_match: An ETag value associated with the version of the resource known to the
          client.
          The operation will be performed only if the resource's current ETag on the
          service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
+        :paramtype if_match: str
+        :keyword if_none_match: An ETag value associated with the version of the resource known to
          the client.
          The operation will be performed only if the resource's current ETag on the
          service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_none_match: str
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_modified_since: str
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
+        :paramtype if_unmodified_since: str
         :keyword content_type: Type of content. Default value is "application/json;
          odata=minimalmetadata".
         :paramtype content_type: str
@@ -6130,10 +6130,10 @@ class JobScheduleOperations:
             client_request_id=client_request_id,
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
-            if__match=if__match,
-            if__none__match=if__none__match,
-            if__modified__since=if__modified__since,
-            if__unmodified__since=if__unmodified__since,
+            if_match=if_match,
+            if_none_match=if_none_match,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -6173,10 +6173,10 @@ class JobScheduleOperations:
         client_request_id: Optional[str] = None,
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
+        if_match: Optional[str] = None,
+        if_none_match: Optional[str] = None,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """Disables a Job Schedule.
@@ -6199,26 +6199,26 @@ class JobScheduleOperations:
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
+        :keyword if_match: An ETag value associated with the version of the resource known to the
          client.
          The operation will be performed only if the resource's current ETag on the
          service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
+        :paramtype if_match: str
+        :keyword if_none_match: An ETag value associated with the version of the resource known to
          the client.
          The operation will be performed only if the resource's current ETag on the
          service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_none_match: str
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_modified_since: str
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
+        :paramtype if_unmodified_since: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: None
@@ -6244,10 +6244,10 @@ class JobScheduleOperations:
             client_request_id=client_request_id,
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
-            if__match=if__match,
-            if__none__match=if__none__match,
-            if__modified__since=if__modified__since,
-            if__unmodified__since=if__unmodified__since,
+            if_match=if_match,
+            if_none_match=if_none_match,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -6285,10 +6285,10 @@ class JobScheduleOperations:
         client_request_id: Optional[str] = None,
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
+        if_match: Optional[str] = None,
+        if_none_match: Optional[str] = None,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """Enables a Job Schedule.
@@ -6311,26 +6311,26 @@ class JobScheduleOperations:
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
+        :keyword if_match: An ETag value associated with the version of the resource known to the
          client.
          The operation will be performed only if the resource's current ETag on the
          service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
+        :paramtype if_match: str
+        :keyword if_none_match: An ETag value associated with the version of the resource known to
          the client.
          The operation will be performed only if the resource's current ETag on the
          service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_none_match: str
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_modified_since: str
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
+        :paramtype if_unmodified_since: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: None
@@ -6356,10 +6356,10 @@ class JobScheduleOperations:
             client_request_id=client_request_id,
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
-            if__match=if__match,
-            if__none__match=if__none__match,
-            if__modified__since=if__modified__since,
-            if__unmodified__since=if__unmodified__since,
+            if_match=if_match,
+            if_none_match=if_none_match,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -6397,10 +6397,10 @@ class JobScheduleOperations:
         client_request_id: Optional[str] = None,
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
+        if_match: Optional[str] = None,
+        if_none_match: Optional[str] = None,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """Terminates a Job Schedule.
@@ -6423,26 +6423,26 @@ class JobScheduleOperations:
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
+        :keyword if_match: An ETag value associated with the version of the resource known to the
          client.
          The operation will be performed only if the resource's current ETag on the
          service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
+        :paramtype if_match: str
+        :keyword if_none_match: An ETag value associated with the version of the resource known to
          the client.
          The operation will be performed only if the resource's current ETag on the
          service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_none_match: str
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_modified_since: str
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
+        :paramtype if_unmodified_since: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: None
@@ -6468,10 +6468,10 @@ class JobScheduleOperations:
             client_request_id=client_request_id,
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
-            if__match=if__match,
-            if__none__match=if__none__match,
-            if__modified__since=if__modified__since,
-            if__unmodified__since=if__unmodified__since,
+            if_match=if_match,
+            if_none_match=if_none_match,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -7080,10 +7080,10 @@ class TaskOperations:
         client_request_id: Optional[str] = None,
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
+        if_match: Optional[str] = None,
+        if_none_match: Optional[str] = None,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """Deletes a Task from the specified Job.
@@ -7112,26 +7112,26 @@ class TaskOperations:
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
+        :keyword if_match: An ETag value associated with the version of the resource known to the
          client.
          The operation will be performed only if the resource's current ETag on the
          service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
+        :paramtype if_match: str
+        :keyword if_none_match: An ETag value associated with the version of the resource known to
          the client.
          The operation will be performed only if the resource's current ETag on the
          service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_none_match: str
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_modified_since: str
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
+        :paramtype if_unmodified_since: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: None
@@ -7158,10 +7158,10 @@ class TaskOperations:
             client_request_id=client_request_id,
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
-            if__match=if__match,
-            if__none__match=if__none__match,
-            if__modified__since=if__modified__since,
-            if__unmodified__since=if__unmodified__since,
+            if_match=if_match,
+            if_none_match=if_none_match,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -7197,10 +7197,10 @@ class TaskOperations:
         client_request_id: Optional[str] = None,
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
+        if_match: Optional[str] = None,
+        if_none_match: Optional[str] = None,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
         select: Optional[str] = None,
         expand: Optional[str] = None,
         **kwargs: Any
@@ -7229,26 +7229,26 @@ class TaskOperations:
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
+        :keyword if_match: An ETag value associated with the version of the resource known to the
          client.
          The operation will be performed only if the resource's current ETag on the
          service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
+        :paramtype if_match: str
+        :keyword if_none_match: An ETag value associated with the version of the resource known to
          the client.
          The operation will be performed only if the resource's current ETag on the
          service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_none_match: str
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_modified_since: str
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
+        :paramtype if_unmodified_since: str
         :keyword select: An OData $select clause. Default value is None.
         :paramtype select: str
         :keyword expand: An OData $expand clause. Default value is None.
@@ -7279,10 +7279,10 @@ class TaskOperations:
             client_request_id=client_request_id,
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
-            if__match=if__match,
-            if__none__match=if__none__match,
-            if__modified__since=if__modified__since,
-            if__unmodified__since=if__unmodified__since,
+            if_match=if_match,
+            if_none_match=if_none_match,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
             select=select,
             expand=expand,
             api_version=self._config.api_version,
@@ -7331,10 +7331,10 @@ class TaskOperations:
         client_request_id: Optional[str] = None,
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
+        if_match: Optional[str] = None,
+        if_none_match: Optional[str] = None,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """Updates the properties of the specified Task.
@@ -7359,26 +7359,26 @@ class TaskOperations:
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
+        :keyword if_match: An ETag value associated with the version of the resource known to the
          client.
          The operation will be performed only if the resource's current ETag on the
          service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
+        :paramtype if_match: str
+        :keyword if_none_match: An ETag value associated with the version of the resource known to
          the client.
          The operation will be performed only if the resource's current ETag on the
          service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_none_match: str
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_modified_since: str
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
+        :paramtype if_unmodified_since: str
         :keyword content_type: Type of content. Default value is "application/json;
          odata=minimalmetadata".
         :paramtype content_type: str
@@ -7413,10 +7413,10 @@ class TaskOperations:
             client_request_id=client_request_id,
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
-            if__match=if__match,
-            if__none__match=if__none__match,
-            if__modified__since=if__modified__since,
-            if__unmodified__since=if__unmodified__since,
+            if_match=if_match,
+            if_none_match=if_none_match,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -7557,10 +7557,10 @@ class TaskOperations:
         client_request_id: Optional[str] = None,
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
+        if_match: Optional[str] = None,
+        if_none_match: Optional[str] = None,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """Terminates the specified Task.
@@ -7587,26 +7587,26 @@ class TaskOperations:
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
+        :keyword if_match: An ETag value associated with the version of the resource known to the
          client.
          The operation will be performed only if the resource's current ETag on the
          service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
+        :paramtype if_match: str
+        :keyword if_none_match: An ETag value associated with the version of the resource known to
          the client.
          The operation will be performed only if the resource's current ETag on the
          service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_none_match: str
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_modified_since: str
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
+        :paramtype if_unmodified_since: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: None
@@ -7633,10 +7633,10 @@ class TaskOperations:
             client_request_id=client_request_id,
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
-            if__match=if__match,
-            if__none__match=if__none__match,
-            if__modified__since=if__modified__since,
-            if__unmodified__since=if__unmodified__since,
+            if_match=if_match,
+            if_none_match=if_none_match,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -7675,10 +7675,10 @@ class TaskOperations:
         client_request_id: Optional[str] = None,
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
+        if_match: Optional[str] = None,
+        if_none_match: Optional[str] = None,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """Reactivates a Task, allowing it to run again even if its retry count has been
@@ -7710,26 +7710,26 @@ class TaskOperations:
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
+        :keyword if_match: An ETag value associated with the version of the resource known to the
          client.
          The operation will be performed only if the resource's current ETag on the
          service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
+        :paramtype if_match: str
+        :keyword if_none_match: An ETag value associated with the version of the resource known to
          the client.
          The operation will be performed only if the resource's current ETag on the
          service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_none_match: str
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_modified_since: str
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
+        :paramtype if_unmodified_since: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: None
@@ -7756,10 +7756,10 @@ class TaskOperations:
             client_request_id=client_request_id,
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
-            if__match=if__match,
-            if__none__match=if__none__match,
-            if__modified__since=if__modified__since,
-            if__unmodified__since=if__unmodified__since,
+            if_match=if_match,
+            if_none_match=if_none_match,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
