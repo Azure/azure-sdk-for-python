@@ -107,7 +107,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Stora
         self.message_encode_policy = kwargs.get('message_encode_policy', None) or NoEncodePolicy()
         self.message_decode_policy = kwargs.get('message_decode_policy', None) or NoDecodePolicy()
         self._client = AzureQueueStorage(self.url, base_url=self.url, pipeline=self._pipeline, loop=loop)
-        self._client._config.version = get_api_version(kwargs)  # pylint: disable=protected-access
+        self._client._config.version = get_api_version(kwargs)  # type: ignore [assignment] # pylint: disable=protected-access
         self._loop = loop
         self._configure_encryption(kwargs)
 

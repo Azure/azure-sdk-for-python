@@ -1028,8 +1028,8 @@ def decrypt_queue_message(
     try:
         message_dict = loads(message)
 
-        encryption_data = _dict_to_encryption_data(message['EncryptionData'])
-        decoded_data = decode_base64_to_bytes(message['EncryptedMessageContents'])
+        encryption_data = _dict_to_encryption_data(message_dict['EncryptionData'])
+        decoded_data = decode_base64_to_bytes(message_dict['EncryptedMessageContents'])
     except (KeyError, ValueError) as exc:
         # Message was not json formatted and so was not encrypted
         # or the user provided a json formatted message
@@ -1045,5 +1045,5 @@ def decrypt_queue_message(
     except Exception as error:
         raise HttpResponseError(
             message="Decryption failed.",
-            response=response,
+            response=response, #type: ignore
             error=error) from error

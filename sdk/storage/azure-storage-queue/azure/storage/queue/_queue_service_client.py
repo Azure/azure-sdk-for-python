@@ -95,7 +95,7 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         self._query_str, credential = self._format_query_string(sas_token, credential)
         super(QueueServiceClient, self).__init__(parsed_url, service='queue', credential=credential, **kwargs)
         self._client = AzureQueueStorage(self.url, base_url=self.url, pipeline=self._pipeline)
-        self._client._config.version = get_api_version(kwargs)  # pylint: disable=protected-access
+        self._client._config.version = get_api_version(kwargs)  # type: ignore [assignment] # pylint: disable=protected-access
         self._configure_encryption(kwargs)
 
     def _format_url(self, hostname: str) -> str:

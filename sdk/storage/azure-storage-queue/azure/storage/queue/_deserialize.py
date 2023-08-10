@@ -43,7 +43,7 @@ def deserialize_queue_creation(
                 f"RequestId:{headers['x-ms-request-id']}\n"
                 f"Time:{headers['Date']}\n"
                 f"ErrorCode:{error_code}"),
-            response=response)
+            response=response)  # type: ignore
         error.error_code = error_code  # type: ignore
         error.additional_info = {}  # type: ignore
         raise error

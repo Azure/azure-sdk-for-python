@@ -116,7 +116,7 @@ class TextBase64DecodePolicy(MessageDecodePolicy):
             # ValueError for Python 3, TypeError for Python 2
             raise DecodeError(
                 message="Message content is not valid base 64.",
-                response=response,
+                response=response, #type: ignore
                 error=error) from error
 
 
@@ -148,7 +148,7 @@ class BinaryBase64DecodePolicy(MessageDecodePolicy):
             # ValueError for Python 3, TypeError for Python 2
             raise DecodeError(
                 message="Message content is not valid base 64.",
-                response=response,
+                response=response, #type: ignore
                 error=error) from error
 
 

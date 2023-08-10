@@ -413,7 +413,7 @@ def parse_connection_str(conn_str, credential, service):
 
 def create_configuration(**kwargs):
     # type: (**Any) -> Configuration
-    config = Configuration(**kwargs)
+    config: Configuration = Configuration(**kwargs)
     config.headers_policy = StorageHeadersPolicy(**kwargs)
     config.user_agent_policy = UserAgentPolicy(
         sdk_moniker=f"storage-{kwargs.pop('storage_sdk')}/{VERSION}", **kwargs)

@@ -134,7 +134,7 @@ class QueueMessagePolicy(SansIOHTTPPolicy):
 class StorageHeadersPolicy(HeadersPolicy):
     request_id_header_name = 'x-ms-client-request-id'
 
-    def on_request(self, request: PipelineRequest)-> None:
+    def on_request(self, request: "PipelineRequest")-> None:
         super(StorageHeadersPolicy, self).on_request(request)
         current_time = format_date_time(time())
         request.http_request.headers['x-ms-date'] = current_time
@@ -164,7 +164,7 @@ class StorageHosts(SansIOHTTPPolicy):
         self.hosts = hosts
         super(StorageHosts, self).__init__()
 
-    def on_request(self, request: PipelineRequest) -> None:
+    def on_request(self, request: "PipelineRequest") -> None:
         request.context.options['hosts'] = self.hosts
         parsed_url = urlparse(request.http_request.url)
 
@@ -199,7 +199,7 @@ class StorageLoggingPolicy(NetworkTraceLoggingPolicy):
         self.logging_body = kwargs.pop("logging_body", False)
         super(StorageLoggingPolicy, self).__init__(logging_enable=logging_enable, **kwargs)
 
-    def on_request(self, request: PipelineRequest) -> None:
+    def on_request(self, request: "PipelineRequest") -> None:
         http_request = request.http_request
         options = request.context.options
         self.logging_body = self.logging_body or options.pop("logging_body", False)
@@ -239,7 +239,7 @@ class StorageLoggingPolicy(NetworkTraceLoggingPolicy):
             except Exception as err:  # pylint: disable=broad-except
                 _LOGGER.debug("Failed to log request: %r", err)
 
-    def on_response(self, request: PipelineRequest, response: PipelineResponse) -> None:
+    def on_response(self, request: "PipelineRequest", response: "PipelineResponse") -> None:
         if response.context.pop("logging_enable", self.enable_http_logger):
             if not _LOGGER.isEnabledFor(logging.DEBUG):
                 return
@@ -282,7 +282,7 @@ class StorageRequestHook(SansIOHTTPPolicy):
         self._request_callback = kwargs.get('raw_request_hook')
         super(StorageRequestHook, self).__init__()
 
-    def on_request(self, request: PipelineRequest) -> None:
+    def on_request(self, request: "PipelineRequest") -> None:
         request_callback = request.context.options.pop('raw_request_hook', self._request_callback)
         if request_callback:
             request_callback(request)
@@ -295,7 +295,7 @@ class StorageResponseHook(HTTPPolicy):
         super(StorageResponseHook, self).__init__()
 
     def send(self, request):
-        # type: (PipelineRequest) -> PipelineResponse
+        # type: ("PipelineRequest") -> "PipelineResponse"
         # Values could be 0
         data_stream_total = request.context.get('data_stream_total')
         if data_stream_total is None:
@@ -374,7 +374,7 @@ class StorageContentValidation(SansIOHTTPPolicy):
 
         return md5.digest()
 
-    def on_request(self, request: PipelineRequest) -> None:
+    def on_request(self, request: "PipelineRequest") -> None:
         validate_content = request.context.options.pop('validate_content', False)
         if validate_content and request.http_request.method != 'GET':
             computed_md5 = encode_base64(StorageContentValidation.get_content_md5(request.http_request.data))
@@ -412,7 +412,7 @@ class StorageRetryPolicy(HTTPPolicy):
         A function which sets the next host location on the request, if applicable.
 
         :param Optional[Dict[str, Any]] settings: The configurable values pertaining to the next host location.
-        :param PipelineRequest request: A pipeline request object.
+        :param "PipelineRequest" request: A pipeline request object.
         """
         if settings['hosts'] and all(settings['hosts'].values()):
             url = urlparse(request.url)
@@ -653,7 +653,7 @@ class StorageBearerTokenCredentialPolicy(BearerTokenCredentialPolicy):
         super(StorageBearerTokenCredentialPolicy, self).__init__(credential, STORAGE_OAUTH_SCOPE, **kwargs)
 
     def on_challenge(self, request, response):
-        # type: (PipelineRequest, PipelineResponse) -> bool
+        # type: ("PipelineRequest", "PipelineResponse") -> bool
         try:
             auth_header = response.http_response.headers.get("WWW-Authenticate")
             challenge = StorageHttpChallenge(auth_header)
