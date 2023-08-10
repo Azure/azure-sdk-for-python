@@ -4,7 +4,8 @@ parameters:
     default: []
 
 jobs:
-- job: 'Build Windows Dependencies'
+- job: 'Build_Windows_Dependencies'
+  displayName: 'Build Windows Dependencies'
   timeoutInMinutes: 90
   pool:
     name: azsdk-pool-mms-win-2022-general
@@ -16,7 +17,8 @@ jobs:
         CondaArtifacts: ${{ parameters.CondaArtifacts }}
         
 
-- job: 'Build Linux Dependencies'
+- job: 'Build_Linux_Dependencies'
+  displayName: 'Build Linux Dependencies'
   timeoutInMinutes: 90
   pool:
     name: azsdk-pool-mms-ubuntu-2004-general
@@ -31,7 +33,8 @@ jobs:
         ArtifactPrefix: linux_
         CondaArtifacts: ${{ parameters.CondaArtifacts }}
 
-- job: 'Build Mac Dependencies'
+- job: 'Build_Mac_Dependencies'
+  displayName: 'Build Mac Dependencies'
   timeoutInMinutes: 90
   pool:
     name: Azure Pipelines
