@@ -8,6 +8,19 @@ from typing_extensions import Protocol, TypedDict  # type: ignore
 
 
 class SchemaContentValidate(Protocol):
+    # TODO: make __call__ a public API so that docs show, until then, keep below docstring
+
+    """
+    Callable protocol which validates content against provided schema. If invalid, raises Exception.
+     Else, returns None.
+
+    :param mapping[str, any] schema: The schema to validate against.
+    :param mapping[str, any] content: The content to validate.
+
+    :rtype: None
+    :returns: None if valid.
+    :raises: Exception if content is invalid against provided schema.
+    """
     def __call__(self, schema: Mapping[str, Any], content: Mapping[str, Any]) -> None:
         """
         Validates content against provided schema. If invalid, raises Exception.
@@ -44,7 +57,7 @@ class MessageType(Protocol):
 
         :param bytes content: The content value to be set as the body of the message.
         :param str content_type: The content type to be set on the message.
-        :rtype: ~azure.schemaregistry.encoder.jsonencoder.MessageType
+        :rtype: ~azure.schemaregistry.MessageType
         :returns: The MessageType object with encoded content and content type.
         """
 
@@ -52,7 +65,7 @@ class MessageType(Protocol):
         """A MessageContent object, with `content` and `content_type` set to
          the values of their respective properties on the MessageType object.
 
-        :rtype: ~azure.schemaregistry.encoder.jsonencoder.MessageContent
+        :rtype: ~azure.schemaregistry.MessageContent
         :returns: TypedDict of the content and content type from the MessageType object.
         """
 
@@ -88,7 +101,7 @@ class SchemaEncoder(Protocol):
         :keyword schema_id: None.
         :paramtype schema_id: None
         :keyword message_type: The message class to construct the message. Must be a subtype of the
-         azure.schemaregistry.encoder.MessageType protocol.
+         azure.schemaregistry.MessageType protocol.
         :paramtype message_type: type[MessageType]
         :keyword request_options: The keyword arguments for http requests to be passed to the client.
         :paramtype request_options: dict[str, any] or None
@@ -122,7 +135,7 @@ class SchemaEncoder(Protocol):
          for validation. `schema` must not be passed.
         :paramtype schema_id: str
         :keyword message_type: The message class to construct the message. Must be a subtype of the
-         azure.schemaregistry.encoder.MessageType protocol.
+         azure.schemaregistry.MessageType protocol.
         :paramtype message_type: type[MessageType]
         :keyword request_options: The keyword arguments for http requests to be passed to the client.
         :paramtype request_options: dict[str, any] or None
@@ -216,12 +229,12 @@ class SchemaEncoder(Protocol):
         :keyword schema_id: The schema ID corresponding to the pre-registered schema to be used
          for validation. Exactly one of `schema` or `schema_id` must be passed.
         :paramtype schema_id: str or None
-        :keyword message_type: The message class to construct the message. Must be a subtype of the
-         azure.schemaregistry.encoder.MessageType protocol.
+        :keyword message_type: The message class to construct the message. If passed, must be a subtype of the
+         azure.schemaregistry.MessageType protocol.
         :paramtype message_type: type[MessageType] or None
         :keyword request_options: The keyword arguments for http requests to be passed to the client.
         :paramtype request_options: dict[str, any] or None
-        :returns: The encoded content and content type if `message_type` is not set, otherwise the
+        :returns: TypedDict of encoded content and content type if `message_type` is not set, otherwise the
          constructed message object.
         :rtype: MessageType or MessageContent
         """

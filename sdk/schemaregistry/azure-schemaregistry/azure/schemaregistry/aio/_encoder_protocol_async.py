@@ -41,7 +41,7 @@ class SchemaEncoder(Protocol):
         :keyword schema_id: None.
         :paramtype schema_id: None
         :keyword message_type: The message class to construct the message. Must be a subtype of the
-         azure.schemaregistry.encoder.MessageType protocol.
+         azure.schemaregistry.MessageType protocol.
         :paramtype message_type: type[MessageType]
         :keyword request_options: The keyword arguments for http requests to be passed to the client.
         :paramtype request_options: dict[str, any] or None
@@ -75,7 +75,7 @@ class SchemaEncoder(Protocol):
          for validation. `schema` must not be passed.
         :paramtype schema_id: str
         :keyword message_type: The message class to construct the message. Must be a subtype of the
-         azure.schemaregistry.encoder.MessageType protocol.
+         azure.schemaregistry.MessageType protocol.
         :paramtype message_type: type[MessageType]
         :keyword request_options: The keyword arguments for http requests to be passed to the client.
         :paramtype request_options: dict[str, any] or None
@@ -169,12 +169,12 @@ class SchemaEncoder(Protocol):
         :keyword schema_id: The schema ID corresponding to the pre-registered schema to be used
          for validation. Exactly one of `schema` or `schema_id` must be passed.
         :paramtype schema_id: str or None
-        :keyword message_type: The message class to construct the message. Must be a subtype of the
-         azure.schemaregistry.encoder.MessageType protocol.
+        :keyword message_type: The message class to construct the message. If passed, must be a subtype of the
+         azure.schemaregistry.MessageType protocol.
         :paramtype message_type: type[MessageType] or None
         :keyword request_options: The keyword arguments for http requests to be passed to the client.
         :paramtype request_options: dict[str, any] or None
-        :returns: The encoded content and content type if `message_type` is not set, otherwise the
+        :returns: TypedDict of encoded content and content type if `message_type` is not set, otherwise the
          constructed message object.
         :rtype: MessageType or MessageContent
         """
