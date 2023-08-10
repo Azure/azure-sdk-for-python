@@ -15,7 +15,7 @@ class WorkspaceHubConfigSchema(metaclass=PatchedSchemaMeta):
     default_workspace_resource_group = fields.Str()
 
     @post_load
-    def make(self, data, **kwargs):
+    def make(self, data, **kwargs):  # pylint: disable=unused-argument
         from azure.ai.ml.entities import WorkspaceHubConfig
 
         return WorkspaceHubConfig(**data)
