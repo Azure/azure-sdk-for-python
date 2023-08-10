@@ -298,12 +298,17 @@ class WorkspaceOperations(WorkspaceOperationsBase):
         workspace_operations = self._all_operations.all_operations[AzureMLResourceType.WORKSPACE]
         workspace_base_uri = _get_workspace_base_url(workspace_operations, workspace_hub_name, self._requests_pipeline)
 
+        def callback(_, deserialized, args):
+            return Workspace._from_rest_object(deserialized)
+
+
         with modified_operation_client(self.dataplane_workspace_operations, workspace_base_uri):
             result = self.dataplane_workspace_operations.begin_hub_join(
                 resource_group_name=resource_group,
                 workspace_name=workspace_hub_name,
                 project_workspace_name=workspace.name,
                 body=workspace._to_rest_object(),
+                cls=callback,
                 **self._init_kwargs,
             )
             return result
