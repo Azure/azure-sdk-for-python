@@ -329,7 +329,7 @@ def get_output(command: str, working_directory: str) -> None:
         command = shlex.split(command)
         wd = working_directory.replace("\\", "/")
 
-        p = subprocess.Popen(cmd=command, cwd=wd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        p = subprocess.Popen(command, cwd=wd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         output, err = p.communicate()
         print(str(output))
         print(str(err))
