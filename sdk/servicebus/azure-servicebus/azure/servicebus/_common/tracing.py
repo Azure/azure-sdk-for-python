@@ -105,7 +105,7 @@ def send_trace_context_manager(
     links: Optional[List[Link]] = None
 ) -> Iterator[None]:
     """Tracing for sending messages."""
-    span_impl_type: Type[AbstractSpan] = settings.tracing_implementation()
+    span_impl_type: Optional[Type[AbstractSpan]] = settings.tracing_implementation()
 
     if span_impl_type is not None:
         links = links or []
@@ -124,7 +124,7 @@ def receive_trace_context_manager(
     start_time: Optional[int] = None
 ) -> Iterator[None]:
     """Tracing for receiving messages."""
-    span_impl_type: Type[AbstractSpan] = settings.tracing_implementation()
+    span_impl_type: Optional[Type[AbstractSpan]] = settings.tracing_implementation()
     if span_impl_type is not None:
         links = links or []
         with span_impl_type(name=span_name, kind=SpanKind.CLIENT, links=links, start_time=start_time) as span:
@@ -141,7 +141,7 @@ def settle_trace_context_manager(
     links: Optional[List[Link]] = None
 ):
     """Tracing for settling messages."""
-    span_impl_type = settings.tracing_implementation()
+    span_impl_type: Optional[Type[AbstractSpan]] = settings.tracing_implementation()
     if span_impl_type is not None:
         links = links or []
         with span_impl_type(name=f"ServiceBus.{operation}", kind=SpanKind.CLIENT, links=links) as span:
@@ -161,7 +161,7 @@ def trace_message(
     Will open and close a message span, and add tracing context to the app properties of the message.
     """
     try:
-        span_impl_type: Type[AbstractSpan] = settings.tracing_implementation()
+        span_impl_type: Optional[Type[AbstractSpan]] = settings.tracing_implementation()
         if span_impl_type is not None:
             with span_impl_type(name=SPAN_NAME_MESSAGE, kind=SpanKind.PRODUCER) as message_span:
                 headers = message_span.to_header()

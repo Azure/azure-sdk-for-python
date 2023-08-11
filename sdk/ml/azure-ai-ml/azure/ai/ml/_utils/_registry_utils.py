@@ -3,6 +3,9 @@
 # ---------------------------------------------------------
 
 import logging
+from typing import Tuple
+
+from typing_extensions import Literal
 
 from azure.ai.ml._restclient.registry_discovery import AzureMachineLearningWorkspaces as ServiceClientRegistryDiscovery
 from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import AzureMachineLearningWorkspaces
@@ -132,6 +135,7 @@ def get_asset_body_for_registry_storage(
     :type asset_name: str
     :param asset_version: Asset version.
     :type asset_version: str
+    :return: The temporary data reference request dto
     :rtype: TemporaryDataReferenceRequestDto
     """
     body = TemporaryDataReferenceRequestDto(
@@ -149,7 +153,7 @@ def get_storage_details_for_registry_assets(
     rg_name: str,
     reg_name: str,
     uri: str,
-) -> str:
+) -> Tuple[str, Literal["NoCredentials", "SAS"]]:
     """Get storage details for registry assets.
 
     :param service_client: AzureMachineLearningWorkspaces service client.
@@ -166,7 +170,10 @@ def get_storage_details_for_registry_assets(
     :type reg_name: str
     :param uri: asset uri
     :type uri: str
-    :rtype: str
+    :return: A 2-tuple of a URI and a string. Either:
+      * A blob uri and "NoCredentials"
+      * A sas URI and "SAS"
+    :rtype: Tuple[str, Literal["NoCredentials", "SAS"]]
     """
     body = BlobReferenceSASRequestDto(
         asset_id=REGISTRY_ASSET_ID.format(reg_name, asset_type, asset_name, asset_version),

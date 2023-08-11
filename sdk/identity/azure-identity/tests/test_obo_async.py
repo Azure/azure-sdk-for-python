@@ -128,7 +128,10 @@ async def test_multitenant_authentication():
     second_tenant = "second-tenant"
     second_token = first_token * 2
 
-    async def send(request, **_):
+    async def send(request, **kwargs):
+        # ensure the `claims` and `tenant_id` keywords from credential's `get_token` method don't make it to transport
+        assert "claims" not in kwargs
+        assert "tenant_id" not in kwargs
         assert request.headers["User-Agent"].startswith(USER_AGENT)
         parsed = urlparse(request.url)
         tenant = parsed.path.split("/")[1]
@@ -174,7 +177,10 @@ async def test_authority(authority):
     expected_authority = "https://{}/{}".format(expected_netloc, tenant_id)
     expected_token = "***"
 
-    async def send(request, **_):
+    async def send(request, **kwargs):
+        # ensure the `claims` and `tenant_id` keywords from credential's `get_token` method don't make it to transport
+        assert "claims" not in kwargs
+        assert "tenant_id" not in kwargs
         assert request.url.startswith(expected_authority)
         return mock_response(json_payload=build_aad_response(access_token=expected_token))
 
@@ -203,7 +209,10 @@ async def test_authority(authority):
 async def test_policies_configurable():
     policy = Mock(spec_set=SansIOHTTPPolicy, on_request=Mock(), on_exception=lambda _: False)
 
-    async def send(request, **_):
+    async def send(request, **kwargs):
+        # ensure the `claims` and `tenant_id` keywords from credential's `get_token` method don't make it to transport
+        assert "claims" not in kwargs
+        assert "tenant_id" not in kwargs
         parsed = urlparse(request.url)
         tenant = parsed.path.split("/")[1]
         if "/oauth2/v2.0/token" not in parsed.path:
@@ -235,7 +244,10 @@ async def test_refresh_token():
     refresh_token = "refresh-token"
     requests = 0
 
-    async def send(request, **_):
+    async def send(request, **kwargs):
+        # ensure the `claims` and `tenant_id` keywords from credential's `get_token` method don't make it to transport
+        assert "claims" not in kwargs
+        assert "tenant_id" not in kwargs
         nonlocal requests
         assert requests < 3, "unexpected request"
         requests += 1

@@ -198,6 +198,7 @@ class Registry(Resource):
         """Build current parameterized schedule instance to a registry object before submission.
 
         :return: Rest registry.
+        :rtype: RestRegistry
         """
         identity = RestManagedServiceIdentity(type=RestManagedServiceIdentityType.SYSTEM_ASSIGNED)
         replication_locations = []

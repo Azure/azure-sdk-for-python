@@ -44,7 +44,6 @@ class GroupInput(Input):
         return isinstance(obj, _GroupAttrDict)
 
     def __getattr__(self, item):
-        """Allow get value from values by __get_attr__."""
         try:
             return super().__getattr__(item)
         except AttributeError:
