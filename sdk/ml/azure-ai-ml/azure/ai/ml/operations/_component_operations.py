@@ -370,15 +370,6 @@ class ComponentOperations(_ScopeDependentOperations):
         :type raise_on_failure: bool
         :return: All validation errors
         :type: ~azure.ai.ml.entities.ValidationResult
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../../../../samples/ml_samples_misc.py
-                :start-after: [START component_operations_validate]
-                :end-before: [END component_operations_validate]
-                :language: python
-                :dedent: 8
-                :caption: Validate component example.
         """
         return self._validate(
             component,
