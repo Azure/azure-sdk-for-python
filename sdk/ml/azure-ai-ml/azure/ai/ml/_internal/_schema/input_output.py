@@ -59,7 +59,6 @@ class InternalPrimitiveOutputSchema(metaclass=PatchedSchemaMeta):
         required=True,
     )
     description = fields.Str()
-    is_control = fields.Bool()
 
 
 class InternalParameterSchema(ParameterSchema):

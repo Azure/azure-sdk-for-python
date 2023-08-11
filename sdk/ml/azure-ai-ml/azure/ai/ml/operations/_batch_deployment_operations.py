@@ -259,8 +259,13 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
             return list(result)
 
     def _get_workspace_location(self) -> str:
-        """Get the workspace location TODO[TASK 1260265]: can we cache this information and only refresh when the
-        operation_scope is changed?"""
+        """Get the workspace location
+
+        TODO[TASK 1260265]: can we cache this information and only refresh when the operation_scope is changed?
+
+        :return: The workspace location
+        :rtype: str
+        """
         return self._all_operations.all_operations[AzureMLResourceType.WORKSPACE].get(self._workspace_name).location
 
     def _validate_component(self, deployment: Deployment, orchestrators: OperationOrchestrator) -> None:

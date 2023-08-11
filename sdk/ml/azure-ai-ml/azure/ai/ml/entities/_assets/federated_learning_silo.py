@@ -104,12 +104,14 @@ class FederatedLearningSilo:
         - silo 1 ...
         - silo 2 ...
 
-        param yaml_path: A path leading to a local YAML file which contains a list of
+        :keyword yaml_path: A path leading to a local YAML file which contains a list of
             FederatedLearningSilo objects.
-        type yaml_path: Optional[Union[PathLike, str]]
-        param list_arg: A string that names the top-level value which contains the list
+        :type yaml_path: Optional[Union[PathLike, str]]
+        :keyword list_arg: A string that names the top-level value which contains the list
             of FL silos.
-        type list_arg: str
+        :type list_arg: str
+        :return: The list of federated learning silos
+        :rtype: List[FederatedLearningSilo]
         """
         yaml_dict = load_yaml(yaml_path)
         return [

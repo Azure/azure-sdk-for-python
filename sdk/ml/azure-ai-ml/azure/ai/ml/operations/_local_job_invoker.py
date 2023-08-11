@@ -133,8 +133,10 @@ def get_execution_service_response(
 
     :param job_definition: Job definition data
     :type job_definition: JobBaseData
-    :param token:
+    :param token: The bearer token to use when retrieving information from Execution Service
     :type token: str
+    :param requests_pipeline: The HttpPipeline to use when sending network requests
+    :type requests_pipeline: HttpPipeline
     :return: Execution service response and snapshot ID
     :rtype: Tuple[Dict[str, str], str]
     """
@@ -292,9 +294,7 @@ class CommonRuntimeHelper:
         """Copy bootstrapper binary from the bootstrapper image to local machine.
 
         :param bootstrapper_info:
-        :type bootstrapper: Dict[str, str]
-        :return: bootstrapper binary path (.azureml-common-runtime/<job_name>/vm-bootstrapper)
-        :rtype: str
+        :type bootstrapper_info: Dict[str, str]
         """
         Path(self.common_runtime_temp_folder).mkdir(parents=True, exist_ok=True)
 
@@ -370,7 +370,7 @@ class CommonRuntimeHelper:
         """Check if bootstrapper process status is non-zero.
 
         :param bootstrapper_process: bootstrapper process
-        :type bootstrapper: subprocess.Popen
+        :type bootstrapper_process: subprocess.Popen
         :return: return_code
         :rtype: int
         """
@@ -396,6 +396,8 @@ def start_run_if_local(
     :type credential: TokenCredential
     :param ws_base_url: Base url to workspace
     :type ws_base_url: str
+    :param requests_pipeline: The HttpPipeline to use when sending network requests
+    :type requests_pipeline: HttpPipeline
     :return: snapshot ID
     :rtype: str
     """
