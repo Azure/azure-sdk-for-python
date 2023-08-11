@@ -347,11 +347,17 @@ class MiscConfigurationOptions(object):
         )
         # [END ssh_job_service_configuration]
 
-        # [START env_entity_create]
+        # [START build_context_entity_create]
+        from azure.ai.ml.entities._assets.environment import BuildContext
+
+        build_context = BuildContext(dockerfile_path="docker-file-path", path="docker-build-context-path")
+        # [END build_context_entity_create]
+
+        # [START base_env_entity_create]
         from azure.ai.ml.entities._assets._artifacts._package.base_environment_source import BaseEnvironment
 
         base_environment = BaseEnvironment(type="base-env-type", resource_id="base-env-resource-id")
-        # [END env_entity_create]
+        # [END base_env_entity_create]
 
         # [START env_entity_create]
         from azure.ai.ml.entities._assets.environment import Environment

@@ -37,6 +37,15 @@ class BuildContext:
     :type path: Union[str, os.PathLike]
     :param dockerfile_path: The path to the dockerfile relative to root of docker build context directory.
     :type dockerfile_path: str
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../../../../../samples/ml_samples_misc.py
+            :start-after: [START build_context_entity_create]
+            :end-before: [END build_context_entity_create]
+            :language: python
+            :dedent: 8
+            :caption: Create a Build Context object.
     """
 
     def __init__(
