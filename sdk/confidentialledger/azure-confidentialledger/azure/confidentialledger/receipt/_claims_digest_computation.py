@@ -195,11 +195,15 @@ def _compute_claims_hexdigest(application_claims_list: List[ApplicationClaim]) -
 
         if claim_kind == LEDGER_ENTRY_CLAIM_TYPE:
             # Compute the digest of the LedgerEntry claim
-            claim_digest = _compute_ledger_entry_claim_digest(cast(LedgerEntryClaim, application_claim_object.ledgerEntry))
+            claim_digest = _compute_ledger_entry_claim_digest(
+                cast(LedgerEntryClaim, application_claim_object.ledgerEntry)
+            )
 
         elif claim_kind == DIGEST_CLAIM_TYPE:
             # Compute the digest of the ClaimDigest claim
-            claim_digest = _compute_claim_digest_from_object(cast(ClaimDigest, application_claim_object.digest))
+            claim_digest = _compute_claim_digest_from_object(
+                cast(ClaimDigest, application_claim_object.digest)
+            )
 
         else:
             raise ValueError(f"Unsupported claim kind: {claim_kind}")

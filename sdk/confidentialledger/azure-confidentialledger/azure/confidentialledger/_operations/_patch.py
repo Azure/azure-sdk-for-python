@@ -8,7 +8,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 
 import time
-from typing import Any, Callable, Dict, IO, List, Optional, Union, cast
+from typing import Any, Callable, IO, List, Optional, Union, cast
 
 from azure.core.exceptions import ResourceNotFoundError
 from azure.core.polling import PollingMethod, LROPoller, NoPolling
