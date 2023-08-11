@@ -133,11 +133,11 @@ class _ComponentFactory:
     def load_from_dict(cls, *, data: Dict, context: Dict, _type: Optional[str] = None, **kwargs) -> Component:
         """Load a component from a YAML dict.
 
-        :param data: The YAML dict.
+        :keyword data: The YAML dict.
         :type data: dict
-        :param context: The context of the YAML dict.
+        :keyword context: The context of the YAML dict.
         :type context: dict
-        :param _type: The type name of the component. When None, it will be inferred from the YAML dict.
+        :keyword _type: The type name of the component. When None, it will be inferred from the YAML dict.
         :type _type: str
         :return: The loaded component.
         :rtype: ~azure.ai.ml.entities.Component
@@ -154,9 +154,9 @@ class _ComponentFactory:
     def load_from_rest(cls, *, obj: ComponentVersion, _type: Optional[str] = None) -> Component:
         """Load a component from a REST object.
 
-        :param obj: The REST object.
+        :keyword obj: The REST object.
         :type obj: ComponentVersion
-        :param _type: The type name of the component. When None, it will be inferred from the REST object.
+        :keyword _type: The type name of the component. When None, it will be inferred from the REST object.
         :type _type: str
         :return: The loaded component.
         :rtype: ~azure.ai.ml.entities.Component

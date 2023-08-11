@@ -4,7 +4,7 @@
 import logging
 import types
 from inspect import Parameter, Signature
-from typing import Callable, Sequence
+from typing import Callable, Dict, Sequence
 
 from azure.ai.ml.entities import Component
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, UnexpectedKeywordError, ValidationException
@@ -32,8 +32,16 @@ class KwParameter(Parameter):
         self._optional = _optional
 
 
-def _replace_function_name(func: types.FunctionType, new_name):
-    """Return a function with the same body but a new name."""
+def _replace_function_name(func: types.FunctionType, new_name: str) -> types.FunctionType:
+    """Replaces the name of a function with a new name
+
+    :param func: The function to update
+    :type func: types.FunctionType
+    :param new_name: The new function name
+    :type new_name: str
+    :return: The function with a replaced name, but otherwise unchanged body
+    :rtype: types.FunctionType
+    """
     try:
         # Use the original code of the function to initialize a new code object for the new function.
         code_template = func.__code__
@@ -80,11 +88,12 @@ def _replace_function_name(func: types.FunctionType, new_name):
         return func
 
 
+# pylint: disable-next=docstring-missing-param
 def _assert_arg_valid(kwargs: dict, keys: list, func_name: str):
     """Assert the arg keys are all in keys."""
     # pylint: disable=protected-access
     # validate component input names
-    Component._validate_io_names(io_dict=kwargs, raise_error=True)
+    Component._validate_io_names(kwargs, raise_error=True)
     lower2original_parameter_names = {x.lower(): x for x in keys}
     kwargs_need_to_update = []
     for key in kwargs:
@@ -105,8 +114,16 @@ def _assert_arg_valid(kwargs: dict, keys: list, func_name: str):
         kwargs[lower2original_parameter_names[key.lower()]] = kwargs.pop(key)
 
 
-def _update_dct_if_not_exist(dst, src):
-    """Update the dst dict with the source dict if the key is not in the dst dict."""
+def _update_dct_if_not_exist(dst: Dict, src: Dict):
+    """Computes the union of `src` and `dst`, in-place within `dst`
+
+    If a key exists in `dst` and `src` the value in `dst` is preserved
+
+    :param dst: The destination to compute the union within
+    :type dst: Dict
+    :param src: A dictionary to include in the union
+    :type src: Dict
+    """
     for k, v in src.items():
         if k not in dst:
             dst[k] = v

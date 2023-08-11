@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+from os import PathLike
 from pathlib import Path
 from typing import Dict, Optional, Union
 
@@ -41,7 +42,9 @@ class InternalEnvironment:
     def _parse_file_path(value: str) -> str:
         return value[len(FILE_PREFIX) :] if value.startswith(FILE_PREFIX) else value
 
-    def _validate_conda_section(self, base_path: str, skip_path_validation: bool) -> MutableValidationResult:
+    def _validate_conda_section(
+        self, base_path: Union[str, PathLike], skip_path_validation: bool
+    ) -> MutableValidationResult:
         validation_result = _ValidationResultBuilder.success()
         if not self.conda:
             return validation_result
@@ -68,7 +71,9 @@ class InternalEnvironment:
                 )
         return validation_result
 
-    def _validate_docker_section(self, base_path: str, skip_path_validation: bool) -> MutableValidationResult:
+    def _validate_docker_section(
+        self, base_path: Union[str, PathLike], skip_path_validation: bool
+    ) -> MutableValidationResult:
         validation_result = _ValidationResultBuilder.success()
         if not self.docker:
             return validation_result
@@ -87,10 +92,17 @@ class InternalEnvironment:
             )
         return validation_result
 
-    def validate(self, base_path: str, skip_path_validation: bool = False) -> MutableValidationResult:
+    def validate(self, base_path: Union[str, PathLike], skip_path_validation: bool = False) -> MutableValidationResult:
         """Validate the environment section.
 
         This is a public method but won't be exposed to user given InternalEnvironment is an internal class.
+
+        :param base_path: The base path
+        :type base_path: Union[str, PathLike]
+        :param skip_path_validation: Whether to skip path validation. Defaults to False
+        :type skip_path_validation: bool
+        :return: The validation result
+        :rtype: MutableValidationResult
         """
         validation_result = _ValidationResultBuilder.success()
         if self.os is not None and self.os not in {"Linux", "Windows", "linux", "windows"}:
@@ -102,7 +114,7 @@ class InternalEnvironment:
         validation_result.merge_with(self._validate_docker_section(base_path, skip_path_validation))
         return validation_result
 
-    def _resolve_conda_section(self, base_path: Union[Path, str]) -> None:
+    def _resolve_conda_section(self, base_path: Union[str, PathLike]) -> None:
         if not self.conda:
             return
         if self.conda.get(self.CONDA_DEPENDENCIES_FILE):
@@ -126,7 +138,7 @@ class InternalEnvironment:
                 }
             return
 
-    def _resolve_docker_section(self, base_path: Union[Path, str]) -> None:
+    def _resolve_docker_section(self, base_path: Union[str, PathLike]) -> None:
         if not self.docker:
             return
         if not self.docker.get(self.BUILD) or not self.docker[self.BUILD].get(self.DOCKERFILE):
@@ -140,6 +152,6 @@ class InternalEnvironment:
             self._docker_file_resolved = True
         return
 
-    def resolve(self, base_path: Union[Path, str]) -> None:
+    def resolve(self, base_path: Union[str, PathLike]) -> None:
         self._resolve_conda_section(base_path)
         self._resolve_docker_section(base_path)

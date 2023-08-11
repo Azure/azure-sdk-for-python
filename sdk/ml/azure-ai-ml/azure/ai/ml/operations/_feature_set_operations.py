@@ -208,6 +208,7 @@ class FeatureSetOperations(_ScopeDependentOperations):
         :keyword spark_configuration: Specifies the spark compute settings.
         :type spark_configuration: dict[str, str]
         :return: An instance of LROPoller that returns ~azure.ai.ml.entities.FeatureSetBackfillMetadata
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.FeatureSetBackfillMetadata]
         """
 
         request_body: FeaturesetVersionBackfillRequest = FeaturesetVersionBackfillRequest(

@@ -9,7 +9,7 @@ import logging
 import re
 import typing
 from collections import Counter
-from typing import Dict, Optional, Tuple, Union
+from typing import Dict, List, Optional, Tuple, Union
 
 from marshmallow import Schema
 
@@ -94,8 +94,14 @@ class PipelineComponent(Component):
         self._source_job_id = kwargs.pop("source_job_id", None)
         # TODO: set anonymous hash for reuse
 
-    def _process_jobs(self, jobs):
-        """Process and validate jobs."""
+    def _process_jobs(self, jobs: Dict[str, BaseNode]) -> Dict[str, BaseNode]:
+        """Process and validate jobs.
+
+        :param jobs: A map of node name to node
+        :type jobs: Dict[str, BaseNode]
+        :return: The processed jobs
+        :rtype: Dict[str, BaseNode]
+        """
         # Remove swept Command
         node_names_to_skip = []
         for node_name, job_instance in jobs.items():
@@ -121,7 +127,11 @@ class PipelineComponent(Component):
         return jobs
 
     def _customized_validate(self) -> MutableValidationResult:
-        """Validate pipeline component structure."""
+        """Validate pipeline component structure.
+
+        :return: The validation result
+        :rtype: MutableValidationResult
+        """
         validation_result = super(PipelineComponent, self)._customized_validate()
 
         # Validate inputs
@@ -154,7 +164,7 @@ class PipelineComponent(Component):
 
         return validation_result
 
-    def _validate_compute_is_set(self, *, parent_node_name=None):
+    def _validate_compute_is_set(self, *, parent_node_name=None) -> MutableValidationResult:
         """Validate compute in pipeline component.
 
         This function will only be called from pipeline_job._validate_compute_is_set
@@ -164,6 +174,9 @@ class PipelineComponent(Component):
         - For general node:
             - If _skip_required_compute_missing_validation is True, validation will be skipped.
             - All the rest of cases without compute will add compute not set error to validation result.
+
+        :return: The validation result
+        :rtype: MutableValidationResult
         """
 
         # Note: do not put this into customized validate, as we would like call
@@ -189,7 +202,13 @@ class PipelineComponent(Component):
         return validation_result
 
     def _get_input_binding_dict(self, node: BaseNode) -> Tuple[dict, dict]:
-        """Return the input binding dict for each node."""
+        """Return the input binding dict for each node.
+
+        :param node: The node
+        :type node: BaseNode
+        :return: A 2-tuple of (binding_dict, optional_binding_in_expression_dict)
+        :rtype: Tuple[dict, dict]
+        """
         # pylint: disable=too-many-nested-blocks
         binding_inputs = node._build_inputs()
         # Collect binding relation dict {'pipeline_input': ['node_input']}
@@ -230,6 +249,11 @@ class PipelineComponent(Component):
 
         Mark input as optional if all binding is optional and optional not set. Raise error if pipeline input is
         optional but link to required inputs.
+
+        :param node: The node to validate
+        :type node: BaseNode
+        :return: The validation result
+        :rtype: MutableValidationResult
         """
         component_definition_inputs = {}
         # Add flattened group input into definition inputs.
@@ -268,8 +292,14 @@ class PipelineComponent(Component):
                     )
         return validation_result
 
-    def _get_job_type_and_source(self):
-        """Get job type and source for telemetry."""
+    def _get_job_type_and_source(self) -> Tuple[Dict[str, int], Dict[str, int]]:
+        """Get job types and sources for telemetry.
+
+        :return: A 2-tuple of
+          * A map of job type to the number of occurrences
+          * A map of job source to the number of occurrences
+        :rtype: Tuple[Dict[str, int], Dict[str, int]]
+        """
         job_types, job_sources = [], []
         for job in self.jobs.values():
             job_types.append(job.type)
@@ -294,7 +324,11 @@ class PipelineComponent(Component):
         return self._jobs
 
     def _get_anonymous_hash(self) -> str:
-        """Get anonymous hash for pipeline component."""
+        """Get anonymous hash for pipeline component.
+
+        :return: The anonymous hash of the pipeline component
+        :rtype: str
+        """
         # ideally we should always use rest object to generate hash as it's the same as
         # what we send to server-side, but changing the hash function will break reuse of
         # existing components except for command component (hash result is the same for
@@ -363,8 +397,14 @@ class PipelineComponent(Component):
         return ["jobs"]
 
     @classmethod
-    def _check_ignored_keys(cls, obj):
-        """Return ignored keys in obj as a pipeline component when its value be set."""
+    def _check_ignored_keys(cls, obj: object) -> List[str]:
+        """Return ignored keys in obj as a pipeline component when its value be set.
+
+        :param obj: The object to examine
+        :type obj: object
+        :return: List of keys to ignore
+        :rtype: List[str]
+        """
         examine_mapping = {
             "compute": lambda val: val is not None,
             "settings": lambda val: val is not None and any(v is not None for v in val._to_dict().values()),
@@ -399,15 +439,17 @@ class PipelineComponent(Component):
         return init_params_dict
 
     def _to_dict(self) -> Dict:
-        """Dump the command component content into a dictionary."""
-
         # Replace the name of $schema to schema.
         component_schema_dict = self._dump_for_validation()
         component_schema_dict.pop("base_path", None)
         return {**self._other_parameter, **component_schema_dict}
 
-    def _build_rest_component_jobs(self):
-        """Build pipeline component jobs to rest."""
+    def _build_rest_component_jobs(self) -> Dict[str, dict]:
+        """Build pipeline component jobs to rest.
+
+        :return: A map of job name to rest objects
+        :rtype: Dict[str, dict]
+        """
         # Build the jobs to dict
         rest_component_jobs = {}
         for job_name, job in self.jobs.items():
@@ -427,7 +469,11 @@ class PipelineComponent(Component):
         return rest_component_jobs
 
     def _to_rest_object(self) -> ComponentVersion:
-        """Check ignored keys and return rest object."""
+        """Check ignored keys and return rest object.
+
+        :return: The component version
+        :rtype: ComponentVersion
+        """
         ignored_keys = self._check_ignored_keys(self)
         if ignored_keys:
             module_logger.warning("%s ignored on pipeline component %r.", ignored_keys, self.name)

@@ -46,7 +46,6 @@ class BaseProperty(dict):
         return False
 
     def as_dict(self) -> Dict[str, Any]:
-        """Return a dict representation of the object."""
         return self._to_dict(self)
 
     @classmethod
