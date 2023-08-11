@@ -2,5 +2,6 @@
 mypy = false
 pylint = false
 pyright = false
+black = false
 type_check_samples = false
 verifytypes = false

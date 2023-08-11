@@ -23,4 +23,4 @@ steps:
         --service_directory="${{ parameters.ServiceDirectory }}"
         --validate="${{ parameters.ValidateFormatting }}"
     env: ${{ parameters.EnvVars }}
-    condition: and(succeededOrFailed(), ne(variables['Skip.Pylint'],'true'))
+    condition: succeededOrFailed()
