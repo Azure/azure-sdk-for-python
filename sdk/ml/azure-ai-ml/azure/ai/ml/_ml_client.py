@@ -248,6 +248,8 @@ class MLClient:
             self._service_client_10_2021_dataplanepreview, resource_group_name, subscription_id = get_registry_client(
                 self._credential, registry_name, workspace_location, **kwargs
             )
+            if not workspace_name:
+                workspace_name = workspace_reference
 
         self._operation_scope = OperationScope(
             subscription_id, resource_group_name, workspace_name, registry_name, workspace_id, workspace_location
@@ -412,6 +414,7 @@ class MLClient:
             self._datastores,
             self._operation_container,
             requests_pipeline=self._requests_pipeline,
+            control_plane_client=self._service_client_04_2023_preview,
             **app_insights_handler_kwargs,
         )
         self._operation_container.add(AzureMLResourceType.MODEL, self._models)

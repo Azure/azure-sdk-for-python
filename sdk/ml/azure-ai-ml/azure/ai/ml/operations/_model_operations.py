@@ -97,6 +97,7 @@ class ModelOperations(_ScopeDependentOperations):
         self._service_client = service_client
         self._datastore_operation = datastore_operations
         self._all_operations = all_operations
+        self._control_plane_client = kwargs.get("control_plane_client", None)
 
         # Maps a label to a function which given an asset name,
         # returns the asset associated with the label
@@ -615,6 +616,10 @@ class ModelOperations(_ScopeDependentOperations):
                     else package_request.base_environment_source.resource_id
                 )
 
+            # import debugpy
+            # debugpy.connect(("localhost", 5678))
+            # debugpy.breakpoint()
+
             if self._registry_name:
                 # create ARM id for the target environment
                 if package_request.target_environment_name:
@@ -623,6 +628,7 @@ class ModelOperations(_ScopeDependentOperations):
             package_request = package_request._to_rest_object()
 
         # module_logger.info("Creating package with name: %s", package_request.target_environment_name)
+
 
         package_out = (
             self._model_versions_operation.begin_package(
@@ -641,12 +647,31 @@ class ModelOperations(_ScopeDependentOperations):
                 **self._scope_kwargs,
             ).result()
         )
-
+        # import debugpy
+        # debugpy.connect(("localhost", 5678))
+        # debugpy.breakpoint()
+        if hasattr(package_out,"target_environment_name"):
+            environment_name = package_out.target_environment_name
+        else:
+            environment_name = package_out.additional_properties['targetEnvironmentName']
+        
+        if hasattr(package_out,"target_environment_version"):
+            environment_version = package_out.target_environment_version
+        else:
+            environment_version = package_out.additional_properties['targetEnvironmentVersion']
+        
+        module_logger.info("\nPackage Created")
         if package_out is not None and package_out.__class__.__name__ == "PackageResponse":
-            environment_operation = self._all_operations.all_operations[AzureMLResourceType.ENVIRONMENT]
-            module_logger.info("\nPackage Created")
-            package_out = environment_operation.get(
-                name=package_out.target_environment_name, version=package_out.target_environment_version
-            )
+            if self._registry_name:
+                env_out = self._control_plane_client.environment_versions.get(name=environment_name, version=environment_version,
+                    workspace_name=self._workspace_name,
+                    **self._scope_kwargs,
+                    )
+                package_out = Environment._from_rest_object(env_out)
+            else:
+                environment_operation = self._all_operations.all_operations[AzureMLResourceType.ENVIRONMENT]
+                package_out = environment_operation.get(
+                    name=environment_name, version=environment_version
+                )
 
         return package_out
