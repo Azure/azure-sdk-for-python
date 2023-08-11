@@ -5,7 +5,7 @@ import os
 from contextlib import contextmanager
 from enum import Enum
 from pathlib import Path
-from typing import List, Optional, Union
+from typing import Iterable, List, Optional, Union
 
 from azure.ai.ml._utils._arm_id_utils import is_ARM_id_for_resource, is_registry_id_for_resource
 from azure.ai.ml._utils._asset_utils import IgnoreFile, get_ignore_file
@@ -106,7 +106,13 @@ class ComponentIgnoreFile(IgnoreFile):
         return ComponentIgnoreFile(other_path, extra_ignore_list=self._extra_ignore_list + [self])
 
     def _get_ignore_list(self) -> List[str]:
-        """Override to add custom ignores."""
+        """Retrieves the list of ignores from ignore file
+
+        Override to add custom ignores.
+
+        :return: The ignore rules
+        :rtype: List[str]
+        """
         if not super(ComponentIgnoreFile, self).exists():
             return self._COMPONENT_CODE_IGNORES
         return super(ComponentIgnoreFile, self)._get_ignore_list() + self._COMPONENT_CODE_IGNORES
@@ -153,7 +159,11 @@ class ComponentCodeMixin:
     """
 
     def _get_base_path_for_code(self) -> Path:
-        """Get base path for additional includes."""
+        """Get base path for additional includes.
+
+        :return: The base path
+        :rtype: Path
+        """
         if hasattr(self, "base_path"):
             return Path(self.base_path)
         raise NotImplementedError(
@@ -163,8 +173,12 @@ class ComponentCodeMixin:
 
     @classmethod
     def _get_code_field_name(cls) -> str:
-        """Get the field name for code. Will be used to get origin code value by default and will be used as
-        field name of validation diagnostics.
+        """Get the field name for code.
+
+        Will be used to get origin code value by default and will be used as field name of validation diagnostics.
+
+        :return: Code field name
+        :rtype: str
         """
         return "code"
 
@@ -175,6 +189,15 @@ class ComponentCodeMixin:
         to a temp folder along with additional includes to form a new code content.
         """
         return getattr(self, self._get_code_field_name(), None)
+
+    def _get_origin_code_in_str(self) -> Optional[str]:
+        """Get origin code value in str to simplify following logic."""
+        origin_code_value = self._get_origin_code_value()
+        if origin_code_value is None:
+            return None
+        if isinstance(origin_code_value, Path):
+            return origin_code_value.as_posix()
+        return str(origin_code_value)
 
     def _append_diagnostics_and_check_if_origin_code_reliable_for_local_path_validation(
         self, base_validation_result: MutableValidationResult = None
@@ -199,7 +222,7 @@ class ComponentCodeMixin:
         # If private features are enable and component has code value of type str we need to check
         # that it is a valid git path case. Otherwise, we should throw a ValidationError
         # saying that the code value is not valid
-        code_type = _get_code_type(self._get_origin_code_value())
+        code_type = _get_code_type(self._get_origin_code_in_str())
         if code_type == CodeType.GIT and not is_private_preview_enabled():
             if base_validation_result is not None:
                 base_validation_result.append_error(
@@ -209,13 +232,14 @@ class ComponentCodeMixin:
         return code_type == CodeType.LOCAL
 
     @contextmanager
-    def _build_code(self) -> Optional[Code]:
+    def _build_code(self) -> Iterable[Optional[Code]]:
         """Create a Code object if necessary based on origin code value and yield it.
 
-        If built code is the same as its origin value, do nothing and yield None.
-        Otherwise, yield a Code object pointing to the code.
+        :return: If built code is the same as its origin value, do nothing and yield None.
+           Otherwise, yield a Code object pointing to the code.
+        :rtype: Iterable[Optional[Code]]
         """
-        origin_code_value = self._get_origin_code_value()
+        origin_code_value = self._get_origin_code_in_str()
         code_type = _get_code_type(origin_code_value)
 
         if code_type == CodeType.GIT:
@@ -229,20 +253,27 @@ class ComponentCodeMixin:
             yield None
 
     @contextmanager
-    def _try_build_local_code(self):
-        """Extract the logic of _build_code for local code for further override."""
-        origin_code_value = self._get_origin_code_value()
+    def _try_build_local_code(self) -> Iterable[Optional[Code]]:
+        """Extract the logic of _build_code for local code for further override.
+
+        :return: The Code object if could be constructed, None otherwise
+        :rtype: Iterable[Optional[Code]]
+        """
+        origin_code_value = self._get_origin_code_in_str()
         if origin_code_value is None:
             yield None
         else:
+            base_path = self._get_base_path_for_code()
+            absolute_path = origin_code_value if os.path.isabs(origin_code_value) else base_path / origin_code_value
+
             yield Code(
-                base_path=self._get_base_path_for_code(),
+                base_path=base_path,
                 path=origin_code_value,
-                ignore_file=ComponentIgnoreFile(origin_code_value),
+                ignore_file=ComponentIgnoreFile(absolute_path),
             )
 
     def _with_local_code(self):
         # TODO: remove this method after we have a better way to do this judge in cache_utils
-        origin_code_value = self._get_origin_code_value()
+        origin_code_value = self._get_origin_code_in_str()
         code_type = _get_code_type(origin_code_value)
         return code_type == CodeType.LOCAL

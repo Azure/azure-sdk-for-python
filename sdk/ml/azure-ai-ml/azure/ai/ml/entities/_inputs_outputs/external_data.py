@@ -12,11 +12,11 @@ from azure.ai.ml.entities._mixins import DictMixin, RestTranslatableMixin
 class StoredProcedureParameter(DictMixin, RestTranslatableMixin):
     """Define a stored procedure parameter class for DataTransfer import database task.
 
-    :param name: The name of the database stored procedure.
+    :keyword name: The name of the database stored procedure.
     :type name: str, optional
-    :param value: The value of the database stored procedure.
+    :keyword value: The value of the database stored procedure.
     :type value: str, optional
-    :param type: The type of the database stored procedure.
+    :keyword type: The type of the database stored procedure.
     :type type: str, optional
     """
 
@@ -35,22 +35,22 @@ class StoredProcedureParameter(DictMixin, RestTranslatableMixin):
 class Database(DictMixin, RestTranslatableMixin):  # pylint: disable=too-many-instance-attributes
     """Define a database class for a DataTransfer Component or Job.
 
-    :param query: The SQL query to retrieve data from the database.
+    :keyword query: The SQL query to retrieve data from the database.
     :type query: str, optional
-    :param table_name: The name of the database table.
+    :keyword table_name: The name of the database table.
     :type table_name: str, optional
-    :param stored_procedure: The name of the stored procedure.
+    :keyword stored_procedure: The name of the stored procedure.
     :type stored_procedure: str, optional
-    :param stored_procedure_params: The parameters for the stored procedure.
+    :keyword stored_procedure_params: The parameters for the stored procedure.
     :type stored_procedure_params: List[dict, StoredProcedureParameter], optional
-    :param connection: The connection string for the database.
+    :keyword connection: The connection string for the database.
         The credential information should be stored in the workspace connection.
     :type connection: str, optional
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if the Database object cannot be successfully validated.
         Details will be provided in the error message.
 
     .. admonition:: Example:
-        :class: tip
+
         .. literalinclude:: ../../../../../samples/ml_samples_input_output_configurations.py
             :start-after: [START configure_database]
             :end-before: [END configure_database]
@@ -80,8 +80,14 @@ class Database(DictMixin, RestTranslatableMixin):  # pylint: disable=too-many-in
         self.stored_procedure = stored_procedure
         self.stored_procedure_params = stored_procedure_params
 
-    def _to_dict(self, remove_name=True):
-        """Convert the Source object to a dict."""
+    def _to_dict(self, remove_name: bool = True) -> Dict:
+        """Convert the Source object to a dict.
+
+        :param remove_name: Whether to remove the `name` key from the  dict representation. Defaults to True.
+        :type remove_name: bool, optional
+        :return: The dictionary representation of the class
+        :rtype: Dict
+        """
         keys = [
             "name",
             "type",
@@ -145,7 +151,7 @@ class FileSystem(DictMixin, RestTranslatableMixin):  # pylint: disable=too-many-
     :param path: The path to which the input is pointing. Could be pointing to the path of file system. Default is None.
     :type path: str, optional
     :param connection: Connection is workspace, we didn't support storage connection here, need leverage workspace
-    connection to store these credential info. Default is None.
+        connection to store these credential info. Default is None.
     :type connection: str, optional
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Source cannot be successfully validated.
         Details will be provided in the error message.
@@ -170,8 +176,14 @@ class FileSystem(DictMixin, RestTranslatableMixin):  # pylint: disable=too-many-
         else:
             self.path = path
 
-    def _to_dict(self, remove_name=True):
-        """Convert the Source object to a dict."""
+    def _to_dict(self, remove_name: bool = True):
+        """Convert the Source object to a dict.
+
+        :param remove_name: Whether to remove the `name` key from the  dict representation. Defaults to True.
+        :type remove_name: bool, optional
+        :return: The dictionary representation of the object
+        :rtype: Dict
+        """
         keys = ["name", "path", "type", "connection"]
         if remove_name:
             keys.remove("name")

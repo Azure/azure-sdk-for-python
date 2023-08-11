@@ -5,8 +5,8 @@ import abc
 import logging
 import sys
 from contextlib import contextmanager
-from types import CodeType, FunctionType, MethodType
-from typing import Any, Dict, List, Optional, Tuple, Union
+from types import CodeType, FrameType, FunctionType, MethodType
+from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple, Union
 
 from azure.ai.ml._utils.utils import is_private_preview_enabled
 
@@ -26,8 +26,14 @@ class PersistentLocalsFunctionBuilder(abc.ABC):
     injected_param = "__self"
 
     @classmethod
-    def make_error(cls, error_name: str, **kwargs):
-        """Make error message with error_name and kwargs."""
+    def make_error(cls, error_name: str, **kwargs) -> str:
+        """Make error message with error_name and kwargs.
+
+        :param error_name: A key from :attr:`~PersistentLocalsFunctionBuilder.errors`
+        :type error_name: str
+        :return: Formatted error message
+        :rtype: str
+        """
         return cls.errors[error_name].format(**kwargs)
 
     @abc.abstractmethod
@@ -60,8 +66,14 @@ class PersistentLocalsFunctionBuilder(abc.ABC):
 class PersistentLocalsFunctionProfilerBuilder(PersistentLocalsFunctionBuilder):
     @staticmethod
     @contextmanager
-    def _replace_sys_profiler(profiler):
-        """A context manager which replaces sys profiler to given profiler."""
+    # pylint: disable-next=docstring-missing-return,docstring-missing-rtype
+    def _replace_sys_profiler(profiler: Callable[[FrameType, str, Any], None]) -> Iterable[None]:
+        """A context manager which replaces sys profiler to given profiler.
+
+        :param profiler: The profile function.
+            See https://docs.python.org/3/library/sys.html#sys.setprofile for more information
+        :type profiler: Callable[[FrameType, str, Any], None]
+        """
         original_profiler = sys.getprofile()
         sys.setprofile(profiler)
         try:
@@ -70,16 +82,20 @@ class PersistentLocalsFunctionProfilerBuilder(PersistentLocalsFunctionBuilder):
             sys.setprofile(original_profiler)
 
     @staticmethod
-    def _get_func_variable_tracer(_locals_data: Dict[str, Any], func_code: CodeType):
+    def _get_func_variable_tracer(
+        _locals_data: Dict[str, Any], func_code: CodeType
+    ) -> Callable[[FrameType, str, Any], None]:
         """Get a tracer to trace variable names in dsl.pipeline function.
 
         :param _locals_data: A dict to save locals data.
         :type _locals_data: dict
         :param func_code: An code object to compare if current frame is inside user function.
         :type func_code: CodeType
+        :return: A tracing function
+        :rtype: Callable[[FrameType, str, Any], None]
         """
 
-        def tracer(frame, event, arg):  # pylint: disable=unused-argument
+        def tracer(frame: FrameType, event: str, arg: Any) -> None:  # pylint: disable=unused-argument
             if frame.f_code == func_code and event == "return":
                 # Copy the locals of user's dsl function when it returns.
                 _locals_data.update(frame.f_locals.copy())
@@ -234,10 +250,18 @@ try:
                     return False
             return True
 
-        def _create_code(self, instructions: List[Instr], base_func: Union[FunctionType, MethodType]):
+        def _create_code(self, instructions: List[Instr], base_func: Union[FunctionType, MethodType]) -> CodeType:
             """Create the base bytecode for the function to be generated.
 
             Will keep information of the function, such as name, globals, etc., but skip all instructions.
+
+            :param instructions: The list of instructions. Used to replace the instructions in base_func
+            :type instructions: List[Instr]
+            :param base_func: A function that provides base metadata (name, globals, etc...). Instructions will not
+                be kept
+            :type base_func: Union[FunctionType, MethodType]
+            :return: Generated code
+            :rtype: CodeType
             """
             fn_code = Bytecode.from_code(base_func.__code__)
             fn_code.clear()
@@ -253,12 +277,19 @@ try:
         # endregion
 
         @classmethod
-        def _get_pieces(cls, instructions, separators):
+        def _get_pieces(cls, instructions: List[Instr], separators: List[Instr]) -> List[List[Instr]]:
             """Split the instructions into pieces by the separators.
             Note that separators is a list of instructions. For example,
             instructions: [I3, I1, I2, I3, I1, I3, I1, I2, I3]
             separators: [I1, I2]
             result: [[I3], [I3, I1, I3], [I3]]
+
+            :param instructions: The list of instructions to split
+            :type instructions: List[instr]
+            :param separators: The sequence of Instr to use as a delimiter
+            :type separators: List[Instr]
+            :return: A sublists of instructions that were delimited by separators
+            :rtype: List[List[Instr]]
             """
             separator_iter = iter(separators)
 
@@ -292,27 +323,46 @@ try:
         @classmethod
         def _split_instructions_based_on_template(
             cls,
-            instructions,
+            instructions: List[Instr],
             *,
             remove_mock_body: bool = False,
-        ) -> List[List[Any]]:
+        ) -> List[List[Instr]]:
             """Split instructions into several pieces by separators.
             For example, in Python 3.11, the template source instructions will be:
-            [
-                Instr('RESUME', 0),  # initial instruction shared by all functions
-                Instr('LOAD_FAST', 'mock_arg'),  # the body execution instruction
-                Instr('RETURN_VALUE'),  # the return instruction shared by all functions
-            ]
+
+            .. code-block:: python
+
+                [
+                    Instr('RESUME', 0),  # initial instruction shared by all functions
+                    Instr('LOAD_FAST', 'mock_arg'),  # the body execution instruction
+                    Instr('RETURN_VALUE'),  # the return instruction shared by all functions
+                ]
+
             Then the separators before body will be:
-            [
-                Instr('RESUME', 0),
-            ]
+
+            .. code-block:: python
+
+                [
+                    Instr('RESUME', 0),
+                ]
+
             And the separators after body will be:
-            [
-                Instr('RETURN_VALUE'),
-            ]
+
+            .. code-block:: python
+
+                [
+                    Instr('RETURN_VALUE'),
+                ]
+
             For passed in instructions, we will split them with separators from beginning (the first RESUME) and
             with reversed_separators from end (the last RETURN_VALUE).
+
+            :param instructions: The instructions to split
+            :type instructions: List[instr]
+            :keyword remove_mock_body: Whether to remove the mock body. Defaults to False
+            :type remove_mock_body: bool, optional
+            :return: The split instructions
+            :rtype: List[List[Instr]]
             """
             if remove_mock_body:
                 # this parameter should be set as True only when processing the template target function,
@@ -350,6 +400,9 @@ try:
             statement around code to persistent the locals in the function.
 
             It will change the func bytecode in this way:
+
+            .. code-block:: python
+
                 def func(__self, *func_args):
                     try:
                        the func code...
@@ -357,12 +410,20 @@ try:
                        __self.locals = locals().copy()
 
             You can get the locals in func by this code:
+
+            .. code-block:: python
+
                 builder = PersistentLocalsFunctionBuilder()
                 persistent_locals_func = builder.build(your_func)
                 # Execute your func
                 result = persistent_locals_func(*args)
                 # Get the locals in the func.
                 func_locals = persistent_locals_func.locals
+
+            :param func: The function to modify
+            :type func: Union[FunctionType, MethodType]
+            :return: The built persistent locals function
+            :rtype: PersistentLocalsFunction
             """
             generated_func = FunctionType(
                 self._create_code(self._build_instructions(func), func),

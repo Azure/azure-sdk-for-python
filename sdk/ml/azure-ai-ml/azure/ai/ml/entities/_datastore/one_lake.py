@@ -7,7 +7,12 @@
 from pathlib import Path
 from typing import Any, Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import OneLakeDatastore as RestOneLakeDatastore, Datastore as DatastoreData, DatastoreType, OneLakeArtifact
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    OneLakeDatastore as RestOneLakeDatastore,
+    Datastore as DatastoreData,
+    DatastoreType,
+    OneLakeArtifact,
+)
 from azure.ai.ml._schema._datastore.one_lake import OneLakeSchema
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, TYPE
 from azure.ai.ml.entities._credentials import NoneCredentialConfiguration, ServicePrincipalConfiguration
@@ -47,7 +52,7 @@ class OneLakeDatastore(Datastore):
         name: str,
         artifact: OneLakeArtifact,
         one_lake_workspace_name: str,
-        endpoint: Optional[str] = None, 
+        endpoint: Optional[str] = None,
         description: Optional[str] = None,
         tags: Optional[Dict] = None,
         properties: Optional[Dict] = None,
@@ -74,9 +79,7 @@ class OneLakeDatastore(Datastore):
         return DatastoreData(properties=one_lake_ds)
 
     @classmethod
-    def _load_from_dict(
-        cls, data: Dict, context: Dict, additional_message: str, **kwargs
-    ) -> "OneLakeDatastore":
+    def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs) -> "OneLakeDatastore":
         return load_from_dict(OneLakeSchema, data, context, additional_message, **kwargs)
 
     @classmethod

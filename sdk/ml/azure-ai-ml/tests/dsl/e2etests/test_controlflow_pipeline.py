@@ -184,10 +184,10 @@ class TestIfElse(TestControlFlowPipeline):
         # Assert is_control with correct bool type
         expected_dict = {
             "output_data": {"type": "uri_folder"},
-            "bool_param_output": {"type": "boolean", "is_control": True, "early_available": True},
-            "int_param_output": {"type": "integer", "is_control": True},
-            "float_param_output": {"type": "number", "is_control": True},
-            "str_param_output": {"type": "string", "is_control": True},
+            "bool_param_output": {"type": "boolean", "early_available": True},
+            "int_param_output": {"type": "integer"},
+            "float_param_output": {"type": "number"},
+            "str_param_output": {"type": "string"},
         }
         assert rest_dict["outputs"] == expected_dict
 
@@ -907,7 +907,7 @@ class TestParallelForPipeline(TestControlFlowPipeline):
 
         rest_pipeline_component = pipeline_job.jobs["parallel_for_pipeline"].component._to_rest_object().as_dict()
         assert rest_pipeline_component["properties"]["component_spec"]["outputs"] == {
-            "component_out_boolean": {"is_control": True, "type": "string"},
+            "component_out_boolean": {"type": "string"},
             "component_out_number": {"type": "string"},
             "component_out_path": {"type": "mltable"},
         }

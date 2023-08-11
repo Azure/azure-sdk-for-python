@@ -225,8 +225,8 @@ class NetworkSettings:
     def public_ip_address(self) -> str:
         """Public IP address of the compute instance.
 
-        return: Public IP address.
-        rtype: str
+        :return: Public IP address.
+        :rtype: str
         """
         return self._public_ip_address
 
@@ -234,7 +234,7 @@ class NetworkSettings:
     def private_ip_address(self) -> str:
         """Private IP address of the compute instance.
 
-        return: Private IP address.
-        rtype: str
+        :return: Private IP address.
+        :rtype: str
         """
         return self._private_ip_address
