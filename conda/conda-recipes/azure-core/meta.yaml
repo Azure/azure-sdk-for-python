@@ -2,7 +2,7 @@
 
 package:
   name: "{{ name|lower }}"
-  version: { environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+  version: {{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
 
 source:
   url: {{ environ.get('CORE_SOURCE_DISTRIBUTION', '') }}

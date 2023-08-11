@@ -329,14 +329,14 @@ def get_output(command: str, working_directory: str) -> None:
         command = shlex.split(command)
         wd = working_directory.replace("\\", "/")
 
-        p = subprocess.Popen(command, cwd=wd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        p = subprocess.Popen(cmd=command, cwd=wd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         output, err = p.communicate()
         print(str(output))
         print(str(err))
         if p.returncode > 0:
             raise CalledProcessError(p.returncode, output=str(output) + str(err))
     except CalledProcessError as e:
-        print(e)
+        print(str(e))
         raise
 
 def invoke_command(command: str, working_directory: str) -> None:
