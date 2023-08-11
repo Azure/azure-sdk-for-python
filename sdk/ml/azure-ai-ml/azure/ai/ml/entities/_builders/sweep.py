@@ -61,7 +61,7 @@ class Sweep(ParameterizedSweep, BaseNode):
     Base class for sweep node.
 
     This class should not be instantiated directly. Instead, it should be created via the builder function: sweep.
-    
+
     :param trial: The ID or instance of the command component or job to be run for the step.
     :type trial: Union[~azure.ai.ml.entities.CommandComponent, str]
     :param compute: The compute definition containing the compute information for the step.
