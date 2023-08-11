@@ -248,7 +248,7 @@ def create_combined_sdist(
     repo_root = discover_repo_root()
     environment_config = os.path.join(repo_root, "conda", "conda-recipes", "conda_env.yml")
 
-    singular_dependency = len(get_pkgs_from_build_directory(config_assembly_folder, conda_build.name)) == 0
+    singular_dependency = len(conda_build.checkout) == 1
 
     if not singular_dependency:
         create_sdist_skeleton(config_assembly_folder, conda_build.name, conda_build.common_root)
@@ -260,8 +260,9 @@ def create_combined_sdist(
             environment_config,
         )
 
-    # todo: support multi dependency for download URI
     if conda_build.checkout[0].download_uri:
+        # if we have a single dependency that is downloadable, it will be placed in final sdist location
+        # by the get_package_source function. In that case, we just need to find it and return it
         if singular_dependency:
             assembled_sdist = next(
                 iter(
@@ -273,6 +274,7 @@ def create_combined_sdist(
                 )
             )
             return assembled_sdist
+        # however in the case where we have multiple dependencies downloaded, we will need to...
         else:
             raise NotImplementedError(
                 "todo: This script does not yet support downloading and extracting multiple packages."
@@ -388,7 +390,7 @@ def get_package_source(
     download_folder: str,
     assembly_location: str,
     output_folder: str,
-    dependency_count: int,
+    conda_build: CondaConfiguration
 ) -> None:
     """
     Retrieves the source code for a specific checkout_config.
@@ -396,20 +398,26 @@ def get_package_source(
     if checkout_config.download_uri:
         # if we have a single package, we can simply use the source distribution _as is_ rather than
         # repackaging it. so we download and move it directly to assembled
-        if dependency_count == 1:
+        if len(conda_build.checkout) == 1:
             return download_pypi_source(output_folder, checkout_config.download_uri)
         # in case of multiple external packages, we need to unzip the code into the same format as we do for a git clone
         else:
-            temp_location = download_pypi_source(download_folder, checkout_config.download_uri)
+            downloaded_zip = download_pypi_source(download_folder, checkout_config.download_uri)
             unzip_staging_folder = prep_directory(os.path.join(download_folder, checkout_config.package))
-            unzipped_staged = unzip_file_to_directory(temp_location, unzip_staging_folder)
+            unzipped_staged = unzip_file_to_directory(downloaded_zip, unzip_staging_folder)
             assembly_location = prep_directory(os.path.join(assembly_location, checkout_config.package))
 
+            # During unzip, we often end up one level deeper than we intend.
+            # EG: unzipping azure-core-1.29.1.zip to `assembly/azure-core/azure-core`
+            # will _actually_ end up in `assembly/azure-core/azure-core/azure-core-1.29.1`.
+            #
+            # What we can do to counteract this is simply move all files _within_ the unzipped folder
+            # to where we actually want them to live.
             for file_name in os.listdir(unzipped_staged):
                 shutil.move(os.path.join(unzipped_staged, file_name), assembly_location)
 
-            if os.path.exists(temp_location):
-                os.remove(temp_location)
+            if os.path.exists(downloaded_zip):
+                os.remove(downloaded_zip)
 
             if os.path.exists(unzipped_staged):
                 shutil.rmtree(unzipped_staged)
@@ -429,8 +437,25 @@ def get_package_source(
 
 
 def assemble_source(conda_configurations: List[CondaConfiguration], repo_root: str) -> None:
-    """If given a common root/package, this function will be used to clone slices of the azure-sdk-for-python repo and to download packages as they were at release.
-    If given an https:// url, will instead attempt to download and unzip a package tar.gz.
+    """This function takes a set of conda configurations as an input and creates the necessary artifacts to produce a successful conda build.
+    The function utilizes 3 temporariy directories to do this.
+
+    /conda/downloaded/
+        /<conda-package-name>/
+            /<downloaded source or repo package 1>
+            /<downloaded source or repo package 2>
+            /<downloaded source or repo package 3>
+    /conda/assembly/
+        <conda-package-name>/
+        /<downloaded source package 1>
+        /<downloaded source package 2>
+    /conda/assembled/
+        /<conda-package-name>
+            meta.yaml
+        <conda-package-name>.tar.gz
+
+    The final outcome being a completely assembled source distribution (which may or may not combine multiple package into a single sdist)
+    which can be immediately built utilizing the generated `conda/conda-env` conda virtual directory.
     """
     sdist_output_dir = prep_directory(os.path.join(repo_root, "conda", "assembled"))
     sdist_assembly_area = prep_directory(os.path.join(repo_root, "conda", "assembly"))
@@ -463,7 +488,7 @@ def assemble_source(conda_configurations: List[CondaConfiguration], repo_root: s
                 config_download_folder,
                 config_assembly_folder,
                 sdist_output_dir,
-                len(conda_build.checkout),
+                conda_build,
             )
 
         # the output of above loop is the following folder structure:
