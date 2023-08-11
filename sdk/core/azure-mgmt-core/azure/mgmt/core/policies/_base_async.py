@@ -31,7 +31,6 @@ from typing import Union
 
 from azure.core.pipeline import PipelineRequest, PipelineResponse
 from azure.core.pipeline.policies import AsyncHTTPPolicy
-from azure.core.pipeline.transport import HttpRequest as LegacyHttpRequest
 from azure.core.pipeline.transport import (
     HttpRequest as LegacyHttpRequest,
     AsyncHttpResponse as LegacyAsyncHttpResponse,

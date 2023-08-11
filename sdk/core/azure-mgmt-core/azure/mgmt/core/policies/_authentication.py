@@ -85,9 +85,9 @@ class _AuxiliaryAuthenticationPolicyBase(Generic[TokenCredentialType]):
     :param str scopes: required authentication scopes
     """
 
-    def __init__(
+    def __init__(  # pylint: disable=unused-argument
         self, auxiliary_credentials: Sequence[TokenCredentialType], *scopes: str, **kwargs: Any
-    ) -> None:  # pylint: disable=unused-argument
+    ) -> None:
         self._auxiliary_credentials = auxiliary_credentials
         self._scopes = scopes
         self._aux_tokens: Optional[List[AccessToken]] = None

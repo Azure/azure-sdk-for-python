@@ -56,7 +56,7 @@ class _SansIOARMAutoResourceProviderRegistrationPolicy:
             response_as_json = json.loads(response.http_response.text())
             if response_as_json["error"]["code"] == "MissingSubscriptionRegistration":
                 # While "match" can in theory be None, if we saw "MissingSubscriptionRegistration" it won't happen
-                match = cast(re.Match[str], re.match(r".*'(.*)'", response_as_json["error"]["message"]))
+                match = cast(re.Match, re.match(r".*'(.*)'", response_as_json["error"]["message"]))
                 return match.group(1)
         except Exception:  # pylint: disable=broad-except
             pass

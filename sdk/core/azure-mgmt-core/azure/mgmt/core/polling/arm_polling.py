@@ -24,7 +24,7 @@
 #
 # --------------------------------------------------------------------------
 from enum import Enum
-from typing import TYPE_CHECKING, Optional, Union, TypeVar, Dict, Any, Sequence
+from typing import Optional, Union, TypeVar, Dict, Any, Sequence
 
 from azure.core import CaseInsensitiveEnumMeta
 from azure.core.polling.base_polling import (

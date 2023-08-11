@@ -23,7 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import Mapping, MutableMapping, Any, Optional, Type, Union, cast
+from typing import Mapping, MutableMapping, Optional, Type, Union, cast
 import re
 import logging
 

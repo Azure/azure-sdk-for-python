@@ -32,7 +32,7 @@ from .policies import (
 )
 
 HTTPRequestType = TypeVar("HTTPRequestType")
-AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType", bound="AsyncContextManager")
+AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType", bound=AsyncContextManager)
 
 
 class AsyncARMPipelineClient(AsyncPipelineClient[HTTPRequestType, AsyncHTTPResponseType]):
