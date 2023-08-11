@@ -381,7 +381,7 @@ def _get_file_list_content_hash(file_list) -> str:
     return str(_hash.hexdigest())
 
 
-def traverse_directory(
+def traverse_directory(  # pylint: disable=unused-argument
     root: str,
     files: List[str],
     *,

@@ -116,7 +116,7 @@ class YamlTranslatableMixin:
 
     def _to_ordered_dict_for_yaml_dump(self) -> Dict:
         """Dump the object into a dictionary with a specific key order.
-        
+
         :return: The ordered dict
         :rtype: Dict
         """
