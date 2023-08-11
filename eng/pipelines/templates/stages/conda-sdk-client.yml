@@ -21,7 +21,8 @@ stages:
         CondaArtifacts:
         - name: azure-core
           common_root: azure
-          in_batch: ${{ parameters.release_azure_core }}
+          service: core
+          in_batch: true
           checkout:
           - package: azure-core
             download_uri: https://files.pythonhosted.org/packages/df/d4/1472562806c1cef919503207082c2b2be70d005cd6deb9ae46d4af0c1b4a/azure-core-1.29.1.zip
@@ -69,14 +70,19 @@ stages:
             CondaArtifacts:
               - name: azure-core
                 common_root: azure
-                in_batch: ${{ parameters.release_azure_core }}
+                service: core
+                in_batch: true
                 checkout:
                 - package: azure-core
-                  checkout_path: sdk/core
-                  version: 1.24.0
+                  download_uri: https://files.pythonhosted.org/packages/df/d4/1472562806c1cef919503207082c2b2be70d005cd6deb9ae46d4af0c1b4a/azure-core-1.29.1.zip
+                - package: azure-mgmt-core
+                  download_uri: https://files.pythonhosted.org/packages/14/95/2b2085e40f4b9de88ad256428a669583066d8ab348fc19110c7d04c3189b/azure-mgmt-core-1.4.0.zip
+                - package: azure-common
+                  download_uri: https://files.pythonhosted.org/packages/3e/71/f6f71a276e2e69264a97ad39ef850dca0a04fce67b12570730cb38d0ccac/azure-common-1.1.28.zip
               - name: azure-storage
                 common_root: azure/storage
                 in_batch: ${{ parameters.release_azure_storage }}
+                service: storage
                 checkout:
                 - package: azure-storage-blob
                   checkout_path: sdk/storage
