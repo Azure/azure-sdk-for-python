@@ -4,13 +4,16 @@
 # ------------------------------------
 from __future__ import annotations
 from types import TracebackType
-from typing import Any, Optional, Type
+from typing import Any, Optional, Type, TypeVar
 from typing_extensions import Protocol, runtime_checkable
 from .credentials import AccessToken as _AccessToken
 
 
+_T_co = TypeVar("_T_co", covariant=True)
+
+
 @runtime_checkable
-class AsyncTokenCredential(Protocol):
+class AsyncTokenCredential(Protocol[_T_co]):
     """Protocol for classes able to provide OAuth tokens."""
 
     async def get_token(
@@ -33,7 +36,7 @@ class AsyncTokenCredential(Protocol):
     async def close(self) -> None:
         pass
 
-    async def __aenter__(self) -> None:
+    async def __aenter__(self) -> _T_co:
         pass
 
     async def __aexit__(
