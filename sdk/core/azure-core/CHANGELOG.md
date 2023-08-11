@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Added a default implementation for `AsyncTokenCredential.__aexit__`
+
 ### Other Changes
 
 ## 1.29.1 (2023-08-09)
