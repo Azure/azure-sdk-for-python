@@ -682,7 +682,7 @@ def encode_message_id(value):
     <type name="message-id-binary" class="restricted" source="binary" provides="message-id"/>
     <type name="message-id-string" class="restricted" source="string" provides="message-id"/>
 
-    :param Any value: The message ID to encode.
+    :param any value: The message ID to encode.
     :return: The encoded message ID.
     :rtype: dict
     """
