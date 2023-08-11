@@ -469,9 +469,9 @@
                 "description": "Whether to grant materialization identity permissions"
             }
         },
-        "materializationIdentityName": {
+        "materialization_identity_name": {
             "defaultValue": "",
-            "type": "String",
+            "type": "string",
             "metadata": {
                 "description": "Feature store materialization identity name"
             }
@@ -538,7 +538,7 @@
         },
         "defaultPEConnections": "[array(variables('privateEndpointSettings'))]",
         "privateEndpointDeploymentName": "[concat('DeployPrivateEndpoint-', uniqueString(parameters('privateEndpointName')))]",
-        "materialization_identity_resource_id": "[if(not(empty(parameters('materializationIdentityName'))), resourceId(parameters('storageAccountResourceGroupName'), 'Microsoft.ManagedIdentity/userAssignedIdentities', parameters('materializationIdentityName')),  parameters('materialization_identity_resource_id'))]",
+        "materialization_identity_resource_id": "[if(not(empty(parameters('materialization_identity_name'))), resourceId(parameters('storageAccountResourceGroupName'), 'Microsoft.ManagedIdentity/userAssignedIdentities', parameters('materialization_identity_name')),  parameters('materialization_identity_resource_id'))]",
         "offlineStoreContainerName": "[concat('offlinestore', guid(variables('storageAccount')))]",
         "offlineStoreConnectionName": "[if(empty(parameters('offline_store_connection_name')), 'OfflineStoreConnectionName', parameters('offline_store_connection_name'))]",
         "onlineStoreConnectionName": "[if(empty(parameters('online_store_connection_name')), 'OnlineStoreConnectionName', parameters('online_store_connection_name'))]",

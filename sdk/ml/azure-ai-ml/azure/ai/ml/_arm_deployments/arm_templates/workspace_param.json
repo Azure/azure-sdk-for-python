@@ -137,7 +137,7 @@
     "offline_store_connection_target" : {
         "value": ""
     },
-    "materializationIdentityName": {
+    "materialization_identity_name": {
         "value": ""
     },
     "materialization_identity_resource_id" : {

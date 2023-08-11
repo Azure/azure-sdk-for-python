@@ -518,7 +518,7 @@ class WorkspaceOperationsBase:
                 _set_val(param["materialization_identity_resource_id"], materialization_identity.resource_id)
             else:
                 _set_val(
-                    param["materializationIdentityName"],
+                    param["materialization_identity_name"],
                     f"materialization-uai-{workspace.resource_group}-{workspace.name}",
                 )
 
