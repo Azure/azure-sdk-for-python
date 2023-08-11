@@ -4,7 +4,7 @@
 # ------------------------------------
 from __future__ import annotations
 from types import TracebackType
-from typing import Any, Optional, AsyncContextManager
+from typing import Any, Optional, AsyncContextManager, Type
 from typing_extensions import Protocol, runtime_checkable
 from .credentials import AccessToken as _AccessToken
 
@@ -34,6 +34,9 @@ class AsyncTokenCredential(Protocol, AsyncContextManager["AsyncTokenCredential"]
         pass
 
     async def __aexit__(
-        self, exc_type: Optional[Any], exc_value: Optional[BaseException], traceback: Optional[TracebackType]
+        self,
+        exc_type: Optional[Type[BaseException]],
+        exc_value: Optional[BaseException],
+        traceback: Optional[TracebackType],
     ) -> None:
         pass
