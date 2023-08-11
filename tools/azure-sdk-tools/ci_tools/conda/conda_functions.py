@@ -447,7 +447,7 @@ def get_package_source(
 
 def assemble_source(conda_configurations: List[CondaConfiguration], repo_root: str) -> None:
     """This function takes a set of conda configurations as an input and creates the necessary artifacts to produce a successful conda build.
-    The function utilizes 3 temporariy directories to do this.
+    The function utilizes 3 temporariy directories to do this. Appearing in order of usage:
 
     /conda/downloaded/
         /<conda-package-name>/
@@ -558,7 +558,7 @@ def build_conda_packages(conda_configurations: List[CondaConfiguration], repo_ro
 
     for conda_build in conda_configurations:
         conda_build_folder = os.path.join(conda_sdist_dir, conda_build.name).replace("\\", "/")
-        invoke_command(
+        get_output(
             f'conda run --prefix "{conda_env_dir}" conda-build . --output-folder "{conda_output_dir}" -c "{conda_output_dir}"',
             conda_build_folder,
         )
