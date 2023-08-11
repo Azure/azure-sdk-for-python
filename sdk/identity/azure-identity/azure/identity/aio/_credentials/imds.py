@@ -3,7 +3,8 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import os
-from typing import Optional, TypeVar, Any
+from types import TracebackType
+from typing import Optional, TypeVar, Any, Type
 
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError
 from azure.core.credentials import AccessToken
@@ -32,6 +33,14 @@ class ImdsCredential(AsyncContextManager, GetTokenMixin):
     async def __aenter__(self: T) -> T:
         await self._client.__aenter__()
         return self
+
+    async def __aexit__(
+        self,
+        exc_type: Optional[Type[BaseException]],
+        exc_value: Optional[BaseException],
+        traceback: Optional[TracebackType],
+    ) -> None:
+        await self.close()
 
     async def close(self) -> None:
         await self._client.close()

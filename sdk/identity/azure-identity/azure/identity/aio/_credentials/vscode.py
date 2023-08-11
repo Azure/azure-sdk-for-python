@@ -2,7 +2,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import cast, Optional, Any
+from types import TracebackType
+from typing import cast, Optional, Any, Type
 
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
@@ -39,6 +40,14 @@ class VisualStudioCodeCredential(_VSCodeCredentialBase, AsyncContextManager, Get
         if self._client:
             await self._client.__aenter__()
         return self
+
+    async def __aexit__(
+        self,
+        exc_type: Optional[Type[BaseException]],
+        exc_value: Optional[BaseException],
+        traceback: Optional[TracebackType],
+    ) -> None:
+        await self.close()
 
     async def close(self) -> None:
         """Close the credential's transport session."""
