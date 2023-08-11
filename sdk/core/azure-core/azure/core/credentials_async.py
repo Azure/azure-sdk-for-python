@@ -33,5 +33,7 @@ class AsyncTokenCredential(Protocol, AsyncContextManager["AsyncTokenCredential"]
     async def close(self) -> None:
         pass
 
-    async def __aexit__(self, exc_type: Any, exc_value: BaseException, traceback: TracebackType) -> None:
+    async def __aexit__(
+        self, exc_type: Optional[Any], exc_value: Optional[BaseException], traceback: Optional[TracebackType]
+    ) -> None:
         pass
