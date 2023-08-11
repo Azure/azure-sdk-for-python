@@ -15,9 +15,11 @@ from azure.ai.ml._utils.utils import camel_to_snake
 
 from .credentials import NoneCredentialsSchema, ServicePrincipalSchema
 
+
 class OneLakeArtifactSchema(PathAwareSchema):
     artifact_name = fields.Str(required=True)
     artifact_type = fields.Str()
+
 
 class OneLakeSchema(PathAwareSchema):
     name = fields.Str(required=True)
@@ -42,6 +44,7 @@ class OneLakeSchema(PathAwareSchema):
     tags = fields.Dict(keys=fields.Str(), values=fields.Str())
 
     @post_load
-    def make(self, data:Dict[str, Any], **kwargs) -> "OneLakeDatastore":
+    def make(self, data: Dict[str, Any], **kwargs) -> "OneLakeDatastore":
         from azure.ai.ml.entities import OneLakeDatastore
+
         return OneLakeDatastore(**data)

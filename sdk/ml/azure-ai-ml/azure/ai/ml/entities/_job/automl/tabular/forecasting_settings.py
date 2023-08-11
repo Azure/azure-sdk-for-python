@@ -133,7 +133,6 @@ class ForecastingSettings(RestTranslatableMixin):
         if isinstance(self.features_unknown_at_forecast_time, str) and self.features_unknown_at_forecast_time:
             features_unknown_at_forecast_time = [self.features_unknown_at_forecast_time]
 
-
         return RestForecastingSettings(
             country_or_region_for_holidays=self.country_or_region_for_holidays,
             cv_step_size=self.cv_step_size,
