@@ -5,12 +5,14 @@ import logging
 from typing import Dict, List, Optional, Union
 
 from marshmallow import ValidationError
+from typing_extensions import Literal
 
 from azure.ai.ml._schema.pipeline.control_flow_job import DoWhileSchema
 from azure.ai.ml.constants._component import DO_WHILE_MAX_ITERATION, ControlFlowType
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job.job_limits import DoWhileJobLimits
-from azure.ai.ml.entities._job.pipeline._io import InputOutputBase
+from azure.ai.ml.entities._job.pipeline._io import InputOutputBase, NodeInput, NodeOutput
+from azure.ai.ml.entities._validation import MutableValidationResult
 from azure.ai.ml.exceptions import ErrorCategory, ValidationErrorType
 
 from .._util import load_from_dict, validate_attribute_type
@@ -108,12 +110,26 @@ class DoWhile(LoopNode):
         return cls(**loaded_data)
 
     @classmethod
-    def _create_instance_from_schema_dict(cls, pipeline_jobs, loaded_data: Dict, validate_port=True) -> "DoWhile":
-        """Create a do_while instance from schema parsed dict."""
+    def _create_instance_from_schema_dict(
+        cls, pipeline_jobs: Dict[str, BaseNode], loaded_data: Dict, validate_port: bool = True
+    ) -> "DoWhile":
+        """Create a do_while instance from schema parsed dict.
+
+        :param pipeline_jobs: The pipeline jobs
+        :type pipeline_jobs: Dict[str, BaseNode]
+        :param loaded_data: The loaded data
+        :type loaded_data: Dict
+        :param validate_port: Whether to raise if inputs/outputs are not present. Defaults to True
+        :type validate_port: bool
+        :return: The DoWhile node
+        :rtype: DoWhile
+        """
 
         # pylint: disable=protected-access
 
-        def get_port_obj(body, port_name, is_input=True, validate_port=True):
+        def get_port_obj(
+            body: BaseNode, port_name: str, is_input: bool = True, validate_port: bool = True
+        ) -> Union[str, NodeInput, NodeOutput]:
             if is_input:
                 port = body.inputs.get(port_name, None)
             else:
@@ -188,7 +204,7 @@ class DoWhile(LoopNode):
 
         The range of the iteration count is (0, 1000].
 
-        :param max_iteration_count: The maximum iteration count for the do-while job.
+        :keyword max_iteration_count: The maximum iteration count for the do-while job.
         :type max_iteration_count: int
         """
         if isinstance(self.limits, DoWhileJobLimits):
@@ -203,8 +219,29 @@ class DoWhile(LoopNode):
         validation_result.merge_with(self._validate_body_output_mapping(raise_error=False))
         return validation_result
 
-    def _validate_port(self, port, node_ports, port_type, yaml_path):
-        """Validate input/output port is exist in the dowhile body."""
+    def _validate_port(
+        self,
+        port: Union[str, NodeInput, NodeOutput],
+        node_ports: Dict[str, Union[NodeInput, NodeOutput]],
+        port_type: Literal["input", "output"],
+        yaml_path: str,
+    ) -> MutableValidationResult:
+        """Validate input/output port is exist in the dowhile body.
+
+        :param port: Either:
+          * The name of an input or output
+          * An input object
+          * An output object
+        :type port: Union[str, NodeInput, NodeOutput],
+        :param node_ports: The node input/outputs
+        :type node_ports: Union[Dict[str, Union[NodeInput, NodeOutput]]]
+        :param port_type: The port type
+        :type port_type: Literal["input", "output"],
+        :param yaml_path: The yaml path
+        :type yaml_path: str,
+        :return: The validation result
+        :rtype: MutableValidationResult
+        """
         validation_result = self._create_empty_validation_result()
         if isinstance(port, str):
             port_obj = node_ports.get(port, None)

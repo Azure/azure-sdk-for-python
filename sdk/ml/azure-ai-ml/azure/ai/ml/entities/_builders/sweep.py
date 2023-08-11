@@ -4,7 +4,7 @@
 # pylint: disable=protected-access
 
 import logging
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, Tuple, Union
 
 import pydash
 from marshmallow import EXCLUDE, Schema
@@ -333,11 +333,21 @@ class Sweep(ParameterizedSweep, BaseNode):
         return SweepSchema(context=context)
 
     @classmethod
-    def _get_origin_inputs_and_search_space(cls, built_inputs: Dict[str, NodeInput]):
+    def _get_origin_inputs_and_search_space(
+        cls, built_inputs: Optional[Dict[str, NodeInput]]
+    ) -> Tuple[Dict[str, Union[Input, str, bool, int, float]], Dict[str, SweepDistribution]]:
         """Separate mixed true inputs & search space definition from inputs of
         this node and return them.
 
         Input will be restored to Input/LiteralInput before returned.
+
+        :param built_inputs: The built inputs
+        :type built_inputs: Optional[Dict[str, NodeInput]]
+        :return: A tuple of the inputs and search space
+        :rtype: Tuple[
+                Dict[str, Union[Input, str, bool, int, float]],
+                Dict[str, SweepDistribution],
+            ]
         """
         search_space: Dict[
             str,

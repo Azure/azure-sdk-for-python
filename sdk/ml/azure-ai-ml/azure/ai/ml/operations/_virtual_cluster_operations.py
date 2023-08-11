@@ -105,7 +105,6 @@ class VirtualClusterOperations:
         """
 
         def make_id(entity_type: str) -> str:
-            """Helper function to make virtual cluster id for search query"""
             return LEVEL_ONE_NAMED_RESOURCE_ID_FORMAT.format(
                 self._subscription_id, self._resource_group_name, AZUREML_RESOURCE_PROVIDER, entity_type, name
             )

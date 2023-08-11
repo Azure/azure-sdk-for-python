@@ -22,5 +22,9 @@ class _InputOutputBase(DictMixin, RestTranslatableMixin):
         self.type = type
 
     def _is_literal(self) -> bool:
-        """Returns True if this input is literal input."""
+        """Check whether input is a literal
+
+        :return: True if this input is literal input.
+        :rtype: bool
+        """
         return self.type in SUPPORTED_PARAM_TYPES
