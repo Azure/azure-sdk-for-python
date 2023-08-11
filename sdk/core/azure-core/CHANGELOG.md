@@ -1,14 +1,10 @@
 # Release History
 
-## 1.29.2 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
+## 1.29.2 (2023-08-11)
 
 ### Bugs Fixed
 
-### Other Changes
+- Added a default implementation for `AsyncTokenCredential.__aexit__()`
 
 ## 1.29.1 (2023-08-09)
 
