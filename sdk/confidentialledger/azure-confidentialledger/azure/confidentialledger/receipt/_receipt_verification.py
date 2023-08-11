@@ -70,7 +70,7 @@ def verify_receipt(
     # Verify node certificate is endorsed by the service certificate
     # through endorsements certificates
     _verify_node_cert_endorsed_by_service_cert(
-        node_cert, service_cert, receipt_obj.serviceEndorsements
+        node_cert, service_cert, cast(List[str], receipt_obj.serviceEndorsements)
     )
 
     # Compute hash of the leaf node in the Merkle Tree corresponding
@@ -83,7 +83,7 @@ def verify_receipt(
     # Verify signature of the signing node over the root of the tree with
     # node certificate public key
     _verify_signature_over_root_node_hash(
-        receipt_obj.signature, node_cert, receipt_obj.nodeId, root_node_hash
+        receipt_obj.signature, node_cert, cast(str, receipt_obj.nodeId), root_node_hash
     )
 
 

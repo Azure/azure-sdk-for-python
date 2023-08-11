@@ -8,7 +8,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 
 import time
-from typing import Any, IO, Callable, List, Optional, Union, cast
+from typing import Any, Callable, Dict, IO, List, Optional, Union, cast
 
 from azure.core.exceptions import ResourceNotFoundError
 from azure.core.polling import PollingMethod, LROPoller, NoPolling
@@ -50,7 +50,7 @@ class BaseStatePollingMethod:
 
         self._deserialization_callback = None
         self._status = "constructed"
-        self._latest_response = {}
+        self._latest_response: JSON = {}
 
         self._retry_not_found = retry_not_found
         self._not_found_count = 0
@@ -156,7 +156,7 @@ class ConfidentialLedgerClientOperationsMixin(GeneratedOperationsMixin):
         else:
             polling_method = polling
 
-        return LROPoller(self._client, initial_response, None, polling_method)
+        return LROPoller(self._client, initial_response, lambda x: x, polling_method)
 
     def begin_get_receipt(self, transaction_id: str, **kwargs: Any) -> LROPoller[JSON]:
         """Returns a poller for getting a receipt certifying ledger contents at a particular
@@ -185,7 +185,7 @@ class ConfidentialLedgerClientOperationsMixin(GeneratedOperationsMixin):
         else:
             polling_method = polling
 
-        return LROPoller(self._client, initial_response, None, polling_method)
+        return LROPoller(self._client, initial_response, lambda x: x, polling_method)
 
     def begin_create_ledger_entry(
         self,

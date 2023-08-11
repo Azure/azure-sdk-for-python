@@ -31,7 +31,7 @@ def _convert_dict_to_camel_case(dictionary: Dict[str, Any]) -> Dict[str, Any]:
     :rtype: dict[str, any]
     """
 
-    new_dictionary = {}
+    new_dictionary: Dict[str, Any] = {}
 
     # Iterate through all the keys in the dictionary
     for key, value in dictionary.items():

@@ -107,7 +107,7 @@ class ConfidentialLedgerClientOperationsMixin(GeneratedOperationsMixin):
         else:
             polling_method = polling
 
-        return AsyncLROPoller(self._client, initial_response, None, polling_method)
+        return AsyncLROPoller(self._client, initial_response, lambda x: x, polling_method)
 
     async def begin_get_receipt(self, transaction_id: str, **kwargs: Any) -> AsyncLROPoller[JSON]:
         """Returns a poller for getting a receipt certifying ledger contents at a particular
@@ -136,7 +136,7 @@ class ConfidentialLedgerClientOperationsMixin(GeneratedOperationsMixin):
         else:
             polling_method = polling
 
-        return AsyncLROPoller(self._client, initial_response, None, polling_method)
+        return AsyncLROPoller(self._client, initial_response, lambda x: x, polling_method)
 
     async def begin_create_ledger_entry(
         self,
