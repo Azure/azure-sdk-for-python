@@ -65,6 +65,23 @@ stages:
         vmImage: MMSUbuntu20.04
 
       steps:
+        # restore platform-specific dependencies and re-index
+        - download: current
+          artifact: windows_conda
+          timeoutInMinutes: 5
+
+        - download: current
+          artifact: linux_conda
+          timeoutInMinutes: 5
+
+        - download: current
+          artifact: mac_conda
+          timeoutInMinutes: 5
+
+        - pwsh: |
+            Get-ChildItem -Recurse -Force -Path "$(Pipeline.Workspace)" | % { $_.FullName } 
+          displayName: Dump Visible Artifacts
+
         - template: ../steps/build-conda-artifacts.yml
           parameters:
             CondaArtifacts:
