@@ -12,8 +12,10 @@ if TYPE_CHECKING:
 class HttpChallenge(object):
     """An object representing the content of a Key Vault authentication challenge.
 
-    :param str request_uri: The URI of the HTTP request that prompted this challenge.
-    :param str challenge: The WWW-Authenticate header of the challenge response.
+    :param request_uri: The URI of the HTTP request that prompted this challenge.
+    :type request_uri: str
+    :param challenge: The WWW-Authenticate header of the challenge response.
+    :type challenge: str
     :param response_headers: Optional. The headers attached to the challenge response.
     :type response_headers: MutableMapping[str, str] or None
     """
@@ -136,8 +138,8 @@ class HttpChallenge(object):
     def _validate_challenge(self, challenge: str) -> str:  # pylint:disable=bad-option-value,useless-option-value,no-self-use
         """Verifies that the challenge is a valid auth challenge and returns the key=value pairs.
 
-        :param str challenge: The WWW-Authenticate header of the challenge response.
-
+        :param challenge: The WWW-Authenticate header of the challenge response.
+        :type challenge: str
         :returns: The challenge key/value pairs, with whitespace removed, as a string.
         :rtype: str
         """
@@ -149,8 +151,8 @@ class HttpChallenge(object):
     def _validate_request_uri(self, uri: str) -> str:  # pylint:disable=bad-option-value,useless-option-value,no-self-use
         """Extracts the host authority from the given URI.
 
-        :param str uri: The URI of the HTTP request that prompted the challenge.
-
+        :param uri: The URI of the HTTP request that prompted the challenge.
+        :type uri: str
         :returns: The challenge host authority.
         :rtype: str
         """

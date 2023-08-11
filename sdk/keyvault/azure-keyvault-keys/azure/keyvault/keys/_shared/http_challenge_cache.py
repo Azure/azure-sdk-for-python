@@ -19,7 +19,8 @@ _lock = threading.Lock()
 def get_challenge_for_url(url: str) -> "Optional[HttpChallenge]":
     """Gets the challenge for the cached URL.
 
-    :param str url: the URL the challenge is cached for.
+    :param url: the URL the challenge is cached for.
+    :type url: str
 
     :returns: The challenge for the cached request URL, or None if the request URL isn't cached.
     :rtype: HttpChallenge or None
@@ -42,7 +43,8 @@ def _get_cache_key(url: str) -> str:
     specify ports, but Key Vault's next page links do, so a redundant challenge would otherwise be executed when the
     client requests the next page.
 
-    :param str url: The HTTP request URL.
+    :param url: The HTTP request URL.
+    :type url: str
 
     :returns: The URL's `netloc`, minus any port attached to the URL.
     :rtype: str
@@ -71,7 +73,8 @@ def remove_challenge_for_url(url: str) -> None:
 def set_challenge_for_url(url: str, challenge: "HttpChallenge") -> None:
     """Caches the challenge for the specified URL.
 
-    :param str url: the URL for which to cache the challenge
+    :param url: the URL for which to cache the challenge
+    :type url: str
     :param challenge: the challenge to cache
     :type challenge: HttpChallenge
     """

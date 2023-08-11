@@ -50,7 +50,8 @@ class KeyVaultOperationPoller(LROPoller):
 
         You can check if this call has ended with timeout with the "done()" method.
 
-        :param float timeout: Period of time to wait for the long running operation to complete (in seconds).
+        :param timeout: Period of time to wait for the long running operation to complete (in seconds).
+        :type timeout: float
 
         :raises ~azure.core.exceptions.HttpResponseError: Server problem with the query.
         """

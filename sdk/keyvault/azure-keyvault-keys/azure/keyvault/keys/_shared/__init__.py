@@ -27,10 +27,14 @@ __all__ = [
 class KeyVaultResourceId():
     """Represents a Key Vault identifier and its parsed contents.
 
-    :param str source_id: The complete identifier received from Key Vault
-    :param str vault_url: The vault URL
-    :param str name: The name extracted from the ID
-    :param str version: The version extracted from the ID
+    :param source_id: The complete identifier received from Key Vault
+    :type source_id: str
+    :param vault_url: The vault URL
+    :type vault_url: str
+    :param name: The name extracted from the ID
+    :type name: str
+    :param version: The version extracted from the ID
+    :type version: str
     """
 
     def __init__(
