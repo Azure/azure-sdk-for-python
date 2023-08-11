@@ -92,6 +92,20 @@ setup(
 """
 
 
+def resolve_assembly_folder_name(package_name: str, conda_package_name: str):
+    """
+    This script does a lot of moving of code automagically. In the case of assembly of a new conda package, the destination
+    folder will be the _name_ of the conda package within the assembly folder.
+
+    In some cases (azure-core), the name of the conda package and the name of one of the packages that will be used to construct
+    it are _the same name_. In that case, we need to ensure that the code doesn't stomp on itself. To do that, use this
+    function to resolve a different name and not accidentally stomp on ourselves.
+    """
+    if package_name == conda_package_name:
+        return f"s{package_name}"
+    else:
+        return package_name
+
 def create_package(pkg_directory, output_directory):
     check_call(
         [
@@ -274,12 +288,8 @@ def create_combined_sdist(
                 )
             )
             return assembled_sdist
-        # however in the case where we have multiple dependencies downloaded, we will need to...
-        else:
-            raise NotImplementedError(
-                "todo: This script does not yet support downloading and extracting multiple packages."
-            )
 
+    breakpoint()
     targeted_folder_for_assembly = os.path.join(config_assembly_folder, conda_build.name)
 
     create_package(targeted_folder_for_assembly, config_assembled_folder)
@@ -334,8 +344,8 @@ def get_output(command: str, working_directory: str) -> None:
 
         p = subprocess.Popen(command, cwd=wd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         output, err = p.communicate()
-        print(str(output))
-        print(str(err))
+        print(str(output.decode()))
+        print(str(err.decode()))
         if p.returncode > 0:
             raise CalledProcessError(p.returncode, output=str(output) + str(err))
     except CalledProcessError as e:
@@ -354,10 +364,10 @@ def invoke_command(command: str, working_directory: str) -> None:
 
 
 def get_git_source(
-    assembly_area: str, assembled_code_area: str, target_package: str, checkout_path: str, target_version: str
+    assembly_area: str, assembled_code_area: str, target_package: str, checkout_path: str, target_version: str, conda_package_name: str
 ) -> None:
     clone_folder = prep_directory(os.path.join(assembly_area, target_package))
-    code_destination = os.path.join(assembled_code_area, target_package)
+    code_destination = os.path.join(assembled_code_area, resolve_assembly_folder_name(target_package, conda_package_name))
     code_source = os.path.join(clone_folder, checkout_path, target_package)
 
     invoke_command(
@@ -405,7 +415,7 @@ def get_package_source(
             downloaded_zip = download_pypi_source(download_folder, checkout_config.download_uri)
             unzip_staging_folder = prep_directory(os.path.join(download_folder, checkout_config.package))
             unzipped_staged = unzip_file_to_directory(downloaded_zip, unzip_staging_folder)
-            assembly_location = prep_directory(os.path.join(assembly_location, checkout_config.package))
+            assembly_location = prep_directory(os.path.join(assembly_location, resolve_assembly_folder_name(checkout_config.package, conda_build.name)))
 
             # During unzip, we often end up one level deeper than we intend.
             # EG: unzipping azure-core-1.29.1.zip to `assembly/azure-core/azure-core`
@@ -421,7 +431,6 @@ def get_package_source(
 
             if os.path.exists(unzipped_staged):
                 shutil.rmtree(unzipped_staged)
-
     elif checkout_config.checkout_path:
         get_git_source(
             download_folder,
@@ -429,6 +438,7 @@ def get_package_source(
             checkout_config.package,
             checkout_config.checkout_path,
             checkout_config.version,
+            conda_build.name
         )
     else:
         raise ValueError(
@@ -549,7 +559,7 @@ def build_conda_packages(conda_configurations: List[CondaConfiguration], repo_ro
 
     for conda_build in conda_configurations:
         conda_build_folder = os.path.join(conda_sdist_dir, conda_build.name).replace("\\", "/")
-        get_output(
+        invoke_command(
             f'conda run --prefix "{conda_env_dir}" conda-build . --output-folder "{conda_output_dir}" -c "{conda_output_dir}"',
             conda_build_folder,
         )
