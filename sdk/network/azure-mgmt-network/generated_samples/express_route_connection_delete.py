@@ -29,14 +29,13 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.express_route_connections.begin_delete(
+    client.express_route_connections.begin_delete(
         resource_group_name="resourceGroupName",
         express_route_gateway_name="expressRouteGatewayName",
         connection_name="connectionName",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2022-11-01/examples/ExpressRouteConnectionDelete.json
+# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2023-02-01/examples/ExpressRouteConnectionDelete.json
 if __name__ == "__main__":
     main()

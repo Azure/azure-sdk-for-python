@@ -4,12 +4,12 @@
 
 # pylint: disable=redefined-builtin,disable=unused-argument
 
-from typing import Dict
+from typing import Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2023_02_01_preview.models import IndexColumn, FeatureDataType
-
-from azure.ai.ml.entities._mixins import RestTranslatableMixin
+from azure.ai.ml._restclient.v2023_02_01_preview.models import FeatureDataType, IndexColumn
 from azure.ai.ml._utils._experimental import experimental
+from azure.ai.ml.entities._mixins import RestTranslatableMixin
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
 from .data_column_type import DataColumnType
 
@@ -45,7 +45,19 @@ class DataColumn(RestTranslatableMixin):
     :type type: str, one of [string, integer, long, float, double, binary, datetime, boolean] or
     ~azure.ai.ml.entities.DataColumnType, optional"""
 
-    def __init__(self, *, name: str, type: DataColumnType = None, **kwargs):
+    def __init__(self, *, name: str, type: Optional[Union[str, DataColumnType]] = None, **kwargs):
+        if isinstance(type, str):
+            type = DataColumnType[type]
+        elif not isinstance(type, DataColumnType):
+            msg = f"Type should be DataColumnType enum string or enum type, found {type}"
+            raise ValidationException(
+                message=msg,
+                no_personal_data_message=msg,
+                error_type=ValidationErrorType.INVALID_VALUE,
+                target=ErrorTarget.DATA,
+                error_category=ErrorCategory.USER_ERROR,
+            )
+
         self.name = name
         self.type = type
 

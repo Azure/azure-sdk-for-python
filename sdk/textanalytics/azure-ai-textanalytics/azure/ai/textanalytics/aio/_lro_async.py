@@ -20,7 +20,6 @@ _FINISHED = frozenset(["succeeded", "cancelled", "failed", "partiallycompleted",
 _FAILED = frozenset(["failed"])
 _SUCCEEDED = frozenset(["succeeded", "partiallycompleted", "partiallysucceeded"])
 
-PollingReturnType = TypeVar("PollingReturnType")
 PollingReturnType_co = TypeVar("PollingReturnType_co", covariant=True)
 
 
@@ -36,23 +35,20 @@ class AsyncTextAnalysisLROPoller(Protocol[PollingReturnType_co], Awaitable[Polli
         :return: A mapping of details about the long-running operation.
         :rtype: Mapping[str, Any]
         """
-        ...
 
-    def continuation_token(self) -> str:  # pylint: disable=no-self-use
+    def continuation_token(self) -> str:
         """Return a continuation token that allows to restart the poller later.
 
         :returns: An opaque continuation token
         :rtype: str
         """
-        ...
 
-    def status(self) -> str:  # pylint: disable=no-self-use
+    def status(self) -> str:
         """Returns the current status string.
 
         :returns: The current status string
         :rtype: str
         """
-        ...
 
     async def result(self) -> PollingReturnType_co:
         """Return the result of the long running operation.
@@ -60,39 +56,37 @@ class AsyncTextAnalysisLROPoller(Protocol[PollingReturnType_co], Awaitable[Polli
         :returns: The deserialized resource of the long running operation, if one is available.
         :raises ~azure.core.exceptions.HttpResponseError: Server problem with the query.
         """
-        ...
 
     async def wait(self) -> None:
         """Wait on the long running operation.
 
         :raises ~azure.core.exceptions.HttpResponseError: Server problem with the query.
         """
-        ...
 
-    def done(self) -> bool:  # pylint: disable=no-self-use
+    def done(self) -> bool:
         """Check status of the long running operation.
 
         :returns: 'True' if the process has completed, else 'False'.
         :rtype: bool
         """
-        ...
 
     def __await__(self) -> Generator[Any, None, PollingReturnType_co]:
         ...
 
-    async def cancel(self) -> None:  # pylint: disable=no-self-use
+    async def cancel(self) -> None:
         """Cancel the operation currently being polled.
 
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError: When the operation has already reached a terminal state.
         """
-        ...
 
 
 class TextAnalyticsAsyncLROPollingMethod(AsyncLROBasePolling):
     def finished(self) -> bool:
         """Is this polling finished?
+
+        :return: Whether the polling finished or not.
         :rtype: bool
         """
         return TextAnalyticsAsyncLROPollingMethod._finished(self.status())
@@ -115,6 +109,7 @@ class TextAnalyticsAsyncLROPollingMethod(AsyncLROBasePolling):
 
         Must be 200, 201, 202, or 204.
 
+        :param HttpResponse response: The initial http response.
         :raises: BadStatus if invalid status.
         """
         code = response.status_code
@@ -130,8 +125,6 @@ class TextAnalyticsAsyncLROPollingMethod(AsyncLROBasePolling):
         """Poll status of operation so long as operation is incomplete and
         we have an endpoint to query.
 
-        :param callable update_cmd: The function to call to retrieve the
-         latest status of the long running operation.
         :raises: OperationFailed if operation status 'Failed' or 'Canceled'.
         :raises: BadStatus if response status invalid.
         :raises: BadResponse if response invalid.
@@ -161,7 +154,7 @@ class TextAnalyticsAsyncLROPollingMethod(AsyncLROBasePolling):
             )
 
 
-class AsyncAnalyzeHealthcareEntitiesLROPollingMethod(
+class AsyncAnalyzeHealthcareEntitiesLROPollingMethod(  # pylint: disable=all
     TextAnalyticsAsyncLROPollingMethod
 ):
     def __init__(self, *args: Any, **kwargs: Any) -> None:
@@ -219,7 +212,7 @@ class AsyncAnalyzeHealthcareEntitiesLROPollingMethod(
         return base64.b64encode(pickle.dumps(self._initial_response)).decode('ascii')
 
 
-class AsyncAnalyzeHealthcareEntitiesLROPoller(AsyncLROPoller[PollingReturnType]):
+class AsyncAnalyzeHealthcareEntitiesLROPoller(AsyncLROPoller[PollingReturnType_co]):
     def polling_method(self) -> AsyncAnalyzeHealthcareEntitiesLROPollingMethod:  # type: ignore
         """Return the polling method associated to this poller.
 
@@ -406,7 +399,7 @@ class AsyncAnalyzeActionsLROPollingMethod(TextAnalyticsAsyncLROPollingMethod):
         return base64.b64encode(pickle.dumps(self._initial_response)).decode('ascii')
 
 
-class AsyncAnalyzeActionsLROPoller(AsyncLROPoller[PollingReturnType]):
+class AsyncAnalyzeActionsLROPoller(AsyncLROPoller[PollingReturnType_co]):
     def polling_method(self) -> AsyncAnalyzeActionsLROPollingMethod:  # type: ignore
         """Return the polling method associated to this poller.
 
@@ -496,8 +489,8 @@ class AsyncAnalyzeActionsLROPoller(AsyncLROPoller[PollingReturnType]):
 
         try:
             await client.begin_analyze_text_cancel_job(self.id, polling=False)
-        except ValueError:
-            raise ValueError("Cancellation not supported by API versions v3.0, v3.1.")
+        except ValueError as exc:
+            raise ValueError("Cancellation not supported by API versions v3.0, v3.1.") from exc
         except HttpResponseError as error:
             from .._response_handlers import process_http_response_error
             process_http_response_error(error)

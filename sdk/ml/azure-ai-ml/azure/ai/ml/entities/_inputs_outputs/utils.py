@@ -14,9 +14,17 @@ from inspect import Parameter, getmro, signature
 from azure.ai.ml.constants._component import IOConstants
 from azure.ai.ml.exceptions import UserErrorException
 
+SUPPORTED_RETURN_TYPES_PRIMITIVE = list(IOConstants.PRIMITIVE_TYPE_2_STR.keys())
+
 
 def is_group(obj):
-    """Return True if obj is a group or an instance of a parameter group class."""
+    """Return True if obj is a group or an instance of a parameter group class.
+
+    :param obj: The object to check.
+    :type obj: Any
+    :return: True if obj is a group or an instance, False otherwise.
+    :rtype: bool
+    """
     return hasattr(obj, IOConstants.GROUP_ATTR_NAME)
 
 
@@ -246,6 +254,8 @@ def _update_io_from_mldesigner(annotations: dict) -> dict:
     This function depend on class names of `mldesigner._input_output` to translate Input/Output class annotations
     to IO entities.
     """
+    from typing_extensions import Annotated, get_args, get_origin
+
     from azure.ai.ml import Input, Output
 
     from .enum_input import EnumInput
@@ -256,7 +266,7 @@ def _update_io_from_mldesigner(annotations: dict) -> dict:
 
     def _is_primitive_type(io: type):
         """Return true if type is subclass of mldesigner._input_output._Param"""
-        return any([io.__module__.startswith(mldesigner_pkg) and item.__name__ == param_name for item in getmro(io)])
+        return any(io.__module__.startswith(mldesigner_pkg) and item.__name__ == param_name for item in getmro(io))
 
     def _is_input_or_output_type(io: type, type_str: str):
         """Return true if type name contains type_str"""
@@ -295,6 +305,26 @@ def _update_io_from_mldesigner(annotations: dict) -> dict:
                         )
             except BaseException as e:
                 raise UserErrorException(f"Failed to parse {io} to azure-ai-ml Input/Output: {str(e)}") from e
+                # Handle Annotated annotation
+        elif get_origin(io) is Annotated:
+            hint_type, arg, *hint_args = get_args(io)  # pylint: disable=unused-variable
+            if hint_type in SUPPORTED_RETURN_TYPES_PRIMITIVE:
+                if not _is_input_or_output_type(type(arg), "Meta"):
+                    raise UserErrorException(
+                        f"Annotated Metadata class only support "
+                        f"mldesigner._input_output.Meta, "
+                        f"it is {type(arg)} now."
+                    )
+                if arg.type is not None and arg.type != hint_type:
+                    raise UserErrorException(
+                        f"Meta class type {arg.type} should be same as Annotated type: " f"{hint_type}"
+                    )
+                arg.type = hint_type
+                io = (
+                    Output(**arg._to_io_entity_args_dict())
+                    if key == return_annotation_key
+                    else Input(**arg._to_io_entity_args_dict())
+                )
         result[key] = io
     return result
 

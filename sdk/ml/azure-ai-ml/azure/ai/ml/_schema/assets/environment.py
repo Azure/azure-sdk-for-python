@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=unused-argument,no-self-use
+# pylint: disable=unused-argument
 
 import logging
 
@@ -128,7 +128,7 @@ class _BaseEnvironmentSchema(AssetSchema):
         except FileNotFoundError as e:
             # Environment.__init__() will raise FileNotFoundError if build.path is not found when trying to calculate
             # the hash for anonymous. Raise ValidationError instead to collect all errors in schema validation.
-            raise ValidationError("Environment file not found: {}".format(e))
+            raise ValidationError("Environment file not found: {}".format(e)) from e
         return obj
 
 

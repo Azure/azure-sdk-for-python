@@ -3,26 +3,15 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import json
 from typing import TYPE_CHECKING
 
-
-from urllib3 import PoolManager, Retry
-import json, os
-
 from .config import PROXY_URL
-from .helpers import get_recording_id, is_live, is_live_and_not_recording
+from .helpers import get_http_client, get_recording_id, is_live, is_live_and_not_recording
 
 if TYPE_CHECKING:
     from typing import Optional
 
-if os.getenv("REQUESTS_CA_BUNDLE"):
-    http_client = PoolManager(
-        retries=Retry(total=3, raise_on_status=True),
-        cert_reqs="CERT_REQUIRED",
-        ca_certs=os.getenv("REQUESTS_CA_BUNDLE"),
-    )
-else:
-    http_client = PoolManager(retries=Retry(total=3, raise_on_status=True))
 
 # This file contains methods for adjusting many aspects of test proxy behavior:
 #
@@ -635,6 +624,7 @@ def _send_matcher_request(matcher: str, headers: dict, parameters: "Optional[dic
         if headers[key] is not None:
             headers_to_send[key] = headers[key]
 
+    http_client = get_http_client()
     http_client.request(
         method="POST",
         url=f"{PROXY_URL}/Admin/SetMatcher",
@@ -662,6 +652,7 @@ def _send_recording_options_request(parameters: dict, headers: "Optional[dict]" 
         if headers[key] is not None:
             headers_to_send[key] = headers[key]
 
+    http_client = get_http_client()
     http_client.request(
         method="POST",
         url=f"{PROXY_URL}/Admin/SetRecordingOptions",
@@ -687,6 +678,7 @@ def _send_reset_request(headers: dict) -> None:
         if headers[key] is not None:
             headers_to_send[key] = headers[key]
 
+    http_client = get_http_client()
     http_client.request(method="POST", url=f"{PROXY_URL}/Admin/Reset", headers=headers_to_send)
 
 
@@ -708,6 +700,7 @@ def _send_sanitizer_request(sanitizer: str, parameters: dict, headers: "Optional
         if headers[key] is not None:
             headers_to_send[key] = headers[key]
 
+    http_client = get_http_client()
     http_client.request(
         method="POST",
         url="{}/Admin/AddSanitizer".format(PROXY_URL),
@@ -733,6 +726,7 @@ def _send_transform_request(transform: str, parameters: dict, headers: "Optional
         if headers[key] is not None:
             headers_to_send[key] = headers[key]
 
+    http_client = get_http_client()
     http_client.request(
         method="POST",
         url=f"{PROXY_URL}/Admin/AddTransform",

@@ -21,6 +21,7 @@ template_mapping = {
     ArmConstants.UPDATE_ONLINE_ENDPOINT_TYPE: "update_online_endpoint.json",
     ArmConstants.WORKSPACE_BASE: "workspace_base.json",
     ArmConstants.WORKSPACE_PARAM: "workspace_param.json",
+    ArmConstants.WORKSPACE_PROJECT: "workspace_project.json",
 }
 
 

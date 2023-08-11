@@ -1,10 +1,75 @@
 import pytest
 import asyncio
+
+from azure.core.settings import settings
+from azure.core.tracing import SpanKind
 from azure.eventhub import EventData
 from azure.eventhub.aio import EventHubConsumerClient
 from azure.eventhub.aio._eventprocessor.in_memory_checkpoint_store import InMemoryCheckpointStore
 from azure.eventhub._constants import ALL_PARTITIONS
 
+
+@pytest.mark.liveTest
+@pytest.mark.asyncio
+async def test_receive_storage_checkpoint_async(connstr_senders, uamqp_transport, checkpoint_store_aio, live_eventhub, resource_mgmt_client):
+    connection_str, senders = connstr_senders
+
+    for i in range(10):
+        senders[0].send(EventData("Test EventData"))
+        senders[1].send(EventData("Test EventData"))
+
+    try:
+        await checkpoint_store_aio._container_client.create_container()
+    except:
+        pass
+
+    client = EventHubConsumerClient.from_connection_string(connection_str, consumer_group='$default', checkpoint_store=checkpoint_store_aio, uamqp_transport=uamqp_transport)
+
+    sequence_numbers_0 = []
+    sequence_numbers_1 = []
+    async def on_event(partition_context, event):
+        await partition_context.update_checkpoint(event)
+        sequence_num = event.sequence_number
+        if partition_context.partition_id == "0":
+            if sequence_num in sequence_numbers_0:
+                assert False
+            sequence_numbers_0.append(sequence_num)
+        else:
+            if sequence_num in sequence_numbers_1:
+                assert False
+            sequence_numbers_1.append(sequence_num)
+
+    async with client:
+        task = asyncio.ensure_future(
+            client.receive(on_event, starting_position="-1"))
+        # Update the eventhub
+        eventhub = resource_mgmt_client.event_hubs.get(
+            live_eventhub["resource_group"],
+            live_eventhub["namespace"],
+            live_eventhub["event_hub"]
+        )
+        properties = eventhub.as_dict()
+        if properties["message_retention_in_days"] == 1:
+            properties["message_retention_in_days"] = 2
+        else:
+            properties["message_retention_in_days"] = 1
+        resource_mgmt_client.event_hubs.create_or_update(
+            live_eventhub["resource_group"],
+            live_eventhub["namespace"],
+            live_eventhub["event_hub"],
+            properties
+        )
+        await asyncio.sleep(10)
+
+ 
+    await task
+    assert len(sequence_numbers_0) == 10
+    assert len(sequence_numbers_1) == 10
+
+    try:
+        await checkpoint_store_aio._container_client.delete_container()
+    except:
+        pass
 
 @pytest.mark.liveTest
 @pytest.mark.asyncio
@@ -183,3 +248,60 @@ async def test_receive_batch_early_callback_async(connstr_senders, uamqp_transpo
         await asyncio.sleep(10)
         assert on_event_batch.received == 10
     await task
+
+
+@pytest.mark.liveTest
+@pytest.mark.asyncio
+async def test_receive_batch_tracing_async(connstr_senders, uamqp_transport, fake_span):
+    """Test that that receive and process spans are properly created and linked."""
+    settings.tracing_implementation.set_value(fake_span)
+    connection_str, senders = connstr_senders
+
+    with fake_span(name="SendSpan") as root_send:
+        senders[0].send([EventData(b"Data"), EventData(b"Data")])
+
+    assert len(root_send.children) == 3
+    assert root_send.children[0].name == "EventHubs.message"
+    assert root_send.children[1].name == "EventHubs.message"
+    assert root_send.children[2].name == "EventHubs.send"
+    assert len(root_send.children[2].links) == 2
+
+    traceparent1 = root_send.children[2].links[0].headers['traceparent']
+    traceparent2 = root_send.children[2].links[1].headers['traceparent']
+
+    client = EventHubConsumerClient.from_connection_string(connection_str, consumer_group='$default', uamqp_transport=uamqp_transport)
+
+    async def on_event_batch(partition_context, event_batch):
+        on_event_batch.received += len(event_batch)
+
+    on_event_batch.received = 0
+
+    with fake_span(name="ReceiveSpan") as root_receive:
+        async with client:
+            task = asyncio.ensure_future(
+                client.receive_batch(on_event_batch, max_batch_size=2, starting_position="-1"))
+            await asyncio.sleep(10)
+            assert on_event_batch.received == 2
+
+        await task
+
+    assert root_receive.name == "ReceiveSpan"
+    # One receive span and one process span.
+    assert len(root_receive.children) == 2
+
+    assert root_receive.children[0].name == "EventHubs.receive"
+    assert root_receive.children[0].kind == SpanKind.CLIENT
+
+    # One link for each message in the batch.
+    assert len(root_receive.children[0].links) == 2
+    assert root_receive.children[0].links[0].headers['traceparent'] == traceparent1
+    assert root_receive.children[0].links[1].headers['traceparent'] == traceparent2
+
+    assert root_receive.children[1].name == "EventHubs.process"
+    assert root_receive.children[1].kind == SpanKind.CONSUMER
+
+    assert len(root_receive.children[1].links) == 2
+    assert root_receive.children[1].links[0].headers['traceparent'] == traceparent1
+    assert root_receive.children[1].links[1].headers['traceparent'] == traceparent2
+
+    settings.tracing_implementation.set_value(None)

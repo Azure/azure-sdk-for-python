@@ -15,7 +15,7 @@ import pydash
 import pytest
 import yaml
 from pytest_mock import MockFixture
-from test_utilities.utils import build_temp_folder, parse_local_path
+from test_utilities.utils import build_temp_folder, mock_artifact_download_to_temp_directory, parse_local_path
 
 from azure.ai.ml import load_component
 from azure.ai.ml._internal._schema.component import NodeType
@@ -420,7 +420,7 @@ class TestComponent:
         component: InternalComponent = load_component(source=yaml_path)
         _try_resolve_code_for_component(
             component=component,
-            get_arm_id_and_fill_back=mock_get_arm_id_and_fill_back,
+            resolver=mock_get_arm_id_and_fill_back,
         )
         assert component.code.path.name != COMPONENT_PLACEHOLDER
 
@@ -431,7 +431,7 @@ class TestComponent:
         component: InternalComponent = load_component(source=yaml_path)
         assert component._validate().passed, repr(component._validate())
         # resolve
-        with component._resolve_local_code() as code:
+        with component._build_code() as code:
             code_path: Path = code.path
             assert code_path.is_dir()
             assert (code_path / "LICENSE").is_file()
@@ -439,7 +439,7 @@ class TestComponent:
             assert ZipFile(code_path / "library.zip").namelist() == ["library/", "library/hello.py", "library/world.py"]
             assert (code_path / "library1" / "hello.py").is_file()
             assert (code_path / "library1" / "world.py").is_file()
-            assert not (code_path / "helloworld_additional_includes.additional_includes").exists()
+            assert code._ignore_file.is_file_excluded(code_path / "helloworld_additional_includes.additional_includes")
 
         assert not code_path.is_dir()
 
@@ -602,7 +602,7 @@ class TestComponent:
             component: InternalComponent = load_component(source=yaml_path)
 
             # resolve and check snapshot directory
-            with component._resolve_local_code() as code:
+            with component._build_code() as code:
                 for file, content, check_func in test_files:
                     # original file is based on test_configs_dir, need to remove the leading
                     # "component_with_additional_includes" or "additional_includes" to get the relative path
@@ -628,7 +628,7 @@ class TestComponent:
         )
         component: InternalComponent = load_component(source=yaml_path)
         assert component._validate().passed, repr(component._validate())
-        with component._resolve_local_code() as code:
+        with component._build_code() as code:
             code_path = code.path
             # first folder
             assert (code_path / "library1" / "__init__.py").is_file()
@@ -651,7 +651,7 @@ class TestComponent:
         component: InternalComponent = load_component(source=yaml_path)
         assert component._validate().passed, repr(component._validate())
         # resolve
-        with component._resolve_local_code() as code:
+        with component._build_code() as code:
             code_path = code.path
             assert code_path.is_dir()
             if has_additional_includes:
@@ -686,7 +686,7 @@ class TestComponent:
 
         component: InternalComponent = load_component(source=yaml_path)
         assert component._validate().passed, repr(component._validate())
-        with component._resolve_local_code():
+        with component._build_code():
             environment_rest_obj = component._to_rest_object().properties.component_spec["environment"]
             assert environment_rest_obj == {
                 "docker": {
@@ -708,7 +708,7 @@ class TestComponent:
 
         component: InternalComponent = load_component(source=yaml_path)
         assert component._validate().passed, repr(component._validate())
-        with component._resolve_local_code():
+        with component._build_code():
             environment_rest_obj = component._to_rest_object().properties.component_spec["environment"]
             assert environment_rest_obj == {
                 "conda": {
@@ -717,28 +717,12 @@ class TestComponent:
                 "os": "Linux",
             }
 
-    def test_artifacts_in_additional_includes(self, mocker: MockFixture):
-        with tempfile.TemporaryDirectory() as temp_dir:
-
-            def mock_get_artifacts(**kwargs):
-                version = kwargs.get("version")
-                artifact = Path(temp_dir) / version
-                if version in ["version_1", "version_3"]:
-                    version = "version_1"
-                artifact.mkdir(parents=True, exist_ok=True)
-                (artifact / version).mkdir(exist_ok=True)
-                (artifact / version / "file").touch(exist_ok=True)
-                (artifact / f"file_{version}").touch(exist_ok=True)
-                return str(artifact)
-
-            mocker.patch(
-                "azure.ai.ml.entities._component._artifact_cache.ArtifactCache.get", side_effect=mock_get_artifacts
-            )
-
+    def test_artifacts_in_additional_includes(self):
+        with mock_artifact_download_to_temp_directory():
             yaml_path = "./tests/test_configs/internal/component_with_additional_includes/with_artifacts.yml"
             component: InternalComponent = load_component(source=yaml_path)
             assert component._validate().passed, repr(component._validate())
-            with component._resolve_local_code() as code:
+            with component._build_code() as code:
                 code_path = code.path
                 assert code_path.is_dir()
                 for path in [
@@ -757,30 +741,32 @@ class TestComponent:
                 "artifacts_additional_includes_with_conflict.yml"
             )
             component: InternalComponent = load_component(source=yaml_path)
-            validation_result = component._validate()
-            assert validation_result.passed is False
-            assert "There are conflict files in additional include" in validation_result.error_messages["*"]
-            assert (
-                "test_additional_include:version_1 in component-sdk-test-feed" in validation_result.error_messages["*"]
-            )
-            assert (
-                "test_additional_include:version_3 in component-sdk-test-feed" in validation_result.error_messages["*"]
-            )
+            with pytest.raises(
+                RuntimeError,
+                match="There are conflict files in additional include"
+                ".*test_additional_include:version_1 in component-sdk-test-feed"
+                ".*test_additional_include:version_3 in component-sdk-test-feed",
+            ):
+                with component._build_code():
+                    pass
 
     @pytest.mark.parametrize(
         "yaml_path,expected_error_msg_prefix",
         [
-            (
+            pytest.param(
                 "helloworld_invalid_additional_includes_root_directory.yml",
                 "Root directory is not supported for additional includes",
+                id="root_as_additional_includes",
             ),
-            (
+            pytest.param(
                 "helloworld_invalid_additional_includes_existing_file.yml",
                 "A file already exists for additional include",
+                id="file_already_exists",
             ),
-            (
+            pytest.param(
                 "helloworld_invalid_additional_includes_zip_file_not_found.yml",
                 "Unable to find additional include ../additional_includes/assets/LICENSE.zip",
+                id="zip_file_not_found",
             ),
         ],
     )
@@ -868,10 +854,7 @@ class TestComponent:
                 # unknown field optional will be ignored
                 "type": "AnyDirectory",
             },
-            "primitive_is_control": {
-                "is_control": True,
-                "type": "boolean",
-            },
+            "primitive_is_control": {"type": "boolean"},
         }
         assert component._to_rest_object().properties.component_spec["outputs"] == expected_outputs
         assert component._validate().passed is True, repr(component._validate())
@@ -909,7 +892,7 @@ class TestComponent:
         component: InternalComponent = load_component(
             source=Path("./tests/test_configs/internal/component-reuse/") / relative_yaml_path
         )
-        with component._resolve_local_code() as code:
+        with component._build_code() as code:
             assert code.name == expected_snapshot_id
 
             code.name = expected_snapshot_id
@@ -934,7 +917,7 @@ class TestComponent:
             (code_pycache / "a.pyc").touch()
 
             # resolve and check snapshot directory
-            with component._resolve_local_code() as code:
+            with component._build_code() as code:
                 # ANONYMOUS_COMPONENT_TEST_PARAMS[0] is the test params for simple-command
                 assert code.name == ANONYMOUS_COMPONENT_TEST_PARAMS[0][1]
 

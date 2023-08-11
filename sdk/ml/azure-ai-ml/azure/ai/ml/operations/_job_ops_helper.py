@@ -40,8 +40,6 @@ def _get_sorted_filtered_logs(
 ) -> List[str]:
     """Filters log file names, sorts, and returns list starting with where we left off last iteration.
 
-    :param run_details:
-    :type run_details: dict
     :param processed_logs: dictionary tracking the state of how many lines of each file have been written out
     :type processed_logs: dict[str, int]
     :param job_type: the job type to filter log files
@@ -318,7 +316,7 @@ def stream_logs_until_completion(
 
         file_handle.write("\n")
         file_handle.flush()
-    except KeyboardInterrupt:
+    except KeyboardInterrupt as e:
         error_message = (
             "The output streaming for the run interrupted.\n"
             "But the run is still executing on the compute target. \n"
@@ -330,7 +328,7 @@ def stream_logs_until_completion(
             target=ErrorTarget.JOB,
             no_personal_data_message=error_message,
             error_category=ErrorCategory.USER_ERROR,
-        )
+        ) from e
 
 
 def get_git_properties() -> Dict[str, str]:

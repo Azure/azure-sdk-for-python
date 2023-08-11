@@ -100,8 +100,9 @@ class TestAutoMLImageObjectDetection(AzureRecordedTestCase):
                     else:
                         print("Skipping unknown file: {}".format(filename))
 
+    @pytest.mark.parametrize("components", [(False), (True)])
     def test_image_object_detection_run(
-        self, image_object_detection_dataset: Tuple[Input, Input], client: MLClient
+        self, image_object_detection_dataset: Tuple[Input, Input], client: MLClient, components: bool
     ) -> None:
         # Note: this test launches two jobs in order to avoid calling the dataset fixture more than once. Ideally, it
         # would have sufficed to mark the fixture with session scope, but pytest-xdist breaks this functionality:
@@ -128,48 +129,72 @@ class TestAutoMLImageObjectDetection(AzureRecordedTestCase):
             properties=get_automl_job_properties(),
         )
 
-        # Configure regular sweep job
         image_object_detection_job_sweep = copy.deepcopy(image_object_detection_job)
         image_object_detection_job_sweep.set_training_parameters(early_stopping=True, evaluation_frequency=1)
-        image_object_detection_job_sweep.extend_search_space(
-            [
-                SearchSpace(
-                    model_name=Choice(["yolov5"]),
-                    learning_rate=Uniform(0.0001, 0.01),
-                    model_size=Choice(["small", "medium"]),  # model-specific
-                ),
-                SearchSpace(
-                    model_name=Choice(["fasterrcnn_resnet50_fpn"]),
-                    learning_rate=Uniform(0.0001, 0.001),
-                    optimizer=Choice(["sgd", "adam", "adamw"]),
-                    min_size=Choice([600, 800]),  # model-specific
-                ),
-            ]
-        )
-        image_object_detection_job_sweep.set_limits(max_trials=1, max_concurrent_trials=1)
-        image_object_detection_job_sweep.set_sweep(
-            sampling_algorithm="Random",
-            early_termination=BanditPolicy(evaluation_interval=2, slack_factor=0.2, delay_evaluation=6),
-        )
+        image_object_detection_job_sweep.set_limits(max_trials=2, max_concurrent_trials=2)
+        if components:
+            # Configure component sweep job search space
+            image_object_detection_job_sweep.extend_search_space(
+                [
+                    SearchSpace(
+                        model_name=Choice(["atss_r50_fpn_1x_coco"]),
+                        number_of_epochs=Choice([1]),
+                        gradient_accumulation_step=Choice([1]),
+                        learning_rate=Choice([0.005]),
+                    ),
+                    SearchSpace(
+                        model_name=Choice(["fasterrcnn_resnet50_fpn"]),
+                        learning_rate=Choice([0.001]),
+                        optimizer=Choice(["sgd"]),
+                        min_size=Choice([600]),  # model-specific
+                        number_of_epochs=Choice([1]),
+                    ),
+                ]
+            )
+            image_object_detection_job_sweep.set_sweep(
+                sampling_algorithm="Grid",
+                early_termination=BanditPolicy(evaluation_interval=2, slack_factor=0.2, delay_evaluation=6),
+            )
+        else:
+            # Configure runtime sweep job search space
+            image_object_detection_job_sweep.extend_search_space(
+                [
+                    SearchSpace(
+                        model_name=Choice(["yolov5"]),
+                        learning_rate=Uniform(0.0001, 0.01),
+                        model_size=Choice(["small", "medium"]),  # model-specific
+                        number_of_epochs=Choice([1]),
+                    ),
+                    SearchSpace(
+                        model_name=Choice(["fasterrcnn_resnet50_fpn"]),
+                        learning_rate=Uniform(0.0001, 0.001),
+                        optimizer=Choice(["sgd", "adam", "adamw"]),
+                        min_size=Choice([600, 800]),  # model-specific
+                        number_of_epochs=Choice([1]),
+                    ),
+                ]
+            )
+            image_object_detection_job_sweep.set_sweep(
+                sampling_algorithm="Random",
+                early_termination=BanditPolicy(evaluation_interval=2, slack_factor=0.2, delay_evaluation=6),
+            )
 
-        # Configure AutoMode job
-        image_object_detection_job_automode = copy.deepcopy(image_object_detection_job)
-        # TODO: after shipping the AutoMode feature, do not set flag and call `set_limits()` instead of changing
-        # the limits object directly.
-        image_object_detection_job_automode.properties["enable_automode"] = True
-        image_object_detection_job_automode.limits.max_trials = 2
-        image_object_detection_job_automode.limits.max_concurrent_trials = 2
+            # Configure AutoMode job
+            image_object_detection_job_automode = copy.deepcopy(image_object_detection_job)
+            image_object_detection_job_automode.set_limits(max_trials=2, max_concurrent_trials=2)
 
-        # Trigger regular sweep and then AutoMode job
+        # Trigger sweep and then AutoMode job
         submitted_job_sweep = client.jobs.create_or_update(image_object_detection_job_sweep)
-        submitted_job_automode = client.jobs.create_or_update(image_object_detection_job_automode)
+        if not components:
+            submitted_job_automode = client.jobs.create_or_update(image_object_detection_job_automode)
 
-        # Assert completion of regular sweep job
+        # Assert completion of sweep job
         assert_final_job_status(
             submitted_job_sweep, client, ImageObjectDetectionJob, JobStatus.COMPLETED, deadline=3600
         )
 
-        # Assert completion of Automode job
-        assert_final_job_status(
-            submitted_job_automode, client, ImageObjectDetectionJob, JobStatus.COMPLETED, deadline=3600
-        )
+        if not components:
+            # Assert completion of Automode job
+            assert_final_job_status(
+                submitted_job_automode, client, ImageObjectDetectionJob, JobStatus.COMPLETED, deadline=3600
+            )

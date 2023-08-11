@@ -29,13 +29,12 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.network_security_groups.begin_delete(
+    client.network_security_groups.begin_delete(
         resource_group_name="rg1",
         network_security_group_name="testnsg",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2022-11-01/examples/NetworkSecurityGroupDelete.json
+# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2023-02-01/examples/NetworkSecurityGroupDelete.json
 if __name__ == "__main__":
     main()

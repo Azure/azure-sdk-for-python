@@ -166,11 +166,11 @@ def log_activity(
     :param custom_dimensions: The custom properties of the activity.
     :type custom_dimensions: dict
     """
-    activity_info = dict(
-        activity_id=str(uuid.uuid4()),
-        activity_name=activity_name,
-        activity_type=activity_type,
-    )
+    activity_info = {
+        "activity_id": str(uuid.uuid4()),
+        "activity_name": activity_name,
+        "activity_type": activity_type,
+    }
     custom_dimensions = custom_dimensions or {}
     custom_dimensions.update({"client_request_id": str(uuid4())})
     activity_info.update(custom_dimensions)

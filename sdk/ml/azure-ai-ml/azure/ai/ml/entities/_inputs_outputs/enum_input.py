@@ -20,15 +20,15 @@ class EnumInput(Input):
         default=None,
         description=None,
         **kwargs,
-    ):
-        """Initialize an enum parameter, the options of an enum parameter are the enum values.
+    ) -> None:
+        """Enum parameter parse the value according to its enum values.
 
         :param enum: Enum values.
-        :type Union[EnumMeta, Sequence[str]]
-        :param description: Description of the param.
-        :type description: str
-        :param optional: If the param is optional.
-        :type optional: bool
+        :type enum: Union[EnumMeta, Sequence[str]], optional
+        :param default: Default value of the parameter
+        :type default: Any, optional
+        :param description: Description of the parameter
+        :type description: str, optional
         """
         enum_values = self._assert_enum_valid(enum)
         # This is used to parse enum class instead of enum str value if a enum class is provided.

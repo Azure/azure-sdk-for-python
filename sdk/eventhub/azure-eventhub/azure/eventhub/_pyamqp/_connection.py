@@ -10,7 +10,7 @@ import time
 from urllib.parse import urlparse
 import socket
 from ssl import SSLError
-from typing import Any, Tuple, Optional, NamedTuple, Union, cast
+from typing import Any, Dict, Tuple, Optional, NamedTuple, Union, cast
 
 from ._transport import Transport
 from .sasl import SASLTransport, SASLWithWebSocket
@@ -19,10 +19,12 @@ from .performatives import OpenFrame, CloseFrame
 from .constants import (
     PORT,
     SECURE_PORT,
+    SOCKET_TIMEOUT,
     WEBSOCKET_PORT,
     MAX_CHANNELS,
     MAX_FRAME_SIZE_BYTES,
     HEADER_FRAME,
+    WS_TIMEOUT_INTERVAL,
     ConnectionState,
     EMPTY_FRAME,
     TransportType,
@@ -82,6 +84,9 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
      keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value). When using these settings,
      the transport_type would be AmqpOverWebSocket.
      Additionally the following keys may also be present: `'username', 'password'`.
+    :keyword float socket_timeout: The maximum time in seconds that the underlying socket in the transport should
+     wait when reading or writing data before timing out. The default value is 0.2 (for transport type Amqp),
+     and 1 for transport type AmqpOverWebsocket.
     """
 
     def __init__(self, endpoint, **kwargs):  # pylint:disable=too-many-statements
@@ -110,6 +115,14 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
 
         transport = kwargs.get("transport")
         self._transport_type = kwargs.pop("transport_type", TransportType.Amqp)
+        self._socket_timeout = kwargs.pop("socket_timeout", None)
+
+        if self._transport_type.value == TransportType.Amqp.value and self._socket_timeout is None:
+            self._socket_timeout = SOCKET_TIMEOUT
+        elif (self._transport_type.value == TransportType.AmqpOverWebsocket.value and
+              self._socket_timeout is None):
+            self._socket_timeout = WS_TIMEOUT_INTERVAL
+
         if transport:
             self._transport = transport
         elif "sasl_credential" in kwargs:
@@ -121,6 +134,7 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
                 host=endpoint,
                 credential=kwargs["sasl_credential"],
                 custom_endpoint=custom_endpoint,
+                socket_timeout=self._socket_timeout,
                 network_trace_params=self._network_trace_params,
                 **kwargs
             )
@@ -128,6 +142,7 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
             self._transport = Transport(
                 parsed_url.netloc,
                 transport_type=self._transport_type,
+                socket_timeout=self._socket_timeout,
                 network_trace_params=self._network_trace_params,
                 **kwargs)
         self._max_frame_size = kwargs.pop("max_frame_size", MAX_FRAME_SIZE_BYTES)  # type: int
@@ -139,7 +154,7 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
         self._offered_capabilities = None  # type: Optional[str]
         self._desired_capabilities = kwargs.pop("desired_capabilities", None)  # type: Optional[str]
         self._properties = kwargs.pop("properties", None)  # type: Optional[Dict[str, str]]
-        self._remote_properties = None  # type: Optional[Dict[str, str]]
+        self._remote_properties: Optional[Dict[str, str]] = None
 
         self._allow_pipelined_open = kwargs.pop("allow_pipelined_open", True)  # type: bool
         self._remote_idle_timeout = None  # type: Optional[int]
@@ -237,13 +252,13 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
         :returns: A tuple with the incoming channel number, and the frame in the form or a tuple of performative
          descriptor and field values.
         """
-        if wait is False:
+        # Since we use `sock.settimeout()` in the transport for reading/writing, that acts as a
+        # "block with timeout" when we pass in a timeout value. If `wait` is float value, then
+        # timeout was set during socket init.
+        if wait is not True:    # wait is float/int/False
             new_frame = self._transport.receive_frame(**kwargs)
-        elif wait is True:
-            with self._transport.block():
-                new_frame = self._transport.receive_frame(**kwargs)
         else:
-            with self._transport.block_with_timeout(timeout=wait):
+            with self._transport.block():
                 new_frame = self._transport.receive_frame(**kwargs)
         return self._process_incoming_frame(*new_frame)
 
@@ -252,13 +267,12 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
         """Whether the connection is in a state where it is legal to write outgoing frames."""
         return self.state not in _CLOSING_STATES
 
-    def _send_frame(self, channel, frame, timeout=None, **kwargs):
-        # type: (int, NamedTuple, Optional[int], Any) -> None
+    def _send_frame(self, channel, frame, **kwargs):
+        # type: (int, NamedTuple, Any) -> None
         """Send a frame over the connection.
 
         :param int channel: The outgoing channel number.
         :param NamedTuple: The outgoing frame.
-        :param int timeout: An optional timeout value to wait until the socket is ready to send the frame.
         :rtype: None
         """
         try:
@@ -269,11 +283,9 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
         if self._can_write():
             try:
                 self._last_frame_sent_time = time.time()
-                if timeout:
-                    with self._transport.block_with_timeout(timeout):
-                        self._transport.send_frame(channel, frame, **kwargs)
-                else:
-                    self._transport.send_frame(channel, frame, **kwargs)
+                # Since we use `sock.settimeout()` in the transport for reading/writing,
+                # that acts as a "block with timeout" when we pass in a timeout value.
+                self._transport.send_frame(channel, frame, **kwargs)
             except (OSError, IOError, SSLError, socket.error) as exc:
                 self._error = AMQPConnectionError(
                     ErrorCondition.SocketError,
@@ -531,8 +543,9 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
         """
         try:
             self._incoming_endpoints[channel]._incoming_end(frame)  # pylint:disable=protected-access
+            outgoing_channel = self._incoming_endpoints[channel].channel
             self._incoming_endpoints.pop(channel)
-            self._outgoing_endpoints.pop(channel)
+            self._outgoing_endpoints.pop(outgoing_channel)
         except KeyError:
             #close the connection
             self.close(
@@ -699,7 +712,7 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
         :param wait: Whether to block on the socket until a frame arrives. If set to `True`, socket will
          block indefinitely. Alternatively, if set to a time in seconds, the socket will block for at most
          the specified timeout. Default value is `False`, where the socket will block for its configured read
-         timeout (by default 0.1 seconds).
+         timeout (by default 0.2 seconds).
         :type wait: int or float or bool
         :param int batch: The number of frames to attempt to read and process before returning. The default value
          is 1, i.e. process frames one-at-a-time. A higher value should only be used when a receiver is established

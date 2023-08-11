@@ -27,10 +27,9 @@ from ._generated.models import AccessPolicy as GenAccessPolicy
 if TYPE_CHECKING:
     from datetime import datetime
 
-
+# Parse a generated PageList into a single list of PageRange sorted by start.
 def parse_page_list(page_list):
-    """Parse a generated PageList into a single list of PageRange sorted by start.
-    """
+
     page_ranges = page_list.page_range
     clear_ranges = page_list.clear_range
 
@@ -185,7 +184,7 @@ class BlobAnalyticsLogging(GeneratedLogging):
     """
 
     def __init__(self, **kwargs):
-        self.version = kwargs.get('version', u'1.0')
+        self.version = kwargs.get('version', '1.0')
         self.delete = kwargs.get('delete', False)
         self.read = kwargs.get('read', False)
         self.write = kwargs.get('write', False)
@@ -221,7 +220,7 @@ class Metrics(GeneratedMetrics):
     """
 
     def __init__(self, **kwargs):
-        self.version = kwargs.get('version', u'1.0')
+        self.version = kwargs.get('version', '1.0')
         self.enabled = kwargs.get('enabled', False)
         self.include_apis = kwargs.get('include_apis')
         self.retention_policy = kwargs.get('retention_policy') or RetentionPolicy()
@@ -399,7 +398,7 @@ class ContainerProperties(DictMixin):
         self.has_legal_hold = kwargs.get('x-ms-has-legal-hold')
         self.metadata = kwargs.get('metadata')
         self.encryption_scope = None
-        self.immutable_storage_with_versioning_enabled = kwargs.get('x-ms-immutable-storage-with-versioning-enabled')
+        self.immutable_storage_with_versioning_enabled = kwargs.get('x-ms-immutable-storage-with-versioning-enabled')  # pylint: disable=name-too-long
         default_encryption_scope = kwargs.get('x-ms-default-encryption-scope')
         if default_encryption_scope:
             self.encryption_scope = ContainerEncryptionScope(
@@ -408,7 +407,7 @@ class ContainerProperties(DictMixin):
             )
 
     @classmethod
-    def _from_generated(cls, generated):
+    def _from_generated(cls, generated):  # pylint: disable=name-too-long
         props = cls()
         props.name = generated.name
         props.last_modified = generated.properties.last_modified
@@ -416,8 +415,7 @@ class ContainerProperties(DictMixin):
         props.lease = LeaseProperties._from_generated(generated)  # pylint: disable=protected-access
         props.public_access = generated.properties.public_access
         props.has_immutability_policy = generated.properties.has_immutability_policy
-        props.immutable_storage_with_versioning_enabled = \
-            generated.properties.is_immutable_storage_with_versioning_enabled
+        props.immutable_storage_with_versioning_enabled = generated.properties.is_immutable_storage_with_versioning_enabled  # pylint: disable=line-too-long, name-too-long
         props.deleted = generated.deleted
         props.version = generated.version
         props.has_legal_hold = generated.properties.has_legal_hold
@@ -1147,7 +1145,7 @@ class BlobProperties(DictMixin):
     """Datetime value that uniquely identifies the blob snapshot."""
     blob_type: "BlobType"
     """String indicating this blob's type."""
-    metadata: Optional[Dict[str, str]]
+    metadata: Dict[str, str]
     """Name-value pairs associated with the blob as metadata."""
     last_modified: "datetime"
     """A datetime object representing the last time the blob was modified."""

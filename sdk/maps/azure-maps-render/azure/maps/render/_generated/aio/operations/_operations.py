@@ -62,14 +62,14 @@ class RenderOperations:
     async def get_map_tile(
         self,
         *,
-        tileset_id: Union[str, "_models.TilesetID"],
+        tileset_id: Union[str, _models.TilesetID],
         z: int,
         x: int,
         y: int,
         time_stamp: Optional[datetime.datetime] = None,
-        tile_size: Optional[Union[str, "_models.MapTileSize"]] = None,
+        tile_size: Optional[Union[str, _models.MapTileSize]] = None,
         language: Optional[str] = None,
-        localized_map_view: Optional[Union[str, "_models.LocalizedMapView"]] = None,
+        localized_map_view: Optional[Union[str, _models.LocalizedMapView]] = None,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         """**Applies to:** see pricing `tiers <https://aka.ms/AzureMapsPricingTier>`_.
@@ -90,8 +90,8 @@ class RenderOperations:
          "microsoft.base.road", "microsoft.base.darkgrey", "microsoft.base.labels.road",
          "microsoft.base.labels.darkgrey", "microsoft.base.hybrid.road",
          "microsoft.base.hybrid.darkgrey", "microsoft.imagery", "microsoft.weather.radar.main",
-         "microsoft.weather.infrared.main", "microsoft.dem", "microsoft.dem.contours",
-         "microsoft.traffic.absolute", "microsoft.traffic.absolute.main", "microsoft.traffic.relative",
+         "microsoft.weather.infrared.main", "microsoft.traffic.absolute",
+         "microsoft.traffic.absolute.main", "microsoft.traffic.relative",
          "microsoft.traffic.relative.main", "microsoft.traffic.relative.dark",
          "microsoft.traffic.delay", "microsoft.traffic.delay.main", "microsoft.traffic.reduced.main",
          and "microsoft.traffic.incident". Required.
@@ -142,15 +142,16 @@ class RenderOperations:
         :paramtype language: str
         :keyword localized_map_view: The View parameter (also called the "user region" parameter)
          allows you to show the correct maps for a certain country/region for geopolitically disputed
-         regions. Different countries have different views of such regions, and the View parameter
-         allows your application to comply with the view required by the country your application will
-         be serving. By default, the View parameter is set to “Unified” even if you haven’t defined it
-         in  the request. It is your responsibility to determine the location of your users, and then
-         set the View parameter correctly for that location. Alternatively, you have the option to set
-         ‘View=Auto’, which will return the map data based on the IP  address of the request. The View
-         parameter in Azure Maps must be used in compliance with applicable laws, including those
-         regarding mapping, of the country where maps, images and other data and third party content
-         that you are authorized to  access via Azure Maps is made available. Example: view=IN.
+         regions. Different countries/regions have different views of such regions, and the View
+         parameter allows your application to comply with the view required by the country/region your
+         application will be serving. By default, the View parameter is set to “Unified” even if you
+         haven’t defined it in  the request. It is your responsibility to determine the location of your
+         users, and then set the View parameter correctly for that location. Alternatively, you have the
+         option to set ‘View=Auto’, which will return the map data based on the IP  address of the
+         request. The View parameter in Azure Maps must be used in compliance with applicable laws,
+         including those  regarding mapping, of the country/region where maps, images and other data and
+         third party content that you are authorized to  access via Azure Maps is made available.
+         Example: view=IN.
 
          Please refer to `Supported Views <https://aka.ms/AzureMapsLocalizationViews>`_ for details and
          to see the available Views. Known values are: "AE", "AR", "BH", "IN", "IQ", "JO", "KW", "LB",
@@ -171,7 +172,7 @@ class RenderOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[AsyncIterator[bytes]]
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         request = build_render_get_map_tile_request(
             tileset_id=tileset_id,
@@ -187,10 +188,11 @@ class RenderOperations:
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=True, **kwargs
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -206,14 +208,12 @@ class RenderOperations:
         deserialized = response.iter_bytes()
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def get_map_tileset(
-        self, *, tileset_id: Union[str, "_models.TilesetID"], **kwargs: Any
-    ) -> _models.MapTileset:
+    async def get_map_tileset(self, *, tileset_id: Union[str, _models.TilesetID], **kwargs: Any) -> _models.MapTileset:
         """**Applies to:** see pricing `tiers <https://aka.ms/AzureMapsPricingTier>`_.
 
         The Get Map Tileset API allows users to request metadata for a tileset.
@@ -228,8 +228,8 @@ class RenderOperations:
          "microsoft.base.road", "microsoft.base.darkgrey", "microsoft.base.labels.road",
          "microsoft.base.labels.darkgrey", "microsoft.base.hybrid.road",
          "microsoft.base.hybrid.darkgrey", "microsoft.imagery", "microsoft.weather.radar.main",
-         "microsoft.weather.infrared.main", "microsoft.dem", "microsoft.dem.contours",
-         "microsoft.traffic.absolute", "microsoft.traffic.absolute.main", "microsoft.traffic.relative",
+         "microsoft.weather.infrared.main", "microsoft.traffic.absolute",
+         "microsoft.traffic.absolute.main", "microsoft.traffic.relative",
          "microsoft.traffic.relative.main", "microsoft.traffic.relative.dark",
          "microsoft.traffic.delay", "microsoft.traffic.delay.main", "microsoft.traffic.reduced.main",
          and "microsoft.traffic.incident". Required.
@@ -249,7 +249,7 @@ class RenderOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.MapTileset]
+        cls: ClsType[_models.MapTileset] = kwargs.pop("cls", None)
 
         request = build_render_get_map_tileset_request(
             tileset_id=tileset_id,
@@ -258,10 +258,11 @@ class RenderOperations:
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -280,7 +281,7 @@ class RenderOperations:
 
     @distributed_trace_async
     async def get_map_attribution(
-        self, *, tileset_id: Union[str, "_models.TilesetID"], zoom: int, bounds: List[float], **kwargs: Any
+        self, *, tileset_id: Union[str, _models.TilesetID], zoom: int, bounds: List[float], **kwargs: Any
     ) -> _models.MapAttribution:
         """**Applies to:** see pricing `tiers <https://aka.ms/AzureMapsPricingTier>`_.
 
@@ -297,8 +298,8 @@ class RenderOperations:
          "microsoft.base.road", "microsoft.base.darkgrey", "microsoft.base.labels.road",
          "microsoft.base.labels.darkgrey", "microsoft.base.hybrid.road",
          "microsoft.base.hybrid.darkgrey", "microsoft.imagery", "microsoft.weather.radar.main",
-         "microsoft.weather.infrared.main", "microsoft.dem", "microsoft.dem.contours",
-         "microsoft.traffic.absolute", "microsoft.traffic.absolute.main", "microsoft.traffic.relative",
+         "microsoft.weather.infrared.main", "microsoft.traffic.absolute",
+         "microsoft.traffic.absolute.main", "microsoft.traffic.relative",
          "microsoft.traffic.relative.main", "microsoft.traffic.relative.dark",
          "microsoft.traffic.delay", "microsoft.traffic.delay.main", "microsoft.traffic.reduced.main",
          and "microsoft.traffic.incident". Required.
@@ -326,7 +327,7 @@ class RenderOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.MapAttribution]
+        cls: ClsType[_models.MapAttribution] = kwargs.pop("cls", None)
 
         request = build_render_get_map_attribution_request(
             tileset_id=tileset_id,
@@ -337,10 +338,11 @@ class RenderOperations:
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -405,7 +407,7 @@ class RenderOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[AsyncIterator[bytes]]
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         request = build_render_get_map_state_tile_request(
             z=z,
@@ -417,10 +419,11 @@ class RenderOperations:
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=True, **kwargs
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -436,13 +439,13 @@ class RenderOperations:
         deserialized = response.iter_bytes()
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def get_copyright_caption(
-        self, format: Union[str, "_models.ResponseFormat"] = "json", **kwargs: Any
+        self, format: Union[str, _models.ResponseFormat] = "json", **kwargs: Any
     ) -> _models.CopyrightCaption:
         """**Applies to:** see pricing `tiers <https://aka.ms/AzureMapsPricingTier>`_.
 
@@ -471,7 +474,7 @@ class RenderOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.CopyrightCaption]
+        cls: ClsType[_models.CopyrightCaption] = kwargs.pop("cls", None)
 
         request = build_render_get_copyright_caption_request(
             format=format,
@@ -480,10 +483,11 @@ class RenderOperations:
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -503,17 +507,17 @@ class RenderOperations:
     @distributed_trace_async
     async def get_map_static_image(
         self,
-        format: Union[str, "_models.RasterTileFormat"] = "png",
+        format: Union[str, _models.RasterTileFormat] = "png",
         *,
-        layer: Optional[Union[str, "_models.StaticMapLayer"]] = None,
-        style: Optional[Union[str, "_models.MapImageStyle"]] = None,
+        layer: Optional[Union[str, _models.StaticMapLayer]] = None,
+        style: Optional[Union[str, _models.MapImageStyle]] = None,
         zoom: Optional[int] = None,
         center: Optional[List[float]] = None,
         bounding_box_private: Optional[List[float]] = None,
         height: Optional[int] = None,
         width: Optional[int] = None,
         language: Optional[str] = None,
-        localized_map_view: Optional[Union[str, "_models.LocalizedMapView"]] = None,
+        localized_map_view: Optional[Union[str, _models.LocalizedMapView]] = None,
         pins: Optional[List[str]] = None,
         path: Optional[List[str]] = None,
         **kwargs: Any
@@ -663,15 +667,16 @@ class RenderOperations:
         :paramtype language: str
         :keyword localized_map_view: The View parameter (also called the "user region" parameter)
          allows you to show the correct maps for a certain country/region for geopolitically disputed
-         regions. Different countries have different views of such regions, and the View parameter
-         allows your application to comply with the view required by the country your application will
-         be serving. By default, the View parameter is set to “Unified” even if you haven’t defined it
-         in  the request. It is your responsibility to determine the location of your users, and then
-         set the View parameter correctly for that location. Alternatively, you have the option to set
-         ‘View=Auto’, which will return the map data based on the IP  address of the request. The View
-         parameter in Azure Maps must be used in compliance with applicable laws, including those
-         regarding mapping, of the country where maps, images and other data and third party content
-         that you are authorized to  access via Azure Maps is made available. Example: view=IN.
+         regions. Different countries/regions have different views of such regions, and the View
+         parameter allows your application to comply with the view required by the country/region your
+         application will be serving. By default, the View parameter is set to “Unified” even if you
+         haven’t defined it in  the request. It is your responsibility to determine the location of your
+         users, and then set the View parameter correctly for that location. Alternatively, you have the
+         option to set ‘View=Auto’, which will return the map data based on the IP  address of the
+         request. The View parameter in Azure Maps must be used in compliance with applicable laws,
+         including those  regarding mapping, of the country/region where maps, images and other data and
+         third party content that you are authorized to  access via Azure Maps is made available.
+         Example: view=IN.
 
          Please refer to `Supported Views <https://aka.ms/AzureMapsLocalizationViews>`_ for details and
          to see the available Views. Known values are: "AE", "AR", "BH", "IN", "IQ", "JO", "KW", "LB",
@@ -970,7 +975,7 @@ class RenderOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[AsyncIterator[bytes]]
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         request = build_render_get_map_static_image_request(
             format=format,
@@ -990,10 +995,11 @@ class RenderOperations:
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=True, **kwargs
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1009,18 +1015,18 @@ class RenderOperations:
         deserialized = response.iter_bytes()
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def get_copyright_from_bounding_box(
         self,
-        format: Union[str, "_models.ResponseFormat"] = "json",
+        format: Union[str, _models.ResponseFormat] = "json",
         *,
         south_west: List[float],
         north_east: List[float],
-        include_text: Optional[Union[str, "_models.IncludeText"]] = None,
+        include_text: Optional[Union[str, _models.IncludeText]] = None,
         **kwargs: Any
     ) -> _models.Copyright:
         """**Applies to:** see pricing `tiers <https://aka.ms/AzureMapsPricingTier>`_.
@@ -1038,7 +1044,8 @@ class RenderOperations:
          longitude coordinate system. E.g. 52.41064,4.84228. Required.
         :paramtype north_east: list[float]
         :keyword include_text: Yes/no value to exclude textual data from response. Only images and
-         country names will be in response. Known values are: "yes" and "no". Default value is None.
+         country/region names will be in response. Known values are: "yes" and "no". Default value is
+         None.
         :paramtype include_text: str or ~azure.maps.render.models.IncludeText
         :return: Copyright
         :rtype: ~azure.maps.render.models.Copyright
@@ -1055,7 +1062,7 @@ class RenderOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.Copyright]
+        cls: ClsType[_models.Copyright] = kwargs.pop("cls", None)
 
         request = build_render_get_copyright_from_bounding_box_request(
             format=format,
@@ -1067,10 +1074,11 @@ class RenderOperations:
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1090,12 +1098,12 @@ class RenderOperations:
     @distributed_trace_async
     async def get_copyright_for_tile(
         self,
-        format: Union[str, "_models.ResponseFormat"] = "json",
+        format: Union[str, _models.ResponseFormat] = "json",
         *,
         z: int,
         x: int,
         y: int,
-        include_text: Optional[Union[str, "_models.IncludeText"]] = None,
+        include_text: Optional[Union[str, _models.IncludeText]] = None,
         **kwargs: Any
     ) -> _models.Copyright:
         """**Applies to:** see pricing `tiers <https://aka.ms/AzureMapsPricingTier>`_.
@@ -1131,7 +1139,8 @@ class RenderOperations:
          details. Required.
         :paramtype y: int
         :keyword include_text: Yes/no value to exclude textual data from response. Only images and
-         country names will be in response. Known values are: "yes" and "no". Default value is None.
+         country/region names will be in response. Known values are: "yes" and "no". Default value is
+         None.
         :paramtype include_text: str or ~azure.maps.render.models.IncludeText
         :return: Copyright
         :rtype: ~azure.maps.render.models.Copyright
@@ -1148,7 +1157,7 @@ class RenderOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.Copyright]
+        cls: ClsType[_models.Copyright] = kwargs.pop("cls", None)
 
         request = build_render_get_copyright_for_tile_request(
             format=format,
@@ -1161,10 +1170,11 @@ class RenderOperations:
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1184,9 +1194,9 @@ class RenderOperations:
     @distributed_trace_async
     async def get_copyright_for_world(
         self,
-        format: Union[str, "_models.ResponseFormat"] = "json",
+        format: Union[str, _models.ResponseFormat] = "json",
         *,
-        include_text: Optional[Union[str, "_models.IncludeText"]] = None,
+        include_text: Optional[Union[str, _models.IncludeText]] = None,
         **kwargs: Any
     ) -> _models.Copyright:
         """**Applies to:** see pricing `tiers <https://aka.ms/AzureMapsPricingTier>`_.
@@ -1201,7 +1211,8 @@ class RenderOperations:
          values are: "json" and "xml". Default value is "json".
         :type format: str or ~azure.maps.render.models.ResponseFormat
         :keyword include_text: Yes/no value to exclude textual data from response. Only images and
-         country names will be in response. Known values are: "yes" and "no". Default value is None.
+         country/region names will be in response. Known values are: "yes" and "no". Default value is
+         None.
         :paramtype include_text: str or ~azure.maps.render.models.IncludeText
         :return: Copyright
         :rtype: ~azure.maps.render.models.Copyright
@@ -1218,7 +1229,7 @@ class RenderOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.Copyright]
+        cls: ClsType[_models.Copyright] = kwargs.pop("cls", None)
 
         request = build_render_get_copyright_for_world_request(
             format=format,
@@ -1228,10 +1239,11 @@ class RenderOperations:
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response

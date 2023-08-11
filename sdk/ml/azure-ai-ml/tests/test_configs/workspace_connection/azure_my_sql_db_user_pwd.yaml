@@ -1,7 +1,6 @@
 name: test_ws_conn_azure_my_sql_db
 type: azure_my_sql_db
 target: dummy
-expiryTime: 01/05/2025 00:00:00
 credentials:
   type: username_password
   username: dummy

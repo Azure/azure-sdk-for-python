@@ -41,7 +41,7 @@ from ..._operations._operations import (
     build_conversation_authoring_get_deployment_request,
     build_conversation_authoring_get_export_project_job_status_request,
     build_conversation_authoring_get_import_project_job_status_request,
-    build_conversation_authoring_get_load_snapshot_status_request,
+    build_conversation_authoring_get_load_snapshot_job_status_request,
     build_conversation_authoring_get_model_evaluation_summary_request,
     build_conversation_authoring_get_project_deletion_job_status_request,
     build_conversation_authoring_get_project_request,
@@ -72,7 +72,7 @@ T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 
-class ConversationAuthoringClientOperationsMixin(
+class ConversationAuthoringClientOperationsMixin(  # pylint: disable=name-too-long
     ConversationAuthoringClientMixinABC
 ):  # pylint: disable=too-many-public-methods
     @distributed_trace
@@ -4459,7 +4459,7 @@ class ConversationAuthoringClientOperationsMixin(
         return cast(JSON, deserialized)
 
     @distributed_trace_async
-    async def get_load_snapshot_status(
+    async def get_load_snapshot_job_status(
         self, project_name: str, trained_model_label: str, job_id: str, **kwargs: Any
     ) -> JSON:
         """Gets the status for loading a snapshot.
@@ -4549,7 +4549,7 @@ class ConversationAuthoringClientOperationsMixin(
 
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        request = build_conversation_authoring_get_load_snapshot_status_request(
+        request = build_conversation_authoring_get_load_snapshot_job_status_request(
             project_name=project_name,
             trained_model_label=trained_model_label,
             job_id=job_id,

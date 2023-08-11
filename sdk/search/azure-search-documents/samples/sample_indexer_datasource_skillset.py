@@ -36,9 +36,20 @@ connection_string = os.getenv("AZURE_STORAGE_CONNECTION_STRING")
 
 from azure.core.credentials import AzureKeyCredential
 from azure.search.documents.indexes.models import (
-    SearchIndexerDataContainer, SearchIndex, SearchIndexer, SimpleField, SearchFieldDataType,
-    EntityRecognitionSkill, InputFieldMappingEntry, OutputFieldMappingEntry, SearchIndexerSkillset,
-    CorsOptions, IndexingSchedule, SearchableField, IndexingParameters, SearchIndexerDataSourceConnection
+    SearchIndexerDataContainer,
+    SearchIndex,
+    SearchIndexer,
+    SimpleField,
+    SearchFieldDataType,
+    EntityRecognitionSkill,
+    InputFieldMappingEntry,
+    OutputFieldMappingEntry,
+    SearchIndexerSkillset,
+    CorsOptions,
+    IndexingSchedule,
+    SearchableField,
+    IndexingParameters,
+    SearchIndexerDataSourceConnection,
 )
 from azure.search.documents.indexes import SearchIndexerClient, SearchIndexClient
 
@@ -62,27 +73,23 @@ def _create_index():
     cors_options = CorsOptions(allowed_origins=["*"], max_age_in_seconds=60)
 
     # pass in the name, fields and cors options and create the index
-    index = SearchIndex(
-        name=name,
-        fields=fields,
-        cors_options=cors_options)
+    index = SearchIndex(name=name, fields=fields, cors_options=cors_options)
     index_client = SearchIndexClient(service_endpoint, AzureKeyCredential(key))
     result = index_client.create_index(index)
     return result
+
 
 def _create_datasource():
     # Here we create a datasource. As mentioned in the description we have stored it in
     # "searchcontainer"
     ds_client = SearchIndexerClient(service_endpoint, AzureKeyCredential(key))
-    container = SearchIndexerDataContainer(name='searchcontainer')
+    container = SearchIndexerDataContainer(name="searchcontainer")
     data_source_connection = SearchIndexerDataSourceConnection(
-        name="hotel-datasource",
-        type="azureblob",
-        connection_string=connection_string,
-        container=container
+        name="hotel-datasource", type="azureblob", connection_string=connection_string, container=container
     )
     data_source = ds_client.create_data_source_connection(data_source_connection)
     return data_source
+
 
 def _create_skillset():
     client = SearchIndexerClient(service_endpoint, AzureKeyCredential(key))
@@ -90,9 +97,10 @@ def _create_skillset():
     output = OutputFieldMappingEntry(name="dateTimes", target_name="RenovatedDate")
     s = EntityRecognitionSkill(name="merge-skill", inputs=[inp], outputs=[output])
 
-    skillset = SearchIndexerSkillset(name='hotel-data-skill', skills=[s], description="example skillset")
+    skillset = SearchIndexerSkillset(name="hotel-data-skill", skills=[s], description="example skillset")
     result = client.create_skillset(skillset)
     return result
+
 
 def sample_indexer_workflow():
     # Now that we have a datasource and an index, we can create an indexer.
@@ -113,11 +121,11 @@ def sample_indexer_workflow():
         data_source_name=ds_name,
         target_index_name=ind_name,
         skillset_name=skillset_name,
-        parameters=parameters
+        parameters=parameters,
     )
 
     indexer_client = SearchIndexerClient(service_endpoint, AzureKeyCredential(key))
-    indexer_client.create_indexer(indexer) # create the indexer
+    indexer_client.create_indexer(indexer)  # create the indexer
 
     # to get an indexer
     result = indexer_client.get_indexer("hotel-data-indexer")
@@ -137,5 +145,6 @@ def sample_indexer_workflow():
     # get the status of an indexer
     indexer_client.get_indexer_status(updated_indexer.name)
 
-if __name__=="__main__":
+
+if __name__ == "__main__":
     sample_indexer_workflow()

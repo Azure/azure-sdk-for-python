@@ -64,7 +64,20 @@ class KeyClient(KeyVaultClientBase):
         expires_on: "Optional[datetime]",
         exportable: "Optional[bool]" = None,
     ) -> "Optional[KeyAttributes]":
-        """Return a KeyAttributes object if none-None attributes are provided, or None otherwise"""
+        """Return a KeyAttributes object if non-None attributes are provided, or None otherwise.
+
+        :param enabled: Whether the key is enabled.
+        :type enabled: bool or None
+        :param not_before: Not before date of the key in UTC.
+        :type not_before: ~datetime.datetime or None
+        :param expires_on: Expiry date of the key in UTC.
+        :type expires_on: ~datetime.datetime or None
+        :param exportable: Whether the private key can be exported.
+        :type exportable: bool or None
+
+        :returns: An autorest-generated model of the key's attributes.
+        :rtype: KeyAttributes
+        """
         if enabled is not None or not_before is not None or expires_on is not None or exportable is not None:
             return self._models.KeyAttributes(
                 enabled=enabled, not_before=not_before, expires=expires_on, exportable=exportable
@@ -298,7 +311,7 @@ class KeyClient(KeyVaultClientBase):
         return self.create_key(name, key_type="oct-HSM" if hsm else "oct", **kwargs)
 
     @distributed_trace
-    def begin_delete_key(self, name: str, **kwargs) -> "LROPoller[DeletedKey]":
+    def begin_delete_key(self, name: str, **kwargs) -> "LROPoller[DeletedKey]":  # pylint:disable=bad-option-value,delete-operation-wrong-return-type
         """Delete all versions of a key and its cryptographic material.
 
         Requires keys/delete permission. When this method returns Key Vault has begun deleting the key. Deletion may
@@ -354,6 +367,7 @@ class KeyClient(KeyVaultClientBase):
             of the key.
         :type version: str or None
 
+        :returns: The fetched key.
         :rtype: ~azure.keyvault.keys.KeyVaultKey
 
         :raises:
@@ -617,6 +631,7 @@ class KeyClient(KeyVaultClientBase):
 
         :param str name: The name of the key to back up
 
+        :returns: The key backup result, in a protected bytes format that can only be used by Azure Key Vault.
         :rtype: bytes
 
         :raises:

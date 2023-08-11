@@ -59,6 +59,7 @@ omit_function_dict = {
     "Omit_management": omit_mgmt,
 }
 
+
 def apply_compatibility_filter(package_set: List[str]) -> List[str]:
     """
     This function takes in a set of paths to python packages. It returns the set filtered by compatibility with the currently running python executable.
@@ -393,39 +394,6 @@ def build_and_install_dev_reqs(file: str, pkg_root: str) -> None:
     shutil.rmtree(os.path.join(pkg_root, ".tmp_whl_dir"))
 
 
-def find_whl(package_name: str, version: str, whl_directory: str) -> str:
-    """Helper function to find where the built whl resides.
-
-    :param str package_name: the name of the package, e.g. azure-core
-    :param str version: the version used to build the whl
-    :param str whl_directory: the absolute path to the temp directory where the whls are built
-    :return: The absolute path to the whl built
-    """
-    if not os.path.exists(whl_directory):
-        logging.error("Whl directory is incorrect")
-        exit(1)
-
-    parsed_version = parse(version)
-
-    logging.info("Searching whl for package {0}-{1}".format(package_name, parsed_version.base_version))
-    whl_name_format = "{0}-{1}*.whl".format(package_name.replace("-", "_"), parsed_version.base_version)
-    whls = []
-    for root, dirnames, filenames in os.walk(whl_directory):
-        for filename in fnmatch.filter(filenames, whl_name_format):
-            whls.append(os.path.join(root, filename))
-
-    whls = [os.path.relpath(w, whl_directory) for w in whls]
-
-    if not whls:
-        logging.error(
-            "whl is not found in whl directory {0} for package {1}-{2}".format(
-                whl_directory, package_name, parsed_version.base_version
-            )
-        )
-        exit(1)
-
-    return whls[0]
-
 def build_whl_for_req(req: str, package_path: str) -> str:
     """Builds a whl from the dev_requirements file.
 
@@ -434,6 +402,7 @@ def build_whl_for_req(req: str, package_path: str) -> str:
     :return: The absolute path to the whl built or the requirement if a third-party package
     """
     from ci_tools.build import create_package
+
     if ".." in req:
         # Create temp path if it doesn't exist
         temp_dir = os.path.join(package_path, ".tmp_whl_dir")
@@ -446,9 +415,130 @@ def build_whl_for_req(req: str, package_path: str) -> str:
         logging.info("Building wheel for package {}".format(parsed.name))
         create_package(req_pkg_path, temp_dir, enable_sdist=False)
 
-        whl_path = os.path.join(temp_dir, find_whl(parsed.name, parsed.version, temp_dir))
+        whl_path = os.path.join(temp_dir, find_whl(temp_dir, parsed.name, parsed.version))
         logging.info("Wheel for package {0} is {1}".format(parsed.name, whl_path))
         logging.info("Replacing dev requirement. Old requirement:{0}, New requirement:{1}".format(req, whl_path))
         return whl_path
     else:
         return req
+
+
+def find_sdist(dist_dir: str, pkg_name: str, pkg_version: str) -> str:
+    """This function attempts to look within a directory (and all subdirs therein) and find a source distribution for the targeted package and version."""
+    # This function will find a sdist for given package name
+    if not os.path.exists(dist_dir):
+        logging.error("dist_dir is incorrect")
+        return
+
+    if pkg_name is None:
+        logging.error("Package name cannot be empty to find sdist")
+        return
+
+    pkg_name_format = f"{pkg_name}-{pkg_version}.zip"
+    pkg_name_format_alt = "${0}-{1}.tar.gz"
+
+    packages = []
+    for root, dirnames, filenames in os.walk(dist_dir):
+        for filename in fnmatch.filter(filenames, pkg_name_format):
+            packages.append(os.path.join(root, filename))
+
+    packages = [os.path.relpath(w, dist_dir) for w in packages]
+
+    if not packages:
+        logging.error("No sdist is found in directory %s with package name format %s", dist_dir, pkg_name_format)
+        return
+    return packages[0]
+
+
+def get_interpreter_compatible_tags() -> List[str]:
+    """
+    This function invokes pip from the invoking interpreter and discovers which tags the interpreter is compatible with.
+    """
+
+    commands = [sys.executable, "-m", "pip", "debug", "--verbose"]
+
+    output = subprocess.run(
+        commands,
+        check=True,
+        capture_output=True,
+    ).stdout.decode(encoding="utf-8")
+
+    tag_strings = output.split(os.linesep)
+
+    for index, value in enumerate(tag_strings):
+        if "Compatible tags" in value:
+            break
+
+    tags = tag_strings[index + 1 :]
+
+    return [tag.strip() for tag in tags if tag]
+
+
+def check_whl_against_tags(whl_name: str, tags: List[str]) -> bool:
+    for tag in tags:
+        if tag in whl_name:
+            return True
+    return False
+
+
+def find_whl(whl_dir: str, pkg_name: str, pkg_version: str) -> str:
+    """This function attempts to look within a directory (and all subdirs therein) and find a wheel that matches our targeted name and version AND
+    whose compilation is compatible with the invoking interpreter."""
+    if not os.path.exists(whl_dir):
+        logging.error("whl_dir is incorrect")
+        return
+
+    if pkg_name is None:
+        logging.error("Package name cannot be empty to find whl")
+        return
+
+    pkg_name_format = f"{pkg_name.replace('-', '_')}-{pkg_version}*.whl"
+    whls = []
+
+    # todo: replace with glob, we aren't using py2 anymore!
+    for root, dirnames, filenames in os.walk(whl_dir):
+        for filename in fnmatch.filter(filenames, pkg_name_format):
+            whls.append(os.path.join(root, filename))
+
+    whls = [os.path.relpath(w, whl_dir) for w in whls]
+
+    if not whls:
+        logging.error("No whl is found in directory %s with package name format %s", whl_dir, pkg_name_format)
+        logging.info("List of whls in directory: %s", glob.glob(os.path.join(whl_dir, "*.whl")))
+        return
+
+    compatible_tags = get_interpreter_compatible_tags()
+
+    logging.debug("Dumping visible tags and whls")
+    logging.debug(compatible_tags)
+    logging.debug(whls)
+
+    if whls:
+        # grab the first whl that matches a tag from our compatible_tags list
+        for whl in whls:
+            if check_whl_against_tags(whl, compatible_tags):
+                logging.info(f"Found whl {whl}")
+                return whl
+
+        # if whl is platform independent then there should only be one whl in filtered list
+        if len(whls) > 1:
+            # if we have reached here, that means we have whl specific to platform as well.
+            # for now we are failing the test if platform specific wheels are found. Todo: enhance to find platform specific whl
+            logging.error(f"We were unable to locate a compatible wheel for {pkg_name}")
+            sys.exit(1)
+
+    return None
+
+
+def discover_prebuilt_package(dist_directory: str, setup_path: str, package_type: str) -> List[str]:
+    """Discovers a prebuild wheel or sdist for a given setup path."""
+    packages = []
+    pkg = ParsedSetup.from_path(setup_path)
+    if package_type == "wheel":
+        prebuilt_package = find_whl(dist_directory, pkg.name, pkg.version)
+    else:
+        prebuilt_package = find_sdist(dist_directory, pkg.name, pkg.version)
+
+    if prebuilt_package is not None:
+        packages.append(prebuilt_package)
+    return packages

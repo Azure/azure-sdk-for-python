@@ -4,7 +4,7 @@
 
 from os import PathLike
 from pathlib import Path
-from typing import Any, Dict, Optional, Union
+from typing import Dict, Optional, Union
 
 from azure.ai.ml.entities._component.component import Component
 from azure.ai.ml._schema._deployment.batch.pipeline_component_batch_deployment_schema import (

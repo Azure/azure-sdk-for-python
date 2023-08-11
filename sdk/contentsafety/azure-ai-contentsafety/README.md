@@ -4,13 +4,13 @@
 
 ## Getting started
 
-### Prequisites
+### Prerequisites
 
 - Python 3.7 or later is required to use this package.
 - You need an [Azure subscription][azure_sub] to use this package.
 - An existing [Azure AI Content Safety][contentsafety_overview] instance.
 
-### Installating the package
+### Install the package
 
 ```bash
 pip install azure-ai-contentsafety
@@ -51,25 +51,29 @@ client = ContentSafetyClient(endpoint, credential)
 
 ### Available features
 There are different types of analysis available from this service. The following table describes the currently available APIs.
+
 |Feature  |Description  |
 |---------|---------|
 |Text Analysis API|Scans text for sexual content, violence, hate, and self harm with multi-severity levels.|
 |Image Analysis API|Scans images for sexual content, violence, hate, and self harm with multi-severity levels.|
-| Text Blocklist Management APIs|The default AI classifiers are sufficient for most content safety needs. However, you might need to screen for terms that are specific to your use case. You can create blocklists of terms to use with the Text API.
+| Text Blocklist Management APIs|The default AI classifiers are sufficient for most content safety needs. However, you might need to screen for terms that are specific to your use case. You can create blocklists of terms to use with the Text API.|
 
 ### Harm categories
 Content Safety recognizes four distinct categories of objectionable content.
-|Category	|Description  |
+
+|Category|Description|
 |---------|---------|
 |Hate	|Hate refers to any content that attacks or uses pejorative or discriminatory language in reference to a person or identity group based on certain differentiating attributes of that group. This includes but is not limited to race, ethnicity, nationality, gender identity and expression, sexual orientation, religion, immigration status, ability status, personal appearance, and body size.|
 |Sexual	|Sexual describes content related to anatomical organs and genitals, romantic relationships, acts portrayed in erotic or affectionate terms, pregnancy, physical sexual acts—including those acts portrayed as an assault or a forced sexual violent act against one’s will—, prostitution, pornography, and abuse.|
 |Violence	|Violence describes content related to physical actions intended to hurt, injure, damage, or kill someone or something. It also includes weapons, guns and related entities, such as manufacturers, associations, legislation, and similar.|
 |Self-harm	|Self-harm describes content related to physical actions intended to purposely hurt, injure, or damage one’s body or kill oneself.|
+
 Classification can be multi-labeled. For example, when a text sample goes through the text moderation model, it could be classified as both Sexual content and Violence.
 
 ### Severity levels
 Every harm category the service applies also comes with a severity level rating. The severity level is meant to indicate the severity of the consequences of showing the flagged content.
-|Severity	|Label	|
+
+|Severity|Label|
 |---------|---------|
 |0	|Safe|
 |2	|Low|
@@ -110,19 +114,16 @@ Please refer to [sample data](https://github.com/Azure/azure-sdk-for-python/tree
     from azure.ai.contentsafety import ContentSafetyClient
     from azure.core.credentials import AzureKeyCredential
     from azure.core.exceptions import HttpResponseError
-    from azure.ai.contentsafety.models import AnalyzeTextOptions, TextCategory
+    from azure.ai.contentsafety.models import AnalyzeTextOptions
 
     key = os.environ["CONTENT_SAFETY_KEY"]
     endpoint = os.environ["CONTENT_SAFETY_ENDPOINT"]
-    text_path = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_data/text.txt"))
 
     # Create an Content Safety client
     client = ContentSafetyClient(endpoint, AzureKeyCredential(key))
 
-    # Read sample data
-    with open(text_path) as f:
-        # Build request
-        request = AnalyzeTextOptions(text=f.readline(), categories=[TextCategory.HATE, TextCategory.SELF_HARM])
+    # Construct a request
+    request = AnalyzeTextOptions(text="You are an idiot")
 
     # Analyze text
     try:
@@ -140,6 +141,10 @@ Please refer to [sample data](https://github.com/Azure/azure-sdk-for-python/tree
         print(f"Hate severity: {response.hate_result.severity}")
     if response.self_harm_result:
         print(f"SelfHarm severity: {response.self_harm_result.severity}")
+    if response.sexual_result:
+        print(f"Sexual severity: {response.sexual_result.severity}")
+    if response.violence_result:
+        print(f"Violence severity: {response.violence_result.severity}")
 ```
 
 <!-- END SNIPPET -->

@@ -25,23 +25,6 @@ class _AzureMLSparkOnBehalfOfCredential(ManagedIdentityBase):
 
 
 def _get_client_args(**kwargs) -> Optional[dict]:
-    from pyspark.sql import SparkSession  # cspell:disable-line # pylint: disable=import-error
-
-    try:
-        spark = SparkSession.builder.getOrCreate()
-    except Exception:
-        raise Exception("Fail to get spark session, please check if spark environment is set up.")
-
-    spark_conf = spark.sparkContext.getConf()
-    spark_conf_vars = {
-        "AZUREML_SYNAPSE_CLUSTER_IDENTIFIER": "spark.synapse.clusteridentifier",
-        "AZUREML_SYNAPSE_TOKEN_SERVICE_ENDPOINT": "spark.tokenServiceEndpoint",
-    }
-    for env_key, conf_key in spark_conf_vars.items():
-        value = spark_conf.get(conf_key)
-        if value:
-            os.environ[env_key] = value
-
     # Override default settings if provided via arguments
     if len(kwargs) > 0:
         env_key_from_kwargs = [
@@ -53,9 +36,29 @@ def _get_client_args(**kwargs) -> Optional[dict]:
         for env_key in env_key_from_kwargs:
             if env_key in kwargs:
                 os.environ[env_key] = kwargs[env_key]
+            else:
+                raise Exception("Unable to initialize AzureMLHoboSparkOBOCredential due to invalid arguments")
+    else:
+        from pyspark.sql import SparkSession  # cspell:disable-line # pylint: disable=import-error
+
+        try:
+            spark = SparkSession.builder.getOrCreate()
+        except Exception as e:
+            raise Exception("Fail to get spark session, please check if spark environment is set up.") from e
+
+        spark_conf = spark.sparkContext.getConf()
+        spark_conf_vars = {
+            "AZUREML_SYNAPSE_CLUSTER_IDENTIFIER": "spark.synapse.clusteridentifier",
+            "AZUREML_SYNAPSE_TOKEN_SERVICE_ENDPOINT": "spark.tokenServiceEndpoint",
+        }
+        for env_key, conf_key in spark_conf_vars.items():
+            value = spark_conf.get(conf_key)
+            if value:
+                os.environ[env_key] = value
 
     token_service_endpoint = os.environ.get("AZUREML_SYNAPSE_TOKEN_SERVICE_ENDPOINT")
     obo_access_token = os.environ.get("AZUREML_OBO_CANARY_TOKEN")
+    obo_endpoint = os.environ.get("AZUREML_OBO_USER_TOKEN_FOR_SPARK_RETRIEVAL_API", "getuseraccesstokenforspark")
     subscription_id = os.environ.get("AZUREML_ARM_SUBSCRIPTION")
     resource_group = os.environ.get("AZUREML_ARM_RESOURCEGROUP")
     workspace_name = os.environ.get("AZUREML_ARM_WORKSPACE_NAME")
@@ -64,14 +67,11 @@ def _get_client_args(**kwargs) -> Optional[dict]:
         return None
 
     # pylint: disable=line-too-long
-    request_url_format = "https://{}/api/v1/proxy/obotoken/v1.0/subscriptions/{}/resourceGroups/{}/providers/Microsoft.MachineLearningServices/workspaces/{}/getuseraccesstokenforrun"  # cspell:disable-line
+    request_url_format = "https://{}/api/v1/proxy/obotoken/v1.0/subscriptions/{}/resourceGroups/{}/providers/Microsoft.MachineLearningServices/workspaces/{}/{}"  # cspell:disable-line
     # pylint: enable=line-too-long
 
     url = request_url_format.format(
-        token_service_endpoint,
-        subscription_id,
-        resource_group,
-        workspace_name,
+        token_service_endpoint, subscription_id, resource_group, workspace_name, obo_endpoint
     )
 
     return dict(

@@ -29,6 +29,7 @@ from contextlib import AbstractAsyncContextManager
 from azure.core.pipeline import PipelineRequest, PipelineResponse, PipelineContext
 from azure.core.pipeline.policies import AsyncHTTPPolicy, SansIOHTTPPolicy
 from ._tools_async import await_result as _await_result
+from ._base import cleanup_kwargs_for_transport
 from .transport import AsyncHttpTransport
 
 AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType")
@@ -81,6 +82,7 @@ class _AsyncTransportRunner(
     Uses specified HTTP transport type to send request and returns response.
 
     :param sender: The async Http Transport instance.
+    :type sender: ~azure.core.pipeline.transport.AsyncHttpTransport
     """
 
     def __init__(self, sender: AsyncHttpTransport[HTTPRequestType, AsyncHTTPResponseType]) -> None:
@@ -97,6 +99,7 @@ class _AsyncTransportRunner(
         :return: The PipelineResponse object.
         :rtype: ~azure.core.pipeline.PipelineResponse
         """
+        cleanup_kwargs_for_transport(request.context.options)
         return PipelineResponse(
             request.http_request,
             await self._sender.send(request.http_request, **request.context.options),
@@ -111,6 +114,7 @@ class AsyncPipeline(AbstractAsyncContextManager, Generic[HTTPRequestType, AsyncH
     of the HTTP sender.
 
     :param transport: The async Http Transport instance.
+    :type transport: ~azure.core.pipeline.transport.AsyncHttpTransport
     :param list policies: List of configured policies.
 
     .. admonition:: Example:
@@ -152,6 +156,9 @@ class AsyncPipeline(AbstractAsyncContextManager, Generic[HTTPRequestType, AsyncH
         """Will execute the multipart policies.
 
         Does nothing if "set_multipart_mixed" was never called.
+
+        :param request: The HTTP request object.
+        :type request: ~azure.core.rest.HttpRequest
         """
         multipart_mixed_info = request.multipart_mixed_info  # type: ignore
         if not multipart_mixed_info:

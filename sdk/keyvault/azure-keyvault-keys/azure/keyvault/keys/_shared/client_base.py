@@ -42,7 +42,15 @@ _SERIALIZER.client_side_validation = False
 
 
 def _format_api_version(request: "HttpRequest", api_version: str) -> "HttpRequest":
-    """Returns a request copy that includes an api-version query parameter if one wasn't originally present."""
+    """Returns a request copy that includes an api-version query parameter if one wasn't originally present.
+
+    :param request: The HTTP request being sent.
+    :type request: :class:`~azure.core.rest.HttpRequest`
+    :param str api_version: The service API version that the request should include.
+
+    :returns: A copy of the request that includes an api-version query parameter.
+    :rtype: :class:`~azure.core.rest.HttpRequest`
+    """
     request_copy = deepcopy(request)
     params = {"api-version": api_version}  # By default, we want to use the client's API version
     query = urlparse(request_copy.url).query
@@ -101,11 +109,11 @@ class KeyVaultClientBase(object):
                 **kwargs
             )
             self._models = _KeyVaultClient.models(api_version=self.api_version)
-        except ValueError:
+        except ValueError as exc:
             raise NotImplementedError(
                 f"This package doesn't support API version '{self.api_version}'. "
                 + f"Supported versions: {', '.join(v.value for v in ApiVersion)}"
-            )
+            ) from exc
 
     @property
     def vault_url(self) -> str:

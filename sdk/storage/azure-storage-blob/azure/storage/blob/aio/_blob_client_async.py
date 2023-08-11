@@ -32,7 +32,7 @@ from .._deserialize import (
 )
 from .._encryption import StorageEncryptionMixin
 from .._models import BlobType, BlobBlock, BlobProperties, PageRange
-from .._serialize import get_modify_conditions, get_api_version, get_access_conditions
+from .._serialize import get_modify_conditions, get_api_version, get_access_conditions, get_version_id
 from ._download_async import StorageStreamDownloader
 from ._lease_async import BlobLeaseClient
 from ._models import PageRangePaged
@@ -99,6 +99,8 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
         the exceeded part will be downloaded in chunks (could be parallel). Defaults to 32*1024*1024, or 32MB.
     :keyword int max_chunk_get_size: The maximum chunk size used for downloading a blob. Defaults to 4*1024*1024,
         or 4MB.
+    :keyword str version_id: The version id parameter is an opaque DateTime value that, when present,
+        specifies the version of the blob to operate on.
 
     .. admonition:: Example:
 
@@ -668,10 +670,13 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`_.
         :returns: boolean
+        :rtype: bool
         """
+        version_id = get_version_id(self.version_id, kwargs)
         try:
             await self._client.blob.get_properties(
                 snapshot=self.snapshot,
+                version_id=version_id,
                 **kwargs)
             return True
         # Encrypted with CPK
@@ -748,6 +753,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
         """
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         mod_conditions = get_modify_conditions(kwargs)
+        version_id = get_version_id(self.version_id, kwargs)
         cpk = kwargs.pop('cpk', None)
         cpk_info = None
         if cpk:
@@ -761,7 +767,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
                 kwargs['cls'] = partial(deserialize_pipeline_response_into_cls, cls_method)
             blob_props = await self._client.blob.get_properties(
                 timeout=kwargs.pop('timeout', None),
-                version_id=kwargs.pop('version_id', None),
+                version_id=version_id,
                 snapshot=self.snapshot,
                 lease_access_conditions=access_conditions,
                 modified_access_conditions=mod_conditions,
@@ -920,7 +926,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
         kwargs['immutability_policy_mode'] = immutability_policy.policy_mode
         return await self._client.blob.set_immutability_policy(cls=return_response_headers, **kwargs)
 
-    @distributed_trace_async()
+    @distributed_trace_async
     async def delete_immutability_policy(self, **kwargs):
         # type: (**Any) -> None
         """The Delete Immutability Policy operation deletes the immutability policy on the blob.
@@ -1557,6 +1563,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
         """
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         mod_conditions = get_modify_conditions(kwargs)
+        version_id = get_version_id(self.version_id, kwargs)
         if standard_blob_tier is None:
             raise ValueError("A StandardBlobTier must be specified")
         try:
@@ -1565,6 +1572,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
                 timeout=kwargs.pop('timeout', None),
                 modified_access_conditions=mod_conditions,
                 lease_access_conditions=access_conditions,
+                version_id=version_id,
                 **kwargs)
         except HttpResponseError as error:
             process_storage_error(error)
@@ -2723,7 +2731,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
         except HttpResponseError as error:
             process_storage_error(error)
 
-    @distributed_trace_async()
+    @distributed_trace_async
     async def append_block_from_url(self, copy_source_url,  # type: str
                                     source_offset=None,  # type: Optional[int]
                                     source_length=None,  # type: Optional[int]
@@ -2832,7 +2840,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
         except HttpResponseError as error:
             process_storage_error(error)
 
-    @distributed_trace_async()
+    @distributed_trace_async
     async def seal_append_blob(self, **kwargs):
         # type: (...) -> Dict[str, Union[str, datetime, int]]
         """The Seal operation seals the Append Blob to make it read-only.
@@ -2908,7 +2916,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
         else:
             _pipeline = self._pipeline  # pylint: disable = protected-access
         return ContainerClient(
-            "{}://{}".format(self.scheme, self.primary_hostname), container_name=self.container_name,
+            f"{self.scheme}://{self.primary_hostname}", container_name=self.container_name,
             credential=self._raw_credential, api_version=self.api_version, _configuration=self._config,
             _pipeline=_pipeline, _location_mode=self._location_mode, _hosts=self._hosts,
             require_encryption=self.require_encryption, encryption_version=self.encryption_version,

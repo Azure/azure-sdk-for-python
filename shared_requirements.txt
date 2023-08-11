@@ -47,3 +47,5 @@ avro
 uamqp
 yarl
 importlib-metadata
+azure-identity
+openai

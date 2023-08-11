@@ -29,13 +29,12 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.virtual_network_taps.begin_delete(
+    client.virtual_network_taps.begin_delete(
         resource_group_name="rg1",
         tap_name="test-vtap",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2022-11-01/examples/VirtualNetworkTapDelete.json
+# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2023-02-01/examples/VirtualNetworkTapDelete.json
 if __name__ == "__main__":
     main()

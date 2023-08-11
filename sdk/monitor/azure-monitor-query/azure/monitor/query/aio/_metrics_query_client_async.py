@@ -27,6 +27,15 @@ class MetricsQueryClient(object):  # pylint: disable=client-accepts-api-version-
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :keyword endpoint: The endpoint to connect to. Defaults to 'https://management.azure.com'.
     :paramtype endpoint: Optional[str]
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/async_samples/sample_authentication_async.py
+            :start-after: [START create_metrics_query_client_async]
+            :end-before: [END create_metrics_query_client_async]
+            :language: python
+            :dedent: 4
+            :caption: Creating the asynchronous MetricsQueryClient with a TokenCredential.
     """
 
     def __init__(self, credential: AsyncTokenCredential, **kwargs: Any) -> None:
@@ -92,6 +101,15 @@ class MetricsQueryClient(object):  # pylint: disable=client-accepts-api-version-
         :return: A MetricsQueryResult object.
         :rtype: ~azure.monitor.query.MetricsQueryResult
         :raises: ~azure.core.exceptions.HttpResponseError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_metrics_query_async.py
+                :start-after: [START send_metrics_query_async]
+                :end-before: [END send_metrics_query_async]
+                :language: python
+                :dedent: 0
+                :caption: Get a response for a single metrics query.
         """
         timespan = construct_iso8601(kwargs.pop("timespan", None))
         # Metric names with commas need to be encoded.
@@ -120,6 +138,15 @@ class MetricsQueryClient(object):  # pylint: disable=client-accepts-api-version-
         :return: An iterator like instance of either MetricNamespace or the result of cls(response)
         :rtype: ~azure.core.paging.AsyncItemPaged[:class: `~azure.monitor.query.MetricNamespace`]
         :raises: ~azure.core.exceptions.HttpResponseError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_metric_namespaces_async.py
+                :start-after: [START send_metric_namespaces_query_async]
+                :end-before: [END send_metric_namespaces_query_async]
+                :language: python
+                :dedent: 0
+                :caption: Get a response for a single metric namespaces query.
         """
         start_time = kwargs.pop("start_time", None)
         if start_time:
@@ -146,6 +173,15 @@ class MetricsQueryClient(object):  # pylint: disable=client-accepts-api-version-
         :return: An iterator like instance of either MetricDefinition or the result of cls(response)
         :rtype: ~azure.core.paging.AsyncItemPaged[:class: `~azure.monitor.query.MetricDefinition`]
         :raises: ~azure.core.exceptions.HttpResponseError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_metric_definitions_async.py
+                :start-after: [START send_metric_definitions_query_async]
+                :end-before: [END send_metric_definitions_query_async]
+                :language: python
+                :dedent: 0
+                :caption: Get a response for a single metric definitions query.
         """
         metric_namespace = kwargs.pop("namespace", None)
         res = self._definitions_op.list(

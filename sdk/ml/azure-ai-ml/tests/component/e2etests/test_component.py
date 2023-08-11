@@ -1,4 +1,7 @@
+import os.path
 import re
+import shutil
+import tempfile
 import uuid
 from itertools import tee
 from pathlib import Path
@@ -6,23 +9,24 @@ from typing import Callable
 
 import pydash
 import pytest
+from azure.core.exceptions import HttpResponseError
+from azure.core.paging import ItemPaged
+from devtools_testutils import AzureRecordedTestCase, is_live
+from test_utilities.utils import assert_job_cancel, omit_with_wildcard, sleep_if_live
+
 from azure.ai.ml import MLClient, MpiDistribution, load_component, load_environment
 from azure.ai.ml._restclient.v2022_05_01.models import ListViewType
 from azure.ai.ml._utils._arm_id_utils import is_ARM_id_for_resource
+from azure.ai.ml.constants._assets import IPProtectionLevel
 from azure.ai.ml.constants._common import (
     ANONYMOUS_COMPONENT_NAME,
     ARM_ID_PREFIX,
     PROVIDER_RESOURCE_ID_WITH_VERSION,
     AzureMLResourceType,
 )
-from azure.ai.ml.constants._assets import IPProtectionLevel
 from azure.ai.ml.dsl._utils import _sanitize_python_variable_name
 from azure.ai.ml.entities import CommandComponent, Component, PipelineComponent
 from azure.ai.ml.entities._load_functions import load_code, load_job
-from azure.core.exceptions import HttpResponseError
-from azure.core.paging import ItemPaged
-from devtools_testutils import AzureRecordedTestCase, is_live
-from test_utilities.utils import assert_job_cancel, omit_with_wildcard, sleep_if_live
 
 from .._util import _COMPONENT_TIMEOUT_SECOND
 from ..unittests.test_component_schema import load_component_entity_from_rest_json
@@ -34,6 +38,7 @@ def create_component(
     path="./tests/test_configs/components/helloworld_component.yml",
     params_override=None,
     is_anonymous=False,
+    **kwargs,
 ):
     default_param_override = [{"name": component_name}]
     if params_override is None:
@@ -45,7 +50,7 @@ def create_component(
         source=path,
         params_override=params_override,
     )
-    return client.components.create_or_update(command_component, is_anonymous=is_anonymous)
+    return client.components.create_or_update(command_component, is_anonymous=is_anonymous, **kwargs)
 
 
 @pytest.fixture
@@ -383,7 +388,7 @@ class TestComponent(AzureRecordedTestCase):
         assert target_entity.id
         # server side will remove \n from the code now. Skip them given it's not targeted to check in this test
         # server side will return optional False for optional None input
-        omit_fields = ["id", "command", "environment", "inputs.*.optional"]
+        omit_fields = ["id", "command", "environment", "inputs.*.optional", "properties"]
         assert omit_with_wildcard(component_entity._to_dict(), *omit_fields) == omit_with_wildcard(
             target_entity._to_dict(), *omit_fields
         )
@@ -396,6 +401,21 @@ class TestComponent(AzureRecordedTestCase):
             component_name,
             path="./tests/test_configs/components/basic_component_code_local_path.yml",
         )
+        assert component_resource.name == component_name
+        # make sure code is created
+        assert component_resource.code
+        assert is_ARM_id_for_resource(component_resource.code)
+
+    def test_command_component_with_pathlike_as_code(self, client: MLClient, randstr: Callable[[str], str]) -> None:
+        component_name = randstr("component_name")
+
+        component = load_component(source="./tests/test_configs/components/basic_component_code_local_path.yml")
+        from pathlib import Path
+
+        component.name = component_name
+        component.code = Path(component.code)
+
+        component_resource = client.components.create_or_update(component)
         assert component_resource.name == component_name
         # make sure code is created
         assert component_resource.code
@@ -1026,3 +1046,126 @@ class TestComponent(AzureRecordedTestCase):
             from_rest_component.outputs["model_output_ipp"]._intellectual_property
             == command_component.outputs["model_output_ipp"]._intellectual_property
         )
+
+    def test_create_component_skip_if_no_change(self, client: MLClient, randstr):
+        component_operation = client._operation_container.all_operations[AzureMLResourceType.COMPONENT]
+        component_name = "test_skip_if_no_change"
+        try:
+            default_component = component_operation.get(name=component_name)
+        except Exception:
+            default_component = None
+        default_version = default_component.version if default_component else "1"
+        # update  default component by current local component data.
+        default_component = create_component(client, component_name=component_name, version=default_version)
+
+        # test component has no change and use skip_if_no_change parameter
+        new_version = randstr("component_version")
+        new_component = create_component(
+            client, component_name=component_name, version=new_version, skip_if_no_change=True
+        )
+        assert default_component._get_component_hash(
+            keys_to_omit=["creation_context"]
+        ) == new_component._get_component_hash(keys_to_omit=["creation_context"])
+
+        # test component has change and use skip_if_no_change parameter
+        new_version = randstr("component_version")
+        params_override = [
+            {"description": "description_{0}".format(new_version)},
+            {"display_name": "display_name_{0}".format(new_version)},
+            {"tags": {"tags": "tags_{0}".format(new_version)}},
+        ]
+        new_component = create_component(
+            client,
+            component_name=component_name,
+            version=new_version,
+            params_override=params_override,
+            skip_if_no_change=True,
+        )
+        assert default_component._get_component_hash(
+            keys_to_omit=["creation_context"]
+        ) != new_component._get_component_hash(keys_to_omit=["creation_context"])
+        assert new_component.description == "description_{0}".format(new_version)
+        assert new_component.display_name == "display_name_{0}".format(new_version)
+        assert new_component.tags == {"tags": "tags_{0}".format(new_version)}
+        assert new_component.version == new_version
+
+        # test component has no change and not use skip_if_no_change parameter
+        new_version = randstr("component_version")
+        new_component = create_component(client, component_name=component_name, version=new_version)
+        assert default_component._get_component_hash(
+            keys_to_omit=["creation_context"]
+        ) != new_component._get_component_hash(keys_to_omit=["creation_context"])
+        assert new_component.version == new_version
+
+    # TODO: code hash will normalize code name to 000000000000000000000, which
+    #  is not compatible with mock_component_hash
+    @pytest.mark.disable_mock_code_hash
+    @pytest.mark.parametrize(
+        "component_path",
+        [
+            pytest.param("./tests/test_configs/components/helloworld_component.yml", id="command"),
+            pytest.param(
+                "./tests/test_configs/components/helloworld_components_with_env/helloworld_component_env_inline.yml",
+                id="command_with_env_inline",
+            ),
+            pytest.param(
+                "./tests/test_configs/components/helloworld_components_with_env/helloworld_component_env_path_1.yml",
+                id="command_with_env_path",
+            ),
+            pytest.param("./tests/test_configs/dsl_pipeline/basic_component/component.yml", id="command_with_code"),
+            pytest.param("./tests/test_configs/components/helloworld_parallel.yml", id="parallel_with_code"),
+            pytest.param(
+                "./tests/test_configs/dsl_pipeline/parallel_component_with_tabular_input/tabular_input_e2e.yml",
+                id="parallel_with_env_and_code",
+            ),
+        ],
+    )
+    def test_component_download(self, client: MLClient, randstr, component_path: str, request):
+        save_dir = Path(f"./tests/test_configs/components/downloaded", request.node.callspec.id)
+        temp_component_name = randstr("component_name")
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            download_path = Path(temp_dir)
+            component = load_component(component_path)
+
+            component.name = temp_component_name
+            created_component = client.components.create_or_update(
+                component,
+            )
+            client.components.download(
+                component.name,
+                version=component.version,
+                download_path=download_path,
+            )
+
+            spec_path = download_path.joinpath("component_spec.yaml")
+            downloaded_component = load_component(spec_path)
+            downloaded_component.name += "_recreated"
+            recreated_component = client.components.create_or_update(downloaded_component)
+
+            # normalize component name
+            spec_path.write_text(spec_path.read_text().replace(temp_component_name, "random_component_name"))
+            if save_dir.is_dir():
+                try:
+                    for file in save_dir.glob("**/*"):
+                        if file.is_file():
+                            assert file.read_text() == download_path.joinpath(file.relative_to(save_dir)).read_text(), (
+                                f"downloaded component is not the same as last snapshot. "
+                                f"Please check if changes under {download_path} are expected."
+                            )
+                except AssertionError:
+                    # replace saved snapshot with downloaded one if not matched
+                    shutil.rmtree(save_dir, ignore_errors=True)
+                    shutil.copytree(download_path, save_dir)
+            else:
+                shutil.copytree(download_path, save_dir)
+
+            # compare created component and recreated component after we updated the saved snapshot (if applicable)
+            omit_fields = [
+                "id",
+                "name",
+                "creation_context",
+            ]
+            assert omit_with_wildcard(recreated_component._to_dict(), *omit_fields) == omit_with_wildcard(
+                created_component._to_dict(), *omit_fields
+            )

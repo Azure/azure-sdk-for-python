@@ -89,7 +89,7 @@ class InputOutputBase(ABC):
         super(InputOutputBase, self).__init__(**kwargs)
 
     @abstractmethod
-    def _build_data(self, data, key=None):  # pylint: disable=unused-argument, no-self-use
+    def _build_data(self, data, key=None):  # pylint: disable=unused-argument
         """Validate if data matches type and translate it to Input/Output acceptable type."""
 
     @abstractmethod
@@ -205,6 +205,10 @@ class InputOutputBase(ABC):
         if isinstance(original_data, PipelineInput):
             return None
         return data.mode if data is not None and hasattr(data, "mode") else kwargs.pop("mode", None)
+
+    @property
+    def _is_primitive_type(self):
+        return self.type in IOConstants.PRIMITIVE_STR_2_TYPE
 
 
 class NodeInput(InputOutputBase):
@@ -426,13 +430,8 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
 
         self._assert_name_and_version()
 
-        self._is_control = meta.is_control if meta is not None else None
         # store original node output to be able to trace back to inner node from a pipeline output builder.
         self._binding_output = binding_output
-
-    @property
-    def is_control(self) -> str:
-        return self._is_control
 
     @property
     def port_name(self) -> str:
@@ -543,11 +542,9 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
         elif isinstance(self._data, Output):
             result = self._data
         elif isinstance(self._data, PipelineOutput):
-            is_control = self._meta.is_control if self._meta is not None else None
             result = Output(
                 path=self._data._data_binding(),
                 mode=self.mode,
-                is_control=is_control,
                 name=self._data.name,
                 version=self._data.version,
                 description=self.description,

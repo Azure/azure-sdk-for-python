@@ -291,7 +291,7 @@ class MessagesPaged(PageIterator):
         except HttpResponseError as error:
             process_storage_error(error)
 
-    def _extract_data_cb(self, messages): # pylint: disable=no-self-use
+    def _extract_data_cb(self, messages):
         # There is no concept of continuation token, so raising on my own condition
         if not messages:
             raise StopIteration("End of paging")
@@ -424,9 +424,8 @@ class QueueSasPermissions(object):
         return parsed
 
 
+# Deserialize a ServiceStats objects into a dict.
 def service_stats_deserialize(generated):
-    """Deserialize a ServiceStats objects into a dict.
-    """
     return {
         'geo_replication': {
             'status': generated.geo_replication.status,
@@ -435,9 +434,8 @@ def service_stats_deserialize(generated):
     }
 
 
+# Deserialize a ServiceProperties objects into a dict.
 def service_properties_deserialize(generated):
-    """Deserialize a ServiceProperties objects into a dict.
-    """
     return {
         'analytics_logging': QueueAnalyticsLogging._from_generated(generated.logging),  # pylint: disable=protected-access
         'hour_metrics': Metrics._from_generated(generated.hour_metrics),  # pylint: disable=protected-access

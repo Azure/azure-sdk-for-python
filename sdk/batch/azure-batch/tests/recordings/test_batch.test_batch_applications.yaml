@@ -9,17 +9,17 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.8.6 (Windows-10-10.0.22000-SP0) msrest/0.7.1 msrest_azure/0.4.34
-        azure-batch/13.0.0 Azure-SDK-For-Python
+      - python/3.8.7 (Windows-10-10.0.22621-SP0) msrest/0.7.1 msrest_azure/0.6.4 azure-batch/13.0.1
+        Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Thu, 27 Oct 2022 21:32:23 GMT
+      - Wed, 24 May 2023 08:48:32 GMT
     method: GET
-    uri: https://batch.eastus.batch.azure.com/applications?api-version=2022-10-01.16.0
+    uri: https://batch.eastasia.batch.azure.com/applications?api-version=2023-05-01.17.0
   response:
     body:
-      string: "{\r\n  \"odata.metadata\":\"https://batch.eastus.batch.azure.com/$metadata#listapplicationsummariesresponses\",\"value\":[\r\n
+      string: "{\r\n  \"odata.metadata\":\"https://batch.eastasia.batch.azure.com/$metadata#listapplicationsummariesresponses\",\"value\":[\r\n
         \   {\r\n      \"id\":\"application_id\",\"versions\":[\r\n        \"v1.0\"\r\n
         \     ]\r\n    }\r\n  ]\r\n}"
     headers:
@@ -28,9 +28,9 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Thu, 27 Oct 2022 21:32:29 GMT
+      - Wed, 24 May 2023 08:48:33 GMT
       request-id:
-      - 4f102dee-b047-48c4-a0ca-6291bbfdeb88
+      - 8e5c8fb2-0285-4401-bc95-0ac7cee90ed9
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -52,17 +52,17 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.8.6 (Windows-10-10.0.22000-SP0) msrest/0.7.1 msrest_azure/0.4.34
-        azure-batch/13.0.0 Azure-SDK-For-Python
+      - python/3.8.7 (Windows-10-10.0.22621-SP0) msrest/0.7.1 msrest_azure/0.6.4 azure-batch/13.0.1
+        Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Thu, 27 Oct 2022 21:32:30 GMT
+      - Wed, 24 May 2023 08:48:33 GMT
     method: GET
-    uri: https://batch.eastus.batch.azure.com/applications/application_id?api-version=2022-10-01.16.0
+    uri: https://batch.eastasia.batch.azure.com/applications/application_id?api-version=2023-05-01.17.0
   response:
     body:
-      string: "{\r\n  \"odata.metadata\":\"https://batch.eastus.batch.azure.com/$metadata#getapplicationsummaryresponse/@Element\",\"id\":\"application_id\",\"versions\":[\r\n
+      string: "{\r\n  \"odata.metadata\":\"https://batch.eastasia.batch.azure.com/$metadata#getapplicationsummaryresponse/@Element\",\"id\":\"application_id\",\"versions\":[\r\n
         \   \"v1.0\"\r\n  ]\r\n}"
     headers:
       content-type:
@@ -70,9 +70,9 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Thu, 27 Oct 2022 21:32:33 GMT
+      - Wed, 24 May 2023 08:48:33 GMT
       request-id:
-      - e0eb0e47-4d6e-41d8-b366-96e2796f3deb
+      - f3de7d8b-7065-461a-91c8-fe3a7ad1ff01
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -100,32 +100,32 @@ interactions:
       Content-Type:
       - application/json; odata=minimalmetadata; charset=utf-8
       User-Agent:
-      - python/3.8.6 (Windows-10-10.0.22000-SP0) msrest/0.7.1 msrest_azure/0.4.34
-        azure-batch/13.0.0 Azure-SDK-For-Python
+      - python/3.8.7 (Windows-10-10.0.22621-SP0) msrest/0.7.1 msrest_azure/0.6.4 azure-batch/13.0.1
+        Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Thu, 27 Oct 2022 21:32:34 GMT
+      - Wed, 24 May 2023 08:48:33 GMT
     method: POST
-    uri: https://batch.eastus.batch.azure.com/jobs/batch/tasks?api-version=2022-10-01.16.0
+    uri: https://batch.eastasia.batch.azure.com/jobs/batch/tasks?api-version=2023-05-01.17.0
   response:
     body:
       string: ''
     headers:
       dataserviceid:
-      - https://batchf06f0dd7.eastus.batch.azure.com/jobs/batchf06f0dd7/tasks/python_task_with_app_package
+      - https://batchf06f0dd7.eastasia.batch.azure.com/jobs/batchf06f0dd7/tasks/python_task_with_app_package
       dataserviceversion:
       - '3.0'
       date:
-      - Thu, 27 Oct 2022 21:32:40 GMT
+      - Wed, 24 May 2023 08:48:33 GMT
       etag:
-      - '0x8DAB862C52553F8'
+      - '0x8DB5C33A88F0DA7'
       last-modified:
-      - Thu, 27 Oct 2022 21:32:38 GMT
+      - Wed, 24 May 2023 08:48:34 GMT
       location:
-      - https://batch.eastus.batch.azure.com/jobs/batch/tasks/python_task_with_app_package
+      - https://batch.eastasia.batch.azure.com/jobs/batch/tasks/python_task_with_app_package
       request-id:
-      - 4cd0dc23-ef4c-42b2-ba3a-b5da6db0e843
+      - 0ad56a42-7bd4-4025-bd88-efd8978903d7
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -147,17 +147,17 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.8.6 (Windows-10-10.0.22000-SP0) msrest/0.7.1 msrest_azure/0.4.34
-        azure-batch/13.0.0 Azure-SDK-For-Python
+      - python/3.8.7 (Windows-10-10.0.22621-SP0) msrest/0.7.1 msrest_azure/0.6.4 azure-batch/13.0.1
+        Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Thu, 27 Oct 2022 21:32:41 GMT
+      - Wed, 24 May 2023 08:48:33 GMT
     method: GET
-    uri: https://batch.eastus.batch.azure.com/jobs/batch/tasks/python_task_with_app_package?api-version=2022-10-01.16.0
+    uri: https://batch.eastasia.batch.azure.com/jobs/batch/tasks/python_task_with_app_package?api-version=2023-05-01.17.0
   response:
     body:
-      string: "{\r\n  \"odata.metadata\":\"https://batch.eastus.batch.azure.com/$metadata#tasks/@Element\",\"id\":\"python_task_with_app_package\",\"url\":\"https://batch.eastus.batch.azure.com/jobs/batch/tasks/python_task_with_app_package\",\"eTag\":\"0x8DAB862C52553F8\",\"creationTime\":\"2022-10-27T21:32:38.0210168Z\",\"lastModified\":\"2022-10-27T21:32:38.0210168Z\",\"state\":\"active\",\"stateTransitionTime\":\"2022-10-27T21:32:38.0210168Z\",\"commandLine\":\"cmd
+      string: "{\r\n  \"odata.metadata\":\"https://batch.eastasia.batch.azure.com/$metadata#tasks/@Element\",\"id\":\"python_task_with_app_package\",\"url\":\"https://batch.eastasia.batch.azure.com/jobs/batch/tasks/python_task_with_app_package\",\"eTag\":\"0x8DB5C33A88F0DA7\",\"creationTime\":\"2023-05-24T08:48:34.4092071Z\",\"lastModified\":\"2023-05-24T08:48:34.4092071Z\",\"state\":\"active\",\"stateTransitionTime\":\"2023-05-24T08:48:34.4092071Z\",\"commandLine\":\"cmd
         /c \\\"echo hello world\\\"\",\"applicationPackageReferences\":[\r\n    {\r\n
         \     \"applicationId\":\"application_id\",\"version\":\"v1.0\"\r\n    }\r\n
         \ ],\"userIdentity\":{\r\n    \"autoUser\":{\r\n      \"scope\":\"pool\",\"elevationLevel\":\"nonadmin\"\r\n
@@ -170,13 +170,13 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Thu, 27 Oct 2022 21:32:44 GMT
+      - Wed, 24 May 2023 08:48:33 GMT
       etag:
-      - '0x8DAB862C52553F8'
+      - '0x8DB5C33A88F0DA7'
       last-modified:
-      - Thu, 27 Oct 2022 21:32:38 GMT
+      - Wed, 24 May 2023 08:48:34 GMT
       request-id:
-      - 1c5fd98a-f6a7-4637-8fe6-da929e700ebb
+      - 2d9c18bb-e568-4b42-9e80-0c5d30b0302e
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:

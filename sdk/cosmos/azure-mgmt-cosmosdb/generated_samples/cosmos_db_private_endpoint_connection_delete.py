@@ -29,14 +29,13 @@ def main():
         subscription_id="00000000-1111-2222-3333-444444444444",
     )
 
-    response = client.private_endpoint_connections.begin_delete(
+    client.private_endpoint_connections.begin_delete(
         resource_group_name="rg1",
         account_name="ddb1",
         private_endpoint_connection_name="privateEndpointConnectionName",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/stable/2023-04-15/examples/CosmosDBPrivateEndpointConnectionDelete.json
+# x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/preview/2023-03-15-preview/examples/CosmosDBPrivateEndpointConnectionDelete.json
 if __name__ == "__main__":
     main()

@@ -29,14 +29,13 @@ def main():
         subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
-    response = client.security_admin_configurations.begin_delete(
+    client.security_admin_configurations.begin_delete(
         resource_group_name="rg1",
         network_manager_name="testNetworkManager",
         configuration_name="myTestSecurityConfig",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2022-11-01/examples/NetworkManagerSecurityAdminConfigurationDelete.json
+# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2023-02-01/examples/NetworkManagerSecurityAdminConfigurationDelete.json
 if __name__ == "__main__":
     main()

@@ -29,14 +29,13 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.express_route_cross_connection_peerings.begin_delete(
+    client.express_route_cross_connection_peerings.begin_delete(
         resource_group_name="CrossConnection-SiliconValley",
         cross_connection_name="<circuitServiceKey>",
         peering_name="AzurePrivatePeering",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2022-11-01/examples/ExpressRouteCrossConnectionBgpPeeringDelete.json
+# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2023-02-01/examples/ExpressRouteCrossConnectionBgpPeeringDelete.json
 if __name__ == "__main__":
     main()

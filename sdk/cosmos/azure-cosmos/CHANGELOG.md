@@ -1,6 +1,6 @@
 ## Release History
 
-### 4.4.0b3 (Unreleased)
+### 4.5.1 (Unreleased)
 
 #### Features Added
 
@@ -9,6 +9,30 @@
 #### Bugs Fixed
 
 #### Other Changes
+
+### 4.5.0 (2023-08-09)
+
+#### Features Added
+* Added support for continuation tokens for streamable cross partition queries. See [PR 31189](https://github.com/Azure/azure-sdk-for-python/pull/31189).
+
+#### Bugs Fixed
+* Fixed bug with async `create_database_if_not_exists` method not working when passing `offer_throughput` as an option. See [PR 31478](https://github.com/Azure/azure-sdk-for-python/pull/31478).
+
+#### Other Changes
+* Renamed `response_continuation_token_limit_in_kb` to `continuation_token_limit` for GA. See [PR 31532](https://github.com/Azure/azure-sdk-for-python/pull/31532).
+
+### 4.4.1b1 (2023-07-25)
+
+#### Features Added
+* Added ability to limit continuation token size when querying for items. See [PR 30731](https://github.com/Azure/azure-sdk-for-python/pull/30731)
+
+#### Bugs Fixed
+* Fixed bug with async patch_item method. See [PR 30804](https://github.com/Azure/azure-sdk-for-python/pull/30804).
+
+### 4.4.0 (2023-06-09)
+
+#### Features Added
+- GA release of Patch API and Delete All Items By Partition Key
 
 ### 4.4.0b2 (2023-05-22)
 
@@ -24,7 +48,7 @@
 ### 4.4.0b1 (2023-04-11)
 
 #### Features Added
- - Added **preview** delete all items by partition key functionality. See [PR 29186](https://github.com/Azure/azure-sdk-for-python/pull/29186).
+ - Added **preview** delete all items by partition key functionality. See [PR 29186](https://github.com/Azure/azure-sdk-for-python/pull/29186). For more information on Partition Key Delete, please see [Azure Cosmos DB Partition Key Delete](https://learn.microsoft.com/azure/cosmos-db/nosql/how-to-delete-by-partition-key?tabs=python-example).
  - Added **preview** partial document update (Patch API) functionality and container methods for patching items with operations. See [PR 29497](https://github.com/Azure/azure-sdk-for-python/pull/29497). For more information on Patch, please see [Azure Cosmos DB Partial Document Update](https://learn.microsoft.com/azure/cosmos-db/partial-document-update).
 
 #### Bugs Fixed

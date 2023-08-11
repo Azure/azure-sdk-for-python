@@ -55,9 +55,6 @@ class ConversationAnalysisClient(GeneratedConversationAnalysisClient):
     that can be used to analyze structured conversations (textual or spoken). Further documentation
     can be found in https://docs.microsoft.com/azure/cognitive-services/language-service/overview.
 
-    See https://docs.microsoft.com/rest/api/language/conversation-analysis-runtime/ for more information about
-    requests and responses you can pass to this client.
-
     :param endpoint: Supported Cognitive Services endpoint (e.g.,
      https://:code:`<resource-name>`.cognitiveservices.azure.com). Required.
     :type endpoint: str
@@ -77,8 +74,8 @@ class ConversationAnalysisClient(GeneratedConversationAnalysisClient):
     ) -> None:
         try:
             endpoint = endpoint.rstrip("/")
-        except AttributeError:
-            raise ValueError("Parameter 'endpoint' must be a string.")
+        except AttributeError as exc:
+            raise ValueError("Parameter 'endpoint' must be a string.") from exc
         super().__init__(
             endpoint=endpoint,
             credential=credential,  # type: ignore

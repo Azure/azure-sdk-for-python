@@ -29,14 +29,17 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.redis.begin_import_data(
+    client.redis.begin_import_data(
         resource_group_name="rg1",
         name="cache1",
-        parameters={"files": ["http://fileuris.contoso.com/pathtofile1"], "format": "RDB"},
+        parameters={
+            "files": ["http://fileuris.contoso.com/pathtofile1"],
+            "format": "RDB",
+            "storage-subscription-id": "storageSubId",
+        },
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/redis/resource-manager/Microsoft.Cache/stable/2022-06-01/examples/RedisCacheImport.json
+# x-ms-original-file: specification/redis/resource-manager/Microsoft.Cache/stable/2023-04-01/examples/RedisCacheImport.json
 if __name__ == "__main__":
     main()

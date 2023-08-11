@@ -66,6 +66,17 @@ class IpFilterTargetType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DEVICE_API = "deviceApi"
 
 
+class ManagedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of managed service identity (where both SystemAssigned and UserAssigned types are
+    allowed).
+    """
+
+    NONE = "None"
+    SYSTEM_ASSIGNED = "SystemAssigned"
+    USER_ASSIGNED = "UserAssigned"
+    SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned,UserAssigned"
+
+
 class NameUnavailabilityReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """specifies the reason a name is unavailable."""
 

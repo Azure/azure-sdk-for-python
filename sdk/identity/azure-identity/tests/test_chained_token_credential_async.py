@@ -56,14 +56,14 @@ async def test_credential_chain_error_message():
 
 @pytest.mark.asyncio
 async def test_chain_attempts_all_credentials():
-    async def credential_unavailable(message="it didn't work"):
+    async def credential_unavailable(message="it didn't work", **_):
         raise CredentialUnavailableError(message)
 
     expected_token = AccessToken("expected_token", 0)
     credentials = [
         Mock(get_token=Mock(wraps=credential_unavailable)),
         Mock(get_token=Mock(wraps=credential_unavailable)),
-        Mock(get_token=wrap_in_future(lambda _: expected_token)),
+        Mock(get_token=wrap_in_future(lambda _, **__: expected_token)),
     ]
 
     token = await ChainedTokenCredential(*credentials).get_token("scope")
@@ -77,7 +77,7 @@ async def test_chain_attempts_all_credentials():
 async def test_chain_raises_for_unexpected_error():
     """the chain should not continue after an unexpected error (i.e. anything but CredentialUnavailableError)"""
 
-    async def credential_unavailable(message="it didn't work"):
+    async def credential_unavailable(message="it didn't work", **_):
         raise CredentialUnavailableError(message)
 
     expected_message = "it can't be done"
@@ -85,7 +85,7 @@ async def test_chain_raises_for_unexpected_error():
     credentials = [
         Mock(get_token=Mock(wraps=credential_unavailable)),
         Mock(get_token=Mock(side_effect=ValueError(expected_message))),
-        Mock(get_token=Mock(wraps=wrap_in_future(lambda _: AccessToken("**", 42)))),
+        Mock(get_token=Mock(wraps=wrap_in_future(lambda _, **__: AccessToken("**", 42)))),
     ]
 
     with pytest.raises(ClientAuthenticationError) as ex:
@@ -98,7 +98,7 @@ async def test_chain_raises_for_unexpected_error():
 @pytest.mark.asyncio
 async def test_returns_first_token():
     expected_token = Mock()
-    first_credential = Mock(get_token=wrap_in_future(lambda _: expected_token))
+    first_credential = Mock(get_token=wrap_in_future(lambda _, **__: expected_token))
     second_credential = Mock(get_token=Mock())
 
     aggregate = ChainedTokenCredential(first_credential, second_credential)

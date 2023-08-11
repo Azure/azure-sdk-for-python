@@ -63,31 +63,51 @@ def _get_datastore_name(*, datastore_name: Optional[str] = WORKSPACE_BLOB_STORE)
     return datastore_name
 
 
-def get_datastore_info(operations: DatastoreOperations, name: str) -> Dict[str, str]:
-    """Get datastore account, type, and auth information."""
+def get_datastore_info(
+    operations: DatastoreOperations,
+    name: str,
+    *,
+    credential=None,
+    **kwargs,
+) -> Dict[str, str]:
+    """Get datastore account, type, and auth information.
+
+    :param operations: DatastoreOperations object
+    :type operations: DatastoreOperations
+    :param name: Name of the datastore. If not provided, the default datastore will be used.
+    :type name: str
+    :param credential: Local credential to use for authentication. If not provided, will try to get
+        credentials from the datastore, which requires authorization to perform action
+        'Microsoft.MachineLearningServices/workspaces/datastores/listSecrets/action' over target datastore.
+    :type credential: str
+    """
     datastore_info = {}
     if name:
-        datastore = operations.get(name, include_secrets=True)
+        datastore = operations.get(name, include_secrets=credential is None)
     else:
-        datastore = operations.get_default(include_secrets=True)
+        datastore = operations.get_default(include_secrets=credential is None)
 
     storage_endpoint = _get_storage_endpoint_from_metadata()
-    credentials = datastore.credentials
     datastore_info["storage_type"] = datastore.type
     datastore_info["storage_account"] = datastore.account_name
     datastore_info["account_url"] = STORAGE_ACCOUNT_URLS[datastore.type].format(
         datastore.account_name, storage_endpoint
     )
-    if isinstance(credentials, AccountKeyConfiguration):
-        datastore_info["credential"] = credentials.account_key
+    if credential is not None:
+        datastore_info["credential"] = credential
     else:
-        try:
-            datastore_info["credential"] = credentials.sas_token
-        except Exception as e:  # pylint: disable=broad-except
-            if not hasattr(credentials, "sas_token"):
-                datastore_info["credential"] = operations._credential
-            else:
-                raise e
+        credential = datastore.credentials
+
+        if isinstance(credential, AccountKeyConfiguration):
+            datastore_info["credential"] = credential.account_key
+        else:
+            try:
+                datastore_info["credential"] = credential.sas_token
+            except Exception as e:  # pylint: disable=broad-except
+                if not hasattr(credential, "sas_token"):
+                    datastore_info["credential"] = operations._credential
+                else:
+                    raise e
 
     if datastore.type == DatastoreType.AZURE_BLOB:
         datastore_info["container_name"] = str(datastore.container_name)
@@ -98,6 +118,10 @@ def get_datastore_info(operations: DatastoreOperations, name: str) -> Dict[str, 
             f"Datastore type {datastore.type} is not supported for uploads. "
             f"Supported types are {DatastoreType.AZURE_BLOB} and {DatastoreType.AZURE_DATA_LAKE_GEN2}."
         )
+
+    for override_param_name, value in kwargs.items():
+        if override_param_name in datastore_info:
+            datastore_info[override_param_name] = value
 
     return datastore_info
 

@@ -29,14 +29,13 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.configuration_policy_groups.begin_delete(
+    client.configuration_policy_groups.begin_delete(
         resource_group_name="rg1",
         vpn_server_configuration_name="vpnServerConfiguration1",
         configuration_policy_group_name="policyGroup1",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2022-11-01/examples/ConfigurationPolicyGroupDelete.json
+# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2023-02-01/examples/ConfigurationPolicyGroupDelete.json
 if __name__ == "__main__":
     main()

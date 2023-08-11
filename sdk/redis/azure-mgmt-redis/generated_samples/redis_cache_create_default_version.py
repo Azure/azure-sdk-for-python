@@ -50,6 +50,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/redis/resource-manager/Microsoft.Cache/stable/2022-06-01/examples/RedisCacheCreateDefaultVersion.json
+# x-ms-original-file: specification/redis/resource-manager/Microsoft.Cache/stable/2023-04-01/examples/RedisCacheCreateDefaultVersion.json
 if __name__ == "__main__":
     main()

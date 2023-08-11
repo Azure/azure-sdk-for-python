@@ -29,14 +29,13 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.virtual_hub_route_table_v2_s.begin_delete(
+    client.virtual_hub_route_table_v2_s.begin_delete(
         resource_group_name="rg1",
         virtual_hub_name="virtualHub1",
         route_table_name="virtualHubRouteTable1a",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2022-11-01/examples/VirtualHubRouteTableV2Delete.json
+# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2023-02-01/examples/VirtualHubRouteTableV2Delete.json
 if __name__ == "__main__":
     main()

@@ -29,14 +29,13 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.subnets.begin_delete(
+    client.subnets.begin_delete(
         resource_group_name="subnet-test",
         virtual_network_name="vnetname",
         subnet_name="subnet1",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2022-11-01/examples/SubnetDelete.json
+# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2023-02-01/examples/SubnetDelete.json
 if __name__ == "__main__":
     main()

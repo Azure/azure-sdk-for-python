@@ -10,6 +10,47 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
+class AmlFilesystemHealthStateType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """List of AML file system health states."""
+
+    UNAVAILABLE = "Unavailable"
+    AVAILABLE = "Available"
+    DEGRADED = "Degraded"
+    TRANSITIONING = "Transitioning"
+    MAINTENANCE = "Maintenance"
+
+
+class AmlFilesystemIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of identity used for the resource."""
+
+    USER_ASSIGNED = "UserAssigned"
+    NONE = "None"
+
+
+class AmlFilesystemProvisioningStateType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """ARM provisioning state."""
+
+    SUCCEEDED = "Succeeded"
+    FAILED = "Failed"
+    CREATING = "Creating"
+    DELETING = "Deleting"
+    UPDATING = "Updating"
+    CANCELED = "Canceled"
+
+
+class ArchiveStatusType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The state of the archive operation."""
+
+    NOT_CONFIGURED = "NotConfigured"
+    IDLE = "Idle"
+    IN_PROGRESS = "InProgress"
+    CANCELED = "Canceled"
+    COMPLETED = "Completed"
+    FAILED = "Failed"
+    CANCELLING = "Cancelling"
+    FS_SCAN_IN_PROGRESS = "FSScanInProgress"
+
+
 class CacheIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of identity used for the cache."""
 
@@ -36,8 +77,15 @@ class DomainJoinedType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ERROR = "Error"
 
 
+class FilesystemSubnetStatusType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The status of the AML file system subnet check."""
+
+    OK = "Ok"
+    INVALID = "Invalid"
+
+
 class FirmwareStatusType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """True if there is a firmware update ready to install on this Cache. The firmware will
+    """True if there is a firmware update ready to install on this cache. The firmware will
     automatically be installed after firmwareUpdateDeadline if not triggered earlier via the
     upgrade operation.
     """
@@ -47,7 +95,12 @@ class FirmwareStatusType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class HealthStateType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """List of Cache health states."""
+    """List of cache health states. Down is when the cluster is not responding.  Degraded is when its
+    functioning but has some alerts. Transitioning when it is creating or deleting. Unknown will be
+    returned in old api versions when a new value is added in future versions. WaitingForKey is
+    when the create is waiting for the system assigned identity to be given access to the
+    encryption key in the encryption settings.
+    """
 
     UNKNOWN = "Unknown"
     HEALTHY = "Healthy"
@@ -61,6 +114,18 @@ class HealthStateType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     WAITING_FOR_KEY = "WaitingForKey"
     START_FAILED = "StartFailed"
     UPGRADE_FAILED = "UpgradeFailed"
+
+
+class MaintenanceDayOfWeekType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Day of the week on which the maintenance window will occur."""
+
+    MONDAY = "Monday"
+    TUESDAY = "Tuesday"
+    WEDNESDAY = "Wednesday"
+    THURSDAY = "Thursday"
+    FRIDAY = "Friday"
+    SATURDAY = "Saturday"
+    SUNDAY = "Sunday"
 
 
 class MetricAggregationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -116,7 +181,7 @@ class ProvisioningStateType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     SUCCEEDED = "Succeeded"
     FAILED = "Failed"
-    CANCELLED = "Cancelled"
+    CANCELED = "Canceled"
     CREATING = "Creating"
     DELETING = "Deleting"
     UPDATING = "Updating"

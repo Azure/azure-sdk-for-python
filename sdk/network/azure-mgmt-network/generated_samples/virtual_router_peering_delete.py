@@ -29,14 +29,13 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.virtual_router_peerings.begin_delete(
+    client.virtual_router_peerings.begin_delete(
         resource_group_name="rg1",
         virtual_router_name="virtualRouter",
         peering_name="peering1",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2022-11-01/examples/VirtualRouterPeeringDelete.json
+# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2023-02-01/examples/VirtualRouterPeeringDelete.json
 if __name__ == "__main__":
     main()

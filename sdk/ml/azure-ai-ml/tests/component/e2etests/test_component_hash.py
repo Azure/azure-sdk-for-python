@@ -39,6 +39,7 @@ def create_component(
 @pytest.mark.usefixtures(
     "recorded_test",
     "mock_asset_name",
+    "mock_component_hash",
 )
 @pytest.mark.pipeline_test
 class TestComponentHash(AzureRecordedTestCase):

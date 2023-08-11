@@ -3,7 +3,6 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-# pylint: disable=no-self-use
 
 from concurrent import futures
 from io import BytesIO, IOBase, SEEK_CUR, SEEK_END, SEEK_SET, UnsupportedOperation
@@ -268,7 +267,7 @@ class BlockBlobChunkUploader(_ChunkUploader):
 
     def _upload_substream_block(self, index, block_stream):
         try:
-            block_id = f'BlockId{"%05d" % (index/self.chunk_size)}'
+            block_id = f'BlockId{(index//self.chunk_size):05}'
             self.service.stage_block(
                 block_id,
                 len(block_stream),
@@ -407,8 +406,8 @@ class SubStream(IOBase):
         try:
             # only the main thread runs this, so there's no need grabbing the lock
             wrapped_stream.seek(0, SEEK_CUR)
-        except:
-            raise ValueError("Wrapped stream must support seek().")
+        except Exception as exc:
+            raise ValueError("Wrapped stream must support seek().") from exc
 
         self._lock = lockObj
         self._wrapped_stream = wrapped_stream
@@ -579,8 +578,6 @@ class IterStreamer(object):
     def __next__(self):
         return next(self.iterator)
 
-    next = __next__  # Python 2 compatibility.
-
     def tell(self, *args, **kwargs):
         raise UnsupportedOperation("Data generator does not support tell.")
 
@@ -597,10 +594,11 @@ class IterStreamer(object):
                     chunk = chunk.encode(self.encoding)
                 data += chunk
                 count += len(chunk)
+        # This means count < size and what's leftover will be returned in this call.
         except StopIteration:
-            pass
+            self.leftover = b""
 
-        if count > size:
+        if count >= size:
             self.leftover = data[size:]
 
         return data[:size]

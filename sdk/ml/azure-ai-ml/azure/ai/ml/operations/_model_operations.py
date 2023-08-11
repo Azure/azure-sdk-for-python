@@ -219,7 +219,7 @@ class ModelOperations(_ScopeDependentOperations):
                         target=ErrorTarget.MODEL,
                         no_personal_data_message=CHANGED_ASSET_PATH_MSG_NO_PERSONAL_DATA,
                         error_category=ErrorCategory.USER_ERROR,
-                    )
+                    ) from e
                 raise e
 
             model = Model._from_rest_object(result)
@@ -425,7 +425,7 @@ class ModelOperations(_ScopeDependentOperations):
 
         :param name: Name of the model.
         :type name: Optional[str]
-        :param list_view_type: View type for including/excluding (for example) archived models. Default: ACTIVE_ONLY.
+        :keyword list_view_type: View type for including/excluding (for example) archived models. Default: ACTIVE_ONLY.
         :type list_view_type: Optional[ListViewType]
         :return: An iterator like instance of Model objects
         :rtype: ~azure.core.paging.ItemPaged[Model]
@@ -474,11 +474,11 @@ class ModelOperations(_ScopeDependentOperations):
         :type name: str
         :param version: Version of model asset.
         :type version: str
-        :param share_with_name: Name of model asset to share with.
+        :keyword share_with_name: Name of model asset to share with.
         :type share_with_name: str
-        :param share_with_version: Version of model asset to share with.
+        :keyword share_with_version: Version of model asset to share with.
         :type share_with_version: str
-        :param registry_name: Name of the destination registry.
+        :keyword registry_name: Name of the destination registry.
         :type registry_name: str
         :return: Model asset object.
         :rtype: ~azure.ai.ml.entities.Model

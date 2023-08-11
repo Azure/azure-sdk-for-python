@@ -1,6 +1,6 @@
 {
     "chosen_version": "2017-06-01-preview",
-    "total_api_version_list": ["2016-12-01", "2017-06-01-preview"],
+    "total_api_version_list": ["2017-06-01-preview"],
     "client": {
         "name": "PolicyClient",
         "filename": "_policy_client",
@@ -106,7 +106,6 @@
     },
     "operation_groups": {
         "policy_assignments": "PolicyAssignmentsOperations",
-        "policy_set_definitions": "PolicySetDefinitionsOperations",
-        "policy_definitions": "PolicyDefinitionsOperations"
+        "policy_set_definitions": "PolicySetDefinitionsOperations"
     }
 }

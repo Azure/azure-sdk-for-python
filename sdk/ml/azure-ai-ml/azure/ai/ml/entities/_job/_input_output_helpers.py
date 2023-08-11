@@ -156,7 +156,7 @@ def validate_key_contains_allowed_characters(key: str) -> None:
         )
 
 
-def validate_pipeline_input_key_contains_allowed_characters(key: str) -> None:
+def validate_pipeline_input_key_characters(key: str) -> None:
     # Pipeline input allow '.' to support parameter group in key.
     # Note: ([a-zA-Z_]+[a-zA-Z0-9_]*) is a valid single key,
     # so a valid pipeline key is: ^{single_key}([.]{single_key})*$
@@ -183,7 +183,7 @@ def to_rest_dataset_literal_inputs(
     :type inputs: Dict[str, Union[int, str, float, bool, JobInput]]
     :return: A dictionary mapping input name to a ComponentJobInput or PipelineInput
     :rtype: Dict[str, Union[ComponentJobInput, PipelineInput]]
-    :param job_type: When job_type is pipeline, enable dot('.') in parameter keys to support parameter group.
+    :keyword job_type: When job_type is pipeline, enable dot('.') in parameter keys to support parameter group.
         TODO: Remove this after move name validation to Job's customized validate.
     :type job_type: str
     """
@@ -191,7 +191,7 @@ def to_rest_dataset_literal_inputs(
     # Pack up the inputs into REST format
     for input_name, input_value in inputs.items():
         if job_type == JobType.PIPELINE:
-            validate_pipeline_input_key_contains_allowed_characters(input_name)
+            validate_pipeline_input_key_characters(input_name)
         elif job_type:
             # We pass job_type=None for pipeline node, and want skip this check for nodes.
             validate_key_contains_allowed_characters(input_name)

@@ -6,8 +6,7 @@
 # --------------------------------------------------------------------------
 from __future__ import division
 from base64 import b64encode
-from datetime import datetime, timedelta
-from dateutil.tz import tzutc
+from datetime import datetime, timedelta, timezone
 import uuid
 import os
 
@@ -24,7 +23,7 @@ from azure.data.tables import (
     TableAnalyticsLogging,
     TableMetrics,
     TableServiceClient,
-    _error
+    _error,
 )
 from azure.data.tables._constants import DEFAULT_COSMOS_ENDPOINT_SUFFIX, DEFAULT_STORAGE_ENDPOINT_SUFFIX
 from azure.data.tables._error import _decode_error
@@ -34,13 +33,17 @@ from devtools_testutils import is_live
 
 TEST_TABLE_PREFIX = "pytablesync"
 
-SERVICE_UNAVAILABLE_RESP_BODY = '<?xml version="1.0" encoding="utf-8"?><StorageServiceStats><GeoReplication><Status' \
-                                '>unavailable</Status><LastSyncTime></LastSyncTime></GeoReplication' \
-                                '></StorageServiceStats> '
+SERVICE_UNAVAILABLE_RESP_BODY = (
+    '<?xml version="1.0" encoding="utf-8"?><StorageServiceStats><GeoReplication><Status'
+    ">unavailable</Status><LastSyncTime></LastSyncTime></GeoReplication"
+    "></StorageServiceStats> "
+)
 
-SERVICE_LIVE_RESP_BODY = '<?xml version="1.0" encoding="utf-8"?><StorageServiceStats><GeoReplication><Status' \
-                         '>live</Status><LastSyncTime>Wed, 19 Jan 2021 22:28:43 GMT</LastSyncTime></GeoReplication' \
-                         '></StorageServiceStats> '
+SERVICE_LIVE_RESP_BODY = (
+    '<?xml version="1.0" encoding="utf-8"?><StorageServiceStats><GeoReplication><Status'
+    ">live</Status><LastSyncTime>Wed, 19 Jan 2021 22:28:43 GMT</LastSyncTime></GeoReplication"
+    "></StorageServiceStats> "
+)
 
 
 class FakeTokenCredential(object):
@@ -66,7 +69,7 @@ class TableTestCase(object):
             + ";EndpointSuffix="
             + endpoint_suffix
         )
-    
+
     def cosmos_connection_string(self, account, key):
         endpoint_suffix = os.getenv("TABLES_COSMOS_ENDPOINT_SUFFIX", DEFAULT_COSMOS_ENDPOINT_SUFFIX)
         return (
@@ -88,12 +91,18 @@ class TableTestCase(object):
             if endpoint_type == "table":
                 return account.primary_endpoints.table.rstrip("/")
             if endpoint_type == "cosmos":
-                return "https://{}.table.{}".format(account.name, os.getenv("TABLES_COSMOS_ENDPOINT_SUFFIX", DEFAULT_COSMOS_ENDPOINT_SUFFIX))
+                return "https://{}.table.{}".format(
+                    account.name, os.getenv("TABLES_COSMOS_ENDPOINT_SUFFIX", DEFAULT_COSMOS_ENDPOINT_SUFFIX)
+                )
         except AttributeError:  # Didn't find "primary_endpoints"
             if endpoint_type == "table":
-                return "https://{}.table.{}".format(account, os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX", DEFAULT_STORAGE_ENDPOINT_SUFFIX))
+                return "https://{}.table.{}".format(
+                    account, os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX", DEFAULT_STORAGE_ENDPOINT_SUFFIX)
+                )
             if endpoint_type == "cosmos":
-                return "https://{}.table.{}".format(account, os.getenv("TABLES_COSMOS_ENDPOINT_SUFFIX", DEFAULT_COSMOS_ENDPOINT_SUFFIX))
+                return "https://{}.table.{}".format(
+                    account, os.getenv("TABLES_COSMOS_ENDPOINT_SUFFIX", DEFAULT_COSMOS_ENDPOINT_SUFFIX)
+                )
 
     def generate_sas_token(self):
         fake_key = "a" * 30 + "b" * 30
@@ -163,7 +172,7 @@ class TableTestCase(object):
             "PartitionKey": partition,
             "RowKey": row,
             "age": 39,
-            "sex": u"male",
+            "sex": "male",
             "married": True,
             "deceased": False,
             "optional": None,
@@ -171,8 +180,8 @@ class TableTestCase(object):
             "evenratio": 3.0,
             "double": (5, EdmType.DOUBLE),
             "large": 933311100,
-            "Birthday": datetime(1973, 10, 4, tzinfo=tzutc()),
-            "birthday": datetime(1970, 10, 4, tzinfo=tzutc()),
+            "Birthday": datetime(1973, 10, 4, tzinfo=timezone.utc),
+            "birthday": datetime(1970, 10, 4, tzinfo=timezone.utc),
             "binary": b"binary",
             "other": EntityProperty(20, EdmType.INT32),
             "clsid": uuid.UUID("c9da6455-213d-42c9-9a79-3e9149a57833"),
@@ -189,10 +198,10 @@ class TableTestCase(object):
         return {
             "PartitionKey": partition,
             "RowKey": row,
-            "age": u"abc",
-            "sex": u"female",
-            "sign": u"aquarius",
-            "birthday": datetime(1991, 10, 4, tzinfo=tzutc()),
+            "age": "abc",
+            "sex": "female",
+            "sign": "aquarius",
+            "birthday": datetime(1991, 10, 4, tzinfo=timezone.utc),
         }
 
     def _assert_default_entity(self, entity):
@@ -208,8 +217,8 @@ class TableTestCase(object):
         assert entity["evenratio"] == 3.0
         assert entity["double"] == 5.0
         assert entity["large"] == 933311100
-        assert entity["Birthday"] == datetime(1973, 10, 4, tzinfo=tzutc())
-        assert entity["birthday"] == datetime(1970, 10, 4, tzinfo=tzutc())
+        assert entity["Birthday"] == datetime(1973, 10, 4, tzinfo=timezone.utc)
+        assert entity["birthday"] == datetime(1970, 10, 4, tzinfo=timezone.utc)
         assert entity["binary"] == b"binary"
         assert entity["other"] == 20
         assert entity["clsid"] == uuid.UUID("c9da6455-213d-42c9-9a79-3e9149a57833")
@@ -231,14 +240,16 @@ class TableTestCase(object):
         assert entity["evenratio"] == 3.0
         assert entity["double"] == 5.0
         assert entity["large"] == 933311100
-        assert entity["Birthday"] == datetime(1973, 10, 4, tzinfo=tzutc())
-        assert entity["birthday"] == datetime(1970, 10, 4, tzinfo=tzutc())
+        assert entity["Birthday"] == datetime(1973, 10, 4, tzinfo=timezone.utc)
+        assert entity["birthday"] == datetime(1970, 10, 4, tzinfo=timezone.utc)
         assert entity["binary"] == b"binary"
         assert entity["other"] == 20
         assert entity["clsid"] == uuid.UUID("c9da6455-213d-42c9-9a79-3e9149a57833")
         assert entity.metadata.pop("etag", None)
         assert isinstance(entity.metadata.pop("timestamp", None), datetime)
-        assert sorted(list(entity.metadata.keys())) == ['editLink', 'id', 'type'], "Found metadata: {}".format(entity.metadata)
+        assert sorted(list(entity.metadata.keys())) == ["editLink", "id", "type"], "Found metadata: {}".format(
+            entity.metadata
+        )
 
     def _assert_default_entity_json_no_metadata(self, entity, headers=None):
         """
@@ -280,7 +291,7 @@ class TableTestCase(object):
         assert not "double" in entity
         assert not "large" in entity
         assert not "Birthday" in entity
-        assert entity["birthday"] == datetime(1991, 10, 4, tzinfo=tzutc())
+        assert entity["birthday"] == datetime(1991, 10, 4, tzinfo=timezone.utc)
         assert not "other" in entity
         assert not "clsid" in entity
         assert entity.metadata["etag"]
@@ -300,8 +311,8 @@ class TableTestCase(object):
         assert entity["evenratio"] == 3.0
         assert entity["double"] == 5.0
         assert entity["large"] == 933311100
-        assert entity["Birthday"] == datetime(1973, 10, 4, tzinfo=tzutc())
-        assert entity["birthday"] == datetime(1991, 10, 4, tzinfo=tzutc())
+        assert entity["Birthday"] == datetime(1973, 10, 4, tzinfo=timezone.utc)
+        assert entity["birthday"] == datetime(1991, 10, 4, tzinfo=timezone.utc)
         assert entity["other"] == 20
         assert isinstance(entity["clsid"], uuid.UUID)
         assert str(entity["clsid"]) == "c9da6455-213d-42c9-9a79-3e9149a57833"
@@ -427,18 +438,18 @@ class TableTestCase(object):
 
         partition, row = self._create_pk_rk(pk, rk)
         properties = {
-            "PartitionKey": partition + u"1",
-            "RowKey": row + u"1",
+            "PartitionKey": partition + "1",
+            "RowKey": row + "1",
             "age": 49,
-            "sex": u"female",
+            "sex": "female",
             "married": False,
             "deceased": True,
             "optional": None,
             "ratio": 5.2,
             "evenratio": 6.0,
             "large": 39999011,
-            "Birthday": datetime(1993, 4, 1, tzinfo=tzutc()),
-            "birthday": datetime(1990, 4, 1, tzinfo=tzutc()),
+            "Birthday": datetime(1993, 4, 1, tzinfo=timezone.utc),
+            "birthday": datetime(1990, 4, 1, tzinfo=timezone.utc),
             "binary": b"binary-binary",
             "other": EntityProperty(40, EdmType.INT32),
             "clsid": uuid.UUID("c8da6455-213e-42d9-9b79-3f9149a57833"),
@@ -487,6 +498,7 @@ class TableTestCase(object):
     def override_response_body_with_live_status(response):
         response.http_response.text = lambda _: SERVICE_LIVE_RESP_BODY
 
+
 class ResponseCallback(object):
     def __init__(self, status=None, new_status=None):
         self.status = status
@@ -522,10 +534,11 @@ def _decode_proxy_error(response, error_message=None, error_type=None, **kwargs)
             message = error_body.get("Message")
             if message and message.startswith("Unable to find a record for the request"):
                 error = ResourceNotFoundError(message=error_message, response=response)
-                error.error_code = 'ResourceNotFoundError'
+                error.error_code = "ResourceNotFoundError"
                 return error
     except DecodeError:
         pass
     return _decode_error(response, error_message, error_type, **kwargs)
+
 
 _error._decode_error = _decode_proxy_error

@@ -29,13 +29,12 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.local_network_gateways.begin_delete(
+    client.local_network_gateways.begin_delete(
         resource_group_name="rg1",
         local_network_gateway_name="localgw",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2022-11-01/examples/LocalNetworkGatewayDelete.json
+# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2023-02-01/examples/LocalNetworkGatewayDelete.json
 if __name__ == "__main__":
     main()

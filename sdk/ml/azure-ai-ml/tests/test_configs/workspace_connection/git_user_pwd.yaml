@@ -1,7 +1,6 @@
 name: test_ws_conn_git_pat
 type: git
 target: https://test-git-feed.com
-expiryTime: 01/05/2025 00:00:00
 credentials:
   type: username_password
   username: dummy

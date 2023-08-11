@@ -6,7 +6,7 @@
 
 from typing import Dict, Iterable, Optional
 
-from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient042023Preview
+from azure.ai.ml._restclient.v2023_06_01_preview import AzureMachineLearningWorkspaces as ServiceClient062023Preview
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationsContainer,
@@ -34,7 +34,7 @@ class WorkspaceConnectionsOperations(_ScopeDependentOperations):
         self,
         operation_scope: OperationScope,
         operation_config: OperationConfig,
-        service_client: ServiceClient042023Preview,
+        service_client: ServiceClient062023Preview,
         all_operations: OperationsContainer,
         credentials: Optional[TokenCredential] = None,
         **kwargs: Dict,
@@ -79,7 +79,7 @@ class WorkspaceConnectionsOperations(_ScopeDependentOperations):
         response = self._operation.create(
             workspace_name=self._workspace_name,
             connection_name=workspace_connection.name,
-            parameters=rest_workspace_connection,
+            body=rest_workspace_connection,
             **self._scope_kwargs,
             **kwargs,
         )

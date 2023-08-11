@@ -2,17 +2,18 @@ from pathlib import Path
 
 import pytest
 from marshmallow import ValidationError
+from test_utilities.utils import omit_with_wildcard
 
 from azure.ai.ml import Input, load_component
 from azure.ai.ml.constants._component import ComponentSource
 from azure.ai.ml.dsl import pipeline
 from azure.ai.ml.dsl._condition import condition
 from azure.ai.ml.dsl._do_while import do_while
+from azure.ai.ml.dsl._group_decorator import group
 from azure.ai.ml.dsl._parallel_for import parallel_for
 from azure.ai.ml.entities._builders.parallel_for import ParallelFor
 from azure.ai.ml.entities._job.pipeline._io import InputOutputBase, PipelineInput
 from azure.ai.ml.exceptions import ValidationException
-from test_utilities.utils import omit_with_wildcard
 
 from .._util import _DSL_TIMEOUT_SECOND
 
@@ -103,11 +104,8 @@ class TestIfElseUT(TestControlFlowPipelineUT):
 
         assert f"must be an instance of {str}, {bool} or {InputOutputBase}" in str(e.value)
 
-        with pytest.raises(ValidationException) as e:
-            node = condition(condition=basic_node.outputs.output3, true_block=basic_node)
-            node._validate(raise_error=True)
-
-        assert "must have 'is_control' field with value 'True'" in str(e.value)
+        node = condition(condition=basic_node.outputs.output3, true_block=basic_node)
+        node._validate(raise_error=True)
 
         with pytest.raises(ValidationError) as e:
             node = condition(condition="${{parent.jobs.xxx.outputs.output}}")
@@ -206,6 +204,42 @@ class TestIfElseUT(TestControlFlowPipelineUT):
                 "type": "command",
             },
             "result": {"_source": "YAML.COMPONENT", "name": "result", "type": "command"},
+        }
+
+    def test_condition_with_group_input(self):
+        hello_world_component_no_paths = load_component(
+            source=r"./tests/test_configs/components/helloworld_component_no_paths.yml"
+        )
+
+        @group
+        class SubGroup:
+            num: int
+
+        @group
+        class ParentGroup:
+            input_group: SubGroup
+
+        @pipeline(
+            compute="cpu-cluster",
+        )
+        def condition_pipeline(group_input: ParentGroup):
+            node1 = hello_world_component_no_paths(component_in_number=1)
+            condition(condition=group_input.input_group.num < 100, true_block=node1)
+
+        pipeline_job = condition_pipeline(group_input=ParentGroup(input_group=SubGroup(num=10)))
+        omit_fields = [
+            "name",
+            "properties.display_name",
+            "properties.jobs.*.componentId",
+            "properties.settings",
+        ]
+        dsl_pipeline_job_dict = omit_with_wildcard(pipeline_job._to_rest_object().as_dict(), *omit_fields)
+        assert dsl_pipeline_job_dict["properties"]["jobs"]["expression_component"] == {
+            "environment_variables": {"AZURE_ML_CLI_PRIVATE_FEATURES_ENABLED": "true"},
+            "name": "expression_component",
+            "type": "command",
+            "inputs": {"num": {"job_input_type": "literal", "value": "${{parent.inputs.group_input.input_group.num}}"}},
+            "_source": "YAML.COMPONENT",
         }
 
 
@@ -344,7 +378,7 @@ class TestDoWhilePipelineUT(TestControlFlowPipelineUT):
                 "output_in_path is the output of do_while_body_pipeline_1, dowhile only accept output of the body: do_while_body_pipeline_3.",
             ],
             "jobs.invalid_condition.condition": [
-                "output_in_path is not a control output. The condition of dowhile must be the control output of the body."
+                "output_in_path is not a control output and is not primitive type. The condition of dowhile must be the control output or primitive type of the body."
             ],
         }
         validate_error_message(expect_errors, validate_errors)
@@ -596,8 +630,8 @@ class TestParallelForPipelineUT(TestControlFlowPipelineUT):
             ({"type": "custom_model"}, {"job_output_type": "mltable"}, {"type": "mltable"}, True),
             ({"type": "path"}, {"job_output_type": "mltable"}, {"type": "mltable"}, True),
             ({"type": "number"}, {}, {"type": "string"}, False),
-            ({"type": "string", "is_control": True}, {}, {"type": "string", "is_control": True}, False),
-            ({"type": "boolean", "is_control": True}, {}, {"type": "string", "is_control": True}, False),
+            ({"type": "string"}, {}, {"type": "string"}, False),
+            ({"type": "boolean"}, {}, {"type": "string"}, False),
             ({"type": "integer"}, {}, {"type": "string"}, False),
         ],
     )

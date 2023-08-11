@@ -29,14 +29,13 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.routes.begin_delete(
+    client.routes.begin_delete(
         resource_group_name="rg1",
         route_table_name="testrt",
         route_name="route1",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2022-11-01/examples/RouteTableRouteDelete.json
+# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2023-02-01/examples/RouteTableRouteDelete.json
 if __name__ == "__main__":
     main()

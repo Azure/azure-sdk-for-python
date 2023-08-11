@@ -12,10 +12,7 @@ from inspect import Parameter, signature
 from typing import Callable, Union
 
 from azure.ai.ml._utils._func_utils import get_outputs_and_locals
-from azure.ai.ml._utils.utils import (
-    is_valid_node_name,
-    parse_args_description_from_docstring,
-)
+from azure.ai.ml._utils.utils import is_valid_node_name, parse_args_description_from_docstring
 from azure.ai.ml.constants._component import ComponentSource, IOConstants
 from azure.ai.ml.constants._job.pipeline import COMPONENT_IO_KEYWORDS
 from azure.ai.ml.dsl._utils import _sanitize_python_variable_name
@@ -154,9 +151,9 @@ class PipelineComponentBuilder:
     ) -> PipelineComponent:
         """Build a pipeline component from current pipeline builder.
 
-        :param user_provided_kwargs: The kwargs user provided to dsl pipeline function. None if not provided.
-        :param non_pipeline_inputs_dict: The non-pipeline input provided key-value. None if not exist.
-        :param non_pipeline_inputs: List of non-pipeline input name. None if not exist.
+        :keyword user_provided_kwargs: The kwargs user provided to dsl pipeline function. None if not provided.
+        :keyword non_pipeline_inputs_dict: The non-pipeline input provided key-value. None if not exist.
+        :keyword non_pipeline_inputs: List of non-pipeline input name. None if not exist.
         """
         if user_provided_kwargs is None:
             user_provided_kwargs = {}
@@ -248,13 +245,7 @@ class PipelineComponentBuilder:
             if value._meta is not None:
                 meta = value._meta
             else:
-                meta = Output(
-                    type=value.type,
-                    path=value.path,
-                    mode=value.mode,
-                    description=value.description,
-                    is_control=value.is_control,
-                )
+                meta = Output(type=value.type, path=value.path, mode=value.mode, description=value.description)
 
             # Hack: map internal output type to pipeline output type
             def _map_internal_output_type(_meta):
@@ -264,12 +255,7 @@ class PipelineComponentBuilder:
                 return _meta.map_pipeline_output_type()
 
             # Note: Here we set PipelineOutput as Pipeline's output definition as we need output binding.
-            output_meta = Output(
-                type=_map_internal_output_type(meta),
-                description=meta.description,
-                mode=meta.mode,
-                is_control=meta.is_control,
-            )
+            output_meta = Output(type=_map_internal_output_type(meta), description=meta.description, mode=meta.mode)
             pipeline_output = PipelineOutput(
                 port_name=key,
                 data=None,
@@ -535,7 +521,7 @@ def _build_pipeline_parameter(func, *, user_provided_kwargs, group_default_kwarg
     # transform default values
     for left_args in parameters:
         if (
-            left_args.name not in transformed_kwargs.keys()
+            left_args.name not in transformed_kwargs
             and left_args.kind != Parameter.VAR_KEYWORD
             and left_args.name not in non_pipeline_inputs
         ):

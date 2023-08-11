@@ -29,15 +29,14 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.subnets.begin_unprepare_network_policies(
+    client.subnets.begin_unprepare_network_policies(
         resource_group_name="rg1",
         virtual_network_name="test-vnet",
         subnet_name="subnet1",
         unprepare_network_policies_request_parameters={"serviceName": "Microsoft.Sql/managedInstances"},
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2022-11-01/examples/SubnetUnprepareNetworkPolicies.json
+# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2023-02-01/examples/SubnetUnprepareNetworkPolicies.json
 if __name__ == "__main__":
     main()

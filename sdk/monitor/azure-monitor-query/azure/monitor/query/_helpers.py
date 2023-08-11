@@ -15,7 +15,14 @@ from ._generated._serialization import Serializer, Deserializer
 
 
 def get_authentication_policy(credential: TokenCredential, audience: str) -> BearerTokenCredentialPolicy:
-    """Returns the correct authentication policy"""
+    """Returns the correct authentication policy.
+
+    :param credential: The credential to use for authentication with the service.
+    :type credential: ~azure.core.credentials.TokenCredential
+    :param str audience: The audience for the token.
+    :returns: The correct authentication policy.
+    :rtype: ~azure.core.pipeline.policies.BearerTokenCredentialPolicy
+    """
     if credential is None:
         raise ValueError("Parameter 'credential' must not be None.")
     scope = audience.rstrip("/") + "/.default"
@@ -66,8 +73,8 @@ def construct_iso8601(timespan=None) -> Optional[str]:
     if duration:
         try:
             duration_str = "PT{}S".format(duration.total_seconds())
-        except AttributeError:
-            raise ValueError("timespan must be a timedelta or a tuple.")
+        except AttributeError as e:
+            raise ValueError("timespan must be a timedelta or a tuple.") from e
     iso_str = None
     if start is not None:
         start = Serializer.serialize_iso(start)

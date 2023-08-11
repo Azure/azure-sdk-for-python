@@ -1,0 +1,10 @@
+-e ../../../tools/azure-sdk-tools
+-e ../../../tools/azure-devtools
+-e ../../identity/azure-identity
+../../core/azure-core
+aiohttp
+azure-iot-device
+pytest
+pytest-cov
+pytest-mock
+responses
