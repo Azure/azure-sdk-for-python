@@ -70,7 +70,7 @@ def verify_receipt(
     # Verify node certificate is endorsed by the service certificate
     # through endorsements certificates
     _verify_node_cert_endorsed_by_service_cert(
-        node_cert, service_cert, receipt_obj.serviceEndorsements
+        node_cert, service_cert, cast(List[str], receipt_obj.serviceEndorsements)
     )
 
     # Compute hash of the leaf node in the Merkle Tree corresponding
@@ -83,13 +83,18 @@ def verify_receipt(
     # Verify signature of the signing node over the root of the tree with
     # node certificate public key
     _verify_signature_over_root_node_hash(
-        receipt_obj.signature, node_cert, receipt_obj.nodeId, root_node_hash
+        receipt_obj.signature, node_cert, cast(str, receipt_obj.nodeId), root_node_hash
     )
 
 
 def _preprocess_input_receipt(receipt_dict: Dict[str, Any]) -> Receipt:
     """Preprocess input receipt dictionary, validate its content, and returns a
-    valid Receipt object based on the vetted input data."""
+    valid Receipt object based on the vetted input data.
+
+    :param dict[str, any] receipt_dict: Receipt dictionary
+    :return: Receipt object
+    :rtype: Receipt
+    """
 
     # Convert any key in the receipt dictionary to camel case
     # to match the model fields (we do this because customers may
@@ -104,7 +109,10 @@ def _preprocess_input_receipt(receipt_dict: Dict[str, Any]) -> Receipt:
 
 
 def _validate_receipt_content(receipt: Dict[str, Any]):
-    """Validate the content of a write transaction receipt."""
+    """Validate the content of a write transaction receipt.
+
+    :param dict[str, any] receipt: Receipt dictionary
+    """
 
     try:
         assert "cert" in receipt
@@ -156,7 +164,13 @@ def _verify_signature_over_root_node_hash(
     signature: str, node_cert: Certificate, node_id: str, root_node_hash: bytes
 ) -> None:
     """Verify signature over root node hash of the Merkle Tree using node
-    certificate public key."""
+    certificate public key.
+
+    :param str signature: Signature
+    :param Certificate node_cert: Node certificate
+    :param str node_id: Node ID
+    :param bytes root_node_hash: Root node hash
+    """
 
     try:
         # Verify public key contained in the node certificate is equal to the node_id
@@ -183,7 +197,12 @@ def _verify_signature_over_root_node_hash(
 
 def _compute_leaf_node_hash(leaf_components: LeafComponents) -> bytes:
     """Compute the hash of the leaf node associated to a transaction given the
-    leaf components from a write transaction receipt."""
+    leaf components from a write transaction receipt.
+
+    :param LeafComponents leaf_components: Leaf components
+    :return: Leaf node hash
+    :rtype: bytes
+    """
 
     try:
         # Digest commit evidence string
@@ -215,7 +234,13 @@ def _compute_leaf_node_hash(leaf_components: LeafComponents) -> bytes:
 def _compute_root_node_hash(leaf_hash: bytes, proof: List[ProofElement]) -> bytes:
     """Re-compute the hash of the root of the Merkle tree from a leaf node hash
     and a receipt proof list containing the required nodes hashes for the
-    computation."""
+    computation.
+
+    :param bytes leaf_hash: Leaf node hash
+    :param list[ProofElement] proof: Receipt proof list
+    :return: Root node hash
+    :rtype: bytes
+    """
 
     try:
         # Initialize current hash to leaf hash
@@ -258,7 +283,11 @@ def _verify_certificate_endorsement(
     endorsee: Certificate, endorser: Certificate
 ) -> None:
     """Verify that the endorser certificate has endorsed endorsee
-    certificate using ECDSA."""
+    certificate using ECDSA.
+
+    :param Certificate endorsee: Endorsee certificate
+    :param Certificate endorser: Endorser certificate
+    """
 
     try:
         # Extract TBS certificate hash from endorsee certificate
@@ -282,7 +311,13 @@ def _verify_ec_signature(
     data: bytes,
     hash_algorithm: hashes.HashAlgorithm,
 ) -> None:
-    """Verify a signature over data using the certificate public key."""
+    """Verify a signature over data using the certificate public key.
+
+    :param Certificate certificate: Certificate
+    :param bytes signature: Signature
+    :param bytes data: Data
+    :param hashes.HashAlgorithm hash_algorithm: Hash algorithm
+    """
 
     public_key = cast(ec.EllipticCurvePublicKey, certificate.public_key())
 
@@ -301,6 +336,10 @@ def _verify_node_cert_endorsed_by_service_cert(
     If a list of endorsements certificates is not empty, check that the
     node certificate is transitively endorsed by the service certificate
     through the endorsement certificates in the list.
+
+    :param Certificate node_cert: Node certificate
+    :param str service_cert_str: Service certificate string
+    :param list[str] endorsements_certs: Endorsements certificates list
     """
 
     current_cert = node_cert
@@ -326,7 +365,12 @@ def _verify_node_cert_endorsed_by_service_cert(
 
 def _load_and_verify_pem_certificate(cert_str: str) -> Certificate:
     """Load PEM certificate from a string representation and verify it is a
-    valid certificate with expected Elliptic Curve public key."""
+    valid certificate with expected Elliptic Curve public key.
+
+    :param str cert_str: PEM certificate string
+    :return: Certificate
+    :rtype: Certificate
+    """
 
     try:
         # Load certificate from string
