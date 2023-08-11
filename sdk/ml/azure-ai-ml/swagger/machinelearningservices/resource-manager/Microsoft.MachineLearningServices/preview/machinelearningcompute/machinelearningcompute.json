@@ -545,83 +545,6 @@
                 },
                 "x-ms-long-running-operation": true
             }
-        },
-        "/machinelearningcompute/snapshot/shapshotcomputes": {
-            "post": {
-                "tags": [
-                    "SnapshotComputes"
-                ],
-                "parameters": [
-                    {
-                        "name": "computeType",
-                        "in": "query",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Success",
-                        "content": {
-                            "application/json": {}
-                        }
-                    }
-                }
-            }
-        },
-        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/computes/{computeId}/updateDataMounts": {
-            "post": {
-                "tags": [
-                    "MachineLearningComputes"
-                ],
-                "summary": "Update Data Mounts of a Machine Learning compute.",
-                "operationId": "Compute_UpdateDataMounts",
-                "parameters": [
-                    {
-                        "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/SubscriptionIdParameter"
-                    },
-                    {
-                        "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ResourceGroupNameParameter"
-                    },
-                    {
-                        "$ref": "#/components/parameters/workspaceNameParameter"
-                    },
-                    {
-                        "$ref": "#/components/parameters/computeIdParameter"
-                    },
-                    {
-                        "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ApiVersionParameter"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Success.",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/IComputeSecrets"
-                                }
-                            }
-                        }
-                    },
-                    "default": {
-                        "description": "Error",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-                                }
-                            }
-                        }
-                    }
-                },
-                "x-ms-examples": {
-                    "Update Data Mounts": {
-                        "$ref": "./examples/Compute/updateDataMounts.json"
-                    }
-                }
-            }
         }
     },
     "components": {
@@ -1953,14 +1876,6 @@
                         "type": "boolean",
                         "title": "Enable Batch Private Link"
                     },
-                    "enableOSPatching": {
-                        "type": "boolean",
-                        "title": "Enable Auto OS Patching"
-                    },
-                    "releaseQuotaOnStop": {
-                        "type": "boolean",
-                        "title": "Release Quota On Stop"
-                    },
                     "dataMounts": {
                         "type": "array",
                         "items": {
@@ -2282,9 +2197,6 @@
                     },
                     "isLatestOsImageVersion": {
                         "type": "boolean"
-                    },
-                    "osPatchingStatus": {
-                        "$ref": "#/components/schemas/OsPatchingStatus"
                     }
                 },
                 "additionalProperties": false
@@ -2709,27 +2621,6 @@
                     "context": {
                         "type": "string",
                         "nullable": true
-                    }
-                },
-                "additionalProperties": false
-            },
-            "OsPatchingStatus": {
-                "type": "object",
-                "properties": {
-                    "patchStatus": {
-                        "type": "string",
-                        "nullable": true
-                    },
-                    "latestPatchTime": {
-                        "type": "string",
-                        "format": "date-time"
-                    },
-                    "rebootPending": {
-                        "type": "boolean"
-                    },
-                    "scheduledRebootTime": {
-                        "type": "string",
-                        "format": "date-time"
                     }
                 },
                 "additionalProperties": false
