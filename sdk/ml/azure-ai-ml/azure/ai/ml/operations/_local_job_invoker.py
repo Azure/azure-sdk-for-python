@@ -12,7 +12,6 @@ import shutil
 import subprocess
 import tarfile
 import tempfile
-import time
 import urllib.parse
 import zipfile
 from pathlib import Path
