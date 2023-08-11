@@ -289,7 +289,6 @@ def create_combined_sdist(
             )
             return assembled_sdist
 
-    breakpoint()
     targeted_folder_for_assembly = os.path.join(config_assembly_folder, conda_build.name)
 
     create_package(targeted_folder_for_assembly, config_assembled_folder)
