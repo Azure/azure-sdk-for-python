@@ -187,7 +187,7 @@ def encode_ulong(output, value, with_constructor=True, use_smallest=True):
     <encoding code="0x80" category="fixed" width="8" label="64-bit unsigned integer in network byte order"/>
 
     :param bytearray output: The output buffer to write to.
-    :param ulong value: The ulong to encode.
+    :param int value: The ulong to encode.
     :param bool with_constructor: Whether to include the constructor byte.
     :param bool use_smallest: Whether to use the smallest possible encoding.
     """
