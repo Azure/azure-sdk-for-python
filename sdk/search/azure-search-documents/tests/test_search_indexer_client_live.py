@@ -26,8 +26,8 @@ class TestSearchIndexerClientTest(AzureRecordedTestCase):
     def test_search_indexers(self, endpoint, api_key, **kwargs):
         storage_cs = kwargs.get("search_storage_connection_string")
         container_name = kwargs.get("search_storage_container_name")
-        client = SearchIndexerClient(endpoint, api_key)
-        index_client = SearchIndexClient(endpoint, api_key)
+        client = SearchIndexerClient(endpoint, api_key, retry_backoff_factor=60)
+        index_client = SearchIndexClient(endpoint, api_key, retry_backoff_factor=60)
         self._test_create_indexer(client, index_client, storage_cs, container_name)
         self._test_delete_indexer(client, index_client, storage_cs, container_name)
         self._test_get_indexer(client, index_client, storage_cs, container_name)

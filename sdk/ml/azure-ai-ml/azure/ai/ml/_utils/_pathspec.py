@@ -12,7 +12,7 @@ import os
 import posixpath
 import re
 import warnings
-from typing import Any, AnyStr, Iterable, Iterator
+from typing import Any, AnyStr, Iterable
 from typing import Match as MatchHint
 from typing import Optional
 from typing import Pattern as PatternHint
@@ -48,17 +48,18 @@ class Pattern(object):
         or is a null-operation (:data:`None`).
         """
 
-    def match(self, files: Iterable[str]) -> Iterator[str]:
-        """
-        DEPRECATED: This method is no longer used and has been replaced by
-        :meth:`.match_file`. Use the :meth:`.match_file` method with a loop
-        for similar results.
-        Matches this pattern against the specified files.
-        *files* (:class:`~collections.abc.Iterable` of :class:`str`)
-        contains each file relative to the root directory (e.g.,
-        :data:`"relative/path/to/file"`).
-        Returns an :class:`~collections.abc.Iterable` yielding each matched
-        file path (:class:`str`).
+    def match(self, files: Iterable[str]) -> Iterable[str]:
+        """Matches this pattern against the specified files.
+
+        :param files: Contains each file relative to the root directory (e.g. :data:`"relative/path/to/file"`).
+        :type files: Iterable[str]
+        :return: The matched file paths
+        :rtype: Iterable[str]
+
+        .. deprecated::
+
+            This method is no longer used and has been replaced by :meth:`.match_file`. Use the :meth:`.match_file`
+            method with a loop for similar results.
         """
         warnings.warn(
             (
@@ -75,10 +76,12 @@ class Pattern(object):
                 yield file
 
     def match_file(self, file: str) -> Optional[Any]:
-        """
-        Matches this pattern against the specified file.
-        *file* (:class:`str`) is the normalized file path to match against.
-        Returns the match result if *file* matched; otherwise, :data:`None`.
+        """Matches this pattern against the specified file.
+
+        :param file: The normalized file path to match against.
+        :type file: str
+        :return: Returns the match result if *file* matched; otherwise, :data:`None`.
+        :rtype: Optional[Any]
         """
         raise NotImplementedError(
             ("{0.__module__}.{0.__qualname__} must override match_file().").format(self.__class__)
@@ -144,22 +147,26 @@ class RegexPattern(Pattern):
         """
 
     def __eq__(self, other: "RegexPattern") -> bool:
-        """
-        Tests the equality of this regex pattern with *other* (:class:`RegexPattern`)
-        by comparing their :attr:`~Pattern.include` and :attr:`~RegexPattern.regex`
-        attributes.
+        """Tests the equality of this regex pattern with *other*
+
+        :param other: The regex pattern to test against
+        :type other: RegexPattern
+        :return: Return True if :attr:`~Pattern.include` and :attr:`~RegexPattern.regex`
+            are equal. False otherwise.
+        :rtype: bool
         """
         if isinstance(other, RegexPattern):
             return self.include == other.include and self.regex == other.regex
         return NotImplemented
 
     def match_file(self, file: str) -> Optional["RegexMatchResult"]:
-        """
-        Matches this pattern against the specified file.
-        *file* (:class:`str`)
-        contains each file relative to the root directory (e.g., "relative/path/to/file").
-        Returns the match result (:class:`RegexMatchResult`) if *file*
-        matched; otherwise, :data:`None`.
+        """Matches this pattern against the specified file.
+
+        :param file: File relative to the root directory (e.g., "relative/path/to/file").
+        :type file: str
+        :return: Returns the match result (:class:`RegexMatchResult`) if *file*
+           matched; otherwise, :data:`None`.
+        :rtype: Optional[RegexMatchResult]
         """
         if self.include is not None:
             match = self.regex.match(file)
@@ -170,15 +177,18 @@ class RegexPattern(Pattern):
 
     @classmethod
     def pattern_to_regex(cls, pattern: str) -> Tuple[str, bool]:
-        """
-        Convert the pattern into an uncompiled regular expression.
-        *pattern* (:class:`str`) is the pattern to convert into a regular
-        expression.
-        Returns the uncompiled regular expression (:class:`str` or :data:`None`),
-        and whether matched files should be included (:data:`True`),
-        excluded (:data:`False`), or is a null-operation (:data:`None`).
-            .. NOTE:: The default implementation simply returns *pattern* and
-                :data:`True`.
+        """Convert the pattern into an uncompiled regular expression.
+
+        :param pattern: The pattern to convert into a regular expression.
+        :type pattern: str
+        :return: Returns the uncompiled regular expression (:class:`str` or :data:`None`),
+            and whether matched files should be included (:data:`True`),
+            excluded (:data:`False`), or is a null-operation (:data:`None`).
+        :rtype: Tuple[str, bool]
+
+        .. NOTE::
+
+            The default implementation simply returns *pattern* and :data:`True`.
         """
         return pattern, True
 
@@ -221,14 +231,16 @@ class GitWildMatchPattern(RegexPattern):
         cls,
         pattern: AnyStr,
     ) -> Tuple[Optional[AnyStr], Optional[bool]]:
-        """
-        Convert the pattern into a regular expression.
-        *pattern* (:class:`str` or :class:`bytes`) is the pattern to convert
-        into a regular expression.
-        Returns the uncompiled regular expression (:class:`str`, :class:`bytes`,
-        or :data:`None`); and whether matched files should be included
-        (:data:`True`), excluded (:data:`False`), or if it is a
-        null-operation (:data:`None`).
+        """Convert the pattern into a regular expression.
+
+        :param pattern: Pattern to convert into a regular expression.
+        :type pattern: AnyStr
+        :return: A 2-tuple of:
+          * the uncompiled regular expression (:class:`str`, :class:`bytes`,
+            or :data:`None`)
+          * whether matched files should be included (:data:`True`), excluded (:data:`False`), or if it is a
+            null-operation (:data:`None`).
+        :rtype: Tuple[Optional[AnyStr], Optional[bool]]
         """
         if isinstance(pattern, str):
             return_type = str
@@ -406,12 +418,14 @@ class GitWildMatchPattern(RegexPattern):
 
     @staticmethod
     def _translate_segment_glob(pattern: str) -> str:
-        """
-        Translates the glob pattern to a regular expression. This is used in
+        """Translates the glob pattern to a regular expression. This is used in
         the constructor to translate a path segment glob pattern to its
         corresponding regular expression.
-        *pattern* (:class:`str`) is the glob pattern.
-        Returns the regular expression (:class:`str`).
+
+        :param pattern:  The glob pattern.
+        :type pattern: str
+        :return: The regular expression
+        :rtype: str
         """
         # NOTE: This is derived from `fnmatch.translate()` and is similar to
         # the POSIX function `fnmatch()` with the `FNM_PATHNAME` flag set.
@@ -513,11 +527,12 @@ class GitWildMatchPattern(RegexPattern):
 
     @staticmethod
     def escape(s: AnyStr) -> AnyStr:
-        """
-        Escape special characters in the given string.
-        *s* (:class:`str` or :class:`bytes`) a filename or a string that you
-        want to escape, usually before adding it to a ".gitignore".
-        Returns the escaped string (:class:`str` or :class:`bytes`).
+        """Escape special characters in the given string.
+
+        :param s:  a filename or a string that you want to escape, usually before adding it to a ".gitignore".
+        :type s: AnyStr
+        :return: The escaped string
+        :rtype: Union[str, bytes]
         """
         if isinstance(s, str):
             return_type = str
@@ -538,22 +553,18 @@ class GitWildMatchPattern(RegexPattern):
         return out_string
 
 
-def normalize_file(file, separators=None):
-    # type: (Union[Text, PathLike], Optional[Collection[Text]]) -> Text
-    """
-    Normalizes the file path to use the POSIX path separator (i.e.,
+def normalize_file(file: Union[str, os.PathLike], separators: Optional[Iterable[str]] = None) -> str:
+    """Normalizes the file path to use the POSIX path separator (i.e.,
     ``'/'``), and make the paths relative (remove leading ``'/'``).
 
-    *file* (:class:`str` or :class:`pathlib.PurePath`) is the file path.
-
-    *separators* (:class:`~collections.abc.Collection` of :class:`str`; or
-    :data:`None`) optionally contains the path separators to normalize.
-    This does not need to include the POSIX path separator (``'/'``), but
-    including it will not affect the results. Default is :data:`None` for
-    :data:`NORMALIZE_PATH_SEPS`. To prevent normalization, pass an empty
-    container (e.g., an empty tuple ``()``).
-
-    Returns the normalized file path (:class:`str`).
+    :param file: The file path.
+    :type file: Union[str, os.PathLike]
+    :param separators: The path separators to normalize. This does not need to include the POSIX path separator
+        (``'/'``), but including it will not affect the results. Default is :data:`None` for
+        :data:`NORMALIZE_PATH_SEPS`. To prevent normalization, pass an empty container (e.g., an empty tuple ``()``).
+    :type separators: Optional[Iterable[str]], optional
+    :return: The normalized file path.
+    :rtype: str
     """
     # Normalize path separators.
     if separators is None:

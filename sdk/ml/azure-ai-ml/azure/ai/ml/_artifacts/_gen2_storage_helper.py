@@ -10,8 +10,8 @@ import sys
 import time
 import uuid
 from pathlib import Path, PurePosixPath
-from typing import Dict, List, Optional
-
+from typing import Dict, List, Optional, Union
+from typing_extensions import Literal
 from colorama import Fore
 
 from azure.ai.ml._artifacts._constants import UPLOAD_CONFIRMATION, FILE_SIZE_WARNING
@@ -61,8 +61,24 @@ class Gen2StorageClient:
         ignore_file: IgnoreFile = IgnoreFile(None),
         asset_hash: Optional[str] = None,
         show_progress: bool = True,
-    ) -> Dict[str, str]:
-        """Upload a file or directory to a path inside the filesystem."""
+    ) -> Dict[Literal["remote path", "name", "version", "indicator file"], str]:
+        """Upload a file or directory to a path inside the filesystem.
+
+        :param source: The path to either a file or directory to upload
+        :type source: str
+        :param name: The asset name
+        :type name: str
+        :param version: The asset version
+        :type version: str
+        :param ignore_file: The IgnoreFile that specifies which files, if any, to ignore when uploading files
+        :type ignore_file: IgnoreFile, optional
+        :param asset_hash: The asset hash
+        :type asset_hash: Optional[str], optional
+        :param show_progress: Whether to show progress on the console. Defaults to True.
+        :type show_progress: bool, optional
+        :return: A dictionary containing info of the uploaded artifact
+        :rtype: Dict[Literal["remote path", "name", "version", "indicator file"], str]
+        """
         if name and version is None:
             version = str(uuid.uuid4())  # placeholder for auto-increment artifacts
 
@@ -167,9 +183,15 @@ class Gen2StorageClient:
     def _set_confirmation_metadata(self, name: str, version: str) -> None:
         self.directory_client.set_metadata(_build_metadata_dict(name, version))
 
-    def download(self, starts_with: str, destination: str = Path.home()) -> None:
-        """Downloads all items inside a specified filesystem directory with the
-        prefix `starts_with` to the destination folder."""
+    def download(self, starts_with: str, destination: Union[str, os.PathLike] = Path.home()) -> None:
+        """Downloads all items inside a specified filesystem directory with the prefix `starts_with` to the destination
+        folder.
+
+        :param starts_with: The prefix used to filter items to download
+        :type starts_with: str
+        :param destination: The path to download items to
+        :type destination: Union[str, os.PathLike]
+        """
         try:
             mylist = self.file_system_client.get_paths(path=starts_with)
             download_size_in_mb = 0
@@ -212,10 +234,22 @@ class Gen2StorageClient:
 
     def list(self, starts_with: str) -> List[str]:
         """Lists all file names in the specified filesystem with the prefix
-        `starts_with`"""
+        `starts_with`
+
+        :param starts_with: The prefix used to filter results
+        :type starts_with: str
+        :return: The list of filenames that start with the prefix
+        :rtype: List[str]
+        """
         return [f.get("name") for f in self.file_system_client.get_paths(path=starts_with)]
 
     def exists(self, path: str) -> bool:
-        """Returns whether there exists a file named `path`"""
+        """Returns whether there exists a file named `path`
+
+        :param path: The path to check
+        :type path: str
+        :return: True if `path` exists, False otherwise
+        :rtype: bool
+        """
         file_client = self.file_system_client.get_file_client(path)
         return file_client.exists()

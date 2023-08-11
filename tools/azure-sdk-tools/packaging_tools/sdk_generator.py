@@ -40,7 +40,7 @@ def extract_sdk_folder(python_md: List[str]) -> str:
     pattern = ["$(python-sdks-folder)", "azure-mgmt-"]
     for line in python_md:
         if all(p in line for p in pattern):
-            return re.findall("[a-z]+/[a-z]+-[a-z]+-[a-z]+", line)[0]
+            return re.findall("[a-z]+/[a-z]+-[a-z]+-[a-z]+[-a-z]*", line)[0]
     return ""
 
 
@@ -335,6 +335,9 @@ def main(generate_input, generate_output):
             if package_name in ("azure-mgmt-network"):
                 multiapi_combiner(sdk_code_path, package_name)
                 after_multiapi_combiner(sdk_code_path, package_name, folder_name)
+                result[package_name]["afterMultiapiCombiner"] = True
+            else:
+                result[package_name]["afterMultiapiCombiner"] = False
 
     # remove duplicates
     for value in result.values():

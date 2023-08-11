@@ -24,6 +24,7 @@ from azure.ai.ml._utils.utils import dump_yaml, is_url, load_file, load_yaml
 from azure.ai.ml.constants._common import ANONYMOUS_ENV_NAME, BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, ArmConstants
 from azure.ai.ml.entities._assets.asset import Asset
 from azure.ai.ml.entities._assets.intellectual_property import IntellectualProperty
+from azure.ai.ml.entities._mixins import LocalizableMixin
 from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._util import get_md5_string, load_from_dict
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
@@ -64,7 +65,7 @@ class BuildContext:
         return not self.__eq__(other)
 
 
-class Environment(Asset):
+class Environment(Asset, LocalizableMixin):
     """Environment for training.
 
     :param name: Name of the resource.
@@ -351,6 +352,21 @@ class Environment(Asset):
         self.version = version_hash
         self.name = ANONYMOUS_ENV_NAME
 
+    def _localize(self, base_path: str):
+        """Called on an asset got from service to clean up remote attributes like id, creation_context, etc. and update
+        base_path.
+
+        :param base_path: The base path
+        :type base_path: str
+        """
+        if not getattr(self, "id", None):
+            raise ValueError("Only remote asset can be localize but got a {} without id.".format(type(self)))
+        self._id = None
+        self._creation_context = None
+        self._base_path = base_path
+        if self._is_anonymous:
+            self.name, self.version = None, None
+
 
 # TODO: Remove _DockerBuild and _DockerConfiguration classes once local endpoint moves to using updated env
 class _DockerBuild:
@@ -390,7 +406,8 @@ def _deserialize(
     :type input: Union[str, os.PathLike, Dict[str, str]]
     :param is_conda: If file is conda file, it will be returned as dictionary
     :type is_conda: bool
-    :return: Union[str, Dict]
+    :return: The deserialized data
+    :rtype: Union[str, Dict]
     """
 
     if input:
@@ -405,13 +422,15 @@ def _deserialize(
 
 def _resolve_path(
     base_path: Union[str, os.PathLike], input: Union[str, os.PathLike, Dict]
-):  # pylint: disable=redefined-builtin
+) -> Path:  # pylint: disable=redefined-builtin
     """Deserialize user input files for conda and docker.
 
     :param base_path: The base path for all files supplied by user.
     :type base_path: Union[str, os.PathLike]
     :param input: Input to be deserialized. Will be either dictionary of file contents or path to file.
     :type input: Union[str, os.PathLike, Dict[str, str]]
+    :return: The resolved path
+    :rtype: Path
     """
 
     path = Path(input)

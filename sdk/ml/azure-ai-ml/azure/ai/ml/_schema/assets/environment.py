@@ -139,6 +139,7 @@ class EnvironmentSchema(_BaseEnvironmentSchema):
 
 class AnonymousEnvironmentSchema(_BaseEnvironmentSchema, AnonymousAssetSchema):
     @pre_load
+    # pylint: disable-next=docstring-missing-param,docstring-missing-return,docstring-missing-rtype
     def trim_dump_only(self, data, **kwargs):
         """trim_dump_only in PathAwareSchema removes all properties which are dump only.
 

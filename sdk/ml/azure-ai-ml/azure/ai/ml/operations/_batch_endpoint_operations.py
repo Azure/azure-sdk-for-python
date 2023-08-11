@@ -294,6 +294,8 @@ class BatchEndpointOperations(_ScopeDependentOperations):
             batch_job.output_file_name = None
             request = BatchJobResource(properties=batch_job).serialize()
             request["properties"]["outputData"] = v2_dataset_dictionary
+        else:
+            request = BatchJobResource(properties=batch_job).serialize()
 
         endpoint = self._batch_operation.get(
             resource_group_name=self._resource_group_name,

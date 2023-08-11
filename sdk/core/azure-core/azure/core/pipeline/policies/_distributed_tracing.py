@@ -110,8 +110,8 @@ class DistributedTracingPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseTyp
 
         :param request: The PipelineRequest object
         :type request: ~azure.core.pipeline.PipelineRequest
-        :param response: The PipelineResponse object
-        :type response: ~azure.core.pipeline.PipelineResponse
+        :param response: The HttpResponse object
+        :type response: ~azure.core.rest.HTTPResponse or ~azure.core.pipeline.transport.HttpResponse
         :param exc_info: The exception information
         :type exc_info: tuple
         """

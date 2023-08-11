@@ -4,10 +4,7 @@
 from enum import Enum
 
 # pylint: disable=unused-import
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
-    NlpLearningRateScheduler,
-    TrainingMode,
-)
+from azure.ai.ml._restclient.v2023_04_01_preview.models import NlpLearningRateScheduler, TrainingMode
 from azure.ai.ml._utils._experimental import experimental
 
 
@@ -95,7 +92,8 @@ class ImageInstanceSegmentationModelNames(Enum):
 
 
 class NlpModels(Enum):
-    # Model names for NLP tasks.
+    """Model names that are supported for NLP (Natural Language Processing) tasks."""
+
     BERT_BASE_CASED = "bert-base-cased"
     BERT_BASE_UNCASED = "bert-base-uncased"
     BERT_BASE_MULTILINGUAL_CASED = "bert-base-multilingual-cased"
