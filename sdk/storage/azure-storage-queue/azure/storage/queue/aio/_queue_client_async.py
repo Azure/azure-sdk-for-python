@@ -114,6 +114,10 @@ class QueueClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Stora
     def _format_url(self, hostname: str) -> str:
         """Format the endpoint URL according to the current location
         mode hostname.
+
+        :param str hostname: The current location mode hostname.
+        :returns: The formatted endpoint URL according to the specified location mode hostname.
+        :rtype: str
         """
         if isinstance(self.queue_name, str):
             queue_name = self.queue_name.encode('UTF-8')
@@ -141,14 +145,15 @@ class QueueClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Stora
             - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
             If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
             should be the storage account key.
+        :paramtype credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "AsyncTokenCredential"]] # pylint: disable=line-too-long
         :returns: A queue client.
         :rtype: ~azure.storage.queue.QueueClient
         """
         try:
             if not queue_url.lower().startswith('http'):
                 queue_url = "https://" + queue_url
-        except AttributeError:
-            raise ValueError("Queue URL must be a string.")
+        except AttributeError as exc:
+            raise ValueError("Queue URL must be a string.") from exc
         parsed_url = urlparse(queue_url.rstrip('/'))
 
         if not parsed_url.netloc:
@@ -188,6 +193,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Stora
             Credentials provided here will take precedence over those in the connection string.
             If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
             should be the storage account key.
+        :paramtype credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "AsyncTokenCredential"]] # pylint: disable=line-too-long
         :returns: A queue client.
         :rtype: ~azure.storage.queue.QueueClient
 

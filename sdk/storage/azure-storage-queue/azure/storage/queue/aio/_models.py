@@ -6,7 +6,7 @@
 # pylint: disable=too-few-public-methods, too-many-instance-attributes
 # pylint: disable=super-init-not-called
 
-from typing import Any, AsyncIterator, Callable, List, Optional, Tuple
+from typing import Any, AsyncIterator, Callable, Optional, Tuple
 from azure.core.async_paging import AsyncPageIterator
 from azure.core.exceptions import HttpResponseError
 from .._shared.response_handlers import (
@@ -16,12 +16,12 @@ from .._models import QueueMessage, QueueProperties
 
 
 async def async_queue_msg_generator(messages: Any):
-        for q in messages:
-            yield QueueMessage._from_generated(q)
+    for q in messages:
+        yield QueueMessage._from_generated(q)  # pylint: disable=protected-access
 
 async def async_queue_items_generator(items: Any):
-        for q in items:
-            yield QueueProperties._from_generated(q)
+    for q in items:
+        yield QueueProperties._from_generated(q)  # pylint: disable=protected-access
 
 class MessagesPaged(AsyncPageIterator):
     """An iterable of Queue Messages.
@@ -56,7 +56,7 @@ class MessagesPaged(AsyncPageIterator):
         self._command = command
         self.results_per_page = results_per_page
         self._max_messages = max_messages
-    
+
     async def _get_next_cb(self, continuation_token: Optional[str]) -> Any:
         try:
             if self._max_messages is not None:

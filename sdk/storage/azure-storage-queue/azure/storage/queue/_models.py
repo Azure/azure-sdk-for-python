@@ -539,6 +539,10 @@ class QueueSasPermissions(object):
 
 def service_stats_deserialize(generated: Any) -> Dict[str, Any]:
     """Deserialize a ServiceStats objects into a dict.
+
+    :param Any generated: The service stats returned from the generated code.
+    :returns: The deserialized ServiceStats as a Dict.
+    :rtype: Dict[str, Any]
     """
     return {
         'geo_replication': {
@@ -550,6 +554,10 @@ def service_stats_deserialize(generated: Any) -> Dict[str, Any]:
 
 def service_properties_deserialize(generated: Any) -> Dict[str, Any]:
     """Deserialize a ServiceProperties objects into a dict.
+
+    :param Any generated: The service properties returned from the generated code.
+    :returns: The deserialized ServiceProperties as a Dict.
+    :rtype: Dict[str, Any]
     """
     return {
         'analytics_logging': QueueAnalyticsLogging._from_generated(generated.logging),  # pylint: disable=protected-access

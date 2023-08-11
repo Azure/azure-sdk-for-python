@@ -67,7 +67,7 @@ class AsyncStorageAccountHostsMixin(object):
 
     def _create_pipeline(self, credential, **kwargs):
         # type: (Any, **Any) -> Tuple[Configuration, AsyncPipeline]
-        self._credential_policy: Optional[Union[AsyncBearerTokenCredentialPolicy, SharedKeyCredentialPolicy, AzureSasCredentialPolicy]] = None
+        self._credential_policy: Optional[Union[AsyncBearerTokenCredentialPolicy, SharedKeyCredentialPolicy, AzureSasCredentialPolicy]] = None # pylint: disable=line-too-long
         if hasattr(credential, 'get_token'):
             self._credential_policy = AsyncBearerTokenCredentialPolicy(credential, STORAGE_OAUTH_SCOPE)
         elif isinstance(credential, SharedKeyCredentialPolicy):
@@ -129,7 +129,7 @@ class AsyncStorageAccountHostsMixin(object):
             primary_hostname = self.primary_hostname
         if hasattr(self, 'api_version'):
             api_version = self.api_version
-        request = client._client.post(
+        request = client._client.post(  # pylint: disable=protected-access
             url=(
                 f'{scheme}://{primary_hostname}/'
                 f"{kwargs.pop('path', '')}?{kwargs.pop('restype', '')}"

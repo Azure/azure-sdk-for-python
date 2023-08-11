@@ -98,6 +98,10 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
     def _format_url(self, hostname: str) -> str:
         """Format the endpoint URL according to the current location
         mode hostname.
+
+        :param str hostname: The current location mode hostname.
+        :returns: The formatted endpoint URL according to the specified location mode hostname.
+        :rtype: str
         """
         if isinstance(self.queue_name, str):
             queue_name = self.queue_name.encode('UTF-8')

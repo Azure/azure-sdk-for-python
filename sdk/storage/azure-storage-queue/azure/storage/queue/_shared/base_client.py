@@ -262,10 +262,13 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
     # Given a series of request, do a Storage batch call.
     def _batch_send(
         self,
-        *reqs: HttpRequest,
+        *reqs: "HttpRequest",
         **kwargs
     ) -> None:
         """Given a series of request, do a Storage batch call.
+
+        :param HttpRequest reqs: A collection of HttpRequest objects.
+        :rtype: None
         """
         # Pop it here, so requests doesn't feel bad about additional kwarg
         raise_on_any_failure = kwargs.pop("raise_on_any_failure", True)

@@ -11,8 +11,8 @@ def _parse_url(account_url, credential):
     try:
         if not account_url.lower().startswith('http'):
             account_url = "https://" + account_url
-    except AttributeError:
-        raise ValueError("Account URL must be a string.")
+    except AttributeError as exc:
+        raise ValueError("Account URL must be a string.") from exc
     parsed_url = urlparse(account_url.rstrip('/'))
     if not parsed_url.netloc:
         raise ValueError(f"Invalid URL: {account_url}")
@@ -20,5 +20,5 @@ def _parse_url(account_url, credential):
     _, sas_token = parse_query(parsed_url.query)
     if not sas_token and not credential:
         raise ValueError("You need to provide either a SAS token or an account shared key to authenticate.")
-    
+
     return parsed_url, sas_token

@@ -638,7 +638,7 @@ def _decrypt_message(
             - returns the unwrapped form of the specified symmetric key using the string-specified algorithm.
         get_kid()
             - returns a string key id for this key-encryption-key.
-    :param Optional[Callable] resolver(kid):
+    :param Optional[Callable] resolver:
         The user-provided key resolver. Uses the kid string to return a key-encryption-key
         implementing the interface defined above.
     :return: The decrypted plaintext.
@@ -910,8 +910,6 @@ def decrypt_blob(  # pylint: disable=too-many-locals,too-many-statements
         return decrypted_content[start_offset:end_offset]
     raise ValueError('Specified encryption version is not supported.')
 
-    raise ValueError('Specified encryption version is not supported.')
-
 
 def get_blob_encryptor_and_padder(
     cek: bytes,
@@ -1017,7 +1015,7 @@ def decrypt_queue_message(
             - returns the unwrapped form of the specified symmetric key usingthe string-specified algorithm.
         get_kid()
             - returns a string key id for this key-encryption-key.
-    :param Callable[[str], bytes] resolver(kid):
+    :param Callable[[str], bytes] resolver:
         The user-provided key resolver. Uses the kid string to return a key-encryption-key
         implementing the interface defined above.
     :return: The plain text message from the queue message.
@@ -1041,7 +1039,7 @@ def decrypt_queue_message(
 
         return message_dict
     try:
-        return _decrypt_message(decoded_data, encryption_data, key_encryption_key, resolver).decode('utf-8') #type: ignore
+        return _decrypt_message(decoded_data, encryption_data, key_encryption_key, resolver).decode('utf-8') #type: ignore # pylint: disable=line-too-long
     except Exception as error:
         raise HttpResponseError(
             message="Decryption failed.",

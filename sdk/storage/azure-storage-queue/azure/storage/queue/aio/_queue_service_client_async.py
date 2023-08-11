@@ -102,6 +102,10 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin
     def _format_url(self, hostname: str) -> str:
         """Format the endpoint URL according to the current location
         mode hostname.
+
+        :param str hostname: The current location mode hostname.
+        :returns: The formatted endpoint URL according to the specified location mode hostname.
+        :rtype: str
         """
         return f"{self.scheme}://{hostname}/{self._query_str}"
 
@@ -124,6 +128,7 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin
             Credentials provided here will take precedence over those in the connection string.
             If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
             should be the storage account key.
+        :paramtype credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "AsyncTokenCredential"]] # pylint: disable=line-too-long
         :returns: A Queue service client.
         :rtype: ~azure.storage.queue.QueueClient
 
