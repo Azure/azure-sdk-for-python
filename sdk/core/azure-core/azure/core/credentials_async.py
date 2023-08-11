@@ -31,3 +31,6 @@ class AsyncTokenCredential(Protocol, AsyncContextManager["AsyncTokenCredential"]
 
     async def close(self) -> None:
         pass
+
+    async def __aexit__(self, exc_type, exc_value, traceback) -> None:
+        pass
