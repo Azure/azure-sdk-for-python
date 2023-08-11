@@ -33,7 +33,7 @@ class AsyncTokenCredential(Protocol):
     async def close(self) -> None:
         pass
 
-    async def __aenter__(self):
+    async def __aenter__(self) -> None:
         pass
 
     async def __aexit__(
