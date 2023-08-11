@@ -4,7 +4,7 @@
 
 ### Bugs Fixed
 
-- Added a default implementation for `AsyncTokenCredential.__aexit__`
+- Reverted the `AsyncTokenCredential` typing change.
 
 ## 1.29.1 (2023-08-09)
 
