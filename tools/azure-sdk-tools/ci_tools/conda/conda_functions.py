@@ -21,7 +21,8 @@ import stat
 from shutil import rmtree
 from typing import List, Any
 from subprocess import check_call
-from ci_tools.variables import discover_repo_root, get_artifact_directory, in_ci
+from ci_tools.variables import discover_repo_root, in_ci
+from ci_tools.functions import unzip_file_to_directory
 from subprocess import check_call, CalledProcessError, check_output
 
 from .CondaConfiguration import CondaConfiguration, CheckoutConfiguration
@@ -339,6 +340,7 @@ def get_output(command: str, working_directory: str) -> None:
         print(str(e))
         raise
 
+
 def invoke_command(command: str, working_directory: str) -> None:
     try:
         command = shlex.split(command)
@@ -372,6 +374,9 @@ def download_pypi_source(target_folder: str, target_uri: str) -> str:
     basename = os.path.basename(target_uri)
     file_name = os.path.join(target_folder, basename)
 
+    if os.path.exists(file_name):
+        return file_name
+
     with urllib.request.urlopen(target_uri) as response, open(file_name, "wb") as out_file:
         shutil.copyfileobj(response, out_file)
 
@@ -386,7 +391,7 @@ def get_package_source(
     dependency_count: int,
 ) -> None:
     """
-    To create a source distribution of
+    Retrieves the source code for a specific checkout_config.
     """
     if checkout_config.download_uri:
         # if we have a single package, we can simply use the source distribution _as is_ rather than
@@ -395,7 +400,19 @@ def get_package_source(
             return download_pypi_source(output_folder, checkout_config.download_uri)
         # in case of multiple external packages, we need to unzip the code into the same format as we do for a git clone
         else:
-            raise NotImplementedError("todo: Download with multiple target packages not yet implemented.")
+            temp_location = download_pypi_source(download_folder, checkout_config.download_uri)
+            unzip_staging_folder = prep_directory(os.path.join(download_folder, checkout_config.package))
+            unzipped_staged = unzip_file_to_directory(temp_location, unzip_staging_folder)
+            assembly_location = prep_directory(os.path.join(assembly_location, checkout_config.package))
+
+            for file_name in os.listdir(unzipped_staged):
+                shutil.move(os.path.join(unzipped_staged, file_name), assembly_location)
+
+            if os.path.exists(temp_location):
+                os.remove(temp_location)
+
+            if os.path.exists(unzipped_staged):
+                shutil.rmtree(unzipped_staged)
 
     elif checkout_config.checkout_path:
         get_git_source(
