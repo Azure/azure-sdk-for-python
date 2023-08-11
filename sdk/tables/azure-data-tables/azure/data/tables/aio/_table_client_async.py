@@ -381,7 +381,8 @@ class TableClient(AsyncTablesBaseClient):
             decoded = _decode_error(error.response, error.message)
             _validate_key_values(decoded, entity.get("PartitionKey"), entity.get("RowKey"))
             _validate_tablename_error(decoded, self.table_name)
-            raise decoded from error
+            # We probably should have been raising decoded error before removing _reraise_error()
+            raise error
         return _trim_service_metadata(metadata, content=content)  # type: ignore
 
     @distributed_trace_async

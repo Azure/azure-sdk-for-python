@@ -375,7 +375,7 @@ class TableClient(TablesBaseClient):
             _validate_key_values(decoded, entity.get("PartitionKey"), entity.get("RowKey"))
             _validate_tablename_error(decoded, self.table_name)
             # We probably should have been raising decoded error before removing _reraise_error()
-            raise decoded from error
+            raise error
         return _trim_service_metadata(metadata, content=content)  # type: ignore
 
     @distributed_trace
