@@ -21,6 +21,7 @@ import logging
 import os
 import sys
 import tempfile
+from typing import Any, Dict
 
 from azure.confidentialledger.aio import ConfidentialLedgerClient
 from azure.confidentialledger.certificate.aio import (
@@ -87,7 +88,7 @@ async def main():
                     "a service-assigned, default collection id will be assigned."
                 )
 
-                tids = {}
+                tids: Dict[Any, Dict[str, Any]] = {}
                 senders = [None, "Alice", "Bob"]
                 for msg_idx in range(3):
                     for sender in senders:
