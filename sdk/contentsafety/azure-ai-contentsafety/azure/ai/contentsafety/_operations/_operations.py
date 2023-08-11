@@ -22,15 +22,14 @@ from azure.core.exceptions import (
 )
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpResponse
-from azure.core.rest import HttpRequest
+from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
 from .. import models as _models
 from .._model_base import AzureJSONEncoder, _deserialize
 from .._serialization import Serializer
-from .._vendor import ContentSafetyClientMixinABC, _format_url_section
+from .._vendor import ContentSafetyClientMixinABC
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
@@ -44,7 +43,7 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_content_safety_analyze_text_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
+def build_content_safety_analyze_text_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -66,7 +65,7 @@ def build_content_safety_analyze_text_request(**kwargs: Any) -> HttpRequest:  # 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_content_safety_analyze_image_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
+def build_content_safety_analyze_image_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -88,7 +87,7 @@ def build_content_safety_analyze_image_request(**kwargs: Any) -> HttpRequest:  #
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_content_safety_get_text_blocklist_request(blocklist_name: str, **kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
+def build_content_safety_get_text_blocklist_request(blocklist_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -101,7 +100,7 @@ def build_content_safety_get_text_blocklist_request(blocklist_name: str, **kwarg
         "blocklistName": _SERIALIZER.url("blocklist_name", blocklist_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -112,7 +111,7 @@ def build_content_safety_get_text_blocklist_request(blocklist_name: str, **kwarg
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_content_safety_create_or_update_text_blocklist_request(blocklist_name: str, **kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
+def build_content_safety_create_or_update_text_blocklist_request(blocklist_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -126,7 +125,7 @@ def build_content_safety_create_or_update_text_blocklist_request(blocklist_name:
         "blocklistName": _SERIALIZER.url("blocklist_name", blocklist_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -139,7 +138,7 @@ def build_content_safety_create_or_update_text_blocklist_request(blocklist_name:
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_content_safety_delete_text_blocklist_request(blocklist_name: str, **kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
+def build_content_safety_delete_text_blocklist_request(blocklist_name: str, **kwargs: Any) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-30-preview"))
@@ -149,7 +148,7 @@ def build_content_safety_delete_text_blocklist_request(blocklist_name: str, **kw
         "blocklistName": _SERIALIZER.url("blocklist_name", blocklist_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -157,7 +156,7 @@ def build_content_safety_delete_text_blocklist_request(blocklist_name: str, **kw
     return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
 
 
-def build_content_safety_list_text_blocklists_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
+def build_content_safety_list_text_blocklists_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -176,7 +175,7 @@ def build_content_safety_list_text_blocklists_request(**kwargs: Any) -> HttpRequ
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_content_safety_add_block_items_request(blocklist_name: str, **kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
+def build_content_safety_add_block_items_request(blocklist_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -190,7 +189,7 @@ def build_content_safety_add_block_items_request(blocklist_name: str, **kwargs: 
         "blocklistName": _SERIALIZER.url("blocklist_name", blocklist_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -203,7 +202,7 @@ def build_content_safety_add_block_items_request(blocklist_name: str, **kwargs: 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_content_safety_remove_block_items_request(blocklist_name: str, **kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
+def build_content_safety_remove_block_items_request(blocklist_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -215,7 +214,7 @@ def build_content_safety_remove_block_items_request(blocklist_name: str, **kwarg
         "blocklistName": _SERIALIZER.url("blocklist_name", blocklist_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -227,7 +226,7 @@ def build_content_safety_remove_block_items_request(blocklist_name: str, **kwarg
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_content_safety_get_text_blocklist_item_request(  # pylint: disable=name-too-long
+def build_content_safety_get_text_blocklist_item_request(
     blocklist_name: str, block_item_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -243,7 +242,7 @@ def build_content_safety_get_text_blocklist_item_request(  # pylint: disable=nam
         "blockItemId": _SERIALIZER.url("block_item_id", block_item_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -254,7 +253,7 @@ def build_content_safety_get_text_blocklist_item_request(  # pylint: disable=nam
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_content_safety_list_text_blocklist_items_request(  # pylint: disable=name-too-long
+def build_content_safety_list_text_blocklist_items_request(
     blocklist_name: str, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -269,7 +268,7 @@ def build_content_safety_list_text_blocklist_items_request(  # pylint: disable=n
         "blocklistName": _SERIALIZER.url("blocklist_name", blocklist_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -410,6 +409,8 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
+            if _stream:
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -548,6 +549,8 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
+            if _stream:
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -607,6 +610,8 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
+            if _stream:
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -754,6 +759,8 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 201]:
+            if _stream:
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -822,6 +829,8 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
+            if _stream:
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -905,6 +914,8 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
+                if _stream:
+                    response.read()  # Load the body in memory and close the socket
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response)
 
@@ -1046,6 +1057,8 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
+            if _stream:
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -1193,6 +1206,8 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
+            if _stream:
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -1248,6 +1263,8 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
+            if _stream:
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -1349,6 +1366,8 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
+                if _stream:
+                    response.read()  # Load the body in memory and close the socket
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response)
 
