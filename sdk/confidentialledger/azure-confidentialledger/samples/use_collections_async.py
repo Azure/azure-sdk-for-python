@@ -51,7 +51,7 @@ async def main():
     # i.e. https://<ledger id>.confidential-ledger.azure.com
     ledger_id = ledger_endpoint.replace("https://", "").split(".")[0]
 
-    identity_service_client = ConfidentialLedgerCertificateClient()
+    identity_service_client = ConfidentialLedgerCertificateClient()  # type: ignore[call-arg]
     async with identity_service_client:
         ledger_certificate = await identity_service_client.get_ledger_identity(
             ledger_id
@@ -97,7 +97,7 @@ async def main():
                         else:
                             msg = f"{sender}'s message {msg_idx}"
 
-                        post_poller = await ledger_client.begin_create_ledger_entry(
+                        post_poller = await ledger_client.begin_create_ledger_entry(  # type: ignore[attr-defined]
                             entry={"contents": msg}, collection_id=sender,
                         )
                         post_result = await post_poller.result()
@@ -133,7 +133,7 @@ async def main():
 
                 print("Let's retrieve the first entry in each collection")
                 for sender in senders:
-                    get_poller = await ledger_client.begin_get_ledger_entry(
+                    get_poller = await ledger_client.begin_get_ledger_entry(  # type: ignore[attr-defined]
                         tids[sender]["first"],
                         collection_id=sender
                     )
