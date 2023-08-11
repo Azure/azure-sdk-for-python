@@ -92,16 +92,6 @@ input-file:
 output-folder: $(python-sdks-folder)/v2021_10_01_dataplanepreview
 ```
 
-### Tag: machinelearningcompute
-
-These settings apply only when `--tag=machinelearningcompute` is specified on the command line.
-
-```yaml $(tag) == 'machinelearningcompute'
-input-file:
-  - Microsoft.MachineLearningServices/preview/machinelearningcompute/machinelearningcompute.json
-output-folder: $(python-sdks-folder)/machinelearningcompute
-```
-
 ### Tag: runhistory
 
 These settings apply only when `--tag=runhistory` is specified on the command line.
