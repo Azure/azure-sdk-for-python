@@ -84,7 +84,7 @@ stages:
 
         - template: ../steps/build-conda-artifacts.yml
           parameters:
-            AdditionalChannels: '--channel "$(Pipeline.Workspace)/mac_conda" "$(Pipeline.Workspace)/windows_conda" "$(Pipeline.Workspace)/linux_conda"'
+            Arguments: '--channel "$(Pipeline.Workspace)/mac_conda" "$(Pipeline.Workspace)/windows_conda" "$(Pipeline.Workspace)/linux_conda"'
             CondaArtifacts:
               - name: azure-core
                 common_root: azure
