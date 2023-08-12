@@ -29,10 +29,10 @@ class AsyncAnonymousAccessCredential(AsyncTokenCredential):
         pass
 
     async def __aexit__(
-            self,
-            exc_type: Optional[Type[BaseException]] = None,
-            exc_value: Optional[BaseException] = None,
-            traceback: Optional[TracebackType] = None,
+        self,
+        exc_type: Optional[Type[BaseException]] = None,
+        exc_value: Optional[BaseException] = None,
+        traceback: Optional[TracebackType] = None,
     ) -> None:
         pass
 
