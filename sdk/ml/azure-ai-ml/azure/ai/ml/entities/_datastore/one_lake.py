@@ -24,21 +24,14 @@ from azure.ai.ml.entities._util import load_from_dict
 
 
 class OneLakeArtifact(RestTranslatableMixin, DictMixin, ABC):
-    def __init__(
-        self,
-        artifact_name: str,
-        artifact_type: Optional[str] = None
-    ):
+    def __init__(self, artifact_name: str, artifact_type: Optional[str] = None):
         super().__init__()
         self.artifact_name = artifact_name
         self.artifact_type = artifact_type
 
 
 class LakeHouseArtifact(OneLakeArtifact):
-    def __init__(
-        self,
-        artifact_name: str
-    ):
+    def __init__(self, artifact_name: str):
         super(LakeHouseArtifact, self).__init__(artifact_name=artifact_name, artifact_type="lake_house")
 
     def _to_datastore_rest_object(self) -> RestLakeHouseArtifact:
@@ -123,8 +116,8 @@ class OneLakeDatastore(Datastore):
         return (
             super().__eq__(other)
             and self.one_lake_workspace_name == other.one_lake_workspace_name
-            and self.artifact.artifact_type == other.artifact['artifact_type']
-            and self.artifact.artifact_name == other.artifact['artifact_name']
+            and self.artifact.artifact_type == other.artifact["artifact_type"]
+            and self.artifact.artifact_name == other.artifact["artifact_name"]
             and self.endpoint == other.endpoint
         )
 

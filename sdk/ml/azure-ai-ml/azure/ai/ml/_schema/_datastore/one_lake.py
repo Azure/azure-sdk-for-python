@@ -15,11 +15,11 @@ from azure.ai.ml._utils.utils import camel_to_snake
 
 from .credentials import NoneCredentialsSchema, ServicePrincipalSchema
 
+
 class OneLakeArtifactSchema(Schema):
     artifact_name = fields.Str(required=True)
     artifact_type = StringTransformedEnum(
-        allowed_values=OneLakeArtifactType.LAKE_HOUSE,
-        casing_transform=camel_to_snake
+        allowed_values=OneLakeArtifactType.LAKE_HOUSE, casing_transform=camel_to_snake
     )
 
 

@@ -9,7 +9,9 @@ from typing import Dict, Optional, Union
 
 from azure.ai.ml._azure_environments import _get_storage_endpoint_from_metadata
 from azure.ai.ml._restclient.v2023_04_01_preview.models import AzureBlobDatastore as RestAzureBlobDatastore
-from azure.ai.ml._restclient.v2023_04_01_preview.models import AzureDataLakeGen2Datastore as RestAzureDataLakeGen2Datastore
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    AzureDataLakeGen2Datastore as RestAzureDataLakeGen2Datastore,
+)
 from azure.ai.ml._restclient.v2023_04_01_preview.models import AzureFileDatastore as RestAzureFileDatastore
 from azure.ai.ml._restclient.v2023_04_01_preview.models import Datastore as DatastoreData, DatastoreType
 from azure.ai.ml._schema._datastore import AzureBlobSchema, AzureDataLakeGen2Schema, AzureFileSchema

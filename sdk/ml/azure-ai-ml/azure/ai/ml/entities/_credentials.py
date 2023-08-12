@@ -28,7 +28,9 @@ from azure.ai.ml._restclient.v2022_05_01.models import UserAssignedIdentity as R
 from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     AccountKeyDatastoreCredentials as RestAccountKeyDatastoreCredentials,
 )
-from azure.ai.ml._restclient.v2023_04_01_preview.models import AccountKeyDatastoreSecrets as RestAccountKeyDatastoreSecrets
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    AccountKeyDatastoreSecrets as RestAccountKeyDatastoreSecrets,
+)
 from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     CertificateDatastoreCredentials as RestCertificateDatastoreCredentials,
 )
