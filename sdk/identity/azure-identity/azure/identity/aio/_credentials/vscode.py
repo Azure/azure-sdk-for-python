@@ -43,9 +43,9 @@ class VisualStudioCodeCredential(_VSCodeCredentialBase, AsyncContextManager, Get
 
     async def __aexit__(
         self,
-        exc_type: Optional[Type[BaseException]]=None,
-        exc_value: Optional[BaseException]=None,
-        traceback: Optional[TracebackType]=None,
+        exc_type: Optional[Type[BaseException]] = None,
+        exc_value: Optional[BaseException] = None,
+        traceback: Optional[TracebackType] = None,
     ) -> None:
         await self.close()
 
