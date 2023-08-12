@@ -190,6 +190,7 @@ class BatchEndpointOperations(_ScopeDependentOperations):
                 body=endpoint_resource,
                 polling=True,
                 **self._init_kwargs,
+                cls=lambda response, deserialized, headers: BatchEndpoint._from_rest_object(deserialized),
             )
             return poller
 
