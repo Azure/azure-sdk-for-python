@@ -6,7 +6,7 @@ parameters:
     type: string
     default: ''
   - name: AdditionalChannels
-    type: str
+    type: string
     default: ''
 
 steps:
