@@ -593,6 +593,8 @@ def build_conda_packages(
         for channel in additional_channel_folders:
             copy_channel_files(conda_output_dir, channel)
             invoke_command(f'conda run --prefix "{conda_env_dir}" conda index {conda_output_dir}', repo_root)
+    else:
+        invoke_command(f'conda run --prefix "{conda_env_dir}" conda index {conda_output_dir}', repo_root)
 
     for conda_build in conda_configurations:
         conda_build_folder = os.path.join(conda_sdist_dir, conda_build.name).replace("\\", "/")
