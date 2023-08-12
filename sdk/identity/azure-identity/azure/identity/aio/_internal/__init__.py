@@ -3,6 +3,8 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import abc
+from types import TracebackType
+from typing import Optional, Type
 
 from .aad_client import AadClient
 from .decorators import wrap_exceptions
@@ -16,7 +18,12 @@ class AsyncContextManager(abc.ABC):
     async def __aenter__(self):
         return self
 
-    async def __aexit__(self, exc_type=None, exc_value=None, traceback=None):
+    async def __aexit__(
+            self,
+            exc_type: Optional[Type[BaseException]],
+            exc_value: Optional[BaseException],
+            traceback: Optional[TracebackType],
+    ) -> None:
         await self.close()
 
 
