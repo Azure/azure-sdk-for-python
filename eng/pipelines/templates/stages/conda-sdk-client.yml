@@ -14,7 +14,7 @@ variables:
 
 stages:
   - stage: Build_Dependencies
-    displayName: Build Non-Azure Conda Packages
+    displayName: Build Binary Conda Packages
     jobs:
     - template: ../jobs/build-conda-dependencies.yml
       parameters:
@@ -40,12 +40,12 @@ stages:
           checkout:
           - package: msal
             download_uri: https://files.pythonhosted.org/packages/85/9b/cf94ca59e4d88afe1852962d2b7e0cd9cee752dddf7cd6e30382cdc3f7ed/msal-1.23.0.tar.gz
-        # - name: uamqp
-        #   common_root: uamqp
-        #   in_batch: true
-        #   checkout:
-        #   - package: uamqp
-        #     download_uri: https://files.pythonhosted.org/packages/0b/d8/fc24d95e6f6c80851ae6738c78da081cd535c924b02c5a4928b108b9ed42/uamqp-1.6.5.tar.gz
+        - name: uamqp
+          common_root: uamqp
+          in_batch: true
+          checkout:
+          - package: uamqp
+            download_uri: https://files.pythonhosted.org/packages/0b/d8/fc24d95e6f6c80851ae6738c78da081cd535c924b02c5a4928b108b9ed42/uamqp-1.6.5.tar.gz
         # - name: msal-extensions
         #   common_root: msal
         #   in_batch: true
@@ -54,7 +54,7 @@ stages:
         #     download_uri: https://files.pythonhosted.org/packages/33/5e/2e23593c67df0b21ffb141c485ca0ae955569203d7ff5064040af968cb81/msal-extensions-1.0.0.tar.gz
 
   - stage: Build
-    displayName: Build Azure Conda Artifacts
+    displayName: Build Universal Conda Artifacts
     dependsOn: Build_Dependencies
     jobs:
     - job: 'Build'
