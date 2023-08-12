@@ -247,6 +247,32 @@ class TestDatastore:
         internal_ds_from_rest = Datastore._from_rest_object(datastore_resource)
         assert internal_ds_from_rest == internal_ds
 
+    def test_credential_less_one_lake_schema(self):
+        test_path = "./tests/test_configs/datastore/credential_less_one_lake.yml"
+        cfg = load_yaml(test_path)
+        internal_ds = load_datastore(test_path)
+        assert isinstance(internal_ds, OneLakeDatastore)
+        assert cfg["artifact"] == internal_ds.artifact
+
+        internal_credentials = internal_ds.credentials
+        assert isinstance(internal_credentials, NoneCredentialConfiguration)
+        assert cfg["one_lake_workspace_name"] == internal_ds.one_lake_workspace_name
+        assert cfg["endpoint"] == internal_ds.endpoint
+
+        # test REST translation
+        datastore_resource = internal_ds._to_rest_object()
+        datastore_resource.name = internal_ds.name
+        ds_properties = datastore_resource.properties
+        assert ds_properties
+        assert isinstance(ds_properties, models_preview.OneLakeDatastore)
+        assert isinstance(ds_properties.credentials, NoneDatastoreCredentials)
+        assert ds_properties.one_lake_workspace_name == cfg["one_lake_workspace_name"]
+        assert ds_properties.endpoint == cfg["endpoint"]
+
+        # test REST to internal translation
+        internal_ds_from_rest = Datastore._from_rest_object(datastore_resource)
+        assert internal_ds_from_rest == internal_ds
+
     def test_one_lake_schema(self):
         test_path = "./tests/test_configs/datastore/one_lake.yml"
         cfg = load_yaml(test_path)
@@ -270,6 +296,7 @@ class TestDatastore:
         ds_properties = datastore_resource.properties
         assert ds_properties
         assert isinstance(ds_properties, models_preview.OneLakeDatastore)
+        assert isinstance(ds_properties.credentials, ServicePrincipalDatastoreCredentials)
         assert ds_properties.one_lake_workspace_name == cfg["one_lake_workspace_name"]
         assert ds_properties.endpoint == cfg["endpoint"]
         self.assert_rest_internal_service_principal_equal(ds_properties.credentials, internal_credentials)
