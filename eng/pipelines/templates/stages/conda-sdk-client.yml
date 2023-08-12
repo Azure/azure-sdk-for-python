@@ -78,10 +78,6 @@ stages:
           artifact: mac_conda
           timeoutInMinutes: 5
 
-        - pwsh: |
-            Get-ChildItem -Recurse -Force -Path "$(Pipeline.Workspace)" | % { $_.FullName } 
-          displayName: Dump Visible Artifacts
-
         - template: ../steps/build-conda-artifacts.yml
           parameters:
             Arguments: '--channel "$(Pipeline.Workspace)/mac_conda" "$(Pipeline.Workspace)/windows_conda" "$(Pipeline.Workspace)/linux_conda"'
