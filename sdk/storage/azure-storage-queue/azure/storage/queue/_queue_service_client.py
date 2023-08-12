@@ -238,6 +238,7 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         :type cors: list(~azure.storage.queue.CorsRule)
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
+        :returns: None
         :rtype: None
 
         .. admonition:: Example:

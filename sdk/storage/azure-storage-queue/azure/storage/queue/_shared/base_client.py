@@ -269,6 +269,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
 
         :param HttpRequest reqs: A collection of HttpRequest objects.
         :rtype: None
+        :returns: None
         """
         # Pop it here, so requests doesn't feel bad about additional kwarg
         raise_on_any_failure = kwargs.pop("raise_on_any_failure", True)
