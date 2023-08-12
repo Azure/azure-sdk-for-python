@@ -3,8 +3,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from types import TracebackType
-from typing import Optional, Union, Type
+from typing import Optional, Union
 
 from azure.core.credentials import AccessToken
 from azure.core.credentials_async import AsyncTokenCredential
@@ -28,12 +27,7 @@ class AsyncAnonymousAccessCredential(AsyncTokenCredential):
     async def __aenter__(self):
         pass
 
-    async def __aexit__(
-            self,
-            exc_type: Optional[Type[BaseException]] = None,
-            exc_value: Optional[BaseException] = None,
-            traceback: Optional[TracebackType] = None,
-    ) -> None:
+    async def __aexit__(self, exc_type, exc_value, traceback) -> None:
         pass
 
 
