@@ -7,6 +7,7 @@ import typing
 from os import PathLike
 from pathlib import Path
 from typing import IO, AnyStr, Dict, Optional, Union
+from typing_extensions import Literal
 
 from azure.ai.ml._restclient.v2023_04_01_preview.models import JobBase as RestJobBase
 from azure.ai.ml._restclient.v2023_04_01_preview.models import JobScheduleAction
@@ -145,7 +146,6 @@ class Schedule(YamlTranslatableMixin, SchemaValidatableMixin, Resource):
         return self._type
 
     def _to_dict(self) -> Dict:
-        """Convert the resource to a dictionary."""
         return self._dump_for_validation()
 
     @classmethod
@@ -269,19 +269,37 @@ class JobSchedule(RestTranslatableMixin, Schedule, TelemetryMixin):
         Load job schedule from rest object dict.
 
         This function is added because the user-faced schema is different from the rest one.
+
         For example:
+
         user yaml create_job is a file reference with updates(not a job definition):
-        create_job:
-            job: ./job.yaml
-            inputs:
-                input: 10
+
+        .. code-block:: yaml
+
+            create_job:
+                job: ./job.yaml
+                inputs:
+                    input: 10
+
         while what we get from rest will be a complete job definition:
-        create_job:
-            name: xx
-            jobs:
-                node1: ...
-            inputs:
-                input: ..
+
+        .. code-block:: yaml
+
+            create_job:
+                name: xx
+                jobs:
+                    node1: ...
+                inputs:
+                    input: ..
+
+        :param data: The REST object to convert
+        :type data: Optional[Dict], optional
+        :param yaml_path: The yaml path
+        :type yaml_path: Optional[Union[PathLike str]], optional
+        :param params_override: A list of parameter overrides
+        :type params_override: Optional[list], optional
+        :return: The job schedule
+        :rtype: JobSchedule
         """
         data = data or {}
         params_override = params_override or []
@@ -323,7 +341,11 @@ class JobSchedule(RestTranslatableMixin, Schedule, TelemetryMixin):
         return JobScheduleSchema(context=context)
 
     def _customized_validate(self) -> MutableValidationResult:
-        """Validate the resource with customized logic."""
+        """Validate the resource with customized logic.
+
+        :return: The validation result
+        :rtype: MutableValidationResult
+        """
         if isinstance(self.create_job, PipelineJob):
             return self.create_job._validate()
         return self._create_empty_validation_result()
@@ -333,6 +355,9 @@ class JobSchedule(RestTranslatableMixin, Schedule, TelemetryMixin):
         """Get the fields that should be skipped in schema validation.
 
         Override this method to add customized validation logic.
+
+        :return: The list of fields to skip in schema validation
+        :rtype: typing.List[str]
         """
         return ["create_job"]
 
@@ -381,6 +406,7 @@ class JobSchedule(RestTranslatableMixin, Schedule, TelemetryMixin):
         """Build current parameterized schedule instance to a schedule object before submission.
 
         :return: Rest schedule.
+        :rtype: RestSchedule
         """
         if isinstance(self.create_job, BaseNode):
             self.create_job = self.create_job._to_job()
@@ -424,6 +450,11 @@ class JobSchedule(RestTranslatableMixin, Schedule, TelemetryMixin):
         except BaseException:  # pylint: disable=broad-except
             return super(JobSchedule, self).__str__()
 
-    def _get_telemetry_values(self, *args, **kwargs):
-        """Return the telemetry values of schedule."""
+    # pylint: disable-next=docstring-missing-param
+    def _get_telemetry_values(self, *args, **kwargs) -> Dict[Literal["trigger_type"], str]:
+        """Return the telemetry values of schedule.
+
+        :return: A dictionary with telemetry values
+        :rtype: Dict[Literal["trigger_type"], str]
+        """
         return {"trigger_type": type(self.trigger).__name__}

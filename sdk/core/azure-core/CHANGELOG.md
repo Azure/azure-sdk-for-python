@@ -1,5 +1,21 @@
 # Release History
 
+## 1.29.2 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.29.1 (2023-08-09)
+
+### Bugs Fixed
+
+- Not pass `enabled_cae` unless it is explicitly enabled.
+
 ## 1.29.0 (2023-08-03)
 
 ### Features Added

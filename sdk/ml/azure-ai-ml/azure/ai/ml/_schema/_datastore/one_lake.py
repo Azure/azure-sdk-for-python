@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=unused-argument,no-self-use
+# pylint: disable=unused-argument
 
 from typing import Any, Dict
 
@@ -46,6 +46,7 @@ class OneLakeSchema(PathAwareSchema):
     tags = fields.Dict(keys=fields.Str(), values=fields.Str())
 
     @post_load
-    def make(self, data:Dict[str, Any], **kwargs) -> "OneLakeDatastore":
+    def make(self, data: Dict[str, Any], **kwargs) -> "OneLakeDatastore":
         from azure.ai.ml.entities import OneLakeDatastore
+
         return OneLakeDatastore(**data)

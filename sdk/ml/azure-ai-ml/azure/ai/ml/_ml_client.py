@@ -27,6 +27,7 @@ from azure.ai.ml._file_utils.file_utils import traverse_up_path_and_find_file
 from azure.ai.ml._restclient.v2020_09_01_dataplanepreview import (
     AzureMachineLearningWorkspaces as ServiceClient092020DataplanePreview,
 )
+
 from azure.ai.ml._restclient.v2022_02_01_preview import AzureMachineLearningWorkspaces as ServiceClient022022Preview
 from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
 from azure.ai.ml._restclient.v2022_10_01 import AzureMachineLearningWorkspaces as ServiceClient102022
@@ -305,6 +306,13 @@ class MLClient:
             **kwargs,
         )
 
+        self._service_client_06_2023_preview = ServiceClient062023Preview(
+            credential=self._credential,
+            subscription_id=self._operation_scope._subscription_id,
+            base_url=base_url,
+            **kwargs,
+        )
+
         self._workspaces = WorkspaceOperations(
             self._operation_scope,
             self._service_client_06_2023_preview,
@@ -335,7 +343,7 @@ class MLClient:
         self._workspace_connections = WorkspaceConnectionsOperations(
             self._operation_scope,
             self._operation_config,
-            self._service_client_04_2023_preview,
+            self._service_client_06_2023_preview,
             self._operation_container,
             self._credential,
         )
@@ -631,11 +639,18 @@ class MLClient:
         )
 
     @classmethod
-    def _ml_client_cli(cls, credentials, subscription_id, **kwargs):
+    def _ml_client_cli(cls, credentials: TokenCredential, subscription_id: Optional[str], **kwargs) -> "MLClient":
         """This method provides a way to create MLClient object for cli to leverage cli context for authentication.
 
         With this we do not have to use AzureCliCredentials from azure-identity package (not meant for heavy usage). The
         credentials are passed by cli get_mgmt_service_client when it created a object of this class.
+
+        :param credentials: The authentication credentials
+        :type credentials: TokenCredential
+        :param subscription_id: The subscription ID
+        :type subscription_id: Optional[str]
+        :return: An MLClient
+        :rtype: ~azure.ai.ml.MLClient
         """
 
         ml_client = cls(credential=credentials, subscription_id=subscription_id, **kwargs)
@@ -849,6 +864,8 @@ class MLClient:
 
         :param workspace_name: AzureML workspace of the new MLClient.
         :type workspace_name: str
+        :return: An updated MLClient
+        :rtype: MLClient
         """
 
         return MLClient(

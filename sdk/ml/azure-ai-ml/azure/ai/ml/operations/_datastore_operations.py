@@ -86,7 +86,7 @@ class DatastoreOperations(_ScopeDependentOperations):
         :type name: str
         """
 
-        return self._operation.delete(
+        self._operation.delete(
             name=name,
             resource_group_name=self._operation_scope.resource_group_name,
             workspace_name=self._workspace_name,

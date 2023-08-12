@@ -27,9 +27,13 @@ def get_code_configuration_artifacts(
     :param endpoint_name: name of endpoint which this deployment is linked to
     :type endpoint_name: str
     :param deployment: deployment to validate
-    :type deployment: OnlineDeployment entity
+    :type deployment: OnlineDeployment
+    :param code_operations: The code operations
+    :type code_operations: CodeOperations
+    :param download_path: The path to download to
+    :type download_path: str
     :return: local path to code
-    :type return: str
+    :rtype: str
     :raises: azure.ai.ml._local_endpoints.errors.RequiredLocalArtifactsNotFoundError
     :raises: azure.ai.ml._local_endpoints.errors.CloudArtifactsNotSupportedError
     """

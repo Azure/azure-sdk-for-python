@@ -323,12 +323,14 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
         )
         return spark_job
 
-    def _to_component(self, context: Optional[Dict] = None, **kwargs):
+    def _to_component(self, context: Optional[Dict] = None, **kwargs) -> "SparkComponent":
         """Translate a spark job to component.
 
         :param context: Context of spark job YAML file.
+        :type context: dict, optional
         :keyword kwargs: Extra arguments.
         :return: Translated spark component.
+        :rtype: SparkComponent
         """
         from azure.ai.ml.entities import SparkComponent
 
@@ -363,12 +365,14 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
             args=self.args,
         )
 
-    def _to_node(self, context: Optional[Dict] = None, **kwargs):
+    def _to_node(self, context: Optional[Dict] = None, **kwargs) -> "Spark":
         """Translate a spark job to a pipeline node.
 
         :param context: Context of spark job YAML file.
+        :type context: dict, optional
         :keyword kwargs: Extra arguments.
         :return: Translated spark component.
+        :rtype: Spark
         """
         from azure.ai.ml.entities._builders import Spark
 

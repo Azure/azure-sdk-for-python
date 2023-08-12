@@ -43,8 +43,16 @@ class CustomDimensionsFilter(logging.Filter):
     def __init__(self, custom_dimensions=None):  # pylint: disable=super-init-not-called
         self.custom_dimensions = custom_dimensions or {}
 
-    def filter(self, record):
-        """Adds the default custom_dimensions into the current log record"""
+    def filter(self, record: dict) -> bool:
+        """Adds the default custom_dimensions into the current log record. Does not
+        otherwise filter any records
+
+        :param record: The record
+        :type record: dict
+        :return: True
+        :rtype: bool
+        """
+
         custom_dimensions = self.custom_dimensions.copy()
         custom_dimensions.update(getattr(record, "custom_dimensions", {}))
         record.custom_dimensions = custom_dimensions
@@ -53,11 +61,13 @@ class CustomDimensionsFilter(logging.Filter):
 
 
 def in_jupyter_notebook() -> bool:
-    """
-    Checks if user is using a Jupyter Notebook. This is necessary because logging is not allowed in
+    """Checks if user is using a Jupyter Notebook. This is necessary because logging is not allowed in
     non-Jupyter contexts.
 
     Adapted from https://stackoverflow.com/a/22424821
+
+    :return: Whether is running in a Jupyter Notebook
+    :rtype: bool
     """
     try:  # cspell:ignore ipython
         from IPython import get_ipython
