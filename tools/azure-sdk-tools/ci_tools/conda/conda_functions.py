@@ -106,6 +106,7 @@ def resolve_assembly_folder_name(package_name: str, conda_package_name: str):
     else:
         return package_name
 
+
 def create_package(pkg_directory, output_directory):
     check_call(
         [
@@ -363,10 +364,17 @@ def invoke_command(command: str, working_directory: str) -> None:
 
 
 def get_git_source(
-    assembly_area: str, assembled_code_area: str, target_package: str, checkout_path: str, target_version: str, conda_package_name: str
+    assembly_area: str,
+    assembled_code_area: str,
+    target_package: str,
+    checkout_path: str,
+    target_version: str,
+    conda_package_name: str,
 ) -> None:
     clone_folder = prep_directory(os.path.join(assembly_area, target_package))
-    code_destination = os.path.join(assembled_code_area, resolve_assembly_folder_name(target_package, conda_package_name))
+    code_destination = os.path.join(
+        assembled_code_area, resolve_assembly_folder_name(target_package, conda_package_name)
+    )
     code_source = os.path.join(clone_folder, checkout_path, target_package)
 
     invoke_command(
@@ -399,7 +407,7 @@ def get_package_source(
     download_folder: str,
     assembly_location: str,
     output_folder: str,
-    conda_build: CondaConfiguration
+    conda_build: CondaConfiguration,
 ) -> None:
     """
     Retrieves the source code for a specific checkout_config.
@@ -414,7 +422,9 @@ def get_package_source(
             downloaded_zip = download_pypi_source(download_folder, checkout_config.download_uri)
             unzip_staging_folder = prep_directory(os.path.join(download_folder, checkout_config.package))
             unzipped_staged = unzip_file_to_directory(downloaded_zip, unzip_staging_folder)
-            assembly_location = prep_directory(os.path.join(assembly_location, resolve_assembly_folder_name(checkout_config.package, conda_build.name)))
+            assembly_location = prep_directory(
+                os.path.join(assembly_location, resolve_assembly_folder_name(checkout_config.package, conda_build.name))
+            )
 
             # During unzip, we often end up one level deeper than we intend.
             # EG: unzipping azure-core-1.29.1.zip to `assembly/azure-core/azure-core`
@@ -437,7 +447,7 @@ def get_package_source(
             checkout_config.package,
             checkout_config.checkout_path,
             checkout_config.version,
-            conda_build.name
+            conda_build.name,
         )
     else:
         raise ValueError(
@@ -546,7 +556,32 @@ def prep_and_create_environment(environment_dir: str) -> None:
     )
 
 
-def build_conda_packages(conda_configurations: List[CondaConfiguration], repo_root: str):
+def copy_channel_files(coalescing_channel_dir: str, additional_channel_dir: str) -> None:
+    artifact_directories = ["noarch", "win-64", "win-x86", "osx-64", "osx-x86", "linux-64", "linux-x86"]
+
+    if additional_channel_dir:
+        for artifact_directory in artifact_directories:
+            a_dir = os.path.join(additional_channel_dir, artifact_directory)
+            if os.path.exists(a_dir):
+                for file in os.listdir(a_dir):
+                    source = os.path.join(a_dir, file)
+                    if os.path.isfile(source) and file.endswith(".tar.bz2"):
+                        target_directory = os.path.join(coalescing_channel_dir, artifact_directory)
+                        target_file = os.path.join(target_directory, file)
+
+                        if not os.path.exists(target_directory):
+                            os.makedirs(target_directory)
+                        print(f"Moving {file} to {target_directory}")
+                        shutil.move(os.path.join(a_dir, file), target_file)
+    else:
+        # a blank additional_channel_dir being passed indicates that we just want to initialize this folder
+        # as an empty conda channel. In that case move no code.
+        pass
+
+
+def build_conda_packages(
+    conda_configurations: List[CondaConfiguration], repo_root: str, additional_channel_folders: List[str]
+):
     """Conda builds each individually assembled conda package folder."""
     conda_output_dir = prep_directory(os.path.join(repo_root, "conda", "output")).replace("\\", "/")
     conda_sdist_dir = os.path.join(repo_root, "conda", "assembled").replace("\\", "/")
@@ -554,7 +589,9 @@ def build_conda_packages(conda_configurations: List[CondaConfiguration], repo_ro
 
     prep_and_create_environment(conda_env_dir)
 
-    invoke_command(f'conda run --prefix "{conda_env_dir}" conda index {conda_output_dir}', repo_root)
+    for channel in additional_channel_folders:
+        copy_channel_files(conda_output_dir, channel)
+        invoke_command(f'conda run --prefix "{conda_env_dir}" conda index {conda_output_dir}', repo_root)
 
     for conda_build in conda_configurations:
         conda_build_folder = os.path.join(conda_sdist_dir, conda_build.name).replace("\\", "/")
@@ -587,15 +624,10 @@ def entrypoint():
         required=True,
     )
 
-    parser.add_argument(
-        "-w",
-        "--work-folder",
-        dest="work_folder",
-        help="What directory will we assemble the conda packages in?",
-        required=True,
-    )
+    parser.add_argument("--channel", dest="channel", action="extend", nargs="+", type=str)
 
     args = parser.parse_args()
+
     json_configs = json.loads(args.config)
 
     check_conda_config()
@@ -619,4 +651,4 @@ def entrypoint():
     assemble_source(run_configurations, repo_root)
 
     # now build the conda packages
-    build_conda_packages(run_configurations, repo_root)
+    build_conda_packages(run_configurations, repo_root, args.channel)
