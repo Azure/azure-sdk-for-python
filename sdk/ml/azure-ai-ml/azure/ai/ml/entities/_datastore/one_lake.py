@@ -39,8 +39,7 @@ class LakeHouseArtifact(OneLakeArtifact):
         self,
         artifact_name: str
     ):
-        self.artifact_name = artifact_name
-        self.artifact_type = "lake_house"
+        super(LakeHouseArtifact, self).__init__(artifact_name=artifact_name, artifact_type="lake_house")
 
     def _to_datastore_rest_object(self) -> RestLakeHouseArtifact:
         return RestLakeHouseArtifact(artifact_name=self.artifact_name)
