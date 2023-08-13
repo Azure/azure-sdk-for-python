@@ -23,8 +23,8 @@ from opentelemetry.sdk.metrics.export import (
     Sum,
 )
 
-from azure.monitor.opentelemetry.exporter.export._base import ExportResult
-from azure.monitor.opentelemetry.exporter.export.metrics._exporter import (
+from azure.monitor.opentelemetry.exporter._export._base import ExportResult
+from azure.monitor.opentelemetry.exporter._export.metrics._exporter import (
     AzureMonitorMetricExporter,
     _get_metric_export_result,
 )

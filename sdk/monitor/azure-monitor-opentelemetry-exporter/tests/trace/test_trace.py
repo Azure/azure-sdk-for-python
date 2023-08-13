@@ -17,8 +17,8 @@ from opentelemetry.semconv.trace import SpanAttributes
 from opentelemetry.trace import Link, SpanContext, SpanKind
 from opentelemetry.trace.status import Status, StatusCode
 
-from azure.monitor.opentelemetry.exporter.export._base import ExportResult
-from azure.monitor.opentelemetry.exporter.export.trace._exporter import (
+from azure.monitor.opentelemetry.exporter._export._base import ExportResult
+from azure.monitor.opentelemetry.exporter._export.trace._exporter import (
     AzureMonitorTraceExporter,
     _check_instrumentation_span,
     _get_trace_export_result,

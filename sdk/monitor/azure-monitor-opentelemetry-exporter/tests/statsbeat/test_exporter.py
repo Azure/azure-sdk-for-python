@@ -11,9 +11,9 @@ from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.metrics.export import NumberDataPoint
 
 from azure.core.exceptions import HttpResponseError
-from azure.monitor.opentelemetry.exporter.export._base import ExportResult
-from azure.monitor.opentelemetry.exporter.statsbeat._exporter import _StatsBeatExporter
-from azure.monitor.opentelemetry.exporter.statsbeat._state import _STATSBEAT_STATE
+from azure.monitor.opentelemetry.exporter._export._base import ExportResult
+from azure.monitor.opentelemetry.exporter._statsbeat._exporter import _StatsBeatExporter
+from azure.monitor.opentelemetry.exporter._statsbeat._state import _STATSBEAT_STATE
 from azure.monitor.opentelemetry.exporter._constants import _STATSBEAT_METRIC_NAME_MAPPINGS
 from azure.monitor.opentelemetry.exporter._generated import AzureMonitorClient
 

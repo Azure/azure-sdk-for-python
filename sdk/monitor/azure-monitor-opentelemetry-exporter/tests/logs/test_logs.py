@@ -14,8 +14,8 @@ from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk._logs.export import LogExportResult
 from opentelemetry._logs.severity import SeverityNumber
 
-from azure.monitor.opentelemetry.exporter.export._base import ExportResult
-from azure.monitor.opentelemetry.exporter.export.logs._exporter import (
+from azure.monitor.opentelemetry.exporter._export._base import ExportResult
+from azure.monitor.opentelemetry.exporter._export.logs._exporter import (
     AzureMonitorLogExporter,
     _get_log_export_result,
     _get_severity_level,

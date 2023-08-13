@@ -24,7 +24,7 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _REQ_SUCCESS_NAME,
     _REQ_THROTTLE_NAME,
 )
-from azure.monitor.opentelemetry.exporter.statsbeat._state import (
+from azure.monitor.opentelemetry.exporter._statsbeat._state import (
     _REQUESTS_MAP_LOCK,
     _REQUESTS_MAP,
 )

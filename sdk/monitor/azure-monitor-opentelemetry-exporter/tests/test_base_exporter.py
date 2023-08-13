@@ -9,12 +9,12 @@ from datetime import datetime
 
 from azure.core.exceptions import HttpResponseError, ServiceRequestError
 from azure.core.pipeline.transport import HttpResponse
-from azure.monitor.opentelemetry.exporter.export._base import (
+from azure.monitor.opentelemetry.exporter._export._base import (
     _get_auth_policy,
     BaseExporter,
     ExportResult,
 )
-from azure.monitor.opentelemetry.exporter.statsbeat._state import _REQUESTS_MAP
+from azure.monitor.opentelemetry.exporter._statsbeat._state import _REQUESTS_MAP
 from azure.monitor.opentelemetry.exporter._constants import (
     _REQ_DURATION_NAME,
     _REQ_EXCEPTION_NAME,

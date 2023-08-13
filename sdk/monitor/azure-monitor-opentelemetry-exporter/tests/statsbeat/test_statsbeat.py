@@ -21,17 +21,17 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _REQ_SUCCESS_NAME,
     _REQ_THROTTLE_NAME,
 )
-from azure.monitor.opentelemetry.exporter.statsbeat import _statsbeat
-from azure.monitor.opentelemetry.exporter.statsbeat._exporter import _StatsBeatExporter
-from azure.monitor.opentelemetry.exporter.statsbeat._state import (
+from azure.monitor.opentelemetry.exporter._statsbeat import _statsbeat
+from azure.monitor.opentelemetry.exporter._statsbeat._exporter import _StatsBeatExporter
+from azure.monitor.opentelemetry.exporter._statsbeat._state import (
     _REQUESTS_MAP,
     _STATSBEAT_STATE,
 )
-from azure.monitor.opentelemetry.exporter.statsbeat._statsbeat import (
+from azure.monitor.opentelemetry.exporter._statsbeat._statsbeat import (
     _DEFAULT_STATS_LONG_EXPORT_INTERVAL,
     _DEFAULT_STATS_SHORT_EXPORT_INTERVAL,
 )
-from azure.monitor.opentelemetry.exporter.statsbeat._statsbeat_metrics import (
+from azure.monitor.opentelemetry.exporter._statsbeat._statsbeat_metrics import (
     _shorten_host,
     _FEATURE_TYPES,
     _StatsbeatFeature,

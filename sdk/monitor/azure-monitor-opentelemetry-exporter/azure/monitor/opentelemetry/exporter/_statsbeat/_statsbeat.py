@@ -6,9 +6,9 @@ import threading
 from opentelemetry.sdk.metrics import MeterProvider
 from opentelemetry.sdk.metrics.export import PeriodicExportingMetricReader
 
-from azure.monitor.opentelemetry.exporter.statsbeat._exporter import _StatsBeatExporter
-from azure.monitor.opentelemetry.exporter.statsbeat._statsbeat_metrics import _StatsbeatMetrics
-from azure.monitor.opentelemetry.exporter.statsbeat._state import (
+from azure.monitor.opentelemetry.exporter._statsbeat._exporter import _StatsBeatExporter
+from azure.monitor.opentelemetry.exporter._statsbeat._statsbeat_metrics import _StatsbeatMetrics
+from azure.monitor.opentelemetry.exporter._statsbeat._state import (
     _STATSBEAT_STATE,
     _STATSBEAT_STATE_LOCK,
 )

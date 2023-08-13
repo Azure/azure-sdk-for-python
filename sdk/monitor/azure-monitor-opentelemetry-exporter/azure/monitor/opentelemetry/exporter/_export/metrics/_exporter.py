@@ -36,7 +36,7 @@ from azure.monitor.opentelemetry.exporter._generated.models import (
     MonitorBase,
     TelemetryItem,
 )
-from azure.monitor.opentelemetry.exporter.export._base import (
+from azure.monitor.opentelemetry.exporter._export._base import (
     BaseExporter,
     ExportResult,
 )

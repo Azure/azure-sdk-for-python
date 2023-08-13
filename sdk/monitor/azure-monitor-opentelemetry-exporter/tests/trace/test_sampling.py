@@ -3,7 +3,7 @@
 import unittest
 from unittest import mock
 
-from azure.monitor.opentelemetry.exporter.export.trace._sampling import (
+from azure.monitor.opentelemetry.exporter._export.trace._sampling import (
     ApplicationInsightsSampler,
 )
 
