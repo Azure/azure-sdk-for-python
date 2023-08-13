@@ -678,7 +678,8 @@ def transform_dict_keys(data: Dict[str, Any], casing_transform: Callable[[str], 
     :rtype: dict
     """
     return {
-        key: transform_dict_keys(val, casing_transform) if isinstance(val, dict) else val for key, val in data.items()
+        casing_transform(key): transform_dict_keys(val, casing_transform) if isinstance(val, dict) else val
+        for key, val in data.items()
     }
 
 
