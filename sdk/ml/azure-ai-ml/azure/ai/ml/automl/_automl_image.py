@@ -4,7 +4,7 @@
 
 """Entrypoints for creating AutoML tasks."""
 
-from typing import Optional, Union
+from typing import Optional, TypeVar, Union
 
 from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     ClassificationMultilabelPrimaryMetrics,
@@ -14,22 +14,41 @@ from azure.ai.ml._restclient.v2023_04_01_preview.models import (
 )
 from azure.ai.ml.entities._builders.base_node import pipeline_node_decorator
 from azure.ai.ml.entities._inputs_outputs import Input
+from azure.ai.ml.entities._job.automl.image.automl_image_object_detection_base import AutoMLImageObjectDetectionBase
 from azure.ai.ml.entities._job.automl.image.image_classification_job import ImageClassificationJob
 from azure.ai.ml.entities._job.automl.image.image_classification_multilabel_job import ImageClassificationMultilabelJob
 from azure.ai.ml.entities._job.automl.image.image_instance_segmentation_job import ImageInstanceSegmentationJob
 from azure.ai.ml.entities._job.automl.image.image_object_detection_job import ImageObjectDetectionJob
 
+TImageJob = TypeVar("TImageJob", bound=AutoMLImageObjectDetectionBase)
+
 
 def _create_image_job(
-    job_cls,
+    job_cls: TImageJob,
     training_data: Input,
     target_column_name: str,
     primary_metric: Optional[Union[str, ClassificationPrimaryMetrics]] = None,
     validation_data: Optional[Input] = None,
     validation_data_size: Optional[float] = None,
     **kwargs,
-):
-    """Helper function to create objects for AutoML Image jobs."""
+) -> TImageJob:
+    """Helper function to create objects for AutoML Image jobs.
+
+    :param job_cls: The job class
+    :type job_cls: TImageJob
+    :param training_data: The training input data
+    :type training_data: Input
+    :param target_column_name: The target column name
+    :type target_column_name: str
+    :param primary_metric: The primary metric
+    :type primary_metric: Optional[Union[str, ClassificationPrimaryMetrics]], optional
+    :param validation_data: The validation data
+    :type validation_data: Optional[Input], optional
+    :param validation_data_size: The validation data size
+    :type validation_data_size: Optional[float], optional
+    :return: An AutoML Image Job
+    :rtype: TImageJob
+    """
     image_job = job_cls(primary_metric=primary_metric, **kwargs)
     image_job.set_data(
         training_data=training_data,
@@ -53,12 +72,12 @@ def image_classification(
 ) -> ImageClassificationJob:
     """Creates an object for AutoML Image multi-class Classification job.
 
-    :param training_data:  The training data to be used within the experiment.
+    :keyword training_data:  The training data to be used within the experiment.
     :type training_data: Input
-    :param target_column_name: The name of the label column.
+    :keyword target_column_name: The name of the label column.
             This parameter is applicable to ``training_data`` and ``validation_data`` parameters.
     :type target_column_name: str
-    :param primary_metric: The metric that Automated Machine Learning will optimize for model selection.
+    :keyword primary_metric: The metric that Automated Machine Learning will optimize for model selection.
             Automated Machine Learning collects more metrics than it can optimize.
             For more information on how metrics are calculated, see
             https://docs.microsoft.com/azure/machine-learning/how-to-configure-auto-train#primary-metric.
@@ -67,9 +86,9 @@ def image_classification(
             and precision_score_weighted
             Defaults to accuracy.
     :type primary_metric: Union[str, ClassificationPrimaryMetrics]
-    :param validation_data: The validation data to be used within the experiment.
+    :keyword validation_data: The validation data to be used within the experiment.
     :type validation_data: Input, optional
-    :param validation_data_size:  What fraction of the data to hold out for validation when user validation data
+    :keyword validation_data_size:  What fraction of the data to hold out for validation when user validation data
             is not specified. This should be between 0.0 and 1.0 non-inclusive.
 
             Specify ``validation_data`` to provide validation data, otherwise set ``validation_data_size``
@@ -77,7 +96,7 @@ def image_classification(
 
             Defaults to .2
     :type validation_data_size: float, optional
-    :param kwargs: A dictionary of additional configuration parameters.
+    :keyword kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
 
     :return: Image classification job object that can be submitted to an Azure ML compute for execution.
@@ -106,12 +125,12 @@ def image_classification_multilabel(
 ) -> ImageClassificationMultilabelJob:
     """Creates an object for AutoML Image multi-label Classification job.
 
-    :param training_data:  The training data to be used within the experiment.
+    :keyword training_data:  The training data to be used within the experiment.
     :type training_data: Input
-    :param target_column_name: The name of the label column.
+    :keyword target_column_name: The name of the label column.
             This parameter is applicable to ``training_data`` and ``validation_data`` parameters.
     :type target_column_name: str
-    :param primary_metric: The metric that Automated Machine Learning will optimize for model selection.
+    :keyword primary_metric: The metric that Automated Machine Learning will optimize for model selection.
             Automated Machine Learning collects more metrics than it can optimize.
             For more information on how metrics are calculated, see
             https://docs.microsoft.com/azure/machine-learning/how-to-configure-auto-train#primary-metric.
@@ -120,9 +139,9 @@ def image_classification_multilabel(
             precision_score_weighted, and Iou
             Defaults to Iou.
     :type primary_metric: Union[str, ClassificationMultilabelPrimaryMetrics]
-    :param validation_data: The validation data to be used within the experiment.
+    :keyword validation_data: The validation data to be used within the experiment.
     :type validation_data: Input, optional
-    :param validation_data_size:  What fraction of the data to hold out for validation when user validation data
+    :keyword validation_data_size:  What fraction of the data to hold out for validation when user validation data
             is not specified. This should be between 0.0 and 1.0 non-inclusive.
 
             Specify ``validation_data`` to provide validation data, otherwise set ``validation_data_size``
@@ -130,7 +149,7 @@ def image_classification_multilabel(
 
             Defaults to .2
     :type validation_data_size: float, optional
-    :param kwargs: A dictionary of additional configuration parameters.
+    :keyword kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
 
     :return: Image multi-label classification job object that can be submitted to an Azure ML compute for execution.
@@ -159,12 +178,12 @@ def image_object_detection(
 ) -> ImageObjectDetectionJob:
     """Creates an object for AutoML Image Object Detection job.
 
-    :param training_data:  The training data to be used within the experiment.
+    :keyword training_data:  The training data to be used within the experiment.
     :type training_data: Input
-    :param target_column_name: The name of the label column.
+    :keyword target_column_name: The name of the label column.
             This parameter is applicable to ``training_data`` and ``validation_data`` parameters.
     :type target_column_name: str
-    :param primary_metric: The metric that Automated Machine Learning will optimize for model selection.
+    :keyword primary_metric: The metric that Automated Machine Learning will optimize for model selection.
             Automated Machine Learning collects more metrics than it can optimize.
             For more information on how metrics are calculated, see
             https://docs.microsoft.com/azure/machine-learning/how-to-configure-auto-train#primary-metric.
@@ -172,9 +191,9 @@ def image_object_detection(
             Acceptable values: MeanAveragePrecision
             Defaults to MeanAveragePrecision.
     :type primary_metric: Union[str, ObjectDetectionPrimaryMetrics]
-    :param validation_data: The validation data to be used within the experiment.
+    :keyword validation_data: The validation data to be used within the experiment.
     :type validation_data: Input, optional
-    :param validation_data_size:  What fraction of the data to hold out for validation when user validation data
+    :keyword validation_data_size:  What fraction of the data to hold out for validation when user validation data
             is not specified. This should be between 0.0 and 1.0 non-inclusive.
 
             Specify ``validation_data`` to provide validation data, otherwise set ``validation_data_size``
@@ -182,7 +201,7 @@ def image_object_detection(
 
             Defaults to .2
     :type validation_data_size: float, optional
-    :param kwargs: A dictionary of additional configuration parameters.
+    :keyword kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
 
     :return: Image object detection job object that can be submitted to an Azure ML compute for execution.
@@ -211,12 +230,12 @@ def image_instance_segmentation(
 ) -> ImageInstanceSegmentationJob:
     """Creates an object for AutoML Image Instance Segmentation job.
 
-    :param training_data:  The training data to be used within the experiment.
+    :keyword training_data:  The training data to be used within the experiment.
     :type training_data: Input
-    :param target_column_name: The name of the label column.
+    :keyword target_column_name: The name of the label column.
             This parameter is applicable to ``training_data`` and ``validation_data`` parameters.
     :type target_column_name: str
-    :param primary_metric: The metric that Automated Machine Learning will optimize for model selection.
+    :keyword primary_metric: The metric that Automated Machine Learning will optimize for model selection.
             Automated Machine Learning collects more metrics than it can optimize.
             For more information on how metrics are calculated, see
             https://docs.microsoft.com/azure/machine-learning/how-to-configure-auto-train#primary-metric.
@@ -224,9 +243,9 @@ def image_instance_segmentation(
             Acceptable values: MeanAveragePrecision
             Defaults to MeanAveragePrecision.
     :type primary_metric: Union[str, InstanceSegmentationPrimaryMetrics]
-    :param validation_data: The validation data to be used within the experiment.
+    :keyword validation_data: The validation data to be used within the experiment.
     :type validation_data: Input, optional
-    :param validation_data_size:  What fraction of the data to hold out for validation when user validation data
+    :keyword validation_data_size:  What fraction of the data to hold out for validation when user validation data
             is not specified. This should be between 0.0 and 1.0 non-inclusive.
 
             Specify ``validation_data`` to provide validation data, otherwise set ``validation_data_size``
@@ -234,7 +253,7 @@ def image_instance_segmentation(
 
             Defaults to .2
     :type validation_data_size: float, optional
-    :param kwargs: A dictionary of additional configuration parameters.
+    :keyword kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
 
     :return: Image instance segmentation job

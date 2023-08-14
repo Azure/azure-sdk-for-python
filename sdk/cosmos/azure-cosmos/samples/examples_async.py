@@ -101,8 +101,7 @@ async def examples_async():
         import json
 
         async for item in container.query_items(
-                query='SELECT * FROM products p WHERE p.productModel <> "DISCONTINUED"',
-                enable_cross_partition_query=True,
+                query='SELECT * FROM products p WHERE p.productModel <> "DISCONTINUED"'
         ):
             print(json.dumps(item, indent=True))
         # [END query_items]

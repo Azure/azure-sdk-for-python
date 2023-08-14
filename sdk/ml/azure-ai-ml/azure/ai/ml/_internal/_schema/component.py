@@ -6,13 +6,18 @@ import os.path
 import pydash
 from marshmallow import EXCLUDE, INCLUDE, fields, post_dump, pre_load
 
-from ..._schema import AnonymousEnvironmentSchema, NestedField, StringTransformedEnum, UnionField
+from ..._schema import NestedField, StringTransformedEnum, UnionField
 from ..._schema.component.component import ComponentSchema
-from ..._schema.core.fields import ArmVersionedStr, CodeField, RegistryStr
+from ..._schema.core.fields import ArmVersionedStr, CodeField, EnvironmentField, RegistryStr
 from ..._schema.job.parameterized_spark import SparkEntryClassSchema, SparkEntryFileSchema
 from ..._utils._arm_id_utils import parse_name_label
 from ..._utils.utils import get_valid_dot_keys_with_wildcard
-from ...constants._common import LABELLED_RESOURCE_NAME, SOURCE_PATH_CONTEXT_KEY, AzureMLResourceType
+from ...constants._common import (
+    DefaultOpenEncoding,
+    LABELLED_RESOURCE_NAME,
+    SOURCE_PATH_CONTEXT_KEY,
+    AzureMLResourceType,
+)
 from ...constants._component import NodeType as PublicNodeType
 from .._utils import yaml_safe_load_with_base_resolver
 from .environment import InternalEnvironmentSchema
@@ -139,7 +144,7 @@ class InternalComponentSchema(ComponentSchema):
                 return isinstance(_input_type, str) and _input_type.lower() not in ["boolean"]
 
             # do override here
-            with open(source_path, "r") as f:
+            with open(source_path, "r", encoding=DefaultOpenEncoding.READ) as f:
                 origin_data = yaml_safe_load_with_base_resolver(f)
                 for dot_key_wildcard, condition_func in [
                     ("version", None),
@@ -182,14 +187,8 @@ class InternalSparkComponentSchema(InternalComponentSchema):
         pass_original=True,
     )
 
-    environment = UnionField(
-        [
-            # unlike other internal component, internal spark component do not use internal environment schema
-            NestedField(AnonymousEnvironmentSchema),
-            RegistryStr(azureml_type=AzureMLResourceType.ENVIRONMENT),
-            ArmVersionedStr(azureml_type=AzureMLResourceType.ENVIRONMENT, allow_default_version=True),
-            NestedField(InternalEnvironmentSchema),
-        ],
+    environment = EnvironmentField(
+        extra_fields=[NestedField(InternalEnvironmentSchema)],
         allow_none=True,
     )
 

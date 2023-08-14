@@ -1,5 +1,21 @@
 # Release History
 
+## 1.0.0b16 (Unreleased)
+
+### Features Added
+
+- Export OTel Resource
+    ([#31355](https://github.com/Azure/azure-sdk-for-python/pull/31355))
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+- Unpin Opentelemetry SDK/API.
+    ([#31253](https://github.com/Azure/azure-sdk-for-python/pull/31253))
+
 ## 1.0.0b15 (2023-07-17)
 
 ### Features Added

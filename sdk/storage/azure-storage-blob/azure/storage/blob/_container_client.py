@@ -1724,7 +1724,9 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
 
     def get_blob_client(
             self, blob,  # type: Union[str, BlobProperties]
-            snapshot=None  # type: str
+            snapshot=None,  # type: str
+            *,
+            version_id=None  # type: Optional[str]
         ):
         # type: (...) -> BlobClient
         """Get a client to interact with the specified blob.
@@ -1737,6 +1739,8 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         :param str snapshot:
             The optional blob snapshot on which to operate. This can be the snapshot ID string
             or the response returned from :func:`~BlobClient.create_snapshot()`.
+        :keyword str version_id: The version id parameter is an opaque DateTime value that, when present,
+            specifies the version of the blob to operate on.
         :returns: A BlobClient.
         :rtype: ~azure.storage.blob.BlobClient
 
@@ -1759,4 +1763,5 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             credential=self.credential, api_version=self.api_version, _configuration=self._config,
             _pipeline=_pipeline, _location_mode=self._location_mode, _hosts=self._hosts,
             require_encryption=self.require_encryption, encryption_version=self.encryption_version,
-            key_encryption_key=self.key_encryption_key, key_resolver_function=self.key_resolver_function)
+            key_encryption_key=self.key_encryption_key, key_resolver_function=self.key_resolver_function,
+            version_id=version_id)

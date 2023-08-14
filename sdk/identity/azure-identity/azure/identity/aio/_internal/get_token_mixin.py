@@ -5,7 +5,7 @@
 import abc
 import logging
 import time
-from typing import Optional
+from typing import Any, Optional
 
 from azure.core.credentials import AccessToken
 from ..._constants import DEFAULT_REFRESH_OFFSET, DEFAULT_TOKEN_REFRESH_RETRY_DELAY
@@ -22,9 +22,7 @@ class GetTokenMixin(abc.ABC):
         super(GetTokenMixin, self).__init__(*args, **kwargs)  # type: ignore
 
     @abc.abstractmethod
-    async def _acquire_token_silently(
-        self, *scopes: str, **kwargs
-    ) -> Optional[AccessToken]:
+    async def _acquire_token_silently(self, *scopes: str, **kwargs) -> Optional[AccessToken]:
         """Attempt to acquire an access token from a cache or by redeeming a refresh token.
 
         :param str scopes: desired scopes for the access token. This method requires at least one scope.
@@ -55,7 +53,9 @@ class GetTokenMixin(abc.ABC):
             return False
         return True
 
-    async def get_token(self, *scopes: str, **kwargs) -> AccessToken:
+    async def get_token(
+        self, *scopes: str, claims: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs: Any
+    ) -> AccessToken:
         """Request an access token for `scopes`.
 
         This method is called automatically by Azure SDK clients.
@@ -63,7 +63,11 @@ class GetTokenMixin(abc.ABC):
         :param str scopes: desired scopes for the access token. This method requires at least one scope.
             For more information about scopes, see
             https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
+        :keyword str claims: additional claims required in the token, such as those returned in a resource provider's
+            claims challenge following an authorization failure.
         :keyword str tenant_id: optional tenant to include in the token request.
+        :keyword bool enable_cae: indicates whether to enable Continuous Access Evaluation (CAE) for the requested
+            token. Defaults to False.
 
         :return: An access token with the desired scopes.
         :rtype: ~azure.core.credentials.AccessToken
@@ -76,14 +80,14 @@ class GetTokenMixin(abc.ABC):
             raise ValueError('"get_token" requires at least one scope')
 
         try:
-            token = await self._acquire_token_silently(*scopes, **kwargs)
+            token = await self._acquire_token_silently(*scopes, claims=claims, tenant_id=tenant_id, **kwargs)
             if not token:
                 self._last_request_time = int(time.time())
-                token = await self._request_token(*scopes, **kwargs)
+                token = await self._request_token(*scopes, claims=claims, tenant_id=tenant_id, **kwargs)
             elif self._should_refresh(token):
                 try:
                     self._last_request_time = int(time.time())
-                    token = await self._request_token(*scopes, **kwargs)
+                    token = await self._request_token(*scopes, claims=claims, tenant_id=tenant_id, **kwargs)
                 except Exception:  # pylint:disable=broad-except
                     pass
             _LOGGER.log(

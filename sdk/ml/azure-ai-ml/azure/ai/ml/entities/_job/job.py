@@ -47,26 +47,28 @@ def _is_pipeline_child_job(job: JobBase) -> bool:
 
 
 class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
-    """Base class for job, can't be instantiated directly.
+    """Base class for jobs.
 
-    :param name: Name of the resource.
-    :type name: str
-    :param display_name: Display name of the resource.
-    :type display_name: str
-    :param description: Description of the resource.
-    :type description: str
+    This class should not be instantiated directly. Instead, use one of its subclasses.
+
+    :param name: The name of the job.
+    :type name: Optional[str]
+    :param display_name: The display name of the job.
+    :type display_name: Optional[str]
+    :param description: The description of the job.
+    :type description: Optional[str]
     :param tags: Tag dictionary. Tags can be added, removed, and updated.
-    :type tags: dict[str, str]
+    :type tags: Optional[dict[str, str]]
     :param properties: The job property dictionary.
-    :type properties: dict[str, str]
-    :param experiment_name:  Name of the experiment the job will be created under,
-        if None is provided, experiment will be set to current directory.
-    :type experiment_name: str
+    :type properties: Optional[dict[str, str]]
+    :param experiment_name: The name of the experiment the job will be created under. Defaults to the name of the
+        current directory.
+    :type experiment_name: Optional[str]
     :param services: Information on services associated with the job.
-    :type services: dict[str, JobService]
-    :param compute: Information on compute resources associated with the job.
-    :type compute: str
-    :param kwargs: A dictionary of additional configuration parameters.
+    :type services: Optional[dict[str, ~azure.ai.ml.entities.JobService]]
+    :param compute: Information about the compute resources associated with the job.
+    :type compute: Optional[str]
+    :keyword kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
     """
 
@@ -80,8 +82,8 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
         experiment_name: Optional[str] = None,
         compute: Optional[str] = None,
         services: Optional[Dict[str, JobService]] = None,
-        **kwargs,
-    ):
+        **kwargs: Dict,
+    ) -> None:
         self._type = kwargs.pop("type", JobType.COMMAND)
         self._status = kwargs.pop("status", None)
         self._log_files = kwargs.pop("log_files", None)
@@ -101,40 +103,38 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
 
     @property
     def type(self) -> Optional[str]:
-        """Type of the job, supported are 'command' and 'sweep'.
+        """The type of the job.
 
-        :return: Type of the job.
-        :rtype: str
+        :return: The type of the job.
+        :rtype: Optional[str]
         """
         return self._type
 
     @property
     def status(self) -> Optional[str]:
-        """Status of the job.
+        """The status of the job.
 
-        Common values returned include "Running", "Completed", and "Failed".
+        Common values returned include "Running", "Completed", and "Failed". All possible values are:
 
-        .. note::
-
-            * NotStarted - This is a temporary state client-side Run objects are in before cloud submission.
+            * NotStarted - This is a temporary state that client-side Run objects are in before cloud submission.
             * Starting - The Run has started being processed in the cloud. The caller has a run ID at this point.
-            * Provisioning - Returned when on-demand compute is being created for a given job submission.
-            * Preparing - The run environment is being prepared:
-                * docker image build
+            * Provisioning - On-demand compute is being created for a given job submission.
+            * Preparing - The run environment is being prepared and is in one of two stages:
+                * Docker image build
                 * conda environment setup
-            * Queued - The job is queued in the compute target. For example, in BatchAI the job is in queued state
-                 while waiting for all the requested nodes to be ready.
-            * Running - The job started to run in the compute target.
-            * Finalizing - User code has completed and the run is in post-processing stages.
+            * Queued - The job is queued on the compute target. For example, in BatchAI, the job is in a queued state
+                while waiting for all the requested nodes to be ready.
+            * Running - The job has started to run on the compute target.
+            * Finalizing - User code execution has completed, and the run is in post-processing stages.
             * CancelRequested - Cancellation has been requested for the job.
-            * Completed - The run completed successfully. This includes both the user code and run
+            * Completed - The run has completed successfully. This includes both the user code execution and run
                 post-processing stages.
             * Failed - The run failed. Usually the Error property on a run will provide details as to why.
             * Canceled - Follows a cancellation request and indicates that the run is now successfully cancelled.
             * NotResponding - For runs that have Heartbeats enabled, no heartbeat has been recently sent.
 
         :return: Status of the job.
-        :rtype: str
+        :rtype: Optional[str]
         """
         return self._status
 
@@ -142,7 +142,7 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
     def log_files(self) -> Optional[Dict[str, str]]:
         """Job output files.
 
-        :return: Dictionary of log names to url.
+        :return: The dictionary of log names and URLs.
         :rtype: Optional[Dict[str, str]]
         """
         return self._log_files
@@ -151,7 +151,7 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
     def studio_url(self) -> Optional[str]:
         """Azure ML studio endpoint.
 
-        :return: URL to the job detail page.
+        :return: The URL to the job details page.
         :rtype: Optional[str]
         """
         if self.services and (JobServices.STUDIO in self.services.keys()):
@@ -160,15 +160,16 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
         return studio_url_from_job_id(self.id) if self.id else None
 
     def dump(self, dest: Union[str, PathLike, IO[AnyStr]], **kwargs) -> None:
-        """Dump the job content into a file in yaml format.
+        """Dumps the job content into a file in YAML format.
 
-        :param dest: The destination to receive this job's content.
-            Must be either a path to a local file, or an already-open file stream.
-            If dest is a file path, a new file will be created,
-            and an exception is raised if the file exists.
-            If dest is an open file, the file will be written to directly,
-            and an exception will be raised if the file is not writable.
+        :param dest: The local path or file stream to write the YAML content to.
+            If dest is a file path, a new file will be created.
+            If dest is an open file, the file will be written to directly.
         :type dest: Union[PathLike, str, IO[AnyStr]]
+        :keyword kwargs: Additional arguments to pass to the YAML serializer.
+        :type kwargs: dict
+        :raises FileExistsError: Raised if dest is a file path and the file already exists.
+        :raises IOError: Raised if dest is an open file and the file is not writable.
         """
         path = kwargs.pop("path", None)
         yaml_serialized = self._to_dict()
@@ -252,7 +253,7 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
         :param params_override: Fields to overwrite on top of the yaml file.
             Format is [{"field1": "value1"}, {"field2": "value2"}], defaults to None
         :type params_override: List[Dict], optional
-        :param kwargs: A dictionary of additional configuration parameters.
+        :keyword kwargs: A dictionary of additional configuration parameters.
         :type kwargs: dict
         :raises Exception: An exception
         :return: Loaded job object.

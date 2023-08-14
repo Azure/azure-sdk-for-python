@@ -50,7 +50,7 @@ class DatastoreOperations(_ScopeDependentOperations):
     def list(self, *, include_secrets: bool = False) -> Iterable[Datastore]:
         """Lists all datastores and associated information within a workspace.
 
-        :param include_secrets: Include datastore secrets in returned datastores, defaults to False
+        :keyword include_secrets: Include datastore secrets in returned datastores, defaults to False
         :type include_secrets: bool, optional
         :return: An iterator like instance of Datastore objects
         :rtype: ~azure.core.paging.ItemPaged[Datastore]
@@ -86,7 +86,7 @@ class DatastoreOperations(_ScopeDependentOperations):
         :type name: str
         """
 
-        return self._operation.delete(
+        self._operation.delete(
             name=name,
             resource_group_name=self._operation_scope.resource_group_name,
             workspace_name=self._workspace_name,
@@ -99,7 +99,7 @@ class DatastoreOperations(_ScopeDependentOperations):
 
         :param name: Datastore name
         :type name: str
-        :param include_secrets: Include datastore secrets in the returned datastore, defaults to False
+        :keyword include_secrets: Include datastore secrets in the returned datastore, defaults to False
         :type include_secrets: bool, optional
         :return: Datastore with the specified name.
         :rtype: Datastore
@@ -128,7 +128,7 @@ class DatastoreOperations(_ScopeDependentOperations):
     def get_default(self, *, include_secrets: bool = False) -> Datastore:
         """Returns the workspace's default datastore.
 
-        :param include_secrets: Include datastore secrets in the returned datastore, defaults to False
+        :keyword include_secrets: Include datastore secrets in the returned datastore, defaults to False
         :type include_secrets: bool, optional
         :return: The default datastore.
         :rtype: Datastore

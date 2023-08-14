@@ -120,4 +120,8 @@ class Artifact(Asset):
 
     @abstractmethod
     def _update_path(self, asset_artifact: ArtifactStorageInfo) -> None:
-        """Updates an an artifact with the remote path of a local upload."""
+        """Updates an an artifact with the remote path of a local upload.
+
+        :param asset_artifact: The asset storage info of the artifact
+        :type asset_artifact: ArtifactStorageInfo
+        """

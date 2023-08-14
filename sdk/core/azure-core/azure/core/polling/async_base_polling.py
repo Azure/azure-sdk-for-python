@@ -48,7 +48,6 @@ HttpRequestType = Union[LegacyHttpRequest, HttpRequest]
 AsyncHttpResponseType = Union[LegacyAsyncHttpResponse, AsyncHttpResponse]
 HttpRequestTypeVar = TypeVar("HttpRequestTypeVar", bound=HttpRequestType)
 AsyncHttpResponseTypeVar = TypeVar("AsyncHttpResponseTypeVar", bound=AsyncHttpResponseType)
-AsyncPipelineResponseTypeVar = PipelineResponse[HttpRequestTypeVar, AsyncHttpResponseTypeVar]
 
 
 PollingReturnType_co = TypeVar("PollingReturnType_co", covariant=True)
@@ -60,6 +59,8 @@ class AsyncLROBasePolling(
     _SansIOLROBasePolling[
         PollingReturnType_co,
         AsyncPipelineClient[HttpRequestTypeVar, AsyncHttpResponseTypeVar],
+        HttpRequestTypeVar,
+        AsyncHttpResponseTypeVar,
     ],
     AsyncPollingMethod[PollingReturnType_co],
 ):
@@ -73,10 +74,10 @@ class AsyncLROBasePolling(
     If your polling need are more specific, you could implement a PollingMethod directly
     """
 
-    _initial_response: AsyncPipelineResponseTypeVar
+    _initial_response: PipelineResponse[HttpRequestTypeVar, AsyncHttpResponseTypeVar]
     """Store the initial response."""
 
-    _pipeline_response: AsyncPipelineResponseTypeVar
+    _pipeline_response: PipelineResponse[HttpRequestTypeVar, AsyncHttpResponseTypeVar]
     """Store the latest received HTTP response, initialized by the first answer."""
 
     @property
@@ -127,20 +128,20 @@ class AsyncLROBasePolling(
     async def _sleep(self, delay: float) -> None:
         await self._transport.sleep(delay)
 
-    async def _delay(self):
+    async def _delay(self) -> None:
         """Check for a 'retry-after' header to set timeout,
         otherwise use configured timeout.
         """
         delay = self._extract_delay()
         await self._sleep(delay)
 
-    async def update_status(self):
+    async def update_status(self) -> None:
         """Update the current status of the LRO."""
         self._pipeline_response = await self.request_status(self._operation.get_polling_url())
         _raise_if_bad_http_status_and_method(self._pipeline_response.http_response)
         self._status = self._operation.get_status(self._pipeline_response)
 
-    async def request_status(self, status_link: str) -> AsyncPipelineResponseTypeVar:
+    async def request_status(self, status_link: str) -> PipelineResponse[HttpRequestTypeVar, AsyncHttpResponseTypeVar]:
         """Do a simple GET to this status link.
 
         This method re-inject 'x-ms-client-request-id'.
@@ -160,7 +161,7 @@ class AsyncLROBasePolling(
             # Need a cast, as "_return_pipeline_response" mutate the return type, and that return type is not
             # declared in the typing of "send_request"
             return cast(
-                AsyncPipelineResponseTypeVar,
+                PipelineResponse[HttpRequestTypeVar, AsyncHttpResponseTypeVar],
                 await self._client.send_request(rest_request, _return_pipeline_response=True, **self._operation_config),
             )
 
@@ -169,7 +170,7 @@ class AsyncLROBasePolling(
         # about the legacy APIs.
         request = cast(HttpRequestTypeVar, self._client.get(status_link))
         return cast(
-            AsyncPipelineResponseTypeVar,
+            PipelineResponse[HttpRequestTypeVar, AsyncHttpResponseTypeVar],
             await self._client._pipeline.run(  # pylint: disable=protected-access
                 request, stream=False, **self._operation_config
             ),

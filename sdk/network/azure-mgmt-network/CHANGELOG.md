@@ -1,5 +1,31 @@
 # Release History
 
+## 24.0.0 (2023-07-21)
+
+### Breaking Changes
+
+  - Removed `HTTP_STATUS499` from enum `ApplicationGatewayCustomErrorStatusCode`
+
+### Features Added
+
+  - Added enum `AdminState`
+  - Model ActiveConnectivityConfiguration has a new parameter resource_guid
+  - Model ActiveDefaultSecurityAdminRule has a new parameter resource_guid
+  - Model ActiveSecurityAdminRule has a new parameter resource_guid
+  - Model AdminRule has a new parameter resource_guid
+  - Model AdminRuleCollection has a new parameter resource_guid
+  - Model ApplicationGateway has a new parameter default_predefined_ssl_policy
+  - Model ConfigurationGroup has a new parameter resource_guid
+  - Model ConnectivityConfiguration has a new parameter resource_guid
+  - Model DefaultAdminRule has a new parameter resource_guid
+  - Model EffectiveConnectivityConfiguration has a new parameter resource_guid
+  - Model EffectiveDefaultSecurityAdminRule has a new parameter resource_guid
+  - Model EffectiveSecurityAdminRule has a new parameter resource_guid
+  - Model NetworkGroup has a new parameter resource_guid
+  - Model NetworkManager has a new parameter resource_guid
+  - Model SecurityAdminConfiguration has a new parameter resource_guid
+  - Model VirtualNetworkGateway has a new parameter admin_state
+
 ## 23.1.0 (2023-05-20)
 
 ### Features Added

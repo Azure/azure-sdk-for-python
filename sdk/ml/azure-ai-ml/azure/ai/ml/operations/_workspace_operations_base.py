@@ -9,8 +9,8 @@ from typing import Callable, Dict, Optional, Tuple
 
 from azure.ai.ml._arm_deployments import ArmDeploymentExecutor
 from azure.ai.ml._arm_deployments.arm_helper import get_template
-from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient042023Preview
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+from azure.ai.ml._restclient.v2023_06_01_preview import AzureMachineLearningWorkspaces as ServiceClient062023Preview
+from azure.ai.ml._restclient.v2023_06_01_preview.models import (
     EncryptionKeyVaultUpdateProperties,
     EncryptionUpdateProperties,
     WorkspaceUpdateParameters,
@@ -37,6 +37,7 @@ from azure.ai.ml.entities import (
     Workspace,
 )
 from azure.ai.ml.entities._credentials import IdentityConfiguration
+from azure.ai.ml.entities._workspace_hub._constants import PROJECT_WORKSPACE_KIND, WORKSPACE_HUB_KIND
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.core.credentials import TokenCredential
 from azure.core.polling import LROPoller, PollingMethod
@@ -51,7 +52,7 @@ class WorkspaceOperationsBase:
     def __init__(
         self,
         operation_scope: OperationScope,
-        service_client: ServiceClient042023Preview,
+        service_client: ServiceClient062023Preview,
         all_operations: OperationsContainer,
         credentials: Optional[TokenCredential] = None,
         **kwargs: Dict,
@@ -114,6 +115,29 @@ class WorkspaceOperationsBase:
 
         workspace.resource_group = resource_group
         template, param, resources_being_deployed = self._populate_arm_paramaters(workspace, **kwargs)
+        # check if create with workspace hub request is valid
+        if workspace._kind == PROJECT_WORKSPACE_KIND:
+            if not all(
+                x is None
+                for x in [
+                    workspace.storage_account,
+                    workspace.container_registry,
+                    workspace.key_vault,
+                    workspace.public_network_access,
+                    workspace.managed_network,
+                    workspace.customer_managed_key,
+                ]
+            ):
+                msg = (
+                    "To create a project workspace with a workspace hub, please only specify name, description, "
+                    + "display_name, location, application insight and identity"
+                )
+                raise ValidationException(
+                    message=msg,
+                    target=ErrorTarget.WORKSPACE,
+                    no_personal_data_message=msg,
+                    error_category=ErrorCategory.USER_ERROR,
+                )
 
         arm_submit = ArmDeploymentExecutor(
             credentials=self._credentials,
@@ -259,7 +283,16 @@ class WorkspaceOperationsBase:
     ) -> LROPoller[None]:
         workspace = self.get(name, **kwargs)
         resource_group = kwargs.get("resource_group") or self._resource_group_name
-        if delete_dependent_resources:
+
+        # prevent dependent resource delete for lean workspace, only delete appinsight
+        if workspace._kind == PROJECT_WORKSPACE_KIND and delete_dependent_resources:
+            delete_resource_by_arm_id(
+                self._credentials,
+                self._subscription_id,
+                workspace.application_insights,
+                ArmConstants.AZURE_MGMT_APPINSIGHT_API_VERSION,
+            )
+        elif delete_dependent_resources:
             delete_resource_by_arm_id(
                 self._credentials,
                 self._subscription_id,
@@ -284,6 +317,7 @@ class WorkspaceOperationsBase:
                 workspace.container_registry,
                 ArmConstants.AZURE_MGMT_CONTAINER_REG_API_VERSION,
             )
+
         poller = self._operation.begin_delete(
             resource_group_name=resource_group,
             workspace_name=name,
@@ -300,9 +334,10 @@ class WorkspaceOperationsBase:
             workspace.location = get_resource_group_location(
                 self._credentials, self._subscription_id, workspace.resource_group
             )
-
         template = get_template(resource_type=ArmConstants.WORKSPACE_BASE)
         param = get_template(resource_type=ArmConstants.WORKSPACE_PARAM)
+        if workspace._kind == PROJECT_WORKSPACE_KIND:
+            template = get_template(resource_type=ArmConstants.WORKSPACE_PROJECT)
         _set_val(param["workspaceName"], workspace.name)
         if not workspace.display_name:
             _set_val(param["friendlyName"], workspace.name)
@@ -465,6 +500,18 @@ class WorkspaceOperationsBase:
         _set_val(param["managedNetwork"], managed_network)
         if workspace.enable_data_isolation:
             _set_val(param["enable_data_isolation"], "true")
+
+        # Hub related param
+        if workspace._kind and workspace._kind.lower() == WORKSPACE_HUB_KIND:
+            if workspace.workspace_hub_config:
+                _set_val(param["workspace_hub_config"], workspace.workspace_hub_config._to_rest_object())
+            if workspace.existing_workspaces:
+                _set_val(param["existing_workspaces"], workspace.existing_workspaces)
+
+        # Lean related param
+        if workspace._kind and workspace._kind.lower() == PROJECT_WORKSPACE_KIND:
+            if workspace.workspace_hub:
+                _set_val(param["workspace_hub"], workspace.workspace_hub)
 
         resources_being_deployed[workspace.name] = (ArmConstants.WORKSPACE, None)
         return template, param, resources_being_deployed

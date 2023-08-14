@@ -7,6 +7,7 @@ import logging
 from pathlib import Path
 from typing import List, Optional
 
+from azure.ai.ml.constants._common import DefaultOpenEncoding
 from azure.ai.ml.constants._endpoint import LocalEndpointConstants
 
 from .dockerfile_instructions import Cmd, Copy, From, Run, Workdir
@@ -70,7 +71,8 @@ class DockerfileResolver(object):
     def __str__(self) -> str:
         """Override DockerfileResolver str() built-in func to return the Dockerfile contents as a string.
 
-        :return: str
+        :return: Dockerfile Contents
+        :rtype: str
         """
         return "" if len(self._instructions) == 0 else "\n".join([str(instr) for instr in self._instructions])
 
@@ -78,6 +80,9 @@ class DockerfileResolver(object):
         """Internal use only.
 
         Constructs the Dockerfile instructions based on properties.
+
+        :param install_debugpy: Whether to install debugpy. Defaults to False.
+        :type install_debugpy: bool, optional
         """
         self._instructions = []
         if self._docker_base_image:
@@ -142,10 +147,10 @@ class DockerfileResolver(object):
 
         :param directory_path: absolute path of local directory to write Dockerfile.
         :type directory_path: str
-        :param name: name of Dockerfile prefix
-        :type name: str
+        :param file_prefix: name of Dockerfile prefix
+        :type file_prefix: str
         """
         file_name = f"{file_prefix}.Dockerfile" if file_prefix else "Dockerfile"
         self._local_dockerfile_path = str(Path(directory_path, file_name).resolve())
-        with open(self._local_dockerfile_path, "w") as f:
+        with open(self._local_dockerfile_path, "w", encoding=DefaultOpenEncoding.WRITE) as f:
             f.write(f"{str(self)}\n")

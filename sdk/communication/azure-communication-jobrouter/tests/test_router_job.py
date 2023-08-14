@@ -32,7 +32,13 @@ from azure.communication.jobrouter import (
     StaticRouterRule,
     StaticWorkerSelectorAttachment,
     RouterJobStatus,
-    RouterJobStatusSelector, DistributionPolicy, RouterQueue, ClassificationPolicy, RouterJob, JobMatchingMode, JobMatchModeType, ScheduleAndSuspendMode
+    DistributionPolicy,
+    RouterQueue,
+    ClassificationPolicy,
+    RouterJob,
+    JobMatchingMode,
+    JobMatchModeType,
+    ScheduleAndSuspendMode
 )
 
 job_labels = {
@@ -338,7 +344,7 @@ class TestRouterJob(RouterRecordedTestCase):
         scheduled_time = datetime.datetime.utcnow() + datetime.timedelta(0, 30)
         scheduled_time_utc = recorded_variables.setdefault("scheduled_time_utc", _datetime_as_isostr(scheduled_time))
 
-        matching_mode = JobMatchingMode.initialize_schedule_and_suspend_mode(schedule_and_suspend_mode = ScheduleAndSuspendMode(
+        matching_mode = JobMatchingMode(schedule_and_suspend_mode = ScheduleAndSuspendMode(
                                             schedule_at = recorded_variables["scheduled_time_utc"]))
 
         job_identifier = "tst_create_sch_job"
@@ -991,7 +997,7 @@ class TestRouterJob(RouterRecordedTestCase):
 
         router_jobs = router_client.list_jobs(
             results_per_page = 2,
-            status = RouterJobStatusSelector.QUEUED,
+            status = RouterJobStatus.QUEUED,
             queue_id = self.get_job_queue_id(),
             channel_id = job_channel_ids[0]
         )
@@ -1033,7 +1039,7 @@ class TestRouterJob(RouterRecordedTestCase):
         scheduled_time = datetime.datetime.utcnow() + datetime.timedelta(0, 30)
         scheduled_time_utc = recorded_variables.setdefault("scheduled_time_utc", _datetime_as_isostr(scheduled_time))
 
-        matching_mode = JobMatchingMode.initialize_schedule_and_suspend_mode(
+        matching_mode = JobMatchingMode(
             schedule_and_suspend_mode = ScheduleAndSuspendMode(
                 schedule_at = recorded_variables["scheduled_time_utc"]))
 
@@ -1090,7 +1096,7 @@ class TestRouterJob(RouterRecordedTestCase):
 
         router_jobs = router_client.list_jobs(
             results_per_page = 2,
-            status = RouterJobStatusSelector.SCHEDULED,
+            status = RouterJobStatus.SCHEDULED,
             queue_id = self.get_job_queue_id(),
             channel_id = job_channel_ids[0],
             scheduled_before = recorded_variables["scheduled_time_utc"]

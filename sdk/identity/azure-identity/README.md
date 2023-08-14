@@ -214,6 +214,18 @@ from azure.identity import AzureAuthorityHosts
 DefaultAzureCredential(authority=AzureAuthorityHosts.AZURE_GOVERNMENT)
 ```
 
+If the authority for your cloud isn't listed in `AzureAuthorityHosts`, you can explicitly specify its URL:
+
+```python
+DefaultAzureCredential(authority="https://login.partner.microsoftonline.cn")
+```
+
+As an alternative to specifying the `authority` argument, you can also set the `AZURE_AUTHORITY_HOST` environment variable to the URL of your cloud's authority. This approach is useful when configuring multiple credentials to authenticate to the same cloud:
+
+```sh
+AZURE_AUTHORITY_HOST=https://login.partner.microsoftonline.cn
+```
+
 Not all credentials require this configuration. Credentials that authenticate through a development tool, such as `AzureCliCredential`, use that tool's configuration. Similarly, `VisualStudioCodeCredential` accepts an `authority` argument but defaults to the authority matching VS Code's "Azure: Cloud" setting.
 
 ## Credential classes

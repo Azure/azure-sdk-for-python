@@ -56,7 +56,7 @@ class DeleteTagsAsync(object):
                     repository_name, order_by=ArtifactTagOrder.LAST_UPDATED_ON_DESCENDING
                 ):
                     tag_count += 1
-                    if tag_count > 3:                        
+                    if tag_count > 3:
                         print(f"Deleting {repository_name}:{tag.name}")
                         await client.delete_tag(repository_name, tag.name)
 

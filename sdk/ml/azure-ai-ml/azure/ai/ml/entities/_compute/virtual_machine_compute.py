@@ -11,7 +11,7 @@ from azure.ai.ml._restclient.v2022_10_01_preview.models import (
     VirtualMachineSshCredentials,
 )
 from azure.ai.ml._schema.compute.virtual_machine_compute import VirtualMachineComputeSchema
-from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, TYPE
+from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, DefaultOpenEncoding, TYPE
 from azure.ai.ml.constants._compute import ComputeType
 from azure.ai.ml.entities._compute.compute import Compute
 from azure.ai.ml.entities._util import load_from_dict
@@ -87,8 +87,8 @@ class VirtualMachineCompute(Compute):
     def public_key_data(self) -> str:
         """Public key data.
 
-        return: Public key data.
-        rtype: str
+        :return: Public key data.
+        :rtype: str
         """
         return self._public_key_data
 
@@ -131,7 +131,7 @@ class VirtualMachineCompute(Compute):
     def _to_rest_object(self) -> ComputeResource:
         ssh_key_value = None
         if self.ssh_settings and self.ssh_settings.ssh_private_key_file:
-            ssh_key_value = Path(self.ssh_settings.ssh_private_key_file).read_text()
+            ssh_key_value = Path(self.ssh_settings.ssh_private_key_file).read_text(encoding=DefaultOpenEncoding.READ)
         credentials = VirtualMachineSshCredentials(
             username=self.ssh_settings.admin_username if self.ssh_settings else None,
             password=self.ssh_settings.admin_password if self.ssh_settings else None,

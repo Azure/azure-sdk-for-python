@@ -36,17 +36,22 @@ module_logger = logging.getLogger(__name__)
 
 
 def _get_sorted_filtered_logs(
-    logs_dict: dict, job_type: str, processed_logs: Optional[dict] = None, only_streamable=True
+    logs_iterable: Iterable[str],
+    job_type: str,
+    processed_logs: Optional[Dict[str, int]] = None,
+    only_streamable: bool = True,
 ) -> List[str]:
     """Filters log file names, sorts, and returns list starting with where we left off last iteration.
 
-    :param run_details:
-    :type run_details: dict
-    :param processed_logs: dictionary tracking the state of how many lines of each file have been written out
-    :type processed_logs: dict[str, int]
+    :param logs_iterable: An iterable of log paths.
+    :type logs_iterable: Iterable[str]
     :param job_type: the job type to filter log files
     :type job_type: str
-    :return:
+    :param processed_logs: dictionary tracking the state of how many lines of each file have been written out
+    :type processed_logs: dict[str, int]
+    :param only_streamable: Whether to only get streamable logs
+    :type only_streamable: bool
+    :return: List of logs to continue from
     :rtype: list[str]
     """
     processed_logs = processed_logs if processed_logs else {}
@@ -56,10 +61,11 @@ def _get_sorted_filtered_logs(
         if only_streamable
         else JobLogPattern.COMMON_RUNTIME_ALL_USER_LOG_PATTERN
     )
-    logs = [x for x in logs_dict if re.match(output_logs_pattern, x)]
+    logs = list(logs_iterable)
+    filtered_logs = [x for x in logs if re.match(output_logs_pattern, x)]
 
     # fall back to legacy log format
-    if logs is None or len(logs) == 0:
+    if filtered_logs is None or len(filtered_logs) == 0:
         job_type = job_type.lower()
         if job_type in JobType.COMMAND:
             output_logs_pattern = JobLogPattern.COMMAND_JOB_LOG_PATTERN
@@ -68,25 +74,25 @@ def _get_sorted_filtered_logs(
         elif job_type in JobType.SWEEP:
             output_logs_pattern = JobLogPattern.SWEEP_JOB_LOG_PATTERN
 
-    logs = [x for x in logs_dict if re.match(output_logs_pattern, x)]
-    logs.sort()
+    filtered_logs = [x for x in logs if re.match(output_logs_pattern, x)]
+    filtered_logs.sort()
     previously_printed_index = 0
-    for i, v in enumerate(logs):
+    for i, v in enumerate(filtered_logs):
         if processed_logs.get(v):
             previously_printed_index = i
         else:
             break
     # Slice inclusive from the last printed log (can be updated before printing new files)
-    return logs[previously_printed_index:]
+    return filtered_logs[previously_printed_index:]
 
 
-def _incremental_print(log, processed_logs, current_log_name, fileout) -> None:
+def _incremental_print(log: str, processed_logs: Dict[str, int], current_log_name: str, fileout) -> None:
     """Incremental print.
 
     :param log:
     :type log: str
     :param processed_logs: The record of how many lines have been written for each log file
-    :type log: dict[str, int]
+    :type processed_logs: dict[str, int]
     :param current_log_name: the file name being read out, used in header writing and accessing processed_logs
     :type current_log_name: str
     :param fileout:
@@ -350,8 +356,14 @@ def get_git_properties() -> Dict[str, str]:
             return None
         return str(value).strip() or None
 
-    def _run_git_cmd(args) -> Optional[str]:
-        """Return the output of running git with arguments, or None if it fails."""
+    def _run_git_cmd(args: Iterable[str]) -> Optional[str]:
+        """Runs git with the provided arguments
+
+        :param args: A iterable of arguments for a git command. Should not include leading "git"
+        :type args: Iterable[str]
+        :return: The output of running git with arguments, or None if it fails.
+        :rtype: Optional[str]
+        """
         try:
             with open(os.devnull, "wb") as devnull:
                 return subprocess.check_output(["git"] + list(args), stderr=devnull).decode()
@@ -418,8 +430,20 @@ def get_job_output_uris_from_dataplane(
 
     If no output names are given, the output paths for all outputs will be returned.
     URIs obtained from the service will be in the long-form azureml:// format.
+
     For example:
     azureml://subscriptions/<sub>/resource[gG]roups/<rg_name>/workspaces/<ws_name>/datastores/<ds_name>/paths/<ds_path>
+
+    :param job_name: The job name
+    :type job_name: str
+    :param run_operations: The RunOperations used to fetch run data for the job
+    :type run_operations: RunOperations
+    :param dataset_dataplane_operations: The DatasetDataplaneOperations used to fetch dataset uris
+    :type dataset_dataplane_operations: DatasetDataplaneOperations
+    :param model_dataplane_operations:  The ModelDataplaneOperations used to fetch dataset uris
+    :type model_dataplane_operations: ModelDataplaneOperations
+    :param output_names: The output name(s) to fetch. If not specified, retrieves all.
+    :type output_names: Optional[Union[Iterable[str] str]], optional
     :return: Dictionary mapping user-defined output name to output uri
     :rtype: Dict[str, str]
     """

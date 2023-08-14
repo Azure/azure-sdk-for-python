@@ -3,22 +3,20 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from azure.appconfiguration.provider import load, SettingSelector
-from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
+from azure.appconfiguration.provider import SettingSelector
+from devtools_testutils import recorded_by_proxy
 from preparers import app_config_decorator
+from testcase import AppConfigTestCase
 
 
-class TestAppConfigurationProvider(AzureRecordedTestCase):
-    def build_provider(
-        self, connection_string, trim_prefixes=[], selects={SettingSelector(key_filter="*", label_filter="\0")}
-    ):
-        return load(connection_string=connection_string, trim_prefixes=trim_prefixes, selects=selects)
-
+class TestAppConfigurationProvider(AppConfigTestCase):
     # method: provider_creation
     @recorded_by_proxy
     @app_config_decorator
-    def test_provider_creation(self, appconfiguration_connection_string):
-        client = self.build_provider(appconfiguration_connection_string)
+    def test_provider_creation(self, appconfiguration_connection_string, appconfiguration_keyvault_secret_url):
+        client = self.create_client(
+            appconfiguration_connection_string, keyvault_secret_url=appconfiguration_keyvault_secret_url
+        )
         assert client["message"] == "hi"
         assert client["my_json"]["key"] == "value"
         assert (
@@ -29,9 +27,13 @@ class TestAppConfigurationProvider(AzureRecordedTestCase):
     # method: provider_trim_prefixes
     @recorded_by_proxy
     @app_config_decorator
-    def test_provider_trim_prefixes(self, appconfiguration_connection_string):
+    def test_provider_trim_prefixes(self, appconfiguration_connection_string, appconfiguration_keyvault_secret_url):
         trimmed = {"test."}
-        client = self.build_provider(appconfiguration_connection_string, trim_prefixes=trimmed)
+        client = self.create_client(
+            appconfiguration_connection_string,
+            trim_prefixes=trimmed,
+            keyvault_secret_url=appconfiguration_keyvault_secret_url,
+        )
         assert client["message"] == "hi"
         assert client["my_json"]["key"] == "value"
         assert client["trimmed"] == "key"
@@ -44,9 +46,13 @@ class TestAppConfigurationProvider(AzureRecordedTestCase):
     # method: provider_selectors
     @recorded_by_proxy
     @app_config_decorator
-    def test_provider_selectors(self, appconfiguration_connection_string):
+    def test_provider_selectors(self, appconfiguration_connection_string, appconfiguration_keyvault_secret_url):
         selects = {SettingSelector(key_filter="message*", label_filter="dev")}
-        client = self.build_provider(appconfiguration_connection_string, selects=selects)
+        client = self.create_client(
+            appconfiguration_connection_string,
+            selects=selects,
+            keyvault_secret_url=appconfiguration_keyvault_secret_url,
+        )
         assert client["message"] == "test"
         assert "test.trimmed" not in client
         assert "FeatureManagementFeatureFlags" not in client

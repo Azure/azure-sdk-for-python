@@ -9,13 +9,10 @@ import logging
 import typing
 from collections import OrderedDict
 from inspect import Parameter, signature
-from typing import Callable, Union
+from typing import Any, Callable, Dict, Union
 
 from azure.ai.ml._utils._func_utils import get_outputs_and_locals
-from azure.ai.ml._utils.utils import (
-    is_valid_node_name,
-    parse_args_description_from_docstring,
-)
+from azure.ai.ml._utils.utils import is_valid_node_name, parse_args_description_from_docstring
 from azure.ai.ml.constants._component import ComponentSource, IOConstants
 from azure.ai.ml.constants._job.pipeline import COMPONENT_IO_KEYWORDS
 from azure.ai.ml.dsl._utils import _sanitize_python_variable_name
@@ -81,7 +78,11 @@ _definition_builder_stack = _PipelineComponentBuilderStack()
 
 
 def _is_inside_dsl_pipeline_func() -> bool:
-    """Returns true if is inside DSL pipeline func."""
+    """Checks whether executing within a dsl pipeline func
+
+    :return: True if is inside DSL pipeline func.
+    :rtype: bool
+    """
     return _definition_builder_stack.size() > 0
 
 
@@ -137,8 +138,12 @@ class PipelineComponentBuilder:
         self.source_path = source_path
 
     @property
-    def name(self):
-        """Name of pipeline builder, it's name will be same as the pipeline definition it builds."""
+    def name(self) -> str:
+        """Name of pipeline builder, it's name will be same as the pipeline definition it builds.
+
+        :return: Pipeline builder name
+        :rtype: str
+        """
         return self._name
 
     def add_node(self, node: Union[BaseNode, AutoMLJob]):
@@ -154,9 +159,11 @@ class PipelineComponentBuilder:
     ) -> PipelineComponent:
         """Build a pipeline component from current pipeline builder.
 
-        :param user_provided_kwargs: The kwargs user provided to dsl pipeline function. None if not provided.
-        :param non_pipeline_inputs_dict: The non-pipeline input provided key-value. None if not exist.
-        :param non_pipeline_inputs: List of non-pipeline input name. None if not exist.
+        :keyword user_provided_kwargs: The kwargs user provided to dsl pipeline function. None if not provided.
+        :keyword non_pipeline_inputs_dict: The non-pipeline input provided key-value. None if not exist.
+        :keyword non_pipeline_inputs: List of non-pipeline input name. None if not exist.
+        :return: The built PipelineComponent
+        :rtype: PipelineComponent
         """
         if user_provided_kwargs is None:
             user_provided_kwargs = {}
@@ -225,12 +232,14 @@ class PipelineComponentBuilder:
                 v["description"] = self._args_description[k]
         return inputs
 
-    def _build_pipeline_outputs(self, outputs: typing.Dict[str, NodeOutput]):
+    def _build_pipeline_outputs(self, outputs: typing.Dict[str, NodeOutput]) -> Dict[str, PipelineOutput]:
         """Validate if dsl.pipeline returns valid outputs and set output binding. Create PipelineOutput as pipeline's
         output definition based on node outputs from return.
 
         :param outputs: Outputs of pipeline
         :type outputs: Mapping[str, azure.ai.ml.Output]
+        :return: The mapping of output names to PipelineOutput
+        :rtype: Dict[str, PipelineOutput]
         """
         error_msg = (
             "The return type of dsl.pipeline decorated function should be a mapping from output name to "
@@ -248,28 +257,23 @@ class PipelineComponentBuilder:
             if value._meta is not None:
                 meta = value._meta
             else:
-                meta = Output(
-                    type=value.type,
-                    path=value.path,
-                    mode=value.mode,
-                    description=value.description,
-                    is_control=value.is_control,
-                )
+                meta = Output(type=value.type, path=value.path, mode=value.mode, description=value.description)
 
             # Hack: map internal output type to pipeline output type
-            def _map_internal_output_type(_meta):
-                """Map component output type to valid pipeline output type."""
+            def _map_internal_output_type(_meta: Output) -> str:
+                """Map component output type to valid pipeline output type.
+
+                :param _meta: The output
+                :type _meta: Output
+                :return: Output type
+                :rtype: str
+                """
                 if type(_meta).__name__ != "InternalOutput":
                     return _meta.type
                 return _meta.map_pipeline_output_type()
 
             # Note: Here we set PipelineOutput as Pipeline's output definition as we need output binding.
-            output_meta = Output(
-                type=_map_internal_output_type(meta),
-                description=meta.description,
-                mode=meta.mode,
-                is_control=meta.is_control,
-            )
+            output_meta = Output(type=_map_internal_output_type(meta), description=meta.description, mode=meta.mode)
             pipeline_output = PipelineOutput(
                 port_name=key,
                 data=None,
@@ -302,7 +306,7 @@ class PipelineComponentBuilder:
             group_defaults[key].insert_group_name_for_items(key)
         return group_defaults
 
-    def _update_nodes_variable_names(self, func_variables: dict):
+    def _update_nodes_variable_names(self, func_variables: dict) -> Dict[str, Union[BaseNode, AutoMLJob]]:
         """Update nodes list to ordered dict with variable name key and component object value.
 
         Variable naming priority:
@@ -325,6 +329,11 @@ class PipelineComponentBuilder:
                  e.g.
                  my_node = module_func()     # final node name is "my_node"
                  module_func_1()             # final node name is its component name
+
+        :param func_variables: The function variables
+        :type func_variables: dict
+        :return: Map of variable name to component object
+        :rtype: Dict[str, Union[BaseNode, AutoMLJob]]
         """
 
         def _get_name_or_component_name(node: Union[BaseNode, AutoMLJob]):
@@ -398,8 +407,12 @@ class PipelineComponentBuilder:
             self._validate_keyword_in_node_io(node)
         return result
 
-    def _update_inputs(self, pipeline_inputs):
-        """Update the pipeline inputs by the dict."""
+    def _update_inputs(self, pipeline_inputs: Dict[str, Union[PipelineInput, Input, NodeOutput, Any]]):
+        """Update the pipeline inputs by the dict.
+
+        :param pipeline_inputs: The pipeline inputs
+        :type pipeline_inputs: Dict[str, Union[PipelineInput, Input, NodeOutput, Any]]
+        """
         for input_name, value in pipeline_inputs.items():
             if input_name not in self.inputs:
                 if isinstance(value, PipelineInput):
@@ -415,8 +428,14 @@ class PipelineComponentBuilder:
                 self.inputs[input_name] = anno
 
     @classmethod
-    def _get_output_annotation(cls, func):
-        """Get the output annotation of the function, validate & refine it."""
+    def _get_output_annotation(cls, func: Callable) -> Dict[str, Dict]:
+        """Get the output annotation of the function, validate & refine it.
+
+        :param func: The function to retrieve output annotations from
+        :type func: Callable
+        :return: A dict of output annotations
+        :rtype: Dict[str, Dict]
+        """
         return_annotation = inspect.signature(func).return_annotation
 
         if is_group(return_annotation):
@@ -442,8 +461,14 @@ class PipelineComponentBuilder:
             output_annotations[key] = val._to_dict()
         return output_annotations
 
-    def _validate_inferred_outputs(self, output_meta_dict: dict, output_dict: dict):
-        """Validate inferred output dict against annotation."""
+    def _validate_inferred_outputs(self, output_meta_dict: dict, output_dict: Dict[str, PipelineOutput]):
+        """Validate inferred output dict against annotation.
+
+        :param output_meta_dict: The output meta dict
+        :type output_meta_dict: dict
+        :param output_dict: The output dict
+        :type output_dict: Dict[str, PipelineOutput]
+        """
         if not self.output_annotation:
             return
         error_prefix = "Unmatched outputs between actual pipeline output and output in annotation"

@@ -33,6 +33,8 @@ def _request_function(f: Callable[["HttpPipeline"], None]):
 
     :param Callable[[], None] f: A function whose name will be used as the http
                                  request method
+    :return: An HTTP request function
+    :rtype: Callable
     """
 
     # This is a hack to provide richer typing for the decorated function
@@ -42,14 +44,16 @@ def _request_function(f: Callable[["HttpPipeline"], None]):
 
     def _(_: Callable[Concatenate[str, P], Any] = HttpRequest):
         @wraps(f)
+        # pylint: disable-next=docstring-missing-param
         def decorated(self: "HttpPipeline", *args: P.args, **kwargs: P.kwargs) -> HttpResponse:
             """A function that sends an HTTP request and returns the response.
 
             Accepts the same parameters as azure.core.rest.HttpRequest, except for the method.
             All other kwargs are forwarded to azure.core.Pipeline.run
 
-            :param bool stream: Whether to stream the response, defaults to False
-            :return HttpResponse:
+            :keyword bool stream: Whether to stream the response, defaults to False
+            :return: The request response
+            :rtype: HttpResponse
             """
             request = HttpRequest(
                 f.__name__.upper(),
@@ -141,9 +145,9 @@ class HttpPipeline(Pipeline):
 
            Accepts the same parameters as __init__
 
-        Returns:
-            Self: new Pipeline object with combined config of current object
-                  and specified overrides
+        :return: new Pipeline object with combined config of current object
+            and specified overrides
+        :rtype: Self
         """
         cls = self.__class__
         return cls(config=self._config, transport=kwargs.pop("transport", self._transport), **kwargs)

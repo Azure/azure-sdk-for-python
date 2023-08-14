@@ -12,7 +12,6 @@ Please refer to the [troubleshooting guide][troubleshooting] if you have any iss
 - [Update existing tests](#update-existing-tests)
   - [Using resource preparers](#using-resource-preparers)
 - [Run tests](#run-tests)
-  - [Perform one-time setup](#perform-one-time-setup)
   - [Start the proxy server](#start-the-proxy-server)
   - [Record or play back tests](#record-or-play-back-tests)
   - [Register sanitizers](#register-sanitizers)
@@ -93,10 +92,6 @@ Resource preparers need a management client to function, so test classes that us
 [AzureMgmtRecordedTestCase][mgmt_recorded_test_case] instead of AzureRecordedTestCase.
 
 ## Run tests
-
-### Perform one-time setup
-
-The test proxy uses a self-signed certificate to communicate with HTTPS. Follow the general setup instructions [here][proxy_cert_docs] to trust this certificate locally.
 
 ### Start the proxy server
 
