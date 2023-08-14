@@ -606,7 +606,7 @@ function Validate-Python-DocMsPackages ($PackageInfo, $PackageInfos, $PackageSou
     if ($item.Version -eq 'IGNORE') { 
       continue
     }
-    # TODO : the == is probably right here?
+
     $result = ValidatePackage `
       -packageName $item.Name `
       -packageVersion "==$($item.Version)" `
