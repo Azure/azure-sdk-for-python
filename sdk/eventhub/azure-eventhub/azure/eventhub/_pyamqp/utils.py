@@ -75,8 +75,6 @@ def generate_sas_token(audience, policy, key, expiry=None):
     :param int expiry: abs expiry time
     :return: A sas token
     :rtype: str
-    :return: A sas token
-    :rtype: str
     """
     if not expiry:
         expiry = int(time.time()) + 3600  # Default to 1 hour.
