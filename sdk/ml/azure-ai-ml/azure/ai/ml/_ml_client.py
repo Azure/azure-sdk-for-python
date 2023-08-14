@@ -203,6 +203,8 @@ class MLClient:
         # whatever is received from the registry discovery service.
         workspace_location = None
         workspace_id = None
+        workspace_rg = resource_group_name
+        workspace_sub = subscription_id
         if registry_name:
             # get the workspace location here if workspace_reference is provided
             workspace_reference = kwargs.pop("workspace_reference", None)
@@ -397,6 +399,8 @@ class MLClient:
             self._operation_container,
             requests_pipeline=self._requests_pipeline,
             control_plane_client=self._service_client_04_2023_preview,
+            workspace_rg=workspace_rg,
+            workspace_sub=workspace_sub,
             **app_insights_handler_kwargs,
         )
         self._operation_container.add(AzureMLResourceType.MODEL, self._models)
