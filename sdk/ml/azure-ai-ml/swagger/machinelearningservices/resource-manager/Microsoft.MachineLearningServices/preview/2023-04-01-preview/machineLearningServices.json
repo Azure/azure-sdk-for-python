@@ -1205,6 +1205,48 @@
         }
       }
     },
+    "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/computes/{computeId}/updateDataMounts": {
+      "post": {
+          "tags": [
+              "MachineLearningComputes"
+          ],
+          "summary": "Update Data Mounts of a Machine Learning compute.",
+          "operationId": "Compute_UpdateDataMounts",
+          "parameters": [
+              {
+                  "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/SubscriptionIdParameter"
+              },
+              {
+                  "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ResourceGroupNameParameter"
+              },
+              {
+                  "$ref": "#/parameters/WorkspaceNameParameter"
+              },
+              {
+                  "$ref": "#/parameters/computeIdParameter"
+              },
+              {
+                  "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ApiVersionParameter"
+              }
+          ],
+          "responses": {
+              "200": {
+                  "description": "Success."
+              },
+              "default": {
+                  "description": "Error",
+                  "schema": {
+                    "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
+                  }
+              }
+          },
+          "x-ms-examples": {
+              "Update Data Mounts": {
+                  "$ref": "./examples/Compute/updateDataMounts.json"
+              }
+          }
+      }
+    },
     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/computes/{computeName}/start": {
       "post": {
         "tags": [
@@ -2274,6 +2316,14 @@
       "in": "path",
       "type": "string",
       "required": true,
+      "x-ms-parameter-location": "method"
+    },
+    "computeIdParameter": {
+      "name": "computeId",
+      "in": "path",
+      "description": "Name of the Azure Machine Learning compute.",
+      "required": true,
+      "type": "string",
       "x-ms-parameter-location": "method"
     },
     "AsyncOperationIdParameter": {
