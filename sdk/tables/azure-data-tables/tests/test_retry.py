@@ -37,6 +37,19 @@ class RetryRequestTransport(RequestsTransport):
         timeout_error = ReadTimeout("Read timed out", request=request)
         raise ServiceResponseError(timeout_error, error=timeout_error)
 
+class FailoverRetryTransport(RequestsTransport):
+    """Transport to attempt to raise on first request but allow requests to secondary location."""
+
+    def __init__(self, *args, **kwargs):
+        super(RetryRequestTransport, self).__init__(*args, **kwargs)
+        self.primary_hostname = kwargs.get('primary')
+        self.secondary_hostname = kwargs.get('secondary')
+
+    def send(self, request, **kwargs):
+        primary_request = kwargs.pop('primary_request', False)
+        if primary_request:
+            raise ServiceRequestError("Attempting to force failover")
+        return super().send(request, **kwargs)
 
 # --Test Class -----------------------------------------------------------------
 class TestStorageRetry(AzureRecordedTestCase, TableTestCase):
