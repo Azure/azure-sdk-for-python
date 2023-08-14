@@ -43,8 +43,8 @@ def collect_statsbeat_metrics(exporter) -> None:
     # Only start statsbeat if did not exist before
     if _STATSBEAT_METER_PROVIDER is None:
         with _STATSBEAT_LOCK:
-            statsbeat_exporter = _StatsBeatExporter(
-                connection_string=_get_stats_connection_string(exporter._endpoint),
+            statsbeat_exporter = _StatsBeatExporter.from_connection_string(
+                _get_stats_connection_string(exporter._endpoint),
                 disable_offline_storage=exporter._disable_offline_storage,
             )
             reader = PeriodicExportingMetricReader(

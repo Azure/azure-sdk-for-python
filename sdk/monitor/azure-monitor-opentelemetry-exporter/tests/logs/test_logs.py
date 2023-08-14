@@ -92,7 +92,7 @@ class TestAzureLogExporter(unittest.TestCase):
     def test_constructor(self):
         """Test the constructor."""
         exporter = AzureMonitorLogExporter(
-            connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab",
+            instrumentation_key="4321abcd-5678-4efa-8abc-1234567890ab",
         )
         self.assertEqual(
             exporter._instrumentation_key,

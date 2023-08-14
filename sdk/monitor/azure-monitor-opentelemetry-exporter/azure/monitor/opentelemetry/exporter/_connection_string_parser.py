@@ -28,9 +28,12 @@ class ConnectionStringParser:
 
     def __init__(
         self,
-        connection_string: str = None
+        connection_string: typing.Optional[str] = None,
+        *,
+        instrumentation_key: typing.Optional[str] = None,
+        **kwargs
     ) -> None:
-        self.instrumentation_key = None
+        self.instrumentation_key = instrumentation_key
         self.endpoint = ""
         self._connection_string = connection_string
         self._initialize()

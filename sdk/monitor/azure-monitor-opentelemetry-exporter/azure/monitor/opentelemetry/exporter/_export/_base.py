@@ -86,7 +86,10 @@ class BaseExporter:
          to `<tempfile.gettempdir()>/opentelemetry-python-<your-instrumentation-key>`.
         :rtype: None
         """
-        parsed_connection_string = ConnectionStringParser(kwargs.get('_conn_str'))
+        parsed_connection_string = ConnectionStringParser(
+            kwargs.get('_conn_str'),
+            **kwargs
+        )
 
         self._api_version = kwargs.get('api_version') or _SERVICE_API_LATEST
         self._credential = credential
