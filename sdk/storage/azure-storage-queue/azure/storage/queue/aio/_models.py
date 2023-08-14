@@ -6,7 +6,7 @@
 # pylint: disable=too-few-public-methods, too-many-instance-attributes
 # pylint: disable=super-init-not-called
 
-from typing import Any, AsyncIterator, Callable, Optional, Tuple
+from typing import Any, Callable, List, Optional, Tuple
 from azure.core.async_paging import AsyncPageIterator
 from azure.core.exceptions import HttpResponseError
 from .._shared.response_handlers import (
@@ -14,14 +14,6 @@ from .._shared.response_handlers import (
     return_context_and_deserialized)
 from .._models import QueueMessage, QueueProperties
 
-
-async def async_queue_msg_generator(messages: Any):
-    for q in messages:
-        yield QueueMessage._from_generated(q)  # pylint: disable=protected-access
-
-async def async_queue_items_generator(items: Any):
-    for q in items:
-        yield QueueProperties._from_generated(q)  # pylint: disable=protected-access
 
 class MessagesPaged(AsyncPageIterator):
     """An iterable of Queue Messages.
@@ -51,7 +43,7 @@ class MessagesPaged(AsyncPageIterator):
 
         super(MessagesPaged, self).__init__(
             self._get_next_cb,
-            self._extract_data_cb,
+            self._extract_data_cb, # type: ignore [arg-type]
         )
         self._command = command
         self.results_per_page = results_per_page
@@ -69,14 +61,13 @@ class MessagesPaged(AsyncPageIterator):
         except HttpResponseError as error:
             process_storage_error(error)
 
-    async def _extract_data_cb(self, messages: Any) -> Tuple[str, AsyncIterator[QueueMessage]]:
+    async def _extract_data_cb(self, messages: Any) -> Tuple[str, List[QueueMessage]]:
         # There is no concept of continuation token, so raising on my own condition
         if not messages:
             raise StopAsyncIteration("End of paging")
         if self._max_messages is not None:
             self._max_messages = self._max_messages - len(messages)
-        queue_msg_iterator = await async_queue_msg_generator(messages)  # pylint: disable=protected-access
-        return "TOKEN_IGNORED", queue_msg_iterator
+        return "TOKEN_IGNORED", [QueueMessage._from_generated(q) for q in messages]  # pylint: disable=protected-access
 
 
 class QueuePropertiesPaged(AsyncPageIterator):
@@ -113,7 +104,7 @@ class QueuePropertiesPaged(AsyncPageIterator):
     ) -> None:
         super(QueuePropertiesPaged, self).__init__(
             self._get_next_cb,
-            self._extract_data_cb,
+            self._extract_data_cb, # type: ignore [arg-type]
             continuation_token=continuation_token or ""
         )
         self._command = command
@@ -133,7 +124,7 @@ class QueuePropertiesPaged(AsyncPageIterator):
         except HttpResponseError as error:
             process_storage_error(error)
 
-    async def _extract_data_cb(self, get_next_return: Any) -> Tuple[str, AsyncIterator[Any]]:
+    async def _extract_data_cb(self, get_next_return: Any) -> Tuple[Optional[Any], List[QueueProperties]]:
         self.location_mode, self._response = get_next_return
         if self._response is not None:
             if hasattr(self._response, 'service_endpoint'):
@@ -145,7 +136,7 @@ class QueuePropertiesPaged(AsyncPageIterator):
             if hasattr(self._response, 'max_results'):
                 self.results_per_page = self._response.max_results
             if hasattr(self._response, 'queue_items'):
-                queue_items_iterator = await async_queue_items_generator(self._response.queue_items) # pylint: disable=protected-access, line-too-long
+                props_list = [QueueProperties._from_generated(q) for q in self._response.queue_items] # pylint: disable=protected-access
             if hasattr(self._response, 'next_marker'):
                 next_marker = self._response.next_marker
-        return next_marker, queue_items_iterator
+        return next_marker or None, props_list
