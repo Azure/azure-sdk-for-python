@@ -124,7 +124,7 @@ class TestAzureTraceExporter(unittest.TestCase):
             self.assertEqual(result, SpanExportResult.SUCCESS)
             self.assertEqual(storage_mock.call_count, 1)
 
-    @mock.patch("azure.monitor.opentelemetry.exporter.export.trace._exporter._logger")
+    @mock.patch("azure.monitor.opentelemetry.exporter._export.trace._exporter._logger")
     def test_export_exception(self, logger_mock):
         test_span = trace._Span(
             name="test",
@@ -1270,7 +1270,7 @@ class TestAzureTraceExporter(unittest.TestCase):
         self.assertEqual(envelope.data.base_data.message, "test event")
         self.assertEqual(envelope.data.base_type, "MessageData")
 
-    @mock.patch("azure.monitor.opentelemetry.exporter.export.trace._exporter.get_tracer_provider")
+    @mock.patch("azure.monitor.opentelemetry.exporter._export.trace._exporter.get_tracer_provider")
     def test_export_otel_resource_metric(self, mock_get_tracer_provider):
         del os.environ["APPLICATIONINSIGHTS_OPENTELEMETRY_RESOURCE_METRIC_DISABLED"]
         mock_tracer_provider = mock.Mock()

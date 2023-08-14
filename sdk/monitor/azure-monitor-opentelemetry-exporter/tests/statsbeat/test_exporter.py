@@ -61,7 +61,7 @@ class TestStatsbeatExporter(unittest.TestCase):
         shutil.rmtree(cls._exporter.storage._path, True)
 
     @mock.patch(
-        'azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.collect_statsbeat_metrics')
+        'azure.monitor.opentelemetry.exporter._statsbeat._statsbeat.collect_statsbeat_metrics')
     def test_init(self, collect_mock):
         exporter = _StatsBeatExporter(disable_offline_storage=True)
         self.assertFalse(exporter._should_collect_stats())
@@ -112,8 +112,8 @@ class TestStatsbeatExporter(unittest.TestCase):
 
     def test_transmit_reach_ingestion_code(self):
         _STATSBEAT_STATE["INITIAL_SUCCESS"] = False
-        with mock.patch("azure.monitor.opentelemetry.exporter.export._base._reached_ingestion_code") as m, \
-            mock.patch("azure.monitor.opentelemetry.exporter.export._base._is_retryable_code") as p:
+        with mock.patch("azure.monitor.opentelemetry.exporter._export._base._reached_ingestion_code") as m, \
+            mock.patch("azure.monitor.opentelemetry.exporter._export._base._is_retryable_code") as p:
             m.return_value = True
             p.return_value = True
             with mock.patch.object(AzureMonitorClient, 'track', throw(HttpResponseError)):
@@ -124,8 +124,8 @@ class TestStatsbeatExporter(unittest.TestCase):
     def test_transmit_not_reach_ingestion_code(self):
         _STATSBEAT_STATE["INITIAL_SUCCESS"] = False
         _STATSBEAT_STATE["INITIAL_FAILURE_COUNT"] = 1
-        with mock.patch("azure.monitor.opentelemetry.exporter.export._base._reached_ingestion_code") as m, \
-            mock.patch("azure.monitor.opentelemetry.exporter.export._base._is_retryable_code") as p:
+        with mock.patch("azure.monitor.opentelemetry.exporter._export._base._reached_ingestion_code") as m, \
+            mock.patch("azure.monitor.opentelemetry.exporter._export._base._is_retryable_code") as p:
             m.return_value = False
             p.return_value = False
             with mock.patch.object(AzureMonitorClient, 'track', throw(HttpResponseError)):
@@ -137,7 +137,7 @@ class TestStatsbeatExporter(unittest.TestCase):
     def test_transmit_not_reach_ingestion_exception(self):
         _STATSBEAT_STATE["INITIAL_SUCCESS"] = False
         _STATSBEAT_STATE["INITIAL_FAILURE_COUNT"] = 1
-        with mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.shutdown_statsbeat_metrics") as m:
+        with mock.patch("azure.monitor.opentelemetry.exporter._statsbeat._statsbeat.shutdown_statsbeat_metrics") as m:
             with mock.patch.object(AzureMonitorClient, 'track', throw(Exception)):
                 result = self._exporter._transmit(self._envelopes_to_export)
         self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
@@ -148,7 +148,7 @@ class TestStatsbeatExporter(unittest.TestCase):
     def test_transmit_not_reach_ingestion_exception_shutdown(self):
         _STATSBEAT_STATE["INITIAL_SUCCESS"] = False
         _STATSBEAT_STATE["INITIAL_FAILURE_COUNT"] = 2
-        with mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.shutdown_statsbeat_metrics") as m:
+        with mock.patch("azure.monitor.opentelemetry.exporter._statsbeat._statsbeat.shutdown_statsbeat_metrics") as m:
             with mock.patch.object(AzureMonitorClient, 'track', throw(Exception)):
                 result = self._exporter._transmit(self._envelopes_to_export)
         self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)

@@ -152,7 +152,7 @@ class TestStatsbeat(unittest.TestCase):
         )
 
 
-    @mock.patch('azure.monitor.opentelemetry.exporter.statsbeat._statsbeat._StatsbeatMetrics')
+    @mock.patch('azure.monitor.opentelemetry.exporter._statsbeat._statsbeat._StatsbeatMetrics')
     def test_collect_statsbeat_metrics_aad(
         self,
         mock_statsbeat_metrics,
@@ -176,7 +176,7 @@ class TestStatsbeat(unittest.TestCase):
         )
 
 
-    @mock.patch('azure.monitor.opentelemetry.exporter.statsbeat._statsbeat._StatsbeatMetrics')
+    @mock.patch('azure.monitor.opentelemetry.exporter._statsbeat._statsbeat._StatsbeatMetrics')
     def test_collect_statsbeat_metrics_no_aad(
         self,
         mock_statsbeat_metrics,

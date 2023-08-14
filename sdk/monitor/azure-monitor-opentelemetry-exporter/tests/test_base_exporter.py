@@ -136,7 +136,7 @@ class TestBaseExporter(unittest.TestCase):
         blob_mock.get.return_value = [envelope_mock]
         dict_patch.return_value = {"name":"test","time":"time"}
         exporter.storage.gets.return_value = [blob_mock]
-        with mock.patch("azure.monitor.opentelemetry.exporter.export._base._is_retryable_code"):
+        with mock.patch("azure.monitor.opentelemetry.exporter._export._base._is_retryable_code"):
             with mock.patch.object(AzureMonitorClient, 'track', throw(HttpResponseError)):
                 exporter._transmit_from_storage()
         exporter.storage.gets.assert_called_once()
@@ -163,14 +163,14 @@ class TestBaseExporter(unittest.TestCase):
         blob_mock.delete.assert_not_called()
 
     def test_transmit_http_error_retryable(self):
-        with mock.patch("azure.monitor.opentelemetry.exporter.export._base._is_retryable_code") as m:
+        with mock.patch("azure.monitor.opentelemetry.exporter._export._base._is_retryable_code") as m:
             m.return_value = True
             with mock.patch.object(AzureMonitorClient, 'track', throw(HttpResponseError)):
                 result = self._base._transmit(self._envelopes_to_export)
             self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
 
     def test_transmit_http_error_not_retryable(self):
-        with mock.patch("azure.monitor.opentelemetry.exporter.export._base._is_retryable_code") as m:
+        with mock.patch("azure.monitor.opentelemetry.exporter._export._base._is_retryable_code") as m:
             m.return_value = False
             with mock.patch.object(AzureMonitorClient, 'track', throw(HttpResponseError)):
                 result = self._base._transmit(self._envelopes_to_export)
@@ -230,7 +230,7 @@ class TestBaseExporter(unittest.TestCase):
         "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL": "false",
         }
     )
-    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.collect_statsbeat_metrics")
+    @mock.patch("azure.monitor.opentelemetry.exporter._statsbeat._statsbeat.collect_statsbeat_metrics")
     def test_transmit_request_error_statsbeat(self, stats_mock):
         exporter = BaseExporter(disable_offline_storage=True)
         with mock.patch.object(AzureMonitorClient, 'track', throw(ServiceRequestError, message="error")):
@@ -253,7 +253,7 @@ class TestBaseExporter(unittest.TestCase):
         "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL": "false",
         }
     )
-    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.collect_statsbeat_metrics")
+    @mock.patch("azure.monitor.opentelemetry.exporter._statsbeat._statsbeat.collect_statsbeat_metrics")
     def test_transmit_request_exception_statsbeat(self, stats_mock):
         exporter = BaseExporter(disable_offline_storage=True)
         with mock.patch.object(AzureMonitorClient, 'track', throw(Exception)):
@@ -281,7 +281,7 @@ class TestBaseExporter(unittest.TestCase):
         "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL": "false",
         }
     )
-    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.collect_statsbeat_metrics")
+    @mock.patch("azure.monitor.opentelemetry.exporter._statsbeat._statsbeat.collect_statsbeat_metrics")
     def test_statsbeat_200(self, stats_mock):
         exporter = BaseExporter(disable_offline_storage=True)
         with mock.patch.object(AzureMonitorClient, 'track') as post:
@@ -331,7 +331,7 @@ class TestBaseExporter(unittest.TestCase):
         "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL": "false",
         }
     )
-    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.collect_statsbeat_metrics")
+    @mock.patch("azure.monitor.opentelemetry.exporter._statsbeat._statsbeat.collect_statsbeat_metrics")
     def test_statsbeat_206_retry(self, stats_mock):
         exporter = BaseExporter(disable_offline_storage=True)
         exporter.storage = mock.Mock()
@@ -391,7 +391,7 @@ class TestBaseExporter(unittest.TestCase):
         "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL": "false",
         }
     )
-    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.collect_statsbeat_metrics")
+    @mock.patch("azure.monitor.opentelemetry.exporter._statsbeat._statsbeat.collect_statsbeat_metrics")
     def test_statsbeat_206_no_retry(self, stats_mock):
         exporter = BaseExporter(disable_offline_storage=True)
         exporter.storage = mock.Mock()
@@ -429,7 +429,7 @@ class TestBaseExporter(unittest.TestCase):
         "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL": "false",
         }
     )
-    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.collect_statsbeat_metrics")
+    @mock.patch("azure.monitor.opentelemetry.exporter._statsbeat._statsbeat.collect_statsbeat_metrics")
     def test_statsbeat_400(self, stats_mock):
         exporter = BaseExporter(disable_offline_storage=True)
         with mock.patch("requests.Session.request") as post:
@@ -454,7 +454,7 @@ class TestBaseExporter(unittest.TestCase):
         "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL": "false",
         }
     )
-    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.collect_statsbeat_metrics")
+    @mock.patch("azure.monitor.opentelemetry.exporter._statsbeat._statsbeat.collect_statsbeat_metrics")
     def test_statsbeat_402(self, stats_mock):
         exporter = BaseExporter(disable_offline_storage=True)
         with mock.patch("requests.Session.request") as post:
@@ -479,7 +479,7 @@ class TestBaseExporter(unittest.TestCase):
         "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL": "false",
         }
     )
-    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.collect_statsbeat_metrics")
+    @mock.patch("azure.monitor.opentelemetry.exporter._statsbeat._statsbeat.collect_statsbeat_metrics")
     def test_statsbeat_408(self, stats_mock):
         exporter = BaseExporter(disable_offline_storage=True)
         with mock.patch("requests.Session.request") as post:
@@ -504,7 +504,7 @@ class TestBaseExporter(unittest.TestCase):
         "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL": "false",
         }
     )
-    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.collect_statsbeat_metrics")
+    @mock.patch("azure.monitor.opentelemetry.exporter._statsbeat._statsbeat.collect_statsbeat_metrics")
     def test_statsbeat_429(self, stats_mock):
         exporter = BaseExporter(disable_offline_storage=True)
         with mock.patch("requests.Session.request") as post:
@@ -529,7 +529,7 @@ class TestBaseExporter(unittest.TestCase):
         "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL": "false",
         }
     )
-    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.collect_statsbeat_metrics")
+    @mock.patch("azure.monitor.opentelemetry.exporter._statsbeat._statsbeat.collect_statsbeat_metrics")
     def test_statsbeat_439(self, stats_mock):
         exporter = BaseExporter(disable_offline_storage=True)
         with mock.patch("requests.Session.request") as post:
@@ -554,7 +554,7 @@ class TestBaseExporter(unittest.TestCase):
         "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL": "false",
         }
     )
-    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.collect_statsbeat_metrics")
+    @mock.patch("azure.monitor.opentelemetry.exporter._statsbeat._statsbeat.collect_statsbeat_metrics")
     def test_statsbeat_500(self, stats_mock):
         exporter = BaseExporter(disable_offline_storage=True)
         with mock.patch("requests.Session.request") as post:
@@ -579,7 +579,7 @@ class TestBaseExporter(unittest.TestCase):
         "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL": "false",
         }
     )
-    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.collect_statsbeat_metrics")
+    @mock.patch("azure.monitor.opentelemetry.exporter._statsbeat._statsbeat.collect_statsbeat_metrics")
     def test_statsbeat_502(self, stats_mock):
         exporter = BaseExporter(disable_offline_storage=True)
         with mock.patch("requests.Session.request") as post:
@@ -626,7 +626,7 @@ class TestBaseExporter(unittest.TestCase):
         "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL": "false",
         }
     )
-    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.collect_statsbeat_metrics")
+    @mock.patch("azure.monitor.opentelemetry.exporter._statsbeat._statsbeat.collect_statsbeat_metrics")
     def test_statsbeat_504(self, stats_mock):
         exporter = BaseExporter(disable_offline_storage=True)
         with mock.patch("requests.Session.request") as post:
@@ -643,7 +643,7 @@ class TestBaseExporter(unittest.TestCase):
         status = self._base._transmit([])
         self.assertEqual(status, ExportResult.SUCCESS)
 
-    @mock.patch("azure.monitor.opentelemetry.exporter.export._base._get_auth_policy")
+    @mock.patch("azure.monitor.opentelemetry.exporter._export._base._get_auth_policy")
     def test_exporter_credential(self, mock_add_credential_policy):
         TEST_CREDENTIAL = "TEST_CREDENTIAL"
         base = BaseExporter(credential=TEST_CREDENTIAL, authentication_policy=TEST_AUTH_POLICY)

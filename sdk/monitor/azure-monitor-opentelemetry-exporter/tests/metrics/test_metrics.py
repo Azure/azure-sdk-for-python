@@ -144,7 +144,7 @@ class TestAzureMetricExporter(unittest.TestCase):
             self.assertEqual(result, MetricExportResult.SUCCESS)
             self.assertEqual(storage_mock.call_count, 1)
 
-    @mock.patch("azure.monitor.opentelemetry.exporter.export.metrics._exporter._logger")
+    @mock.patch("azure.monitor.opentelemetry.exporter._export.metrics._exporter._logger")
     def test_export_exception(self, logger_mock):
         exporter = self._exporter
         with mock.patch(

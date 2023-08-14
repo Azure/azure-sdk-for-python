@@ -138,7 +138,7 @@ class TestAzureLogExporter(unittest.TestCase):
             self.assertEqual(result, LogExportResult.SUCCESS)
             self.assertEqual(storage_mock.call_count, 1)
 
-    @mock.patch("azure.monitor.opentelemetry.exporter.export.logs._exporter._logger")
+    @mock.patch("azure.monitor.opentelemetry.exporter._export.logs._exporter._logger")
     def test_export_exception(self, logger_mock):
         exporter = self._exporter
         with mock.patch(

@@ -178,7 +178,7 @@ class BaseExporter:
         :param envelopes: The list of telemetry items to transmit.
         :type envelopes: list of ~azure.monitor.opentelemetry.exporter._generated.models.TelemetryItem
         :return: The result of the export.
-        :rtype: ~azure.monitor.opentelemetry.exporter.export._base._ExportResult
+        :rtype: ~azure.monitor.opentelemetry.exporter._export._base._ExportResult
         """
         if len(envelopes) > 0:
             result = ExportResult.SUCCESS
