@@ -385,6 +385,9 @@ class Environment(Asset, LocalizableMixin):
     def _localize(self, base_path: str):
         """Called on an asset got from service to clean up remote attributes like id, creation_context, etc. and update
         base_path.
+
+        :param base_path: The base path
+        :type base_path: str
         """
         if not getattr(self, "id", None):
             raise ValueError("Only remote asset can be localize but got a {} without id.".format(type(self)))
@@ -433,7 +436,8 @@ def _deserialize(
     :type input: Union[str, os.PathLike, Dict[str, str]]
     :param is_conda: If file is conda file, it will be returned as dictionary
     :type is_conda: bool
-    :return: Union[str, Dict]
+    :return: The deserialized data
+    :rtype: Union[str, Dict]
     """
 
     if input:
@@ -448,13 +452,15 @@ def _deserialize(
 
 def _resolve_path(
     base_path: Union[str, os.PathLike], input: Union[str, os.PathLike, Dict]
-):  # pylint: disable=redefined-builtin
+) -> Path:  # pylint: disable=redefined-builtin
     """Deserialize user input files for conda and docker.
 
     :param base_path: The base path for all files supplied by user.
     :type base_path: Union[str, os.PathLike]
     :param input: Input to be deserialized. Will be either dictionary of file contents or path to file.
     :type input: Union[str, os.PathLike, Dict[str, str]]
+    :return: The resolved path
+    :rtype: Path
     """
 
     path = Path(input)

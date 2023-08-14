@@ -424,6 +424,11 @@ class EnvironmentOperations(_ScopeDependentOperations):
 
         Latest is defined as the most recently created, not the most
         recently updated.
+
+        :param name: The asset name
+        :type name: str
+        :return: The latest version of the named environment
+        :rtype: Environment
         """
         result = _get_latest(
             name,
@@ -481,7 +486,8 @@ class EnvironmentOperations(_ScopeDependentOperations):
             return self.create_or_update(environment_ref)
 
     @contextmanager
-    def _set_registry_client(self, registry_name: str) -> None:
+    # pylint: disable-next=docstring-missing-return,docstring-missing-rtype
+    def _set_registry_client(self, registry_name: str) -> Iterable[None]:
         """Sets the registry client for the environment operations.
 
         :param registry_name: Name of the registry.

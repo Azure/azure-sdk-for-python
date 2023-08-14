@@ -44,7 +44,6 @@ from azure.ai.ml._restclient.v2022_10_01.models import (
 )
 
 from azure.ai.ml._restclient.v2023_04_01_preview.models import AmlToken as RestAmlToken
-from azure.ai.ml._restclient.v2023_04_01_preview.models import ConnectionAuthType
 from azure.ai.ml._restclient.v2023_04_01_preview.models import IdentityConfiguration as RestJobIdentityConfiguration
 from azure.ai.ml._restclient.v2023_04_01_preview.models import IdentityConfigurationType
 from azure.ai.ml._restclient.v2023_04_01_preview.models import ManagedIdentity as RestJobManagedIdentity
@@ -55,7 +54,7 @@ from azure.ai.ml._restclient.v2023_04_01_preview.models import (
 )
 from azure.ai.ml._restclient.v2023_06_01_preview.models import ConnectionAuthType
 from azure.ai.ml._restclient.v2023_06_01_preview.models import (
-    WorkspaceConnectionApiKey as WorkspaceConnectionApiKey,
+    WorkspaceConnectionApiKey as RestWorkspaceConnectionApiKey,
 )
 from azure.ai.ml._utils.utils import camel_to_snake, snake_to_pascal
 from azure.ai.ml.constants._common import CommonYamlFields, IdentityType
@@ -783,6 +782,7 @@ class AccessKeyConfiguration(RestTranslatableMixin, DictMixin):
             return NotImplemented
         return self.access_key_id == other.access_key_id and self.secret_access_key == other.secret_access_key
 
+
 @experimental
 class ApiKeyConfiguration(RestTranslatableMixin, DictMixin):
     """Api Key Credentials.
@@ -800,14 +800,14 @@ class ApiKeyConfiguration(RestTranslatableMixin, DictMixin):
         self.type = camel_to_snake(ConnectionAuthType.API_KEY)
         self.key = key
 
-    def _to_workspace_connection_rest_object(self) -> WorkspaceConnectionApiKey:
-        return WorkspaceConnectionApiKey(
+    def _to_workspace_connection_rest_object(self) -> RestWorkspaceConnectionApiKey:
+        return RestWorkspaceConnectionApiKey(
             key=self.key,
         )
 
     @classmethod
     def _from_workspace_connection_rest_object(
-        cls, obj: Optional[WorkspaceConnectionApiKey]
+        cls, obj: Optional[RestWorkspaceConnectionApiKey]
     ) -> "AccessKeyConfiguration":
         return cls(
             key=obj.key if obj is not None and obj.key else None,

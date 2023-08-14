@@ -639,11 +639,18 @@ class MLClient:
         )
 
     @classmethod
-    def _ml_client_cli(cls, credentials, subscription_id, **kwargs):
+    def _ml_client_cli(cls, credentials: TokenCredential, subscription_id: Optional[str], **kwargs) -> "MLClient":
         """This method provides a way to create MLClient object for cli to leverage cli context for authentication.
 
         With this we do not have to use AzureCliCredentials from azure-identity package (not meant for heavy usage). The
         credentials are passed by cli get_mgmt_service_client when it created a object of this class.
+
+        :param credentials: The authentication credentials
+        :type credentials: TokenCredential
+        :param subscription_id: The subscription ID
+        :type subscription_id: Optional[str]
+        :return: An MLClient
+        :rtype: ~azure.ai.ml.MLClient
         """
 
         ml_client = cls(credential=credentials, subscription_id=subscription_id, **kwargs)
@@ -857,6 +864,8 @@ class MLClient:
 
         :param workspace_name: AzureML workspace of the new MLClient.
         :type workspace_name: str
+        :return: An updated MLClient
+        :rtype: MLClient
         """
 
         return MLClient(

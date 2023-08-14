@@ -287,7 +287,7 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
 
         for conn in connection_list:
             print(conn)
-    
+
     def test_workspace_connections_create_update_and_delete_open_ai_conn(
         self,
         client: MLClient,
@@ -295,9 +295,7 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
     ) -> None:
         wps_connection_name = f"e2etest_wps_conn_{randstr('wps_connection_name')}"
 
-        wps_connection = load_workspace_connection(
-            source="./tests/test_configs/workspace_connection/open_ai.yaml"
-        )
+        wps_connection = load_workspace_connection(source="./tests/test_configs/workspace_connection/open_ai.yaml")
 
         wps_connection.name = wps_connection_name
 
@@ -319,7 +317,7 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
 
         for conn in connection_list:
             print(conn)
-    
+
     def test_workspace_connections_create_update_and_delete_cog_search_conn(
         self,
         client: MLClient,
@@ -327,9 +325,7 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
     ) -> None:
         wps_connection_name = f"e2etest_wps_conn_{randstr('wps_connection_name')}"
 
-        wps_connection = load_workspace_connection(
-            source="./tests/test_configs/workspace_connection/cog_search.yaml"
-        )
+        wps_connection = load_workspace_connection(source="./tests/test_configs/workspace_connection/cog_search.yaml")
 
         wps_connection.name = wps_connection_name
 
@@ -350,7 +346,7 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
 
         for conn in connection_list:
             print(conn)
-    
+
     def test_workspace_connections_create_update_and_delete_cog_service_conn(
         self,
         client: MLClient,
@@ -358,9 +354,7 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
     ) -> None:
         wps_connection_name = f"e2etest_wps_conn_{randstr('wps_connection_name')}"
 
-        wps_connection = load_workspace_connection(
-            source="./tests/test_configs/workspace_connection/cog_service.yaml"
-        )
+        wps_connection = load_workspace_connection(source="./tests/test_configs/workspace_connection/cog_service.yaml")
 
         wps_connection.name = wps_connection_name
 

@@ -7,22 +7,48 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-confidentialledger-certificate/1.0.0 Python/3.8.10 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.29)"
+        "User-Agent": "azsdk-python-confidentialledger-certificate/1.1.1 Python/3.10.12 (Linux-5.15.90.1-microsoft-standard-WSL2-x86_64-with-glibc2.35)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 16 Aug 2022 20:46:15 GMT",
+        "Date": "Tue, 01 Aug 2023 22:10:51 GMT",
         "Server": "Kestrel",
         "Transfer-Encoding": "chunked",
-        "x-ms-correlation-request-id": "76d07870-c2e5-4ccf-af96-5d0ba6170eb4",
-        "x-ms-image-digest": "sha256:9b8d3952372e585a3b21995d9be0c8702fb7ba2ef54ca65392b2562dd2adcc73",
-        "x-ms-image-tag": "1.0.02031.28-b60f6adbe3f21e46216336ba378cc34dd0ab86ca",
-        "x-ms-machineName": "identityservice-6f96b84df8-wbxmj"
+        "x-ms-correlation-request-id": "df9e9739-dbb0-44f2-b7ea-87c781a7cc72",
+        "x-ms-image-digest": "sha256:15c53e60c81a2669c3dc28ad3331502dc8a28edb229fd5bdf98d9c62ad310e39",
+        "x-ms-image-tag": "1.0.02396.1287-22f2c77d25c55d9afd559a5adcb1934218c80822",
+        "x-ms-machineName": "identityservice-7845b47bcb-8tcjd"
       },
       "ResponseBody": {
-        "ledgerTlsCertificate": "-----BEGIN CERTIFICATE-----\nMIIBeTCCASCgAwIBAgIQcTrTRLjb9eOoGTXSvOEgxjAKBggqhkjOPQQDAjAWMRQw\nEgYDVQQDDAtDQ0YgTmV0d29yazAeFw0yMjA2MjcxNjA3MjNaFw0yMjA5MjUxNjA3\nMjJaMBYxFDASBgNVBAMMC0NDRiBOZXR3b3JrMFkwEwYHKoZIzj0CAQYIKoZIzj0D\nAQcDQgAEyn3oh7/D\u002Bm/yuzdWNSEh3ZOupuUiO6U7MIcwiM6RBZ3nsWQHGeVyT0Ai\n\u002B7cYDtPGo/8VRio\u002BBrknl7VALE3q9aNQME4wDAYDVR0TBAUwAwEB/zAdBgNVHQ4E\nFgQUh1gNHgpIlTONmFbFX7HeG1rcT6gwHwYDVR0jBBgwFoAUh1gNHgpIlTONmFbF\nX7HeG1rcT6gwCgYIKoZIzj0EAwIDRwAwRAIgdd7rQszgGJ\u002BjtjuiECigiFxoAvDk\nOPPBwTvMsE8TzsYCIDgYQ1mGHyZ52NXgoxPfqVVFTive8JIsjeQuczMZFq\u002B9\n-----END CERTIFICATE-----\n",
+        "ledgerTlsCertificate": "-----BEGIN CERTIFICATE-----\nMIIBfzCCASagAwIBAgIQTJJlUzjGVMYxXqhglEgojDAKBggqhkjOPQQDAjAWMRQw\nEgYDVQQDDAtDQ0YgTmV0d29yazAeFw0yMzA3MjgxMzIyMzNaFw0yMzEwMjYxMzIy\nMzJaMBYxFDASBgNVBAMMC0NDRiBOZXR3b3JrMFkwEwYHKoZIzj0CAQYIKoZIzj0D\nAQcDQgAE/xa9a76UojbYLpURWRyySR3MpsgB05bIZq7hL/tmifljOf6e7q144BEK\nogQ17A6kLpnFSHDXCcBB5o8EVM9TO6NWMFQwEgYDVR0TAQH/BAgwBgEB/wIBADAd\nBgNVHQ4EFgQUjJMex\u002BSJUGao1sWAl0fyJPe89J4wHwYDVR0jBBgwFoAUjJMex\u002BSJ\nUGao1sWAl0fyJPe89J4wCgYIKoZIzj0EAwIDRwAwRAIgXXjZFMQMeosZTRN93aYv\nqmlL3j0cXoY3bq9foKo\u002B0TICIHSZC9y\u002Big410aJHOjM4rk71PUDWhvIsYw/uSPJn\nYVJ4\n-----END CERTIFICATE-----\n",
+        "ledgerId": "fake"
+      }
+    },
+    {
+      "RequestUri": "https://identity.confidential-ledger.core.azure.com/ledgerIdentity/fake?api-version=2022-05-13",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-confidentialledger-certificate/1.1.1 Python/3.10.12 (Linux-5.15.90.1-microsoft-standard-WSL2-x86_64-with-glibc2.35)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Tue, 01 Aug 2023 22:10:52 GMT",
+        "Server": "Kestrel",
+        "Transfer-Encoding": "chunked",
+        "x-ms-correlation-request-id": "7e879191-2419-4a2c-970d-61e6743577a0",
+        "x-ms-image-digest": "sha256:15c53e60c81a2669c3dc28ad3331502dc8a28edb229fd5bdf98d9c62ad310e39",
+        "x-ms-image-tag": "1.0.02396.1287-22f2c77d25c55d9afd559a5adcb1934218c80822",
+        "x-ms-machineName": "identityservice-7845b47bcb-8tcjd"
+      },
+      "ResponseBody": {
+        "ledgerTlsCertificate": "-----BEGIN CERTIFICATE-----\nMIIBfzCCASagAwIBAgIQTJJlUzjGVMYxXqhglEgojDAKBggqhkjOPQQDAjAWMRQw\nEgYDVQQDDAtDQ0YgTmV0d29yazAeFw0yMzA3MjgxMzIyMzNaFw0yMzEwMjYxMzIy\nMzJaMBYxFDASBgNVBAMMC0NDRiBOZXR3b3JrMFkwEwYHKoZIzj0CAQYIKoZIzj0D\nAQcDQgAE/xa9a76UojbYLpURWRyySR3MpsgB05bIZq7hL/tmifljOf6e7q144BEK\nogQ17A6kLpnFSHDXCcBB5o8EVM9TO6NWMFQwEgYDVR0TAQH/BAgwBgEB/wIBADAd\nBgNVHQ4EFgQUjJMex\u002BSJUGao1sWAl0fyJPe89J4wHwYDVR0jBBgwFoAUjJMex\u002BSJ\nUGao1sWAl0fyJPe89J4wCgYIKoZIzj0EAwIDRwAwRAIgXXjZFMQMeosZTRN93aYv\nqmlL3j0cXoY3bq9foKo\u002B0TICIHSZC9y\u002Big410aJHOjM4rk71PUDWhvIsYw/uSPJn\nYVJ4\n-----END CERTIFICATE-----\n",
         "ledgerId": "fake"
       }
     }

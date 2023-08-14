@@ -58,7 +58,7 @@ class Output(_InputOutputBase):
             :caption: Creating a CommandJob with a folder output.
     """
 
-    _IO_KEYS = ["name", "version", "path", "type", "mode", "description", "is_control", "early_available"]
+    _IO_KEYS = ["name", "version", "path", "type", "mode", "description", "early_available"]
 
     @overload
     def __init__(self, type: Literal["uri_folder"] = "uri_folder", path=None, mode=None, description=None) -> None:
@@ -116,8 +116,6 @@ class Output(_InputOutputBase):
         self.description = description
         self.path = path
         self.mode = mode
-        # use this field to determine the Output is control or not, currently hide in kwargs
-        self.is_control = kwargs.pop("is_control", None)
         # use this field to mark Output for early node orchestrate, currently hide in kwargs
         self.early_available = kwargs.pop("early_available", None)
         self._intellectual_property = None
@@ -129,15 +127,19 @@ class Output(_InputOutputBase):
                 else IntellectualProperty(**intellectual_property)
             )
         self._assert_name_and_version()
-        # normalize properties like ["is_control"]
+        # normalize properties
         self._normalize_self_properties()
 
     def _get_hint(self, new_line_style=False):
         comment_str = self.description.replace('"', '\\"') if self.description else self.type
         return '"""%s"""' % comment_str if comment_str and new_line_style else comment_str
 
-    def _to_dict(self):
-        """Convert the Output object to a dict."""
+    def _to_dict(self) -> Dict:
+        """Convert the Output object to a dict.
+
+        :return: The dictionary representation of Output
+        :rtype: Dict
+        """
         keys = self._IO_KEYS
         result = {key: getattr(self, key) for key in keys}
         return _remove_empty_values(result)
@@ -156,8 +158,6 @@ class Output(_InputOutputBase):
 
     def _normalize_self_properties(self):
         # parse value from string to its original type. eg: "false" -> False
-        if self.is_control:
-            self.is_control = self._simple_parse(getattr(self, "is_control", "false"), _type="boolean")
         if self.early_available:
             self.early_available = self._simple_parse(getattr(self, "early_available", "false"), _type="boolean")
 

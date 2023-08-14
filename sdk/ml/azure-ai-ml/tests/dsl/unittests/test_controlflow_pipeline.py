@@ -630,8 +630,8 @@ class TestParallelForPipelineUT(TestControlFlowPipelineUT):
             ({"type": "custom_model"}, {"job_output_type": "mltable"}, {"type": "mltable"}, True),
             ({"type": "path"}, {"job_output_type": "mltable"}, {"type": "mltable"}, True),
             ({"type": "number"}, {}, {"type": "string"}, False),
-            ({"type": "string", "is_control": True}, {}, {"type": "string", "is_control": True}, False),
-            ({"type": "boolean", "is_control": True}, {}, {"type": "string", "is_control": True}, False),
+            ({"type": "string"}, {}, {"type": "string"}, False),
+            ({"type": "boolean"}, {}, {"type": "string"}, False),
             ({"type": "integer"}, {}, {"type": "string"}, False),
         ],
     )

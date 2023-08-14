@@ -6,7 +6,6 @@ from os import PathLike
 from pathlib import Path
 from typing import Dict, Union
 
-from azure.core.exceptions import HttpResponseError
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
 from azure.ai.ml._artifacts._artifact_utilities import (
@@ -45,6 +44,7 @@ from azure.ai.ml.exceptions import (
     ValidationException,
 )
 from azure.ai.ml.operations._datastore_operations import DatastoreOperations
+from azure.core.exceptions import HttpResponseError
 
 # pylint: disable=protected-access
 

@@ -160,7 +160,11 @@ class CommandComponent(Component, ParameterizedCommand, AdditionalIncludesMixin)
         self.additional_includes = additional_includes or []
 
     def _to_ordered_dict_for_yaml_dump(self) -> Dict:
-        """Dump the component content into a sorted yaml string."""
+        """Dump the component content into a sorted yaml string.
+
+        :return: The ordered dict
+        :rtype: Dict
+        """
 
         obj = super()._to_ordered_dict_for_yaml_dump()
         # dict dumped base on schema will transfer code to an absolute path, while we want to keep its original value
@@ -181,7 +185,7 @@ class CommandComponent(Component, ParameterizedCommand, AdditionalIncludesMixin)
     def instance_count(self, value: int) -> None:
         """Sets the number of instances or nodes to be used by the compute target.
 
-        :param value: The number of instances or nodes to be used by the compute target. Defaults to 1.
+        :param value: The number of instances of nodes to be used by the compute target. Defaults to 1.
         :type value: int
         """
         if not value:
@@ -201,7 +205,6 @@ class CommandComponent(Component, ParameterizedCommand, AdditionalIncludesMixin)
         }
 
     def _to_dict(self) -> Dict:
-        """Dump the command component content into a dictionary."""
         return convert_ordered_dict_to_dict({**self._other_parameter, **super(CommandComponent, self)._to_dict()})
 
     @classmethod
@@ -251,10 +254,10 @@ class CommandComponent(Component, ParameterizedCommand, AdditionalIncludesMixin)
     def _validate_early_available_output(self) -> MutableValidationResult:
         validation_result = self._create_empty_validation_result()
         for name, output in self.outputs.items():
-            if output.early_available is True and output._is_control_or_primitive_type is not True:
+            if output.early_available is True and output._is_primitive_type is not True:
                 msg = (
-                    f"Early available output {name!r} requires is_control as True or output is primitive type, "
-                    f"got {output._is_control_or_primitive_type!r}."
+                    f"Early available output {name!r} requires output is primitive type, "
+                    f"got {output._is_primitive_type!r}."
                 )
                 validation_result.append_error(message=msg, yaml_path=f"outputs.{name}")
         return validation_result
