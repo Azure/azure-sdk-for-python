@@ -82,7 +82,7 @@ setup(
     python_requires=">=3.7",
     install_requires=[
         "azure-core<2.0.0,>=1.23.0",
-        "fixedint==0.1.6",
+        "fixedint",
         "msrest>=0.6.10",
         "opentelemetry-api~=1.19.0",
         "opentelemetry-sdk~=1.19.0",
@@ -99,7 +99,7 @@ setup(
             "azure_monitor_opentelemetry_exporter = azure.monitor.opentelemetry.exporter:AzureMonitorMetricExporter"
         ],
         "opentelemetry_traces_sampler": [
-            "azure_monitor_opentelemetry_sampler = azure.monitor.opentelemetry.exporter.export.trace._sampling:azure_monitor_opentelemetry_sampler_factory"
+            "azure_monitor_opentelemetry_sampler = azure.monitor.opentelemetry.exporter._export.trace._sampling:azure_monitor_opentelemetry_sampler_factory"
         ]
     }
 )
