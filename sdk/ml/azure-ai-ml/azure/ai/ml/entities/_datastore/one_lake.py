@@ -24,6 +24,14 @@ from azure.ai.ml.entities._util import load_from_dict
 
 
 class OneLakeArtifact(RestTranslatableMixin, DictMixin, ABC):
+    """OneLake artifact (data source) backing the OneLake workspace.
+
+    :param artifact_name: OneLake artifact name/GUID. ex) 01234567-abcd-1234-5678-012345678901
+    :type artifact_name: str
+    :param artifact_type: OneLake artifact type. Only LakeHouse artifacts are currently supported.
+    :type artifact_type: str
+    """
+
     def __init__(self, artifact_name: str, artifact_type: Optional[str] = None):
         super().__init__()
         self.artifact_name = artifact_name
@@ -31,6 +39,12 @@ class OneLakeArtifact(RestTranslatableMixin, DictMixin, ABC):
 
 
 class LakeHouseArtifact(OneLakeArtifact):
+    """LakeHouse artifact type for OneLake.
+
+    :param artifact_name: OneLake LakeHouse artifact name/GUID. ex) 01234567-abcd-1234-5678-012345678901
+    :type artifact_name: str
+    """
+
     def __init__(self, artifact_name: str):
         super(LakeHouseArtifact, self).__init__(artifact_name=artifact_name, artifact_type="lake_house")
 
