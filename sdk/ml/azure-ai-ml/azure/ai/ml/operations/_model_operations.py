@@ -582,6 +582,11 @@ class ModelOperations(_ScopeDependentOperations):
         """Returns the latest version of the asset with the given name.
 
         Latest is defined as the most recently created, not the most recently updated.
+
+        :param name: The model name
+        :type name: str
+        :return: The latest version of the named model
+        :rtype: Model
         """
         result = _get_latest(
             name,
@@ -593,7 +598,8 @@ class ModelOperations(_ScopeDependentOperations):
         return Model._from_rest_object(result)
 
     @contextmanager
-    def _set_registry_client(self, registry_name: str) -> None:
+    # pylint: disable-next=docstring-missing-return,docstring-missing-rtype
+    def _set_registry_client(self, registry_name: str) -> Iterable[None]:
         """Sets the registry client for the model operations.
 
         :param registry_name: Name of the registry.

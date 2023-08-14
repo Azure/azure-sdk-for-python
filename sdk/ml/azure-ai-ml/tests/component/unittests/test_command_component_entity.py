@@ -493,14 +493,13 @@ class TestCommandComponentEntity:
             "is_deterministic": True,
             "name": "sample_command_component_basic",
             "outputs": {
-                "component_out_boolean": {"description": "A boolean", "type": "boolean", "is_control": True},
-                "component_out_integer": {"description": "A integer", "type": "integer", "is_control": True},
+                "component_out_boolean": {"description": "A boolean", "type": "boolean"},
+                "component_out_integer": {"description": "A integer", "type": "integer"},
                 "component_out_number": {"description": "A ranged number", "type": "number"},
                 "component_out_string": {"description": "A string", "type": "string"},
                 "component_out_early_available_string": {
                     "description": "A early available string",
                     "type": "string",
-                    "is_control": True,
                     "early_available": True,
                 },
             },
