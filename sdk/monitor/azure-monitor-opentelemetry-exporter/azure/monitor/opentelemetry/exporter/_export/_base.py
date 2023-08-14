@@ -5,7 +5,7 @@ import os
 import tempfile
 import time
 from enum import Enum
-from typing import List, Any
+from typing import List, Any, Optional, TYPE_CHECKING, Self
 from urllib.parse import urlparse
 
 from azure.core.exceptions import HttpResponseError, ServiceRequestError
@@ -16,6 +16,9 @@ from azure.core.pipeline.policies import (
     RedirectPolicy,
     RequestIdPolicy,
 )
+if TYPE_CHECKING:
+    from azure.core.credentials import TokenCredential
+
 from azure.monitor.opentelemetry.exporter._generated import AzureMonitorClient
 from azure.monitor.opentelemetry.exporter._generated._configuration import AzureMonitorClientConfiguration
 from azure.monitor.opentelemetry.exporter._generated.models import TelemetryItem
@@ -62,21 +65,32 @@ class ExportResult(Enum):
 class BaseExporter:
     """Azure Monitor base exporter for OpenTelemetry."""
 
-    def __init__(self, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        *,
+        credential: Optional["TokenCredential"] = None,
+        disable_offline_storage: bool = False,
+        storage_directory: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """Azure Monitor base exporter for OpenTelemetry.
 
         :keyword str api_version: The service API version used. Defaults to latest.
-        :keyword ManagedIdentityCredential/ClientSecretCredential credential: Token credential, such as ManagedIdentityCredential or ClientSecretCredential, used for Azure Active Directory (AAD) authentication. Defaults to None.
-        :keyword bool disable_offline_storage: Determines whether to disable storing failed telemetry records for retry. Defaults to `False`.
-        :keyword str storage_directory: Storage path in which to store retry files. Defaults to `<tempfile.gettempdir()>/opentelemetry-python-<your-instrumentation-key>`.
+        :keyword credential: Token credential, such as ManagedIdentityCredential or ClientSecretCredential,
+         used for Azure Active Directory (AAD) authentication. Defaults to None.
+        :paramtype credential: ~azure.core.credentials.TokenCredential
+        :keyword bool disable_offline_storage: Determines whether to disable storing failed telemetry records
+         for retry. Defaults to `False`.
+        :keyword str storage_directory: Storage path in which to store retry files. Defaults
+         to `<tempfile.gettempdir()>/opentelemetry-python-<your-instrumentation-key>`.
         :rtype: None
         """
-        parsed_connection_string = ConnectionStringParser(kwargs.get('connection_string'))
+        parsed_connection_string = ConnectionStringParser(kwargs.get('_conn_str'))
 
         self._api_version = kwargs.get('api_version') or _SERVICE_API_LATEST
-        self._credential = kwargs.get('credential')
+        self._credential = credential
         self._consecutive_redirects = 0  # To prevent circular redirects
-        self._disable_offline_storage = kwargs.get('disable_offline_storage', False)
+        self._disable_offline_storage = disable_offline_storage
         self._endpoint = parsed_connection_string.endpoint
         self._instrumentation_key = parsed_connection_string.instrumentation_key
         self._storage_maintenance_period = kwargs.get('storage_maintenance_period', 60)  # Maintenance interval in seconds.
@@ -86,7 +100,7 @@ class BaseExporter:
         default_storage_directory = os.path.join(
             tempfile.gettempdir(), _AZURE_TEMPDIR_PREFIX, _TEMPDIR_PREFIX + temp_suffix
         )
-        self._storage_directory = kwargs.get('storage_directory', default_storage_directory)  # Storage path in which to store retry files.
+        self._storage_directory = storage_directory or default_storage_directory  # Storage path in which to store retry files.
         self._storage_retention_period = kwargs.get('storage_retention_period', 48 * 60 * 60)  # Retention period in seconds (default 48 hrs)
         self._timeout = kwargs.get('timeout', 10.0)  # networking timeout in seconds
 
@@ -127,6 +141,7 @@ class BaseExporter:
             # Import here to avoid circular dependencies
             from azure.monitor.opentelemetry.exporter.statsbeat._statsbeat import collect_statsbeat_metrics
             collect_statsbeat_metrics(self)
+
 
     def _transmit_from_storage(self) -> None:
         for blob in self.storage.gets():

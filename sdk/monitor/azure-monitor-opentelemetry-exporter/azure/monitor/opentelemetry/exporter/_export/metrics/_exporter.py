@@ -2,7 +2,7 @@
 # Licensed under the MIT License.
 import logging
 
-from typing import Mapping, Optional, Any
+from typing import Mapping, Optional, Any, TYPE_CHECKING
 
 from opentelemetry.util.types import AttributeValue
 from opentelemetry.sdk.metrics import (
@@ -41,6 +41,10 @@ from azure.monitor.opentelemetry.exporter._export._base import (
     ExportResult,
 )
 
+if TYPE_CHECKING:
+    from azure.core.credentials import TokenCredential
+
+
 _logger = logging.getLogger(__name__)
 
 __all__ = ["AzureMonitorMetricExporter"]
@@ -59,12 +63,62 @@ APPLICATION_INSIGHTS_METRIC_TEMPORALITIES = {
 class AzureMonitorMetricExporter(BaseExporter, MetricExporter):
     """Azure Monitor Metric exporter for OpenTelemetry."""
 
-    def __init__(self, **kwargs: Any) -> None:
-        BaseExporter.__init__(self, **kwargs)
+    def __init__(
+        self,
+        *,
+        credential: Optional["TokenCredential"] = None,
+        disable_offline_storage: bool = False,
+        storage_directory: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        BaseExporter.__init__(
+            self,
+            credential=credential,
+            disable_offline_storage=disable_offline_storage,
+            storage_directory=storage_directory,
+            **kwargs
+        )
         MetricExporter.__init__(
             self,
             preferred_temporality=APPLICATION_INSIGHTS_METRIC_TEMPORALITIES,
             preferred_aggregation=kwargs.get("preferred_aggregation"),
+        )
+
+    @classmethod
+    def from_connection_string(
+        cls,
+        conn_str: str,
+        *,
+        credential: Optional["TokenCredential"] = None,
+        disable_offline_storage: bool = False,
+        storage_directory: Optional[str] = None,
+        **kwargs
+    ) -> "AzureMonitorMetricExporter":
+        """
+        Create an AzureMonitorMetricExporter from a connection string.
+
+        This is the recommended way of instantation if a connection string is passed in explicitly.
+        If a user wants to use a connection string provided by environment variable, the constructor
+        of the exporter can be called directly.
+
+        :param str conn_str: The connection string to be used for authentication.
+        :keyword str api_version: The service API version used. Defaults to latest.
+        :keyword credential: Token credential, such as ManagedIdentityCredential or ClientSecretCredential,
+         used for Azure Active Directory (AAD) authentication. Defaults to None.
+        :paramtype credential: ~azure.core.credentials.TokenCredential
+        :keyword bool disable_offline_storage: Determines whether to disable storing failed telemetry
+         records for retry. Defaults to `False`.
+        :keyword str storage_directory: Storage path in which to store retry files. Defaults
+         to `<tempfile.gettempdir()>/opentelemetry-python-<your-instrumentation-key>`.
+        :return: An instance of AzureMonitorMetricExporter
+        :rtype ~azure.monitor.opentelemetry.exporter.AzureMonitorMetricExporter
+        """
+        return cls(
+            _conn_str=conn_str,
+            credential=credential,
+            disable_offline_storage=disable_offline_storage,
+            storage_directory=storage_directory,
+            **kwargs
         )
 
     # pylint: disable=R1702
@@ -142,24 +196,6 @@ class AzureMonitorMetricExporter(BaseExporter, MetricExporter):
         if envelope is not None:
             envelope.instrumentation_key = self._instrumentation_key
         return envelope
-
-    @classmethod
-    def from_connection_string(
-        cls, conn_str: str, **kwargs: Any
-    ) -> "AzureMonitorMetricExporter":
-        """
-        Create an AzureMonitorMetricExporter from a connection string.
-
-        This is the recommended way of instantation if a connection string is passed in explicitly.
-        If a user wants to use a connection string provided by environment variable, the constructor
-        of the exporter can be called directly.
-
-        :param str conn_str: The connection string to be used for authentication.
-        :keyword str api_version: The service API version used. Defaults to latest.
-        :return: An instance of ~AzureMonitorMetricExporter
-        :rtype ~azure.monitor.opentelemetry.exporter.AzureMonitorMetricExporter
-        """
-        return cls(connection_string=conn_str, **kwargs)
 
 
 # pylint: disable=protected-access

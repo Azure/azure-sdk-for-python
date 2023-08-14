@@ -4,7 +4,7 @@ from os import environ
 import json
 import logging
 from time import time_ns
-from typing import Optional, Sequence, Any
+from typing import Optional, Sequence, Any, TYPE_CHECKING
 from urllib.parse import urlparse
 
 from opentelemetry.util.types import Attributes
@@ -43,6 +43,9 @@ from azure.monitor.opentelemetry.exporter._export._base import (
     ExportResult,
 )
 
+if TYPE_CHECKING:
+    from azure.core.credentials import TokenCredential
+
 _logger = logging.getLogger(__name__)
 
 __all__ = ["AzureMonitorTraceExporter"]
@@ -70,7 +73,43 @@ _STANDARD_AZURE_MONITOR_ATTRIBUTES = [
 class AzureMonitorTraceExporter(BaseExporter, SpanExporter):
     """Azure Monitor Trace exporter for OpenTelemetry."""
 
-    def export(self, spans: Sequence[ReadableSpan], **kwargs: Any) -> SpanExportResult: # pylint: disable=unused-argument
+    @classmethod
+    def from_connection_string(
+        cls,
+        conn_str: str,
+        *,
+        credential: Optional["TokenCredential"] = None,
+        disable_offline_storage: bool = False,
+        storage_directory: Optional[str] = None,
+        **kwargs
+    ) -> "AzureMonitorTraceExporter":
+        """Create an AzureMonitorTraceExporter from a connection string.
+
+        This is the recommended way of instantation if a connection string is passed in explicitly.
+        If a user wants to use a connection string provided by environment variable, the constructor
+        of the exporter can be called directly.
+
+        :param str conn_str: The connection string to be used for authentication.
+        :keyword str api_version: The service API version used. Defaults to latest.
+        :keyword credential: Token credential, such as ManagedIdentityCredential or ClientSecretCredential,
+         used for Azure Active Directory (AAD) authentication. Defaults to None.
+        :paramtype credential: ~azure.core.credentials.TokenCredential
+        :keyword bool disable_offline_storage: Determines whether to disable storing failed telemetry
+         records for retry. Defaults to `False`.
+        :keyword str storage_directory: Storage path in which to store retry files. Defaults
+         to `<tempfile.gettempdir()>/opentelemetry-python-<your-instrumentation-key>`.
+        :return: An instance of AzureMonitorTraceExporter
+        :rtype: ~azure.monitor.opentelemetry.exporter.AzureMonitorTraceExporter
+        """
+        return cls(
+            _conn_str=conn_str,
+            credential=credential,
+            disable_offline_storage=disable_offline_storage,
+            storage_directory=storage_directory,
+            **kwargs
+        )
+
+    def export(self, spans: Sequence[ReadableSpan]) -> SpanExportResult:
         """Export span data.
 
         :param spans: Open Telemetry Spans to export.
@@ -125,7 +164,6 @@ class AzureMonitorTraceExporter(BaseExporter, SpanExporter):
         )
 
         envelope.data = MonitorBase(base_data=data, base_type="MetricData")
-
         return envelope
 
     def _span_to_envelope(self, span: ReadableSpan) -> TelemetryItem:
@@ -147,20 +185,6 @@ class AzureMonitorTraceExporter(BaseExporter, SpanExporter):
         disabled = environ.get(_APPLICATIONINSIGHTS_OPENTELEMETRY_RESOURCE_METRIC_DISABLED)
         return disabled is None or disabled.lower() != "true"
 
-    @classmethod
-    def from_connection_string(cls, conn_str: str, **kwargs: Any) -> "AzureMonitorTraceExporter":
-        """Create an AzureMonitorTraceExporter from a connection string.
-
-        This is the recommended way of instantation if a connection string is passed in explicitly.
-        If a user wants to use a connection string provided by environment variable, the constructor
-        of the exporter can be called directly.
-
-        :param str conn_str: The connection string to be used for authentication.
-        :keyword str api_version: The service API version used. Defaults to latest.
-        :returns an instance of ~AzureMonitorTraceExporter
-        :rtype: ~azure.monitor.opentelemetry.exporter.AzureMonitorTraceExporter
-        """
-        return cls(connection_string=conn_str, **kwargs)
 
 # pylint: disable=too-many-statements
 # pylint: disable=too-many-branches

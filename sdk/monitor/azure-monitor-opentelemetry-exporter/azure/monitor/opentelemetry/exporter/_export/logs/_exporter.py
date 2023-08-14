@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 import logging
-from typing import Sequence, Any
+from typing import Optional, Sequence, Any, TYPE_CHECKING
 
 from opentelemetry._logs.severity import SeverityNumber
 from opentelemetry.semconv.trace import SpanAttributes
@@ -25,6 +25,9 @@ from azure.monitor.opentelemetry.exporter._export._base import (
     ExportResult,
 )
 
+if TYPE_CHECKING:
+    from azure.core.credentials import TokenCredential
+
 _logger = logging.getLogger(__name__)
 
 _DEFAULT_SPAN_ID = 0
@@ -35,6 +38,43 @@ __all__ = ["AzureMonitorLogExporter"]
 
 class AzureMonitorLogExporter(BaseExporter, LogExporter):
     """Azure Monitor Log exporter for OpenTelemetry."""
+
+    @classmethod
+    def from_connection_string(
+        cls,
+        conn_str: str,
+        *,
+        credential: Optional["TokenCredential"] = None,
+        disable_offline_storage: bool = False,
+        storage_directory: Optional[str] = None,
+        **kwargs
+    ) -> "AzureMonitorLogExporter":
+        """
+        Create an AzureMonitorLogExporter from a connection string.
+
+        This is the recommended way of instantation if a connection string is passed in explicitly.
+        If a user wants to use a connection string provided by environment variable, the constructor
+        of the exporter can be called directly.
+
+        :param str conn_str: The connection string to be used for authentication.
+        :keyword str api_version: The service API version used. Defaults to latest.
+        :keyword credential: Token credential, such as ManagedIdentityCredential or ClientSecretCredential,
+         used for Azure Active Directory (AAD) authentication. Defaults to None.
+        :paramtype credential: ~azure.core.credentials.TokenCredential
+        :keyword bool disable_offline_storage: Determines whether to disable storing failed telemetry
+         records for retry. Defaults to `False`.
+        :keyword str storage_directory: Storage path in which to store retry files. Defaults
+         to `<tempfile.gettempdir()>/opentelemetry-python-<your-instrumentation-key>`.
+        :return: An instance of AzureMonitorLogExporter
+        :rtype ~azure.monitor.opentelemetry.exporter.AzureMonitorLogExporter
+        """
+        return cls(
+            _conn_str=conn_str,
+            credential=credential,
+            disable_offline_storage=disable_offline_storage,
+            storage_directory=storage_directory,
+            **kwargs
+        )
 
     def export(
         self, batch: Sequence[LogData], **kwargs: Any  # pylint: disable=unused-argument
@@ -68,24 +108,6 @@ class AzureMonitorLogExporter(BaseExporter, LogExporter):
         envelope = _convert_log_to_envelope(log_data)
         envelope.instrumentation_key = self._instrumentation_key
         return envelope
-
-    @classmethod
-    def from_connection_string(
-        cls, conn_str: str, **kwargs: Any
-    ) -> "AzureMonitorLogExporter":
-        """
-        Create an AzureMonitorLogExporter from a connection string.
-
-        This is the recommended way of instantation if a connection string is passed in explicitly.
-        If a user wants to use a connection string provided by environment variable, the constructor
-        of the exporter can be called directly.
-
-        :param str conn_str: The connection string to be used for authentication.
-        :keyword str api_version: The service API version used. Defaults to latest.
-        :returns an instance of ~AzureMonitorLogExporter
-        :rtype ~azure.monitor.opentelemetry.exporter.AzureMonitorLogExporter
-        """
-        return cls(connection_string=conn_str, **kwargs)
 
 
 # pylint: disable=protected-access
