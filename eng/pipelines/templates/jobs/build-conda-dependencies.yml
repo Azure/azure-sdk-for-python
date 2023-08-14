@@ -32,7 +32,7 @@ jobs:
         ${{ replace(convertToJson(parameters.CondaArtifacts), '"', '\"') }}
         '@
 
-        sdk_build_conda -c "$argument" ${{ parameters.Arguments }}
+        sdk_build_conda -c "$argument"
       displayName: Assemble Conda Packages
 
     - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
