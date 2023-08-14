@@ -12,6 +12,7 @@ from azure.core.exceptions import (
     ResourceExistsError,
     AzureError,
     ServiceResponseError,
+    ServiceRequestError
 )
 from azure.core.pipeline.policies import RetryMode
 from azure.core.pipeline.transport import RequestsTransport
@@ -41,7 +42,7 @@ class FailoverRetryTransport(RequestsTransport):
     """Transport to attempt to raise on first request but allow requests to secondary location."""
 
     def __init__(self, *args, **kwargs):
-        super(RetryRequestTransport, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.primary_hostname = kwargs.get('primary')
         self.secondary_hostname = kwargs.get('secondary')
 
