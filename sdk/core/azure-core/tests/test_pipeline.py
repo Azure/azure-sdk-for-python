@@ -208,7 +208,14 @@ def test_format_url_braces_with_dot():
     base_url = "https://bing.com/{aaa.bbb}"
     client = PipelineClientBase(base_url)
     request = client._request("GET", base_url, None, None, None, None, None)
-    print(request)
+    assert request
+
+
+def test_format_url_single_brace():
+    base_url = "https://bing.com/{aaa.bbb"
+    client = PipelineClientBase(base_url)
+    request = client._request("GET", base_url, None, None, None, None, None)
+    assert request
 
 
 def test_format_incorrect_endpoint():
