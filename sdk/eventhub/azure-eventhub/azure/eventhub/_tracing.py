@@ -76,7 +76,13 @@ def is_tracing_enabled():
 
 @contextmanager
 def send_context_manager(client: Optional[ClientBase], links: Optional[List[Link]] = None) -> Iterator[None]:
-    """Tracing for message sending."""
+    """Tracing for message sending.
+
+    :param ~azure.eventhub._client_base.ClientBase or None client: The client that is sending the message.
+    :param list[~azure.core.tracing.Link] or None links: A list of links to add to the span.
+    :return: A context manager that will start and end the span.
+    :rtype: iterator[None]
+    """
     span_impl_type: Optional[Type[AbstractSpan]] = settings.tracing_implementation()
     if span_impl_type is not None:
         links = links or []
@@ -91,7 +97,14 @@ def send_context_manager(client: Optional[ClientBase], links: Optional[List[Link
 def receive_context_manager(
     client: Optional[ClientBase], links: Optional[List[Link]] = None, start_time: Optional[int] = None
 )  -> Iterator[None]:
-    """Tracing for message receiving."""
+    """Tracing for message receiving.
+    
+    :param ~azure.eventhub._client_base.ClientBase or None client: The client that is receiving the message.
+    :param list[~azure.core.tracing.Link] or None links: A list of links to add to the span.
+    :param int or None start_time: The time the receive operation started.
+    :return: A context manager that will start and end the span.
+    :rtype: iterator[None]
+    """
     span_impl_type: Optional[Type[AbstractSpan]] = settings.tracing_implementation()
     if span_impl_type is not None:
         links = links or []
@@ -108,7 +121,14 @@ def receive_context_manager(
 def process_context_manager(
     client: Optional[ClientBase], links: Optional[List[Link]] = None, is_batch: bool = False
 ) -> Iterator[None]:
-    """Tracing for message processing."""
+    """Tracing for message processing.
+    
+    :param ~azure.eventhub._client_base.ClientBase or None client: The client that is processing the message.
+    :param list[~azure.core.tracing.Link] or None links: A list of links to add to the span.
+    :param bool is_batch: Whether the processing is done in a batch.
+    :return: A context manager that will start and end the span.
+    :rtype: iterator[None]
+    """
     span_impl_type: Optional[Type[AbstractSpan]] = settings.tracing_implementation()
     if span_impl_type is not None:
         context = None
