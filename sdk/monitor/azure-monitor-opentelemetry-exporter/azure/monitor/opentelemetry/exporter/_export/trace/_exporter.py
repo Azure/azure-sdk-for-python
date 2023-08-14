@@ -4,7 +4,7 @@ from os import environ
 import json
 import logging
 from time import time_ns
-from typing import Optional, Sequence, Any, TYPE_CHECKING
+from typing import Optional, Sequence, TYPE_CHECKING
 from urllib.parse import urlparse
 
 from opentelemetry.util.types import Attributes

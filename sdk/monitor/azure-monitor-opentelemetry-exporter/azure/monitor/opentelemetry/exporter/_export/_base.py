@@ -5,7 +5,7 @@ import os
 import tempfile
 import time
 from enum import Enum
-from typing import List, Any, Optional, TYPE_CHECKING, Self
+from typing import List, Any, Optional, TYPE_CHECKING
 from urllib.parse import urlparse
 
 from azure.core.exceptions import HttpResponseError, ServiceRequestError
@@ -16,8 +16,6 @@ from azure.core.pipeline.policies import (
     RedirectPolicy,
     RequestIdPolicy,
 )
-if TYPE_CHECKING:
-    from azure.core.credentials import TokenCredential
 
 from azure.monitor.opentelemetry.exporter._generated import AzureMonitorClient
 from azure.monitor.opentelemetry.exporter._generated._configuration import AzureMonitorClientConfiguration
@@ -36,7 +34,7 @@ from azure.monitor.opentelemetry.exporter._constants import (
 )
 from azure.monitor.opentelemetry.exporter._connection_string_parser import ConnectionStringParser
 from azure.monitor.opentelemetry.exporter._storage import LocalFileStorage
-from azure.monitor.opentelemetry.exporter.statsbeat._state import (
+from azure.monitor.opentelemetry.exporter._statsbeat._state import (
     _REQUESTS_MAP_LOCK,
     _REQUESTS_MAP,
     get_statsbeat_initial_success,
@@ -45,6 +43,9 @@ from azure.monitor.opentelemetry.exporter.statsbeat._state import (
     is_statsbeat_enabled,
     set_statsbeat_initial_success,
 )
+
+if TYPE_CHECKING:
+    from azure.core.credentials import TokenCredential
 
 logger = logging.getLogger(__name__)
 
@@ -139,7 +140,7 @@ class BaseExporter:
         # statsbeat initialization
         if self._should_collect_stats():
             # Import here to avoid circular dependencies
-            from azure.monitor.opentelemetry.exporter.statsbeat._statsbeat import collect_statsbeat_metrics
+            from azure.monitor.opentelemetry.exporter._statsbeat._statsbeat import collect_statsbeat_metrics
             collect_statsbeat_metrics(self)
 
 
@@ -308,7 +309,7 @@ class BaseExporter:
                         # has been reached during attempting statsbeat initialization
                         if increment_and_check_statsbeat_failure_count():
                             # Import here to avoid circular dependencies
-                            from azure.monitor.opentelemetry.exporter.statsbeat._statsbeat import shutdown_statsbeat_metrics
+                            from azure.monitor.opentelemetry.exporter._statsbeat._statsbeat import shutdown_statsbeat_metrics
                             shutdown_statsbeat_metrics()
                             # pylint: disable=lost-exception
                             return ExportResult.FAILED_NOT_RETRYABLE
