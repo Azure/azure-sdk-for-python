@@ -305,7 +305,7 @@ class AMQPClient(
 
         :param connection: An existing Connection that may be shared between
          multiple clients.
-        :type connection: ~pyamqp._connection.Connection
+        :type connection: ~pyamqp.Connection
         """
         # pylint: disable=protected-access
         if self._session:
@@ -884,7 +884,6 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
         Additionally if the client is retrieving messages for a batch
         or iterator, the message will be added to an internal queue.
 
-        :param NamedTuple frame: Received frame.
         :param message: Received message.
         :type message: ~pyamqp.message.Message
         :param frame: Received frame.

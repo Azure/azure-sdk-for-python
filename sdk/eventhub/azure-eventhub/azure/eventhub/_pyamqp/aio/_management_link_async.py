@@ -193,7 +193,7 @@ class ManagementLink(object):  # pylint:disable=too-many-instance-attributes
         """Execute a request and wait on a response.
 
         :param message: The message to send in the management request.
-        :type message: ~pyamqp.message.Message
+        :type message: ~uamqp.message.Message
         :param on_execute_operation_complete: Callback to be called when the operation is complete.
          The following value will be passed to the callback: operation_id, operation_result, status_code,
          status_description, raw_message and error.

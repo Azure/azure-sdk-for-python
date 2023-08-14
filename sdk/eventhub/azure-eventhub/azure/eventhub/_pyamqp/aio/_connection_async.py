@@ -257,7 +257,6 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
         :rtype: Tuple[int, Optional[Tuple[int, NamedTuple]]]
         :returns: A tuple with the incoming channel number, and the frame in the form or a tuple of performative
          descriptor and field values.
-        :rtype: tuple[int, tuple[int, NamedTuple]] or None
         """
         timeout: Optional[Union[int, float]] = None
         if wait is False:
@@ -284,6 +283,7 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
         :param int channel: The outgoing channel number.
         :param NamedTuple frame: The outgoing frame.
         :param int timeout: An optional timeout value to wait until the socket is ready to send the frame.
+        :rtype: None
         """
         try:
             raise self._error
@@ -489,9 +489,6 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
     async def _incoming_close(self, channel, frame):
         # type: (int, Tuple[Any, ...]) -> None
         """Process incoming Open frame to finish the connection negotiation.
-
-        :param int channel: The incoming channel number.
-        :param tuple frame: The incoming Close frame.
 
         The incoming frame format is::
 

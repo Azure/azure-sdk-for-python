@@ -79,7 +79,7 @@ def set_cloexec(fd, cloexec):  # noqa # pylint: disable=inconsistent-return-stat
         return
     try:
         FD_CLOEXEC = fcntl.FD_CLOEXEC
-    except AttributeError as exc:
+    except AttributeError:
         raise NotImplementedError(
             "close-on-exec flag not supported on this platform",
         ) from None
@@ -734,7 +734,7 @@ class WebSocketTransport(_AbstractTransport):
                 WebSocketTimeoutException,
                 WebSocketConnectionClosedException
             )
-        except ImportError as exc:
+        except ImportError:
             raise ImportError(
                 "Please install websocket-client library to use sync websocket transport."
             ) from None

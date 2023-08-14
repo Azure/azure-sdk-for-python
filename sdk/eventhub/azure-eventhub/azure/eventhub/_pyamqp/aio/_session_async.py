@@ -110,7 +110,7 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
         """Get the next available outgoing handle number within the max handle limit.
 
         :raises ValueError: If maximum handle has been reached.
-        :return: The next available outgoing handle number.
+        :returns: The next available outgoing handle number.
         :rtype: int
         """
         if len(self._output_handles) >= self.handle_max:

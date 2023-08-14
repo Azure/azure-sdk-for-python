@@ -353,7 +353,6 @@ class AMQPClientAsync(AMQPClientSync):
 
         :return: Whether the connection is still open and ready for work.
         :rtype: bool
-        :returns: Whether the connection is still open and ready to be used for further work.
         :raises: TimeoutError if CBS authentication timeout reached.
         """
 
@@ -732,7 +731,6 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
 
         :return: Whether the client is ready to start receiving messages.
         :rtype: bool
-        :returns: True if ready, False otherwise.
         """
         # pylint: disable=protected-access
         if not self._link:
