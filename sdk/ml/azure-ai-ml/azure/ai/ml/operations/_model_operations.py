@@ -81,8 +81,12 @@ class ModelOperations(_ScopeDependentOperations):
     :type operation_scope: ~azure.ai.ml._scope_dependent_operations.OperationScope
     :param operation_config: Common configuration for operations classes of an MLClient object.
     :type operation_config: ~azure.ai.ml._scope_dependent_operations.OperationConfig
-    :param service_client: Service client to allow end users to operate on Azure Machine Learning Workspace resources (ServiceClient042023Preview or ServiceClient102021Dataplane).
-    :type service_client: typing.Union[~azure.ai.ml._restclient.v2023_04_01_preview._azure_machine_learning_workspaces.AzureMachineLearningWorkspaces, ~azure.ai.ml._restclient.v2021_10_01_dataplanepreview._azure_machine_learning_workspaces.AzureMachineLearningWorkspaces]
+    :param service_client: Service client to allow end users to operate on Azure Machine Learning Workspace
+        resources (ServiceClient042023Preview or ServiceClient102021Dataplane).
+    :type service_client: typing.Union[
+        ~azure.ai.ml._restclient.v2023_04_01_preview._azure_machine_learning_workspaces.AzureMachineLearningWorkspaces,
+        ~azure.ai.ml._restclient.v2021_10_01_dataplanepreview._azure_machine_learning_workspaces.
+        AzureMachineLearningWorkspaces]
     :param datastore_operations: Represents a client for performing operations on Datastores.
     :type datastore_operations: ~azure.ai.ml.operations._datastore_operations.DatastoreOperations
     :param all_operations: All operations classes of an MLClient object.
@@ -128,6 +132,7 @@ class ModelOperations(_ScopeDependentOperations):
         :rtype: ~azure.ai.ml.entities.Model
 
         .. admonition:: Example:
+
             .. literalinclude:: ../../../../samples/ml_samples_misc.py
                 :start-after: [START model_operations_create_or_update]
                 :end-before: [END model_operations_create_or_update]
@@ -294,6 +299,7 @@ class ModelOperations(_ScopeDependentOperations):
         :rtype: ~azure.ai.ml.entities.Model
 
         .. admonition:: Example:
+
             .. literalinclude:: ../../../../samples/ml_samples_misc.py
                 :start-after: [START model_operations_get]
                 :end-before: [END model_operations_get]
@@ -336,11 +342,13 @@ class ModelOperations(_ScopeDependentOperations):
         :type name: str
         :param version: Version of the model.
         :type version: str
-        :param download_path: Local path as download destination, defaults to current working directory of the current user. Contents will be overwritten.
+        :param download_path: Local path as download destination, defaults to current working directory of the current
+            user. Contents will be overwritten.
         :type download_path: Union[PathLike, str]
         :raises ResourceNotFoundError: if can't find a model matching provided name.
 
         .. admonition:: Example:
+
             .. literalinclude:: ../../../../samples/ml_samples_misc.py
                 :start-after: [START model_operations_download]
                 :end-before: [END model_operations_download]
@@ -417,6 +425,7 @@ class ModelOperations(_ScopeDependentOperations):
         :type label: str
 
         .. admonition:: Example:
+
             .. literalinclude:: ../../../../samples/ml_samples_misc.py
                 :start-after: [START model_operations_archive]
                 :end-before: [END model_operations_archive]
@@ -448,6 +457,7 @@ class ModelOperations(_ScopeDependentOperations):
         :type label: str
 
         .. admonition:: Example:
+
             .. literalinclude:: ../../../../samples/ml_samples_misc.py
                 :start-after: [START model_operations_restore]
                 :end-before: [END model_operations_restore]
@@ -486,6 +496,7 @@ class ModelOperations(_ScopeDependentOperations):
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.ml.entities.Model]
 
         .. admonition:: Example:
+
             .. literalinclude:: ../../../../samples/ml_samples_misc.py
                 :start-after: [START model_operations_list]
                 :end-before: [END model_operations_list]
@@ -547,6 +558,7 @@ class ModelOperations(_ScopeDependentOperations):
         :rtype: ~azure.ai.ml.entities.Model
 
         .. admonition:: Example:
+
             .. literalinclude:: ../../../../samples/ml_samples_misc.py
                 :start-after: [START model_operations_share]
                 :end-before: [END model_operations_share]
@@ -643,6 +655,7 @@ class ModelOperations(_ScopeDependentOperations):
         :rtype: ~azure.ai.ml.entities.Environment
 
         .. admonition:: Example:
+
             .. literalinclude:: ../../../../samples/ml_samples_misc.py
                 :start-after: [START model_operations_package]
                 :end-before: [END model_operations_package]
