@@ -10,11 +10,6 @@ import re
 from pathlib import Path
 from typing import TYPE_CHECKING, Dict, Optional
 
-from azure.core.credentials import TokenCredential
-from azure.core.exceptions import HttpResponseError
-from azure.core.paging import ItemPaged
-from azure.core.polling import LROPoller
-from azure.core.tracing.decorator import distributed_trace
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
 from azure.ai.ml._artifacts._artifact_utilities import _upload_and_generate_remote_uri
@@ -57,6 +52,11 @@ from azure.ai.ml.constants._endpoint import EndpointInvokeFields, EndpointYamlFi
 from azure.ai.ml.entities import BatchEndpoint, BatchJob
 from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, MlException, ValidationErrorType, ValidationException
+from azure.core.credentials import TokenCredential
+from azure.core.exceptions import HttpResponseError
+from azure.core.paging import ItemPaged
+from azure.core.polling import LROPoller
+from azure.core.tracing.decorator import distributed_trace
 
 from ._operation_orchestrator import OperationOrchestrator
 
@@ -77,8 +77,10 @@ class BatchEndpointOperations(_ScopeDependentOperations):
     :type operation_scope: ~azure.ai.ml._scope_dependent_operations.OperationScope
     :param operation_config: Common configuration for operations classes of an MLClient object.
     :type operation_config: ~azure.ai.ml._scope_dependent_operations.OperationConfig
-    :param service_client_05_2022: Service client to allow end users to operate on Azure Machine Learning Workspace resources.
-    :type service_client_05_2022: ~azure.ai.ml._restclient.v2022_05_01._azure_machine_learning_workspaces.AzureMachineLearningWorkspaces
+    :param service_client_05_2022: Service client to allow end users to operate on Azure Machine Learning Workspace
+        resources.
+    :type service_client_05_2022: ~azure.ai.ml._restclient.v2022_05_01._azure_machine_learning_workspaces.
+        AzureMachineLearningWorkspaces
     :param all_operations: All operations classes of an MLClient object.
     :type all_operations: ~azure.ai.ml._scope_dependent_operations.OperationsContainer
     :param credentials: Credential to use for authentication.

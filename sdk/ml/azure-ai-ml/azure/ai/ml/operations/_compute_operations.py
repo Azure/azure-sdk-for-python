@@ -6,9 +6,6 @@
 
 from typing import Any, Dict, Iterable, Optional
 
-from azure.core.polling import LROPoller
-from azure.core.tracing.decorator import distributed_trace
-
 from azure.ai.ml._restclient.v2023_02_01_preview import AzureMachineLearningWorkspaces as ServiceClient022023Preview
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope, _ScopeDependentOperations
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
@@ -16,6 +13,8 @@ from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml.constants._common import COMPUTE_UPDATE_ERROR
 from azure.ai.ml.constants._compute import ComputeType
 from azure.ai.ml.entities import AmlComputeNodeInfo, Compute, Usage, VmSize
+from azure.core.polling import LROPoller
+from azure.core.tracing.decorator import distributed_trace
 
 ops_logger = OpsLogger(__name__)
 logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
@@ -32,7 +31,8 @@ class ComputeOperations(_ScopeDependentOperations):
     :param operation_config: Common configuration for operations classes of an MLClient object.
     :type operation_config: ~azure.ai.ml._scope_dependent_operations.OperationConfig
     :param service_client: Service client to allow end users to operate on Azure Machine Learning Workspace resources.
-    :type service_client: ~azure.ai.ml._restclient.v2023_02_01_preview._azure_machine_learning_workspaces.AzureMachineLearningWorkspaces
+    :type service_client: ~azure.ai.ml._restclient.v2023_02_01_preview._azure_machine_learning_workspaces.
+        AzureMachineLearningWorkspaces
     """
 
     def __init__(

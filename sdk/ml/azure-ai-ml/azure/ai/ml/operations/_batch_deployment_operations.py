@@ -7,11 +7,6 @@
 import re
 from typing import Dict, Optional, TypeVar, Union
 
-from azure.core.credentials import TokenCredential
-from azure.core.paging import ItemPaged
-from azure.core.polling import LROPoller
-from azure.core.tracing.decorator import distributed_trace
-
 from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
@@ -31,6 +26,10 @@ from azure.ai.ml.constants._common import ARM_ID_PREFIX, AzureMLResourceType, LR
 from azure.ai.ml.entities import BatchDeployment, BatchJob, ModelBatchDeployment, PipelineComponent
 from azure.ai.ml.entities._deployment.deployment import Deployment
 from azure.ai.ml.entities._deployment.pipeline_component_batch_deployment import PipelineComponentBatchDeployment
+from azure.core.credentials import TokenCredential
+from azure.core.paging import ItemPaged
+from azure.core.polling import LROPoller
+from azure.core.tracing.decorator import distributed_trace
 
 from ._operation_orchestrator import OperationOrchestrator
 
@@ -51,8 +50,10 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
     :type operation_scope: ~azure.ai.ml._scope_dependent_operations.OperationScope
     :param operation_config: Common configuration for operations classes of an MLClient object.
     :type operation_config: ~azure.ai.ml._scope_dependent_operations.OperationConfig
-    :param service_client_05_2022: Service client to allow end users to operate on Azure Machine Learning Workspace resources.
-    :type service_client_05_2022: ~azure.ai.ml._restclient.v2022_05_01._azure_machine_learning_workspaces.AzureMachineLearningWorkspaces
+    :param service_client_05_2022: Service client to allow end users to operate on Azure Machine Learning Workspace
+        resources.
+    :type service_client_05_2022: ~azure.ai.ml._restclient.v2022_05_01._azure_machine_learning_workspaces.
+        AzureMachineLearningWorkspaces
     :param all_operations: All operations classes of an MLClient object.
     :type all_operations: ~azure.ai.ml._scope_dependent_operations.OperationsContainer
     :param credentials: Credential to use for authentication.

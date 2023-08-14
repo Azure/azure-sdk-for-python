@@ -9,8 +9,6 @@ from contextlib import contextmanager
 from pathlib import Path
 from typing import Dict, Iterable, List, Optional, Union
 
-from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
-from azure.core.paging import ItemPaged
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
 from azure.ai.ml._artifacts._artifact_utilities import _check_and_upload_path
@@ -77,6 +75,8 @@ from azure.ai.ml.exceptions import (
     ValidationException,
 )
 from azure.ai.ml.operations._datastore_operations import DatastoreOperations
+from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
+from azure.core.paging import ItemPaged
 
 ops_logger = OpsLogger(__name__)
 logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
@@ -93,8 +93,12 @@ class DataOperations(_ScopeDependentOperations):
     :type operation_scope: ~azure.ai.ml._scope_dependent_operations.OperationScope
     :param operation_config: Common configuration for operations classes of an MLClient object.
     :type operation_config: ~azure.ai.ml._scope_dependent_operations.OperationConfig
-    :param service_client: Service client to allow end users to operate on Azure Machine Learning Workspace resources (ServiceClient042023Preview or ServiceClient102021Dataplane).
-    :type service_client: typing.Union[~azure.ai.ml._restclient.v2023_04_01_preview._azure_machine_learning_workspaces.AzureMachineLearningWorkspaces, ~azure.ai.ml._restclient.v2021_10_01_dataplanepreview._azure_machine_learning_workspaces.AzureMachineLearningWorkspaces]
+    :param service_client: Service client to allow end users to operate on Azure Machine Learning Workspace
+        resources (ServiceClient042023Preview or ServiceClient102021Dataplane).
+    :type service_client: typing.Union[
+        ~azure.ai.ml._restclient.v2023_04_01_preview._azure_machine_learning_workspaces.AzureMachineLearningWorkspaces,
+        ~azure.ai.ml._restclient.v2021_10_01_dataplanepreview._azure_machine_learning_workspaces.
+        AzureMachineLearningWorkspaces]
     :param datastore_operations: Represents a client for performing operations on Datastores.
     :type datastore_operations: ~azure.ai.ml.operations._datastore_operations.DatastoreOperations
     """
