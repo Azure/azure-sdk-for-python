@@ -30,7 +30,7 @@ import json
 import logging
 import time
 import copy
-from urllib.parse import urlparse
+from urllib.parse import urlparse, quote
 import xml.etree.ElementTree as ET
 
 from typing import (
@@ -95,7 +95,7 @@ def _format_url_section(template, **kwargs):
             return template.format(**kwargs)
         except KeyError as key:
             formatted_components = template.split("/")
-            components = [c for c in formatted_components if f"{{{key.args[0]}" not in c]
+            components = [c for c in formatted_components if "{{{}}}".format(key.args[0]) not in c]
             template = "/".join(components)
     # No URL sections left - returning None
 
@@ -591,7 +591,8 @@ class PipelineClientBase:
         :return: An HttpRequest object
         :rtype: ~azure.core.pipeline.transport.HttpRequest
         """
-        request = HttpRequest(method, self.format_url(url))
+        encoded_url = url.replace("{", quote("{")).replace("}", quote("}"))
+        request = HttpRequest(method, self.format_url(encoded_url))
 
         if params:
             request.format_parameters(params)

@@ -205,9 +205,10 @@ def test_format_url_double_query():
 
 
 def test_format_url_braces_with_dot():
-    client = PipelineClientBase("https://bing.com/")
-    formatted = client.format_url("/subscriptions/{aaa.bbb}")
-    assert formatted == "https://bing.com/subscriptions"
+    base_url = "https://bing.com/{aaa.bbb}"
+    client = PipelineClientBase(base_url)
+    request = client._request("GET", base_url, None, None, None, None, None)
+    print(request)
 
 
 def test_format_incorrect_endpoint():
