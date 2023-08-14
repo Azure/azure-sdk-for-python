@@ -18,6 +18,12 @@ logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
 
 
 class WorkspaceOutboundRuleOperations:
+    """WorkspaceOutboundRuleOperations.
+
+    You should not instantiate this class directly. Instead, you should create an MLClient instance that instantiates it
+    for you and attaches it as an attribute.
+    """
+
     def __init__(
         self,
         operation_scope: OperationScope,

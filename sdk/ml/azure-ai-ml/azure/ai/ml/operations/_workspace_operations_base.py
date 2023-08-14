@@ -15,6 +15,8 @@ from azure.ai.ml._restclient.v2023_06_01_preview.models import (
     EncryptionUpdateProperties,
     WorkspaceUpdateParameters,
 )
+from azure.ai.ml.entities._workspace.networking import ManagedNetwork
+from azure.ai.ml.constants._workspace import IsolationMode, OutboundRuleCategory
 from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope
 from azure.ai.ml._utils._appinsights_utils import get_log_analytics_arm_id
 
@@ -263,6 +265,14 @@ class WorkspaceOperationsBase:
                     key_identifier=customer_managed_key_uri,
                 )
             )
+
+        if workspace.managed_network.outbound_rules is not None:
+            # drop recommended and required rules from the update request since it would result in bad request
+            workspace.managed_network.outbound_rules = [
+                rule
+                for rule in workspace.managed_network.outbound_rules
+                if rule.category != OutboundRuleCategory.REQUIRED and rule.category != OutboundRuleCategory.RECOMMENDED
+            ]
 
         update_role_assignment = (
             kwargs.get("update_workspace_role_assignment", None)

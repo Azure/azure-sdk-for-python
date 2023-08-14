@@ -664,6 +664,15 @@ class MLClient:
         :rtype: ~azure.ai.ml.operations.WorkspaceOperations
         """
         return self._workspaces
+    
+    @property
+    def workspace_outbound_rules(self) -> WorkspaceOutboundRuleOperations:
+        """A collection of workspace outbound rule related operations.
+
+        :return: Workspace outbound rule operations
+        :rtype: ~azure.ai.ml.operations.WorkspaceOutboundRuleOperations
+        """
+        return self._workspace_outbound_rules
 
     @property
     @experimental
