@@ -86,7 +86,7 @@ class Environment(Asset, LocalizableMixin):
     :param image: URI of a custom base image.
     :type image: str
     :param build: Docker build context to create the environment. Mutually exclusive with "image"
-    :type build: BuildContext
+    :type build: ~azure.ai.ml.entities._assets.environment.BuildContext
     :param conda_file: Path to configuration file listing conda packages to install.
     :type conda_file: typing.Union[str, os.PathLike]
     :param tags: Tag dictionary. Tags can be added, removed, and updated.
