@@ -53,6 +53,10 @@ class TestFeatureStore(AzureRecordedTestCase):
         assert isinstance(updated_fs, FeatureStore)
         assert updated_fs.description == fs_updated_description
 
+        fs_poller = client.feature_stores.begin_provision_network(name=fs_name)
+        assert isinstance(fs_poller, LROPoller)
+        fs_poller.result()
+
         fs_poller = client.feature_stores.begin_delete(name=fs_name, delete_dependent_resources=True)
         assert isinstance(fs_poller, LROPoller)
         fs_poller.result()

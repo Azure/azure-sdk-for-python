@@ -134,6 +134,14 @@ class TestFeatureStoreOperation:
                 )
             )
 
+    def test_begin_provision_network(self, mock_feature_store_operation: FeatureStoreOperations) -> None:
+        def outgoing_call(name):
+            return "testws"
+
+        mock_feature_store_operation._operation.get.side_effect = outgoing_call
+        mock_feature_store_operation.begin_provision_network(feature_store_name="testws")
+        mock_feature_store_operation._provision_network_operation.begin_provision_managed_network.assert_called_once()
+
     def test_delete(self, mock_feature_store_operation: FeatureStoreOperations, mocker: MockFixture) -> None:
         def outgoing_call(rg, name):
             return Workspace(name=name, kind="featurestore")._to_rest_object()
