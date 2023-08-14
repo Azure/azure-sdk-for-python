@@ -318,7 +318,7 @@ def encode_double(
     <encoding name="ieee-754" code="0x82" category="fixed" width="8" label="IEEE 754-2008 binary64"/>
 
     :param bytearray output: The output buffer to write to.
-    :param double value: The double to encode.
+    :param float value: The double to encode.
     :param bool with_constructor: Whether to include the constructor byte.
     """
     value = float(value)
