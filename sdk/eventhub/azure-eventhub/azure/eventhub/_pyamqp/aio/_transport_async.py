@@ -210,10 +210,10 @@ class AsyncTransportMixin:
                 context.load_verify_locations(ca_certs)
                 return context
             return True
-        except TypeError as exc:
+        except TypeError:
             raise TypeError(
                 "SSL configuration must be a dictionary, or the value True."
-            ) from exc
+            ) from None
 
     def _build_ssl_context(
         self, check_hostname=None, **ctx_options

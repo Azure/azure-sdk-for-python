@@ -188,8 +188,8 @@ class SenderLink(Link):
     def cancel_transfer(self, delivery):
         try:
             index = self._pending_deliveries.index(delivery)
-        except ValueError as exc:
-            raise ValueError("Found no matching pending transfer.") from exc
+        except ValueError:
+            raise ValueError("Found no matching pending transfer.") from None
         delivery = self._pending_deliveries[index]
         if delivery.sent:
             raise MessageException(
