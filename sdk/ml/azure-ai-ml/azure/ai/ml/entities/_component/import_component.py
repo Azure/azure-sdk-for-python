@@ -72,7 +72,6 @@ class ImportComponent(Component):
         self.output = output
 
     def _to_dict(self) -> Dict:
-        """Dump the import component content into a dictionary."""
         return convert_ordered_dict_to_dict({**self._other_parameter, **super(ImportComponent, self)._to_dict()})
 
     @classmethod

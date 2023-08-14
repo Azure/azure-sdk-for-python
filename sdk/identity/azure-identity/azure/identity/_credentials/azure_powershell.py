@@ -6,7 +6,7 @@ import base64
 import logging
 import subprocess
 import sys
-from typing import List, Tuple, Optional, Any
+from typing import Any, List, Tuple, Optional
 
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
@@ -83,7 +83,13 @@ class AzurePowerShellCredential:
         """Calling this method is unnecessary."""
 
     @log_get_token("AzurePowerShellCredential")
-    def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
+    def get_token(
+        self,
+        *scopes: str,
+        claims: Optional[str] = None,  # pylint:disable=unused-argument
+        tenant_id: Optional[str] = None,
+        **kwargs: Any,
+    ) -> AccessToken:
         """Request an access token for `scopes`.
 
         This method is called automatically by Azure SDK clients. Applications calling this method directly must
@@ -92,6 +98,7 @@ class AzurePowerShellCredential:
         :param str scopes: desired scope for the access token. This credential allows only one scope per request.
             For more information about scopes, see
             https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
+        :keyword str claims: not used by this credential; any value provided will be ignored.
         :keyword str tenant_id: optional tenant to include in the token request.
 
         :return: An access token with the desired scopes.
@@ -103,7 +110,10 @@ class AzurePowerShellCredential:
           receive an access token
         """
         tenant_id = resolve_tenant(
-            default_tenant=self.tenant_id, additionally_allowed_tenants=self._additionally_allowed_tenants, **kwargs
+            default_tenant=self.tenant_id,
+            tenant_id=tenant_id,
+            additionally_allowed_tenants=self._additionally_allowed_tenants,
+            **kwargs,
         )
         command_line = get_command_line(scopes, tenant_id)
         output = run_command_line(command_line, self._process_timeout)

@@ -4,6 +4,7 @@
 # pylint: disable=protected-access
 
 import logging
+import os
 import uuid
 from abc import abstractmethod
 from enum import Enum
@@ -20,7 +21,7 @@ from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job._input_output_helpers import build_input_output
 from azure.ai.ml.entities._job.job import Job
 from azure.ai.ml.entities._job.pipeline._attr_dict import _AttrDict
-from azure.ai.ml.entities._job.pipeline._io import NodeOutput, PipelineInput
+from azure.ai.ml.entities._job.pipeline._io import NodeInput, NodeOutput, PipelineInput
 from azure.ai.ml.entities._job.pipeline._io.mixin import NodeWithGroupInputMixin
 from azure.ai.ml.entities._job.pipeline._pipeline_expression import PipelineExpression
 from azure.ai.ml.entities._job.sweep.search_space import SweepDistribution
@@ -32,10 +33,12 @@ from azure.ai.ml.exceptions import ErrorTarget
 module_logger = logging.getLogger(__name__)
 
 
-def parse_inputs_outputs(data):
+def parse_inputs_outputs(data: dict) -> dict:
     """Parse inputs and outputs from data. If data is a list, parse each item in the list.
 
-    :return: parsed data
+    :param data: A dict that may contain "inputs" or "outputs" keys
+    :type data: dict
+    :return: Dict with parsed "inputs" and "outputs" keys
     :rtype: Dict
     """
 
@@ -268,24 +271,34 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, SchemaValidatableMixin, No
         # TODO: replace this hack
         return self._init
 
-    def _set_base_path(self, base_path):
+    def _set_base_path(self, base_path: Union[str, os.PathLike]):
         """Set the base path for the node.
 
         Will be used for schema validation. If not set, will use Path.cwd() as the base path
         (default logic defined in SchemaValidatableMixin._base_path_for_validation).
+
+        :param base_path: The new base path
+        :type base_path: Union[str, os.PathLike]
         """
         self._base_path = base_path
 
-    def _set_referenced_control_flow_node_instance_id(self, instance_id):
+    def _set_referenced_control_flow_node_instance_id(self, instance_id: str) -> None:
         """Set the referenced control flow node instance id.
 
         If this node is referenced to a control flow node, the instance_id will not be modified.
+
+        :param instance_id: The new instance id
+        :type instance_id: str
         """
         if not self._referenced_control_flow_node_instance_id:
             self._referenced_control_flow_node_instance_id = instance_id
 
     def _get_component_id(self) -> Union[str, Component]:
-        """Return component id if possible."""
+        """Return component id if possible.
+
+        :return: The component id
+        :rtype: Union[str, Component]
+        """
         if isinstance(self._component, Component) and self._component.id:
             # If component is remote, return it's asset id
             return self._component.id
@@ -309,6 +322,9 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, SchemaValidatableMixin, No
         """Return the error target of this resource.
 
         Should be overridden by subclass. Value should be in ErrorTarget enum.
+
+        :return: The error target
+        :rtype: ErrorTarget
         """
         return ErrorTarget.PIPELINE
 
@@ -343,6 +359,9 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, SchemaValidatableMixin, No
         """Validate the resource with customized logic.
 
         Override this method to add customized validation logic.
+
+        :return: The validation result
+        :rtype: MutableValidationResult
         """
         validate_result = self._validate_inputs(raise_error=False)
         return validate_result
@@ -391,10 +410,15 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, SchemaValidatableMixin, No
 
     @classmethod
     def _from_rest_object_to_init_params(cls, obj: dict) -> Dict:
-        """Transfer the rest object to a dict containing items to init the node.
+        """Convert the rest object to a dict containing items to init the node.
 
         Will be used in _from_rest_object. Please override this method instead of _from_rest_object to make the logic
         reusable.
+
+        :param obj: The REST object
+        :type obj: dict
+        :return: The init params
+        :rtype: Dict
         """
         inputs = obj.get("inputs", {})
         outputs = obj.get("outputs", {})
@@ -420,14 +444,24 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, SchemaValidatableMixin, No
 
     @classmethod
     def _picked_fields_from_dict_to_rest_object(cls) -> List[str]:
-        """Override this method to add custom fields to be picked from self._to_dict() in self._to_rest_object().
+        """List of fields to be picked from self._to_dict() in self._to_rest_object().
 
-        Pick nothing by default.
+        By default, returns an empty list.
+
+        Override this method to add custom fields.
+
+        :return: List of fields to pick
+        :rtype: List[str]
         """
+
         return []
 
     def _to_rest_object(self, **kwargs) -> dict:  # pylint: disable=unused-argument
-        """Convert self to a rest object for remote call."""
+        """Convert self to a rest object for remote call.
+
+        :return: The rest object
+        :rtype: dict
+        """
         base_dict, rest_obj = self._to_dict(), {}
         for key in self._picked_fields_from_dict_to_rest_object():
             if key in base_dict:
@@ -455,20 +489,20 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, SchemaValidatableMixin, No
         return convert_ordered_dict_to_dict(rest_obj)
 
     @property
-    def inputs(self) -> Dict[str, Union[Input, str, bool, int, float]]:
+    def inputs(self) -> Dict[str, NodeInput]:
         """Get the inputs for the object.
 
         :return: A dictionary containing the inputs for the object.
-        :rtype: Dict[str, Union[~azure.ai.ml.entities.Input, str, bool, int, float]]
+        :rtype: Dict[str, NodeInput]
         """
         return self._inputs
 
     @property
-    def outputs(self) -> Dict[str, Union[str, Output]]:
+    def outputs(self) -> Dict[str, NodeOutput]:
         """Get the outputs of the object.
 
         :return: A dictionary containing the outputs for the object.
-        :rtype: Dict[str, Union[str, ~azure.ai.ml.entities.Output]]
+        :rtype: Dict[str, Union[str, NodeOutput]
         """
         return self._outputs
 
@@ -492,8 +526,12 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, SchemaValidatableMixin, No
         # _attr_dict will return False if no extra attributes are set
         return True
 
-    def _get_origin_job_outputs(self):
-        """Restore outputs to JobOutput/BindingString and return them."""
+    def _get_origin_job_outputs(self) -> Dict[str, Union[str, Output]]:
+        """Restore outputs to JobOutput/BindingString and return them.
+
+        :return: The origin job outputs
+        :rtype: Dict[str, Union[str, Output]]
+        """
         outputs: Dict[str, Union[str, Output]] = {}
         if self.outputs is not None:
             for output_name, output_obj in self.outputs.items():
@@ -520,9 +558,17 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, SchemaValidatableMixin, No
         return input_name in built_inputs and built_inputs[input_name] is not None
 
     @classmethod
-    def _refine_optional_inputs_with_no_value(cls, node, kwargs):
+    def _refine_optional_inputs_with_no_value(cls, node: "BaseNode", kwargs):
         """Refine optional inputs that have no default value and no value is provided when calling command/parallel
-        function This is to align with behavior of calling component to generate a pipeline node."""
+        function.
+
+        This is to align with behavior of calling component to generate a pipeline node.
+
+        :param node: The node
+        :type node: BaseNode
+        :param kwargs: The kwargs
+        :type kwargs: dict
+        """
         for key, value in node.inputs.items():
             meta = value._data
             if (
