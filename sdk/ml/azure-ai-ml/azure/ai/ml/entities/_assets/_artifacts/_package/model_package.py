@@ -200,7 +200,7 @@ class ModelPackage(Resource, PackageRequest):
     :param model_configuration: The model configuration.
     :type model_configuration: Optional[~azure.ai.ml.entities.ModelConfiguration]
     :param tags: The tags of the model package.
-    :type tags: Optiona[dict[str, str]]
+    :type tags: Optional[dict[str, str]]
 
     .. admonition:: Example:
 

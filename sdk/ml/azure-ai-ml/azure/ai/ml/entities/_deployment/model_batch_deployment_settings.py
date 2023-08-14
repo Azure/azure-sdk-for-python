@@ -27,7 +27,7 @@ class ModelBatchDeploymentSettings:
     :param max_concurrency_per_instance: Indicates maximum number of parallelism per instance, defaults to 1
     :type max_concurrency_per_instance: int
     :param retry_settings: Retry settings for a batch inference operation, defaults to None
-    :type retry_settings: BatchRetrySettings, optional
+    :type retry_settings: ~azure.ai.ml.entities._deployment.deployment_settings.BatchRetrySettings, optional
     :param environment_variables: Environment variables that will be set in deployment.
     :type environment_variables: dict, optional
     :param error_threshold: Error threshold, if the error count for the entire input goes above

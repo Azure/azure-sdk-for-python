@@ -8,7 +8,6 @@ from contextlib import contextmanager
 from os import PathLike, path
 from typing import Dict, Iterable, Optional, Union
 
-from azure.core.exceptions import ResourceNotFoundError
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
 from azure.ai.ml._artifacts._artifact_utilities import (
@@ -64,6 +63,7 @@ from azure.ai.ml.exceptions import (
     ValidationException,
 )
 from azure.ai.ml.operations._datastore_operations import DatastoreOperations
+from azure.core.exceptions import ResourceNotFoundError
 
 from ._operation_orchestrator import OperationOrchestrator
 
@@ -332,11 +332,13 @@ class ModelOperations(_ScopeDependentOperations):
     def download(self, name: str, version: str, download_path: Union[PathLike, str] = ".") -> None:
         """Download files related to a model.
 
-        :param str name: Name of the model.
-        :param str version: Version of the model.
-        :param Union[PathLike, str] download_path: Local path as download destination,
-            defaults to current working directory of the current user. Contents will be overwritten.
-        :raise: ResourceNotFoundError if can't find a model matching provided name.
+        :param name: Name of the model.
+        :type name: str
+        :param version: Version of the model.
+        :type version: str
+        :param download_path: Local path as download destination, defaults to current working directory of the current user. Contents will be overwritten.
+        :type download_path: Union[PathLike, str]
+        :raises ResourceNotFoundError: if can't find a model matching provided name.
 
         .. admonition:: Example:
             .. literalinclude:: ../../../../samples/ml_samples_misc.py
@@ -481,7 +483,7 @@ class ModelOperations(_ScopeDependentOperations):
              :attr:`ListViewType.ACTIVE_ONLY`.
         :type list_view_type: ListViewType, optional
         :return: An iterator like instance of Model objects
-        :rtype: ~azure.core.paging.ItemPaged[Model]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.ml.entities.Model]
 
         .. admonition:: Example:
             .. literalinclude:: ../../../../samples/ml_samples_misc.py
