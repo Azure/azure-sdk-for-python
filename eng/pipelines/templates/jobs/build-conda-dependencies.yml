@@ -15,67 +15,91 @@ jobs:
         echo "##vso[task.prependpath]$(CONDA)/Scripts"
       displayName: 'Prepend PATH with Conda'
 
-    - template: ../steps/build-conda-artifacts.yml
-      parameters:
-        ArtifactPrefix: windows_
-        CondaArtifacts: ${{ parameters.CondaArtifacts }}
-        
-
-- job: 'Build_Linux_Dependencies'
-  displayName: 'Build Linux Dependencies'
-  timeoutInMinutes: 90
-  pool:
-    name: azsdk-pool-mms-ubuntu-2004-general
-    vmImage: MMSUbuntu20.04
-  steps:
-    - bash: |
-        sudo apt-get install -y build-essential
-      displayName: Install Requirements
-
-    - template: ../steps/build-conda-artifacts.yml
-      parameters:
-        ArtifactPrefix: linux_
-        CondaArtifacts: ${{ parameters.CondaArtifacts }}
-
-- job: 'Build_Mac_Dependencies'
-  displayName: 'Build Mac Dependencies'
-  timeoutInMinutes: 90
-  pool:
-    name: Azure Pipelines
-    vmImage: macos-11
-  variables:
-    MacOSXDeploymentTarget: '10.9'
-    OpenSSLDir: $(Agent.BuildDirectory)/openssl-macosx$(MacOSXDeploymentTarget)
-  steps:
-    - task: DownloadPipelineArtifact@1
-      displayName: 'Download OpenSSL artifact'
+    - task: UsePythonVersion@0
+      displayName: 'Use Python $(PythonVersion)'
       inputs:
-        artifactName: openssl-macosx$(MacOSXDeploymentTarget)
-        buildType: specific
-        buildVersionToDownload: latest
-        downloadPath: $(Agent.BuildDirectory)
-        pipeline: 119 # azure-uamqp-python - openssl
-        project: '29ec6040-b234-4e31-b139-33dc4287b756' # public
+        versionSpec: $(PythonVersion)
 
-    - script: sudo ls /Applications/
-      displayName: 'List All apps'
-      
-    - script: sudo xcode-select --switch /Applications/Xcode_11.7.0.app
-      displayName: 'Select Xcode 11.7.0'
+    - pwsh: |
+        pip install tools/azure-sdk-tools[build]
+        pip install disutils
+        choco install visualstudio2019buildtools
+      displayName: Install build script requirements
 
-    - bash: |
-          echo "##vso[task.setvariable variable=CFLAGS;]-mmacosx-version-min=$(MacOSXDeploymentTarget) -I$(OpenSSLDir)/include"
-          echo "##vso[task.setvariable variable=CMAKE_OSX_ARCHITECTURES;]x86_64"
-          echo "##vso[task.setvariable variable=CMAKE_OSX_DEPLOYMENT_TARGET;]$(MacOSXDeploymentTarget)"
-          echo "##vso[task.setvariable variable=LDFLAGS;]-mmacosx-version-min=$(MacOSXDeploymentTarget) -L$(OpenSSLDir)/lib"
-          echo "##vso[task.setvariable variable=MACOSX_DEPLOYMENT_TARGET;]$(MacOSXDeploymentTarget)"
-          echo "##vso[task.setvariable variable=OPENSSL_INCLUDE_DIR;]$(OpenSSLDir)/include"
-          echo "##vso[task.setvariable variable=OPENSSL_ROOT_DIR;]$(OpenSSLDir)"
-          echo "##vso[task.setvariable variable=UAMQP_REBUILD_PYX;]True"
-          echo "##vso[task.setvariable variable=UAMQP_USE_OPENSSL;]True"
-      displayName: Set Mac Build Flags
+    - pwsh: |
+        "C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\VC\Auxiliary\Build\vcvars64.bat"
+        $argument = @'
+        ${{ replace(convertToJson(parameters.CondaArtifacts), '"', '\"') }}
+        '@
 
-    - template: ../steps/build-conda-artifacts.yml
+        sdk_build_conda -c "$argument" ${{ parameters.Arguments }}
+      displayName: Assemble Conda Packages
+
+    - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
       parameters:
-        ArtifactPrefix: mac_
-        CondaArtifacts: ${{ parameters.CondaArtifacts }}
+        ArtifactPath: '$(Build.SourcesDirectory)/conda/assembled'
+        ArtifactName: 'windows_distributions'
+
+    - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
+      parameters:
+        ArtifactPath: '$(Build.SourcesDirectory)/conda/output'
+        ArtifactName: 'windows_conda'
+
+# - job: 'Build_Linux_Dependencies'
+#   displayName: 'Build Linux Dependencies'
+#   timeoutInMinutes: 90
+#   pool:
+#     name: azsdk-pool-mms-ubuntu-2004-general
+#     vmImage: MMSUbuntu20.04
+#   steps:
+#     - bash: |
+#         sudo apt-get install -y build-essential
+#       displayName: Install Requirements
+
+#     - template: ../steps/build-conda-artifacts.yml
+#       parameters:
+#         ArtifactPrefix: linux_
+#         CondaArtifacts: ${{ parameters.CondaArtifacts }}
+
+# - job: 'Build_Mac_Dependencies'
+#   displayName: 'Build Mac Dependencies'
+#   timeoutInMinutes: 90
+#   pool:
+#     name: Azure Pipelines
+#     vmImage: macos-11
+#   variables:
+#     MacOSXDeploymentTarget: '10.9'
+#     OpenSSLDir: $(Agent.BuildDirectory)/openssl-macosx$(MacOSXDeploymentTarget)
+#   steps:
+#     - task: DownloadPipelineArtifact@1
+#       displayName: 'Download OpenSSL artifact'
+#       inputs:
+#         artifactName: openssl-macosx$(MacOSXDeploymentTarget)
+#         buildType: specific
+#         buildVersionToDownload: latest
+#         downloadPath: $(Agent.BuildDirectory)
+#         pipeline: 119 # azure-uamqp-python - openssl
+#         project: '29ec6040-b234-4e31-b139-33dc4287b756' # public
+
+#     - script: sudo ls /Applications/
+#       displayName: 'List All apps'
+      
+#     - script: sudo xcode-select --switch /Applications/Xcode_11.7.0.app
+#       displayName: 'Select Xcode 11.7.0'
+
+#     - bash: |
+#           echo "##vso[task.setvariable variable=CFLAGS;]-mmacosx-version-min=$(MacOSXDeploymentTarget) -I$(OpenSSLDir)/include"
+#           echo "##vso[task.setvariable variable=CMAKE_OSX_ARCHITECTURES;]x86_64"
+#           echo "##vso[task.setvariable variable=CMAKE_OSX_DEPLOYMENT_TARGET;]$(MacOSXDeploymentTarget)"
+#           echo "##vso[task.setvariable variable=LDFLAGS;]-mmacosx-version-min=$(MacOSXDeploymentTarget) -L$(OpenSSLDir)/lib"
+#           echo "##vso[task.setvariable variable=MACOSX_DEPLOYMENT_TARGET;]$(MacOSXDeploymentTarget)"
+#           echo "##vso[task.setvariable variable=OPENSSL_INCLUDE_DIR;]$(OpenSSLDir)/include"
+#           echo "##vso[task.setvariable variable=OPENSSL_ROOT_DIR;]$(OpenSSLDir)"
+#           echo "##vso[task.setvariable variable=UAMQP_REBUILD_PYX;]True"
+#           echo "##vso[task.setvariable variable=UAMQP_USE_OPENSSL;]True"
+#       displayName: Set Mac Build Flags
+
+#     - template: ../steps/build-conda-artifacts.yml
+#       parameters:
+#         ArtifactPrefix: mac_
+#         CondaArtifacts: ${{ parameters.CondaArtifacts }}

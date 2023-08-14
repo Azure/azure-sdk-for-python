@@ -19,100 +19,100 @@ stages:
     - template: ../jobs/build-conda-dependencies.yml
       parameters:
         CondaArtifacts:
-        - name: azure-core
-          common_root: azure
-          service: core
-          in_batch: true
-          checkout:
-          - package: azure-core
-            download_uri: https://files.pythonhosted.org/packages/df/d4/1472562806c1cef919503207082c2b2be70d005cd6deb9ae46d4af0c1b4a/azure-core-1.29.1.zip
-          - package: azure-mgmt-core
-            download_uri: https://files.pythonhosted.org/packages/14/95/2b2085e40f4b9de88ad256428a669583066d8ab348fc19110c7d04c3189b/azure-mgmt-core-1.4.0.zip
-          - package: azure-common
-            download_uri: https://files.pythonhosted.org/packages/3e/71/f6f71a276e2e69264a97ad39ef850dca0a04fce67b12570730cb38d0ccac/azure-common-1.1.28.zip
-        - name: msrest
-          in_batch: true
-          checkout:
-          - package: msrest
-            download_uri: https://files.pythonhosted.org/packages/68/77/8397c8fb8fc257d8ea0fa66f8068e073278c65f05acb17dcb22a02bfdc42/msrest-0.7.1.zip
-        - name: msal
-          in_batch: true
-          checkout:
-          - package: msal
-            download_uri: https://files.pythonhosted.org/packages/85/9b/cf94ca59e4d88afe1852962d2b7e0cd9cee752dddf7cd6e30382cdc3f7ed/msal-1.23.0.tar.gz
+        # - name: azure-core
+        #   common_root: azure
+        #   service: core
+        #   in_batch: true
+        #   checkout:
+        #   - package: azure-core
+        #     download_uri: https://files.pythonhosted.org/packages/df/d4/1472562806c1cef919503207082c2b2be70d005cd6deb9ae46d4af0c1b4a/azure-core-1.29.1.zip
+        #   - package: azure-mgmt-core
+        #     download_uri: https://files.pythonhosted.org/packages/14/95/2b2085e40f4b9de88ad256428a669583066d8ab348fc19110c7d04c3189b/azure-mgmt-core-1.4.0.zip
+        #   - package: azure-common
+        #     download_uri: https://files.pythonhosted.org/packages/3e/71/f6f71a276e2e69264a97ad39ef850dca0a04fce67b12570730cb38d0ccac/azure-common-1.1.28.zip
+        # - name: msrest
+        #   in_batch: true
+        #   checkout:
+        #   - package: msrest
+        #     download_uri: https://files.pythonhosted.org/packages/68/77/8397c8fb8fc257d8ea0fa66f8068e073278c65f05acb17dcb22a02bfdc42/msrest-0.7.1.zip
+        # - name: msal
+        #   in_batch: true
+        #   checkout:
+        #   - package: msal
+        #     download_uri: https://files.pythonhosted.org/packages/85/9b/cf94ca59e4d88afe1852962d2b7e0cd9cee752dddf7cd6e30382cdc3f7ed/msal-1.23.0.tar.gz
         - name: uamqp
           common_root: uamqp
           in_batch: true
           checkout:
           - package: uamqp
             download_uri: https://files.pythonhosted.org/packages/0b/d8/fc24d95e6f6c80851ae6738c78da081cd535c924b02c5a4928b108b9ed42/uamqp-1.6.5.tar.gz
-        - name: msal-extensions
-          common_root: msal
-          in_batch: true
-          checkout:
-          - package: msal-extensions
-            download_uri: https://files.pythonhosted.org/packages/33/5e/2e23593c67df0b21ffb141c485ca0ae955569203d7ff5064040af968cb81/msal-extensions-1.0.0.tar.gz
+  #       - name: msal-extensions
+  #         common_root: msal
+  #         in_batch: true
+  #         checkout:
+  #         - package: msal-extensions
+  #           download_uri: https://files.pythonhosted.org/packages/33/5e/2e23593c67df0b21ffb141c485ca0ae955569203d7ff5064040af968cb81/msal-extensions-1.0.0.tar.gz
 
-  - stage: Build
-    displayName: Build Universal Conda Artifacts
-    dependsOn: Build_Dependencies
-    jobs:
-    - job: 'Build'
-      timeoutInMinutes: 90
+  # # - stage: Build
+  #   displayName: Build Universal Conda Artifacts
+  #   dependsOn: Build_Dependencies
+  #   jobs:
+  #   - job: 'Build'
+  #     timeoutInMinutes: 90
         
-      pool:
-        name: azsdk-pool-mms-ubuntu-2004-general
-        vmImage: MMSUbuntu20.04
+  #     pool:
+  #       name: azsdk-pool-mms-ubuntu-2004-general
+  #       vmImage: MMSUbuntu20.04
 
-      steps:
-        # restore platform-specific dependencies and re-index
-        - download: current
-          artifact: windows_conda
-          timeoutInMinutes: 5
+  #     steps:
+  #       # restore platform-specific dependencies and re-index
+  #       - download: current
+  #         artifact: windows_conda
+  #         timeoutInMinutes: 5
 
-        - download: current
-          artifact: linux_conda
-          timeoutInMinutes: 5
+  #       - download: current
+  #         artifact: linux_conda
+  #         timeoutInMinutes: 5
 
-        - download: current
-          artifact: mac_conda
-          timeoutInMinutes: 5
+  #       - download: current
+  #         artifact: mac_conda
+  #         timeoutInMinutes: 5
 
-        - template: ../steps/build-conda-artifacts.yml
-          parameters:
-            Arguments: '--channel "$(Pipeline.Workspace)/mac_conda" "$(Pipeline.Workspace)/windows_conda" "$(Pipeline.Workspace)/linux_conda"'
-            CondaArtifacts:
-              - name: azure-core
-                common_root: azure
-                service: core
-                in_batch: true
-                checkout:
-                - package: azure-core
-                  download_uri: https://files.pythonhosted.org/packages/df/d4/1472562806c1cef919503207082c2b2be70d005cd6deb9ae46d4af0c1b4a/azure-core-1.29.1.zip
-                - package: azure-mgmt-core
-                  download_uri: https://files.pythonhosted.org/packages/14/95/2b2085e40f4b9de88ad256428a669583066d8ab348fc19110c7d04c3189b/azure-mgmt-core-1.4.0.zip
-                - package: azure-common
-                  download_uri: https://files.pythonhosted.org/packages/3e/71/f6f71a276e2e69264a97ad39ef850dca0a04fce67b12570730cb38d0ccac/azure-common-1.1.28.zip
-              - name: azure-storage
-                common_root: azure/storage
-                in_batch: ${{ parameters.release_azure_storage }}
-                service: storage
-                checkout:
-                - package: azure-storage-blob
-                  checkout_path: sdk/storage
-                  version: 12.12.0
-                - package: azure-storage-queue
-                  checkout_path: sdk/storage
-                  version: 12.3.0
-                - package: azure-storage-file-share
-                  checkout_path: sdk/storage
-                  version: 12.8.0
-                - package: azure-storage-file-datalake
-                  checkout_path: sdk/storage
-                  version: 12.7.0
+  #       - template: ../steps/build-conda-artifacts.yml
+  #         parameters:
+  #           Arguments: '--channel "$(Pipeline.Workspace)/mac_conda" "$(Pipeline.Workspace)/windows_conda" "$(Pipeline.Workspace)/linux_conda"'
+  #           CondaArtifacts:
+  #             - name: azure-core
+  #               common_root: azure
+  #               service: core
+  #               in_batch: true
+  #               checkout:
+  #               - package: azure-core
+  #                 download_uri: https://files.pythonhosted.org/packages/df/d4/1472562806c1cef919503207082c2b2be70d005cd6deb9ae46d4af0c1b4a/azure-core-1.29.1.zip
+  #               - package: azure-mgmt-core
+  #                 download_uri: https://files.pythonhosted.org/packages/14/95/2b2085e40f4b9de88ad256428a669583066d8ab348fc19110c7d04c3189b/azure-mgmt-core-1.4.0.zip
+  #               - package: azure-common
+  #                 download_uri: https://files.pythonhosted.org/packages/3e/71/f6f71a276e2e69264a97ad39ef850dca0a04fce67b12570730cb38d0ccac/azure-common-1.1.28.zip
+  #             - name: azure-storage
+  #               common_root: azure/storage
+  #               in_batch: ${{ parameters.release_azure_storage }}
+  #               service: storage
+  #               checkout:
+  #               - package: azure-storage-blob
+  #                 checkout_path: sdk/storage
+  #                 version: 12.12.0
+  #               - package: azure-storage-queue
+  #                 checkout_path: sdk/storage
+  #                 version: 12.3.0
+  #               - package: azure-storage-file-share
+  #                 checkout_path: sdk/storage
+  #                 version: 12.8.0
+  #               - package: azure-storage-file-datalake
+  #                 checkout_path: sdk/storage
+  #                 version: 12.7.0
 
-  # - ${{if and(ne(variables['Build.Reason'], 'PullRequest'), eq(variables['System.TeamProject'], 'internal'))}}:
-  #   - template: archetype-conda-release.yml
-  #     parameters:
-  #       DependsOn: Build
-  #       CondaArtifacts: $(CondaArtifacts)
+  # # - ${{if and(ne(variables['Build.Reason'], 'PullRequest'), eq(variables['System.TeamProject'], 'internal'))}}:
+  # #   - template: archetype-conda-release.yml
+  # #     parameters:
+  # #       DependsOn: Build
+  # #       CondaArtifacts: $(CondaArtifacts)
