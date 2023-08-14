@@ -9,7 +9,7 @@ _LOGGER = logging.getLogger(__name__)
 def generate_autorest(folder: Path) -> None:
 
     readme_path = folder / "swagger" / "README.md"
-    completed_process = run(["autorest", readme_path], cwd=folder)
+    completed_process = run(["autorest", readme_path, "--python-sdks-folder=../../"], cwd=folder)
 
     if completed_process.returncode != 0:
         raise ValueError("Something happened with autorest: " + str(completed_process))
