@@ -146,7 +146,7 @@ class _EncryptionData:
         The content encryption initialization vector.
         Required for AES-CBC (V1).
     :param Optional[_EncryptedRegionInfo] encrypted_region_info:
-        The info about the autenticated block sizes.
+        The info about the authenticated block sizes.
         Required for AES-GCM (V2).
     :param _EncryptionAgent encryption_agent:
         The encryption agent.
