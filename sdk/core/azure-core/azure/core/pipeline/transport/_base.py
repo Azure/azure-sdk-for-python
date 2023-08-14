@@ -623,7 +623,7 @@ class PipelineClientBase:
 
         return request
 
-    def format_url(self, url_template: str, **kwargs) -> str:
+    def format_url(self, url_template: str, **kwargs: Any) -> str:
         """Format request URL with the client base URL, unless the
         supplied URL is already absolute.
 
@@ -817,7 +817,7 @@ class PipelineClientBase:
         return request
 
     def options(
-        self, url: str, params: Optional[Dict[str, str]] = None, headers: Optional[Dict[str, str]] = None, **kwargs
+        self, url: str, params: Optional[Dict[str, str]] = None, headers: Optional[Dict[str, str]] = None, **kwargs: Any
     ) -> HttpRequest:
         """Create a OPTIONS request object.
 
