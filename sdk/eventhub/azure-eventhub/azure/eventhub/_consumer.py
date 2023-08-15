@@ -249,7 +249,7 @@ class EventHubConsumer(
                             self._name,
                             last_exception,
                         )
-                        raise last_exception # pylint:disable=raise-missing-from
+                        raise last_exception from None
         if (
             len(self._message_buffer) >= max_batch_size
             or (self._message_buffer and not max_wait_time)
