@@ -53,6 +53,8 @@ class OutboundRule:
                 service_resource_id=rest_obj.destination.service_resource_id,
                 subresource_target=rest_obj.destination.subresource_target,
                 spark_enabled=rest_obj.destination.spark_enabled,
+                data_import_enabled=rest_obj.destination.data_import_enabled,
+                pe_fqdn=rest_obj.destination.pe_fqdn,
                 name=name,
             )
             rule.category = rest_obj.category
@@ -100,11 +102,15 @@ class PrivateEndpointDestination(OutboundRule):
         service_resource_id: str,
         subresource_target: str,
         spark_enabled: bool = False,
+        data_import_enabled: bool = False,
+        pe_fqdn: str = None,
         **kwargs,
     ) -> None:
         self.service_resource_id = service_resource_id
         self.subresource_target = subresource_target
         self.spark_enabled = spark_enabled
+        self.data_import_enabled = data_import_enabled
+        self.pe_fqdn = pe_fqdn
         OutboundRule.__init__(self, type=OutboundRuleType.PRIVATE_ENDPOINT, name=name, **kwargs)
 
     def _to_rest_object(self) -> RestPrivateEndpointOutboundRule:
@@ -115,6 +121,8 @@ class PrivateEndpointDestination(OutboundRule):
                 service_resource_id=self.service_resource_id,
                 subresource_target=self.subresource_target,
                 spark_enabled=self.spark_enabled,
+                data_import_enabled=self.data_import_enabled,
+                pe_fqdn=self.pe_fqdn,
             ),
         )
 
@@ -127,6 +135,8 @@ class PrivateEndpointDestination(OutboundRule):
                 "service_resource_id": self.service_resource_id,
                 "subresource_target": self.subresource_target,
                 "spark_enabled": self.spark_enabled,
+                "data_import_enabled": self.data_import_enabled,
+                "pe_fqdn": self.pe_fqdn,
             },
             "status": self.status,
         }

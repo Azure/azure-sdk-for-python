@@ -25209,6 +25209,10 @@ class PrivateEndpointDestination(msrest.serialization.Model):
     :ivar spark_status: Type of a managed network Outbound Rule of a machine learning workspace.
      Possible values include: "Inactive", "Active".
     :vartype spark_status: str or ~azure.mgmt.machinelearningservices.models.RuleStatus
+    :ivar data_import_enabled:
+    :vartype data_import_enabled: bool
+    :ivar pe_fqdn:
+    :vartype pe_fqdn: str
     :ivar subresource_target:
     :vartype subresource_target: str
     """
@@ -25217,6 +25221,8 @@ class PrivateEndpointDestination(msrest.serialization.Model):
         'service_resource_id': {'key': 'serviceResourceId', 'type': 'str'},
         'spark_enabled': {'key': 'sparkEnabled', 'type': 'bool'},
         'spark_status': {'key': 'sparkStatus', 'type': 'str'},
+        'data_import_enabled': {'key': 'dataImportEnabled', 'type': 'bool'},
+        'pe_fqdn': {'key': 'peFqdn', 'type': 'str'},
         'subresource_target': {'key': 'subresourceTarget', 'type': 'str'},
     }
 
@@ -25226,6 +25232,8 @@ class PrivateEndpointDestination(msrest.serialization.Model):
         service_resource_id: Optional[str] = None,
         spark_enabled: Optional[bool] = None,
         spark_status: Optional[Union[str, "RuleStatus"]] = None,
+        data_import_enabled: Optional[bool] = None,
+        pe_fqdn: Optional[str] = None,
         subresource_target: Optional[str] = None,
         **kwargs
     ):
@@ -25237,6 +25245,10 @@ class PrivateEndpointDestination(msrest.serialization.Model):
         :keyword spark_status: Type of a managed network Outbound Rule of a machine learning workspace.
          Possible values include: "Inactive", "Active".
         :paramtype spark_status: str or ~azure.mgmt.machinelearningservices.models.RuleStatus
+        :keyword data_import_enabled:
+        :paramtype data_import_enabled: bool
+        :keyword pe_fqdn:
+        :paramtype pe_fqdn: str
         :keyword subresource_target:
         :paramtype subresource_target: str
         """
@@ -25244,6 +25256,8 @@ class PrivateEndpointDestination(msrest.serialization.Model):
         self.service_resource_id = service_resource_id
         self.spark_enabled = spark_enabled
         self.spark_status = spark_status
+        self.data_import_enabled = data_import_enabled
+        self.pe_fqdn = pe_fqdn
         self.subresource_target = subresource_target
 
 

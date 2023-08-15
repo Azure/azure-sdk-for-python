@@ -108,7 +108,9 @@ class ServiceTagOutboundRuleSchema(metaclass=PatchedSchemaMeta):
 class PrivateEndpointDestinationSchema(metaclass=PatchedSchemaMeta):
     service_resource_id = fields.Str(required=True)
     subresource_target = fields.Str(required=True)
-    spark_enabled = fields.Bool(required=True)
+    spark_enabled = fields.Bool(required=False)
+    data_import_enabled = fields.Bool(required=False)
+    pe_fqdn = fields.Str(required=False)
 
 
 @experimental
@@ -130,7 +132,7 @@ class PrivateEndpointOutboundRuleSchema(metaclass=PatchedSchemaMeta):
 
     @pre_dump
     def predump(self, data, **kwargs):
-        data.destination = self.pe_dest2dict(data.service_resource_id, data.subresource_target, data.spark_enabled)
+        data.destination = self.pe_dest2dict(data.service_resource_id, data.subresource_target, data.spark_enabled, data.data_import_enabled, data.pe_fqdn)
         return data
 
     @post_load
@@ -143,16 +145,20 @@ class PrivateEndpointOutboundRuleSchema(metaclass=PatchedSchemaMeta):
             name=name,
             service_resource_id=dest["service_resource_id"],
             subresource_target=dest["subresource_target"],
-            spark_enabled=dest["spark_enabled"],
+            spark_enabled=dest["spark_enabled"] if "spark_enabled" in dest else False,
+            data_import_enabled=dest["data_import_enabled"] if "data_import_enabled" in dest else False,
+            pe_fqdn=dest["pe_fqdn"] if "pe_fqdn" in dest else None,
             category=_snake_to_camel(category),
             status=status,
         )
 
-    def pe_dest2dict(self, service_resource_id, subresource_target, spark_enabled):
+    def pe_dest2dict(self, service_resource_id, subresource_target, spark_enabled, data_import_enabled, pe_fqdn):
         pedest = {}
         pedest["service_resource_id"] = service_resource_id
         pedest["subresource_target"] = subresource_target
         pedest["spark_enabled"] = spark_enabled
+        pedest["data_import_enabled"] = data_import_enabled
+        pedest["pe_fqdn"] = pe_fqdn
         return pedest
 
 

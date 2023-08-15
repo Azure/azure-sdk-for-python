@@ -15,6 +15,14 @@ managed_network:
       spark_enabled: false
       subresource_target: blob
     type: private_endpoint
+  - name: my-dataimport-source
+    destination:
+      service_resource_id: /subscriptions/0caf7ec9-615a-4491-bad8-64ce023324e1/resourceGroups/joharrin-sdk-tests/providers/Microsoft.Network/privatelinkservices/mvnettestservice
+      spark_enabled: false
+      data_import_enabled: true
+      pe_fqdn: test
+      subresource_target: default
+    type: private_endpoint
   - name: pytorch
     destination: '*.pytorch.org'
     type: fqdn

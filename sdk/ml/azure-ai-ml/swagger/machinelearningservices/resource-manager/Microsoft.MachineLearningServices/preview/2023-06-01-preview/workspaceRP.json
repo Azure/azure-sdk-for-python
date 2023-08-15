@@ -2693,6 +2693,12 @@
         "sparkStatus": {
           "$ref": "#/definitions/RuleStatus"
         },
+        "dataImportEnabled": {
+          "type": "boolean"
+        },
+        "peFqdn": {
+          "type": "string"
+        },
         "subresourceTarget": {
           "type": "string"
         }

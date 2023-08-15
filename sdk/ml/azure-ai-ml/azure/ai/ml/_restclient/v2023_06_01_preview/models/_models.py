@@ -23262,6 +23262,10 @@ class PrivateEndpointDestination(msrest.serialization.Model):
     :ivar spark_status: Type of a managed network Outbound Rule of a machine learning workspace.
      Possible values include: "Inactive", "Active".
     :vartype spark_status: str or ~azure.mgmt.machinelearningservices.models.RuleStatus
+    :ivar data_import_enabled:
+    :vartype data_import_enabled: bool
+    :ivar pe_fqdn:
+    :vartype pe_fqdn: str
     :ivar subresource_target:
     :vartype subresource_target: str
     """
@@ -23270,6 +23274,8 @@ class PrivateEndpointDestination(msrest.serialization.Model):
         'service_resource_id': {'key': 'serviceResourceId', 'type': 'str'},
         'spark_enabled': {'key': 'sparkEnabled', 'type': 'bool'},
         'spark_status': {'key': 'sparkStatus', 'type': 'str'},
+        'data_import_enabled': {'key': 'dataImportEnabled', 'type': 'bool'},
+        'pe_fqdn': {'key': 'peFqdn', 'type': 'str'},
         'subresource_target': {'key': 'subresourceTarget', 'type': 'str'},
     }
 
@@ -23285,6 +23291,10 @@ class PrivateEndpointDestination(msrest.serialization.Model):
         :keyword spark_status: Type of a managed network Outbound Rule of a machine learning workspace.
          Possible values include: "Inactive", "Active".
         :paramtype spark_status: str or ~azure.mgmt.machinelearningservices.models.RuleStatus
+        :keyword data_import_enabled:
+        :paramtype data_import_enabled: bool
+        :keyword pe_fqdn:
+        :paramtype pe_fqdn: str
         :keyword subresource_target:
         :paramtype subresource_target: str
         """
@@ -23292,6 +23302,8 @@ class PrivateEndpointDestination(msrest.serialization.Model):
         self.service_resource_id = kwargs.get('service_resource_id', None)
         self.spark_enabled = kwargs.get('spark_enabled', None)
         self.spark_status = kwargs.get('spark_status', None)
+        self.data_import_enabled = kwargs.get('data_import_enabled', None)
+        self.pe_fqdn = kwargs.get('pe_fqdn', None)
         self.subresource_target = kwargs.get('subresource_target', None)
 
 

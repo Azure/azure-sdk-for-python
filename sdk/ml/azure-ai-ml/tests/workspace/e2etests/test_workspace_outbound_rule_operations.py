@@ -43,7 +43,7 @@ class TestWorkspaceOutboundRules(AzureRecordedTestCase):
             {"description": wps_description},
             {"display_name": wps_display_name},
         ]
-        wps = load_workspace("./tests/test_configs/workspace/workspace_mvnet.yaml", params_override=params_override)
+        wps = load_workspace("../../../tests/test_configs/workspace/workspace_mvnet.yaml", params_override=params_override)
 
         # test creation
         workspace_poller = client.workspaces.begin_create(workspace=wps)
@@ -75,6 +75,15 @@ class TestWorkspaceOutboundRules(AzureRecordedTestCase):
         assert "storageAccounts/mvnetteststorage" in rules_dict["my-storage"].service_resource_id
         assert rules_dict["my-storage"].spark_enabled == False
         assert rules_dict["my-storage"].subresource_target == "blob"
+
+        assert "my-dataimport-source" in rules_dict.keys()
+        assert isinstance(rules_dict["my-dataimport-source"], PrivateEndpointDestination)
+        assert rules_dict["my-dataimport-source"].category == OutboundRuleCategory.USER_DEFINED
+        assert "privatelinkservices/mvnettestservice" in rules_dict["my-dataimport-source"].service_resource_id
+        assert rules_dict["my-dataimport-source"].spark_enabled == False
+        assert rules_dict["my-dataimport-source"].data_import_enabled == True
+        assert rules_dict["pe_fqdn"].data_import_enabled == "test"
+        assert rules_dict["my-dataimport-source"].subresource_target == "default"
 
         assert "pytorch" in rules_dict.keys()
         assert isinstance(rules_dict["pytorch"], FqdnDestination)
