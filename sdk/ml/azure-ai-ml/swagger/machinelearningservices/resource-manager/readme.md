@@ -158,9 +158,9 @@ These settings apply only when `--tag=v2023-04-01-preview` is specified on the c
 ```yaml $(tag) == 'v2023-04-01-preview'
 input-file:
   - Microsoft.MachineLearningServices/preview/2023-04-01-preview/machineLearningServices.json
-  - Microsoft.MachineLearningServices/preview/2023-04-01-preview/registries.json
-  - Microsoft.MachineLearningServices/preview/2023-04-01-preview/workspaceFeatures.json
-  - Microsoft.MachineLearningServices/preview/2023-04-01-preview/mfe.json
+  # - Microsoft.MachineLearningServices/preview/2023-04-01-preview/registries.json
+  # - Microsoft.MachineLearningServices/preview/2023-04-01-preview/workspaceFeatures.json
+  # - Microsoft.MachineLearningServices/preview/2023-04-01-preview/mfe.json
 output-folder: $(python-sdks-folder)/v2023_04_01_preview
 ```
 
