@@ -27,7 +27,9 @@ jobs:
       displayName: Install build script requirements
 
     - pwsh: |
-        Invoke-Expression "C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\VC\Auxiliary\Build\vcvars64.bat"
+        Push-Location "C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\Common7\tools"
+        Invoke-Expression "./VsDevCmd.bat"
+        Pop-Location
 
         $argument = @'
         ${{ replace(convertToJson(parameters.CondaArtifacts), '"', '\"') }}
