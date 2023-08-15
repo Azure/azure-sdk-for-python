@@ -324,7 +324,7 @@ if uamqp_installed:
             Return updated auth token.
             :param ~uamqp.authentication.JWTTokenAuth mgmt_auth: Auth.
             :return: Updated token.
-            :rtype: str 
+            :rtype: str
             """
             return mgmt_auth.token
 
