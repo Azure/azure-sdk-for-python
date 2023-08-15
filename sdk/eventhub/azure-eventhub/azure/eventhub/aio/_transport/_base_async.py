@@ -72,7 +72,8 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
     def get_remote_max_message_size(handler):
         """
         Returns max peer message size.
-        :param ~uamqp.AMQPClientAsync or ~pyamqp.aio.AMQPClientAsync handler: Client to get remote max message size on link from.
+        :param handler: Client to get remote max message size on link from.
+        :type handler: ~uamqp.AMQPClientAsync or ~pyamqp.aio.AMQPClientAsync
         :rtype: int
         """
 
@@ -242,7 +243,9 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
     async def get_updated_token_async(mgmt_auth):
         """
         Return updated auth token.
-        :param ~pyamqp.aio._authentication_async.JWTTokenAuthAsync or uamqp.authentication.JWTTokenAsync mgmt_auth: Auth.
+        :param mgmt_auth: Auth.
+        :type mgmt_auth: ~pyamqp.aio._authentication_async.JWTTokenAuthAsync
+         or uamqp.authentication.JWTTokenAsync 
         """
 
     @staticmethod
