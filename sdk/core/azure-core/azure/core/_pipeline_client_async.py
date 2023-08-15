@@ -34,8 +34,10 @@ from typing import (
     Generator,
     Generic,
     Optional,
+    Type,
     cast,
 )
+from types import TracebackType
 from .configuration import Configuration
 from .pipeline import AsyncPipeline
 from .pipeline.transport._base import PipelineClientBase
@@ -108,8 +110,13 @@ class _Coroutine(Awaitable[AsyncHTTPResponseType]):
         self._response = await self
         return self._response
 
-    async def __aexit__(self, *args) -> None:
-        await self._response.__aexit__(*args)
+    async def __aexit__(
+        self,
+        exc_type: Optional[Type[BaseException]] = None,
+        exc_value: Optional[BaseException] = None,
+        traceback: Optional[TracebackType] = None,
+    ) -> None:
+        await self._response.__aexit__(exc_type, exc_value, traceback)
 
 
 class AsyncPipelineClient(
@@ -162,11 +169,16 @@ class AsyncPipelineClient(
         await self._pipeline.__aenter__()
         return self
 
-    async def __aexit__(self, *args: Any) -> None:
-        await self.close()
+    async def __aexit__(
+        self,
+        exc_type: Optional[Type[BaseException]] = None,
+        exc_value: Optional[BaseException] = None,
+        traceback: Optional[TracebackType] = None,
+    ) -> None:
+        await self._pipeline.__aexit__(exc_type, exc_value, traceback)
 
     async def close(self) -> None:
-        await self._pipeline.__aexit__()
+        await self.__aexit__()
 
     def _build_pipeline(
         self,

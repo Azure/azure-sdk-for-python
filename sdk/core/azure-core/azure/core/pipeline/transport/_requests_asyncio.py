@@ -27,14 +27,8 @@ import asyncio
 from collections.abc import AsyncIterator
 import functools
 import logging
-from typing import (
-    Any,
-    Optional,
-    AsyncIterator as AsyncIteratorType,
-    Union,
-    TYPE_CHECKING,
-    overload,
-)
+from typing import Any, Optional, AsyncIterator as AsyncIteratorType, Union, TYPE_CHECKING, overload, Type
+from types import TracebackType
 from urllib3.exceptions import (
     ProtocolError,
     NewConnectionError,
@@ -99,8 +93,13 @@ class AsyncioRequestsTransport(RequestsAsyncTransportBase):
     async def __aenter__(self):
         return super(AsyncioRequestsTransport, self).__enter__()
 
-    async def __aexit__(self, *exc_details):  # pylint: disable=arguments-differ
-        return super(AsyncioRequestsTransport, self).__exit__()
+    async def __aexit__(
+        self,
+        exc_type: Optional[Type[BaseException]] = None,
+        exc_value: Optional[BaseException] = None,
+        traceback: Optional[TracebackType] = None,
+    ) -> None:
+        return super(AsyncioRequestsTransport, self).__exit__(exc_type, exc_value, traceback)
 
     async def sleep(self, duration):  # pylint:disable=invalid-overridden-method
         await asyncio.sleep(duration)

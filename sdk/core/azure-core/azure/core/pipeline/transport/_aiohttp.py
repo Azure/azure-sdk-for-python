@@ -24,7 +24,8 @@
 #
 # --------------------------------------------------------------------------
 import sys
-from typing import Any, Optional, AsyncIterator as AsyncIteratorType, TYPE_CHECKING, overload, cast, Union
+from typing import Any, Optional, AsyncIterator as AsyncIteratorType, TYPE_CHECKING, overload, cast, Union, Type
+from types import TracebackType
 from collections.abc import AsyncIterator
 
 import logging
@@ -97,7 +98,12 @@ class AioHttpTransport(AsyncHttpTransport):
         await self.open()
         return self
 
-    async def __aexit__(self, *args):  # pylint: disable=arguments-differ
+    async def __aexit__(
+        self,
+        exc_type: Optional[Type[BaseException]] = None,
+        exc_value: Optional[BaseException] = None,
+        traceback: Optional[TracebackType] = None,
+    ) -> None:
         await self.close()
 
     async def open(self):

@@ -3,6 +3,8 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+from typing import Optional, Type
+from types import TracebackType
 from copy import deepcopy
 from azure.core import AsyncPipelineClient
 from azure.core.pipeline import policies
@@ -60,5 +62,9 @@ class AsyncTestRestClient(object):
         await self._client.__aenter__()
         return self
 
-    async def __aexit__(self, *exc_details) -> None:
-        await self._client.__aexit__(*exc_details)
+    async def __aexit__(self,
+        exc_type: Optional[Type[BaseException]] = None,
+        exc_value: Optional[BaseException] = None,
+        traceback: Optional[TracebackType] = None,
+    ) -> None:
+        await self._client.__aexit__(exc_type, exc_value, traceback)

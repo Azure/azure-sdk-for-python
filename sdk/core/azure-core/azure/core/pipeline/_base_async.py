@@ -24,7 +24,8 @@
 #
 # --------------------------------------------------------------------------
 from __future__ import annotations
-from typing import Any, Union, Generic, TypeVar, List, Dict, Optional, Iterable
+from types import TracebackType
+from typing import Any, Union, Generic, TypeVar, List, Dict, Optional, Iterable, Type
 from typing_extensions import AsyncContextManager
 
 from azure.core.pipeline import PipelineRequest, PipelineResponse, PipelineContext
@@ -156,8 +157,13 @@ class AsyncPipeline(AsyncContextManager["AsyncPipeline"], Generic[HTTPRequestTyp
         await self._transport.__aenter__()
         return self
 
-    async def __aexit__(self, *exc_details: Any) -> None:  # pylint: disable=arguments-differ
-        await self._transport.__aexit__(*exc_details)
+    async def __aexit__(
+        self,
+        exc_type: Optional[Type[BaseException]] = None,
+        exc_value: Optional[BaseException] = None,
+        traceback: Optional[TracebackType] = None,
+    ) -> None:
+        await self._transport.__aexit__(exc_type, exc_value, traceback)
 
     async def _prepare_multipart_mixed_request(self, request: HTTPRequestType) -> None:
         """Will execute the multipart policies.
