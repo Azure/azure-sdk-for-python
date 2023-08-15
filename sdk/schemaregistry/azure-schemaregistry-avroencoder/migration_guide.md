@@ -76,7 +76,7 @@ Using the `AvroEncoder`:
 ```python
 with encoder:
     dict_content = {"name": "Ben", "favorite_number": 7, "favorite_color": "red"}
-    message_content_ben = encoder.encode(content=dict_content, schema=definition)
+    message_content_ben = encoder.encode(content=dict_content, schema=SCHEMA_STRING)
     print(message_content_ben)  # prints {"content": <Avro-encoded content>, "content_type": "<Avro MIME type>+<Schema ID>"}
 ```
 
@@ -95,7 +95,7 @@ Using the `AvroEncoder`:
 
 ```python
 with encoder:
-    decoded_content = encoder.decode(value=encoded_content)
+    decoded_content = encoder.decode(content=encoded_content)
 ```
 
 ### Content type
@@ -179,14 +179,14 @@ Previously, the body on the received EventData would need to be manually constru
 ```python
 def on_event(partition_context, event):
     bytes_payload = b"".join(b for b in event.body)
-    deserialized_data = avro_serializer.deserialize(bytes_payload)
+    deserialized_data = avro_serializer.deserialize(value=bytes_payload)
 ```
 
 Now, the `EventData` can be passed directly to the `AvroEncoder` for automatic decoding.
 
 ```python
 def on_event(partition_context, event):
-    decoded_content = avro_encoder.decode(event)
+    decoded_content = avro_encoder.decode(content=event)
 ```
 
 ## Additional samples
