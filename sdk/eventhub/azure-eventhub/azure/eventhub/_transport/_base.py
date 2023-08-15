@@ -186,7 +186,7 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
         """
         Add EventData to the data body of the BatchMessage.
         :param ~pyamqp.message.BatchMessage or ~uamqp.BatchMessage event_data_batch: BatchMessage to add data to.
-        :param Any outgoing_event_data: Transformed EventData for sending.
+        :param any outgoing_event_data: Transformed EventData for sending.
         :param EventData event_data: EventData to add to internal batch events. uamqp use only.
         """
 

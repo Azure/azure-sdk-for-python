@@ -216,7 +216,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
                             consumer._name,
                             last_exception,
                         )
-                        raise last_exception # pylint: disable=raise-missing-from
+                        raise last_exception from None
         finally:
             consumer._callback_task_run = False
 

@@ -83,7 +83,7 @@ if uamqp_installed:
         async def close_connection_async(connection):
             """
             Closes existing connection.
-            :param Connection connection: uamqp or pyamqp Connection.
+            :param ~uamqp.ConnectionAsync connection: uamqp Connection.
             """
             await connection.destroy_async()
 
@@ -244,7 +244,7 @@ if uamqp_installed:
                                 consumer._name,
                                 last_exception,
                             )
-                            raise last_exception # pylint: disable=raise-missing-from
+                            raise last_exception from None
 
             if consumer._message_buffer:
                 while consumer._message_buffer:
@@ -332,8 +332,8 @@ if uamqp_installed:
         async def open_mgmt_client_async(mgmt_client, conn):
             """
             Opens the mgmt AMQP client.
-            :param AMQPClient mgmt_client: uamqp AMQPClient.
-            :param Connection conn: Connection.
+            :param ~uamqp.aio.AMQPClientAsync mgmt_client: uamqp AMQPClient.
+            :param ~uamqp.aio.ConnectionAsync conn: Connection.
             """
             await mgmt_client.open_async(connection=conn)
 

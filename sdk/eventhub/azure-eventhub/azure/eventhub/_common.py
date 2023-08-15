@@ -622,12 +622,12 @@ class EventDataBatch(object):
         for event_data in events:
             try:
                 self.add(event_data)
-            except ValueError as exc:
+            except ValueError:
                 raise ValueError(
                     "The combined size of EventData or AmqpAnnotatedMessage collection exceeds "
                     "the Event Hub frame size limit. Please send a smaller collection of EventData "
                     "or use EventDataBatch, which is guaranteed to be under the frame size limit"
-                ) from exc
+                ) from None
 
     @property
     def message(self) -> Union["BatchMessage", LegacyBatchMessage]:

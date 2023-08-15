@@ -202,7 +202,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         Creates the error retry policy.
         :param ~azure.eventhub._configuration.Configuration config: Configuration.
         :return: The retry policy.
-        :rtype: ~pyamqp.error.errors.RetryPolicy
+        :rtype: ~pyamqp.error.RetryPolicy
 
         """
         return errors.RetryPolicy(
@@ -270,7 +270,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         :param connection: pyamqp Connection.
         :type connection: ~pyamqp.Connection
         :return: Connection state.
-        :rtype: ~pyamqp.ConnectionState
+        :rtype: ~pyamqp.constants.ConnectionState
         """
         return connection.state
 
@@ -531,7 +531,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         """
         Return updated auth token.
         :param mgmt_auth: Auth.
-        :type mgmt_auth: ~pyamqp._authentication.JWTTokenAuth
+        :type mgmt_auth: ~pyamqp.authentication.JWTTokenAuth
         :return: The mgmt AMQP client.
         :rtype: str
         """
