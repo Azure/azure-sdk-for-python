@@ -101,6 +101,7 @@ class PredictionDriftMetricThresholdSchema(MetricThresholdSchema):
         return PredictionDriftMetricThreshold(**data)
 
 
+# pylint: disable-next=name-too-long
 class FeatureAttributionDriftMetricThresholdSchema(MetricThresholdSchema):
     normalized_discounted_cumulative_gain = fields.Number()
     @post_load

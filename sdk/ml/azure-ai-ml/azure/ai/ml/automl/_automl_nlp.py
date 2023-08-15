@@ -45,6 +45,7 @@ def text_classification(
     :type kwargs: dict
 
     :return: The TextClassificationJob object.
+    :rtype: TextClassificationJob
     """
 
     text_classification_job = TextClassificationJob(
@@ -93,6 +94,7 @@ def text_classification_multilabel(
     :type kwargs: dict
 
     :return: The TextClassificationMultilabelJob object.
+    :rtype: TextClassificationMultilabelJob
     """
 
     text_classification_multilabel_job = TextClassificationMultilabelJob(
@@ -138,6 +140,7 @@ def text_ner(
     :type kwargs: dict
 
     :return: The TextNerJob object.
+    :rtype: TextNerJob
     """
 
     text_ner_job = TextNerJob(

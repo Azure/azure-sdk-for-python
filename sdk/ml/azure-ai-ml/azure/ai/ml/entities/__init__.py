@@ -50,9 +50,11 @@ from ._credentials import (
     UserIdentityConfiguration,
     UsernamePasswordConfiguration,
     AccessKeyConfiguration,
+    ApiKeyConfiguration,
 )
 from ._datastore.adls_gen1 import AzureDataLakeGen1Datastore
 from ._datastore.azure_storage import AzureBlobDatastore, AzureDataLakeGen2Datastore, AzureFileDatastore
+from ._datastore.one_lake import OneLakeArtifact, OneLakeDatastore
 from ._data_import.data_import import DataImport
 from ._datastore.datastore import Datastore
 from ._deployment.batch_deployment import BatchDeployment
@@ -281,6 +283,8 @@ __all__ = [
     "AzureBlobDatastore",
     "AzureDataLakeGen2Datastore",
     "AzureFileDatastore",
+    "OneLakeDatastore",
+    "OneLakeArtifact",
     "Compute",
     "VirtualMachineCompute",
     "AmlCompute",
@@ -394,6 +398,7 @@ __all__ = [
     "Route",
     "AccessKeyConfiguration",
     "AlertNotification",
+    "ApiKeyConfiguration",
     "MonitorDefinition",
     "MonitorInputData",
     "MonitorSchedule",

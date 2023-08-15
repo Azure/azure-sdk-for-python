@@ -38,24 +38,24 @@ from azure.ai.ml.entities._monitoring.compute import ServerLessSparkCompute
 class MonitorDefinition(RestTranslatableMixin):
     """Monitor definition
 
-    :param compute: The Spark resource configuration to be associated with the monitor
+    :keyword compute: The Spark resource configuration to be associated with the monitor
     :type compute: ~azure.ai.ml.entities.SparkResourceConfiguration
-    :param monitoring_target: The ARM ID object associated with the model or deployment that is being monitored.
-    :type monitoring_target: ~azure.ai.ml.entities.MonitoringTarget
-    :param monitoring_signals: The dictionary of signals to monitor. The key is the name of the signal and the value
-    is the DataSignal object. Accepted values for the DataSignal objects are DataDriftSignal, DataQualitySignal,
-    PredictionDriftSignal, FeatureAttributionDriftSignal, and CustomMonitoringSignal.
-    :type monitoring_signals: Dict[str, Union[~azure.ai.ml.entities.DataDriftSignal
+    :keyword monitoring_target: The ARM ID object associated with the model or deployment that is being monitored.
+    :type monitoring_target: Optional[~azure.ai.ml.entities.MonitoringTarget]
+    :keyword monitoring_signals: The dictionary of signals to monitor. The key is the name of the signal and the value
+        is the DataSignal object. Accepted values for the DataSignal objects are DataDriftSignal, DataQualitySignal,
+        PredictionDriftSignal, FeatureAttributionDriftSignal, and CustomMonitoringSignal.
+    :type monitoring_signals: Optional[Dict[str, Union[~azure.ai.ml.entities.DataDriftSignal
         , ~azure.ai.ml.entities.DataQualitySignal, ~azure.ai.ml.entities.PredictionDriftSignal
         , ~azure.ai.ml.entities.FeatureAttributionDriftSignal
-        , ~azure.ai.ml.entities.CustomMonitoringSignal]]
-    :param alert_notification: The alert configuration for the monitor.
-    :type alert_notification: Union[Literal['azmonitoring'], ~azure.ai.ml.entities.AlertNotification]
+        , ~azure.ai.ml.entities.CustomMonitoringSignal]]]
+    :keyword alert_notification: The alert configuration for the monitor.
+    :type alert_notification: Optional[Union[Literal['azmonitoring'], ~azure.ai.ml.entities.AlertNotification]]
 
     .. admonition:: Example:
-        :class: tip
 
-        .. literalinclude:: ../samples/ml_samples_spark_configurations.py
+
+        .. literalinclude:: ../../../../../samples/ml_samples_spark_configurations.py
             :start-after: [START spark_monitor_definition]
             :end-before: [END spark_monitor_definition]
             :language: python

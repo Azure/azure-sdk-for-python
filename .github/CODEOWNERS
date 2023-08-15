@@ -44,7 +44,7 @@
 /sdk/agrifood/azure-agrifood-farming/                                @bhargav-kansagara
 
 # PRLabel: %Azure.Identity
-/sdk/identity/                                                       @pvaneck @xiangyan99 @Azure/azsdk-identity
+/sdk/identity/                                                       @pvaneck @xiangyan99 @Azure/azure-sdk-write-identity
 
 # PRLabel: %Event Hubs
 /sdk/eventhub/                                                       @annatisch @kashifkhan @swathipil @l0lawrence

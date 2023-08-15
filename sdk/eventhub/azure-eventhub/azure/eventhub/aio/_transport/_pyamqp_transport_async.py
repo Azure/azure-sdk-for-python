@@ -93,6 +93,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
             connection_verify=config.connection_verify,
             transport_type=config.transport_type,
             http_proxy=config.http_proxy,
+            socket_timeout=config.socket_timeout,
             **kwargs,
         )
 
@@ -147,6 +148,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
             transport_type=config.transport_type,
             custom_endpoint_address=config.custom_endpoint_address,
             connection_verify=config.connection_verify,
+            socket_timeout=config.socket_timeout,
             **kwargs,
         )
 
@@ -154,11 +156,10 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
     async def _callback_task(consumer, batch, max_batch_size, max_wait_time):
         while consumer._callback_task_run: # pylint: disable=protected-access
             async with consumer._message_buffer_lock: # pylint: disable=protected-access
-                messages = [
-                    consumer._message_buffer.popleft() # pylint: disable=protected-access
+                events = [
+                    consumer._next_message_in_buffer() # pylint: disable=protected-access
                     for _ in range(min(max_batch_size, len(consumer._message_buffer))) # pylint: disable=protected-access
                 ]
-            events = [EventData._from_message(message) for message in messages] # pylint: disable=protected-access
             now_time = time.time()
             if len(events) > 0:
                 await consumer._on_event_received(events if batch else events[0]) # pylint: disable=protected-access
@@ -226,6 +227,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         # pylint:disable=protected-access
         consumer._callback_task_run = True
         consumer._last_callback_called_time = time.time()
+
         callback_task = asyncio.create_task(
             PyamqpTransportAsync._callback_task(consumer, batch, max_batch_size, max_wait_time)
         )

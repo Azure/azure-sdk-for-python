@@ -12,11 +12,11 @@ from azure.ai.ml._restclient.v2023_04_01_preview.models import (
 from azure.ai.ml._restclient.v2023_04_01_preview.models import DistributionType as RestDistributionType
 from azure.ai.ml._restclient.v2023_04_01_preview.models import Mpi as RestMpi
 from azure.ai.ml._restclient.v2023_04_01_preview.models import PyTorch as RestPyTorch
-from azure.ai.ml._restclient.v2023_04_01_preview.models import TensorFlow as RestTensorFlow
 from azure.ai.ml._restclient.v2023_04_01_preview.models import Ray as RestRay
+from azure.ai.ml._restclient.v2023_04_01_preview.models import TensorFlow as RestTensorFlow
+from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants import DistributionType
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
-from azure.ai.ml._utils._experimental import experimental
 
 SDK_TO_REST = {
     DistributionType.MPI: RestDistributionType.MPI,
@@ -27,6 +27,11 @@ SDK_TO_REST = {
 
 
 class DistributionConfiguration(RestTranslatableMixin):
+    """Distribution configuration for a component or job.
+
+    This class is not meant to be instantiated directly. Instead, use one of its subclasses.
+    """
+
     def __init__(self, **kwargs) -> None:
         self.type = None
 
@@ -34,7 +39,9 @@ class DistributionConfiguration(RestTranslatableMixin):
     def _from_rest_object(
         cls, obj: Optional[Union[RestDistributionConfiguration, Dict]]
     ) -> "DistributionConfiguration":
-        """This function works for distribution property of a Job object and of a Component object()
+        """Constructs a DistributionConfiguration object from a REST object
+
+        This function works for distribution property of a Job object and of a Component object()
 
         Distribution of Job when returned by MFE, is a RestDistributionConfiguration
 
@@ -43,6 +50,12 @@ class DistributionConfiguration(RestTranslatableMixin):
 
         So in the job distribution case, we need to call as_dict() first and get type from "distribution_type" property.
         In the componenet case, we need to extract type from key "type"
+
+
+        :param obj: The object to translate
+        :type obj: Optional[Union[RestDistributionConfiguration, Dict]]
+        :return: The distribution configuration
+        :rtype: DistributionConfiguration
         """
         if obj is None:
             return None
@@ -64,13 +77,21 @@ class DistributionConfiguration(RestTranslatableMixin):
 class MpiDistribution(DistributionConfiguration):
     """MPI distribution configuration.
 
-    :param process_count_per_instance: Number of processes per MPI node.
-    :type process_count_per_instance: int
-    :ivar type: Specifies the type of distribution. Set automatically to "mpi" for this class.
-    :vartype type: str
+    :keyword process_count_per_instance: The number of processes per node.
+    :type process_count_per_instance: Optional[int]
+
+    .. admonition:: Example:
+
+
+        .. literalinclude:: ../../../../../samples/ml_samples_misc.py
+            :start-after: [START mpi_distribution_configuration]
+            :end-before: [END mpi_distribution_configuration]
+            :language: python
+            :dedent: 8
+            :caption: Configuring a CommandComponent with an MpiDistribution.
     """
 
-    def __init__(self, *, process_count_per_instance: Optional[int] = None, **kwargs):
+    def __init__(self, *, process_count_per_instance: Optional[int] = None, **kwargs) -> None:
         super().__init__(**kwargs)
         self.type = DistributionType.MPI
         self.process_count_per_instance = process_count_per_instance
@@ -82,13 +103,21 @@ class MpiDistribution(DistributionConfiguration):
 class PyTorchDistribution(DistributionConfiguration):
     """PyTorch distribution configuration.
 
-    :param process_count_per_instance: Number of processes per node.
-    :type process_count_per_instance: int
-    :ivar type: Specifies the type of distribution. Set automatically to "pytorch" for this class.
-    :vartype type: str
+    :keyword process_count_per_instance: The number of processes per node.
+    :type process_count_per_instance: Optional[int]
+
+    .. admonition:: Example:
+
+
+        .. literalinclude:: ../../../../../samples/ml_samples_misc.py
+            :start-after: [START pytorch_distribution_configuration]
+            :end-before: [END pytorch_distribution_configuration]
+            :language: python
+            :dedent: 8
+            :caption: Configuring a CommandComponent with a PyTorchDistribution.
     """
 
-    def __init__(self, *, process_count_per_instance: Optional[int] = None, **kwargs):
+    def __init__(self, *, process_count_per_instance: Optional[int] = None, **kwargs) -> None:
         super().__init__(**kwargs)
         self.type = DistributionType.PYTORCH
         self.process_count_per_instance = process_count_per_instance
@@ -100,16 +129,25 @@ class PyTorchDistribution(DistributionConfiguration):
 class TensorFlowDistribution(DistributionConfiguration):
     """TensorFlow distribution configuration.
 
-    :vartype distribution_type: str or ~azure.mgmt.machinelearningservices.models.DistributionType
-    :ivar parameter_server_count: Number of parameter server tasks.
-    :vartype parameter_server_count: int
-    :ivar worker_count: Number of workers. If not specified, will default to the instance count.
-    :vartype worker_count: int
-    :ivar type: Specifies the type of distribution. Set automatically to "tensorflow" for this class.
-    :vartype type: str
+    :keyword parameter_server_count: The number of parameter server tasks. Defaults to 0.
+    :type parameter_server_count: Optional[int]
+    :keyword worker_count: The number of workers. Defaults to the instance count.
+    :type worker_count: Optional[int]
+
+    .. admonition:: Example:
+
+
+        .. literalinclude:: ../../../../../samples/ml_samples_misc.py
+            :start-after: [START tensorflow_distribution_configuration]
+            :end-before: [END tensorflow_distribution_configuration]
+            :language: python
+            :dedent: 8
+            :caption: Configuring a CommandComponent with a TensorFlowDistribution.
     """
 
-    def __init__(self, *, parameter_server_count: Optional[int] = 0, worker_count: Optional[int] = None, **kwargs):
+    def __init__(
+        self, *, parameter_server_count: Optional[int] = 0, worker_count: Optional[int] = None, **kwargs
+    ) -> None:
         super().__init__(**kwargs)
         self.type = DistributionType.TENSORFLOW
         self.parameter_server_count = parameter_server_count
