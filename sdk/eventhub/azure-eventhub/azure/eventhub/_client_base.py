@@ -154,7 +154,7 @@ def _generate_sas_token(uri, policy, key, expiry=None):
     :param str key: The shared access key.
     :param datetime.timedelta or None expiry: The time period that the signature is valid for. Default is 1 hour.
     :return: SAS token as string literal.
-    :rtype: str
+    :rtype: ~azure.core.credentials.AccessToken
     """
     if not expiry:
         expiry = timedelta(hours=1)  # Default to 1 hour.

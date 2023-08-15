@@ -186,7 +186,7 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
         """
         Add EventData to the data body of the BatchMessage.
         :param ~pyamqp.message.BatchMessage or ~uamqp.BatchMessage event_data_batch: BatchMessage to add data to.
-        :param any outgoing_event_data: Transformed EventData for sending.
+        :param ~azure.eventhub.EventData outgoing_event_data: EventData with outgoing Messages set for sending.
         :param EventData event_data: EventData to add to internal batch events. uamqp use only.
         """
 
@@ -231,7 +231,7 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
         Opens the receive client.
         :keyword ~uamqp.ReceiveClient or ~pyamqp.ReceiveClient handler: The receive client.
         :keyword ~azure.eventhub.EventHubConsumerClient client: The consumer client.
-        :keyword JWTTokenAuth auth: The auth.
+        :keyword ~pyamqp.authentication.JWTTokenAuth or uamqp.authentication.JWTTokenAuth auth: The auth.
         """
 
     @staticmethod
@@ -264,7 +264,7 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
         """
         Creates and returns the mgmt AMQP client.
         :param _Address address: Required. The Address.
-        :param JWTTokenAuth mgmt_auth: Auth for client.
+        :param ~pyamqp.authentication.JWTTokenAuth or uamqp.authentication.JWTTokenAuth mgmt_auth: Auth for client.
         :param ~azure.eventhub._configuration.Configuration config: The configuration.
         """
 
@@ -273,7 +273,7 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
     def get_updated_token(mgmt_auth):
         """
         Return updated auth token.
-        :param JWTTokenAuth mgmt_auth: Auth.
+        :param ~pyamqp.authentication.JWTTokenAuth or uamqp.authentication.JWTTokenAuth mgmt_auth: Auth.
         """
 
     @staticmethod

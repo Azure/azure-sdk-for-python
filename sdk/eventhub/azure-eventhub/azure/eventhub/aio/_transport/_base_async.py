@@ -242,7 +242,7 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
     async def get_updated_token_async(mgmt_auth):
         """
         Return updated auth token.
-        :param JWTTokenAuth mgmt_auth: Auth.
+        :param ~pyamqp.aio._authentication_async.JWTTokenAuthAsync or uamqp.authentication.JWTTokenAsync mgmt_auth: Auth.
         """
 
     @staticmethod

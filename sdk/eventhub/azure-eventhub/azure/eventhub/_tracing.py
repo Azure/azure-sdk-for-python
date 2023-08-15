@@ -266,7 +266,7 @@ def get_span_link_from_message(message: Union[AmqpAnnotatedMessage, Message]) ->
     based on these values.
 
     :param message: The message to extract the traceparent and tracestate from.
-    :type message: ~azure.eventhub.amqp.AmqpAnnotatedMessage or ~azure.eventhub._pyamqp.message.Message
+    :type message: ~azure.eventhub.amqp.AmqpAnnotatedMessage or ~azure.eventhub._pyamqp.message.Message or ~uamqp.Message
     :rtype: ~azure.core.tracing.Link
     :return: A span link.
     """

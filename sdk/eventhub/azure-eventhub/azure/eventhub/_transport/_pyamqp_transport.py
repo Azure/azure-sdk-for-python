@@ -366,7 +366,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         """
         Add EventData to the data body of the BatchMessage.
         :param ~azure.eventhub.EventDataBatch event_data_batch: EventDataBatch to add data to.
-        :param any outgoing_event_data: Transformed EventData for sending.
+        :param ~azure.eventhub.EventData outgoing_event_data: EventData with outgoing Messages set for sending.
         :param ~azure.eventhub.EventData event_data: EventData to add to internal batch events. uamqp use only.
         :rtype: None
         """
@@ -545,8 +545,8 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         :param str mgmt_msg: Message.
         :keyword bytes operation: Operation.
         :keyword bytes operation_type: Op type.
-        :keyword int status_code_field: mgmt status code.
-        :keyword any description_fields: mgmt status desc.
+        :keyword bytes status_code_field: mgmt status code.
+        :keyword bytes description_fields: mgmt status desc.
 
         :return: Message.
         :rtype: ~pyamqp.message.Message
@@ -568,7 +568,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         :param int status_code: The status code.
         :param str description: Error description message.
         :return: Error.
-        :rtype: ~pyamqp.error.AMQPConnectionError or ~pyamqp.error.AMQPConnectionError
+        :rtype: ~pyamqp.error.AMQPException
 
         """
         if status_code in [401]:

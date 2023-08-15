@@ -411,7 +411,7 @@ if uamqp_installed:
             """
             Add EventData to the data body of the BatchMessage.
             :param uamqp.BatchMessage event_data_batch: BatchMessage to add data to.
-            :param any outgoing_event_data: Transformed EventData for sending.
+            :param ~azure.eventhub.EventData outgoing_event_data: EventData with outgoing Messages set for sending.
             :param ~azure.eventhub.EventData event_data: EventData to add to internal batch events. uamqp use only.
             :rtype: None
             """
@@ -603,11 +603,11 @@ if uamqp_installed:
             :param uamqp.AMQPClient mgmt_client: Client to send request with.
             :param str mgmt_msg: Message.
             :keyword bytes operation: Operation.
-            :keyword operation_type: Op type.
-            :keyword status_code_field: mgmt status code.
-            :keyword description_fields: mgmt status desc.
+            :keyword bytes operation_type: Op type.
+            :keyword bytes status_code_field: mgmt status code.
+            :keyword bytes description_fields: mgmt status desc.
             :return: Status code, description, and response.
-            :rtype: tuple[int, str, any]
+            :rtype: tuple[str, str, uamqp.Message]
             """
             operation_type = kwargs.pop("operation_type")
             operation = kwargs.pop("operation")

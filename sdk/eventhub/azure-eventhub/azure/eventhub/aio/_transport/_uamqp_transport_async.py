@@ -55,7 +55,7 @@ if uamqp_installed:
             """
             Creates and returns the uamqp async Connection object.
             :keyword str host: The hostname, used by uamqp.
-            :keyword ~uamqp.authentication.JWTTokenAuth auth: The auth, used by uamqp.
+            :keyword ~uamqp.authentication.JWTTokenAsync auth: The auth, used by uamqp.
             :keyword str endpoint: The endpoint, used by pyamqp.
             :keyword str container_id: Required.
             :keyword int max_frame_size: Required.
@@ -94,7 +94,7 @@ if uamqp_installed:
             :keyword ~azure.eventhub._configuration.Configuration config: The configuration.
 
             :keyword str target: Required. The target.
-            :keyword ~uamqp.authentication.JWTTokenAuth auth: Required.
+            :keyword ~uamqp.authentication.JWTTokenAsync auth: Required.
             :keyword int idle_timeout: Required.
             :keyword network_trace: Required.
             :keyword retry_policy: Required.
@@ -275,7 +275,7 @@ if uamqp_installed:
             then pass 300 to refresh_window.
 
             :return: A JWTTokenAsync instance.
-            :rtype: JWTTokenAsync
+            :rtype: ~uamqp.authentication.JWTTokenAsync
             """
             update_token = kwargs.pop("update_token")
             refresh_window = 300
@@ -304,7 +304,7 @@ if uamqp_installed:
             """
             Creates and returns the mgmt AMQP client.
             :param _Address address: Required. The Address.
-            :param ~uamqp.authentication.JWTTokenAuth mgmt_auth: Auth for client.
+            :param ~uamqp.authentication.JWTTokenAsync mgmt_auth: Auth for client.
             :param ~azure.eventhub._configuration.Configuration config: The configuration.
 
             :return: The mgmt AMQP client.
@@ -344,9 +344,9 @@ if uamqp_installed:
             :param ~uamqp.AMQPClient mgmt_client: Client to send request with.
             :param str mgmt_msg: Message.
             :keyword bytes operation: Operation.
-            :keyword operation_type: Op type.
-            :keyword status_code_field: mgmt status code.
-            :keyword description_fields: mgmt status desc.
+            :keyword bytes operation_type: Op type.
+            :keyword bytes status_code_field: mgmt status code.
+            :keyword bytes description_fields: mgmt status desc.
 
             :return: Status code, description, response.
             :rtype: tuple
