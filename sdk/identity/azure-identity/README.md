@@ -77,7 +77,7 @@ The Azure Identity library focuses on OAuth authentication with Azure AD. It off
 
 #### Continuation policy
 
-As of 1.14.0, `DefaultAzureCredential` will attempt to authenticate with all developer credentials until one succeeds, regardless of any errors previous developer credentials experienced. For example, a developer credential may attempt to get a token and fail, so `DefaultAzureCredential` will continue to the next credential in the flow. Deployed service credentials will stop the flow with a thrown exception if they're able to attempt token retrieval, but don't receive one.
+As of version 1.14.0, `DefaultAzureCredential` will attempt to authenticate with all developer credentials until one succeeds, regardless of any errors previous developer credentials experienced. For example, a developer credential may attempt to get a token and fail, so `DefaultAzureCredential` will continue to the next credential in the flow. Deployed service credentials will stop the flow with a thrown exception if they're able to attempt token retrieval, but don't receive one. Prior to version 1.14.0, developer credentials would similarly stop the authentication flow if token retrieval failed, but this is no longer the case.
 
 This allows for trying all of the developer credentials on your machine while having predictable deployed behavior.
 
@@ -307,7 +307,7 @@ Configuration is attempted in the above order. For example, if values for a clie
 
 ## Continuous Access Evaluation
 
-As of 1.14.0, accessing resources protected by [Continuous Access Evaluation (CAE)][cae] is possible on a per-request basis. This can be enabled by setting the `enable_cae` keyword argument to `True` in the credential's `get_token` method. CAE isn't supported for developer and managed identity credentials.
+As of version 1.14.0, accessing resources protected by [Continuous Access Evaluation (CAE)][cae] is possible on a per-request basis. This behavior can be enabled by setting the `enable_cae` keyword argument to `True` in the credential's `get_token` method. CAE isn't supported for developer and managed identity credentials.
 
 ## Token caching
 
