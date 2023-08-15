@@ -524,7 +524,10 @@ class Serializer:
 
         imports += "\n".join(imports_to_add)
         try:
-            imports = modify_relative_imports(r"from (.*)_serialization import Serializer", imports)
+            if " Deserializer" in imports:
+                imports = modify_relative_imports(r"from (.*)_serialization import Deserializer", imports)
+            else:
+                imports = modify_relative_imports(r"from (.*)_serialization import Serializer", imports)
         except AttributeError:
             pass
         validation_relative = "..." if async_mode else ".."
