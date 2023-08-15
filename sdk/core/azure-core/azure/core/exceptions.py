@@ -297,7 +297,7 @@ class AzureError(Exception):
 
         self.exc_type = self.exc_type if self.exc_type else type(self.inner_exception)
         self.exc_msg: str = "{}, {}: {}".format(message, self.exc_type.__name__, self.exc_value)
-        self.message: Optional[str] = str(message)
+        self.message: str = str(message)
         self.continuation_token: Optional[str] = kwargs.get("continuation_token")
         super(AzureError, self).__init__(self.message, *args)
 
