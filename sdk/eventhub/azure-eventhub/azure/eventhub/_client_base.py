@@ -152,7 +152,7 @@ def _generate_sas_token(uri, policy, key, expiry=None):
     :param str uri: The resource URI.
     :param str policy: The name of the shared access policy.
     :param str key: The shared access key.
-    :param timedelta or None expiry: The time period that the signature is valid for. Default is 1 hour.
+    :param datetime.timedelta or None expiry: The time period that the signature is valid for. Default is 1 hour.
     :return: SAS token as string literal.
     :rtype: str
     """
