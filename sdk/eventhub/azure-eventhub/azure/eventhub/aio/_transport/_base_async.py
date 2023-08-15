@@ -72,7 +72,7 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
     def get_remote_max_message_size(handler):
         """
         Returns max peer message size.
-        :param ~uamqp.AMQPClient or ~pyamqp.AMQPClient handler: Client to get remote max message size on link from.
+        :param ~uamqp.AMQPClientAsync or ~pyamqp.aio.AMQPClientAsync handler: Client to get remote max message size on link from.
         :rtype: int
         """
 
@@ -117,7 +117,7 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
     async def close_connection_async(connection):
         """
         Closes existing connection.
-        :param ~uamqp.aio.Connection or ~pyamqp.aio.Connection connection: uamqp or pyamqp Connection.
+        :param ~uamqp.async_ops.ConnectionAsync or ~pyamqp.aio.Connection connection: uamqp or pyamqp Connection.
         """
 
     @staticmethod
@@ -125,7 +125,7 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
     def get_connection_state(connection):
         """
         Gets connection state.
-        :param ~uamqp.aio.Connection or ~pyamqp.aio.Connection connection: uamqp or pyamqp Connection.
+        :param ~uamqp.async_ops.ConnectionAsync or ~pyamqp.aio.Connection connection: uamqp or pyamqp Connection.
         """
 
     @staticmethod
@@ -250,7 +250,7 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
     async def mgmt_client_request_async(mgmt_client, mgmt_msg, **kwargs):
         """
         Send mgmt request.
-        :param ~uamqp.AMQPClient or ~pyamqp.AMQPClient mgmt_client: Client to send request with.
+        :param ~uamqp.AMQPClientAsync or ~pyamq.aio.AMQPClientAsync mgmt_client: Client to send request with.
         :param str mgmt_msg: Message.
         :keyword bytes operation: Operation.
         :keyword operation_type: Op type.

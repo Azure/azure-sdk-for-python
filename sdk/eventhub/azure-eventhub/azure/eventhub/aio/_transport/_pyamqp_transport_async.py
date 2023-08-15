@@ -86,7 +86,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         :keyword properties: Required.
 
         :return: The created SendClientAsync.
-        :rtype: ~pyamqp.aio.SendClient
+        :rtype: ~pyamqp.aio.SendClientAsync
         """
         target = kwargs.pop("target")
         # TODO: extra passed in to pyamqp, but not used. should be used?
@@ -146,7 +146,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         :keyword timeout: Required.
 
         :return: The created ReceiveClientAsync.
-        :rtype: ~pyamqp.aio.ReceiveClient
+        :rtype: ~pyamqp.aio.ReceiveClientAsync
         """
 
         source = kwargs.pop("source")
@@ -296,7 +296,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         :param ~azure.eventhub._configuration.Configuration config: The configuration.
 
         :return: The created AMQPClientAsync.
-        :rtype: ~pyamqp.aio.AMQPClient
+        :rtype: ~pyamqp.aio.AMQPClientAsync
         """
 
         return AMQPClientAsync(
@@ -324,7 +324,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
     async def mgmt_client_request_async(mgmt_client, mgmt_msg, **kwargs):
         """
         Send mgmt request.
-        :param ~pyamqp.aio.AMQPClient mgmt_client: Client to send request with.
+        :param ~pyamqp.aio.AMQPClientAsync mgmt_client: Client to send request with.
         :param str mgmt_msg: Message.
         :keyword bytes operation: Operation.
         :keyword bytes operation_type: Op type.
@@ -332,7 +332,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         :keyword any description_fields: mgmt status desc.
 
         :return: The mgmt client.
-        :rtype: ~pyamqp.aio.AMQPClient
+        :rtype: ~pyamqp.aio.AMQPClientAsync
         """
         operation_type = kwargs.pop("operation_type")
         operation = kwargs.pop("operation")

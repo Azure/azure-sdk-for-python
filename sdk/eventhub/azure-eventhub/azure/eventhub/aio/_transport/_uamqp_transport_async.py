@@ -68,7 +68,7 @@ if uamqp_installed:
             :keyword str encoding: Required.
 
             :return: The connection.
-            :rtype: ~uamqp.ConnectionAsync
+            :rtype: ~uamqp.async_ops.ConnectionAsync
             """
             endpoint = kwargs.pop("endpoint") # pylint:disable=unused-variable
             host = kwargs.pop("host")
@@ -83,7 +83,7 @@ if uamqp_installed:
         async def close_connection_async(connection):
             """
             Closes existing connection.
-            :param ~uamqp.ConnectionAsync connection: uamqp Connection.
+            :param ~uamqp.async_ops.ConnectionAsync connection: uamqp Connection.
             """
             await connection.destroy_async()
 
@@ -324,7 +324,7 @@ if uamqp_installed:
             Return updated auth token.
             :param JWTTokenAuth mgmt_auth: Auth.
             :return: Updated token.
-            :rtype: str
+            :rtype: str 
             """
             return mgmt_auth.token
 
@@ -332,8 +332,8 @@ if uamqp_installed:
         async def open_mgmt_client_async(mgmt_client, conn):
             """
             Opens the mgmt AMQP client.
-            :param ~uamqp.aio.AMQPClientAsync mgmt_client: uamqp AMQPClient.
-            :param ~uamqp.aio.ConnectionAsync conn: Connection.
+            :param ~uamqp.AMQPClientAsync mgmt_client: uamqp AMQPClient.
+            :param ~uamqp.async_ops.ConnectionAsync conn: Connection.
             """
             await mgmt_client.open_async(connection=conn)
 
@@ -341,7 +341,7 @@ if uamqp_installed:
         async def mgmt_client_request_async(mgmt_client, mgmt_msg, **kwargs):
             """
             Send mgmt request.
-            :param AMQP Client mgmt_client: Client to send request with.
+            :param ~uamqp.AMQPClient mgmt_client: Client to send request with.
             :param str mgmt_msg: Message.
             :keyword bytes operation: Operation.
             :keyword operation_type: Op type.
