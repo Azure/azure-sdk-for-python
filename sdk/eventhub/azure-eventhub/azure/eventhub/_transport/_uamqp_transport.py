@@ -270,7 +270,7 @@ if uamqp_installed:
             """
             Creates and returns the uamqp Connection object.
             :keyword str host: The hostname, used by uamqp.
-            :keyword JWTTokenAuth auth: The auth, used by uamqp.
+            :keyword ~uamqp.authentication.JWTTokenAuth auth: The auth, used by uamqp.
             :keyword str endpoint: The endpoint, used by pyamqp.
             :keyword str container_id: Required.
             :keyword int max_frame_size: Required.
@@ -324,7 +324,7 @@ if uamqp_installed:
             :keyword ~azure.eventhub._configuration.Configuration config: The configuration.
 
             :keyword str target: Required. The target.
-            :keyword JWTTokenAuth auth: Required.
+            :keyword ~uamqp.authentication.JWTTokenAuth auth: Required.
             :keyword int idle_timeout: Required.
             :keyword network_trace: Required.
             :keyword retry_policy: Required.
@@ -446,7 +446,7 @@ if uamqp_installed:
             :keyword str source: Required. The source.
             :keyword str offset: Required.
             :keyword str offset_inclusive: Required.
-            :keyword JWTTokenAuth auth: Required.
+            :keyword ~uamqp.authentication.JWTTokenAuth auth: Required.
             :keyword int idle_timeout: Required.
             :keyword network_trace: Required.
             :keyword retry_policy: Required.
@@ -497,7 +497,7 @@ if uamqp_installed:
             Opens the receive client and returns ready status.
             :keyword uamqp.ReceiveClient handler: The receive client.
             :keyword ~azure.eventhub.EventHubConsumerClient client: The consumer client.
-            :keyword JWTTokenAuth auth: Auth.
+            :keyword ~uamqp.authentication.JWTTokenAuth auth: Auth.
             """
             # pylint:disable=protected-access
             handler.open(connection=client._conn_manager.get_connection(
@@ -531,7 +531,7 @@ if uamqp_installed:
             then pass 300 to refresh_window.
 
             :returns: The JWTTokenAuth.
-            :rtype: JWTTokenAuth
+            :rtype: ~uamqp.authentication.JWTTokenAuth
 
             """
             update_token = kwargs.pop("update_token")
@@ -561,7 +561,7 @@ if uamqp_installed:
             """
             Creates and returns the mgmt AMQP client.
             :param _Address address: Required. The Address.
-            :param JWTTokenAuth mgmt_auth: Auth for client.
+            :param ~uamqp.authentication.JWTTokenAuth mgmt_auth: Auth for client.
             :param ~azure.eventhub._configuration.Configuration config: The configuration.
             :returns: The mgmt AMQP client.
             :rtype: uamqp.AMQPClient
@@ -590,7 +590,7 @@ if uamqp_installed:
             """
             Return updated auth token.
             :param mgmt_auth: Auth.
-            :type mgmt_auth: JWTTokenAuth
+            :type mgmt_auth: ~uamqp.authentication.JWTTokenAuth
             :return: Updated auth token.
             :rtype: str
             """

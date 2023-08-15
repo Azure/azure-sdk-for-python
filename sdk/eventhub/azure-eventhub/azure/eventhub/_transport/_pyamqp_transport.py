@@ -233,7 +233,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         """
         Creates and returns the uamqp Connection object.
         :keyword str host: The hostname, used by uamqp.
-        :keyword JWTTokenAuth auth: The auth, used by uamqp.
+        :keyword ~pyamqp.authentication.JWTTokenAuth auth: The auth, used by uamqp.
         :keyword str endpoint: The endpoint, used by pyamqp.
         :keyword str container_id: Required.
         :keyword int max_frame_size: Required.
@@ -258,8 +258,8 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
     def close_connection(connection):
         """
         Closes existing connection.
-        :param connection: uamqp or pyamqp Connection.
-        :type connection: ~uamqp.Connection or ~pyamqp.Connection
+        :param connection: pyamqp Connection.
+        :type connection: ~pyamqp.Connection
         """
         connection.close()
 
@@ -281,7 +281,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         :keyword ~azure.eventhub._configuration.Configuration config: The configuration.
 
         :keyword str target: Required. The target.
-        :keyword JWTTokenAuth auth: Required.
+        :keyword ~pyamqp.authentication.JWTTokenAuth auth: Required.
         :keyword int idle_timeout: Required.
         :keyword network_trace: Required.
         :keyword retry_policy: Required.
@@ -405,7 +405,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         :keyword str source: Required. The source.
         :keyword str offset: Required.
         :keyword str offset_inclusive: Required.
-        :keyword JWTTokenAuth auth: Required.
+        :keyword ~pyamqp.authentication.JWTTokenAuth auth: Required.
         :keyword int idle_timeout: Required.
         :keyword network_trace: Required.
         :keyword retry_policy: Required.
@@ -509,7 +509,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         """
         Creates and returns the mgmt AMQP client.
         :param _Address address: Required. The Address.
-        :param JWTTokenAuth mgmt_auth: Auth for client.
+        :param ~pyamqp.authentication.JWTTokenAuth mgmt_auth: Auth for client.
         :param ~azure.eventhub._configuration.Configuration config: The configuration.
 
         :return: The mgmt AMQP client.
