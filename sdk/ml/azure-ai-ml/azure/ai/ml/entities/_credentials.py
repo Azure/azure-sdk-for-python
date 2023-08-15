@@ -25,21 +25,23 @@ from azure.ai.ml._restclient.v2022_01_01_preview.models import (
 )
 from azure.ai.ml._restclient.v2022_05_01.models import ManagedServiceIdentity as RestManagedServiceIdentityConfiguration
 from azure.ai.ml._restclient.v2022_05_01.models import UserAssignedIdentity as RestUserAssignedIdentityConfiguration
-from azure.ai.ml._restclient.v2022_10_01.models import (
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     AccountKeyDatastoreCredentials as RestAccountKeyDatastoreCredentials,
 )
-from azure.ai.ml._restclient.v2022_10_01.models import AccountKeyDatastoreSecrets as RestAccountKeyDatastoreSecrets
-from azure.ai.ml._restclient.v2022_10_01.models import (
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    AccountKeyDatastoreSecrets as RestAccountKeyDatastoreSecrets,
+)
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     CertificateDatastoreCredentials as RestCertificateDatastoreCredentials,
 )
-from azure.ai.ml._restclient.v2022_10_01.models import CertificateDatastoreSecrets, CredentialsType
-from azure.ai.ml._restclient.v2022_10_01.models import NoneDatastoreCredentials as RestNoneDatastoreCredentials
-from azure.ai.ml._restclient.v2022_10_01.models import SasDatastoreCredentials as RestSasDatastoreCredentials
-from azure.ai.ml._restclient.v2022_10_01.models import SasDatastoreSecrets as RestSasDatastoreSecrets
-from azure.ai.ml._restclient.v2022_10_01.models import (
+from azure.ai.ml._restclient.v2023_04_01_preview.models import CertificateDatastoreSecrets, CredentialsType
+from azure.ai.ml._restclient.v2023_04_01_preview.models import NoneDatastoreCredentials as RestNoneDatastoreCredentials
+from azure.ai.ml._restclient.v2023_04_01_preview.models import SasDatastoreCredentials as RestSasDatastoreCredentials
+from azure.ai.ml._restclient.v2023_04_01_preview.models import SasDatastoreSecrets as RestSasDatastoreSecrets
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     ServicePrincipalDatastoreCredentials as RestServicePrincipalDatastoreCredentials,
 )
-from azure.ai.ml._restclient.v2022_10_01.models import (
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     ServicePrincipalDatastoreSecrets as RestServicePrincipalDatastoreSecrets,
 )
 
