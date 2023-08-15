@@ -11,8 +11,7 @@ from azure.core.exceptions import (
     HttpResponseError,
     ResourceExistsError,
     AzureError,
-    ServiceResponseError,
-    ServiceRequestError
+    ServiceResponseError
 )
 from azure.core.pipeline.policies import RetryMode
 from azure.core.pipeline.transport import RequestsTransport
@@ -38,19 +37,30 @@ class RetryRequestTransport(RequestsTransport):
         timeout_error = ReadTimeout("Read timed out", request=request)
         raise ServiceResponseError(timeout_error, error=timeout_error)
 
+
 class FailoverRetryTransport(RequestsTransport):
-    """Transport to attempt to raise on first request but allow requests to secondary location."""
+    """Transport to attempt to raise on first request but allow requests to secondary location.
+
+    To simulate a failover scenario, pass the exception into the `failover` keyword arg on the method
+    you wish to test, e.g.:
+
+    client.get_entity("foo", "bar", failover=ServiceRequestError("Attempting to force failover"))
+    """
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.primary_hostname = kwargs.get('primary')
-        self.secondary_hostname = kwargs.get('secondary')
+        self._already_raised = False
 
     def send(self, request, **kwargs):
-        primary_request = kwargs.pop('primary_request', False)
-        if primary_request:
-            raise ServiceRequestError("Attempting to force failover")
-        return super().send(request, **kwargs)
+        failover_on_error = kwargs.pop('failover', None)
+        if failover_on_error and not self._already_raised:
+            self._already_raised = True
+            raise failover_on_error
+        try:
+            return super().send(request, **kwargs)
+        finally:
+            self._already_raised = False
+
 
 # --Test Class -----------------------------------------------------------------
 class TestStorageRetry(AzureRecordedTestCase, TableTestCase):
