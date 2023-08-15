@@ -40,7 +40,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         """
         Creates and returns the pyamqp Connection object.
         :keyword str host: The hostname, used by pyamqp.
-        :keyword JWTTokenAuthAsync auth: The auth, used by pyamqp.
+        :keyword ~pyamqp.aio._authentication_async.JWTTokenAuthAsync auth: The auth, used by pyamqp.
         :keyword str endpoint: The endpoint, used by pyamqp.
         :keyword str container_id: Required.
         :keyword int max_frame_size: Required.
@@ -76,7 +76,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         :keyword ~azure.eventhub._configuration.Configuration config: The configuration.
 
         :keyword str target: Required. The target.
-        :keyword JWTTokenAuth auth: Required.
+        :keyword ~pyamqp.aio._authentication_async.JWTTokenAuthAsync auth: Required.
         :keyword int idle_timeout: Required.
         :keyword network_trace: Required.
         :keyword retry_policy: Required.
@@ -131,7 +131,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         :keyword str source: Required. The source.
         :keyword str offset: Required.
         :keyword str offset_inclusive: Required.
-        :keyword JWTTokenAuth auth: Required.
+        :keyword ~pyamqp.aio._authentication_async.JWTTokenAuthAsync auth: Required.
         :keyword int idle_timeout: Required.
         :keyword network_trace: Required.
         :keyword retry_policy: Required.
@@ -292,7 +292,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         """
         Creates and returns the mgmt AMQP client.
         :param _Address address: Required. The Address.
-        :param JWTTokenAuth mgmt_auth: Auth for client.
+        :param ~pyamqp.aio._authentication_async.JWTTokenAuthAsync mgmt_auth: Auth for client.
         :param ~azure.eventhub._configuration.Configuration config: The configuration.
 
         :return: The created AMQPClientAsync.
@@ -313,7 +313,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
     async def get_updated_token_async(mgmt_auth):
         """
         Return updated auth token.
-        :param JWTTokenAuth mgmt_auth: Auth.
+        :param ~pyamqp.aio._authentication_async.JWTTokenAuthAsync mgmt_auth: Auth.
 
         :return: The updated auth token.
         :rtype: str

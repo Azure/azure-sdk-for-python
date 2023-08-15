@@ -55,7 +55,7 @@ if uamqp_installed:
             """
             Creates and returns the uamqp async Connection object.
             :keyword str host: The hostname, used by uamqp.
-            :keyword JWTTokenAuth auth: The auth, used by uamqp.
+            :keyword ~uamqp.authentication.JWTTokenAuth auth: The auth, used by uamqp.
             :keyword str endpoint: The endpoint, used by pyamqp.
             :keyword str container_id: Required.
             :keyword int max_frame_size: Required.
@@ -94,7 +94,7 @@ if uamqp_installed:
             :keyword ~azure.eventhub._configuration.Configuration config: The configuration.
 
             :keyword str target: Required. The target.
-            :keyword JWTTokenAuth auth: Required.
+            :keyword ~uamqp.authentication.JWTTokenAuth auth: Required.
             :keyword int idle_timeout: Required.
             :keyword network_trace: Required.
             :keyword retry_policy: Required.
@@ -148,7 +148,7 @@ if uamqp_installed:
             :keyword str source: Required. The source.
             :keyword str offset: Required.
             :keyword str offset_inclusive: Required.
-            :keyword JWTTokenAuth auth: Required.
+            :keyword ~uamqp.authentication.JWTTokenAuth auth: Required.
             :keyword int idle_timeout: Required.
             :keyword network_trace: Required.
             :keyword retry_policy: Required.
@@ -304,7 +304,7 @@ if uamqp_installed:
             """
             Creates and returns the mgmt AMQP client.
             :param _Address address: Required. The Address.
-            :param JWTTokenAuth mgmt_auth: Auth for client.
+            :param ~uamqp.authentication.JWTTokenAuth mgmt_auth: Auth for client.
             :param ~azure.eventhub._configuration.Configuration config: The configuration.
 
             :return: The mgmt AMQP client.
@@ -322,7 +322,7 @@ if uamqp_installed:
         async def get_updated_token_async(mgmt_auth):
             """
             Return updated auth token.
-            :param JWTTokenAuth mgmt_auth: Auth.
+            :param ~uamqp.authentication.JWTTokenAuth mgmt_auth: Auth.
             :return: Updated token.
             :rtype: str 
             """
