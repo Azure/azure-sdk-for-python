@@ -66,8 +66,12 @@ OUTPUT_MOUNT_MAPPING_TO_REST = {
 
 
 # TODO: Remove this as both rest type and sdk type are snake case now.
-def get_output_type_mapping_from_rest():
-    """Get output type mapping."""
+def get_output_type_mapping_from_rest() -> Dict[str, str]:
+    """Gets the mapping of JobOutputType to AssetType
+
+    :return: Mapping of JobOutputType to AssetType
+    :rtype: Dict[str, str]
+    """
     return {
         JobOutputType.URI_FILE: AssetTypes.URI_FILE,
         JobOutputType.URI_FOLDER: AssetTypes.URI_FOLDER,
@@ -78,8 +82,12 @@ def get_output_type_mapping_from_rest():
     }
 
 
-def get_input_rest_cls_dict():
-    """Get input rest init func dict."""
+def get_input_rest_cls_dict() -> Dict[str, RestJobInput]:
+    """Gets the mapping of AssetType to RestJobInput
+
+    :return: Map of AssetType to RestJobInput
+    :rtype: Dict[str, RestJobInput]
+    """
     return {
         AssetTypes.URI_FILE: RestUriFileJobInput,
         AssetTypes.URI_FOLDER: RestUriFolderJobInput,
@@ -90,9 +98,12 @@ def get_input_rest_cls_dict():
     }
 
 
-def get_output_rest_cls_dict():
-    """Get output rest init cls dict."""
+def get_output_rest_cls_dict() -> Dict[str, RestJobOutput]:
+    """Get output rest init cls dict.
 
+    :return: Map of AssetType to RestJobOutput
+    :rtype: Dict[str, RestJobOutput]
+    """
     return {
         AssetTypes.URI_FILE: RestUriFileJobOutput,
         AssetTypes.URI_FOLDER: RestUriFolderJobOutput,
@@ -156,7 +167,7 @@ def validate_key_contains_allowed_characters(key: str) -> None:
         )
 
 
-def validate_pipeline_input_key_contains_allowed_characters(key: str) -> None:
+def validate_pipeline_input_key_characters(key: str) -> None:
     # Pipeline input allow '.' to support parameter group in key.
     # Note: ([a-zA-Z_]+[a-zA-Z0-9_]*) is a valid single key,
     # so a valid pipeline key is: ^{single_key}([.]{single_key})*$
@@ -183,7 +194,7 @@ def to_rest_dataset_literal_inputs(
     :type inputs: Dict[str, Union[int, str, float, bool, JobInput]]
     :return: A dictionary mapping input name to a ComponentJobInput or PipelineInput
     :rtype: Dict[str, Union[ComponentJobInput, PipelineInput]]
-    :param job_type: When job_type is pipeline, enable dot('.') in parameter keys to support parameter group.
+    :keyword job_type: When job_type is pipeline, enable dot('.') in parameter keys to support parameter group.
         TODO: Remove this after move name validation to Job's customized validate.
     :type job_type: str
     """
@@ -191,7 +202,7 @@ def to_rest_dataset_literal_inputs(
     # Pack up the inputs into REST format
     for input_name, input_value in inputs.items():
         if job_type == JobType.PIPELINE:
-            validate_pipeline_input_key_contains_allowed_characters(input_name)
+            validate_pipeline_input_key_characters(input_name)
         elif job_type:
             # We pass job_type=None for pipeline node, and want skip this check for nodes.
             validate_key_contains_allowed_characters(input_name)

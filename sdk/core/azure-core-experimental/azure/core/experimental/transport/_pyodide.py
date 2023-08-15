@@ -29,31 +29,45 @@ from io import BytesIO
 
 import js  # pylint: disable=import-error
 from pyodide import JsException  # pylint: disable=import-error
-from pyodide.http import pyfetch  # pylint: disable=import-error
+from pyodide.http import pyfetch, FetchResponse  # pylint: disable=import-error
 
 from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline import Pipeline
 from azure.core.utils import CaseInsensitiveDict
 
 from azure.core.rest._http_response_impl_async import AsyncHttpResponseImpl
-from azure.core.pipeline.transport import HttpRequest, AsyncioRequestsTransport
+from azure.core.pipeline.transport import (  # pylint: disable=non-abstract-transport-import, no-name-in-module
+    HttpRequest,
+    AsyncioRequestsTransport,
+)
 
 
 class PyodideTransportResponse(AsyncHttpResponseImpl):
     """Async response object for the `PyodideTransport`."""
 
-    def _js_stream(self):
-        """So we get a fresh stream every time."""
+    def _js_stream(self) -> FetchResponse:
+        """So we get a fresh stream every time.
+
+        :return: The stream stream
+        :rtype: ~pyodide.http.FetchResponse
+        """
         return self._internal_response.clone().js_response.body
 
     async def close(self) -> None:
         """We don't actually have control over closing connections in the browser, so we just pretend
         to close.
+
+        :return: None
+        :rtype: None
         """
         self._is_closed = True
 
     def body(self) -> bytes:
-        """The body is just the content."""
+        """The body is just the content.
+
+        :return: The body of the response.
+        :rtype: bytes
+        """
         return self.content
 
     async def load_body(self) -> None:
@@ -65,6 +79,11 @@ class PyodideTransportResponse(AsyncHttpResponseImpl):
 class PyodideStreamDownloadGenerator(AsyncIterator):
     """Simple stream download generator that returns the contents of
     a request.
+
+    :param pipeline: The pipeline object
+    :type pipeline: ~azure.core.pipeline.Pipeline
+    :param response: The response object
+    :type response: ~azure.core.experimental.transport.PyodideTransportResponse
     """
 
     # pylint: disable=unused-argument
@@ -85,7 +104,11 @@ class PyodideStreamDownloadGenerator(AsyncIterator):
         self.done = False
 
     async def __anext__(self) -> bytes:
-        """Get the next block of bytes."""
+        """Get the next block of bytes.
+
+        :return: The next block of bytes.
+        :rtype: bytes
+        """
         if self._closed:
             raise StopAsyncIteration()
 
@@ -140,7 +163,7 @@ class PyodideTransport(AsyncioRequestsTransport):
         try:
             response = await pyfetch(endpoint, **init)
         except JsException as error:
-            raise HttpResponseError(error, error=error)
+            raise HttpResponseError(error, error=error) from error
 
         headers = CaseInsensitiveDict(response.js_response.headers)
         transport_response = PyodideTransportResponse(

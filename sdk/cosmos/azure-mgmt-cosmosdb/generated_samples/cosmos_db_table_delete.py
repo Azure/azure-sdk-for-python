@@ -29,14 +29,13 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.table_resources.begin_delete_table(
+    client.table_resources.begin_delete_table(
         resource_group_name="rg1",
         account_name="ddb1",
         table_name="tableName",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/stable/2023-04-15/examples/CosmosDBTableDelete.json
+# x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/preview/2023-03-15-preview/examples/CosmosDBTableDelete.json
 if __name__ == "__main__":
     main()

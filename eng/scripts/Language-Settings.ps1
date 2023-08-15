@@ -184,15 +184,17 @@ function ValidatePackage
   # Add more validation by replicating as much of the docs CI process as
   # possible
   # https://github.com/Azure/azure-sdk-for-python/issues/20109
+  $result = $true
   if (!$DocValidationImageId) {
     Write-Host "Validating using pip command directly on $packageName."
-    FallbackValidation -packageName "$packageName" -packageVersion "$packageVersion" -workingDirectory $installValidationFolder -PackageSourceOverride $PackageSourceOverride
-  }
-  else {
+    $result = FallbackValidation -packageName "$packageName" -packageVersion "$packageVersion" -workingDirectory $installValidationFolder -PackageSourceOverride $PackageSourceOverride
+  } else {
     Write-Host "Validating using $DocValidationImageId on $packageName."
-    DockerValidation -packageName "$packageName" -packageVersion "$packageVersion" `
+    $result = DockerValidation -packageName "$packageName" -packageVersion "$packageVersion" `
         -PackageSourceOverride $PackageSourceOverride -DocValidationImageId $DocValidationImageId -workingDirectory $installValidationFolder
   }
+
+  return $result
 }
 function DockerValidation{
   Param(
@@ -302,6 +304,7 @@ $PackageExclusions = @{
   'azure-mgmt-netapp' = 'Latest package requires Python >= 3.7 and this breaks docs build. https://github.com/Azure/azure-sdk-for-python/issues/22492';
   'azure-synapse-artifacts' = 'Latest package requires Python >= 3.7 and this breaks docs build. https://github.com/Azure/azure-sdk-for-python/issues/22492';
   'azure-mgmt-streamanalytics' = 'Latest package requires Python >= 3.7 and this breaks docs build. https://github.com/Azure/azure-sdk-for-python/issues/22492';
+  'azure-ai-ml' = 'Docs CI build issues https://github.com/Azure/azure-sdk-for-python/issues/30774';
 
   'azure-keyvault' = 'Metapackages should not be documented';
 }
@@ -588,6 +591,8 @@ function Import-Dev-Cert-python
   python $pathToScript
 }
 
+# Defined in common.ps1 as:
+# $ValidateDocsMsPackagesFn = "Validate-${Language}-DocMsPackages"
 function Validate-Python-DocMsPackages ($PackageInfo, $PackageInfos, $PackageSourceOverride, $DocValidationImageId)
 {
   # While eng/common/scripts/Update-DocsMsMetadata.ps1 is still passing a single packageInfo, process as a batch
@@ -595,10 +600,20 @@ function Validate-Python-DocMsPackages ($PackageInfo, $PackageInfos, $PackageSou
     $PackageInfos =  @($PackageInfo)
   }
 
+  $allSucceeded = $true
   foreach ($package in $PackageInfos) {
-    ValidatePackage -packageName $package.Name -packageVersion $package.Version `
-        -PackageSourceOverride $PackageSourceOverride -DocValidationImageId $DocValidationImageId
+    $result = ValidatePackage `
+      -packageName $package.Name `
+      -packageVersion $package.Version `
+      -PackageSourceOverride $PackageSourceOverride `
+      -DocValidationImageId $DocValidationImageId
+
+    if (!$result) {
+      $allSucceeded = $false
+    }
   }
+
+  return $allSucceeded
 }
 
 function Get-python-EmitterName() {

@@ -10,7 +10,7 @@ from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Callable, Dict, List, Optional, Union
+from typing import Callable, Dict, List, Optional, Tuple, Union
 
 from azure.ai.ml._utils._asset_utils import get_object_hash
 from azure.ai.ml._utils.utils import (
@@ -20,10 +20,15 @@ from azure.ai.ml._utils.utils import (
     is_private_preview_enabled,
     write_to_shared_file,
 )
-from azure.ai.ml.constants._common import AZUREML_COMPONENT_REGISTRATION_MAX_WORKERS, AzureMLResourceType
+from azure.ai.ml.constants._common import (
+    AZUREML_COMPONENT_REGISTRATION_MAX_WORKERS,
+    AzureMLResourceType,
+    DefaultOpenEncoding,
+)
 from azure.ai.ml.entities import Component
 from azure.ai.ml.entities._builders import BaseNode
 from azure.ai.ml.entities._component.code import ComponentCodeMixin
+from azure.ai.ml.operations._operation_orchestrator import _AssetResolver
 
 logger = logging.getLogger(__name__)
 
@@ -95,37 +100,20 @@ class CachedNodeResolver(object):
     def __init__(
         self,
         resolver: Callable[[Union[Component, str]], str],
-        subscription_id: Optional[str],
-        resource_group_name: Optional[str],
-        workspace_name: Optional[str],
-        registry_name: Optional[str],
+        client_key: str,
     ):
         self._resolver = resolver
         self._cache: Dict[str, _CacheContent] = {}
         self._nodes_to_resolve: List[BaseNode] = []
 
-        self._client_hash = self._get_client_hash(subscription_id, resource_group_name, workspace_name, registry_name)
+        hash_obj = hashlib.sha256()
+        hash_obj.update(client_key.encode("utf-8"))
+        self._client_hash = hash_obj.hexdigest()
         # the same client share 1 lock
         self._lock = _node_resolution_lock[self._client_hash]
 
     @staticmethod
-    def _get_client_hash(
-        subscription_id: Optional[str],
-        resource_group_name: Optional[str],
-        workspace_name: Optional[str],
-        registry_name: Optional[str],
-    ) -> str:
-        """Get a hash for used client.
-
-        Works for both workspace client and registry client.
-        """
-        object_hash = hashlib.sha256()
-        for s in [subscription_id, resource_group_name, workspace_name, registry_name]:
-            object_hash.update(str(s).encode("utf-8"))
-        return object_hash.hexdigest()
-
-    @staticmethod
-    def _get_component_registration_max_workers():
+    def _get_component_registration_max_workers() -> int:
         """Get the max workers for component registration.
 
         Before Python 3.8, the default max_worker is the number of processors multiplied by 5.
@@ -135,6 +123,9 @@ class CachedNodeResolver(object):
 
         1 risk is that, asset_utils will create a new thread pool to upload files in subprocesses, which may cause
         the number of threads exceed the max_worker.
+
+        :return: The number of workers to use for component registration
+        :rtype: int
         """
         default_max_workers = min(32, (os.cpu_count() or 1) + 4)
         try:
@@ -157,6 +148,11 @@ class CachedNodeResolver(object):
 
         This function assumes that there is no change in code folder among hash calculations, which is true during
         resolution of 1 root pipeline component/job.
+
+        :param component: The component
+        :type component: Component
+        :return: The hash of the component
+        :rtype: str
         """
         if not isinstance(component, Component):
             # this shouldn't happen; handle it in case invalid call is made outside this class
@@ -183,6 +179,13 @@ class CachedNodeResolver(object):
 
         This function will calculate the hash based on the component's code folder if the component has code, so it's
         unique even if code folder is changed.
+
+        :param component: The component to hash
+        :type component: Component
+        :param in_memory_hash: :attr:`_CacheNodeResolver.in_memory_hash`
+        :type in_memory_hash: str
+        :return: The hash of the component
+        :rtype: str
         """
         if not isinstance(component, Component):
             # this shouldn't happen; handle it in case invalid call is made outside this class
@@ -216,23 +219,39 @@ class CachedNodeResolver(object):
 
     @property
     def _on_disk_cache_dir(self) -> Path:
-        """Get the base path for on disk cache."""
+        """Get the base path for on disk cache.
+
+        :return: The base path for the on disk cache
+        :rtype: Path
+        """
         return get_versioned_base_directory_for_cache().joinpath(
             "components",
             self._client_hash,
         )
 
     def _get_on_disk_cache_path(self, on_disk_hash: str) -> Path:
-        """Get the on disk cache path for a component."""
+        """Get the on disk cache path for a component.
+
+        :param on_disk_hash: The hash of the component
+        :type on_disk_hash: str
+        :return: The path to the disk cache
+        :rtype: Path
+        """
         return self._on_disk_cache_dir.joinpath(on_disk_hash)
 
     def _load_from_on_disk_cache(self, on_disk_hash: str) -> Optional[str]:
-        """Load component arm id from on disk cache."""
+        """Load component arm id from on disk cache.
+
+        :param on_disk_hash: The hash of the component
+        :type on_disk_hash: str
+        :return: The cached component arm id if reading was successful, None otherwise
+        :rtype: Optional[str]
+        """
         # on-disk cache will expire in a new SDK version
         on_disk_cache_path = self._get_on_disk_cache_path(on_disk_hash)
         if on_disk_cache_path.is_file() and time.time() - on_disk_cache_path.stat().st_ctime < EXPIRE_TIME_IN_SECONDS:
             try:
-                return on_disk_cache_path.read_text().strip()
+                return on_disk_cache_path.read_text(encoding=DefaultOpenEncoding.READ).strip()
             except (OSError, PermissionError) as e:
                 logger.warning(
                     "Failed to read on-disk cache for component due to %s. "
@@ -243,7 +262,13 @@ class CachedNodeResolver(object):
         return None
 
     def _save_to_on_disk_cache(self, on_disk_hash: str, arm_id: str) -> None:
-        """Save component arm id to on disk cache."""
+        """Save component arm id to on disk cache.
+
+        :param on_disk_hash: The on disk hash of the component
+        :type on_disk_hash: str
+        :param arm_id: The component ARM ID
+        :type arm_id: str
+        """
         # this shouldn't happen in real case, but in case of current mock tests and potential future changes
         if not isinstance(arm_id, str):
             return
@@ -258,8 +283,14 @@ class CachedNodeResolver(object):
                 on_disk_cache_path.as_posix(),
             )
 
-    def _resolve_cache_contents(self, cache_contents_to_resolve: List[_CacheContent], resolver):
-        """Resolve all components to resolve and save the results in cache."""
+    def _resolve_cache_contents(self, cache_contents_to_resolve: List[_CacheContent], resolver: _AssetResolver):
+        """Resolve all components to resolve and save the results in cache.
+
+        :param cache_contents_to_resolve: The cache contents to resolve
+        :type cache_contents_to_resolve: List[_CacheContent]
+        :param resolver: The resolver function
+        :type resolver: _AssetResolver
+        """
 
         def _map_func(_cache_content: _CacheContent):
             _cache_content.arm_id = resolver(_cache_content.component_ref, azureml_type=AzureMLResourceType.COMPONENT)
@@ -278,12 +309,13 @@ class CachedNodeResolver(object):
         else:
             list(map(_map_func, cache_contents_to_resolve))
 
-    def _prepare_items_to_resolve(self):
+    def _prepare_items_to_resolve(self) -> Tuple[Dict[str, List[BaseNode]], List[_CacheContent]]:
         """Pop all nodes in self._nodes_to_resolve to prepare cache contents to resolve and nodes to resolve. Nodes in
         self._nodes_to_resolve will be grouped by component hash and saved to a dict of list. Distinct dependent
         components not in current cache will be saved to a list.
 
         :return: a tuple of (dict of nodes to resolve, list of cache contents to resolve)
+        :rtype: Tuple[Dict[str, List[BaseNode]],  List[_CacheContent]]
         """
         _components = list(map(lambda x: x._component, self._nodes_to_resolve))  # pylint: disable=protected-access
         # we can do concurrent component in-memory hash calculation here
@@ -305,7 +337,13 @@ class CachedNodeResolver(object):
 
     def _resolve_cache_contents_from_disk(self, cache_contents_to_resolve: List[_CacheContent]) -> List[_CacheContent]:
         """Check on-disk cache to resolve cache contents in cache_contents_to_resolve and return unresolved cache
-        contents."""
+        contents.
+
+        :param cache_contents_to_resolve: The cache contents to resolve
+        :type cache_contents_to_resolve: List[_CacheContent]
+        :return: Unresolved cache contents
+        :rtype: List[_CacheContent]
+        """
         # Note that we should recalculate the hash based on code for local cache, as
         # we can't assume that the code folder won't change among dependency
         # On-disk hash calculation can be slow as it involved data copying and artifact downloading.
@@ -333,7 +371,11 @@ class CachedNodeResolver(object):
         return left_cache_contents_to_resolve
 
     def _fill_back_component_to_nodes(self, dict_of_nodes_to_resolve: Dict[str, List[BaseNode]]):
-        """Fill back resolved component to nodes."""
+        """Fill back resolved component to nodes.
+
+        :param dict_of_nodes_to_resolve: The nodes to resolve
+        :type dict_of_nodes_to_resolve: Dict[str, List[BaseNode]]
+        """
         for component_hash, nodes in dict_of_nodes_to_resolve.items():
             cache_content = self._cache[component_hash]
             for node in nodes:
@@ -354,7 +396,11 @@ class CachedNodeResolver(object):
         self._fill_back_component_to_nodes(dict_of_nodes_to_resolve)
 
     def register_node_for_lazy_resolution(self, node: BaseNode):
-        """Register a node with its component to resolve."""
+        """Register a node with its component to resolve.
+
+        :param node: The node
+        :type node: BaseNode
+        """
         component = node._component  # pylint: disable=protected-access
 
         # directly resolve node and skip registration if the resolution involves no remote call

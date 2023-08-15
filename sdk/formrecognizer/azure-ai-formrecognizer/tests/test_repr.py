@@ -234,8 +234,8 @@ def document_key_value_element(bounding_region, document_span):
 
 @pytest.fixture
 def document_key_value_pair(document_key_value_element):
-    model = _models.DocumentKeyValuePair(key=document_key_value_element[0], value=document_key_value_element[0], confidence=0.98, common_name="Charges")
-    model_repr = "DocumentKeyValuePair(key={}, value={}, confidence={}, common_name={})".format(document_key_value_element[1], document_key_value_element[1], 0.98, "Charges")
+    model = _models.DocumentKeyValuePair(key=document_key_value_element[0], value=document_key_value_element[0], confidence=0.98)
+    model_repr = "DocumentKeyValuePair(key={}, value={}, confidence={})".format(document_key_value_element[1], document_key_value_element[1], 0.98)
     assert repr(model) == model_repr
     return model, model_repr
 
@@ -298,21 +298,6 @@ def document_selection_mark(bounding_box, document_span):
     return model, model_repr
 
 @pytest.fixture
-def document_annotation(bounding_box, document_span):
-    model = _models.DocumentAnnotation(
-                    kind="check",
-                    polygon=bounding_box[0],
-                    confidence=0.8
-                )
-    model_repr = "DocumentAnnotation(kind={}, polygon={}, confidence={})".format(
-            "check",
-            bounding_box[1],
-            0.8,
-        )
-    assert repr(model) == model_repr
-    return model, model_repr
-
-@pytest.fixture
 def document_barcode(bounding_box, document_span):
     model = _models.DocumentBarcode(
                     kind="QRCode",
@@ -351,24 +336,7 @@ def document_formula(bounding_box, document_span):
     return model, model_repr
 
 @pytest.fixture
-def document_image(bounding_box, document_span):
-    model = _models.DocumentImage(
-                    page_number=1,
-                    polygon=bounding_box[0],
-                    span=document_span[0],
-                    confidence=0.8
-                )
-    model_repr = "DocumentImage(page_number={}, polygon={}, confidence={}, span={})".format(
-            1,
-            bounding_box[1],
-            0.8,
-            document_span[1],
-        )
-    assert repr(model) == model_repr
-    return model, model_repr
-
-@pytest.fixture
-def document_page(document_span, document_word, document_selection_mark, document_line, document_annotation, document_formula, document_image, document_barcode):
+def document_page(document_span, document_word, document_selection_mark, document_line, document_formula, document_barcode):
     model = _models.DocumentPage(
         page_number=1,
         angle=120.0,
@@ -379,14 +347,11 @@ def document_page(document_span, document_word, document_selection_mark, documen
         words=[document_word[0]],
         selection_marks=[document_selection_mark[0]],
         lines=[document_line[0]],
-        kind="document",
-        annotations=[document_annotation[0]],
         formulas=[document_formula[0]],
-        images=[document_image[0]],
         barcodes=[document_barcode[0]],
     )
     model_repr = "DocumentPage(page_number={}, angle={}, width={}, height={}, unit={}, lines=[{}], words=[{}], selection_marks=[{}], spans=[{}], " \
-                 "kind={}, annotations=[{}], barcodes=[{}], formulas=[{}], images=[{}])".format(
+                 "barcodes=[{}], formulas=[{}])".format(
                 1,
                 120.0,
                 8.0,
@@ -396,11 +361,8 @@ def document_page(document_span, document_word, document_selection_mark, documen
                 document_word[1],
                 document_selection_mark[1],
                 document_span[1],
-                "document",
-                document_annotation[1],
                 document_barcode[1],
                 document_formula[1],
-                document_image[1],
             )
     assert repr(model) == model_repr
     return model, model_repr
@@ -476,6 +438,53 @@ def doc_type_info():
             )
     assert repr(model) == model_repr
     return model, model_repr
+
+
+@pytest.fixture
+def blob_file_list_source():
+    model = _models.BlobFileListSource(
+            container_url="https://test.blob.core.windows.net/blob-sas-url",
+            file_list="filelist.jsonl",
+    )
+    model_repr = f"BlobFileListSource(container_url=https://test.blob.core.windows.net/blob-sas-url, file_list=filelist.jsonl)"
+
+    assert repr(model) == model_repr
+    return model, model_repr
+
+
+@pytest.fixture
+def blob_source():
+    model = _models.BlobSource(
+            container_url="https://test.blob.core.windows.net/blob-sas-url",
+            prefix="prefix",
+    )
+    model_repr = f"BlobSource(container_url=https://test.blob.core.windows.net/blob-sas-url, prefix=prefix)"
+
+    assert repr(model) == model_repr
+    return model, model_repr
+
+
+@pytest.fixture
+def classifier_document_type_details(blob_source):
+    model = _models.ClassifierDocumentTypeDetails(
+            source=blob_source[0],
+    )
+    model_repr = f"ClassifierDocumentTypeDetails(source_kind=azureBlob, source={blob_source[1]})"
+
+    assert repr(model) == model_repr
+    return model, model_repr
+
+
+@pytest.fixture
+def classifier_document_type_details_file_list(blob_file_list_source):
+    model = _models.ClassifierDocumentTypeDetails(
+            source=blob_file_list_source[0],
+    )
+    model_repr = f"ClassifierDocumentTypeDetails(source_kind=azureBlobFileList, source={blob_file_list_source[1]})"
+
+    assert repr(model) == model_repr
+    return model, model_repr
+
 
 @pytest.fixture
 def document_model(doc_type_info):
@@ -611,6 +620,23 @@ class TestRepr():
             )
         assert repr(model) == model_repr
 
+
+    def test_document_classifier_details(self, classifier_document_type_details, classifier_document_type_details_file_list):
+        model = _models.DocumentClassifierDetails(
+                api_version="2023-07-31",
+                description="my description",
+                created_on=datetime.datetime(2021, 9, 16, 10, 10, 59, 342380),
+                expires_on=datetime.datetime(2024, 9, 16, 10, 10, 59, 342380),
+                classifier_id="custom-classifier",
+                doc_types={
+                    "form-A": classifier_document_type_details[0],
+                    "form-B": classifier_document_type_details_file_list[0],
+                }
+        )
+        model_repr = f"DocumentClassifierDetails(classifier_id=custom-classifier, description=my description, created_on={datetime.datetime(2021, 9, 16, 10, 10, 59, 342380)}, expires_on={datetime.datetime(2024, 9, 16, 10, 10, 59, 342380)}, api_version=2023-07-31, doc_types={{'form-A': {classifier_document_type_details[1]}, 'form-B': {classifier_document_type_details_file_list[1]}}})"
+        assert repr(model) == model_repr
+
+
     def test_model_operation(self, document_analysis_error, document_model):
         model = _models.OperationDetails(
                 api_version="2022-08-31",
@@ -712,13 +738,13 @@ class TestRepr():
             custom_document_models=_models.CustomDocumentModelsDetails(
                 limit=5000, count=10
             ),
-            custom_neural_document_model_builds=_models.QuotaDetails(
+            neural_document_model_quota=_models.QuotaDetails(
                 used=0,
                 quota=20,
                 quota_resets_on=datetime.datetime(2024, 9, 16, 10, 10, 59, 342380)
             )
         )
-        model_repr = "ResourceDetails(custom_document_models={}, custom_neural_document_model_builds={})".format(
+        model_repr = "ResourceDetails(custom_document_models={}, neural_document_model_quota={})".format(
             "CustomDocumentModelsDetails(count=10, limit=5000)",
             "QuotaDetails(used=0, quota=20, quota_resets_on=2024-09-16 10:10:59.342380)"
         )

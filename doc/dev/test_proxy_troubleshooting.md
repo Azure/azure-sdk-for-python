@@ -4,8 +4,8 @@ This guide details some common errors that can come up when migrating to and usi
 information about migrating existing tests to the test proxy, please refer to the
 [test proxy migration guide][migration_guide].
 
-Documentation of the motivations and goals of the test proxy can be found [here][general_docs] in the azure-sdk-tools
-GitHub repository, and documentation of how to set up and use the proxy can be found [here][detailed_docs].
+Documentation of test proxy's underlying functionality can be found [here][detailed_docs] in the `azure-sdk-tools`
+GitHub repository, but this isn't necessary to read for Python testing.
 
 ## Table of contents
 - [Guide for test proxy troubleshooting](#guide-for-test-proxy-troubleshooting)
@@ -16,6 +16,7 @@ GitHub repository, and documentation of how to set up and use the proxy can be f
     - [Test failure during `record/start` or `playback/start` requests](#test-failure-during-recordstart-or-playbackstart-requests)
     - [Playback failures from body matching errors](#playback-failures-from-body-matching-errors)
     - [Playback failures from inconsistent line breaks](#playback-failures-from-inconsistent-line-breaks)
+    - [Playback failures from URL mismatches](#playback-failures-from-url-mismatches)
     - [Recordings not being produced](#recordings-not-being-produced)
     - [ConnectionError during tests](#connectionerror-during-tests)
     - [Different error than expected when using proxy](#different-error-than-expected-when-using-proxy)
@@ -69,6 +70,15 @@ Remove-Item -Recurse -Force .\.assets\
 
 After running tests again, a new `.assets` directory will be created and tests should run normally.
 
+If the problem persists, try removing both the `.assets` folder and your local test proxy tool. `cd` into the root of
+`azure-sdk-for-python` and run the following PowerShell commands:
+```powershell
+Remove-Item -Recurse -Force .\.assets\
+Remove-Item -Recurse -Force .\.proxy\
+```
+
+These folders will be freshly recreated the next time you run tests.
+
 ## Playback failures from body matching errors
 
 In the old, `vcrpy`-based testing system, request and response bodies weren't compared in playback mode by default in
@@ -98,6 +108,41 @@ you can create a `.gitattributes` file in the directory with the following conte
 ```
 
 For a real example, refer to https://github.com/Azure/azure-sdk-for-python/pull/29955.
+
+## Playback failures from URL mismatches
+
+URL matching errors in playback tests can come from a variety of issues. This section lists common ones and how to
+resolve them.
+
+### Duplicated slash(es) in URLs
+
+This most often appears at the end of the URL domain; for example:
+```text
+Uri doesn't match:
+    request: https://fake_resource.service.azure.net/path
+    record:  https://fake_resource.service.azure.net//path
+```
+This most often comes from an `EnvironmentVariableLoader` playback endpoint ending with a trailing slash (e.g.
+`https://fake_resource.service.azure.net/`) while the live-mode URL doesn't (e.g.
+`https://fake_resource.service.azure.net`). A slash gets added to the real endpoint during tests, and then the domain
+-- without a trailing slash -- is sanitized with a URL that has an additional trailing slash.
+
+Check the real values of endpoints in your `.env` file, and ensure the formatting of corresponding playback endpoint
+values match in any sanitizer or `EnvironmentVariableLoader` uses.
+
+### Inconsistent query parameter ordering
+
+By default, the test proxy tries to match URLs exactly. If there's a section of the URL that's indeterminately ordered,
+you may intermittently see matching errors. This often happens with query parameters; for example:
+```text
+Uri doesn't match:
+    request: https://fake_resource.service.azure.net/?a=value1&b=value2
+    record:  https://fake_resource.service.azure.net/?b=value2&a=value1
+```
+To match requests for query parameter content instead of exact ordering, you can use the
+[`set_custom_default_matcher`][custom_default_matcher] method from `devtools_testutils` with the keyword argument
+`ignore_query_ordering=True`. Calling this method inside the body of a test function will update the matcher for only
+that test, which is recommended.
 
 ## Recordings not being produced
 
@@ -186,10 +231,10 @@ chmod +x .../azure-sdk-for-python/.proxy/Azure.Sdk.Tools.TestProxy
 ```
 
 
+[custom_default_matcher]: https://github.com/Azure/azure-sdk-for-python/blob/497f5f3435162c4f2086d1429fc1bba4f31a4354/tools/azure-sdk-tools/devtools_testutils/sanitizers.py#L85
 [detailed_docs]: https://github.com/Azure/azure-sdk-tools/tree/main/tools/test-proxy/Azure.Sdk.Tools.TestProxy/README.md
 [env_var_loader]: https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/envvariable_loader.py
 [env_var_section]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/test_proxy_migration_guide.md#fetch-environment-variables
-[general_docs]: https://github.com/Azure/azure-sdk-tools/blob/main/tools/test-proxy/documentation/test-proxy/initial-investigation.md
 [gitattributes]: https://git-scm.com/docs/gitattributes
 [mgmt_recorded_test_case]: https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/mgmt_recorded_testcase.py
 [migration_guide]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/test_proxy_migration_guide.md

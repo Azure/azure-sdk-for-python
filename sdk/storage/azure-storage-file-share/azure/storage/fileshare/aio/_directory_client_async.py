@@ -360,7 +360,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
             new_dir_sas = self._query_str.strip('?')
 
         new_directory_client = ShareDirectoryClient(
-            '{}://{}'.format(self.scheme, self.primary_hostname), self.share_name, new_dir_path,
+            f'{self.scheme}://{self.primary_hostname}', self.share_name, new_dir_path,
             credential=new_dir_sas or self.credential, api_version=self.api_version,
             _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,
             _location_mode=self._location_mode, allow_trailing_dot=self.allow_trailing_dot,

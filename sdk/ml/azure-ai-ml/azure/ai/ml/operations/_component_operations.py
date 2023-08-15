@@ -2,15 +2,16 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=protected-access
-
+# pylint: disable=protected-access,too-many-lines
 import time
 import types
 from functools import partial
 from inspect import Parameter, signature
+from os import PathLike
+from pathlib import Path
 from typing import Any, Callable, Dict, Iterable, List, Optional, Union
 
-from azure.core.exceptions import ResourceNotFoundError
+from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 
 from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
     AzureMachineLearningWorkspaces as ServiceClient102021Dataplane,
@@ -38,15 +39,16 @@ from azure.ai.ml._vendor.azure_resources.operations import DeploymentsOperations
 from azure.ai.ml.constants._common import (
     DEFAULT_COMPONENT_VERSION,
     DEFAULT_LABEL_NAME,
+    DefaultOpenEncoding,
     AzureMLResourceType,
     LROConfigurations,
 )
-from azure.ai.ml.entities import Component, ValidationResult
+from azure.ai.ml.entities import Component, Environment, ValidationResult
 from azure.ai.ml.exceptions import ComponentException, ErrorCategory, ErrorTarget, ValidationException
 
 from .._utils._cache_utils import CachedNodeResolver
 from .._utils._experimental import experimental
-from .._utils.utils import is_data_binding_expression
+from .._utils.utils import extract_name_and_version, is_data_binding_expression
 from ..entities._builders import BaseNode
 from ..entities._builders.condition_node import ConditionNode
 from ..entities._builders.control_flow_node import LoopNode
@@ -56,7 +58,7 @@ from ..entities._component.pipeline_component import PipelineComponent
 from ..entities._job.pipeline._attr_dict import has_attr_safe
 from ._code_operations import CodeOperations
 from ._environment_operations import EnvironmentOperations
-from ._operation_orchestrator import OperationOrchestrator
+from ._operation_orchestrator import _AssetResolver, OperationOrchestrator
 from ._workspace_operations import WorkspaceOperations
 
 ops_logger = OpsLogger(__name__)
@@ -69,6 +71,21 @@ class ComponentOperations(_ScopeDependentOperations):
     You should not instantiate this class directly. Instead, you should
     create an MLClient instance that instantiates it for you and
     attaches it as an attribute.
+
+    :param operation_scope: The operation scope.
+    :type operation_scope: ~azure.ai.ml._scope_dependent_operations.OperationScope
+    :param operation_config: The operation configuration.
+    :type operation_config: ~azure.ai.ml._scope_dependent_operations.OperationConfig
+    :param service_client: The service client for API operations.
+    :type service_client: Union[
+        ~azure.ai.ml._restclient.v2022_10_01.AzureMachineLearningWorkspaces,
+        ~azure.ai.ml._restclient.v2021_10_01_dataplanepreview.AzureMachineLearningWorkspaces]
+    :param all_operations: The container for all available operations.
+    :type all_operations: ~azure.ai.ml._scope_dependent_operations.OperationsContainer
+    :param preflight_operation: The preflight operation for deployments.
+    :type preflight_operation: Optional[~azure.ai.ml._vendor.azure_resources.operations.DeploymentsOperations]
+    :param kwargs: Additional keyword arguments.
+    :type kwargs: Dict
     """
 
     def __init__(
@@ -79,7 +96,7 @@ class ComponentOperations(_ScopeDependentOperations):
         all_operations: OperationsContainer,
         preflight_operation: Optional[DeploymentsOperations] = None,
         **kwargs: Dict,
-    ):
+    ) -> None:
         super(ComponentOperations, self).__init__(operation_scope, operation_config)
         ops_logger.update_info(kwargs)
         self._version_operation = service_client.component_versions
@@ -91,6 +108,8 @@ class ComponentOperations(_ScopeDependentOperations):
         # returns the asset associated with the label
         self._managed_label_resolver = {"latest": self._get_latest_version}
         self._orchestrators = OperationOrchestrator(self._all_operations, self._operation_scope, self._operation_config)
+
+        self._client_key: Optional[str] = None
 
     @property
     def _code_operations(self) -> CodeOperations:
@@ -127,7 +146,7 @@ class ComponentOperations(_ScopeDependentOperations):
 
         :param name: Component name, if not set, list all components of the workspace
         :type name: Optional[str]
-        :param list_view_type: View type for including/excluding (for example) archived components.
+        :keyword list_view_type: View type for including/excluding (for example) archived components.
             Default: ACTIVE_ONLY.
         :type list_view_type: Optional[ListViewType]
         :return: An iterator like instance of component objects
@@ -208,13 +227,90 @@ class ComponentOperations(_ScopeDependentOperations):
         :type name: str
         :param version: Version of the component.
         :type version: Optional[str]
-        :param label: Label of the component. (mutually exclusive with version)
+        :param label: Label of the component, mutually exclusive with version.
         :type label: Optional[str]
         :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Component cannot be successfully
             identified and retrieved. Details will be provided in the error message.
         :return: The specified component object.
         :rtype: ~azure.ai.ml.entities.Component
         """
+        return self._get(name=name, version=version, label=label)
+
+    def _localize_code(self, component: Component, base_dir: Path) -> None:
+        if not isinstance(component, ComponentCodeMixin):
+            return
+        code = component._get_origin_code_value()
+        if not isinstance(code, str):
+            return
+        # registry code will keep the "azureml:" prefix can be used directly
+        if code.startswith("azureml://registries"):
+            return
+
+        target_code_value = "./code"
+        self._code_operations.download(
+            **extract_name_and_version(code), download_path=base_dir.joinpath(target_code_value)
+        )
+
+        setattr(component, component._get_code_field_name(), target_code_value)
+
+    def _localize_environment(self, component: Component, base_dir: Path) -> None:
+        from azure.ai.ml.entities import ParallelComponent
+
+        if hasattr(component, "environment"):
+            parent = component
+        elif isinstance(component, ParallelComponent):
+            parent = component.task
+        else:
+            return
+
+        # environment can be None
+        if not isinstance(parent.environment, str):
+            return
+        # registry environment will keep the "azureml:" prefix can be used directly
+        if parent.environment.startswith("azureml://registries"):
+            return
+
+        environment = self._environment_operations.get(**extract_name_and_version(parent.environment))
+        environment._localize(base_path=base_dir.absolute().as_posix())
+        parent.environment = environment
+
+    @experimental
+    @monitor_with_telemetry_mixin(logger, "Component.Download", ActivityType.PUBLICAPI)
+    def download(self, name: str, download_path: Union[PathLike, str] = ".", *, version: str = None) -> None:
+        """Download the specified component and its dependencies to local. Local component can be used to create
+        the component in another workspace or for offline development.
+
+        :param name: Name of the code component.
+        :type name: str
+        :param Union[PathLike, str] download_path: Local path as download destination,
+            defaults to current working directory of the current user. Will be created if not exists.
+        :type download_path: str
+        :keyword version: Version of the component.
+        :type version: Optional[str]
+        :raises ~OSError: Raised if download_path is pointing to an existing directory that is not empty.
+            identified and retrieved. Details will be provided in the error message.
+        :return: The specified component object.
+        :rtype: ~azure.ai.ml.entities.Component
+        """
+        download_path = Path(download_path)
+        component = self._get(name=name, version=version)
+        self._resolve_azureml_id(component)
+
+        output_dir = Path(download_path)
+        if output_dir.is_dir():
+            # an OSError will be raised if the directory is not empty
+            output_dir.rmdir()
+        output_dir.mkdir(parents=True)
+        # download code
+        self._localize_code(component, output_dir)
+
+        # download environment
+        self._localize_environment(component, output_dir)
+
+        component._localize(output_dir.absolute().as_posix())
+        (output_dir / "component_spec.yaml").write_text(component._to_yaml(), encoding=DefaultOpenEncoding.WRITE)
+
+    def _get(self, name: str, version: Optional[str] = None, label: Optional[str] = None) -> Component:
         if version and label:
             msg = "Cannot specify both version and label."
             raise ValidationException(
@@ -236,16 +332,11 @@ class ComponentOperations(_ScopeDependentOperations):
 
         result = self._get_component_version(name, version)
         component = Component._from_rest_object(result)
-        self._resolve_dependencies_for_pipeline_component_jobs(
-            component,
-            resolver=self._orchestrators.resolve_azureml_id,
-            resolve_inputs=False,
-        )
+        self._resolve_azureml_id(component, jobs_only=True)
         return component
 
     @experimental
     @monitor_with_telemetry_mixin(logger, "Component.Validate", ActivityType.PUBLICAPI)
-    # pylint: disable=no-self-use
     def validate(
         self,
         component: Union[Component, types.FunctionType],
@@ -257,10 +348,10 @@ class ComponentOperations(_ScopeDependentOperations):
 
         :param component: The component object or a mldesigner component function that generates component object
         :type component: Union[Component, types.FunctionType]
-        :param raise_on_failure: whether to raise exception on validation error
-        :type raise_on_failure: bool
+        :param raise_on_failure: Whether to raise exception on validation error. Defaults to False
+        :type raise_on_failure: bool, optional
         :return: All validation errors
-        :type: ValidationResult
+        :rtype: ~azure.ai.ml.entities.ValidationResult
         """
         return self._validate(
             component,
@@ -270,7 +361,7 @@ class ComponentOperations(_ScopeDependentOperations):
         )
 
     @monitor_with_telemetry_mixin(logger, "Component.Validate", ActivityType.INTERNALCALL)
-    def _validate(  # pylint: disable=no-self-use
+    def _validate(
         self,
         component: Union[Component, types.FunctionType],
         raise_on_failure: bool,
@@ -278,6 +369,15 @@ class ComponentOperations(_ScopeDependentOperations):
     ) -> ValidationResult:
         """Implementation of validate. Add this function to avoid calling validate() directly in create_or_update(),
         which will impact telemetry statistics & bring experimental warning in create_or_update().
+
+        :param component: The component
+        :type component: Union[Component, types.FunctionType]
+        :param raise_on_failure: Whether to raise on failure.
+        :type raise_on_failure: bool
+        :param skip_remote_validation: Whether to skip remote validation.
+        :type skip_remote_validation: bool
+        :return: The validation result
+        :rtype: ValidationResult
         """
         # Update component when the input is a component function
         if isinstance(component, types.FunctionType):
@@ -322,7 +422,7 @@ class ComponentOperations(_ScopeDependentOperations):
         :type component: Union[Component, types.FunctionType]
         :param version: The component version to override.
         :type version: str
-        :param skip_validation: whether to skip validation before creating/updating the component
+        :keyword skip_validation: whether to skip validation before creating/updating the component, defaults to False
         :type skip_validation: bool
         :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Component cannot be successfully validated.
             Details will be provided in the error message.
@@ -442,10 +542,9 @@ class ComponentOperations(_ScopeDependentOperations):
         else:
             component = Component._from_rest_object(result)
 
-        self._resolve_dependencies_for_pipeline_component_jobs(
-            component,
-            resolver=self._orchestrators.resolve_azureml_id,
-            resolve_inputs=False,
+        self._resolve_azureml_id(
+            component=component,
+            jobs_only=True,
         )
         return component
 
@@ -463,7 +562,7 @@ class ComponentOperations(_ScopeDependentOperations):
         :type name: str
         :param version: Version of the component.
         :type version: str
-        :param label: Label of the component. (mutually exclusive with version)
+        :param label: Label of the component. (mutually exclusive with version).
         :type label: str
         """
         _archive_or_restore(
@@ -490,7 +589,7 @@ class ComponentOperations(_ScopeDependentOperations):
         :type name: str
         :param version: Version of the component.
         :type version: str
-        :param label: Label of the component. (mutually exclusive with version)
+        :param label: Label of the component. (mutually exclusive with version).
         :type label: str
         """
         _archive_or_restore(
@@ -508,6 +607,11 @@ class ComponentOperations(_ScopeDependentOperations):
 
         Latest is defined as the most recently created, not the most
         recently updated.
+
+        :param component_name: The component name
+        :type component_name: str
+        :return: A latest version of the named Component
+        :rtype: Component
         """
 
         result = (
@@ -529,55 +633,80 @@ class ComponentOperations(_ScopeDependentOperations):
         return Component._from_rest_object(result)
 
     @classmethod
-    def _try_resolve_environment_for_component(cls, component, _: str, resolver: Callable):
+    def _try_resolve_environment_for_component(cls, component, _: str, resolver: _AssetResolver):
         if isinstance(component, BaseNode):
             component = component._component  # pylint: disable=protected-access
 
         if isinstance(component, str):
             return
-        if hasattr(component, "environment"):
+        potential_parents = [component]
+        if hasattr(component, "task"):
+            potential_parents.append(component.task)
+        for parent in potential_parents:
             # for internal component, environment may be a dict or InternalEnvironment object
             # in these two scenarios, we don't need to resolve the environment;
             # Note for not directly importing InternalEnvironment and check with `isinstance`:
             #   import from azure.ai.ml._internal will enable internal component feature for all users,
             #   therefore, use type().__name__ to avoid import and execute type check
-            if (
-                not isinstance(component.environment, dict)
-                and not type(component.environment).__name__ == "InternalEnvironment"
-            ):
-                component.environment = resolver(component.environment, azureml_type=AzureMLResourceType.ENVIRONMENT)
+            if not hasattr(parent, "environment"):
+                continue
+            if isinstance(parent.environment, dict):
+                continue
+            if type(parent.environment).__name__ == "InternalEnvironment":
+                continue
+            if not isinstance(parent.environment, (str, Environment)):
+                continue
+            parent.environment = resolver(parent.environment, azureml_type=AzureMLResourceType.ENVIRONMENT)
+
+    def _resolve_azureml_id(self, component: Component, jobs_only: bool = False) -> None:
+        # TODO: remove the parameter `jobs_only`. Some tests are expecting an arm id after resolving for now.
+        resolver = self._orchestrators.resolve_azureml_id
+        self._resolve_dependencies_for_component(component, resolver, resolve_jobs_inputs=True, jobs_only=jobs_only)
 
     def _resolve_arm_id_or_upload_dependencies(self, component: Component) -> None:
-        if isinstance(component, AutoMLComponent):
-            # no extra dependency for automl component
-            return
-
-        # type check for potential Job type, which is unexpected here.
-        if not isinstance(component, Component):
-            msg = f"Non supported component type: {type(component)}"
-            raise ValidationException(
-                message=msg,
-                target=ErrorTarget.COMPONENT,
-                no_personal_data_message=msg,
-                error_category=ErrorCategory.USER_ERROR,
-            )
-
-        get_arm_id_and_fill_back = OperationOrchestrator(
+        resolver = OperationOrchestrator(
             self._all_operations, self._operation_scope, self._operation_config
         ).get_asset_arm_id
 
-        # resolve component's code
-        _try_resolve_code_for_component(component=component, get_arm_id_and_fill_back=get_arm_id_and_fill_back)
-        # resolve component's environment
-        self._try_resolve_environment_for_component(
-            component=component,
-            resolver=get_arm_id_and_fill_back,
-            _="",
-        )
+        self._resolve_dependencies_for_component(component, resolver)
+
+    def _resolve_dependencies_for_component(
+        self,
+        component: Component,
+        resolver: Callable,
+        *,
+        resolve_jobs_inputs: bool = False,
+        jobs_only: bool = False,
+    ) -> None:
+        # for now, many tests are expecting long arm id instead of short id for environment and code
+        if not jobs_only:
+            if isinstance(component, AutoMLComponent):
+                # no extra dependency for automl component
+                return
+
+            # type check for potential Job type, which is unexpected here.
+            if not isinstance(component, Component):
+                msg = f"Non supported component type: {type(component)}"
+                raise ValidationException(
+                    message=msg,
+                    target=ErrorTarget.COMPONENT,
+                    no_personal_data_message=msg,
+                    error_category=ErrorCategory.USER_ERROR,
+                )
+
+            # resolve component's code
+            _try_resolve_code_for_component(component=component, resolver=resolver)
+            # resolve component's environment
+            self._try_resolve_environment_for_component(
+                component=component,
+                resolver=resolver,
+                _="",
+            )
 
         self._resolve_dependencies_for_pipeline_component_jobs(
             component,
-            resolver=get_arm_id_and_fill_back,
+            resolver=resolver,
+            resolve_inputs=resolve_jobs_inputs,
         )
 
     def _resolve_inputs_for_pipeline_component_jobs(self, jobs: Dict[str, Any], base_path: str):
@@ -585,46 +714,43 @@ class ComponentOperations(_ScopeDependentOperations):
 
         :param jobs: A dict of nodes in a pipeline component.
         :type jobs: Dict[str, Any]
-        :param base_path: The base path used to resolve inputs. Usually it's
-        the base path of the pipeline component.
+        :param base_path: The base path used to resolve inputs. Usually it's the base path of the pipeline component.
         :type base_path: str
         """
-        from azure.ai.ml.entities._builders import Pipeline
         from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
 
         for _, job_instance in jobs.items():
             # resolve inputs for each job's component
-            if isinstance(job_instance, Pipeline):
-                node: Pipeline = job_instance
-                self._job_operations._resolve_pipeline_job_inputs(
-                    node,
-                    base_path,
-                )
-            elif isinstance(job_instance, BaseNode):
+            if isinstance(job_instance, BaseNode):
                 node: BaseNode = job_instance
                 self._job_operations._resolve_job_inputs(
-                    map(lambda x: x._data, node.inputs.values()),
+                    # parameter group input need to be flattened first
+                    self._job_operations._flatten_group_inputs(node.inputs),
                     base_path,
                 )
             elif isinstance(job_instance, AutoMLJob):
                 self._job_operations._resolve_automl_job_inputs(job_instance)
 
     @classmethod
-    def _resolve_binding_on_supported_fields_for_node(cls, node):
-        """Resolve all PipelineInput(binding from sdk) on supported fields to string."""
-        from azure.ai.ml.entities._job.pipeline._attr_dict import try_get_non_arbitrary_attr_for_potential_attr_dict
+    def _resolve_binding_on_supported_fields_for_node(cls, node: BaseNode):
+        """Resolve all PipelineInput(binding from sdk) on supported fields to string.
+
+        :param node: The node
+        :type node: BaseNode
+        """
+        from azure.ai.ml.entities._job.pipeline._attr_dict import try_get_non_arbitrary_attr
         from azure.ai.ml.entities._job.pipeline._io import PipelineInput
 
         # compute binding to pipeline input is supported on node.
         supported_fields = ["compute", "compute_name"]
         for field_name in supported_fields:
-            val = try_get_non_arbitrary_attr_for_potential_attr_dict(node, field_name)
+            val = try_get_non_arbitrary_attr(node, field_name)
             if isinstance(val, PipelineInput):
                 # Put binding string to field
                 setattr(node, field_name, val._data_binding())
 
     @classmethod
-    def _try_resolve_node_level_task_for_parallel_node(cls, node: BaseNode, _: str, resolver: Callable):
+    def _try_resolve_node_level_task_for_parallel_node(cls, node: BaseNode, _: str, resolver: _AssetResolver):
         """Resolve node.task.code for parallel node if it's a reference to node.component.task.code.
 
         This is a hack operation.
@@ -641,6 +767,13 @@ class ComponentOperations(_ScopeDependentOperations):
         consistent across os and python versions.
 
         The ideal solution should be done after PRS team decides how to handle parallel.task.code
+
+        :param node: The node
+        :type node: BaseNode
+        :param _: The component name
+        :type _: str
+        :param resolver: The resolver function
+        :type resolver: _AssetResolver
         """
         from azure.ai.ml.entities import Parallel, ParallelComponent
 
@@ -655,7 +788,7 @@ class ComponentOperations(_ScopeDependentOperations):
         if node.task.code:
             _try_resolve_code_for_component(
                 component,
-                get_arm_id_and_fill_back=resolver,
+                resolver=resolver,
             )
             node.task.code = component.code
         if node.task.environment:
@@ -665,6 +798,11 @@ class ComponentOperations(_ScopeDependentOperations):
     def _set_default_display_name_for_anonymous_component_in_node(cls, node: BaseNode, default_name: str):
         """Set default display name for anonymous component in a node.
         If node._component is an anonymous component and without display name, set the default display name.
+
+        :param node: The node
+        :type node: BaseNode
+        :param default_name: The default name to set
+        :type default_name: str
         """
         if not isinstance(node, BaseNode):
             return
@@ -685,8 +823,16 @@ class ComponentOperations(_ScopeDependentOperations):
             component.display_name = default_name
 
     @classmethod
-    def _try_resolve_compute_for_node(cls, node: BaseNode, _: str, resolver):
-        """Resolve compute for base node."""
+    def _try_resolve_compute_for_node(cls, node: BaseNode, _: str, resolver: _AssetResolver):
+        """Resolve compute for base node.
+
+        :param node: The node
+        :type node: BaseNode
+        :param _: The node name
+        :type _: str
+        :param resolver: The resolver function
+        :type resolver: _AssetResolver
+        """
         if not isinstance(node, BaseNode):
             return
         if not isinstance(node._component, PipelineComponent):
@@ -699,7 +845,9 @@ class ComponentOperations(_ScopeDependentOperations):
                 node.compute_name = resolver(node.compute_name, azureml_type=AzureMLResourceType.COMPUTE)
 
     @classmethod
-    def _divide_nodes_to_resolve_into_layers(cls, component: PipelineComponent, extra_operations: List[Callable]):
+    def _divide_nodes_to_resolve_into_layers(
+        cls, component: PipelineComponent, extra_operations: List[Callable[[BaseNode, str], Any]]
+    ):
         """Traverse the pipeline component and divide nodes to resolve into layers. Note that all leaf nodes will be
         put in the last layer.
         For example, for below pipeline component, assuming that all nodes need to be resolved:
@@ -720,7 +868,7 @@ class ComponentOperations(_ScopeDependentOperations):
         :param component: The pipeline component to resolve.
         :type component: PipelineComponent
         :param extra_operations: Extra operations to apply on nodes during the traversing.
-        :type extra_operations: List[Callable]
+        :type extra_operations: List[Callable[Callable[[BaseNode, str], Any]]]
         :return: A list of layers of nodes to resolve.
         :rtype: List[List[Tuple[str, BaseNode]]]
         """
@@ -756,8 +904,53 @@ class ComponentOperations(_ScopeDependentOperations):
 
         return layers
 
+    def _get_workspace_key(self) -> str:
+        try:
+            workspace_rest = self._workspace_operations._operation.get(
+                resource_group_name=self._resource_group_name, workspace_name=self._workspace_name
+            )
+            return workspace_rest.workspace_id
+        except HttpResponseError:
+            return "{}/{}/{}".format(self._subscription_id, self._resource_group_name, self._workspace_name)
+
+    def _get_registry_key(self) -> str:
+        """Get key for used registry.
+
+        Note that, although registry id is in registry discovery response, it is not in RegistryDiscoveryDto; and we'll
+        lose the information after deserialization.
+        To avoid changing related rest client, we simply use registry related information from self to construct
+        registry key, which means that on-disk cache will be invalid if a registry is deleted and then created
+        again with the same name.
+
+        :return: The registry key
+        :rtype: str
+        """
+        return "{}/{}/{}".format(self._subscription_id, self._resource_group_name, self._registry_name)
+
+    def _get_client_key(self) -> str:
+        """Get key for used client.
+        Key should be able to uniquely identify used registry or workspace.
+
+        :return: The client key
+        :rtype: str
+        """
+        # check cache first
+        if self._client_key:
+            return self._client_key
+
+        # registry name has a higher priority comparing to workspace name according to current __init__ implementation
+        # of MLClient
+        if self._registry_name:
+            self._client_key = "registry/" + self._get_registry_key()
+        elif self._workspace_name:
+            self._client_key = "workspace/" + self._get_workspace_key()
+        else:
+            # This should never happen.
+            raise ValueError("Either workspace name or registry name must be provided to use component operations.")
+        return self._client_key
+
     def _resolve_dependencies_for_pipeline_component_jobs(
-        self, component: Union[Component, str], resolver: Callable, *, resolve_inputs: bool = True
+        self, component: Union[Component, str], resolver: _AssetResolver, *, resolve_inputs: bool = True
     ):
         """Resolve dependencies for pipeline component jobs.
         Will directly return if component is not a pipeline component.
@@ -765,8 +958,8 @@ class ComponentOperations(_ScopeDependentOperations):
         :param component: The pipeline component to resolve.
         :type component: Union[Component, str]
         :param resolver: The resolver to resolve the dependencies.
-        :type resolver: Callable
-        :param resolve_inputs: Whether to resolve inputs.
+        :type resolver: _AssetResolver
+        :keyword resolve_inputs: Whether to resolve inputs.
         :type resolve_inputs: bool
         """
         if not isinstance(component, PipelineComponent) or not component.jobs:
@@ -797,10 +990,7 @@ class ComponentOperations(_ScopeDependentOperations):
         # relatively simple and of small number of distinct instances
         component_cache = CachedNodeResolver(
             resolver=resolver,
-            subscription_id=self._subscription_id,
-            resource_group_name=self._resource_group_name,
-            workspace_name=self._workspace_name,
-            registry_name=self._registry_name,
+            client_key=self._get_client_key(),
         )
 
         for layer in reversed(layers):
@@ -834,9 +1024,12 @@ def _refine_component(component_func: types.FunctionType) -> Component:
     :rtype: Component
     """
 
-    def check_parameter_type(f):
-        """Check all parameter is annotated or has a default value with
-        clear type(not None)."""
+    def check_parameter_type(f: types.FunctionType):
+        """Check all parameter is annotated or has a default value with clear type(not None).
+
+        :param f: The component function
+        :type f: types.FunctionType
+        """
         annotations = getattr(f, "__annotations__", {})
         func_parameters = signature(f).parameters
         defaults_dict = {key: val.default for key, val in func_parameters.items()}
@@ -863,8 +1056,12 @@ def _refine_component(component_func: types.FunctionType) -> Component:
                 error_category=ErrorCategory.USER_ERROR,
             )
 
-    def check_non_pipeline_inputs(f):
-        """Check whether non_pipeline_inputs exist in pipeline builder."""
+    def check_non_pipeline_inputs(f: types.FunctionType):
+        """Check whether non_pipeline_inputs exist in pipeline builder.
+
+        :param f: The component function
+        :type f: types.FunctionType
+        """
         if f._pipeline_builder.non_pipeline_parameter_names:
             msg = "Cannot register pipeline component {!r} with non_pipeline_inputs."
             raise ValidationException(
@@ -898,9 +1095,11 @@ def _refine_component(component_func: types.FunctionType) -> Component:
     )
 
 
-def _try_resolve_code_for_component(component: Component, get_arm_id_and_fill_back: Callable) -> None:
+def _try_resolve_code_for_component(component: Component, resolver: _AssetResolver) -> None:
     if isinstance(component, ComponentCodeMixin):
         with component._build_code() as code:
             if code is None:
+                code = component._get_origin_code_value()
+            if code is None:
                 return
-            component.code = get_arm_id_and_fill_back(code, azureml_type=AzureMLResourceType.CODE)
+            component.code = resolver(code, azureml_type=AzureMLResourceType.CODE)

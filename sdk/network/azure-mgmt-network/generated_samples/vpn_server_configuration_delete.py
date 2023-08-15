@@ -29,13 +29,12 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.vpn_server_configurations.begin_delete(
+    client.vpn_server_configurations.begin_delete(
         resource_group_name="rg1",
         vpn_server_configuration_name="vpnServerConfiguration1",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2022-11-01/examples/VpnServerConfigurationDelete.json
+# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2023-02-01/examples/VpnServerConfigurationDelete.json
 if __name__ == "__main__":
     main()

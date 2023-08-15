@@ -64,12 +64,16 @@ class ComputeManagementClient:  # pylint: disable=client-accepts-api-version-key
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.disks = DisksOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.snapshots = SnapshotsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.disk_encryption_sets = DiskEncryptionSetsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+        self.disks = DisksOperations(self._client, self._config, self._serialize, self._deserialize, "2020-05-01")
+        self.snapshots = SnapshotsOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2020-05-01"
         )
-        self.disk_accesses = DiskAccessesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.disk_encryption_sets = DiskEncryptionSetsOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2020-05-01"
+        )
+        self.disk_accesses = DiskAccessesOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2020-05-01"
+        )
 
     def _send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.

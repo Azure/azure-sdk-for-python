@@ -29,14 +29,13 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.express_route_port_authorizations.begin_delete(
+    client.express_route_port_authorizations.begin_delete(
         resource_group_name="rg1",
         express_route_port_name="expressRoutePortName",
         authorization_name="authorizationName",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2022-11-01/examples/ExpressRoutePortAuthorizationDelete.json
+# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2023-02-01/examples/ExpressRoutePortAuthorizationDelete.json
 if __name__ == "__main__":
     main()

@@ -2,7 +2,7 @@
 
 Microsoft Purview Share is a fully managed cloud service.
 
-**Please rely heavily on the [service's documentation][sharing_product_documentation] and our [protocol client docs][protocol_client_quickstart] to use this library**
+**Please rely heavily on the [service's documentation][sharing_product_documentation] and our [protocol client docs][request_builders_and_client] to use this library**
 
 [Source code][source_code] | [Package (PyPI)][client_pypi_package] | [Product documentation][sharing_product_documentation]
 
@@ -25,7 +25,7 @@ pip install azure-purview-sharing
 
 #### Using Azure Active Directory
 
-This document demonstrates using [DefaultAzureCredential][default_cred_ref] to authenticate via Azure Active Directory. However, any of the credentials offered by the [azure_identity][azure_identity] will be accepted.  See the [azure_identity][azure_identity] documentation for more information about other credentials.
+This document demonstrates using [DefaultAzureCredential][default_azure_credential] to authenticate via Azure Active Directory. However, any of the credentials offered by the [azure-identity package][azure_identity_pip] will be accepted.  See the [azure-identity][azure_identity_credentials] documentation for more information about other credentials.
 
 Once you have chosen and configured your credential, you can create instances of the `PurviewSharingClient`.
 
@@ -39,11 +39,38 @@ client = PurviewSharingClient(endpoint="https://<my-account-name>.purview.azure.
 
 ## Key concepts
 
+**Data Provider:** A data provider is the individual who creates a share by selecting a data source, choosing which files and folders to share, and who to share them with. Microsoft Purview then sends an invitation to each data consumer.
+
+**Data Consumer:** A data consumer is the individual who accepts the invitation by specifying a target storage account in their own Azure subscription that they'll use to access the shared data.
+
 ## Examples
 
-The following section shows you how to initialize and authenticate your client and share data.
+Table of Contents: 
+- [Data Provider](#data-provider-examples)
+- [Data Consumer](#data-consumer-examples)
+- [Share Resource](#share-resource-examples)
 
-### Create share
+## Data Provider Examples
+
+The following code examples demonstrate how data providers can use the Microsoft Azure Python SDK for Purview Sharing to manage their sharing activity.
+
+### Create a Sent Share Client
+
+```python Snippet:create_a_sent_share_client
+import os, uuid, json
+
+from azure.purview.sharing import PurviewSharingClient
+from azure.identity import DefaultAzureCredential
+
+endpoint = os.environ["ENDPOINT"]
+credential = DefaultAzureCredential()
+
+client = PurviewSharingClient(endpoint=endpoint, credential=credential)
+```
+
+### Create Share
+
+To begin sharing data, the data provider must first create a sent share that identifies the data they would like to share.
 
 ```python Snippet:create_a_sent_share
 import os, uuid, json
@@ -92,51 +119,12 @@ response = request.result()
 print(response)
 ```
 
-### Get sent share
+### Send Share Invitation to a User
 
-```python Snippet:get_a_sent_share
-import os, uuid
-
-from azure.purview.sharing import PurviewSharingClient
-from azure.identity import DefaultAzureCredential
-
-endpoint = os.environ["ENDPOINT"]
-credential = DefaultAzureCredential()
-sent_share_id = uuid.uuid4()
-
-client = PurviewSharingClient(endpoint=endpoint, credential=credential)
-
-retrieved_sent_share = client.sent_shares.get(sent_share_id=str(sent_share_id))
-print(retrieved_sent_share)
-```
-
-### List sent shares
-
-```python Snippet:get_all_sent_shares
-import os
-
-from azure.purview.sharing import PurviewSharingClient
-from azure.identity import DefaultAzureCredential
-
-endpoint = os.environ["ENDPOINT"]
-credential = DefaultAzureCredential()
-
-client = PurviewSharingClient(endpoint=endpoint, credential=credential)
-
-provider_storage_account_resource_id = "/subscriptions/{subscription-id}/resourceGroups/provider-storage-rg/providers/Microsoft.Storage/storageAccounts/providerstorage"
-
-list_request = client.sent_shares.list(
-    reference_name=provider_storage_account_resource_id,
-    orderby="properties/createdAt desc")
-
-for list_response in list_request:
-    print(list_response)
-```
-
-### Create sent share invitation
+After creating a sent share, the data provider can extend invitations to consumers who may then view the shared data. In this example, an invitation is extended to an individual by specifying their email address.
 
 ```python Snippet:send_a_user_invitation
-import os
+import os, uuid
 
 from azure.purview.sharing import PurviewSharingClient
 from azure.identity import DefaultAzureCredential
@@ -170,8 +158,136 @@ invitation_response = invitation_request.result()
 created_invitation = json.loads(invitation_response)
 print(created_invitation)
 ```
+### Send Share Invitation to a Service
 
-### List sent share invitations
+Data providers can also extend invitations to services or applications by specifying the tenant id and object id of the service. _The object id used for sending an invitation to a service must be the object id associated with the Enterprise Application (not the application registration)._
+
+```python Snippet:send_a_service_invitation
+import os, uuid
+
+from azure.purview.sharing import PurviewSharingClient
+from azure.identity import DefaultAzureCredential
+
+endpoint = os.environ["ENDPOINT"]
+credential = DefaultAzureCredential()
+
+client = PurviewSharingClient(endpoint=endpoint, credential=credential)
+
+targetActiveDirectoryId = uuid.uuid4()
+targetObjectId = uuid.uuid4()
+
+sent_share_invitation = {
+    "invitationKind": "Service",
+    "properties": {
+        "targetActiveDirectoryId": str(targetActiveDirectoryId),
+        "targetObjectId": str(targetObjectId)
+    }
+}
+
+invitation_response = client.sent_shares.create_invitation(
+    sent_share_id=str(sent_share_id),
+    sent_share_invitation_id=str(sent_share_invitation_id),
+    sent_share_invitation=sent_share_invitation)
+
+print(invitation_response)
+```
+
+### Get Sent Share
+
+After creating a sent share, data providers can retrieve it.
+
+```python Snippet:get_a_sent_share
+import os, uuid
+
+from azure.purview.sharing import PurviewSharingClient
+from azure.identity import DefaultAzureCredential
+
+endpoint = os.environ["ENDPOINT"]
+credential = DefaultAzureCredential()
+sent_share_id = uuid.uuid4()
+
+client = PurviewSharingClient(endpoint=endpoint, credential=credential)
+
+retrieved_sent_share = client.sent_shares.get(sent_share_id=str(sent_share_id))
+print(retrieved_sent_share)
+```
+
+### List Sent Shares
+
+Data providers can also retrieve a list of the sent shares they have created.
+
+```python Snippet:get_all_sent_shares
+import os
+
+from azure.purview.sharing import PurviewSharingClient
+from azure.identity import DefaultAzureCredential
+
+endpoint = os.environ["ENDPOINT"]
+credential = DefaultAzureCredential()
+
+client = PurviewSharingClient(endpoint=endpoint, credential=credential)
+
+provider_storage_account_resource_id = "/subscriptions/{subscription-id}/resourceGroups/provider-storage-rg/providers/Microsoft.Storage/storageAccounts/providerstorage"
+
+list_request = client.sent_shares.list(
+    reference_name=provider_storage_account_resource_id,
+    order_by="properties/createdAt desc")
+
+for list_response in list_request:
+    print(list_response)
+```
+
+### Delete Sent Share
+
+A sent share can be deleted by the data provider to stop sharing their data with all data consumers.
+
+```python Snippet:delete_a_sent_share
+import os
+
+from azure.purview.sharing import PurviewSharingClient
+from azure.identity import DefaultAzureCredential
+
+endpoint = os.environ["ENDPOINT"]
+credential = DefaultAzureCredential()
+
+client = PurviewSharingClient(endpoint=endpoint,credential=credential)
+
+sent_share_id = uuid.uuid4()
+
+delete_request = client.sent_shares.begin_delete(sent_share_id=str(sent_share_id))
+delete_response = delete_request.result()
+print(delete_response)
+```
+
+### Get Sent Share Invitation
+
+After creating a sent share invitation, data providers can retrieve it.
+
+```python Snippet:get_a_sent_share_invitation
+import os, uuid, json
+
+from azure.purview.sharing import PurviewSharingClient
+from azure.identity import DefaultAzureCredential
+
+endpoint = os.environ["ENDPOINT"]
+credential = DefaultAzureCredential()
+
+client = PurviewSharingClient(endpoint=endpoint,credential=credential)
+
+sent_share_id = uuid.uuid4()
+sent_share_invitation_id = uuid.uuid4()
+
+get_invitation_response = client.sent_shares.get_invitation(
+    sent_share_id=str(sent_share_id), 
+    sent_share_invitation_id=str(sent_share_invitation_id))
+
+retrieved_share_invitation = json.loads(get_invitation_response)
+print(retrieved_share_invitation)
+```
+
+### List Sent Share Invitations
+
+Data providers can also retrieve a list of the sent share invitations they have created.
 
 ```python Snippet:view_sent_invitations
 import os, uuid, json
@@ -192,7 +308,52 @@ for list_response in list_request:
     print(list_response)
 ```
 
-### List received shares
+### Delete Sent Share Invitation
+
+An individual sent share invitation can be deleted by the data provider to stop sharing their data with the specific data consumer to whom the invitation was addressed.
+
+```python Snippet:delete_a_sent_share_invitation
+import os, uuid, json
+
+from azure.purview.sharing import PurviewSharingClient
+from azure.identity import DefaultAzureCredential
+
+endpoint = os.environ["ENDPOINT"]
+credential = DefaultAzureCredential()
+
+client = PurviewSharingClient(endpoint=endpoint,credential=credential)
+
+sent_share_id = uuid.uuid4()
+sent_share_invitation_id = uuid.uuid4()
+
+delete_invitation_request = client.sent_shares.begin_delete_invitation(
+    sent_share_id=str(sent_share_id),
+    sent_share_invitation_id=str(sent_share_invitation_id))
+delete_invitation_response = delete_invitation_request.result()
+print(delete_invitation_response)
+```
+
+## Data Consumer Examples
+
+The following code examples demonstrate how data consumers can use the Microsoft Azure Python SDK for Purview Sharing to manage their sharing activity.
+
+### Create a Received Share Client
+
+```python Snippet:create_received_share_client
+import os
+
+from azure.purview.sharing import PurviewSharingClient
+from azure.identity import DefaultAzureCredential
+
+endpoint = os.environ["ENDPOINT"]
+credential = DefaultAzureCredential()
+
+client = PurviewSharingClient(endpoint=endpoint,credential=credential)
+```
+
+### List Detached Received Shares
+
+To begin viewing data shared with them, a data consumer must first retrieve a list of detached received shares. Within this list, they can identify a detached received share to attach. A "detached" received share refers to a received share that has never been attached or has been detached.
 
 ```python Snippet:get_all_detached_received_shares
 import os
@@ -205,11 +366,13 @@ credential = DefaultAzureCredential()
 
 client = PurviewSharingClient(endpoint=endpoint,credential=credential)
 
-list_detached_response = client.received_shares.list_detached(orderby="properties/createdAt desc")
+list_detached_response = client.received_shares.list_detached(order_by="properties/createdAt desc")
 print(list_detached_response)
 ```
 
-### Attach a received share
+### Attach a Received Share
+
+Once the data consumer has identified a received share, they can attach the received share to a location where they can access the shared data. If the received share is already attached, the shared data will be made accessible at the new location specified.
 
 ```python Snippet:attach_a_received_share
 import os, json
@@ -224,7 +387,7 @@ client = PurviewSharingClient(endpoint=endpoint,credential=credential)
 
 consumer_storage_account_resource_id = "/subscriptions/{subscription-id}/resourceGroups/consumer-storage-rg/providers/Microsoft.Storage/storageAccounts/consumerstorage"
 
-list_detached_response = client.received_shares.list_detached(orderby="properties/createdAt desc")
+list_detached_response = client.received_shares.list_detached(order_by="properties/createdAt desc")
 received_share = next(x for x in list_detached_response)
 
 store_reference = {
@@ -253,7 +416,9 @@ update_response = update_request.result()
 print(update_response)
 ```
 
-### Get received share
+### Get Received Share
+
+A data consumer can retrieve an individual received share.
 
 ```python Snippet:get_a_received_share
 import os
@@ -266,7 +431,7 @@ credential = DefaultAzureCredential()
 
 client = PurviewSharingClient(endpoint=endpoint,credential=credential)
 
-list_detached_response = client.received_shares.list_detached(orderby="properties/createdAt desc")
+list_detached_response = client.received_shares.list_detached(order_by="properties/createdAt desc")
 list_detached = json.loads(list_detached_response)
 received_share = list_detached[0]
 
@@ -275,7 +440,9 @@ retrieved_share = json.loads(get_share_response)
 print(retrieved_share)
 ```
 
-### List attached shares
+### List Attached Received Shares
+
+Data consumers can also retrieve a list of their attached received shares.
 
 ```python Snippet:list_attached_received_shares
 import os
@@ -292,11 +459,13 @@ consumer_storage_account_resource_id = "/subscriptions/{subscription-id}/resourc
 
 list_attached_response = client.received_shares.list_attached(
     reference_name=consumer_storage_account_resource_id,
-    orderby="properties/createdAt desc")
+    order_by="properties/createdAt desc")
 print(list_attached_response)
 ```
 
-### Delete received share
+### Delete Received Share
+
+A received share can be deleted by the data consumer to terminate their access to shared data.
 
 ```python Snippet:delete_a_received_share
 import os
@@ -314,9 +483,15 @@ delete_received_share_response = delete_received_share_request.result()
 print(delete_received_share_response)
 ```
 
-### Delete sent share
+## Share Resource Examples
 
-```python Snippet:delete_a_sent_share
+The following code examples demonstrate how to use the Microsoft Azure Python SDK for Purview Sharing to view share resources. A share resource is the underlying resource from which a provider shares data or the destination where a consumer attaches data shared with them.
+
+### List Share Resources
+
+A list of share resources can be retrieved to view all resources within an account where sharing activities have taken place.
+
+```python Snippet:list_share_resources
 import os
 
 from azure.purview.sharing import PurviewSharingClient
@@ -327,11 +502,12 @@ credential = DefaultAzureCredential()
 
 client = PurviewSharingClient(endpoint=endpoint,credential=credential)
 
-sent_share_id="885E60CB-2001-4192-B95D-B98CE316C783"
+list_request = client.share_resources.list(
+    filter="properties/storeKind eq 'AdlsGen2Account'",
+    order_by="properties/createdAt desc")
 
-delete_request = client.sent_shares.begin_delete(sent_share_id=str(sent_share_id))
-delete_response = delete_request.result()
-print(delete_response)
+for list_response in list_request:
+    print(list_response)
 ```
 
 ## Troubleshooting
@@ -397,18 +573,18 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [sharing_ref_docs]: https://aka.ms/azsdk/python/purviewcatalog/ref-docs
 [sharing_product_documentation]: https://azure.microsoft.com/services/purview/
 [azure_subscription]: https://azure.microsoft.com/free/
-[purview_resource]: https://docs.microsoft.com/azure/purview
+[purview_resource]: https://learn.microsoft.com/purview/
 [pip]: https://pypi.org/project/pip/
 [authenticate_with_token]: https://docs.microsoft.com/azure/cognitive-services/authentication?tabs=powershell#authenticate-with-an-authentication-token
 [azure_identity_credentials]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#credentials
 [azure_identity_pip]: https://pypi.org/project/azure-identity/
-[default_azure_credential]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#defaultazurecredential
+[default_azure_credential]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-identity/latest/azure.identity.html#azure.identity.DefaultAzureCredential
 [request_builders_and_client]: https://aka.ms/azsdk/python/protocol/quickstart
-[enable_aad]: https://docs.microsoft.com/azure/purview/
+[enable_aad]: https://learn.microsoft.com/purview/
 [azure_core]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/README.md
 [python_logging]: https://docs.python.org/3.5/library/logging.html
 [cla]: https://cla.microsoft.com
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
 [coc_faq]: https://opensource.microsoft.com/codeofconduct/faq/
 [coc_contact]: mailto:opencode@microsoft.com
-[samples]: https://github.com/yamanwahsheh/azure-sdk-for-python/tree/yaman/share-v2-python-tests-and-samples/sdk/purview/azure-purview-sharing/samples
+[samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/purview/azure-purview-sharing/samples

@@ -29,14 +29,13 @@ def main():
         subscription_id="00000000-1111-2222-3333-444444444444",
     )
 
-    response = client.long_term_retention_managed_instance_backups.begin_delete_by_resource_group(
+    client.long_term_retention_managed_instance_backups.begin_delete_by_resource_group(
         resource_group_name="testResourceGroup",
         location_name="japaneast",
         managed_instance_name="testInstance",
         database_name="testDatabase",
         backup_name="55555555-6666-7777-8888-999999999999;131637960820000000",
     ).result()
-    print(response)
 
 
 # x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2021-05-01-preview/examples/ResourceGroupBasedManagedInstanceLongTermRetentionBackupDelete.json

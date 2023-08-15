@@ -132,103 +132,103 @@ class AutoMLImageClassificationBase(AutoMLImage):
     ) -> None:
         """Setting Image training parameters for AutoML Image Classification and Image Classification Multilabel tasks.
 
-        :param advanced_settings: Settings for advanced scenarios.
+        :keyword advanced_settings: Settings for advanced scenarios.
         :type advanced_settings: str
-        :param ams_gradient: Enable AMSGrad when optimizer is 'adam' or 'adamw'.
+        :keyword ams_gradient: Enable AMSGrad when optimizer is 'adam' or 'adamw'.
         :type ams_gradient: bool
-        :param beta1: Value of 'beta1' when optimizer is 'adam' or 'adamw'. Must be a float in the
+        :keyword beta1: Value of 'beta1' when optimizer is 'adam' or 'adamw'. Must be a float in the
          range [0, 1].
         :type beta1: float
-        :param beta2: Value of 'beta2' when optimizer is 'adam' or 'adamw'. Must be a float in the
+        :keyword beta2: Value of 'beta2' when optimizer is 'adam' or 'adamw'. Must be a float in the
          range [0, 1].
         :type beta2: float
-        :param checkpoint_frequency: Frequency to store model checkpoints. Must be a positive
+        :keyword checkpoint_frequency: Frequency to store model checkpoints. Must be a positive
          integer.
         :type checkpoint_frequency: int
-        :param checkpoint_run_id: The id of a previous run that has a pretrained checkpoint for
+        :keyword checkpoint_run_id: The id of a previous run that has a pretrained checkpoint for
          incremental training.
         :type checkpoint_run_id: str
-        :param distributed: Whether to use distributed training.
+        :keyword distributed: Whether to use distributed training.
         :type distributed: bool
-        :param early_stopping: Enable early stopping logic during training.
+        :keyword early_stopping: Enable early stopping logic during training.
         :type early_stopping: bool
-        :param early_stopping_delay: Minimum number of epochs or validation evaluations to wait
+        :keyword early_stopping_delay: Minimum number of epochs or validation evaluations to wait
          before primary metric improvement
          is tracked for early stopping. Must be a positive integer.
         :type early_stopping_delay: int
-        :param early_stopping_patience: Minimum number of epochs or validation evaluations with no
+        :keyword early_stopping_patience: Minimum number of epochs or validation evaluations with no
          primary metric improvement before
          the run is stopped. Must be a positive integer.
         :type early_stopping_patience: int
-        :param enable_onnx_normalization: Enable normalization when exporting ONNX model.
+        :keyword enable_onnx_normalization: Enable normalization when exporting ONNX model.
         :type enable_onnx_normalization: bool
-        :param evaluation_frequency: Frequency to evaluate validation dataset to get metric scores.
+        :keyword evaluation_frequency: Frequency to evaluate validation dataset to get metric scores.
          Must be a positive integer.
         :type evaluation_frequency: int
-        :param gradient_accumulation_step: Gradient accumulation means running a configured number of
+        :keyword gradient_accumulation_step: Gradient accumulation means running a configured number of
          "GradAccumulationStep" steps without
          updating the model weights while accumulating the gradients of those steps, and then using
          the accumulated gradients to compute the weight updates. Must be a positive integer.
         :type gradient_accumulation_step: int
-        :param layers_to_freeze: Number of layers to freeze for the model. Must be a positive
+        :keyword layers_to_freeze: Number of layers to freeze for the model. Must be a positive
          integer.
          For instance, passing 2 as value for 'seresnext' means
          freezing layer0 and layer1. For a full list of models supported and details on layer freeze,
          please
          see: https://docs.microsoft.com/en-us/azure/machine-learning/reference-automl-images-hyperparameters#model-agnostic-hyperparameters.   # pylint: disable=line-too-long
         :type layers_to_freeze: int
-        :param learning_rate: Initial learning rate. Must be a float in the range [0, 1].
+        :keyword learning_rate: Initial learning rate. Must be a float in the range [0, 1].
         :type learning_rate: float
-        :param learning_rate_scheduler: Type of learning rate scheduler. Must be 'warmup_cosine' or
+        :keyword learning_rate_scheduler: Type of learning rate scheduler. Must be 'warmup_cosine' or
          'step'. Possible values include: "None", "WarmupCosine", "Step".
         :type learning_rate_scheduler: str or
          ~azure.mgmt.machinelearningservices.models.LearningRateScheduler
-        :param model_name: Name of the model to use for training.
+        :keyword model_name: Name of the model to use for training.
          For more information on the available models please visit the official documentation:
          https://docs.microsoft.com/en-us/azure/machine-learning/how-to-auto-train-image-models.
         :type model_name: str
-        :param momentum: Value of momentum when optimizer is 'sgd'. Must be a float in the range [0,
+        :keyword momentum: Value of momentum when optimizer is 'sgd'. Must be a float in the range [0,
          1].
         :type momentum: float
-        :param nesterov: Enable nesterov when optimizer is 'sgd'.
+        :keyword nesterov: Enable nesterov when optimizer is 'sgd'.
         :type nesterov: bool
-        :param number_of_epochs: Number of training epochs. Must be a positive integer.
+        :keyword number_of_epochs: Number of training epochs. Must be a positive integer.
         :type number_of_epochs: int
-        :param number_of_workers: Number of data loader workers. Must be a non-negative integer.
+        :keyword number_of_workers: Number of data loader workers. Must be a non-negative integer.
         :type number_of_workers: int
-        :param optimizer: Type of optimizer. Possible values include: "None", "Sgd", "Adam", "Adamw".
+        :keyword optimizer: Type of optimizer. Possible values include: "None", "Sgd", "Adam", "Adamw".
         :type optimizer: str or ~azure.mgmt.machinelearningservices.models.StochasticOptimizer
-        :param random_seed: Random seed to be used when using deterministic training.
+        :keyword random_seed: Random seed to be used when using deterministic training.
         :type random_seed: int
-        :param step_lr_gamma: Value of gamma when learning rate scheduler is 'step'. Must be a float
+        :keyword step_lr_gamma: Value of gamma when learning rate scheduler is 'step'. Must be a float
          in the range [0, 1].
         :type step_lr_gamma: float
-        :param step_lr_step_size: Value of step size when learning rate scheduler is 'step'. Must be
+        :keyword step_lr_step_size: Value of step size when learning rate scheduler is 'step'. Must be
          a positive integer.
         :type step_lr_step_size: int
-        :param training_batch_size: Training batch size. Must be a positive integer.
+        :keyword training_batch_size: Training batch size. Must be a positive integer.
         :type training_batch_size: int
-        :param validation_batch_size: Validation batch size. Must be a positive integer.
+        :keyword validation_batch_size: Validation batch size. Must be a positive integer.
         :type validation_batch_size: int
-        :param warmup_cosine_lr_cycles: Value of cosine cycle when learning rate scheduler is
+        :keyword warmup_cosine_lr_cycles: Value of cosine cycle when learning rate scheduler is
          'warmup_cosine'. Must be a float in the range [0, 1].
         :type warmup_cosine_lr_cycles: float
-        :param warmup_cosine_lr_warmup_epochs: Value of warmup epochs when learning rate scheduler is
+        :keyword warmup_cosine_lr_warmup_epochs: Value of warmup epochs when learning rate scheduler is
          'warmup_cosine'. Must be a positive integer.
         :type warmup_cosine_lr_warmup_epochs: int
-        :param weight_decay: Value of weight decay when optimizer is 'sgd', 'adam', or 'adamw'. Must
+        :keyword weight_decay: Value of weight decay when optimizer is 'sgd', 'adam', or 'adamw'. Must
          be a float in the range[0, 1].
         :type weight_decay: float
-        :param training_crop_size: Image crop size that is input to the neural network for the
+        :keyword training_crop_size: Image crop size that is input to the neural network for the
          training dataset. Must be a positive integer.
         :type training_crop_size: int
-        :param validation_crop_size: Image crop size that is input to the neural network for the
+        :keyword validation_crop_size: Image crop size that is input to the neural network for the
          validation dataset. Must be a positive integer.
         :type validation_crop_size: int
-        :param validation_resize_size: Image size to which to resize before cropping for validation
+        :keyword validation_resize_size: Image size to which to resize before cropping for validation
          dataset. Must be a positive integer.
         :type validation_resize_size: int
-        :param weighted_loss: Weighted loss. The accepted values are 0 for no weighted loss.
+        :keyword weighted_loss: Weighted loss. The accepted values are 0 for no weighted loss.
          1 for weighted loss with sqrt.(class_weights). 2 for weighted loss with class_weights. Must be
          0 or 1 or 2.
         :type weighted_loss: int
@@ -358,7 +358,7 @@ class AutoMLImageClassificationBase(AutoMLImage):
 
         :param value: specify either an instance of ImageClassificationSearchSpace or list of
         ImageClassificationSearchSpace for searching through the parameter space
-        :type Union[ImageClassificationSearchSpace, List[ImageClassificationSearchSpace]]
+        :type value: Union[ImageClassificationSearchSpace, List[ImageClassificationSearchSpace]]
         """
         self._search_space = self._search_space or []
 

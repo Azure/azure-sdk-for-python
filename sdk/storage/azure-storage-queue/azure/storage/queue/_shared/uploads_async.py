@@ -3,7 +3,6 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-# pylint: disable=no-self-use
 
 import asyncio
 import inspect
@@ -294,7 +293,7 @@ class BlockBlobChunkUploader(_ChunkUploader):
 
     async def _upload_substream_block(self, index, block_stream):
         try:
-            block_id = f'BlockId{"%05d" % (index/self.chunk_size)}'
+            block_id = f'BlockId{(index//self.chunk_size):05}'
             await self.service.stage_block(
                 block_id,
                 len(block_stream),

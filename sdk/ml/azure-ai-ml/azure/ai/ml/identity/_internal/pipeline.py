@@ -16,11 +16,17 @@ from azure.core.pipeline.policies import (
     RetryPolicy,
     UserAgentPolicy,
 )
+
+# pylint: disable-next=no-name-in-module,non-abstract-transport-import
 from azure.core.pipeline.transport import RequestsTransport
 
 
-def _get_config(**kwargs):
-    """Configuration common to a/sync pipelines."""
+def _get_config(**kwargs) -> Configuration:
+    """Configuration common to a/sync pipelines.
+
+    :return: The configuration object
+    :rtype: Configuration
+    """
     config = Configuration(**kwargs)
     config.custom_hook_policy = CustomHookPolicy(**kwargs)
     config.headers_policy = HeadersPolicy(**kwargs)
@@ -76,6 +82,7 @@ def build_async_pipeline(transport=None, policies=None, **kwargs):
         config.retry_policy = AsyncRetryPolicy(**kwargs)
         policies = _get_policies(config, **kwargs)
     if not transport:
+        # pylint: disable-next=no-name-in-module,non-abstract-transport-import
         from azure.core.pipeline.transport import AioHttpTransport
 
         transport = AioHttpTransport(**kwargs)

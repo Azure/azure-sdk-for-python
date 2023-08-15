@@ -29,14 +29,13 @@ def main():
         subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
-    response = client.connectivity_configurations.begin_delete(
+    client.connectivity_configurations.begin_delete(
         resource_group_name="myResourceGroup",
         network_manager_name="testNetworkManager",
         configuration_name="myTestConnectivityConfig",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2022-11-01/examples/NetworkManagerConnectivityConfigurationDelete.json
+# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2023-02-01/examples/NetworkManagerConnectivityConfigurationDelete.json
 if __name__ == "__main__":
     main()

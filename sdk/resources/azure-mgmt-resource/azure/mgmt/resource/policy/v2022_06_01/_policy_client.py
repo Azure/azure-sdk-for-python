@@ -15,51 +15,29 @@ from azure.mgmt.core import ARMPipelineClient
 from . import models as _models
 from .._serialization import Deserializer, Serializer
 from ._configuration import PolicyClientConfiguration
-from .operations import (
-    DataPolicyManifestsOperations,
-    PolicyAssignmentsOperations,
-    PolicyDefinitionsOperations,
-    PolicyExemptionsOperations,
-    PolicySetDefinitionsOperations,
-    VariableValuesOperations,
-    VariablesOperations,
-)
+from .operations import PolicyAssignmentsOperations
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials import TokenCredential
 
 
-class PolicyClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
+class PolicyClient:  # pylint: disable=client-accepts-api-version-keyword
     """To manage and control access to your resources, you can define customized policies and assign
     them at a scope.
 
-    :ivar data_policy_manifests: DataPolicyManifestsOperations operations
-    :vartype data_policy_manifests:
-     azure.mgmt.resource.policy.v2022_06_01.operations.DataPolicyManifestsOperations
-    :ivar policy_definitions: PolicyDefinitionsOperations operations
-    :vartype policy_definitions:
-     azure.mgmt.resource.policy.v2022_06_01.operations.PolicyDefinitionsOperations
-    :ivar policy_set_definitions: PolicySetDefinitionsOperations operations
-    :vartype policy_set_definitions:
-     azure.mgmt.resource.policy.v2022_06_01.operations.PolicySetDefinitionsOperations
     :ivar policy_assignments: PolicyAssignmentsOperations operations
     :vartype policy_assignments:
      azure.mgmt.resource.policy.v2022_06_01.operations.PolicyAssignmentsOperations
-    :ivar policy_exemptions: PolicyExemptionsOperations operations
-    :vartype policy_exemptions:
-     azure.mgmt.resource.policy.v2022_06_01.operations.PolicyExemptionsOperations
-    :ivar variables: VariablesOperations operations
-    :vartype variables: azure.mgmt.resource.policy.v2022_06_01.operations.VariablesOperations
-    :ivar variable_values: VariableValuesOperations operations
-    :vartype variable_values:
-     azure.mgmt.resource.policy.v2022_06_01.operations.VariableValuesOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The ID of the target subscription. Required.
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
+    :keyword api_version: Api Version. Default value is "2022-06-01". Note that overriding this
+     default value may result in unsupported behavior.
+    :paramtype api_version: str
     """
 
     def __init__(
@@ -76,23 +54,9 @@ class PolicyClient:  # pylint: disable=client-accepts-api-version-keyword,too-ma
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.data_policy_manifests = DataPolicyManifestsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.policy_definitions = PolicyDefinitionsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.policy_set_definitions = PolicySetDefinitionsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
         self.policy_assignments = PolicyAssignmentsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.policy_exemptions = PolicyExemptionsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.variables = VariablesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.variable_values = VariableValuesOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def _send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.

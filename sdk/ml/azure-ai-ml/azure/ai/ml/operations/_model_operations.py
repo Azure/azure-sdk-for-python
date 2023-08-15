@@ -424,9 +424,12 @@ class ModelOperations(_ScopeDependentOperations):
         """List all model assets in workspace.
 
         :param name: Name of the model.
-        :type name: Optional[str]
-        :param list_view_type: View type for including/excluding (for example) archived models. Default: ACTIVE_ONLY.
-        :type list_view_type: Optional[ListViewType]
+        :type name: Optional[str], optional
+        :param stage: The Model stage
+        :type stage: Optional[str], optional
+        :keyword list_view_type: View type for including/excluding (for example) archived models. Defaults to
+             :attr:`ListViewType.ACTIVE_ONLY`.
+        :type list_view_type: ListViewType, optional
         :return: An iterator like instance of Model objects
         :rtype: ~azure.core.paging.ItemPaged[Model]
         """
@@ -474,11 +477,11 @@ class ModelOperations(_ScopeDependentOperations):
         :type name: str
         :param version: Version of model asset.
         :type version: str
-        :param share_with_name: Name of model asset to share with.
+        :keyword share_with_name: Name of model asset to share with.
         :type share_with_name: str
-        :param share_with_version: Version of model asset to share with.
+        :keyword share_with_version: Version of model asset to share with.
         :type share_with_version: str
-        :param registry_name: Name of the destination registry.
+        :keyword registry_name: Name of the destination registry.
         :type registry_name: str
         :return: Model asset object.
         :rtype: ~azure.ai.ml.entities.Model
@@ -513,6 +516,11 @@ class ModelOperations(_ScopeDependentOperations):
         """Returns the latest version of the asset with the given name.
 
         Latest is defined as the most recently created, not the most recently updated.
+
+        :param name: The model name
+        :type name: str
+        :return: The latest version of the named model
+        :rtype: Model
         """
         result = _get_latest(
             name,
@@ -524,7 +532,8 @@ class ModelOperations(_ScopeDependentOperations):
         return Model._from_rest_object(result)
 
     @contextmanager
-    def _set_registry_client(self, registry_name: str) -> None:
+    # pylint: disable-next=docstring-missing-return,docstring-missing-rtype
+    def _set_registry_client(self, registry_name: str) -> Iterable[None]:
         """Sets the registry client for the model operations.
 
         :param registry_name: Name of the registry.

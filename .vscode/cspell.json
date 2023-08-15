@@ -128,7 +128,9 @@
     "addinivalue",
     "adfs",
     "adls",
+    "aenter",
     "aiohttp",
+    "alru",
     "amqp",
     "amqps",
     "apim",
@@ -217,6 +219,7 @@
     "ints",
     "iohttp",
     "IOHTTP",
+    "IOLRO",
     "inprogress",
     "ipconfiguration",
     "ipconfigurations",
@@ -246,6 +249,8 @@
     "livekvtestgetkeyperfkey",
     "livekvtestsignperfkey",
     "livekvtestunwrapperfkey",
+    "lrobasepollingasynclrobasepolling",
+    "lropollerasynclropoller",
     "lmazuel",
     "logz",
     "LPCWSTR",
@@ -267,6 +272,7 @@
     "mydirectory",
     "myfile",
     "myvault",
+    "mytable",
     "nazsdk",
     "nbytes",
     "nbsp",
@@ -352,6 +358,7 @@
     "ukwest",
     "unpad",
     "unpadder",
+    "unpartial",
     "unredacted",
     "unseekable",
     "unsubscriptable",
@@ -405,7 +412,8 @@
     "dacl",
     "wday",
     "whls",
-    "aiter"
+    "aiter",
+    "solft"
   ],
   "overrides": [
     {
@@ -451,6 +459,13 @@
         "isfork",
         "ISFORK",
         "thead"
+      ]
+    },
+    {
+      "filename": "tools/azure-sdk-tools/gh_tools/**",
+      "words": [
+        "JOBID",
+        "vnext"
       ]
     },
     {
@@ -565,7 +580,6 @@
         "fhir",
         "FHIR",
         "naam",
-        "aenter"
       ]
     },
     {
@@ -818,6 +832,7 @@
       "filename": "sdk/monitor/azure-monitor-opentelemetry-exporter/**/*",
       "words": [
         "otel",
+        "OTELRESOURCE",
         "OTLP",
         "otlp",
         "grpc"
@@ -833,9 +848,7 @@
     {
       "filename": "sdk/schemaregistry/azure-schemaregistry-avroencoder/**/*.py",
       "words": [
-        "currsize",
-        "unpartial",
-        "alru"
+        "currsize"
       ]
     },
     {
@@ -1336,6 +1349,13 @@
     },
     {
       "filename": "sdk/purview/azure-purview-workflow/azure/purview/workflow/_serialization.py",
+      "words": [
+        "ctxt",
+        "wday"
+      ]
+    },
+    {
+      "filename": "sdk/purview/azure-purview-sharing/azure/purview/sharing/_serialization.py",
       "words": [
         "ctxt",
         "wday"

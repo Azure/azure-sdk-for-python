@@ -52,7 +52,7 @@ class RegistryOperations:
     def list(self, *, scope: str = Scope.RESOURCE_GROUP) -> Iterable[Registry]:
         """List all registries that the user has access to in the current resource group or subscription.
 
-        :param scope: scope of the listing, "resource_group" or "subscription", defaults to "resource_group"
+        :keyword scope: scope of the listing, "resource_group" or "subscription", defaults to "resource_group"
         :type scope: str, optional
         :return: An iterator like instance of Registry objects
         :rtype: ~azure.core.paging.ItemPaged[Registry]
@@ -95,8 +95,14 @@ class RegistryOperations:
             )
         return registry_name
 
-    def _get_polling(self, name):
-        """Return the polling with custom poll interval."""
+    def _get_polling(self, name: str) -> AzureMLPolling:
+        """Return the polling with custom poll interval.
+
+        :param name: The registry name
+        :type name: str
+        :return: A poller with custom poll interval.
+        :rtype: AzureMLPolling
+        """
         path_format_arguments = {
             "registryName": name,
             "resourceGroupName": self._resource_group_name,
@@ -142,7 +148,7 @@ class RegistryOperations:
     def begin_delete(self, *, name: str, **kwargs: Dict) -> LROPoller[None]:
         """Delete a registry if it exists. Returns nothing on a successful operation.
 
-        :param name: Name of the registry
+        :keyword name: Name of the registry
         :type name: str
         :return: A poller to track the operation status.
         :rtype: LROPoller

@@ -28,23 +28,24 @@ def text_classification(
     A text classification job is used to train a model that can predict the class/category of a text data.
     Input training data should include a target column that classifies the text into exactly one class.
 
-    :param training_data: The training data to be used within the experiment.
+    :keyword training_data: The training data to be used within the experiment.
             It should contain both training features and a target column.
     :type training_data: Input
-    :param target_column_name: Name of the target column.
+    :keyword target_column_name: Name of the target column.
     :type target_column_name: str
-    :param validation_data: The validation data to be used within the experiment.
+    :keyword validation_data: The validation data to be used within the experiment.
             It should contain both training features and a target column.
     :type validation_data: Input
-    :param primary_metric: Primary metric for the task.
+    :keyword primary_metric: Primary metric for the task.
             Acceptable values: accuracy, AUC_weighted, precision_score_weighted
     :type primary_metric: Union[str, ClassificationPrimaryMetrics]
-    :param log_verbosity: Log verbosity level.
+    :keyword log_verbosity: Log verbosity level.
     :type log_verbosity: str
-    :param kwargs: A dictionary of additional configuration parameters.
+    :keyword kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
 
     :return: The TextClassificationJob object.
+    :rtype: TextClassificationJob
     """
 
     text_classification_job = TextClassificationJob(
@@ -76,23 +77,24 @@ def text_classification_multilabel(
     For more information on format of multilabel data, refer to:
     https://docs.microsoft.com/en-us/azure/machine-learning/how-to-auto-train-nlp-models#multi-label
 
-    :param training_data: The training data to be used within the experiment.
+    :keyword training_data: The training data to be used within the experiment.
             It should contain both training features and a target column.
     :type training_data: Input
-    :param target_column_name: Name of the target column.
+    :keyword target_column_name: Name of the target column.
     :type target_column_name: str
-    :param validation_data: The validation data to be used within the experiment.
+    :keyword validation_data: The validation data to be used within the experiment.
             It should contain both training features and a target column.
     :type validation_data: Input
-    :param primary_metric: Primary metric for the task.
+    :keyword primary_metric: Primary metric for the task.
             Acceptable values: accuracy
     :type primary_metric: str
-    :param log_verbosity: Log verbosity level.
+    :keyword log_verbosity: Log verbosity level.
     :type log_verbosity: str
-    :param kwargs: A dictionary of additional configuration parameters.
+    :keyword kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
 
     :return: The TextClassificationMultilabelJob object.
+    :rtype: TextClassificationMultilabelJob
     """
 
     text_classification_multilabel_job = TextClassificationMultilabelJob(
@@ -123,21 +125,22 @@ def text_ner(
     refer to:
     https://docs.microsoft.com/en-us/azure/machine-learning/how-to-auto-train-nlp-models#named-entity-recognition-ner
 
-    :param training_data: The training data to be used within the experiment.
+    :keyword training_data: The training data to be used within the experiment.
             It should contain both training features and a target column.
     :type training_data: Input
-    :param validation_data: The validation data to be used within the experiment.
+    :keyword validation_data: The validation data to be used within the experiment.
             It should contain both training features and a target column.
     :type validation_data: Input
-    :param primary_metric: Primary metric for the task.
+    :keyword primary_metric: Primary metric for the task.
             Acceptable values: accuracy
     :type primary_metric: str
-    :param log_verbosity: Log verbosity level.
+    :keyword log_verbosity: Log verbosity level.
     :type log_verbosity: str
-    :param kwargs: A dictionary of additional configuration parameters.
+    :keyword kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
 
     :return: The TextNerJob object.
+    :rtype: TextNerJob
     """
 
     text_ner_job = TextNerJob(

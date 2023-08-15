@@ -1,15 +1,32 @@
 # Release History
 
-## 1.4.1 (Unreleased)
+## 1.5.0b3 (Unreleased)
 
 ### Features Added
 
 ### Breaking Changes
 
 ### Bugs Fixed
+
+### Other Changes
+
+## 1.5.0b2 (2023-08-02)
+
+### Bugs Fixed
+- Fixed a bug in deserializing and serializing Snapshot when `filters` property is `None`.
+- Fixed a bug when creating `FeatureFlagConfigurationSetting` from SDK but having an error in portal.([#31326](https://github.com/Azure/azure-sdk-for-python/issues/31326))
+
+## 1.5.0b1 (2023-07-11)
+
+### Features Added
+- Added support for `Snapshot` CRUD operations.
+
+### Bugs Fixed
 - Fixed async `update_sync_token` to use async/await keywords
 
 ### Other Changes
+- Bumped minimum dependency on `azure-core` to `>=1.25.0`.
+- Updated the default `api_version` to "2022-11-01-preview".
 
 ## 1.4.0 (2022-02-13)
 

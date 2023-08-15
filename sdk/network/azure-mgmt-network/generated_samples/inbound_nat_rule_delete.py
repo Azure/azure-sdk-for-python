@@ -29,14 +29,13 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.inbound_nat_rules.begin_delete(
+    client.inbound_nat_rules.begin_delete(
         resource_group_name="testrg",
         load_balancer_name="lb1",
         inbound_nat_rule_name="natRule1.1",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2022-11-01/examples/InboundNatRuleDelete.json
+# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2023-02-01/examples/InboundNatRuleDelete.json
 if __name__ == "__main__":
     main()

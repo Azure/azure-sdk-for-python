@@ -7,7 +7,7 @@
 import json
 import logging
 import time
-from typing import Optional
+from typing import Dict, List, Optional
 
 from azure.ai.ml._local_endpoints.local_endpoint_mode import LocalEndpointMode
 from azure.ai.ml._local_endpoints.vscode_debug.vscode_client import VSCodeClient
@@ -267,7 +267,8 @@ class DockerClient(object):
 
         :param endpoint_name: name of local endpoint
         :type endpoint_name: str
-        :returns dict: JSON dict representing user provided endpoint input
+        :returns: JSON dict representing user provided endpoint input
+        :rtype: dict
         """
         container = self.get_endpoint_container(endpoint_name=endpoint_name)
         if container is None:
@@ -281,7 +282,8 @@ class DockerClient(object):
         :type endpoint_name: str
         :param deployment_name: name of local deployment
         :type deployment_name: (str, optional)
-        :returns dict: JSON dict representing user provided endpoint input
+        :return: JSON dict representing user provided endpoint input
+        :rtype: dict
         """
         container = self.get_endpoint_container(endpoint_name=endpoint_name, deployment_name=deployment_name)
         if container is None:
@@ -304,7 +306,7 @@ class DockerClient(object):
             verify_single_deployment=True,
         )
         if container is None:
-            return
+            return None
         _validate_container_state(
             endpoint_name=endpoint_name,
             deployment_name=deployment_name,
@@ -321,7 +323,8 @@ class DockerClient(object):
         :type deployment_name: str
         :param lines: number of lines to retrieve from container logs
         :type lines: int
-        :return: str
+        :return: Deployment logs
+        :rtype: str
         :raises: azure.ai.ml._local_endpoints.errors.LocalEndpointNotFoundError
         """
         container = self.get_endpoint_container(endpoint_name, deployment_name=deployment_name)
@@ -343,7 +346,8 @@ class DockerClient(object):
         :type deployment_name: (str, optional)
         :param include_stopped: Include stopped containers. Default: True.
         :type include_stopped: (str, optional)
-        :returns list[Container]: array of Container objects from docker-py library
+        :return: array of Container objects from docker-py library
+        :rtype: List[docker.models.containers.Container]
         """
         filters = {"label": [f"{LocalEndpointConstants.LABEL_KEY_AZUREML_LOCAL_ENDPOINT}"]}
         if endpoint_name:
@@ -370,7 +374,8 @@ class DockerClient(object):
         :type verify_single_deployment: (bool, optional)
         :param include_stopped: Include container even if it's stopped. Default: True.
         :type include_stopped: (bool, optional)
-        :returns docker.models.containers.Container:
+        :returns: The docker container
+        :rtype: docker.models.containers.Container
         """
         containers = self.list_containers(
             endpoint_name=endpoint_name,
@@ -378,7 +383,7 @@ class DockerClient(object):
             include_stopped=include_stopped,
         )
         if len(containers) == 0:
-            return
+            return None
         if len(containers) > 1 and verify_single_deployment:
             raise MultipleLocalDeploymentsFoundError(endpoint_name=endpoint_name)
         return containers[0]
@@ -420,24 +425,31 @@ class DockerClient(object):
                 raise
             raise LocalEndpointImageBuildError(e) from e
 
-    def _reformat_volumes(self, volumes_dict: dict) -> list:  # pylint: disable=no-self-use
+    def _reformat_volumes(self, volumes_dict: Dict[str, Dict[str, Dict[str, str]]]) -> List[str]:
         """Returns a list of volumes to pass to docker.
 
-        :param volumes_dict: custom formatted dict of volumes to mount. We expect the keys to be unique.
-        Example: {
-            "codesrc:codedest": {
-                "codesrc": {
-                    "bind": "codedest"
+        :param volumes_dict: custom formatted dict of volumes to mount. We expect the keys to be unique. Example:
+            .. code-block:: python
+
+                {
+                    "codesrc:codedest": {
+                        "codesrc": {
+                            "bind": "codedest"
+                        }
+                    },
+                    "modelsrc:modeldest": {
+                        "modelsrc": {
+                            "bind": "modeldest"
+                        }
+                    }
                 }
-            },
-            "modelsrc:modeldest": {
-                "modelsrc": {
-                    "bind": "modeldest"
-                }
-            }
-        }
+
         :type volumes_dict: str
-        :return list: list of volumes to pass to docker. Example: ["codesrc:codedest", "modelsrc:modeldest"]
+        :return: list of volumes to pass to docker. Example:
+            .. code-block:: python
+
+                ["codesrc:codedest", "modelsrc:modeldest"]
+        :rtype: List[str]
         """
         return list(volumes_dict.keys())
 
@@ -462,14 +474,14 @@ def get_endpoint_json_from_container(container: "docker.models.containers.Contai
     if container:
         data = container.labels[LocalEndpointConstants.LABEL_KEY_ENDPOINT_JSON]
         return json.loads(data)
-    return
+    return None
 
 
 def get_deployment_json_from_container(container: "docker.models.containers.Container") -> dict:
     if container:
         data = container.labels[LocalEndpointConstants.LABEL_KEY_DEPLOYMENT_JSON]
         return json.loads(data)
-    return
+    return None
 
 
 def get_status_from_container(container: "docker.models.containers.Container") -> str:
@@ -477,7 +489,8 @@ def get_status_from_container(container: "docker.models.containers.Container") -
 
     :param container: container of local Deployment
     :type container: docker.models.containers.Container
-    :return str: container status
+    :return: container status
+    :rtype: str
     """
     return container.status
 
@@ -487,7 +500,8 @@ def get_scoring_uri_from_container(container: "docker.models.containers.Containe
 
     :param container: container of local Deployment
     :type container: docker.models.containers.Container
-    :return str: container scoring_uri
+    :return: container scoring_uri
+    :rtype: str
     """
     port = 5001
     # Example container.ports: {'5001/tcp': [{'HostIp': '0.0.0.0', 'HostPort': '5001'}],
@@ -511,7 +525,8 @@ def _get_image_name(endpoint_name: str, deployment_name: str) -> str:
     :type endpoint_name: str
     :param deployment_name: name of local deployment
     :type deployment_name: str
-    :return str: image name
+    :return: image name
+    :rtype: str
     """
     return f"{endpoint_name}:{deployment_name}"
 
@@ -523,7 +538,8 @@ def _get_container_name(endpoint_name: str, deployment_name: Optional[str] = Non
     :type endpoint_name: str
     :param deployment_name: name of local deployment
     :type deployment_name: str
-    :return str: container name
+    :return: container name
+    :rtype: str
     """
     return f"{endpoint_name}.{deployment_name}" if deployment_name else endpoint_name
 

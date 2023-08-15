@@ -29,12 +29,11 @@ def main():
         subscription_id="00000000-1111-2222-3333-444444444444",
     )
 
-    response = client.start_stop_managed_instance_schedules.delete(
+    client.start_stop_managed_instance_schedules.delete(
         resource_group_name="schedulerg",
         managed_instance_name="schedulemi",
         start_stop_schedule_name="default",
     )
-    print(response)
 
 
 # x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2022-08-01-preview/examples/StartStopManagedInstanceScheduleDelete.json

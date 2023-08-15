@@ -16,7 +16,7 @@ from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
 
 from .. import CredentialUnavailableError
-from .._internal import _scopes_to_resource, resolve_tenant
+from .._internal import _scopes_to_resource, resolve_tenant, within_dac
 from .._internal.decorators import log_get_token
 
 
@@ -46,12 +46,13 @@ class AzureCliCredential:
             :dedent: 4
             :caption: Create an AzureCliCredential.
     """
+
     def __init__(
         self,
         *,
         tenant_id: str = "",
         additionally_allowed_tenants: Optional[List[str]] = None,
-        process_timeout: int = 10
+        process_timeout: int = 10,
     ) -> None:
 
         self.tenant_id = tenant_id
@@ -68,7 +69,13 @@ class AzureCliCredential:
         """Calling this method is unnecessary."""
 
     @log_get_token("AzureCliCredential")
-    def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
+    def get_token(
+        self,
+        *scopes: str,
+        claims: Optional[str] = None,  # pylint:disable=unused-argument
+        tenant_id: Optional[str] = None,
+        **kwargs: Any,
+    ) -> AccessToken:
         """Request an access token for `scopes`.
 
         This method is called automatically by Azure SDK clients. Applications calling this method directly must
@@ -77,9 +84,11 @@ class AzureCliCredential:
         :param str scopes: desired scope for the access token. This credential allows only one scope per request.
             For more information about scopes, see
             https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
+        :keyword str claims: not used by this credential; any value provided will be ignored.
         :keyword str tenant_id: optional tenant to include in the token request.
 
-        :rtype: :class:`azure.core.credentials.AccessToken`
+        :return: An access token with the desired scopes.
+        :rtype: ~azure.core.credentials.AccessToken
 
         :raises ~azure.identity.CredentialUnavailableError: the credential was unable to invoke the Azure CLI.
         :raises ~azure.core.exceptions.ClientAuthenticationError: the credential invoked the Azure CLI but didn't
@@ -90,8 +99,9 @@ class AzureCliCredential:
         command = COMMAND_LINE.format(resource)
         tenant = resolve_tenant(
             default_tenant=self.tenant_id,
+            tenant_id=tenant_id,
             additionally_allowed_tenants=self._additionally_allowed_tenants,
-            **kwargs
+            **kwargs,
         )
         if tenant:
             command += " --tenant " + tenant
@@ -100,10 +110,14 @@ class AzureCliCredential:
         token = parse_token(output)
         if not token:
             sanitized_output = sanitize_output(output)
-            raise ClientAuthenticationError(
-                message="Unexpected output from Azure CLI: '{}'. \n"
-                        "To mitigate this issue, please refer to the troubleshooting guidelines here at "
-                        "https://aka.ms/azsdk/python/identity/azclicredential/troubleshoot.".format(sanitized_output))
+            message = (
+                f"Unexpected output from Azure CLI: '{sanitized_output}'. \n"
+                f"To mitigate this issue, please refer to the troubleshooting guidelines here at "
+                f"https://aka.ms/azsdk/python/identity/azclicredential/troubleshoot."
+            )
+            if within_dac.get():
+                raise CredentialUnavailableError(message=message)
+            raise ClientAuthenticationError(message=message)
 
         return token
 
@@ -113,6 +127,10 @@ def parse_token(output) -> Optional[AccessToken]:
 
     In particular, convert the "expiresOn" value to epoch seconds. This value is a naive local datetime as returned by
     datetime.fromtimestamp.
+
+    :param str output: Output of 'az' command.
+    :return: An AccessToken or None if the output isn't valid.
+    :rtype: azure.core.credentials.AccessToken or None
     """
     try:
         token = json.loads(output)
@@ -130,7 +148,11 @@ def parse_token(output) -> Optional[AccessToken]:
 
 
 def get_safe_working_dir() -> str:
-    """Invoke 'az' from a directory controlled by the OS, not the executing program's directory"""
+    """Invoke 'az' from a directory controlled by the OS, not the executing program's directory.
+
+    :return: The path to the directory.
+    :rtype: str
+    """
 
     if sys.platform.startswith("win"):
         path = os.environ.get("SYSTEMROOT")
@@ -142,7 +164,12 @@ def get_safe_working_dir() -> str:
 
 
 def sanitize_output(output: str) -> str:
-    """Redact access tokens from CLI output to prevent error messages revealing them"""
+    """Redact access tokens from CLI output to prevent error messages revealing them.
+
+    :param str output: The output of the Azure CLI.
+    :return: The output with access tokens redacted.
+    :rtype: str
+    """
     return re.sub(r"\"accessToken\": \"(.*?)(\"|$)", "****", output)
 
 
@@ -170,16 +197,18 @@ def _run_command(command: str, timeout: int) -> str:
         # non-zero return from shell
         # Fallback check in case the executable is not found while executing subprocess.
         if ex.returncode == 127 or ex.stderr.startswith("'az' is not recognized"):
-            raise CredentialUnavailableError(message=CLI_NOT_FOUND)
+            raise CredentialUnavailableError(message=CLI_NOT_FOUND) from ex
         if "az login" in ex.stderr or "az account set" in ex.stderr:
-            raise CredentialUnavailableError(message=NOT_LOGGED_IN)
+            raise CredentialUnavailableError(message=NOT_LOGGED_IN) from ex
 
         # return code is from the CLI -> propagate its output
         if ex.stderr:
             message = sanitize_output(ex.stderr)
         else:
             message = "Failed to invoke Azure CLI"
-        raise ClientAuthenticationError(message=message)
+        if within_dac.get():
+            raise CredentialUnavailableError(message=message) from ex
+        raise ClientAuthenticationError(message=message) from ex
     except OSError as ex:
         # failed to execute 'cmd' or '/bin/sh'
         error = CredentialUnavailableError(message="Failed to execute '{}'".format(args[0]))

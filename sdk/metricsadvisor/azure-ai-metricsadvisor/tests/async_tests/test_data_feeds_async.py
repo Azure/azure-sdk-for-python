@@ -7,7 +7,7 @@
 
 import datetime
 import uuid
-from dateutil.tz import tzutc
+from datetime import timezone
 import pytest
 import functools
 from azure.core.exceptions import ResourceNotFoundError
@@ -70,7 +70,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
                 assert data_feed.granularity.granularity_type == "Daily"
                 assert data_feed.schema.metrics[0].name == "cost"
                 assert data_feed.schema.metrics[1].name == "revenue"
-                assert data_feed.ingestion_settings.ingestion_begin_time == datetime.datetime(2019, 10, 1, tzinfo=tzutc())
+                assert data_feed.ingestion_settings.ingestion_begin_time == datetime.datetime(2019, 10, 1, tzinfo=timezone.utc)
 
             finally:
                 await self.clean_up(client.delete_data_feed, variables)
@@ -146,7 +146,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
                 assert data_feed.schema.dimensions[1].name == "city"
                 assert data_feed.schema.dimensions[0].display_name == "display category"
                 assert data_feed.schema.dimensions[1].display_name == "display city"
-                assert data_feed.ingestion_settings.ingestion_begin_time == datetime.datetime(2019, 10, 1, tzinfo=tzutc())
+                assert data_feed.ingestion_settings.ingestion_begin_time == datetime.datetime(2019, 10, 1, tzinfo=timezone.utc)
                 assert data_feed.ingestion_settings.data_source_request_concurrency == 0
                 assert data_feed.ingestion_settings.ingestion_retry_delay == -1
                 assert data_feed.ingestion_settings.ingestion_start_offset == -1
@@ -243,7 +243,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
                 assert data_feed.schema.dimensions[1].name == "city"
                 assert data_feed.schema.dimensions[0].display_name == "display category"
                 assert data_feed.schema.dimensions[1].display_name == "display city"
-                assert data_feed.ingestion_settings.ingestion_begin_time == datetime.datetime(2019, 10, 1, tzinfo=tzutc())
+                assert data_feed.ingestion_settings.ingestion_begin_time == datetime.datetime(2019, 10, 1, tzinfo=timezone.utc)
                 assert data_feed.ingestion_settings.data_source_request_concurrency == 0
                 assert data_feed.ingestion_settings.ingestion_retry_delay == -1
                 assert data_feed.ingestion_settings.ingestion_start_offset == -1
@@ -861,7 +861,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
                 assert updated.name == variables["data_feed_updated_name"]
                 assert updated.data_feed_description == "updated"
                 assert updated.schema.timestamp_column == "time"
-                assert updated.ingestion_settings.ingestion_begin_time == datetime.datetime(2021, 12, 10, tzinfo=tzutc())
+                assert updated.ingestion_settings.ingestion_begin_time == datetime.datetime(2021, 12, 10, tzinfo=timezone.utc)
                 assert updated.ingestion_settings.ingestion_start_offset == 1
                 assert updated.ingestion_settings.data_source_request_concurrency == 1
                 assert updated.ingestion_settings.ingestion_retry_delay == 120
@@ -920,7 +920,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
                 assert updated.name == variables["data_feed_updated_name"]
                 assert updated.data_feed_description == "updated"
                 assert updated.schema.timestamp_column == "time"
-                assert updated.ingestion_settings.ingestion_begin_time == datetime.datetime(2021, 9, 10, tzinfo=tzutc())
+                assert updated.ingestion_settings.ingestion_begin_time == datetime.datetime(2021, 9, 10, tzinfo=timezone.utc)
                 assert updated.ingestion_settings.ingestion_start_offset == 1
                 assert updated.ingestion_settings.data_source_request_concurrency == 1
                 assert updated.ingestion_settings.ingestion_retry_delay == 120
@@ -998,7 +998,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
                 assert updated.name == variables["data_feed_updated_name"]
                 assert updated.data_feed_description == "updateMe"
                 assert updated.schema.timestamp_column == "time"
-                assert updated.ingestion_settings.ingestion_begin_time == datetime.datetime(2021, 9, 10, tzinfo=tzutc())
+                assert updated.ingestion_settings.ingestion_begin_time == datetime.datetime(2021, 9, 10, tzinfo=timezone.utc)
                 assert updated.ingestion_settings.ingestion_start_offset == 1
                 assert updated.ingestion_settings.data_source_request_concurrency == 1
                 assert updated.ingestion_settings.ingestion_retry_delay == 120
@@ -1053,7 +1053,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
                 assert updated.name == variables["data_feed_updated_name"]
                 # assert updated.data_feed_description == ""  # doesn't currently clear
                 # assert updated.schema.timestamp_column == ""  # doesn't currently clear
-                assert updated.ingestion_settings.ingestion_begin_time == datetime.datetime(2019, 10, 1, tzinfo=tzutc())
+                assert updated.ingestion_settings.ingestion_begin_time == datetime.datetime(2019, 10, 1, tzinfo=timezone.utc)
                 assert updated.ingestion_settings.ingestion_start_offset == -1
                 assert updated.ingestion_settings.data_source_request_concurrency == 0
                 assert updated.ingestion_settings.ingestion_retry_delay == -1

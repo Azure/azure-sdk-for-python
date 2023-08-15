@@ -70,7 +70,7 @@ class CreateClients(object):
             ("update", entity4, {"mode": "replace"}),
         ]
         try:
-            self.table_client.submit_transaction(operations) # type: ignore[arg-type]
+            self.table_client.submit_transaction(operations)  # type: ignore[arg-type]
         except TableTransactionError as e:
             print("There was an error with the transaction operation")
             print(e)

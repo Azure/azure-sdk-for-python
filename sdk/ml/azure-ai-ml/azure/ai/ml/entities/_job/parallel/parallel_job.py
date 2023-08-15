@@ -93,12 +93,14 @@ class ParallelJob(Job, ParameterizedParallel, JobIOMixin):
     def _load_from_rest(cls, obj: JobBaseData):
         pass
 
-    def _to_component(self, context: Optional[Dict] = None, **kwargs):
+    def _to_component(self, context: Optional[Dict] = None, **kwargs) -> "ParallelComponent":
         """Translate a parallel job to component job.
 
         :param context: Context of parallel job YAML file.
-        :param kwargs: Extra arguments.
+        :type context: dict, optional
+        :keyword kwargs: Extra arguments.
         :return: Translated parallel component.
+        :rtype: ParallelComponent
         """
         from azure.ai.ml.entities._component.parallel_component import ParallelComponent
 
@@ -122,12 +124,14 @@ class ParallelJob(Job, ParameterizedParallel, JobIOMixin):
             resources=self.resources if self.resources else None,
         )
 
-    def _to_node(self, context: Optional[Dict] = None, **kwargs):
+    def _to_node(self, context: Optional[Dict] = None, **kwargs) -> "Parallel":
         """Translate a parallel job to a pipeline node.
 
         :param context: Context of parallel job YAML file.
-        :param kwargs: Extra arguments.
+        :type context: dict, optional
+        :keyword kwargs: Extra arguments.
         :return: Translated parallel component.
+        :rtype: Parallel
         """
         from azure.ai.ml.entities._builders import Parallel
 

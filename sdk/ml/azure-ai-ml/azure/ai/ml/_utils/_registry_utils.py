@@ -3,6 +3,9 @@
 # ---------------------------------------------------------
 
 import logging
+from typing import Tuple
+
+from typing_extensions import Literal
 
 from azure.ai.ml._restclient.registry_discovery import AzureMachineLearningWorkspaces as ServiceClientRegistryDiscovery
 from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import AzureMachineLearningWorkspaces
@@ -104,7 +107,7 @@ def get_sas_uri_for_registry_asset(service_client, name, version, resource_group
             registry_name=registry,
             body=body,
         )
-        sas_uri = res.blob_reference_for_consumption.credential.sas_uri
+        sas_uri = res.blob_reference_for_consumption.credential.additional_properties["sasUri"]
     except HttpResponseError as e:
         # "Asset already exists" exception is thrown from service with error code 409, that we need to ignore
         if e.status_code == 409:
@@ -127,6 +130,7 @@ def get_asset_body_for_registry_storage(
     :type asset_name: str
     :param asset_version: Asset version.
     :type asset_version: str
+    :return: The temporary data reference request dto
     :rtype: TemporaryDataReferenceRequestDto
     """
     body = TemporaryDataReferenceRequestDto(
@@ -144,7 +148,7 @@ def get_storage_details_for_registry_assets(
     rg_name: str,
     reg_name: str,
     uri: str,
-) -> str:
+) -> Tuple[str, Literal["NoCredentials", "SAS"]]:
     """Get storage details for registry assets.
 
     :param service_client: AzureMachineLearningWorkspaces service client.
@@ -161,7 +165,10 @@ def get_storage_details_for_registry_assets(
     :type reg_name: str
     :param uri: asset uri
     :type uri: str
-    :rtype: str
+    :return: A 2-tuple of a URI and a string. Either:
+      * A blob uri and "NoCredentials"
+      * A sas URI and "SAS"
+    :rtype: Tuple[str, Literal["NoCredentials", "SAS"]]
     """
     body = BlobReferenceSASRequestDto(
         asset_id=REGISTRY_ASSET_ID.format(reg_name, asset_type, asset_name, asset_version),
@@ -170,10 +177,10 @@ def get_storage_details_for_registry_assets(
     sas_uri = service_client.data_references.get_blob_reference_sas(
         name=asset_name, version=asset_version, resource_group_name=rg_name, registry_name=reg_name, body=body
     )
-    if sas_uri.blob_reference_for_consumption.credential["credentialType"] == "NoCredentials":
+    if sas_uri.blob_reference_for_consumption.credential.credential_type == "no_credentials":
         return sas_uri.blob_reference_for_consumption.blob_uri, "NoCredentials"
 
-    return sas_uri.blob_reference_for_consumption.credential["sasUri"], "SAS"
+    return sas_uri.blob_reference_for_consumption.credential.additional_properties["sasUri"], "SAS"
 
 
 def get_registry_client(credential, registry_name, **kwargs):

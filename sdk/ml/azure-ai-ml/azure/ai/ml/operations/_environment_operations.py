@@ -264,7 +264,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
 
         :param name: Name of the environment.
         :type name: Optional[str]
-        :param list_view_type: View type for including/excluding (for example) archived environments.
+        :keyword list_view_type: View type for including/excluding (for example) archived environments.
             Default: ACTIVE_ONLY.
         :type list_view_type: Optional[ListViewType]
         :return: An iterator like instance of Environment objects.
@@ -367,6 +367,11 @@ class EnvironmentOperations(_ScopeDependentOperations):
 
         Latest is defined as the most recently created, not the most
         recently updated.
+
+        :param name: The asset name
+        :type name: str
+        :return: The latest version of the named environment
+        :rtype: Environment
         """
         result = _get_latest(
             name,
@@ -379,18 +384,20 @@ class EnvironmentOperations(_ScopeDependentOperations):
 
     @monitor_with_activity(logger, "Environment.Share", ActivityType.PUBLICAPI)
     @experimental
-    def share(self, name, version, *, share_with_name, share_with_version, registry_name) -> Environment:
+    def share(
+        self, name: str, version: str, *, share_with_name: str, share_with_version: str, registry_name: str
+    ) -> Environment:
         """Share a environment asset from workspace to registry.
 
         :param name: Name of environment asset.
         :type name: str
         :param version: Version of environment asset.
         :type version: str
-        :param share_with_name: Name of environment asset to share with.
+        :keyword share_with_name: Name of environment asset to share with.
         :type share_with_name: str
-        :param share_with_version: Version of environment asset to share with.
+        :keyword share_with_version: Version of environment asset to share with.
         :type share_with_version: str
-        :param registry_name: Name of the destination registry.
+        :keyword registry_name: Name of the destination registry.
         :type registry_name: str
         :return: Environment asset object.
         :rtype: ~azure.ai.ml.entities.Environment
@@ -422,7 +429,8 @@ class EnvironmentOperations(_ScopeDependentOperations):
             return self.create_or_update(environment_ref)
 
     @contextmanager
-    def _set_registry_client(self, registry_name: str) -> None:
+    # pylint: disable-next=docstring-missing-return,docstring-missing-rtype
+    def _set_registry_client(self, registry_name: str) -> Iterable[None]:
         """Sets the registry client for the environment operations.
 
         :param registry_name: Name of the registry.

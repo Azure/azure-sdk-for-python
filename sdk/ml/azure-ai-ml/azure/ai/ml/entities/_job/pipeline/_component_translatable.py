@@ -4,7 +4,7 @@
 # pylint: disable=protected-access, redefined-builtin
 # disable redefined-builtin to use input as argument name
 import re
-from typing import Dict, Optional, Union
+from typing import Dict, Optional, Tuple, Union
 
 from pydash import get
 
@@ -26,10 +26,15 @@ class ComponentTranslatableMixin:
     }
 
     @classmethod
-    def _find_source_from_parent_inputs(cls, input: str, pipeline_job_inputs: dict):
+    def _find_source_from_parent_inputs(cls, input: str, pipeline_job_inputs: dict) -> Tuple[str, Optional[str]]:
         """Find source type and mode of input/output from parent input.
 
-        :return: tuple(type, mode)
+        :param input: The input name
+        :type input: str
+        :param pipeline_job_inputs: The pipeline job inputs
+        :type pipeline_job_inputs: dict
+        :return: A 2-tuple of the type and the mode
+        :rtype: Tuple[str, Optional[str]]
         """
         _input_name = input.split(".")[2][:-2]
         if _input_name not in pipeline_job_inputs.keys():
@@ -42,15 +47,20 @@ class ComponentTranslatableMixin:
             )
         input_data = pipeline_job_inputs[_input_name]
         input_type = type(input_data)
-        if input_type in cls._PYTHON_SDK_TYPE_MAPPING.keys():
+        if input_type in cls._PYTHON_SDK_TYPE_MAPPING:
             return cls._PYTHON_SDK_TYPE_MAPPING[input_type], None
         return getattr(input_data, "type", AssetTypes.URI_FOLDER), getattr(input_data, "mode", None)
 
     @classmethod
-    def _find_source_from_parent_outputs(cls, input: str, pipeline_job_outputs: dict):
+    def _find_source_from_parent_outputs(cls, input: str, pipeline_job_outputs: dict) -> Tuple[str, Optional[str]]:
         """Find source type and mode of input/output from parent output.
 
-        :return: tuple(type, mode)
+        :param input: The input name
+        :type input: str
+        :param pipeline_job_outputs: The pipeline job outputs
+        :type pipeline_job_outputs: dict
+        :return: A 2-tuple of the type and the mode
+        :rtype: Tuple[str, Optional[str]]
         """
         _output_name = input.split(".")[2][:-2]
         if _output_name not in pipeline_job_outputs.keys():
@@ -63,7 +73,7 @@ class ComponentTranslatableMixin:
             )
         output_data = pipeline_job_outputs[_output_name]
         output_type = type(output_data)
-        if output_type in cls._PYTHON_SDK_TYPE_MAPPING.keys():
+        if output_type in cls._PYTHON_SDK_TYPE_MAPPING:
             return cls._PYTHON_SDK_TYPE_MAPPING[output_type], None
         if isinstance(output_data, dict):
             if "type" in output_data:
@@ -78,10 +88,19 @@ class ComponentTranslatableMixin:
         return getattr(output_data, "type", AssetTypes.URI_FOLDER), getattr(output_data, "mode", None)
 
     @classmethod
-    def _find_source_from_other_jobs(cls, input: str, jobs_dict: dict, pipeline_job_dict: dict):
+    def _find_source_from_other_jobs(
+        cls, input: str, jobs_dict: dict, pipeline_job_dict: dict
+    ) -> Tuple[str, Optional[str]]:
         """Find source type and mode of input/output from other job.
 
-        :return: tuple(type, mode)
+        :param input: The input name
+        :type input: str
+        :param jobs_dict: The job dict
+        :type jobs_dict:
+        :param pipeline_job_dict: The pipeline job dict
+        :type pipeline_job_dict: dict
+        :return: A 2-tuple of the type and the mode
+        :rtype: Tuple[str, Optional[str]]
         """
         from azure.ai.ml.entities import CommandJob
         from azure.ai.ml.entities._builders import BaseNode
@@ -161,10 +180,15 @@ class ComponentTranslatableMixin:
         )
 
     @classmethod
-    def _find_source_input_output_type(cls, input: str, pipeline_job_dict: dict):
+    def _find_source_input_output_type(cls, input: str, pipeline_job_dict: dict) -> Tuple[str, Optional[str]]:
         """Find source type and mode of input/output.
 
-        :return: tuple(type, mode)
+        :param input: The input binding
+        :type input: str
+        :param pipeline_job_dict: The pipeline job dict
+        :type pipeline_job_dict: dict
+        :return: A 2-tuple of the type and the mode
+        :rtype: Tuple[str, Optional[str]]
         """
         pipeline_job_inputs = pipeline_job_dict.get("inputs", {})
         pipeline_job_outputs = pipeline_job_dict.get("outputs", {})
@@ -199,10 +223,18 @@ class ComponentTranslatableMixin:
     def _to_input(
         cls,
         input: Union[Input, str, bool, int, float],
-        pipeline_job_dict=None,
+        pipeline_job_dict: Optional[dict] = None,
         **kwargs,  # pylint: disable=unused-argument
     ) -> Input:
-        """Convert a single job input value to component input."""
+        """Convert a single job input value to component input.
+
+        :param input: The input
+        :type input: Union[Input, str, bool, int, float]
+        :param pipeline_job_dict: The pipeline job dict
+        :type pipeline_job_dict: Optional[dict], optional
+        :return: The Component Input
+        :rtype: Input
+        """
         pipeline_job_dict = pipeline_job_dict or {}
         input_variable = {}
 
@@ -223,7 +255,7 @@ class ComponentTranslatableMixin:
                 input_variable["type"] = cls._PYTHON_SDK_TYPE_MAPPING[float]
 
             input_variable["optional"] = False
-        elif type(input) in cls._PYTHON_SDK_TYPE_MAPPING.keys():
+        elif type(input) in cls._PYTHON_SDK_TYPE_MAPPING:
             input_variable["type"] = cls._PYTHON_SDK_TYPE_MAPPING[type(input)]
             input_variable["default"] = input
         elif isinstance(input, PipelineInput):
@@ -265,11 +297,19 @@ class ComponentTranslatableMixin:
     def _to_output(
         cls,
         output: Union[Output, str, bool, int, float],
-        pipeline_job_dict=None,
+        pipeline_job_dict: Optional[dict] = None,
         **kwargs,  # pylint: disable=unused-argument
     ) -> Output:
         """Translate output value to Output and infer component output type
-        from linked pipeline output, its original type or default type."""
+        from linked pipeline output, its original type or default type.
+
+        :param output: The output
+        :type output: Union[Output, str, bool, int, float]
+        :param pipeline_job_dict: The pipeline job dict
+        :type pipeline_job_dict: Optional[dict], optional
+        :return: The output object
+        :rtype: Output
+        """
         pipeline_job_dict = pipeline_job_dict or {}
         if not pipeline_job_dict or output is None:
             try:
@@ -293,7 +333,7 @@ class ComponentTranslatableMixin:
         elif isinstance(output, PipelineOutput):
             output_variable = output._to_output()._to_dict()
 
-        elif type(output) in cls._PYTHON_SDK_TYPE_MAPPING.keys():
+        elif type(output) in cls._PYTHON_SDK_TYPE_MAPPING:
             output_variable["type"] = cls._PYTHON_SDK_TYPE_MAPPING[type(output)]
             output_variable["default"] = output
         else:
@@ -312,7 +352,9 @@ class ComponentTranslatableMixin:
         """Translate inputs to Inputs.
 
         :param inputs: mapping from input name to input object.
+        :type inputs: Dict[str, Union[Input, str, bool, int, float]]
         :return: mapping from input name to translated component input.
+        :rtype: Dict[str, Input]
         """
         pipeline_job_dict = kwargs.get("pipeline_job_dict", {})
         translated_component_inputs = {}
@@ -324,7 +366,9 @@ class ComponentTranslatableMixin:
         """Translate outputs to Outputs.
 
         :param outputs: mapping from output name to output object.
+        :type outputs: Dict[str, Output]
         :return: mapping from output name to translated component output.
+        :rtype: Dict[str, Output]
         """
         # Translate outputs to Outputs.
         pipeline_job_dict = kwargs.get("pipeline_job_dict", {})
@@ -336,7 +380,10 @@ class ComponentTranslatableMixin:
     def _to_component(self, context: Optional[Dict] = None, **kwargs) -> "Component":
         """Translate to Component.
 
+        :param context: The context
+        :type context: Optional[context], optional
         :return: Translated Component.
+        :rtype: Component
         """
         # Note: Source of translated component should be same with Job
         # And should be set after called _to_component/_to_node as job has no _source now.
@@ -345,8 +392,11 @@ class ComponentTranslatableMixin:
     def _to_node(self, context: Optional[Dict] = None, **kwargs) -> "BaseNode":
         """Translate to pipeline node.
 
-        :param kwargs:
+        :param context: The context
+        :type context: Optional[context], optional
+        :keyword kwargs:
         :return: Translated node.
+        :rtype: BaseNode
         """
         # Note: Source of translated component should be same with Job
         # And should be set after called _to_component/_to_node as job has no _source now.

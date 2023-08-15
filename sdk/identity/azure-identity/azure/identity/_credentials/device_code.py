@@ -66,12 +66,12 @@ class DeviceCodeCredential(InteractiveCredential):
     """
 
     def __init__(
-            self,
-            client_id: str = DEVELOPER_SIGN_ON_CLIENT_ID,
-            *,
-            timeout: Optional[int] = None,
-            prompt_callback: Optional[Callable[[str, str, datetime], None]] = None,
-            **kwargs: Any
+        self,
+        client_id: str = DEVELOPER_SIGN_ON_CLIENT_ID,
+        *,
+        timeout: Optional[int] = None,
+        prompt_callback: Optional[Callable[[str, str, datetime], None]] = None,
+        **kwargs: Any
     ) -> None:
         self._timeout = timeout
         self._prompt_callback = prompt_callback

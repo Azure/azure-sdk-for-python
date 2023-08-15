@@ -2,11 +2,78 @@ import time
 import pytest
 import threading
 import sys
+
+from azure.core.settings import settings
+from azure.core.tracing import SpanKind
 from azure.eventhub import EventData
 from azure.eventhub import EventHubConsumerClient
 from azure.eventhub._eventprocessor.in_memory_checkpoint_store import InMemoryCheckpointStore
 from azure.eventhub._constants import ALL_PARTITIONS
 
+@pytest.mark.liveTest
+@pytest.mark.asyncio
+async def test_receive_storage_checkpoint(connstr_senders, uamqp_transport, checkpoint_store, live_eventhub, resource_mgmt_client):
+    connection_str, senders = connstr_senders
+
+    for i in range(10):
+        senders[0].send(EventData("Test EventData"))
+        senders[1].send(EventData("Test EventData"))
+
+    try:
+        checkpoint_store._container_client.create_container()
+    except:
+        pass
+
+    client = EventHubConsumerClient.from_connection_string(connection_str, consumer_group='$default', checkpoint_store=checkpoint_store, uamqp_transport=uamqp_transport)
+
+    sequence_numbers_0 = []
+    sequence_numbers_1 = []
+    def on_event(partition_context, event):
+        partition_context.update_checkpoint(event)
+        sequence_num = event.sequence_number
+        if partition_context.partition_id == "0":
+            if sequence_num in sequence_numbers_0:
+                assert False
+            sequence_numbers_0.append(sequence_num)
+        else:
+            if sequence_num in sequence_numbers_1:
+                assert False
+            sequence_numbers_1.append(sequence_num)
+
+    with client:
+        worker = threading.Thread(target=client.receive,
+                                  args=(on_event,),
+                                  kwargs={"starting_position": "-1"})
+        worker.start()
+
+        # Update the eventhub
+        eventhub = resource_mgmt_client.event_hubs.get(
+            live_eventhub["resource_group"],
+            live_eventhub["namespace"],
+            live_eventhub["event_hub"]
+        )
+        properties = eventhub.as_dict()
+        if properties["message_retention_in_days"] == 1:
+            properties["message_retention_in_days"] = 2
+        else:
+            properties["message_retention_in_days"] = 1
+        resource_mgmt_client.event_hubs.create_or_update(
+            live_eventhub["resource_group"],
+            live_eventhub["namespace"],
+            live_eventhub["event_hub"],
+            properties
+        )
+        
+        time.sleep(20)
+
+ 
+    assert len(sequence_numbers_0) == 10
+    assert len(sequence_numbers_1) == 10
+
+    try:
+        checkpoint_store._container_client.delete_container()
+    except:
+        pass
 
 @pytest.mark.liveTest
 def test_receive_no_partition(connstr_senders, uamqp_transport):
@@ -202,3 +269,62 @@ def test_receive_batch_early_callback(connstr_senders, uamqp_transport):
         time.sleep(10)
         assert on_event_batch.received == 10
     worker.join()
+
+
+@pytest.mark.liveTest
+def test_receive_batch_tracing(connstr_senders, uamqp_transport, fake_span):
+    """Test that that receive and process spans are properly created and linked."""
+    settings.tracing_implementation.set_value(fake_span)
+    connection_str, senders = connstr_senders
+
+    with fake_span(name="SendSpan") as root_send:
+        senders[0].send([EventData(b"Data"), EventData(b"Data")])
+
+    assert len(root_send.children) == 3
+    assert root_send.children[0].name == "EventHubs.message"
+    assert root_send.children[1].name == "EventHubs.message"
+    assert root_send.children[2].name == "EventHubs.send"
+    assert len(root_send.children[2].links) == 2
+
+    traceparent1 = root_send.children[2].links[0].headers['traceparent']
+    traceparent2 = root_send.children[2].links[1].headers['traceparent']
+
+    def on_event_batch(partition_context, event_batch):
+        on_event_batch.received += len(event_batch)
+
+    on_event_batch.received = 0
+
+    client = EventHubConsumerClient.from_connection_string(
+        connection_str, consumer_group='$default', uamqp_transport=uamqp_transport
+    )
+
+    with fake_span(name="ReceiveSpan") as root_receive:
+        with client:
+            worker = threading.Thread(target=client.receive_batch, args=(on_event_batch,),
+                                    kwargs={"starting_position": "-1"})
+            worker.start()
+            time.sleep(20)
+            assert on_event_batch.received == 2
+
+    worker.join()
+
+    assert root_receive.name == "ReceiveSpan"
+    # One receive span and one process span.
+    assert len(root_receive.children) == 2
+
+    assert root_receive.children[0].name == "EventHubs.receive"
+    assert root_receive.children[0].kind == SpanKind.CLIENT
+
+    # One link for each message in the batch.
+    assert len(root_receive.children[0].links) == 2
+    assert root_receive.children[0].links[0].headers['traceparent'] == traceparent1
+    assert root_receive.children[0].links[1].headers['traceparent'] == traceparent2
+
+    assert root_receive.children[1].name == "EventHubs.process"
+    assert root_receive.children[1].kind == SpanKind.CONSUMER
+
+    assert len(root_receive.children[1].links) == 2
+    assert root_receive.children[1].links[0].headers['traceparent'] == traceparent1
+    assert root_receive.children[1].links[1].headers['traceparent'] == traceparent2
+
+    settings.tracing_implementation.set_value(None)

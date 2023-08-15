@@ -29,13 +29,12 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.ip_allocations.begin_delete(
+    client.ip_allocations.begin_delete(
         resource_group_name="rg1",
         ip_allocation_name="test-ipallocation",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2022-11-01/examples/IpAllocationDelete.json
+# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2023-02-01/examples/IpAllocationDelete.json
 if __name__ == "__main__":
     main()

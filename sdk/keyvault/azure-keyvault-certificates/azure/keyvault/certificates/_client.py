@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-# pylint:disable=too-many-lines,too-many-public-methods
+# pylint:disable=too-many-lines,too-many-public-methods,bad-option-value,delete-operation-wrong-return-type
 import base64
 from functools import partial
 from typing import Any, List, Optional, Union
@@ -112,10 +112,7 @@ class CertificateClient(KeyVaultClientBase):
         )
 
         cert_bundle = self._client.create_certificate(
-            vault_base_url=self.vault_url,
-            certificate_name=certificate_name,
-            parameters=parameters,
-            **kwargs
+            vault_base_url=self.vault_url, certificate_name=certificate_name, parameters=parameters, **kwargs
         )
 
         create_certificate_operation = CertificateOperation._from_certificate_operation_bundle(cert_bundle)
@@ -127,8 +124,10 @@ class CertificateClient(KeyVaultClientBase):
         create_certificate_polling = CreateCertificatePoller(
             get_certificate_command=get_certificate_command, interval=polling_interval
         )
+
         def no_op(*_, **__) -> Any:  # The deserialization callback is ignored based on polling implementation
             pass
+
         return LROPoller(command, create_certificate_operation, no_op, create_certificate_polling)
 
     @distributed_trace
@@ -156,17 +155,12 @@ class CertificateClient(KeyVaultClientBase):
                 :dedent: 8
         """
         bundle = self._client.get_certificate(
-            vault_base_url=self.vault_url,
-            certificate_name=certificate_name,
-            certificate_version="",
-            **kwargs
+            vault_base_url=self.vault_url, certificate_name=certificate_name, certificate_version="", **kwargs
         )
         return KeyVaultCertificate._from_certificate_bundle(certificate_bundle=bundle)
 
     @distributed_trace
-    def get_certificate_version(
-        self, certificate_name: str, version: str, **kwargs
-    ) -> KeyVaultCertificate:
+    def get_certificate_version(self, certificate_name: str, version: str, **kwargs) -> KeyVaultCertificate:
         """Gets a specific version of a certificate without returning its management policy.
 
         Requires certificates/get permission. To get the latest version of the certificate, or to get the certificate's
@@ -191,10 +185,7 @@ class CertificateClient(KeyVaultClientBase):
                 :dedent: 8
         """
         bundle = self._client.get_certificate(
-            vault_base_url=self.vault_url,
-            certificate_name=certificate_name,
-            certificate_version=version,
-            **kwargs
+            vault_base_url=self.vault_url, certificate_name=certificate_name, certificate_version=version, **kwargs
         )
         return KeyVaultCertificate._from_certificate_bundle(certificate_bundle=bundle)
 
@@ -296,9 +287,7 @@ class CertificateClient(KeyVaultClientBase):
         )
 
     @distributed_trace
-    def begin_recover_deleted_certificate(
-        self, certificate_name: str, **kwargs
-    ) -> LROPoller[KeyVaultCertificate]:
+    def begin_recover_deleted_certificate(self, certificate_name: str, **kwargs) -> LROPoller[KeyVaultCertificate]:
         """Recover a deleted certificate to its latest version. Possible only in a vault with soft-delete enabled.
 
         Requires certificates/recover permission. When this method returns Key Vault has begun recovering the
@@ -340,9 +329,7 @@ class CertificateClient(KeyVaultClientBase):
         return KeyVaultOperationPoller(polling_method)
 
     @distributed_trace
-    def import_certificate(
-        self, certificate_name: str, certificate_bytes: bytes, **kwargs
-    ) -> KeyVaultCertificate:
+    def import_certificate(self, certificate_name: str, certificate_bytes: bytes, **kwargs) -> KeyVaultCertificate:
         """Import a certificate created externally. Requires certificates/import permission.
 
         Imports an existing valid certificate, containing a private key, into Azure Key Vault. The certificate to be
@@ -389,10 +376,7 @@ class CertificateClient(KeyVaultClientBase):
         )
 
         bundle = self._client.import_certificate(
-            vault_base_url=self.vault_url,
-            certificate_name=certificate_name,
-            parameters=parameters,
-            **kwargs
+            vault_base_url=self.vault_url, certificate_name=certificate_name, parameters=parameters, **kwargs
         )
         return KeyVaultCertificate._from_certificate_bundle(certificate_bundle=bundle)
 
@@ -548,14 +532,17 @@ class CertificateClient(KeyVaultClientBase):
         return KeyVaultCertificate._from_certificate_bundle(certificate_bundle=bundle)
 
     @distributed_trace
-    def list_deleted_certificates(self, **kwargs) -> ItemPaged[DeletedCertificate]:
+    def list_deleted_certificates(
+        self, *, include_pending: Optional[bool] = None, **kwargs
+    ) -> ItemPaged[DeletedCertificate]:
         """Lists the currently-recoverable deleted certificates. Possible only if vault is soft-delete enabled.
 
         Requires certificates/get/list permission. Retrieves the certificates in the current vault which are in a
         deleted state and ready for recovery or purging. This operation includes deletion-specific information.
 
         :keyword bool include_pending: Specifies whether to include certificates which are not completely deleted.
-            Only available for API versions v7.0 and up.
+            Only available for API versions v7.0 and up. If not provided, Key Vault treats this as False.
+        :paramtype include_pending: bool or None
 
         :return: An iterator-like instance of DeletedCertificate
         :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.certificates.DeletedCertificate]
@@ -572,11 +559,15 @@ class CertificateClient(KeyVaultClientBase):
         """
         max_page_size = kwargs.pop("max_page_size", None)
 
-        if self.api_version == "2016-10-01" and kwargs.get("include_pending"):
-            raise NotImplementedError(
-                "The 'include_pending' parameter to `list_deleted_certificates` "
-                "is only available for API versions v7.0 and up"
-            )
+        if self.api_version == "2016-10-01":
+            if include_pending is not None:
+                raise NotImplementedError(
+                    "The 'include_pending' parameter to `list_deleted_certificates` "
+                    "is only available for API versions v7.0 and up"
+                )
+        else:
+            kwargs.update({"include_pending": include_pending})
+
         return self._client.get_deleted_certificates(
             vault_base_url=self._vault_url,
             maxresults=max_page_size,
@@ -587,13 +578,16 @@ class CertificateClient(KeyVaultClientBase):
         )
 
     @distributed_trace
-    def list_properties_of_certificates(self, **kwargs) -> ItemPaged[CertificateProperties]:
+    def list_properties_of_certificates(
+        self, *, include_pending: Optional[bool] = None, **kwargs
+    ) -> ItemPaged[CertificateProperties]:
         """List identifiers and properties of all certificates in the vault.
 
         Requires certificates/list permission.
 
-        :keyword bool include_pending: Specifies whether to include certificates which are not completely provisioned.
-            Only available for API versions v7.0 and up.
+        :keyword include_pending: Specifies whether to include certificates which are not completely provisioned.
+            Only available for API versions v7.0 and up. If not provided, Key Vault treats this as False.
+        :paramtype include_pending: bool or None
 
         :returns: An iterator-like instance of CertificateProperties
         :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.certificates.CertificateProperties]
@@ -610,11 +604,14 @@ class CertificateClient(KeyVaultClientBase):
         """
         max_page_size = kwargs.pop("max_page_size", None)
 
-        if self.api_version == "2016-10-01" and kwargs.get("include_pending"):
-            raise NotImplementedError(
-                "The 'include_pending' parameter to `list_properties_of_certificates` "
-                "is only available for API versions v7.0 and up"
-            )
+        if self.api_version == "2016-10-01":
+            if include_pending is not None:
+                raise NotImplementedError(
+                    "The 'include_pending' parameter to `list_properties_of_certificates` "
+                    "is only available for API versions v7.0 and up"
+                )
+        else:
+            kwargs.update({"include_pending": include_pending})
 
         return self._client.get_certificates(
             vault_base_url=self._vault_url,
@@ -721,9 +718,7 @@ class CertificateClient(KeyVaultClientBase):
                 :caption: Delete contacts
                 :dedent: 8
         """
-        contacts = self._client.delete_certificate_contacts(
-            vault_base_url=self.vault_url, **kwargs
-        )
+        contacts = self._client.delete_certificate_contacts(vault_base_url=self.vault_url, **kwargs)
         return [CertificateContact._from_certificate_contacts_item(contact_item=item) for item in contacts.contact_list]
 
     @distributed_trace
@@ -820,10 +815,7 @@ class CertificateClient(KeyVaultClientBase):
         )
 
         bundle = self._client.merge_certificate(
-            vault_base_url=self.vault_url,
-            certificate_name=certificate_name,
-            parameters=parameters,
-            **kwargs
+            vault_base_url=self.vault_url, certificate_name=certificate_name, parameters=parameters, **kwargs
         )
         return KeyVaultCertificate._from_certificate_bundle(certificate_bundle=bundle)
 
@@ -893,7 +885,7 @@ class CertificateClient(KeyVaultClientBase):
         else:
             issuer_credentials = None
         if admin_contacts:
-            admin_details = [
+            admin_details: Optional[List[Any]] = [
                 self._models.AdministratorDetails(
                     first_name=contact.first_name,
                     last_name=contact.last_name,
@@ -901,7 +893,7 @@ class CertificateClient(KeyVaultClientBase):
                     phone=contact.phone,
                 )
                 for contact in admin_contacts
-            ]  # type: Optional[List[Any]]
+            ]
         else:
             admin_details = None
         if organization_id or admin_details:
@@ -956,7 +948,7 @@ class CertificateClient(KeyVaultClientBase):
         else:
             issuer_credentials = None
         if admin_contacts:
-            admin_details = [
+            admin_details: Optional[List[Any]] = [
                 self._models.AdministratorDetails(
                     first_name=contact.first_name,
                     last_name=contact.last_name,
@@ -964,7 +956,7 @@ class CertificateClient(KeyVaultClientBase):
                     phone=contact.phone,
                 )
                 for contact in admin_contacts
-            ]  # type: Optional[List[Any]]
+            ]
         else:
             admin_details = None
         if organization_id or admin_details:

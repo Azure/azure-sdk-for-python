@@ -29,12 +29,11 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.global_rulestack.begin_delete(
+    client.global_rulestack.begin_delete(
         global_rulestack_name="praval",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/paloaltonetworks/resource-manager/PaloAltoNetworks.Cloudngfw/preview/2022-08-29-preview/examples/GlobalRulestack_Delete_MinimumSet_Gen.json
+# x-ms-original-file: specification/paloaltonetworks/resource-manager/PaloAltoNetworks.Cloudngfw/stable/2022-08-29/examples/GlobalRulestack_Delete_MinimumSet_Gen.json
 if __name__ == "__main__":
     main()

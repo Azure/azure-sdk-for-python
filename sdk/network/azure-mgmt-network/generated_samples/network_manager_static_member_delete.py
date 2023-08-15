@@ -29,15 +29,14 @@ def main():
         subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
-    response = client.static_members.delete(
+    client.static_members.delete(
         resource_group_name="SampleRG",
         network_manager_name="TestNM",
         network_group_name="testNetworkGroup",
         static_member_name="testStaticMember",
     )
-    print(response)
 
 
-# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2022-11-01/examples/NetworkManagerStaticMemberDelete.json
+# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2023-02-01/examples/NetworkManagerStaticMemberDelete.json
 if __name__ == "__main__":
     main()

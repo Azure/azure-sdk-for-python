@@ -1,25 +1,26 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from typing import Dict, Union, List, Optional
 import re
+from typing import Dict, List, Optional, Tuple, Union
 
 from azure.ai.ml import Output
-from azure.ai.ml.constants._common import AssetTypes
 from azure.ai.ml._schema import PathAwareSchema
 from azure.ai.ml._schema.pipeline.control_flow_job import FLScatterGatherSchema
+from azure.ai.ml.constants import JobType
+from azure.ai.ml.constants._common import AssetTypes
+from azure.ai.ml.dsl import pipeline
+from azure.ai.ml.dsl._do_while import do_while
+from azure.ai.ml.entities._assets.federated_learning_silo import FederatedLearningSilo
 from azure.ai.ml.entities._builders.control_flow_node import ControlFlowNode
+from azure.ai.ml.entities._builders.pipeline import Pipeline
+from azure.ai.ml.entities._component.command_component import CommandComponent
+from azure.ai.ml.entities._component.component import Component
 from azure.ai.ml.entities._job.pipeline._io.mixin import NodeIOMixin
 from azure.ai.ml.entities._util import convert_ordered_dict_to_dict
-from azure.ai.ml.constants import JobType
-
-from azure.ai.ml.entities._assets.federated_learning_silo import FederatedLearningSilo
-from azure.ai.ml.entities._component.component import Component
 from azure.ai.ml.entities._validation import MutableValidationResult
-from azure.ai.ml.dsl._do_while import do_while
-from azure.ai.ml.dsl import pipeline
-from .subcomponents import create_scatter_output_table
 
+from .subcomponents import create_scatter_output_table
 
 # TODO 2293610: add support for more types of outputs besides uri_folder and mltable
 # Likely types that ought to be mergeable: string, int, uri_file
@@ -44,8 +45,31 @@ ANCHORING_PATH_ROOT = "root"
 class FLScatterGather(ControlFlowNode, NodeIOMixin):
     """A node which creates a federated learning scatter-gather loop as a pipeline subgraph.
     Intended for use inside a pipeline job. This is initialized when calling
-    dsl.fl_scatter_gather() or when loading a serialized version of this node from YAML.
+    `dsl.fl_scatter_gather()` or when loading a serialized version of this node from YAML.
     Please do not manually initialize this class.
+
+    :param silo_configs: List of federated learning silo configurations.
+    :type silo_configs: List[~azure.ai.ml.entities._assets.federated_learning_silo.FederatedLearningSilo]
+    :param silo_component: Component representing the silo for federated learning.
+    :type silo_component: ~azure.ai.ml.entities.Component
+    :param aggregation_component: Component representing the aggregation step.
+    :type aggregation_component: ~azure.ai.ml.entities.Component
+    :param aggregation_compute: The compute resource for the aggregation step.
+    :type aggregation_compute: str, optional
+    :param aggregation_datastore: The datastore for the aggregation step.
+    :type aggregation_datastore: str, optional
+    :param shared_silo_kwargs: Keyword arguments shared across all silos.
+    :type shared_silo_kwargs: dict, optional
+    :param aggregation_kwargs: Keyword arguments specific to the aggregation step.
+    :type aggregation_kwargs: dict, optional
+    :param silo_to_aggregation_argument_map: Mapping of silo to aggregation arguments.
+    :type silo_to_aggregation_argument_map: dict, optional
+    :param aggregation_to_silo_argument_map: Mapping of aggregation to silo arguments.
+    :type aggregation_to_silo_argument_map: dict, optional
+    :param max_iterations: The maximum number of iterations for the scatter-gather loop.
+    :type max_iterations: int, optional
+    :param create_default_mappings_if_needed: Whether to create default argument mappings if needed.
+    :type create_default_mappings_if_needed: bool, optional
     """
 
     # See node class for input descriptions, no point maintaining
@@ -65,7 +89,7 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
         max_iterations: int = 1,
         create_default_mappings_if_needed: bool = False,
         **kwargs,
-    ):
+    ) -> None:
         # auto-create X_to_Y_argument_map values if allowed and needed.
         if create_default_mappings_if_needed:
             # pylint: disable=line-too-long
@@ -130,19 +154,27 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
         )
 
     def scatter_gather(self):
+        """Executes the scatter-gather loop by creating and executing a pipeline subgraph.
+        Returns the outputs of the final aggregation step.
+
+        :return: Outputs of the final aggregation step.
+        :rtype: list[~azure.ai.ml.Output]
+        """
+
         @pipeline(
             name="Scatter gather",
             description="It includes all steps that need to be executed in silo and aggregation",
         )
+        # pylint: disable-next=docstring-missing-return,docstring-missing-rtype
         def scatter_gather_iteration_body(**silo_inputs):
             """
                 Performs a scatter-gather iteration by running copies of the silo step on different
             computes/datstores according to this node's silo configs. The outputs of these
             silo components are then merged by an internal helper component. The merged values
             are then inputted into the user-provided aggregation component. Returns the executed aggregation component.
-            Args:
-                silo_inputs (dict): A dictionary of names and Inputs to be injected into each executed silo step.
-                    This dictionary is merged with silo-specific inputs before each executed.
+
+            Kwargs are a dictionary of names and Inputs to be injected into each executed silo step. This dictionary is
+            merged with silo-specific inputs before each executed.
             """
 
             silo_outputs = []
@@ -202,6 +234,7 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
             return executed_aggregation_component.outputs
 
         @pipeline(name="Scatter gather graph")
+        # pylint: disable-next=docstring-missing-return,docstring-missing-rtype
         def create_scatter_gather_graph():
             """
             Creates a scatter-gather graph by executing the scatter_gather_iteration_body
@@ -233,35 +266,6 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
 
         return create_scatter_gather_graph()
 
-    # TODO potential set default fail_on_missing value to false
-    @classmethod
-    def _extract_outputs(cls, component_output: Output, argument_map: Dict, fail_on_missing=False):
-        """
-            Pulls values from a component_output, as specified by the keys of the
-        inputted argument_map, and groups in a new dictionary. The keys of the new dictionary
-        are specified by the items of the argument_map dictionary.
-        Example
-            component_output = {"one" : 1, "two": 2, "three" : 3}
-            argument_map = {"one" : "red", "two" : "two"}
-            returned result = {"red" : 1, "two" : 2}
-        """
-        result = {}
-        if component_output is None or argument_map is None:
-            if fail_on_missing:
-                # TODO error handling
-                pass
-            return result
-
-        for k, v in argument_map.items():
-            if not k in component_output:
-                if fail_on_missing:
-                    pass
-                    # TODO add error handling
-                result[v] = None
-            else:
-                result[v] = component_output[k]
-        return result
-
     @classmethod
     def _get_fl_datastore_path(
         cls,
@@ -273,17 +277,19 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
         """Construct a path string using the inputted values. The important aspect is that this produces a
         path with a specified datastore.
 
-        Args:
-            datastore_name (str): The datastore to use in the constructed path.
-            output_name (str): The name of the output value that this path is assumed to belong to. Is injected into
-                the path.
-            unique_id (str): An additional string to inject if needed.
-                Defaults to ${{name}}, which is the output name again.
-            iteration_num: optional[int]: The iteration number of the current scatter-gather iteration.
-                If set, inject this into the resulting path string.
-
-        Returns:
-            data_path: A data path string containing the various aforementioned inputs.
+        :param datastore_name: The datastore to use in the constructed path.
+        :type datastore_name: str
+        :param output_name: The name of the output value that this path is assumed to belong to.
+            Is injected into the path.
+        :type output_name: str
+        :param unique_id: An additional string to inject if needed. Defaults to ${{name}}, which is the
+            output name again.
+        :type unique_id: str
+        :param iteration_num: The iteration number of the current scatter-gather iteration.
+            If set, inject this into the resulting path string.
+        :type iteration_num: Optional[int]
+        :return: A data path string containing the various aforementioned inputs.
+        :rtype: str
 
         """
         data_path = f"azureml://datastores/{datastore_name}/paths/federated_learning/{output_name}/{unique_id}/"
@@ -296,11 +302,13 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
         """Perform a simple regex check to try determine if the datastore in the inputted path string
         matches the expected_datastore.
 
-        Args:
-            path (str): An output pathstring.
-            expected_datastore (str): A datastore name.
-        Returns:
-            nameless bool: Whether or not the expected_datastore was found in the path at the expected location.
+
+        :param path: An output pathstring.
+        :type path: str
+        :param expected_datastore: A datastore name.
+        :type expected_datastore: str
+        :return: Whether or not the expected_datastore was found in the path at the expected location.
+        :rtype: bool
         """
         match = re.match("(.*datastore/)([^/]*)(/.*)", path)
         if match:
@@ -320,16 +328,18 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
         """Tries to assign output.path to a value which includes the target_datastore if it's not already
         set. If the output's path is already set, return a warning if it doesn't match the target_datastore.
 
-        Args:
-            name (str): The name of the output to modify
-            output (Output): The output object to examine and potentially change the datastore of.
-            target_datastore (str): The name of the datastore to try applying to the output
-            iteration_num (optional[int]): the current iteration in the scatter gather loop.
-                If set, include this in the generated path.
-        Returns:
-            validation_result (MutableValidationResult): A validation result containing any problems that arose.
-            Contains a warning if the examined output already contains a datastore that does not match
-            'target_datastore'.
+        :param name: The name of the output to modify
+        :type name: str
+        :param output: The output object to examine and potentially change the datastore of.
+        :type output: Output
+        :param target_datastore: The name of the datastore to try applying to the output
+        :type target_datastore: str
+        :param iteration_num: the current iteration in the scatter gather loop. If set, include this in the generated
+            path.
+        :type iteration_num: Optional[int]
+        :return: A validation result containing any problems that arose. Contains a warning if the examined output
+            already contains a datastore that does not match 'target_datastore'.
+        :rtype: MutableValidationResult
         """
         validation_result = cls._create_empty_validation_result()
         if not hasattr(output, "path") or not output.path:
@@ -348,26 +358,31 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
     @classmethod
     def _anchor_step(
         cls,
-        pipeline_step,
-        compute,
-        internal_datastore,
-        orchestrator_datastore,
+        pipeline_step: Union[Pipeline, CommandComponent],
+        compute: str,
+        internal_datastore: str,
+        orchestrator_datastore: str,
         iteration: Optional[int] = 0,
         _path="root",
     ) -> MutableValidationResult:
         """Take a pipeline step and recursively enforces the right compute/datastore config.
-        Args:
-            pipeline_step (PipelineStep, CommandComponent): a step to anchor
-            compute (str): name of the compute target
-            internal_datastore (str): The name of the datastore that should be used for internal
-                output anchoring.
-            orchestrator_datastore (str): The name of the orchestrator/aggregation datastore that
-                should be used for 'real' output anchoring.
-            _path (str): for recursive anchoring, codes the "path" inside the pipeline for messaging
-        Returns:
-            validation_result (MutableValidationResult): A validation result containing any issues
-                that were uncovered during anchoring. This function adds warnings when outputs already have
-                assigned paths which don't contain the expected datastore.
+
+        :param pipeline_step: a step to anchor
+        :type pipeline_step: Union[Pipeline, CommandComponent]
+        :param compute: name of the compute target
+        :type compute: str
+        :param internal_datastore: The name of the datastore that should be used for internal output anchoring.
+        :type internal_datastore: str
+        :param orchestrator_datastore: The name of the orchestrator/aggregation datastore that should be used for
+            'real' output anchoring.
+        :type orchestrator_datastore: str
+        :param iteration: The current iteration number in the scatter gather loop. Defaults to 0.
+        :type iteration: Optional[int], optional
+        :param _path: for recursive anchoring, codes the "path" inside the pipeline for messaging
+        :type _path: str
+        :return: A validation result containing any issues that were uncovered during anchoring. This function adds
+            warnings when outputs already have assigned paths which don't contain the expected datastore.
+        :rtype: MutableValidationResult
         """
 
         validation_result = cls._create_empty_validation_result()
@@ -470,6 +485,33 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
         max_iterations: int,
         raise_error=False,
     ) -> MutableValidationResult:
+        """Validates the inputs for the scatter-gather node.
+
+        :keyword silo_configs: List of federated learning silo configurations.
+        :type silo_configs: List[~azure.ai.ml.entities._assets.federated_learning_silo.FederatedLearningSilo]
+        :keyword silo_component: Component representing the silo for federated learning.
+        :type silo_component: ~azure.ai.ml.entities.Component
+        :keyword aggregation_component: Component representing the aggregation step.
+        :type aggregation_component: ~azure.ai.ml.entities.Component
+        :keyword shared_silo_kwargs: Keyword arguments shared across all silos.
+        :type shared_silo_kwargs: Dict
+        :keyword aggregation_compute: The compute resource for the aggregation step.
+        :type aggregation_compute: str
+        :keyword aggregation_datastore: The datastore for the aggregation step.
+        :type aggregation_datastore: str
+        :keyword aggregation_kwargs: Keyword arguments specific to the aggregation step.
+        :type aggregation_kwargs: Dict
+        :keyword silo_to_aggregation_argument_map: Mapping of silo to aggregation arguments.
+        :type silo_to_aggregation_argument_map: Dict
+        :keyword aggregation_to_silo_argument_map: Mapping of aggregation to silo arguments.
+        :type aggregation_to_silo_argument_map: Dict
+        :keyword max_iterations: The maximum number of iterations for the scatter-gather loop.
+        :type max_iterations: int
+        :keyword raise_error: Whether to raise an exception if validation fails. Defaults to False.
+        :type raise_error: bool
+        :return: The validation result.
+        :rtype: ~azure.ai.ml.entities._validation.MutableValidationResult
+        """
         validation_result = cls._create_empty_validation_result()
 
         # saved values for validation later on
@@ -673,15 +715,19 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
         output_name,
         unique_id="${{name}}",
         iteration_num="${{iteration_num}}",
-    ):
+    ) -> str:
         """Produces a path to store the data during FL training.
-        Args:
-            datastore_name (str): name of the Azure ML datastore
-            output_name (str): a name unique to this output
-            unique_id (str): a unique id for the run (default: inject run id with ${{name}})
-            iteration_num (str): an iteration number if relevant
-        Returns:
-            data_path (str): direct url to the data path to store the data
+
+        :param datastore_name: name of the Azure ML datastore
+        :type datastore_name: str
+        :param output_name: a name unique to this output
+        :type output_name: str
+        :param unique_id: a unique id for the run (default: inject run id with ${{name}})
+        :type unique_id: str
+        :param iteration_num: an iteration number if relevant
+        :type iteration_num: str
+        :return: direct url to the data path to store the data
+        :rtype: str
         """
         data_path = f"azureml://datastores/{datastore_name}/paths/federated_learning/{output_name}/{unique_id}/"
         if iteration_num is not None:
@@ -689,21 +735,26 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
 
         return data_path
 
-    def _get_aggregator_input_name(self, silo_output_name):
-        """
-        Returns aggregator input name that maps to silo_output.
-        Returns None if silo_output_name not in silo_to_aggregation_argument_map
+    def _get_aggregator_input_name(self, silo_output_name: str) -> Optional[str]:
+        """Retrieves the aggregator input name
+
+        :param silo_output_name: The silo output name
+        :type silo_output_name: str
+        :return:
+            * Returns aggregator input name that maps to silo_output.
+            * Returns None if silo_output_name not in silo_to_aggregation_argument_map
+        :rtype: Optional[str]
         """
         return self.silo_to_aggregation_argument_map.get(silo_output_name)
 
     @classmethod
     def _try_create_default_mappings(
         cls,
-        silo_comp: Component,
-        agg_comp: Component,
-        silo_agg_map: Dict,
-        agg_silo_map: Dict,
-    ):
+        silo_comp: Optional[Component],
+        agg_comp: Optional[Component],
+        silo_agg_map: Optional[Dict],
+        agg_silo_map: Optional[Dict],
+    ) -> Tuple[Optional[Dict], Optional[Dict]]:
         """
         This function tries to produce dictionaries that link the silo and aggregation
         components' outputs to the other's inputs.
@@ -712,11 +763,8 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
         These auto-generated mappings are naive, and simply maps all outputs of a component that have a
         identically-named input in the other component.
 
-            This function does nothing if either inputted component is None. This function will also do nothing
+        This function does nothing if either inputted component is None. This function will also do nothing
         for a given mapping if either of the relevant inputs or outputs are None (but not empty).
-
-        Returns a tuple of the potentially modified silo to aggregation mapping,
-        followed by the aggregation to silo mapping.
 
         Example inputs:
             silo_comp.inputs = {"silo_input" : value }
@@ -729,6 +777,17 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
         Example returns:
             {"silo_output1" : "silo_output1"}, {}
 
+        :param silo_comp: The silo component
+        :type silo_comp: Optional[Component]
+        :param agg_comp: The aggregation component
+        :type agg_comp: Optional[Component]
+        :param silo_agg_map: Mapping of silo to aggregation arguments.
+        :type silo_agg_map: Optional[Dict]
+        :param agg_silo_map: Mapping of aggregation to silo arguments.
+        :type agg_silo_map: Optional[Dict]
+        :return: Returns a tuple of the potentially modified silo to aggregation mapping, followed by the aggregation
+            to silo mapping.
+        :rtype: Tuple[Optional[Dict], Optional[Dict]]
         """
         if silo_comp is None or agg_comp is None:
             return silo_agg_map, agg_silo_map
@@ -739,9 +798,13 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
         return silo_agg_map, agg_silo_map
 
     @staticmethod
-    def _get_merge_component(output_type):
-        """
-        Gets the merge component to be used based on type of output
+    # pylint: disable-next=docstring-missing-rtype
+    def _get_merge_component(output_type: str):
+        """Gets the merge component to be used based on type of output
+
+        :param output_type: The output type
+        :type output_type: str
+        :return: The merge component
         """
         return MERGE_COMPONENT_MAPPING[output_type]
 
@@ -750,11 +813,10 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
             These merge components act as a mediator between the user silo and aggregation steps, reducing
             the variable number of silo outputs into a single input for the aggergation step.
 
-        Args:
-            executed_silo_components: A list of executed silo steps to extract outputs from.
-        Returns:
-            merge_comp_mapping (dict): A mapping from silo output names to the corresponding newly
-                created and executed merge component
+        :param executed_silo_components: A list of executed silo steps to extract outputs from.
+        :type executed_silo_components:
+        :return: A mapping from silo output names to the corresponding newly created and executed merge component
+        :rtype: dict
         """
         executed_component = executed_silo_components[0]
 
@@ -783,6 +845,11 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
 
     @property
     def outputs(self) -> Dict[str, Union[str, Output]]:
+        """Get the outputs of the scatter-gather node.
+
+        :return: The outputs of the scatter-gather node.
+        :rtype: Dict[str, Union[str, ~azure.ai.ml.Output]]
+        """
         return self._outputs
 
     @classmethod
@@ -790,7 +857,11 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
         return FLScatterGatherSchema(context=context)
 
     def _to_rest_object(self, **kwargs) -> dict:  # pylint: disable=unused-argument
-        """Convert self to a rest object for remote call."""
+        """Convert self to a rest object for remote call.
+
+        :return: The rest object
+        :rtype: dict
+        """
         rest_node = super(FLScatterGather, self)._to_rest_object(**kwargs)
         rest_node.update({"outputs": self._to_rest_outputs()})
         return convert_ordered_dict_to_dict(rest_node)

@@ -26,7 +26,12 @@ from azure.ai.ml._artifacts._constants import (
 from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml._restclient.v2023_04_01_preview.models import ListViewType
 from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient042023_preview
-from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope, _ScopeDependentOperations
+from azure.ai.ml._scope_dependent_operations import (
+    OperationConfig,
+    OperationsContainer,
+    OperationScope,
+    _ScopeDependentOperations,
+)
 
 from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
     AzureMachineLearningWorkspaces as ServiceClient102021Dataplane,
@@ -97,6 +102,7 @@ class DataOperations(_ScopeDependentOperations):
         self._service_client = service_client
         self._init_kwargs = kwargs
         self._requests_pipeline: HttpPipeline = kwargs.pop("requests_pipeline")
+        self._all_operations: OperationsContainer = kwargs.pop("all_operations")
         # Maps a label to a function which given an asset name,
         # returns the asset associated with the label
         self._managed_label_resolver = {"latest": self._get_latest_version}
@@ -112,7 +118,7 @@ class DataOperations(_ScopeDependentOperations):
 
         :param name: Name of a specific data asset, optional.
         :type name: Optional[str]
-        :param list_view_type: View type for including/excluding (for example) archived data assets.
+        :keyword list_view_type: View type for including/excluding (for example) archived data assets.
             Default: ACTIVE_ONLY.
         :type list_view_type: Optional[ListViewType]
         :return: An iterator like instance of Data objects
@@ -411,7 +417,9 @@ class DataOperations(_ScopeDependentOperations):
             jobs={experiment_name: import_job},
         )
         import_pipeline.properties["azureml.materializationAssetName"] = data_import.name
-        return self._job_operation.create_or_update(job=import_pipeline, skip_validation=True, **kwargs)
+        return self._all_operations.all_operations[AzureMLResourceType.JOB].create_or_update(
+            job=import_pipeline, skip_validation=True, **kwargs
+        )
 
     @monitor_with_activity(logger, "Data.ListMaterializationStatus", ActivityType.PUBLICAPI)
     @experimental
@@ -426,13 +434,15 @@ class DataOperations(_ScopeDependentOperations):
 
         :param name: name of asset being created by the materialization jobs.
         :type name: str
-        :param list_view_type: View type for including/excluding (for example) archived jobs. Default: ACTIVE_ONLY.
+        :keyword list_view_type: View type for including/excluding (for example) archived jobs. Default: ACTIVE_ONLY.
         :type list_view_type: Optional[ListViewType]
         :return: An iterator like instance of Job objects.
         :rtype: ~azure.core.paging.ItemPaged[PipelineJob]
         """
 
-        return self._job_operation.list(job_type="Pipeline", asset_name=name, list_view_type=list_view_type, **kwargs)
+        return self._all_operations.all_operations[AzureMLResourceType.JOB].list(
+            job_type="Pipeline", asset_name=name, list_view_type=list_view_type, **kwargs
+        )
 
     @monitor_with_activity(logger, "Data.Validate", ActivityType.INTERNALCALL)
     def _validate(self, data: Data) -> Union[List[str], None]:
@@ -462,7 +472,7 @@ class DataOperations(_ScopeDependentOperations):
                 except Exception:  # pylint: disable=broad-except
                     # skip validation for remote MLTable when the contents cannot be read
                     module_logger.info("Unable to access MLTable metadata at path %s", asset_path)
-                    return
+                    return None
             else:
                 metadata_contents = read_local_mltable_metadata_contents(path=asset_path)
                 metadata_yaml_path = Path(asset_path, "MLTable")
@@ -477,13 +487,14 @@ class DataOperations(_ScopeDependentOperations):
 
         if is_url(asset_path):
             # skip validation for remote URI_FILE or URI_FOLDER
-            return
-
-        if os.path.isabs(asset_path):
+            pass
+        elif os.path.isabs(asset_path):
             _assert_local_path_matches_asset_type(asset_path, asset_type)
         else:
             abs_path = Path(base_path, asset_path).resolve()
             _assert_local_path_matches_asset_type(abs_path, asset_type)
+
+        return None
 
     def _try_get_mltable_metadata_jsonschema(self, mltable_schema_url: str) -> Union[Dict, None]:
         if mltable_schema_url is None:
@@ -555,9 +566,13 @@ class DataOperations(_ScopeDependentOperations):
         )
 
     def _get_latest_version(self, name: str) -> Data:
-        """Returns the latest version of the asset with the given name.
+        """Returns the latest version of the asset with the given name. Latest is defined as the most recently created,
+         not the most recently updated.
 
-        Latest is defined as the most recently created, not the most recently updated.
+        :param name: The asset name
+        :type name: str
+        :return: The latest asset
+        :rtype: Data
         """
         latest_version = _get_latest_version_from_container(
             name, self._container_operation, self._resource_group_name, self._workspace_name, self._registry_name
@@ -582,11 +597,11 @@ class DataOperations(_ScopeDependentOperations):
         :type name: str
         :param version: Version of data asset.
         :type version: str
-        :param share_with_name: Name of data asset to share with.
+        :keyword share_with_name: Name of data asset to share with.
         :type share_with_name: str
-        :param share_with_version: Version of data asset to share with.
+        :keyword share_with_version: Version of data asset to share with.
         :type share_with_version: str
-        :param registry_name: Name of the destination registry.
+        :keyword registry_name: Name of the destination registry.
         :type registry_name: str
         :return: Data asset object.
         :rtype: ~azure.ai.ml.entities.Data
@@ -618,7 +633,8 @@ class DataOperations(_ScopeDependentOperations):
             return self.create_or_update(data_ref)
 
     @contextmanager
-    def _set_registry_client(self, registry_name: str) -> None:
+    # pylint: disable-next=docstring-missing-return,docstring-missing-rtype
+    def _set_registry_client(self, registry_name: str) -> Iterable[None]:
         """Sets the registry client for the data operations.
 
         :param registry_name: Name of the registry.

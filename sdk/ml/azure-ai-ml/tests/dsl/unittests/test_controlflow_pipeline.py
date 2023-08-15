@@ -2,6 +2,7 @@ from pathlib import Path
 
 import pytest
 from marshmallow import ValidationError
+from test_utilities.utils import omit_with_wildcard
 
 from azure.ai.ml import Input, load_component
 from azure.ai.ml.constants._component import ComponentSource
@@ -13,7 +14,6 @@ from azure.ai.ml.dsl._parallel_for import parallel_for
 from azure.ai.ml.entities._builders.parallel_for import ParallelFor
 from azure.ai.ml.entities._job.pipeline._io import InputOutputBase, PipelineInput
 from azure.ai.ml.exceptions import ValidationException
-from test_utilities.utils import omit_with_wildcard
 
 from .._util import _DSL_TIMEOUT_SECOND
 
@@ -104,11 +104,8 @@ class TestIfElseUT(TestControlFlowPipelineUT):
 
         assert f"must be an instance of {str}, {bool} or {InputOutputBase}" in str(e.value)
 
-        with pytest.raises(ValidationException) as e:
-            node = condition(condition=basic_node.outputs.output3, true_block=basic_node)
-            node._validate(raise_error=True)
-
-        assert "must have 'is_control' field with value 'True'" in str(e.value)
+        node = condition(condition=basic_node.outputs.output3, true_block=basic_node)
+        node._validate(raise_error=True)
 
         with pytest.raises(ValidationError) as e:
             node = condition(condition="${{parent.jobs.xxx.outputs.output}}")
@@ -381,7 +378,7 @@ class TestDoWhilePipelineUT(TestControlFlowPipelineUT):
                 "output_in_path is the output of do_while_body_pipeline_1, dowhile only accept output of the body: do_while_body_pipeline_3.",
             ],
             "jobs.invalid_condition.condition": [
-                "output_in_path is not a control output. The condition of dowhile must be the control output of the body."
+                "output_in_path is not a control output and is not primitive type. The condition of dowhile must be the control output or primitive type of the body."
             ],
         }
         validate_error_message(expect_errors, validate_errors)
@@ -633,8 +630,8 @@ class TestParallelForPipelineUT(TestControlFlowPipelineUT):
             ({"type": "custom_model"}, {"job_output_type": "mltable"}, {"type": "mltable"}, True),
             ({"type": "path"}, {"job_output_type": "mltable"}, {"type": "mltable"}, True),
             ({"type": "number"}, {}, {"type": "string"}, False),
-            ({"type": "string", "is_control": True}, {}, {"type": "string", "is_control": True}, False),
-            ({"type": "boolean", "is_control": True}, {}, {"type": "string", "is_control": True}, False),
+            ({"type": "string"}, {}, {"type": "string"}, False),
+            ({"type": "boolean"}, {}, {"type": "string"}, False),
             ({"type": "integer"}, {}, {"type": "string"}, False),
         ],
     )

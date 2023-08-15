@@ -18,7 +18,8 @@ from azure.communication.rooms._models import (
 )
 from azure.communication.rooms._shared.models import CommunicationIdentifier
 from .._generated.aio._client import AzureCommunicationRoomsService
-from .._shared.utils import parse_connection_str, get_authentication_policy
+from .._shared.auth_policy_utils import get_authentication_policy
+from .._shared.utils import parse_connection_str
 from .._version import SDK_MONIKER
 from .._api_versions import DEFAULT_VERSION
 
@@ -46,8 +47,8 @@ class RoomsClient(object):
         try:
             if not endpoint.lower().startswith('http'):
                 endpoint = "https://" + endpoint
-        except AttributeError:
-            raise ValueError("Account URL must be a string.")
+        except AttributeError as exc:
+            raise ValueError("Account URL must be a string.") from exc
 
         if not credential:
             raise ValueError(
@@ -101,12 +102,9 @@ class RoomsClient(object):
     ) -> CommunicationRoom:
         """Create a new room.
 
-        :param valid_from: The timestamp from when the room is open for joining. Optional.
-        :type valid_from: ~datetime.datetime
-        :param valid_until: The timestamp from when the room can no longer be joined. Optional.
-        :type valid_until: ~datetime.datetime
-        :param participants: Collection of identities invited to the room. Optional.
-        :type participants: List[~azure.communication.rooms.RoomParticipant]
+        :keyword datetime valid_from: The timestamp from when the room is open for joining. Optional.
+        :keyword datetime valid_until: The timestamp from when the room can no longer be joined. Optional.
+        :keyword List[RoomParticipant] participants: Collection of identities invited to the room. Optional.
         :returns: Created room.
         :rtype: ~azure.communication.rooms.CommunicationRoom
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -158,12 +156,9 @@ class RoomsClient(object):
         """Update a valid room's attributes. For any argument that is passed
         in, the corresponding room property will be replaced with the new value.
 
-        :keyword room_id: Required. Id of room to be updated
-        :type room_id: str
-        :keyword valid_from: Required. The timestamp from when the room is open for joining.
-        :type valid_from: ~datetime.datetime
-        :keyword valid_until: Required. The timestamp from when the room can no longer be joined.
-        :type valid_until: ~datetime.datetime
+        :keyword str room_id: Required. Id of room to be updated
+        :keyword datetime valid_from: Required. The timestamp from when the room is open for joining.
+        :keyword datetime valid_until: Required. The timestamp from when the room can no longer be joined.
         :returns: Updated room.
         :rtype: ~azure.communication.rooms.CommunicationRoom
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
@@ -222,10 +217,9 @@ class RoomsClient(object):
         """Update participants to a room. It looks for the room participants based on their
         communication identifier and replace those participants with the value passed in
         this API.
-        :param room_id: Required. Id of room to be updated
-        :type room_id: str
-        :param participants: Required. Collection of identities to be updated
-        :type participants: List[~azure.communication.rooms.RoomParticipant]
+        :keyword str room_id: Required. Id of room to be updated
+        :keyword List[RoomParticipant] participants:
+            Required. Collection of identities invited to be updated
         :returns: None.
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
@@ -245,11 +239,9 @@ class RoomsClient(object):
         **kwargs
     ) -> None:
         """Remove participants from a room
-        :param room_id: Required. Id of room to be updated
-        :type room_id: str
-        :param participants: Required. Collection of identities to be removed from the room.
-        :type participants:
-         List[Union[~azure.communication.rooms.RoomParticipant, ~azure.communication.rooms.CommunicationIdentifier]]
+        :keyword str room_id: Required. Id of room to be updated
+        :keyword List[Union[RoomParticipant, CommunicationIdentifier]] participants:
+            Required. Collection of identities to be removed from the room.
         :returns: None.
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError

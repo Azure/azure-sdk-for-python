@@ -3,9 +3,12 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import Optional, Union
+from types import TracebackType
+from typing import Optional, Union, Type
+
 from azure.core.credentials import AccessToken
 from azure.core.credentials_async import AsyncTokenCredential
+
 from ._async_exchange_client import ExchangeClientAuthenticationPolicy
 from .._generated.aio import ContainerRegistry
 from .._generated.models import TokenGrantType
@@ -25,7 +28,12 @@ class AsyncAnonymousAccessCredential(AsyncTokenCredential):
     async def __aenter__(self):
         pass
 
-    async def __aexit__(self, exc_type, exc_value, traceback) -> None:
+    async def __aexit__(
+        self,
+        exc_type: Optional[Type[BaseException]] = None,
+        exc_value: Optional[BaseException] = None,
+        traceback: Optional[TracebackType] = None,
+    ) -> None:
         pass
 
 
@@ -34,12 +42,13 @@ class AnonymousACRExchangeClient(object):
 
     :param endpoint: Azure Container Registry endpoint
     :type endpoint: str
-    :keyword api_version: Api Version. Default value is "2021-07-01". Note that overriding this
-        default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2021-07-01".
     :paramtype api_version: str
     """
 
-    def __init__(self, endpoint: str, **kwargs) -> None: # pylint: disable=missing-client-constructor-parameter-credential
+    def __init__(  # pylint: disable=missing-client-constructor-parameter-credential
+        self, endpoint: str, **kwargs
+    ) -> None:
         if not endpoint.startswith("https://") and not endpoint.startswith("http://"):
             endpoint = "https://" + endpoint
         self._endpoint = endpoint
@@ -51,7 +60,9 @@ class AnonymousACRExchangeClient(object):
             **kwargs
         )
 
-    async def get_acr_access_token(self, challenge: str, **kwargs) -> Optional[str]:
+    async def get_acr_access_token(  # pylint:disable=client-method-missing-tracing-decorator-async
+        self, challenge: str, **kwargs
+    ) -> Optional[str]:
         parsed_challenge = _parse_challenge(challenge)
         return await self.exchange_refresh_token_for_access_token(
             "",
@@ -61,10 +72,10 @@ class AnonymousACRExchangeClient(object):
             **kwargs
         )
 
-    async def exchange_refresh_token_for_access_token(
+    async def exchange_refresh_token_for_access_token(  # pylint:disable=client-method-missing-tracing-decorator-async
         self, refresh_token: str, service: str, scope: str, grant_type: Union[str, TokenGrantType], **kwargs
     ) -> Optional[str]:
-        access_token = await self._client.authentication.exchange_acr_refresh_token_for_acr_access_token( # type: ignore
+        access_token = await self._client.authentication.exchange_acr_refresh_token_for_acr_access_token(  # type: ignore[attr-defined] # pylint: disable=line-too-long
             service=service, scope=scope, refresh_token=refresh_token, grant_type=grant_type, **kwargs
         )
         return access_token.access_token
@@ -78,6 +89,7 @@ class AnonymousACRExchangeClient(object):
 
     async def close(self) -> None:
         """Close sockets opened by the client.
+
         Calling this method is unnecessary when using the client as a context manager.
         """
         await self._client.close()

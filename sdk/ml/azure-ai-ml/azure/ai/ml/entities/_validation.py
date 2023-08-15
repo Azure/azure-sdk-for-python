@@ -11,18 +11,17 @@ import os.path
 import typing
 from os import PathLike
 from pathlib import Path
-from typing import List, Optional
+from typing import Dict, List, Optional
 
 import msrest
 import pydash
 import strictyaml
 from marshmallow import Schema, ValidationError
-from strictyaml.ruamel.scanner import ScannerError
 
 from .._schema import PathAwareSchema
 from .._vendor.azure_resources.models import Deployment, DeploymentProperties, DeploymentValidateResult, ErrorResponse
 from ..constants._common import BASE_PATH_CONTEXT_KEY, OperationStatus
-from ..entities._job.pipeline._attr_dict import try_get_non_arbitrary_attr_for_potential_attr_dict
+from ..entities._job.pipeline._attr_dict import try_get_non_arbitrary_attr
 from ..entities._util import convert_ordered_dict_to_dict, decorate_validation_error
 from ..exceptions import ErrorCategory, ErrorTarget, ValidationException
 from ._mixins import RestTranslatableMixin
@@ -33,14 +32,14 @@ module_logger = logging.getLogger(__name__)
 class Diagnostic(object):
     """Represents a diagnostic of an asset validation error with the location info."""
 
-    def __init__(self, yaml_path: str, message: str, error_code: str):
+    def __init__(self, yaml_path: str, message: str, error_code: str) -> None:
         """Init Diagnostic.
 
-        :param yaml_path: A dash path from root to the target element of the diagnostic. jobs.job_a.inputs.input_str
+        :keyword yaml_path: A dash path from root to the target element of the diagnostic. jobs.job_a.inputs.input_str
         :type yaml_path: str
-        :param message: Error message of diagnostic.
+        :keyword message: Error message of diagnostic.
         :type message: str
-        :param error_code: Error code of diagnostic.
+        :keyword error_code: Error code of diagnostic.
         :type error_code: str
         """
         self.yaml_path = yaml_path
@@ -48,8 +47,12 @@ class Diagnostic(object):
         self.error_code = error_code
         self.local_path, self.value = None, None
 
-    def __repr__(self):
-        """Return the asset friendly name and error message."""
+    def __repr__(self) -> str:
+        """The asset friendly name and error message.
+
+        :return: The formatted diagnostic
+        :rtype: str
+        """
         return "{}: {}".format(self.yaml_path, self.message)
 
     @classmethod
@@ -67,6 +70,8 @@ class Diagnostic(object):
         :type message: str
         :param error_code: Error code of diagnostic.
         :type error_code: str
+        :return: The created instance
+        :rtype: Diagnostic
         """
         return cls(
             yaml_path=yaml_path,
@@ -82,46 +87,27 @@ class ValidationResult(object):
     is immutable.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         self._target_obj = None
         self._errors = []
         self._warnings = []
 
     @property
-    def error_messages(self):
-        """Return all messages of errors in the validation result.
-        For example, if repr(self) is:
-        {
-            "errors": [
-                {
-                    "path": "jobs.job_a.inputs.input_str",
-                    "message": "input_str is required",
-                    "value": None,
-                },
-                {
-                    "path": "jobs.job_a.inputs.input_str",
-                    "message": "input_str must be in the format of xxx",
-                    "value": None,
-                },
-                {
-                    "path": "settings.on_init",
-                    "message": "On_init job name job_b not exists in jobs.",
-                    "value": None,
-                },
-            ],
-            "warnings": [
-                {
-                    "path": "jobs.job_a.inputs.input_str",
-                    "message": "input_str is required",
-                    "value": None,
-                }
-            ]
-        }
-        then the error_messages will be:
-        {
-            "jobs.job_a.inputs.input_str": "input_str is required; input_str must be in the format of xxx",
-            "settings.on_init": "On_init job name job_b not exists in jobs.",
-        }
+    def error_messages(self) -> Dict:
+        """
+        Return all messages of errors in the validation result.
+
+        :return: A dictionary of error messages. The key is the yaml path of the error, and the value is the error
+            message.
+        :rtype: dict
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+                :start-after: [START validation_result]
+                :end-before: [END validation_result]
+                :language: markdown
+                :dedent: 8
         """
         messages = {}
         for diagnostic in self._errors:
@@ -132,10 +118,11 @@ class ValidationResult(object):
         return messages
 
     @property
-    def passed(self):
-        """Return whether the validation passed.
+    def passed(self) -> bool:
+        """Returns boolean indicating whether any errors were found.
 
-        If there is no error, then it passed.
+        :return: True if the validation passed, False otherwise.
+        :rtype: bool
         """
         return not self._errors
 
@@ -161,8 +148,12 @@ class ValidationResult(object):
                 result[diagnostic_type] = messages
         return result
 
-    def __repr__(self):
-        """Get the string representation of the validation result."""
+    def __repr__(self) -> str:
+        """Get the string representation of the validation result.
+
+        :return: The string representation
+        :rtype: str
+        """
         return json.dumps(self._to_dict(), indent=2)
 
 
@@ -310,13 +301,16 @@ class MutableValidationResult(ValidationResult):
 
     def resolve_location_for_diagnostics(self, source_path: str, resolve_value: bool = False):
         """Resolve location/value for diagnostics based on the source path where the validatable object is loaded.
+
         Location includes local path of the exact file (can be different from the source path) & line number of the
         invalid field. Value of a diagnostic is resolved from the validatable object in transfering to a dict by
         default; however, when the validatable object is not available for the validation result, validation result is
         created from marshmallow.ValidationError.messages e.g., it can be resolved from the source path.
 
-        param source_path: The path of the source file. type source_path: str param resolve_value: Whether to resolve
-        the value of the invalid field from source file. type resolve_value: bool
+        :param source_path: The path of the source file.
+        :type source_path: str
+        :param resolve_value: Whether to resolve the value of the invalid field from source file.
+        :type resolve_value: bool
         """
         resolver = _YamlLocationResolver(source_path)
         for diagnostic in self._errors + self._warnings:
@@ -354,8 +348,13 @@ class MutableValidationResult(ValidationResult):
 class SchemaValidatableMixin:
     @classmethod
     def _create_empty_validation_result(cls) -> MutableValidationResult:
-        """Simply create an empty validation result to reduce _ValidationResultBuilder importing, which is a private
-        class."""
+        """Simply create an empty validation result
+
+        To reduce _ValidationResultBuilder importing, which is a private class.
+
+        :return: An empty validation result
+        :rtype: MutableValidationResult
+        """
         return _ValidationResultBuilder.success()
 
     @classmethod
@@ -388,24 +387,28 @@ class SchemaValidatableMixin:
             ) from e
 
     @classmethod
+    # pylint: disable-next=docstring-missing-param
     def _create_schema_for_validation(cls, context) -> PathAwareSchema:
         """Create a schema of the resource with specific context. Should be overridden by subclass.
 
-        return: The schema of the resource.
-        return type: PathAwareSchema. PathAwareSchema will add marshmallow.Schema as super class on runtime.
+        :return: The schema of the resource. PathAwareSchema will add marshmallow.Schema as super class on runtime.
+        :rtype: PathAwareSchema.
         """
         raise NotImplementedError()
 
     @property
     def __base_path_for_validation(self) -> typing.Union[str, PathLike]:
-        """Get the base path of the resource. It will try to return self.base_path, then self._base_path, then
-        Path.cwd() if above attrs are non-existent or None.
+        """Get the base path of the resource.
 
-        return type: str
+        It will try to return self.base_path, then self._base_path, then Path.cwd() if above attrs are non-existent or
+        `None.
+
+        :return: The base path of the resource
+        :rtype: typing.Union[str, os.PathLike]
         """
         return (
-            try_get_non_arbitrary_attr_for_potential_attr_dict(self, "base_path")
-            or try_get_non_arbitrary_attr_for_potential_attr_dict(self, "_base_path")
+            try_get_non_arbitrary_attr(self, "base_path")
+            or try_get_non_arbitrary_attr(self, "_base_path")
             or Path.cwd()
         )
 
@@ -414,6 +417,9 @@ class SchemaValidatableMixin:
         """Return the error target of this resource.
 
         Should be overridden by subclass. Value should be in ErrorTarget enum.
+
+        :return: The error target of the resource
+        :rtype: ErrorTarget
         """
         raise NotImplementedError()
 
@@ -422,13 +428,18 @@ class SchemaValidatableMixin:
         """Return the schema of this Resource with self._base_path as base_path of Schema. Do not override this method.
         Override _get_schema instead.
 
-        return: The schema of the resource.
-        return type: PathAwareSchema. PathAwareSchema will add marshmallow.Schema as super class on runtime.
+        :return: The schema of the resource. Note that PathAwareSchema will add marshmallow.Schema as super class on
+            runtime.
+        :rtype: PathAwareSchema.
         """
         return self._create_schema_for_validation_with_base_path(self.__base_path_for_validation)
 
     def _dump_for_validation(self) -> typing.Dict:
-        """Convert the resource to a dictionary."""
+        """Convert the resource to a dictionary.
+
+        :return: Converted dictionary
+        :rtype: Dict
+        """
         return convert_ordered_dict_to_dict(self._schema_for_validation.dump(self))
 
     def _validate(self, raise_error=False) -> MutableValidationResult:
@@ -437,7 +448,8 @@ class SchemaValidatableMixin:
 
         :param raise_error: Whether to raise ValidationError if validation fails.
         :type raise_error: bool
-        return type: ValidationResult
+        :return: The validation result
+        :rtype: ValidationResult
         """
         result = self.__schema_validate()
         result.merge_with(self._customized_validate())
@@ -447,23 +459,30 @@ class SchemaValidatableMixin:
         """Validate the resource with customized logic.
 
         Override this method to add customized validation logic.
+
+        :return: The customized validation result
+        :rtype: MutableValidationResult
         """
         return self._create_empty_validation_result()
 
     @classmethod
     def _get_skip_fields_in_schema_validation(
         cls,
-    ) -> typing.List[str]:  # pylint: disable=no-self-use
+    ) -> typing.List[str]:
         """Get the fields that should be skipped in schema validation.
 
         Override this method to add customized validation logic.
+
+        :return: The fields to skip in schema validation
+        :rtype: typing.List[str]
         """
         return []
 
     def __schema_validate(self) -> MutableValidationResult:
         """Validate the resource with the schema.
 
-        return type: ValidationResult
+        :return: The validation result
+        :rtype: MutableValidationResult
         """
         data = self._dump_for_validation()
         messages = self._schema_for_validation.validate(data)
@@ -480,14 +499,23 @@ class _ValidationResultBuilder:
         pass
 
     @classmethod
-    def success(cls):
-        """Create a validation result with success status."""
+    def success(cls) -> MutableValidationResult:
+        """Create a validation result with success status.
+
+        :return: A validation result
+        :rtype: MutableValidationResult
+        """
         return MutableValidationResult()
 
     @classmethod
-    def from_rest_object(cls, rest_obj: DeploymentValidateResult):
+    def from_rest_object(cls, rest_obj: DeploymentValidateResult) -> MutableValidationResult:
         """Create a validation result from a rest object. Note that the created validation result does not have
         target_obj so should only be used for merging.
+
+        :param rest_obj: The Deployment Validate REST obj
+        :type rest_obj: DeploymentValidateResult
+        :return: The validation result created from rest_obj
+        :rtype: MutableValidationResult
         """
         if not rest_obj.error or not rest_obj.error.details:
             return cls.success()
@@ -507,8 +535,14 @@ class _ValidationResultBuilder:
     ):
         """Create a validation result with only 1 diagnostic.
 
-        param singular_error_message: diagnostic.message. param yaml_path: diagnostic.yaml_path. param data: serialized
-        validation target.
+        :param singular_error_message: diagnostic.message.
+        :type singular_error_message: Optional[str]
+        :param yaml_path: diagnostic.yaml_path.
+        :type yaml_path: str
+        :param data: serializedvalidation target.
+        :type data: Optional[Dict]
+        :return: The validation result
+        :rtype: MutableValidationResult
         """
         obj = MutableValidationResult(target_obj=data)
         if singular_error_message:
@@ -518,13 +552,16 @@ class _ValidationResultBuilder:
     @classmethod
     def from_validation_error(
         cls, error: ValidationError, *, source_path: Optional[str] = None, error_on_unknown_field=False
-    ):
+    ) -> MutableValidationResult:
         """Create a validation result from a ValidationError, which will be raised in marshmallow.Schema.load. Please
         use this function only for exception in loading file.
 
-        param error: ValidationError raised by marshmallow.Schema.load. type error: ValidationError param
-        error_on_unknown_field: whether to raise error if there are unknown field diagnostics. type
-        error_on_unknown_field: bool
+        :param error: ValidationError raised by marshmallow.Schema.load.
+        :type error: ValidationError
+        :keyword error_on_unknown_field: whether to raise error if there are unknown field diagnostics.
+        :type error_on_unknown_field: bool
+        :return: The validation result
+        :rtype: MutableValidationResult
         """
         obj = cls.from_validation_messages(
             error.messages, data=error.data, error_on_unknown_field=error_on_unknown_field
@@ -534,12 +571,19 @@ class _ValidationResultBuilder:
         return obj
 
     @classmethod
-    def from_validation_messages(cls, errors: typing.Dict, data: typing.Dict, *, error_on_unknown_field: bool = False):
+    def from_validation_messages(
+        cls, errors: typing.Dict, data: typing.Dict, *, error_on_unknown_field: bool = False
+    ) -> MutableValidationResult:
         """Create a validation result from error messages, which will be returned by marshmallow.Schema.validate.
 
-        param errors: error message returned by marshmallow.Schema.validate. type errors: dict param data: serialized
-        data to validate type data: dict param error_on_unknown_field: whether to raise error if there are unknown field
-        diagnostics. type error_on_unknown_field: bool
+        :param errors: error message returned by marshmallow.Schema.validate.
+        :type errors: dict
+        :param data: serialized data to validate
+        :type data: dict
+        :keyword error_on_unknown_field: whether to raise error if there are unknown field diagnostics.
+        :type error_on_unknown_field: bool
+        :return: The validation result
+        :rtype: MutableValidationResult
         """
         instance = MutableValidationResult(target_obj=data)
         errors = copy.deepcopy(errors)
@@ -632,7 +676,7 @@ class _YamlLocationResolver:
         with open(source_path, encoding="utf-8") as f:
             try:
                 loaded_yaml = strictyaml.load(f.read())
-            except (ScannerError, strictyaml.exceptions.StrictYAMLError) as e:
+            except Exception as e:  # pylint: disable=broad-except
                 msg = "Can't load source file %s as a strict yaml:\n%s" % (source_path, str(e))
                 module_logger.debug(msg)
                 return None, None
@@ -732,6 +776,9 @@ class RemoteValidatableMixin(RestTranslatableMixin):
         """Return resource type to be used in remote validation.
 
         Should be overridden by subclass.
+
+        :return: The resource type
+        :rtype: str
         """
         raise NotImplementedError()
 
@@ -739,6 +786,9 @@ class RemoteValidatableMixin(RestTranslatableMixin):
         """Return resource name and version to be used in remote validation.
 
         Should be overridden by subclass.
+
+        :return: The name and version
+        :rtype: typing.Tuple[str, str]
         """
         raise NotImplementedError()
 
@@ -747,6 +797,10 @@ class RemoteValidatableMixin(RestTranslatableMixin):
 
         :param location: The location of the resource.
         :type location: str
+        :param workspace_name: The workspace name
+        :type workspace_name: str
+        :return: The preflight resource
+        :rtype: PreflightResource
         """
         name, version = self._get_resource_name_version()
         return PreflightResource(

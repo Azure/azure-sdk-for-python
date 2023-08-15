@@ -4,8 +4,10 @@
 # license information.
 # -------------------------------------------------------------------------
 import time
-from typing import TYPE_CHECKING, Dict, Optional, TypeVar
-
+from typing import TYPE_CHECKING, Optional, TypeVar, MutableMapping, Any
+from azure.core.pipeline import PipelineRequest, PipelineResponse
+from azure.core.pipeline.transport import HttpResponse as LegacyHttpResponse, HttpRequest as LegacyHttpRequest
+from azure.core.rest import HttpResponse, HttpRequest
 from . import HTTPPolicy, SansIOHTTPPolicy
 from ...exceptions import ServiceRequestError
 
@@ -17,10 +19,9 @@ if TYPE_CHECKING:
         AzureKeyCredential,
         AzureSasCredential,
     )
-    from azure.core.pipeline import PipelineRequest, PipelineResponse
-    from azure.core.pipeline.policies._universal import HTTPRequestType
 
-HTTPResponseTypeVar = TypeVar("HTTPResponseTypeVar")
+HTTPResponseType = TypeVar("HTTPResponseType", HttpResponse, LegacyHttpResponse)
+HTTPRequestType = TypeVar("HTTPRequestType", HttpRequest, LegacyHttpRequest)
 
 
 # pylint:disable=too-few-public-methods
@@ -30,16 +31,19 @@ class _BearerTokenCredentialPolicyBase:
     :param credential: The credential.
     :type credential: ~azure.core.credentials.TokenCredential
     :param str scopes: Lets you specify the type of access needed.
+    :keyword bool enable_cae: Indicates whether to enable Continuous Access Evaluation (CAE) on all requested
+        tokens. Defaults to False.
     """
 
-    def __init__(self, credential: "TokenCredential", *scopes: str, **kwargs) -> None:  # pylint:disable=unused-argument
+    def __init__(self, credential: "TokenCredential", *scopes: str, **kwargs: Any) -> None:
         super(_BearerTokenCredentialPolicyBase, self).__init__()
         self._scopes = scopes
         self._credential = credential
         self._token: Optional["AccessToken"] = None
+        self._enable_cae: bool = kwargs.get("enable_cae", False)
 
     @staticmethod
-    def _enforce_https(request: "PipelineRequest") -> None:
+    def _enforce_https(request: PipelineRequest[HTTPRequestType]) -> None:
         # move 'enforce_https' from options to context so it persists
         # across retries but isn't passed to a transport implementation
         option = request.context.options.pop("enforce_https", None)
@@ -55,10 +59,10 @@ class _BearerTokenCredentialPolicyBase:
             )
 
     @staticmethod
-    def _update_headers(headers: Dict[str, str], token: str) -> None:
+    def _update_headers(headers: MutableMapping[str, str], token: str) -> None:
         """Updates the Authorization header with the bearer token.
 
-        :param dict headers: The HTTP Request headers
+        :param MutableMapping[str, str] headers: The HTTP Request headers
         :param str token: The OAuth token.
         """
         headers["Authorization"] = "Bearer {}".format(token)
@@ -68,16 +72,18 @@ class _BearerTokenCredentialPolicyBase:
         return not self._token or self._token.expires_on - time.time() < 300
 
 
-class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy):
+class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy[HTTPRequestType, HTTPResponseType]):
     """Adds a bearer token Authorization header to requests.
 
     :param credential: The credential.
     :type credential: ~azure.core.TokenCredential
     :param str scopes: Lets you specify the type of access needed.
+    :keyword bool enable_cae: Indicates whether to enable Continuous Access Evaluation (CAE) on all requested
+        tokens. Defaults to False.
     :raises: :class:`~azure.core.exceptions.ServiceRequestError`
     """
 
-    def on_request(self, request: "PipelineRequest") -> None:
+    def on_request(self, request: PipelineRequest[HTTPRequestType]) -> None:
         """Called before the policy sends a request.
 
         The base implementation authorizes the request with a bearer token.
@@ -87,10 +93,13 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy):
         self._enforce_https(request)
 
         if self._token is None or self._need_new_token:
-            self._token = self._credential.get_token(*self._scopes)
+            if self._enable_cae:
+                self._token = self._credential.get_token(*self._scopes, enable_cae=self._enable_cae)
+            else:
+                self._token = self._credential.get_token(*self._scopes)
         self._update_headers(request.http_request.headers, self._token.token)
 
-    def authorize_request(self, request: "PipelineRequest", *scopes: str, **kwargs) -> None:
+    def authorize_request(self, request: PipelineRequest[HTTPRequestType], *scopes: str, **kwargs) -> None:
         """Acquire a token from the credential and authorize the request with it.
 
         Keyword arguments are passed to the credential's get_token method. The token will be cached and used to
@@ -99,14 +108,18 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy):
         :param ~azure.core.pipeline.PipelineRequest request: the request
         :param str scopes: required scopes of authentication
         """
+        if self._enable_cae:
+            kwargs.setdefault("enable_cae", self._enable_cae)
         self._token = self._credential.get_token(*scopes, **kwargs)
         self._update_headers(request.http_request.headers, self._token.token)
 
-    def send(self, request: "PipelineRequest") -> "PipelineResponse":
+    def send(self, request: PipelineRequest[HTTPRequestType]) -> PipelineResponse[HTTPRequestType, HTTPResponseType]:
         """Authorize request with a bearer token and send it to the next policy
 
         :param request: The pipeline request object
         :type request: ~azure.core.pipeline.PipelineRequest
+        :return: The pipeline response object
+        :rtype: ~azure.core.pipeline.PipelineResponse
         """
         self.on_request(request)
         try:
@@ -121,6 +134,10 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy):
                 if "WWW-Authenticate" in response.http_response.headers:
                     request_authorized = self.on_challenge(request, response)
                     if request_authorized:
+                        # if we receive a challenge response, we retrieve a new token
+                        # which matches the new target. In this case, we don't want to remove
+                        # token from the request so clear the 'insecure_domain_change' tag
+                        request.context.options.pop("insecure_domain_change", False)
                         try:
                             response = self.next.send(request)
                             self.on_response(request, response)
@@ -130,7 +147,9 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy):
 
         return response
 
-    def on_challenge(self, request: "PipelineRequest", response: "PipelineResponse") -> bool:
+    def on_challenge(
+        self, request: PipelineRequest[HTTPRequestType], response: PipelineResponse[HTTPRequestType, HTTPResponseType]
+    ) -> bool:
         """Authorize request according to an authentication challenge
 
         This method is called when the resource provider responds 401 with a WWW-Authenticate header.
@@ -138,11 +157,14 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy):
         :param ~azure.core.pipeline.PipelineRequest request: the request which elicited an authentication challenge
         :param ~azure.core.pipeline.PipelineResponse response: the resource provider's response
         :returns: a bool indicating whether the policy should send the request
+        :rtype: bool
         """
-        # pylint:disable=unused-argument,no-self-use
+        # pylint:disable=unused-argument
         return False
 
-    def on_response(self, request: "PipelineRequest", response: "PipelineResponse") -> None:
+    def on_response(
+        self, request: PipelineRequest[HTTPRequestType], response: PipelineResponse[HTTPRequestType, HTTPResponseType]
+    ) -> None:
         """Executed after the request comes back from the next policy.
 
         :param request: Request to be modified after returning from the policy.
@@ -151,7 +173,7 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy):
         :type response: ~azure.core.pipeline.PipelineResponse
         """
 
-    def on_exception(self, request: "PipelineRequest") -> None:
+    def on_exception(self, request: PipelineRequest[HTTPRequestType]) -> None:
         """Executed when an exception is raised while executing the next policy.
 
         This method is executed inside the exception handler.
@@ -159,11 +181,11 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy):
         :param request: The Pipeline request object
         :type request: ~azure.core.pipeline.PipelineRequest
         """
-        # pylint: disable=no-self-use,unused-argument
+        # pylint: disable=unused-argument
         return
 
 
-class AzureKeyCredentialPolicy(SansIOHTTPPolicy["HTTPRequestType", HTTPResponseTypeVar]):
+class AzureKeyCredentialPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]):
     """Adds a key header for the provided credential.
 
     :param credential: The credential used to authenticate requests.
@@ -192,11 +214,11 @@ class AzureKeyCredentialPolicy(SansIOHTTPPolicy["HTTPRequestType", HTTPResponseT
         self._name = name
         self._prefix = prefix + " " if prefix else ""
 
-    def on_request(self, request: "PipelineRequest[HTTPRequestType]") -> None:
+    def on_request(self, request: PipelineRequest[HTTPRequestType]) -> None:
         request.http_request.headers[self._name] = f"{self._prefix}{self._credential.key}"
 
 
-class AzureSasCredentialPolicy(SansIOHTTPPolicy):
+class AzureSasCredentialPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]):
     """Adds a shared access signature to query for the provided credential.
 
     :param credential: The credential used to authenticate requests.
@@ -210,7 +232,7 @@ class AzureSasCredentialPolicy(SansIOHTTPPolicy):
             raise ValueError("credential can not be None")
         self._credential = credential
 
-    def on_request(self, request):
+    def on_request(self, request: PipelineRequest[HTTPRequestType]) -> None:
         url = request.http_request.url
         query = request.http_request.query
         signature = self._credential.signature

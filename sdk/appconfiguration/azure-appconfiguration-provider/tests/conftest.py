@@ -3,6 +3,7 @@ from devtools_testutils import (
     add_general_regex_sanitizer,
     add_general_string_sanitizer,
     add_oauth_response_sanitizer,
+    set_custom_default_matcher,
 )
 import pytest
 
@@ -32,4 +33,5 @@ def add_sanitizers(test_proxy):
         value="https://fake-key-vault.vault.azure.net/",
         target=os.environ.get("APPCONFIGURATION_KEY_VAULT_REFERENCE", "https://fake-key-vault.vault.azure.net/"),
     )
+    set_custom_default_matcher(ignored_headers="x-ms-content-sha256")
     add_oauth_response_sanitizer()

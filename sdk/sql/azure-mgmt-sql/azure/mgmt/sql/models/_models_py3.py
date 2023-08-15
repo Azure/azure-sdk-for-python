@@ -4000,7 +4000,7 @@ class DistributedAvailabilityGroup(ProxyResource):  # pylint: disable=too-many-i
     :ivar secondary_availability_group_name: The secondary availability group name.
     :vartype secondary_availability_group_name: str
     :ivar replication_mode: The replication mode of a distributed availability group. Parameter
-     will be ignored during link creation. Known values are: "Async" and "Sync".
+     will be ignored during link creation. Known values are: "Async", "Sync", and "Async".
     :vartype replication_mode: str or ~azure.mgmt.sql.models.ReplicationMode
     :ivar distributed_availability_group_id: The distributed availability group id.
     :vartype distributed_availability_group_id: str
@@ -4061,7 +4061,7 @@ class DistributedAvailabilityGroup(ProxyResource):  # pylint: disable=too-many-i
         :keyword secondary_availability_group_name: The secondary availability group name.
         :paramtype secondary_availability_group_name: str
         :keyword replication_mode: The replication mode of a distributed availability group. Parameter
-         will be ignored during link creation. Known values are: "Async" and "Sync".
+         will be ignored during link creation. Known values are: "Async", "Sync", and "Async".
         :paramtype replication_mode: str or ~azure.mgmt.sql.models.ReplicationMode
         """
         super().__init__(**kwargs)
@@ -7526,7 +7526,7 @@ class IPv6FirewallRule(ProxyResourceWithWritableName):
     :ivar start_i_pv6_address: The start IP address of the firewall rule. Must be IPv6 format.
     :vartype start_i_pv6_address: str
     :ivar end_i_pv6_address: The end IP address of the firewall rule. Must be IPv6 format. Must be
-     greater than or equal to startIpAddress.
+     greater than or equal to startIpv6Address.
     :vartype end_i_pv6_address: str
     """
 
@@ -7557,7 +7557,7 @@ class IPv6FirewallRule(ProxyResourceWithWritableName):
         :keyword start_i_pv6_address: The start IP address of the firewall rule. Must be IPv6 format.
         :paramtype start_i_pv6_address: str
         :keyword end_i_pv6_address: The end IP address of the firewall rule. Must be IPv6 format. Must
-         be greater than or equal to startIpAddress.
+         be greater than or equal to startIpv6Address.
         :paramtype end_i_pv6_address: str
         """
         super().__init__(name=name, **kwargs)
@@ -14361,6 +14361,8 @@ class PrivateEndpointConnection(ProxyResource):
     :vartype type: str
     :ivar private_endpoint: Private endpoint which the connection belongs to.
     :vartype private_endpoint: ~azure.mgmt.sql.models.PrivateEndpointProperty
+    :ivar group_ids: Group IDs.
+    :vartype group_ids: list[str]
     :ivar private_link_service_connection_state: Connection state of the private endpoint
      connection.
     :vartype private_link_service_connection_state:
@@ -14374,6 +14376,7 @@ class PrivateEndpointConnection(ProxyResource):
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "group_ids": {"readonly": True},
         "provisioning_state": {"readonly": True},
     }
 
@@ -14382,6 +14385,7 @@ class PrivateEndpointConnection(ProxyResource):
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
         "private_endpoint": {"key": "properties.privateEndpoint", "type": "PrivateEndpointProperty"},
+        "group_ids": {"key": "properties.groupIds", "type": "[str]"},
         "private_link_service_connection_state": {
             "key": "properties.privateLinkServiceConnectionState",
             "type": "PrivateLinkServiceConnectionStateProperty",
@@ -14406,6 +14410,7 @@ class PrivateEndpointConnection(ProxyResource):
         """
         super().__init__(**kwargs)
         self.private_endpoint = private_endpoint
+        self.group_ids = None
         self.private_link_service_connection_state = private_link_service_connection_state
         self.provisioning_state = None
 
@@ -19488,6 +19493,8 @@ class SqlVulnerabilityAssessmentScanRecord(ProxyResource):  # pylint: disable=to
     :vartype total_rules_count: int
     :ivar is_baseline_applied: Baseline created for this database, and has one or more rules.
     :vartype is_baseline_applied: bool
+    :ivar last_scan_time: The last scan time.
+    :vartype last_scan_time: ~datetime.datetime
     """
 
     _validation = {
@@ -19511,6 +19518,7 @@ class SqlVulnerabilityAssessmentScanRecord(ProxyResource):  # pylint: disable=to
         "total_failed_rules_count": {"readonly": True},
         "total_rules_count": {"readonly": True},
         "is_baseline_applied": {"readonly": True},
+        "last_scan_time": {"readonly": True},
     }
 
     _attribute_map = {
@@ -19534,6 +19542,7 @@ class SqlVulnerabilityAssessmentScanRecord(ProxyResource):  # pylint: disable=to
         "total_failed_rules_count": {"key": "properties.totalFailedRulesCount", "type": "int"},
         "total_rules_count": {"key": "properties.totalRulesCount", "type": "int"},
         "is_baseline_applied": {"key": "properties.isBaselineApplied", "type": "bool"},
+        "last_scan_time": {"key": "properties.lastScanTime", "type": "iso-8601"},
     }
 
     def __init__(self, **kwargs: Any) -> None:
@@ -19556,6 +19565,7 @@ class SqlVulnerabilityAssessmentScanRecord(ProxyResource):  # pylint: disable=to
         self.total_failed_rules_count = None
         self.total_rules_count = None
         self.is_baseline_applied = None
+        self.last_scan_time = None
 
 
 class SqlVulnerabilityAssessmentScanRecordListResult(_serialization.Model):
