@@ -10,6 +10,8 @@
 
 ### Other Changes
 
+- Updated the type of `AzureError.message` to `str`.  #31656
+
 ## 1.29.2 (2023-08-14)
 
 ### Bugs Fixed
