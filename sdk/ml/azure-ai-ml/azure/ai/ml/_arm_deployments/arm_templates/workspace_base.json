@@ -542,7 +542,7 @@
         "offlineStoreContainerName": "[concat('offlinestore', guid(variables('storageAccount')))]",
         "offlineStoreConnectionName": "[if(empty(parameters('offline_store_connection_name')), 'OfflineStoreConnectionName', parameters('offline_store_connection_name'))]",
         "onlineStoreConnectionName": "[if(empty(parameters('online_store_connection_name')), 'OnlineStoreConnectionName', parameters('online_store_connection_name'))]",
-        "offlineStoreConnectionTarget": "[if(equals(parameters('offline_store_connection_target'), ''), resourceId('Microsoft.Storage/storageAccounts/blobServices/containers', parameters('storageAccountName'), 'default', variables('offlineStoreContainerName')), parameters('offline_store_connection_target'))]",
+        "offlineStoreConnectionTarget": "[if(empty(parameters('offline_store_connection_target')), resourceId('Microsoft.Storage/storageAccounts/blobServices/containers', parameters('storageAccountName'), 'default', variables('offlineStoreContainerName')), parameters('offline_store_connection_target'))]",
         "isWorkspaceHub": "[equals(parameters('kind'), 'hub')]"
     },
     "resources": [

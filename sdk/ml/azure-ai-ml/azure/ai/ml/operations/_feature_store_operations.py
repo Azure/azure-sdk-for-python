@@ -174,7 +174,7 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
         self,
         feature_store: FeatureStore,
         *,
-        grant_materialization_identity_permissions: bool = False,
+        grant_materialization_identity_permissions: bool = True,
         update_dependent_resources: bool = False,
         **kwargs: Dict,
     ) -> LROPoller[FeatureStore]:
