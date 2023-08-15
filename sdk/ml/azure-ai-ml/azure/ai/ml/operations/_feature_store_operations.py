@@ -221,6 +221,7 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
     @distributed_trace
     @monitor_with_activity(logger, "FeatureStore.BeginUpdate", ActivityType.PUBLICAPI)
     # pylint: disable=arguments-renamed
+    # pylint: disable=too-many-locals, too-many-branches, too-many-statements
     def begin_update(
         self,
         feature_store: FeatureStore,
