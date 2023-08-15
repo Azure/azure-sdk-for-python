@@ -1227,6 +1227,18 @@
               },
               {
                   "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ApiVersionParameter"
+              },
+              {
+                "name": "dataMounts",
+                "in": "body",
+                "description": "The parameters for creating or updating a machine learning workspace.",
+                "required": true,
+                "schema": {
+                  "type": "array",
+                  "items": {
+                      "$ref": "#/definitions/ComputeInstanceDataMount"
+                  }
+                }
               }
           ],
           "responses": {
