@@ -103,7 +103,9 @@ with encoder:
 Previously, `encode` returned an Avro-encoded content, with the binary encoded schema ID and record format indicator values prepended to it. Now, `encode` will return a TypedDict of {`content`: `<serialized payload>`, `content_type`: `<Avro MIME type>`+`<schema ID>`} by default.
 
 #### Backward compatibility
-In order to decode content that was encoded (or "serialized") by the `AvroSerializer`:
+
+In order to decode content that was encoded (or "serialized") by the `AvroSerializer`, use `azure-schemaregistry-avroencoder` v1.0.0b2.
+> Note: This backward compatibility was removed starting `azure-schemaregistry-avroencoder` v1.0.0b3.
 
 1. Install `azure-schemaregistry-avroencoder` v1.0.0b2, which automatically detects the preamble.
 
@@ -141,8 +143,6 @@ def on_event(partition_context, event):
 with eventhub_consumer, avro_encoder:
     eventhub_consumer.receive(on_event=on_event, starting_position="-1")
 ```
-
-This backward compatibility was removed starting `azure-schemaregistry-avroencoder` v1.0.0b3.
 
 ### MessageType models
 
