@@ -21,7 +21,7 @@ from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
 from ... import models as _models
 from ..._vendor import _convert_request
-from ...operations._compute_operations import build_create_or_update_request_initial, build_delete_request_initial, build_get_request, build_list_keys_request, build_list_nodes_request, build_list_request, build_restart_request_initial, build_start_request_initial, build_stop_request_initial, build_update_custom_services_request, build_update_idle_shutdown_setting_request, build_update_request_initial
+from ...operations._compute_operations import build_create_or_update_request_initial, build_delete_request_initial, build_get_request, build_list_keys_request, build_list_nodes_request, build_list_request, build_restart_request_initial, build_start_request_initial, build_stop_request_initial, build_update_custom_services_request, build_update_data_mounts_request, build_update_idle_shutdown_setting_request, build_update_request_initial
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -810,6 +810,74 @@ class ComputeOperations:
         return deserialized
 
     list_keys.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/computes/{computeName}/listKeys"}  # type: ignore
+
+
+    @distributed_trace_async
+    async def update_data_mounts(  # pylint: disable=inconsistent-return-statements
+        self,
+        resource_group_name: str,
+        workspace_name: str,
+        compute_id: str,
+        data_mounts: List["_models.ComputeInstanceDataMount"],
+        **kwargs: Any
+    ) -> None:
+        """Update Data Mounts of a Machine Learning compute.
+
+        Update Data Mounts of a Machine Learning compute.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+        :type resource_group_name: str
+        :param workspace_name: Name of Azure Machine Learning workspace.
+        :type workspace_name: str
+        :param compute_id: Name of the Azure Machine Learning compute.
+        :type compute_id: str
+        :param data_mounts: The parameters for creating or updating a machine learning workspace.
+        :type data_mounts: list[~azure.mgmt.machinelearningservices.models.ComputeInstanceDataMount]
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None, or the result of cls(response)
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+
+        api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
+        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+
+        _json = self._serialize.body(data_mounts, '[ComputeInstanceDataMount]')
+
+        request = build_update_data_mounts_request(
+            subscription_id=self._config.subscription_id,
+            resource_group_name=resource_group_name,
+            workspace_name=workspace_name,
+            compute_id=compute_id,
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            template_url=self.update_data_mounts.metadata['url'],
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
+
+        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if cls:
+            return cls(pipeline_response, None, {})
+
+    update_data_mounts.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/computes/{computeId}/updateDataMounts"}  # type: ignore
 
 
     async def _start_initial(  # pylint: disable=inconsistent-return-statements

@@ -366,6 +366,7 @@ def build_update_data_mounts_request(
 ):
     # type: (...) -> HttpRequest
     api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
+    content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
     accept = "application/json"
     # Construct URL
@@ -385,6 +386,8 @@ def build_update_data_mounts_request(
 
     # Construct headers
     _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    if content_type is not None:
+        _header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
     _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
@@ -1359,6 +1362,7 @@ class ComputeOperations(object):
         resource_group_name,  # type: str
         workspace_name,  # type: str
         compute_id,  # type: str
+        data_mounts,  # type: List["_models.ComputeInstanceDataMount"]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -1372,6 +1376,8 @@ class ComputeOperations(object):
         :type workspace_name: str
         :param compute_id: Name of the Azure Machine Learning compute.
         :type compute_id: str
+        :param data_mounts: The parameters for creating or updating a machine learning workspace.
+        :type data_mounts: list[~azure.mgmt.machinelearningservices.models.ComputeInstanceDataMount]
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -1384,14 +1390,18 @@ class ComputeOperations(object):
         error_map.update(kwargs.pop('error_map', {}))
 
         api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
+        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        
+        _json = self._serialize.body(data_mounts, '[ComputeInstanceDataMount]')
+
         request = build_update_data_mounts_request(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
             compute_id=compute_id,
             api_version=api_version,
+            content_type=content_type,
+            json=_json,
             template_url=self.update_data_mounts.metadata['url'],
         )
         request = _convert_request(request)
