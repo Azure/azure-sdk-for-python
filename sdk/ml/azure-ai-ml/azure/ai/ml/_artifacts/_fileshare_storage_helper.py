@@ -217,10 +217,10 @@ class FileStorageClient:
         prefix = "" if dest == "" else dest + "/"
         prefix += os.path.basename(source) + "/"
 
-        upload_paths = sorted(get_upload_files_from_folder(source_path, prefix, ignore_file=ignore_file))
+        upload_paths = sorted(get_upload_files_from_folder(source_path, prefix=prefix, ignore_file=ignore_file))
         self.total_file_count = len(upload_paths)
 
-        for root, _, files in os.walk(source):
+        for root, *_ in os.walk(source):
             if sys.platform.startswith(("win32", "cygwin")):
                 split_char = "\\"
             else:
