@@ -1,14 +1,10 @@
 # Release History
 
-## 1.0.0b5 (Unreleased)
+## 1.0.0b4.post1 (2023-08-15)
 
-### Features Added
+This package is no longer being maintained. Use the [azure-schemaregistry-avroencoder](https://pypi.org/project/azure-schemaregistry-avroencoder/) package instead.
 
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+For migration instructions, see the [migration guide](https://aka.ms/azsdk/python/migrate/sr-avroserializer-to-avroencoder).
 
 ## 1.0.0b4 (2021-11-11)
 
