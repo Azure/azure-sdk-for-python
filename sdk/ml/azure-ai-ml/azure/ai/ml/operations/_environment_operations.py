@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=protected-access
+# pylint: disable=protected-access,no-value-for-parameter
 
 from typing import Any, Iterable, Optional, Union
 from contextlib import contextmanager

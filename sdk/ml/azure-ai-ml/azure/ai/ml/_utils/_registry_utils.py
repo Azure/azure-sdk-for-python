@@ -206,8 +206,9 @@ def get_registry_client(credential, registry_name, workspace_location, **kwargs)
     return service_client_10_2021_dataplanepreview, resource_group_name, subscription_id
 
 
-def _check_region_fqdn(workspace_region, response, **kwargs):
+def _check_region_fqdn(workspace_region, response):
     if workspace_region in response.additional_properties["registryFqdns"].keys():
         return
     regions = list(response.additional_properties["registryFqdns"].keys())
-    raise Exception(f"Workspace region {workspace_region} not supported by the registry {response.registry_name} regions {regions}")
+    raise Exception(f"Workspace region {workspace_region} not supported by the \
+                    registry {response.registry_name} regions {regions}")
