@@ -138,7 +138,7 @@
         "value": ""
     },
     "materialization_identity_name": {
-        "value": ""
+        "value": "empty"
     },
     "materialization_identity_resource_id" : {
         "value": ""
