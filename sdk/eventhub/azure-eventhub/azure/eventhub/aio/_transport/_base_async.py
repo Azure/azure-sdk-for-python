@@ -250,7 +250,7 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
     async def mgmt_client_request_async(mgmt_client, mgmt_msg, **kwargs):
         """
         Send mgmt request.
-        :param ~uamqp.AMQPClientAsync or ~pyamq.aio.AMQPClientAsync mgmt_client: Client to send request with.
+        :param ~uamqp.AMQPClientAsync or ~pyamqp.aio.AMQPClientAsync mgmt_client: Client to send request with.
         :param str mgmt_msg: Message.
         :keyword bytes operation: Operation.
         :keyword operation_type: Op type.
