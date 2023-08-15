@@ -99,6 +99,7 @@ class DataOperations(_ScopeDependentOperations):
         self._operation = service_client.data_versions
         self._container_operation = service_client.data_containers
         self._datastore_operation = datastore_operations
+        self._compute_operation = service_client.compute
         self._service_client = service_client
         self._init_kwargs = kwargs
         self._requests_pipeline: HttpPipeline = kwargs.pop("requests_pipeline")
@@ -664,7 +665,8 @@ class DataOperations(_ScopeDependentOperations):
             self._operation_scope._subscription_id, self._resource_group_name, self._workspace_name, path
         )
         if persistent and ci_name is not None:
-            raise NotImplementedError("TODO")
+            # TODO: body?
+            self._compute_operation.update_data_mounts(self._resource_group_name, self._workspace_name, ci_name)
         else:
             rslex_fuse_subprocess_wrapper.start_fuse_mount_subprocess(uri, mount_point, read_only, debug)
 
