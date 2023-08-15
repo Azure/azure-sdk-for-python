@@ -27,21 +27,28 @@ import asyncio
 import json
 import logging
 import uuid
-from typing import TypeVar
+from typing import Union
 
 from azure.core.pipeline import PipelineRequest, PipelineResponse
 from azure.core.pipeline.policies import AsyncHTTPPolicy
+from azure.core.pipeline.transport import (
+    HttpRequest as LegacyHttpRequest,
+    AsyncHttpResponse as LegacyAsyncHttpResponse,
+)
+from azure.core.rest import HttpRequest, AsyncHttpResponse
 
-from . import ARMAutoResourceProviderRegistrationPolicy
+
+from ._base import _SansIOARMAutoResourceProviderRegistrationPolicy
 
 _LOGGER = logging.getLogger(__name__)
 
-AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType")
-HTTPRequestType = TypeVar("HTTPRequestType")
+HTTPRequestType = Union[LegacyHttpRequest, HttpRequest]
+AsyncHTTPResponseType = Union[LegacyAsyncHttpResponse, AsyncHttpResponse]
+PipelineResponseType = PipelineResponse[HTTPRequestType, AsyncHTTPResponseType]
 
 
 class AsyncARMAutoResourceProviderRegistrationPolicy(
-    ARMAutoResourceProviderRegistrationPolicy, AsyncHTTPPolicy
+    _SansIOARMAutoResourceProviderRegistrationPolicy, AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType]
 ):  # pylint: disable=name-too-long
     """Auto register an ARM resource provider if not done yet."""
 
@@ -64,7 +71,9 @@ class AsyncARMAutoResourceProviderRegistrationPolicy(
                 response = await self.next.send(request)
         return response
 
-    async def _async_register_rp(self, initial_request, url_prefix, rp_name):
+    async def _async_register_rp(
+        self, initial_request: PipelineRequest[HTTPRequestType], url_prefix: str, rp_name: str
+    ) -> bool:
         """Synchronously register the RP is paremeter.
 
         Return False if we have a reason to believe this didn't work
