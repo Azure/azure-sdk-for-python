@@ -20,7 +20,12 @@ from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml.constants import ManagedServiceIdentityType
 from azure.ai.ml.constants._common import Scope
-from azure.ai.ml.entities import IdentityConfiguration, ManagedIdentityConfiguration, WorkspaceConnection, ManagedNetworkProvisionStatus
+from azure.ai.ml.entities import (
+    IdentityConfiguration,
+    ManagedIdentityConfiguration,
+    WorkspaceConnection,
+    ManagedNetworkProvisionStatus,
+)
 from azure.ai.ml.entities._feature_store._constants import (
     FEATURE_STORE_KIND,
     OFFLINE_MATERIALIZATION_STORE_TYPE,
