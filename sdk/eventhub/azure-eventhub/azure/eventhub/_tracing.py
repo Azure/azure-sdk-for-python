@@ -98,7 +98,7 @@ def receive_context_manager(
     client: Optional[ClientBase], links: Optional[List[Link]] = None, start_time: Optional[int] = None
 )  -> Iterator[None]:
     """Tracing for message receiving.
-    
+
     :param ~azure.eventhub._client_base.ClientBase or None client: The client that is receiving the message.
     :param list[~azure.core.tracing.Link] or None links: A list of links to add to the span.
     :param int or None start_time: The time the receive operation started.
@@ -122,7 +122,7 @@ def process_context_manager(
     client: Optional[ClientBase], links: Optional[List[Link]] = None, is_batch: bool = False
 ) -> Iterator[None]:
     """Tracing for message processing.
-    
+
     :param ~azure.eventhub._client_base.ClientBase or None client: The client that is processing the message.
     :param list[~azure.core.tracing.Link] or None links: A list of links to add to the span.
     :param bool is_batch: Whether the processing is done in a batch.

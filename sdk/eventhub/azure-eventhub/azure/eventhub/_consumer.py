@@ -13,7 +13,6 @@ from typing import TYPE_CHECKING, Callable, Dict, Optional, Any, Deque, Union, c
 from ._common import EventData
 from ._client_base import ConsumerProducerMixin
 from ._utils import create_properties, event_position_selector
-from ._transport._pyamqp_transport import PyamqpTransport
 from ._constants import (
     EPOCH_SYMBOL,
     TIMEOUT_SYMBOL,
