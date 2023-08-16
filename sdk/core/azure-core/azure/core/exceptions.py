@@ -487,10 +487,10 @@ class ODataV4Error(HttpResponseError):
             odata_message = self.odata_json.setdefault("error", {}).get("message")
         except Exception:  # pylint: disable=broad-except
             # If the body is not JSON valid, just stop now
-            odata_message = None
+            odata_message = "<payload was not compliant with Odata and exception didn't have a message>
 
         self.code: Optional[str] = None
-        self.message: Optional[str] = kwargs.get("message", odata_message)
+        self.message: str = kwargs.get("message", odata_message)
         self.target: Optional[str] = None
         self.details: Optional[List[Any]] = []
         self.innererror: Optional[Mapping[str, Any]] = {}
