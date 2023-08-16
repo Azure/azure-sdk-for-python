@@ -57,7 +57,6 @@ from azure.ai.ml._restclient.v2023_06_01_preview.models import ConnectionAuthTyp
 from azure.ai.ml._restclient.v2023_06_01_preview.models import (
     WorkspaceConnectionApiKey as RestWorkspaceConnectionApiKey,
 )
-from azure.ai.ml._schema.job.identity import AMLTokenIdentitySchema
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils.utils import camel_to_snake, snake_to_pascal
 from azure.ai.ml.constants._common import CommonYamlFields, IdentityType
@@ -561,10 +560,7 @@ class UserIdentityConfiguration(_BaseIdentityConfiguration):
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, UserIdentityConfiguration):
             return NotImplemented
-        if self._to_job_rest_object() == other._to_job_rest_object():
-            return True
-        else:
-            return False
+        return bool(self._to_job_rest_object() == other._to_job_rest_object())
 
 
 class AmlTokenConfiguration(_BaseIdentityConfiguration):
@@ -580,6 +576,8 @@ class AmlTokenConfiguration(_BaseIdentityConfiguration):
             :caption: Configuring an AmlTokenConfiguration for a command().
     """
 
+    from azure.ai.ml._schema.job.identity import AMLTokenIdentitySchema
+
     def __init__(self) -> None:
         super().__init__()
         self.type = IdentityType.AML_TOKEN
@@ -589,12 +587,16 @@ class AmlTokenConfiguration(_BaseIdentityConfiguration):
 
     def _to_dict(self) -> Dict:
         # pylint: disable=no-member
+        from azure.ai.ml._schema.job.identity import AMLTokenIdentitySchema
+
         _dict: Dict = AMLTokenIdentitySchema().dump(self)
         return _dict
 
     @classmethod
     def _load_from_dict(cls, data: Dict) -> "AMLTokenIdentitySchema":
         # pylint: disable=no-member
+        from azure.ai.ml._schema.job.identity import AMLTokenIdentitySchema
+
         return AMLTokenIdentitySchema().load(data)
 
     @classmethod
@@ -827,7 +829,4 @@ class ApiKeyConfiguration(RestTranslatableMixin, DictMixin):
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, AccessKeyConfiguration):
             return NotImplemented
-        if self.key == other.key:
-            return True
-        else:
-            return False
+        return bool(self.key == other.key)
