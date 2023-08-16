@@ -640,11 +640,6 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
     @acr_preparer()
     async def test_upload_large_blob_in_chunk(self, **kwargs):
         containerregistry_endpoint = kwargs.pop("containerregistry_endpoint")
-        if not is_public_endpoint(containerregistry_endpoint):
-            pytest.skip(
-                "Running on non-public cloud may cause all tests finishing longer than the max time of 120 mins."
-            )
-
         repo = self.get_resource_name("repo")
         async with self.create_registry_client(containerregistry_endpoint) as client:
             # Test blob upload and download in equal size chunks
