@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Encoded URL before formatting it. #31346
+
 ### Other Changes
 
 ## 1.29.2 (2023-08-14)
