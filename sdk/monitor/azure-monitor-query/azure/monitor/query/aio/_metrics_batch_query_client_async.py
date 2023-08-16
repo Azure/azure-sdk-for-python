@@ -121,8 +121,11 @@ class MetricsBatchQueryClient:  # pylint: disable=client-accepts-api-version-key
             subscription_id, resource_id_json, metricnamespace=metric_namespace, metricnames=metric_names, **kwargs
         )
 
+        # In rare cases, the generated value is a JSON string instead of a dict. This potentially stems from a bug in
+        # the service. This check handles that case.
         if isinstance(generated, str):
             generated = loads(generated)
+
         return [
             MetricsQueryResult._from_generated(value)  # pylint: disable=protected-access
             for value in generated["values"]
