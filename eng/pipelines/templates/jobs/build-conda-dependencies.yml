@@ -20,7 +20,7 @@ jobs:
       inputs:
         versionSpec: $(PythonVersion)
 
-    - pwsh: |
+    - script: |
         pip install tools/azure-sdk-tools[build]
         pip install disutils
         choco install visualstudio2019buildtools
@@ -36,6 +36,7 @@ jobs:
 
     - script: |
         "C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\Common7\tools\VsDevCmd.bat"
+
         sdk_build_conda -c "%arguments%"
       displayName: Assemble Conda Packages
 
