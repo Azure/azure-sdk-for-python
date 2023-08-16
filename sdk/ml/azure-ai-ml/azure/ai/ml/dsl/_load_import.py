@@ -30,9 +30,9 @@ def to_component(*, job: ComponentTranslatableMixin, **kwargs) -> Callable[..., 
         component = component_func(param1=xxx, param2=xxx)
 
     :keyword job: Job load from local or remote.
-    :type job: ~azure.ai.ml.entities._job.pipeline._component_translatable.ComponentTranslatableMixin
+    :paramtype job: ~azure.ai.ml.entities._job.pipeline._component_translatable.ComponentTranslatableMixin
     :keyword kwargs: A dictionary of additional configuration parameters.
-    :type kwargs: dict
+    :paramtype kwargs: dict
 
     :return: Wrapped function call.
     :rtype: typing.Callable[..., ~azure.ai.ml.entities._builders.command.Command]

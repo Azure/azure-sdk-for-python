@@ -15,15 +15,15 @@ class MonitorInputData(RestTranslatableMixin):
     """Monitor input data.
 
     :keyword input_dataset: Input data used by the monitor
-    :type input_dataset: Optional[~azure.ai.ml.Input]
+    :paramtype input_dataset: Optional[~azure.ai.ml.Input]
     :keyword dataset_context: The context of the input dataset. Accepted values are "model_inputs",
         "model_outputs", "training", "test", "validation", and "ground_truth".
-    :type dataset_context: Optional[Union[str, ~azure.ai.ml.constants.MonitorDatasetContext]]
+    :paramtype dataset_context: Optional[Union[str, ~azure.ai.ml.constants.MonitorDatasetContext]]
     :keyword target_column_name: The target column in the given input dataset.
-    :type target_column_name: Optional[str]
+    :paramtype target_column_name: Optional[str]
     :keyword pre_processing_component: The ARM (Azure Resource Manager) resource ID of the component resource used to
         preprocess the data.
-    :type pre_processing_component: Optional[str]
+    :paramtype pre_processing_component: Optional[str]
     """
 
     def __init__(
