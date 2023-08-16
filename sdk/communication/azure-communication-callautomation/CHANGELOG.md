@@ -1,6 +1,6 @@
 # Release History
 
-## 1.1.0b1 (Unreleased)
+## 1.1.0b1 (2023-08-17)
 ### Features Added
 - Play and recognize supports TTS and SSML source prompts.
 - Recognize supports choices and freeform speech.
