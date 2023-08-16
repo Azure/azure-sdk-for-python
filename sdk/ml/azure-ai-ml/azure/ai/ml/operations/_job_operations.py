@@ -257,10 +257,10 @@ class JobOperations(_ScopeDependentOperations):
 
         :keyword parent_job_name: When provided, only returns jobs that are children of the named job. Defaults to None,
             listing all jobs in the workspace.
-        :type parent_job_name: Optional[str]
+        :paramtype parent_job_name: Optional[str]
         :keyword list_view_type: The view type for including/excluding archived jobs. Defaults to
             ~azure.mgt.machinelearningservices.models.ListViewType.ACTIVE_ONLY, excluding archived jobs.
-        :type list_view_type: ~azure.mgmt.machinelearningservices.models.ListViewType
+        :paramtype list_view_type: ~azure.mgmt.machinelearningservices.models.ListViewType
         :return: An iterator-like instance of Job objects.
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.ml.entities.Job]
 
@@ -476,7 +476,7 @@ class JobOperations(_ScopeDependentOperations):
         :param job: The job object to be validated.
         :type job: ~azure.ai.ml.entities.Job
         :keyword raise_on_failure: Specifies if an error should be raised if validation fails. Defaults to False.
-        :type raise_on_failure: bool
+        :paramtype raise_on_failure: bool
         :return: A ValidationResult object containing all found errors.
         :rtype: ~azure.ai.ml.entities.ValidationResult
 
@@ -504,7 +504,7 @@ class JobOperations(_ScopeDependentOperations):
         :param job: The job to validate
         :type job: Job
         :keyword raise_on_failure: Whether to raise on validation failure
-        :type raise_on_failure: bool
+        :paramtype raise_on_failure: bool
         :return: The validation result
         :rtype: ValidationResult
         """
@@ -568,18 +568,18 @@ class JobOperations(_ScopeDependentOperations):
         :param job: The job object.
         :type job: ~azure.ai.ml.entities.Job
         :keyword description: The job description.
-        :type description: Optional[str]
+        :paramtype description: Optional[str]
         :keyword compute: The compute target for the job.
-        :type compute: Optional[str]
+        :paramtype compute: Optional[str]
         :keyword tags: The tags for the job.
-        :type tags: Optional[dict]
+        :paramtype tags: Optional[dict]
         :keyword experiment_name: The name of the experiment the job will be created under. If None is provided,
             job will be created under experiment 'Default'.
-        :type experiment_name: Optional[str]
+        :paramtype experiment_name: Optional[str]
         :keyword skip_validation: Specifies whether or not to skip validation before creating or updating the job. Note
             that validation for dependent resources such as an anonymous component will not be skipped. Defaults to
             False.
-        :type skip_validation: bool
+        :paramtype skip_validation: bool
         :raises Union[~azure.ai.ml.exceptions.UserErrorException, ~azure.ai.ml.exceptions.ValidationException]: Raised
             if Job cannot be successfully validated. Details will be provided in the error message.
         :raises ~azure.ai.ml.exceptions.AssetException: Raised if Job assets
@@ -795,11 +795,11 @@ class JobOperations(_ScopeDependentOperations):
         :param name: The name of a job.
         :type name: str
         :keyword download_path: The local path to be used as the download destination. Defaults to ".".
-        :type download_path: Union[PathLike, str]
+        :paramtype download_path: Union[PathLike, str]
         :keyword output_name: The name of the output to download. Defaults to None.
-        :type output_name: Optional[str]
+        :paramtype output_name: Optional[str]
         :keyword all: Specifies if all logs and named outputs should be downloaded. Defaults to False.
-        :type all: bool
+        :paramtype all: bool
         :raises ~azure.ai.ml.exceptions.JobException: Raised if Job is not yet in a terminal state.
             Details will be provided in the error message.
         :raises ~azure.ai.ml.exceptions.MlException: Raised if logs and outputs cannot be successfully downloaded.

@@ -49,7 +49,7 @@ class ComputeOperations(_ScopeDependentOperations):
         """List computes of the workspace.
 
         :keyword compute_type: the type of the compute to be listed, defaults to amlcompute
-        :type compute_type: str
+        :paramtype compute_type: str
         :return: An iterator like instance of Compute objects
         :rtype: ~azure.core.paging.ItemPaged[Compute]
         """
@@ -252,7 +252,7 @@ class ComputeOperations(_ScopeDependentOperations):
 
         :keyword location: The location for which resource usage is queried.
             If location not provided , defaults to workspace location
-        :type location: str
+        :paramtype location: str
         :return: An iterator over current usage info
         :rtype: ~azure.core.paging.ItemPaged[Usage]
         """
@@ -270,7 +270,7 @@ class ComputeOperations(_ScopeDependentOperations):
 
         :keyword location: The location upon which virtual-machine-sizes is queried.
             If location not provided, defaults to workspace location.
-        :type location: str
+        :paramtype location: str
 
         :return: An iterator over virtual machine sizes.
         :rtype: Iterable[VmSize]

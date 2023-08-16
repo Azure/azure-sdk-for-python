@@ -56,44 +56,44 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
     """Command job.
 
     :keyword name: The name of the job.
-    :type name: str
+    :paramtype name: str
     :keyword description: The job description.
-    :type description: str
+    :paramtype description: str
     :keyword tags: Tag dictionary. Tags can be added, removed, and updated.
-    :type tags: dict[str, str]
+    :paramtype tags: dict[str, str]
     :keyword display_name: The job display name.
-    :type display_name: str
+    :paramtype display_name: str
     :keyword properties: A dictionary of properties for the job.
-    :type properties: dict[str, str]
+    :paramtype properties: dict[str, str]
     :keyword experiment_name: The name of the experiment that the job will be created under. Defaults to current
         directory name.
-    :type experiment_name: str
+    :paramtype experiment_name: str
     :keyword services: Read-only information on services associated with the job.
-    :type services: Optional[dict[str, ~azure.ai.ml.entities.JobService]]
+    :paramtype services: Optional[dict[str, ~azure.ai.ml.entities.JobService]]
     :keyword inputs: Mapping of output data bindings used in the command.
-    :type inputs: Optional[dict[str, Union[~azure.ai.ml.Input, str, bool, int, float]]]
+    :paramtype inputs: Optional[dict[str, Union[~azure.ai.ml.Input, str, bool, int, float]]]
     :keyword outputs: Mapping of output data bindings used in the job.
-    :type outputs: Optional[dict[str, ~azure.ai.ml.Output]]
+    :paramtype outputs: Optional[dict[str, ~azure.ai.ml.Output]]
     :keyword command: The command to be executed.
-    :type command: str
+    :paramtype command: str
     :keyword compute: The compute target the job runs on.
-    :type compute: str
+    :paramtype compute: str
     :keyword resources: The compute resource configuration for the job.
-    :type resources: ~azure.ai.ml.entities.ResourceConfiguration
+    :paramtype resources: ~azure.ai.ml.entities.ResourceConfiguration
     :keyword code: A local path or "http:", "https:", or "azureml:" url pointing to a remote location.
     :type code: str
     :keyword distribution: The distribution configuration for distributed jobs.
-    :type distribution: Union[~azure.ai.ml.PyTorchDistribution, ~azure.ai.ml.MpiDistribution,
+    :paramtype distribution: Union[~azure.ai.ml.PyTorchDistribution, ~azure.ai.ml.MpiDistribution,
         ~azure.ai.ml.TensorFlowDistribution, ~azure.ai.ml.RayDistribution]
     :keyword environment: The environment that the job will run in.
-    :type environment: Union[~azure.ai.ml.entities.Environment, str]
+    :paramtype environment: Union[~azure.ai.ml.entities.Environment, str]
     :keyword identity: The identity that the job will use while running on compute.
-    :type identity: Optional[Union[~azure.ai.ml.ManagedIdentityConfiguration, ~azure.ai.ml.AmlTokenConfiguration,
+    :paramtype identity: Optional[Union[~azure.ai.ml.ManagedIdentityConfiguration, ~azure.ai.ml.AmlTokenConfiguration,
         ~azure.ai.ml.UserIdentityConfiguration]]
     :keyword limits: The limits for the job.
-    :type limits: Optional[~azure.ai.ml.entities.CommandJobLimits]
+    :paramtype limits: Optional[~azure.ai.ml.entities.CommandJobLimits]
     :keyword kwargs: A dictionary of additional configuration parameters.
-    :type kwargs: dict
+    :paramtype kwargs: dict
 
     .. admonition:: Example:
 
@@ -236,7 +236,7 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
         """Translate a command job to component.
 
         :param context: Context of command job YAML file.
-        :type context: dict, optional
+        :type context: dict
         :keyword kwargs: Extra arguments.
         :return: Translated command component.
         :rtype: CommandComponent
@@ -265,7 +265,7 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
         """Translate a command job to a pipeline node.
 
         :param context: Context of command job YAML file.
-        :type context: dict, optional
+        :type context: dict
         :keyword kwargs: Extra arguments.
         :return: Translated command component.
         :rtype: Command
