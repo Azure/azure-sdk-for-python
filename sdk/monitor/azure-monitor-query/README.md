@@ -541,7 +541,7 @@ from azure.monitor.query import MetricsBatchQueryClient, MetricAggregationType
 
 
 credential = DefaultAzureCredential()
-client = MetricsBatchQueryClient(credential, endpoint=endpoint)
+client = MetricsBatchQueryClient(endpoint, credential)
 
 resource_uris = [
     "/subscriptions/<id>/resourceGroups/<rg-name>/providers/<source>/storageAccounts/<resource-name-1>",

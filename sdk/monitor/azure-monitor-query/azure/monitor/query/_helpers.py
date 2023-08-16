@@ -5,7 +5,7 @@
 # license information.
 # --------------------------------------------------------------------------
 from datetime import datetime, timedelta, timezone
-from typing import List, Dict, Any, Optional, Tuple
+from typing import List, Dict, Any, Optional, Tuple, Union
 
 from azure.core.credentials import TokenCredential
 from azure.core.exceptions import HttpResponseError
@@ -90,24 +90,23 @@ def construct_iso8601(timespan=None) -> Optional[str]:
     return iso_str
 
 
-def get_timespan_iso8601_endpoints(timespan=None) -> Tuple[Optional[str], Optional[str]]:
+def get_timespan_iso8601_endpoints(
+    timespan: Optional[Union[timedelta, Tuple[datetime, timedelta], Tuple[datetime, datetime]]] = None
+) -> Tuple[Optional[str], Optional[str]]:
+
     if not timespan:
         return None, None
     start, end, duration = None, None, None
-    try:
-        # We treat this as (start_time, end_time)
+
+    if isinstance(timespan, timedelta):
+        duration = timespan
+    else:
         if isinstance(timespan[1], datetime):
             start, end = timespan[0], timespan[1]
-        # We treat this as (start_time, duration)
         elif isinstance(timespan[1], timedelta):
             start, duration = timespan[0], timespan[1]
         else:
             raise ValueError("Tuple must be a start datetime with a timedelta or an end datetime.")
-    except TypeError as ex:
-        # We then assume only duration (timedelta) is provided.
-        duration = timespan
-        if not isinstance(duration, timedelta):
-            raise TypeError("timespan must be a timedelta or a tuple.") from ex
 
     iso_start = None
     iso_end = None

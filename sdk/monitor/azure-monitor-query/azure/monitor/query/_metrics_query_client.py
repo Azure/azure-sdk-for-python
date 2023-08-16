@@ -99,7 +99,7 @@ class MetricsQueryClient(object):  # pylint: disable=client-accepts-api-version-
         :paramtype metric_namespace: Optional[str]
         :return: A MetricsQueryResult object.
         :rtype: ~azure.monitor.query.MetricsQueryResult
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
 
@@ -137,7 +137,7 @@ class MetricsQueryClient(object):  # pylint: disable=client-accepts-api-version-
         :paramtype start_time: Optional[~datetime.datetime]
         :return: An iterator like instance of either MetricNamespace or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.monitor.query.MetricNamespace]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
 
@@ -172,7 +172,7 @@ class MetricsQueryClient(object):  # pylint: disable=client-accepts-api-version-
         :paramtype namespace: Optional[str]
         :return: An iterator like instance of either MetricDefinition or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.monitor.query.MetricDefinition]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
 

@@ -5,7 +5,7 @@
 # license information.
 # --------------------------------------------------------------------------
 from json import loads
-from typing import Any, List, MutableMapping
+from typing import Any, List, MutableMapping, Sequence
 
 from azure.core.credentials import TokenCredential
 from azure.core.tracing.decorator import distributed_trace
@@ -17,20 +17,20 @@ from ._helpers import get_authentication_policy, get_timespan_iso8601_endpoints,
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 
-class MetricsBatchQueryClient(object):  # pylint: disable=client-accepts-api-version-keyword
-    """MetricsBatchQueryClient should be used for performing metrics queries on multiple monitored resoures in the same
-    region. A credential with authorization at the subscription level is required when using this client.
+class MetricsBatchQueryClient:  # pylint: disable=client-accepts-api-version-keyword
+    """MetricsBatchQueryClient should be used for performing metrics queries on multiple monitored resources in the
+    same region. A credential with authorization at the subscription level is required when using this client.
 
-    :param credential: The credential to authenticate the client.
-    :type credential: ~azure.core.credentials.TokenCredential
     :param str endpoint: The regional endpoint to use, for example
         https://eastus.metrics.monitor.azure.com. The region should match the region of the requested
         resources. For global resources, the region should be 'global'. Required.
+    :param credential: The credential to authenticate the client.
+    :type credential: ~azure.core.credentials.TokenCredential
     :keyword str audience: The audience to use when requesting a token. If not provided, the public cloud audience
         will be assumed. Defaults to 'https://metrics.monitor.azure.com'.
     """
 
-    def __init__(self, credential: TokenCredential, endpoint: str, **kwargs: Any) -> None:
+    def __init__(self, endpoint: str, credential: TokenCredential, **kwargs: Any) -> None:
         self._endpoint = endpoint
         if not self._endpoint.startswith("https://") and not self._endpoint.startswith("http://"):
             self._endpoint = "https://" + self._endpoint
@@ -47,11 +47,11 @@ class MetricsBatchQueryClient(object):  # pylint: disable=client-accepts-api-ver
 
     @distributed_trace
     def query_batch(
-        self, resource_uris: List[str], metric_namespace: str, metric_names: List[str], **kwargs: Any
+        self, resource_uris: Sequence[str], metric_namespace: str, metric_names: Sequence[str], **kwargs: Any
     ) -> List[MetricsQueryResult]:
         """Lists the metric values for multiple resources.
 
-        :param resource_uris: A list of resource IDs to query metrics for. Required.
+        :param resource_uris: A list of resource URIs to query metrics for. Required.
         :type resource_uris: list[str]
         :param metric_namespace: Metric namespace that contains the requested metric names. Required.
         :type metric_namespace: str
@@ -85,9 +85,9 @@ class MetricsBatchQueryClient(object):  # pylint: disable=client-accepts-api-ver
             **$filter= "dim (test) 3 eq 'dim3 (test) val'"** use **$filter= "dim
             %2528test%2529 3 eq 'dim3 %2528test%2529 val'"**. Default value is None.
         :paramtype filter: str
-        :return: A list ofMetricsQueryResult objects.
+        :return: A list of MetricsQueryResult objects.
         :rtype: list[~azure.monitor.query.MetricsQueryResult]
-        :raises ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
 
@@ -100,10 +100,6 @@ class MetricsBatchQueryClient(object):  # pylint: disable=client-accepts-api-ver
         """
         if not resource_uris:
             raise ValueError("resource_uris must be provided and must not be empty.")
-        if not metric_namespace:
-            raise ValueError("metric_namespace must be provided and must not be empty.")
-        if not metric_names:
-            raise ValueError("metric_names must be provided and must not be empty.")
 
         aggregations = kwargs.pop("aggregations", None)
         if aggregations:
@@ -118,7 +114,7 @@ class MetricsBatchQueryClient(object):  # pylint: disable=client-accepts-api-ver
         start_time, end_time = get_timespan_iso8601_endpoints(kwargs.pop("timespan", None))
         kwargs.setdefault("starttime", start_time)
         kwargs.setdefault("endtime", end_time)
-        resource_id_json: JSON = {"resourceids": resource_uris}
+        resource_id_json: JSON = {"resourceids": list(resource_uris)}
         subscription_id = get_subscription_id_from_resource(resource_uris[0])
         generated = self._batch_metrics_op.batch(
             subscription_id, resource_id_json, metricnamespace=metric_namespace, metricnames=metric_names, **kwargs

@@ -3,17 +3,17 @@
 """
 FILE: sample_metrics_batch_query_async.py
 DESCRIPTION:
-    This sample demonstrates authenticating the MetricsBatchClient and retrieving the "Ingress"
+    This sample demonstrates authenticating the MetricsBatchQueryClient and retrieving the "Ingress"
     metric along with the "Average" aggregation type for multiple resources.
     The query will execute over a timespan of 2 hours with a granularity of 5 minutes.
 USAGE:
     python sample_metrics_batch_query_async.py
-    2) AZURE_METRICS_ENDPOINT - The regional metrics endpoint to use (i.e. https://westus3.metrics.monitor.azure.com)
+    1) AZURE_METRICS_ENDPOINT - The regional metrics endpoint to use (i.e. https://westus3.metrics.monitor.azure.com)
 
     This example uses DefaultAzureCredential, which requests a token from Azure Active Directory.
     For more information on DefaultAzureCredential, see https://learn.microsoft.com/python/api/overview/azure/identity-readme?view=azure-python#defaultazurecredential.
 
-    In this example, storage account URIs are taken.
+    In this example, storage account resource URIs are queried for metrics.
 """
 import asyncio
 
@@ -31,7 +31,7 @@ async def query_metrics_batch():
     endpoint = os.environ["AZURE_METRICS_ENDPOINT"]
 
     credential = DefaultAzureCredential()
-    client = MetricsBatchQueryClient(credential, endpoint=endpoint)
+    client = MetricsBatchQueryClient(endpoint, credential)
 
     resource_uris = [
         '/subscriptions/<id>/resourceGroups/<rg>/providers/Microsoft.Storage/storageAccounts/<account-1>',
