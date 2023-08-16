@@ -1,10 +1,5 @@
 files: sdk/ml/
 repos:
--   repo: https://github.com/psf/black
-    rev: 22.3.0 # Needs to be updated whenever azure sdk team bumps
-    hooks:
-    -   id: black
-        args: [--config=eng/black-pyproject.toml]
 - repo: https://github.com/econchick/interrogate
   rev: 1.5.0 
   hooks:
@@ -26,6 +21,15 @@ repos:
     args: ['--settings-file', 'sdk/ml/azure-ai-ml/pyproject.toml']
 - repo: local
   hooks:
+    - id: black
+      name: black
+      description: "Black: The uncompromising Python code formatter"
+      minimum_pre_commit_version: 2.9.2
+      require_serial: true
+      types_or: [python, pyi]
+      entry: python
+      language: system
+      args: ["-m", "tox", "-qqq", "run", "-c", "eng/tox/tox.ini", "--root", "sdk/ml/azure-ai-ml", "-e", "black", "--"]
     - id: pylint
       name: pylint
       entry: python
