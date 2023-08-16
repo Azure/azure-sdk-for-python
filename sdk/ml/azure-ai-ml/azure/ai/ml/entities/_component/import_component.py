@@ -20,19 +20,19 @@ class ImportComponent(Component):
     """Import component version, used to define an import component.
 
     :param name: Name of the component.
-    :type name: str, optional
+    :type name: str
     :param version: Version of the component.
-    :type version: str, optional
+    :type version: str
     :param description: Description of the component.
-    :type description: str, optional
+    :type description: str
     :param tags: Tag dictionary. Tags can be added, removed, and updated.
-    :type tags: dict, optional
+    :type tags: dict
     :param display_name: Display name of the component.
-    :type display_name: str, optional
+    :type display_name: str
     :param source: Input source parameters of the component.
-    :type source: dict, optional
+    :type source: dict
     :param output: Output of the component.
-    :type output: dict, optional
+    :type output: dict
     :param is_deterministic: Whether the command component is deterministic. Defaults to True.
     :type is_deterministic: bool
     :param kwargs: Additional parameters for the import component.

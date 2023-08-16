@@ -168,7 +168,7 @@ def _convert_container_to_endpoint(
     :param container: Container for a local deployment.
     :type container: docker.models.containers.Container
     :param endpoint_json: The endpoint json
-    :type endpoint_json: Optional[dict], optional
+    :type endpoint_json: Optional[dict]
     :return: The OnlineEndpoint entity
     :rtype: OnlineEndpoint
     """

@@ -73,7 +73,7 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
         resource group or subscription.
 
         :keyword scope: scope of the listing, "resource_group" or "subscription", defaults to "resource_group"
-        :type scope: str, optional
+        :paramtype scope: str
         :return: An iterator like instance of FeatureStore objects
         :rtype: ~azure.core.paging.ItemPaged[FeatureStore]
         """
@@ -399,7 +399,7 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
         :keyword delete_dependent_resources: Whether to delete resources associated with the feature store,
             i.e., container registry, storage account, key vault, and application insights.
             The default is False. Set to True to delete these resources.
-        :type delete_dependent_resources: bool
+        :paramtype delete_dependent_resources: bool
         :return: A poller to track the operation status.
         :rtype: ~azure.core.polling.LROPoller[None]
         """

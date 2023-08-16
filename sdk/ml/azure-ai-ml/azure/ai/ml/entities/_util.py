@@ -215,7 +215,7 @@ def convert_ordered_dict_to_dict(target_object: Union[Dict, List], remove_empty:
     :param target_object: The object to convert
     :type target_object: Union[Dict, List]
     :param remove_empty: Whether to omit values that are None or empty dictionaries. Defaults to True.
-    :type remove_empty: bool, optional
+    :type remove_empty: bool
     :return: Converted ordered dict with removed None values
     :rtype: Union[Dict, List]
     """
@@ -248,7 +248,7 @@ def _general_copy(src: Union[str, os.PathLike], dst: Union[str, os.PathLike], ma
     :param dst: The destination path to copy to
     :type dst: Union[str, os.PathLike]
     :param make_dirs: Whether to ensure the destination path exists. Defaults to True.
-    :type make_dirs: bool, optional
+    :type make_dirs: bool
     """
     if make_dirs:
         os.makedirs(os.path.dirname(dst), exist_ok=True)
@@ -281,7 +281,7 @@ def get_rest_dict_for_node_attrs(target_obj: T, clear_empty_value: bool = False)
     :param target_obj: The object to convert
     :type target_obj: T
     :param clear_empty_value: Whether to clear empty values. Defaults to False.
-    :type clear_empty_value: bool, optional
+    :type clear_empty_value: bool
     :return: The translated dict, or the the original object
     :rtype: Union[T, Dict]
     """
@@ -400,7 +400,7 @@ def resolve_pipeline_parameters(
     :param pipeline_parameters: The pipeline parameters
     :type pipeline_parameters: Optional[Dict[str, T]]
     :param remove_empty: Whether to remove None values. Defaults to False.
-    :type remove_empty: bool, optional
+    :type remove_empty: bool
     :return:
         * None if pipeline_parameters is None
         * The resolved dict of pipeline parameters
@@ -511,7 +511,7 @@ def get_type_from_spec(data: dict, *, valid_keys: Iterable[str]) -> str:
     :param data: The data
     :type data: dict
     :keyword valid_keys: An iterable of valid types
-    :type valid_keys: Iterable[str]
+    :paramtype valid_keys: Iterable[str]
     :return: The type of the node or component
     :rtype: str
     """
