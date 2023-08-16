@@ -509,6 +509,7 @@ class WorkspaceOperationsBase:
             offline_store_target = kwargs.get("offline_store_target", None)
             online_store_target = kwargs.get("online_store_target", None)
 
+            _set_val(param["set_up_feature_store"], "true")
             if offline_store_target is not None:
                 _set_val(param["offline_store_connection_target"], offline_store_target)
             if online_store_target is not None:

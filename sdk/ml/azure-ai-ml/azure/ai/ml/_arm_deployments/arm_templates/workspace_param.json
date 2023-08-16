@@ -163,5 +163,8 @@
     },
     "enable_data_isolation": {
         "value": "false"
+    },
+    "set_up_feature_store": {
+        "value": "false"
     }
 }

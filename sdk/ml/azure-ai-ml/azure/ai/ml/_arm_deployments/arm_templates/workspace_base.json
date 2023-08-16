@@ -507,6 +507,17 @@
             "metadata": {
                 "description": "Resource Id of Hub used for lean workspace."
             }
+        },
+        "set_up_feature_store" : {
+            "type": "string",
+            "defaultValue": "false",
+            "allowedValues": [
+                "false",
+                "true"
+            ],
+            "metadata": {
+                "description": "A flag to determine whether to set up feature store"
+            }
         }
     },
     "variables": {
@@ -587,7 +598,7 @@
             }
         },
         {
-            "condition": "[not(equals(parameters('materialization_identity_name'), 'empty'))]",
+            "condition": "[and(equals(parameters('set_up_feature_store'), 'true'), not(equals(parameters('materialization_identity_name'), 'empty')))]",
             "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
             "apiVersion": "2018-11-30",
             "name": "[parameters('materialization_identity_name')]",
@@ -625,7 +636,7 @@
             }
         },
         {
-            "condition": "[and(variables('enablePE'), empty(parameters('offline_store_connection_target')), equals(parameters('storageAccountOption'), 'new'))]",
+            "condition": "[and(variables('enablePE'), equals(parameters('set_up_feature_store'), 'true'), empty(parameters('offline_store_connection_target')), equals(parameters('storageAccountOption'), 'new'))]",
             "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
             "apiVersion": "2021-04-01",
             "name": "[concat(parameters('storageAccountName'), '/default/', variables('offlineStoreContainerName'))]",
@@ -751,9 +762,10 @@
             }
         },
         {
+            "condition":"[equals(parameters('set_up_feature_store'), 'true')]",
 			"type": "Microsoft.Resources/deployments",
 			"apiVersion": "2022-05-01",
-			"name": "[parameters('workspaceName')]",
+			"name": "[concat(parameters('workspaceName'), '-deploy-feature-store')]",
 			"dependsOn": [
 				"[resourceId('Microsoft.MachineLearningServices/workspaces', parameters('workspaceName'))]",
                 "[resourceId('Microsoft.Storage/storageAccounts/blobServices/containers', parameters('storageAccountName'), 'default', variables('offlineStoreContainerName'))]",
@@ -877,7 +889,7 @@
 			}
 		},
         {
-            "condition": "[equals(parameters('grant_materialization_identity_permissions'), 'true')]",
+            "condition": "[and(equals(parameters('set_up_feature_store'), 'true'), equals(parameters('grant_materialization_identity_permissions'), 'true'))]",
             "type": "Microsoft.Authorization/roleAssignments",
             "apiVersion": "2022-04-01",
             "name": "[guid(variables('materialization_identity_resource_id'), variables('offlineStoreConnectionTarget'), 'storage blob data contributor')]",
@@ -893,7 +905,7 @@
             }
         },
         {
-            "condition": "[and(equals(parameters('grant_materialization_identity_permissions'), 'true'), not(empty(parameters('online_store_connection_target'))))]",
+            "condition": "[and(equals(parameters('set_up_feature_store'), 'true'), equals(parameters('grant_materialization_identity_permissions'), 'true'), not(empty(parameters('online_store_connection_target'))))]",
             "type": "Microsoft.Authorization/roleAssignments",
             "apiVersion": "2022-04-01",
             "name": "[guid(variables('materialization_identity_resource_id'), parameters('online_store_connection_target'), 'contributor')]",
