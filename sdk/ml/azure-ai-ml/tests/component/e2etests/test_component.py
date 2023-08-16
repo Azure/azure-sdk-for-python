@@ -371,13 +371,6 @@ class TestComponent(AzureRecordedTestCase):
             "type_contract/path.yml",
             "input_types_component.yml",
         ],
-        ids=[
-            "mltable.yml",
-            "mlflow_model.yml",
-            "custom_model.yml",
-            "path.yml",
-            "input_types_component.yml",
-        ]
     )
     def test_command_component_create_input_output_types(
         self, client: MLClient, randstr: Callable[[str], str], component_path: str

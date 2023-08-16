@@ -102,13 +102,6 @@ class TestPipelineJob(AzureRecordedTestCase):
             "tests/test_configs/dsl_pipeline/spark_job_in_pipeline/pipeline_inline_job.yml",
             "tests/test_configs/pipeline_jobs/shakespear_sample/pipeline.yml",
         ],
-        ids=[
-            "wordcount_pipeline.yml",
-            "sample_pipeline.yml",
-            "pipeline.yml",
-            "pipeline_inline_job.yml",
-            "[shakespeare]pipeline.yml",
-        ]
     )
     def test_pipeline_job_with_spark_job(
         self, client: MLClient, randstr: Callable[[], str], pipeline_job_path: str
@@ -1805,22 +1798,6 @@ class TestPipelineJob(AzureRecordedTestCase):
             "spark/pipeline_serverless_compute.yml",
             "spark/node_serverless_compute_no_default.yml",
         ],
-        ids=[
-            "[command]pipeline_serverless_compute.yml",
-            "[command]node_serverless_compute.yml",
-            "[command]node_serverless_compute_no_default.yml",
-            "[sweep]pipeline_serverless_compute.yml",
-            "[sweep]node_serverless_compute.yml",
-            "[sweep]node_serverless_compute_no_default.yml",
-            "[pipeline]pipeline_serverless_compute.yml",
-            "[pipeline]node_serverless_compute.yml",
-            "[automl]pipeline_with_instance_type.yml",
-            "[automl]pipeline_without_instance_type.yml",
-            "[automl]pipeline_with_instance_type_no_default.yml",
-            # "[parallel]pipeline_serverless_compute.yml", TODO (2349832): azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33 uses deprecated Python
-            "[spark]pipeline_serverless_compute.yml",
-            "[spark]node_serverless_compute_no_default.yml",
-        ]
     )
     def test_serverless_compute_in_pipeline(self, client: MLClient, test_path: str) -> None:
         yaml_path = "./tests/test_configs/pipeline_jobs/serverless_compute/all_types/" + test_path
