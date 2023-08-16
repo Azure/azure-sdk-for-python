@@ -478,11 +478,11 @@ class ModelOperations(_ScopeDependentOperations):
         :param version: Version of model asset.
         :type version: str
         :keyword share_with_name: Name of model asset to share with.
-        :type share_with_name: str
+        :paramtype share_with_name: str
         :keyword share_with_version: Version of model asset to share with.
-        :type share_with_version: str
+        :paramtype share_with_version: str
         :keyword registry_name: Name of the destination registry.
-        :type registry_name: str
+        :paramtype registry_name: str
         :return: Model asset object.
         :rtype: ~azure.ai.ml.entities.Model
         """

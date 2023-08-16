@@ -404,9 +404,9 @@ def traverse_directory(  # pylint: disable=unused-argument
     :param files: List of all file paths in the directory
     :type files: List[str]
     :keyword prefix: Remote upload path for project directory (e.g. LocalUpload/<guid>/project_dir)
-    :type prefix: str
+    :paramtype prefix: str
     :keyword ignore_file: The .amlignore or .gitignore file in the project directory
-    :type ignore_file: azure.ai.ml._utils._asset_utils.IgnoreFile
+    :paramtype ignore_file: azure.ai.ml._utils._asset_utils.IgnoreFile
     :return: Zipped list of tuples representing the local path and remote destination path for each file
     :rtype: Iterable[Tuple[str, Union[str, Any]]]
     """

@@ -360,7 +360,7 @@ try:
             :param instructions: The instructions to split
             :type instructions: List[instr]
             :keyword remove_mock_body: Whether to remove the mock body. Defaults to False
-            :type remove_mock_body: bool
+            :paramtype remove_mock_body: bool
             :return: The split instructions
             :rtype: List[List[Instr]]
             """

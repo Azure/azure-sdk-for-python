@@ -278,15 +278,15 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):
         """Set the resources for the parallel job.
 
         :keyword instance_type: The instance type or a list of instance types used as supported by the compute target.
-        :type instance_type: str or list[str]
+        :paramtype instance_type: str or list[str]
         :keyword instance_count: The number of instances or nodes used by the compute target.
-        :type instance_count: int
+        :paramtype instance_count: int
         :keyword properties: The property dictionary for the resources.
-        :type properties: dict
+        :paramtype properties: dict
         :keyword docker_args: Extra arguments to pass to the Docker run command.
-        :type docker_args: str
+        :paramtype docker_args: str
         :keyword shm_size: Size of the Docker container's shared memory block.
-        :type shm_size: str
+        :paramtype shm_size: str
         """
         if self.resources is None:
             self.resources = JobResourceConfiguration()

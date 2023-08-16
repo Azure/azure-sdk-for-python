@@ -31,28 +31,28 @@ def import_job(
     and can also be created as a standalone import job.
 
     :keyword name: Name of the import job or component created.
-    :type name: str
+    :paramtype name: str
     :keyword description: A friendly description of the import.
-    :type description: str
+    :paramtype description: str
     :keyword tags: Tags to be attached to this import.
-    :type tags: Dict
+    :paramtype tags: Dict
     :keyword display_name: A friendly name.
-    :type display_name: str
+    :paramtype display_name: str
     :keyword experiment_name: Name of the experiment the job will be created under.
         If None is provided, the default will be set to the current directory name.
         Will be ignored as a pipeline step.
-    :type experiment_name: str
+    :paramtype experiment_name: str
     :keyword source: Input source parameters used by this import.
-    :type source: ~azure.ai.ml.entities._job.import_job.ImportSource
+    :paramtype source: ~azure.ai.ml.entities._job.import_job.ImportSource
     :keyword output: The output of this import.
-    :type output: ~azure.ai.ml.entities.Output
+    :paramtype output: ~azure.ai.ml.entities.Output
     :keyword is_deterministic: Specify whether the command will return the same output given the same input.
         If a command (component) is deterministic, when used as a node/step in a pipeline,
         it will reuse results from a previously submitted job in the current workspace
         which has the same inputs and settings.
         In this case, this step will not use any compute resource.
         Defaults to True.
-    :type is_deterministic: bool
+    :paramtype is_deterministic: bool
     :returns: The Import object.
     :rtype: ~azure.ai.ml.entities._builders.import_node.Import
     """

@@ -107,7 +107,7 @@ class ForecastingJob(AutoMLTabular):
         :keyword time_column_name:
             The name of the time column. This parameter is required when forecasting to specify the datetime
             column in the input data used for building the time series and inferring its frequency.
-        :type time_column_name: Optional[str]
+        :paramtype time_column_name: Optional[str]
         :keyword forecast_horizon:
             The desired maximum forecast horizon in units of time-series frequency. The default value is 1.
 
@@ -121,7 +121,7 @@ class ForecastingJob(AutoMLTabular):
             It can be used to create multiple series. If time series id column names is not defined or
             the identifier columns specified do not identify all the series in the dataset, the time series identifiers
             will be automatically created for your dataset.
-        :type time_series_id_column_names: Optional[Union[str, List[str]]]
+        :paramtype time_series_id_column_names: Optional[Union[str, List[str]]]
         :keyword target_lags:
             The number of past periods to lag from the target column. By default the lags are turned off.
 
@@ -155,7 +155,7 @@ class ForecastingJob(AutoMLTabular):
                itself) is followed by insignificant, the lag will be 0 and we will not use look back features.
         :type target_lags: Optional[Union[str, int, List[int]]]
         :keyword feature_lags: Flag for generating lags for the numeric features with 'auto' or None.
-        :type feature_lags: Optional[str]
+        :paramtype feature_lags: Optional[str]
         :keyword target_rolling_window_size:
             The number of past periods used to create a rolling window average of the target column.
 
@@ -164,10 +164,10 @@ class ForecastingJob(AutoMLTabular):
             when you only want to consider a certain amount of history when training the model.
             If set to 'auto', rolling window will be estimated as the last
             value where the PACF is more then the significance threshold. Please see target_lags section for details.
-        :type target_rolling_window_size: Optional[Union[int, str]]
+        :paramtype target_rolling_window_size: Optional[Union[int, str]]
         :keyword country_or_region_for_holidays: The country/region used to generate holiday features.
             These should be ISO 3166 two-letter country/region codes, for example 'US' or 'GB'.
-        :type country_or_region_for_holidays: Optional[str]
+        :paramtype country_or_region_for_holidays: Optional[str]
         :keyword use_stl: Configure STL Decomposition of the time-series target column.
                     use_stl can take three values: None (default) - no stl decomposition, 'season' - only generate
                     season component and season_trend - generate both season and trend components.
@@ -175,7 +175,7 @@ class ForecastingJob(AutoMLTabular):
         :keyword seasonality: Set time series seasonality as an integer multiple of the series frequency.
                     If seasonality is set to 'auto', it will be inferred.
                     If set to None, the time series is assumed non-seasonal which is equivalent to seasonality=1.
-        :type seasonality: Optional[Union[int, str]
+        :paramtype seasonality: Optional[Union[int, str]
         :keyword short_series_handling_config:
             The parameter defining how if AutoML should handle short time series.
 
@@ -288,10 +288,10 @@ class ForecastingJob(AutoMLTabular):
             Number of periods between the origin_time of one CV fold and the next fold. For
             example, if `n_step` = 3 for daily data, the origin time for each fold will be
             three days apart.
-        :type cv_step_size: Optional[int]
+        :paramtype cv_step_size: Optional[int]
         :keyword features_unknown_at_forecast_time:
             The column of features/regressors that are available at training time but unknown at forecast time.
-        :type features_unknown_at_forecast_time: Optional[Union[str, List[str]]]
+        :paramtype features_unknown_at_forecast_time: Optional[Union[str, List[str]]]
         """
         self._forecasting_settings = self._forecasting_settings or ForecastingSettings()
 
@@ -374,7 +374,7 @@ class ForecastingJob(AutoMLTabular):
         :keyword enable_dnn_training:
             Whether to include DNN based models during model selection.
             However, the default is True for DNN NLP tasks, and it's False for all other AutoML tasks.
-        :type enable_dnn_training: Optional[bool]
+        :paramtype enable_dnn_training: Optional[bool]
         :keyword enable_model_explainability:
             Whether to enable explaining the best AutoML model at the end of all AutoML training iterations.
             For more information, see `Interpretability: model explanations in automated machine learning
@@ -398,20 +398,20 @@ class ForecastingJob(AutoMLTabular):
         :type enable_vote_ensemble: Optional[bool]
         :keyword stack_ensemble_settings:
             Settings for StackEnsemble iteration, defaults to None
-        :type stack_ensemble_settings: Optional[StackEnsembleSettings]
+        :paramtype stack_ensemble_settings: Optional[StackEnsembleSettings]
         :keyword ensemble_model_download_timeout:
             During VotingEnsemble and StackEnsemble model generation,
             multiple fitted models from the previous child runs are downloaded. Configure this parameter with a
             higher value than 300 secs, if more time is needed, defaults to None
-        :type ensemble_model_download_timeout: Optional[int]
+        :paramtype ensemble_model_download_timeout: Optional[int]
         :keyword allowed_training_algorithms:
             A list of model names to search for an experiment. If not specified,
             then all models supported for the task are used minus any specified in ``blocked_training_algorithms``
             or deprecated TensorFlow models, defaults to None
-        :type allowed_training_algorithms: Optional[List[str]]
+        :paramtype allowed_training_algorithms: Optional[List[str]]
         :keyword blocked_training_algorithms:
             A list of algorithms to ignore for an experiment, defaults to None
-        :type blocked_training_algorithms: Optional[List[str]]
+        :paramtype blocked_training_algorithms: Optional[List[str]]
         :keyword training_mode:
             [Experimental] The training mode to use.
             The possible values are-

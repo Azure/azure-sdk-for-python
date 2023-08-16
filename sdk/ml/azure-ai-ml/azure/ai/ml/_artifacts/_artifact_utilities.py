@@ -79,7 +79,7 @@ def get_datastore_info(
     :keyword credential: Local credential to use for authentication. If not provided, will try to get
         credentials from the datastore, which requires authorization to perform action
         'Microsoft.MachineLearningServices/workspaces/datastores/listSecrets/action' over target datastore.
-    :type credential: str
+    :paramtype credential: str
     :return: The dictionary with datastore info
     :rtype: Dict[Literal["storage_type", "storage_account", "account_url", "container_name"], str]
     """

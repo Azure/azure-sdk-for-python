@@ -13,11 +13,11 @@ class StoredProcedureParameter(DictMixin, RestTranslatableMixin):
     """Define a stored procedure parameter class for DataTransfer import database task.
 
     :keyword name: The name of the database stored procedure.
-    :type name: str
+    :paramtype name: str
     :keyword value: The value of the database stored procedure.
-    :type value: str
+    :paramtype value: str
     :keyword type: The type of the database stored procedure.
-    :type type: str
+    :paramtype type: str
     """
 
     def __init__(
@@ -36,16 +36,16 @@ class Database(DictMixin, RestTranslatableMixin):  # pylint: disable=too-many-in
     """Define a database class for a DataTransfer Component or Job.
 
     :keyword query: The SQL query to retrieve data from the database.
-    :type query: str
+    :paramtype query: str
     :keyword table_name: The name of the database table.
-    :type table_name: str
+    :paramtype table_name: str
     :keyword stored_procedure: The name of the stored procedure.
-    :type stored_procedure: str
+    :paramtype stored_procedure: str
     :keyword stored_procedure_params: The parameters for the stored procedure.
-    :type stored_procedure_params: List[dict, StoredProcedureParameter]
+    :paramtype stored_procedure_params: List[dict, StoredProcedureParameter]
     :keyword connection: The connection string for the database.
         The credential information should be stored in the workspace connection.
-    :type connection: str
+    :paramtype connection: str
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if the Database object cannot be successfully validated.
         Details will be provided in the error message.
 

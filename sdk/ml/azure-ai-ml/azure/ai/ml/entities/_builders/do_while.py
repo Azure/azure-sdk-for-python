@@ -205,7 +205,7 @@ class DoWhile(LoopNode):
         The range of the iteration count is (0, 1000].
 
         :keyword max_iteration_count: The maximum iteration count for the do-while job.
-        :type max_iteration_count: int
+        :paramtype max_iteration_count: int
         """
         if isinstance(self.limits, DoWhileJobLimits):
             self.limits._max_iteration_count = max_iteration_count  # pylint: disable=protected-access

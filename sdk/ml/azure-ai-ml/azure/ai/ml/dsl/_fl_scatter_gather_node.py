@@ -84,41 +84,41 @@ def fl_scatter_gather(
     :keyword silo_configs: A list of FederatedLearningSilo objects,
         which contain the necessary data to reconfigure components to run on specific computes and datastores,
         while also targeting specific inputs located on the aforementioned datastores.
-    :type silo_configs: List[~azure.ai.ml.entities._assets.federated_learning_silo.FederatedLearningSilo]
+    :paramtype silo_configs: List[~azure.ai.ml.entities._assets.federated_learning_silo.FederatedLearningSilo]
     :keyword silo_component: A pipeline step that will be run multiple times across different silos, as specified
         by the silo_configs input. In a typical horizontal federated learning context, this step is what will perform
         model training using siloed subsets of data. Can be either a PipelineJob or a CommandComponent.
-    :type silo_component: Union[~azure.ai.ml.entities.PipelineJob, ~azure.ai.ml.entities.CommandComponent]
+    :paramtype silo_component: Union[~azure.ai.ml.entities.PipelineJob, ~azure.ai.ml.entities.CommandComponent]
     :keyword aggregation_component: A pipeline step which receives inputs from the myriad executed silo components,
         and does something with them. In a typical horizontal federated learning context, this component will merge
         the models that were independently trained on each silo's data in a single model. Can be either a
         PipelineJob or a CommandComponent.
-    :type aggregation_component: Union[
+    :paramtype aggregation_component: Union[
         ~azure.ai.ml.entities.PipelineJob,
         ~azure.ai.ml.entities.CommandComponent]
     :keyword aggregation_compute: The name of the compute that the aggregation component will use.
-    :type aggregation_compute: str
+    :paramtype aggregation_compute: str
     :keyword aggregation_datastore: The name of the datastore that the aggregation component will use.
-    :type aggregation_datastore: str
+    :paramtype aggregation_datastore: str
     :keyword shared_silo_kwargs: A dictionary of string keywords to component inputs. This dictionary is treated
         like kwargs and is injected into ALL executed silo components.
-    :type shared_silo_kwargs: Dict
+    :paramtype shared_silo_kwargs: Dict
     :keyword aggregation_kwargs: A dictionary of string keywords to component inputs. This dictionary is treated
         like kwargs and is injected into ALL executed aggregation components.
-    :type aggregation_kwargs: Dict
+    :paramtype aggregation_kwargs: Dict
     :keyword silo_to_aggregation_argument_map: A dictionary specifying the mapping of outputs from the silo step to
         inputs in the aggregation step. The keys should be output names from the silo step, and the values should be
         input names in the aggregation step. This allows for customization of the mapping between the steps.
-    :type silo_to_aggregation_argument_map: Dict
+    :paramtype silo_to_aggregation_argument_map: Dict
     :keyword aggregation_to_silo_argument_map: A dictionary specifying the mapping of outputs from the aggregation step
         to inputs in the silo step. The keys should be output names from the aggregation step, and the values should be
         input names in the silo step. This allows for customization of the mapping between the steps.
-    :type aggregation_to_silo_argument_map: Dict
+    :paramtype aggregation_to_silo_argument_map: Dict
     :keyword max_iterations: The maximum number of scatter gather iterations that should be performed.
-    :type max_iterations: int
+    :paramtype max_iterations: int
     :keyword _create_default_mappings_if_needed:
         If True, try to automatically create input/output mappings if they're unset.
-    :type _create_default_mappings_if_needed: bool
+    :paramtype _create_default_mappings_if_needed: bool
     :return: The federated learning scatter-gather subgraph node.
     :rtype: ~azure.ai.ml.entities._builders.fl_scatter_gather.FLScatterGather
 

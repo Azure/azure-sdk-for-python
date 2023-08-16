@@ -511,7 +511,7 @@ def get_type_from_spec(data: dict, *, valid_keys: Iterable[str]) -> str:
     :param data: The data
     :type data: dict
     :keyword valid_keys: An iterable of valid types
-    :type valid_keys: Iterable[str]
+    :paramtype valid_keys: Iterable[str]
     :return: The type of the node or component
     :rtype: str
     """

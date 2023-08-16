@@ -488,27 +488,27 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
         """Validates the inputs for the scatter-gather node.
 
         :keyword silo_configs: List of federated learning silo configurations.
-        :type silo_configs: List[~azure.ai.ml.entities._assets.federated_learning_silo.FederatedLearningSilo]
+        :paramtype silo_configs: List[~azure.ai.ml.entities._assets.federated_learning_silo.FederatedLearningSilo]
         :keyword silo_component: Component representing the silo for federated learning.
-        :type silo_component: ~azure.ai.ml.entities.Component
+        :paramtype silo_component: ~azure.ai.ml.entities.Component
         :keyword aggregation_component: Component representing the aggregation step.
-        :type aggregation_component: ~azure.ai.ml.entities.Component
+        :paramtype aggregation_component: ~azure.ai.ml.entities.Component
         :keyword shared_silo_kwargs: Keyword arguments shared across all silos.
-        :type shared_silo_kwargs: Dict
+        :paramtype shared_silo_kwargs: Dict
         :keyword aggregation_compute: The compute resource for the aggregation step.
-        :type aggregation_compute: str
+        :paramtype aggregation_compute: str
         :keyword aggregation_datastore: The datastore for the aggregation step.
-        :type aggregation_datastore: str
+        :paramtype aggregation_datastore: str
         :keyword aggregation_kwargs: Keyword arguments specific to the aggregation step.
-        :type aggregation_kwargs: Dict
+        :paramtype aggregation_kwargs: Dict
         :keyword silo_to_aggregation_argument_map: Mapping of silo to aggregation arguments.
-        :type silo_to_aggregation_argument_map: Dict
+        :paramtype silo_to_aggregation_argument_map: Dict
         :keyword aggregation_to_silo_argument_map: Mapping of aggregation to silo arguments.
-        :type aggregation_to_silo_argument_map: Dict
+        :paramtype aggregation_to_silo_argument_map: Dict
         :keyword max_iterations: The maximum number of iterations for the scatter-gather loop.
-        :type max_iterations: int
+        :paramtype max_iterations: int
         :keyword raise_error: Whether to raise an exception if validation fails. Defaults to False.
-        :type raise_error: bool
+        :paramtype raise_error: bool
         :return: The validation result.
         :rtype: ~azure.ai.ml.entities._validation.MutableValidationResult
         """

@@ -39,10 +39,10 @@ def classification(
 
     :keyword training_data: The training data to be used within the experiment.
             It should contain both training features and a label column (optionally a sample weights column).
-    :type training_data: Input
+    :paramtype training_data: Input
     :keyword target_column_name: The name of the label column.
             This parameter is applicable to ``training_data``, ``validation_data`` and ``test_data`` parameters
-    :type target_column_name: str
+    :paramtype target_column_name: str
     :keyword primary_metric: The metric that Automated Machine Learning will optimize for model selection.
             Automated Machine Learning collects more metrics than it can optimize.
             For more information on how metrics are calculated, see
@@ -57,19 +57,19 @@ def classification(
             The default is None. For more information, see
             `Interpretability: model explanations in automated machine learning
             <https://docs.microsoft.com/azure/machine-learning/how-to-machine-learning-interpretability-automl>`__.
-    :type enable_model_explainability: bool
+    :paramtype enable_model_explainability: bool
     :keyword weight_column_name: The name of the sample weight column. Automated ML supports a weighted column
             as an input, causing rows in the data to be weighted up or down.
             If the input data is from a pandas.DataFrame which doesn't have column names,
             column indices can be used instead, expressed as integers.
 
             This parameter is applicable to ``training_data`` and ``validation_data`` parameters
-    :type weight_column_name: str
+    :paramtype weight_column_name: str
     :keyword validation_data: The validation data to be used within the experiment.
             It should contain both training features and label column (optionally a sample weights column).
 
             Defaults to None
-    :type validation_data: Input
+    :paramtype validation_data: Input
     :keyword validation_data_size: What fraction of the data to hold out for validation when user validation data
             is not specified. This should be between 0.0 and 1.0 non-inclusive.
 
@@ -82,7 +82,7 @@ def classification(
             /azure/machine-learning/how-to-configure-cross-validation-data-splits>`__.
 
             Defaults to None
-    :type validation_data_size: float
+    :paramtype validation_data_size: float
     :keyword n_cross_validations: How many cross validations to perform when user validation data is not specified.
 
             Specify ``validation_data`` to provide validation data, otherwise set ``n_cross_validations`` or
@@ -94,13 +94,13 @@ def classification(
             /azure/machine-learning/how-to-configure-cross-validation-data-splits>`__.
 
             Defaults to None
-    :type n_cross_validations: Union[str, int]
+    :paramtype n_cross_validations: Union[str, int]
     :keyword cv_split_column_names: List of names of the columns that contain custom cross validation split.
             Each of the CV split columns represents one CV split where each row are either marked
             1 for training or 0 for validation.
 
             Defaults to None
-    :type cv_split_column_names: List[str]
+    :paramtype cv_split_column_names: List[str]
     :keyword test_data: The Model Test feature using test datasets or test data splits is a feature in
             Preview state and might change at any time.
             The test data to be used for a test run that will automatically be started after
@@ -113,7 +113,7 @@ def classification(
             If ``test_data`` is specified then the ``target_column_name`` parameter must be specified.
 
             Defaults to None
-    :type test_data: Input
+    :paramtype test_data: Input
     :keyword test_data_size: The Model Test feature using test datasets or test data splits is a feature in
             Preview state and might change at any time.
             What fraction of the training data to hold out for test data for a test run that will
@@ -134,7 +134,7 @@ def classification(
             no test run will be executed automatically after model training is completed.
 
             Defaults to None
-    :type test_data_size: float
+    :paramtype test_data_size: float
     :return: A job object that can be submitted to an Azure ML compute for execution.
     :rtype: ClassificationJob
     """
@@ -181,10 +181,10 @@ def regression(
 
     :keyword training_data: The training data to be used within the experiment.
             It should contain both training features and a label column (optionally a sample weights column).
-    :type training_data: Input
+    :paramtype training_data: Input
     :keyword target_column_name: The name of the label column.
             This parameter is applicable to ``training_data``, ``validation_data`` and ``test_data`` parameters
-    :type target_column_name: str
+    :paramtype target_column_name: str
     :keyword primary_metric: The metric that Automated Machine Learning will optimize for model selection.
             Automated Machine Learning collects more metrics than it can optimize.
             For more information on how metrics are calculated, see
@@ -199,19 +199,19 @@ def regression(
             The default is None. For more information, see
             `Interpretability: model explanations in automated machine learning
             <https://docs.microsoft.com/azure/machine-learning/how-to-machine-learning-interpretability-automl>`__.
-    :type enable_model_explainability: bool
+    :paramtype enable_model_explainability: bool
     :keyword weight_column_name: The name of the sample weight column. Automated ML supports a weighted column
             as an input, causing rows in the data to be weighted up or down.
             If the input data is from a pandas.DataFrame which doesn't have column names,
             column indices can be used instead, expressed as integers.
 
             This parameter is applicable to ``training_data`` and ``validation_data`` parameters
-    :type weight_column_name: str
+    :paramtype weight_column_name: str
     :keyword validation_data: The validation data to be used within the experiment.
             It should contain both training features and label column (optionally a sample weights column).
 
             Defaults to None
-    :type validation_data: Input
+    :paramtype validation_data: Input
     :keyword validation_data_size: What fraction of the data to hold out for validation when user validation data
             is not specified. This should be between 0.0 and 1.0 non-inclusive.
 
@@ -224,7 +224,7 @@ def regression(
             /azure/machine-learning/how-to-configure-cross-validation-data-splits>`__.
 
             Defaults to None
-    :type validation_data_size: float
+    :paramtype validation_data_size: float
     :keyword n_cross_validations: How many cross validations to perform when user validation data is not specified.
 
             Specify ``validation_data`` to provide validation data, otherwise set ``n_cross_validations`` or
@@ -236,13 +236,13 @@ def regression(
             /azure/machine-learning/how-to-configure-cross-validation-data-splits>`__.
 
             Defaults to None
-    :type n_cross_validations: Union[str, int]
+    :paramtype n_cross_validations: Union[str, int]
     :keyword cv_split_column_names: List of names of the columns that contain custom cross validation split.
             Each of the CV split columns represents one CV split where each row are either marked
             1 for training or 0 for validation.
 
             Defaults to None
-    :type cv_split_column_names: List[str]
+    :paramtype cv_split_column_names: List[str]
     :keyword test_data: The Model Test feature using test datasets or test data splits is a feature in
             Preview state and might change at any time.
             The test data to be used for a test run that will automatically be started after
@@ -255,7 +255,7 @@ def regression(
             If ``test_data`` is specified then the ``target_column_name`` parameter must be specified.
 
             Defaults to None
-    :type test_data: Input
+    :paramtype test_data: Input
     :keyword test_data_size: The Model Test feature using test datasets or test data splits is a feature in
             Preview state and might change at any time.
             What fraction of the training data to hold out for test data for a test run that will
@@ -277,7 +277,7 @@ def regression(
             no test run will be executed automatically after model training is completed.
 
             Defaults to None
-    :type test_data_size: float
+    :paramtype test_data_size: float
     :return: A job object that can be submitted to an Azure ML compute for execution.
     :rtype: RegressionJob
     """
@@ -323,10 +323,10 @@ def forecasting(
 
     :keyword training_data: The training data to be used within the experiment.
             It should contain both training features and a label column (optionally a sample weights column).
-    :type training_data: Input
+    :paramtype training_data: Input
     :keyword target_column_name: The name of the label column.
             This parameter is applicable to ``training_data``, ``validation_data`` and ``test_data`` parameters
-    :type target_column_name: str
+    :paramtype target_column_name: str
     :keyword primary_metric: The metric that Automated Machine Learning will optimize for model selection.
             Automated Machine Learning collects more metrics than it can optimize.
             For more information on how metrics are calculated, see
@@ -340,19 +340,19 @@ def forecasting(
             The default is None. For more information, see
             `Interpretability: model explanations in automated machine learning
             <https://docs.microsoft.com/azure/machine-learning/how-to-machine-learning-interpretability-automl>`__.
-    :type enable_model_explainability: bool
+    :paramtype enable_model_explainability: bool
     :keyword weight_column_name: The name of the sample weight column. Automated ML supports a weighted column
             as an input, causing rows in the data to be weighted up or down.
             If the input data is from a pandas.DataFrame which doesn't have column names,
             column indices can be used instead, expressed as integers.
 
             This parameter is applicable to ``training_data`` and ``validation_data`` parameters
-    :type weight_column_name: str
+    :paramtype weight_column_name: str
     :keyword validation_data: The validation data to be used within the experiment.
             It should contain both training features and label column (optionally a sample weights column).
 
             Defaults to None
-    :type validation_data: Input
+    :paramtype validation_data: Input
     :keyword validation_data_size: What fraction of the data to hold out for validation when user validation data
             is not specified. This should be between 0.0 and 1.0 non-inclusive.
 
@@ -365,7 +365,7 @@ def forecasting(
             /azure/machine-learning/how-to-configure-cross-validation-data-splits>`__.
 
             Defaults to None
-    :type validation_data_size: float
+    :paramtype validation_data_size: float
     :keyword n_cross_validations: How many cross validations to perform when user validation data is not specified.
 
             Specify ``validation_data`` to provide validation data, otherwise set ``n_cross_validations`` or
@@ -377,13 +377,13 @@ def forecasting(
             /azure/machine-learning/how-to-configure-cross-validation-data-splits>`__.
 
             Defaults to None
-    :type n_cross_validations: Union[str, int]
+    :paramtype n_cross_validations: Union[str, int]
     :keyword cv_split_column_names: List of names of the columns that contain custom cross validation split.
             Each of the CV split columns represents one CV split where each row are either marked
             1 for training or 0 for validation.
 
             Defaults to None
-    :type cv_split_column_names: List[str]
+    :paramtype cv_split_column_names: List[str]
     :keyword test_data: The Model Test feature using test datasets or test data splits is a feature in
             Preview state and might change at any time.
             The test data to be used for a test run that will automatically be started after
@@ -396,7 +396,7 @@ def forecasting(
             If ``test_data`` is specified then the ``target_column_name`` parameter must be specified.
 
             Defaults to None
-    :type test_data: Input
+    :paramtype test_data: Input
     :keyword test_data_size: The Model Test feature using test datasets or test data splits is a feature in
             Preview state and might change at any time.
             What fraction of the training data to hold out for test data for a test run that will
@@ -418,9 +418,9 @@ def forecasting(
             no test run will be executed automatically after model training is completed.
 
             Defaults to None
-    :type test_data_size: float
+    :paramtype test_data_size: float
     :keyword forecasting_settings: The settings for the forecasting task
-    :type forecasting_settings: ForecastingSettings
+    :paramtype forecasting_settings: ForecastingSettings
     :return: A job object that can be submitted to an Azure ML compute for execution.
     :rtype: ForecastingJob
     """
