@@ -127,7 +127,10 @@ class WorkspaceOperationsBase:
                     workspace.customer_managed_key,
                 ]
             ):
-                msg = "To create a project workspace with a workspace hub, please only specify name, description, display_name, location, application insight and identity"
+                msg = (
+                    "To create a project workspace with a workspace hub, please only specify name, description, "
+                    + "display_name, location, application insight and identity"
+                )
                 raise ValidationException(
                     message=msg,
                     target=ErrorTarget.WORKSPACE,

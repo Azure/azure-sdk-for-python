@@ -62,8 +62,8 @@ class ComputeInstanceSshSettings:
     def admin_username(self) -> str:
         """The name of the administrator user account which can be used to SSH into nodes.
 
-        return: The name of the administrator user account.
-        rtype: str
+        :return: The name of the administrator user account.
+        :rtype: str
         """
         return self._admin_username
 
@@ -71,8 +71,8 @@ class ComputeInstanceSshSettings:
     def ssh_port(self) -> str:
         """SSH port.
 
-        return: SSH port.
-        rtype: str
+        :return: SSH port.
+        :rtype: str
         """
         return self._ssh_port
 
@@ -200,8 +200,8 @@ class ComputeInstance(Compute):
     def services(self) -> List[Dict[str, str]]:
         """
 
-        return: The services for the compute instance.
-        rtype: List[Dict[str, str]]
+        :return: The services for the compute instance.
+        :rtype: List[Dict[str, str]]
         """
         return self._services
 
@@ -209,8 +209,8 @@ class ComputeInstance(Compute):
     def last_operation(self) -> Dict[str, str]:
         """The last operation.
 
-        return: The last operation.
-        rtype: str
+        :return: The last operation.
+        :rtype: str
         """
         return self._last_operation
 
@@ -218,8 +218,8 @@ class ComputeInstance(Compute):
     def state(self) -> str:
         """The state of the compute.
 
-        return: The state of the compute.
-        rtype: str
+        :return: The state of the compute.
+        :rtype: str
         """
         return self._state
 
@@ -227,8 +227,8 @@ class ComputeInstance(Compute):
     def os_image_metadata(self) -> ImageMetadata:
         """Metadata about the operating system image for this compute instance.
 
-        return: Operating system image metadata.
-        rtype: ImageMetadata
+        :return: Operating system image metadata.
+        :rtype: ImageMetadata
         """
         return self._os_image_metadata
 

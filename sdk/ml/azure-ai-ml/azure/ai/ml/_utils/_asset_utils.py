@@ -17,9 +17,9 @@ from pathlib import Path
 from platform import system
 from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Optional, Tuple, Union, cast
 
-from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 from colorama import Fore
 from tqdm import TqdmWarning, tqdm
+from typing_extensions import Literal
 
 from azure.ai.ml._artifacts._constants import (
     AML_IGNORE_FILE_NAME,
@@ -66,6 +66,7 @@ from azure.ai.ml.exceptions import (
     ValidationErrorType,
     ValidationException,
 )
+from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 
 if TYPE_CHECKING:
     from azure.ai.ml.operations import ComponentOperations, DataOperations, EnvironmentOperations, ModelOperations
@@ -80,7 +81,7 @@ class AssetNotChangedError(Exception):
 
 
 class IgnoreFile(object):
-    def __init__(self, file_path: Optional[Union[str, Path]] = None):
+    def __init__(self, file_path: Optional[Union[str, os.PathLike]] = None):
         """Base class for handling .gitignore and .amlignore files.
 
         :param file_path: Relative path, or absolute path to the ignore file.
@@ -90,7 +91,10 @@ class IgnoreFile(object):
         self._path_spec = None
 
     def exists(self) -> bool:
-        """Checks if ignore file exists."""
+        """Checks if ignore file exists.
+        :return: True if file exists. False Otherwise
+        :rtype: bool
+        """
         return self._file_exists()
 
     def _file_exists(self) -> bool:
@@ -101,7 +105,11 @@ class IgnoreFile(object):
         return self._path.parent
 
     def _get_ignore_list(self) -> List[str]:
-        """Get ignore list from ignore file contents."""
+        """Get ignore list from ignore file contents.
+
+        :return: The lines of the ignore file
+        :rtype: List[str]
+        """
         if not self.exists():
             return []
         if self._file_exists():
@@ -110,11 +118,21 @@ class IgnoreFile(object):
         return []
 
     def _create_pathspec(self) -> List[GitWildMatchPattern]:
-        """Creates path specification based on ignore list."""
+        """Creates path specification based on ignore list.
+
+        :return: Path specification
+        :rtype: List[GitWildMatchPattern]
+        """
         return [GitWildMatchPattern(ignore) for ignore in self._get_ignore_list()]
 
-    def _get_rel_path(self, file_path: Union[str, Path]) -> Optional[str]:
-        """Get relative path of given file_path."""
+    def _get_rel_path(self, file_path: Union[str, os.PathLike]) -> Optional[str]:
+        """Get relative path of given file_path.
+
+        :param file_path: A file path
+        :type file_path: Union[str, os.PathLike]
+        :return: file_path relative to base_path, if computable. None otherwise
+        :rtype: Optional[str]
+        """
         file_path = Path(file_path).absolute()
         try:
             # use os.path.relpath instead of Path.relative_to in case file_path is not a child of self.base_path
@@ -123,10 +141,13 @@ class IgnoreFile(object):
             # 2 paths are on different drives
             return None
 
-    def is_file_excluded(self, file_path: Union[str, Path]) -> bool:
+    def is_file_excluded(self, file_path: Union[str, os.PathLike]) -> bool:
         """Checks if given file_path is excluded.
 
         :param file_path: File path to be checked against ignore file specifications
+        :type file_path: Union[str, os.PathLike]
+        :return: Whether the file is excluded by ignore file
+        :rtype: bool
         """
         # TODO: current design of ignore file can't distinguish between files and directories of the same name
         if self._path_spec is None:
@@ -163,7 +184,7 @@ class GitIgnoreFile(IgnoreFile):
         super(GitIgnoreFile, self).__init__(file_path)
 
 
-def get_ignore_file(directory_path: Union[Path, str]) -> Optional[IgnoreFile]:
+def get_ignore_file(directory_path: Union[Path, str]) -> IgnoreFile:
     """Finds and returns IgnoreFile object based on ignore file found in directory_path.
 
     .amlignore takes precedence over .gitignore and if no file is found, an empty
@@ -172,6 +193,9 @@ def get_ignore_file(directory_path: Union[Path, str]) -> Optional[IgnoreFile]:
     The ignore file must be in the root directory.
 
     :param directory_path: Path to the (root) directory where ignore file is located
+    :type directory_path: Union[Path, str]
+    :return: The IgnoreFile found in the directory
+    :rtype: IgnoreFile
     """
     aml_ignore = AmlIgnoreFile(directory_path)
     git_ignore = GitIgnoreFile(directory_path)
@@ -210,14 +234,14 @@ def _parse_name_version(
     return ":".join(name), version
 
 
-def _get_file_hash(filename: Union[str, Path], _hash: hash_type) -> hash_type:
+def _get_file_hash(filename: Union[str, os.PathLike], _hash: hash_type) -> hash_type:
     with open(str(filename), "rb") as f:
         for chunk in iter(lambda: f.read(CHUNK_SIZE), b""):
             _hash.update(chunk)
     return _hash
 
 
-def _get_dir_hash(directory: Union[str, Path], _hash: hash_type, ignore_file: IgnoreFile) -> hash_type:
+def _get_dir_hash(directory: Union[str, os.PathLike], _hash: hash_type, ignore_file: IgnoreFile) -> hash_type:
     dir_contents = Path(directory).iterdir()
     sorted_contents = sorted(dir_contents, key=lambda path: str(path).lower())
     for path in sorted_contents:
@@ -238,6 +262,13 @@ def _build_metadata_dict(name: str, version: str) -> Dict[str, str]:
 
     Metadata includes an upload confirmation field, and for code uploads only, the name and version of the code asset
     being created for that data.
+
+    :param name: The name of the uploaded data
+    :type name: str
+    :param version: The version of the uploaded data
+    :type version: str
+    :return: Metadata dict
+    :rtype: Dict[str, str]
     """
     if name:
         linked_asset_arm_id = {"name": name, "version": version}
@@ -255,7 +286,7 @@ def _build_metadata_dict(name: str, version: str) -> Dict[str, str]:
     return metadata_dict
 
 
-def get_object_hash(path: Union[str, Path], ignore_file: IgnoreFile = IgnoreFile()) -> str:
+def get_object_hash(path: Union[str, os.PathLike], ignore_file: IgnoreFile = IgnoreFile()) -> str:
     _hash = hashlib.md5(b"Initialize for october 2021 AML CLI version")  # nosec
     if Path(path).is_dir():
         object_hash = _get_dir_hash(directory=path, _hash=_hash, ignore_file=ignore_file)
@@ -270,8 +301,11 @@ def get_content_hash_version():
     return 202208
 
 
-def get_content_hash(path: Union[str, Path], ignore_file: IgnoreFile = IgnoreFile()) -> str:
-    """Generating sha256 hash for file/folder, e.g. Code snapshot fingerprints to prevent tampering.
+def get_content_hash(path: Union[str, os.PathLike], ignore_file: IgnoreFile = IgnoreFile()) -> Optional[str]:
+    """Generating sha256 hash for file/folder,
+
+    e.g. Code snapshot fingerprints to prevent tampering.
+
     The process of hashing is:
     1. If it's a link, get the actual path of the link.
     2. If it's a file, append file content.
@@ -289,6 +323,13 @@ def get_content_hash(path: Union[str, Path], ignore_file: IgnoreFile = IgnoreFil
             ('/mnt/c/codehash/code/Folder2/folder1/file1.txt', 'Folder2/folder1/file1.txt')
         ]
     4. Hash the content and convert to hex digest string.
+
+    :param path: The directory to calculate the size of
+    :type path: Union[str, os.PathLike]
+    :param ignore_file: An ignore file that specifies files to ignore when computing the size
+    :type ignore_file: IgnoreFile, optional
+    :return: The content hash if the content is a link, directory, or file. None otherwise
+    :rtype: Optional[str]
     """
     # DO NOT change this function unless you change the verification logic together
     actual_path = path
@@ -302,7 +343,7 @@ def get_content_hash(path: Union[str, Path], ignore_file: IgnoreFile = IgnoreFil
 
 
 def get_upload_files_from_folder(
-    path: Union[str, Path], *, prefix: str = "", ignore_file: IgnoreFile = IgnoreFile()
+    path: Union[str, os.PathLike], *, prefix: str = "", ignore_file: IgnoreFile = IgnoreFile()
 ) -> List[str]:
     path = Path(path)
     upload_paths = []
@@ -340,12 +381,14 @@ def _get_file_list_content_hash(file_list) -> str:
     return str(_hash.hexdigest())
 
 
-def traverse_directory(
+def traverse_directory(  # pylint: disable=unused-argument
     root: str,
     files: List[str],
     *,
     prefix: str,
     ignore_file: IgnoreFile = IgnoreFile(),
+    # keep this for backward compatibility
+    **kwargs: Any,
 ) -> Iterable[Tuple[str, Union[str, Any]]]:
     """Enumerate all files in the given directory and compose paths for them to be uploaded to in the remote storage.
     e.g.
@@ -360,9 +403,9 @@ def traverse_directory(
     :type root: str
     :param files: List of all file paths in the directory
     :type files: List[str]
-    :param prefix: Remote upload path for project directory (e.g. LocalUpload/<guid>/project_dir)
+    :keyword prefix: Remote upload path for project directory (e.g. LocalUpload/<guid>/project_dir)
     :type prefix: str
-    :param ignore_file: The .amlignore or .gitignore file in the project directory
+    :keyword ignore_file: The .amlignore or .gitignore file in the project directory
     :type ignore_file: azure.ai.ml._utils._asset_utils.IgnoreFile
     :return: Zipped list of tuples representing the local path and remote destination path for each file
     :rtype: Iterable[Tuple[str, Union[str, Any]]]
@@ -404,11 +447,20 @@ def generate_asset_id(asset_hash: str, include_directory=True) -> str:
     return asset_id
 
 
-def get_directory_size(root: os.PathLike, ignore_file: IgnoreFile = IgnoreFile(None)) -> Tuple[int, Dict[str, int]]:
+def get_directory_size(
+    root: Union[str, os.PathLike], ignore_file: IgnoreFile = IgnoreFile(None)
+) -> Tuple[int, Dict[str, int]]:
     """Returns total size of a directory and a dictionary itemizing each sub- path and its size.
 
     If an optional ignore_file argument is provided, then files specified in the ignore file are not included in the
     directory size calculation.
+
+    :param root: The directory to calculate the size of
+    :type root: Union[str, os.PathLike]
+    :param ignore_file: An ignore file that specifies files to ignore when computing the size
+    :type ignore_file: IgnoreFile, optional
+    :return: The computed size of the directory, and the sizes of the child paths
+    :rtype: Tuple[int, Dict[str, int]]
     """
     total_size = 0
     size_list = {}
@@ -526,7 +578,7 @@ def upload_file(
 
 def upload_directory(
     storage_client: Union["BlobStorageClient", "Gen2StorageClient"],
-    source: str,
+    source: Union[str, os.PathLike],
     dest: str,
     msg: str,
     show_progress: bool,
@@ -539,7 +591,7 @@ def upload_directory(
         azure.ai.ml._artifacts._blob_storage_helper.BlobStorageClient,
         azure.ai.ml._artifacts._gen2_storage_helper.Gen2StorageClient]
     :param source: Local path to project directory
-    :type source: str
+    :type source: Union[str, os.PathLike]
     :param dest: Remote upload path for project directory (e.g. LocalUpload/<guid>/project_dir)
     :type dest: str
     :param msg: Message to be shown with progress bar (e.g. "Uploading <source>")
@@ -750,12 +802,27 @@ def _get_latest(
     resource_group_name: str,
     workspace_name: Optional[str] = None,
     registry_name: Optional[str] = None,
-    order_by: str = OrderString.CREATED_AT_DESC,
+    order_by: Literal[OrderString.CREATED_AT, OrderString.CREATED_AT_DESC] = OrderString.CREATED_AT_DESC,
     **kwargs,
 ) -> Union[ModelVersionData, DataVersionBaseData]:
-    """Returns the latest version of the asset with the given name.
+    """Retrieve the latest version of the asset with the given name.
 
     Latest is defined as the most recently created, not the most recently updated.
+
+    :param asset_name: The asset name
+    :type asset_name: str
+    :param version_operation: Any
+    :type version_operation: Any
+    :param resource_group_name: The resource group name
+    :type resource_group_name: str
+    :param workspace_name: The workspace name
+    :type workspace_name: Optional[str], optional
+    :param registry_name: The registry name
+    :type registry_name: Optional[str], optional
+    :param order_by: Specifies how to order the results. Defaults to :attr:`OrderString.CREATED_AT_DESC`
+    :type order_by: Literal[OrderString.CREATED_AT, OrderString.CREATED_AT_DESC], optional
+    :return: The latest version of the requested asset
+    :rtype: Union[ModelVersionData, DataVersionBaseData]
     """
     result = (
         version_operation.list(
@@ -915,6 +982,15 @@ def _resolve_label_to_asset(
     """Returns the asset referred to by the given label.
 
     Throws if label does not refer to a version of the named asset
+
+    :param assetOperations: The operations class used to retrieve the asset
+    :type assetOperations: Union["DataOperations", "ComponentOperations", "EnvironmentOperations", "ModelOperations"]
+    :param name: The name of the asset
+    :type name: str
+    :param label: The label to resolve
+    :type label: str
+    :return: The requested asset
+    :rtype: Asset
     """
 
     resolver = assetOperations._managed_label_resolver.get(label, None)
@@ -1001,16 +1077,21 @@ class DirectoryUploadProgressBar(tqdm):
 
 
 def get_storage_info_for_non_registry_asset(
-    service_client, workspace_name, name, version, resource_group
+    service_client, workspace_name: str, name: str, version: str, resource_group: str
 ) -> Dict[str, str]:
-    """Get SAS uri and blob uri for non-registry asset.
+    """Get SAS uri and blob uri for non-registry asset. Note that this function won't return the same
+    SAS uri and blob uri for the same asset. It will return a new SAS uri and blob uri every time it is called.
     :param service_client: Service client
     :type service_client: AzureMachineLearningWorkspaces
+    :param workspace_name: The workspace name
+    :type workspace_name: str
     :param name: Asset name
     :type name: str
     :param version: Asset version
     :type version: str
     :param resource_group: Resource group
+    :type resource_group: str
+    :return: The sas_uri and blob_uri
     :rtype: Dict[str, str]
     """
     request_body = PendingUploadRequestDto(pending_upload_type="TemporaryBlobReference")

@@ -13,13 +13,19 @@ from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace
 
 from azure.ai.ml._restclient.v2023_06_01_preview import AzureMachineLearningWorkspaces as ServiceClient062023Preview
+from azure.ai.ml._restclient.v2023_06_01_preview.models import ManagedNetworkProvisionOptions
 from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml.constants import ManagedServiceIdentityType
 from azure.ai.ml.constants._common import Scope
-from azure.ai.ml.entities import IdentityConfiguration, ManagedIdentityConfiguration, WorkspaceConnection
+from azure.ai.ml.entities import (
+    IdentityConfiguration,
+    ManagedIdentityConfiguration,
+    WorkspaceConnection,
+    ManagedNetworkProvisionStatus,
+)
 from azure.ai.ml.entities._feature_store._constants import (
     FEATURE_STORE_KIND,
     OFFLINE_MATERIALIZATION_STORE_TYPE,
@@ -56,6 +62,7 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
         **kwargs: Dict,
     ):
         ops_logger.update_info(kwargs)
+        self._provision_network_operation = service_client.managed_network_provisions
         super().__init__(
             operation_scope=operation_scope,
             service_client=service_client,
@@ -455,3 +462,32 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
             raise ValidationError("{0} is not a feature store".format(name))
 
         return super().begin_delete(name=name, delete_dependent_resources=delete_dependent_resources, **kwargs)
+
+    @distributed_trace
+    @monitor_with_activity(logger, "FeatureStore.BeginProvisionNetwork", ActivityType.PUBLICAPI)
+    def begin_provision_network(
+        self,
+        *,
+        feature_store_name: Optional[str] = None,
+        **kwargs,
+    ) -> LROPoller[ManagedNetworkProvisionStatus]:
+        """Triggers the feature store to provision the managed network. Specifying spark enabled
+        as true prepares the feature store managed network for supporting Spark.
+
+        :keyword feature_store_name: Name of the feature store.
+        :type feature_store_name: str
+        :return: An instance of LROPoller.
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.ManagedNetworkProvisionStatus]
+        """
+        workspace_name = self._check_workspace_name(feature_store_name)
+
+        poller = self._provision_network_operation.begin_provision_managed_network(
+            self._resource_group_name,
+            workspace_name,
+            ManagedNetworkProvisionOptions(),
+            polling=True,
+            cls=lambda response, deserialized, headers: ManagedNetworkProvisionStatus._from_rest_object(deserialized),
+            **kwargs,
+        )
+        module_logger.info("Provision network request initiated for feature store: %s\n", workspace_name)
+        return poller

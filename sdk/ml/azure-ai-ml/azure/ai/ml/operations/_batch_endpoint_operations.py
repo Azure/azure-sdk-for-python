@@ -26,7 +26,7 @@ from azure.ai.ml._scope_dependent_operations import (
 )
 
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
-from azure.ai.ml._utils._arm_id_utils import get_datastore_arm_id, is_ARM_id_for_resource, remove_aml_prefix
+from azure.ai.ml._utils._arm_id_utils import is_ARM_id_for_resource, remove_aml_prefix
 from azure.ai.ml._utils._azureml_polling import AzureMLPolling
 from azure.ai.ml._utils._endpoint_utils import validate_response, convert_v1_dataset_to_v2
 from azure.ai.ml._utils._http_utils import HttpPipeline
@@ -190,6 +190,7 @@ class BatchEndpointOperations(_ScopeDependentOperations):
                 body=endpoint_resource,
                 polling=True,
                 **self._init_kwargs,
+                cls=lambda response, deserialized, headers: BatchEndpoint._from_rest_object(deserialized),
             )
             return poller
 
