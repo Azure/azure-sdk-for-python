@@ -29,11 +29,13 @@ class BlobCheckpointStore(CheckpointStore):
     :param container_name:
         The name of the container for the blobs.
     :type container_name: str
-    :param str or ~azure.core.credentials_async.AsyncTokenCredential or None credential:
+    :param credential:
         The credentials with which to authenticate. This is optional if the
         account URL already has a SAS token. The value can be a SAS token string, an account
         shared access key, or an instance of a TokenCredentials class from azure.identity.
         If the URL already has a SAS token, specifying an explicit credential will take priority.
+    :type credential: ~azure.core.credentials_async.AsyncTokenCredential or 
+     ~azure.core.credentials.AzureSasCredential or ~azure.core.credentials.AzureNamedKeyCredential or None
     :keyword str api_version:
             The Storage API version to use for requests. Default value is '2019-07-07'.
     :keyword str secondary_hostname:
@@ -68,12 +70,14 @@ class BlobCheckpointStore(CheckpointStore):
         :param container_name:
             The container name for the blobs.
         :type container_name: str
-        :keyword str or ~azure.core.credentials_async.AsyncTokenCredential or None credential:
+        :keyword credential:
             The credentials with which to authenticate. This is optional if the
             account URL already has a SAS token, or the connection string already has shared
             access key values. The value can be a SAS token string, an account shared access
             key, or an instance of a TokenCredentials class from azure.identity.
             Credentials provided here will take precedence over those in the connection string.
+        :type credential: ~azure.core.credentials_async.AsyncTokenCredential or
+         ~azure.core.credentials.AzureSasCredential or ~azure.core.credentials.AzureNamedKeyCredential or None
         :keyword str api_version:
             The Storage API version to use for requests. Default value is '2019-07-07'.
         :keyword str secondary_hostname:
