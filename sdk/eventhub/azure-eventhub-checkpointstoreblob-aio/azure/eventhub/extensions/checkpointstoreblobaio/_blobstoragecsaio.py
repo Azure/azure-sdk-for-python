@@ -29,7 +29,7 @@ class BlobCheckpointStore(CheckpointStore):
     :param container_name:
         The name of the container for the blobs.
     :type container_name: str
-    :param credential:
+    :param str or ~azure.core.credentials_async.AsyncTokenCredential or None credential:
         The credentials with which to authenticate. This is optional if the
         account URL already has a SAS token. The value can be a SAS token string, an account
         shared access key, or an instance of a TokenCredentials class from azure.identity.
@@ -68,7 +68,7 @@ class BlobCheckpointStore(CheckpointStore):
         :param container_name:
             The container name for the blobs.
         :type container_name: str
-        :keyword any credential:
+        :keyword str or ~azure.core.credentials_async.AsyncTokenCredential or None credential:
             The credentials with which to authenticate. This is optional if the
             account URL already has a SAS token, or the connection string already has shared
             access key values. The value can be a SAS token string, an account shared access
