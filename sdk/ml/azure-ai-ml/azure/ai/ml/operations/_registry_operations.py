@@ -53,7 +53,7 @@ class RegistryOperations:
         """List all registries that the user has access to in the current resource group or subscription.
 
         :keyword scope: scope of the listing, "resource_group" or "subscription", defaults to "resource_group"
-        :type scope: str, optional
+        :paramtype scope: str
         :return: An iterator like instance of Registry objects
         :rtype: ~azure.core.paging.ItemPaged[Registry]
         """
@@ -149,7 +149,7 @@ class RegistryOperations:
         """Delete a registry if it exists. Returns nothing on a successful operation.
 
         :keyword name: Name of the registry
-        :type name: str
+        :paramtype name: str
         :return: A poller to track the operation status.
         :rtype: LROPoller
         """

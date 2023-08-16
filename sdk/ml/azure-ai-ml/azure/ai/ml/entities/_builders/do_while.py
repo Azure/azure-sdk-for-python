@@ -37,7 +37,7 @@ class DoWhile(LoopNode):
     :type mapping: dict[Union[str, ~azure.ai.ml.entities.Output],
         Union[str, ~azure.ai.ml.entities.Input, list]]
     :param limits: Limits in running the do-while node.
-    :type limits: Union[dict, ~azure.ai.ml.entities._job.job_limits.DoWhileJobLimits], optional
+    :type limits: Union[dict, ~azure.ai.ml.entities._job.job_limits.DoWhileJobLimits]
     :raises ValidationError: If the initialization parameters are not of valid types.
     """
 
@@ -205,7 +205,7 @@ class DoWhile(LoopNode):
         The range of the iteration count is (0, 1000].
 
         :keyword max_iteration_count: The maximum iteration count for the do-while job.
-        :type max_iteration_count: int
+        :paramtype max_iteration_count: int
         """
         if isinstance(self.limits, DoWhileJobLimits):
             self.limits._max_iteration_count = max_iteration_count  # pylint: disable=protected-access

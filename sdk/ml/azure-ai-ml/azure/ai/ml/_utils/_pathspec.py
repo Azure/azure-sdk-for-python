@@ -562,7 +562,7 @@ def normalize_file(file: Union[str, os.PathLike], separators: Optional[Iterable[
     :param separators: The path separators to normalize. This does not need to include the POSIX path separator
         (``'/'``), but including it will not affect the results. Default is :data:`None` for
         :data:`NORMALIZE_PATH_SEPS`. To prevent normalization, pass an empty container (e.g., an empty tuple ``()``).
-    :type separators: Optional[Iterable[str]], optional
+    :type separators: Optional[Iterable[str]]
     :return: The normalized file path.
     :rtype: str
     """

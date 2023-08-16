@@ -231,7 +231,7 @@ class ComponentTranslatableMixin:
         :param input: The input
         :type input: Union[Input, str, bool, int, float]
         :param pipeline_job_dict: The pipeline job dict
-        :type pipeline_job_dict: Optional[dict], optional
+        :type pipeline_job_dict: Optional[dict]
         :return: The Component Input
         :rtype: Input
         """
@@ -306,7 +306,7 @@ class ComponentTranslatableMixin:
         :param output: The output
         :type output: Union[Output, str, bool, int, float]
         :param pipeline_job_dict: The pipeline job dict
-        :type pipeline_job_dict: Optional[dict], optional
+        :type pipeline_job_dict: Optional[dict]
         :return: The output object
         :rtype: Output
         """
@@ -381,7 +381,7 @@ class ComponentTranslatableMixin:
         """Translate to Component.
 
         :param context: The context
-        :type context: Optional[context], optional
+        :type context: Optional[context]
         :return: Translated Component.
         :rtype: Component
         """
@@ -393,7 +393,7 @@ class ComponentTranslatableMixin:
         """Translate to pipeline node.
 
         :param context: The context
-        :type context: Optional[context], optional
+        :type context: Optional[context]
         :keyword kwargs:
         :return: Translated node.
         :rtype: BaseNode

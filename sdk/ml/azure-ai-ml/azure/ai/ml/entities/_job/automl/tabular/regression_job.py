@@ -34,7 +34,7 @@ class RegressionJob(AutoMLTabular):
         """Initialize a new AutoML Regression task.
 
         :param primary_metric: The primary metric to use for optimization
-        :type primary_metric: str, optional
+        :type primary_metric: str
         :param kwargs: Job-specific arguments
         :type kwargs: dict
         """

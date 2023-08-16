@@ -30,19 +30,19 @@ def text_classification(
 
     :keyword training_data: The training data to be used within the experiment.
             It should contain both training features and a target column.
-    :type training_data: Input
+    :paramtype training_data: Input
     :keyword target_column_name: Name of the target column.
-    :type target_column_name: str
+    :paramtype target_column_name: str
     :keyword validation_data: The validation data to be used within the experiment.
             It should contain both training features and a target column.
-    :type validation_data: Input
+    :paramtype validation_data: Input
     :keyword primary_metric: Primary metric for the task.
             Acceptable values: accuracy, AUC_weighted, precision_score_weighted
-    :type primary_metric: Union[str, ClassificationPrimaryMetrics]
+    :paramtype primary_metric: Union[str, ClassificationPrimaryMetrics]
     :keyword log_verbosity: Log verbosity level.
-    :type log_verbosity: str
+    :paramtype log_verbosity: str
     :keyword kwargs: A dictionary of additional configuration parameters.
-    :type kwargs: dict
+    :paramtype kwargs: dict
 
     :return: The TextClassificationJob object.
     :rtype: TextClassificationJob
@@ -79,19 +79,19 @@ def text_classification_multilabel(
 
     :keyword training_data: The training data to be used within the experiment.
             It should contain both training features and a target column.
-    :type training_data: Input
+    :paramtype training_data: Input
     :keyword target_column_name: Name of the target column.
-    :type target_column_name: str
+    :paramtype target_column_name: str
     :keyword validation_data: The validation data to be used within the experiment.
             It should contain both training features and a target column.
-    :type validation_data: Input
+    :paramtype validation_data: Input
     :keyword primary_metric: Primary metric for the task.
             Acceptable values: accuracy
-    :type primary_metric: str
+    :paramtype primary_metric: str
     :keyword log_verbosity: Log verbosity level.
-    :type log_verbosity: str
+    :paramtype log_verbosity: str
     :keyword kwargs: A dictionary of additional configuration parameters.
-    :type kwargs: dict
+    :paramtype kwargs: dict
 
     :return: The TextClassificationMultilabelJob object.
     :rtype: TextClassificationMultilabelJob
@@ -127,17 +127,17 @@ def text_ner(
 
     :keyword training_data: The training data to be used within the experiment.
             It should contain both training features and a target column.
-    :type training_data: Input
+    :paramtype training_data: Input
     :keyword validation_data: The validation data to be used within the experiment.
             It should contain both training features and a target column.
-    :type validation_data: Input
+    :paramtype validation_data: Input
     :keyword primary_metric: Primary metric for the task.
             Acceptable values: accuracy
-    :type primary_metric: str
+    :paramtype primary_metric: str
     :keyword log_verbosity: Log verbosity level.
-    :type log_verbosity: str
+    :paramtype log_verbosity: str
     :keyword kwargs: A dictionary of additional configuration parameters.
-    :type kwargs: dict
+    :paramtype kwargs: dict
 
     :return: The TextNerJob object.
     :rtype: TextNerJob

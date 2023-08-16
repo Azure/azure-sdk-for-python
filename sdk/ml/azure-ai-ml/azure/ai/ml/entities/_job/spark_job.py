@@ -49,66 +49,66 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
     """A standalone Spark job.
 
     :keyword driver_cores: The number of cores to use for the driver process, only in cluster mode.
-    :type driver_cores: Optional[int]
+    :paramtype driver_cores: Optional[int]
     :keyword driver_memory: The amount of memory to use for the driver process, formatted as strings with a size unit
         suffix ("k", "m", "g" or "t") (e.g. "512m", "2g").
-    :type driver_memory: Optional[str]
+    :paramtype driver_memory: Optional[str]
     :keyword executor_cores: The number of cores to use on each executor.
-    :type executor_cores: Optional[int]
+    :paramtype executor_cores: Optional[int]
     :keyword executor_memory: The amount of memory to use per executor process, formatted as strings with a size unit
         suffix ("k", "m", "g" or "t") (e.g. "512m", "2g").
-    :type executor_memory: Optional[str]
+    :paramtype executor_memory: Optional[str]
     :keyword executor_instances: The initial number of executors.
-    :type executor_instances: Optional[int]
+    :paramtype executor_instances: Optional[int]
     :keyword dynamic_allocation_enabled: Whether to use dynamic resource allocation, which scales the number of
         executors registered with this application up and down based on the workload.
-    :type dynamic_allocation_enabled: Optional[bool]
+    :paramtype dynamic_allocation_enabled: Optional[bool]
     :keyword dynamic_allocation_min_executors: The lower bound for the number of executors if dynamic allocation is
         enabled.
-    :type dynamic_allocation_min_executors: Optional[int]
+    :paramtype dynamic_allocation_min_executors: Optional[int]
     :keyword dynamic_allocation_max_executors: The upper bound for the number of executors if dynamic allocation is
         enabled.
-    :type dynamic_allocation_max_executors: Optional[int]
+    :paramtype dynamic_allocation_max_executors: Optional[int]
     :keyword inputs: The mapping of input data bindings used in the job.
-    :type inputs: Optional[dict[str, ~azure.ai.ml.Input]]
+    :paramtype inputs: Optional[dict[str, ~azure.ai.ml.Input]]
     :keyword outputs: The mapping of output data bindings used in the job.
-    :type outputs: Optional[dict[str, ~azure.ai.ml.Output]]
+    :paramtype outputs: Optional[dict[str, ~azure.ai.ml.Output]]
     :keyword compute: The compute resource the job runs on.
-    :type compute: Optional[str]
+    :paramtype compute: Optional[str]
     :keyword identity: The identity that the Spark job will use while running on compute.
-    :type identity: Optional[Union[dict[str, str], ~azure.ai.ml.ManagedIdentityConfiguration,
+    :paramtype identity: Optional[Union[dict[str, str], ~azure.ai.ml.ManagedIdentityConfiguration,
         ~azure.ai.ml.AmlTokenConfiguration, ~azure.ai.ml.UserIdentityConfiguration]]
     :keyword resources: The compute resource configuration for the job.
-    :type resources: Optional[Union[dict, ~azure.ai.ml.entities.SparkResourceConfiguration]]
+    :paramtype resources: Optional[Union[dict, ~azure.ai.ml.entities.SparkResourceConfiguration]]
     :keyword experiment_name: The name of the experiment the job will be created under.
-    :type experiment_name: str
+    :paramtype experiment_name: str
     :keyword name: The name of the job.
-    :type name: str
+    :paramtype name: str
     :keyword display_name: The job display name.
-    :type display_name: str
+    :paramtype display_name: str
     :keyword description: The job description.
-    :type description: str
+    :paramtype description: str
     :keyword tags: The tag dictionary. Tags can be added, removed, and updated.
-    :type tags: dict[str, str]
+    :paramtype tags: dict[str, str]
     :keyword code: The source code to run the job. Can be a local path or "http:", "https:", or "azureml:" url pointing
         to a remote location.
     :type code: Union[str, os.PathLike]
     :keyword entry: The file or class entry point.
-    :type entry: dict[str, str]
+    :paramtype entry: dict[str, str]
     :keyword py_files: The list of .zip, .egg or .py files to place on the PYTHONPATH for Python apps.
-    :type py_files: list[str]
+    :paramtype py_files: list[str]
     :keyword jars: The list of .JAR files to include on the driver and executor classpaths.
-    :type jars: list[str]
+    :paramtype jars: list[str]
     :keyword files: The list of files to be placed in the working directory of each executor.
-    :type files: list[str]
+    :paramtype files: list[str]
     :keyword archives: The list of archives to be extracted into the working directory of each executor.
-    :type archives: list[str]
+    :paramtype archives: list[str]
     :keyword conf: A dictionary with pre-defined Spark configurations key and values.
-    :type conf: dict[str, str]
+    :paramtype conf: dict[str, str]
     :keyword environment: The Azure ML environment to run the job in.
-    :type environment: Union[str, ~azure.ai.ml.entities.Environment]
+    :paramtype environment: Union[str, ~azure.ai.ml.entities.Environment]
     :keyword args: The arguments for the job.
-    :type args: str
+    :paramtype args: str
 
     .. admonition:: Example:
 
@@ -327,7 +327,7 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
         """Translate a spark job to component.
 
         :param context: Context of spark job YAML file.
-        :type context: dict, optional
+        :type context: dict
         :keyword kwargs: Extra arguments.
         :return: Translated spark component.
         :rtype: SparkComponent
@@ -369,7 +369,7 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
         """Translate a spark job to a pipeline node.
 
         :param context: Context of spark job YAML file.
-        :type context: dict, optional
+        :type context: dict
         :keyword kwargs: Extra arguments.
         :return: Translated spark component.
         :rtype: Spark
