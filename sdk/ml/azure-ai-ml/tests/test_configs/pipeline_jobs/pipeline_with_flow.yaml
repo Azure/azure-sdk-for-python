@@ -1,0 +1,39 @@
+type: pipeline
+
+name: simplePipelineJobWithFlow
+description: The hello world pipeline job with flow option 1
+
+compute: "azureml:cpu-cluster"
+
+inputs:
+  job_data:
+    type: uri_file
+    path: "../test_data/flow_input_data.jsonl"
+
+outputs:
+  anonymous_command_output: ${{parent.jobs.anonymous_command_flow.outputs.output_data}}
+
+jobs:
+  anonymous_parallel_flow:
+    type: parallel
+    # type of the component will be determined by node type
+    # if there is default value in flow.dag.yaml, it will be used as component input default value
+    component: ../flows/basic/flow.dag.yaml
+    inputs:
+      data: ${{parent.inputs.job_data}}
+      groundtruth: "5"
+      prediction: "${run.outputs.category}"
+      connections.node_name.connection: another_connection
+      connections.node_name.deployment_name: deployment_name
+
+#  registered_parallel_flow:
+#    type: parallel
+#    component: azureml:basic_flow@latest
+#    logging_level: INFO
+#    instance_count: 2
+#    inputs:
+#      data: ${{parent.inputs.job_data}}
+#      groundtruth: "${data.answer}"
+#      prediction: "${run.outputs.category}"
+#      connections.node_name.connection: another_connection
+#      connections.node_name.deployment_name: deployment_name

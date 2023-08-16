@@ -7,6 +7,7 @@ from unittest import mock
 import pydash
 import pytest
 import yaml
+
 from azure.ai.ml import MLClient, load_component
 from azure.ai.ml._restclient.v2022_05_01.models import ComponentVersionData
 from azure.ai.ml._utils._arm_id_utils import PROVIDER_RESOURCE_ID_WITH_VERSION
@@ -379,3 +380,40 @@ class TestSparkComponent:
         )
         validation_result = spark_component._validate()
         assert validation_result.passed is True
+
+
+@pytest.mark.timeout(_COMPONENT_TIMEOUT_SECOND)
+@pytest.mark.unittest
+class TestFlowComponent:
+    @pytest.mark.skip(reason="TODO: enable after load from flow is supported")
+    @pytest.mark.parametrize(
+        "target_path",
+        [
+            pytest.param("./tests/test_configs/flows/basic/flow.dag.yaml", id="flow"),
+            # TODO: enable this after load from flow run is supported
+            # pytest.param("./tests/test_configs/flows/runs/basic_run.yaml", id="flow_run"),
+        ],
+    )
+    def test_component_load(self, target_path: str):
+        component = load_component(target_path)
+        assert component.type == "flow_parallel"
+
+        with pytest.raises(Exception, match="Ports of flow component is not editable."):
+            component.inputs["groundtruth"] = None
+
+        with pytest.raises(Exception, match="Flow component ports are not readable before creation."):
+            component.inputs.keys()
+
+        with pytest.raises(Exception, match="Flow component ports are not readable before creation."):
+            component.inputs["groundtruth"]
+
+        component.name = "test_basic_flow"
+        component.version = "1"
+        component.description = "test load component from flow"
+
+    @pytest.mark.skip(reason="TODO: enable after load from flow is supported")
+    def test_component_load_fail(self):
+        target_path = "./tests/test_configs/flows/basic/flow.dag.yaml"
+        Path(target_path).parent.joinpath(".promptflow", "flow.tools.json").unlink(missing_ok=True)
+        with pytest.raises(Exception, match="Ports of flow component is not editable."):
+            load_component(target_path)

@@ -3284,3 +3284,47 @@ class TestDSLPipeline(AzureRecordedTestCase):
         pipeline_job.settings.default_compute = "cpu-cluster"
         job_res = client.jobs.create_or_update(job=pipeline_job, experiment_name="test_unknown_field")
         assert job_res.jobs["node"].unknown_field == "${{parent.inputs.input}}"
+
+    @pytest.mark.skip(reason="enable this after load component from flow is supported")
+    def test_flow_in_pipeline(self, client):
+        """
+        benefits: no need to download component.code to re-create it in another workspace; naturally support
+          maintaining flow definition flow in git repo.
+        Solution: Type of the component will be determined on client-side.
+        Benefit: Relatively easy to implement - nearly no change to service side.
+        Drawback: Need to add a different parameter for component load function like this:
+            load_component(path, type="command")
+        """
+        component_func = load_component(
+            # pass flow.meta.yaml if we have it
+            "./tests/test_configs/flows/basic/flow.dag.yaml",
+        )
+
+        data_input = Input(path="./tests/test_configs/flows/data/basic.jsonl", type=AssetTypes.URI_FILE)
+
+        @dsl.pipeline
+        def pipeline_func_with_flow_fail(data):
+            flow_node = component_func(non_existed_input=data)
+            flow_node.compute = "cpu-cluster"
+
+        invalid_pipeline = pipeline_func_with_flow_fail(data=data_input)
+        with pytest.raises(Exception, match="can't find input non_existed_input."):
+            # TODO: need dev efforts to do client-side validation here
+            client.jobs.create_or_update(invalid_pipeline)
+
+        @dsl.pipeline
+        def pipeline_func_with_flow(data):
+            flow_node = component_func(
+                data=data,
+                text="${{data.text}}",
+            )
+            flow_node.compute = "cpu-cluster"
+
+        pipeline_with_flow = pipeline_func_with_flow(data=data_input)
+
+        _ = client.jobs.create_or_update(
+            pipeline_with_flow,
+            compute="cpu-cluster",
+        )
+
+        # TODO: verify e2e change in Shrike

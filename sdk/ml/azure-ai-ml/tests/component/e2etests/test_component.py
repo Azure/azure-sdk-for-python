@@ -1169,3 +1169,21 @@ class TestComponent(AzureRecordedTestCase):
             assert omit_with_wildcard(recreated_component._to_dict(), *omit_fields) == omit_with_wildcard(
                 created_component._to_dict(), *omit_fields
             )
+
+    @pytest.mark.skip(reason="TODO: enable after load from flow is supported")
+    def test_load_component_from_flow(self, client: MLClient, randstr, target_path: str):
+        component = load_component(target_path, param_override=[{name}])
+        assert component.type == "flow_parallel"
+
+        with pytest.raises(Exception, match="Ports of flow component is not editable."):
+            component.inputs.groundtruth.default_value = "${{data.answer}}"
+
+        component.name = randstr("component_name")
+        component.version = "1"
+        component.description = "test load component from flow"
+
+        # TODO: service-side need to skip parallel component schema validation
+        created_component = client.components.create_or_update(component, version="1")
+
+        assert created_component.name == component.name
+        assert created_component.version == component.version
