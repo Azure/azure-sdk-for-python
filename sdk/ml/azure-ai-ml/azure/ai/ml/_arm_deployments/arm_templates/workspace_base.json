@@ -825,7 +825,7 @@
                             },
                             "resources":[
                                 {
-                                    "condition": "[not(empty(parameters('online_store_connection_target')))]",
+                                    "condition": "[and(equals(parameters('set_up_feature_store'), 'true'), not(empty(parameters('online_store_connection_target'))))]",
                                     "type": "connections",
                                     "apiVersion": "2022-05-01",
                                     "name": "[variables('onlineStoreConnectionName')]",
@@ -841,13 +841,13 @@
                                         "target": "[parameters('online_store_connection_target')]",
                                         "authType": "ManagedIdentity",
                                         "credentials": {
-                                            "clientid": "[reference(variables('materialization_identity_resource_id'), '2018-11-30').principalId]",
+                                            "clientid": "[if(empty(variables('materialization_identity_resource_id')), '', reference(variables('materialization_identity_resource_id'), '2018-11-30').principalId)]",
                                             "resourceid": "[variables('materialization_identity_resource_id')]"
                                         }
                                     }
                                 },
                                 {
-                                    "condition": "[not(empty(variables('offlineStoreConnectionName')))]",
+                                    "condition": "[and(equals(parameters('set_up_feature_store'), 'true'), not(empty(variables('offlineStoreConnectionName'))))]",
                                     "type": "connections",
                                     "apiVersion": "2022-05-01",
                                     "name": "[variables('offlineStoreConnectionName')]",
@@ -863,13 +863,13 @@
                                         "target": "[variables('offlineStoreConnectionTarget')]",
                                         "authType": "ManagedIdentity",
                                         "credentials": {
-                                            "clientid": "[reference(variables('materialization_identity_resource_id'), '2018-11-30').principalId]",
+                                            "clientid": "[if(empty(variables('materialization_identity_resource_id')), '', reference(variables('materialization_identity_resource_id'), '2018-11-30').principalId)]",
                                             "resourceid": "[variables('materialization_identity_resource_id')]"
                                         }
                                     }
                                 },
                                 {
-                                    "condition": "[equals(parameters('grant_materialization_identity_permissions'), 'true')]",
+                                    "condition": "[and(equals(parameters('set_up_feature_store'), 'true'), equals(parameters('grant_materialization_identity_permissions'), 'true'))]",
                                     "type": "Microsoft.MachineLearningServices/workspaces/providers/roleAssignments",
                                     "apiVersion": "2019-04-01-preview",
                                     "name": "[concat(parameters('workspaceName'), '/Microsoft.Authorization/', guid(variables('materialization_identity_resource_id'), parameters('workspaceName'), 'azureml ds role'))]",
@@ -878,7 +878,7 @@
                                     ],
                                     "properties": {
                                         "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'f6c7c914-8db3-469d-8ca1-694a8f32e121')]",
-                                        "principalId": "[reference(variables('materialization_identity_resource_id'), '2018-11-30').principalId]",
+                                        "principalId": "[if(empty(variables('materialization_identity_resource_id')), '', reference(variables('materialization_identity_resource_id'), '2018-11-30').principalId)]",
                                         "principalType": "ServicePrincipal"
                                     }
                                 }
@@ -900,7 +900,7 @@
             ],
             "properties": {
                 "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'ba92f5b4-2d11-453d-a403-e96b0029c9fe')]",
-                "principalId": "[reference(variables('materialization_identity_resource_id'), '2018-11-30').principalId]",
+                "principalId": "[if(empty(variables('materialization_identity_resource_id')), '', reference(variables('materialization_identity_resource_id'), '2018-11-30').principalId)]",
                 "principalType": "ServicePrincipal"
             }
         },
@@ -915,7 +915,7 @@
             ],
             "properties": {
                 "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'b24988ac-6180-42a0-ab88-20f7382dd24c')]",
-                "principalId": "[reference(variables('materialization_identity_resource_id'), '2018-11-30').principalId]",
+                "principalId": "[if(empty(variables('materialization_identity_resource_id')), '', reference(variables('materialization_identity_resource_id'), '2018-11-30').principalId)]",
                 "principalType": "ServicePrincipal"
             }
         },
