@@ -197,8 +197,11 @@ class DatastoreOperations(_ScopeDependentOperations):
         read_only = mode == "ro_mount"
 
         import os
+
         ci_name = os.environ.get("CI_NAME")
-        assert not persistent or (persistent and ci_name is not None), "persistent mount is only supported on Compute Instance"
+        assert not persistent or (
+            persistent and ci_name is not None
+        ), "persistent mount is only supported on Compute Instance"
 
         # cspell:ignore rslex
         from azureml.dataprep import rslex_fuse_subprocess_wrapper
