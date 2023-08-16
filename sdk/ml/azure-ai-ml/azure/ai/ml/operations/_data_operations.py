@@ -5,6 +5,7 @@
 # pylint: disable=protected-access
 
 import os
+import uuid
 from pathlib import Path
 from typing import Dict, List, Optional, Union, Iterable
 from contextlib import contextmanager
@@ -24,7 +25,7 @@ from azure.ai.ml._artifacts._constants import (
     CHANGED_ASSET_PATH_MSG_NO_PERSONAL_DATA,
 )
 from azure.ai.ml._exception_helper import log_and_raise_error
-from azure.ai.ml._restclient.v2023_04_01_preview.models import ListViewType
+from azure.ai.ml._restclient.v2023_04_01_preview.models import ListViewType, ComputeInstanceDataMount
 from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient042023_preview
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
@@ -665,8 +666,12 @@ class DataOperations(_ScopeDependentOperations):
             self._operation_scope._subscription_id, self._resource_group_name, self._workspace_name, path
         )
         if persistent and ci_name is not None:
-            # TODO: body?
-            self._compute_operation.update_data_mounts(self._resource_group_name, self._workspace_name, ci_name)
+            self._compute_operation.update_data_mounts(self._resource_group_name, self._workspace_name, ci_name, ComputeInstanceDataMount(
+                source=uri,
+                source_type="URL",
+                mount_name=f'unified_mount_{uuid.uuid4()}',
+                mount_action="Mount",
+            ))
         else:
             rslex_fuse_subprocess_wrapper.start_fuse_mount_subprocess(uri, mount_point, read_only, debug)
 
