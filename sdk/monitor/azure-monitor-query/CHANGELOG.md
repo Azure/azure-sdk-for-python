@@ -1,8 +1,10 @@
 # Release History
 
-## 1.2.1 (Unreleased)
+## 1.3.0b1 (Unreleased)
 
 ### Features Added
+
+- Added `MetricsBatchQueryClient` to support batch querying metrics from Azure resources. ([#31049](https://github.com/Azure/azure-sdk-for-python/pull/31049))
 
 ### Breaking Changes
 
