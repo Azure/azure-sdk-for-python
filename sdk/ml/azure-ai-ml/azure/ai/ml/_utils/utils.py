@@ -130,7 +130,7 @@ def create_requests_pipeline_with_retry(*, requests_pipeline: HttpPipeline, retr
     :keyword requests_pipeline: Pipeline to base new one off of.
     :type requests_pipeline: HttpPipeline
     :keyword retry: Number of retries. Defaults to 3
-    :type retry: int, optional
+    :type retry: int
     :return: Pipeline identical to provided one, except with a new retry policy
     :rtype: HttpPipeline
     """
@@ -170,7 +170,7 @@ def download_text_from_url(
     :param timeout: One of
       * float that specifies the connect and read time outs
       * a 2-tuple that specifies the connect and read time out in that order
-    :type timeout: Union[float, Tuple[float, float]], optional
+    :type timeout: Union[float, Tuple[float, float]]
     :return: The Response text
     :rtype: str
     """

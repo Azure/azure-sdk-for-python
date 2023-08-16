@@ -93,11 +93,11 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
         :param deployment: the deployment entity
         :type deployment: ~azure.ai.ml.entities.OnlineDeployment
         :keyword local: Whether deployment should be created locally, defaults to False
-        :type local: bool, optional
+        :type local: bool
         :keyword vscode_debug: Whether to open VSCode instance to debug local deployment, defaults to False
-        :type vscode_debug: bool, optional
+        :type vscode_debug: bool
         :keyword local_enable_gpu: enable local container to access gpu
-        :type local_enable_gpu: bool, optional
+        :type local_enable_gpu: bool
         :raises ~azure.ai.ml.exceptions.ValidationException: Raised if OnlineDeployment cannot
             be successfully validated. Details will be provided in the error message.
         :raises ~azure.ai.ml.exceptions.AssetException: Raised if OnlineDeployment assets
@@ -291,9 +291,9 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
         :type lines: int
         :keyword container_type: The type of container to retrieve logs from. Possible values include:
             "StorageInitializer", "InferenceServer", defaults to None
-        :type container_type: Optional[str], optional
+        :type container_type: Optional[str]
         :keyword local: [description], defaults to False
-        :type local: bool, optional
+        :type local: bool
         :return: the logs
         :rtype: str
         """
@@ -321,7 +321,7 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
         :param endpoint_name: The name of the endpoint
         :type endpoint_name: str
         :keyword local: Whether deployment should be retrieved from local docker environment, defaults to False
-        :type local: bool, optional
+        :type local: bool
         :return: an iterator of deployment entities
         :rtype: Iterable[~azure.ai.ml.entities.OnlineDeployment]
         """

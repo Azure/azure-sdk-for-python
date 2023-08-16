@@ -53,7 +53,7 @@ class RegistryOperations:
         """List all registries that the user has access to in the current resource group or subscription.
 
         :keyword scope: scope of the listing, "resource_group" or "subscription", defaults to "resource_group"
-        :type scope: str, optional
+        :type scope: str
         :return: An iterator like instance of Registry objects
         :rtype: ~azure.core.paging.ItemPaged[Registry]
         """

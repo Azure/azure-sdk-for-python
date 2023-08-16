@@ -179,7 +179,7 @@ class DataTransferCopyJob(DataTransferJob):
         """Translate a data transfer copy job to component.
 
         :param context: Context of data transfer job YAML file.
-        :type context: dict, optional
+        :type context: dict
         :keyword kwargs: Extra arguments.
         :return: Translated data transfer copy component.
         :rtype: DataTransferCopyComponent
@@ -206,7 +206,7 @@ class DataTransferCopyJob(DataTransferJob):
         """Translate a data transfer copy job to a pipeline node.
 
         :param context: Context of data transfer job YAML file.
-        :type context: dict, optional
+        :type context: dict
         :keyword kwargs: Extra arguments.
         :return: Translated data transfer component.
         :rtype: DataTransferCopy
@@ -253,7 +253,7 @@ class DataTransferImportJob(DataTransferJob):
         """Translate a data transfer import job to component.
 
         :param context: Context of data transfer job YAML file.
-        :type context: dict, optional
+        :type context: dict
         :keyword kwargs: Extra arguments.
         :return: Translated data transfer import component.
         :rtype: str
@@ -270,7 +270,7 @@ class DataTransferImportJob(DataTransferJob):
         """Translate a data transfer import job to a pipeline node.
 
         :param context: Context of data transfer job YAML file.
-        :type context: dict, optional
+        :type context: dict
         :keyword kwargs: Extra arguments.
         :return: Translated data transfer import node.
         :rtype: DataTransferImport
@@ -317,7 +317,7 @@ class DataTransferExportJob(DataTransferJob):
         """Translate a data transfer export job to component.
 
         :param context: Context of data transfer job YAML file.
-        :type context: dict, optional
+        :type context: dict
         :keyword kwargs: Extra arguments.
         :return: Translated data transfer export component.
         :rtype: str
@@ -338,7 +338,7 @@ class DataTransferExportJob(DataTransferJob):
         """Translate a data transfer export job to a pipeline node.
 
         :param context: Context of data transfer job YAML file.
-        :type context: dict, optional
+        :type context: dict
         :keyword kwargs: Extra arguments.
         :return: Translated data transfer export node.
         :rtype: DataTransferExport

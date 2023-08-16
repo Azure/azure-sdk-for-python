@@ -24,7 +24,7 @@ class SparkJobEntry(RestTranslatableMixin):
     :type entry: str
     :keyword type: The entry type. Accepted values are SparkJobEntryType.SPARK_JOB_FILE_ENTRY or
         SparkJobEntryType.SPARK_JOB_CLASS_ENTRY. Defaults to SparkJobEntryType.SPARK_JOB_FILE_ENTRY.
-    :type type: ~azure.ai.ml.entities.SparkJobEntryType, optional
+    :type type: ~azure.ai.ml.entities.SparkJobEntryType
 
     .. admonition:: Example:
 

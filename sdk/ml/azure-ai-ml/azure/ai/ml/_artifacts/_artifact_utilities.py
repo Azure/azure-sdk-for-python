@@ -217,17 +217,17 @@ def upload_artifact(
     :param datastore_name: The datastore name
     :type datastore_name: Optional[str]
     :param asset_hash: The asset hash
-    :type asset_hash: Optional[str], optional
+    :type asset_hash: Optional[str]
     :param show_progress: Whether to show progress on the console. Defaults to True.
-    :type show_progress: bool, optional
+    :type show_progress: bool
     :param asset_name: The asset name
-    :type asset_name: Optional[str], optional
+    :type asset_name: Optional[str]
     :param asset_version: The asset version
-    :type asset_version: Optional[str], optional
+    :type asset_version: Optional[str]
     :param ignore_file: The IgnoreFile determining which, if any, files to ignore when uploading
-    :type ignore_file: IgnoreFile, optional
+    :type ignore_file: IgnoreFile
     :param sas_uri: The sas uri to use for uploading
-    :type sas_uri: Optional[str], optional
+    :type sas_uri: Optional[str]
     :return: The artifact storage info
     :rtype: ArtifactStorageInfo
     """
@@ -280,7 +280,7 @@ def download_artifact(
     :param datastore_name: name of datastore
     :type datastore_name: Optional[str]
     :param datastore_info: the return value of invoking get_datastore_info
-    :type datastore_info: Optional[Dict], optional
+    :type datastore_info: Optional[Dict]
     :return: Path that files were written to
     :rtype: str
     """
@@ -465,13 +465,13 @@ def _check_and_upload_path(
     :param artifact_type: The artifact type
     :type artifact_type: str
     :param datastore_name: the name of the datastore to upload to
-    :type datastore_name: Optional[str], optional
+    :type datastore_name: Optional[str]
     :param sas_uri: the sas uri to use for uploading
-    :type sas_uri: Optional[str], optional
+    :type sas_uri: Optional[str]
     :param show_progress: Whether to show progress on the console. Defaults to True.
-    :type show_progress: bool, optional
+    :type show_progress: bool
     :param blob_uri: The storage account uri
-    :type blob_uri: Optional[str], optional
+    :type blob_uri: Optional[str]
     :return: A 2-tuple of the uploaded artifact, and the indicator file.
     :rtype: Tuple[T, Optional[str]]
     """

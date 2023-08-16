@@ -31,7 +31,7 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
     :keyword type: The type of the data input. Accepted values are
         'uri_folder', 'uri_file', 'mltable', 'mlflow_model', 'custom_model', 'integer', 'number', 'string', and
         'boolean'.
-    :type type: str, optional
+    :type type: str
     :keyword path: The path to the input data. Paths can be local paths, remote data uris, or a registered AzureML asset
         ID.
     :type path: Optional[str]
@@ -53,9 +53,9 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
     :keyword description: Description of the input
     :type description: Optional[str]
     :keyword datastore: The datastore to upload local files to.
-    :type datastore: str, optional
+    :type datastore: str
     :keyword intellectual_property: Intellectual property for the input.
-    :type intellectual_property: IntellectualProperty, optional
+    :type intellectual_property: IntellectualProperty
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Input cannot be successfully validated.
         Details will be provided in the error message.
 
@@ -180,11 +180,11 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
         :param type: The type of the data input. Can only be set to "string".
         :type type: str
         :param default: The default value of this input. When a `default` is set, the input will be optional.
-        :type default: str, optional
+        :type default: str
         :param optional: Determine if this input is optional.
-        :type optional: bool, optional
+        :type optional: bool
         :param description: Description of the input.
-        :type description: str, optional
+        :type description: str
         :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Input cannot be successfully validated.
             Details will be provided in the error message.
         """

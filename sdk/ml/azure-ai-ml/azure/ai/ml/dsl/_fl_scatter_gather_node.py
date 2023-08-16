@@ -97,28 +97,28 @@ def fl_scatter_gather(
         ~azure.ai.ml.entities.PipelineJob,
         ~azure.ai.ml.entities.CommandComponent]
     :keyword aggregation_compute: The name of the compute that the aggregation component will use.
-    :type aggregation_compute: str, optional
+    :type aggregation_compute: str
     :keyword aggregation_datastore: The name of the datastore that the aggregation component will use.
-    :type aggregation_datastore: str, optional
+    :type aggregation_datastore: str
     :keyword shared_silo_kwargs: A dictionary of string keywords to component inputs. This dictionary is treated
         like kwargs and is injected into ALL executed silo components.
-    :type shared_silo_kwargs: Dict, optional
+    :type shared_silo_kwargs: Dict
     :keyword aggregation_kwargs: A dictionary of string keywords to component inputs. This dictionary is treated
         like kwargs and is injected into ALL executed aggregation components.
-    :type aggregation_kwargs: Dict, optional
+    :type aggregation_kwargs: Dict
     :keyword silo_to_aggregation_argument_map: A dictionary specifying the mapping of outputs from the silo step to
         inputs in the aggregation step. The keys should be output names from the silo step, and the values should be
         input names in the aggregation step. This allows for customization of the mapping between the steps.
-    :type silo_to_aggregation_argument_map: Dict, optional
+    :type silo_to_aggregation_argument_map: Dict
     :keyword aggregation_to_silo_argument_map: A dictionary specifying the mapping of outputs from the aggregation step
         to inputs in the silo step. The keys should be output names from the aggregation step, and the values should be
         input names in the silo step. This allows for customization of the mapping between the steps.
-    :type aggregation_to_silo_argument_map: Dict, optional
+    :type aggregation_to_silo_argument_map: Dict
     :keyword max_iterations: The maximum number of scatter gather iterations that should be performed.
-    :type max_iterations: int, optional
+    :type max_iterations: int
     :keyword _create_default_mappings_if_needed:
         If True, try to automatically create input/output mappings if they're unset.
-    :type _create_default_mappings_if_needed: bool, optional
+    :type _create_default_mappings_if_needed: bool
     :return: The federated learning scatter-gather subgraph node.
     :rtype: ~azure.ai.ml.entities._builders.fl_scatter_gather.FLScatterGather
 

@@ -293,11 +293,11 @@ class JobSchedule(RestTranslatableMixin, Schedule, TelemetryMixin):
                     input: ..
 
         :param data: The REST object to convert
-        :type data: Optional[Dict], optional
+        :type data: Optional[Dict]
         :param yaml_path: The yaml path
-        :type yaml_path: Optional[Union[PathLike str]], optional
+        :type yaml_path: Optional[Union[PathLike str]]
         :param params_override: A list of parameter overrides
-        :type params_override: Optional[list], optional
+        :type params_override: Optional[list]
         :return: The job schedule
         :rtype: JobSchedule
         """

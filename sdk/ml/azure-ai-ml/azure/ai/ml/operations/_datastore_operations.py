@@ -51,7 +51,7 @@ class DatastoreOperations(_ScopeDependentOperations):
         """Lists all datastores and associated information within a workspace.
 
         :keyword include_secrets: Include datastore secrets in returned datastores, defaults to False
-        :type include_secrets: bool, optional
+        :type include_secrets: bool
         :return: An iterator like instance of Datastore objects
         :rtype: ~azure.core.paging.ItemPaged[Datastore]
         """
@@ -100,7 +100,7 @@ class DatastoreOperations(_ScopeDependentOperations):
         :param name: Datastore name
         :type name: str
         :keyword include_secrets: Include datastore secrets in the returned datastore, defaults to False
-        :type include_secrets: bool, optional
+        :type include_secrets: bool
         :return: Datastore with the specified name.
         :rtype: Datastore
         """
@@ -129,7 +129,7 @@ class DatastoreOperations(_ScopeDependentOperations):
         """Returns the workspace's default datastore.
 
         :keyword include_secrets: Include datastore secrets in the returned datastore, defaults to False
-        :type include_secrets: bool, optional
+        :type include_secrets: bool
         :return: The default datastore.
         :rtype: Datastore
         """

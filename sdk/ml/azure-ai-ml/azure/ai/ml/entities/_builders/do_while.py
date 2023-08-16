@@ -37,7 +37,7 @@ class DoWhile(LoopNode):
     :type mapping: dict[Union[str, ~azure.ai.ml.entities.Output],
         Union[str, ~azure.ai.ml.entities.Input, list]]
     :param limits: Limits in running the do-while node.
-    :type limits: Union[dict, ~azure.ai.ml.entities._job.job_limits.DoWhileJobLimits], optional
+    :type limits: Union[dict, ~azure.ai.ml.entities._job.job_limits.DoWhileJobLimits]
     :raises ValidationError: If the initialization parameters are not of valid types.
     """
 

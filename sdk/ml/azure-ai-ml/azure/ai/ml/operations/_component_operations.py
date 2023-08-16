@@ -349,7 +349,7 @@ class ComponentOperations(_ScopeDependentOperations):
         :param component: The component object or a mldesigner component function that generates component object
         :type component: Union[Component, types.FunctionType]
         :param raise_on_failure: Whether to raise exception on validation error. Defaults to False
-        :type raise_on_failure: bool, optional
+        :type raise_on_failure: bool
         :return: All validation errors
         :rtype: ~azure.ai.ml.entities.ValidationResult
         """

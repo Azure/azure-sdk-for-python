@@ -327,7 +327,7 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
         """Translate a spark job to component.
 
         :param context: Context of spark job YAML file.
-        :type context: dict, optional
+        :type context: dict
         :keyword kwargs: Extra arguments.
         :return: Translated spark component.
         :rtype: SparkComponent
@@ -369,7 +369,7 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
         """Translate a spark job to a pipeline node.
 
         :param context: Context of spark job YAML file.
-        :type context: dict, optional
+        :type context: dict
         :keyword kwargs: Extra arguments.
         :return: Translated spark component.
         :rtype: Spark

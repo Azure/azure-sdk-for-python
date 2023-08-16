@@ -41,11 +41,11 @@ def _create_image_job(
     :param target_column_name: The target column name
     :type target_column_name: str
     :param primary_metric: The primary metric
-    :type primary_metric: Optional[Union[str, ClassificationPrimaryMetrics]], optional
+    :type primary_metric: Optional[Union[str, ClassificationPrimaryMetrics]]
     :param validation_data: The validation data
-    :type validation_data: Optional[Input], optional
+    :type validation_data: Optional[Input]
     :param validation_data_size: The validation data size
-    :type validation_data_size: Optional[float], optional
+    :type validation_data_size: Optional[float]
     :return: An AutoML Image Job
     :rtype: TImageJob
     """
@@ -87,7 +87,7 @@ def image_classification(
             Defaults to accuracy.
     :type primary_metric: Union[str, ClassificationPrimaryMetrics]
     :keyword validation_data: The validation data to be used within the experiment.
-    :type validation_data: Input, optional
+    :type validation_data: Input
     :keyword validation_data_size:  What fraction of the data to hold out for validation when user validation data
             is not specified. This should be between 0.0 and 1.0 non-inclusive.
 
@@ -95,7 +95,7 @@ def image_classification(
             to extract validation data out of the specified training data.
 
             Defaults to .2
-    :type validation_data_size: float, optional
+    :type validation_data_size: float
     :keyword kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
 
@@ -140,7 +140,7 @@ def image_classification_multilabel(
             Defaults to Iou.
     :type primary_metric: Union[str, ClassificationMultilabelPrimaryMetrics]
     :keyword validation_data: The validation data to be used within the experiment.
-    :type validation_data: Input, optional
+    :type validation_data: Input
     :keyword validation_data_size:  What fraction of the data to hold out for validation when user validation data
             is not specified. This should be between 0.0 and 1.0 non-inclusive.
 
@@ -148,7 +148,7 @@ def image_classification_multilabel(
             to extract validation data out of the specified training data.
 
             Defaults to .2
-    :type validation_data_size: float, optional
+    :type validation_data_size: float
     :keyword kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
 
@@ -192,7 +192,7 @@ def image_object_detection(
             Defaults to MeanAveragePrecision.
     :type primary_metric: Union[str, ObjectDetectionPrimaryMetrics]
     :keyword validation_data: The validation data to be used within the experiment.
-    :type validation_data: Input, optional
+    :type validation_data: Input
     :keyword validation_data_size:  What fraction of the data to hold out for validation when user validation data
             is not specified. This should be between 0.0 and 1.0 non-inclusive.
 
@@ -200,7 +200,7 @@ def image_object_detection(
             to extract validation data out of the specified training data.
 
             Defaults to .2
-    :type validation_data_size: float, optional
+    :type validation_data_size: float
     :keyword kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
 
@@ -244,7 +244,7 @@ def image_instance_segmentation(
             Defaults to MeanAveragePrecision.
     :type primary_metric: Union[str, InstanceSegmentationPrimaryMetrics]
     :keyword validation_data: The validation data to be used within the experiment.
-    :type validation_data: Input, optional
+    :type validation_data: Input
     :keyword validation_data_size:  What fraction of the data to hold out for validation when user validation data
             is not specified. This should be between 0.0 and 1.0 non-inclusive.
 
@@ -252,7 +252,7 @@ def image_instance_segmentation(
             to extract validation data out of the specified training data.
 
             Defaults to .2
-    :type validation_data_size: float, optional
+    :type validation_data_size: float
     :keyword kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
 

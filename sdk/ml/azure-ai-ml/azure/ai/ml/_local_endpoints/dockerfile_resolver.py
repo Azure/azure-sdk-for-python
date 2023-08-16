@@ -82,7 +82,7 @@ class DockerfileResolver(object):
         Constructs the Dockerfile instructions based on properties.
 
         :param install_debugpy: Whether to install debugpy. Defaults to False.
-        :type install_debugpy: bool, optional
+        :type install_debugpy: bool
         """
         self._instructions = []
         if self._docker_base_image:

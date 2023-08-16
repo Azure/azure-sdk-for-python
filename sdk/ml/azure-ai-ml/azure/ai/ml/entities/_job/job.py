@@ -247,12 +247,12 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
         :param cls: Indicates that this is a class method.
         :type cls: class
         :param data: Data Dictionary, defaults to None
-        :type data: Dict, optional
+        :type data: Dict
         :param yaml_path: YAML Path, defaults to None
-        :type yaml_path: Union[PathLike, str], optional
+        :type yaml_path: Union[PathLike, str]
         :param params_override: Fields to overwrite on top of the yaml file.
             Format is [{"field1": "value1"}, {"field2": "value2"}], defaults to None
-        :type params_override: List[Dict], optional
+        :type params_override: List[Dict]
         :keyword kwargs: A dictionary of additional configuration parameters.
         :type kwargs: dict
         :raises Exception: An exception

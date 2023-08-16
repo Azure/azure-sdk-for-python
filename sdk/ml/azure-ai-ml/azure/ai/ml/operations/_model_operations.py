@@ -424,12 +424,12 @@ class ModelOperations(_ScopeDependentOperations):
         """List all model assets in workspace.
 
         :param name: Name of the model.
-        :type name: Optional[str], optional
+        :type name: Optional[str]
         :param stage: The Model stage
-        :type stage: Optional[str], optional
+        :type stage: Optional[str]
         :keyword list_view_type: View type for including/excluding (for example) archived models. Defaults to
              :attr:`ListViewType.ACTIVE_ONLY`.
-        :type list_view_type: ListViewType, optional
+        :type list_view_type: ListViewType
         :return: An iterator like instance of Model objects
         :rtype: ~azure.core.paging.ItemPaged[Model]
         """

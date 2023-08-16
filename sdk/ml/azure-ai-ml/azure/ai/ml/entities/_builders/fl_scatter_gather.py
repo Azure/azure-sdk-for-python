@@ -55,21 +55,21 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
     :param aggregation_component: Component representing the aggregation step.
     :type aggregation_component: ~azure.ai.ml.entities.Component
     :param aggregation_compute: The compute resource for the aggregation step.
-    :type aggregation_compute: str, optional
+    :type aggregation_compute: str
     :param aggregation_datastore: The datastore for the aggregation step.
-    :type aggregation_datastore: str, optional
+    :type aggregation_datastore: str
     :param shared_silo_kwargs: Keyword arguments shared across all silos.
-    :type shared_silo_kwargs: dict, optional
+    :type shared_silo_kwargs: dict
     :param aggregation_kwargs: Keyword arguments specific to the aggregation step.
-    :type aggregation_kwargs: dict, optional
+    :type aggregation_kwargs: dict
     :param silo_to_aggregation_argument_map: Mapping of silo to aggregation arguments.
-    :type silo_to_aggregation_argument_map: dict, optional
+    :type silo_to_aggregation_argument_map: dict
     :param aggregation_to_silo_argument_map: Mapping of aggregation to silo arguments.
-    :type aggregation_to_silo_argument_map: dict, optional
+    :type aggregation_to_silo_argument_map: dict
     :param max_iterations: The maximum number of iterations for the scatter-gather loop.
-    :type max_iterations: int, optional
+    :type max_iterations: int
     :param create_default_mappings_if_needed: Whether to create default argument mappings if needed.
-    :type create_default_mappings_if_needed: bool, optional
+    :type create_default_mappings_if_needed: bool
     """
 
     # See node class for input descriptions, no point maintaining
@@ -377,7 +377,7 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
             'real' output anchoring.
         :type orchestrator_datastore: str
         :param iteration: The current iteration number in the scatter gather loop. Defaults to 0.
-        :type iteration: Optional[int], optional
+        :type iteration: Optional[int]
         :param _path: for recursive anchoring, codes the "path" inside the pipeline for messaging
         :type _path: str
         :return: A validation result containing any issues that were uncovered during anchoring. This function adds

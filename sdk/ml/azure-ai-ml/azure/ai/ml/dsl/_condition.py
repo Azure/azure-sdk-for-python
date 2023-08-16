@@ -48,11 +48,11 @@ def condition(
     :keyword true_block: The block to be executed if the condition resolves to True.
     :type true_block: Union[
         ~azure.ai.ml.entities._builders.BaseNode,
-        List[~azure.ai.ml.entities._builders.BaseNode]], optional
+        List[~azure.ai.ml.entities._builders.BaseNode]]
     :keyword false_block: The block to be executed if the condition resolves to False.
     :type false_block: Union[
         ~azure.ai.ml.entities._builders.BaseNode,
-        List[~azure.ai.ml.entities._builders.BaseNode]], optional
+        List[~azure.ai.ml.entities._builders.BaseNode]]
     :return: The condition node.
     :rtype: ConditionNode
     :raises UserErrorException: Raised if the condition node has an incorrect number of outputs.
