@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Ensure `AzurePowershellCredential` calls PowerShell with the `-NoProfile` flag to avoid loading user profiles for more consistent behavior.
+
 ### Other Changes
 
 ## 1.14.0 (2023-08-08)
