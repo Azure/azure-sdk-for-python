@@ -831,7 +831,8 @@
                                     "name": "[variables('onlineStoreConnectionName')]",
                                     "location": "[parameters('location')]",
                                     "dependsOn": [
-                                        "[resourceId('Microsoft.MachineLearningServices/workspaces', parameters('workspaceName'))]"
+                                        "[resourceId('Microsoft.MachineLearningServices/workspaces', parameters('workspaceName'))]",
+                                        "[resourceId('Microsoft.MachineLearningServices/workspaces/connections', parameters('workspaceName'), variables('offlineStoreConnectionName'))]"
                                     ],
                                     "identity": {
                                         "type": "SystemAssigned"
