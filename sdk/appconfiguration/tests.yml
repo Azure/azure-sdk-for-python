@@ -12,6 +12,8 @@ stages:
     - template: ../../eng/pipelines/templates/stages/archetype-sdk-tests.yml
       parameters:
         ServiceDirectory: appconfiguration
+        BuildTargetingString: ${{ service }}
+        JobName: ${{ replace(service, '-', '_') }}
         SupportedClouds: 'Public,UsGov,China'
         TestTimeoutInMinutes: 240
         CloudConfig:
