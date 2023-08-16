@@ -3,7 +3,7 @@ mypy = false
 pyright = false
 type_check_samples = false
 verifytypes = false
-pylint = false
+pylint = true
 
 [tool.interrogate]
 fail-under = 75
@@ -18,6 +18,14 @@ ignore-magic = true
 [tool.isort]
 profile = "black"
 line_length = 120
+known_first_party = ["azure"]
+extend_skip_glob = [
+  "*/_vendor/*",
+  "*/_generated/*",
+  "*/_restclient/*",
+  "*/doc/*",
+  "*/.tox/*",
+]
 
 [tool.mypy] 
 exclude = ["azure/ai/ml/_vendor", "azure/ai/ml/_restclient"] 

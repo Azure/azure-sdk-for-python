@@ -9,10 +9,6 @@ import re
 import subprocess
 from typing import Dict, Optional
 
-from azure.core.credentials import TokenCredential
-from azure.core.paging import ItemPaged
-from azure.core.polling import LROPoller
-from azure.core.tracing.decorator import distributed_trace
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
 from azure.ai.ml._exception_helper import log_and_raise_error
@@ -42,6 +38,10 @@ from azure.ai.ml.exceptions import (
     ValidationErrorType,
     ValidationException,
 )
+from azure.core.credentials import TokenCredential
+from azure.core.paging import ItemPaged
+from azure.core.polling import LROPoller
+from azure.core.tracing.decorator import distributed_trace
 
 from ._local_deployment_helper import _LocalDeploymentHelper
 from ._operation_orchestrator import OperationOrchestrator
@@ -361,8 +361,13 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
         return f"{self._workspace_name}-{name}-{random.randint(1, 10000000)}"
 
     def _get_workspace_location(self) -> str:
-        """Get the workspace location TODO[TASK 1260265]: can we cache this information and only refresh when the
-        operation_scope is changed?"""
+        """Get the workspace location
+
+        TODO[TASK 1260265]: can we cache this information and only refresh when the operation_scope is changed?
+
+        :return: The workspace location
+        :rtype: str
+        """
         return self._all_operations.all_operations[AzureMLResourceType.WORKSPACE].get(self._workspace_name).location
 
     def _get_local_endpoint_mode(self, vscode_debug):

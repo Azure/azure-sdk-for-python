@@ -39,7 +39,9 @@ class DistributionConfiguration(RestTranslatableMixin):
     def _from_rest_object(
         cls, obj: Optional[Union[RestDistributionConfiguration, Dict]]
     ) -> "DistributionConfiguration":
-        """This function works for distribution property of a Job object and of a Component object()
+        """Constructs a DistributionConfiguration object from a REST object
+
+        This function works for distribution property of a Job object and of a Component object()
 
         Distribution of Job when returned by MFE, is a RestDistributionConfiguration
 
@@ -48,6 +50,12 @@ class DistributionConfiguration(RestTranslatableMixin):
 
         So in the job distribution case, we need to call as_dict() first and get type from "distribution_type" property.
         In the componenet case, we need to extract type from key "type"
+
+
+        :param obj: The object to translate
+        :type obj: Optional[Union[RestDistributionConfiguration, Dict]]
+        :return: The distribution configuration
+        :rtype: DistributionConfiguration
         """
         if obj is None:
             return None

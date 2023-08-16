@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 from pathlib import Path
-from typing import Dict, Optional, Union
+from typing import Dict, Optional, Union, NoReturn
 
 from marshmallow import Schema
 
@@ -75,7 +75,6 @@ class DataTransferComponent(Component):  # pylint: disable=too-many-instance-att
         return self._task
 
     def _to_dict(self) -> Dict:
-        """Dump the data transfer component content into a dictionary."""
         return convert_ordered_dict_to_dict({**self._other_parameter, **super(DataTransferComponent, self)._to_dict()})
 
     def __str__(self):
@@ -259,7 +258,8 @@ class DataTransferImportComponent(DataTransferComponent):
     def _create_schema_for_validation(cls, context) -> Union[PathAwareSchema, Schema]:
         return DataTransferImportComponentSchema(context=context)
 
-    def __call__(self, *args, **kwargs):
+    # pylint: disable-next=docstring-missing-param
+    def __call__(self, *args, **kwargs) -> NoReturn:
         """Call ComponentVersion as a function and get a Component object."""
 
         msg = "DataTransfer component is not callable for import task."
@@ -304,7 +304,8 @@ class DataTransferExportComponent(DataTransferComponent):  # pylint: disable=too
     def _create_schema_for_validation(cls, context) -> Union[PathAwareSchema, Schema]:
         return DataTransferExportComponentSchema(context=context)
 
-    def __call__(self, *args, **kwargs):
+    # pylint: disable-next=docstring-missing-param
+    def __call__(self, *args, **kwargs) -> NoReturn:
         """Call ComponentVersion as a function and get a Component object."""
 
         msg = "DataTransfer component is not callable for export task."

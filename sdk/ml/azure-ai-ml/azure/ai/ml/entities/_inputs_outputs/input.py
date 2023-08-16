@@ -7,7 +7,7 @@
 
 import math
 from inspect import Parameter
-from typing import Dict, Optional, Union, overload
+from typing import Any, Dict, Optional, TypeVar, Union, overload
 
 from typing_extensions import Literal
 
@@ -283,28 +283,49 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
         Currently, there are two scenarios that need to check this property:
         1. before `in` as it may throw exception; there will be `in` operation for validation/transformation.
         2. `str()` of list is not ideal, so we need to manually create its string result.
+
+        :return: Whether this input has multiple types
+        :rtype: bool
         """
         return isinstance(self.type, list)
 
     def _is_literal(self) -> bool:
-        """Override this function as `self.type` can be list and not hashable for operation `in`."""
+        """Whether this input is a literal
+
+        Override this function as `self.type` can be list and not hashable for operation `in`.
+
+        :return: Whether is a literal
+        :rtype: bool
+        """
         return not self._multiple_types and super(Input, self)._is_literal()
 
-    def _is_enum(self):
-        """returns true if the input is enum."""
+    def _is_enum(self) -> bool:
+        """Whether input is an enum
+
+        :return: True if the input is enum.
+        :rtype: bool
+        """
         return self.type == ComponentParameterTypes.STRING and self.enum
 
     def _to_dict(self):
-        """Convert the Input object to a dict."""
+        """Convert the Input object to a dict.
+
+        :return: Dictionary representation of Input
+        :rtype: Dict
+        """
         keys = self._IO_KEYS
         result = {key: getattr(self, key) for key in keys}
         return _remove_empty_values(result)
 
-    def _parse(self, val):
+    T = TypeVar("T")
+
+    def _parse(self, val: T) -> Union[int, float, bool, str, T]:
         """Parse value passed from command line.
 
         :param val: The input value
+        :type val: T
         :return: The parsed value.
+        :rtype: Union[int, float, bool, str, T]
         """
         if self.type == "integer":
             return int(float(val))  # backend returns 10.0，for integer， parse it to float before int
@@ -326,11 +347,13 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
             return val if isinstance(val, str) else str(val)
         return val
 
-    def _parse_and_validate(self, val):
+    def _parse_and_validate(self, val: T) -> Union[int, float, bool, str, T]:
         """Parse the val passed from the command line and validate the value.
 
         :param val: The input string value from the command line.
+        :type val: T
         :return: The parsed value, an exception will be raised if the value is invalid.
+        :rtype: Union[int, float, bool, str, T]
         """
         if self._is_primitive_type:
             val = self._parse(val) if isinstance(val, str) else val
@@ -340,8 +363,12 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
     def _update_name(self, name):
         self._port_name = name
 
-    def _update_default(self, default_value):
-        """Update provided default values."""
+    def _update_default(self, default_value: Any):
+        """Update provided default values.
+
+        :param default_value: The default value of the Input
+        :type default_value: Any
+        """
         name = "" if not self._port_name else f"{self._port_name!r} "
         msg_prefix = f"Default value of Input {name}"
 
@@ -375,10 +402,13 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
                     raise UserErrorException(msg) from e
         self.default = default_value
 
-    def _validate_or_throw(self, value):
+    def _validate_or_throw(self, value: Any):
         """Validate input parameter value, throw exception if not as expected.
 
         It will throw exception if validate failed, otherwise do nothing.
+
+        :param value: A value to validate
+        :type value: Any
         """
         if not self.optional and value is None:
             msg = "Parameter {} cannot be None since it is not optional."
@@ -424,6 +454,9 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
         """Get python builtin type for current input in string, eg: str.
 
         Return yaml type if not available.
+
+        :return: The name of the input type
+        :rtype: str
         """
         if self._multiple_types:
             return "[" + ", ".join(self.type) + "]"
@@ -471,13 +504,13 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
             self.optional = self._simple_parse(getattr(self, "optional", "false"), _type="boolean")
 
     @classmethod
-    def _get_input_by_type(cls, t: type, optional=None):
+    def _get_input_by_type(cls, t: type, optional=None) -> Optional["Input"]:
         if t in IOConstants.PRIMITIVE_TYPE_2_STR:
             return cls(type=IOConstants.PRIMITIVE_TYPE_2_STR[t], optional=optional)
         return None
 
     @classmethod
-    def _get_default_unknown_input(cls, optional=None):
+    def _get_default_unknown_input(cls, optional=None) -> "Input":
         # Set type as None here to avoid schema validation failed
         return cls(type=None, optional=optional)
 

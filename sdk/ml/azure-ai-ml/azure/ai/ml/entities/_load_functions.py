@@ -64,9 +64,9 @@ def load_common(
         Must be provided, and is assumed to be assigned by other internal
         functions that call this.
     :type relative_origin: str
-    :keyword params_override: _description_, defaults to None
-    :type params_override: list, optional
-    :return: _description_
+    :param params_override: List of values to override in loaded yaml
+    :type params_override: Optional[list], optional
+    :return: The loaded resource
     :rtype: Resource
     """
 

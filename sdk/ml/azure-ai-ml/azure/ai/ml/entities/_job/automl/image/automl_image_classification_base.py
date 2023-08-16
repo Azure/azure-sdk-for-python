@@ -358,7 +358,7 @@ class AutoMLImageClassificationBase(AutoMLImage):
 
         :param value: specify either an instance of ImageClassificationSearchSpace or list of
         ImageClassificationSearchSpace for searching through the parameter space
-        :type Union[ImageClassificationSearchSpace, List[ImageClassificationSearchSpace]]
+        :type value: Union[ImageClassificationSearchSpace, List[ImageClassificationSearchSpace]]
         """
         self._search_space = self._search_space or []
 

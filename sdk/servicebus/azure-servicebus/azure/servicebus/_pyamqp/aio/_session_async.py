@@ -84,7 +84,9 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
 
     async def _set_state(self, new_state):
         # type: (SessionState) -> None
-        """Update the session state."""
+        """Update the session state.
+        :param ~pyamqp.constants.SessionState new_state: The new state to transition to.
+        """
         if new_state is None:
             return
         previous_state = self.state

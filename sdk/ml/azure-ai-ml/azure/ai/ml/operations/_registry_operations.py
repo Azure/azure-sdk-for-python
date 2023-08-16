@@ -95,8 +95,14 @@ class RegistryOperations:
             )
         return registry_name
 
-    def _get_polling(self, name):
-        """Return the polling with custom poll interval."""
+    def _get_polling(self, name: str) -> AzureMLPolling:
+        """Return the polling with custom poll interval.
+
+        :param name: The registry name
+        :type name: str
+        :return: A poller with custom poll interval.
+        :rtype: AzureMLPolling
+        """
         path_format_arguments = {
             "registryName": name,
             "resourceGroupName": self._resource_group_name,

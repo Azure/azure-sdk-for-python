@@ -566,9 +566,13 @@ class DataOperations(_ScopeDependentOperations):
         )
 
     def _get_latest_version(self, name: str) -> Data:
-        """Returns the latest version of the asset with the given name.
+        """Returns the latest version of the asset with the given name. Latest is defined as the most recently created,
+         not the most recently updated.
 
-        Latest is defined as the most recently created, not the most recently updated.
+        :param name: The asset name
+        :type name: str
+        :return: The latest asset
+        :rtype: Data
         """
         latest_version = _get_latest_version_from_container(
             name, self._container_operation, self._resource_group_name, self._workspace_name, self._registry_name
@@ -629,7 +633,8 @@ class DataOperations(_ScopeDependentOperations):
             return self.create_or_update(data_ref)
 
     @contextmanager
-    def _set_registry_client(self, registry_name: str) -> None:
+    # pylint: disable-next=docstring-missing-return,docstring-missing-rtype
+    def _set_registry_client(self, registry_name: str) -> Iterable[None]:
         """Sets the registry client for the data operations.
 
         :param registry_name: Name of the registry.
