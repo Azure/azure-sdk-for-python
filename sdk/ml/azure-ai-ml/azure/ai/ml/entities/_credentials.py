@@ -576,8 +576,6 @@ class AmlTokenConfiguration(_BaseIdentityConfiguration):
             :caption: Configuring an AmlTokenConfiguration for a command().
     """
 
-    from azure.ai.ml._schema.job.identity import AMLTokenIdentitySchema
-
     def __init__(self) -> None:
         super().__init__()
         self.type = IdentityType.AML_TOKEN
@@ -593,11 +591,12 @@ class AmlTokenConfiguration(_BaseIdentityConfiguration):
         return _dict
 
     @classmethod
-    def _load_from_dict(cls, data: Dict) -> "AMLTokenIdentitySchema":
+    def _load_from_dict(cls, data: Dict) -> "AmlTokenConfiguration":
         # pylint: disable=no-member
         from azure.ai.ml._schema.job.identity import AMLTokenIdentitySchema
 
-        return AMLTokenIdentitySchema().load(data)
+        _data: AmlTokenConfiguration = AMLTokenIdentitySchema().load(data)
+        return _data
 
     @classmethod
     # pylint: disable=unused-argument
