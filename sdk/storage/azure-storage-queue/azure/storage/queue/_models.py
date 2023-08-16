@@ -468,7 +468,7 @@ class QueuePropertiesPaged(PageIterator):
                 props_list = [QueueProperties._from_generated(q) for q in self._response.queue_items] # pylint: disable=protected-access
             if hasattr(self._response, 'next_marker'):
                 next_marker = self._response.next_marker
-        return next_marker, props_list
+        return next_marker or None, props_list
 
 
 class QueueSasPermissions(object):
