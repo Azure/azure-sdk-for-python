@@ -31,10 +31,15 @@ from azure.ai.ml._restclient.v2023_04_01_preview.models import (
 from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     AccountKeyDatastoreSecrets as RestAccountKeyDatastoreSecrets,
 )
+from azure.ai.ml._restclient.v2023_04_01_preview.models import AmlToken as RestAmlToken
 from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     CertificateDatastoreCredentials as RestCertificateDatastoreCredentials,
 )
 from azure.ai.ml._restclient.v2023_04_01_preview.models import CertificateDatastoreSecrets, CredentialsType
+from azure.ai.ml._restclient.v2023_04_01_preview.models import IdentityConfiguration as RestJobIdentityConfiguration
+from azure.ai.ml._restclient.v2023_04_01_preview.models import IdentityConfigurationType
+from azure.ai.ml._restclient.v2023_04_01_preview.models import ManagedIdentity as RestJobManagedIdentity
+from azure.ai.ml._restclient.v2023_04_01_preview.models import ManagedServiceIdentity as RestRegistryManagedIdentity
 from azure.ai.ml._restclient.v2023_04_01_preview.models import NoneDatastoreCredentials as RestNoneDatastoreCredentials
 from azure.ai.ml._restclient.v2023_04_01_preview.models import SasDatastoreCredentials as RestSasDatastoreCredentials
 from azure.ai.ml._restclient.v2023_04_01_preview.models import SasDatastoreSecrets as RestSasDatastoreSecrets
@@ -44,12 +49,6 @@ from azure.ai.ml._restclient.v2023_04_01_preview.models import (
 from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     ServicePrincipalDatastoreSecrets as RestServicePrincipalDatastoreSecrets,
 )
-
-from azure.ai.ml._restclient.v2023_04_01_preview.models import AmlToken as RestAmlToken
-from azure.ai.ml._restclient.v2023_04_01_preview.models import IdentityConfiguration as RestJobIdentityConfiguration
-from azure.ai.ml._restclient.v2023_04_01_preview.models import IdentityConfigurationType
-from azure.ai.ml._restclient.v2023_04_01_preview.models import ManagedIdentity as RestJobManagedIdentity
-from azure.ai.ml._restclient.v2023_04_01_preview.models import ManagedServiceIdentity as RestRegistryManagedIdentity
 from azure.ai.ml._restclient.v2023_04_01_preview.models import UserIdentity as RestUserIdentity
 from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     WorkspaceConnectionAccessKey as RestWorkspaceConnectionAccessKey,
@@ -58,15 +57,16 @@ from azure.ai.ml._restclient.v2023_06_01_preview.models import ConnectionAuthTyp
 from azure.ai.ml._restclient.v2023_06_01_preview.models import (
     WorkspaceConnectionApiKey as RestWorkspaceConnectionApiKey,
 )
+from azure.ai.ml._schema.job.identity import AMLTokenIdentitySchema
+from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils.utils import camel_to_snake, snake_to_pascal
 from azure.ai.ml.constants._common import CommonYamlFields, IdentityType
 from azure.ai.ml.entities._mixins import DictMixin, RestTranslatableMixin, YamlTranslatableMixin
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, JobException, ValidationErrorType, ValidationException
-from azure.ai.ml._utils._experimental import experimental
 
 
 class _BaseIdentityConfiguration(ABC, DictMixin, RestTranslatableMixin):
-    def __init__(self):
+    def __init__(self) -> None:
         self.type = None
 
 
@@ -248,7 +248,7 @@ class ServicePrincipalConfiguration(BaseTenantCredentials):
         self,
         *,
         client_secret: str,
-        **kwargs,
+        **kwargs: str,
     ) -> None:
         super().__init__(**kwargs)
         self.type = camel_to_snake(CredentialsType.SERVICE_PRINCIPAL)
@@ -291,7 +291,7 @@ class ServicePrincipalConfiguration(BaseTenantCredentials):
             client_id=obj.client_id if obj is not None and obj.client_id else None,
             client_secret=obj.client_secret if obj is not None and obj.client_secret else None,
             tenant_id=obj.tenant_id if obj is not None and obj.tenant_id else None,
-            authority_url=None,
+            authority_url="",
         )
 
     def __eq__(self, other: object) -> bool:
@@ -314,7 +314,7 @@ class CertificateConfiguration(BaseTenantCredentials):
         self,
         certificate: Optional[str] = None,
         thumbprint: Optional[str] = None,
-        **kwargs,
+        **kwargs: str,
     ) -> None:
         super().__init__(**kwargs)
         self.type = CredentialsType.CERTIFICATE
@@ -360,11 +360,11 @@ class CertificateConfiguration(BaseTenantCredentials):
 
 
 class _BaseJobIdentityConfiguration(ABC, RestTranslatableMixin, DictMixin, YamlTranslatableMixin):
-    def __init__(self):
+    def __init__(self) -> None:
         self.type = None
 
     @classmethod
-    def _from_rest_object(cls, obj: RestJobIdentityConfiguration) -> "Identity":
+    def _from_rest_object(cls, obj: RestJobIdentityConfiguration) -> "RestIdentityConfiguration":
         if obj is None:
             return None
         mapping = {
@@ -392,7 +392,7 @@ class _BaseJobIdentityConfiguration(ABC, RestTranslatableMixin, DictMixin, YamlT
     @classmethod
     def _load(
         cls,
-        data: Optional[Dict] = None,
+        data: Dict,
     ) -> Union["ManagedIdentityConfiguration", "UserIdentityConfiguration", "AmlTokenConfiguration"]:
         type_str = data.get(CommonYamlFields.TYPE)
         if type_str == IdentityType.MANAGED_IDENTITY:
@@ -474,9 +474,10 @@ class ManagedIdentityConfiguration(_BaseIdentityConfiguration):
 
     @classmethod
     def _from_identity_configuration_rest_object(
-        cls, rest_obj: RestUserAssignedIdentity, **kwargs
+        cls, rest_obj: RestUserAssignedIdentity, **kwargs: Optional[str]
     ) -> "ManagedIdentityConfiguration":
-        result = cls(resource_id=kwargs["resource_id"])
+        _rid: Optional[str] = kwargs["resource_id"]
+        result = cls(resource_id=_rid)
         result.__dict__.update(rest_obj.as_dict())
         return result
 
@@ -500,14 +501,16 @@ class ManagedIdentityConfiguration(_BaseIdentityConfiguration):
         # pylint: disable=no-member
         from azure.ai.ml._schema.job.identity import ManagedIdentitySchema
 
-        return ManagedIdentitySchema().dump(self)
+        _dict: Dict = ManagedIdentitySchema().dump(self)
+        return _dict
 
     @classmethod
     def _load_from_dict(cls, data: Dict) -> "ManagedIdentityConfiguration":
         # pylint: disable=no-member
         from azure.ai.ml._schema.job.identity import ManagedIdentitySchema
 
-        return ManagedIdentitySchema().load(data)
+        _data: ManagedIdentityConfiguration = ManagedIdentitySchema().load(data)
+        return _data
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, ManagedIdentityConfiguration):
@@ -537,26 +540,31 @@ class UserIdentityConfiguration(_BaseIdentityConfiguration):
 
     @classmethod
     # pylint: disable=unused-argument
-    def _from_job_rest_object(cls, obj: RestUserIdentity) -> "UserIdentity":
+    def _from_job_rest_object(cls, obj: RestUserIdentity) -> "RestUserIdentity":
         return cls()
 
     def _to_dict(self) -> Dict:
         # pylint: disable=no-member
         from azure.ai.ml._schema.job.identity import UserIdentitySchema
 
-        return UserIdentitySchema().dump(self)
+        _dict: Dict = UserIdentitySchema().dump(self)
+        return _dict
 
     @classmethod
     def _load_from_dict(cls, data: Dict) -> "UserIdentityConfiguration":
         # pylint: disable=no-member
         from azure.ai.ml._schema.job.identity import UserIdentitySchema
 
-        return UserIdentitySchema().load(data)
+        _data: UserIdentityConfiguration = UserIdentitySchema().load(data)
+        return _data
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, UserIdentityConfiguration):
             return NotImplemented
-        return self._to_job_rest_object() == other._to_job_rest_object()
+        if self._to_job_rest_object() == other._to_job_rest_object():
+            return True
+        else:
+            return False
 
 
 class AmlTokenConfiguration(_BaseIdentityConfiguration):
@@ -581,15 +589,12 @@ class AmlTokenConfiguration(_BaseIdentityConfiguration):
 
     def _to_dict(self) -> Dict:
         # pylint: disable=no-member
-        from azure.ai.ml._schema.job.identity import AMLTokenIdentitySchema
-
-        return AMLTokenIdentitySchema().dump(self)
+        _dict: Dict = AMLTokenIdentitySchema().dump(self)
+        return _dict
 
     @classmethod
     def _load_from_dict(cls, data: Dict) -> "AMLTokenIdentitySchema":
         # pylint: disable=no-member
-        from azure.ai.ml._schema.job.identity import AMLTokenIdentitySchema
-
         return AMLTokenIdentitySchema().load(data)
 
     @classmethod
@@ -609,7 +614,11 @@ class IdentityConfiguration(RestTranslatableMixin):
     """
 
     def __init__(
-        self, *, type: str, user_assigned_identities: Optional[List[ManagedIdentityConfiguration]] = None, **kwargs
+        self,
+        *,
+        type: str,
+        user_assigned_identities: Optional[List[ManagedIdentityConfiguration]] = None,
+        **kwargs: dict,
     ) -> None:
         self.type = type
         self.user_assigned_identities = user_assigned_identities
@@ -725,7 +734,7 @@ class IdentityConfiguration(RestTranslatableMixin):
 class NoneCredentialConfiguration(RestTranslatableMixin):
     """None Credential Configuration."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.type = CredentialsType.NONE
 
     def _to_datastore_rest_object(self) -> RestNoneDatastoreCredentials:
@@ -818,4 +827,7 @@ class ApiKeyConfiguration(RestTranslatableMixin, DictMixin):
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, AccessKeyConfiguration):
             return NotImplemented
-        return self.key == other.key
+        if self.key == other.key:
+            return True
+        else:
+            return False
