@@ -19,7 +19,7 @@ class AlertNotification(RestTranslatableMixin):
 
     :keyword emails: A list of email addresses that will receive notifications for monitoring alerts.
         Defaults to None.
-    :type emails: Optional[list[str]]
+    :paramtype emails: Optional[list[str]]
 
     .. admonition:: Example:
 

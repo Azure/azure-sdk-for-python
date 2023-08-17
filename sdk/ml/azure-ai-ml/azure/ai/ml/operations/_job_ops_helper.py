@@ -443,7 +443,7 @@ def get_job_output_uris_from_dataplane(
     :param model_dataplane_operations:  The ModelDataplaneOperations used to fetch dataset uris
     :type model_dataplane_operations: ModelDataplaneOperations
     :param output_names: The output name(s) to fetch. If not specified, retrieves all.
-    :type output_names: Optional[Union[Iterable[str] str]], optional
+    :type output_names: Optional[Union[Iterable[str] str]]
     :return: Dictionary mapping user-defined output name to output uri
     :rtype: Dict[str, str]
     """

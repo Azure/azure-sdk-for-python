@@ -134,11 +134,11 @@ class _ComponentFactory:
         """Load a component from a YAML dict.
 
         :keyword data: The YAML dict.
-        :type data: dict
+        :paramtype data: dict
         :keyword context: The context of the YAML dict.
-        :type context: dict
+        :paramtype context: dict
         :keyword _type: The type name of the component. When None, it will be inferred from the YAML dict.
-        :type _type: str
+        :paramtype _type: str
         :return: The loaded component.
         :rtype: ~azure.ai.ml.entities.Component
         """
@@ -155,9 +155,9 @@ class _ComponentFactory:
         """Load a component from a REST object.
 
         :keyword obj: The REST object.
-        :type obj: ComponentVersion
+        :paramtype obj: ComponentVersion
         :keyword _type: The type name of the component. When None, it will be inferred from the REST object.
-        :type _type: str
+        :paramtype _type: str
         :return: The loaded component.
         :rtype: ~azure.ai.ml.entities.Component
         """

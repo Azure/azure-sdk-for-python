@@ -22,11 +22,11 @@ class ComponentIgnoreFile(IgnoreFile):
     :param directory_path: The directory path for the ignore file.
     :type directory_path: Union[str, Path]
     :param additional_includes_file_name: Name of the additional includes file in the root directory to be ignored.
-    :type additional_includes_file_name: str, optional
+    :type additional_includes_file_name: str
     :param skip_ignore_file: Whether to skip the ignore file, defaults to False.
-    :type skip_ignore_file: bool, optional
+    :type skip_ignore_file: bool
     :param extra_ignore_list: List of additional ignore files to be considered during file exclusion.
-    :type extra_ignore_list: List[~azure.ai.ml._utils._asset_utils.IgnoreFile], optional
+    :type extra_ignore_list: List[~azure.ai.ml._utils._asset_utils.IgnoreFile]
     :raises ValueError: If additional include file is not found.
     :return: The ComponentIgnoreFile object.
     :rtype: ComponentIgnoreFile
