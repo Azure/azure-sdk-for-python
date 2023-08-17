@@ -130,6 +130,7 @@
     "adls",
     "aenter",
     "aiohttp",
+    "alru",
     "amqp",
     "amqps",
     "apim",
@@ -354,6 +355,7 @@
     "ukwest",
     "unpad",
     "unpadder",
+    "unpartial",
     "unredacted",
     "unseekable",
     "unsubscriptable",
@@ -453,6 +455,13 @@
         "isfork",
         "ISFORK",
         "thead"
+      ]
+    },
+    {
+      "filename": "tools/azure-sdk-tools/gh_tools/**",
+      "words": [
+        "JOBID",
+        "vnext"
       ]
     },
     {
@@ -835,9 +844,7 @@
     {
       "filename": "sdk/schemaregistry/azure-schemaregistry-avroencoder/**/*.py",
       "words": [
-        "currsize",
-        "unpartial",
-        "alru"
+        "currsize"
       ]
     },
     {

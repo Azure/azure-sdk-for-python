@@ -21,6 +21,8 @@ template_mapping = {
     ArmConstants.UPDATE_ONLINE_ENDPOINT_TYPE: "update_online_endpoint.json",
     ArmConstants.WORKSPACE_BASE: "workspace_base.json",
     ArmConstants.WORKSPACE_PARAM: "workspace_param.json",
+    ArmConstants.FEATURE_STORE_ROLE_ASSIGNMENTS: "feature_store_role_assignments.json",
+    ArmConstants.FEATURE_STORE_ROLE_ASSIGNMENTS_PARAM: "feature_store_role_assignments_param.json",
     ArmConstants.WORKSPACE_PROJECT: "workspace_project.json",
 }
 
@@ -45,6 +47,7 @@ deployment_message_mapping = {
     ArmConstants.STORAGE_ACCOUNT_PARAMETER_NAME: "Creating Storage Account: ({0})",
     AzureMLResourceType.WORKSPACE: "Creating AzureML Workspace: ({0})",
     AzureMLResourceType.CONNECTIONS: "Creating connection: ({0})",
+    ArmConstants.USER_ASSIGNED_IDENTITIES: "Creating User Assigned Identities: ({0})",
 }
 
 

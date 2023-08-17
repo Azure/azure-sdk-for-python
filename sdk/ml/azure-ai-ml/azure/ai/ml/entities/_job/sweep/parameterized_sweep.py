@@ -187,13 +187,13 @@ class ParameterizedSweep:
         """Set limits for Sweep node. Leave parameters as None if you don't want to update corresponding values.
 
         :keyword max_concurrent_trials: maximum concurrent trial number.
-        :type max_concurrent_trials: int
+        :paramtype max_concurrent_trials: int
         :keyword max_total_trials: maximum total trial number.
-        :type max_total_trials: int
+        :paramtype max_total_trials: int
         :keyword timeout: total timeout in seconds for sweep node
-        :type timeout: int
+        :paramtype timeout: int
         :keyword trial_timeout: timeout in seconds for each trial
-        :type trial_timeout: int
+        :paramtype trial_timeout: int
         """
         if self._limits is None:
             self._limits = SweepJobLimits(
@@ -219,7 +219,7 @@ class ParameterizedSweep:
         "minimize", "maximize".
         :type goal: str
         :keyword primary_metric: Name of the metric to optimize.
-        :type primary_metric: str
+        :paramtype primary_metric: str
         """
 
         if self.objective is not None:
