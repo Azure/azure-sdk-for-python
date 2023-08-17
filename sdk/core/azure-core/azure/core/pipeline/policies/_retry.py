@@ -241,13 +241,13 @@ class RetryPolicyBase:
         :return: False if have more retries. True if retries exhausted.
         :rtype: bool
         """
-        initial_retry_counts = (
+        settings_retry_count = (
             settings["total"],
             settings["connect"],
             settings["read"],
             settings["status"],
         )
-        retry_counts: List[int] = list(filter(None, initial_retry_counts))
+        retry_counts: List[int] = list(filter(None, settings_retry_count))
         if not retry_counts:
             return False
 

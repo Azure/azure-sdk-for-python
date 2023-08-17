@@ -25,11 +25,21 @@
 # --------------------------------------------------------------------------
 import datetime
 import email.utils
-from typing import Optional, cast
+from typing import Optional, cast, TypeVar, Union
+from azure.core.pipeline.transport import (
+    HttpResponse as LegacyHttpResponse,
+    AsyncHttpResponse as LegacyAsyncHttpResponse,
+    HttpRequest as LegacyHttpRequest,
+)
+from azure.core.rest import HttpResponse, AsyncHttpResponse, HttpRequest
+
 
 from urllib.parse import urlparse
 from ...utils._utils import _FixedOffset, case_insensitive_dict
 from .. import PipelineResponse
+
+AllHttpResponseType = Union[HttpResponse, LegacyHttpResponse, AsyncHttpResponse, LegacyAsyncHttpResponse]
+HTTPRequestType = Union[HttpRequest, LegacyHttpRequest]
 
 
 def _parse_http_date(text: str) -> datetime.datetime:
@@ -63,7 +73,7 @@ def parse_retry_after(retry_after: str) -> float:
     return max(0, delay)
 
 
-def get_retry_after(response: PipelineResponse) -> Optional[float]:
+def get_retry_after(response: PipelineResponse[HTTPRequestType, AllHttpResponseType]) -> Optional[float]:
     """Get the value of Retry-After in seconds.
 
     :param response: The PipelineResponse object
