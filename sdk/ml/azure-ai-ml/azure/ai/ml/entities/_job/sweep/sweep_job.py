@@ -340,7 +340,7 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
             if properties.identity
             else None,
             queue_settings=properties.queue_settings,
-            resources=properties.resources,
+            resources= properties.resources if hasattr(properties, 'resources') else None
         )
 
     def _override_missing_properties_from_trial(self):
