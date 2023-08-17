@@ -15,10 +15,7 @@ from unittest.mock import patch
 import azure.monitor.opentelemetry.diagnostics._diagnostic_logging as diagnostic_logger
 
 TEST_LOGGER_PATH = str(Path.home())
-TEST_DIAGNOSTIC_LOGGER_FILE_NAME = "test-applicationinsights-extension.log"
-TEST_DIAGNOSTIC_LOGGER_LOCATION = join(
-    TEST_LOGGER_PATH, TEST_DIAGNOSTIC_LOGGER_FILE_NAME
-)
+TEST_DIAGNOSTIC_LOGGER_FILE_NAME_TEMPLATE = "test-applicationinsights-extension-%s.log"
 TEST_SITE_NAME = "TEST_SITE_NAME"
 TEST_CUSTOMER_IKEY = "TEST_CUSTOMER_IKEY"
 TEST_EXTENSION_VERSION = "TEST_EXTENSION_VERSION"
@@ -34,16 +31,24 @@ TEST_LOGGER_NAME_SUB_MODULE = TEST_LOGGER_NAME + ".sub.module"
 TEST_LOGGER_SUB_MODULE = logging.getLogger(TEST_LOGGER_NAME_SUB_MODULE)
 
 
-def clear_file():
-    with open(TEST_DIAGNOSTIC_LOGGER_LOCATION, "w") as f:
+def get_test_file_name(test_id):
+    return TEST_DIAGNOSTIC_LOGGER_FILE_NAME_TEMPLATE % test_id
+
+def get_test_file_location(test_id):
+    return join(
+        TEST_LOGGER_PATH, get_test_file_name(test_id) 
+    )
+
+def clear_file(test_id):
+    with open(get_test_file_location(test_id), "w") as f:
         f.seek(0)
         f.truncate()
 
 
 def check_file_for_messages(
-    level, messages, logger_name=TEST_LOGGER_NAME_SUB_MODULE
+    level, messages, test_id, logger_name=TEST_LOGGER_NAME_SUB_MODULE
 ):
-    with open(TEST_DIAGNOSTIC_LOGGER_LOCATION, "r") as f:
+    with open(get_test_file_location(test_id), "r") as f:
         f.seek(0)
         for message in messages:
             json = loads(f.readline())
@@ -61,19 +66,20 @@ def check_file_for_messages(
         assert not f.read()
 
 
-def check_file_is_empty():
-    with open(TEST_DIAGNOSTIC_LOGGER_LOCATION, "r") as f:
+def check_file_is_empty(test_id):
+    with open(get_test_file_location(test_id), "r") as f:
         f.seek(0)
         assert not f.read()
 
 
 def set_up(
     is_diagnostics_enabled,
+    test_id,
     logger=TEST_LOGGER,
     subscription_id_env_var=TEST_SUBSCRIPTION_ID_ENV_VAR,
 ) -> None:
-    clear_file()
-    check_file_is_empty()
+    clear_file(test_id)
+    check_file_is_empty(test_id)
     diagnostic_logger._logger.handlers.clear()
     logger.handlers.clear()
     TEST_LOGGER.handlers.clear()
@@ -94,7 +100,7 @@ def set_up(
     ).start()
     patch(
         "azure.monitor.opentelemetry.diagnostics._diagnostic_logging._DIAGNOSTIC_LOGGER_FILE_NAME",
-        TEST_DIAGNOSTIC_LOGGER_FILE_NAME,
+        get_test_file_name(test_id),
     ).start()
     patch(
         "azure.monitor.opentelemetry.diagnostics._diagnostic_logging._get_customer_ikey_from_env_var",
@@ -117,95 +123,97 @@ def set_up(
 
 class TestDiagnosticLogger(TestCase):
     def test_initialized(self):
-        set_up(is_diagnostics_enabled=True)
+        set_up(test_id=self.id(), is_diagnostics_enabled=True)
         self.assertTrue(diagnostic_logger.AzureDiagnosticLogging._initialized)
 
     def test_uninitialized(self):
-        set_up(is_diagnostics_enabled=False)
+        set_up(test_id=self.id(), is_diagnostics_enabled=False)
         self.assertFalse(diagnostic_logger.AzureDiagnosticLogging._initialized)
 
     def test_info(self):
-        set_up(is_diagnostics_enabled=True)
+        set_up(test_id=self.id(), is_diagnostics_enabled=True)
         TEST_LOGGER_SUB_MODULE.info(MESSAGE1)
         TEST_LOGGER_SUB_MODULE.info(MESSAGE2)
-        check_file_is_empty()
+        check_file_is_empty(test_id=self.id())
 
     def test_info_with_info_log_level(self):
-        set_up(is_diagnostics_enabled=True)
+        set_up(test_id=self.id(), is_diagnostics_enabled=True)
         TEST_LOGGER_SUB_MODULE.setLevel(logging.INFO)
         TEST_LOGGER_SUB_MODULE.info(MESSAGE1)
         TEST_LOGGER_SUB_MODULE.info(MESSAGE2)
         TEST_LOGGER_SUB_MODULE.setLevel(logging.NOTSET)
-        check_file_for_messages("INFO", (MESSAGE1, MESSAGE2))
+        check_file_for_messages("INFO", (MESSAGE1, MESSAGE2), test_id=self.id())
 
     def test_info_with_sub_module_info_log_level(self):
-        set_up(is_diagnostics_enabled=True)
+        set_up(test_id=self.id(), is_diagnostics_enabled=True)
         TEST_LOGGER_SUB_MODULE.setLevel(logging.INFO)
         TEST_LOGGER_SUB_MODULE.info(MESSAGE1)
         TEST_LOGGER_SUB_MODULE.info(MESSAGE2)
         TEST_LOGGER_SUB_MODULE.setLevel(logging.NOTSET)
-        check_file_for_messages("INFO", (MESSAGE1, MESSAGE2))
+        check_file_for_messages("INFO", (MESSAGE1, MESSAGE2), test_id=self.id())
 
     def test_warning(self):
-        set_up(is_diagnostics_enabled=True)
+        set_up(test_id=self.id(), is_diagnostics_enabled=True)
         TEST_LOGGER_SUB_MODULE.warning(MESSAGE1)
         TEST_LOGGER_SUB_MODULE.warning(MESSAGE2)
-        check_file_for_messages("WARNING", (MESSAGE1, MESSAGE2))
+        check_file_for_messages("WARNING", (MESSAGE1, MESSAGE2), test_id=self.id())
 
     def test_warning_multiple_enable(self):
-        set_up(is_diagnostics_enabled=True)
+        set_up(test_id=self.id(), is_diagnostics_enabled=True)
         diagnostic_logger.AzureDiagnosticLogging.enable(TEST_LOGGER)
         diagnostic_logger.AzureDiagnosticLogging.enable(TEST_LOGGER)
         TEST_LOGGER_SUB_MODULE.warning(MESSAGE1)
         TEST_LOGGER_SUB_MODULE.warning(MESSAGE2)
-        check_file_for_messages("WARNING", (MESSAGE1, MESSAGE2))
+        check_file_for_messages("WARNING", (MESSAGE1, MESSAGE2), test_id=self.id())
 
     def test_error(self):
-        set_up(is_diagnostics_enabled=True)
+        set_up(test_id=self.id(), is_diagnostics_enabled=True)
         TEST_LOGGER_SUB_MODULE.error(MESSAGE1)
         TEST_LOGGER_SUB_MODULE.error(MESSAGE2)
-        check_file_for_messages("ERROR", (MESSAGE1, MESSAGE2))
+        check_file_for_messages("ERROR", (MESSAGE1, MESSAGE2), test_id=self.id())
 
     def test_off_app_service_info(self):
-        set_up(is_diagnostics_enabled=False)
+        set_up(test_id=self.id(), is_diagnostics_enabled=False)
         TEST_LOGGER.info(MESSAGE1)
         TEST_LOGGER.info(MESSAGE2)
         TEST_LOGGER_SUB_MODULE.info(MESSAGE1)
         TEST_LOGGER_SUB_MODULE.info(MESSAGE2)
-        check_file_is_empty()
+        check_file_is_empty(test_id=self.id())
 
     def test_off_app_service_warning(self):
-        set_up(is_diagnostics_enabled=False)
+        set_up(test_id=self.id(), is_diagnostics_enabled=False)
         TEST_LOGGER.warning(MESSAGE1)
         TEST_LOGGER.warning(MESSAGE2)
         TEST_LOGGER_SUB_MODULE.warning(MESSAGE1)
         TEST_LOGGER_SUB_MODULE.warning(MESSAGE2)
-        check_file_is_empty()
+        check_file_is_empty(test_id=self.id())
 
     def test_off_app_service_error(self):
-        set_up(is_diagnostics_enabled=False)
+        set_up(test_id=self.id(), is_diagnostics_enabled=False)
         TEST_LOGGER.error(MESSAGE1)
         TEST_LOGGER.error(MESSAGE2)
         TEST_LOGGER_SUB_MODULE.error(MESSAGE1)
         TEST_LOGGER_SUB_MODULE.error(MESSAGE2)
-        check_file_is_empty()
+        check_file_is_empty(test_id=self.id())
 
     def test_subscription_id_plus(self):
         set_up(
+            test_id=self.id(),
             is_diagnostics_enabled=True,
             subscription_id_env_var=TEST_SUBSCRIPTION_ID_ENV_VAR,
         )
         self.assertEqual(diagnostic_logger._SUBSCRIPTION_ID, TEST_SUBSCRIPTION_ID)
         TEST_LOGGER_SUB_MODULE.warning(MESSAGE1)
         TEST_LOGGER_SUB_MODULE.warning(MESSAGE2)
-        check_file_for_messages("WARNING", (MESSAGE1, MESSAGE2))
+        check_file_for_messages("WARNING", (MESSAGE1, MESSAGE2), test_id=self.id())
 
     def test_subscription_id_no_plus(self):
         set_up(
+            test_id=self.id(),
             is_diagnostics_enabled=True,
             subscription_id_env_var=TEST_SUBSCRIPTION_ID,
         )
         self.assertEqual(diagnostic_logger._SUBSCRIPTION_ID, TEST_SUBSCRIPTION_ID)
         TEST_LOGGER_SUB_MODULE.warning(MESSAGE1)
         TEST_LOGGER_SUB_MODULE.warning(MESSAGE2)
-        check_file_for_messages("WARNING", (MESSAGE1, MESSAGE2))
+        check_file_for_messages("WARNING", (MESSAGE1, MESSAGE2), test_id=self.id())
