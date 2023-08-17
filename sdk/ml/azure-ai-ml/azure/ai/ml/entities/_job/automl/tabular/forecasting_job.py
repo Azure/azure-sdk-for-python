@@ -64,11 +64,23 @@ class ForecastingJob(AutoMLTabular):
         self._forecasting_settings = forecasting_settings
 
     @property
-    def primary_metric(self):
+    def primary_metric(self) -> Optional[str]:
+        """
+        Return the primary metric to use for model selection.
+
+        :return: The primary metric for model selection.
+        :rtype: Optional[str]
+        """
         return self._primary_metric
 
     @primary_metric.setter
-    def primary_metric(self, value: Union[str, ForecastingPrimaryMetrics]):
+    def primary_metric(self, value: Union[str, ForecastingPrimaryMetrics]) -> None:
+        """
+        Set the primary metric to use for model selection.
+
+        :param value: The primary metric for model selection.
+        :rtype: Optional[str]
+        """
         if is_data_binding_expression(str(value), ["parent"]):
             self._primary_metric = value
             return
@@ -80,10 +92,22 @@ class ForecastingJob(AutoMLTabular):
 
     @property
     def training(self) -> ForecastingTrainingSettings:
+        """
+        Return the forecast training settings.
+
+        :retuen: training settings.
+        :rtype: ~azure.ai.ml.entities._job.automl.training_settings.ForecastingTrainingSettings
+        """
         return self._training or ForecastingTrainingSettings()
 
     @property
     def forecasting_settings(self) -> ForecastingSettings:
+        """
+        Return the forecast settings.
+
+        :return: forecast settings.
+        :rtypre: ~azure.ai.ml.entities._job.automl.tabular.forecasting_settings.ForecastingSettings
+        """
         return self._forecasting_settings
 
     def set_forecast_settings(
