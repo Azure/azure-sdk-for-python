@@ -5,7 +5,7 @@
 import logging
 import warnings
 from os import PathLike
-from typing import IO, AnyStr, Optional, Type, Union
+from typing import IO, AnyStr, Dict, Optional, Type, Union
 
 from marshmallow import ValidationError
 
@@ -51,7 +51,7 @@ def load_common(
     source: Union[str, PathLike, IO[AnyStr]],
     relative_origin: str,
     params_override: Optional[list] = None,
-    **kwargs,
+    **kwargs: Union[str, PathLike, IO[AnyStr]],
 ) -> Resource:
     """Private function to load a yaml file to an entity object.
 
@@ -138,10 +138,10 @@ def _try_load_yaml_dict(source: Union[str, PathLike, IO[AnyStr]]) -> dict:
 
 def _load_common_raising_marshmallow_error(
     cls: Type[Resource],
-    yaml_dict,
+    yaml_dict: Dict,
     relative_origin: Union[PathLike, str],
     params_override: Optional[list] = None,
-    **kwargs,
+    **kwargs: Union[str, PathLike, IO[AnyStr]],
 ) -> Resource:
     # pylint: disable=protected-access
     return cls._load(data=yaml_dict, yaml_path=relative_origin, params_override=params_override, **kwargs)
@@ -150,8 +150,8 @@ def _load_common_raising_marshmallow_error(
 def load_job(
     source: Union[str, PathLike, IO[AnyStr]],
     *,
-    relative_origin: Optional[str] = None,
-    **kwargs,
+    relative_origin: str,
+    **kwargs: Union[str, PathLike, IO[AnyStr]],
 ) -> Job:
     """Constructs a Job object from a YAML file.
 
@@ -179,14 +179,14 @@ def load_job(
             :dedent: 8
             :caption: Loading a Job from a YAML config file.
     """
-    return load_common(Job, source, relative_origin, **kwargs)
+    return load_common(Job, source, relative_origin, None, **kwargs)
 
 
 def load_workspace(
     source: Union[str, PathLike, IO[AnyStr]],
     *,
-    relative_origin: Optional[str] = None,
-    **kwargs,
+    relative_origin: str,
+    **kwargs: Union[str, PathLike, IO[AnyStr]],
 ) -> Workspace:
     """Load a workspace object from a yaml file.
 
@@ -209,14 +209,14 @@ def load_workspace(
     :return: Loaded workspace object.
     :rtype: Workspace
     """
-    return load_common(Workspace, source, relative_origin, **kwargs)
+    return load_common(Workspace, source, relative_origin, None, **kwargs)
 
 
 def load_registry(
     source: Union[str, PathLike, IO[AnyStr]],
     *,
-    relative_origin: Optional[str] = None,
-    **kwargs,
+    relative_origin: str,
+    **kwargs: Union[str, PathLike, IO[AnyStr]],
 ) -> Registry:
     """Load a registry object from a yaml file.
 
@@ -239,14 +239,14 @@ def load_registry(
     :return: Loaded registry object.
     :rtype: Registry
     """
-    return load_common(Registry, source, relative_origin, **kwargs)
+    return load_common(Registry, source, relative_origin, None, **kwargs)
 
 
 def load_datastore(
     source: Union[str, PathLike, IO[AnyStr]],
     *,
-    relative_origin: Optional[str] = None,
-    **kwargs,
+    relative_origin: str,
+    **kwargs: Union[str, PathLike, IO[AnyStr]],
 ) -> Datastore:
     """Construct a datastore object from a yaml file.
 
@@ -270,14 +270,14 @@ def load_datastore(
     :return: Loaded datastore object.
     :rtype: Datastore
     """
-    return load_common(Datastore, source, relative_origin, **kwargs)
+    return load_common(Datastore, source, relative_origin, None, **kwargs)
 
 
 def load_code(
     source: Union[str, PathLike, IO[AnyStr]],
     *,
-    relative_origin: Optional[str] = None,
-    **kwargs,
+    relative_origin: str,
+    **kwargs: Union[str, PathLike, IO[AnyStr]],
 ) -> Code:
     """Construct a code object from a yaml file.
 
@@ -301,14 +301,14 @@ def load_code(
     :return: Loaded code object.
     :rtype: ~azure.ai.ml.entities._assets._artifacts.code.Code
     """
-    return load_common(Code, source, relative_origin, **kwargs)
+    return load_common(Code, source, relative_origin, None, **kwargs)
 
 
 def load_compute(
     source: Union[str, PathLike, IO[AnyStr]],
     *,
-    relative_origin: Optional[str] = None,
-    **kwargs,
+    relative_origin: str,
+    **kwargs: Union[str, PathLike, IO[AnyStr]],
 ) -> Compute:
     """Construct a compute object from a yaml file.
 
@@ -331,14 +331,14 @@ def load_compute(
     :return: Loaded compute object.
     :rtype: Compute
     """
-    return load_common(Compute, source, relative_origin, **kwargs)
+    return load_common(Compute, source, relative_origin, None, **kwargs)
 
 
 def load_component(
-    source: Optional[Union[str, PathLike, IO[AnyStr]]] = None,
+    source: Union[str, PathLike, IO[AnyStr]],
     *,
-    relative_origin: Optional[str] = None,
-    **kwargs,
+    relative_origin: str,
+    **kwargs: Union[str, PathLike, IO[AnyStr]],
 ) -> Union[CommandComponent, ParallelComponent, PipelineComponent]:
     """Load component from local or remote to a component function.
 
@@ -384,7 +384,7 @@ def load_component(
     version = kwargs.pop("version", None)
 
     if source:
-        component_entity = load_common(Component, source, relative_origin, **kwargs)
+        component_entity = load_common(Component, source, relative_origin, None, **kwargs)
     elif client and name and version:
         component_entity = client.components.get(name, version)
     else:
@@ -402,8 +402,8 @@ def load_component(
 def load_model(
     source: Union[str, PathLike, IO[AnyStr]],
     *,
-    relative_origin: Optional[str] = None,
-    **kwargs,
+    relative_origin: str,
+    **kwargs: Union[str, PathLike, IO[AnyStr]],
 ) -> Model:
     """Constructs a Model object from a YAML file.
 
@@ -431,14 +431,14 @@ def load_model(
             :dedent: 8
             :caption: Loading a Model from a YAML config file, overriding the name and version parameters.
     """
-    return load_common(Model, source, relative_origin, **kwargs)
+    return load_common(Model, source, relative_origin, None, **kwargs)
 
 
 def load_data(
     source: Union[str, PathLike, IO[AnyStr]],
     *,
-    relative_origin: Optional[str] = None,
-    **kwargs,
+    relative_origin: str,
+    **kwargs: Union[str, PathLike, IO[AnyStr]],
 ) -> Data:
     """Construct a data object from yaml file.
 
@@ -462,14 +462,14 @@ def load_data(
     :return: Constructed Data or DataImport object.
     :rtype: Data
     """
-    return load_common(Data, source, relative_origin, **kwargs)
+    return load_common(Data, source, relative_origin, None, **kwargs)
 
 
 def load_environment(
     source: Union[str, PathLike, IO[AnyStr]],
     *,
-    relative_origin: Optional[str] = None,
-    **kwargs,
+    relative_origin: str,
+    **kwargs: Union[str, PathLike, IO[AnyStr]],
 ) -> Environment:
     """Construct a environment object from yaml file.
 
@@ -493,14 +493,14 @@ def load_environment(
     :return: Constructed environment object.
     :rtype: Environment
     """
-    return load_common(Environment, source, relative_origin, **kwargs)
+    return load_common(Environment, source, relative_origin, None, **kwargs)
 
 
 def load_online_deployment(
     source: Union[str, PathLike, IO[AnyStr]],
     *,
-    relative_origin: Optional[str] = None,
-    **kwargs,
+    relative_origin: str,
+    **kwargs: Union[str, PathLike, IO[AnyStr]],
 ) -> OnlineDeployment:
     """Construct a online deployment object from yaml file.
 
@@ -524,14 +524,14 @@ def load_online_deployment(
     :return: Constructed online deployment object.
     :rtype: OnlineDeployment
     """
-    return load_common(OnlineDeployment, source, relative_origin, **kwargs)
+    return load_common(OnlineDeployment, source, relative_origin, None, **kwargs)
 
 
 def load_batch_deployment(
     source: Union[str, PathLike, IO[AnyStr]],
     *,
-    relative_origin: Optional[str] = None,
-    **kwargs,
+    relative_origin: str,
+    **kwargs: Union[str, PathLike, IO[AnyStr]],
 ) -> BatchDeployment:
     """Construct a batch deployment object from yaml file.
 
@@ -554,14 +554,14 @@ def load_batch_deployment(
     :return: Constructed batch deployment object.
     :rtype: BatchDeployment
     """
-    return load_common(BatchDeployment, source, relative_origin, **kwargs)
+    return load_common(BatchDeployment, source, relative_origin, None, **kwargs)
 
 
 def load_model_batch_deployment(
     source: Union[str, PathLike, IO[AnyStr]],
     *,
-    relative_origin: Optional[str] = None,
-    **kwargs,
+    relative_origin: str,
+    **kwargs: Union[str, PathLike, IO[AnyStr]],
 ) -> ModelBatchDeployment:
     """Construct a model batch deployment object from yaml file.
 
@@ -584,14 +584,14 @@ def load_model_batch_deployment(
     :return: Constructed model batch deployment object.
     :rtype: ModelBatchDeployment
     """
-    return load_common(ModelBatchDeployment, source, relative_origin, **kwargs)
+    return load_common(ModelBatchDeployment, source, relative_origin, None, **kwargs)
 
 
 def load_pipeline_component_batch_deployment(
     source: Union[str, PathLike, IO[AnyStr]],
     *,
-    relative_origin: Optional[str] = None,
-    **kwargs,
+    relative_origin: str,
+    **kwargs: Union[str, PathLike, IO[AnyStr]],
 ) -> PipelineComponentBatchDeployment:
     """Construct a pipeline component batch deployment object from yaml file.
 
@@ -614,14 +614,14 @@ def load_pipeline_component_batch_deployment(
     :return: Constructed pipeline component batch deployment object.
     :rtype: PipelineComponentBatchDeployment
     """
-    return load_common(PipelineComponentBatchDeployment, source, relative_origin, **kwargs)
+    return load_common(PipelineComponentBatchDeployment, source, relative_origin, None, **kwargs)
 
 
 def load_online_endpoint(
     source: Union[str, PathLike, IO[AnyStr]],
     *,
-    relative_origin: Optional[str] = None,
-    **kwargs,
+    relative_origin: str,
+    **kwargs: Union[str, PathLike, IO[AnyStr]],
 ) -> OnlineEndpoint:
     """Construct a online endpoint object from yaml file.
 
@@ -645,13 +645,13 @@ def load_online_endpoint(
     :return: Constructed online endpoint object.
     :rtype: OnlineEndpoint
     """
-    return load_common(OnlineEndpoint, source, relative_origin, **kwargs)
+    return load_common(OnlineEndpoint, source, relative_origin, None, **kwargs)
 
 
 def load_batch_endpoint(
     source: Union[str, PathLike, IO[AnyStr]],
-    relative_origin: Optional[str] = None,
-    **kwargs,
+    relative_origin: str,
+    **kwargs: Union[str, PathLike, IO[AnyStr]],
 ) -> BatchEndpoint:
     """Construct a batch endpoint object from yaml file.
 
@@ -674,14 +674,14 @@ def load_batch_endpoint(
     :return: Constructed batch endpoint object.
     :rtype: BatchEndpoint
     """
-    return load_common(BatchEndpoint, source, relative_origin, **kwargs)
+    return load_common(BatchEndpoint, source, relative_origin, None, **kwargs)
 
 
 def load_workspace_connection(
     source: Union[str, PathLike, IO[AnyStr]],
     *,
-    relative_origin: Optional[str] = None,
-    **kwargs,
+    relative_origin: str,
+    **kwargs: Union[str, PathLike, IO[AnyStr]],
 ) -> WorkspaceConnection:
     """Construct a workspace connection object from yaml file.
 
@@ -704,13 +704,13 @@ def load_workspace_connection(
     :return: Constructed workspace connection object.
     :rtype: WorkspaceConnection
     """
-    return load_common(WorkspaceConnection, source, relative_origin, **kwargs)
+    return load_common(WorkspaceConnection, source, relative_origin, None, **kwargs)
 
 
 def load_schedule(
     source: Union[str, PathLike, IO[AnyStr]],
-    relative_origin: Optional[str] = None,
-    **kwargs,
+    relative_origin: str,
+    **kwargs: Union[str, PathLike, IO[AnyStr]],
 ) -> Schedule:
     """Construct a schedule object from yaml file.
 
@@ -733,14 +733,14 @@ def load_schedule(
     :return: Constructed schedule object.
     :rtype: Schedule
     """
-    return load_common(Schedule, source, relative_origin, **kwargs)
+    return load_common(Schedule, source, relative_origin, None, **kwargs)
 
 
 def load_feature_store(
     source: Union[str, PathLike, IO[AnyStr]],
     *,
-    relative_origin: Optional[str] = None,
-    **kwargs,
+    relative_origin: str,
+    **kwargs: Union[str, PathLike, IO[AnyStr]],
 ) -> FeatureStore:
     """Load a feature store object from a yaml file.
     :param source: The local yaml source of a feature store. Must be either a
@@ -761,14 +761,14 @@ def load_feature_store(
     :return: Loaded feature store object.
     :rtype: FeatureStore
     """
-    return load_common(FeatureStore, source, relative_origin, **kwargs)
+    return load_common(FeatureStore, source, relative_origin, None, **kwargs)
 
 
 def load_feature_set(
     source: Union[str, PathLike, IO[AnyStr]],
     *,
-    relative_origin: Optional[str] = None,
-    **kwargs,
+    relative_origin: str,
+    **kwargs: Union[str, PathLike, IO[AnyStr]],
 ) -> FeatureSet:
     """Construct a FeatureSet object from yaml file.
 
@@ -792,14 +792,14 @@ def load_feature_set(
     :return: Constructed FeatureSet object.
     :rtype: FeatureSet
     """
-    return load_common(FeatureSet, source, relative_origin, **kwargs)
+    return load_common(FeatureSet, source, relative_origin, None, **kwargs)
 
 
 def load_feature_store_entity(
     source: Union[str, PathLike, IO[AnyStr]],
     *,
-    relative_origin: Optional[str] = None,
-    **kwargs,
+    relative_origin: str,
+    **kwargs: Union[str, PathLike, IO[AnyStr]],
 ) -> FeatureStoreEntity:
     """Construct a FeatureStoreEntity object from yaml file.
 
@@ -823,14 +823,14 @@ def load_feature_store_entity(
     :return: Constructed FeatureStoreEntity object.
     :rtype: FeatureStoreEntity
     """
-    return load_common(FeatureStoreEntity, source, relative_origin, **kwargs)
+    return load_common(FeatureStoreEntity, source, relative_origin, None, **kwargs)
 
 
 def load_workspace_hub(
     source: Union[str, PathLike, IO[AnyStr]],
     *,
-    relative_origin: Optional[str] = None,
-    **kwargs,
+    relative_origin: str,
+    **kwargs: Union[str, PathLike, IO[AnyStr]],
 ) -> WorkspaceHub:
     """Load a WorkspaceHub object from a yaml file.
     :param source: The local yaml source of a WorkspaceHub. Must be either a
@@ -851,15 +851,15 @@ def load_workspace_hub(
     :return: Loaded WorkspaceHub object.
     :rtype: WorkspaceHub
     """
-    return load_common(WorkspaceHub, source, relative_origin, **kwargs)
+    return load_common(WorkspaceHub, source, relative_origin, None, **kwargs)
 
 
 @experimental
 def load_model_package(
     source: Union[str, PathLike, IO[AnyStr]],
     *,
-    relative_origin: Optional[str] = None,
-    **kwargs,
+    relative_origin: str,
+    **kwargs: Union[str, PathLike, IO[AnyStr]],
 ) -> ModelPackage:
     """Constructs a ModelPackage object from a YAML file.
 
@@ -887,4 +887,4 @@ def load_model_package(
             :dedent: 8
             :caption: Loading a ModelPackage from a YAML config file.
     """
-    return load_common(ModelPackage, source, relative_origin, **kwargs)
+    return load_common(ModelPackage, source, relative_origin, None, **kwargs)
