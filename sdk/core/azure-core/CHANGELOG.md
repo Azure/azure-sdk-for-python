@@ -1,16 +1,10 @@
 # Release History
 
-## 1.29.3 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
+## 1.29.3 (2023-08-17)
 
 ### Bugs Fixed
 
 - Encoded URL before formatting it. #31346
-
-### Other Changes
 
 ## 1.29.2 (2023-08-14)
 
