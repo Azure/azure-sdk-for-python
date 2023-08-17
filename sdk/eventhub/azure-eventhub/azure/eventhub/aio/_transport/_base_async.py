@@ -256,9 +256,9 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
         :param ~uamqp.AMQPClientAsync or ~pyamqp.aio.AMQPClientAsync mgmt_client: Client to send request with.
         :param str mgmt_msg: Message.
         :keyword bytes operation: Operation.
-        :keyword operation_type: Op type.
-        :keyword status_code_field: mgmt status code.
-        :keyword description_fields: mgmt status desc.
+        :keyword str operation_type: Op type.
+        :keyword str status_code_field: mgmt status code.
+        :keyword str description_fields: mgmt status desc.
         """
 
     @staticmethod

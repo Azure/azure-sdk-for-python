@@ -52,9 +52,8 @@ class BlobCheckpointStore(CheckpointStore):
     :type container_name: str
     :param credential:
         The credentials with which to authenticate. This is optional if the
-        account URL already has a SAS token. The value can be a SAS token string, an account
-        shared access key, or an instance of a TokenCredentials class from azure.identity.
-        If the URL already has a SAS token, specifying an explicit credential will take priority.
+        account URL already has a SAS token. The value can be a AzureSasCredential, an AzureNamedKeyCredential,
+        or a TokenCredential.If the URL already has a SAS token, specifying an explicit credential will take priority.
     :type credential: ~azure.core.credentials.TokenCredential or ~azure.core.credentials.AzureSasCredential
      or ~azure.core.credentials.AzureNamedKeyCredential or None
     :keyword str api_version:
@@ -94,10 +93,8 @@ class BlobCheckpointStore(CheckpointStore):
         :type container_name: str
         :param credential:
             The credentials with which to authenticate. This is optional if the
-            account URL already has a SAS token, or the connection string already has shared
-            access key values. The value can be a SAS token string, an account
-            shared access key, or an instance of a TokenCredentials class from azure.identity.
-            Credentials provided here will take precedence over those in the connection string.
+            account URL already has a SAS token. The value can be a AzureSasCredential, an AzureNamedKeyCredential,
+            or a TokenCredential.If the URL already has a SAS token, specifying an explicit credential will take priority.
         :type credential: ~azure.core.credentials.TokenCredential or ~azure.core.credentials.AzureSasCredential
          or ~azure.core.credentials.AzureNamedKeyCredential or None
         :keyword str api_version:

@@ -58,29 +58,26 @@ class UTC(datetime.tzinfo):
     """Time Zone info for handling UTC"""
 
     def utcoffset(self, dt):
-        """
-            UTF offset for UTC is 0.
-            :param any dt: Ignored.
-            :return: Datetime offset.
-            :rtype: datetime.timedelta
+        """UTF offset for UTC is 0.
+        :param any dt: Ignored.
+        :return: Datetime offset.
+        :rtype: datetime.timedelta
         """
         return datetime.timedelta(0)
 
     def tzname(self, dt):
-        """
-            Timestamp representation.
-            :param any dt: Ignored.
-            :return: Timestamp representation.
-            :rtype: str
+        """ Timestamp representation.
+        :param any dt: Ignored.
+        :return: Timestamp representation.
+        :rtype: str
         """
         return "Z"
 
     def dst(self, dt):
-        """
-            No daylight saving for UTC.
-            :param any dt: Ignored.
-            :return: Offset for daylight savings time.
-            :rtype: datetime.timedelta
+        """ No daylight saving for UTC.
+        :param any dt: Ignored.
+        :return: Offset for daylight savings time.
+        :rtype: datetime.timedelta
         """
         return datetime.timedelta(hours=1)
 
@@ -244,7 +241,7 @@ def transform_outbound_single_message(message, message_type, to_outgoing_amqp_me
     :param message: A single instance of message of type EventData
         or AmqpAnnotatedMessage.
     :type message: ~azure.eventhub.EventData or ~azure.eventhub.amqp.AmqpAnnotatedMessage
-    :param ~azure.eventhub.EventData message_type: The class type to return the messages as.
+    :param type[~azure.eventhub.EventData] message_type: The class type to return the messages as.
     :param callable to_outgoing_amqp_message: A function to transform the message
     :rtype:  ~azure.eventhub.EventData
     :return: The transformed message.

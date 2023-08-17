@@ -95,7 +95,7 @@ class EventHubConsumerClient(
      If the port 5671 is unavailable/blocked in the network environment, `TransportType.AmqpOverWebsocket` could
      be used instead which uses port 443 for communication.
     :paramtype transport_type: ~azure.eventhub.TransportType
-    :keyword dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
+    :keyword dict[str, str or int] http_proxy: HTTP proxy settings. This must be a dictionary with the following
      keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
      Additionally the following keys may also be present: `'username', 'password'`.
     :keyword checkpoint_store: A manager that stores the partition load-balancing and checkpoint data

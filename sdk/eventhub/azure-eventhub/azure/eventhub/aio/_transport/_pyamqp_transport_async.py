@@ -327,9 +327,9 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         :param ~pyamqp.aio.AMQPClientAsync mgmt_client: Client to send request with.
         :param str mgmt_msg: Message.
         :keyword bytes operation: Operation.
-        :keyword bytes operation_type: Op type.
-        :keyword int status_code_field: mgmt status code.
-        :keyword any description_fields: mgmt status desc.
+        :keyword str operation_type: Op type.
+        :keyword str status_code_field: mgmt status code.
+        :keyword str description_fields: mgmt status desc.
 
         :return: The mgmt client.
         :rtype: ~pyamqp.aio.AMQPClientAsync

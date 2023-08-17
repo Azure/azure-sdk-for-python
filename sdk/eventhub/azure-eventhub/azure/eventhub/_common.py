@@ -408,8 +408,8 @@ class EventData(object):
         """
         try:
             return self._raw_amqp_message.body
-        except: # pylint: disable=raise-missing-from
-            raise ValueError("Event content empty.")
+        except:
+            raise ValueError("Event content empty.") from None
 
     @property
     def body_type(self) -> AmqpMessageBodyType:
