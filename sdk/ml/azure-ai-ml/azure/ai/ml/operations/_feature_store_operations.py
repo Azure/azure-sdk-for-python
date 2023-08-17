@@ -469,6 +469,7 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
         self,
         *,
         feature_store_name: Optional[str] = None,
+        include_spark: Optional[bool] = False,
         **kwargs,
     ) -> LROPoller[ManagedNetworkProvisionStatus]:
         """Triggers the feature store to provision the managed network. Specifying spark enabled
@@ -484,7 +485,7 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
         poller = self._provision_network_operation.begin_provision_managed_network(
             self._resource_group_name,
             workspace_name,
-            ManagedNetworkProvisionOptions(),
+            ManagedNetworkProvisionOptions(include_spark=include_spark),
             polling=True,
             cls=lambda response, deserialized, headers: ManagedNetworkProvisionStatus._from_rest_object(deserialized),
             **kwargs,
