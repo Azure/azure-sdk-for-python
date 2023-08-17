@@ -62,7 +62,8 @@ class AsyncTestRestClient(object):
         await self._client.__aenter__()
         return self
 
-    async def __aexit__(self,
+    async def __aexit__(
+        self,
         exc_type: Optional[Type[BaseException]] = None,
         exc_value: Optional[BaseException] = None,
         traceback: Optional[TracebackType] = None,
