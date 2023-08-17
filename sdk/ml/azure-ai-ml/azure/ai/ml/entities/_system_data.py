@@ -2,7 +2,11 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+from datetime import datetime
+from typing import Union
+
 from azure.ai.ml._restclient.v2022_10_01.models import SystemData as RestSystemData
+from azure.ai.ml.entities import CreatedByType
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 
@@ -25,7 +29,7 @@ class SystemData(RestTranslatableMixin):
     :type last_modified_at: datetime
     """
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, **kwargs: Union[str, CreatedByType, datetime]) -> None:
         self.created_by = kwargs.get("created_by", None)
         self.created_by_type = kwargs.get("created_by_type", None)
         self.created_at = kwargs.get("created_at", None)
