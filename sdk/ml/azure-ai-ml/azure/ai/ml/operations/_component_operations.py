@@ -286,7 +286,7 @@ class ComponentOperations(_ScopeDependentOperations):
             defaults to current working directory of the current user. Will be created if not exists.
         :type download_path: str
         :keyword version: Version of the component.
-        :type version: Optional[str]
+        :paramtype version: Optional[str]
         :raises ~OSError: Raised if download_path is pointing to an existing directory that is not empty.
             identified and retrieved. Details will be provided in the error message.
         :return: The specified component object.
@@ -349,7 +349,7 @@ class ComponentOperations(_ScopeDependentOperations):
         :param component: The component object or a mldesigner component function that generates component object
         :type component: Union[Component, types.FunctionType]
         :param raise_on_failure: Whether to raise exception on validation error. Defaults to False
-        :type raise_on_failure: bool, optional
+        :type raise_on_failure: bool
         :return: All validation errors
         :rtype: ~azure.ai.ml.entities.ValidationResult
         """
@@ -423,7 +423,7 @@ class ComponentOperations(_ScopeDependentOperations):
         :param version: The component version to override.
         :type version: str
         :keyword skip_validation: whether to skip validation before creating/updating the component, defaults to False
-        :type skip_validation: bool
+        :paramtype skip_validation: bool
         :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Component cannot be successfully validated.
             Details will be provided in the error message.
         :raises ~azure.ai.ml.exceptions.AssetException: Raised if Component assets
@@ -960,7 +960,7 @@ class ComponentOperations(_ScopeDependentOperations):
         :param resolver: The resolver to resolve the dependencies.
         :type resolver: _AssetResolver
         :keyword resolve_inputs: Whether to resolve inputs.
-        :type resolve_inputs: bool
+        :paramtype resolve_inputs: bool
         """
         if not isinstance(component, PipelineComponent) or not component.jobs:
             return

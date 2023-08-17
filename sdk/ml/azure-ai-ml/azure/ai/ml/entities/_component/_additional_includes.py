@@ -34,7 +34,7 @@ class AdditionalIncludes:
     :param base_path: The base path for origin code path and additional include configs.
     :type base_path: Path
     :param configs: The additional include configs.
-    :type configs: List[Union[str, dict]], optional
+    :type configs: List[Union[str, dict]]
     """
 
     def __init__(
@@ -309,7 +309,7 @@ class AdditionalIncludes:
         :param local_path: The local path
         :type local_path: str
         :param config_info: The config info
-        :type config_info: Optional[str], optional
+        :type config_info: Optional[str]
         :return: The validation result.
         :rtype: ~azure.ai.ml.entities._validation.MutableValidationResult
         """

@@ -32,13 +32,13 @@ class VirtualMachineSshSettings:
         :type admin_username: str, required
         :param admin_password: Describes the admin user password.
             Defaults to None. Required if ssh_private_key_file is not specified.
-        :type admin_password: str, optional
+        :type admin_password: str
         :param ssh_port: The ssh port number. Default is 22.
-        :type ssh_port: str, optional
+        :type ssh_port: str
         :param ssh_private_key_file: Specifies the file containing SSH rsa private key.
             Use "ssh-keygen -t rsa -b 2048" to generate your SSH key pairs.
             Required if admin_password is not specified.
-        :type ssh_private_key_file: str, optional
+        :type ssh_private_key_file: str
         """
         self.admin_username = admin_username
         self.admin_password = admin_password
@@ -52,13 +52,13 @@ class VirtualMachineCompute(Compute):
     :param name: Name of the compute
     :type name: str
     :param description: Description of the resource.
-    :type description: Optional[str], optional
+    :type description: Optional[str]
     :param resource_id: ARM resource id of the underlying compute
     :type resource_id: str
     :param tags: A set of tags. Contains resource tags defined as key/value pairs.
     :type tags: Optional[dict[str, str]]
     :param ssh_settings: SSH settings.
-    :type ssh_settings: VirtualMachineSshSettings, optional
+    :type ssh_settings: VirtualMachineSshSettings
     """
 
     def __init__(

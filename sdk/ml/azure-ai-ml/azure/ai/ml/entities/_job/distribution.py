@@ -78,7 +78,7 @@ class MpiDistribution(DistributionConfiguration):
     """MPI distribution configuration.
 
     :keyword process_count_per_instance: The number of processes per node.
-    :type process_count_per_instance: Optional[int]
+    :paramtype process_count_per_instance: Optional[int]
 
     .. admonition:: Example:
 
@@ -104,7 +104,7 @@ class PyTorchDistribution(DistributionConfiguration):
     """PyTorch distribution configuration.
 
     :keyword process_count_per_instance: The number of processes per node.
-    :type process_count_per_instance: Optional[int]
+    :paramtype process_count_per_instance: Optional[int]
 
     .. admonition:: Example:
 
@@ -130,9 +130,9 @@ class TensorFlowDistribution(DistributionConfiguration):
     """TensorFlow distribution configuration.
 
     :keyword parameter_server_count: The number of parameter server tasks. Defaults to 0.
-    :type parameter_server_count: Optional[int]
+    :paramtype parameter_server_count: Optional[int]
     :keyword worker_count: The number of workers. Defaults to the instance count.
-    :type worker_count: Optional[int]
+    :paramtype worker_count: Optional[int]
 
     .. admonition:: Example:
 

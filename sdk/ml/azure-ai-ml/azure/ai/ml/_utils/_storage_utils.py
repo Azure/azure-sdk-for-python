@@ -139,11 +139,11 @@ def get_storage_client(
     :param storage_account: The storage_account name
     :type storage_account: str
     :param storage_type: The storage type
-    :type storage_type: Union[DatastoreType, str], optional
+    :type storage_type: Union[DatastoreType, str]
     :param account_url: The account url
-    :type account_url: Optional[str], optional
+    :type account_url: Optional[str]
     :param container_name: The container name
-    :type container_name: Optional[str], optional
+    :type container_name: Optional[str]
     :return: The storage client
     :rtype: Union[BlobStorageClient, FileStorageClient, Gen2StorageClient]
     """
