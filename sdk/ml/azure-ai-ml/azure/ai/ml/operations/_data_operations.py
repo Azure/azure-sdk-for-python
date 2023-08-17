@@ -671,12 +671,12 @@ class DataOperations(_ScopeDependentOperations):
                 self._resource_group_name,
                 self._workspace_name,
                 ci_name,
-                ComputeInstanceDataMount(
+                [ComputeInstanceDataMount(
                     source=uri,
                     source_type="URL",
                     mount_name=f"unified_mount_{uuid.uuid4()}",
                     mount_action="Mount",
-                ),
+                )],
             )
         else:
             rslex_fuse_subprocess_wrapper.start_fuse_mount_subprocess(uri, mount_point, read_only, debug)
