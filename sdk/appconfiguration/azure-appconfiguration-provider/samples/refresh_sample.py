@@ -3,11 +3,10 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-from azure.appconfiguration.provider import load
+from azure.appconfiguration.provider import load, SentinelKey
 from azure.appconfiguration import (
     AzureAppConfigurationClient,
     ConfigurationSetting,
-    SentinelKey,
 )
 import os
 import time
