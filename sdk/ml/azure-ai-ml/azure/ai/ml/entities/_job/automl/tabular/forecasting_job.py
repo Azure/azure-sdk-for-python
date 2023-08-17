@@ -25,7 +25,16 @@ from azure.ai.ml.entities._util import load_from_dict
 
 
 class ForecastingJob(AutoMLTabular):
-    """Configuration for AutoML Forecasting Task."""
+    """
+    Configuration for AutoML Forecasting Task.
+
+    :param primary_metric: The primary metric to use for model selection.
+    :type primary_metric: Optional[str]
+    :param forecasting_settings: The settings for the forecasting task.
+    :type forecasting_settings:  ~azure.ai.ml.entities._job.automl.tabular.forecasting_settings.ForecastingSettings, optional
+    :param kwargs: Job-specific arguments
+    :type kwargs: dict
+    """
 
     _DEFAULT_PRIMARY_METRIC = ForecastingPrimaryMetrics.NORMALIZED_ROOT_MEAN_SQUARED_ERROR
 
@@ -36,15 +45,7 @@ class ForecastingJob(AutoMLTabular):
         forecasting_settings: Optional[ForecastingSettings] = None,
         **kwargs,
     ) -> None:
-        """Initialize a new AutoML Forecasting task.
-
-        :param primary_metric: The primary metric to use for optimization
-        :type primary_metric: str, optional
-        :param forecasting_settings: The settings for the forecasting task
-        :type forecasting_settings: ForecastingSettings, optional
-        :param kwargs: Job-specific arguments
-        :type kwargs: dict
-        """
+        """Initialize a new AutoML Forecasting task."""
         # Extract any task specific settings
         featurization = kwargs.pop("featurization", None)
         limits = kwargs.pop("limits", None)
