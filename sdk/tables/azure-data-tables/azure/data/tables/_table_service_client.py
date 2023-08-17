@@ -12,12 +12,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.pipeline import Pipeline
 
 from ._generated.models import TableServiceProperties
-from ._models import (
-    TablePropertiesPaged,
-    service_stats_deserialize,
-    service_properties_deserialize,
-    TableItem
-)
+from ._models import TablePropertiesPaged, service_stats_deserialize, service_properties_deserialize, TableItem
 from ._base_client import parse_connection_str, TablesBaseClient, TransportWrapper
 from ._models import LocationMode
 from ._error import _process_table_error, _reprocess_error
@@ -42,45 +37,49 @@ class TableServiceClient(TablesBaseClient):
     :keyword credential:
         The credentials with which to authenticate. This is optional if the
         account URL already has a SAS token. The value can be one of AzureNamedKeyCredential (azure-core),
-        AzureSasCredential (azure-core), or TokenCredentials from azure-identity.
+        AzureSasCredential (azure-core), or a TokenCredential implementation from azure-identity.
     :paramtype credential:
-        :class:`~azure.core.credentials.AzureNamedKeyCredential` or
-        :class:`~azure.core.credentials.AzureSasCredential` or
-        :class:`~azure.core.credentials.TokenCredential`
+        ~azure.core.credentials.AzureNamedKeyCredential or
+        ~azure.core.credentials.AzureSasCredential or
+        ~azure.core.credentials.TokenCredential or None
     :keyword str api_version:
         The Storage API version to use for requests. Default value is '2019-02-02'.
         Setting to an older version may result in reduced feature compatibility.
 
-        .. admonition:: Example:
+    .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_authentication.py
-                :start-after: [START auth_from_sas]
-                :end-before: [END auth_from_sas]
-                :language: python
-                :dedent: 8
-                :caption: Authenticating a TableServiceClient from a Shared Access Key
+        .. literalinclude:: ../samples/sample_authentication.py
+            :start-after: [START auth_from_sas]
+            :end-before: [END auth_from_sas]
+            :language: python
+            :dedent: 8
+            :caption: Authenticating a TableServiceClient from a Shared Access Key
 
-            .. literalinclude:: ../samples/sample_authentication.py
-                :start-after: [START auth_from_shared_key]
-                :end-before: [END auth_from_shared_key]
-                :language: python
-                :dedent: 8
-                :caption: Authenticating a TableServiceClient from a Shared Account Key
-        """
+        .. literalinclude:: ../samples/sample_authentication.py
+            :start-after: [START auth_from_shared_key]
+            :end-before: [END auth_from_shared_key]
+            :language: python
+            :dedent: 8
+            :caption: Authenticating a TableServiceClient from a Shared Account Key
+    """
 
     def _format_url(self, hostname: str) -> str:
         """Format the endpoint URL according to the current location
         mode hostname.
+
+        :param str hostname: The current location mode hostname.
+        :returns: The full URL to the Tables account.
+        :rtype: str
         """
-        return "{}://{}{}".format(self.scheme, hostname, self._query_str)
+        return f"{self.scheme}://{hostname}{self._query_str}"
 
     @classmethod
-    def from_connection_string(cls, conn_str: str, **kwargs) -> 'TableServiceClient':
+    def from_connection_string(cls, conn_str: str, **kwargs) -> "TableServiceClient":
         """Create TableServiceClient from a connection string.
 
         :param str conn_str: A connection string to an Azure Storage or Cosmos account.
         :returns: A Table service client.
-        :rtype: :class:`~azure.data.tables.TableServiceClient`
+        :rtype: ~azure.data.tables.TableServiceClient
 
         .. admonition:: Example:
 
@@ -91,9 +90,7 @@ class TableServiceClient(TablesBaseClient):
                 :dedent: 8
                 :caption: Authenticating a TableServiceClient from a connection_string
         """
-        endpoint, credential = parse_connection_str(
-            conn_str=conn_str, credential=None, keyword_args=kwargs
-        )
+        endpoint, credential = parse_connection_str(conn_str=conn_str, credential=None, keyword_args=kwargs)
         return cls(endpoint, credential=credential, **kwargs)
 
     @distributed_trace
@@ -102,7 +99,7 @@ class TableServiceClient(TablesBaseClient):
         location endpoint when read-access geo-redundant replication is enabled for the account.
 
         :return: Dictionary of service stats
-        :rtype: Dict[str, object]
+        :rtype: dict[str, object]
         :raises: :class:`~azure.core.exceptions.HttpResponseError:`
         """
         try:
@@ -120,7 +117,7 @@ class TableServiceClient(TablesBaseClient):
         including properties for Analytics and CORS (Cross-Origin Resource Sharing) rules.
 
         :return: Dictionary of service properties
-        :rtype: Dict[str, object]
+        :rtype: dict[str, object]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
         timeout = kwargs.pop("timeout", None)
@@ -146,18 +143,17 @@ class TableServiceClient(TablesBaseClient):
         :keyword minute_metrics: Minute level metrics
         :paramtype minute_metrics: ~azure.data.tables.TableMetrics
         :keyword cors: Cross-origin resource sharing rules
-        :paramtype cors: List[~azure.data.tables.TableCorsRule]
+        :paramtype cors: list[~azure.data.tables.TableCorsRule]
         :return: None
-        :rtype: None
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
-        cors = kwargs.pop('cors', None)
+        cors = kwargs.pop("cors", None)
         if cors:
             cors = [c._to_generated() for c in cors]  # pylint:disable=protected-access
         props = TableServiceProperties(
-            logging=kwargs.pop('analytics_logging', None),
-            hour_metrics=kwargs.pop('hour_metrics', None),
-            minute_metrics=kwargs.pop('minute_metrics', None),
+            logging=kwargs.pop("analytics_logging", None),
+            hour_metrics=kwargs.pop("hour_metrics", None),
+            minute_metrics=kwargs.pop("minute_metrics", None),
             cors=cors,  # type: ignore
         )
         try:
@@ -176,7 +172,7 @@ class TableServiceClient(TablesBaseClient):
         :param table_name: The Table name.
         :type table_name: str
         :return: TableClient
-        :rtype: :class:`~azure.data.tables.TableClient`
+        :rtype: ~azure.data.tables.TableClient
         :raises: :class:`~azure.core.exceptions.ResourceExistsError`
 
         .. admonition:: Example:
@@ -201,7 +197,7 @@ class TableServiceClient(TablesBaseClient):
         :param table_name: The Table name.
         :type table_name: str
         :return: TableClient
-        :rtype: :class:`~azure.data.tables.TableClient`
+        :rtype: ~azure.data.tables.TableClient
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         .. admonition:: Example:
@@ -228,7 +224,6 @@ class TableServiceClient(TablesBaseClient):
         :param table_name: The Table name.
         :type table_name: str
         :return: None
-        :rtype: None
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         .. admonition:: Example:
@@ -250,9 +245,9 @@ class TableServiceClient(TablesBaseClient):
         :param str query_filter: Specify a filter to return certain tables.
         :keyword int results_per_page: Number of tables per page in return ItemPaged
         :keyword parameters: Dictionary for formatting query with additional, user defined parameters
-        :paramtype parameters:  Dict[str, Any]
-        :return: ItemPaged[:class:`~azure.data.tables.TableItem`]
-        :rtype: ~azure.core.paging.ItemPaged
+        :paramtype parameters:  dict[str, Any]
+        :return: An iterator of :class:`~azure.data.tables.TableItem`
+        :rtype: ~azure.core.paging.ItemPaged[~azure.data.tables.TableItem]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         .. admonition:: Example:
@@ -265,9 +260,7 @@ class TableServiceClient(TablesBaseClient):
                 :caption: Querying tables in a storage account
         """
         parameters = kwargs.pop("parameters", None)
-        query_filter = _parameter_filter_substitution(
-            parameters, query_filter
-        )
+        query_filter = _parameter_filter_substitution(parameters, query_filter)
         top = kwargs.pop("results_per_page", None)
 
         command = functools.partial(self._client.table.query, **kwargs)
@@ -283,8 +276,8 @@ class TableServiceClient(TablesBaseClient):
         """Queries tables under the given account.
 
         :keyword int results_per_page: Number of tables per page in returned ItemPaged
-        :return: ItemPaged[:class:`~azure.data.tables.TableItem`]
-        :rtype: ~azure.core.paging.ItemPaged
+        :return: An iterator of :class:`~azure.data.tables.TableItem`
+        :rtype: ~azure.core.paging.ItemPaged[~azure.data.tables.TableItem]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         .. admonition:: Example:
@@ -312,12 +305,12 @@ class TableServiceClient(TablesBaseClient):
 
         :param str table_name: The table name
         :returns: A :class:`~azure.data.tables.TableClient` object.
-        :rtype: :class:`~azure.data.tables.TableClient`
+        :rtype: ~azure.data.tables.TableClient
 
         """
         pipeline = Pipeline(  # type: ignore
-            transport=TransportWrapper(self._client._client._pipeline._transport), # pylint: disable = protected-access
-            policies=self._policies
+            transport=TransportWrapper(self._client._client._pipeline._transport),  # pylint: disable = protected-access
+            policies=self._policies,
         )
         return TableClient(
             self.url,
@@ -327,5 +320,5 @@ class TableServiceClient(TablesBaseClient):
             pipeline=pipeline,
             location_mode=self._location_mode,
             _hosts=self._hosts,
-            **kwargs
+            **kwargs,
         )

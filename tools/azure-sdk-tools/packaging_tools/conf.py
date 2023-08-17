@@ -20,6 +20,7 @@ _CONFIG = {
     "need_msrestazure": False,  # track2 does not need it anymore in setup.py
     "need_azuremgmtcore": True,
     "sample_link": "",
+    "exclude_folders": "",
 }
 
 

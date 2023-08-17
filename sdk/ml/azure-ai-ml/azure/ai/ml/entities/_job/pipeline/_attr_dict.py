@@ -6,7 +6,7 @@
 
 import logging
 from abc import ABC
-from typing import Generic, TypeVar
+from typing import Any, Generic, TypeVar, Optional
 
 K = TypeVar("K")
 V = TypeVar("V")
@@ -49,7 +49,7 @@ class _AttrDict(Generic[K, V], dict, ABC):
             self._key_restriction = True
         self._logger = logging.getLogger("attr_dict")
 
-    def _initializing(self) -> bool:  # pylint: disable=no-self-use
+    def _initializing(self) -> bool:
         # use this to indicate ongoing init process, sub class need to make sure this return True during init process.
         return False
 
@@ -82,7 +82,9 @@ class _AttrDict(Generic[K, V], dict, ABC):
         assign value to it.
 
         :param attr_name: Attribute name
+        :type attr_name: str
         :return: If the given attribute name should be treated as arbitrary attribute.
+        :rtype: bool
         """
         # Internal attribute won't be set as arbitrary attribute.
         if attr_name.startswith("_"):
@@ -91,7 +93,7 @@ class _AttrDict(Generic[K, V], dict, ABC):
         if self._initializing():
             return False
         # If there's key restriction, only keys in it can be set as arbitrary attribute.
-        if self._key_restriction and attr_name not in self._allowed_keys.keys():
+        if self._key_restriction and attr_name not in self._allowed_keys:
             return False
         # Attributes already in attribute dict will not be set as arbitrary attribute.
         try:
@@ -113,14 +115,14 @@ class _AttrDict(Generic[K, V], dict, ABC):
             self.__setattr__(key, result)
             return result
 
-    def __setattr__(self, key: K, value: V):
+    def __setattr__(self, key: K, value: V) -> None:
         if not self._is_arbitrary_attr(key):
             super().__setattr__(key, value)
         else:
             self._logger.debug("setting %s to %s", key, value)
-            return super().__setitem__(key, value)
+            super().__setitem__(key, value)
 
-    def __setitem__(self, key: K, value: V):
+    def __setitem__(self, key: K, value: V) -> None:
         self.__setattr__(key, value)
 
     def __getitem__(self, item: V):
@@ -142,10 +144,17 @@ def has_attr_safe(obj, attr):
     return has_attr
 
 
-def try_get_non_arbitrary_attr_for_potential_attr_dict(obj, attr):
+def try_get_non_arbitrary_attr(obj: Any, attr: str) -> Optional[Any]:
     """Try to get non-arbitrary attribute for potential attribute dict.
 
     Will not create target attribute if it is an arbitrary attribute in _AttrDict.
+
+    :param obj: The obj
+    :type obj: Any
+    :param attr: The attribute name
+    :type attr: str
+    :return: obj.attr
+    :rtype: Any
     """
     if has_attr_safe(obj, attr):
         return obj[attr] if isinstance(obj, dict) else getattr(obj, attr)

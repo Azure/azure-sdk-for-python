@@ -36,6 +36,7 @@ key = os.getenv("AZURE_SEARCH_API_KEY")
 def get_embeddings(text: str):
     # There are a few ways to get embeddings. This is just one example.
     import openai
+
     open_ai_endpoint = os.getenv("OpenAIEndpoint")
     open_ai_key = os.getenv("OpenAIKey")
 
@@ -56,7 +57,7 @@ def get_hotel_index(name: str):
         SimpleField,
         SearchableField,
         VectorSearch,
-        VectorSearchAlgorithmConfiguration,
+        HnswVectorSearchAlgorithmConfiguration,
     )
 
     fields = [
@@ -67,7 +68,7 @@ def get_hotel_index(name: str):
             name="descriptionVector",
             type=SearchFieldDataType.Collection(SearchFieldDataType.Single),
             searchable=True,
-            dimensions=1536,
+            vector_search_dimensions=1536,
             vector_search_configuration="my-vector-config",
         ),
         SearchableField(
@@ -75,7 +76,7 @@ def get_hotel_index(name: str):
         ),
     ]
     vector_search = VectorSearch(
-        algorithm_configurations=[VectorSearchAlgorithmConfiguration(name="my-vector-config", kind="hnsw")]
+        algorithm_configurations=[HnswVectorSearchAlgorithmConfiguration(name="my-vector-config", kind="hnsw")]
     )
     return SearchIndex(name=name, fields=fields, vector_search=vector_search)
 
@@ -86,40 +87,40 @@ def get_hotel_documents():
             "hotelId": "1",
             "hotelName": "Fancy Stay",
             "description": "Best hotel in town if you like luxury hotels.",
-            "DescriptionVector": get_embeddings("Best hotel in town if you like luxury hotels."),
+            "descriptionVector": get_embeddings("Best hotel in town if you like luxury hotels."),
             "category": "Luxury",
         },
         {
-            "HotelId": "2",
-            "HotelName": "Roach Motel",
-            "Description": "Cheapest hotel in town. Infact, a motel.",
-            "DescriptionVector": get_embeddings("Cheapest hotel in town. Infact, a motel."),
-            "Category": "Budget",
+            "hotelId": "2",
+            "hotelName": "Roach Motel",
+            "descrdescriptioniption": "Cheapest hotel in town. Infact, a motel.",
+            "descriptionVector": get_embeddings("Cheapest hotel in town. Infact, a motel."),
+            "category": "Budget",
         },
         {
-            "HotelId": "3",
-            "HotelName": "EconoStay",
-            "Description": "Very popular hotel in town.",
-            "DescriptionVector": get_embeddings("Very popular hotel in town."),
-            "Category": "Budget",
+            "hotelId": "3",
+            "hotelName": "EconoStay",
+            "description": "Very popular hotel in town.",
+            "descriptionVector": get_embeddings("Very popular hotel in town."),
+            "category": "Budget",
         },
         {
-            "HotelId": "4",
-            "HotelName": "Modern Stay",
-            "Description": "Modern architecture, very polite staff and very clean. Also very affordable.",
-            "DescriptionVector": get_embeddings(
+            "hotelId": "4",
+            "hotelName": "Modern Stay",
+            "description": "Modern architecture, very polite staff and very clean. Also very affordable.",
+            "descriptionVector": get_embeddings(
                 "Modern architecture, very polite staff and very clean. Also very affordable."
             ),
-            "Category": "Luxury",
+            "category": "Luxury",
         },
         {
-            "HotelId": "5",
-            "HotelName": "Secret Point",
-            "Description": "One of the best hotel in town. The hotel is ideally located on the main commercial artery of the city in the heart of New York.",
-            "DescriptionVector": get_embeddings(
+            "hotelId": "5",
+            "hotelName": "Secret Point",
+            "description": "One of the best hotel in town. The hotel is ideally located on the main commercial artery of the city in the heart of New York.",
+            "descriptionVector": get_embeddings(
                 "One of the best hotel in town. The hotel is ideally located on the main commercial artery of the city in the heart of New York."
             ),
-            "Category": "Boutique",
+            "category": "Boutique",
         },
     ]
     return docs
@@ -130,11 +131,12 @@ async def single_vector_search():
     query = "Top hotels in town"
 
     search_client = SearchClient(service_endpoint, index_name, AzureKeyCredential(key))
+    vector = Vector(value=get_embeddings(query), k=3, fields="descriptionVector")
 
     async with search_client:
         results = await search_client.search(
             search_text="",
-            vector=Vector(value=get_embeddings(query), k=3, fields="descriptionVector"),
+            vectors=[vector],
             select=["hotelId", "hotelName"],
         )
 
@@ -148,11 +150,12 @@ async def single_vector_search_with_filter():
     query = "Top hotels in town"
 
     search_client = SearchClient(service_endpoint, index_name, AzureKeyCredential(key))
+    vector = Vector(value=get_embeddings(query), k=3, fields="descriptionVector")
 
     async with search_client:
         results = await search_client.search(
             search_text="",
-            vector=Vector(value=get_embeddings(query), k=3, fields="descriptionVector"),
+            vectors=[vector],
             filter="category eq 'Luxury'",
             select=["hotelId", "hotelName"],
         )
@@ -167,11 +170,12 @@ async def simple_hybrid_search():
     query = "Top hotels in town"
 
     search_client = SearchClient(service_endpoint, index_name, AzureKeyCredential(key))
+    vector = Vector(value=get_embeddings(query), k=3, fields="descriptionVector")
 
     async with search_client:
         results = await search_client.search(
             search_text=query,
-            vector=Vector(value=get_embeddings(query), k=3, fields="descriptionVector"),
+            vectors=[vector],
             select=["hotelId", "hotelName"],
         )
         print(await results.get_answers())
@@ -180,17 +184,19 @@ async def simple_hybrid_search():
     # [END simple_hybrid_search]
 
 
-if __name__ == "__main__":
+async def main():
     credential = AzureKeyCredential(key)
     index_client = SearchIndexClient(service_endpoint, credential)
     index = get_hotel_index(index_name)
     index_client.create_index(index)
     client = SearchClient(service_endpoint, index_name, credential)
     hotel_docs = get_hotel_documents()
-    client.upload_documents(documents=hotel_docs)
-    
-    single_vector_search()
-    single_vector_search_with_filter()
-    asyncio.run(single_vector_search())
-    asyncio.run(single_vector_search_with_filter())
-    asyncio.run(simple_hybrid_search())
+    await client.upload_documents(documents=hotel_docs)
+
+    await single_vector_search()
+    await single_vector_search_with_filter()
+    await simple_hybrid_search()
+
+
+if __name__ == "__main__":
+    asyncio.run(main())

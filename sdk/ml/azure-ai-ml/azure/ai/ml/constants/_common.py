@@ -184,6 +184,15 @@ SPARK_ENVIRONMENT_WARNING_MESSAGE = (
 )
 
 
+class DefaultOpenEncoding:
+    """Enum that captures SDK's default values for the encoding param of open(...)"""
+
+    READ = "utf-8-sig"
+    """SDK Default Encoding when reading a file"""
+    WRITE = "utf-8"
+    """SDK Default Encoding when writing a file"""
+
+
 class AzureMLResourceType:
     """AzureMLResourceType is a class that defines the resource types that are supported by the SDK/CLI."""
 
@@ -231,6 +240,8 @@ class AzureMLResourceType:
     """Feature store entity resource type."""
     FEATURE_STORE = "feature_store"
     """Feature store resource type."""
+    WORKSPACE_HUB = "workspace_hub"
+    """WorkspaceHub resource type."""
 
     NAMED_TYPES = {
         JOB,
@@ -283,6 +294,7 @@ class ArmConstants:
     STORAGE_ACCOUNT_PARAMETER_NAME = "storageAccounts"
     APP_INSIGHTS_PARAMETER_NAME = "components"
     CONTAINER_REGISTRY_PARAMETER_NAME = "registries"
+    USER_ASSIGNED_IDENTITIES = "userAssignedIdentities"
 
     CODE_TYPE = "code"
     CODE_VERSION_TYPE = "code_version"
@@ -296,6 +308,9 @@ class ArmConstants:
     BASE_TYPE = "base"
     WORKSPACE_BASE = "workspace_base"
     WORKSPACE_PARAM = "workspace_param"
+    FEATURE_STORE_ROLE_ASSIGNMENTS = "feature_store_role_assignments"
+    FEATURE_STORE_ROLE_ASSIGNMENTS_PARAM = "feature_store_role_assignments_param"
+    WORKSPACE_PROJECT = "workspace_project"
 
     OPERATION_CREATE = "create"
     OPERATION_UPDATE = "update"
@@ -452,6 +467,7 @@ class YAMLRefDocLinks:
     FEATURE_STORE = "https://aka.ms/ml-cli-v2-featurestore-yaml-reference"
     FEATURE_SET = "https://aka.ms/ml-cli-v2-featureset-yaml-reference"
     FEATURE_STORE_ENTITY = "https://aka.ms/ml-cli-v2-featurestore-entity-yaml-reference"
+    WORKSPACEHUB = "https://aka.ms/ml-cli-v2-workspace-hub-entity-yaml-reference"
 
 
 class YAMLRefDocSchemaNames:

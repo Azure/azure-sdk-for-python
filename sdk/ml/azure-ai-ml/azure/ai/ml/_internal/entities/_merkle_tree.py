@@ -110,7 +110,7 @@ class DirTreeNode(object):
 
     def load_children_from_dict(self, node_dict):
         if len(node_dict.items()) == 0:
-            return
+            return None
         self.name = node_dict["name"]
         self.file_type = node_dict["type"]
         self.hexdigest_hash = node_dict["hash"]

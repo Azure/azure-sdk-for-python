@@ -6,7 +6,17 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from ._models_py3 import AadConfiguration
 from ._models_py3 import AdministrativeCredentials
+from ._models_py3 import AdministratorConfiguration
+from ._models_py3 import AgentOptions
+from ._models_py3 import AgentPool
+from ._models_py3 import AgentPoolConfiguration
+from ._models_py3 import AgentPoolList
+from ._models_py3 import AgentPoolPatchParameters
+from ._models_py3 import AgentPoolUpgradeSettings
+from ._models_py3 import AttachedNetworkConfiguration
+from ._models_py3 import AvailableUpgrade
 from ._models_py3 import BareMetalMachine
 from ._models_py3 import BareMetalMachineCommandSpecification
 from ._models_py3 import BareMetalMachineConfigurationData
@@ -22,7 +32,8 @@ from ._models_py3 import BareMetalMachineRunCommandParameters
 from ._models_py3 import BareMetalMachineRunDataExtractsParameters
 from ._models_py3 import BareMetalMachineRunReadCommandsParameters
 from ._models_py3 import BareMetalMachineValidateHardwareParameters
-from ._models_py3 import BgpPeer
+from ._models_py3 import BgpAdvertisement
+from ._models_py3 import BgpServiceLoadBalancerConfiguration
 from ._models_py3 import BmcKeySet
 from ._models_py3 import BmcKeySetList
 from ._models_py3 import BmcKeySetPatchParameters
@@ -43,34 +54,38 @@ from ._models_py3 import ClusterMetricsConfigurationList
 from ._models_py3 import ClusterMetricsConfigurationPatchParameters
 from ._models_py3 import ClusterPatchParameters
 from ._models_py3 import ClusterUpdateVersionParameters
-from ._models_py3 import CniBgpConfiguration
-from ._models_py3 import CommunityAdvertisement
 from ._models_py3 import Console
 from ._models_py3 import ConsoleList
 from ._models_py3 import ConsolePatchParameters
-from ._models_py3 import DefaultCniNetwork
-from ._models_py3 import DefaultCniNetworkList
-from ._models_py3 import DefaultCniNetworkPatchParameters
+from ._models_py3 import ControlPlaneNodeConfiguration
+from ._models_py3 import ControlPlaneNodePatchConfiguration
 from ._models_py3 import EgressEndpoint
 from ._models_py3 import EndpointDependency
 from ._models_py3 import ErrorAdditionalInfo
 from ._models_py3 import ErrorDetail
 from ._models_py3 import ErrorResponse
 from ._models_py3 import ExtendedLocation
+from ._models_py3 import FeatureStatus
 from ._models_py3 import HardwareInventory
 from ._models_py3 import HardwareInventoryNetworkInterface
 from ._models_py3 import HardwareValidationStatus
-from ._models_py3 import HybridAksCluster
-from ._models_py3 import HybridAksClusterList
-from ._models_py3 import HybridAksClusterPatchParameters
-from ._models_py3 import HybridAksClusterRestartNodeParameters
 from ._models_py3 import ImageRepositoryCredentials
+from ._models_py3 import InitialAgentPoolConfiguration
+from ._models_py3 import IpAddressPool
 from ._models_py3 import KeySetUser
 from ._models_py3 import KeySetUserStatus
+from ._models_py3 import KubernetesCluster
+from ._models_py3 import KubernetesClusterList
+from ._models_py3 import KubernetesClusterNode
+from ._models_py3 import KubernetesClusterPatchParameters
+from ._models_py3 import KubernetesClusterRestartNodeParameters
+from ._models_py3 import KubernetesLabel
 from ._models_py3 import L2Network
+from ._models_py3 import L2NetworkAttachmentConfiguration
 from ._models_py3 import L2NetworkList
 from ._models_py3 import L2NetworkPatchParameters
 from ._models_py3 import L3Network
+from ._models_py3 import L3NetworkAttachmentConfiguration
 from ._models_py3 import L3NetworkList
 from ._models_py3 import L3NetworkPatchParameters
 from ._models_py3 import LldpNeighbor
@@ -78,10 +93,9 @@ from ._models_py3 import MachineDisk
 from ._models_py3 import MachineSkuSlot
 from ._models_py3 import ManagedResourceGroupConfiguration
 from ._models_py3 import NetworkAttachment
+from ._models_py3 import NetworkConfiguration
 from ._models_py3 import NetworkInterface
 from ._models_py3 import Nic
-from ._models_py3 import Node
-from ._models_py3 import NodeConfiguration
 from ._models_py3 import Operation
 from ._models_py3 import OperationDisplay
 from ._models_py3 import OperationListResult
@@ -93,6 +107,7 @@ from ._models_py3 import RackPatchParameters
 from ._models_py3 import RackSku
 from ._models_py3 import RackSkuList
 from ._models_py3 import Resource
+from ._models_py3 import ServiceLoadBalancerBgpPeer
 from ._models_py3 import ServicePrincipalInformation
 from ._models_py3 import SshPublicKey
 from ._models_py3 import StorageAppliance
@@ -103,12 +118,12 @@ from ._models_py3 import StorageApplianceList
 from ._models_py3 import StorageAppliancePatchParameters
 from ._models_py3 import StorageApplianceRunReadCommandsParameters
 from ._models_py3 import StorageApplianceSkuSlot
-from ._models_py3 import StorageApplianceValidateHardwareParameters
 from ._models_py3 import StorageProfile
 from ._models_py3 import SystemData
 from ._models_py3 import TagsParameter
 from ._models_py3 import TrackedResource
 from ._models_py3 import TrunkedNetwork
+from ._models_py3 import TrunkedNetworkAttachmentConfiguration
 from ._models_py3 import TrunkedNetworkList
 from ._models_py3 import TrunkedNetworkPatchParameters
 from ._models_py3 import ValidationThreshold
@@ -123,6 +138,11 @@ from ._models_py3 import VolumeList
 from ._models_py3 import VolumePatchParameters
 
 from ._network_cloud_mgmt_client_enums import ActionType
+from ._network_cloud_mgmt_client_enums import AdvertiseToFabric
+from ._network_cloud_mgmt_client_enums import AgentPoolDetailedStatus
+from ._network_cloud_mgmt_client_enums import AgentPoolMode
+from ._network_cloud_mgmt_client_enums import AgentPoolProvisioningState
+from ._network_cloud_mgmt_client_enums import AvailabilityLifecycle
 from ._network_cloud_mgmt_client_enums import BareMetalMachineCordonStatus
 from ._network_cloud_mgmt_client_enums import BareMetalMachineDetailedStatus
 from ._network_cloud_mgmt_client_enums import BareMetalMachineEvacuate
@@ -136,6 +156,8 @@ from ._network_cloud_mgmt_client_enums import BareMetalMachinePowerState
 from ._network_cloud_mgmt_client_enums import BareMetalMachineProvisioningState
 from ._network_cloud_mgmt_client_enums import BareMetalMachineReadyState
 from ._network_cloud_mgmt_client_enums import BareMetalMachineSkipShutdown
+from ._network_cloud_mgmt_client_enums import BfdEnabled
+from ._network_cloud_mgmt_client_enums import BgpMultiHop
 from ._network_cloud_mgmt_client_enums import BmcKeySetDetailedStatus
 from ._network_cloud_mgmt_client_enums import BmcKeySetPrivilegeLevel
 from ._network_cloud_mgmt_client_enums import BmcKeySetProvisioningState
@@ -157,19 +179,24 @@ from ._network_cloud_mgmt_client_enums import ConsoleEnabled
 from ._network_cloud_mgmt_client_enums import ConsoleProvisioningState
 from ._network_cloud_mgmt_client_enums import ControlImpact
 from ._network_cloud_mgmt_client_enums import CreatedByType
-from ._network_cloud_mgmt_client_enums import DefaultCniNetworkDetailedStatus
-from ._network_cloud_mgmt_client_enums import DefaultCniNetworkProvisioningState
 from ._network_cloud_mgmt_client_enums import DefaultGateway
 from ._network_cloud_mgmt_client_enums import DeviceConnectionType
 from ._network_cloud_mgmt_client_enums import DiskType
-from ._network_cloud_mgmt_client_enums import HybridAksClusterDetailedStatus
-from ._network_cloud_mgmt_client_enums import HybridAksClusterMachinePowerState
-from ._network_cloud_mgmt_client_enums import HybridAksClusterProvisioningState
+from ._network_cloud_mgmt_client_enums import FabricPeeringEnabled
+from ._network_cloud_mgmt_client_enums import FeatureDetailedStatus
+from ._network_cloud_mgmt_client_enums import HugepagesSize
 from ._network_cloud_mgmt_client_enums import HybridAksIpamEnabled
 from ._network_cloud_mgmt_client_enums import HybridAksPluginType
 from ._network_cloud_mgmt_client_enums import IpAllocationType
+from ._network_cloud_mgmt_client_enums import KubernetesClusterDetailedStatus
+from ._network_cloud_mgmt_client_enums import KubernetesClusterNodeDetailedStatus
+from ._network_cloud_mgmt_client_enums import KubernetesClusterProvisioningState
+from ._network_cloud_mgmt_client_enums import KubernetesNodePowerState
+from ._network_cloud_mgmt_client_enums import KubernetesNodeRole
+from ._network_cloud_mgmt_client_enums import KubernetesPluginType
 from ._network_cloud_mgmt_client_enums import L2NetworkDetailedStatus
 from ._network_cloud_mgmt_client_enums import L2NetworkProvisioningState
+from ._network_cloud_mgmt_client_enums import L3NetworkConfigurationIpamEnabled
 from ._network_cloud_mgmt_client_enums import L3NetworkDetailedStatus
 from ._network_cloud_mgmt_client_enums import L3NetworkProvisioningState
 from ._network_cloud_mgmt_client_enums import MachineSkuDiskConnectionType
@@ -184,7 +211,6 @@ from ._network_cloud_mgmt_client_enums import RemoteVendorManagementFeature
 from ._network_cloud_mgmt_client_enums import RemoteVendorManagementStatus
 from ._network_cloud_mgmt_client_enums import SkipShutdown
 from ._network_cloud_mgmt_client_enums import StorageApplianceDetailedStatus
-from ._network_cloud_mgmt_client_enums import StorageApplianceHardwareValidationCategory
 from ._network_cloud_mgmt_client_enums import StorageApplianceProvisioningState
 from ._network_cloud_mgmt_client_enums import TrunkedNetworkDetailedStatus
 from ._network_cloud_mgmt_client_enums import TrunkedNetworkProvisioningState
@@ -209,7 +235,17 @@ from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
+    "AadConfiguration",
     "AdministrativeCredentials",
+    "AdministratorConfiguration",
+    "AgentOptions",
+    "AgentPool",
+    "AgentPoolConfiguration",
+    "AgentPoolList",
+    "AgentPoolPatchParameters",
+    "AgentPoolUpgradeSettings",
+    "AttachedNetworkConfiguration",
+    "AvailableUpgrade",
     "BareMetalMachine",
     "BareMetalMachineCommandSpecification",
     "BareMetalMachineConfigurationData",
@@ -225,7 +261,8 @@ __all__ = [
     "BareMetalMachineRunDataExtractsParameters",
     "BareMetalMachineRunReadCommandsParameters",
     "BareMetalMachineValidateHardwareParameters",
-    "BgpPeer",
+    "BgpAdvertisement",
+    "BgpServiceLoadBalancerConfiguration",
     "BmcKeySet",
     "BmcKeySetList",
     "BmcKeySetPatchParameters",
@@ -246,34 +283,38 @@ __all__ = [
     "ClusterMetricsConfigurationPatchParameters",
     "ClusterPatchParameters",
     "ClusterUpdateVersionParameters",
-    "CniBgpConfiguration",
-    "CommunityAdvertisement",
     "Console",
     "ConsoleList",
     "ConsolePatchParameters",
-    "DefaultCniNetwork",
-    "DefaultCniNetworkList",
-    "DefaultCniNetworkPatchParameters",
+    "ControlPlaneNodeConfiguration",
+    "ControlPlaneNodePatchConfiguration",
     "EgressEndpoint",
     "EndpointDependency",
     "ErrorAdditionalInfo",
     "ErrorDetail",
     "ErrorResponse",
     "ExtendedLocation",
+    "FeatureStatus",
     "HardwareInventory",
     "HardwareInventoryNetworkInterface",
     "HardwareValidationStatus",
-    "HybridAksCluster",
-    "HybridAksClusterList",
-    "HybridAksClusterPatchParameters",
-    "HybridAksClusterRestartNodeParameters",
     "ImageRepositoryCredentials",
+    "InitialAgentPoolConfiguration",
+    "IpAddressPool",
     "KeySetUser",
     "KeySetUserStatus",
+    "KubernetesCluster",
+    "KubernetesClusterList",
+    "KubernetesClusterNode",
+    "KubernetesClusterPatchParameters",
+    "KubernetesClusterRestartNodeParameters",
+    "KubernetesLabel",
     "L2Network",
+    "L2NetworkAttachmentConfiguration",
     "L2NetworkList",
     "L2NetworkPatchParameters",
     "L3Network",
+    "L3NetworkAttachmentConfiguration",
     "L3NetworkList",
     "L3NetworkPatchParameters",
     "LldpNeighbor",
@@ -281,10 +322,9 @@ __all__ = [
     "MachineSkuSlot",
     "ManagedResourceGroupConfiguration",
     "NetworkAttachment",
+    "NetworkConfiguration",
     "NetworkInterface",
     "Nic",
-    "Node",
-    "NodeConfiguration",
     "Operation",
     "OperationDisplay",
     "OperationListResult",
@@ -296,6 +336,7 @@ __all__ = [
     "RackSku",
     "RackSkuList",
     "Resource",
+    "ServiceLoadBalancerBgpPeer",
     "ServicePrincipalInformation",
     "SshPublicKey",
     "StorageAppliance",
@@ -306,12 +347,12 @@ __all__ = [
     "StorageAppliancePatchParameters",
     "StorageApplianceRunReadCommandsParameters",
     "StorageApplianceSkuSlot",
-    "StorageApplianceValidateHardwareParameters",
     "StorageProfile",
     "SystemData",
     "TagsParameter",
     "TrackedResource",
     "TrunkedNetwork",
+    "TrunkedNetworkAttachmentConfiguration",
     "TrunkedNetworkList",
     "TrunkedNetworkPatchParameters",
     "ValidationThreshold",
@@ -325,6 +366,11 @@ __all__ = [
     "VolumeList",
     "VolumePatchParameters",
     "ActionType",
+    "AdvertiseToFabric",
+    "AgentPoolDetailedStatus",
+    "AgentPoolMode",
+    "AgentPoolProvisioningState",
+    "AvailabilityLifecycle",
     "BareMetalMachineCordonStatus",
     "BareMetalMachineDetailedStatus",
     "BareMetalMachineEvacuate",
@@ -338,6 +384,8 @@ __all__ = [
     "BareMetalMachineProvisioningState",
     "BareMetalMachineReadyState",
     "BareMetalMachineSkipShutdown",
+    "BfdEnabled",
+    "BgpMultiHop",
     "BmcKeySetDetailedStatus",
     "BmcKeySetPrivilegeLevel",
     "BmcKeySetProvisioningState",
@@ -359,19 +407,24 @@ __all__ = [
     "ConsoleProvisioningState",
     "ControlImpact",
     "CreatedByType",
-    "DefaultCniNetworkDetailedStatus",
-    "DefaultCniNetworkProvisioningState",
     "DefaultGateway",
     "DeviceConnectionType",
     "DiskType",
-    "HybridAksClusterDetailedStatus",
-    "HybridAksClusterMachinePowerState",
-    "HybridAksClusterProvisioningState",
+    "FabricPeeringEnabled",
+    "FeatureDetailedStatus",
+    "HugepagesSize",
     "HybridAksIpamEnabled",
     "HybridAksPluginType",
     "IpAllocationType",
+    "KubernetesClusterDetailedStatus",
+    "KubernetesClusterNodeDetailedStatus",
+    "KubernetesClusterProvisioningState",
+    "KubernetesNodePowerState",
+    "KubernetesNodeRole",
+    "KubernetesPluginType",
     "L2NetworkDetailedStatus",
     "L2NetworkProvisioningState",
+    "L3NetworkConfigurationIpamEnabled",
     "L3NetworkDetailedStatus",
     "L3NetworkProvisioningState",
     "MachineSkuDiskConnectionType",
@@ -386,7 +439,6 @@ __all__ = [
     "RemoteVendorManagementStatus",
     "SkipShutdown",
     "StorageApplianceDetailedStatus",
-    "StorageApplianceHardwareValidationCategory",
     "StorageApplianceProvisioningState",
     "TrunkedNetworkDetailedStatus",
     "TrunkedNetworkProvisioningState",

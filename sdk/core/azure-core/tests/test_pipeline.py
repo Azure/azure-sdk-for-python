@@ -58,6 +58,7 @@ from azure.core.pipeline.transport import (
 from utils import HTTP_REQUESTS, is_rest
 
 from azure.core.exceptions import AzureError
+from azure.core.pipeline._base import cleanup_kwargs_for_transport
 
 
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
@@ -201,6 +202,20 @@ def test_format_url_double_query():
     client = PipelineClientBase("https://bing.com/path?query=testvalue&x=2ndvalue")
     formatted = client.format_url("/subpath?a=X&c=Y")
     assert formatted == "https://bing.com/path/subpath?query=testvalue&x=2ndvalue&a=X&c=Y"
+
+
+def test_format_url_braces_with_dot():
+    base_url = "https://bing.com/{aaa.bbb}"
+    client = PipelineClientBase(base_url)
+    request = client._request("GET", base_url, None, None, None, None, None)
+    assert request
+
+
+def test_format_url_single_brace():
+    base_url = "https://bing.com/{aaa.bbb"
+    client = PipelineClientBase(base_url)
+    request = client._request("GET", base_url, None, None, None, None, None)
+    assert request
 
 
 def test_format_incorrect_endpoint():
@@ -351,7 +366,12 @@ def test_add_custom_policy():
     pos_retry = policies.index(retry_policy)
     assert pos_boo > pos_retry
 
-    client = PipelineClient(base_url="test", config=config, per_call_policies=boo_policy, per_retry_policies=foo_policy)
+    client = PipelineClient(
+        base_url="test",
+        config=config,
+        per_call_policies=boo_policy,
+        per_retry_policies=foo_policy,
+    )
     policies = client._pipeline._impl_policies
     assert boo_policy in policies
     assert foo_policy in policies
@@ -362,7 +382,10 @@ def test_add_custom_policy():
     assert pos_foo > pos_retry
 
     client = PipelineClient(
-        base_url="test", config=config, per_call_policies=[boo_policy], per_retry_policies=[foo_policy]
+        base_url="test",
+        config=config,
+        per_call_policies=[boo_policy],
+        per_retry_policies=[foo_policy],
     )
     policies = client._pipeline._impl_policies
     assert boo_policy in policies
@@ -389,13 +412,19 @@ def test_add_custom_policy():
     assert foo_policy == actual_policies[2]
 
     client = PipelineClient(
-        base_url="test", policies=policies, per_call_policies=boo_policy, per_retry_policies=foo_policy
+        base_url="test",
+        policies=policies,
+        per_call_policies=boo_policy,
+        per_retry_policies=foo_policy,
     )
     actual_policies = client._pipeline._impl_policies
     assert boo_policy == actual_policies[0]
     assert foo_policy == actual_policies[3]
     client = PipelineClient(
-        base_url="test", policies=policies, per_call_policies=[boo_policy], per_retry_policies=[foo_policy]
+        base_url="test",
+        policies=policies,
+        per_call_policies=[boo_policy],
+        per_retry_policies=[foo_policy],
     )
     actual_policies = client._pipeline._impl_policies
     assert boo_policy == actual_policies[0]
@@ -483,3 +512,10 @@ def test_request_text(port, http_request):
 
     # We want a direct string
     assert request.data == "foo"
+
+
+def test_cleanup_kwargs():
+    kwargs = {"insecure_domain_change": True, "enable_cae": True}
+    cleanup_kwargs_for_transport(kwargs)
+    assert "insecure_domain_change" not in kwargs
+    assert "enable_cae" not in kwargs

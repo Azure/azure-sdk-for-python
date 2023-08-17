@@ -23,11 +23,14 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+from typing import TypeVar
 from io import SEEK_SET, UnsupportedOperation
 import logging
 import time
 from enum import Enum
-from azure.core.pipeline import PipelineResponse
+from azure.core.pipeline import PipelineResponse, PipelineRequest
+from azure.core.pipeline.transport import HttpResponse as LegacyHttpResponse, HttpRequest as LegacyHttpRequest
+from azure.core.rest import HttpResponse, HttpRequest
 from azure.core.exceptions import (
     AzureError,
     ClientAuthenticationError,
@@ -40,6 +43,9 @@ from azure.core.exceptions import (
 from ._base import HTTPPolicy, RequestHistory
 from . import _utils
 from ..._enum_meta import CaseInsensitiveEnumMeta
+
+HTTPResponseType = TypeVar("HTTPResponseType", HttpResponse, LegacyHttpResponse)
+HTTPRequestType = TypeVar("HTTPRequestType", HttpRequest, LegacyHttpRequest)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -353,7 +359,7 @@ class RetryPolicyBase:
         retry_settings["file_positions"] = file_positions
 
 
-class RetryPolicy(RetryPolicyBase, HTTPPolicy):
+class RetryPolicy(RetryPolicyBase, HTTPPolicy[HTTPRequestType, HTTPResponseType]):
     """A retry policy.
 
     The retry policy in the pipeline can be configured directly, or tweaked on a per-call basis.
@@ -442,7 +448,7 @@ class RetryPolicy(RetryPolicyBase, HTTPPolicy):
                 return
         self._sleep_backoff(settings, transport)
 
-    def send(self, request):
+    def send(self, request: PipelineRequest[HTTPRequestType]) -> PipelineResponse[HTTPRequestType, HTTPResponseType]:
         """Sends the PipelineRequest object to the next policy. Uses retry settings if necessary.
 
         :param request: The PipelineRequest object
@@ -491,6 +497,8 @@ class RetryPolicy(RetryPolicyBase, HTTPPolicy):
                 end_time = time.time()
                 if absolute_timeout:
                     absolute_timeout -= end_time - start_time
+        if not response:
+            raise AzureError("Maximum retries exceeded.")
 
         self.update_context(response.context, retry_settings)
         return response

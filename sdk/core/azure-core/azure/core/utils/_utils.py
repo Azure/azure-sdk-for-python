@@ -86,9 +86,13 @@ def _convert_to_isoformat(date_time):
     return deserialized
 
 
-def case_insensitive_dict(*args: Any, **kwargs: Any) -> MutableMapping[str, Any]:
+def case_insensitive_dict(
+    *args: Optional[Union[Mapping[str, Any], Iterable[Tuple[str, Any]]]], **kwargs: Any
+) -> MutableMapping[str, Any]:
     """Return a case-insensitive mutable mapping from an inputted mapping structure.
 
+    :param args: The positional arguments to pass to the dict.
+    :type args: Mapping[str, Any] or Iterable[Tuple[str, Any]
     :return: A case-insensitive mutable mapping object.
     :rtype: ~collections.abc.MutableMapping
     """
@@ -144,7 +148,7 @@ class CaseInsensitiveDict(MutableMapping[str, Any]):
     def __len__(self) -> int:
         return len(self._store)
 
-    def lowerkey_items(self):
+    def lowerkey_items(self) -> Iterator[Tuple[str, Any]]:
         return ((lower_case_key, pair[1]) for lower_case_key, pair in self._store.items())
 
     def __eq__(self, other: Any) -> bool:

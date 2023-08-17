@@ -77,7 +77,7 @@ def is_tracing_enabled():
 @contextmanager
 def send_context_manager(client: Optional[ClientBase], links: Optional[List[Link]] = None) -> Iterator[None]:
     """Tracing for message sending."""
-    span_impl_type: Type[AbstractSpan] = settings.tracing_implementation()
+    span_impl_type: Optional[Type[AbstractSpan]] = settings.tracing_implementation()
     if span_impl_type is not None:
         links = links or []
         with span_impl_type(name="EventHubs.send", kind=SpanKind.CLIENT, links=links) as span:
@@ -92,7 +92,7 @@ def receive_context_manager(
     client: Optional[ClientBase], links: Optional[List[Link]] = None, start_time: Optional[int] = None
 )  -> Iterator[None]:
     """Tracing for message receiving."""
-    span_impl_type: Type[AbstractSpan] = settings.tracing_implementation()
+    span_impl_type: Optional[Type[AbstractSpan]] = settings.tracing_implementation()
     if span_impl_type is not None:
         links = links or []
         with span_impl_type(
@@ -109,7 +109,7 @@ def process_context_manager(
     client: Optional[ClientBase], links: Optional[List[Link]] = None, is_batch: bool = False
 ) -> Iterator[None]:
     """Tracing for message processing."""
-    span_impl_type: Type[AbstractSpan] = settings.tracing_implementation()
+    span_impl_type: Optional[Type[AbstractSpan]] = settings.tracing_implementation()
     if span_impl_type is not None:
         context = None
         links = links or []
@@ -136,7 +136,7 @@ def trace_message(
     Will open and close an message span, and add trace context to the app properties of the message.
     """
     try:
-        span_impl_type: Type[AbstractSpan] = settings.tracing_implementation()
+        span_impl_type: Optional[Type[AbstractSpan]] = settings.tracing_implementation()
         if span_impl_type is not None:
             with span_impl_type(name="EventHubs.message", kind=SpanKind.PRODUCER) as message_span:
                 headers = message_span.to_header()

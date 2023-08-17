@@ -80,7 +80,7 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
     def list(self, *, local: bool = False) -> ItemPaged[OnlineEndpoint]:
         """List endpoints of the workspace.
 
-        :param local: (Optional) Flag to indicate whether to interact with endpoints in local Docker environment.
+        :keyword local: (Optional) Flag to indicate whether to interact with endpoints in local Docker environment.
             Default: False
         :type local: bool
         :return: A list of endpoints
@@ -120,8 +120,8 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
 
         :param name: Name of the endpoint.
         :type name: str
-        :param local: Indicates whether to interact with endpoints in local Docker environment. Defaults to False.
-        :type local: Optional[bool]
+        :keyword local: Indicates whether to interact with endpoints in local Docker environment. Defaults to False.
+        :paramtype local: Optional[bool]
         :raises ~azure.ai.ml.exceptions.LocalEndpointNotFoundError: Raised if local endpoint resource does not exist.
         :return: Endpoint object retrieved from the service.
         :rtype: ~azure.ai.ml.entities.OnlineEndpoint
@@ -163,8 +163,8 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
 
         :param name: Name of the endpoint.
         :type name: str
-        :param local: Whether to interact with the endpoint in local Docker environment. Defaults to False.
-        :type local: bool
+        :keyword local: Whether to interact with the endpoint in local Docker environment. Defaults to False.
+        :paramtype local: bool
         :raises ~azure.ai.ml.exceptions.LocalEndpointNotFoundError: Raised if local endpoint resource does not exist.
         :return: A poller to track the operation status if remote, else returns None if local.
         :rtype: ~azure.core.polling.LROPoller[None]
@@ -199,8 +199,8 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
 
         :param endpoint: The endpoint entity.
         :type endpoint: ~azure.ai.ml.entities.OnlineEndpoint
-        :param local: Whether to interact with the endpoint in local Docker environment. Defaults to False.
-        :type local: bool
+        :keyword local: Whether to interact with the endpoint in local Docker environment. Defaults to False.
+        :paramtype local: bool
         :raises ~azure.ai.ml.exceptions.ValidationException: Raised if OnlineEndpoint cannot be successfully validated.
             Details will be provided in the error message.
         :raises ~azure.ai.ml.exceptions.AssetException: Raised if OnlineEndpoint assets
@@ -267,8 +267,8 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
 
         :param name: The endpoint name.
         :type name: The endpoint type. Defaults to ONLINE_ENDPOINT_TYPE.
-        :param key_type: One of "primary", "secondary". Defaults to "primary".
-        :type key_type: str
+        :keyword key_type: One of "primary", "secondary". Defaults to "primary".
+        :paramtype key_type: str
         :return: A poller to track the operation status.
         :rtype: ~azure.core.polling.LROPoller[None]
         """
@@ -307,15 +307,15 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
 
         :param endpoint_name: The endpoint name
         :type endpoint_name: str
-        :param request_file: File containing the request payload. This is only valid for online endpoint.
-        :type request_file: Optional[str]
-        :param deployment_name: Name of a specific deployment to invoke. This is optional.
+        :keyword request_file: File containing the request payload. This is only valid for online endpoint.
+        :paramtype request_file: Optional[str]
+        :keyword deployment_name: Name of a specific deployment to invoke. This is optional.
             By default requests are routed to any of the deployments according to the traffic rules.
-        :type deployment_name: Optional[str]
-        :param input_data: To use a pre-registered data asset, pass str in format
-        :type input_data: Optional[Union[str, Data]]
-        :param local: Indicates whether to interact with endpoints in local Docker environment. Defaults to False.
-        :type local: Optional[bool]
+        :paramtype deployment_name: Optional[str]
+        :keyword input_data: To use a pre-registered data asset, pass str in format
+        :paramtype input_data: Optional[Union[str, Data]]
+        :keyword local: Indicates whether to interact with endpoints in local Docker environment. Defaults to False.
+        :paramtype local: Optional[bool]
         :raises ~azure.ai.ml.exceptions.LocalEndpointNotFoundError: Raised if local endpoint resource does not exist.
         :raises ~azure.ai.ml.exceptions.MultipleLocalDeploymentsFoundError: Raised if there are multiple deployments
             and no deployment_name is specified.

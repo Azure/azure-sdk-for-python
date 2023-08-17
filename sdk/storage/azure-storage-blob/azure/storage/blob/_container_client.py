@@ -63,6 +63,8 @@ def _get_blob_name(blob):
     """Return the blob name.
 
     :param blob: A blob string or BlobProperties
+    :paramtype blob: str or BlobProperties
+    :returns: The name of the blob.
     :rtype: str
     """
     try:
@@ -144,8 +146,8 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         try:
             if not account_url.lower().startswith('http'):
                 account_url = "https://" + account_url
-        except AttributeError:
-            raise ValueError("Container URL must be a string.")
+        except AttributeError as exc:
+            raise ValueError("Container URL must be a string.") from exc
         parsed_url = urlparse(account_url.rstrip('/'))
         if not container_name:
             raise ValueError("Please specify a container name.")
@@ -195,14 +197,15 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
             If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
             should be the storage account key.
+        :paramtype credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
         :returns: A container client.
         :rtype: ~azure.storage.blob.ContainerClient
         """
         try:
             if not container_url.lower().startswith('http'):
                 container_url = "https://" + container_url
-        except AttributeError:
-            raise ValueError("Container URL must be a string.")
+        except AttributeError as exc:
+            raise ValueError("Container URL must be a string.") from exc
         parsed_url = urlparse(container_url)
         if not parsed_url.netloc:
             raise ValueError(f"Invalid URL: {container_url}")
@@ -240,6 +243,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             Credentials provided here will take precedence over those in the connection string.
             If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
             should be the storage account key.
+        :paramtype credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
         :returns: A container client.
         :rtype: ~azure.storage.blob.ContainerClient
 
@@ -540,6 +544,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`_.
         :returns: boolean
+        :rtype: bool
         """
         try:
             self._client.container.get_properties(**kwargs)
@@ -1285,6 +1290,8 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             encoding=encoding,
             **kwargs)
 
+    # This code is a copy from _generated.
+    # Once Autorest is able to provide request preparation this code should be removed.
     def _generate_delete_blobs_subrequest_options(
         self, snapshot=None,
         version_id=None,
@@ -1293,10 +1300,6 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         modified_access_conditions=None,
         **kwargs
     ):
-        """This code is a copy from _generated.
-
-        Once Autorest is able to provide request preparation this code should be removed.
-        """
         lease_id = None
         if lease_access_conditions is not None:
             lease_id = lease_access_conditions.lease_id
@@ -1408,7 +1411,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         return reqs, kwargs
 
     @distributed_trace
-    def delete_blobs(
+    def delete_blobs(  # pylint: disable=delete-operation-wrong-return-type
             self, *blobs: Union[str, Dict[str, Any], BlobProperties],
             **kwargs: Any
         ) -> Iterator[HttpResponse]:
@@ -1505,13 +1508,11 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
 
         return self._batch_send(*reqs, **options)
 
+    # This code is a copy from _generated.
+    # Once Autorest is able to provide request preparation this code should be removed.
     def _generate_set_tiers_subrequest_options(
         self, tier, snapshot=None, version_id=None, rehydrate_priority=None, lease_access_conditions=None, **kwargs
     ):
-        """This code is a copy from _generated.
-
-        Once Autorest is able to provide request preparation this code should be removed.
-        """
         if not tier:
             raise ValueError("A blob tier must be specified")
         if snapshot and version_id:
@@ -1723,7 +1724,9 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
 
     def get_blob_client(
             self, blob,  # type: Union[str, BlobProperties]
-            snapshot=None  # type: str
+            snapshot=None,  # type: str
+            *,
+            version_id=None  # type: Optional[str]
         ):
         # type: (...) -> BlobClient
         """Get a client to interact with the specified blob.
@@ -1736,6 +1739,8 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         :param str snapshot:
             The optional blob snapshot on which to operate. This can be the snapshot ID string
             or the response returned from :func:`~BlobClient.create_snapshot()`.
+        :keyword str version_id: The version id parameter is an opaque DateTime value that, when present,
+            specifies the version of the blob to operate on.
         :returns: A BlobClient.
         :rtype: ~azure.storage.blob.BlobClient
 
@@ -1758,4 +1763,5 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             credential=self.credential, api_version=self.api_version, _configuration=self._config,
             _pipeline=_pipeline, _location_mode=self._location_mode, _hosts=self._hosts,
             require_encryption=self.require_encryption, encryption_version=self.encryption_version,
-            key_encryption_key=self.key_encryption_key, key_resolver_function=self.key_resolver_function)
+            key_encryption_key=self.key_encryption_key, key_resolver_function=self.key_resolver_function,
+            version_id=version_id)

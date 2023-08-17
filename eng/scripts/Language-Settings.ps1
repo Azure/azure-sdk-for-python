@@ -1,7 +1,7 @@
 $Language = "python"
 $LanguageDisplayName = "Python"
 $PackageRepository = "PyPI"
-$packagePattern = "*.zip"
+$packagePattern = "*.tar.gz"
 $MetadataUri = "https://raw.githubusercontent.com/Azure/azure-sdk/main/_data/releases/latest/python-packages.csv"
 $BlobStorageUrl = "https://azuresdkdocs.blob.core.windows.net/%24web?restype=container&comp=list&prefix=python%2F&delimiter=%2F"
 $GithubUri = "https://github.com/Azure/azure-sdk-for-python"
@@ -86,7 +86,7 @@ function IsPythonPackageVersionPublished($pkgId, $pkgVersion)
   }
 }
 
-# Parse out package publishing information given a python sdist of ZIP format.
+# Parse out package publishing information given a python sdist of tar.gz format.
 function Get-python-PackageInfoFromPackageFile ($pkg, $workingDirectory)
 {
   $pkg.Basename -match $SDIST_PACKAGE_REGEX | Out-Null
@@ -101,7 +101,8 @@ function Get-python-PackageInfoFromPackageFile ($pkg, $workingDirectory)
   $readmeContent = ""
 
   New-Item -ItemType Directory -Force -Path $workFolder
-  Expand-Archive -Path $pkg -DestinationPath $workFolder
+  Write-Host "tar -zxvf $pkg -C $workFolder"
+  tar -zxvf $pkg -C $workFolder
 
   $changeLogLoc = @(Get-ChildItem -Path $workFolder -Recurse -Include "CHANGELOG.md")[0]
   if ($changeLogLoc) {
@@ -130,16 +131,26 @@ function Get-python-PackageInfoFromPackageFile ($pkg, $workingDirectory)
 # Stage and Upload Docs to blob Storage
 function Publish-python-GithubIODocs ($DocLocation, $PublicArtifactLocation)
 {
-  $PublishedDocs = Get-ChildItem "$DocLocation" | Where-Object -FilterScript {$_.Name.EndsWith(".zip")}
+  $PublishedDocs = Get-ChildItem "$DocLocation" | Where-Object -FilterScript {$_.Name.EndsWith(".tar.gz")}
 
   foreach ($Item in $PublishedDocs)
   {
-    $PkgName = $Item.BaseName
+    $PkgName = $Item.BaseName.Replace(".tar", "")
     $ZippedDocumentationPath = Join-Path -Path $DocLocation -ChildPath $Item.Name
     $UnzippedDocumentationPath = Join-Path -Path $DocLocation -ChildPath $PkgName
     $VersionFileLocation = Join-Path -Path $UnzippedDocumentationPath -ChildPath "version.txt"
 
-    Expand-Archive -Force -Path $ZippedDocumentationPath -DestinationPath $UnzippedDocumentationPath
+    if (!(Test-Path $UnzippedDocumentationPath)) {
+      New-Item -Path $UnzippedDocumentationPath -ItemType Directory
+    }
+
+    Write-Host "tar -zxvf $ZippedDocumentationPath -C $UnzippedDocumentationPath"
+    tar -zxvf $ZippedDocumentationPath -C $UnzippedDocumentationPath
+
+    if ($LASTEXITCODE -ne 0) {
+      Write-Error "tar failed with exit code $LASTEXITCODE."
+      exit $LASTEXITCODE
+    }
 
     $Version = $(Get-Content $VersionFileLocation).Trim()
 
@@ -184,15 +195,17 @@ function ValidatePackage
   # Add more validation by replicating as much of the docs CI process as
   # possible
   # https://github.com/Azure/azure-sdk-for-python/issues/20109
+  $result = $true
   if (!$DocValidationImageId) {
     Write-Host "Validating using pip command directly on $packageName."
-    FallbackValidation -packageName "$packageName" -packageVersion "$packageVersion" -workingDirectory $installValidationFolder -PackageSourceOverride $PackageSourceOverride
-  }
-  else {
+    $result = FallbackValidation -packageName "$packageName" -packageVersion "$packageVersion" -workingDirectory $installValidationFolder -PackageSourceOverride $PackageSourceOverride
+  } else {
     Write-Host "Validating using $DocValidationImageId on $packageName."
-    DockerValidation -packageName "$packageName" -packageVersion "$packageVersion" `
+    $result = DockerValidation -packageName "$packageName" -packageVersion "$packageVersion" `
         -PackageSourceOverride $PackageSourceOverride -DocValidationImageId $DocValidationImageId -workingDirectory $installValidationFolder
   }
+
+  return $result
 }
 function DockerValidation{
   Param(
@@ -589,6 +602,8 @@ function Import-Dev-Cert-python
   python $pathToScript
 }
 
+# Defined in common.ps1 as:
+# $ValidateDocsMsPackagesFn = "Validate-${Language}-DocMsPackages"
 function Validate-Python-DocMsPackages ($PackageInfo, $PackageInfos, $PackageSourceOverride, $DocValidationImageId)
 {
   # While eng/common/scripts/Update-DocsMsMetadata.ps1 is still passing a single packageInfo, process as a batch
@@ -596,10 +611,20 @@ function Validate-Python-DocMsPackages ($PackageInfo, $PackageInfos, $PackageSou
     $PackageInfos =  @($PackageInfo)
   }
 
+  $allSucceeded = $true
   foreach ($package in $PackageInfos) {
-    ValidatePackage -packageName $package.Name -packageVersion $package.Version `
-        -PackageSourceOverride $PackageSourceOverride -DocValidationImageId $DocValidationImageId
+    $result = ValidatePackage `
+      -packageName $package.Name `
+      -packageVersion $package.Version `
+      -PackageSourceOverride $PackageSourceOverride `
+      -DocValidationImageId $DocValidationImageId
+
+    if (!$result) {
+      $allSucceeded = $false
+    }
   }
+
+  return $allSucceeded
 }
 
 function Get-python-EmitterName() {

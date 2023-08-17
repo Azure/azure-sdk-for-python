@@ -9,8 +9,8 @@ from typing import Dict, Iterable
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
 from azure.ai.ml._exception_helper import log_and_raise_error
-from azure.ai.ml._restclient.v2022_10_01 import AzureMachineLearningWorkspaces as ServiceClient2022_10_01
-from azure.ai.ml._restclient.v2022_10_01.models import (
+from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient042023Preview
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     Datastore as DatastoreData,
     DatastoreSecrets,
     NoneDatastoreCredentials,
@@ -37,21 +37,21 @@ class DatastoreOperations(_ScopeDependentOperations):
         self,
         operation_scope: OperationScope,
         operation_config: OperationConfig,
-        serviceclient_2022_10_01: ServiceClient2022_10_01,
+        serviceclient_2023_04_01_preview: ServiceClient042023Preview,
         **kwargs: Dict
     ):
         super(DatastoreOperations, self).__init__(operation_scope, operation_config)
         ops_logger.update_info(kwargs)
-        self._operation = serviceclient_2022_10_01.datastores
-        self._credential = serviceclient_2022_10_01._config.credential
+        self._operation = serviceclient_2023_04_01_preview.datastores
+        self._credential = serviceclient_2023_04_01_preview._config.credential
         self._init_kwargs = kwargs
 
     @monitor_with_activity(logger, "Datastore.List", ActivityType.PUBLICAPI)
     def list(self, *, include_secrets: bool = False) -> Iterable[Datastore]:
         """Lists all datastores and associated information within a workspace.
 
-        :param include_secrets: Include datastore secrets in returned datastores, defaults to False
-        :type include_secrets: bool, optional
+        :keyword include_secrets: Include datastore secrets in returned datastores, defaults to False
+        :paramtype include_secrets: bool
         :return: An iterator like instance of Datastore objects
         :rtype: ~azure.core.paging.ItemPaged[Datastore]
         """
@@ -86,7 +86,7 @@ class DatastoreOperations(_ScopeDependentOperations):
         :type name: str
         """
 
-        return self._operation.delete(
+        self._operation.delete(
             name=name,
             resource_group_name=self._operation_scope.resource_group_name,
             workspace_name=self._workspace_name,
@@ -99,8 +99,8 @@ class DatastoreOperations(_ScopeDependentOperations):
 
         :param name: Datastore name
         :type name: str
-        :param include_secrets: Include datastore secrets in the returned datastore, defaults to False
-        :type include_secrets: bool, optional
+        :keyword include_secrets: Include datastore secrets in the returned datastore, defaults to False
+        :paramtype include_secrets: bool
         :return: Datastore with the specified name.
         :rtype: Datastore
         """
@@ -128,8 +128,8 @@ class DatastoreOperations(_ScopeDependentOperations):
     def get_default(self, *, include_secrets: bool = False) -> Datastore:
         """Returns the workspace's default datastore.
 
-        :param include_secrets: Include datastore secrets in the returned datastore, defaults to False
-        :type include_secrets: bool, optional
+        :keyword include_secrets: Include datastore secrets in the returned datastore, defaults to False
+        :paramtype include_secrets: bool
         :return: The default datastore.
         :rtype: Datastore
         """

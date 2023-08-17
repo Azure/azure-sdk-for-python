@@ -9,10 +9,11 @@ from marshmallow import Schema
 
 from azure.ai.ml.entities._component.component import Component, NodeType
 from azure.ai.ml.entities._inputs_outputs import Input, Output
+from azure.ai.ml.entities._validation import MutableValidationResult
 
 from ..._schema import PathAwareSchema
 from .._job.pipeline.pipeline_job_settings import PipelineJobSettings
-from .._util import convert_ordered_dict_to_dict, validate_attribute_type, copy_output_setting
+from .._util import convert_ordered_dict_to_dict, copy_output_setting, validate_attribute_type
 from .base_node import BaseNode
 
 module_logger = logging.getLogger(__name__)
@@ -22,19 +23,16 @@ class Pipeline(BaseNode):
     """Base class for pipeline node, used for pipeline component version consumption. You should not instantiate this
     class directly. Instead, you should use @pipeline decorator to create a pipeline node.
 
-    You should not instantiate this class directly. Instead, you should
-    create from @pipeline decorator.
-
-    :param component: Id or instance of the pipeline component/job to be run for the step
-    :type component: PipelineComponent
-    :param description: Description of the pipeline node.
-    :type description: str
+    :param component: Id or instance of the pipeline component/job to be run for the step.
+    :type component: Union[~azure.ai.ml.entities.Component, str]
     :param inputs: Inputs of the pipeline node.
-    :type inputs: dict
+    :type inputs: Optional[Dict[str, Union[
+                                    ~azure.ai.ml.entities.Input,
+                                    str, bool, int, float, Enum, "Input"]]].
     :param outputs: Outputs of the pipeline node.
-    :type outputs: dict
+    :type outputs: Optional[Dict[str, Union[str, ~azure.ai.ml.entities.Output, "Output"]]]
     :param settings: Setting of pipeline node, only taking effect for root pipeline job.
-    :type settings: ~azure.ai.ml.entities.PipelineJobSettings
+    :type settings: Optional[~azure.ai.ml.entities._job.pipeline.pipeline_job_settings.PipelineJobSettings]
     """
 
     def __init__(
@@ -58,7 +56,7 @@ class Pipeline(BaseNode):
         outputs: Optional[Dict[str, Union[str, Output, "Output"]]] = None,
         settings: Optional[PipelineJobSettings] = None,
         **kwargs,
-    ):
+    ) -> None:
         # validate init params are valid type
         validate_attribute_type(attrs_to_check=locals(), attr_type_map=self._attr_type_map())
         kwargs.pop("type", None)
@@ -78,6 +76,11 @@ class Pipeline(BaseNode):
 
     @property
     def component(self) -> Union[str, Component]:
+        """Id or instance of the pipeline component/job to be run for the step.
+
+        :return: Id or instance of the pipeline component/job.
+        :rtype: Union[str, ~azure.ai.ml.entities.Component]
+        """
         return self._component
 
     @property
@@ -96,6 +99,12 @@ class Pipeline(BaseNode):
 
     @settings.setter
     def settings(self, value):
+        """Set the settings of the pipeline.
+
+        :param value: The settings of the pipeline.
+        :type value: Union[~azure.ai.ml.entities.PipelineJobSettings, dict]
+        :raises TypeError: If the value is not an instance of PipelineJobSettings or a dict.
+        """
         if value is not None:
             if isinstance(value, PipelineJobSettings):
                 # since PipelineJobSettings inherit _AttrDict, we need add this branch to distinguish with dict
@@ -149,8 +158,12 @@ class Pipeline(BaseNode):
             settings=self.settings,
         )
 
-    def _customized_validate(self):
-        """Check unsupported settings when use as a node."""
+    def _customized_validate(self) -> MutableValidationResult:
+        """Check unsupported settings when use as a node.
+
+        :return: The validation result
+        :rtype: MutableValidationResult
+        """
         # Note: settings is not supported on node,
         # jobs.create_or_update(node) will call node._to_job() at first,
         # thus won't reach here.

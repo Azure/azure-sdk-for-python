@@ -61,22 +61,13 @@ class CertificateCredential(ClientCredentialBase):
             :caption: Create a CertificateCredential.
     """
 
-    def __init__(
-            self,
-            tenant_id: str,
-            client_id: str,
-            certificate_path: Optional[str] = None,
-            **kwargs: Any
-    ) -> None:
+    def __init__(self, tenant_id: str, client_id: str, certificate_path: Optional[str] = None, **kwargs: Any) -> None:
         validate_tenant_id(tenant_id)
 
         client_credential = get_client_credential(certificate_path, **kwargs)
 
         super(CertificateCredential, self).__init__(
-            client_id=client_id,
-            client_credential=client_credential,
-            tenant_id=tenant_id,
-            **kwargs
+            client_id=client_id, client_credential=client_credential, tenant_id=tenant_id, **kwargs
         )
 
 
@@ -100,20 +91,14 @@ def extract_cert_chain(pem_bytes: bytes) -> bytes:
 _Cert = NamedTuple("_Cert", [("pem_bytes", bytes), ("private_key", "Any"), ("fingerprint", bytes)])
 
 
-def load_pem_certificate(
-        certificate_data: bytes,
-        password: Optional[bytes] = None
-) -> _Cert:
+def load_pem_certificate(certificate_data: bytes, password: Optional[bytes] = None) -> _Cert:
     private_key = serialization.load_pem_private_key(certificate_data, password, backend=default_backend())
     cert = x509.load_pem_x509_certificate(certificate_data, default_backend())
     fingerprint = cert.fingerprint(hashes.SHA1())  # nosec
     return _Cert(certificate_data, private_key, fingerprint)
 
 
-def load_pkcs12_certificate(
-        certificate_data: bytes,
-        password: Optional[bytes] = None
-) -> _Cert:
+def load_pkcs12_certificate(certificate_data: bytes, password: Optional[bytes] = None) -> _Cert:
     from cryptography.hazmat.primitives.serialization import Encoding, NoEncryption, pkcs12, PrivateFormat
 
     try:
@@ -141,11 +126,11 @@ def load_pkcs12_certificate(
 
 
 def get_client_credential(
-        certificate_path: Optional[str] = None,
-        password: Optional[Union[bytes, str]] = None,
-        certificate_data: Optional[bytes] = None,
-        send_certificate_chain: bool = False,
-        **_: Any
+    certificate_path: Optional[str] = None,
+    password: Optional[Union[bytes, str]] = None,
+    certificate_data: Optional[bytes] = None,
+    send_certificate_chain: bool = False,
+    **_: Any
 ) -> Dict:
     """Load a certificate from a filesystem path or bytes, return it as a dict suitable for msal.ClientApplication.
 

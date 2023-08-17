@@ -2,7 +2,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 # pylint: disable=protected-access
-
 from typing import Any, Iterable
 
 from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient042023Preview
@@ -27,7 +26,11 @@ from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace
 
 from .._restclient.v2022_10_01.models import ScheduleListViewType
-from .._utils._arm_id_utils import is_ARM_id_for_parented_resource, AMLNamedArmId
+from .._utils._arm_id_utils import (
+    is_ARM_id_for_parented_resource,
+    AMLNamedArmId,
+    AMLVersionedArmId,
+)
 from .._utils.utils import snake_to_camel
 from .._utils._azureml_polling import AzureMLPolling
 from ..constants._common import (
@@ -115,7 +118,7 @@ class ScheduleOperations(_ScopeDependentOperations):
     ) -> Iterable[Schedule]:
         """List schedules in specified workspace.
 
-        :param list_view_type: View type for including/excluding (for example)
+        :keyword list_view_type: View type for including/excluding (for example)
             archived schedules. Default: ENABLED_ONLY.
         :type list_view_type: Optional[ScheduleListViewType]
         :return: An iterator to list Schedule.
@@ -140,8 +143,14 @@ class ScheduleOperations(_ScopeDependentOperations):
             **kwargs,
         )
 
-    def _get_polling(self, name):
-        """Return the polling with custom poll interval."""
+    def _get_polling(self, name: str) -> AzureMLPolling:
+        """Return the polling with custom poll interval.
+
+        :param name: The schedule name
+        :type name: str
+        :return: The AzureMLPolling object
+        :rtype: AzureMLPolling
+        """
         path_format_arguments = {
             "scheduleName": name,
             "resourceGroupName": self._resource_group_name,
@@ -163,6 +172,8 @@ class ScheduleOperations(_ScopeDependentOperations):
 
         :param name: Schedule name.
         :type name: str
+        :return: A poller for deletion status
+        :rtype: LROPoller[None]
         """
         poller = self.service_client.begin_delete(
             resource_group_name=self._operation_scope.resource_group_name,
@@ -283,12 +294,23 @@ class ScheduleOperations(_ScopeDependentOperations):
         if target and target.endpoint_deployment_id:
             endpoint_name, deployment_name = self._process_and_get_endpoint_deployment_names_from_id(target)
             online_deployment = self._online_deployment_operations.get(deployment_name, endpoint_name)
-            model_inputs_name = online_deployment.tags.get(DEPLOYMENT_MODEL_INPUTS_NAME_KEY)
-            model_inputs_version = online_deployment.tags.get(DEPLOYMENT_MODEL_INPUTS_VERSION_KEY)
-            model_outputs_name = online_deployment.tags.get(DEPLOYMENT_MODEL_OUTPUTS_NAME_KEY)
-            model_outputs_version = online_deployment.tags.get(DEPLOYMENT_MODEL_OUTPUTS_VERSION_KEY)
-            mdc_input_enabled_str = online_deployment.tags.get(DEPLOYMENT_MODEL_INPUTS_COLLECTION_KEY)
-            mdc_output_enabled_str = online_deployment.tags.get(DEPLOYMENT_MODEL_OUTPUTS_COLLECTION_KEY)
+            deployment_data_collector = online_deployment.data_collector
+            if deployment_data_collector:
+                in_reg = AMLVersionedArmId(deployment_data_collector.collections.get("model_inputs").data)
+                out_reg = AMLVersionedArmId(deployment_data_collector.collections.get("model_outputs").data)
+                model_inputs_name = in_reg.asset_name
+                model_inputs_version = in_reg.asset_version
+                model_outputs_name = out_reg.asset_name
+                model_outputs_version = out_reg.asset_version
+                mdc_input_enabled_str = deployment_data_collector.collections.get("model_inputs").enabled
+                mdc_output_enabled_str = deployment_data_collector.collections.get("model_outputs").enabled
+            else:
+                model_inputs_name = online_deployment.tags.get(DEPLOYMENT_MODEL_INPUTS_NAME_KEY)
+                model_inputs_version = online_deployment.tags.get(DEPLOYMENT_MODEL_INPUTS_VERSION_KEY)
+                model_outputs_name = online_deployment.tags.get(DEPLOYMENT_MODEL_OUTPUTS_NAME_KEY)
+                model_outputs_version = online_deployment.tags.get(DEPLOYMENT_MODEL_OUTPUTS_VERSION_KEY)
+                mdc_input_enabled_str = online_deployment.tags.get(DEPLOYMENT_MODEL_INPUTS_COLLECTION_KEY)
+                mdc_output_enabled_str = online_deployment.tags.get(DEPLOYMENT_MODEL_OUTPUTS_COLLECTION_KEY)
             if mdc_input_enabled_str and mdc_input_enabled_str.lower() == "true":
                 mdc_input_enabled = True
             if mdc_output_enabled_str and mdc_output_enabled_str.lower() == "true":
@@ -314,7 +336,6 @@ class ScheduleOperations(_ScopeDependentOperations):
                     target=ErrorTarget.SCHEDULE,
                     error_category=ErrorCategory.USER_ERROR,
                 )
-
         # resolve ARM id for each signal and populate any defaults if needed
         for signal_name, signal in schedule.create_monitor.monitoring_signals.items():
             if signal.type == MonitorSignalType.CUSTOM:
@@ -327,7 +348,7 @@ class ScheduleOperations(_ScopeDependentOperations):
             error_messages = []
             if not signal.target_dataset or not signal.baseline_dataset:
                 # if there is no target dataset, we check the type of signal
-                if signal.type == MonitorSignalType.DATA_DRIFT or signal.type == MonitorSignalType.DATA_QUALITY:
+                if signal.type in {MonitorSignalType.DATA_DRIFT, MonitorSignalType.DATA_QUALITY}:
                     if mdc_input_enabled:
                         default_dataset = MonitorInputData(
                             input_dataset=Input(
