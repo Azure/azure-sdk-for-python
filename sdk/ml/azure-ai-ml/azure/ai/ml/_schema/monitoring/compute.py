@@ -10,9 +10,8 @@ from azure.ai.ml._schema.core.fields import StringTransformedEnum, NestedField
 from azure.ai.ml.constants._monitoring import COMPUTE_AML_TYPE, COMPUTE_MANAGED_IDENTITY_TYPE
 class ComputeIdentitySchema(metaclass=PatchedSchemaMeta):
     identity_type = StringTransformedEnum(
-        allowed_values=[COMPUTE_AML_TYPE, COMPUTE_MANAGED_IDENTITY_TYPE]
+        allowed_values=[COMPUTE_AML_TYPE]
     )
-    identity=fields.Str()
 
     @post_load
     def make(self, data, **kwargs):

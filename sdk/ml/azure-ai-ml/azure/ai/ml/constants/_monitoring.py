@@ -99,3 +99,10 @@ class FADColumnNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class MonitorFeatureDataType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     NUMERICAL = "numerical"
     CATEGORICAL = "categorical"
+
+class NumericalMetricThresholds(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    JENSEN_SHANNON_DISTANCE = "jensen_shannon_distance"
+    NORMALIZED_WASSERSTEIN_DISTANCE = "normalized_wasserstein_distance"
+    POPULATION_STABILITY_INDEX = "population_stability_index"
+    TWO_SAMPLE_KOLMOGOROV_SMIRNOV_TEST = "two_sample_kolmogorov_smirnov_test"
+

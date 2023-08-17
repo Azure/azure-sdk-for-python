@@ -21,14 +21,13 @@ create_monitor:
   compute:
     instance_type: "standard_e8s_v3"
     runtime_version: "3.2"
-    compute_identity: 
-      identity_type: "AmlToken"
   monitoring_target:
     endpoint_deployment_id: fake_endpoint_id
     ml_task: classification
   monitoring_signals:
     testSignal:
       type: data_quality
+      alert_enabled: true
       production_data:
         input_data:
           type: mltable
@@ -43,6 +42,7 @@ create_monitor:
       metric_thresholds:
         numerical: 
           null_value_rate: 0.5
+          out_of_bounds_rate: 0.2
         categorical:
           out_of_bounds_rate: 0.2
 properties:

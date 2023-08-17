@@ -21,28 +21,19 @@ create_monitor:
   compute:
     instance_type: "standard_e8s_v3"
     runtime_version: "3.2"
-    compute_identity:
-      identity_type: "AmlToken"
   monitoring_target:
     endpoint_deployment_id: fake_endpoint_id
     ml_task: classification
   monitoring_signals:
     testSignal:
       type: feature_attribution_drift
+      alert_enabled: true
       production_data:
         - input_data:
             path: azureml:my_model_inputs_data:1
             type: mltable
           data_context: model_inputs
           data_column_names:
-            correlation_id: inference_correlation_id
-        - input_data:
-            path: azureml:my_model_outputs_data:1
-            type: mltable
-          data_context: model_outputs
-          data_column_names:
-            prediction: is_fraud
-            prediction_probability: is_fraud_probability
             correlation_id: inference_correlation_id
       reference_data:
         input_data:

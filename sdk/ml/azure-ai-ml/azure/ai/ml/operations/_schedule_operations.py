@@ -17,7 +17,7 @@ from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml.entities import Job, JobSchedule, Schedule
 from azure.ai.ml.entities._monitoring.schedule import MonitorSchedule
 from azure.ai.ml.entities._monitoring.target import MonitoringTarget
-from azure.ai.ml.entities._monitoring.signals import ProductionData, ReferenceData, BaselineDataRange
+from azure.ai.ml.entities._monitoring.signals import InputData, BaselineDataRange
 from azure.ai.ml.entities._monitoring.input_data import FixedInputData
 from azure.ai.ml.entities._inputs_outputs.input import Input
 from azure.ai.ml.exceptions import ScheduleException, ErrorCategory, ErrorTarget
@@ -353,15 +353,16 @@ class ScheduleOperations(_ScopeDependentOperations):
                         if not signal.production_data:
                             # if target dataset is absent and data collector for input is enabled,
                             # create a default target dataset with production model inputs as target
-                            signal.production_data = ProductionData(
+                            signal.production_data = InputData(
                                 input_data=Input(
                                     path=f"{model_inputs_name}:{model_inputs_version}",
                                     type=self._data_operations.get(model_inputs_name, model_inputs_version).type,
                                 ),
                                 data_context=MonitorDatasetContext.MODEL_INPUTS,
+                                data_window_size="P7D",
                             )
                         if not signal.reference_data:
-                            signal.reference_data = ReferenceData(
+                            signal.reference_data = InputData(
                                 input_data=Input(
                                     path=f"{model_inputs_name}:{model_inputs_version}",
                                     type=self._data_operations.get(model_inputs_name, model_inputs_version).type,
@@ -384,7 +385,7 @@ class ScheduleOperations(_ScopeDependentOperations):
                         if not signal.target_dataset:
                             # if target dataset is absent and data collector for output is enabled,
                             # create a default target dataset with production model outputs as target
-                            signal.production_data = ProductionData(
+                            signal.production_data = InputData(
                                 input_data=Input(
                                     path=f"{model_outputs_name}:{model_outputs_version}",
                                     type=self._data_operations.get(model_outputs_name, model_outputs_version).type,
@@ -393,7 +394,7 @@ class ScheduleOperations(_ScopeDependentOperations):
                                 data_window_size="P7D",
                             )
                         if not signal.baseline_dataset:
-                            signal.reference_data = ReferenceData(
+                            signal.reference_data = InputData(
                                 input_data=Input(
                                     path=f"{model_outputs_name}:{model_outputs_version}",
                                     type=self._data_operations.get(model_outputs_name, model_outputs_version).type,

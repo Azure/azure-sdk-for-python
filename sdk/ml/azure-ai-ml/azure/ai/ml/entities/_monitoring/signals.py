@@ -4,6 +4,7 @@
 
 # pylint: disable=protected-access
 
+import datetime, isodate
 from typing import Dict, List, Optional, Union
 
 from typing_extensions import Literal
@@ -14,23 +15,23 @@ from azure.ai.ml._restclient.v2023_06_01_preview.models import (
     MonitoringSignalBase as RestMonitoringSignalBase,
     DataDriftMonitoringSignal as RestMonitoringDataDriftSignal,
 )
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+from azure.ai.ml._restclient.v2023_06_01_preview.models import (
     DataQualityMonitoringSignal as RestMonitoringDataQualitySignal,
 )
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+from azure.ai.ml._restclient.v2023_06_01_preview.models import (
     FeatureAttributionDriftMonitoringSignal as RestFeatureAttributionDriftMonitoringSignal,
     ModelPerformanceSignal as RestModelPerformanceSignal,
     CustomMonitoringSignal as RestCustomMonitoringSignal,
     MonitoringDataSegment as RestMonitoringDataSegment,
     MonitoringFeatureFilterBase as RestMonitoringFeatureFilterBase,
 )
-from azure.ai.ml._restclient.v2023_04_01_preview.models import MonitoringNotificationMode
-from azure.ai.ml._restclient.v2023_04_01_preview.models import MonitoringSignalBase as RestMonitoringSignalBase
-from azure.ai.ml._restclient.v2023_04_01_preview.models import MonitoringSignalType
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+from azure.ai.ml._restclient.v2023_06_01_preview.models import MonitoringNotificationMode
+from azure.ai.ml._restclient.v2023_06_01_preview.models import MonitoringSignalBase as RestMonitoringSignalBase
+from azure.ai.ml._restclient.v2023_06_01_preview.models import MonitoringSignalType
+from azure.ai.ml._restclient.v2023_06_01_preview.models import (
     PredictionDriftMonitoringSignal as RestPredictionDriftMonitoringSignal,
 )
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+from azure.ai.ml._restclient.v2023_06_01_preview.models import (
     TopNFeaturesByAttribution as RestTopNFeaturesByAttribution,
     AllFeatures as RestAllFeatures,
     FeatureSubset as RestFeatureSubset,
@@ -66,6 +67,8 @@ from azure.ai.ml.entities._monitoring.thresholds import (
     MetricThreshold,
     ModelPerformanceMetricThreshold,
     CustomMonitoringMetricThreshold,
+    NumericalDataDriftMetricThreshold,
+    CategoricalDataDriftMetricThreshold,
     NumericalDataDriftMetrics,
     CategoricalDataDriftMetrics,
 )
@@ -125,11 +128,13 @@ class MonitorFeatureFilter(RestTranslatableMixin):
     def _from_rest_object(cls, obj: RestTopNFeaturesByAttribution) -> "MonitorFeatureFilter":
         return cls(top_n_feature_importance=obj.top)
 
+@experimental
 class TargetDataset:
     def __init__(self, dataset: MonitorInputData, data_window_size: str = None):
         self.dataset = dataset
         self.data_window_size = data_window_size
 
+@experimental
 class BaselineDataRange:
     def __init__(
         self,
@@ -199,94 +204,107 @@ class ProductionData(RestTranslatableMixin):
             pre_processing_component=obj.pre_processing_component_id,
             data_window_size=obj.window_size,
         )
+    
 
-class ReferenceData(RestTranslatableMixin):
-    """Reference Data
-    :param input_data: The data for which drift will be calculated
-    :type Input: ~azure.ai.ml.entities._input_outputs
-    :param data_context: The data to calculate drift against
-    :type MointorDatasetContext: ~azure.ai.ml.constants._monitoring
-    :param pre_processing_component : 
-    :type pre_processing_component: string
-    :param target_column_name: 
-    :type target_column_name: string
-    :param data_window:
-    :type data_window_size: BaselineDataRange
-    """
-
+@experimental
+class InputData(RestTranslatableMixin):
     def __init__(
         self,
         *,
         input_data: Input,
         data_context: MonitorDatasetContext = None,
-        pre_processing_component: str = None,
-        target_column_name: str = None,
-        data_window: BaselineDataRange = None,
+        pre_processing_component: Optional[str] = None,
+        data_window_size: Optional[datetime.timedelta] = None,
+        target_columns: Optional[Dict[str, str]] = None,
+        data_window: Optional[BaselineDataRange] = None,
     ):
         self.input_data = input_data
         self.data_context = data_context
         self.pre_processing_component = pre_processing_component
-        self.target_column_name = target_column_name
+        self.data_window_size = data_window_size
+        self.target_columns = target_columns
         self.data_window = data_window
 
-    def _to_rest_object(self) -> RestMonitoringInputData:
-        uri = self.input_data.path, 
-        jobInputType = self.input_data.type
-        if self.target_column_name:
-            target_column = {"target_column_name": self.target_column_name}
-        else:
-            target_column = None
-        if self.data_window is not None:
-            if self.data_window.trailing_window_size is not None:
-                return(
-                    TrailingInputData(
-                        data_context=self.data_context,
-                        target_columns=target_column,
-                        job_type=jobInputType,
-                        uri=uri,
-                        preocessing_component_id=self.pre_processing_component,
-                        window_size=self.data_window.trailing_window_size,
-                        window_offset=self.data_window.trailing_window_size,
-                    )._to_rest_object()
-                )
-            elif self.data_window.window_start is not None and self.data_window.window_end is not None:
-                return(
-                    StaticInputData(
-                        data_context=self.data_context,
-                        target_columns=target_column,
-                        job_type=jobInputType,
-                        uri=uri,
-                        preocessing_component_id=self.pre_processing_component,
-                        window_start=self.data_window.window_start,
-                        window_end=self.data_window.window_end,
-                    )._to_rest_object()
-                ) 
-        return(
-            FixedInputData(
-                data_context=self.data_context,
-                target_columns=target_column,
-                job_type=jobInputType,
-                uri=uri,
-            )._to_rest_object()
+    def _to_rest_object(self, **kwargs) -> RestMonitoringInputData:
+        return (
+            self._get_input_data_type()
         )
-        
-    def _from_rest_object(cls, obj: RestMonitoringInputData) -> "ReferenceData":
+
+    @classmethod
+    def _from_rest_object(cls, obj: RestMonitoringInputData, data_type) -> "InputData":
+        data_window = None
+        if obj.input_data_type == "Static":
+            data_window = BaselineDataRange(
+                window_start=isodate.duration_isoformat(obj.window_start),
+                window_end=isodate.duration_isoformat(obj.window_end),
+            )
+        elif obj.input_data_type == "Trailing":
+            data_window = BaselineDataRange(
+                trailing_window_size=isodate.duration_isoformat(obj.window_size),
+                trailing_window_offset=isodate.duration_isoformat(obj.window_offset),
+            )
+
         return cls(
             input_data=Input(
                 path=obj.uri,
                 type=obj.job_input_type,
             ),
             data_context=obj.data_context,
-            pre_processing_component=obj.pre_processing_component_id,
-            target_column=obj.target_column,
-            data_window=BaselineDataRange(
-                window_start=obj.window_start,
-                window_end=obj.window_end,
-                trailing_window_size=obj.window_size,
-                trailing_window_offset=obj.window_offset,
-            ),
+            pre_processing_component=obj.preprocessing_component_id if obj.input_data_type != "Fixed" and obj.preprocessing_component_id else None,
+            data_window_size=isodate.duration_isoformat(obj.window_size) if data_type == "production" else None,
+            target_columns=obj.columns if obj.columns else None,
+            data_window=data_window
+            if obj.input_data_type != "Fixed" and data_type != "production" else None,
         )
-    
+
+    def _get_input_data_type(self):
+        job_type = self.input_data.type
+        uri = self.input_data.path
+        if self.data_window is not None:
+            if self.data_window.trailing_window_size is not None:
+                return (
+                    TrailingInputData(
+                        data_context=self.data_context,
+                        target_columns=self.target_columns,
+                        job_type=job_type,
+                        uri=uri,
+                        preocessing_component_id=self.pre_processing_component,
+                        window_size=self.data_window.trailing_window_size,
+                        window_offset=self.data_window.trailing_window_offset,
+                    )._to_rest_object()
+                )
+            elif self.data_window.window_start is not None and self.data_window.window_end is not None:
+                return (
+                    StaticInputData(
+                        data_context=self.data_context,
+                        target_columns=self.target_column,
+                        job_type=job_type,
+                        uri=uri,
+                        preocessing_component_id=self.pre_processing_component,
+                        window_start=self.data_window.window_start,
+                        window_end=self.data_window.window_end,
+                    )._to_rest_object()
+                )
+        elif self.data_window_size is not None:
+            return (
+                TrailingInputData(
+                    data_context=self.data_context,
+                    job_type=job_type,
+                    uri=uri,
+                    preocessing_component_id=self.pre_processing_component,
+                    window_size=self.data_window_size,
+                    window_offset=self.data_window_size,
+                )._to_rest_object()
+            )
+        else:
+            return (
+                FixedInputData(
+                    data_context=self.data_context,
+                    target_columns=self.target_columns,
+                    job_type=job_type,
+                    uri=uri,
+                )._to_rest_object()
+            )
 @experimental
 class MonitoringSignal(RestTranslatableMixin):
     """
@@ -319,8 +337,8 @@ class MonitoringSignal(RestTranslatableMixin):
     def __init__(
         self,
         *,
-        production_data: ProductionData,
-        reference_data: ReferenceData,
+        production_data: InputData = None,
+        reference_data: InputData = None,
         metric_thresholds: Union[MetricThreshold, List[MetricThreshold]],
         properties: Optional[Dict[str, str]] = None,
         alert_enabled: bool = True,
@@ -378,8 +396,8 @@ class DataSignal(MonitoringSignal):
     def __init__(
         self,
         *,
-        production_data: ProductionData,
-        reference_data: ReferenceData,
+        production_data: InputData = None,
+        reference_data: InputData = None,
         features: Optional[Union[List[str], MonitorFeatureFilter, Literal[ALL_FEATURES]]] = None,
         feature_type_override: Optional[Dict[str, Union[ str, MonitorFeatureDataType]]] = None,
         metric_thresholds: List[MetricThreshold],
@@ -422,8 +440,8 @@ class DataDriftSignal(DataSignal):
     def __init__(
         self,
         *,
-        production_data: ProductionData,
-        reference_data: ReferenceData,
+        production_data: InputData = None,
+        reference_data: InputData = None,
         features: Optional[Union[List[str], MonitorFeatureFilter, Literal[ALL_FEATURES]]] = None,
         feature_type_override: Optional[Dict[str, Union[ str, MonitorFeatureDataType]]] = None,
         metric_thresholds: DataDriftMetricThreshold = None,
@@ -448,13 +466,12 @@ class DataDriftSignal(DataSignal):
         if self.production_data.data_window_size is None:
             self.production_data.data_window_size = default_data_window_size
         rest_features = _to_rest_features(self.features) if self.features else None
-        rest_metrics = _to_rest_num_cat_metrics(self.metric_thresholds.numerical, self.metric_thresholds.categorical)
         return RestMonitoringDataDriftSignal(
             production_data=self.production_data._to_rest_object(),
             reference_data=self.reference_data._to_rest_object(),
             features=rest_features,
             feature_data_type_override=self.feature_type_override,
-            metric_thresholds=rest_metrics,
+            metric_thresholds=self.metric_thresholds._to_rest_object(),
             mode=MonitoringNotificationMode.ENABLED if self.alert_enabled else MonitoringNotificationMode.DISABLED,
             data_segment=self.data_segment._to_rest_object() if self.data_segment else None,
             properties=self.properties,
@@ -463,11 +480,11 @@ class DataDriftSignal(DataSignal):
     @classmethod
     def _from_rest_object(cls, obj: RestMonitoringDataDriftSignal) -> "DataDriftSignal":
         return cls(
-            production_data=ProductionData._from_rest_object(obj.production_data),
-            reference_data=ReferenceData._from_rest_object(obj.reference_data),
+            production_data=InputData._from_rest_object(obj.production_data, "production"),
+            reference_data=InputData._from_rest_object(obj.reference_data, "reference"),
             features=_from_rest_features(obj.features),
             feature_type_override=obj.feature_data_type_override,
-            metric_thresholds=_from_rest_num_cat_metrics(obj.metric_thresholds.numerical,obj.metric_thresholds.categorical),
+            metric_thresholds=DataDriftMetricThreshold._from_rest_object(obj.metric_thresholds),
             alert_enabled=False
             if not obj.mode or (obj.mode and obj.mode == MonitoringNotificationMode.DISABLED)
             else MonitoringNotificationMode.ENABLED,
@@ -500,10 +517,9 @@ class PredictionDriftSignal(MonitoringSignal):
     def __init__(
         self,
         *,
-        production_data: ProductionData,
-        reference_data: ReferenceData,
+        production_data: InputData,
+        reference_data: InputData,
         metric_thresholds: PredictionDriftMetricThreshold,
-        model_type: Union[str, MonitorTargetTasks],
         alert_enabled: bool = True,
         properties: Optional[Dict[str, str]] = None,
     ):
@@ -515,33 +531,30 @@ class PredictionDriftSignal(MonitoringSignal):
             properties=properties
         )
         self.type = MonitorSignalType.PREDICTION_DRIFT
-        self.model_type = model_type
 
     def _to_rest_object(self, **kwargs) -> RestPredictionDriftMonitoringSignal:
         default_data_window_size = kwargs.get("default_data_window_size")
         if self.production_data.data_window_size is None:
             self.production_data.data_window_size = default_data_window_size
-        rest_metric_thresholds = _to_rest_num_cat_metrics(self.metric_thresholds.numerical, self.metric_thresholds.categorical)
         return RestPredictionDriftMonitoringSignal(
             production_data=self.production_data._to_rest_object(),
             reference_data=self.reference_data._to_rest_object(),
-            metric_thresholds=rest_metric_thresholds,
+            metric_thresholds=self.metric_thresholds._to_rest_object(),
             properties=self.properties,
             mode=MonitoringNotificationMode.ENABLED if self.alert_enabled else MonitoringNotificationMode.DISABLED,
-            model_type=self.model_type,
+            model_type='classification',
         )
 
     @classmethod
     def _from_rest_object(cls, obj: RestPredictionDriftMonitoringSignal) -> "PredictionDriftSignal":
         return cls(
-            production_data=ProductionData._from_rest_object(obj.production_data),
-            reference_data=ReferenceData._from_rest_object(obj.reference_data),
-            metric_thresholds=_from_rest_num_cat_metrics(obj.metric_thresholds.numerical,obj.metric_thresholds.categorical),
+            production_data=InputData._from_rest_object(obj.production_data, "production"),
+            reference_data=InputData._from_rest_object(obj.reference_data, "reference"),
+            metric_thresholds=PredictionDriftMetricThreshold._from_rest_object(obj.metric_thresholds),
             alert_enabled=False
             if not obj.mode or (obj.mode and obj.mode == MonitoringNotificationMode.DISABLED)
             else MonitoringNotificationMode.ENABLED,
             properties=obj.properties,
-            model_type=obj.model_type,
         )
 
     @classmethod
@@ -573,8 +586,8 @@ class DataQualitySignal(DataSignal):
     def __init__(
         self,
         *,
-        production_data: ProductionData,
-        reference_data: ReferenceData,
+        production_data: InputData,
+        reference_data: InputData,
         features: Optional[Union[List[str], MonitorFeatureFilter, Literal[ALL_FEATURES]]] = None,
         feature_type_override: Optional[Dict[str, Union[str, MonitorFeatureDataType]]] = None,
         metric_thresholds: DataQualityMetricThreshold,
@@ -611,11 +624,11 @@ class DataQualitySignal(DataSignal):
     @classmethod
     def _from_rest_object(cls, obj: RestMonitoringDataQualitySignal) -> "DataDriftSignal":
         return cls(
-            target_dataset=ProductionData._from_rest_object(obj.production_data),
-            reference_data=ReferenceData._from_rest_object(obj.ref),
+            production_data=InputData._from_rest_object(obj.production_data, "production"),
+            reference_data=InputData._from_rest_object(obj.reference_data, "reference"),
             features=_from_rest_features(obj.features),
             feature_type_override=obj.feature_data_type_override,
-            metric_thresholds=[DataQualityMetricsCategorical._from_rest_object(threshold) for threshold in obj.metric_thresholds.categorical],
+            metric_thresholds=DataQualityMetricThreshold._from_rest_object(obj.metric_thresholds),
             alert_enabled=False
             if not obj.mode or (obj.mode and obj.mode == MonitoringNotificationMode.DISABLED)
             else MonitoringNotificationMode.ENABLED,
@@ -684,7 +697,7 @@ class FADProductionData(RestTranslatableMixin):
         self.pre_processing_component = pre_processing_component
         self.data_window_size = data_window_size
     
-    def _to_rest_object(self, *kwargs) -> RestMonitoringInputData:
+    def _to_rest_object(self, **kwargs) -> RestMonitoringInputData:
         default_data_window_size = kwargs.get("default_data_window_size")
         if self.data_window_size is None:
             self.data_window_size = default_data_window_size
@@ -703,6 +716,7 @@ class FADProductionData(RestTranslatableMixin):
             monitoring_input_data._to_rest_object()
         )
     
+    @classmethod
     def _from_rest_object(cls, obj: RestMonitoringInputData) -> "FADProductionData":
         return cls(
             input_data=Input(
@@ -710,8 +724,8 @@ class FADProductionData(RestTranslatableMixin):
                 type=obj.job_input_type,
             ),
             data_context=obj.data_context,
-            target_columns=obj.data_column_names,
-            pre_processing_component=obj.pre_processing_component_id,
+            data_column_names=obj.columns,
+            pre_processing_component=obj.preprocessing_component_id,
             data_window_size=obj.window_size,
         )
 
@@ -737,7 +751,7 @@ class FeatureAttributionDriftSignal(RestTranslatableMixin):
         self,
         *,
         production_data: List[FADProductionData],
-        reference_data: ReferenceData,
+        reference_data: InputData,
         metric_thresholds: FeatureAttributionDriftMetricThreshold,
         alert_enabled: bool = True,
         properties: Optional[Dict[str, str]] = None,
@@ -762,9 +776,8 @@ class FeatureAttributionDriftSignal(RestTranslatableMixin):
     def _from_rest_object(cls, obj: RestFeatureAttributionDriftMonitoringSignal) -> "FeatureAttributionDriftSignal":
         return cls(
             production_data=[FADProductionData._from_rest_object(data) for data in obj.production_data],
-            reference_data=ReferenceData._from_rest_object(obj.reference_data),
+            reference_data=InputData._from_rest_object(obj.reference_data, "reference"),
             metric_thresholds=FeatureAttributionDriftMetricThreshold._from_rest_object(obj.metric_threshold),
-            model_type=obj.model_type.lower(),
             alert_enabled=False
             if not obj.mode or (obj.mode and obj.mode == MonitoringNotificationMode.DISABLED)
             else MonitoringNotificationMode.ENABLED,
@@ -980,15 +993,20 @@ def _to_rest_num_cat_metrics(numerical_metrics, categorical_metrics):
     
     return metrics
 
-def _from_rest_num_cat_metrics(numerical_metrics, categorical_metrics):
-    metrics = []
-    if numerical_metrics is not None:
-        metrics.append(NumericalDataDriftMetrics._from_rest_object(numerical_metrics))
+def _from_rest_num_cat_metrics(metric_thresholds):
+    numerical = None
+    categorical = None
+    result = []
+    for threshold in metric_thresholds:
+        if threshold.data_type == "Numerical":
+            numerical = NumericalDataDriftMetrics(metric=threshold.metric, metric_threshold=threshold.threshold.value)
+            result.append(NumericalDataDriftMetrics._from_rest_object(numerical))
+        # elif threshold.data_type == "Categorical":
+        #     categorical = CategoricalDataDriftMetric(metric=threshold.metric, threshold=threshold.threshold)
+        #     result.append(CategoricalDataDriftMetricThresh._from_rest_object(categorical))
     
-    if categorical_metrics is not None:
-        metrics.append(CategoricalDataDriftMetrics._from_rest_object(categorical_metrics))
-    
-    return metrics
+    metrics = DataDriftMetricThreshold(numerical=numerical, categorical=categorical)
+    return result
 
 def _to_rest_data_quality_metrics(numerical_metrics, categorical_metrics):
     metric_thresholds = []

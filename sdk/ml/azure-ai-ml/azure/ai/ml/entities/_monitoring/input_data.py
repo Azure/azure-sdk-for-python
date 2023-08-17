@@ -4,6 +4,8 @@
 
 import datetime
 from typing import Dict
+
+import isodate
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 from azure.ai.ml._restclient.v2023_06_01_preview.models import(
     MonitoringInputDataBase as RestMonitoringInputData,
@@ -17,7 +19,7 @@ from azure.ai.ml._utils.utils import camel_to_snake, snake_to_camel
 from azure.ai.ml.constants._monitoring import MonitorDatasetContext
 from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
-
+from azure.ai.ml._utils.utils import to_iso_duration_format_days, from_iso_duration_format_days
 
 @experimental
 class MonitorInputData(RestTranslatableMixin):
@@ -50,11 +52,11 @@ class MonitorInputData(RestTranslatableMixin):
         self.job_type = job_type
         self.uri = uri
 
+@experimental
 class FixedInputData(MonitorInputData):
     def __init(
         self,
         *,
-        input_type: str = None,
         data_context: MonitorDatasetContext = None,
         target_columns: Dict = None,
         job_type: str = None,
@@ -70,7 +72,7 @@ class FixedInputData(MonitorInputData):
 
     def _to_rest_object(self) -> RestFixedInputData:
         return RestFixedInputData(
-            data_context=snake_to_camel(self.data_context),
+            data_context=camel_to_snake(self.data_context),
             columns=self.target_columns,
             job_input_type=self.job_type,
             uri=self.uri,
@@ -78,12 +80,13 @@ class FixedInputData(MonitorInputData):
     
     def _from_rest_object(cls, obj: RestFixedInputData) -> "FixedInputData":
         return cls(
-            data_context=camel_to_snake(obj.data_context),
+            data_context=snake_to_camel(obj.data_context),
             target_columns=obj.columns,
             job_type=obj.job_input_type,
             uri=obj.uri,
         )
     
+@experimental
 class TrailingInputData(MonitorInputData):
     def __init__(
         self,
@@ -92,7 +95,7 @@ class TrailingInputData(MonitorInputData):
         target_columns: Dict = None,
         job_type: str = None,
         uri: str = None,
-        window_size: datetime.timedelta = None,
+        window_size: str = None,
         window_offset: datetime.timedelta = None,
         preocessing_component_id: str = None,
     ):
@@ -109,7 +112,7 @@ class TrailingInputData(MonitorInputData):
 
     def _to_rest_object(self) -> RestTrailingInputData:
         return RestTrailingInputData(
-            data_context=snake_to_camel(self.data_context),
+            data_context=camel_to_snake(self.data_context),
             columns=self.target_columns,
             job_input_type=self.job_type,
             uri=self.uri,
@@ -120,15 +123,16 @@ class TrailingInputData(MonitorInputData):
     
     def _from_rest_object(cls, obj: RestTrailingInputData) -> "TrailingInputData":
         return cls(
-            data_context=camel_to_snake(obj.data_context),
+            data_context=snake_to_camel(obj.data_context),
             target_columns=obj.columns,
             job_type=obj.job_input_type,
             uri=obj.uri,
-            window_size=obj.window_size,
+            window_size=isodate.duration_isoformat(obj.window_size),
             window_offset=obj.window_offset,
             preocessing_component_id=obj.preprocessing_component_id,
         )
-    
+
+@experimental
 class StaticInputData(MonitorInputData):
     def __init__(
         self,
@@ -154,22 +158,22 @@ class StaticInputData(MonitorInputData):
     
     def _to_rest_object(self) -> RestStaticInputData:
         return RestStaticInputData(
-            data_context=snake_to_camel(self.data_context),
+            data_context=camel_to_snake(self.data_context),
             columns=self.target_columns,
             job_input_type=self.job_type,
             uri=self.uri,
             preprocessing_component_id=self.preocessing_component_id,
-            window_start=self.window_start,
-            window_end=self.window_end,
+            window_start=to_iso_duration_format_days(self.window_start),
+            window_end=from_iso_duration_format_days(self.window_end),
         )
     
     def _from_rest_object(cls, obj: RestStaticInputData) -> "StaticInputData":
         return cls(
-            data_context=camel_to_snake(obj.data_context),
+            data_context=snake_to_camel(obj.data_context),
             target_columns=obj.columns,
             job_type=obj.job_input_type,
             uri=obj.uri,
             preocessing_component_id=obj.preprocessing_component_id,
-            window_start=obj.window_start,
-            window_end=obj.window_end,
+            window_start=from_iso_duration_format_days(obj.window_start),
+            window_end=from_iso_duration_format_days(obj.window_end),
         )

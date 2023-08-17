@@ -3,16 +3,16 @@
         "action": {
             "actionType": "CreateMonitor",
             "monitorDefinition": {
-                "compute_configuration":{
+                "computeConfiguration":{
                     "computeType": "ServerlessSpark",
-                    "instanceType": "Standard_D2_v2",
-                    "runtime_version": "3.2",
+                    "instanceType": "standard_e8s_v3",
+                    "runtimeVersion": "3.2",
                     "computeIdentity": {
-                        "type": "AmlToken"
+                        "computeIdentityType": "AmlToken"
                     }
                 },
                 "monitoringTarget": {
-                    "task_type" : "classification",
+                    "taskType" : "classification",
                     "deploymentId": "fake_endpoint_id"
                 },
                 "signals": {
@@ -24,11 +24,12 @@
                             "inputDataType": "Trailing",
                             "jobInputType": "mltable",
                             "uri": "Direct:1",
-                            "window_size": "P60D",
-                            "window_offset": "P60D"
+                            "windowSize": "P60D",
+                            "windowOffset": "P60D"
                         },
                         "referenceData": {
                             "dataContext": "test",
+                            "inputDataType": "Fixed",
                             "jobInputType": "mltable",
                             "uri": "Direct:1"
                         },
@@ -38,6 +39,13 @@
                                 "metric": "nullValueRate",
                                 "threshold": {
                                     "value": 0.5
+                                }
+                            },
+                            {
+                                "dataType": "Numerical",
+                                "metric": "outOfBoundsRate",
+                                "threshold": {
+                                    "value": 0.2
                                 }
                             },
                             {
@@ -77,9 +85,7 @@
             "prop1": "value"
         },
         "tags": {
-            "tag1": "tag",
-            "compute.spark.resources.instance_type": "standard_e8s_v3",
-            "compute.spark.resources.runtime_version": "3.2"
+            "tag1": "tag"
         }
     }
 }

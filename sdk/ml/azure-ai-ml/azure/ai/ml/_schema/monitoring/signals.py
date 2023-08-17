@@ -90,6 +90,7 @@ class ProductionDataSchema(metaclass=PatchedSchemaMeta):
 
         return ProductionData(**data)
 
+
 class ReferenceDataSchema(metaclass=PatchedSchemaMeta):
     input_data = UnionField(union_fields=[NestedField(DataInputSchema), NestedField(MLTableInputSchema)])
     data_context = StringTransformedEnum(allowed_values=[o.value for o in MonitorDatasetContext])
@@ -102,9 +103,25 @@ class ReferenceDataSchema(metaclass=PatchedSchemaMeta):
         from azure.ai.ml.entities._monitoring.signals import ReferenceData
 
         return ReferenceData(**data)
+
+class InputDataSchema(metaclass=PatchedSchemaMeta):
+    input_data = UnionField(union_fields=[NestedField(DataInputSchema), NestedField(MLTableInputSchema)])
+    data_context = StringTransformedEnum(allowed_values=[o.value for o in MonitorDatasetContext])
+    pre_processing_component = fields.Str()
+    data_window_size = fields.Str()
+    target_columns = fields.Dict(keys=fields.Str(), values=fields.Str())
+    data_window = NestedField(BaselineDataRange)
+
+    @post_load
+    def make(self, data, **kwargs):
+        from azure.ai.ml.entities._monitoring.signals import InputData
+
+        return InputData(**data)
+
+
 class MonitoringSignalSchema(metaclass=PatchedSchemaMeta):
-    production_data = NestedField(ProductionDataSchema)
-    reference_data = NestedField(ReferenceDataSchema)
+    production_data = NestedField(InputDataSchema)
+    reference_data = NestedField(InputDataSchema)
     properties = fields.Dict()
     alert_enabled = fields.Bool()
 
@@ -164,7 +181,6 @@ class DataQualitySignalSchema(DataSignalSchema):
 class PredictionDriftSignalSchema(MonitoringSignalSchema):
     type = StringTransformedEnum(allowed_values=MonitorSignalType.PREDICTION_DRIFT, required=True)
     metric_thresholds = NestedField(PredictionDriftMetricThresholdSchema)
-    model_type = StringTransformedEnum(allowed_values=[MonitorModelType.CLASSIFICATION, MonitorModelType.REGRESSION])
 
     @pre_dump
     def predump(self, data, **kwargs):
@@ -202,7 +218,7 @@ class FADProductionDataSchema(metaclass=PatchedSchemaMeta):
 
 class FeatureAttributionDriftSignalSchema(metaclass=PatchedSchemaMeta):
     production_data = fields.List(NestedField(FADProductionDataSchema))
-    reference_data = NestedField(ReferenceDataSchema)
+    reference_data = NestedField(InputDataSchema)
     alert_enabled = fields.Bool()
     type = StringTransformedEnum(allowed_values=MonitorSignalType.FEATURE_ATTRIBUTION_DRIFT, required=True)
     metric_thresholds = NestedField(FeatureAttributionDriftMetricThresholdSchema)

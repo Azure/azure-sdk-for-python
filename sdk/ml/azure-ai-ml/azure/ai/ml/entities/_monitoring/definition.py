@@ -119,7 +119,7 @@ class MonitorDefinition(RestTranslatableMixin):
                 from_rest_alert_notification = AlertNotification._from_rest_object(obj.alert_notification_setting)
         return cls(
             compute=ServerLessSparkCompute._from_rest_object(obj.compute_configuration),
-            monitoring_target=MonitoringTarget(endpoint_deployment_id=obj.monitoring_target, ml_task=obj.task_type),
+            monitoring_target=MonitoringTarget(endpoint_deployment_id=obj.monitoring_target.deployment_id, ml_task=obj.monitoring_target.task_type),
             monitoring_signals={
                 signal_name: MonitoringSignal._from_rest_object(signal) for signal_name, signal in obj.signals.items()
             },

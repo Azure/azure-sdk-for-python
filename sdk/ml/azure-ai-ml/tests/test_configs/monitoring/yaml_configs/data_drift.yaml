@@ -21,14 +21,13 @@ create_monitor:
   compute:
     instance_type: "standard_e8s_v3"
     runtime_version: "3.2"
-    compute_identity: 
-      identity_type: "AmlToken"
   monitoring_target:
     ml_task: classification
     endpoint_deployment_id: fake_endpoint_id
   monitoring_signals:
     testSignal:
       type: data_drift
+      alert_enabled: true
       production_data:
         input_data:
           type: mltable
@@ -54,3 +53,7 @@ create_monitor:
           - a
           - b
           - c
+properties:
+  prop1: value
+tags:
+  tag1: value

@@ -99,10 +99,6 @@ class MonitorSchedule(Schedule, RestTranslatableMixin):
     def _to_rest_object(self) -> RestSchedule:
         tags = {
             **self.tags,
-            **{
-                SPARK_INSTANCE_TYPE_KEY: self.create_monitor.compute.instance_type,
-                SPARK_RUNTIME_VERSION: self.create_monitor.compute.runtime_version,
-            },
         }
         # default data window size is calculated based on the trigger frequency
         # by default 7 days if user provides incorrect recurrence frequency

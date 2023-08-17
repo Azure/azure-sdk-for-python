@@ -3,34 +3,37 @@
         "action": {
             "actionType": "CreateMonitor",
             "monitorDefinition": {
-                "monitoringTarget": {
-                    "task_type" : "classification",
-                    "deploymentId": "fake_endpoint_id"
-                },
-                "compute_configuration":{
+                "computeConfiguration":{
                     "computeType": "ServerlessSpark",
-                    "instanceType": "Standard_D2_v2",
-                    "runtime_version": "3.2",
+                    "instanceType": "standard_e8s_v3",
+                    "runtimeVersion": "3.2",
                     "computeIdentity": {
-                        "type": "AmlToken"
+                        "computeIdentityType": "AmlToken"
                     }
+                },
+                "monitoringTarget": {
+                    "taskType" : "classification",
+                    "deploymentId": "fake_endpoint_id"
                 },
                 "signals": {
                     "testSignal": {
                         "signalType": "DataDrift",
-                        "mode": "Disabled",
+                        "mode": "Enabled",
                         "productionData": {
                             "dataContext": "test",
                             "inputDataType": "Trailing",
                             "jobInputType": "mltable",
                             "uri": "Direct:1",
-                            "window_size": "P60D",
-                            "window_offset": "P60D"
+                            "windowSize": "P60D",
+                            "windowOffset": "P60D"
                         },
                         "referenceData": {
                             "dataContext": "test",
+                            "inputDataType": "Trailing",
                             "jobInputType": "mltable",
-                            "uri": "Direct:1"
+                            "uri": "Direct:1",
+                            "windowSize": "P30D",
+                            "windowOffset": "P30D"
                         },
                         "metricThresholds": [
                             {
@@ -80,6 +83,12 @@
                     "friday"
                 ]
             }
+        },
+        "properties": {
+            "prop1": "value"
+        },
+        "tags":{
+            "tag1": "value"
         }
     }
 }
