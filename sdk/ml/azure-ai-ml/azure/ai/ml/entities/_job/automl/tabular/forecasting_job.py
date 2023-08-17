@@ -34,7 +34,7 @@ class ForecastingJob(AutoMLTabular):
     :type forecasting_settings: 
         Optional[~azure.ai.ml.entities._job.automl.tabular.forecasting_settings.ForecastingSettings]
     :param kwargs: Job-specific arguments
-    :type kwargs: dict
+    :type kwargs: Dict[str, Any]
     """
 
     _DEFAULT_PRIMARY_METRIC = ForecastingPrimaryMetrics.NORMALIZED_ROOT_MEAN_SQUARED_ERROR
@@ -95,7 +95,7 @@ class ForecastingJob(AutoMLTabular):
         """
         Return the forecast training settings.
 
-        :retuen: training settings.
+        :return: training settings.
         :rtype: ~azure.ai.ml.entities._job.automl.training_settings.ForecastingTrainingSettings
         """
         return self._training or ForecastingTrainingSettings()
@@ -106,7 +106,7 @@ class ForecastingJob(AutoMLTabular):
         Return the forecast settings.
 
         :return: forecast settings.
-        :rtypre: ~azure.ai.ml.entities._job.automl.tabular.forecasting_settings.ForecastingSettings
+        :rtype: ~azure.ai.ml.entities._job.automl.tabular.forecasting_settings.ForecastingSettings
         """
         return self._forecasting_settings
 
@@ -143,10 +143,10 @@ class ForecastingJob(AutoMLTabular):
             azure/machine-learning/how-to-auto-train-forecast>`_.
         :type forecast_horizon: Optional[Union[str, int]]
         :keyword time_series_id_column_names:
-            The names of columns used to group a timeseries.
+            The names of columns used to group a time series.
             It can be used to create multiple series. If time series id column names is not defined or
             the identifier columns specified do not identify all the series in the dataset, the time series identifiers
-            will be automatically created for your dataset.
+            will be automatically created for your data set.
         :paramtype time_series_id_column_names: Optional[Union[str, List[str]]]
         :keyword target_lags:
             The number of past periods to lag from the target column. By default the lags are turned off.
