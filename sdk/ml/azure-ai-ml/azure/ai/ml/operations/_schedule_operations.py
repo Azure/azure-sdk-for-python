@@ -381,7 +381,7 @@ class ScheduleOperations(_ScopeDependentOperations):
                         error_messages.append(msg)
                 elif signal.type == MonitorSignalType.PREDICTION_DRIFT:
                     if mdc_output_enabled:
-                        if not signal.target_dataset:
+                        if not signal.production_data:
                             # if target dataset is absent and data collector for output is enabled,
                             # create a default target dataset with production model outputs as target
                             signal.production_data = InputData(
@@ -392,7 +392,7 @@ class ScheduleOperations(_ScopeDependentOperations):
                                 data_context=MonitorDatasetContext.MODEL_OUTPUTS,
                                 data_window_size="P7D",
                             )
-                        if not signal.baseline_dataset:
+                        if not signal.reference_data:
                             signal.reference_data = InputData(
                                 input_data=Input(
                                     path=f"{model_outputs_name}:{model_outputs_version}",

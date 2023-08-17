@@ -517,8 +517,8 @@ class PredictionDriftSignal(MonitoringSignal):
     def __init__(
         self,
         *,
-        production_data: InputData,
-        reference_data: InputData,
+        production_data: InputData = None,
+        reference_data: InputData = None,
         metric_thresholds: PredictionDriftMetricThreshold,
         alert_enabled: bool = True,
         properties: Optional[Dict[str, str]] = None,
@@ -586,11 +586,11 @@ class DataQualitySignal(DataSignal):
     def __init__(
         self,
         *,
-        production_data: InputData,
-        reference_data: InputData,
+        production_data: InputData = None,
+        reference_data: InputData = None,
         features: Optional[Union[List[str], MonitorFeatureFilter, Literal[ALL_FEATURES]]] = None,
         feature_type_override: Optional[Dict[str, Union[str, MonitorFeatureDataType]]] = None,
-        metric_thresholds: DataQualityMetricThreshold,
+        metric_thresholds: DataQualityMetricThreshold = None,
         alert_enabled: bool = True,
         properties: Optional[Dict[str, str]] = None,
     ):
