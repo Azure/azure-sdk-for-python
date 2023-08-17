@@ -138,7 +138,7 @@ To run a tox command from your directory use the following commands:
 (env) azure-sdk-for-python\sdk\my-service\my-package> tox run -e samples -c ../../../eng/tox/tox.ini --root . 
 (env) azure-sdk-for-python\sdk\my-service\my-package> tox run -e apistub -c ../../../eng/tox/tox.ini --root . 
 ```
-A quick description of the five commands above:
+A quick description of the nine commands above:
 * sphinx: documentation generation using the inline comments written in our code
 * lint: runs pylint to make sure our code adheres to the style guidance
 * mypy: runs the mypy static type checker for Python to make sure that our types are valid.
