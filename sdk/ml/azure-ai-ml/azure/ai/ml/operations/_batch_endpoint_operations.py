@@ -190,6 +190,7 @@ class BatchEndpointOperations(_ScopeDependentOperations):
                 body=endpoint_resource,
                 polling=True,
                 **self._init_kwargs,
+                cls=lambda response, deserialized, headers: BatchEndpoint._from_rest_object(deserialized),
             )
             return poller
 
@@ -214,10 +215,10 @@ class BatchEndpointOperations(_ScopeDependentOperations):
         :type endpoint_name: str
         :keyword deployment_name: (Optional) The name of a specific deployment to invoke. This is optional.
             By default requests are routed to any of the deployments according to the traffic rules.
-        :type deployment_name: str
+        :paramtype deployment_name: str
         :keyword inputs: (Optional) A dictionary of existing data asset, public uri file or folder
             to use with the deployment
-        :type inputs: Dict[str, Input]
+        :paramtype inputs: Dict[str, Input]
         :raises ~azure.ai.ml.exceptions.ValidationException: Raised if deployment cannot be successfully validated.
             Details will be provided in the error message.
         :raises ~azure.ai.ml.exceptions.AssetException: Raised if BatchEndpoint assets

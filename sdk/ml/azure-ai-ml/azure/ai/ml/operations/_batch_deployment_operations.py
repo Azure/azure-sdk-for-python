@@ -235,7 +235,7 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
         :param endpoint_name: Name of endpoint.
         :type endpoint_name: str
         :keyword name: (Optional) Name of deployment.
-        :type name: str
+        :paramtype name: str
         :raise: Exception if endpoint_type is not BATCH_ENDPOINT_TYPE
         :return: List of jobs
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.ml.entities.BatchJob]

@@ -36,11 +36,11 @@ class Diagnostic(object):
         """Init Diagnostic.
 
         :keyword yaml_path: A dash path from root to the target element of the diagnostic. jobs.job_a.inputs.input_str
-        :type yaml_path: str
+        :paramtype yaml_path: str
         :keyword message: Error message of diagnostic.
-        :type message: str
+        :paramtype message: str
         :keyword error_code: Error code of diagnostic.
-        :type error_code: str
+        :paramtype error_code: str
         """
         self.yaml_path = yaml_path
         self.message = message
@@ -559,7 +559,7 @@ class _ValidationResultBuilder:
         :param error: ValidationError raised by marshmallow.Schema.load.
         :type error: ValidationError
         :keyword error_on_unknown_field: whether to raise error if there are unknown field diagnostics.
-        :type error_on_unknown_field: bool
+        :paramtype error_on_unknown_field: bool
         :return: The validation result
         :rtype: MutableValidationResult
         """
@@ -581,7 +581,7 @@ class _ValidationResultBuilder:
         :param data: serialized data to validate
         :type data: dict
         :keyword error_on_unknown_field: whether to raise error if there are unknown field diagnostics.
-        :type error_on_unknown_field: bool
+        :paramtype error_on_unknown_field: bool
         :return: The validation result
         :rtype: MutableValidationResult
         """

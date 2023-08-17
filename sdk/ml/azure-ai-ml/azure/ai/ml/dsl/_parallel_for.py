@@ -41,9 +41,9 @@ def parallel_for(*, body, items, **kwargs):
                 )
 
     :keyword body: Node to execute as the loop body.
-    :type body: ~azure.ai.ml.entities._builders.BaseNode
+    :paramtype body: ~azure.ai.ml.entities._builders.BaseNode
     :keyword items: The loop body's input which will bind to the loop node.
-    :type items: Union[
+    :paramtype items: Union[
         list,
         dict,
         str,

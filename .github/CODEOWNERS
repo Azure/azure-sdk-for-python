@@ -44,7 +44,7 @@
 /sdk/agrifood/azure-agrifood-farming/                                @bhargav-kansagara
 
 # PRLabel: %Azure.Identity
-/sdk/identity/                                                       @pvaneck @xiangyan99 @Azure/azsdk-identity
+/sdk/identity/                                                       @pvaneck @xiangyan99 @Azure/azure-sdk-write-identity
 
 # PRLabel: %Event Hubs
 /sdk/eventhub/                                                       @annatisch @kashifkhan @swathipil @l0lawrence
@@ -119,10 +119,10 @@
 /sdk/monitor/azure-monitor-opentelemetry-exporter/                   @lmazuel @lzchen @hectorhdzg @jeremydvoss
 
 # PRLabel: %Monitor - Query
-/sdk/monitor/azure-monitor-query/                                    @pvaneck
+/sdk/monitor/azure-monitor-query/                                    @pvaneck @Azure/azure-sdk-write-monitor-data-plane
 
 # PRLabel: %Monitor - Ingestion
-/sdk/monitor/azure-monitor-ingestion/                                @pvaneck
+/sdk/monitor/azure-monitor-ingestion/                                @pvaneck @Azure/azure-sdk-write-monitor-data-plane
 
 # PRLabel: %Consumption
 /sdk/consumption/                                                    @sandeepnl
@@ -425,7 +425,7 @@
 # ServiceLabel: %Bot Service %Service Attention
 #/<NotInRepo>/          @sgellock
 
-# ServiceLabel: %Client
+# ServiceLabel: %Cosmos %Service Attention
 #/<NotInRepo>/          @simorenoh @gahl-levy @bambriz
 
 # ServiceLabel: %Cloud Shell %Service Attention

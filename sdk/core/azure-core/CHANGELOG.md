@@ -1,6 +1,6 @@
 # Release History
 
-## 1.29.2 (Unreleased)
+## 1.29.3 (Unreleased)
 
 ### Features Added
 
@@ -8,7 +8,19 @@
 
 ### Bugs Fixed
 
+- Encoded URL before formatting it. #31346
+
 ### Other Changes
+
+## 1.29.2 (2023-08-14)
+
+### Bugs Fixed
+
+- Added a default implementation for `AsyncTokenCredential.__aexit__()` #31573
+
+### Other Changes
+
+- Bumped `typing-extensions` version to 4.6.0.
 
 ## 1.29.1 (2023-08-09)
 

@@ -1,6 +1,7 @@
 from unittest.mock import DEFAULT, Mock, patch
 
 import pytest
+from azure.core.polling import LROPoller
 from pytest_mock import MockFixture
 
 from azure.ai.ml._restclient.v2023_06_01_preview.models import (
@@ -10,14 +11,8 @@ from azure.ai.ml._restclient.v2023_06_01_preview.models import (
 from azure.ai.ml._scope_dependent_operations import OperationScope
 from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml.constants import ManagedServiceIdentityType
-from azure.ai.ml.entities import (
-    CustomerManagedKey,
-    IdentityConfiguration,
-    ManagedIdentityConfiguration,
-    Workspace,
-)
+from azure.ai.ml.entities import CustomerManagedKey, IdentityConfiguration, ManagedIdentityConfiguration, Workspace
 from azure.ai.ml.operations._workspace_operations_base import WorkspaceOperationsBase
-from azure.core.polling import LROPoller
 
 
 @pytest.fixture
@@ -244,6 +239,34 @@ class TestWorkspaceOperation:
         ws.tags = {"k": "v"}
         ws.param = {"tagValues": {"value": {}}}
         mock_workspace_operation_base._populate_arm_paramaters(workspace=ws)
+
+    def test_populate_feature_store_role_assignments_paramaters(
+        self, mock_workspace_operation_base: WorkspaceOperationsBase, mocker: MockFixture
+    ) -> None:
+        mocker.patch(
+            "azure.ai.ml.operations._workspace_operations_base.get_resource_group_location", return_value="random_name"
+        )
+        mocker.patch(
+            "azure.ai.ml.operations._workspace_operations_base.get_log_analytics_arm_id",
+            return_value=("random_id", True),
+        )
+        template, param, _ = mock_workspace_operation_base._populate_feature_store_role_assignment_parameters(
+            workspace=Workspace(name="name"),
+            materialization_identity_id="mat_id",
+            offline_store_target="offline_target",
+            online_store_target="online_target",
+            update_workspace_role_assignment=True,
+            update_offline_store_role_assignment=True,
+            update_online_store_role_assignment=True,
+        )
+
+        assert template is not None
+        assert param["materialization_identity_resource_id"] == {"value": "mat_id"}
+        assert param["offline_store_target"] == {"value": "offline_target"}
+        assert param["online_store_target"] == {"value": "online_target"}
+        assert param["update_workspace_role_assignment"] == {"value": "true"}
+        assert param["update_offline_store_role_assignment"] == {"value": "true"}
+        assert param["update_online_store_role_assignment"] == {"value": "true"}
 
     def test_check_workspace_name(self, mock_workspace_operation_base: WorkspaceOperationsBase):
         mock_workspace_operation_base._default_workspace_name = None

@@ -486,12 +486,12 @@ class ModelOperations(_ScopeDependentOperations):
         """List all model assets in workspace.
 
         :param name: Name of the model.
-        :type name: Optional[str], optional
+        :type name: Optional[str]
         :param stage: The Model stage
-        :type stage: Optional[str], optional
+        :type stage: Optional[str]
         :keyword list_view_type: View type for including/excluding (for example) archived models. Defaults to
              :attr:`ListViewType.ACTIVE_ONLY`.
-        :type list_view_type: ListViewType, optional
+        :type list_view_type: ListViewType
         :return: An iterator like instance of Model objects
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.ml.entities.Model]
 
@@ -549,11 +549,11 @@ class ModelOperations(_ScopeDependentOperations):
         :param version: Version of model asset.
         :type version: str
         :keyword share_with_name: Name of model asset to share with.
-        :type share_with_name: str
+        :paramtype share_with_name: str
         :keyword share_with_version: Version of model asset to share with.
-        :type share_with_version: str
+        :paramtype share_with_version: str
         :keyword registry_name: Name of the destination registry.
-        :type registry_name: str
+        :paramtype registry_name: str
         :return: Model asset object.
         :rtype: ~azure.ai.ml.entities.Model
 

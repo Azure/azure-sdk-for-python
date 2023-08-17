@@ -46,10 +46,10 @@ class AmlComputeSshSettings:
         :param admin_username: SSH user name
         :type admin_username: str
         :param admin_password: SSH user password, defaults to None
-        :type admin_password: str, optional
+        :type admin_password: str
         :param ssh_key_value:  Specifies the SSH rsa private key as a string. Use "ssh-keygen -t
             rsa -b 2048" to generate your SSH key pairs. Defaults to None
-        :type ssh_key_value: Optional[str], optional
+        :type ssh_key_value: Optional[str]
         """
         self.admin_username = admin_username
         self.admin_password = admin_password
@@ -77,37 +77,37 @@ class AmlCompute(Compute):
     :param name: Name of the compute
     :type name: str
     :param description: Description of the resource.
-    :type description: str, optional
+    :type description: str
     :param size: Compute Size, defaults to None.
-    :type size: str, optional
+    :type size: str
     :param tags: A set of tags. Contains resource tags defined as key/value pairs.
     :type tags: Optional[dict[str, str]]
     :param ssh_settings: SSH settings to access the AzureML compute cluster.
-    :type ssh_settings: AmlComputeSshSettings, optional
+    :type ssh_settings: AmlComputeSshSettings
     :param network_settings: Virtual network settings for the AzureML compute cluster.
-    :type network_settings: NetworkSettings, optional
+    :type network_settings: NetworkSettings
     :param idle_time_before_scale_down: Node Idle Time before scaling down amlCompute. Defaults to None.
-    :type idle_time_before_scale_down: int, optional
+    :type idle_time_before_scale_down: int
     :param identity:  The identity configuration, identities that are associated with the compute cluster.
-    :type identity: IdentityConfiguration, optional
+    :type identity: IdentityConfiguration
     :param tier: Virtual Machine tier. Possible values include: "Dedicated", "LowPriority". Defaults to None.
-    :type tier: str, optional
+    :type tier: str
     :param min_instances: Minimum number of instances. Defaults to None.
-    :type min_instances: int, optional
+    :type min_instances: int
     :param max_instances: Maximum number of instances. Defaults to None.
-    :type max_instances: int, optional
+    :type max_instances: int
     :param ssh_public_access_enabled: State of the public SSH port. Possible values are:
      False - Indicates that the public ssh port is closed on all nodes of the cluster. True -
      Indicates that the public ssh port is open on all nodes of the cluster. None -
      Indicates that the public ssh port is closed on all nodes of the cluster if VNet is defined,
      else is open all public nodes. It can be default only during cluster creation time, after
      creation it will be either True or False. Possible values include: True, False, None. Default value: None.
-     :type ssh_public_access_enabled: bool, optional
+     :type ssh_public_access_enabled: bool
     :param enable_node_public_ip: Enable or disable node public IP address provisioning. Possible values are:
      True - Indicates that the compute nodes will have public IPs provisioned.
      False - Indicates that the compute nodes will have a private endpoint and no public IPs.
      Default Value: True.
-    :type enable_node_public_ip: Optional[bool], optional
+    :type enable_node_public_ip: Optional[bool]
     """
 
     def __init__(

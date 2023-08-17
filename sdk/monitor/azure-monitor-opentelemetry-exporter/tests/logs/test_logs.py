@@ -224,6 +224,16 @@ class TestAzureLogExporter(unittest.TestCase):
         self.assertTrue(envelope.data.base_data.exceptions[0].has_full_stack)
         self.assertEqual(envelope.data.base_data.exceptions[0].stack, 'Traceback (most recent call last):\n  File "test.py", line 38, in <module>\n    raise ZeroDivisionError()\nZeroDivisionError\n')
 
+    def test_log_to_envelope_timestamp(self):
+        exporter = self._exporter
+        old_record = self._log_data.log_record
+        self._log_data.log_record.timestamp = None
+        self._log_data.log_record.observed_timestamp = 1646865018558419457
+        envelope = exporter._log_to_envelope(self._log_data)
+        record = self._log_data.log_record
+        self.assertEqual(envelope.time, ns_to_iso_str(record.observed_timestamp))
+        self._log_data.log_record = old_record
+
 class TestAzureLogExporterUtils(unittest.TestCase):
     def test_get_log_export_result(self):
         self.assertEqual(
