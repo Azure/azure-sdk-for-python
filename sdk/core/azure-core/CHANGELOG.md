@@ -5,6 +5,7 @@
 ### Bugs Fixed
 
 - Encoded URL before formatting it. #31346
+  - Typing fix: `message` cannot be `None` in `AzureError`. #31564
 
 ## 1.29.2 (2023-08-14)
 
