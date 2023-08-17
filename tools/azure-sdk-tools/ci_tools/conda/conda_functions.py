@@ -631,9 +631,6 @@ def entrypoint():
 
     args = parser.parse_args()
 
-    print(args.config)
-
-    exit(1)
     json_configs = json.loads(args.config)
 
     check_conda_config()
