@@ -344,9 +344,9 @@ if uamqp_installed:
             :param ~uamqp.AMQPClient mgmt_client: Client to send request with.
             :param str mgmt_msg: Message.
             :keyword bytes operation: Operation.
-            :keyword str operation_type: Op type.
-            :keyword str status_code_field: mgmt status code.
-            :keyword str description_fields: mgmt status desc.
+            :keyword bytes operation_type: Op type.
+            :keyword bytes status_code_field: mgmt status code.
+            :keyword bytes description_fields: mgmt status desc.
 
             :return: Status code, description, response.
             :rtype: tuple

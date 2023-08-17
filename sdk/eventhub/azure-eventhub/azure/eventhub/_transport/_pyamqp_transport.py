@@ -544,9 +544,9 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         :param ~pyamqp.AMQPClient mgmt_client: Client to send request with.
         :param str mgmt_msg: Message.
         :keyword bytes operation: Operation.
-        :keyword str operation_type: Op type.
-        :keyword str status_code_field: mgmt status code.
-        :keyword str description_fields: mgmt status desc.
+        :keyword bytes operation_type: Op type.
+        :keyword bytes status_code_field: mgmt status code.
+        :keyword bytes description_fields: mgmt status desc.
 
         :return: Message.
         :rtype: ~pyamqp.message.Message
