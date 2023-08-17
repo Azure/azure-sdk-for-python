@@ -737,7 +737,7 @@ def encrypt_blob(blob: bytes, key_encryption_key: object, version: str) -> Tuple
     return dumps(encryption_data), encrypted_data
 
 
-def generate_blob_encryption_data(key_encryption_key: object, version: str) -> Tuple[bytes, Optional[bytes], Dict[str, Any]]:
+def generate_blob_encryption_data(key_encryption_key: object, version: str) -> Tuple[bytes, Optional[bytes], Dict[str, Any]]: # pylint: disable=line-too-long
     '''
     Generates the encryption_metadata for the blob.
 
@@ -946,7 +946,7 @@ def encrypt_queue_message(message: str, key_encryption_key: object, version: str
     # Queue encoding functions all return unicode strings, and encryption should
     # operate on binary strings.
     message_as_bytes: bytes = message.encode('utf-8')
-    
+
 
     if version == _ENCRYPTION_PROTOCOL_V1:
         # AES256 CBC uses 256 bit (32 byte) keys and always with 16 byte blocks
@@ -1035,7 +1035,7 @@ def decrypt_queue_message(
 
         return message
     try:
-        return _decrypt_message(decoded_data, encryption_data, key_encryption_key, resolver).decode('utf-8') #type: ignore
+        return _decrypt_message(decoded_data, encryption_data, key_encryption_key, resolver).decode('utf-8') #type: ignore  # pylint: disable=line-too-long
     except Exception as error:
         raise HttpResponseError(
             message="Decryption failed.",
