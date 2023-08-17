@@ -185,7 +185,7 @@ class AsyncTransportMixin:
                 return self._build_ssl_context(**sslopts.pop("context"))
             ssl_version = sslopts.get("ssl_version")
             if ssl_version is None:
-                ssl_version = ssl.PROTOCOL_TLS
+                ssl_version = ssl.PROTOCOL_TLS_CLIENT
 
             # Set SNI headers if supported
             server_hostname = sslopts.get("server_hostname")
