@@ -43,11 +43,6 @@ from ._access_review_instance_my_decisions_operations import AccessReviewInstanc
 from ._tenant_level_access_review_instance_contacted_reviewers_operations import (
     TenantLevelAccessReviewInstanceContactedReviewersOperations,
 )
-from ._alerts_operations import AlertsOperations
-from ._alert_configurations_operations import AlertConfigurationsOperations
-from ._alert_definitions_operations import AlertDefinitionsOperations
-from ._alert_incidents_operations import AlertIncidentsOperations
-from ._alert_operation_operations import AlertOperationOperations
 
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
@@ -79,11 +74,6 @@ __all__ = [
     "AccessReviewInstancesAssignedForMyApprovalOperations",
     "AccessReviewInstanceMyDecisionsOperations",
     "TenantLevelAccessReviewInstanceContactedReviewersOperations",
-    "AlertsOperations",
-    "AlertConfigurationsOperations",
-    "AlertDefinitionsOperations",
-    "AlertIncidentsOperations",
-    "AlertOperationOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

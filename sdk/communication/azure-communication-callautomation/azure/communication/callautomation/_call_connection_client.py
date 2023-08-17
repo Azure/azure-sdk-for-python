@@ -5,8 +5,13 @@
 # --------------------------------------------------------------------------
 from typing import TYPE_CHECKING, Optional, List, Union, Dict
 from urllib.parse import urlparse
+import warnings
+
+from typing_extensions import Literal
+
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
+
 from ._version import SDK_MONIKER
 from ._api_versions import DEFAULT_VERSION
 from ._utils import (
@@ -21,6 +26,7 @@ from ._models import (
     RemoveParticipantResult,
     TransferCallResult,
     MuteParticipantsResult,
+    CallInvite
 )
 from ._generated._client import AzureCommunicationCallAutomationService
 from ._generated.models import (
@@ -45,24 +51,26 @@ from ._credential.call_automation_auth_policy_utils import get_call_automation_a
 from ._credential.credential_utils import get_custom_enabled, get_custom_url
 if TYPE_CHECKING:
     from ._call_automation_client import CallAutomationClient
+    from ._generated.models._enums import DtmfTone
+    from ._shared.models import (
+        PhoneNumberIdentifier,
+        CommunicationIdentifier
+    )
     from ._models  import (
         FileSource,
         TextSource,
         SsmlSource,
-        CallInvite,
         Choice
     )
     from azure.core.credentials import (
         TokenCredential,
         AzureKeyCredential
     )
-    from ._shared.models import (
-        CommunicationIdentifier,
-    )
-    from ._generated.models._enums import DtmfTone
-    from azure.core.exceptions import HttpResponseError
 
-class CallConnectionClient(object): # pylint: disable=client-accepts-api-version-keyword
+MediaSources = Union['FileSource', 'TextSource', 'SsmlSource']
+
+
+class CallConnectionClient:
     """A client to interact with ongoing call. This client can be used to do mid-call actions,
     such as Transfer and Play Media. Call must be estbalished to perform these actions.
 
@@ -76,7 +84,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
     :keyword api_version: Azure Communication Call Automation API version.
     :paramtype api_version: str
     """
-    def __init__(# pylint: disable=missing-client-constructor-parameter-credential, missing-client-constructor-parameter-kwargs
+    def __init__(
         self,
         endpoint: str,
         credential: Union['TokenCredential', 'AzureKeyCredential'],
@@ -170,7 +178,6 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         call_properties = self._call_connection_client.get_call(call_connection_id=self._call_connection_id, **kwargs)
-
         return CallConnectionProperties._from_generated(call_properties) # pylint:disable=protected-access
 
     @distributed_trace
@@ -183,15 +190,17 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-
         if is_for_everyone:
             process_repeatability_first_sent(kwargs)
             self._call_connection_client.terminate_call(
                 self._call_connection_id,
-                **kwargs)
+                **kwargs
+            )
         else:
             self._call_connection_client.hangup_call(
-                self._call_connection_id, **kwargs)
+                self._call_connection_id,
+                **kwargs
+            )
 
     @distributed_trace
     def get_participant(
@@ -207,21 +216,26 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         :rtype: ~azure.communication.callautomation.CallParticipant
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-
         participant = self._call_connection_client.get_participant(
-            self._call_connection_id, target_participant.raw_id, **kwargs)
-
+            self._call_connection_id,
+            target_participant.raw_id,
+            **kwargs
+        )
         return CallParticipant._from_generated(participant) # pylint:disable=protected-access
 
     @distributed_trace
     def list_participants(self, **kwargs) -> ItemPaged[CallParticipant]:
         """List all participants in this call.
 
-        :return: List of CallParticipant
-        :rtype: ItemPaged[azure.communication.callautomation.CallParticipant]
+        :return: An iterable of CallParticipant
+        :rtype: ~azure.core.paging.ItemPaged[azure.communication.callautomation.CallParticipant]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        return self._call_connection_client.get_participants(self._call_connection_id, **kwargs)
+        return self._call_connection_client.get_participants(
+            self._call_connection_id,
+            cls=lambda participants: [CallParticipant._from_generated(p) for p in participants],  # pylint:disable=protected-access
+            **kwargs
+        )
 
     @distributed_trace
     def transfer_call_to_participant(
@@ -231,7 +245,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         sip_headers: Optional[Dict[str, str]] = None,
         voip_headers: Optional[Dict[str, str]] = None,
         operation_context: Optional[str] = None,
-        callback_url_override: Optional[str] = None,
+        callback_url: Optional[str] = None,
         transferee: Optional['CommunicationIdentifier'] = None,
         **kwargs
     ) -> TransferCallResult:
@@ -245,8 +259,10 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         :paramtype voip_headers: dict[str, str]
         :keyword operation_context: Value that can be used to track this call and its associated events.
         :paramtype operation_context: str
-        :keyword callback_url_override: Url that overrides original callback URI for this request.
-        :paramtype callback_url_override: str
+        :keyword callback_url: Url that overrides original callback URI for this request.
+        :paramtype callback_url: str
+        :keyword transferee: Url that overrides original callback URI for this request.
+        :paramtype transferee: ~azure.communication.callautomation.CommunicationIdentifier
         :return: TransferCallResult
         :rtype: ~azure.communication.callautomation.TransferCallResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -257,65 +273,89 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
             ) if sip_headers or voip_headers else None
         request = TransferToParticipantRequest(
             target_participant=serialize_identifier(target_participant),
-            custom_context=user_custom_context, operation_context=operation_context,
-            callback_uri_override=callback_url_override)
-
+            custom_context=user_custom_context,
+            operation_context=operation_context,
+            callback_uri=callback_url
+        )
         process_repeatability_first_sent(kwargs)
-
-        if transferee is not None:
+        if transferee:
             request.transferee=serialize_identifier(transferee)
-
-        return self._call_connection_client.transfer_to_participant(
-            self._call_connection_id, request,
-            **kwargs)
+        result = self._call_connection_client.transfer_to_participant(
+            self._call_connection_id,
+            request,
+            **kwargs
+        )
+        return TransferCallResult._from_generated(result)  # pylint:disable=protected-access
 
     @distributed_trace
     def add_participant(
         self,
-        target_participant: 'CallInvite',
+        target_participant: 'CommunicationIdentifier',
         *,
         invitation_timeout: Optional[int] = None,
         operation_context: Optional[str] = None,
-        callback_url_override: Optional[str] = None,
+        sip_headers: Optional[Dict[str, str]] = None,
+        voip_headers: Optional[Dict[str, str]] = None,
+        source_caller_id_number: Optional['PhoneNumberIdentifier'] = None,
+        source_display_name: Optional[str] = None,
+        callback_url: Optional[str] = None,
         **kwargs
     ) -> AddParticipantResult:
         """Add a participant to this call.
 
         :param target_participant: The participant being added.
-        :type target_participant: ~azure.communication.callautomation.CallInvite
+        :type target_participant: ~azure.communication.callautomation.CommunicationIdentifier
         :keyword invitation_timeout: Timeout to wait for the invited participant to pickup.
          The maximum value of this is 180 seconds.
-        :paramtype invitation_timeout: int
+        :paramtype invitation_timeout: int or None
         :keyword operation_context: Value that can be used to track this call and its associated events.
-        :paramtype operation_context: str
-        :keyword callback_url_override: Url that overrides original callback URI for this request.
-        :paramtype callback_url_override: str
+        :paramtype operation_context: str or None
+        :keyword sip_headers: Sip Headers for PSTN Call
+        :paramtype sip_headers: Dict[str, str] or None
+        :keyword voip_headers: Voip Headers for Voip Call
+        :paramtype voip_headers: Dict[str, str] or None
+        :keyword source_caller_id_number: The source caller Id, a phone number,
+         that's shown to the PSTN participant being invited.
+         Required only when calling a PSTN callee.
+        :paramtype source_caller_id_number: ~azure.communication.callautomation.PhoneNumberIdentifier or None
+        :keyword source_display_name: Display name of the caller.
+        :paramtype source_display_name: str or None
+        :keyword callback_url: Url that overrides original callback URI for this request.
+        :paramtype callback_url: str or None
         :return: AddParticipantResult
         :rtype: ~azure.communication.callautomation.AddParticipantResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        user_custom_context = CustomContext(
-            voip_headers=target_participant.voip_headers,
-            sip_headers=target_participant.sip_headers
-            ) if target_participant.sip_headers or target_participant.voip_headers else None
+        # Backwards compatibility with old API signature
+        if isinstance(target_participant, CallInvite):
+            sip_headers = sip_headers or target_participant.sip_headers
+            voip_headers = voip_headers or target_participant.voip_headers
+            source_caller_id_number = source_caller_id_number or target_participant.source_caller_id_number
+            source_display_name = source_display_name or target_participant.source_display_name
+            target_participant = target_participant.target
+
+        user_custom_context = None
+        if sip_headers or voip_headers:
+            user_custom_context = CustomContext(
+                voip_headers=voip_headers,
+                sip_headers=sip_headers
+            )
         add_participant_request = AddParticipantRequest(
-            participant_to_add=serialize_identifier(target_participant.target),
-            source_caller_id_number=serialize_phone_identifier(
-                target_participant.source_caller_id_number) if target_participant.source_caller_id_number else None,
-            source_display_name=target_participant.source_display_name,
+            participant_to_add=serialize_identifier(target_participant),
+            source_caller_id_number=serialize_phone_identifier(source_caller_id_number),
+            source_display_name=source_display_name,
             custom_context=user_custom_context,
             invitation_timeout=invitation_timeout,
             operation_context=operation_context,
-            callback_uri_override=callback_url_override)
-
+            callback_uri=callback_url
+        )
         process_repeatability_first_sent(kwargs)
-
         response = self._call_connection_client.add_participant(
             self._call_connection_id,
             add_participant_request,
-            **kwargs)
-
-        return AddParticipantResult._from_generated(response) # pylint:disable=protected-access
+            **kwargs
+        )
+        return AddParticipantResult._from_generated(response)  # pylint:disable=protected-access
 
     @distributed_trace
     def remove_participant(
@@ -323,7 +363,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         target_participant: 'CommunicationIdentifier',
         *,
         operation_context: Optional[str] = None,
-        callback_url_override: Optional[str] = None,
+        callback_url: Optional[str] = None,
         **kwargs
     ) -> RemoveParticipantResult:
         """Remove a participant from this call.
@@ -332,15 +372,16 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         :type target_participant: ~azure.communication.callautomation.CommunicationIdentifier
         :keyword operation_context: Value that can be used to track this call and its associated events.
         :paramtype operation_context: str
-        :keyword callback_url_override: Url that overrides original callback URI for this request.
-        :paramtype callback_url_override: str
+        :keyword callback_url: Url that overrides original callback URI for this request.
+        :paramtype callback_url: str
         :return: RemoveParticipantResult
         :rtype: ~azure.communication.callautomation.RemoveParticipantResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         remove_participant_request = RemoveParticipantRequest(
             participant_to_remove=serialize_identifier(target_participant),
-            operation_context=operation_context, callback_uri_override=callback_url_override)
+            operation_context=operation_context,
+            callback_uri=callback_url)
 
         process_repeatability_first_sent(kwargs)
 
@@ -354,9 +395,8 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
     @distributed_trace
     def play_media(
         self,
-        play_source: Union['FileSource', 'TextSource', 'SsmlSource',
-                           List[Union['FileSource', 'TextSource', 'SsmlSource']]],
-        play_to: List['CommunicationIdentifier'],
+        play_source: Union[MediaSources, List[MediaSources]],
+        play_to: Union[Literal["all"], List['CommunicationIdentifier']] = 'all',
         *,
         loop: bool = False,
         operation_context: Optional[str] = None,
@@ -371,27 +411,28 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
          list[~azure.communication.callautomation.FileSource or
           ~azure.communication.callautomation.TextSource or
           ~azure.communication.callautomation.SsmlSource]
-        :param play_to: The targets to play media to.
+        :param play_to: The targets to play media to. Default value is 'all', to play media
+         to all participants in the call.
         :type play_to: list[~azure.communication.callautomation.CommunicationIdentifier]
-        :keyword loop: if the media should be repeated until cancelled.
+        :keyword loop: Whether the media should be repeated until cancelled.
         :paramtype loop: bool
         :keyword operation_context: Value that can be used to track this call and its associated events.
-        :paramtype operation_context: str
+        :paramtype operation_context: str or None
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        play_source_single: Union['FileSource', 'TextSource', 'SsmlSource'] = None
+        play_source_single: Optional[MediaSources] = None
         if isinstance(play_source, list):
             if play_source:  # Check if the list is not empty
                 play_source_single = play_source[0]
         else:
             play_source_single = play_source
 
+        audience = [] if play_to == "all" else [serialize_identifier(i) for i in play_to]
         play_request = PlayRequest(
-            play_source_info=play_source_single._to_generated(),#pylint:disable=protected-access
-            play_to=[serialize_identifier(identifier)
-                     for identifier in play_to],
+            play_source_info=play_source_single._to_generated(),  # pylint:disable=protected-access
+            play_to=audience,
             play_options=PlayOptions(loop=loop),
             operation_context=operation_context,
             **kwargs
@@ -401,8 +442,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
     @distributed_trace
     def play_media_to_all(
         self,
-        play_source: Union['FileSource', 'TextSource', 'SsmlSource',
-                           List[Union['FileSource', 'TextSource', 'SsmlSource']]],
+        play_source: Union['FileSource', List['FileSource']],
         *,
         loop: bool = False,
         operation_context: Optional[str] = None,
@@ -412,31 +452,25 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
 
         :param play_source: A PlaySource representing the source to play.
         :type play_source: ~azure.communication.callautomation.FileSource or
-         ~azure.communication.callautomation.TextSource or
-         ~azure.communication.callautomation.SsmlSource or
-         list[~azure.communication.callautomation.FileSource or
-          ~azure.communication.callautomation.TextSource or
-          ~azure.communication.callautomation.SsmlSource]
-        :keyword loop: if the media should be repeated until cancelled.
+         list[~azure.communication.callautomation.FileSource]
+        :keyword loop: Whether the media should be repeated until cancelled.
         :paramtype loop: bool
         :keyword operation_context: Value that can be used to track this call and its associated events.
-        :paramtype operation_context: str
+        :paramtype operation_context: str or None
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        play_source_single: Union['FileSource', 'TextSource', 'SsmlSource'] = None
-        if isinstance(play_source, list):
-            if play_source:  # Check if the list is not empty
-                play_source_single = play_source[0]
-        else:
-            play_source_single = play_source
-
-        self.play_media(play_source=play_source_single,
-                        play_to=[],
-                        loop=loop,
-                        operation_context=operation_context,
-                        **kwargs)
+        warnings.warn(
+            "The method 'play_media_to_all' is deprecated. Please use 'play_media' instead.",
+            DeprecationWarning
+        )
+        self.play_media(
+            play_source=play_source,
+            loop=loop,
+            operation_context=operation_context,
+            **kwargs
+    )
 
     @distributed_trace
     def start_recognizing_media(
@@ -445,8 +479,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         target_participant: 'CommunicationIdentifier',
         *,
         initial_silence_timeout: Optional[int] = None,
-        play_prompt: Optional[Union['FileSource', 'TextSource', 'SsmlSource',
-                           List[Union['FileSource', 'TextSource', 'SsmlSource']]]] = None,
+        play_prompt: Optional[Union[MediaSources, List[MediaSources]]] = None,
         interrupt_call_media_operation: bool = False,
         operation_context: Optional[str] = None,
         interrupt_prompt: bool = False,
@@ -500,15 +533,12 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
             speech_recognition_model_endpoint_id=speech_recognition_model_endpoint_id
         )
 
-        play_source_single: Union['FileSource', 'TextSource', 'SsmlSource'] = None
+        play_source_single: Optional[MediaSources] = None
         if isinstance(play_prompt, list):
             if play_prompt:  # Check if the list is not empty
                 play_source_single = play_prompt[0]
         else:
             play_source_single = play_prompt
-
-        if isinstance(input_type, str):
-            input_type = RecognizeInputType[input_type.upper()]
 
         if input_type == RecognizeInputType.DTMF:
             dtmf_options=DtmfOptions(
@@ -532,34 +562,30 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         elif input_type == RecognizeInputType.CHOICES:
             options.choices = choices
         else:
-            raise NotImplementedError(f"{type(input_type).__name__} is not supported")
+            raise ValueError(f"Input type '{input_type}' is not supported.")
 
         recognize_request = RecognizeRequest(
             recognize_input_type=input_type,
-            play_prompt=
-            play_source_single._to_generated() if play_source_single is not None else None,#pylint:disable=protected-access
+            play_prompt=play_source_single._to_generated() if play_source_single else None,  # pylint:disable=protected-access
             interrupt_call_media_operation=interrupt_call_media_operation,
             operation_context=operation_context,
             recognize_options=options,
+        )
+        self._call_media_client.recognize(
+            self._call_connection_id,
+            recognize_request,
             **kwargs
         )
 
-        self._call_media_client.recognize(
-            self._call_connection_id, recognize_request)
-
     @distributed_trace
-    def cancel_all_media_operations(
-        self,
-        **kwargs
-    ) -> None:
+    def cancel_all_media_operations(self, **kwargs) -> None:
         """Cancels all the ongoing and queued media operations for this call.
 
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        self._call_media_client.cancel_all_media_operations(
-            self._call_connection_id, **kwargs)
+        self._call_media_client.cancel_all_media_operations(self._call_connection_id, **kwargs)
 
     @distributed_trace
     def start_continuous_dtmf_recognition(
@@ -581,12 +607,13 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         """
         continuous_dtmf_recognition_request = ContinuousDtmfRecognitionRequest(
             target_participant=serialize_identifier(target_participant),
-            operation_context=operation_context)
-
+            operation_context=operation_context
+        )
         self._call_media_client.start_continuous_dtmf_recognition(
             self._call_connection_id,
             continuous_dtmf_recognition_request,
-            **kwargs)
+            **kwargs
+        )
 
     @distributed_trace
     def stop_continuous_dtmf_recognition(
@@ -608,12 +635,13 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         """
         continuous_dtmf_recognition_request = ContinuousDtmfRecognitionRequest(
             target_participant=serialize_identifier(target_participant),
-            operation_context=operation_context)
-
+            operation_context=operation_context
+        )
         self._call_media_client.stop_continuous_dtmf_recognition(
             self._call_connection_id,
             continuous_dtmf_recognition_request,
-            **kwargs)
+            **kwargs
+        )
 
     @distributed_trace
     def send_dtmf(
@@ -639,12 +667,13 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         send_dtmf_request = SendDtmfRequest(
             tones=tones,
             target_participant=serialize_identifier(target_participant),
-            operation_context=operation_context)
-
+            operation_context=operation_context
+        )
         self._call_media_client.send_dtmf(
             self._call_connection_id,
             send_dtmf_request,
-            **kwargs)
+            **kwargs
+        )
 
     @distributed_trace
     def mute_participants(
@@ -667,13 +696,11 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         """
         mute_participants_request = MuteParticipantsRequest(
             target_participants=[serialize_identifier(target_participant)],
-            operation_context=operation_context)
-
+            operation_context=operation_context
+        )
         process_repeatability_first_sent(kwargs)
-
         response = self._call_connection_client.mute(
             self._call_connection_id,
             mute_participants_request,
             **kwargs)
-
-        return MuteParticipantsResult._from_generated(response) # pylint:disable=protected-access
+        return MuteParticipantsResult._from_generated(response)  # pylint:disable=protected-access

@@ -4,7 +4,7 @@
 
 """Entrypoints for creating AutoML tasks."""
 
-from typing import Optional, Union
+from typing import Optional, TypeVar, Union
 
 from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     ClassificationMultilabelPrimaryMetrics,
@@ -14,22 +14,41 @@ from azure.ai.ml._restclient.v2023_04_01_preview.models import (
 )
 from azure.ai.ml.entities._builders.base_node import pipeline_node_decorator
 from azure.ai.ml.entities._inputs_outputs import Input
+from azure.ai.ml.entities._job.automl.image.automl_image_object_detection_base import AutoMLImageObjectDetectionBase
 from azure.ai.ml.entities._job.automl.image.image_classification_job import ImageClassificationJob
 from azure.ai.ml.entities._job.automl.image.image_classification_multilabel_job import ImageClassificationMultilabelJob
 from azure.ai.ml.entities._job.automl.image.image_instance_segmentation_job import ImageInstanceSegmentationJob
 from azure.ai.ml.entities._job.automl.image.image_object_detection_job import ImageObjectDetectionJob
 
+TImageJob = TypeVar("TImageJob", bound=AutoMLImageObjectDetectionBase)
+
 
 def _create_image_job(
-    job_cls,
+    job_cls: TImageJob,
     training_data: Input,
     target_column_name: str,
     primary_metric: Optional[Union[str, ClassificationPrimaryMetrics]] = None,
     validation_data: Optional[Input] = None,
     validation_data_size: Optional[float] = None,
     **kwargs,
-):
-    """Helper function to create objects for AutoML Image jobs."""
+) -> TImageJob:
+    """Helper function to create objects for AutoML Image jobs.
+
+    :param job_cls: The job class
+    :type job_cls: TImageJob
+    :param training_data: The training input data
+    :type training_data: Input
+    :param target_column_name: The target column name
+    :type target_column_name: str
+    :param primary_metric: The primary metric
+    :type primary_metric: Optional[Union[str, ClassificationPrimaryMetrics]], optional
+    :param validation_data: The validation data
+    :type validation_data: Optional[Input], optional
+    :param validation_data_size: The validation data size
+    :type validation_data_size: Optional[float], optional
+    :return: An AutoML Image Job
+    :rtype: TImageJob
+    """
     image_job = job_cls(primary_metric=primary_metric, **kwargs)
     image_job.set_data(
         training_data=training_data,

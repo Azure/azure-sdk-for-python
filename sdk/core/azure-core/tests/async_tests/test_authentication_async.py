@@ -9,6 +9,7 @@ from unittest.mock import Mock
 from requests import Response
 
 from azure.core.credentials import AccessToken
+from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.exceptions import ServiceRequestError
 from azure.core.pipeline import AsyncPipeline
 from azure.core.pipeline.policies import (
@@ -36,7 +37,7 @@ async def test_bearer_policy_adds_header(http_request):
 
     get_token_calls = 0
 
-    async def get_token(_):
+    async def get_token(*_, **__):
         nonlocal get_token_calls
         get_token_calls += 1
         return expected_token
@@ -63,7 +64,8 @@ async def test_bearer_policy_send(http_request):
         assert request.http_request is expected_request
         return expected_response
 
-    fake_credential = Mock(get_token=lambda *_, **__: get_completed_future(AccessToken("", 0)))
+    get_token = get_completed_future(AccessToken("***", 42))
+    fake_credential = Mock(get_token=lambda *_, **__: get_token)
     policies = [AsyncBearerTokenCredentialPolicy(fake_credential, "scope"), Mock(send=verify_request)]
     response = await AsyncPipeline(transport=Mock(), policies=policies).run(expected_request)
 
@@ -80,7 +82,8 @@ async def test_bearer_policy_sync_send(http_request):
         assert request.http_request is expected_request
         return expected_response
 
-    fake_credential = Mock(get_token=lambda _: AccessToken("", 0))
+    get_token = get_completed_future(AccessToken("***", 42))
+    fake_credential = Mock(get_token=lambda *_, **__: get_token)
     policies = [AsyncBearerTokenCredentialPolicy(fake_credential, "scope"), Mock(send=verify_request)]
     response = await AsyncPipeline(transport=Mock(), policies=policies).run(expected_request)
 
@@ -93,7 +96,7 @@ async def test_bearer_policy_token_caching(http_request):
     expected_token = good_for_one_hour
     get_token_calls = 0
 
-    async def get_token(_):
+    async def get_token(*_, **__):
         nonlocal get_token_calls
         get_token_calls += 1
         return expected_token
@@ -284,7 +287,7 @@ async def test_bearer_policy_redirect_same_domain():
     auth_headder = "token"
     expected_scope = "scope"
 
-    async def get_token(_):
+    async def get_token(*_, **__):
         token = AccessToken(auth_headder, 0)
         return token
 
@@ -328,7 +331,7 @@ async def test_bearer_policy_redirect_different_domain():
     auth_headder = "token"
     expected_scope = "scope"
 
-    async def get_token(_):
+    async def get_token(*_, **__):
         token = AccessToken(auth_headder, 0)
         return token
 
@@ -372,7 +375,7 @@ async def test_bearer_policy_redirect_opt_out_clean_up():
     auth_headder = "token"
     expected_scope = "scope"
 
-    async def get_token(_):
+    async def get_token(*_, **__):
         token = AccessToken(auth_headder, 0)
         return token
 
@@ -416,7 +419,7 @@ async def test_bearer_policy_redirect_customize_sensitive_headers():
     auth_headder = "token"
     expected_scope = "scope"
 
-    async def get_token(_):
+    async def get_token(*_, **__):
         token = AccessToken(auth_headder, 0)
         return token
 
@@ -427,3 +430,13 @@ async def test_bearer_policy_redirect_customize_sensitive_headers():
     pipeline = AsyncPipeline(transport=MockTransport(), policies=[redirect_policy, auth_policy, header_clean_up_policy])
 
     await pipeline.run(HttpRequest("GET", "https://localhost"))
+
+
+@pytest.mark.asyncio
+async def test_async_token_credential_inheritance():
+    class TestTokenCredential(AsyncTokenCredential):
+        async def get_token(self, *scopes, **kwargs):
+            return "TOKEN"
+
+    cred = TestTokenCredential()
+    await cred.get_token("scope")

@@ -79,6 +79,7 @@ class AadClient(AadClientBase):
         # tenant_id is already part of `request` at this point
         kwargs.pop("tenant_id", None)
         kwargs.pop("claims", None)
+        enable_cae = kwargs.pop("enable_cae", False)
         now = int(time.time())
         response = await self._pipeline.run(request, retry_on_methods=self._POST, **kwargs)
-        return self._process_response(response, now)
+        return self._process_response(response, now, enable_cae=enable_cae, **kwargs)

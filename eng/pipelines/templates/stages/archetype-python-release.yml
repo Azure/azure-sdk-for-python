@@ -312,3 +312,5 @@ stages:
               - metadata/
             PackageSourceOverride: ${{parameters.PackageSourceOverride}}
             DocValidationImageId: ${{parameters.DocValidationImageId}}
+
+        - template: /eng/common/pipelines/templates/steps/docsms-ensure-validation.yml

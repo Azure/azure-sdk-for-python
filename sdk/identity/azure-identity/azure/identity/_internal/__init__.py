@@ -4,6 +4,7 @@
 # ------------------------------------
 from .aad_client import AadClient
 from .aad_client_base import AadClientBase
+from .auth_code_redirect_handler import AuthCodeRedirectServer
 from .aadclient_certificate import AadClientCertificate
 from .decorators import wrap_exceptions
 from .interactive import InteractiveCredential
@@ -13,6 +14,7 @@ from .utils import (
     resolve_tenant,
     validate_tenant_id,
     within_credential_chain,
+    within_dac,
 )
 
 
@@ -39,12 +41,14 @@ __all__ = [
     "_scopes_to_resource",
     "AadClient",
     "AadClientBase",
+    "AuthCodeRedirectServer",
     "AadClientCertificate",
     "get_default_authority",
     "InteractiveCredential",
     "normalize_authority",
     "resolve_tenant",
     "within_credential_chain",
+    "within_dac",
     "wrap_exceptions",
     "validate_tenant_id",
 ]

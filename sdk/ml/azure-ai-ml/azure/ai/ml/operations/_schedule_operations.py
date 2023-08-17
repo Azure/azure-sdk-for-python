@@ -143,8 +143,14 @@ class ScheduleOperations(_ScopeDependentOperations):
             **kwargs,
         )
 
-    def _get_polling(self, name):
-        """Return the polling with custom poll interval."""
+    def _get_polling(self, name: str) -> AzureMLPolling:
+        """Return the polling with custom poll interval.
+
+        :param name: The schedule name
+        :type name: str
+        :return: The AzureMLPolling object
+        :rtype: AzureMLPolling
+        """
         path_format_arguments = {
             "scheduleName": name,
             "resourceGroupName": self._resource_group_name,
@@ -166,6 +172,8 @@ class ScheduleOperations(_ScopeDependentOperations):
 
         :param name: Schedule name.
         :type name: str
+        :return: A poller for deletion status
+        :rtype: LROPoller[None]
         """
         poller = self.service_client.begin_delete(
             resource_group_name=self._operation_scope.resource_group_name,
@@ -294,8 +302,8 @@ class ScheduleOperations(_ScopeDependentOperations):
                 model_inputs_version = in_reg.asset_version
                 model_outputs_name = out_reg.asset_name
                 model_outputs_version = out_reg.asset_version
-                mdc_input_enabled_str = deployment_data_collector.get("model_inputs").enabled
-                mdc_output_enabled_str = deployment_data_collector.get("model_outputs").enabled
+                mdc_input_enabled_str = deployment_data_collector.collections.get("model_inputs").enabled
+                mdc_output_enabled_str = deployment_data_collector.collections.get("model_outputs").enabled
             else:
                 model_inputs_name = online_deployment.tags.get(DEPLOYMENT_MODEL_INPUTS_NAME_KEY)
                 model_inputs_version = online_deployment.tags.get(DEPLOYMENT_MODEL_INPUTS_VERSION_KEY)
@@ -328,7 +336,6 @@ class ScheduleOperations(_ScopeDependentOperations):
                     target=ErrorTarget.SCHEDULE,
                     error_category=ErrorCategory.USER_ERROR,
                 )
-
         # resolve ARM id for each signal and populate any defaults if needed
         for signal_name, signal in schedule.create_monitor.monitoring_signals.items():
             if signal.type == MonitorSignalType.CUSTOM:

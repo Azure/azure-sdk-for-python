@@ -11,12 +11,28 @@ urlFragment: ml-samples
 # Azure Machine Learning Client Library for Python Samples
 
 These are code samples that show common scenario operations with the Azure Machine Learning Client Library for Python.
+Their main purpose is to be used in inline examples for class and methods throughout the codebase like below:
 
-These samples provide example code for additional scenarios commonly encountered while working with Machine Learning Library:
+```markdown
+.. admonition:: Example:
 
-* [ml_samples_authentication_sovereign_cloud.py](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ml/azure-ai-ml/samples/ml_samples_authentication_sovereign_cloud.py) - Examples for creating MLClient for non public cloud:
-  * Set up a MLClient
-  * List workspaces in the subscription.
+    .. literalinclude:: ../samples/ml_samples_authentication.py
+        :start-after: [START create_ml_client_from_config_default]
+        :end-before: [END create_ml_client_from_config_default]
+        :language: python
+        :dedent: 8
+        :caption: Creating an MLClient from a file named "config.json" in directory "src".
+```
+
+If adding or updating
+a public class or method, please add or update the example. Double-check that you have the correct path for literalinclude::. It needs to be relative to the file you are adding the admonition to (e.g. in this case, the MLClient code is in sdk\ml\azure-ai-ml\ so the path to the samples folder has to be ../samples/ml_samples_authentication.py). Each samples file is run during the azure-sdk-for-python Build CI to ensure that examples are up-to-date and functioning.
+
+
+* [ml_samples_authentication.py](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ml/azure-ai-ml/samples/ml_samples_authentication.py)
+* [ml_samples_cloud_configurations](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ml/azure-ai-ml/samples/ml_samples_cloud_configurations.py)
+* [ml_samples_misc](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ml/azure-ai-ml/samples/ml_samples_misc.py)
+* [ml_samples_spark_configurations](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ml/azure-ai-ml/samples/ml_samples_spark_configurations.py)
+* [ml_samples_sweep_configurations](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ml/azure-ai-ml/samples/ml_samples_sweep_configurations.py)
 
 ## Prerequisites
 
@@ -39,7 +55,7 @@ These samples provide example code for additional scenarios commonly encountered
 
 1. Open a terminal window and `cd` to the directory that the samples are saved in.
 2. Set the environment variables specified in the sample file you wish to run.
-3. Follow the usage described in the file, e.g. `python ml_samples_authentication_sovereign_cloud.py`
+3. Follow the usage described in the file, e.g. `python ml_samples_authentication.py`
 
 ## Next steps
 

@@ -6,9 +6,7 @@ import json
 import logging
 from typing import Any, Dict, Optional
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
-    ResourceConfiguration as RestResourceConfiguration,
-)
+from azure.ai.ml._restclient.v2023_04_01_preview.models import ResourceConfiguration as RestResourceConfiguration
 from azure.ai.ml.constants._job.job import JobComputePropertyFields
 from azure.ai.ml.entities._mixins import DictMixin, RestTranslatableMixin
 
@@ -16,6 +14,18 @@ module_logger = logging.getLogger(__name__)
 
 
 class ResourceConfiguration(RestTranslatableMixin, DictMixin):
+    """Resource configuration for a job.
+
+    This class should not be instantiated directly. Instead, use its subclasses.
+
+    :keyword instance_count: The number of instances to use for the job.
+    :type instance_count: Optional[int]
+    :keyword instance_type: The type of instance to use for the job.
+    :type instance_type: Optional[str]
+    :keyword properties: The resource's property dictionary.
+    :type properties: Optional[dict[str, Any]]
+    """
+
     def __init__(
         self,
         *,
@@ -23,7 +33,7 @@ class ResourceConfiguration(RestTranslatableMixin, DictMixin):
         instance_type: Optional[str] = None,
         properties: Optional[Dict[str, Any]] = None,
         **kwargs  # pylint: disable=unused-argument
-    ):
+    ) -> None:
         self.instance_count = instance_count
         self.instance_type = instance_type
         self.properties = {}

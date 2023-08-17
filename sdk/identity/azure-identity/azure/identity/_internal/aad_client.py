@@ -70,4 +70,4 @@ class AadClient(AadClientBase):
         kwargs.pop("claims", None)
         now = int(time.time())
         response = self._pipeline.run(request, retry_on_methods=self._POST, **kwargs)
-        return self._process_response(response, now)
+        return self._process_response(response, now, **kwargs)

@@ -8,7 +8,7 @@ from azure.appconfiguration.provider import load, SettingSelector
 import os
 from sample_utilities import get_authority, get_audience, get_credential
 
-endpoint = os.environ.get("AZURE_APPCONFIG_ENDPOINT")
+endpoint = os.environ.get("APPCONFIGURATION_ENDPOINT_STRING")
 authority = get_authority(endpoint)
 audience = get_audience(authority)
 credential = get_credential(authority)

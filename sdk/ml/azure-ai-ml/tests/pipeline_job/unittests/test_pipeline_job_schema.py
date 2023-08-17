@@ -31,7 +31,7 @@ from azure.ai.ml.entities._component.parallel_component import ParallelComponent
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job._input_output_helpers import (
     INPUT_MOUNT_MAPPING_FROM_REST,
-    validate_pipeline_input_key_contains_allowed_characters,
+    validate_pipeline_input_key_characters,
 )
 from azure.ai.ml.entities._job.automl.search_space_utils import _convert_sweep_dist_dict_to_str_dict
 from azure.ai.ml.entities._job.job_service import (
@@ -55,10 +55,10 @@ class TestPipelineJobSchema:
     def test_validate_pipeline_job_keys(self):
         def validator(key, assert_valid=True):
             if assert_valid:
-                validate_pipeline_input_key_contains_allowed_characters(key)
+                validate_pipeline_input_key_characters(key)
                 return
             with pytest.raises(Exception):
-                validate_pipeline_input_key_contains_allowed_characters(key)
+                validate_pipeline_input_key_characters(key)
 
         validator("a.vsd2..", assert_valid=False)
         validator("a..b", assert_valid=False)

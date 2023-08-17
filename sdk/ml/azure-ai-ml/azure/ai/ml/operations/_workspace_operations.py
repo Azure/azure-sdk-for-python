@@ -6,8 +6,8 @@
 
 from typing import Dict, Iterable, Optional
 
-from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient042023Preview
-from azure.ai.ml._restclient.v2023_04_01_preview.models import ManagedNetworkProvisionOptions
+from azure.ai.ml._restclient.v2023_06_01_preview import AzureMachineLearningWorkspaces as ServiceClient062023Preview
+from azure.ai.ml._restclient.v2023_06_01_preview.models import ManagedNetworkProvisionOptions
 
 from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope
 
@@ -43,7 +43,7 @@ class WorkspaceOperations(WorkspaceOperationsBase):
     def __init__(
         self,
         operation_scope: OperationScope,
-        service_client: ServiceClient042023Preview,
+        service_client: ServiceClient062023Preview,
         all_operations: OperationsContainer,
         credentials: Optional[TokenCredential] = None,
         **kwargs: Dict,
@@ -168,6 +168,7 @@ class WorkspaceOperations(WorkspaceOperationsBase):
 
         :param workspace: Workspace definition.
         :type workspace: Workspace
+        :param update_dependent_resources: Whether to update dependent resources
         :type update_dependent_resources: boolean
         :return: An instance of LROPoller that returns a Workspace.
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.Workspace]
@@ -199,8 +200,8 @@ class WorkspaceOperations(WorkspaceOperationsBase):
             i.e., container registry, storage account, key vault, and application insights.
             The default is False. Set to True to delete these resources.
         :type delete_dependent_resources: bool
-        :keyword permanently_delete: Workspaces are soft-deleted state by default to allow recovery of workspace data.
-            Set this flag to override the soft-delete behavior and permanently delete your workspace.
+        :keyword permanently_delete: Workspaces are soft-deleted by default to allow recovery of workspace data.
+            Set this flag to true to override the soft-delete behavior and permanently delete your workspace.
         :type permanently_delete: bool
         :return: A poller to track the operation status.
         :rtype: ~azure.core.polling.LROPoller[None]

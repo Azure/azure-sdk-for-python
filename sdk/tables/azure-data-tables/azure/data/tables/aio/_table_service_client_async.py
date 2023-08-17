@@ -77,7 +77,7 @@ class TableServiceClient(AsyncTablesBaseClient):
         return f"{self.scheme}://{hostname}{self._query_str}"
 
     @classmethod
-    def from_connection_string(cls, conn_str: str, **kwargs) -> 'TableServiceClient':
+    def from_connection_string(cls, conn_str: str, **kwargs) -> "TableServiceClient":
         """Create TableServiceClient from a Connection String.
 
         :param str conn_str: A connection string to an Azure Tables account.
@@ -94,9 +94,7 @@ class TableServiceClient(AsyncTablesBaseClient):
                 :caption: Creating the tableServiceClient from a connection string
 
         """
-        endpoint, credential = parse_connection_str(
-            conn_str=conn_str, credential=None, keyword_args=kwargs
-        )
+        endpoint, credential = parse_connection_str(conn_str=conn_str, credential=None, keyword_args=kwargs)
         return cls(endpoint, credential=credential, **kwargs)
 
     @distributed_trace_async
@@ -146,7 +144,7 @@ class TableServiceClient(AsyncTablesBaseClient):
         hour_metrics: Optional[TableMetrics] = None,
         minute_metrics: Optional[TableMetrics] = None,
         cors: Optional[List[TableCorsRule]] = None,
-        **kwargs
+        **kwargs,
     ) -> None:
         """Sets properties for an account's Table service endpoint,
          including properties for Analytics and CORS (Cross-Origin Resource Sharing) rules.
@@ -298,9 +296,7 @@ class TableServiceClient(AsyncTablesBaseClient):
                 :caption: Querying tables in an account given specific parameters
         """
         parameters = kwargs.pop("parameters", None)
-        query_filter = _parameter_filter_substitution(
-            parameters, query_filter
-        )
+        query_filter = _parameter_filter_substitution(parameters, query_filter)
         top = kwargs.pop("results_per_page", None)
         command = functools.partial(self._client.table.query, **kwargs)
         return AsyncItemPaged(
@@ -321,7 +317,9 @@ class TableServiceClient(AsyncTablesBaseClient):
 
         """
         pipeline = AsyncPipeline(  # type: ignore
-            transport=AsyncTransportWrapper(self._client._client._pipeline._transport), # pylint:disable=protected-access
+            transport=AsyncTransportWrapper(
+                self._client._client._pipeline._transport  # pylint:disable=protected-access
+            ),
             policies=self._policies,
         )
         return TableClient(
@@ -332,5 +330,5 @@ class TableServiceClient(AsyncTablesBaseClient):
             pipeline=pipeline,
             location_mode=self._location_mode,
             _hosts=self._hosts,
-            **kwargs
+            **kwargs,
         )

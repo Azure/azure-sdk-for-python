@@ -61,6 +61,9 @@ class ForecastingSettings(RestTranslatableMixin):
     :type time_column_name: str
     :param time_series_id_column_names:  The names of columns used to group a timeseries.
     :type time_series_id_column_names: Union[str, List[str]]
+    :param features_unknown_at_forecast_time:
+        The column of features/regressors that are available at training time but unknown at forecast time.
+    :type features_unknown_at_forecast_time: Union[str, List[str]]
     """
 
     def __init__(
@@ -79,6 +82,7 @@ class ForecastingSettings(RestTranslatableMixin):
         target_aggregate_function: Optional[str] = None,
         time_column_name: Optional[str] = None,
         time_series_id_column_names: Optional[Union[str, List[str]]] = None,
+        features_unknown_at_forecast_time: Optional[Union[str, List[str]]] = None,
     ):
         self.country_or_region_for_holidays = country_or_region_for_holidays
         self.cv_step_size = cv_step_size
@@ -93,6 +97,7 @@ class ForecastingSettings(RestTranslatableMixin):
         self.target_aggregate_function = target_aggregate_function
         self.time_column_name = time_column_name
         self.time_series_id_column_names = time_series_id_column_names
+        self.features_unknown_at_forecast_time = features_unknown_at_forecast_time
 
     def _to_rest_object(self) -> RestForecastingSettings:
         forecast_horizon = None
@@ -124,6 +129,10 @@ class ForecastingSettings(RestTranslatableMixin):
         if isinstance(self.time_series_id_column_names, str) and self.time_series_id_column_names:
             time_series_id_column_names = [self.time_series_id_column_names]
 
+        features_unknown_at_forecast_time = self.features_unknown_at_forecast_time
+        if isinstance(self.features_unknown_at_forecast_time, str) and self.features_unknown_at_forecast_time:
+            features_unknown_at_forecast_time = [self.features_unknown_at_forecast_time]
+
         return RestForecastingSettings(
             country_or_region_for_holidays=self.country_or_region_for_holidays,
             cv_step_size=self.cv_step_size,
@@ -138,6 +147,7 @@ class ForecastingSettings(RestTranslatableMixin):
             short_series_handling_config=self.short_series_handling_config,
             target_aggregate_function=self.target_aggregate_function,
             time_series_id_column_names=time_series_id_column_names,
+            features_unknown_at_forecast_time=features_unknown_at_forecast_time,
         )
 
     @classmethod
@@ -181,6 +191,7 @@ class ForecastingSettings(RestTranslatableMixin):
             target_aggregate_function=obj.target_aggregate_function,
             time_column_name=obj.time_column_name,
             time_series_id_column_names=obj.time_series_id_column_names,
+            features_unknown_at_forecast_time=obj.features_unknown_at_forecast_time,
         )
 
     def __eq__(self, other: object) -> bool:
@@ -200,6 +211,7 @@ class ForecastingSettings(RestTranslatableMixin):
             and self.target_aggregate_function == other.target_aggregate_function
             and self.time_column_name == other.time_column_name
             and self.time_series_id_column_names == other.time_series_id_column_names
+            and self.features_unknown_at_forecast_time == other.features_unknown_at_forecast_time
         )
 
     def __ne__(self, other: object) -> bool:

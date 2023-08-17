@@ -307,6 +307,7 @@ class AutoMLNLPJob(AutoMLVertical, ABC):
         """Add (a) search space(s) for this AutoML NLP job.
 
         :param value: either a SearchSpace object or a list of SearchSpace objects with nlp-specific parameters.
+        :type value: Union[SearchSpace, List[SearchSpace]]
         :return: None.
         """
         self._search_space = self._search_space or []
