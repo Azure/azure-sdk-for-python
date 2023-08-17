@@ -38,7 +38,7 @@ jobs:
   #     call "C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\Common7\tools\VsDevCmd.bat"
 
     - script: |
-        sdk_build_conda -c '%arguments%'
+        sdk_build_conda -c %arguments%
       displayName: Assemble Conda Packages
 
     - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
