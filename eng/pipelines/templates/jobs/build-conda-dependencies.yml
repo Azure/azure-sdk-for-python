@@ -32,7 +32,7 @@ jobs:
         '@
         $escapedJsonString = $argument -replace '"','\"' -replace "`r`n", "" -replace "\s", ""
         Write-Host "##vso[task.setvariable variable=arguments;]$escapedJsonString"
-        Write-Host "$esapedJsonString"
+        Write-Host "$escapedJsonString"
       displayName: "Convert YAML to JSON-like string"
 
   #     call "C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\Common7\tools\VsDevCmd.bat"
