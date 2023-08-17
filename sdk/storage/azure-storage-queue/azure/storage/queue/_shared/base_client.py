@@ -233,11 +233,11 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         config = kwargs.get("_configuration") or create_configuration(**kwargs)
         if kwargs.get("_pipeline"):
             return config, kwargs["_pipeline"]
-        config.transport = kwargs.get("transport")  # type: ignore
+        transport = kwargs.get("transport")
         kwargs.setdefault("connection_timeout", CONNECTION_TIMEOUT)
         kwargs.setdefault("read_timeout", READ_TIMEOUT)
-        if not config.transport:
-            config.transport = RequestsTransport(**kwargs)  # type: ignore
+        if not transport:
+            transport = RequestsTransport(**kwargs)
         policies = [
             QueueMessagePolicy(),
             config.proxy_policy,
@@ -257,7 +257,8 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         ]
         if kwargs.get("_additional_pipeline_policies"):
             policies = policies + kwargs.get("_additional_pipeline_policies")  # type: ignore
-        return config, Pipeline(config.transport, policies=policies)
+        config.transport = transport #type: ignore
+        return config, Pipeline(transport, policies=policies)
 
     # Given a series of request, do a Storage batch call.
     def _batch_send(

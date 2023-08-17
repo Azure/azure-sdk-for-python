@@ -109,8 +109,7 @@ class AsyncStorageAccountHostsMixin(object):
         ]
         if kwargs.get("_additional_pipeline_policies"):
             policies = policies + kwargs.get("_additional_pipeline_policies")  #type: ignore
-        if hasattr(config, 'transport'):
-            config.transport = transport
+        config.transport = transport #type: ignore
         return config, AsyncPipeline(transport, policies=policies) #type: ignore
 
     # Given a series of request, do a Storage batch call.

@@ -433,7 +433,7 @@ class QueuePropertiesPaged(PageIterator):
     ) -> None:
         super(QueuePropertiesPaged, self).__init__(
             self._get_next_cb,
-            self._extract_data_cb,
+            self._extract_data_cb, #type: ignore
             continuation_token=continuation_token or ""
         )
         self._command = command
@@ -453,7 +453,7 @@ class QueuePropertiesPaged(PageIterator):
         except HttpResponseError as error:
             process_storage_error(error)
 
-    def _extract_data_cb(self, get_next_return: Any) -> Tuple[str, List[QueueProperties]]:
+    def _extract_data_cb(self, get_next_return: Any) -> Tuple[Optional[str], List[QueueProperties]]:
         self.location_mode, self._response = get_next_return
         if self._response is not None:
             if hasattr(self._response, 'service_endpoint'):
