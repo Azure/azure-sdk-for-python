@@ -380,7 +380,6 @@ class ScheduleOperations(_ScopeDependentOperations):
                         )
                         error_messages.append(msg)
                 elif signal.type == MonitorSignalType.PREDICTION_DRIFT:
-                    signal.model_type = target.ml_task
                     if mdc_output_enabled:
                         if not signal.target_dataset:
                             # if target dataset is absent and data collector for output is enabled,
@@ -402,7 +401,7 @@ class ScheduleOperations(_ScopeDependentOperations):
                                 data_context=MonitorDatasetContext.MODEL_OUTPUTS,
                                 data_window=BaselineDataRange(trailing_window_size="P7D", trailing_window_offset="P7D"),
                             )
-                    elif not mdc_output_enabled and not (signal.target_dataset and signal.baseline_dataset):
+                    elif not mdc_output_enabled and not (signal.production_data and signal.reference_data):
                         # if target dataset is absent and data collector for output is not enabled,
                         # collect exception message
                         msg = (
