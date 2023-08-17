@@ -371,10 +371,13 @@ folder will be a `.json` file that captures the HTTP traffic that was generated 
 file's name.
 
 The final step in setting up recordings is to move these files out of the `azure-sdk-for-python` and into the
-`azure-sdk-assets` repository. The [recording migration guide][recording_move] describes how to do so -- this step only
-needs to be completed once, and future test sessions will automatically pull recordings from the assets repo. Your
-library will have an `assets.json` file at its root, which stores the `azure-sdk-assets` tag that contains the current
-set of recordings.
+`azure-sdk-assets` repository. The [recording migration guide][recording_move] describes how to do so. This step only
+needs to be completed once. Your library will have an `assets.json` file at its root, which stores the `azure-sdk-assets`
+tag that contains the current set of recordings.
+
+From this point on, recordings will automatically be fetched when tests are run in playback mode -- either from
+a local cache (described in [Update test recordings](#update-test-recordings)), or from `azure-sdk-assets` if they're
+not locally available.
 
 #### Update test recordings
 
@@ -387,16 +390,11 @@ set of recordings.
 - Membership in the `azure-sdk-write` GitHub group.
 
 Test recordings will be updated if tests are run while `AZURE_TEST_RUN_LIVE` is set to "true" and
-`AZURE_SKIP_LIVE_RECORDING` is unset or "false". Since the recordings themselves are no longer in the
-`azure-sdk-for-python` repo, though, these updates will be reflected in a git-excluded `.assets` folder at the root of
-the repo.
+`AZURE_SKIP_LIVE_RECORDING` is unset or "false". These recording updates will be reflected in a git-excluded `.assets`
+folder at the root of the repo.
 
 The `.assets` folder contains one or more directories with random names, which each are a git directory containing
-recordings. If you `cd` into the folder containing your package's recordings, you can use `git status` to view the
-recording updates you've made. You can also use other `git` commands; for example, `git diff {file name}` to see
-specific file changes, or `git restore {file name}` to undo changes you don't want to keep.
-
-To find the directory containing your package's recordings, you can use the [`manage_recordings.py`][manage_recordings]
+recordings. To find the directory containing your package's recordings, you can use the [`manage_recordings.py`][manage_recordings]
 script from `azure-sdk-for-python/scripts`. This script accepts a verb and a **relative** path to your package's
 `assets.json` file (this path is optional, and is simply `assets.json` by default).
 
@@ -410,6 +408,10 @@ The output will include an absolute path to the recordings directory; in this ca
 ```
 C:/azure-sdk-for-python/.assets/Y0iKQSfTwa/python
 ```
+
+If you `cd` into the folder containing your package's recordings, you can use `git status` to view the recording
+updates you've made. You can also use other `git` commands; for example, `git diff {file name}` to see specific file
+changes, or `git restore {file name}` to undo changes you don't want to keep.
 
 After verifying that your recording updates look correct, you can use [`manage_recordings.py`][manage_recordings] to
 push your recordings to the `azure-sdk-assets` repo:
