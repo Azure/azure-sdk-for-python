@@ -20,11 +20,11 @@ jobs:
       inputs:
         versionSpec: $(PythonVersion)
 
-    - script: |
-        pip install tools/azure-sdk-tools[build]
-        pip install disutils
-        choco install visualstudio2019buildtools
-      displayName: Install build script requirements
+    # - script: |
+    #     pip install tools/azure-sdk-tools[build]
+    #     pip install disutils
+    #     choco install visualstudio2019buildtools
+    #   displayName: Install build script requirements
 
     - pwsh: |
         $argument = @'
@@ -32,13 +32,12 @@ jobs:
         '@
         $escapedJsonString = $argument -replace '"','\"' -replace "`r`n", "" -replace "\s", ""
         Write-Host "##vso[task.setvariable variable=arguments;]$escapedJsonString"
+        Write-Host "$esapedJsonString"
       displayName: "Convert YAML to JSON-like string"
 
+  #     call "C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\Common7\tools\VsDevCmd.bat"
+
     - script: |
-        call "C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\Common7\tools\VsDevCmd.bat"
-
-        echo "Hi!"
-
         sdk_build_conda -c '%arguments%'
       displayName: Assemble Conda Packages
 
