@@ -30,7 +30,7 @@ jobs:
         $argument = @'
           ${{ replace(convertToJson(parameters.CondaArtifacts), '"', '\"') }}
         '@
-        $escapedJsonString = $argument -replace '"','\"' -replace "`r`n", "" -replace "\s", ""
+        $escapedJsonString = $argument -replace "`r`n", "" -replace "\s", ""
         Write-Host "##vso[task.setvariable variable=arguments;]$escapedJsonString"
         Write-Host "$escapedJsonString"
       displayName: "Convert YAML to JSON-like string"
