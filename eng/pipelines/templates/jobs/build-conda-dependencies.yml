@@ -35,7 +35,7 @@ jobs:
       displayName: "Convert YAML to JSON-like string"
 
     - script: |
-        "C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\Common7\tools\VsDevCmd.bat"
+        call "C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\Common7\tools\VsDevCmd.bat"
 
         echo "Hi!"
 
