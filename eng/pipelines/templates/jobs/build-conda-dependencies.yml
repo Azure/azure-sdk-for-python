@@ -38,6 +38,7 @@ jobs:
   #     call "C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\Common7\tools\VsDevCmd.bat"
 
     - script: |
+        echo '%arguments%'
         sdk_build_conda -c '%arguments%'
       displayName: Assemble Conda Packages
 
