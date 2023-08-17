@@ -290,7 +290,7 @@ class Component(
         :param io_names: The names to validate
         :type io_names: Iterable[str]
         :param raise_error: Whether to raise if validation fails. Defaults to False
-        :type raise_error: bool, optional
+        :type raise_error: bool
         :return: The validation result
         :rtype: MutableValidationResult
         """
@@ -476,7 +476,7 @@ class Component(
         """Return the hash of component.
 
         :param keys_to_omit: An iterable of keys to omit when computing the component hash
-        :type keys_to_omit: Optional[Iterable[str]], optional
+        :type keys_to_omit: Optional[Iterable[str]]
         :return: The component hash
         :rtype: str
         """

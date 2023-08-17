@@ -137,7 +137,7 @@ To run a tox command from your directory use the following commands:
 (env) azure-sdk-for-python\sdk\my-service\my-package> tox run -e samples -c ../../../eng/tox/tox.ini --root . 
 (env) azure-sdk-for-python\sdk\my-service\my-package> tox run -e apistub -c ../../../eng/tox/tox.ini --root . 
 ```
-A quick description of the five commands above:
+A quick description of the nine commands above:
 * sphinx: documentation generation using the inline comments written in our code
 * lint: runs pylint to make sure our code adheres to the style guidance
 * mypy: runs the mypy static type checker for Python to make sure that our types are valid.
@@ -396,23 +396,31 @@ recordings. If you `cd` into the folder containing your package's recordings, yo
 recording updates you've made. You can also use other `git` commands; for example, `git diff {file name}` to see
 specific file changes, or `git restore {file name}` to undo changes you don't want to keep.
 
-To find the directory containing your package's recordings, open the `.breadcrumb` file in the `.assets` folder. This
-file lists a package name on each line, followed by the recording directory name; for example:
-```
-sdk/{service}/{package}/assets.json;2Km2Z8755;python/{service}/{package}_<10-character-commit-SHA>
-```
-The recording directory in this case is `2Km2Z8755`, the string between the two semicolons.
+To find the directory containing your package's recordings, you can use the [`manage_recordings.py`][manage_recordings]
+script from `azure-sdk-for-python/scripts`. This script accepts a verb and a **relative** path to your package's
+`assets.json` file (this path is optional, and is simply `assets.json` by default).
 
-After verifying that your recording updates look correct, you can use the [`manage_recordings.py`][manage_recordings]
-script from `azure-sdk-for-python/scripts` to push these recordings to the `azure-sdk-assets` repo. This script accepts
-a verb and a **relative** path to your package's `assets.json` file (this path is optional, and is simply `assets.json`
-by default). For example, from the root of the `azure-sdk-for-python` repo:
+For example, to view the location of `azure-keyvault-keys`'s recordings, from a current working directory at the root
+of the repo, run the following command:
+```
+python scripts/manage_recordings.py locate -p sdk/keyvault/azure-keyvault-keys
+```
+
+The output will include an absolute path to the recordings directory; in this case:
+```
+C:/azure-sdk-for-python/.assets/Y0iKQSfTwa/python
+```
+
+After verifying that your recording updates look correct, you can use [`manage_recordings.py`][manage_recordings] to
+push your recordings to the `azure-sdk-assets` repo:
 ```
 python scripts/manage_recordings.py push -p sdk/{service}/{package}/assets.json
 ```
 
-The verbs that can be provided to this script are "push", "restore", and "reset":
+The verbs that can be provided to this script are "locate", "push", "show", "restore", and "reset":
+- **locate**: prints the location of the library's locally cached recordings.
 - **push**: pushes recording updates to a new assets repo tag and updates the tag pointer in `assets.json`.
+- **show**: prints the contents of the provided `assets.json` file.
 - **restore**: fetches recordings from the assets repo, based on the tag pointer in `assets.json`.
 - **reset**: discards any pending changes to recordings, based on the tag pointer in `assets.json`.
 

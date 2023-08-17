@@ -95,7 +95,7 @@ class NodeIOMixin:
         :param inputs: Provided kwargs when parameterizing component func.
         :type inputs: Dict[str, Union[Input, str, bool, int, float]]
         :keyword input_definition_dict: Static input definition dict. If not provided, will build inputs without meta.
-        :type input_definition_dict: dict, optional
+        :paramtype input_definition_dict: dict
         :return: Built dynamic input attribute dict.
         :rtype: InputsAttrDict
         """
@@ -124,9 +124,9 @@ class NodeIOMixin:
         :param outputs: Provided kwargs when parameterizing component func.
         :type outputs: Dict[str, Output]
         :keyword output_definition_dict: Static output definition dict.
-        :type output_definition_dict: Dict
+        :paramtype output_definition_dict: Dict
         :keyword none_data: If True, will set output data to None.
-        :type none_data: bool
+        :paramtype none_data: bool
         :return: Built dynamic output attribute dict.
         :rtype: OutputsAttrDict
         """
@@ -345,7 +345,7 @@ def flatten_dict(
     :param _type: Either _GroupAttrDict or GroupInput (both have the method `flatten`)
     :type _type: Union[Type["_GroupAttrDict"], Type[GroupInput]]
     :keyword allow_dict_fields: A list of keys for dictionary values that will be included in flattened output
-    :type allow_dict_fields: Optional[List[str]], optional
+    :paramtype allow_dict_fields: Optional[List[str]]
     :return: The flattened dict
     :rtype: Dict
     """
@@ -416,7 +416,7 @@ class NodeWithGroupInputMixin(NodeIOMixin):
         :param inputs: Provided kwargs when parameterizing component func.
         :type inputs: Dict[str, Union[Input, str, bool, int, float]]
         :keyword input_definition_dict: Input definition dict from component entity.
-        :type input_definition_dict: dict, optional
+        :paramtype input_definition_dict: dict
         :return: Built input attribute dict.
         :rtype: InputsAttrDict
         """

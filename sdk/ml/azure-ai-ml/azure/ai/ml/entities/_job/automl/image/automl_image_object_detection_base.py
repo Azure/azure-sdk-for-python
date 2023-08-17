@@ -159,43 +159,43 @@ class AutoMLImageObjectDetectionBase(AutoMLImage):
         tasks.
 
         :keyword advanced_settings: Settings for advanced scenarios.
-        :type advanced_settings: str
+        :paramtype advanced_settings: str
         :keyword ams_gradient: Enable AMSGrad when optimizer is 'adam' or 'adamw'.
-        :type ams_gradient: bool
+        :paramtype ams_gradient: bool
         :keyword beta1: Value of 'beta1' when optimizer is 'adam' or 'adamw'. Must be a float in the
          range [0, 1].
-        :type beta1: float
+        :paramtype beta1: float
         :keyword beta2: Value of 'beta2' when optimizer is 'adam' or 'adamw'. Must be a float in the
          range [0, 1].
-        :type beta2: float
+        :paramtype beta2: float
         :keyword checkpoint_frequency: Frequency to store model checkpoints. Must be a positive
          integer.
-        :type checkpoint_frequency: int
+        :paramtype checkpoint_frequency: int
         :keyword checkpoint_run_id: The id of a previous run that has a pretrained checkpoint for
          incremental training.
-        :type checkpoint_run_id: str
+        :paramtype checkpoint_run_id: str
         :keyword distributed: Whether to use distributed training.
-        :type distributed: bool
+        :paramtype distributed: bool
         :keyword early_stopping: Enable early stopping logic during training.
-        :type early_stopping: bool
+        :paramtype early_stopping: bool
         :keyword early_stopping_delay: Minimum number of epochs or validation evaluations to wait
          before primary metric improvement
          is tracked for early stopping. Must be a positive integer.
-        :type early_stopping_delay: int
+        :paramtype early_stopping_delay: int
         :keyword early_stopping_patience: Minimum number of epochs or validation evaluations with no
          primary metric improvement before
          the run is stopped. Must be a positive integer.
-        :type early_stopping_patience: int
+        :paramtype early_stopping_patience: int
         :keyword enable_onnx_normalization: Enable normalization when exporting ONNX model.
-        :type enable_onnx_normalization: bool
+        :paramtype enable_onnx_normalization: bool
         :keyword evaluation_frequency: Frequency to evaluate validation dataset to get metric scores.
          Must be a positive integer.
-        :type evaluation_frequency: int
+        :paramtype evaluation_frequency: int
         :keyword gradient_accumulation_step: Gradient accumulation means running a configured number of
          "GradAccumulationStep" steps without
          updating the model weights while accumulating the gradients of those steps, and then using
          the accumulated gradients to compute the weight updates. Must be a positive integer.
-        :type gradient_accumulation_step: int
+        :paramtype gradient_accumulation_step: int
         :keyword layers_to_freeze: Number of layers to freeze for the model. Must be a positive
          integer.
          For instance, passing 2 as value for 'seresnext' means
@@ -204,7 +204,7 @@ class AutoMLImageObjectDetectionBase(AutoMLImage):
          see: https://docs.microsoft.com/en-us/azure/machine-learning/reference-automl-images-hyperparameters#model-agnostic-hyperparameters.   # pylint: disable=line-too-long
         :type layers_to_freeze: int
         :keyword learning_rate: Initial learning rate. Must be a float in the range [0, 1].
-        :type learning_rate: float
+        :paramtype learning_rate: float
         :keyword learning_rate_scheduler: Type of learning rate scheduler. Must be 'warmup_cosine' or
          'step'. Possible values include: "None", "WarmupCosine", "Step".
         :type learning_rate_scheduler: str or
@@ -215,36 +215,36 @@ class AutoMLImageObjectDetectionBase(AutoMLImage):
         :type model_name: str
         :keyword momentum: Value of momentum when optimizer is 'sgd'. Must be a float in the range [0,
          1].
-        :type momentum: float
+        :paramtype momentum: float
         :keyword nesterov: Enable nesterov when optimizer is 'sgd'.
-        :type nesterov: bool
+        :paramtype nesterov: bool
         :keyword number_of_epochs: Number of training epochs. Must be a positive integer.
-        :type number_of_epochs: int
+        :paramtype number_of_epochs: int
         :keyword number_of_workers: Number of data loader workers. Must be a non-negative integer.
-        :type number_of_workers: int
+        :paramtype number_of_workers: int
         :keyword optimizer: Type of optimizer. Possible values include: "None", "Sgd", "Adam", "Adamw".
         :type optimizer: str or ~azure.mgmt.machinelearningservices.models.StochasticOptimizer
         :keyword random_seed: Random seed to be used when using deterministic training.
-        :type random_seed: int
+        :paramtype random_seed: int
         :keyword step_lr_gamma: Value of gamma when learning rate scheduler is 'step'. Must be a float
          in the range [0, 1].
-        :type step_lr_gamma: float
+        :paramtype step_lr_gamma: float
         :keyword step_lr_step_size: Value of step size when learning rate scheduler is 'step'. Must be
          a positive integer.
-        :type step_lr_step_size: int
+        :paramtype step_lr_step_size: int
         :keyword training_batch_size: Training batch size. Must be a positive integer.
-        :type training_batch_size: int
+        :paramtype training_batch_size: int
         :keyword validation_batch_size: Validation batch size. Must be a positive integer.
-        :type validation_batch_size: int
+        :paramtype validation_batch_size: int
         :keyword warmup_cosine_lr_cycles: Value of cosine cycle when learning rate scheduler is
          'warmup_cosine'. Must be a float in the range [0, 1].
-        :type warmup_cosine_lr_cycles: float
+        :paramtype warmup_cosine_lr_cycles: float
         :keyword warmup_cosine_lr_warmup_epochs: Value of warmup epochs when learning rate scheduler is
          'warmup_cosine'. Must be a positive integer.
-        :type warmup_cosine_lr_warmup_epochs: int
+        :paramtype warmup_cosine_lr_warmup_epochs: int
         :keyword weight_decay: Value of weight decay when optimizer is 'sgd', 'adam', or 'adamw'. Must
          be a float in the range[0, 1].
-        :type weight_decay: float
+        :paramtype weight_decay: float
         :keyword box_detections_per_image: Maximum number of detections per image, for all classes.
          Must be a positive integer.
          Note: This settings is not supported for the 'yolov5' algorithm.
@@ -252,7 +252,7 @@ class AutoMLImageObjectDetectionBase(AutoMLImage):
         :keyword box_score_threshold: During inference, only return proposals with a classification
          score greater than
          BoxScoreThreshold. Must be a float in the range[0, 1].
-        :type box_score_threshold: float
+        :paramtype box_score_threshold: float
         :keyword image_size: Image size for training and validation. Must be a positive integer.
          Note: The training run may get into CUDA OOM if the size is too big.
          Note: This settings is only supported for the 'yolov5' algorithm.
@@ -275,14 +275,14 @@ class AutoMLImageObjectDetectionBase(AutoMLImage):
         :type multi_scale: bool
         :keyword nms_iou_threshold: IOU threshold used during inference in NMS post processing. Must be
          float in the range [0, 1].
-        :type nms_iou_threshold: float
+        :paramtype nms_iou_threshold: float
         :keyword tile_grid_size: The grid size to use for tiling each image. Note: TileGridSize must
          not be
          None to enable small object detection logic. A string containing two integers in mxn format.
         :type tile_grid_size: str
         :keyword tile_overlap_ratio: Overlap ratio between adjacent tiles in each dimension. Must be
          float in the range [0, 1).
-        :type tile_overlap_ratio: float
+        :paramtype tile_overlap_ratio: float
         :keyword tile_predictions_nms_threshold: The IOU threshold to use to perform NMS while merging
          predictions from tiles and image.
          Used in validation/ inference. Must be float in the range [0, 1].
@@ -290,16 +290,16 @@ class AutoMLImageObjectDetectionBase(AutoMLImage):
         :type tile_predictions_nms_threshold: str
         :keyword validation_iou_threshold: IOU threshold to use when computing validation metric. Must
          be float in the range [0, 1].
-        :type validation_iou_threshold: float
+        :paramtype validation_iou_threshold: float
         :keyword validation_metric_type: Metric computation method to use for validation metrics. Must
          be 'none', 'coco', 'voc', or 'coco_voc'.
-        :type validation_metric_type: str or ~azure.mgmt.machinelearningservices.models.ValidationMetricType
+        :paramtype validation_metric_type: str or ~azure.mgmt.machinelearningservices.models.ValidationMetricType
         :keyword log_training_metrics: indicates whether or not to log training metrics. Must
          be 'Enable' or 'Disable'
-        :type log_training_metrics: str or ~azure.mgmt.machinelearningservices.models.LogTrainingMetrics
+        :paramtype log_training_metrics: str or ~azure.mgmt.machinelearningservices.models.LogTrainingMetrics
         :keyword log_validation_loss: indicates whether or not to log validation loss. Must
          be 'Enable' or 'Disable'
-        :type log_validation_loss: str or ~azure.mgmt.machinelearningservices.models.LogValidationLoss
+        :paramtype log_validation_loss: str or ~azure.mgmt.machinelearningservices.models.LogValidationLoss
         """
         self._training_parameters = self._training_parameters or ImageModelSettingsObjectDetection()
 
