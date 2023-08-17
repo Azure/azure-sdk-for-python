@@ -25,20 +25,20 @@ class BlobCheckpointStore(CheckpointStore):
     defined in class azure.eventhub.aio.CheckpointStore of package azure-eventhub.
 
     :param str blob_account_url:
-        The URI to the storage account.
+     The URI to the storage account.
     :param container_name:
-        The name of the container for the blobs.
+     The name of the container for the blobs.
     :type container_name: str
     :param credential:
-        The credentials with which to authenticate. This is optional if the
-        account URL already has a SAS token. The value can be a AzureSasCredential, an AzureNamedKeyCredential,
-        or a TokenCredential.If the URL already has a SAS token, specifying an explicit credential will take priority.
-    :type credential: ~azure.core.credentials_async.AsyncTokenCredential or 
+     The credentials with which to authenticate. This is optional if the
+     account URL already has a SAS token. The value can be a AzureSasCredential, an AzureNamedKeyCredential,
+     or a TokenCredential.If the URL already has a SAS token, specifying an explicit credential will take priority.
+    :type credential: ~azure.core.credentials_async.AsyncTokenCredential or
      ~azure.core.credentials.AzureSasCredential or ~azure.core.credentials.AzureNamedKeyCredential or None
     :keyword str api_version:
-            The Storage API version to use for requests. Default value is '2019-07-07'.
+     The Storage API version to use for requests. Default value is '2019-07-07'.
     :keyword str secondary_hostname:
-        The hostname of the secondary endpoint.
+     The hostname of the secondary endpoint.
     """
 
     def __init__(self, blob_account_url, container_name, *, credential=None, **kwargs):
@@ -65,20 +65,21 @@ class BlobCheckpointStore(CheckpointStore):
         """Create BlobCheckpointStore from a storage connection string.
 
         :param str conn_str:
-            A connection string to an Azure Storage account.
+         A connection string to an Azure Storage account.
         :param container_name:
-            The container name for the blobs.
+         The container name for the blobs.
         :type container_name: str
         :keyword credential:
-            The credentials with which to authenticate. This is optional if the
-            account URL already has a SAS token. The value can be a AzureSasCredential, an AzureNamedKeyCredential,
-            or a TokenCredential.If the URL already has a SAS token, specifying an explicit credential will take priority.
+         The credentials with which to authenticate. This is optional if the
+         account URL already has a SAS token. The value can be a AzureSasCredential, an AzureNamedKeyCredential,
+         or a TokenCredential.If the URL already has a SAS token,
+         specifying an explicit credential will take priority.
         :type credential: ~azure.core.credentials_async.AsyncTokenCredential or
          ~azure.core.credentials.AzureSasCredential or ~azure.core.credentials.AzureNamedKeyCredential or None
         :keyword str api_version:
-            The Storage API version to use for requests. Default value is '2019-07-07'.
+         The Storage API version to use for requests. Default value is '2019-07-07'.
         :keyword str secondary_hostname:
-            The hostname of the secondary endpoint.
+         The hostname of the secondary endpoint.
         :returns: A blob checkpoint store.
         :rtype: ~azure.eventhub.extensions.checkpointstoreblobaio.BlobCheckpointStore
         """
