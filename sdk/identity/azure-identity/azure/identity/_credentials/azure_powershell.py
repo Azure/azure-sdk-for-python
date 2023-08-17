@@ -183,7 +183,7 @@ def get_command_line(scopes: Tuple[str, ...], tenant_id: str) -> List[str]:
     script = SCRIPT.format(NO_AZ_ACCOUNT_MODULE, resource, tenant_argument)
     encoded_script = base64.b64encode(script.encode("utf-16-le")).decode()
 
-    command = "pwsh -NonInteractive -EncodedCommand " + encoded_script
+    command = "pwsh -NoProfile -NonInteractive -EncodedCommand " + encoded_script
     if sys.platform.startswith("win"):
         return ["cmd", "/c", command]
     return ["/bin/sh", "-c", command]
