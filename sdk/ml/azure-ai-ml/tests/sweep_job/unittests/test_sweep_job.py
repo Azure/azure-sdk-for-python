@@ -355,7 +355,10 @@ class TestSweepJob:
         )
 
         rest_obj = sweep._to_rest_object()
-        rest_obj.properties.resources == resources._to_rest_object() if resources else None
+
+        # if statement can be removed when sdk will be from 2023-08
+        if hasattr(rest_obj, 'resources'):
+            rest_obj.properties.resources == resources._to_rest_object() if resources else None
 
         # validate from rest scenario
         sweep_job: SweepJob = Job._from_rest_object(rest_obj)
