@@ -55,38 +55,12 @@ module_logger = logging.getLogger(__name__)
 class CommandJob(Job, ParameterizedCommand, JobIOMixin):
     """Command job.
 
-    :keyword name: The name of the job.
-    :paramtype name: str
-    :keyword description: The job description.
-    :paramtype description: str
-    :keyword tags: Tag dictionary. Tags can be added, removed, and updated.
-    :paramtype tags: dict[str, str]
-    :keyword display_name: The job display name.
-    :paramtype display_name: str
-    :keyword properties: A dictionary of properties for the job.
-    :paramtype properties: dict[str, str]
-    :keyword experiment_name: The name of the experiment that the job will be created under. Defaults to current
-        directory name.
-    :paramtype experiment_name: str
     :keyword services: Read-only information on services associated with the job.
     :paramtype services: Optional[dict[str, ~azure.ai.ml.entities.JobService]]
     :keyword inputs: Mapping of output data bindings used in the command.
     :paramtype inputs: Optional[dict[str, Union[~azure.ai.ml.Input, str, bool, int, float]]]
     :keyword outputs: Mapping of output data bindings used in the job.
     :paramtype outputs: Optional[dict[str, ~azure.ai.ml.Output]]
-    :keyword command: The command to be executed.
-    :paramtype command: str
-    :keyword compute: The compute target the job runs on.
-    :paramtype compute: str
-    :keyword resources: The compute resource configuration for the job.
-    :paramtype resources: ~azure.ai.ml.entities.ResourceConfiguration
-    :keyword code: A local path or "http:", "https:", or "azureml:" url pointing to a remote location.
-    :type code: str
-    :keyword distribution: The distribution configuration for distributed jobs.
-    :paramtype distribution: Union[~azure.ai.ml.PyTorchDistribution, ~azure.ai.ml.MpiDistribution,
-        ~azure.ai.ml.TensorFlowDistribution, ~azure.ai.ml.RayDistribution]
-    :keyword environment: The environment that the job will run in.
-    :paramtype environment: Union[~azure.ai.ml.entities.Environment, str]
     :keyword identity: The identity that the job will use while running on compute.
     :paramtype identity: Optional[Union[~azure.ai.ml.ManagedIdentityConfiguration, ~azure.ai.ml.AmlTokenConfiguration,
         ~azure.ai.ml.UserIdentityConfiguration]]
