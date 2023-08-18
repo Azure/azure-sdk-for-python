@@ -117,9 +117,7 @@ class Resource(abc.ABC):
 
     @classmethod
     # pylint: disable=unused-argument
-    def _resolve_cls_and_type(
-        cls, data: Optional[Dict] = None, params_override: Optional[list] = None
-    ) -> Tuple[type["Resource"], Optional[str]]:
+    def _resolve_cls_and_type(cls, data: Optional[Dict] = None, params_override: Optional[list] = None):
         """Resolve the class to use for deserializing the data. Return current class if no override is provided.
 
         :param data: Data to deserialize.
