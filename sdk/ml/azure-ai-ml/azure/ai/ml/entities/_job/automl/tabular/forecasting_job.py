@@ -56,9 +56,7 @@ class ForecastingJob(AutoMLTabular):
     :type kwargs: Dict[str, Any]
     """
 
-    _DEFAULT_PRIMARY_METRIC = (
-        ForecastingPrimaryMetrics.NORMALIZED_ROOT_MEAN_SQUARED_ERROR
-    )
+    _DEFAULT_PRIMARY_METRIC = ForecastingPrimaryMetrics.NORMALIZED_ROOT_MEAN_SQUARED_ERROR
 
     def __init__(
         self,
@@ -351,19 +349,13 @@ class ForecastingJob(AutoMLTabular):
             else self._forecasting_settings.country_or_region_for_holidays
         )
         self._forecasting_settings.cv_step_size = (
-            cv_step_size
-            if cv_step_size is not None
-            else self._forecasting_settings.cv_step_size
+            cv_step_size if cv_step_size is not None else self._forecasting_settings.cv_step_size
         )
         self._forecasting_settings.forecast_horizon = (
-            forecast_horizon
-            if forecast_horizon is not None
-            else self._forecasting_settings.forecast_horizon
+            forecast_horizon if forecast_horizon is not None else self._forecasting_settings.forecast_horizon
         )
         self._forecasting_settings.target_lags = (
-            target_lags
-            if target_lags is not None
-            else self._forecasting_settings.target_lags
+            target_lags if target_lags is not None else self._forecasting_settings.target_lags
         )
         self._forecasting_settings.target_rolling_window_size = (
             target_rolling_window_size
@@ -374,18 +366,12 @@ class ForecastingJob(AutoMLTabular):
             frequency if frequency is not None else self._forecasting_settings.frequency
         )
         self._forecasting_settings.feature_lags = (
-            feature_lags
-            if feature_lags is not None
-            else self._forecasting_settings.feature_lags
+            feature_lags if feature_lags is not None else self._forecasting_settings.feature_lags
         )
         self._forecasting_settings.seasonality = (
-            seasonality
-            if seasonality is not None
-            else self._forecasting_settings.seasonality
+            seasonality if seasonality is not None else self._forecasting_settings.seasonality
         )
-        self._forecasting_settings.use_stl = (
-            use_stl if use_stl is not None else self._forecasting_settings.use_stl
-        )
+        self._forecasting_settings.use_stl = use_stl if use_stl is not None else self._forecasting_settings.use_stl
         self._forecasting_settings.short_series_handling_config = (
             short_series_handling_config
             if short_series_handling_config is not None
@@ -397,9 +383,7 @@ class ForecastingJob(AutoMLTabular):
             else self._forecasting_settings.target_aggregate_function
         )
         self._forecasting_settings.time_column_name = (
-            time_column_name
-            if time_column_name is not None
-            else self._forecasting_settings.time_column_name
+            time_column_name if time_column_name is not None else self._forecasting_settings.time_column_name
         )
         self._forecasting_settings.time_series_id_column_names = (
             time_series_id_column_names
@@ -517,13 +501,9 @@ class ForecastingJob(AutoMLTabular):
             n_cross_validations=self.n_cross_validations,
             test_data=self.test_data,
             test_data_size=self.test_data_size,
-            featurization_settings=self._featurization._to_rest_object()
-            if self._featurization
-            else None,
+            featurization_settings=self._featurization._to_rest_object() if self._featurization else None,
             limit_settings=self._limits._to_rest_object() if self._limits else None,
-            training_settings=self._training._to_rest_object()
-            if self._training
-            else None,
+            training_settings=self._training._to_rest_object() if self._training else None,
             primary_metric=self.primary_metric,
             log_verbosity=self.log_verbosity,
             forecasting_settings=self._forecasting_settings._to_rest_object(),
@@ -572,9 +552,7 @@ class ForecastingJob(AutoMLTabular):
             "compute": properties.compute_id,
             "outputs": from_rest_data_outputs(properties.outputs),
             "resources": properties.resources,
-            "identity": _BaseJobIdentityConfiguration._from_rest_object(
-                properties.identity
-            )
+            "identity": _BaseJobIdentityConfiguration._from_rest_object(properties.identity)
             if properties.identity
             else None,
             "queue_settings": properties.queue_settings,
@@ -590,23 +568,17 @@ class ForecastingJob(AutoMLTabular):
             n_cross_validations=task_details.n_cross_validations,
             test_data=task_details.test_data,
             test_data_size=task_details.test_data_size,
-            featurization=TabularFeaturizationSettings._from_rest_object(
-                task_details.featurization_settings
-            )
+            featurization=TabularFeaturizationSettings._from_rest_object(task_details.featurization_settings)
             if task_details.featurization_settings
             else None,
             limits=TabularLimitSettings._from_rest_object(task_details.limit_settings)
             if task_details.limit_settings
             else None,
-            training=ForecastingTrainingSettings._from_rest_object(
-                task_details.training_settings
-            )
+            training=ForecastingTrainingSettings._from_rest_object(task_details.training_settings)
             if task_details.training_settings
             else None,
             primary_metric=task_details.primary_metric,
-            forecasting_settings=ForecastingSettings._from_rest_object(
-                task_details.forecasting_settings
-            )
+            forecasting_settings=ForecastingSettings._from_rest_object(task_details.forecasting_settings)
             if task_details.forecasting_settings
             else None,
             log_verbosity=task_details.log_verbosity,
@@ -632,13 +604,9 @@ class ForecastingJob(AutoMLTabular):
         from azure.ai.ml._schema.pipeline.automl_node import AutoMLForecastingNodeSchema
 
         if kwargs.pop("inside_pipeline", False):
-            loaded_data = load_from_dict(
-                AutoMLForecastingNodeSchema, data, context, additional_message, **kwargs
-            )
+            loaded_data = load_from_dict(AutoMLForecastingNodeSchema, data, context, additional_message, **kwargs)
         else:
-            loaded_data = load_from_dict(
-                AutoMLForecastingSchema, data, context, additional_message, **kwargs
-            )
+            loaded_data = load_from_dict(AutoMLForecastingSchema, data, context, additional_message, **kwargs)
         job_instance = cls._create_instance_from_schema_dict(loaded_data)
         return job_instance
 
@@ -660,22 +628,16 @@ class ForecastingJob(AutoMLTabular):
         job.set_data(**data_settings)
         return job
 
-    def _to_dict(
-        self, inside_pipeline=False
-    ) -> Dict:  # pylint: disable=arguments-differ
+    def _to_dict(self, inside_pipeline=False) -> Dict:  # pylint: disable=arguments-differ
         from azure.ai.ml._schema.automl.table_vertical.forecasting import (
             AutoMLForecastingSchema,
         )
         from azure.ai.ml._schema.pipeline.automl_node import AutoMLForecastingNodeSchema
 
         if inside_pipeline:
-            schema_dict = AutoMLForecastingNodeSchema(
-                context={BASE_PATH_CONTEXT_KEY: "./"}
-            ).dump(self)
+            schema_dict = AutoMLForecastingNodeSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
         else:
-            schema_dict = AutoMLForecastingSchema(
-                context={BASE_PATH_CONTEXT_KEY: "./"}
-            ).dump(self)
+            schema_dict = AutoMLForecastingSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
         return schema_dict
 
     def __eq__(self, other):
@@ -685,10 +647,7 @@ class ForecastingJob(AutoMLTabular):
         if not super(ForecastingJob, self).__eq__(other):
             return False
 
-        return (
-            self.primary_metric == other.primary_metric
-            and self._forecasting_settings == other._forecasting_settings
-        )
+        return self.primary_metric == other.primary_metric and self._forecasting_settings == other._forecasting_settings
 
     def __ne__(self, other):
         return not self.__eq__(other)
