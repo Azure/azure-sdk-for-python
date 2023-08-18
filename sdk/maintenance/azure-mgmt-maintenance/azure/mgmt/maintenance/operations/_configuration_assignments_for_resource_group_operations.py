@@ -7,8 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from io import IOBase
-from typing import Any, Callable, Dict, IO, Iterable, Optional, TypeVar, Union, overload
-import urllib.parse
+from typing import Any, Callable, Dict, IO, Optional, TypeVar, Union, overload
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -18,7 +17,6 @@ from azure.core.exceptions import (
     ResourceNotModifiedError,
     map_error,
 )
-from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpResponse
 from azure.core.rest import HttpRequest
@@ -37,7 +35,9 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_get_request(resource_group_name: str, resource_name: str, subscription_id: str, **kwargs: Any) -> HttpRequest:
+def build_get_request(
+    resource_group_name: str, configuration_assignment_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -47,12 +47,14 @@ def build_get_request(resource_group_name: str, resource_name: str, subscription
     # Construct URL
     _url = kwargs.pop(
         "template_url",
-        "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Maintenance/maintenanceConfigurations/{resourceName}",
+        "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Maintenance/configurationAssignments/{configurationAssignmentName}",
     )  # pylint: disable=line-too-long
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
+        "configurationAssignmentName": _SERIALIZER.url(
+            "configuration_assignment_name", configuration_assignment_name, "str", pattern=r"^.+$"
+        ),
     }
 
     _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
@@ -67,7 +69,7 @@ def build_get_request(resource_group_name: str, resource_name: str, subscription
 
 
 def build_create_or_update_request(
-    resource_group_name: str, resource_name: str, subscription_id: str, **kwargs: Any
+    resource_group_name: str, configuration_assignment_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -79,12 +81,14 @@ def build_create_or_update_request(
     # Construct URL
     _url = kwargs.pop(
         "template_url",
-        "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Maintenance/maintenanceConfigurations/{resourceName}",
+        "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Maintenance/configurationAssignments/{configurationAssignmentName}",
     )  # pylint: disable=line-too-long
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
+        "configurationAssignmentName": _SERIALIZER.url(
+            "configuration_assignment_name", configuration_assignment_name, "str"
+        ),
     }
 
     _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
@@ -100,39 +104,8 @@ def build_create_or_update_request(
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_delete_request(
-    resource_group_name: str, resource_name: str, subscription_id: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-01"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = kwargs.pop(
-        "template_url",
-        "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Maintenance/maintenanceConfigurations/{resourceName}",
-    )  # pylint: disable=line-too-long
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
-    }
-
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
-
-
 def build_update_request(
-    resource_group_name: str, resource_name: str, subscription_id: str, **kwargs: Any
+    resource_group_name: str, configuration_assignment_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -144,12 +117,14 @@ def build_update_request(
     # Construct URL
     _url = kwargs.pop(
         "template_url",
-        "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Maintenance/maintenanceConfigurations/{resourceName}",
+        "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Maintenance/configurationAssignments/{configurationAssignmentName}",
     )  # pylint: disable=line-too-long
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
+        "configurationAssignmentName": _SERIALIZER.url(
+            "configuration_assignment_name", configuration_assignment_name, "str"
+        ),
     }
 
     _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
@@ -165,7 +140,9 @@ def build_update_request(
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_list_request(subscription_id: str, **kwargs: Any) -> HttpRequest:
+def build_delete_request(
+    resource_group_name: str, configuration_assignment_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -174,10 +151,15 @@ def build_list_request(subscription_id: str, **kwargs: Any) -> HttpRequest:
 
     # Construct URL
     _url = kwargs.pop(
-        "template_url", "/subscriptions/{subscriptionId}/providers/Microsoft.Maintenance/maintenanceConfigurations"
+        "template_url",
+        "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Maintenance/configurationAssignments/{configurationAssignmentName}",
     )  # pylint: disable=line-too-long
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "configurationAssignmentName": _SERIALIZER.url(
+            "configuration_assignment_name", configuration_assignment_name, "str"
+        ),
     }
 
     _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
@@ -188,17 +170,17 @@ def build_list_request(subscription_id: str, **kwargs: Any) -> HttpRequest:
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class MaintenanceConfigurationsOperations:
+class ConfigurationAssignmentsForResourceGroupOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.mgmt.maintenance.MaintenanceManagementClient`'s
-        :attr:`maintenance_configurations` attribute.
+        :attr:`configuration_assignments_for_resource_group` attribute.
     """
 
     models = _models
@@ -211,18 +193,20 @@ class MaintenanceConfigurationsOperations:
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def get(self, resource_group_name: str, resource_name: str, **kwargs: Any) -> _models.MaintenanceConfiguration:
-        """Get Configuration record.
+    def get(
+        self, resource_group_name: str, configuration_assignment_name: str, **kwargs: Any
+    ) -> _models.ConfigurationAssignment:
+        """Get configuration assignment.
 
-        Get Configuration record.
+        Get configuration assignment for resource..
 
-        :param resource_group_name: Resource Group Name. Required.
+        :param resource_group_name: Resource group name. Required.
         :type resource_group_name: str
-        :param resource_name: Maintenance Configuration Name. Required.
-        :type resource_name: str
+        :param configuration_assignment_name: Configuration assignment name. Required.
+        :type configuration_assignment_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: MaintenanceConfiguration or the result of cls(response)
-        :rtype: ~azure.mgmt.maintenance.models.MaintenanceConfiguration
+        :return: ConfigurationAssignment or the result of cls(response)
+        :rtype: ~azure.mgmt.maintenance.models.ConfigurationAssignment
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -237,11 +221,11 @@ class MaintenanceConfigurationsOperations:
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[_models.MaintenanceConfiguration] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ConfigurationAssignment] = kwargs.pop("cls", None)
 
         request = build_get_request(
             resource_group_name=resource_group_name,
-            resource_name=resource_name,
+            configuration_assignment_name=configuration_assignment_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             template_url=self.get.metadata["url"],
@@ -263,7 +247,7 @@ class MaintenanceConfigurationsOperations:
             error = self._deserialize.failsafe_deserialize(_models.MaintenanceError, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("MaintenanceConfiguration", pipeline_response)
+        deserialized = self._deserialize("ConfigurationAssignment", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -271,35 +255,35 @@ class MaintenanceConfigurationsOperations:
         return deserialized
 
     get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Maintenance/maintenanceConfigurations/{resourceName}"
+        "url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Maintenance/configurationAssignments/{configurationAssignmentName}"
     }
 
     @overload
     def create_or_update(
         self,
         resource_group_name: str,
-        resource_name: str,
-        configuration: _models.MaintenanceConfiguration,
+        configuration_assignment_name: str,
+        configuration_assignment: _models.ConfigurationAssignment,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.MaintenanceConfiguration:
-        """Create or Update configuration record.
+    ) -> _models.ConfigurationAssignment:
+        """Create configuration assignment.
 
-        Create or Update configuration record.
+        Register configuration for resource.
 
-        :param resource_group_name: Resource Group Name. Required.
+        :param resource_group_name: Resource group name. Required.
         :type resource_group_name: str
-        :param resource_name: Maintenance Configuration Name. Required.
-        :type resource_name: str
-        :param configuration: The configuration. Required.
-        :type configuration: ~azure.mgmt.maintenance.models.MaintenanceConfiguration
+        :param configuration_assignment_name: Configuration assignment name. Required.
+        :type configuration_assignment_name: str
+        :param configuration_assignment: The configurationAssignment. Required.
+        :type configuration_assignment: ~azure.mgmt.maintenance.models.ConfigurationAssignment
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: MaintenanceConfiguration or the result of cls(response)
-        :rtype: ~azure.mgmt.maintenance.models.MaintenanceConfiguration
+        :return: ConfigurationAssignment or the result of cls(response)
+        :rtype: ~azure.mgmt.maintenance.models.ConfigurationAssignment
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -307,28 +291,28 @@ class MaintenanceConfigurationsOperations:
     def create_or_update(
         self,
         resource_group_name: str,
-        resource_name: str,
-        configuration: IO,
+        configuration_assignment_name: str,
+        configuration_assignment: IO,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.MaintenanceConfiguration:
-        """Create or Update configuration record.
+    ) -> _models.ConfigurationAssignment:
+        """Create configuration assignment.
 
-        Create or Update configuration record.
+        Register configuration for resource.
 
-        :param resource_group_name: Resource Group Name. Required.
+        :param resource_group_name: Resource group name. Required.
         :type resource_group_name: str
-        :param resource_name: Maintenance Configuration Name. Required.
-        :type resource_name: str
-        :param configuration: The configuration. Required.
-        :type configuration: IO
+        :param configuration_assignment_name: Configuration assignment name. Required.
+        :type configuration_assignment_name: str
+        :param configuration_assignment: The configurationAssignment. Required.
+        :type configuration_assignment: IO
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: MaintenanceConfiguration or the result of cls(response)
-        :rtype: ~azure.mgmt.maintenance.models.MaintenanceConfiguration
+        :return: ConfigurationAssignment or the result of cls(response)
+        :rtype: ~azure.mgmt.maintenance.models.ConfigurationAssignment
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -336,27 +320,27 @@ class MaintenanceConfigurationsOperations:
     def create_or_update(
         self,
         resource_group_name: str,
-        resource_name: str,
-        configuration: Union[_models.MaintenanceConfiguration, IO],
+        configuration_assignment_name: str,
+        configuration_assignment: Union[_models.ConfigurationAssignment, IO],
         **kwargs: Any
-    ) -> _models.MaintenanceConfiguration:
-        """Create or Update configuration record.
+    ) -> _models.ConfigurationAssignment:
+        """Create configuration assignment.
 
-        Create or Update configuration record.
+        Register configuration for resource.
 
-        :param resource_group_name: Resource Group Name. Required.
+        :param resource_group_name: Resource group name. Required.
         :type resource_group_name: str
-        :param resource_name: Maintenance Configuration Name. Required.
-        :type resource_name: str
-        :param configuration: The configuration. Is either a MaintenanceConfiguration type or a IO
-         type. Required.
-        :type configuration: ~azure.mgmt.maintenance.models.MaintenanceConfiguration or IO
+        :param configuration_assignment_name: Configuration assignment name. Required.
+        :type configuration_assignment_name: str
+        :param configuration_assignment: The configurationAssignment. Is either a
+         ConfigurationAssignment type or a IO type. Required.
+        :type configuration_assignment: ~azure.mgmt.maintenance.models.ConfigurationAssignment or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: MaintenanceConfiguration or the result of cls(response)
-        :rtype: ~azure.mgmt.maintenance.models.MaintenanceConfiguration
+        :return: ConfigurationAssignment or the result of cls(response)
+        :rtype: ~azure.mgmt.maintenance.models.ConfigurationAssignment
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -372,19 +356,19 @@ class MaintenanceConfigurationsOperations:
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.MaintenanceConfiguration] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ConfigurationAssignment] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
         _content = None
-        if isinstance(configuration, (IOBase, bytes)):
-            _content = configuration
+        if isinstance(configuration_assignment, (IOBase, bytes)):
+            _content = configuration_assignment
         else:
-            _json = self._serialize.body(configuration, "MaintenanceConfiguration")
+            _json = self._serialize.body(configuration_assignment, "ConfigurationAssignment")
 
         request = build_create_or_update_request(
             resource_group_name=resource_group_name,
-            resource_name=resource_name,
+            configuration_assignment_name=configuration_assignment_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,
@@ -410,10 +394,10 @@ class MaintenanceConfigurationsOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
-            deserialized = self._deserialize("MaintenanceConfiguration", pipeline_response)
+            deserialized = self._deserialize("ConfigurationAssignment", pipeline_response)
 
         if response.status_code == 201:
-            deserialized = self._deserialize("MaintenanceConfiguration", pipeline_response)
+            deserialized = self._deserialize("ConfigurationAssignment", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -421,103 +405,35 @@ class MaintenanceConfigurationsOperations:
         return deserialized  # type: ignore
 
     create_or_update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Maintenance/maintenanceConfigurations/{resourceName}"
-    }
-
-    @distributed_trace
-    def delete(
-        self, resource_group_name: str, resource_name: str, **kwargs: Any
-    ) -> Optional[_models.MaintenanceConfiguration]:
-        """Delete Configuration record.
-
-        Delete Configuration record.
-
-        :param resource_group_name: Resource Group Name. Required.
-        :type resource_group_name: str
-        :param resource_name: Maintenance Configuration Name. Required.
-        :type resource_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: MaintenanceConfiguration or None or the result of cls(response)
-        :rtype: ~azure.mgmt.maintenance.models.MaintenanceConfiguration or None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[Optional[_models.MaintenanceConfiguration]] = kwargs.pop("cls", None)
-
-        request = build_delete_request(
-            resource_group_name=resource_group_name,
-            resource_name=resource_name,
-            subscription_id=self._config.subscription_id,
-            api_version=api_version,
-            template_url=self.delete.metadata["url"],
-            headers=_headers,
-            params=_params,
-        )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
-
-        _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.MaintenanceError, pipeline_response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize("MaintenanceConfiguration", pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-
-    delete.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Maintenance/maintenanceConfigurations/{resourceName}"
+        "url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Maintenance/configurationAssignments/{configurationAssignmentName}"
     }
 
     @overload
     def update(
         self,
         resource_group_name: str,
-        resource_name: str,
-        configuration: _models.MaintenanceConfiguration,
+        configuration_assignment_name: str,
+        configuration_assignment: _models.ConfigurationAssignment,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.MaintenanceConfiguration:
-        """Patch configuration record.
+    ) -> _models.ConfigurationAssignment:
+        """Create configuration assignment.
 
-        Patch configuration record.
+        Register configuration for resource.
 
-        :param resource_group_name: Resource Group Name. Required.
+        :param resource_group_name: Resource group name. Required.
         :type resource_group_name: str
-        :param resource_name: Maintenance Configuration Name. Required.
-        :type resource_name: str
-        :param configuration: The configuration. Required.
-        :type configuration: ~azure.mgmt.maintenance.models.MaintenanceConfiguration
+        :param configuration_assignment_name: Configuration assignment name. Required.
+        :type configuration_assignment_name: str
+        :param configuration_assignment: The configurationAssignment. Required.
+        :type configuration_assignment: ~azure.mgmt.maintenance.models.ConfigurationAssignment
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: MaintenanceConfiguration or the result of cls(response)
-        :rtype: ~azure.mgmt.maintenance.models.MaintenanceConfiguration
+        :return: ConfigurationAssignment or the result of cls(response)
+        :rtype: ~azure.mgmt.maintenance.models.ConfigurationAssignment
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -525,28 +441,28 @@ class MaintenanceConfigurationsOperations:
     def update(
         self,
         resource_group_name: str,
-        resource_name: str,
-        configuration: IO,
+        configuration_assignment_name: str,
+        configuration_assignment: IO,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.MaintenanceConfiguration:
-        """Patch configuration record.
+    ) -> _models.ConfigurationAssignment:
+        """Create configuration assignment.
 
-        Patch configuration record.
+        Register configuration for resource.
 
-        :param resource_group_name: Resource Group Name. Required.
+        :param resource_group_name: Resource group name. Required.
         :type resource_group_name: str
-        :param resource_name: Maintenance Configuration Name. Required.
-        :type resource_name: str
-        :param configuration: The configuration. Required.
-        :type configuration: IO
+        :param configuration_assignment_name: Configuration assignment name. Required.
+        :type configuration_assignment_name: str
+        :param configuration_assignment: The configurationAssignment. Required.
+        :type configuration_assignment: IO
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: MaintenanceConfiguration or the result of cls(response)
-        :rtype: ~azure.mgmt.maintenance.models.MaintenanceConfiguration
+        :return: ConfigurationAssignment or the result of cls(response)
+        :rtype: ~azure.mgmt.maintenance.models.ConfigurationAssignment
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -554,27 +470,27 @@ class MaintenanceConfigurationsOperations:
     def update(
         self,
         resource_group_name: str,
-        resource_name: str,
-        configuration: Union[_models.MaintenanceConfiguration, IO],
+        configuration_assignment_name: str,
+        configuration_assignment: Union[_models.ConfigurationAssignment, IO],
         **kwargs: Any
-    ) -> _models.MaintenanceConfiguration:
-        """Patch configuration record.
+    ) -> _models.ConfigurationAssignment:
+        """Create configuration assignment.
 
-        Patch configuration record.
+        Register configuration for resource.
 
-        :param resource_group_name: Resource Group Name. Required.
+        :param resource_group_name: Resource group name. Required.
         :type resource_group_name: str
-        :param resource_name: Maintenance Configuration Name. Required.
-        :type resource_name: str
-        :param configuration: The configuration. Is either a MaintenanceConfiguration type or a IO
-         type. Required.
-        :type configuration: ~azure.mgmt.maintenance.models.MaintenanceConfiguration or IO
+        :param configuration_assignment_name: Configuration assignment name. Required.
+        :type configuration_assignment_name: str
+        :param configuration_assignment: The configurationAssignment. Is either a
+         ConfigurationAssignment type or a IO type. Required.
+        :type configuration_assignment: ~azure.mgmt.maintenance.models.ConfigurationAssignment or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: MaintenanceConfiguration or the result of cls(response)
-        :rtype: ~azure.mgmt.maintenance.models.MaintenanceConfiguration
+        :return: ConfigurationAssignment or the result of cls(response)
+        :rtype: ~azure.mgmt.maintenance.models.ConfigurationAssignment
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -590,19 +506,19 @@ class MaintenanceConfigurationsOperations:
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.MaintenanceConfiguration] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ConfigurationAssignment] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
         _content = None
-        if isinstance(configuration, (IOBase, bytes)):
-            _content = configuration
+        if isinstance(configuration_assignment, (IOBase, bytes)):
+            _content = configuration_assignment
         else:
-            _json = self._serialize.body(configuration, "MaintenanceConfiguration")
+            _json = self._serialize.body(configuration_assignment, "ConfigurationAssignment")
 
         request = build_update_request(
             resource_group_name=resource_group_name,
-            resource_name=resource_name,
+            configuration_assignment_name=configuration_assignment_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,
@@ -627,7 +543,7 @@ class MaintenanceConfigurationsOperations:
             error = self._deserialize.failsafe_deserialize(_models.MaintenanceError, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("MaintenanceConfiguration", pipeline_response)
+        deserialized = self._deserialize("ConfigurationAssignment", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -635,27 +551,26 @@ class MaintenanceConfigurationsOperations:
         return deserialized
 
     update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Maintenance/maintenanceConfigurations/{resourceName}"
+        "url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Maintenance/configurationAssignments/{configurationAssignmentName}"
     }
 
     @distributed_trace
-    def list(self, **kwargs: Any) -> Iterable["_models.MaintenanceConfiguration"]:
-        """Get Configuration records within a subscription.
+    def delete(
+        self, resource_group_name: str, configuration_assignment_name: str, **kwargs: Any
+    ) -> Optional[_models.ConfigurationAssignment]:
+        """Unregister configuration for resource.
 
-        Get Configuration records within a subscription.
+        Unregister configuration for resource.
 
+        :param resource_group_name: Resource group name. Required.
+        :type resource_group_name: str
+        :param configuration_assignment_name: Unique configuration assignment name. Required.
+        :type configuration_assignment_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either MaintenanceConfiguration or the result of
-         cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.maintenance.models.MaintenanceConfiguration]
+        :return: ConfigurationAssignment or None or the result of cls(response)
+        :rtype: ~azure.mgmt.maintenance.models.ConfigurationAssignment or None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[_models.ListMaintenanceConfigurationsResult] = kwargs.pop("cls", None)
-
         error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -664,60 +579,45 @@ class MaintenanceConfigurationsOperations:
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        def prepare_request(next_link=None):
-            if not next_link:
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-                request = build_list_request(
-                    subscription_id=self._config.subscription_id,
-                    api_version=api_version,
-                    template_url=self.list.metadata["url"],
-                    headers=_headers,
-                    params=_params,
-                )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        cls: ClsType[Optional[_models.ConfigurationAssignment]] = kwargs.pop("cls", None)
 
-            else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+        request = build_delete_request(
+            resource_group_name=resource_group_name,
+            configuration_assignment_name=configuration_assignment_name,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            template_url=self.delete.metadata["url"],
+            headers=_headers,
+            params=_params,
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
 
-        def extract_data(pipeline_response):
-            deserialized = self._deserialize("ListMaintenanceConfigurationsResult", pipeline_response)
-            list_of_elem = deserialized.value
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return None, iter(list_of_elem)
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
+        )
 
-        def get_next(next_link=None):
-            request = prepare_request(next_link)
+        response = pipeline_response.http_response
 
-            _stream = False
-            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
+        if response.status_code not in [200, 204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.MaintenanceError, pipeline_response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.MaintenanceError, pipeline_response)
-                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize("ConfigurationAssignment", pipeline_response)
 
-            return pipeline_response
+        if cls:
+            return cls(pipeline_response, deserialized, {})
 
-        return ItemPaged(get_next, extract_data)
+        return deserialized
 
-    list.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Maintenance/maintenanceConfigurations"}
+    delete.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Maintenance/configurationAssignments/{configurationAssignmentName}"
+    }
