@@ -32,4 +32,6 @@ extends:
       safeName: azureschemaregistry
     - name: azure-schemaregistry-avroencoder
       safeName: azureschemaregistryavroencoder
+    - name: azure-schemaregistry-avroserializer
+      safeName: azure-schemaregistry-avroserializer
     TestProxy: true
