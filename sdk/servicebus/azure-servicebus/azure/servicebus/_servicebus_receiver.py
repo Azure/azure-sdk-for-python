@@ -13,6 +13,8 @@ import warnings
 from enum import Enum
 from typing import Any, List, Optional, Dict, Iterator, Union, TYPE_CHECKING, cast
 
+from azure.servicebus._pyamqp.error import AMQPConnectionError
+
 from .exceptions import MessageLockLostError
 from ._base_handler import BaseHandler
 from ._common.message import ServiceBusReceivedMessage
@@ -353,7 +355,9 @@ class ServiceBusReceiver(
 
     def _open(self):
         # pylint: disable=protected-access
+        print(f"the value of {self._running} while trying to open the handler")
         if self._running:
+            print(f"ITS TRUEEEEE")
             return
         if self._handler and not self._handler._shutdown:
             self._handler.close()
@@ -504,7 +508,7 @@ class ServiceBusReceiver(
                         dead_letter_error_description=dead_letter_error_description,
                     )
                     return
-                except RuntimeError as exception:
+                except (AttributeError, AMQPConnectionError, RuntimeError) as exception:
                     _LOGGER.info(
                         "Message settling: %r has encountered an exception (%r)."
                         "Trying to settle through management link",
