@@ -21,6 +21,9 @@ _MACHINE_NAME = node()
 _STATUS_LOG_PATH = _get_log_path(status_log_path=True)
 
 
+def _get_status_logger_file_name(pid):
+    return f"status_{_MACHINE_NAME}_{pid}.json"
+
 class AzureStatusLogger:
     @classmethod
     def _get_status_json(
@@ -49,7 +52,7 @@ class AzureStatusLogger:
             if not exists(_STATUS_LOG_PATH):
                 makedirs(_STATUS_LOG_PATH)
             # Change to be hostname and pid
-            status_logger_file_name = f"status_{_MACHINE_NAME}_{pid}.json"
+            status_logger_file_name = _get_status_logger_file_name(pid)
             with open(
                 join(_STATUS_LOG_PATH, status_logger_file_name), "w"
             ) as f:

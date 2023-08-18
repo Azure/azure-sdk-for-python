@@ -12,14 +12,15 @@ from unittest.mock import patch
 
 from azure.monitor.opentelemetry.diagnostics._status_logger import (
     AzureStatusLogger,
+    _get_status_logger_file_name
 )
 
 TEST_LOGGER_PATH = str(Path.home())
 TEST_MACHINE_NAME = "TEST_MACHINE_NAME"
 TEST_PID = 321
-TEST_STATUS_LOGGER_LOCATION = join(
-    TEST_LOGGER_PATH, f"status_{TEST_MACHINE_NAME}_{TEST_PID}.json"
-)
+# TEST_STATUS_LOGGER_LOCATION = join(
+#     TEST_LOGGER_PATH, f"status_{TEST_MACHINE_NAME}_{TEST_PID}.json"
+# )
 TEST_OPERATION = "TEST_OPERATION"
 TEST_OPERATION = "TEST_OPERATION"
 TEST_SITE_NAME = "TEST_SITE_NAME"
@@ -31,14 +32,21 @@ MESSAGE1 = "MESSAGE1"
 MESSAGE2 = "MESSAGE2"
 
 
-def clear_file():
-    with open(TEST_STATUS_LOGGER_LOCATION, "w") as f:
+def get_test_file_name(test_id):
+    return f"status_{TEST_MACHINE_NAME}_{TEST_PID}_{test_id}.json"
+
+def get_test_file_location(test_id):
+    return join(
+        TEST_LOGGER_PATH, get_test_file_name(test_id) 
+    )
+
+def clear_file(test_id):
+    with open(get_test_file_location(test_id), "w") as f:
         f.seek(0)
         f.truncate()
 
-
-def check_file_for_messages(agent_initialized_successfully, reason=None):
-    with open(TEST_STATUS_LOGGER_LOCATION, "r") as f:
+def check_file_for_messages(agent_initialized_successfully, test_id, reason=None):
+    with open(get_test_file_location(test_id), "r") as f:
         f.seek(0)
         json = loads(f.readline())
         assert (
@@ -58,15 +66,19 @@ def check_file_for_messages(agent_initialized_successfully, reason=None):
         assert not f.read()
 
 
-def check_file_is_empty():
-    with open(TEST_STATUS_LOGGER_LOCATION, "r") as f:
+def check_file_is_empty(test_id):
+    with open(get_test_file_location(test_id), "r") as f:
         f.seek(0)
         assert not f.read()
 
 
 class TestStatusLogger(TestCase):
     def setUp(self) -> None:
-        clear_file()
+        clear_file(test_id=self.id())
+        patch(
+            "azure.monitor.opentelemetry.diagnostics._status_logger._get_status_logger_file_name",
+            return_value=get_test_file_name(self.id()),
+        ).start()
 
     @patch(
         "azure.monitor.opentelemetry.diagnostics._status_logger._STATUS_LOG_PATH",
@@ -99,7 +111,7 @@ class TestStatusLogger(TestCase):
     def test_log_status_success(self, mock_getpid, mock_get_ikey):
         AzureStatusLogger.log_status(False, MESSAGE1)
         AzureStatusLogger.log_status(True, MESSAGE2)
-        check_file_for_messages(True, MESSAGE2)
+        check_file_for_messages(True, self.id(), MESSAGE2)
 
     @patch(
         "azure.monitor.opentelemetry.diagnostics._status_logger._STATUS_LOG_PATH",
@@ -134,7 +146,7 @@ class TestStatusLogger(TestCase):
     ):
         AzureStatusLogger.log_status(True, MESSAGE1)
         AzureStatusLogger.log_status(False, MESSAGE2)
-        check_file_for_messages(False, MESSAGE2)
+        check_file_for_messages(False, self.id(), MESSAGE2)
 
     @patch(
         "azure.monitor.opentelemetry.diagnostics._status_logger._STATUS_LOG_PATH",
@@ -167,7 +179,7 @@ class TestStatusLogger(TestCase):
     def test_log_status_no_reason(self, mock_getpid, mock_get_ikey):
         AzureStatusLogger.log_status(False, MESSAGE1)
         AzureStatusLogger.log_status(True)
-        check_file_for_messages(True)
+        check_file_for_messages(True, self.id())
 
     @patch(
         "azure.monitor.opentelemetry.diagnostics._status_logger._STATUS_LOG_PATH",
@@ -200,7 +212,7 @@ class TestStatusLogger(TestCase):
     def test_disabled_log_status_success(self, mock_getpid, mock_get_ikey):
         AzureStatusLogger.log_status(False, MESSAGE1)
         AzureStatusLogger.log_status(True, MESSAGE2)
-        check_file_is_empty()
+        check_file_is_empty(self.id())
 
     @patch(
         "azure.monitor.opentelemetry.diagnostics._status_logger._STATUS_LOG_PATH",
@@ -235,12 +247,12 @@ class TestStatusLogger(TestCase):
     ):
         AzureStatusLogger.log_status(True, MESSAGE1)
         AzureStatusLogger.log_status(False, MESSAGE2)
-        check_file_is_empty()
+        check_file_is_empty(self.id())
 
-    @patch(
-        "azure.monitor.opentelemetry.diagnostics._status_logger._STATUS_LOG_PATH",
-        TEST_LOGGER_PATH,
-    )
+    # @patch(
+    #     "azure.monitor.opentelemetry.diagnostics._status_logger._STATUS_LOG_PATH",
+    #     TEST_LOGGER_PATH,
+    # )
     @patch(
         "azure.monitor.opentelemetry.diagnostics._status_logger._get_customer_ikey_from_env_var",
         return_value=TEST_CUSTOMER_IKEY,
@@ -268,4 +280,14 @@ class TestStatusLogger(TestCase):
     def test_disabled_log_status_no_reason(self, mock_getpid, mock_get_ikey):
         AzureStatusLogger.log_status(False, MESSAGE1)
         AzureStatusLogger.log_status(True)
-        check_file_is_empty()
+        check_file_is_empty(self.id())
+
+    @patch(
+        "azure.monitor.opentelemetry.diagnostics._status_logger._MACHINE_NAME",
+        TEST_MACHINE_NAME,
+    )
+    def test_get_status_logger_file_name(self):
+        self.assertEqual(
+            _get_status_logger_file_name(TEST_PID),
+            f"status_{TEST_MACHINE_NAME}_{TEST_PID}.json"
+        )
