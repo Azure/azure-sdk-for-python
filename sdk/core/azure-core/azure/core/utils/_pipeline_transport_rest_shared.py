@@ -33,7 +33,6 @@ from ..pipeline import (
     PipelineContext,
 )
 from ..pipeline._tools import await_result as _await_result
-from ..exceptions import DecodeError
 
 if TYPE_CHECKING:
     # importing both the py3 RestHttpRequest and the fallback RestHttpRequest
@@ -244,32 +243,23 @@ def _decode_parts_helper(
             try:
                 matching_request = requests[index]
             except IndexError:
-                raise DecodeError("Multipart response has no matching request.", response=response) from None
+                # If we have no matching request, this could mean that we had an empty batch.
+                # The request object is only needed to get the HTTP METHOD and to store in the response object,
+                # so let's just use the parent request so allow the rest of the deserialization to continue.
+                matching_request = response.request
             responses.append(
                 deserialize_response(
                     raw_response.get_payload(decode=True),
-                    requests[index],
+                    matching_request,
                     http_response_type=http_response_type,
                 )
             )
         elif content_type == "multipart/mixed" and requests[index].multipart_mixed_info:
             # The message batch contains one or more change sets
             changeset_requests = requests[index].multipart_mixed_info[0]  # type: ignore
-            try:
-                changeset_responses = response._decode_parts(  # pylint: disable=protected-access
-                    raw_response, http_response_type, changeset_requests
-                )
-            except DecodeError:
-                if not changeset_requests:
-                    # We have an odd scenario where we have changeset responses but no changeset requests.
-                    # We'll try using the parent requests as the context for attempting to decode the responses.
-                    # The request object is only used to provide the HTTP method, and is stored in the response
-                    # object attribute, so this should be safe.
-                    changeset_responses = response._decode_parts(  # pylint: disable=protected-access
-                        raw_response, http_response_type, requests
-                    )
-                else:
-                    raise
+            changeset_responses = response._decode_parts(  # pylint: disable=protected-access
+                raw_response, http_response_type, changeset_requests
+            )
             responses.extend(changeset_responses)
         else:
             raise ValueError("Multipart doesn't support part other than application/http for now")
