@@ -5,8 +5,7 @@
 # license information.
 # --------------------------------------------------------------------------
 import asyncio
-from collections.abc import AsyncIterator, Iterator
-from typing import TYPE_CHECKING, Any, List, Generic, TypeVar, Type, Optional
+from typing import TYPE_CHECKING, List, Generic, TypeVar, Type, Optional, AsyncIterator, Iterator
 from ..pipeline import PipelineContext, PipelineRequest, PipelineResponse
 from ..pipeline._tools_async import await_result as _await_result
 
@@ -17,7 +16,7 @@ if TYPE_CHECKING:
 HttpResponseType = TypeVar("HttpResponseType")
 
 
-class _PartGenerator(AsyncIterator, Generic[HttpResponseType]):
+class _PartGenerator(AsyncIterator[HttpResponseType], Generic[HttpResponseType]):
     """Until parts is a real async iterator, wrap the sync call.
 
     :param response: The response to parse

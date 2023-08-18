@@ -25,7 +25,9 @@
 # --------------------------------------------------------------------------
 import datetime
 import email.utils
-from typing import Optional, cast, TypeVar, Union
+from typing import Optional, cast, Union
+from urllib.parse import urlparse
+
 from azure.core.pipeline.transport import (
     HttpResponse as LegacyHttpResponse,
     AsyncHttpResponse as LegacyAsyncHttpResponse,
@@ -34,7 +36,6 @@ from azure.core.pipeline.transport import (
 from azure.core.rest import HttpResponse, AsyncHttpResponse, HttpRequest
 
 
-from urllib.parse import urlparse
 from ...utils._utils import _FixedOffset, case_insensitive_dict
 from .. import PipelineResponse
 
