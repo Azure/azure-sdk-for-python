@@ -46,7 +46,7 @@ class Resource(abc.ABC):
         description: Optional[str] = None,
         tags: Optional[Dict] = None,
         properties: Optional[Dict] = None,
-        **kwargs: Optional[str],
+        **kwargs,
     ) -> None:
 
         self.name = name
@@ -75,7 +75,7 @@ class Resource(abc.ABC):
         return self.__source_path
 
     @_source_path.setter
-    def _source_path(self, value: Union[str, PathLike]) -> None:
+    def _source_path(self, value: Union[str, PathLike]):
         self.__source_path = Path(value).as_posix()
 
     @property
@@ -85,7 +85,7 @@ class Resource(abc.ABC):
         :return: The global ID of the resource, an Azure Resource Manager (ARM) ID.
         :rtype: Optional[str]
         """
-        return str(self._id)
+        return self._id
 
     @property
     def creation_context(self) -> Optional[SystemData]:
@@ -155,7 +155,10 @@ class Resource(abc.ABC):
         """
 
     # pylint: disable:unused-argument
-    def _get_arm_resource(self, **kwargs) -> Dict:
+    def _get_arm_resource(
+        self,
+        **kwargs,  # pylint: disable=unused-argument
+    ):
         """Get arm resource.
 
         :keyword kwargs: A dictionary of additional configuration parameters.
@@ -170,7 +173,7 @@ class Resource(abc.ABC):
         template = get_template(resource_type=self._arm_type)
         # pylint: disable=no-member
         template["copy"]["name"] = f"{self._arm_type}Deployment"
-        return Dict(template)
+        return template
 
     def _get_arm_resource_and_params(self, **kwargs):
         """Get arm resource and parameters.
@@ -194,5 +197,5 @@ class Resource(abc.ABC):
         if hasattr(self, "print_as_yaml") and self.print_as_yaml:
             # pylint: disable=no-member
             yaml_serialized = self._to_dict()
-            return str(dump_yaml(yaml_serialized, default_flow_style=False))
+            return dump_yaml(yaml_serialized, default_flow_style=False)
         return self.__repr__()
