@@ -364,7 +364,12 @@ def test_add_custom_policy():
     pos_retry = policies.index(retry_policy)
     assert pos_boo > pos_retry
 
-    client = PipelineClient(base_url="test", config=config, per_call_policies=boo_policy, per_retry_policies=foo_policy)
+    client = PipelineClient(
+        base_url="test",
+        config=config,
+        per_call_policies=boo_policy,
+        per_retry_policies=foo_policy,
+    )
     policies = client._pipeline._impl_policies
     assert boo_policy in policies
     assert foo_policy in policies
@@ -375,7 +380,10 @@ def test_add_custom_policy():
     assert pos_foo > pos_retry
 
     client = PipelineClient(
-        base_url="test", config=config, per_call_policies=[boo_policy], per_retry_policies=[foo_policy]
+        base_url="test",
+        config=config,
+        per_call_policies=[boo_policy],
+        per_retry_policies=[foo_policy],
     )
     policies = client._pipeline._impl_policies
     assert boo_policy in policies
@@ -402,13 +410,19 @@ def test_add_custom_policy():
     assert foo_policy == actual_policies[2]
 
     client = PipelineClient(
-        base_url="test", policies=policies, per_call_policies=boo_policy, per_retry_policies=foo_policy
+        base_url="test",
+        policies=policies,
+        per_call_policies=boo_policy,
+        per_retry_policies=foo_policy,
     )
     actual_policies = client._pipeline._impl_policies
     assert boo_policy == actual_policies[0]
     assert foo_policy == actual_policies[3]
     client = PipelineClient(
-        base_url="test", policies=policies, per_call_policies=[boo_policy], per_retry_policies=[foo_policy]
+        base_url="test",
+        policies=policies,
+        per_call_policies=[boo_policy],
+        per_retry_policies=[foo_policy],
     )
     actual_policies = client._pipeline._impl_policies
     assert boo_policy == actual_policies[0]
