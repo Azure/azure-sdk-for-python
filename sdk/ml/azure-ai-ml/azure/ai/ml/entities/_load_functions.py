@@ -49,7 +49,7 @@ _DEFAULT_RELATIVE_ORIGIN = "./"
 def load_common(
     cls: Type[Resource],
     source: Union[str, PathLike, IO[AnyStr]],
-    relative_origin: str,
+    relative_origin: Optional[str] = None,
     params_override: Optional[list] = None,
     **kwargs,
 ) -> Resource:
@@ -80,7 +80,7 @@ def load_common(
 
     if relative_origin is None:
         if isinstance(source, (str, PathLike)):
-            relative_origin = source
+            relative_origin = str(source)
         else:
             try:
                 relative_origin = source.name
@@ -139,7 +139,7 @@ def _try_load_yaml_dict(source: Union[str, PathLike, IO[AnyStr]]) -> dict:
 def _load_common_raising_marshmallow_error(
     cls: Type[Resource],
     yaml_dict,
-    relative_origin: Union[PathLike, str],
+    relative_origin: Union[PathLike, str, None],
     params_override: Optional[list] = None,
     **kwargs,
 ) -> Resource:
