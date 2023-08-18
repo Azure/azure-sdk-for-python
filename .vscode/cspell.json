@@ -833,6 +833,7 @@
         "speced",
         "pkgutils",
         "psycopg",
+        "reqctx",
         "uninstrument",
         "uninstrumented"
       ]
