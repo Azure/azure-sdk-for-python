@@ -9,9 +9,9 @@ from os import PathLike
 from pathlib import Path
 from typing import IO, AnyStr, Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import CreateMonitorAction, RecurrenceFrequency
-from azure.ai.ml._restclient.v2023_04_01_preview.models import Schedule as RestSchedule
-from azure.ai.ml._restclient.v2023_04_01_preview.models import ScheduleProperties
+from azure.ai.ml._restclient.v2023_06_01_preview.models import CreateMonitorAction, RecurrenceFrequency
+from azure.ai.ml._restclient.v2023_06_01_preview.models import Schedule as RestSchedule
+from azure.ai.ml._restclient.v2023_06_01_preview.models import ScheduleProperties
 from azure.ai.ml._schema.monitoring.schedule import MonitorScheduleSchema
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils.utils import dump_yaml_to_file

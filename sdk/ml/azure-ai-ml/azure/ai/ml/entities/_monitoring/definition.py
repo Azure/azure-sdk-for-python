@@ -31,7 +31,7 @@ from azure.ai.ml.entities._monitoring.signals import (
     PredictionDriftSignal,
 )
 from azure.ai.ml.entities._monitoring.target import MonitoringTarget
-from azure.ai.ml.entities._monitoring.compute import ServerLessSparkCompute
+from azure.ai.ml.entities._monitoring.compute import ServerlessSparkCompute
 
 
 @experimental
@@ -66,7 +66,7 @@ class MonitorDefinition(RestTranslatableMixin):
     def __init__(
         self,
         *,
-        compute: ServerLessSparkCompute,
+        compute: ServerlessSparkCompute,
         monitoring_target: Optional[MonitoringTarget] = None,
         monitoring_signals:Dict[
             str,
@@ -77,7 +77,7 @@ class MonitorDefinition(RestTranslatableMixin):
                 FeatureAttributionDriftSignal,
                 CustomMonitoringSignal,
             ],
-        ]
+        ] = None
         ,
         alert_notification: Optional[Union[Literal[AZMONITORING], AlertNotification]] = None,
     ) -> None:
@@ -118,7 +118,7 @@ class MonitorDefinition(RestTranslatableMixin):
             else:
                 from_rest_alert_notification = AlertNotification._from_rest_object(obj.alert_notification_setting)
         return cls(
-            compute=ServerLessSparkCompute._from_rest_object(obj.compute_configuration),
+            compute=ServerlessSparkCompute._from_rest_object(obj.compute_configuration),
             monitoring_target=MonitoringTarget(endpoint_deployment_id=obj.monitoring_target.deployment_id, ml_task=obj.monitoring_target.task_type),
             monitoring_signals={
                 signal_name: MonitoringSignal._from_rest_object(signal) for signal_name, signal in obj.signals.items()

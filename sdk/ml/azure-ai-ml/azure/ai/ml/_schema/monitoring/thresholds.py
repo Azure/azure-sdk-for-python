@@ -22,9 +22,9 @@ class NumericalDriftMetricsSchema(metaclass=PatchedSchemaMeta):
 
     @post_load
     def make(self, data, **kwargs):
-        from azure.ai.ml.entities._monitoring.thresholds import NumericalDataDriftMetrics
+        from azure.ai.ml.entities._monitoring.thresholds import NumericalDriftMetrics
 
-        return NumericalDataDriftMetrics(**data)
+        return NumericalDriftMetrics(**data)
 
 class CategoricalDriftMetricsSchema(metaclass=PatchedSchemaMeta):
     jensen_shannon_distance = fields.Number()
@@ -33,9 +33,9 @@ class CategoricalDriftMetricsSchema(metaclass=PatchedSchemaMeta):
 
     @post_load
     def make(self, data, **kwargs):
-        from azure.ai.ml.entities._monitoring.thresholds import CategoricalDataDriftMetrics
+        from azure.ai.ml.entities._monitoring.thresholds import CategoricalDriftMetrics
 
-        return CategoricalDataDriftMetrics(**data)
+        return CategoricalDriftMetrics(**data)
 
 class DataDriftMetricThresholdSchema(MetricThresholdSchema):
     data_type = StringTransformedEnum(

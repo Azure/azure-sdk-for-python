@@ -11,6 +11,7 @@ from azure.ai.ml._restclient.v2023_06_01_preview.models import(
 )
 
 
+@experimental
 class ComputeIdentity:
     def __init__(
         self, 
@@ -32,7 +33,8 @@ class ComputeIdentity:
             identity_type="AmlToken",
         )
 
-class ServerLessSparkCompute():
+@experimental
+class ServerlessSparkCompute():
     def __init__(
         self,
         *,
@@ -52,7 +54,7 @@ class ServerLessSparkCompute():
         )
 
     @classmethod
-    def _from_rest_object(cls, obj: MonitorServerlessSparkCompute) -> "ServerLessSparkCompute":
+    def _from_rest_object(cls, obj: MonitorServerlessSparkCompute) -> "ServerlessSparkCompute":
         return cls(
             runtime_version=obj.runtime_version,
             instance_type=obj.instance_type,

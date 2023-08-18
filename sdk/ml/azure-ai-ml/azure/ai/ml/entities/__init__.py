@@ -174,7 +174,6 @@ from ._monitoring.signals import (
     PredictionDriftSignal,
     FeatureAttributionDriftSignal,
     CustomMonitoringSignal,
-    TargetDataset,
     MonitorFeatureFilter,
     DataSegment,
 )

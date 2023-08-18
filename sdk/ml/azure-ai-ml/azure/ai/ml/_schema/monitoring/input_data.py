@@ -15,7 +15,7 @@ from azure.ai.ml._schema.job.input_output_entry import MLTableInputSchema, DataI
 class MonitorInputDataSchema(metaclass=PatchedSchemaMeta):
     input_data = UnionField(union_fields=[NestedField(DataInputSchema), NestedField(MLTableInputSchema)])
     data_context = StringTransformedEnum(allowed_values=[o.value for o in MonitorDatasetContext])
-    target_column_name = fields.Str()
+    target_columns = fields.Dict()
     job_type = fields.Str()
     uri = fields.Str()
 
@@ -38,9 +38,8 @@ class TrailingInputDataSchema(MonitorInputDataSchema):
     
 class StaticInputDataSchema(MonitorInputDataSchema):
     pre_processing_component = fields.Str()
-    window_start = fields.DateTime()
-    window_end = fields.DateTime()
-
+    window_start = fields.Date('%Y-%m-%d')
+    window_end = fields.Date('%Y-%m-%d')
 
     @post_load
     def make(self, data, **kwargs):

@@ -15,8 +15,18 @@
       "action": {
         "actionType": "CreateMonitor",
         "monitorDefinition": {
-          "computeId": "spark",
-          "monitoringTarget": "fake_endpoint_deployment_id",
+          "computeConfiguration":{
+            "computeType": "ServerlessSpark",
+            "instanceType": "standard_e8s_v3",
+            "runtimeVersion": "3.2",
+            "computeIdentity": {
+                "computeIdentityType": "AmlToken"
+            }
+          },
+          "monitoringTarget":{
+            "deploymentId": "fake_endpoint_deployment_id",
+            "mlTask": "classification"
+          },
           "signals": {
             "data-drift-signal": {
               "lookbackPeriod": "P7D",

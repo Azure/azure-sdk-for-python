@@ -20,15 +20,15 @@ class ComputeIdentitySchema(metaclass=PatchedSchemaMeta):
         return ComputeIdentity(**data)
 
 class ComputeConfigurationSchema(metaclass=PatchedSchemaMeta):
-    compute_type = fields.Str(allowed_values=["ServerLessSpark"])
+    compute_type = fields.Str(allowed_values=["ServerlessSpark"])
 
-class ServerLessSparkComputeSchema(ComputeConfigurationSchema):
+class ServerlessSparkComputeSchema(ComputeConfigurationSchema):
     runtime_version = fields.Str()
     instance_type = fields.Str()
     compute_identity = NestedField(ComputeIdentitySchema)
 
     @post_load
     def make(self, data, **kwargs):
-        from azure.ai.ml.entities._monitoring.compute import ServerLessSparkCompute
+        from azure.ai.ml.entities._monitoring.compute import ServerlessSparkCompute
 
-        return ServerLessSparkCompute(**data)
+        return ServerlessSparkCompute(**data)

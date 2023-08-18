@@ -27,7 +27,6 @@ create_monitor:
   monitoring_signals:
     testSignal:
       type: feature_attribution_drift
-      alert_enabled: true
       production_data:
         - input_data:
             path: azureml:my_model_inputs_data:1
@@ -35,11 +34,21 @@ create_monitor:
           data_context: model_inputs
           data_column_names:
             correlation_id: inference_correlation_id
+        - input_data:
+            path: azureml:my_model_outputs_data:1
+            type: mltable
+          data_context: model_outputs
+          data_column_names:
+            prediction: is_fraud
+            prediction_probability: is_fraud_probability
+            correlation_id: inference_correlation_id
       reference_data:
         input_data:
+          path: azureml:my_model_training_data:1
           type: mltable
-          path: azureml:Direct:1
-        data_context: test
+        data_context: training
+        target_column_name: target
+      alert_enabled: true
       metric_thresholds:
         normalized_discounted_cumulative_gain: 0.2
 properties:
