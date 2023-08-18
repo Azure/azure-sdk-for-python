@@ -4,6 +4,8 @@
 
 # pylint: disable=protected-access
 
+import time
+import uuid
 from typing import Dict, Iterable
 
 from marshmallow.exceptions import ValidationError as SchemaValidationError
@@ -15,6 +17,7 @@ from azure.ai.ml._restclient.v2022_10_01.models import (
     DatastoreSecrets,
     NoneDatastoreCredentials,
 )
+from azure.ai.ml._restclient.v2023_04_01_preview.models import ComputeInstanceDataMount
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope, _ScopeDependentOperations
 
 from azure.ai.ml._utils._experimental import experimental
@@ -210,6 +213,39 @@ class DatastoreOperations(_ScopeDependentOperations):
             self._operation_scope._subscription_id, self._resource_group_name, self._workspace_name, path
         )
         if persistent and ci_name is not None:
-            raise NotImplementedError("TODO")
+            mount_name = f"unified_mount_{str(uuid.uuid4()).replace('-', '')}" # TODO: allow user to specify name
+            self._compute_operation.update_data_mounts(
+                self._resource_group_name,
+                self._workspace_name,
+                ci_name,
+                [ComputeInstanceDataMount(
+                    source=uri,
+                    source_type="URI",
+                    mount_name=mount_name,
+                    mount_action="Mount",
+                )],
+                api_version="2021-01-01",
+            )
+            print(f"Mount requested [name: {mount_name}]. Waiting for completion ...")
+            while True:
+                compute = self._compute_operation.get(
+                    self._resource_group_name,
+                    self._workspace_name,
+                    ci_name)
+                mounts = compute.properties.properties.data_mounts
+                try:
+                    mount = [mount for mount in mounts if mount.mount_name == mount_name][0]
+                    if mount.mount_state == "Mounted":
+                        print(f"Mounted [name: {mount_name}].")
+                        break
+                    elif mount.mount_state == "MountRequested":
+                        pass
+                    elif mount.mount_state == "MountFailed":
+                        raise Exception(f"Mount failed [name: {mount_name}]: {mount.error}")
+                    else:
+                        raise Exception(f"Got unexpected mount state [name: {mount_name}]: {mount.mount_state}")
+                except IndexError:
+                    pass
+                time.sleep(5) # TBD: timeout?
         else:
             rslex_fuse_subprocess_wrapper.start_fuse_mount_subprocess(uri, mount_point, read_only, debug)
