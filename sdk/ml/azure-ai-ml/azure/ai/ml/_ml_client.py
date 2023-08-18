@@ -113,12 +113,12 @@ class MLClient:
     :type registry_name: Optional[str]
     :keyword show_progress: Specifies whether or not to display progress bars for long-running operations (e.g.
         customers may consider setting this to False if not using this SDK in an interactive setup). Defaults to True.
-    :type show_progress: Optional[bool]
+    :paramtype show_progress: Optional[bool]
     :keyword enable_telemetry: Specifies whether or not to enable telemetry. Will be overridden to False if not in a
         Jupyter Notebook. Defaults to True if in a Jupyter Notebook.
-    :type enable_telemetry: Optional[bool]
+    :paramtype enable_telemetry: Optional[bool]
     :keyword cloud: The cloud name to use. Defaults to "AzureCloud".
-    :type cloud: Optional[str]
+    :paramtype cloud: Optional[str]
     :raises ValueError: Raised if credential is None.
     :raises ~azure.ai.ml.ValidationException: Raised if both workspace_name and registry_name are provided.
 
@@ -363,7 +363,7 @@ class MLClient:
         self._datastores = DatastoreOperations(
             operation_scope=self._operation_scope,
             operation_config=self._operation_config,
-            serviceclient_2022_10_01=self._service_client_10_2022,
+            serviceclient_2023_04_01_preview=self._service_client_04_2023_preview,
             **ops_kwargs,
         )
         self._operation_container.add(AzureMLResourceType.DATASTORE, self._datastores)
@@ -495,7 +495,7 @@ class MLClient:
 
         self._featurestores = FeatureStoreOperations(
             self._operation_scope,
-            self._service_client_04_2023_preview,
+            self._service_client_06_2023_preview,
             self._operation_container,
             self._credential,
             **app_insights_handler_kwargs,
@@ -510,7 +510,7 @@ class MLClient:
         )
 
         self._featurestoreentities = FeatureStoreEntityOperations(
-            self._operation_scope, self._operation_config, self._service_client_04_2023_preview, **ops_kwargs
+            self._operation_scope, self._operation_config, self._service_client_06_2023_preview, **ops_kwargs
         )
 
         self._workspace_hubs = WorkspaceHubOperations(
@@ -547,12 +547,12 @@ class MLClient:
         :type credential: ~azure.core.credentials.TokenCredential
         :keyword path: The path to the configuration file or starting directory to search for the configuration file
             within. Defaults to None, indicating the current directory will be used.
-        :type path: Optional[Union[os.PathLike, str]]
+        :paramtype path: Optional[Union[os.PathLike, str]]
         :keyword file_name: The configuration file name to search for when path is a directory path. Defaults to
             "config.json".
-        :type file_name: Optional[str]
+        :paramtype file_name: Optional[str]
         :keyword cloud: The cloud name to use. Defaults to "AzureCloud".
-        :type cloud: Optional[str]
+        :paramtype cloud: Optional[str]
         :raises ~azure.ai.ml.exceptions.ValidationException: Raised if "config.json", or file_name if overridden,
             cannot be found in directory. Details will be provided in the error message.
         :returns: The client for an existing Azure ML Workspace.
@@ -639,11 +639,18 @@ class MLClient:
         )
 
     @classmethod
-    def _ml_client_cli(cls, credentials, subscription_id, **kwargs):
+    def _ml_client_cli(cls, credentials: TokenCredential, subscription_id: Optional[str], **kwargs) -> "MLClient":
         """This method provides a way to create MLClient object for cli to leverage cli context for authentication.
 
         With this we do not have to use AzureCliCredentials from azure-identity package (not meant for heavy usage). The
         credentials are passed by cli get_mgmt_service_client when it created a object of this class.
+
+        :param credentials: The authentication credentials
+        :type credentials: TokenCredential
+        :param subscription_id: The subscription ID
+        :type subscription_id: Optional[str]
+        :return: An MLClient
+        :rtype: ~azure.ai.ml.MLClient
         """
 
         ml_client = cls(credential=credentials, subscription_id=subscription_id, **kwargs)
@@ -857,6 +864,8 @@ class MLClient:
 
         :param workspace_name: AzureML workspace of the new MLClient.
         :type workspace_name: str
+        :return: An updated MLClient
+        :rtype: MLClient
         """
 
         return MLClient(

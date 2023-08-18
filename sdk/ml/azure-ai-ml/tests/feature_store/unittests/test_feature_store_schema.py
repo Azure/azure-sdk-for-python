@@ -25,3 +25,5 @@ class TestFeatureStoreSchema:
         assert feature_store.offline_store is not None
         assert feature_store.tags is not None
         assert feature_store.properties is not None
+        assert feature_store.managed_network is not None
+        assert feature_store.managed_network.outbound_rules is not None

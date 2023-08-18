@@ -1,5 +1,9 @@
 # Release History
 
+## 12.7.0 (Unreleased)
+
+### Features Added
+
 ## 12.7.0b1 (2023-08-08)
 
 ### Other Changes

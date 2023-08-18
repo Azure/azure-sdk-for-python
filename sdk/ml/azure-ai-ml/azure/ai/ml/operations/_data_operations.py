@@ -435,7 +435,7 @@ class DataOperations(_ScopeDependentOperations):
         :param name: name of asset being created by the materialization jobs.
         :type name: str
         :keyword list_view_type: View type for including/excluding (for example) archived jobs. Default: ACTIVE_ONLY.
-        :type list_view_type: Optional[ListViewType]
+        :paramtype list_view_type: Optional[ListViewType]
         :return: An iterator like instance of Job objects.
         :rtype: ~azure.core.paging.ItemPaged[PipelineJob]
         """
@@ -566,9 +566,13 @@ class DataOperations(_ScopeDependentOperations):
         )
 
     def _get_latest_version(self, name: str) -> Data:
-        """Returns the latest version of the asset with the given name.
+        """Returns the latest version of the asset with the given name. Latest is defined as the most recently created,
+         not the most recently updated.
 
-        Latest is defined as the most recently created, not the most recently updated.
+        :param name: The asset name
+        :type name: str
+        :return: The latest asset
+        :rtype: Data
         """
         latest_version = _get_latest_version_from_container(
             name, self._container_operation, self._resource_group_name, self._workspace_name, self._registry_name
@@ -594,11 +598,11 @@ class DataOperations(_ScopeDependentOperations):
         :param version: Version of data asset.
         :type version: str
         :keyword share_with_name: Name of data asset to share with.
-        :type share_with_name: str
+        :paramtype share_with_name: str
         :keyword share_with_version: Version of data asset to share with.
-        :type share_with_version: str
+        :paramtype share_with_version: str
         :keyword registry_name: Name of the destination registry.
-        :type registry_name: str
+        :paramtype registry_name: str
         :return: Data asset object.
         :rtype: ~azure.ai.ml.entities.Data
         """
@@ -629,7 +633,8 @@ class DataOperations(_ScopeDependentOperations):
             return self.create_or_update(data_ref)
 
     @contextmanager
-    def _set_registry_client(self, registry_name: str) -> None:
+    # pylint: disable-next=docstring-missing-return,docstring-missing-rtype
+    def _set_registry_client(self, registry_name: str) -> Iterable[None]:
         """Sets the registry client for the data operations.
 
         :param registry_name: Name of the registry.

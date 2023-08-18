@@ -2,8 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=protected-access
-
+# pylint: disable=protected-access,too-many-lines
 import time
 import types
 from functools import partial
@@ -40,6 +39,7 @@ from azure.ai.ml._vendor.azure_resources.operations import DeploymentsOperations
 from azure.ai.ml.constants._common import (
     DEFAULT_COMPONENT_VERSION,
     DEFAULT_LABEL_NAME,
+    DefaultOpenEncoding,
     AzureMLResourceType,
     LROConfigurations,
 )
@@ -58,7 +58,7 @@ from ..entities._component.pipeline_component import PipelineComponent
 from ..entities._job.pipeline._attr_dict import has_attr_safe
 from ._code_operations import CodeOperations
 from ._environment_operations import EnvironmentOperations
-from ._operation_orchestrator import OperationOrchestrator
+from ._operation_orchestrator import _AssetResolver, OperationOrchestrator
 from ._workspace_operations import WorkspaceOperations
 
 ops_logger = OpsLogger(__name__)
@@ -285,8 +285,8 @@ class ComponentOperations(_ScopeDependentOperations):
         :param Union[PathLike, str] download_path: Local path as download destination,
             defaults to current working directory of the current user. Will be created if not exists.
         :type download_path: str
-        :param version: Version of the component.
-        :type version: Optional[str]
+        :keyword version: Version of the component.
+        :paramtype version: Optional[str]
         :raises ~OSError: Raised if download_path is pointing to an existing directory that is not empty.
             identified and retrieved. Details will be provided in the error message.
         :return: The specified component object.
@@ -308,7 +308,7 @@ class ComponentOperations(_ScopeDependentOperations):
         self._localize_environment(component, output_dir)
 
         component._localize(output_dir.absolute().as_posix())
-        (output_dir / "component_spec.yaml").write_text(component._to_yaml())
+        (output_dir / "component_spec.yaml").write_text(component._to_yaml(), encoding=DefaultOpenEncoding.WRITE)
 
     def _get(self, name: str, version: Optional[str] = None, label: Optional[str] = None) -> Component:
         if version and label:
@@ -348,10 +348,10 @@ class ComponentOperations(_ScopeDependentOperations):
 
         :param component: The component object or a mldesigner component function that generates component object
         :type component: Union[Component, types.FunctionType]
-        :param raise_on_failure: whether to raise exception on validation error, defaults to False
+        :param raise_on_failure: Whether to raise exception on validation error. Defaults to False
         :type raise_on_failure: bool
         :return: All validation errors
-        :type: ~azure.ai.ml.entities.ValidationResult
+        :rtype: ~azure.ai.ml.entities.ValidationResult
         """
         return self._validate(
             component,
@@ -369,6 +369,15 @@ class ComponentOperations(_ScopeDependentOperations):
     ) -> ValidationResult:
         """Implementation of validate. Add this function to avoid calling validate() directly in create_or_update(),
         which will impact telemetry statistics & bring experimental warning in create_or_update().
+
+        :param component: The component
+        :type component: Union[Component, types.FunctionType]
+        :param raise_on_failure: Whether to raise on failure.
+        :type raise_on_failure: bool
+        :param skip_remote_validation: Whether to skip remote validation.
+        :type skip_remote_validation: bool
+        :return: The validation result
+        :rtype: ValidationResult
         """
         # Update component when the input is a component function
         if isinstance(component, types.FunctionType):
@@ -413,8 +422,8 @@ class ComponentOperations(_ScopeDependentOperations):
         :type component: Union[Component, types.FunctionType]
         :param version: The component version to override.
         :type version: str
-        :param skip_validation: whether to skip validation before creating/updating the component, defaults to False
-        :type skip_validation: bool
+        :keyword skip_validation: whether to skip validation before creating/updating the component, defaults to False
+        :paramtype skip_validation: bool
         :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Component cannot be successfully validated.
             Details will be provided in the error message.
         :raises ~azure.ai.ml.exceptions.AssetException: Raised if Component assets
@@ -598,6 +607,11 @@ class ComponentOperations(_ScopeDependentOperations):
 
         Latest is defined as the most recently created, not the most
         recently updated.
+
+        :param component_name: The component name
+        :type component_name: str
+        :return: A latest version of the named Component
+        :rtype: Component
         """
 
         result = (
@@ -619,7 +633,7 @@ class ComponentOperations(_ScopeDependentOperations):
         return Component._from_rest_object(result)
 
     @classmethod
-    def _try_resolve_environment_for_component(cls, component, _: str, resolver: Callable):
+    def _try_resolve_environment_for_component(cls, component, _: str, resolver: _AssetResolver):
         if isinstance(component, BaseNode):
             component = component._component  # pylint: disable=protected-access
 
@@ -700,8 +714,7 @@ class ComponentOperations(_ScopeDependentOperations):
 
         :param jobs: A dict of nodes in a pipeline component.
         :type jobs: Dict[str, Any]
-        :param base_path: The base path used to resolve inputs. Usually it's
-        the base path of the pipeline component.
+        :param base_path: The base path used to resolve inputs. Usually it's the base path of the pipeline component.
         :type base_path: str
         """
         from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
@@ -719,8 +732,12 @@ class ComponentOperations(_ScopeDependentOperations):
                 self._job_operations._resolve_automl_job_inputs(job_instance)
 
     @classmethod
-    def _resolve_binding_on_supported_fields_for_node(cls, node):
-        """Resolve all PipelineInput(binding from sdk) on supported fields to string."""
+    def _resolve_binding_on_supported_fields_for_node(cls, node: BaseNode):
+        """Resolve all PipelineInput(binding from sdk) on supported fields to string.
+
+        :param node: The node
+        :type node: BaseNode
+        """
         from azure.ai.ml.entities._job.pipeline._attr_dict import try_get_non_arbitrary_attr
         from azure.ai.ml.entities._job.pipeline._io import PipelineInput
 
@@ -733,7 +750,7 @@ class ComponentOperations(_ScopeDependentOperations):
                 setattr(node, field_name, val._data_binding())
 
     @classmethod
-    def _try_resolve_node_level_task_for_parallel_node(cls, node: BaseNode, _: str, resolver: Callable):
+    def _try_resolve_node_level_task_for_parallel_node(cls, node: BaseNode, _: str, resolver: _AssetResolver):
         """Resolve node.task.code for parallel node if it's a reference to node.component.task.code.
 
         This is a hack operation.
@@ -750,6 +767,13 @@ class ComponentOperations(_ScopeDependentOperations):
         consistent across os and python versions.
 
         The ideal solution should be done after PRS team decides how to handle parallel.task.code
+
+        :param node: The node
+        :type node: BaseNode
+        :param _: The component name
+        :type _: str
+        :param resolver: The resolver function
+        :type resolver: _AssetResolver
         """
         from azure.ai.ml.entities import Parallel, ParallelComponent
 
@@ -774,6 +798,11 @@ class ComponentOperations(_ScopeDependentOperations):
     def _set_default_display_name_for_anonymous_component_in_node(cls, node: BaseNode, default_name: str):
         """Set default display name for anonymous component in a node.
         If node._component is an anonymous component and without display name, set the default display name.
+
+        :param node: The node
+        :type node: BaseNode
+        :param default_name: The default name to set
+        :type default_name: str
         """
         if not isinstance(node, BaseNode):
             return
@@ -794,8 +823,16 @@ class ComponentOperations(_ScopeDependentOperations):
             component.display_name = default_name
 
     @classmethod
-    def _try_resolve_compute_for_node(cls, node: BaseNode, _: str, resolver):
-        """Resolve compute for base node."""
+    def _try_resolve_compute_for_node(cls, node: BaseNode, _: str, resolver: _AssetResolver):
+        """Resolve compute for base node.
+
+        :param node: The node
+        :type node: BaseNode
+        :param _: The node name
+        :type _: str
+        :param resolver: The resolver function
+        :type resolver: _AssetResolver
+        """
         if not isinstance(node, BaseNode):
             return
         if not isinstance(node._component, PipelineComponent):
@@ -808,7 +845,9 @@ class ComponentOperations(_ScopeDependentOperations):
                 node.compute_name = resolver(node.compute_name, azureml_type=AzureMLResourceType.COMPUTE)
 
     @classmethod
-    def _divide_nodes_to_resolve_into_layers(cls, component: PipelineComponent, extra_operations: List[Callable]):
+    def _divide_nodes_to_resolve_into_layers(
+        cls, component: PipelineComponent, extra_operations: List[Callable[[BaseNode, str], Any]]
+    ):
         """Traverse the pipeline component and divide nodes to resolve into layers. Note that all leaf nodes will be
         put in the last layer.
         For example, for below pipeline component, assuming that all nodes need to be resolved:
@@ -829,7 +868,7 @@ class ComponentOperations(_ScopeDependentOperations):
         :param component: The pipeline component to resolve.
         :type component: PipelineComponent
         :param extra_operations: Extra operations to apply on nodes during the traversing.
-        :type extra_operations: List[Callable]
+        :type extra_operations: List[Callable[Callable[[BaseNode, str], Any]]]
         :return: A list of layers of nodes to resolve.
         :rtype: List[List[Tuple[str, BaseNode]]]
         """
@@ -876,17 +915,24 @@ class ComponentOperations(_ScopeDependentOperations):
 
     def _get_registry_key(self) -> str:
         """Get key for used registry.
+
         Note that, although registry id is in registry discovery response, it is not in RegistryDiscoveryDto; and we'll
         lose the information after deserialization.
         To avoid changing related rest client, we simply use registry related information from self to construct
         registry key, which means that on-disk cache will be invalid if a registry is deleted and then created
         again with the same name.
+
+        :return: The registry key
+        :rtype: str
         """
         return "{}/{}/{}".format(self._subscription_id, self._resource_group_name, self._registry_name)
 
     def _get_client_key(self) -> str:
         """Get key for used client.
         Key should be able to uniquely identify used registry or workspace.
+
+        :return: The client key
+        :rtype: str
         """
         # check cache first
         if self._client_key:
@@ -904,7 +950,7 @@ class ComponentOperations(_ScopeDependentOperations):
         return self._client_key
 
     def _resolve_dependencies_for_pipeline_component_jobs(
-        self, component: Union[Component, str], resolver: Callable, *, resolve_inputs: bool = True
+        self, component: Union[Component, str], resolver: _AssetResolver, *, resolve_inputs: bool = True
     ):
         """Resolve dependencies for pipeline component jobs.
         Will directly return if component is not a pipeline component.
@@ -912,9 +958,9 @@ class ComponentOperations(_ScopeDependentOperations):
         :param component: The pipeline component to resolve.
         :type component: Union[Component, str]
         :param resolver: The resolver to resolve the dependencies.
-        :type resolver: Callable
+        :type resolver: _AssetResolver
         :keyword resolve_inputs: Whether to resolve inputs.
-        :type resolve_inputs: bool
+        :paramtype resolve_inputs: bool
         """
         if not isinstance(component, PipelineComponent) or not component.jobs:
             return
@@ -978,9 +1024,12 @@ def _refine_component(component_func: types.FunctionType) -> Component:
     :rtype: Component
     """
 
-    def check_parameter_type(f):
-        """Check all parameter is annotated or has a default value with
-        clear type(not None)."""
+    def check_parameter_type(f: types.FunctionType):
+        """Check all parameter is annotated or has a default value with clear type(not None).
+
+        :param f: The component function
+        :type f: types.FunctionType
+        """
         annotations = getattr(f, "__annotations__", {})
         func_parameters = signature(f).parameters
         defaults_dict = {key: val.default for key, val in func_parameters.items()}
@@ -1007,8 +1056,12 @@ def _refine_component(component_func: types.FunctionType) -> Component:
                 error_category=ErrorCategory.USER_ERROR,
             )
 
-    def check_non_pipeline_inputs(f):
-        """Check whether non_pipeline_inputs exist in pipeline builder."""
+    def check_non_pipeline_inputs(f: types.FunctionType):
+        """Check whether non_pipeline_inputs exist in pipeline builder.
+
+        :param f: The component function
+        :type f: types.FunctionType
+        """
         if f._pipeline_builder.non_pipeline_parameter_names:
             msg = "Cannot register pipeline component {!r} with non_pipeline_inputs."
             raise ValidationException(
@@ -1042,7 +1095,7 @@ def _refine_component(component_func: types.FunctionType) -> Component:
     )
 
 
-def _try_resolve_code_for_component(component: Component, resolver: Callable) -> None:
+def _try_resolve_code_for_component(component: Component, resolver: _AssetResolver) -> None:
     if isinstance(component, ComponentCodeMixin):
         with component._build_code() as code:
             if code is None:
