@@ -1,11 +1,17 @@
 # Release History
 
+## 1.29.4 (unreleased)
+
+### Bugs Fixed
+
+- Fixed issue where IndexError was raised if multipart responses did not match the number of requests. #31471
+
 ## 1.29.3 (2023-08-17)
 
 ### Bugs Fixed
 
 - Encoded URL before formatting it. #31346
-  - Typing fix: `message` cannot be `None` in `AzureError`. #31564
+- Typing fix: `message` cannot be `None` in `AzureError`. #31564
 
 ## 1.29.2 (2023-08-14)
 
