@@ -7,9 +7,6 @@
 import time
 from typing import Callable, Dict, Optional, Tuple
 
-from azure.core.credentials import TokenCredential
-from azure.core.polling import LROPoller, PollingMethod
-
 from azure.ai.ml._arm_deployments import ArmDeploymentExecutor
 from azure.ai.ml._arm_deployments.arm_helper import get_template
 from azure.ai.ml._restclient.v2023_06_01_preview import AzureMachineLearningWorkspaces as ServiceClient062023Preview
@@ -40,6 +37,8 @@ from azure.ai.ml.entities._credentials import IdentityConfiguration
 from azure.ai.ml.entities._workspace.networking import ManagedNetwork
 from azure.ai.ml.entities._workspace_hub._constants import PROJECT_WORKSPACE_KIND, WORKSPACE_HUB_KIND
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
+from azure.core.credentials import TokenCredential
+from azure.core.polling import LROPoller, PollingMethod
 
 ops_logger = OpsLogger(__name__)
 module_logger = ops_logger.module_logger
@@ -526,8 +525,8 @@ class WorkspaceOperationsBase:
                     f"materialization-uai-{workspace.resource_group}-{workspace.name}",
                 )
 
-            if kwargs.get("grant_materialization_identity_permissions", None) is True:
-                _set_val(param["grant_materialization_identity_permissions"], "true")
+            if not kwargs.get("grant_materialization_identity_permissions", None):
+                _set_val(param["grant_materialization_identity_permissions"], "false")
 
         managed_network = None
         if workspace.managed_network:
