@@ -357,7 +357,7 @@ class TestSweepJob:
         rest_obj = sweep._to_rest_object()
 
         # if statement can be removed when sdk will be from 2023-08
-        if hasattr(rest_obj, 'resources'):
+        if hasattr(rest_obj, "resources"):
             rest_obj.properties.resources == resources._to_rest_object() if resources else None
 
         # validate from rest scenario
@@ -367,7 +367,8 @@ class TestSweepJob:
         assert sweep_job.inputs == sweep.inputs
         assert sweep_job.outputs == sweep.outputs
         assert sweep_job.identity == sweep.identity
-        if "instance_type" in sweep.resources:
-            assert sweep_job.resources.instance_type == sweep.resources["instance_type"]
-        if "instance_count" in sweep.resources:
-            assert sweep_job.resources.instance_count == sweep.resources["instance_count"]
+        if sweep.resources:
+            if "instance_type" in sweep.resources:
+                assert sweep_job.resources.instance_type == sweep.resources["instance_type"]
+            if "instance_count" in sweep.resources:
+                assert sweep_job.resources.instance_count == sweep.resources["instance_count"]

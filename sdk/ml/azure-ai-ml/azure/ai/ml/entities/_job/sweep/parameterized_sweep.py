@@ -108,6 +108,11 @@ class ParameterizedSweep:
 
     @property
     def resources(self) -> JobResourceConfiguration:
+        """Resources for sweep job.
+
+        :returns: Resources for sweep job.
+        :rtype: ~azure.ai.ml.entities.ResourceConfiguration
+        """
         return self._resources
 
     @property
