@@ -7,46 +7,48 @@
                     "computeType": "ServerlessSpark",
                     "instanceType": "standard_e8s_v3",
                     "runtimeVersion": "3.2",
-                    "computeIdentity": {
-                        "computeIdentityType": "AmlToken"
-                    }
+                    "computeIdentity": {"computeIdentityType": "AmlToken"},
                 },
-                "monitoringTarget":{
-                    "taskType" : "classification",
-                    "deploymentId": "fake_endpoint_id"
-                },
+                "monitoringTarget": {"taskType": "classification", "deploymentId": "fake_endpoint_id"},
                 "signals": {
                     "testSignal": {
                         "signalType": "FeatureAttributionDrift",
                         "mode": "Enabled",
                         "modelType": "classification",
                         "productionData": [
-                            {   
+                            {
                                 "inputDataType": "Trailing",
                                 "uri": "my_model_inputs_data:1",
                                 "jobInputType": "mltable",
                                 "dataContext": "model_inputs",
+                                "columns": {"correlation_id": "inference_correlation_id"},
+                            },
+                            {
+                                "inputDataType": "Trailing",
+                                "uri": "my_model_outputs_data:1",
+                                "jobInputType": "mltable",
+                                "dataContext": "model_outputs",
                                 "columns": {
-                                    "correlation_id": "inference_correlation_id"
-                                }
-                            }
+                                    "correlation_id": "inference_correlation_id",
+                                    "prediction": "is_fraud",
+                                    "prediction_probability": "is_fraud_probability",
+                                },
+                            },
                         ],
                         "referenceData": {
-                            "dataContext": "test",
+                            "dataContext": "training",
                             "inputDataType": "Fixed",
                             "jobInputType": "mltable",
-                            "uri": "Direct:1"
-                            
+                            "uri": "my_model_training_data:1",
+                            "columns": {"targetColumn": "target"},
                         },
                         "metricThreshold": {
                             "metric": "normalizedDiscountedCumulativeGain",
-                            "threshold": {
-                                "value": 0.2
-                            }
-                        }
+                            "threshold": {"value": 0.2},
+                        },
                     }
-                }
-            }
+                },
+            },
         },
         "trigger": {
             "triggerType": "Recurrence",
@@ -54,26 +56,12 @@
             "frequency": "week",
             "interval": 1,
             "schedule": {
-                "hours": [
-                    22, 20
-                ],
-                "minutes": [
-                    0, 0
-                ],
-                "weekDays": [
-                    "monday",
-                    "tuesday",
-                    "wednesday",
-                    "thursday",
-                    "friday"
-                ]
-            }
+                "hours": [22, 20],
+                "minutes": [0, 0],
+                "weekDays": ["monday", "tuesday", "wednesday", "thursday", "friday"],
+            },
         },
-        "properties": {
-            "prop1": "value"
-        },
-        "tags": {
-            "tag1": "tag"
-        }
+        "properties": {"prop1": "value"},
+        "tags": {"tag1": "tag"},
     }
 }

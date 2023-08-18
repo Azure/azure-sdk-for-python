@@ -3,18 +3,13 @@
         "action": {
             "actionType": "CreateMonitor",
             "monitorDefinition": {
-                "computeConfiguration":{
+                "computeConfiguration": {
                     "computeType": "ServerlessSpark",
                     "instanceType": "standard_e8s_v3",
                     "runtimeVersion": "3.2",
-                    "computeIdentity": {
-                        "computeIdentityType": "AmlToken"
-                    }
+                    "computeIdentity": {"computeIdentityType": "AmlToken"},
                 },
-                "monitoringTarget": {
-                    "taskType" : "classification",
-                    "deploymentId": "fake_endpoint_id"
-                },
+                "monitoringTarget": {"taskType": "classification", "deploymentId": "fake_endpoint_id"},
                 "signals": {
                     "testSignal": {
                         "signalType": "DataDrift",
@@ -25,7 +20,7 @@
                             "jobInputType": "mltable",
                             "uri": "Direct:1",
                             "windowSize": "P60D",
-                            "windowOffset": "P60D"
+                            "windowOffset": "P60D",
                         },
                         "referenceData": {
                             "dataContext": "test",
@@ -33,35 +28,20 @@
                             "jobInputType": "mltable",
                             "uri": "Direct:1",
                             "windowSize": "P30D",
-                            "windowOffset": "P30D"
+                            "windowOffset": "P30D",
                         },
                         "metricThresholds": [
-                            {
-                                "dataType": "Numerical",
-                                "metric": "jensenShannonDistance",
-                                "threshold": {
-                                    "value": 0.5
-                                }
-                            },
+                            {"dataType": "Numerical", "metric": "jensenShannonDistance", "threshold": {"value": 0.5}},
                             {
                                 "dataType": "Categorical",
                                 "metric": "pearsonsChiSquaredTest",
-                                "threshold": {
-                                    "value": 0.2
-                                }
-                            }
+                                "threshold": {"value": 0.2},
+                            },
                         ],
-                        "dataSegment": {
-                            "feature": "foo",
-                            "values": [
-                                "a",
-                                "b",
-                                "c"
-                            ]
-                        }
+                        "dataSegment": {"feature": "foo", "values": ["a", "b", "c"]},
                     }
-                }
-            }
+                },
+            },
         },
         "trigger": {
             "triggerType": "Recurrence",
@@ -69,26 +49,12 @@
             "frequency": "week",
             "interval": 1,
             "schedule": {
-                "hours": [
-                    22, 20
-                ],
-                "minutes": [
-                    0, 30
-                ],
-                "weekDays": [
-                    "monday",
-                    "tuesday",
-                    "wednesday",
-                    "thursday",
-                    "friday"
-                ]
-            }
+                "hours": [22, 20],
+                "minutes": [0, 30],
+                "weekDays": ["monday", "tuesday", "wednesday", "thursday", "friday"],
+            },
         },
-        "properties": {
-            "prop1": "value"
-        },
-        "tags":{
-            "tag1": "value"
-        }
+        "properties": {"prop1": "value"},
+        "tags": {"tag1": "value"},
     }
 }

@@ -17,7 +17,7 @@ from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml.entities import Job, JobSchedule, Schedule
 from azure.ai.ml.entities._monitoring.schedule import MonitorSchedule
 from azure.ai.ml.entities._monitoring.target import MonitoringTarget
-from azure.ai.ml.entities._monitoring.signals import InputData, ProductionData, ReferenceData, BaselineDataRange
+from azure.ai.ml.entities._monitoring.signals import ProductionData, ReferenceData, BaselineDataRange
 from azure.ai.ml.entities._monitoring.input_data import FixedInputData
 from azure.ai.ml.entities._inputs_outputs.input import Input
 from azure.ai.ml.exceptions import ScheduleException, ErrorCategory, ErrorTarget
@@ -393,7 +393,7 @@ class ScheduleOperations(_ScopeDependentOperations):
                                 data_window_size="P7D",
                             )
                         if not signal.reference_data:
-                            signal.reference_data = ProductionData(
+                            signal.reference_data = ReferenceData(
                                 input_data=Input(
                                     path=f"{model_outputs_name}:{model_outputs_version}",
                                     type=self._data_operations.get(model_outputs_name, model_outputs_version).type,

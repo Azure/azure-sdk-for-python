@@ -7,6 +7,7 @@ from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._restclient.v2023_06_01_preview.models import MonitoringTarget as RestMonitoringTarget
 from azure.ai.ml.constants._monitoring import MonitorTargetTasks
 
+
 @experimental
 class MonitoringTarget:
     """Monitoring target
@@ -23,7 +24,7 @@ class MonitoringTarget:
     def __init__(
         self,
         *,
-        ml_task: Union[str,MonitorTargetTasks],
+        ml_task: Union[str, MonitorTargetTasks],
         endpoint_deployment_id: Optional[str] = None,
         model_id: Optional[str] = None,
     ):
@@ -37,7 +38,7 @@ class MonitoringTarget:
             deployment_id=self.endpoint_deployment_id,
             model_id=self.model_id,
         )
-    
+
     def _from_rest_object(cls, obj: RestMonitoringTarget) -> "MonitoringTarget":
         return cls(
             task_type=obj.task_type,

@@ -9,7 +9,6 @@ from typing import Dict, List, Optional, Union
 
 from typing_extensions import Literal
 
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 from azure.ai.ml._restclient.v2023_06_01_preview.models import (
@@ -45,8 +44,8 @@ from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils.utils import to_iso_duration_format_days, from_iso_duration_format_days
 from azure.ai.ml.constants._monitoring import (
     MonitorSignalType,
-    ALL_FEATURES, 
-    MonitorModelType, 
+    ALL_FEATURES,
+    MonitorModelType,
     MonitorDatasetContext,
     MonitorTargetTasks,
     MonitorFeatureDataType,
@@ -57,6 +56,9 @@ from azure.ai.ml.entities._monitoring.input_data import (
     FixedInputData,
     TrailingInputData,
     StaticInputData,
+    RestFixedInputData,
+    RestStaticInputData,
+    RestTrailingInputData,
 )
 from azure.ai.ml.entities._monitoring.thresholds import (
     CustomMonitoringMetricThreshold,
@@ -140,6 +142,7 @@ class BaselineDataRange:
         self.trailing_window_size = trailing_window_size
         self.trailing_window_offset = trailing_window_offset
 
+
 @experimental
 class ProductionData(RestTranslatableMixin):
     """Production Data
@@ -149,7 +152,7 @@ class ProductionData(RestTranslatableMixin):
     :type MointorDatasetContext: ~azure.ai.ml.constants._monitoring
     :param pre_processing_component :
     :type pre_processing_component: string
-    :param data_window_size: 
+    :param data_window_size:
     :type data_window_size: string
     """
 
@@ -166,7 +169,6 @@ class ProductionData(RestTranslatableMixin):
         self.pre_processing_component = pre_processing_component
         self.data_window_size = data_window_size
 
-    
     def _to_rest_object(self, **kwargs) -> RestMonitoringInputData:
         default_data_window_size = kwargs.get("default_data_window_size")
         if self.data_window_size is None:
@@ -180,12 +182,10 @@ class ProductionData(RestTranslatableMixin):
             uri=uri,
             preocessing_component_id=self.pre_processing_component,
             window_size=self.data_window_size,
-            window_offset= self.data_window_size,
+            window_offset=self.data_window_size,
         )
-        return (
-            monitoring_input_data._to_rest_object()
-        )
-    
+        return monitoring_input_data._to_rest_object()
+
     @classmethod
     def _from_rest_object(cls, obj: RestMonitoringInputData) -> "ProductionData":
         return cls(
@@ -198,6 +198,7 @@ class ProductionData(RestTranslatableMixin):
             data_window_size=isodate.duration_isoformat(obj.window_size),
         )
 
+
 @experimental
 class ReferenceData(RestTranslatableMixin):
     """Reference Data
@@ -205,9 +206,9 @@ class ReferenceData(RestTranslatableMixin):
     :type Input: ~azure.ai.ml.entities._input_outputs
     :param data_context: The data to calculate drift against
     :type MointorDatasetContext: ~azure.ai.ml.constants._monitoring
-    :param pre_processing_component : 
+    :param pre_processing_component :
     :type pre_processing_component: string
-    :param target_column_name: 
+    :param target_column_name:
     :type target_column_name: string
     :param data_window:
     :type data_window_size: BaselineDataRange
@@ -227,56 +228,57 @@ class ReferenceData(RestTranslatableMixin):
         self.pre_processing_component = pre_processing_component
         self.target_column_name = target_column_name
         self.data_window = data_window
-    
+
     def _to_rest_object(self, **kwargs) -> RestMonitoringInputData:
         if self.data_window is not None:
             if self.data_window.trailing_window_size is not None:
-                return (
-                    TrailingInputData(
-                        data_context=self.data_context,
-                        target_columns=None,
-                        job_type=self.input_data.type,
-                        uri=self.input_data.path,
-                        preocessing_component_id=self.pre_processing_component,
-                        window_size=self.data_window.trailing_window_size,
-                        window_offset=self.data_window.trailing_window_offset
-                        if self.data_window.trailing_window_offset is not None else self.data_window.trailing_window_size,
-                    )._to_rest_object()
-                )
-            elif self.data_window.window_start is not None and self.data_window.window_end is not None:
-                return (
-                    StaticInputData(
-                        data_context=self.data_context,
-                        target_columns=None,
-                        job_type=self.input_data.type,
-                        uri=self.input_data.path,
-                        preocessing_component_id=self.pre_processing_component,
-                        window_start=self.data_window.window_start,
-                        window_end=self.data_window.window_end,
-                    )._to_rest_object()
-                )
-        else:
-            return (
-                FixedInputData(
+                return TrailingInputData(
                     data_context=self.data_context,
-                    target_columns=None,
+                    target_columns={"target_column": self.target_column_name}
+                    if self.target_column_name is not None
+                    else None,
                     job_type=self.input_data.type,
                     uri=self.input_data.path,
+                    preocessing_component_id=self.pre_processing_component,
+                    window_size=self.data_window.trailing_window_size,
+                    window_offset=self.data_window.trailing_window_offset
+                    if self.data_window.trailing_window_offset is not None
+                    else self.data_window.trailing_window_size,
                 )._to_rest_object()
-            )
-    
+            elif self.data_window.window_start is not None and self.data_window.window_end is not None:
+                return StaticInputData(
+                    data_context=self.data_context,
+                    target_columns={"target_column": self.target_column_name}
+                    if self.target_column_name is not None
+                    else None,
+                    job_type=self.input_data.type,
+                    uri=self.input_data.path,
+                    preocessing_component_id=self.pre_processing_component,
+                    window_start=self.data_window.window_start,
+                    window_end=self.data_window.window_end,
+                )._to_rest_object()
+        else:
+            return FixedInputData(
+                data_context=self.data_context,
+                target_columns={"target_column": self.target_column_name}
+                if self.target_column_name is not None
+                else None,
+                job_type=self.input_data.type,
+                uri=self.input_data.path,
+            )._to_rest_object()
+
     @classmethod
     def _from_rest_object(cls, obj: RestMonitoringInputData) -> "ReferenceData":
         data_window = None
         if obj.input_data_type == "Static":
-            data_window = BaselineDataRange (
+            data_window = BaselineDataRange(
                 window_start=datetime.datetime.strftime(obj.window_start, "%Y-%m-%d"),
                 window_end=datetime.datetime.strftime(obj.window_end, "%Y-%m-%d"),
-            ) 
+            )
         if obj.input_data_type == "Trailing":
-            data_window = BaselineDataRange (
+            data_window = BaselineDataRange(
                 trailing_window_size=isodate.duration_isoformat(obj.window_size),
-                trailing_window_offset=isodate.duration_isoformat(obj.window_offset)
+                trailing_window_offset=isodate.duration_isoformat(obj.window_offset),
             )
 
         return cls(
@@ -285,9 +287,9 @@ class ReferenceData(RestTranslatableMixin):
                 type=obj.job_input_type,
             ),
             data_context=obj.data_context,
-            pre_processing_component=obj.preprocessing_component_id 
-            if obj.input_data_type != "Fixed" else None,
+            pre_processing_component=obj.preprocessing_component_id if obj.input_data_type != "Fixed" else None,
             data_window=data_window,
+            target_column_name=obj.columns["targetColumn"] if obj.columns is not None else None,
         )
 
 
@@ -429,7 +431,7 @@ class DataDriftSignal(DataSignal):
         production_data: ProductionData = None,
         reference_data: ReferenceData = None,
         features: Optional[Union[List[str], MonitorFeatureFilter, Literal[ALL_FEATURES]]] = None,
-        feature_type_override: Optional[Dict[str, Union[ str, MonitorFeatureDataType]]] = None,
+        feature_type_override: Optional[Dict[str, Union[str, MonitorFeatureDataType]]] = None,
         metric_thresholds: DataDriftMetricThreshold = None,
         alert_enabled: bool = True,
         data_segment: Optional[DataSegment] = None,
@@ -453,8 +455,8 @@ class DataDriftSignal(DataSignal):
             self.production_data.data_window_size = default_data_window_size
         rest_features = _to_rest_features(self.features) if self.features else None
         return RestMonitoringDataDriftSignal(
-            production_data=self.production_data._to_rest_object(data_type="production"),
-            reference_data=self.reference_data._to_rest_object(data_type="reference"),
+            production_data=self.production_data._to_rest_object(),
+            reference_data=self.reference_data._to_rest_object(),
             features=rest_features,
             feature_data_type_override=self.feature_type_override,
             metric_thresholds=self.metric_thresholds._to_rest_object(),
@@ -514,7 +516,7 @@ class PredictionDriftSignal(MonitoringSignal):
             reference_data=reference_data,
             metric_thresholds=metric_thresholds,
             alert_enabled=alert_enabled,
-            properties=properties
+            properties=properties,
         )
         self.type = MonitorSignalType.PREDICTION_DRIFT
 
@@ -528,7 +530,7 @@ class PredictionDriftSignal(MonitoringSignal):
             metric_thresholds=self.metric_thresholds._to_rest_object(),
             properties=self.properties,
             mode=MonitoringNotificationMode.ENABLED if self.alert_enabled else MonitoringNotificationMode.DISABLED,
-            model_type='classification',
+            model_type="classification",
         )
 
     @classmethod
@@ -576,7 +578,7 @@ class DataQualitySignal(DataSignal):
         reference_data: ReferenceData = None,
         features: Optional[Union[List[str], MonitorFeatureFilter, Literal[ALL_FEATURES]]] = None,
         feature_type_override: Optional[Dict[str, Union[str, MonitorFeatureDataType]]] = None,
-        metric_thresholds: DataQualityMetricThreshold = None,
+        metric_thresholds: [DataQualityMetricThreshold] = None,
         alert_enabled: bool = True,
         properties: Optional[Dict[str, str]] = None,
     ):
@@ -596,7 +598,9 @@ class DataQualitySignal(DataSignal):
         if self.production_data.data_window_size is None:
             self.production_data.data_window_size = default_data_window_size
         rest_features = _to_rest_features(self.features) if self.features else None
-        rest_mertrics = _to_rest_data_quality_metrics(self.metric_thresholds.numerical, self.metric_thresholds.categorical)
+        rest_mertrics = _to_rest_data_quality_metrics(
+            self.metric_thresholds.numerical, self.metric_thresholds.categorical
+        )
         return RestMonitoringDataQualitySignal(
             production_data=self.production_data._to_rest_object(),
             reference_data=self.reference_data._to_rest_object(),
@@ -667,6 +671,7 @@ class ModelSignal(MonitoringSignal):
         )
         self.model_type = model_type
 
+
 @experimental
 class FADProductionData(RestTranslatableMixin):
     def __init__(
@@ -683,7 +688,7 @@ class FADProductionData(RestTranslatableMixin):
         self.data_column_names = data_column_names
         self.pre_processing_component = pre_processing_component
         self.data_window_size = data_window_size
-    
+
     def _to_rest_object(self, **kwargs) -> RestMonitoringInputData:
         default_data_window_size = kwargs.get("default_data_window_size")
         if self.data_window_size is None:
@@ -697,12 +702,10 @@ class FADProductionData(RestTranslatableMixin):
             uri=uri,
             preocessing_component_id=self.pre_processing_component,
             window_size=self.data_window_size,
-            window_offset= self.data_window_size,
+            window_offset=self.data_window_size,
         )
-        return (
-            monitoring_input_data._to_rest_object()
-        )
-    
+        return monitoring_input_data._to_rest_object()
+
     @classmethod
     def _from_rest_object(cls, obj: RestMonitoringInputData) -> "FADProductionData":
         return cls(
@@ -716,7 +719,7 @@ class FADProductionData(RestTranslatableMixin):
             data_window_size=obj.window_size,
         )
 
-    
+
 @experimental
 class FeatureAttributionDriftSignal(RestTranslatableMixin):
     """Feature attribution drift signal
@@ -840,8 +843,8 @@ class WorkspaceConnection(RestTranslatableMixin):
     def __init__(
         self,
         *,
-        environment_variables: Optional[Dict[str,str]],
-        secret_config: Optional[Dict[str,str]],
+        environment_variables: Optional[Dict[str, str]] = None,
+        secret_config: Optional[Dict[str, str]] = None,
     ):
         self.environment_variables = environment_variables
         self.secret_config = secret_config
@@ -849,15 +852,17 @@ class WorkspaceConnection(RestTranslatableMixin):
     def _to_rest_object(self) -> RestMonitoringWorkspaceConnection:
         return RestMonitoringWorkspaceConnection(
             environment_variables=self.environment_variables,
-            secret_config=self.secret_config,
+            secrets=self.secret_config,
         )
-    
+
     @classmethod
     def _from_rest_object(cls, obj: RestMonitoringWorkspaceConnection) -> "WorkspaceConnection":
         return cls(
             environment_variables=obj.environment_variables,
-            secret_config=obj.secret_config,
+            secret_config=obj.secrets,
         )
+
+
 @experimental
 class CustomMonitoringSignal(RestTranslatableMixin):
     """Custom monitoring signal.
@@ -881,39 +886,38 @@ class CustomMonitoringSignal(RestTranslatableMixin):
     def __init__(
         self,
         *,
-        input_data: Optional[Dict[str, Input]] = None,
+        input_literals: Optional[Dict[str, Input]] = None,
         metric_thresholds: List[CustomMonitoringMetricThreshold],
         component_id: str,
-        workspace_connection: WorkspaceConnection,
-        input_assets: Optional[Dict[str, MonitoringInputDataBase]],
+        workspace_connection: Optional[WorkspaceConnection] = None,
+        input_datasets: Optional[Dict[str, ProductionData]],
         alert_enabled: bool = True,
         properties: Optional[Dict[str, str]] = None,
     ):
         self.type = MonitorSignalType.CUSTOM
-        self.input_data = input_data
+        self.input_literals = input_literals
         self.metric_thresholds = metric_thresholds
         self.component_id = component_id
         self.alert_enabled = alert_enabled
-        self.input_assets = input_assets
+        self.input_datasets = input_datasets
         self.properties = properties
         self.workspace_connection = workspace_connection
 
     def _to_rest_object(self, **kwargs) -> RestCustomMonitoringSignal:  # pylint:disable=unused-argument
+        if self.workspace_connection is None:
+            self.workspace_connection = WorkspaceConnection()
         return RestCustomMonitoringSignal(
             component_id=self.component_id,
             metric_thresholds=[threshold._to_rest_object() for threshold in self.metric_thresholds],
-            inputs={
-                input_name: input_value._to_rest_object() for input_name, input_value in self.input_data.items()
-            }
-            if self.input_data
+            inputs={input_name: input_value for input_name, input_value in self.input_literals.items()}
+            if self.input_literals
             else None,
             input_assets={
-                port_name: asset_value._to_rest_object() for port_name, asset_value in self.input_assets.items()
+                asset_name: asset_value._to_rest_object() for asset_name, asset_value in self.input_datasets.items()
             }
-            if self.inpit_literals
+            if self.input_datasets
             else None,
-            workspace_connection=self.workspace_connection._to_rest_object() 
-            if self.workspace_connection else None,
+            workspace_connection=self.workspace_connection._to_rest_object() if self.workspace_connection else None,
             mode=MonitoringNotificationMode.ENABLED if self.alert_enabled else MonitoringNotificationMode.DISABLED,
             properties=self.properties,
         )
@@ -921,15 +925,14 @@ class CustomMonitoringSignal(RestTranslatableMixin):
     @classmethod
     def _from_rest_object(cls, obj: RestCustomMonitoringSignal) -> "CustomMonitoringSignal":
         return cls(
-            input_data={
-                input_name: Input._from_rest_object(input_value)
-                for input_name, input_value in obj.input_data.items()
+            input_literals={
+                input_name: Input._from_rest_object(input_value) for input_name, input_value in obj.inputs.items()
             }
-            if obj.input_assets
+            if obj.inputs
             else None,
-            input_assets={
-                input_name: Input._from_rest_object(input_value)
-                for input_name, input_value in obj.input_data.items()
+            input_datasets={
+                input_name: ProductionData._from_rest_object(input_value)
+                for input_name, input_value in obj.input_assets.items()
             },
             metric_thresholds=[
                 CustomMonitoringMetricThreshold._from_rest_object(metric) for metric in obj.metric_thresholds
@@ -939,6 +942,7 @@ class CustomMonitoringSignal(RestTranslatableMixin):
             if not obj.mode or (obj.mode and obj.mode == MonitoringNotificationMode.DISABLED)
             else MonitoringNotificationMode.ENABLED,
             properties=obj.properties,
+            workspace_connection=WorkspaceConnection._from_rest_object(obj.workspace_connection),
         )
 
 
@@ -967,22 +971,24 @@ def _to_rest_features(
         rest_features = RestAllFeatures()
     return rest_features
 
+
 def _to_rest_num_cat_metrics(numerical_metrics, categorical_metrics):
     metrics = []
     if numerical_metrics is not None:
         metrics.append(numerical_metrics._to_rest_object())
-    
+
     if categorical_metrics is not None:
         metrics.append(categorical_metrics._to_rest_object())
-    
+
     return metrics
+
 
 def _to_rest_data_quality_metrics(numerical_metrics, categorical_metrics):
     metric_thresholds = []
     if numerical_metrics is not None:
         metric_thresholds = metric_thresholds + numerical_metrics._to_rest_object()
-    
+
     if categorical_metrics is not None:
-        metric_thresholds = metric_thresholds +  categorical_metrics._to_rest_object()
-    
+        metric_thresholds = metric_thresholds + categorical_metrics._to_rest_object()
+
     return metric_thresholds

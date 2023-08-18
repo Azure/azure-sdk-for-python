@@ -8,10 +8,10 @@ from marshmallow import fields, post_load
 from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
 from azure.ai.ml._schema.core.fields import StringTransformedEnum, NestedField
 from azure.ai.ml.constants._monitoring import COMPUTE_AML_TYPE, COMPUTE_MANAGED_IDENTITY_TYPE
+
+
 class ComputeIdentitySchema(metaclass=PatchedSchemaMeta):
-    identity_type = StringTransformedEnum(
-        allowed_values=[COMPUTE_AML_TYPE]
-    )
+    identity_type = StringTransformedEnum(allowed_values=[COMPUTE_AML_TYPE])
 
     @post_load
     def make(self, data, **kwargs):
@@ -19,8 +19,10 @@ class ComputeIdentitySchema(metaclass=PatchedSchemaMeta):
 
         return ComputeIdentity(**data)
 
+
 class ComputeConfigurationSchema(metaclass=PatchedSchemaMeta):
     compute_type = fields.Str(allowed_values=["ServerlessSpark"])
+
 
 class ServerlessSparkComputeSchema(ComputeConfigurationSchema):
     runtime_version = fields.Str()

@@ -17,7 +17,7 @@ class MonitoringTargetSchema(metaclass=PatchedSchemaMeta):
     model_id = ArmVersionedStr(azureml_type=AzureMLResourceType.MODEL)
     ml_task = StringTransformedEnum(allowed_values=[o.value for o in MonitorTargetTasks])
     endpoint_deployment_id = fields.Str()
-    
+
     @post_load
     def make(self, data, **kwargs):
         from azure.ai.ml.entities._monitoring.target import MonitoringTarget

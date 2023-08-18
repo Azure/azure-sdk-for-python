@@ -24,8 +24,10 @@ class FixedInputDataSchema(MonitorInputDataSchema):
     @post_load
     def make(self, data, **kwargs):
         from azure.ai.ml.entities._monitoring.input_data import FixedInputData
+
         return FixedInputData(**data)
-    
+
+
 class TrailingInputDataSchema(MonitorInputDataSchema):
     trailing_window_size = fields.Str()
     trailing_window_offset = fields.Str()
@@ -34,14 +36,17 @@ class TrailingInputDataSchema(MonitorInputDataSchema):
     @post_load
     def make(self, data, **kwargs):
         from azure.ai.ml.entities._monitoring.input_data import TrailingInputData
+
         return TrailingInputData(**data)
-    
+
+
 class StaticInputDataSchema(MonitorInputDataSchema):
     pre_processing_component = fields.Str()
-    window_start = fields.Date('%Y-%m-%d')
-    window_end = fields.Date('%Y-%m-%d')
+    window_start = fields.Date("%Y-%m-%d")
+    window_end = fields.Date("%Y-%m-%d")
 
     @post_load
     def make(self, data, **kwargs):
         from azure.ai.ml.entities._monitoring.input_data import StaticInputData
+
         return StaticInputData(**data)

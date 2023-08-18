@@ -3,46 +3,47 @@
         "action": {
             "actionType": "CreateMonitor",
             "monitorDefinition": {
-                "computeId": "spark",
-                "monitoringTarget": "fake_endpoint_id",
+                "computeConfiguration": {
+                    "computeType": "ServerlessSpark",
+                    "instanceType": "standard_e8s_v3",
+                    "runtimeVersion": "3.2",
+                    "computeIdentity": {"computeIdentityType": "AmlToken"},
+                },
+                "monitoringTarget": {"taskType": "classification", "deploymentId": "fake_endpoint_id"},
                 "signals": {
                     "testSignal": {
                         "signalType": "Custom",
                         "componentId": "fake_component:1",
                         "mode": "Enabled",
+                        "workspaceConnection": {
+                            "environmentVariables": {"ENV_VAR_1": "value1", "ENV_VAR_2": "value2"},
+                            "secrets": {"SECRET_1": "secret1", "SECRET_2": "secret2"},
+                        },
                         "inputAssets": {
                             "test_data_1": {
                                 "dataContext": "test",
-                                "asset": {
-                                    "jobInputType": "mltable",
-                                    "uri": "Direct:1"
-                                }
+                                "inputDataType": "Trailing",
+                                "jobInputType": "mltable",
+                                "uri": "Direct:1",
+                                "windowSize": "P60D",
+                                "windowOffset": "P60D",
                             },
                             "test_data_2": {
                                 "dataContext": "test",
-                                "asset": {
-                                    "jobInputType": "mltable",
-                                    "uri": "Direct:1"
-                                }
-                            }
+                                "jobInputType": "mltable",
+                                "inputDataType": "Trailing",
+                                "uri": "Direct:1",
+                                "windowSize": "P30D",
+                                "windowOffset": "P30D",
+                            },
                         },
                         "metricThresholds": [
-                            {
-                                "metric": "metric1",
-                                "threshold": {
-                                    "value": 0.1
-                                }
-                            },
-                            {
-                                "metric": "metric2",
-                                "threshold": {
-                                    "value": 0.2
-                                }
-                            }
-                        ]
+                            {"metric": "metric1", "threshold": {"value": 0.1}},
+                            {"metric": "metric2", "threshold": {"value": 0.2}},
+                        ],
                     }
-                }
-            }
+                },
+            },
         },
         "trigger": {
             "triggerType": "Recurrence",
@@ -50,28 +51,12 @@
             "frequency": "week",
             "interval": 1,
             "schedule": {
-                "hours": [
-                    22, 20
-                ],
-                "minutes": [
-                    0, 0
-                ],
-                "weekDays": [
-                    "monday",
-                    "tuesday",
-                    "wednesday",
-                    "thursday",
-                    "friday"
-                ]
-            }
+                "hours": [22, 20],
+                "minutes": [0, 0],
+                "weekDays": ["monday", "tuesday", "wednesday", "thursday", "friday"],
+            },
         },
-        "properties": {
-            "prop1": "value"
-        },
-        "tags": {
-            "tag1": "tag",
-            "compute.spark.resources.instance_type": "standard_e8s_v3",
-            "compute.spark.resources.runtime_version": "3.2"
-        }
+        "properties": {"prop1": "value"},
+        "tags": {"tag1": "tag"},
     }
 }

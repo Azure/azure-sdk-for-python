@@ -9,15 +9,19 @@ from marshmallow import fields, post_load, pre_dump, ValidationError
 from azure.ai.ml._schema.job.input_output_entry import DataInputSchema, MLTableInputSchema
 from azure.ai.ml.constants._common import AzureMLResourceType
 from azure.ai.ml.constants._monitoring import (
-    MonitorSignalType, 
-    ALL_FEATURES, 
-    MonitorModelType, 
+    MonitorSignalType,
+    ALL_FEATURES,
+    MonitorModelType,
     MonitorDatasetContext,
     FADColumnNames,
 )
 from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
 from azure.ai.ml._schema.core.fields import ArmVersionedStr, NestedField, UnionField, StringTransformedEnum
-from azure.ai.ml._schema.monitoring.input_data import MonitorInputDataSchema
+from azure.ai.ml._schema.monitoring.input_data import (
+    FixedInputDataSchema,
+    StaticInputDataSchema,
+    TrailingInputDataSchema,
+)
 from azure.ai.ml._schema.monitoring.thresholds import (
     DataDriftMetricThresholdSchema,
     DataQualityMetricThresholdSchema,
@@ -69,6 +73,7 @@ class BaselineDataRange(metaclass=PatchedSchemaMeta):
 
         return BaselineDataRange(**data)
 
+
 class ProductionDataSchema(metaclass=PatchedSchemaMeta):
     input_data = UnionField(union_fields=[NestedField(DataInputSchema), NestedField(MLTableInputSchema)])
     data_context = StringTransformedEnum(allowed_values=[o.value for o in MonitorDatasetContext])
@@ -80,7 +85,8 @@ class ProductionDataSchema(metaclass=PatchedSchemaMeta):
         from azure.ai.ml.entities._monitoring.signals import ProductionData
 
         return ProductionData(**data)
-    
+
+
 class ReferenceDataSchema(metaclass=PatchedSchemaMeta):
     input_data = UnionField(union_fields=[NestedField(DataInputSchema), NestedField(MLTableInputSchema)])
     data_context = StringTransformedEnum(allowed_values=[o.value for o in MonitorDatasetContext])
@@ -93,19 +99,6 @@ class ReferenceDataSchema(metaclass=PatchedSchemaMeta):
         from azure.ai.ml.entities._monitoring.signals import ReferenceData
 
         return ReferenceData(**data)
-class InputDataSchema(metaclass=PatchedSchemaMeta):
-    input_data = UnionField(union_fields=[NestedField(DataInputSchema), NestedField(MLTableInputSchema)])
-    data_context = StringTransformedEnum(allowed_values=[o.value for o in MonitorDatasetContext])
-    pre_processing_component = fields.Str()
-    data_window_size = fields.Str()
-    target_column_name = fields.Str()
-    data_window = NestedField(BaselineDataRange)
-
-    @post_load
-    def make(self, data, **kwargs):
-        from azure.ai.ml.entities._monitoring.signals import InputData
-
-        return InputData(**data)
 
 
 class MonitoringSignalSchema(metaclass=PatchedSchemaMeta):
@@ -194,7 +187,9 @@ class ModelSignalSchema(MonitoringSignalSchema):
 class FADProductionDataSchema(metaclass=PatchedSchemaMeta):
     input_data = UnionField(union_fields=[NestedField(DataInputSchema), NestedField(MLTableInputSchema)])
     data_context = StringTransformedEnum(allowed_values=[o.value for o in MonitorDatasetContext])
-    data_column_names = fields.Dict(keys=StringTransformedEnum(allowed_values=[o.value for o in FADColumnNames]), values=fields.Str())
+    data_column_names = fields.Dict(
+        keys=StringTransformedEnum(allowed_values=[o.value for o in FADColumnNames]), values=fields.Str()
+    )
     pre_processing_component = fields.Str()
     data_window_size = fields.Str()
 
@@ -203,6 +198,7 @@ class FADProductionDataSchema(metaclass=PatchedSchemaMeta):
         from azure.ai.ml.entities._monitoring.signals import FADProductionData
 
         return FADProductionData(**data)
+
 
 class FeatureAttributionDriftSignalSchema(metaclass=PatchedSchemaMeta):
     production_data = fields.List(NestedField(FADProductionDataSchema))
@@ -249,22 +245,26 @@ class ModelPerformanceSignalSchema(ModelSignalSchema):
         data.pop("type", None)
         return ModelPerformanceSignal(**data)
 
+
 class WorkspaceConnectionSchema(metaclass=PatchedSchemaMeta):
-    environmental_variables = fields.Dict(keys=fields.Str(), values=fields.Str())
+    environment_variables = fields.Dict(keys=fields.Str(), values=fields.Str())
     secret_config = fields.Dict(keys=fields.Str(), values=fields.Str())
 
+    @post_load
     def make(self, data, **kwargs):
         from azure.ai.ml.entities._monitoring.signals import WorkspaceConnection
 
         return WorkspaceConnection(**data)
 
+
 class CustomMonitoringSignalSchema(metaclass=PatchedSchemaMeta):
     type = StringTransformedEnum(allowed_values=MonitorSignalType.CUSTOM, required=True)
+    workspace_connection = NestedField(WorkspaceConnectionSchema)
     component_id = ArmVersionedStr(azureml_type=AzureMLResourceType.COMPONENT)
     metric_thresholds = fields.List(NestedField(CustomMonitoringMetricThresholdSchema))
-    input_assets = fields.Dict(keys=fields.Str(), values=NestedField(MonitorInputDataSchema))
-    alert_notification = fields.Bool()
-    data_window_size = fields.Int()
+    input_datasets = fields.Dict(keys=fields.Str(), values=NestedField(ProductionDataSchema))
+    alert_enabled = fields.Bool()
+    input_literals = fields.Dict(keys=fields.Str, values=NestedField(DataInputSchema))
 
     @pre_dump
     def predump(self, data, **kwargs):

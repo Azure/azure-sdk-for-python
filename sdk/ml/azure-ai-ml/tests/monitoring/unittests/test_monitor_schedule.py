@@ -61,7 +61,7 @@ class TestMonitorSchedule:
 
         validate_to_from_rest_translation(json_path, yaml_path)
 
-    @pytest.mark.skip(reason="Temporarily disabled")
+    @pytest.mark.skip(reason="temp skip for custom signal")
     def test_custom_basic(self) -> None:
         json_path = "tests/test_configs/monitoring/rest_json_configs/custom_rest.json"
         yaml_path = "tests/test_configs/monitoring/yaml_configs/custom.yaml"

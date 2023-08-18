@@ -68,7 +68,7 @@ class MonitorDefinition(RestTranslatableMixin):
         *,
         compute: ServerlessSparkCompute,
         monitoring_target: Optional[MonitoringTarget] = None,
-        monitoring_signals:Dict[
+        monitoring_signals: Dict[
             str,
             Union[
                 DataDriftSignal,
@@ -77,8 +77,7 @@ class MonitorDefinition(RestTranslatableMixin):
                 FeatureAttributionDriftSignal,
                 CustomMonitoringSignal,
             ],
-        ] = None
-        ,
+        ] = None,
         alert_notification: Optional[Union[Literal[AZMONITORING], AlertNotification]] = None,
     ) -> None:
         self.compute = compute
@@ -96,9 +95,7 @@ class MonitorDefinition(RestTranslatableMixin):
                 rest_alert_notification = self.alert_notification._to_rest_object()
         return RestMonitorDefinition(
             compute_configuration=self.compute._to_rest_object(),
-            monitoring_target=self.monitoring_target._to_rest_object()
-            if self.monitoring_target
-            else None,
+            monitoring_target=self.monitoring_target._to_rest_object() if self.monitoring_target else None,
             signals={
                 signal_name: signal._to_rest_object(
                     default_data_window_size=default_data_window_size,
@@ -119,7 +116,9 @@ class MonitorDefinition(RestTranslatableMixin):
                 from_rest_alert_notification = AlertNotification._from_rest_object(obj.alert_notification_setting)
         return cls(
             compute=ServerlessSparkCompute._from_rest_object(obj.compute_configuration),
-            monitoring_target=MonitoringTarget(endpoint_deployment_id=obj.monitoring_target.deployment_id, ml_task=obj.monitoring_target.task_type),
+            monitoring_target=MonitoringTarget(
+                endpoint_deployment_id=obj.monitoring_target.deployment_id, ml_task=obj.monitoring_target.task_type
+            ),
             monitoring_signals={
                 signal_name: MonitoringSignal._from_rest_object(signal) for signal_name, signal in obj.signals.items()
             },
