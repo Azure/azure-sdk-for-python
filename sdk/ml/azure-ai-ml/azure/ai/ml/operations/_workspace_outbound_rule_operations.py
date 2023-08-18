@@ -3,7 +3,10 @@
 # ---------------------------------------------------------
 
 from typing import Dict, Iterable
-from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient122022Preview
+from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient042023Preview
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    OutboundRuleBasicResource
+)
 from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope
 
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
@@ -27,7 +30,7 @@ class WorkspaceOutboundRuleOperations:
     def __init__(
         self,
         operation_scope: OperationScope,
-        service_client: ServiceClient122022Preview,
+        service_client: ServiceClient042023Preview,
         all_operations: OperationsContainer,
         credentials: TokenCredential = None,
         **kwargs: Dict,
@@ -42,16 +45,92 @@ class WorkspaceOutboundRuleOperations:
         self._init_kwargs = kwargs
 
     @monitor_with_activity(logger, "WorkspaceOutboundRule.Get", ActivityType.PUBLICAPI)
-    def get(self, resource_group: str, ws_name: str, outbound_rule_name: str, **kwargs) -> OutboundRule:
-        workspace_name = self._check_workspace_name(ws_name)
+    def get(self, workspace_name: str, outbound_rule_name: str, **kwargs) -> OutboundRule:
+        """Get a workspace OutboundRule by name.
+
+        :param workspace_name: Name of the workspace.
+        :type workspace_name: str
+        :param outbound_rule_name: Name of the outbound rule.
+        :type outbound_rule_name: str
+        :return: The OutboundRule with the provided name for the workspace.
+        :rtype: OutboundRule
+        """
+
+        workspace_name = self._check_workspace_name(workspace_name)
         resource_group = kwargs.get("resource_group") or self._resource_group_name
 
         obj = self._rule_operation.get(resource_group, workspace_name, outbound_rule_name)
         return OutboundRule._from_rest_object(obj.properties, name=obj.name)  # pylint: disable=protected-access
+    
+    @monitor_with_activity(logger, "WorkspaceOutboundRule.BeginCreate", ActivityType.PUBLICAPI)
+    def begin_create(self, workspace_name: str, rule: OutboundRule, **kwargs) -> LROPoller[OutboundRule]:
+        """Create a Workspace OutboundRule.
+
+        :param workspace_name: Name of the workspace.
+        :type workspace_name: str
+        :param rule: OutboundRule definition.
+        :type rule: OutboundRule
+        :return: An instance of LROPoller that returns an OutboundRule.
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.OutboundRule]
+        """
+        
+        workspace_name = self._check_workspace_name(workspace_name)
+        resource_group = kwargs.get("resource_group") or self._resource_group_name
+
+        rule_params = OutboundRuleBasicResource(
+            properties=rule._to_rest_object()
+        )
+
+        # pylint: disable=unused-argument
+        def callback(_, deserialized, args):
+            return (
+                OutboundRule._from_rest_object(deserialized.properties, name=deserialized.name)
+            )
+
+        poller = self._rule_operation.begin_create_or_update(resource_group, workspace_name, rule.name, rule_params, polling=True, cls=callback)
+        module_logger.info("Create request initiated for outbound rule with name: %s\n", rule.name)
+        return poller
+    
+    @monitor_with_activity(logger, "WorkspaceOutboundRule.BeginUpdate", ActivityType.PUBLICAPI)
+    def begin_update(self, workspace_name: str, rule: OutboundRule, **kwargs) -> LROPoller[OutboundRule]:
+        """Update a Workspace OutboundRule.
+
+        :param workspace_name: Name of the workspace.
+        :type workspace_name: str
+        :param rule: OutboundRule definition.
+        :type rule: OutboundRule
+        :return: An instance of LROPoller that returns an OutboundRule.
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.OutboundRule]
+        """
+
+        workspace_name = self._check_workspace_name(workspace_name)
+        resource_group = kwargs.get("resource_group") or self._resource_group_name
+
+        rule_params = OutboundRuleBasicResource(
+            properties=rule._to_rest_object()
+        )
+
+        # pylint: disable=unused-argument
+        def callback(_, deserialized, args):
+            return (
+                OutboundRule._from_rest_object(deserialized.properties, name=deserialized.name)
+            )
+
+        poller = self._rule_operation.begin_create_or_update(resource_group, workspace_name, rule.name, rule_params, polling=True, cls=callback)
+        module_logger.info("Update request initiated for outbound rule with name: %s\n", rule.name)
+        return poller
 
     @monitor_with_activity(logger, "WorkspaceOutboundRule.List", ActivityType.PUBLICAPI)
-    def list(self, resource_group: str, ws_name: str, **kwargs) -> Iterable[OutboundRule]:
-        workspace_name = self._check_workspace_name(ws_name)
+    def list(self, workspace_name: str, **kwargs) -> Iterable[OutboundRule]:
+        """List Workspace OutboundRules.
+
+        :param workspace_name: Name of the workspace.
+        :type workspace_name: str
+        :return: An Iterable of OutboundRule.
+        :rtype: Iterable[OutboundRule]
+        """
+
+        workspace_name = self._check_workspace_name(workspace_name)
         resource_group = kwargs.get("resource_group") or self._resource_group_name
 
         rest_rules = self._rule_operation.list(resource_group, workspace_name)
@@ -63,8 +142,16 @@ class WorkspaceOutboundRuleOperations:
         return result
 
     @monitor_with_activity(logger, "WorkspaceOutboundRule.Remove", ActivityType.PUBLICAPI)
-    def begin_remove(self, resource_group: str, ws_name: str, outbound_rule_name: str, **kwargs) -> LROPoller[None]:
-        workspace_name = self._check_workspace_name(ws_name)
+    def begin_remove(self, workspace_name: str, outbound_rule_name: str, **kwargs) -> LROPoller[None]:
+        """Remove a Workspace OutboundRule.
+
+        :param workspace_name: Name of the workspace.
+        :type workspace_name: str
+        :return: An Iterable of OutboundRule.
+        :rtype: Iterable[OutboundRule]
+        """
+
+        workspace_name = self._check_workspace_name(workspace_name)
         resource_group = kwargs.get("resource_group") or self._resource_group_name
 
         poller = self._rule_operation.begin_delete(

@@ -20,7 +20,6 @@ from azure.ai.ml._utils._experimental import experimental
 from abc import ABC
 
 
-@experimental
 class OutboundRule(ABC):
     """Base class for Outbound Rules, cannot be instantiated directly.
 
