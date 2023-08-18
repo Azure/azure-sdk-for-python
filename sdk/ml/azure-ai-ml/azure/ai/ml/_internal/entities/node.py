@@ -87,7 +87,9 @@ class InternalBaseNode(BaseNode):
         raise RuntimeError("Internal components doesn't support to job")
 
     @classmethod
-    def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs) -> "Job":
+    def _load_from_dict(
+        cls, data: Dict, context: Dict, additional_message: str, **kwargs
+    ) -> "Job":
         raise RuntimeError("Internal components doesn't support load from dict")
 
     @classmethod
@@ -152,7 +154,9 @@ class HDInsight(InternalBaseNode):
         self._executor_cores: int = kwargs.pop("executor_cores", None)
         self._number_executors: int = kwargs.pop("number_executors", None)
         self._conf: Union[dict, str] = kwargs.pop("conf", None)
-        self._hdinsight_spark_job_name: str = kwargs.pop("hdinsight_spark_job_name", None)
+        self._hdinsight_spark_job_name: str = kwargs.pop(
+            "hdinsight_spark_job_name", None
+        )
         self._init = False
 
     @property

@@ -61,7 +61,9 @@ class _DSLSettings:
         if isinstance(value, (BaseNode, str)):
             self._init_job = value
         else:
-            module_logger.warning(f"Initialization job setting is ignored as input parameter type is {type(value)!r}.")
+            module_logger.warning(
+                f"Initialization job setting is ignored as input parameter type is {type(value)!r}."
+            )
 
     @property
     def init_job_set(self) -> bool:
@@ -74,7 +76,9 @@ class _DSLSettings:
         for name, job in jobs.items():
             if id(self.init_job) == id(job):
                 return name
-        module_logger.warning("Initialization job setting is ignored as cannot find corresponding job node.")
+        module_logger.warning(
+            "Initialization job setting is ignored as cannot find corresponding job node."
+        )
         return None
 
     @property
@@ -87,7 +91,9 @@ class _DSLSettings:
         if isinstance(value, (BaseNode, str)):
             self._finalize_job = value
         else:
-            module_logger.warning(f"Finalization job setting is ignored as input parameter type is {type(value)!r}.")
+            module_logger.warning(
+                f"Finalization job setting is ignored as input parameter type is {type(value)!r}."
+            )
 
     @property
     def finalize_job_set(self) -> bool:
@@ -100,7 +106,9 @@ class _DSLSettings:
         for name, job in jobs.items():
             if id(self.finalize_job) == id(job):
                 return name
-        module_logger.warning("Finalization job setting is ignored as cannot find corresponding job node.")
+        module_logger.warning(
+            "Finalization job setting is ignored as cannot find corresponding job node."
+        )
         return None
 
 

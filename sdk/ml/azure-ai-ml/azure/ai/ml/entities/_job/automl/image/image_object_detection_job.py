@@ -6,18 +6,37 @@
 
 from typing import Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import AutoMLJob as RestAutoMLJob
-from azure.ai.ml._restclient.v2023_04_01_preview.models import ImageObjectDetection as RestImageObjectDetection
-from azure.ai.ml._restclient.v2023_04_01_preview.models import JobBase, ObjectDetectionPrimaryMetrics, TaskType
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    AutoMLJob as RestAutoMLJob,
+)
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    ImageObjectDetection as RestImageObjectDetection,
+)
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    JobBase,
+    ObjectDetectionPrimaryMetrics,
+    TaskType,
+)
 from azure.ai.ml._utils.utils import camel_to_snake, is_data_binding_expression
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 from azure.ai.ml.constants._job.automl import AutoMLConstants
 from azure.ai.ml.entities._credentials import _BaseJobIdentityConfiguration
-from azure.ai.ml.entities._job._input_output_helpers import from_rest_data_outputs, to_rest_data_outputs
-from azure.ai.ml.entities._job.automl.image.automl_image_object_detection_base import AutoMLImageObjectDetectionBase
-from azure.ai.ml.entities._job.automl.image.image_limit_settings import ImageLimitSettings
-from azure.ai.ml.entities._job.automl.image.image_model_settings import ImageModelSettingsObjectDetection
-from azure.ai.ml.entities._job.automl.image.image_sweep_settings import ImageSweepSettings
+from azure.ai.ml.entities._job._input_output_helpers import (
+    from_rest_data_outputs,
+    to_rest_data_outputs,
+)
+from azure.ai.ml.entities._job.automl.image.automl_image_object_detection_base import (
+    AutoMLImageObjectDetectionBase,
+)
+from azure.ai.ml.entities._job.automl.image.image_limit_settings import (
+    ImageLimitSettings,
+)
+from azure.ai.ml.entities._job.automl.image.image_model_settings import (
+    ImageModelSettingsObjectDetection,
+)
+from azure.ai.ml.entities._job.automl.image.image_sweep_settings import (
+    ImageSweepSettings,
+)
 from azure.ai.ml.entities._util import load_from_dict
 
 
@@ -52,7 +71,9 @@ class ImageObjectDetectionJob(AutoMLImageObjectDetectionBase):
             **kwargs,
         )
 
-        self.primary_metric = primary_metric or ImageObjectDetectionJob._DEFAULT_PRIMARY_METRIC
+        self.primary_metric = (
+            primary_metric or ImageObjectDetectionJob._DEFAULT_PRIMARY_METRIC
+        )
 
     @property
     def primary_metric(self):
@@ -77,9 +98,15 @@ class ImageObjectDetectionJob(AutoMLImageObjectDetectionBase):
             validation_data_size=self.validation_data_size,
             limit_settings=self._limits._to_rest_object() if self._limits else None,
             sweep_settings=self._sweep._to_rest_object() if self._sweep else None,
-            model_settings=self._training_parameters._to_rest_object() if self._training_parameters else None,
+            model_settings=self._training_parameters._to_rest_object()
+            if self._training_parameters
+            else None,
             search_space=(
-                [entry._to_rest_object() for entry in self._search_space if entry is not None]
+                [
+                    entry._to_rest_object()
+                    for entry in self._search_space
+                    if entry is not None
+                ]
                 if self._search_space is not None
                 else None
             ),
@@ -129,7 +156,9 @@ class ImageObjectDetectionJob(AutoMLImageObjectDetectionBase):
             "compute": properties.compute_id,
             "outputs": from_rest_data_outputs(properties.outputs),
             "resources": properties.resources,
-            "identity": _BaseJobIdentityConfiguration._from_rest_object(properties.identity)
+            "identity": _BaseJobIdentityConfiguration._from_rest_object(
+                properties.identity
+            )
             if properties.identity
             else None,
             "queue_settings": properties.queue_settings,
@@ -151,7 +180,9 @@ class ImageObjectDetectionJob(AutoMLImageObjectDetectionBase):
                 else None
             ),
             training_parameters=(
-                ImageModelSettingsObjectDetection._from_rest_object(task_details.model_settings)
+                ImageModelSettingsObjectDetection._from_rest_object(
+                    task_details.model_settings
+                )
                 if task_details.model_settings
                 else None
             ),
@@ -173,8 +204,12 @@ class ImageObjectDetectionJob(AutoMLImageObjectDetectionBase):
         additional_message: str,
         **kwargs,
     ) -> "ImageObjectDetectionJob":
-        from azure.ai.ml._schema.automl.image_vertical.image_object_detection import ImageObjectDetectionSchema
-        from azure.ai.ml._schema.pipeline.automl_node import ImageObjectDetectionNodeSchema
+        from azure.ai.ml._schema.automl.image_vertical.image_object_detection import (
+            ImageObjectDetectionSchema,
+        )
+        from azure.ai.ml._schema.pipeline.automl_node import (
+            ImageObjectDetectionNodeSchema,
+        )
 
         if kwargs.pop("inside_pipeline", False):
             if context.get("inside_pipeline", None) is None:
@@ -187,12 +222,16 @@ class ImageObjectDetectionJob(AutoMLImageObjectDetectionBase):
                 **kwargs,
             )
         else:
-            loaded_data = load_from_dict(ImageObjectDetectionSchema, data, context, additional_message, **kwargs)
+            loaded_data = load_from_dict(
+                ImageObjectDetectionSchema, data, context, additional_message, **kwargs
+            )
         job_instance = cls._create_instance_from_schema_dict(loaded_data)
         return job_instance
 
     @classmethod
-    def _create_instance_from_schema_dict(cls, loaded_data: Dict) -> "ImageObjectDetectionJob":
+    def _create_instance_from_schema_dict(
+        cls, loaded_data: Dict
+    ) -> "ImageObjectDetectionJob":
         loaded_data.pop(AutoMLConstants.TASK_TYPE_YAML, None)
         data_settings = {
             "training_data": loaded_data.pop("training_data"),
@@ -204,16 +243,24 @@ class ImageObjectDetectionJob(AutoMLImageObjectDetectionBase):
         job.set_data(**data_settings)
         return job
 
-    def _to_dict(self, inside_pipeline=False) -> Dict:  # pylint: disable=arguments-differ
-        from azure.ai.ml._schema.automl.image_vertical.image_object_detection import ImageObjectDetectionSchema
-        from azure.ai.ml._schema.pipeline.automl_node import ImageObjectDetectionNodeSchema
+    def _to_dict(
+        self, inside_pipeline=False
+    ) -> Dict:  # pylint: disable=arguments-differ
+        from azure.ai.ml._schema.automl.image_vertical.image_object_detection import (
+            ImageObjectDetectionSchema,
+        )
+        from azure.ai.ml._schema.pipeline.automl_node import (
+            ImageObjectDetectionNodeSchema,
+        )
 
         if inside_pipeline:
             schema_dict = ImageObjectDetectionNodeSchema(
                 context={BASE_PATH_CONTEXT_KEY: "./", "inside_pipeline": True}
             ).dump(self)
         else:
-            schema_dict = ImageObjectDetectionSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+            schema_dict = ImageObjectDetectionSchema(
+                context={BASE_PATH_CONTEXT_KEY: "./"}
+            ).dump(self)
 
         return schema_dict
 

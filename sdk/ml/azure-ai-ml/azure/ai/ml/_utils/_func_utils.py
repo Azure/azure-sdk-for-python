@@ -58,7 +58,11 @@ class PersistentLocalsFunctionBuilder(abc.ABC):
             raise TypeError(self.make_error("not_callable"))
 
         if self.injected_param in func.__code__.co_varnames:
-            raise ValueError(self.make_error("conflict_argument", args=list(func.__code__.co_varnames)))
+            raise ValueError(
+                self.make_error(
+                    "conflict_argument", args=list(func.__code__.co_varnames)
+                )
+            )
 
         return self._call(func, _all_kwargs)
 
@@ -67,7 +71,9 @@ class PersistentLocalsFunctionProfilerBuilder(PersistentLocalsFunctionBuilder):
     @staticmethod
     @contextmanager
     # pylint: disable-next=docstring-missing-return,docstring-missing-rtype
-    def _replace_sys_profiler(profiler: Callable[[FrameType, str, Any], None]) -> Iterable[None]:
+    def _replace_sys_profiler(
+        profiler: Callable[[FrameType, str, Any], None]
+    ) -> Iterable[None]:
         """A context manager which replaces sys profiler to given profiler.
 
         :param profiler: The profile function.
@@ -95,7 +101,9 @@ class PersistentLocalsFunctionProfilerBuilder(PersistentLocalsFunctionBuilder):
         :rtype: Callable[[FrameType, str, Any], None]
         """
 
-        def tracer(frame: FrameType, event: str, arg: Any) -> None:  # pylint: disable=unused-argument
+        def tracer(
+            frame: FrameType, event: str, arg: Any
+        ) -> None:  # pylint: disable=unused-argument
             if frame.f_code == func_code and event == "return":
                 # Copy the locals of user's dsl function when it returns.
                 _locals_data.update(frame.f_locals.copy())
@@ -137,7 +145,9 @@ try:
             __self._locals.clear()
             try:
                 if __self._self:
-                    return __self._func(__self._self, *args, **kwargs)  # pylint: disable=not-callable
+                    return __self._func(
+                        __self._self, *args, **kwargs
+                    )  # pylint: disable=not-callable
                 return __self._func(*args, **kwargs)  # pylint: disable=not-callable
             finally:
                 # always pop skip locals even if exception is raised in user code
@@ -172,7 +182,9 @@ try:
             while index < len(instructions) - len(separator) + 1:
                 if cls.is_instr_equal(instructions[index], separator[0]):
                     for i, template_body_instruction in enumerate(separator):
-                        if not cls.is_instr_equal(instructions[index + i], template_body_instruction):
+                        if not cls.is_instr_equal(
+                            instructions[index + i], template_body_instruction
+                        ):
                             break
                     else:
                         result.append(instructions[cur_start:index])
@@ -184,21 +196,28 @@ try:
                 index += 1
             result.append(instructions[cur_start:])
             if n != -1 and len(result) != n:
-                msg = "can't split instructions into {} pieces with provided separators".format(n)
+                msg = "can't split instructions into {} pieces with provided separators".format(
+                    n
+                )
                 raise ValueError(msg)
             return result
 
         @classmethod
         def _class_init_impl(cls):  # pylint: disable=unused-argument
             """Override this method to implement different template matching algorithm."""
-            cls._template_separators_before_body, cls._template_separators_after_body = cls._split(
+            (
+                cls._template_separators_before_body,
+                cls._template_separators_after_body,
+            ) = cls._split(
                 cls.get_instructions(_source_template_func),
                 separator=cls._get_mock_body_instructions(),
                 n=2,
             )
             # use None to indicate the body
             cls._template_separators = (
-                cls._template_separators_before_body + [None] + cls._template_separators_after_body
+                cls._template_separators_before_body
+                + [None]
+                + cls._template_separators_after_body
             )
 
             cls._template_body = cls._split_instructions_based_on_template(
@@ -242,7 +261,9 @@ try:
             return True
 
         @classmethod
-        def is_instructions_equal(cls, instructions1: List[Instr], instructions2: List[Instr]) -> bool:
+        def is_instructions_equal(
+            cls, instructions1: List[Instr], instructions2: List[Instr]
+        ) -> bool:
             if len(instructions1) != len(instructions2):
                 return False
             for instr1, instr2 in zip(instructions1, instructions2):
@@ -250,7 +271,9 @@ try:
                     return False
             return True
 
-        def _create_code(self, instructions: List[Instr], base_func: Union[FunctionType, MethodType]) -> CodeType:
+        def _create_code(
+            self, instructions: List[Instr], base_func: Union[FunctionType, MethodType]
+        ) -> CodeType:
             """Create the base bytecode for the function to be generated.
 
             Will keep information of the function, such as name, globals, etc., but skip all instructions.
@@ -277,7 +300,9 @@ try:
         # endregion
 
         @classmethod
-        def _get_pieces(cls, instructions: List[Instr], separators: List[Instr]) -> List[List[Instr]]:
+        def _get_pieces(
+            cls, instructions: List[Instr], separators: List[Instr]
+        ) -> List[List[Instr]]:
             """Split the instructions into pieces by the separators.
             Note that separators is a list of instructions. For example,
             instructions: [I3, I1, I2, I3, I1, I3, I1, I2, I3]
@@ -368,19 +393,27 @@ try:
                 # this parameter should be set as True only when processing the template target function,
                 # when we should ignore the mock body
                 pieces = cls._get_pieces(
-                    instructions, cls._template_separators_before_body + cls._get_mock_body_instructions()
+                    instructions,
+                    cls._template_separators_before_body
+                    + cls._get_mock_body_instructions(),
                 )
             else:
-                pieces = cls._get_pieces(instructions, cls._template_separators_before_body)
+                pieces = cls._get_pieces(
+                    instructions, cls._template_separators_before_body
+                )
 
-            reversed_pieces = cls._get_pieces(reversed(pieces.pop()), reversed(cls._template_separators_after_body))
+            reversed_pieces = cls._get_pieces(
+                reversed(pieces.pop()), reversed(cls._template_separators_after_body)
+            )
 
             while reversed_pieces:
                 pieces.append(list(reversed(reversed_pieces.pop())))
 
             return pieces
 
-        def _build_instructions(self, func: Union[FunctionType, MethodType]) -> List[Instr]:
+        def _build_instructions(
+            self, func: Union[FunctionType, MethodType]
+        ) -> List[Instr]:
             generated_instructions = []
 
             for template_piece, input_piece, separator in zip(
@@ -395,7 +428,9 @@ try:
             generated_instructions.extend(self._template_tail)
             return generated_instructions
 
-        def _build_func(self, func: Union[FunctionType, MethodType]) -> PersistentLocalsFunction:
+        def _build_func(
+            self, func: Union[FunctionType, MethodType]
+        ) -> PersistentLocalsFunction:
             """Build a persistent locals function from the given function. Use bytecode injection to add try...finally
             statement around code to persistent the locals in the function.
 
@@ -445,7 +480,9 @@ try:
 
 except ImportError:
     # Fall back to the profiler implementation
-    class PersistentLocalsFunctionBytecodeBuilder(PersistentLocalsFunctionProfilerBuilder):
+    class PersistentLocalsFunctionBytecodeBuilder(
+        PersistentLocalsFunctionProfilerBuilder
+    ):
         pass
 
 

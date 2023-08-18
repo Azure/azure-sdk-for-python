@@ -16,7 +16,10 @@ from azure.ai.ml.entities._builders import BaseNode
 from azure.ai.ml.entities._builders.control_flow_node import LoopNode
 from azure.ai.ml.entities._job.pipeline._io import NodeOutput, PipelineInput
 from azure.ai.ml.entities._job.pipeline._io.mixin import NodeIOMixin
-from azure.ai.ml.entities._util import convert_ordered_dict_to_dict, validate_attribute_type
+from azure.ai.ml.entities._util import (
+    convert_ordered_dict_to_dict,
+    validate_attribute_type,
+)
 from azure.ai.ml.entities._validation import MutableValidationResult
 from azure.ai.ml.exceptions import UserErrorException
 
@@ -60,7 +63,9 @@ class ParallelFor(LoopNode, NodeIOMixin):
         **kwargs,
     ) -> None:
         # validate init params are valid type
-        validate_attribute_type(attrs_to_check=locals(), attr_type_map=self._attr_type_map())
+        validate_attribute_type(
+            attrs_to_check=locals(), attr_type_map=self._attr_type_map()
+        )
 
         kwargs.pop("type", None)
         super(ParallelFor, self).__init__(
@@ -77,7 +82,8 @@ class ParallelFor(LoopNode, NodeIOMixin):
             outputs = self.body._component.outputs
             # transform body outputs to aggregate types when available
             self._outputs = self._build_outputs_dict(
-                outputs=actual_outputs, output_definition_dict=self._convert_output_meta(outputs)
+                outputs=actual_outputs,
+                output_definition_dict=self._convert_output_meta(outputs),
             )
         except AttributeError:
             # when body output not available, create default output builder without meta
@@ -146,7 +152,9 @@ class ParallelFor(LoopNode, NodeIOMixin):
 
     @classmethod
     # pylint: disable-next=docstring-missing-param,docstring-missing-return,docstring-missing-rtype
-    def _to_rest_items(cls, items: Union[list, dict, str, NodeOutput, PipelineInput]) -> str:
+    def _to_rest_items(
+        cls, items: Union[list, dict, str, NodeOutput, PipelineInput]
+    ) -> str:
         """Convert items to rest object."""
         # validate items.
         cls._validate_items(items=items, raise_error=True, body_component=None)
@@ -209,16 +217,24 @@ class ParallelFor(LoopNode, NodeIOMixin):
         # pylint: disable=protected-access
         obj = BaseNode._from_rest_object_to_init_params(obj)
         obj["items"] = cls._from_rest_items(rest_items=obj.get("items", ""))
-        return cls._create_instance_from_schema_dict(pipeline_jobs=pipeline_jobs, loaded_data=obj)
+        return cls._create_instance_from_schema_dict(
+            pipeline_jobs=pipeline_jobs, loaded_data=obj
+        )
 
     @classmethod
     def _create_instance_from_schema_dict(cls, pipeline_jobs, loaded_data, **kwargs):
-        body_name = cls._get_data_binding_expression_value(loaded_data.pop("body"), regex=r"\{\{.*\.jobs\.(.*)\}\}")
+        body_name = cls._get_data_binding_expression_value(
+            loaded_data.pop("body"), regex=r"\{\{.*\.jobs\.(.*)\}\}"
+        )
 
-        loaded_data["body"] = cls._get_body_from_pipeline_jobs(pipeline_jobs=pipeline_jobs, body_name=body_name)
+        loaded_data["body"] = cls._get_body_from_pipeline_jobs(
+            pipeline_jobs=pipeline_jobs, body_name=body_name
+        )
         return cls(**loaded_data, **kwargs)
 
-    def _convert_output_meta(self, outputs: Dict[str, Union[NodeOutput, Output]]) -> Dict[str, Output]:
+    def _convert_output_meta(
+        self, outputs: Dict[str, Union[NodeOutput, Output]]
+    ) -> Dict[str, Output]:
         """Convert output meta to aggregate types.
 
         :param outputs: Output meta
@@ -235,7 +251,9 @@ class ParallelFor(LoopNode, NodeIOMixin):
                 # when loop body introduces some new output type, this will be raised as a reminder to support is in
                 # parallel for
                 raise UserErrorException(
-                    "Referencing output with type {} is not supported in parallel_for node.".format(output.type)
+                    "Referencing output with type {} is not supported in parallel_for node.".format(
+                        output.type
+                    )
                 )
             if isinstance(output, NodeOutput):
                 output = output._to_job_output()
@@ -257,7 +275,9 @@ class ParallelFor(LoopNode, NodeIOMixin):
         # pylint: disable=protected-access
         validation_result = self._validate_body(raise_error=False)
         validation_result.merge_with(
-            self._validate_items(items=self.items, raise_error=False, body_component=self.body._component)
+            self._validate_items(
+                items=self.items, raise_error=False, body_component=self.body._component
+            )
         )
         return validation_result
 
@@ -281,9 +301,13 @@ class ParallelFor(LoopNode, NodeIOMixin):
                 items = list(items.values())
             if isinstance(items, list):
                 if len(items) > 0:
-                    cls._validate_items_list(items, validation_result, body_component=body_component)
+                    cls._validate_items_list(
+                        items, validation_result, body_component=body_component
+                    )
                 else:
-                    validation_result.append_error(yaml_path="items", message="Items is an empty list/dict.")
+                    validation_result.append_error(
+                        yaml_path="items", message="Items is an empty list/dict."
+                    )
         else:
             validation_result.append_error(
                 yaml_path="items",
@@ -305,7 +329,8 @@ class ParallelFor(LoopNode, NodeIOMixin):
             if not isinstance(item, dict):
                 validation_result.append_error(
                     yaml_path="items",
-                    message=f"Items has to be list/dict of dict as value, " f"but got {type(item)} for {item}.",
+                    message=f"Items has to be list/dict of dict as value, "
+                    f"but got {type(item)} for {item}.",
                 )
             else:
                 # item has to have matched meta
@@ -316,11 +341,15 @@ class ParallelFor(LoopNode, NodeIOMixin):
                         msg = f"Items should have same keys with body inputs, but got {item.keys()} and {meta.keys()}."
                         validation_result.append_error(yaml_path="items", message=msg)
                 # items' keys should appear in body's inputs
-                if isinstance(body_component, Component) and (not item.keys() <= body_component.inputs.keys()):
+                if isinstance(body_component, Component) and (
+                    not item.keys() <= body_component.inputs.keys()
+                ):
                     msg = f"Item {item} got unmatched inputs with loop body component inputs {body_component.inputs}."
                     validation_result.append_error(yaml_path="items", message=msg)
                 # validate item value type
-                cls._validate_item_value_type(item=item, validation_result=validation_result)
+                cls._validate_item_value_type(
+                    item=item, validation_result=validation_result
+                )
 
     @classmethod
     def _validate_item_value_type(cls, item: dict, validation_result):
@@ -335,7 +364,9 @@ class ParallelFor(LoopNode, NodeIOMixin):
                     ),
                 )
             if isinstance(val, Input):
-                cls._validate_input_item_value(entry=val, validation_result=validation_result)
+                cls._validate_input_item_value(
+                    entry=val, validation_result=validation_result
+                )
 
     @classmethod
     def _validate_input_item_value(cls, entry: Input, validation_result):

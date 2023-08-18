@@ -9,11 +9,15 @@ from typing import Dict, Optional, Union
 from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     DistributionConfiguration as RestDistributionConfiguration,
 )
-from azure.ai.ml._restclient.v2023_04_01_preview.models import DistributionType as RestDistributionType
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    DistributionType as RestDistributionType,
+)
 from azure.ai.ml._restclient.v2023_04_01_preview.models import Mpi as RestMpi
 from azure.ai.ml._restclient.v2023_04_01_preview.models import PyTorch as RestPyTorch
 from azure.ai.ml._restclient.v2023_04_01_preview.models import Ray as RestRay
-from azure.ai.ml._restclient.v2023_04_01_preview.models import TensorFlow as RestTensorFlow
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    TensorFlow as RestTensorFlow,
+)
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants import DistributionType
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
@@ -91,7 +95,9 @@ class MpiDistribution(DistributionConfiguration):
             :caption: Configuring a CommandComponent with an MpiDistribution.
     """
 
-    def __init__(self, *, process_count_per_instance: Optional[int] = None, **kwargs) -> None:
+    def __init__(
+        self, *, process_count_per_instance: Optional[int] = None, **kwargs
+    ) -> None:
         super().__init__(**kwargs)
         self.type = DistributionType.MPI
         self.process_count_per_instance = process_count_per_instance
@@ -117,7 +123,9 @@ class PyTorchDistribution(DistributionConfiguration):
             :caption: Configuring a CommandComponent with a PyTorchDistribution.
     """
 
-    def __init__(self, *, process_count_per_instance: Optional[int] = None, **kwargs) -> None:
+    def __init__(
+        self, *, process_count_per_instance: Optional[int] = None, **kwargs
+    ) -> None:
         super().__init__(**kwargs)
         self.type = DistributionType.PYTORCH
         self.process_count_per_instance = process_count_per_instance
@@ -146,7 +154,11 @@ class TensorFlowDistribution(DistributionConfiguration):
     """
 
     def __init__(
-        self, *, parameter_server_count: Optional[int] = 0, worker_count: Optional[int] = None, **kwargs
+        self,
+        *,
+        parameter_server_count: Optional[int] = 0,
+        worker_count: Optional[int] = None,
+        **kwargs
     ) -> None:
         super().__init__(**kwargs)
         self.type = DistributionType.TENSORFLOW
@@ -154,7 +166,10 @@ class TensorFlowDistribution(DistributionConfiguration):
         self.worker_count = worker_count
 
     def _to_rest_object(self) -> RestTensorFlow:
-        return RestTensorFlow(parameter_server_count=self.parameter_server_count, worker_count=self.worker_count)
+        return RestTensorFlow(
+            parameter_server_count=self.parameter_server_count,
+            worker_count=self.worker_count,
+        )
 
 
 @experimental

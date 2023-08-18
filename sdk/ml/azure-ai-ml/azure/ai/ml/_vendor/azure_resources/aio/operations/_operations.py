@@ -22,7 +22,9 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 from ... import models
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[
+    Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]
+]
 
 
 class Operations:
@@ -56,7 +58,11 @@ class Operations:
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop("cls", None)  # type: ClsType["models.OperationListResult"]
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+        }
         error_map.update(kwargs.pop("error_map", {}))
         api_version = "2020-06-01"
         accept = "application/json"
@@ -64,14 +70,18 @@ class Operations:
         def prepare_request(next_link=None):
             # Construct headers
             header_parameters = {}  # type: Dict[str, Any]
-            header_parameters["Accept"] = self._serialize.header("accept", accept, "str")
+            header_parameters["Accept"] = self._serialize.header(
+                "accept", accept, "str"
+            )
 
             if not next_link:
                 # Construct URL
                 url = self.list.metadata["url"]  # type: ignore
                 # Construct parameters
                 query_parameters = {}  # type: Dict[str, Any]
-                query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
+                query_parameters["api-version"] = self._serialize.query(
+                    "api_version", api_version, "str"
+                )
 
                 request = self._client.get(url, query_parameters, header_parameters)
             else:
@@ -90,11 +100,17 @@ class Operations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(
+                request, stream=False, **kwargs
+            )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                map_error(
+                    status_code=response.status_code,
+                    response=response,
+                    error_map=error_map,
+                )
                 raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
             return pipeline_response

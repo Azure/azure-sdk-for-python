@@ -19,14 +19,11 @@ class Artifact(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'prefix': {'key': 'prefix', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "prefix": {"key": "prefix", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword id:
         :paramtype id: str
@@ -34,8 +31,8 @@ class Artifact(msrest.serialization.Model):
         :paramtype prefix: str
         """
         super(Artifact, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
-        self.prefix = kwargs.get('prefix', None)
+        self.id = kwargs.get("id", None)
+        self.prefix = kwargs.get("prefix", None)
 
 
 class Asset(msrest.serialization.Model):
@@ -68,27 +65,24 @@ class Asset(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'required': True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'artifacts': {'key': 'artifacts', 'type': '[Artifact]'},
-        'kv_tags': {'key': 'kvTags', 'type': '{str}'},
-        'properties': {'key': 'properties', 'type': '{str}'},
-        'runid': {'key': 'runid', 'type': 'str'},
-        'projectid': {'key': 'projectid', 'type': 'str'},
-        'meta': {'key': 'meta', 'type': '{str}'},
-        'created_time': {'key': 'createdTime', 'type': 'iso-8601'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "artifacts": {"key": "artifacts", "type": "[Artifact]"},
+        "kv_tags": {"key": "kvTags", "type": "{str}"},
+        "properties": {"key": "properties", "type": "{str}"},
+        "runid": {"key": "runid", "type": "str"},
+        "projectid": {"key": "projectid", "type": "str"},
+        "meta": {"key": "meta", "type": "{str}"},
+        "created_time": {"key": "createdTime", "type": "iso-8601"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword id:
         :paramtype id: str
@@ -114,17 +108,17 @@ class Asset(msrest.serialization.Model):
         :paramtype created_time: ~datetime.datetime
         """
         super(Asset, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
-        self.name = kwargs['name']
-        self.type = kwargs.get('type', None)
-        self.description = kwargs.get('description', None)
-        self.artifacts = kwargs.get('artifacts', None)
-        self.kv_tags = kwargs.get('kv_tags', None)
-        self.properties = kwargs.get('properties', None)
-        self.runid = kwargs.get('runid', None)
-        self.projectid = kwargs.get('projectid', None)
-        self.meta = kwargs.get('meta', None)
-        self.created_time = kwargs.get('created_time', None)
+        self.id = kwargs.get("id", None)
+        self.name = kwargs["name"]
+        self.type = kwargs.get("type", None)
+        self.description = kwargs.get("description", None)
+        self.artifacts = kwargs.get("artifacts", None)
+        self.kv_tags = kwargs.get("kv_tags", None)
+        self.properties = kwargs.get("properties", None)
+        self.runid = kwargs.get("runid", None)
+        self.projectid = kwargs.get("projectid", None)
+        self.meta = kwargs.get("meta", None)
+        self.created_time = kwargs.get("created_time", None)
 
 
 class AssetDto(msrest.serialization.Model):
@@ -148,19 +142,19 @@ class AssetDto(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'asset_id': {'key': 'assetId', 'type': 'str'},
-        'entity_id': {'key': 'entityId', 'type': 'str'},
-        'data_items': {'key': 'dataItems', 'type': '{DataItem}'},
-        'data_references': {'key': 'dataReferences', 'type': 'DataReferences'},
-        'should_index': {'key': 'shouldIndex', 'type': 'bool'},
-        'dependencies': {'key': 'dependencies', 'type': '[DependentAsset]'},
-        'intellectual_property_publisher_information': {'key': 'intellectualPropertyPublisherInformation', 'type': 'IntellectualPropertyPublisherInformation'},
+        "asset_id": {"key": "assetId", "type": "str"},
+        "entity_id": {"key": "entityId", "type": "str"},
+        "data_items": {"key": "dataItems", "type": "{DataItem}"},
+        "data_references": {"key": "dataReferences", "type": "DataReferences"},
+        "should_index": {"key": "shouldIndex", "type": "bool"},
+        "dependencies": {"key": "dependencies", "type": "[DependentAsset]"},
+        "intellectual_property_publisher_information": {
+            "key": "intellectualPropertyPublisherInformation",
+            "type": "IntellectualPropertyPublisherInformation",
+        },
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword asset_id:
         :paramtype asset_id: str
@@ -179,13 +173,15 @@ class AssetDto(msrest.serialization.Model):
          ~azure.mgmt.machinelearningservices.models.IntellectualPropertyPublisherInformation
         """
         super(AssetDto, self).__init__(**kwargs)
-        self.asset_id = kwargs.get('asset_id', None)
-        self.entity_id = kwargs.get('entity_id', None)
-        self.data_items = kwargs.get('data_items', None)
-        self.data_references = kwargs.get('data_references', None)
-        self.should_index = kwargs.get('should_index', None)
-        self.dependencies = kwargs.get('dependencies', None)
-        self.intellectual_property_publisher_information = kwargs.get('intellectual_property_publisher_information', None)
+        self.asset_id = kwargs.get("asset_id", None)
+        self.entity_id = kwargs.get("entity_id", None)
+        self.data_items = kwargs.get("data_items", None)
+        self.data_references = kwargs.get("data_references", None)
+        self.should_index = kwargs.get("should_index", None)
+        self.dependencies = kwargs.get("dependencies", None)
+        self.intellectual_property_publisher_information = kwargs.get(
+            "intellectual_property_publisher_information", None
+        )
 
 
 class AssetPaginatedResult(msrest.serialization.Model):
@@ -200,15 +196,12 @@ class AssetPaginatedResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Asset]'},
-        'continuation_token': {'key': 'continuationToken', 'type': 'str'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Asset]"},
+        "continuation_token": {"key": "continuationToken", "type": "str"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword value:
         :paramtype value: list[~azure.mgmt.machinelearningservices.models.Asset]
@@ -218,9 +211,9 @@ class AssetPaginatedResult(msrest.serialization.Model):
         :paramtype next_link: str
         """
         super(AssetPaginatedResult, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
-        self.continuation_token = kwargs.get('continuation_token', None)
-        self.next_link = kwargs.get('next_link', None)
+        self.value = kwargs.get("value", None)
+        self.continuation_token = kwargs.get("continuation_token", None)
+        self.next_link = kwargs.get("next_link", None)
 
 
 class BatchGetResolvedUrisDto(msrest.serialization.Model):
@@ -231,19 +224,16 @@ class BatchGetResolvedUrisDto(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'values': {'key': 'values', 'type': '[str]'},
+        "values": {"key": "values", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword values:
         :paramtype values: list[str]
         """
         super(BatchGetResolvedUrisDto, self).__init__(**kwargs)
-        self.values = kwargs.get('values', None)
+        self.values = kwargs.get("values", None)
 
 
 class BatchModelPathResponseDto(msrest.serialization.Model):
@@ -254,19 +244,16 @@ class BatchModelPathResponseDto(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'values': {'key': 'values', 'type': '{ModelPathResponseDto}'},
+        "values": {"key": "values", "type": "{ModelPathResponseDto}"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword values: Dictionary of :code:`<ModelPathResponseDto>`.
         :paramtype values: dict[str, ~azure.mgmt.machinelearningservices.models.ModelPathResponseDto]
         """
         super(BatchModelPathResponseDto, self).__init__(**kwargs)
-        self.values = kwargs.get('values', None)
+        self.values = kwargs.get("values", None)
 
 
 class BlobReference(msrest.serialization.Model):
@@ -279,14 +266,11 @@ class BlobReference(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'blob_uri': {'key': 'blobUri', 'type': 'str'},
-        'storage_account_arm_id': {'key': 'storageAccountArmId', 'type': 'str'},
+        "blob_uri": {"key": "blobUri", "type": "str"},
+        "storage_account_arm_id": {"key": "storageAccountArmId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword blob_uri:
         :paramtype blob_uri: str
@@ -294,8 +278,8 @@ class BlobReference(msrest.serialization.Model):
         :paramtype storage_account_arm_id: str
         """
         super(BlobReference, self).__init__(**kwargs)
-        self.blob_uri = kwargs.get('blob_uri', None)
-        self.storage_account_arm_id = kwargs.get('storage_account_arm_id', None)
+        self.blob_uri = kwargs.get("blob_uri", None)
+        self.storage_account_arm_id = kwargs.get("storage_account_arm_id", None)
 
 
 class BlobReferenceForConsumptionDto(msrest.serialization.Model):
@@ -310,15 +294,12 @@ class BlobReferenceForConsumptionDto(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'blob_uri': {'key': 'blobUri', 'type': 'str'},
-        'storage_account_arm_id': {'key': 'storageAccountArmId', 'type': 'str'},
-        'credential': {'key': 'credential', 'type': 'DataReferenceCredentialDto'},
+        "blob_uri": {"key": "blobUri", "type": "str"},
+        "storage_account_arm_id": {"key": "storageAccountArmId", "type": "str"},
+        "credential": {"key": "credential", "type": "DataReferenceCredentialDto"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword blob_uri:
         :paramtype blob_uri: str
@@ -328,9 +309,9 @@ class BlobReferenceForConsumptionDto(msrest.serialization.Model):
         :paramtype credential: ~azure.mgmt.machinelearningservices.models.DataReferenceCredentialDto
         """
         super(BlobReferenceForConsumptionDto, self).__init__(**kwargs)
-        self.blob_uri = kwargs.get('blob_uri', None)
-        self.storage_account_arm_id = kwargs.get('storage_account_arm_id', None)
-        self.credential = kwargs.get('credential', None)
+        self.blob_uri = kwargs.get("blob_uri", None)
+        self.storage_account_arm_id = kwargs.get("storage_account_arm_id", None)
+        self.credential = kwargs.get("credential", None)
 
 
 class ContainerResourceRequirements(msrest.serialization.Model):
@@ -353,19 +334,16 @@ class ContainerResourceRequirements(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'cpu': {'key': 'cpu', 'type': 'float'},
-        'cpu_limit': {'key': 'cpuLimit', 'type': 'float'},
-        'memory_in_gb': {'key': 'memoryInGB', 'type': 'float'},
-        'memory_in_gb_limit': {'key': 'memoryInGBLimit', 'type': 'float'},
-        'gpu_enabled': {'key': 'gpuEnabled', 'type': 'bool'},
-        'gpu': {'key': 'gpu', 'type': 'int'},
-        'fpga': {'key': 'fpga', 'type': 'int'},
+        "cpu": {"key": "cpu", "type": "float"},
+        "cpu_limit": {"key": "cpuLimit", "type": "float"},
+        "memory_in_gb": {"key": "memoryInGB", "type": "float"},
+        "memory_in_gb_limit": {"key": "memoryInGBLimit", "type": "float"},
+        "gpu_enabled": {"key": "gpuEnabled", "type": "bool"},
+        "gpu": {"key": "gpu", "type": "int"},
+        "fpga": {"key": "fpga", "type": "int"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword cpu:
         :paramtype cpu: float
@@ -383,13 +361,13 @@ class ContainerResourceRequirements(msrest.serialization.Model):
         :paramtype fpga: int
         """
         super(ContainerResourceRequirements, self).__init__(**kwargs)
-        self.cpu = kwargs.get('cpu', None)
-        self.cpu_limit = kwargs.get('cpu_limit', None)
-        self.memory_in_gb = kwargs.get('memory_in_gb', None)
-        self.memory_in_gb_limit = kwargs.get('memory_in_gb_limit', None)
-        self.gpu_enabled = kwargs.get('gpu_enabled', None)
-        self.gpu = kwargs.get('gpu', None)
-        self.fpga = kwargs.get('fpga', None)
+        self.cpu = kwargs.get("cpu", None)
+        self.cpu_limit = kwargs.get("cpu_limit", None)
+        self.memory_in_gb = kwargs.get("memory_in_gb", None)
+        self.memory_in_gb_limit = kwargs.get("memory_in_gb_limit", None)
+        self.gpu_enabled = kwargs.get("gpu_enabled", None)
+        self.gpu = kwargs.get("gpu", None)
+        self.fpga = kwargs.get("fpga", None)
 
 
 class CreatedBy(msrest.serialization.Model):
@@ -404,15 +382,12 @@ class CreatedBy(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'user_object_id': {'key': 'userObjectId', 'type': 'str'},
-        'user_tenant_id': {'key': 'userTenantId', 'type': 'str'},
-        'user_name': {'key': 'userName', 'type': 'str'},
+        "user_object_id": {"key": "userObjectId", "type": "str"},
+        "user_tenant_id": {"key": "userTenantId", "type": "str"},
+        "user_name": {"key": "userName", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword user_object_id:
         :paramtype user_object_id: str
@@ -422,9 +397,9 @@ class CreatedBy(msrest.serialization.Model):
         :paramtype user_name: str
         """
         super(CreatedBy, self).__init__(**kwargs)
-        self.user_object_id = kwargs.get('user_object_id', None)
-        self.user_tenant_id = kwargs.get('user_tenant_id', None)
-        self.user_name = kwargs.get('user_name', None)
+        self.user_object_id = kwargs.get("user_object_id", None)
+        self.user_tenant_id = kwargs.get("user_tenant_id", None)
+        self.user_name = kwargs.get("user_name", None)
 
 
 class CreateUnregisteredInputModelDto(msrest.serialization.Model):
@@ -441,16 +416,13 @@ class CreateUnregisteredInputModelDto(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'run_id': {'key': 'runId', 'type': 'str'},
-        'input_name': {'key': 'inputName', 'type': 'str'},
-        'path': {'key': 'path', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "run_id": {"key": "runId", "type": "str"},
+        "input_name": {"key": "inputName", "type": "str"},
+        "path": {"key": "path", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword run_id:
         :paramtype run_id: str
@@ -462,10 +434,10 @@ class CreateUnregisteredInputModelDto(msrest.serialization.Model):
         :paramtype type: str
         """
         super(CreateUnregisteredInputModelDto, self).__init__(**kwargs)
-        self.run_id = kwargs.get('run_id', None)
-        self.input_name = kwargs.get('input_name', None)
-        self.path = kwargs.get('path', None)
-        self.type = kwargs.get('type', None)
+        self.run_id = kwargs.get("run_id", None)
+        self.input_name = kwargs.get("input_name", None)
+        self.path = kwargs.get("path", None)
+        self.type = kwargs.get("type", None)
 
 
 class CreateUnregisteredOutputModelDto(msrest.serialization.Model):
@@ -482,16 +454,13 @@ class CreateUnregisteredOutputModelDto(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'run_id': {'key': 'runId', 'type': 'str'},
-        'output_name': {'key': 'outputName', 'type': 'str'},
-        'path': {'key': 'path', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "run_id": {"key": "runId", "type": "str"},
+        "output_name": {"key": "outputName", "type": "str"},
+        "path": {"key": "path", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword run_id:
         :paramtype run_id: str
@@ -503,10 +472,10 @@ class CreateUnregisteredOutputModelDto(msrest.serialization.Model):
         :paramtype type: str
         """
         super(CreateUnregisteredOutputModelDto, self).__init__(**kwargs)
-        self.run_id = kwargs.get('run_id', None)
-        self.output_name = kwargs.get('output_name', None)
-        self.path = kwargs.get('path', None)
-        self.type = kwargs.get('type', None)
+        self.run_id = kwargs.get("run_id", None)
+        self.output_name = kwargs.get("output_name", None)
+        self.path = kwargs.get("path", None)
+        self.type = kwargs.get("type", None)
 
 
 class CreationContext(msrest.serialization.Model):
@@ -524,16 +493,13 @@ class CreationContext(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'additional_properties': {'key': '', 'type': '{object}'},
-        'created_time': {'key': 'createdTime', 'type': 'iso-8601'},
-        'created_by': {'key': 'createdBy', 'type': 'CreatedBy'},
-        'creation_source': {'key': 'creationSource', 'type': 'str'},
+        "additional_properties": {"key": "", "type": "{object}"},
+        "created_time": {"key": "createdTime", "type": "iso-8601"},
+        "created_by": {"key": "createdBy", "type": "CreatedBy"},
+        "creation_source": {"key": "creationSource", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -546,10 +512,10 @@ class CreationContext(msrest.serialization.Model):
         :paramtype creation_source: str
         """
         super(CreationContext, self).__init__(**kwargs)
-        self.additional_properties = kwargs.get('additional_properties', None)
-        self.created_time = kwargs.get('created_time', None)
-        self.created_by = kwargs.get('created_by', None)
-        self.creation_source = kwargs.get('creation_source', None)
+        self.additional_properties = kwargs.get("additional_properties", None)
+        self.created_time = kwargs.get("created_time", None)
+        self.created_by = kwargs.get("created_by", None)
+        self.creation_source = kwargs.get("creation_source", None)
 
 
 class DataItem(msrest.serialization.Model):
@@ -560,19 +526,16 @@ class DataItem(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'data': {'key': 'data', 'type': 'object'},
+        "data": {"key": "data", "type": "object"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword data: Anything.
         :paramtype data: any
         """
         super(DataItem, self).__init__(**kwargs)
-        self.data = kwargs.get('data', None)
+        self.data = kwargs.get("data", None)
 
 
 class DataReferenceCredentialDto(msrest.serialization.Model):
@@ -586,14 +549,11 @@ class DataReferenceCredentialDto(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'additional_properties': {'key': '', 'type': '{object}'},
-        'credential_type': {'key': 'credentialType', 'type': 'str'},
+        "additional_properties": {"key": "", "type": "{object}"},
+        "credential_type": {"key": "credentialType", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -602,8 +562,8 @@ class DataReferenceCredentialDto(msrest.serialization.Model):
         :paramtype credential_type: str
         """
         super(DataReferenceCredentialDto, self).__init__(**kwargs)
-        self.additional_properties = kwargs.get('additional_properties', None)
-        self.credential_type = kwargs.get('credential_type', None)
+        self.additional_properties = kwargs.get("additional_properties", None)
+        self.credential_type = kwargs.get("credential_type", None)
 
 
 class DataReferences(msrest.serialization.Model):
@@ -617,14 +577,14 @@ class DataReferences(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'blob_references': {'key': 'blobReferences', 'type': '{BlobReference}'},
-        'image_registry_references': {'key': 'imageRegistryReferences', 'type': '{ImageReference}'},
+        "blob_references": {"key": "blobReferences", "type": "{BlobReference}"},
+        "image_registry_references": {
+            "key": "imageRegistryReferences",
+            "type": "{ImageReference}",
+        },
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword blob_references: Dictionary of :code:`<BlobReference>`.
         :paramtype blob_references: dict[str, ~azure.mgmt.machinelearningservices.models.BlobReference]
@@ -633,8 +593,8 @@ class DataReferences(msrest.serialization.Model):
          ~azure.mgmt.machinelearningservices.models.ImageReference]
         """
         super(DataReferences, self).__init__(**kwargs)
-        self.blob_references = kwargs.get('blob_references', None)
-        self.image_registry_references = kwargs.get('image_registry_references', None)
+        self.blob_references = kwargs.get("blob_references", None)
+        self.image_registry_references = kwargs.get("image_registry_references", None)
 
 
 class DataReferencesForConsumptionDto(msrest.serialization.Model):
@@ -649,14 +609,17 @@ class DataReferencesForConsumptionDto(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'blob_references': {'key': 'blobReferences', 'type': '{BlobReferenceForConsumptionDto}'},
-        'image_registry_references': {'key': 'imageRegistryReferences', 'type': '{ImageReferenceForConsumptionDto}'},
+        "blob_references": {
+            "key": "blobReferences",
+            "type": "{BlobReferenceForConsumptionDto}",
+        },
+        "image_registry_references": {
+            "key": "imageRegistryReferences",
+            "type": "{ImageReferenceForConsumptionDto}",
+        },
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword blob_references: Dictionary of :code:`<BlobReferenceForConsumptionDto>`.
         :paramtype blob_references: dict[str,
@@ -666,8 +629,8 @@ class DataReferencesForConsumptionDto(msrest.serialization.Model):
          ~azure.mgmt.machinelearningservices.models.ImageReferenceForConsumptionDto]
         """
         super(DataReferencesForConsumptionDto, self).__init__(**kwargs)
-        self.blob_references = kwargs.get('blob_references', None)
-        self.image_registry_references = kwargs.get('image_registry_references', None)
+        self.blob_references = kwargs.get("blob_references", None)
+        self.image_registry_references = kwargs.get("image_registry_references", None)
 
 
 class DatasetReference(msrest.serialization.Model):
@@ -680,14 +643,11 @@ class DatasetReference(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword name:
         :paramtype name: str
@@ -695,8 +655,8 @@ class DatasetReference(msrest.serialization.Model):
         :paramtype id: str
         """
         super(DatasetReference, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.id = kwargs.get('id', None)
+        self.name = kwargs.get("name", None)
+        self.id = kwargs.get("id", None)
 
 
 class DependencyMapDto(msrest.serialization.Model):
@@ -707,19 +667,16 @@ class DependencyMapDto(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'dependencies': {'key': 'dependencies', 'type': '[DependencyMapItemDto]'},
+        "dependencies": {"key": "dependencies", "type": "[DependencyMapItemDto]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword dependencies:
         :paramtype dependencies: list[~azure.mgmt.machinelearningservices.models.DependencyMapItemDto]
         """
         super(DependencyMapDto, self).__init__(**kwargs)
-        self.dependencies = kwargs.get('dependencies', None)
+        self.dependencies = kwargs.get("dependencies", None)
 
 
 class DependencyMapItemDto(msrest.serialization.Model):
@@ -732,14 +689,11 @@ class DependencyMapItemDto(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'source_id': {'key': 'sourceId', 'type': 'str'},
-        'destination_id': {'key': 'destinationId', 'type': 'str'},
+        "source_id": {"key": "sourceId", "type": "str"},
+        "destination_id": {"key": "destinationId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword source_id:
         :paramtype source_id: str
@@ -747,8 +701,8 @@ class DependencyMapItemDto(msrest.serialization.Model):
         :paramtype destination_id: str
         """
         super(DependencyMapItemDto, self).__init__(**kwargs)
-        self.source_id = kwargs.get('source_id', None)
-        self.destination_id = kwargs.get('destination_id', None)
+        self.source_id = kwargs.get("source_id", None)
+        self.destination_id = kwargs.get("destination_id", None)
 
 
 class DependentAsset(msrest.serialization.Model):
@@ -759,19 +713,16 @@ class DependentAsset(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'asset_id': {'key': 'assetId', 'type': 'str'},
+        "asset_id": {"key": "assetId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword asset_id:
         :paramtype asset_id: str
         """
         super(DependentAsset, self).__init__(**kwargs)
-        self.asset_id = kwargs.get('asset_id', None)
+        self.asset_id = kwargs.get("asset_id", None)
 
 
 class DependentEntitiesDto(msrest.serialization.Model):
@@ -784,14 +735,11 @@ class DependentEntitiesDto(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'asset_id': {'key': 'assetId', 'type': 'str'},
-        'dependencies': {'key': 'dependencies', 'type': '[DependentAsset]'},
+        "asset_id": {"key": "assetId", "type": "str"},
+        "dependencies": {"key": "dependencies", "type": "[DependentAsset]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword asset_id:
         :paramtype asset_id: str
@@ -799,8 +747,8 @@ class DependentEntitiesDto(msrest.serialization.Model):
         :paramtype dependencies: list[~azure.mgmt.machinelearningservices.models.DependentAsset]
         """
         super(DependentEntitiesDto, self).__init__(**kwargs)
-        self.asset_id = kwargs.get('asset_id', None)
-        self.dependencies = kwargs.get('dependencies', None)
+        self.asset_id = kwargs.get("asset_id", None)
+        self.dependencies = kwargs.get("dependencies", None)
 
 
 class ErrorResponse(msrest.serialization.Model):
@@ -821,18 +769,15 @@ class ErrorResponse(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'status_code': {'key': 'statusCode', 'type': 'int'},
-        'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[InnerErrorDetails]'},
-        'correlation': {'key': 'correlation', 'type': '{str}'},
+        "code": {"key": "code", "type": "str"},
+        "status_code": {"key": "statusCode", "type": "int"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[InnerErrorDetails]"},
+        "correlation": {"key": "correlation", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword code:
         :paramtype code: str
@@ -848,12 +793,12 @@ class ErrorResponse(msrest.serialization.Model):
         :paramtype correlation: dict[str, str]
         """
         super(ErrorResponse, self).__init__(**kwargs)
-        self.code = kwargs.get('code', None)
-        self.status_code = kwargs.get('status_code', None)
-        self.message = kwargs.get('message', None)
-        self.target = kwargs.get('target', None)
-        self.details = kwargs.get('details', None)
-        self.correlation = kwargs.get('correlation', None)
+        self.code = kwargs.get("code", None)
+        self.status_code = kwargs.get("status_code", None)
+        self.message = kwargs.get("message", None)
+        self.target = kwargs.get("target", None)
+        self.details = kwargs.get("details", None)
+        self.correlation = kwargs.get("correlation", None)
 
 
 class ExtensiveModel(msrest.serialization.Model):
@@ -868,15 +813,12 @@ class ExtensiveModel(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'model': {'key': 'Model', 'type': 'Model'},
-        'service_list': {'key': 'ServiceList', 'type': '[ServiceResponseBase]'},
-        'asset_list': {'key': 'AssetList', 'type': '[Asset]'},
+        "model": {"key": "Model", "type": "Model"},
+        "service_list": {"key": "ServiceList", "type": "[ServiceResponseBase]"},
+        "asset_list": {"key": "AssetList", "type": "[Asset]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword model:
         :paramtype model: ~azure.mgmt.machinelearningservices.models.Model
@@ -886,9 +828,9 @@ class ExtensiveModel(msrest.serialization.Model):
         :paramtype asset_list: list[~azure.mgmt.machinelearningservices.models.Asset]
         """
         super(ExtensiveModel, self).__init__(**kwargs)
-        self.model = kwargs.get('model', None)
-        self.service_list = kwargs.get('service_list', None)
-        self.asset_list = kwargs.get('asset_list', None)
+        self.model = kwargs.get("model", None)
+        self.service_list = kwargs.get("service_list", None)
+        self.asset_list = kwargs.get("asset_list", None)
 
 
 class FeedIndexEntityDto(msrest.serialization.Model):
@@ -903,15 +845,12 @@ class FeedIndexEntityDto(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'index_entity': {'key': 'indexEntity', 'type': 'IndexEntity'},
-        'schema_id': {'key': 'schemaId', 'type': 'str'},
-        'entity_schema': {'key': 'entitySchema', 'type': 'object'},
+        "index_entity": {"key": "indexEntity", "type": "IndexEntity"},
+        "schema_id": {"key": "schemaId", "type": "str"},
+        "entity_schema": {"key": "entitySchema", "type": "object"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword index_entity:
         :paramtype index_entity: ~azure.mgmt.machinelearningservices.models.IndexEntity
@@ -921,9 +860,9 @@ class FeedIndexEntityDto(msrest.serialization.Model):
         :paramtype entity_schema: any
         """
         super(FeedIndexEntityDto, self).__init__(**kwargs)
-        self.index_entity = kwargs.get('index_entity', None)
-        self.schema_id = kwargs.get('schema_id', None)
-        self.entity_schema = kwargs.get('entity_schema', None)
+        self.index_entity = kwargs.get("index_entity", None)
+        self.schema_id = kwargs.get("schema_id", None)
+        self.entity_schema = kwargs.get("entity_schema", None)
 
 
 class FeedIndexEntityRequestDto(msrest.serialization.Model):
@@ -936,14 +875,11 @@ class FeedIndexEntityRequestDto(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'feed_entity': {'key': 'feedEntity', 'type': 'AssetDto'},
-        'label_to_version_mapping': {'key': 'labelToVersionMapping', 'type': '{str}'},
+        "feed_entity": {"key": "feedEntity", "type": "AssetDto"},
+        "label_to_version_mapping": {"key": "labelToVersionMapping", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword feed_entity:
         :paramtype feed_entity: ~azure.mgmt.machinelearningservices.models.AssetDto
@@ -951,8 +887,8 @@ class FeedIndexEntityRequestDto(msrest.serialization.Model):
         :paramtype label_to_version_mapping: dict[str, str]
         """
         super(FeedIndexEntityRequestDto, self).__init__(**kwargs)
-        self.feed_entity = kwargs.get('feed_entity', None)
-        self.label_to_version_mapping = kwargs.get('label_to_version_mapping', None)
+        self.feed_entity = kwargs.get("feed_entity", None)
+        self.label_to_version_mapping = kwargs.get("label_to_version_mapping", None)
 
 
 class ImageReference(msrest.serialization.Model):
@@ -963,19 +899,16 @@ class ImageReference(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'image_registry_reference': {'key': 'imageRegistryReference', 'type': 'str'},
+        "image_registry_reference": {"key": "imageRegistryReference", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword image_registry_reference:
         :paramtype image_registry_reference: str
         """
         super(ImageReference, self).__init__(**kwargs)
-        self.image_registry_reference = kwargs.get('image_registry_reference', None)
+        self.image_registry_reference = kwargs.get("image_registry_reference", None)
 
 
 class ImageReferenceForConsumptionDto(msrest.serialization.Model):
@@ -988,14 +921,11 @@ class ImageReferenceForConsumptionDto(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'image_registry_reference': {'key': 'imageRegistryReference', 'type': 'str'},
-        'credential': {'key': 'credential', 'type': 'DataReferenceCredentialDto'},
+        "image_registry_reference": {"key": "imageRegistryReference", "type": "str"},
+        "credential": {"key": "credential", "type": "DataReferenceCredentialDto"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword image_registry_reference:
         :paramtype image_registry_reference: str
@@ -1003,8 +933,8 @@ class ImageReferenceForConsumptionDto(msrest.serialization.Model):
         :paramtype credential: ~azure.mgmt.machinelearningservices.models.DataReferenceCredentialDto
         """
         super(ImageReferenceForConsumptionDto, self).__init__(**kwargs)
-        self.image_registry_reference = kwargs.get('image_registry_reference', None)
-        self.credential = kwargs.get('credential', None)
+        self.image_registry_reference = kwargs.get("image_registry_reference", None)
+        self.credential = kwargs.get("credential", None)
 
 
 class IndexAnnotations(msrest.serialization.Model):
@@ -1020,15 +950,12 @@ class IndexAnnotations(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'additional_properties': {'key': '', 'type': '{object}'},
-        'archived': {'key': 'archived', 'type': 'bool'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "additional_properties": {"key": "", "type": "{object}"},
+        "archived": {"key": "archived", "type": "bool"},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -1039,9 +966,9 @@ class IndexAnnotations(msrest.serialization.Model):
         :paramtype tags: dict[str, str]
         """
         super(IndexAnnotations, self).__init__(**kwargs)
-        self.additional_properties = kwargs.get('additional_properties', None)
-        self.archived = kwargs.get('archived', None)
-        self.tags = kwargs.get('tags', None)
+        self.additional_properties = kwargs.get("additional_properties", None)
+        self.archived = kwargs.get("archived", None)
+        self.tags = kwargs.get("tags", None)
 
 
 class IndexEntity(msrest.serialization.Model):
@@ -1080,33 +1007,30 @@ class IndexEntity(msrest.serialization.Model):
     """
 
     _validation = {
-        'version': {'readonly': True},
-        'entity_container_id': {'readonly': True},
-        'entity_object_id': {'readonly': True},
-        'resource_type': {'readonly': True},
+        "version": {"readonly": True},
+        "entity_container_id": {"readonly": True},
+        "entity_object_id": {"readonly": True},
+        "resource_type": {"readonly": True},
     }
 
     _attribute_map = {
-        'schema_id': {'key': 'schemaId', 'type': 'str'},
-        'entity_id': {'key': 'entityId', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'annotations': {'key': 'annotations', 'type': 'IndexAnnotations'},
-        'properties': {'key': 'properties', 'type': 'IndexProperties'},
-        'internal': {'key': 'internal', 'type': '{object}'},
-        'update_sequence': {'key': 'updateSequence', 'type': 'long'},
-        'type': {'key': 'type', 'type': 'str'},
-        'version': {'key': 'version', 'type': 'str'},
-        'entity_container_id': {'key': 'entityContainerId', 'type': 'str'},
-        'entity_object_id': {'key': 'entityObjectId', 'type': 'str'},
-        'resource_type': {'key': 'resourceType', 'type': 'str'},
-        'relationships': {'key': 'relationships', 'type': '[Relationship]'},
-        'asset_id': {'key': 'assetId', 'type': 'str'},
+        "schema_id": {"key": "schemaId", "type": "str"},
+        "entity_id": {"key": "entityId", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "annotations": {"key": "annotations", "type": "IndexAnnotations"},
+        "properties": {"key": "properties", "type": "IndexProperties"},
+        "internal": {"key": "internal", "type": "{object}"},
+        "update_sequence": {"key": "updateSequence", "type": "long"},
+        "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
+        "entity_container_id": {"key": "entityContainerId", "type": "str"},
+        "entity_object_id": {"key": "entityObjectId", "type": "str"},
+        "resource_type": {"key": "resourceType", "type": "str"},
+        "relationships": {"key": "relationships", "type": "[Relationship]"},
+        "asset_id": {"key": "assetId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword schema_id:
         :paramtype schema_id: str
@@ -1130,20 +1054,20 @@ class IndexEntity(msrest.serialization.Model):
         :paramtype asset_id: str
         """
         super(IndexEntity, self).__init__(**kwargs)
-        self.schema_id = kwargs.get('schema_id', None)
-        self.entity_id = kwargs.get('entity_id', None)
-        self.kind = kwargs.get('kind', None)
-        self.annotations = kwargs.get('annotations', None)
-        self.properties = kwargs.get('properties', None)
-        self.internal = kwargs.get('internal', None)
-        self.update_sequence = kwargs.get('update_sequence', None)
-        self.type = kwargs.get('type', None)
+        self.schema_id = kwargs.get("schema_id", None)
+        self.entity_id = kwargs.get("entity_id", None)
+        self.kind = kwargs.get("kind", None)
+        self.annotations = kwargs.get("annotations", None)
+        self.properties = kwargs.get("properties", None)
+        self.internal = kwargs.get("internal", None)
+        self.update_sequence = kwargs.get("update_sequence", None)
+        self.type = kwargs.get("type", None)
         self.version = None
         self.entity_container_id = None
         self.entity_object_id = None
         self.resource_type = None
-        self.relationships = kwargs.get('relationships', None)
-        self.asset_id = kwargs.get('asset_id', None)
+        self.relationships = kwargs.get("relationships", None)
+        self.asset_id = kwargs.get("asset_id", None)
 
 
 class IndexProperties(msrest.serialization.Model):
@@ -1157,14 +1081,11 @@ class IndexProperties(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'additional_properties': {'key': '', 'type': '{object}'},
-        'creation_context': {'key': 'creationContext', 'type': 'CreationContext'},
+        "additional_properties": {"key": "", "type": "{object}"},
+        "creation_context": {"key": "creationContext", "type": "CreationContext"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -1173,8 +1094,8 @@ class IndexProperties(msrest.serialization.Model):
         :paramtype creation_context: ~azure.mgmt.machinelearningservices.models.CreationContext
         """
         super(IndexProperties, self).__init__(**kwargs)
-        self.additional_properties = kwargs.get('additional_properties', None)
-        self.creation_context = kwargs.get('creation_context', None)
+        self.additional_properties = kwargs.get("additional_properties", None)
+        self.creation_context = kwargs.get("creation_context", None)
 
 
 class InnerErrorDetails(msrest.serialization.Model):
@@ -1189,15 +1110,12 @@ class InnerErrorDetails(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword code:
         :paramtype code: str
@@ -1207,9 +1125,9 @@ class InnerErrorDetails(msrest.serialization.Model):
         :paramtype target: str
         """
         super(InnerErrorDetails, self).__init__(**kwargs)
-        self.code = kwargs.get('code', None)
-        self.message = kwargs.get('message', None)
-        self.target = kwargs.get('target', None)
+        self.code = kwargs.get("code", None)
+        self.message = kwargs.get("message", None)
+        self.target = kwargs.get("target", None)
 
 
 class IntellectualPropertyPublisherInformation(msrest.serialization.Model):
@@ -1220,19 +1138,21 @@ class IntellectualPropertyPublisherInformation(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'intellectual_property_publisher': {'key': 'intellectualPropertyPublisher', 'type': 'str'},
+        "intellectual_property_publisher": {
+            "key": "intellectualPropertyPublisher",
+            "type": "str",
+        },
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword intellectual_property_publisher:
         :paramtype intellectual_property_publisher: str
         """
         super(IntellectualPropertyPublisherInformation, self).__init__(**kwargs)
-        self.intellectual_property_publisher = kwargs.get('intellectual_property_publisher', None)
+        self.intellectual_property_publisher = kwargs.get(
+            "intellectual_property_publisher", None
+        )
 
 
 class ListModelsRequest(msrest.serialization.Model):
@@ -1276,29 +1196,26 @@ class ListModelsRequest(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'tag': {'key': 'tag', 'type': 'str'},
-        'version': {'key': 'version', 'type': 'str'},
-        'framework': {'key': 'framework', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'count': {'key': 'count', 'type': 'int'},
-        'offset': {'key': 'offset', 'type': 'int'},
-        'skip_token': {'key': 'skipToken', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'str'},
-        'run_id': {'key': 'runId', 'type': 'str'},
-        'dataset_id': {'key': 'datasetId', 'type': 'str'},
-        'order_by': {'key': 'orderBy', 'type': 'str'},
-        'latest_version_only': {'key': 'latestVersionOnly', 'type': 'bool'},
-        'modified_after': {'key': 'modifiedAfter', 'type': 'iso-8601'},
-        'modified_before': {'key': 'modifiedBefore', 'type': 'iso-8601'},
-        'list_view_type': {'key': 'listViewType', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "tag": {"key": "tag", "type": "str"},
+        "version": {"key": "version", "type": "str"},
+        "framework": {"key": "framework", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "count": {"key": "count", "type": "int"},
+        "offset": {"key": "offset", "type": "int"},
+        "skip_token": {"key": "skipToken", "type": "str"},
+        "tags": {"key": "tags", "type": "str"},
+        "properties": {"key": "properties", "type": "str"},
+        "run_id": {"key": "runId", "type": "str"},
+        "dataset_id": {"key": "datasetId", "type": "str"},
+        "order_by": {"key": "orderBy", "type": "str"},
+        "latest_version_only": {"key": "latestVersionOnly", "type": "bool"},
+        "modified_after": {"key": "modifiedAfter", "type": "iso-8601"},
+        "modified_before": {"key": "modifiedBefore", "type": "iso-8601"},
+        "list_view_type": {"key": "listViewType", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword name:
         :paramtype name: str
@@ -1337,23 +1254,23 @@ class ListModelsRequest(msrest.serialization.Model):
         :paramtype list_view_type: str or ~azure.mgmt.machinelearningservices.models.ListViewType
         """
         super(ListModelsRequest, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.tag = kwargs.get('tag', None)
-        self.version = kwargs.get('version', None)
-        self.framework = kwargs.get('framework', None)
-        self.description = kwargs.get('description', None)
-        self.count = kwargs.get('count', None)
-        self.offset = kwargs.get('offset', None)
-        self.skip_token = kwargs.get('skip_token', None)
-        self.tags = kwargs.get('tags', None)
-        self.properties = kwargs.get('properties', None)
-        self.run_id = kwargs.get('run_id', None)
-        self.dataset_id = kwargs.get('dataset_id', None)
-        self.order_by = kwargs.get('order_by', None)
-        self.latest_version_only = kwargs.get('latest_version_only', None)
-        self.modified_after = kwargs.get('modified_after', None)
-        self.modified_before = kwargs.get('modified_before', None)
-        self.list_view_type = kwargs.get('list_view_type', None)
+        self.name = kwargs.get("name", None)
+        self.tag = kwargs.get("tag", None)
+        self.version = kwargs.get("version", None)
+        self.framework = kwargs.get("framework", None)
+        self.description = kwargs.get("description", None)
+        self.count = kwargs.get("count", None)
+        self.offset = kwargs.get("offset", None)
+        self.skip_token = kwargs.get("skip_token", None)
+        self.tags = kwargs.get("tags", None)
+        self.properties = kwargs.get("properties", None)
+        self.run_id = kwargs.get("run_id", None)
+        self.dataset_id = kwargs.get("dataset_id", None)
+        self.order_by = kwargs.get("order_by", None)
+        self.latest_version_only = kwargs.get("latest_version_only", None)
+        self.modified_after = kwargs.get("modified_after", None)
+        self.modified_before = kwargs.get("modified_before", None)
+        self.list_view_type = kwargs.get("list_view_type", None)
 
 
 class Model(msrest.serialization.Model):
@@ -1443,55 +1360,58 @@ class Model(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'required': True},
-        'mime_type': {'required': True},
+        "name": {"required": True},
+        "mime_type": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'framework': {'key': 'framework', 'type': 'str'},
-        'framework_version': {'key': 'frameworkVersion', 'type': 'str'},
-        'version': {'key': 'version', 'type': 'long'},
-        'tags': {'key': 'tags', 'type': '[str]'},
-        'datasets': {'key': 'datasets', 'type': '[DatasetReference]'},
-        'url': {'key': 'url', 'type': 'str'},
-        'mime_type': {'key': 'mimeType', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'created_time': {'key': 'createdTime', 'type': 'iso-8601'},
-        'modified_time': {'key': 'modifiedTime', 'type': 'iso-8601'},
-        'unpack': {'key': 'unpack', 'type': 'bool'},
-        'parent_model_id': {'key': 'parentModelId', 'type': 'str'},
-        'run_id': {'key': 'runId', 'type': 'str'},
-        'experiment_name': {'key': 'experimentName', 'type': 'str'},
-        'kv_tags': {'key': 'kvTags', 'type': '{str}'},
-        'properties': {'key': 'properties', 'type': '{str}'},
-        'derived_model_ids': {'key': 'derivedModelIds', 'type': '[str]'},
-        'inputs_schema': {'key': 'inputsSchema', 'type': '[ModelSchema]'},
-        'outputs_schema': {'key': 'outputsSchema', 'type': '[ModelSchema]'},
-        'sample_input_data': {'key': 'sampleInputData', 'type': 'str'},
-        'sample_output_data': {'key': 'sampleOutputData', 'type': 'str'},
-        'resource_requirements': {'key': 'resourceRequirements', 'type': 'ContainerResourceRequirements'},
-        'created_by': {'key': 'createdBy', 'type': 'User'},
-        'modified_by': {'key': 'modifiedBy', 'type': 'User'},
-        'flavors': {'key': 'flavors', 'type': '{{str}}'},
-        'model_format': {'key': 'modelFormat', 'type': 'str'},
-        'stage': {'key': 'stage', 'type': 'str'},
-        'model_container_id': {'key': 'modelContainerId', 'type': 'str'},
-        'mms_id': {'key': 'mmsId', 'type': 'str'},
-        'default_deployment_settings': {'key': 'defaultDeploymentSettings', 'type': 'ModelDeploymentSettings'},
-        'is_anonymous': {'key': 'isAnonymous', 'type': 'bool'},
-        'is_archived': {'key': 'isArchived', 'type': 'bool'},
-        'is_registered': {'key': 'isRegistered', 'type': 'bool'},
-        'data_path': {'key': 'dataPath', 'type': 'str'},
-        'model_type': {'key': 'modelType', 'type': 'str'},
-        'asset_id': {'key': 'assetId', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "framework": {"key": "framework", "type": "str"},
+        "framework_version": {"key": "frameworkVersion", "type": "str"},
+        "version": {"key": "version", "type": "long"},
+        "tags": {"key": "tags", "type": "[str]"},
+        "datasets": {"key": "datasets", "type": "[DatasetReference]"},
+        "url": {"key": "url", "type": "str"},
+        "mime_type": {"key": "mimeType", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "created_time": {"key": "createdTime", "type": "iso-8601"},
+        "modified_time": {"key": "modifiedTime", "type": "iso-8601"},
+        "unpack": {"key": "unpack", "type": "bool"},
+        "parent_model_id": {"key": "parentModelId", "type": "str"},
+        "run_id": {"key": "runId", "type": "str"},
+        "experiment_name": {"key": "experimentName", "type": "str"},
+        "kv_tags": {"key": "kvTags", "type": "{str}"},
+        "properties": {"key": "properties", "type": "{str}"},
+        "derived_model_ids": {"key": "derivedModelIds", "type": "[str]"},
+        "inputs_schema": {"key": "inputsSchema", "type": "[ModelSchema]"},
+        "outputs_schema": {"key": "outputsSchema", "type": "[ModelSchema]"},
+        "sample_input_data": {"key": "sampleInputData", "type": "str"},
+        "sample_output_data": {"key": "sampleOutputData", "type": "str"},
+        "resource_requirements": {
+            "key": "resourceRequirements",
+            "type": "ContainerResourceRequirements",
+        },
+        "created_by": {"key": "createdBy", "type": "User"},
+        "modified_by": {"key": "modifiedBy", "type": "User"},
+        "flavors": {"key": "flavors", "type": "{{str}}"},
+        "model_format": {"key": "modelFormat", "type": "str"},
+        "stage": {"key": "stage", "type": "str"},
+        "model_container_id": {"key": "modelContainerId", "type": "str"},
+        "mms_id": {"key": "mmsId", "type": "str"},
+        "default_deployment_settings": {
+            "key": "defaultDeploymentSettings",
+            "type": "ModelDeploymentSettings",
+        },
+        "is_anonymous": {"key": "isAnonymous", "type": "bool"},
+        "is_archived": {"key": "isArchived", "type": "bool"},
+        "is_registered": {"key": "isRegistered", "type": "bool"},
+        "data_path": {"key": "dataPath", "type": "str"},
+        "model_type": {"key": "modelType", "type": "str"},
+        "asset_id": {"key": "assetId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword id:
         :paramtype id: str
@@ -1574,44 +1494,46 @@ class Model(msrest.serialization.Model):
         :paramtype asset_id: str
         """
         super(Model, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
-        self.name = kwargs['name']
-        self.framework = kwargs.get('framework', None)
-        self.framework_version = kwargs.get('framework_version', None)
-        self.version = kwargs.get('version', None)
-        self.tags = kwargs.get('tags', None)
-        self.datasets = kwargs.get('datasets', None)
-        self.url = kwargs.get('url', None)
-        self.mime_type = kwargs['mime_type']
-        self.description = kwargs.get('description', None)
-        self.created_time = kwargs.get('created_time', None)
-        self.modified_time = kwargs.get('modified_time', None)
-        self.unpack = kwargs.get('unpack', None)
-        self.parent_model_id = kwargs.get('parent_model_id', None)
-        self.run_id = kwargs.get('run_id', None)
-        self.experiment_name = kwargs.get('experiment_name', None)
-        self.kv_tags = kwargs.get('kv_tags', None)
-        self.properties = kwargs.get('properties', None)
-        self.derived_model_ids = kwargs.get('derived_model_ids', None)
-        self.inputs_schema = kwargs.get('inputs_schema', None)
-        self.outputs_schema = kwargs.get('outputs_schema', None)
-        self.sample_input_data = kwargs.get('sample_input_data', None)
-        self.sample_output_data = kwargs.get('sample_output_data', None)
-        self.resource_requirements = kwargs.get('resource_requirements', None)
-        self.created_by = kwargs.get('created_by', None)
-        self.modified_by = kwargs.get('modified_by', None)
-        self.flavors = kwargs.get('flavors', None)
-        self.model_format = kwargs.get('model_format', None)
-        self.stage = kwargs.get('stage', None)
-        self.model_container_id = kwargs.get('model_container_id', None)
-        self.mms_id = kwargs.get('mms_id', None)
-        self.default_deployment_settings = kwargs.get('default_deployment_settings', None)
-        self.is_anonymous = kwargs.get('is_anonymous', None)
-        self.is_archived = kwargs.get('is_archived', None)
-        self.is_registered = kwargs.get('is_registered', None)
-        self.data_path = kwargs.get('data_path', None)
-        self.model_type = kwargs.get('model_type', None)
-        self.asset_id = kwargs.get('asset_id', None)
+        self.id = kwargs.get("id", None)
+        self.name = kwargs["name"]
+        self.framework = kwargs.get("framework", None)
+        self.framework_version = kwargs.get("framework_version", None)
+        self.version = kwargs.get("version", None)
+        self.tags = kwargs.get("tags", None)
+        self.datasets = kwargs.get("datasets", None)
+        self.url = kwargs.get("url", None)
+        self.mime_type = kwargs["mime_type"]
+        self.description = kwargs.get("description", None)
+        self.created_time = kwargs.get("created_time", None)
+        self.modified_time = kwargs.get("modified_time", None)
+        self.unpack = kwargs.get("unpack", None)
+        self.parent_model_id = kwargs.get("parent_model_id", None)
+        self.run_id = kwargs.get("run_id", None)
+        self.experiment_name = kwargs.get("experiment_name", None)
+        self.kv_tags = kwargs.get("kv_tags", None)
+        self.properties = kwargs.get("properties", None)
+        self.derived_model_ids = kwargs.get("derived_model_ids", None)
+        self.inputs_schema = kwargs.get("inputs_schema", None)
+        self.outputs_schema = kwargs.get("outputs_schema", None)
+        self.sample_input_data = kwargs.get("sample_input_data", None)
+        self.sample_output_data = kwargs.get("sample_output_data", None)
+        self.resource_requirements = kwargs.get("resource_requirements", None)
+        self.created_by = kwargs.get("created_by", None)
+        self.modified_by = kwargs.get("modified_by", None)
+        self.flavors = kwargs.get("flavors", None)
+        self.model_format = kwargs.get("model_format", None)
+        self.stage = kwargs.get("stage", None)
+        self.model_container_id = kwargs.get("model_container_id", None)
+        self.mms_id = kwargs.get("mms_id", None)
+        self.default_deployment_settings = kwargs.get(
+            "default_deployment_settings", None
+        )
+        self.is_anonymous = kwargs.get("is_anonymous", None)
+        self.is_archived = kwargs.get("is_archived", None)
+        self.is_registered = kwargs.get("is_registered", None)
+        self.data_path = kwargs.get("data_path", None)
+        self.model_type = kwargs.get("model_type", None)
+        self.asset_id = kwargs.get("asset_id", None)
 
 
 class ModelBatchDto(msrest.serialization.Model):
@@ -1622,19 +1544,16 @@ class ModelBatchDto(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'model_ids': {'key': 'modelIds', 'type': '[str]'},
+        "model_ids": {"key": "modelIds", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword model_ids:
         :paramtype model_ids: list[str]
         """
         super(ModelBatchDto, self).__init__(**kwargs)
-        self.model_ids = kwargs.get('model_ids', None)
+        self.model_ids = kwargs.get("model_ids", None)
 
 
 class ModelBatchResponseDto(msrest.serialization.Model):
@@ -1645,19 +1564,16 @@ class ModelBatchResponseDto(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'models': {'key': 'models', 'type': '{Model}'},
+        "models": {"key": "models", "type": "{Model}"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword models: Dictionary of :code:`<Model>`.
         :paramtype models: dict[str, ~azure.mgmt.machinelearningservices.models.Model]
         """
         super(ModelBatchResponseDto, self).__init__(**kwargs)
-        self.models = kwargs.get('models', None)
+        self.models = kwargs.get("models", None)
 
 
 class ModelContainerRequest(msrest.serialization.Model):
@@ -1678,21 +1594,18 @@ class ModelContainerRequest(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'required': True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'kv_tags': {'key': 'kvTags', 'type': '{str}'},
-        'is_archived': {'key': 'isArchived', 'type': 'bool'},
-        'is_registered': {'key': 'isRegistered', 'type': 'bool'},
+        "name": {"key": "name", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "kv_tags": {"key": "kvTags", "type": "{str}"},
+        "is_archived": {"key": "isArchived", "type": "bool"},
+        "is_registered": {"key": "isRegistered", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword name: Required.
         :paramtype name: str
@@ -1706,11 +1619,11 @@ class ModelContainerRequest(msrest.serialization.Model):
         :paramtype is_registered: bool
         """
         super(ModelContainerRequest, self).__init__(**kwargs)
-        self.name = kwargs['name']
-        self.description = kwargs.get('description', None)
-        self.kv_tags = kwargs.get('kv_tags', None)
-        self.is_archived = kwargs.get('is_archived', None)
-        self.is_registered = kwargs.get('is_registered', None)
+        self.name = kwargs["name"]
+        self.description = kwargs.get("description", None)
+        self.kv_tags = kwargs.get("kv_tags", None)
+        self.is_archived = kwargs.get("is_archived", None)
+        self.is_registered = kwargs.get("is_registered", None)
 
 
 class ModelDeploymentSettings(msrest.serialization.Model):
@@ -1729,20 +1642,17 @@ class ModelDeploymentSettings(msrest.serialization.Model):
     """
 
     _validation = {
-        'model_format': {'required': True},
+        "model_format": {"required": True},
     }
 
     _attribute_map = {
-        'model_format': {'key': 'modelFormat', 'type': 'str'},
-        'model_name': {'key': 'ModelName', 'type': 'str'},
-        'model_version': {'key': 'ModelVersion', 'type': 'str'},
-        'model_type': {'key': 'ModelType', 'type': 'str'},
+        "model_format": {"key": "modelFormat", "type": "str"},
+        "model_name": {"key": "ModelName", "type": "str"},
+        "model_version": {"key": "ModelVersion", "type": "str"},
+        "model_type": {"key": "ModelType", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword model_format: Required. Possible values include: "CUSTOM", "MLFLOW", "TRITON",
          "PRESETS".
@@ -1755,10 +1665,10 @@ class ModelDeploymentSettings(msrest.serialization.Model):
         :paramtype model_type: str
         """
         super(ModelDeploymentSettings, self).__init__(**kwargs)
-        self.model_format = kwargs['model_format']
-        self.model_name = kwargs.get('model_name', None)
-        self.model_version = kwargs.get('model_version', None)
-        self.model_type = kwargs.get('model_type', None)
+        self.model_format = kwargs["model_format"]
+        self.model_name = kwargs.get("model_name", None)
+        self.model_version = kwargs.get("model_version", None)
+        self.model_type = kwargs.get("model_type", None)
 
 
 class ModelListModelsRequestPagedResponse(msrest.serialization.Model):
@@ -1775,16 +1685,13 @@ class ModelListModelsRequestPagedResponse(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Model]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'continuation_token': {'key': 'continuationToken', 'type': 'str'},
-        'next_request': {'key': 'nextRequest', 'type': 'ListModelsRequest'},
+        "value": {"key": "value", "type": "[Model]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+        "continuation_token": {"key": "continuationToken", "type": "str"},
+        "next_request": {"key": "nextRequest", "type": "ListModelsRequest"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword value:
         :paramtype value: list[~azure.mgmt.machinelearningservices.models.Model]
@@ -1796,10 +1703,10 @@ class ModelListModelsRequestPagedResponse(msrest.serialization.Model):
         :paramtype next_request: ~azure.mgmt.machinelearningservices.models.ListModelsRequest
         """
         super(ModelListModelsRequestPagedResponse, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
-        self.next_link = kwargs.get('next_link', None)
-        self.continuation_token = kwargs.get('continuation_token', None)
-        self.next_request = kwargs.get('next_request', None)
+        self.value = kwargs.get("value", None)
+        self.next_link = kwargs.get("next_link", None)
+        self.continuation_token = kwargs.get("continuation_token", None)
+        self.next_request = kwargs.get("next_request", None)
 
 
 class ModelPagedResponse(msrest.serialization.Model):
@@ -1814,15 +1721,12 @@ class ModelPagedResponse(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Model]'},
-        'continuation_token': {'key': 'continuationToken', 'type': 'str'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Model]"},
+        "continuation_token": {"key": "continuationToken", "type": "str"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword value:
         :paramtype value: list[~azure.mgmt.machinelearningservices.models.Model]
@@ -1832,9 +1736,9 @@ class ModelPagedResponse(msrest.serialization.Model):
         :paramtype next_link: str
         """
         super(ModelPagedResponse, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
-        self.continuation_token = kwargs.get('continuation_token', None)
-        self.next_link = kwargs.get('next_link', None)
+        self.value = kwargs.get("value", None)
+        self.continuation_token = kwargs.get("continuation_token", None)
+        self.next_link = kwargs.get("next_link", None)
 
 
 class ModelPathResponseDto(msrest.serialization.Model):
@@ -1847,14 +1751,11 @@ class ModelPathResponseDto(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'path': {'key': 'path', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "path": {"key": "path", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword path:
         :paramtype path: str
@@ -1862,8 +1763,8 @@ class ModelPathResponseDto(msrest.serialization.Model):
         :paramtype type: str
         """
         super(ModelPathResponseDto, self).__init__(**kwargs)
-        self.path = kwargs.get('path', None)
-        self.type = kwargs.get('type', None)
+        self.path = kwargs.get("path", None)
+        self.type = kwargs.get("type", None)
 
 
 class ModelSchema(msrest.serialization.Model):
@@ -1882,19 +1783,16 @@ class ModelSchema(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'required': True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'data_type': {'key': 'dataType', 'type': 'str'},
-        'shape': {'key': 'shape', 'type': '[int]'},
+        "name": {"key": "name", "type": "str"},
+        "data_type": {"key": "dataType", "type": "str"},
+        "shape": {"key": "shape", "type": "[int]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword name: Required.
         :paramtype name: str
@@ -1906,9 +1804,9 @@ class ModelSchema(msrest.serialization.Model):
         :paramtype shape: list[int]
         """
         super(ModelSchema, self).__init__(**kwargs)
-        self.name = kwargs['name']
-        self.data_type = kwargs.get('data_type', None)
-        self.shape = kwargs.get('shape', None)
+        self.name = kwargs["name"]
+        self.data_type = kwargs.get("data_type", None)
+        self.shape = kwargs.get("shape", None)
 
 
 class ModelSettingsIdentifiers(msrest.serialization.Model):
@@ -1921,14 +1819,11 @@ class ModelSettingsIdentifiers(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'model_id': {'key': 'modelId', 'type': 'str'},
-        'engine_id': {'key': 'engineId', 'type': 'str'},
+        "model_id": {"key": "modelId", "type": "str"},
+        "engine_id": {"key": "engineId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword model_id:
         :paramtype model_id: str
@@ -1936,8 +1831,8 @@ class ModelSettingsIdentifiers(msrest.serialization.Model):
         :paramtype engine_id: str
         """
         super(ModelSettingsIdentifiers, self).__init__(**kwargs)
-        self.model_id = kwargs.get('model_id', None)
-        self.engine_id = kwargs.get('engine_id', None)
+        self.model_id = kwargs.get("model_id", None)
+        self.engine_id = kwargs.get("engine_id", None)
 
 
 class Operation(msrest.serialization.Model):
@@ -1954,16 +1849,13 @@ class Operation(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': 'object'},
-        'path': {'key': 'path', 'type': 'str'},
-        'op': {'key': 'op', 'type': 'str'},
-        'from_property': {'key': 'from', 'type': 'str'},
+        "value": {"key": "value", "type": "object"},
+        "path": {"key": "path", "type": "str"},
+        "op": {"key": "op", "type": "str"},
+        "from_property": {"key": "from", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword value: Anything.
         :paramtype value: any
@@ -1975,10 +1867,10 @@ class Operation(msrest.serialization.Model):
         :paramtype from_property: str
         """
         super(Operation, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
-        self.path = kwargs.get('path', None)
-        self.op = kwargs.get('op', None)
-        self.from_property = kwargs.get('from_property', None)
+        self.value = kwargs.get("value", None)
+        self.path = kwargs.get("path", None)
+        self.op = kwargs.get("op", None)
+        self.from_property = kwargs.get("from_property", None)
 
 
 class ProviderFeedEntityRequestDto(msrest.serialization.Model):
@@ -1994,15 +1886,15 @@ class ProviderFeedEntityRequestDto(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'source_and_target_asset_ids': {'key': 'sourceAndTargetAssetIds', 'type': 'DependencyMapItemDto'},
-        'dependency_map_dto': {'key': 'dependencyMapDto', 'type': 'DependencyMapDto'},
-        'label_to_version_mapping': {'key': 'labelToVersionMapping', 'type': '{str}'},
+        "source_and_target_asset_ids": {
+            "key": "sourceAndTargetAssetIds",
+            "type": "DependencyMapItemDto",
+        },
+        "dependency_map_dto": {"key": "dependencyMapDto", "type": "DependencyMapDto"},
+        "label_to_version_mapping": {"key": "labelToVersionMapping", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword source_and_target_asset_ids:
         :paramtype source_and_target_asset_ids:
@@ -2013,9 +1905,11 @@ class ProviderFeedEntityRequestDto(msrest.serialization.Model):
         :paramtype label_to_version_mapping: dict[str, str]
         """
         super(ProviderFeedEntityRequestDto, self).__init__(**kwargs)
-        self.source_and_target_asset_ids = kwargs.get('source_and_target_asset_ids', None)
-        self.dependency_map_dto = kwargs.get('dependency_map_dto', None)
-        self.label_to_version_mapping = kwargs.get('label_to_version_mapping', None)
+        self.source_and_target_asset_ids = kwargs.get(
+            "source_and_target_asset_ids", None
+        )
+        self.dependency_map_dto = kwargs.get("dependency_map_dto", None)
+        self.label_to_version_mapping = kwargs.get("label_to_version_mapping", None)
 
 
 class Relationship(msrest.serialization.Model):
@@ -2041,24 +1935,21 @@ class Relationship(msrest.serialization.Model):
     """
 
     _validation = {
-        'entity_type': {'readonly': True},
-        'entity_container_id': {'readonly': True},
+        "entity_type": {"readonly": True},
+        "entity_container_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'additional_properties': {'key': '', 'type': '{object}'},
-        'relation_type': {'key': 'relationType', 'type': 'str'},
-        'target_entity_id': {'key': 'targetEntityId', 'type': 'str'},
-        'asset_id': {'key': 'assetId', 'type': 'str'},
-        'entity_type': {'key': 'entityType', 'type': 'str'},
-        'direction': {'key': 'direction', 'type': 'str'},
-        'entity_container_id': {'key': 'entityContainerId', 'type': 'str'},
+        "additional_properties": {"key": "", "type": "{object}"},
+        "relation_type": {"key": "relationType", "type": "str"},
+        "target_entity_id": {"key": "targetEntityId", "type": "str"},
+        "asset_id": {"key": "assetId", "type": "str"},
+        "entity_type": {"key": "entityType", "type": "str"},
+        "direction": {"key": "direction", "type": "str"},
+        "entity_container_id": {"key": "entityContainerId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -2073,12 +1964,12 @@ class Relationship(msrest.serialization.Model):
         :paramtype direction: str
         """
         super(Relationship, self).__init__(**kwargs)
-        self.additional_properties = kwargs.get('additional_properties', None)
-        self.relation_type = kwargs.get('relation_type', None)
-        self.target_entity_id = kwargs.get('target_entity_id', None)
-        self.asset_id = kwargs.get('asset_id', None)
+        self.additional_properties = kwargs.get("additional_properties", None)
+        self.relation_type = kwargs.get("relation_type", None)
+        self.target_entity_id = kwargs.get("target_entity_id", None)
+        self.asset_id = kwargs.get("asset_id", None)
         self.entity_type = None
-        self.direction = kwargs.get('direction', None)
+        self.direction = kwargs.get("direction", None)
         self.entity_container_id = None
 
 
@@ -2122,27 +2013,24 @@ class ServiceResponseBase(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '[str]'},
-        'kv_tags': {'key': 'kvTags', 'type': '{str}'},
-        'properties': {'key': 'properties', 'type': '{str}'},
-        'operation_id': {'key': 'operationId', 'type': 'str'},
-        'state': {'key': 'state', 'type': 'str'},
-        'created_time': {'key': 'createdTime', 'type': 'iso-8601'},
-        'updated_time': {'key': 'updatedTime', 'type': 'iso-8601'},
-        'error': {'key': 'error', 'type': 'ErrorResponse'},
-        'compute_type': {'key': 'computeType', 'type': 'str'},
-        'deployment_type': {'key': 'deploymentType', 'type': 'str'},
-        'created_by': {'key': 'createdBy', 'type': 'User'},
-        'endpoint_name': {'key': 'endpointName', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "tags": {"key": "tags", "type": "[str]"},
+        "kv_tags": {"key": "kvTags", "type": "{str}"},
+        "properties": {"key": "properties", "type": "{str}"},
+        "operation_id": {"key": "operationId", "type": "str"},
+        "state": {"key": "state", "type": "str"},
+        "created_time": {"key": "createdTime", "type": "iso-8601"},
+        "updated_time": {"key": "updatedTime", "type": "iso-8601"},
+        "error": {"key": "error", "type": "ErrorResponse"},
+        "compute_type": {"key": "computeType", "type": "str"},
+        "deployment_type": {"key": "deploymentType", "type": "str"},
+        "created_by": {"key": "createdBy", "type": "User"},
+        "endpoint_name": {"key": "endpointName", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword id:
         :paramtype id: str
@@ -2181,21 +2069,21 @@ class ServiceResponseBase(msrest.serialization.Model):
         :paramtype endpoint_name: str
         """
         super(ServiceResponseBase, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
-        self.name = kwargs.get('name', None)
-        self.description = kwargs.get('description', None)
-        self.tags = kwargs.get('tags', None)
-        self.kv_tags = kwargs.get('kv_tags', None)
-        self.properties = kwargs.get('properties', None)
-        self.operation_id = kwargs.get('operation_id', None)
-        self.state = kwargs.get('state', None)
-        self.created_time = kwargs.get('created_time', None)
-        self.updated_time = kwargs.get('updated_time', None)
-        self.error = kwargs.get('error', None)
-        self.compute_type = kwargs.get('compute_type', None)
-        self.deployment_type = kwargs.get('deployment_type', None)
-        self.created_by = kwargs.get('created_by', None)
-        self.endpoint_name = kwargs.get('endpoint_name', None)
+        self.id = kwargs.get("id", None)
+        self.name = kwargs.get("name", None)
+        self.description = kwargs.get("description", None)
+        self.tags = kwargs.get("tags", None)
+        self.kv_tags = kwargs.get("kv_tags", None)
+        self.properties = kwargs.get("properties", None)
+        self.operation_id = kwargs.get("operation_id", None)
+        self.state = kwargs.get("state", None)
+        self.created_time = kwargs.get("created_time", None)
+        self.updated_time = kwargs.get("updated_time", None)
+        self.error = kwargs.get("error", None)
+        self.compute_type = kwargs.get("compute_type", None)
+        self.deployment_type = kwargs.get("deployment_type", None)
+        self.created_by = kwargs.get("created_by", None)
+        self.endpoint_name = kwargs.get("endpoint_name", None)
 
 
 class User(msrest.serialization.Model):
@@ -2220,20 +2108,17 @@ class User(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'user_object_id': {'key': 'userObjectId', 'type': 'str'},
-        'user_pu_id': {'key': 'userPuId', 'type': 'str'},
-        'user_idp': {'key': 'userIdp', 'type': 'str'},
-        'user_alt_sec_id': {'key': 'userAltSecId', 'type': 'str'},
-        'user_iss': {'key': 'userIss', 'type': 'str'},
-        'user_tenant_id': {'key': 'userTenantId', 'type': 'str'},
-        'user_name': {'key': 'userName', 'type': 'str'},
-        'upn': {'key': 'upn', 'type': 'str'},
+        "user_object_id": {"key": "userObjectId", "type": "str"},
+        "user_pu_id": {"key": "userPuId", "type": "str"},
+        "user_idp": {"key": "userIdp", "type": "str"},
+        "user_alt_sec_id": {"key": "userAltSecId", "type": "str"},
+        "user_iss": {"key": "userIss", "type": "str"},
+        "user_tenant_id": {"key": "userTenantId", "type": "str"},
+        "user_name": {"key": "userName", "type": "str"},
+        "upn": {"key": "upn", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword user_object_id:
         :paramtype user_object_id: str
@@ -2253,11 +2138,11 @@ class User(msrest.serialization.Model):
         :paramtype upn: str
         """
         super(User, self).__init__(**kwargs)
-        self.user_object_id = kwargs.get('user_object_id', None)
-        self.user_pu_id = kwargs.get('user_pu_id', None)
-        self.user_idp = kwargs.get('user_idp', None)
-        self.user_alt_sec_id = kwargs.get('user_alt_sec_id', None)
-        self.user_iss = kwargs.get('user_iss', None)
-        self.user_tenant_id = kwargs.get('user_tenant_id', None)
-        self.user_name = kwargs.get('user_name', None)
-        self.upn = kwargs.get('upn', None)
+        self.user_object_id = kwargs.get("user_object_id", None)
+        self.user_pu_id = kwargs.get("user_pu_id", None)
+        self.user_idp = kwargs.get("user_idp", None)
+        self.user_alt_sec_id = kwargs.get("user_alt_sec_id", None)
+        self.user_iss = kwargs.get("user_iss", None)
+        self.user_tenant_id = kwargs.get("user_tenant_id", None)
+        self.user_name = kwargs.get("user_name", None)
+        self.upn = kwargs.get("upn", None)

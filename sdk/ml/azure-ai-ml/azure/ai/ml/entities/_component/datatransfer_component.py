@@ -13,10 +13,19 @@ from azure.ai.ml._schema.component.data_transfer_component import (
 )
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._common import COMPONENT_TYPE, AssetTypes
-from azure.ai.ml.constants._component import DataTransferTaskType, ExternalDataType, NodeType
+from azure.ai.ml.constants._component import (
+    DataTransferTaskType,
+    ExternalDataType,
+    NodeType,
+)
 from azure.ai.ml.entities._inputs_outputs.external_data import Database, FileSystem
 from azure.ai.ml.entities._inputs_outputs.output import Output
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+from azure.ai.ml.exceptions import (
+    ErrorCategory,
+    ErrorTarget,
+    ValidationErrorType,
+    ValidationException,
+)
 
 from ..._schema import PathAwareSchema
 from .._util import convert_ordered_dict_to_dict, validate_attribute_type
@@ -47,7 +56,9 @@ class DataTransferComponent(Component):  # pylint: disable=too-many-instance-att
         **kwargs,
     ) -> None:
         # validate init params are valid type
-        validate_attribute_type(attrs_to_check=locals(), attr_type_map=self._attr_type_map())
+        validate_attribute_type(
+            attrs_to_check=locals(), attr_type_map=self._attr_type_map()
+        )
 
         kwargs[COMPONENT_TYPE] = NodeType.DATA_TRANSFER
         # Set default base path
@@ -75,7 +86,9 @@ class DataTransferComponent(Component):  # pylint: disable=too-many-instance-att
         return self._task
 
     def _to_dict(self) -> Dict:
-        return convert_ordered_dict_to_dict({**self._other_parameter, **super(DataTransferComponent, self)._to_dict()})
+        return convert_ordered_dict_to_dict(
+            {**self._other_parameter, **super(DataTransferComponent, self)._to_dict()}
+        )
 
     def __str__(self):
         try:
@@ -173,7 +186,9 @@ class DataTransferCopyComponent(DataTransferComponent):
         return self._data_copy_mode
 
     def _customized_validate(self):
-        validation_result = super(DataTransferCopyComponent, self)._customized_validate()
+        validation_result = super(
+            DataTransferCopyComponent, self
+        )._customized_validate()
         validation_result.merge_with(self._validate_input_output_mapping())
         return validation_result
 
@@ -195,10 +210,16 @@ class DataTransferCopyComponent(DataTransferComponent):
                     input_type = input_data.type
                 for _, output_data in self.outputs.items():
                     output_type = output_data.type
-                if input_type is None or output_type is None or input_type != output_type:
+                if (
+                    input_type is None
+                    or output_type is None
+                    or input_type != output_type
+                ):
                     msg = "Input type {} doesn't exactly match with output type {} in task {}"
                     validation_result.append_error(
-                        message=msg.format(input_type, output_type, DataTransferTaskType.COPY_DATA),
+                        message=msg.format(
+                            input_type, output_type, DataTransferTaskType.COPY_DATA
+                        ),
                         yaml_path="outputs",
                     )
             elif inputs_count > 1:
@@ -272,7 +293,9 @@ class DataTransferImportComponent(DataTransferComponent):
 
 
 @experimental
-class DataTransferExportComponent(DataTransferComponent):  # pylint: disable=too-many-instance-attributes
+class DataTransferExportComponent(
+    DataTransferComponent
+):  # pylint: disable=too-many-instance-attributes
     """DataTransfer export component version, used to define a data transfer export component.
 
     :param sink: The sink of external data and databases.

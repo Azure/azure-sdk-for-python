@@ -24,7 +24,9 @@ class FeatureSetBackfillMetadata(RestTranslatableMixin):
         self.job_id = job_id
 
     @classmethod
-    def _from_rest_object(cls, obj: RestFeaturesetVersionBackfillResponse) -> "FeatureSetBackfillMetadata":
+    def _from_rest_object(
+        cls, obj: RestFeaturesetVersionBackfillResponse
+    ) -> "FeatureSetBackfillMetadata":
         if not obj:
             return None
         return FeatureSetBackfillMetadata(job_id=obj.job_id)

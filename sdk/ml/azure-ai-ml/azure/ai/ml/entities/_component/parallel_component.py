@@ -13,9 +13,13 @@ from azure.ai.ml._restclient.v2022_10_01.models import ComponentVersion
 from azure.ai.ml._schema.component.parallel_component import ParallelComponentSchema
 from azure.ai.ml.constants._common import COMPONENT_TYPE
 from azure.ai.ml.constants._component import NodeType
-from azure.ai.ml.entities._job.job_resource_configuration import JobResourceConfiguration
+from azure.ai.ml.entities._job.job_resource_configuration import (
+    JobResourceConfiguration,
+)
 from azure.ai.ml.entities._job.parallel.parallel_task import ParallelTask
-from azure.ai.ml.entities._job.parallel.parameterized_parallel import ParameterizedParallel
+from azure.ai.ml.entities._job.parallel.parameterized_parallel import (
+    ParameterizedParallel,
+)
 from azure.ai.ml.entities._job.parallel.retry_settings import RetrySettings
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 
@@ -104,12 +108,16 @@ class ParallelComponent(
         inputs: Optional[Dict] = None,
         outputs: Optional[Dict] = None,
         code: Optional[str] = None,  # promoted property from task.code
-        instance_count: Optional[int] = None,  # promoted property from resources.instance_count
+        instance_count: Optional[
+            int
+        ] = None,  # promoted property from resources.instance_count
         is_deterministic: bool = True,
         **kwargs,
     ):
         # validate init params are valid type
-        validate_attribute_type(attrs_to_check=locals(), attr_type_map=self._attr_type_map())
+        validate_attribute_type(
+            attrs_to_check=locals(), attr_type_map=self._attr_type_map()
+        )
 
         kwargs[COMPONENT_TYPE] = NodeType.PARALLEL
 
@@ -154,7 +162,9 @@ class ParallelComponent(
             # Convert str to int.
             pattern = re.compile(r"^\d+([kKmMgG][bB])*$")
             if not pattern.match(self.mini_batch_size):
-                raise ValueError(r"Parameter mini_batch_size must follow regex rule ^\d+([kKmMgG][bB])*$")
+                raise ValueError(
+                    r"Parameter mini_batch_size must follow regex rule ^\d+([kKmMgG][bB])*$"
+                )
 
             try:
                 self.mini_batch_size = int(self.mini_batch_size)
@@ -165,7 +175,9 @@ class ParallelComponent(
                 elif unit == "mb":
                     self.mini_batch_size = int(self.mini_batch_size[0:-2]) * 1024 * 1024
                 elif unit == "gb":
-                    self.mini_batch_size = int(self.mini_batch_size[0:-2]) * 1024 * 1024 * 1024
+                    self.mini_batch_size = (
+                        int(self.mini_batch_size[0:-2]) * 1024 * 1024 * 1024
+                    )
                 else:
                     raise ValueError("mini_batch_size unit must be kb, mb or gb") from e
 
@@ -255,7 +267,9 @@ class ParallelComponent(
 
     def _customized_validate(self) -> MutableValidationResult:
         validation_result = super()._customized_validate()
-        self._append_diagnostics_and_check_if_origin_code_reliable_for_local_path_validation(validation_result)
+        self._append_diagnostics_and_check_if_origin_code_reliable_for_local_path_validation(
+            validation_result
+        )
         return validation_result
 
     @classmethod
@@ -276,7 +290,9 @@ class ParallelComponent(
         rest_object = super()._to_rest_object()
         # schema required list while backend accept json string
         if self.partition_keys:
-            rest_object.properties.component_spec["partition_keys"] = json.dumps(self.partition_keys)
+            rest_object.properties.component_spec["partition_keys"] = json.dumps(
+                self.partition_keys
+            )
         return rest_object
 
     @classmethod

@@ -16,7 +16,9 @@ from azure.ai.ml._schema import (
     ArmStr,
     RegistryStr,
 )
-from azure.ai.ml._schema.pipeline.pipeline_component import PipelineComponentFileRefField
+from azure.ai.ml._schema.pipeline.pipeline_component import (
+    PipelineComponentFileRefField,
+)
 from azure.ai.ml.constants._common import AzureMLResourceType
 from azure.ai.ml.constants._job.job import JobType
 
@@ -34,7 +36,9 @@ class JobDefinitionSchema(metaclass=PatchedSchemaMeta):
     component = UnionField(
         [
             RegistryStr(azureml_type=AzureMLResourceType.COMPONENT),
-            ArmVersionedStr(azureml_type=AzureMLResourceType.COMPONENT, allow_default_version=True),
+            ArmVersionedStr(
+                azureml_type=AzureMLResourceType.COMPONENT, allow_default_version=True
+            ),
             PipelineComponentFileRefField(),
         ]
     )

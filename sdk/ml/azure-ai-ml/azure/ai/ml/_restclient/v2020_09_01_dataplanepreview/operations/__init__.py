@@ -10,6 +10,6 @@ from ._batch_job_deployment_operations import BatchJobDeploymentOperations
 from ._batch_job_endpoint_operations import BatchJobEndpointOperations
 
 __all__ = [
-    'BatchJobDeploymentOperations',
-    'BatchJobEndpointOperations',
+    "BatchJobDeploymentOperations",
+    "BatchJobEndpointOperations",
 ]

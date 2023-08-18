@@ -16,7 +16,9 @@ def get_root_path() -> str:
     return os.path.realpath(os.sep)
 
 
-def traverse_up_path_and_find_file(path, file_name, directory_name=None, num_levels=None) -> str:
+def traverse_up_path_and_find_file(
+    path, file_name, directory_name=None, num_levels=None
+) -> str:
     """
     Traverses up the provided path until we find the file, reach a directory
     that the user does not have permissions to, or if we reach num_levels (if set by the user).
@@ -43,7 +45,9 @@ def traverse_up_path_and_find_file(path, file_name, directory_name=None, num_lev
         if os.path.isfile(path_to_check):
             return path_to_check
 
-        if str(current_path) == root_path or (num_levels is not None and num_levels == current_level):
+        if str(current_path) == root_path or (
+            num_levels is not None and num_levels == current_level
+        ):
             break
         current_path = os.path.realpath(os.path.join(current_path, os.path.pardir))
         current_level = current_level + 1

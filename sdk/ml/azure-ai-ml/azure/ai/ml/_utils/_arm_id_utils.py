@@ -24,7 +24,12 @@ from azure.ai.ml.constants._common import (
     SINGULARITY_SHORT_NAME_REGEX_FORMAT,
     NAMED_RESOURCE_ID_FORMAT_WITH_PARENT,
 )
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+from azure.ai.ml.exceptions import (
+    ErrorCategory,
+    ErrorTarget,
+    ValidationErrorType,
+    ValidationException,
+)
 
 module_logger = logging.getLogger(__name__)
 
@@ -72,7 +77,8 @@ class AMLVersionedArmId(object):
 
 
 def get_datastore_arm_id(
-    datastore_name: Optional[str] = None, operation_scope: Optional[OperationScope] = None
+    datastore_name: Optional[str] = None,
+    operation_scope: Optional[OperationScope] = None,
 ) -> Optional[str]:
     return (
         DATASTORE_RESOURCE_ID.format(
@@ -215,7 +221,9 @@ class AzureResourceId:
     """
 
     REGEX_PATTERN = "^/?subscriptions/([^/]+)/resourceGroups/([^/]+)/providers/Microsoft.([^/]+)/([^/]+)/([^/]+)"
-    RESOURCEGROUP_PATTERN = "^/?subscriptions/([^/]+)/providers/Microsoft.([^/]+)/([^/]+)/([^/]+)"
+    RESOURCEGROUP_PATTERN = (
+        "^/?subscriptions/([^/]+)/providers/Microsoft.([^/]+)/([^/]+)/([^/]+)"
+    )
 
     def __init__(self, arm_id=None):
         if arm_id:
@@ -315,7 +323,9 @@ def parse_name_label(name: str) -> Tuple[str, Optional[str]]:
     return name, label
 
 
-def is_ARM_id_for_resource(name: Any, resource_type: str = ".*", sub_workspace_resource: bool = True) -> bool:
+def is_ARM_id_for_resource(
+    name: Any, resource_type: str = ".*", sub_workspace_resource: bool = True
+) -> bool:
     if sub_workspace_resource:
         resource_regex = NAMED_RESOURCE_ID_FORMAT.format(
             ".*", ".*", AZUREML_RESOURCE_PROVIDER, ".*", resource_type, ".*"
@@ -329,7 +339,9 @@ def is_ARM_id_for_resource(name: Any, resource_type: str = ".*", sub_workspace_r
     return False
 
 
-def is_ARM_id_for_parented_resource(name: str, parent_resource_type: str, child_resource_type: str) -> bool:
+def is_ARM_id_for_parented_resource(
+    name: str, parent_resource_type: str, child_resource_type: str
+) -> bool:
     resource_regex = NAMED_RESOURCE_ID_FORMAT_WITH_PARENT.format(
         ".*",
         ".*",
@@ -344,25 +356,33 @@ def is_ARM_id_for_parented_resource(name: str, parent_resource_type: str, child_
 
 
 def is_registry_id_for_resource(name: Any) -> bool:
-    if isinstance(name, str) and re.match(REGISTRY_URI_REGEX_FORMAT, name, re.IGNORECASE):
+    if isinstance(name, str) and re.match(
+        REGISTRY_URI_REGEX_FORMAT, name, re.IGNORECASE
+    ):
         return True
     return False
 
 
 def is_singularity_id_for_resource(name: Any) -> bool:
-    if isinstance(name, str) and re.match(SINGULARITY_ID_REGEX_FORMAT, name, re.IGNORECASE):
+    if isinstance(name, str) and re.match(
+        SINGULARITY_ID_REGEX_FORMAT, name, re.IGNORECASE
+    ):
         return True
     return False
 
 
 def is_singularity_full_name_for_resource(name: Any) -> bool:
-    if isinstance(name, str) and (re.match(SINGULARITY_FULL_NAME_REGEX_FORMAT, name, re.IGNORECASE)):
+    if isinstance(name, str) and (
+        re.match(SINGULARITY_FULL_NAME_REGEX_FORMAT, name, re.IGNORECASE)
+    ):
         return True
     return False
 
 
 def is_singularity_short_name_for_resource(name: Any) -> bool:
-    if isinstance(name, str) and re.match(SINGULARITY_SHORT_NAME_REGEX_FORMAT, name, re.IGNORECASE):
+    if isinstance(name, str) and re.match(
+        SINGULARITY_SHORT_NAME_REGEX_FORMAT, name, re.IGNORECASE
+    ):
         return True
     return False
 

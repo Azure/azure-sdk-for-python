@@ -226,7 +226,9 @@ class IdentityConfiguration(msrest.serialization.Model):
         "identity_type": {"key": "identityType", "type": "str"},
     }
 
-    _subtype_map = {"identity_type": {"AMLToken": "AmlToken", "Managed": "ManagedIdentity"}}
+    _subtype_map = {
+        "identity_type": {"AMLToken": "AmlToken", "Managed": "ManagedIdentity"}
+    }
 
     def __init__(self, **kwargs):
         """ """
@@ -537,7 +539,10 @@ class AzureBlobDatastore(Datastore):
         "container_name": {"key": "containerName", "type": "str"},
         "endpoint": {"key": "endpoint", "type": "str"},
         "protocol": {"key": "protocol", "type": "str"},
-        "service_data_access_auth_identity": {"key": "serviceDataAccessAuthIdentity", "type": "str"},
+        "service_data_access_auth_identity": {
+            "key": "serviceDataAccessAuthIdentity",
+            "type": "str",
+        },
     }
 
     def __init__(self, **kwargs):
@@ -570,7 +575,9 @@ class AzureBlobDatastore(Datastore):
         self.container_name = kwargs.get("container_name", None)
         self.endpoint = kwargs.get("endpoint", None)
         self.protocol = kwargs.get("protocol", None)
-        self.service_data_access_auth_identity = kwargs.get("service_data_access_auth_identity", None)
+        self.service_data_access_auth_identity = kwargs.get(
+            "service_data_access_auth_identity", None
+        )
 
 
 class AzureDataLakeGen1Datastore(Datastore):
@@ -617,7 +624,10 @@ class AzureDataLakeGen1Datastore(Datastore):
         "credentials": {"key": "credentials", "type": "DatastoreCredentials"},
         "datastore_type": {"key": "datastoreType", "type": "str"},
         "is_default": {"key": "isDefault", "type": "bool"},
-        "service_data_access_auth_identity": {"key": "serviceDataAccessAuthIdentity", "type": "str"},
+        "service_data_access_auth_identity": {
+            "key": "serviceDataAccessAuthIdentity",
+            "type": "str",
+        },
         "store_name": {"key": "storeName", "type": "str"},
     }
 
@@ -641,7 +651,9 @@ class AzureDataLakeGen1Datastore(Datastore):
         """
         super(AzureDataLakeGen1Datastore, self).__init__(**kwargs)
         self.datastore_type = "AzureDataLakeGen1"  # type: str
-        self.service_data_access_auth_identity = kwargs.get("service_data_access_auth_identity", None)
+        self.service_data_access_auth_identity = kwargs.get(
+            "service_data_access_auth_identity", None
+        )
         self.store_name = kwargs["store_name"]
 
 
@@ -700,7 +712,10 @@ class AzureDataLakeGen2Datastore(Datastore):
         "endpoint": {"key": "endpoint", "type": "str"},
         "filesystem": {"key": "filesystem", "type": "str"},
         "protocol": {"key": "protocol", "type": "str"},
-        "service_data_access_auth_identity": {"key": "serviceDataAccessAuthIdentity", "type": "str"},
+        "service_data_access_auth_identity": {
+            "key": "serviceDataAccessAuthIdentity",
+            "type": "str",
+        },
     }
 
     def __init__(self, **kwargs):
@@ -733,7 +748,9 @@ class AzureDataLakeGen2Datastore(Datastore):
         self.endpoint = kwargs.get("endpoint", None)
         self.filesystem = kwargs["filesystem"]
         self.protocol = kwargs.get("protocol", None)
-        self.service_data_access_auth_identity = kwargs.get("service_data_access_auth_identity", None)
+        self.service_data_access_auth_identity = kwargs.get(
+            "service_data_access_auth_identity", None
+        )
 
 
 class AzureFileDatastore(Datastore):
@@ -791,7 +808,10 @@ class AzureFileDatastore(Datastore):
         "endpoint": {"key": "endpoint", "type": "str"},
         "file_share_name": {"key": "fileShareName", "type": "str"},
         "protocol": {"key": "protocol", "type": "str"},
-        "service_data_access_auth_identity": {"key": "serviceDataAccessAuthIdentity", "type": "str"},
+        "service_data_access_auth_identity": {
+            "key": "serviceDataAccessAuthIdentity",
+            "type": "str",
+        },
     }
 
     def __init__(self, **kwargs):
@@ -824,7 +844,9 @@ class AzureFileDatastore(Datastore):
         self.endpoint = kwargs.get("endpoint", None)
         self.file_share_name = kwargs["file_share_name"]
         self.protocol = kwargs.get("protocol", None)
-        self.service_data_access_auth_identity = kwargs.get("service_data_access_auth_identity", None)
+        self.service_data_access_auth_identity = kwargs.get(
+            "service_data_access_auth_identity", None
+        )
 
 
 class InferencingServer(msrest.serialization.Model):
@@ -1041,10 +1063,15 @@ class BaseEnvironmentSource(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        "base_environment_source_type": {"key": "baseEnvironmentSourceType", "type": "str"},
+        "base_environment_source_type": {
+            "key": "baseEnvironmentSourceType",
+            "type": "str",
+        },
     }
 
-    _subtype_map = {"base_environment_source_type": {"EnvironmentAsset": "BaseEnvironmentId"}}
+    _subtype_map = {
+        "base_environment_source_type": {"EnvironmentAsset": "BaseEnvironmentId"}
+    }
 
     def __init__(self, **kwargs):
         """ """
@@ -1071,7 +1098,10 @@ class BaseEnvironmentId(BaseEnvironmentSource):
     }
 
     _attribute_map = {
-        "base_environment_source_type": {"key": "baseEnvironmentSourceType", "type": "str"},
+        "base_environment_source_type": {
+            "key": "baseEnvironmentSourceType",
+            "type": "str",
+        },
         "resource_id": {"key": "resourceId", "type": "str"},
     }
 
@@ -1231,7 +1261,9 @@ class BlobReferenceSASResponseDto(msrest.serialization.Model):
          ~azure.mgmt.machinelearningservices.models.BlobReferenceForConsumptionDto
         """
         super(BlobReferenceSASResponseDto, self).__init__(**kwargs)
-        self.blob_reference_for_consumption = kwargs.get("blob_reference_for_consumption", None)
+        self.blob_reference_for_consumption = kwargs.get(
+            "blob_reference_for_consumption", None
+        )
 
 
 class BuildContext(msrest.serialization.Model):
@@ -1400,7 +1432,11 @@ class CodeConfiguration(msrest.serialization.Model):
     """
 
     _validation = {
-        "scoring_script": {"required": True, "min_length": 1, "pattern": r"[a-zA-Z0-9_]"},
+        "scoring_script": {
+            "required": True,
+            "min_length": 1,
+            "pattern": r"[a-zA-Z0-9_]",
+        },
     }
 
     _attribute_map = {
@@ -1763,7 +1799,12 @@ class JobBase(ResourceBase):
     }
 
     _subtype_map = {
-        "job_type": {"Base": "Job", "Command": "CommandJob", "Pipeline": "PipelineJob", "Sweep": "SweepJob"}
+        "job_type": {
+            "Base": "Job",
+            "Command": "CommandJob",
+            "Pipeline": "PipelineJob",
+            "Sweep": "SweepJob",
+        }
     }
 
     def __init__(self, **kwargs):
@@ -1980,7 +2021,9 @@ class JobLimits(msrest.serialization.Model):
         "timeout": {"key": "timeout", "type": "duration"},
     }
 
-    _subtype_map = {"job_limits_type": {"Command": "CommandJobLimits", "Sweep": "SweepJobLimits"}}
+    _subtype_map = {
+        "job_limits_type": {"Command": "CommandJobLimits", "Sweep": "SweepJobLimits"}
+    }
 
     def __init__(self, **kwargs):
         """
@@ -2349,7 +2392,10 @@ class CustomInferencingServer(InferencingServer):
 
     _attribute_map = {
         "server_type": {"key": "serverType", "type": "str"},
-        "inference_configuration": {"key": "inferenceConfiguration", "type": "OnlineInferenceConfiguration"},
+        "inference_configuration": {
+            "key": "inferenceConfiguration",
+            "type": "OnlineInferenceConfiguration",
+        },
     }
 
     def __init__(self, **kwargs):
@@ -2652,11 +2698,18 @@ class DataVersionBaseDetails(AssetBase):
         "is_archived": {"key": "isArchived", "type": "bool"},
         "data_type": {"key": "dataType", "type": "str"},
         "data_uri": {"key": "dataUri", "type": "str"},
-        "intellectual_property": {"key": "intellectualProperty", "type": "IntellectualProperty"},
+        "intellectual_property": {
+            "key": "intellectualProperty",
+            "type": "IntellectualProperty",
+        },
     }
 
     _subtype_map = {
-        "data_type": {"mltable": "MLTableData", "uri_file": "UriFileDataVersion", "uri_folder": "UriFolderDataVersion"}
+        "data_type": {
+            "mltable": "MLTableData",
+            "uri_file": "UriFileDataVersion",
+            "uri_folder": "UriFolderDataVersion",
+        }
     }
 
     def __init__(self, **kwargs):
@@ -2734,7 +2787,13 @@ class DistributionConfiguration(msrest.serialization.Model):
         "distribution_type": {"key": "distributionType", "type": "str"},
     }
 
-    _subtype_map = {"distribution_type": {"Mpi": "Mpi", "PyTorch": "PyTorch", "TensorFlow": "TensorFlow"}}
+    _subtype_map = {
+        "distribution_type": {
+            "Mpi": "Mpi",
+            "PyTorch": "PyTorch",
+            "TensorFlow": "TensorFlow",
+        }
+    }
 
     def __init__(self, **kwargs):
         """ """
@@ -3009,8 +3068,14 @@ class EnvironmentVersionDetails(AssetBase):
         "conda_file": {"key": "condaFile", "type": "str"},
         "environment_type": {"key": "environmentType", "type": "str"},
         "image": {"key": "image", "type": "str"},
-        "inference_config": {"key": "inferenceConfig", "type": "InferenceContainerProperties"},
-        "intellectual_property": {"key": "intellectualProperty", "type": "IntellectualProperty"},
+        "inference_config": {
+            "key": "inferenceConfig",
+            "type": "InferenceContainerProperties",
+        },
+        "intellectual_property": {
+            "key": "intellectualProperty",
+            "type": "IntellectualProperty",
+        },
         "os_type": {"key": "osType", "type": "str"},
         "stage": {"key": "stage", "type": "str"},
     }
@@ -3456,7 +3521,11 @@ class JobInput(msrest.serialization.Model):
     }
 
     _subtype_map = {
-        "job_input_type": {"Dataset": "JobInputDataset", "Literal": "JobInputLiteral", "Uri": "JobInputUri"}
+        "job_input_type": {
+            "Dataset": "JobInputDataset",
+            "Literal": "JobInputLiteral",
+            "Uri": "JobInputUri",
+        }
     }
 
     def __init__(self, **kwargs):
@@ -3619,7 +3688,9 @@ class JobOutput(msrest.serialization.Model):
         "job_output_type": {"key": "jobOutputType", "type": "str"},
     }
 
-    _subtype_map = {"job_output_type": {"Dataset": "JobOutputDataset", "Uri": "JobOutputUri"}}
+    _subtype_map = {
+        "job_output_type": {"Dataset": "JobOutputDataset", "Uri": "JobOutputUri"}
+    }
 
     def __init__(self, **kwargs):
         """
@@ -3833,10 +3904,22 @@ class ManagedIdentityCredentialDto(msrest.serialization.Model):
 
     _attribute_map = {
         "managed_identity_type": {"key": "managedIdentityType", "type": "str"},
-        "user_managed_identity_client_id": {"key": "userManagedIdentityClientId", "type": "str"},
-        "user_managed_identity_principal_id": {"key": "userManagedIdentityPrincipalId", "type": "str"},
-        "user_managed_identity_resource_id": {"key": "userManagedIdentityResourceId", "type": "str"},
-        "user_managed_identity_tenant_id": {"key": "userManagedIdentityTenantId", "type": "str"},
+        "user_managed_identity_client_id": {
+            "key": "userManagedIdentityClientId",
+            "type": "str",
+        },
+        "user_managed_identity_principal_id": {
+            "key": "userManagedIdentityPrincipalId",
+            "type": "str",
+        },
+        "user_managed_identity_resource_id": {
+            "key": "userManagedIdentityResourceId",
+            "type": "str",
+        },
+        "user_managed_identity_tenant_id": {
+            "key": "userManagedIdentityTenantId",
+            "type": "str",
+        },
     }
 
     def __init__(self, **kwargs):
@@ -3858,10 +3941,18 @@ class ManagedIdentityCredentialDto(msrest.serialization.Model):
         """
         super(ManagedIdentityCredentialDto, self).__init__(**kwargs)
         self.managed_identity_type = kwargs.get("managed_identity_type", None)
-        self.user_managed_identity_client_id = kwargs.get("user_managed_identity_client_id", None)
-        self.user_managed_identity_principal_id = kwargs.get("user_managed_identity_principal_id", None)
-        self.user_managed_identity_resource_id = kwargs.get("user_managed_identity_resource_id", None)
-        self.user_managed_identity_tenant_id = kwargs.get("user_managed_identity_tenant_id", None)
+        self.user_managed_identity_client_id = kwargs.get(
+            "user_managed_identity_client_id", None
+        )
+        self.user_managed_identity_principal_id = kwargs.get(
+            "user_managed_identity_principal_id", None
+        )
+        self.user_managed_identity_resource_id = kwargs.get(
+            "user_managed_identity_resource_id", None
+        )
+        self.user_managed_identity_tenant_id = kwargs.get(
+            "user_managed_identity_tenant_id", None
+        )
 
 
 class MedianStoppingPolicy(EarlyTerminationPolicy):
@@ -3941,7 +4032,10 @@ class MLTableData(DataVersionBaseDetails):
         "is_archived": {"key": "isArchived", "type": "bool"},
         "data_type": {"key": "dataType", "type": "str"},
         "data_uri": {"key": "dataUri", "type": "str"},
-        "intellectual_property": {"key": "intellectualProperty", "type": "IntellectualProperty"},
+        "intellectual_property": {
+            "key": "intellectualProperty",
+            "type": "IntellectualProperty",
+        },
         "referenced_uris": {"key": "referencedUris", "type": "[str]"},
     }
 
@@ -4249,7 +4343,10 @@ class ModelVersionDetails(AssetBase):
         "is_anonymous": {"key": "isAnonymous", "type": "bool"},
         "is_archived": {"key": "isArchived", "type": "bool"},
         "flavors": {"key": "flavors", "type": "{FlavorData}"},
-        "intellectual_property": {"key": "intellectualProperty", "type": "IntellectualProperty"},
+        "intellectual_property": {
+            "key": "intellectualProperty",
+            "type": "IntellectualProperty",
+        },
         "job_name": {"key": "jobName", "type": "str"},
         "model_type": {"key": "modelType", "type": "str"},
         "model_uri": {"key": "modelUri", "type": "str"},
@@ -4661,11 +4758,17 @@ class PackageRequest(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        "base_environment_source": {"key": "baseEnvironmentSource", "type": "BaseEnvironmentSource"},
+        "base_environment_source": {
+            "key": "baseEnvironmentSource",
+            "type": "BaseEnvironmentSource",
+        },
         "environment_variables": {"key": "environmentVariables", "type": "{str}"},
         "inferencing_server": {"key": "inferencingServer", "type": "InferencingServer"},
         "inputs": {"key": "inputs", "type": "[ModelPackageInput]"},
-        "model_configuration": {"key": "modelConfiguration", "type": "ModelConfiguration"},
+        "model_configuration": {
+            "key": "modelConfiguration",
+            "type": "ModelConfiguration",
+        },
         "properties": {"key": "properties", "type": "{str}"},
         "sku_architecture_type": {"key": "skuArchitectureType", "type": "str"},
         "tags": {"key": "tags", "type": "{str}"},
@@ -4754,14 +4857,20 @@ class PackageResponse(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        "base_environment_source": {"key": "baseEnvironmentSource", "type": "BaseEnvironmentSource"},
+        "base_environment_source": {
+            "key": "baseEnvironmentSource",
+            "type": "BaseEnvironmentSource",
+        },
         "build_id": {"key": "buildId", "type": "str"},
         "build_state": {"key": "buildState", "type": "str"},
         "environment_variables": {"key": "environmentVariables", "type": "{str}"},
         "inferencing_server": {"key": "inferencingServer", "type": "InferencingServer"},
         "inputs": {"key": "inputs", "type": "[ModelPackageInput]"},
         "log_url": {"key": "logUrl", "type": "str"},
-        "model_configuration": {"key": "modelConfiguration", "type": "ModelConfiguration"},
+        "model_configuration": {
+            "key": "modelConfiguration",
+            "type": "ModelConfiguration",
+        },
         "properties": {"key": "properties", "type": "{str}"},
         "sku_architecture_type": {"key": "skuArchitectureType", "type": "str"},
         "tags": {"key": "tags", "type": "{str}"},
@@ -5000,7 +5109,10 @@ class ResourceManagementAssetReferenceData(Resource):
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
         "system_data": {"key": "systemData", "type": "SystemData"},
-        "properties": {"key": "properties", "type": "ResourceManagementAssetReferenceDetails"},
+        "properties": {
+            "key": "properties",
+            "type": "ResourceManagementAssetReferenceDetails",
+        },
     }
 
     def __init__(self, **kwargs):
@@ -5348,7 +5460,10 @@ class SweepJob(JobBase):
         "parent_job_name": {"key": "parentJobName", "type": "str"},
         "services": {"key": "services", "type": "{JobService}"},
         "status": {"key": "status", "type": "str"},
-        "early_termination": {"key": "earlyTermination", "type": "EarlyTerminationPolicy"},
+        "early_termination": {
+            "key": "earlyTermination",
+            "type": "EarlyTerminationPolicy",
+        },
         "identity": {"key": "identity", "type": "IdentityConfiguration"},
         "inputs": {"key": "inputs", "type": "{JobInput}"},
         "limits": {"key": "limits", "type": "SweepJobLimits"},
@@ -5536,8 +5651,14 @@ class TemporaryDataReferenceRequestDto(msrest.serialization.Model):
 
     _attribute_map = {
         "asset_id": {"key": "assetId", "type": "str"},
-        "temporary_data_reference_id": {"key": "temporaryDataReferenceId", "type": "str"},
-        "temporary_data_reference_type": {"key": "temporaryDataReferenceType", "type": "str"},
+        "temporary_data_reference_id": {
+            "key": "temporaryDataReferenceId",
+            "type": "str",
+        },
+        "temporary_data_reference_type": {
+            "key": "temporaryDataReferenceType",
+            "type": "str",
+        },
     }
 
     def __init__(self, **kwargs):
@@ -5553,8 +5674,12 @@ class TemporaryDataReferenceRequestDto(msrest.serialization.Model):
         """
         super(TemporaryDataReferenceRequestDto, self).__init__(**kwargs)
         self.asset_id = kwargs.get("asset_id", None)
-        self.temporary_data_reference_id = kwargs.get("temporary_data_reference_id", None)
-        self.temporary_data_reference_type = kwargs.get("temporary_data_reference_type", None)
+        self.temporary_data_reference_id = kwargs.get(
+            "temporary_data_reference_id", None
+        )
+        self.temporary_data_reference_type = kwargs.get(
+            "temporary_data_reference_type", None
+        )
 
 
 class TemporaryDataReferenceResponseDto(msrest.serialization.Model):
@@ -5581,8 +5706,14 @@ class TemporaryDataReferenceResponseDto(msrest.serialization.Model):
             "key": "imageReferenceForConsumption",
             "type": "ImageReferenceForConsumptionDto",
         },
-        "temporary_data_reference_id": {"key": "temporaryDataReferenceId", "type": "str"},
-        "temporary_data_reference_type": {"key": "temporaryDataReferenceType", "type": "str"},
+        "temporary_data_reference_id": {
+            "key": "temporaryDataReferenceId",
+            "type": "str",
+        },
+        "temporary_data_reference_type": {
+            "key": "temporaryDataReferenceType",
+            "type": "str",
+        },
     }
 
     def __init__(self, **kwargs):
@@ -5599,10 +5730,18 @@ class TemporaryDataReferenceResponseDto(msrest.serialization.Model):
         :paramtype temporary_data_reference_type: str
         """
         super(TemporaryDataReferenceResponseDto, self).__init__(**kwargs)
-        self.blob_reference_for_consumption = kwargs.get("blob_reference_for_consumption", None)
-        self.image_reference_for_consumption = kwargs.get("image_reference_for_consumption", None)
-        self.temporary_data_reference_id = kwargs.get("temporary_data_reference_id", None)
-        self.temporary_data_reference_type = kwargs.get("temporary_data_reference_type", None)
+        self.blob_reference_for_consumption = kwargs.get(
+            "blob_reference_for_consumption", None
+        )
+        self.image_reference_for_consumption = kwargs.get(
+            "image_reference_for_consumption", None
+        )
+        self.temporary_data_reference_id = kwargs.get(
+            "temporary_data_reference_id", None
+        )
+        self.temporary_data_reference_type = kwargs.get(
+            "temporary_data_reference_type", None
+        )
 
 
 class TensorFlow(DistributionConfiguration):
@@ -5723,7 +5862,10 @@ class TritonInferencingServer(InferencingServer):
 
     _attribute_map = {
         "server_type": {"key": "serverType", "type": "str"},
-        "inference_configuration": {"key": "inferenceConfiguration", "type": "OnlineInferenceConfiguration"},
+        "inference_configuration": {
+            "key": "inferenceConfiguration",
+            "type": "OnlineInferenceConfiguration",
+        },
     }
 
     def __init__(self, **kwargs):
@@ -5818,7 +5960,10 @@ class UriFileDataVersion(DataVersionBaseDetails):
         "is_archived": {"key": "isArchived", "type": "bool"},
         "data_type": {"key": "dataType", "type": "str"},
         "data_uri": {"key": "dataUri", "type": "str"},
-        "intellectual_property": {"key": "intellectualProperty", "type": "IntellectualProperty"},
+        "intellectual_property": {
+            "key": "intellectualProperty",
+            "type": "IntellectualProperty",
+        },
     }
 
     def __init__(self, **kwargs):
@@ -5884,7 +6029,10 @@ class UriFolderDataVersion(DataVersionBaseDetails):
         "is_archived": {"key": "isArchived", "type": "bool"},
         "data_type": {"key": "dataType", "type": "str"},
         "data_uri": {"key": "dataUri", "type": "str"},
-        "intellectual_property": {"key": "intellectualProperty", "type": "IntellectualProperty"},
+        "intellectual_property": {
+            "key": "intellectualProperty",
+            "type": "IntellectualProperty",
+        },
     }
 
     def __init__(self, **kwargs):

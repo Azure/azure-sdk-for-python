@@ -31,7 +31,10 @@ def _validate_spark_configurations(obj):
                 target=ErrorTarget.SPARK_JOB,
                 error_category=ErrorCategory.USER_ERROR,
             )
-        if obj.dynamic_allocation_min_executors is None or obj.dynamic_allocation_max_executors is None:
+        if (
+            obj.dynamic_allocation_min_executors is None
+            or obj.dynamic_allocation_max_executors is None
+        ):
             msg = (
                 "spark.dynamicAllocation.minExecutors and spark.dynamicAllocation.maxExecutors are required "
                 "when dynamic allocation is enabled."
@@ -44,7 +47,8 @@ def _validate_spark_configurations(obj):
             )
         if not (
             obj.dynamic_allocation_min_executors > 0
-            and obj.dynamic_allocation_min_executors <= obj.dynamic_allocation_max_executors
+            and obj.dynamic_allocation_min_executors
+            <= obj.dynamic_allocation_max_executors
         ):
             msg = (
                 "Dynamic min executors should be bigger than 0 and min executors should be equal or less than "
@@ -88,7 +92,10 @@ def _validate_spark_configurations(obj):
                 target=ErrorTarget.SPARK_JOB,
                 error_category=ErrorCategory.USER_ERROR,
             )
-        if obj.dynamic_allocation_min_executors is not None or obj.dynamic_allocation_max_executors is not None:
+        if (
+            obj.dynamic_allocation_min_executors is not None
+            or obj.dynamic_allocation_max_executors is not None
+        ):
             msg = "Should not specify min or max executors when dynamic allocation is disabled."
             raise ValidationException(
                 message=msg,
@@ -126,12 +133,19 @@ def _validate_compute_or_resources(compute, resources):
 # pylint: disable=no-else-raise, too-many-boolean-expressions
 def _validate_input_output_mode(inputs, outputs):
     for input_name, input_value in inputs.items():
-        if isinstance(input_value, Input) and input_value.mode != InputOutputModes.DIRECT:
+        if (
+            isinstance(input_value, Input)
+            and input_value.mode != InputOutputModes.DIRECT
+        ):
             # For standalone job input
             msg = "Input '{}' is using '{}' mode, only '{}' is supported for Spark job"
             raise ValidationException(
-                message=msg.format(input_name, input_value.mode, InputOutputModes.DIRECT),
-                no_personal_data_message=msg.format("[input_name]", "[input_value.mode]", "direct"),
+                message=msg.format(
+                    input_name, input_value.mode, InputOutputModes.DIRECT
+                ),
+                no_personal_data_message=msg.format(
+                    "[input_name]", "[input_value.mode]", "direct"
+                ),
                 target=ErrorTarget.SPARK_JOB,
                 error_category=ErrorCategory.USER_ERROR,
             )
@@ -141,11 +155,18 @@ def _validate_input_output_mode(inputs, outputs):
                 isinstance(input_value._data, Input)
                 and not (
                     isinstance(input_value._data.path, str)
-                    and bool(re.search(ComponentJobConstants.INPUT_PATTERN, input_value._data.path))
+                    and bool(
+                        re.search(
+                            ComponentJobConstants.INPUT_PATTERN, input_value._data.path
+                        )
+                    )
                 )
                 and input_value._data.mode != InputOutputModes.DIRECT
             )
-            and (isinstance(input_value._meta, Input) and input_value._meta.mode != InputOutputModes.DIRECT)
+            and (
+                isinstance(input_value._meta, Input)
+                and input_value._meta.mode != InputOutputModes.DIRECT
+            )
         ):
             # For node input in pipeline job, client side can only validate node input which isn't bound to pipeline
             # input or node output.
@@ -160,9 +181,13 @@ def _validate_input_output_mode(inputs, outputs):
             msg = "Input '{}' is using '{}' mode, only '{}' is supported for Spark job"
             raise ValidationException(
                 message=msg.format(
-                    input_name, input_value._data.mode or input_value._meta.mode, InputOutputModes.DIRECT
+                    input_name,
+                    input_value._data.mode or input_value._meta.mode,
+                    InputOutputModes.DIRECT,
                 ),
-                no_personal_data_message=msg.format("[input_name]", "[input_value.mode]", "direct"),
+                no_personal_data_message=msg.format(
+                    "[input_name]", "[input_value.mode]", "direct"
+                ),
                 target=ErrorTarget.SPARK_JOB,
                 error_category=ErrorCategory.USER_ERROR,
             )
@@ -176,8 +201,12 @@ def _validate_input_output_mode(inputs, outputs):
             # For standalone job output
             msg = "Output '{}' is using '{}' mode, only '{}' is supported for Spark job"
             raise ValidationException(
-                message=msg.format(output_name, output_value.mode, InputOutputModes.DIRECT),
-                no_personal_data_message=msg.format("[output_name]", "[output_value.mode]", "direct"),
+                message=msg.format(
+                    output_name, output_value.mode, InputOutputModes.DIRECT
+                ),
+                no_personal_data_message=msg.format(
+                    "[output_name]", "[output_value.mode]", "direct"
+                ),
                 target=ErrorTarget.SPARK_JOB,
                 error_category=ErrorCategory.USER_ERROR,
             )
@@ -188,11 +217,19 @@ def _validate_input_output_mode(inputs, outputs):
                 isinstance(output_value._data, Output)
                 and not (
                     isinstance(output_value._data.path, str)
-                    and bool(re.search(ComponentJobConstants.OUTPUT_PATTERN, output_value._data.path))
+                    and bool(
+                        re.search(
+                            ComponentJobConstants.OUTPUT_PATTERN,
+                            output_value._data.path,
+                        )
+                    )
                 )
                 and output_value._data.mode != InputOutputModes.DIRECT
             )
-            and (isinstance(output_value._meta, Output) and output_value._meta.mode != InputOutputModes.DIRECT)
+            and (
+                isinstance(output_value._meta, Output)
+                and output_value._meta.mode != InputOutputModes.DIRECT
+            )
         ):
             # For node output in pipeline job, client side can only validate node output which isn't bound to pipeline
             # output.
@@ -203,9 +240,13 @@ def _validate_input_output_mode(inputs, outputs):
             msg = "Output '{}' is using '{}' mode, only '{}' is supported for Spark job"
             raise ValidationException(
                 message=msg.format(
-                    output_name, output_value._data.mode or output_value._meta.mode, InputOutputModes.DIRECT
+                    output_name,
+                    output_value._data.mode or output_value._meta.mode,
+                    InputOutputModes.DIRECT,
                 ),
-                no_personal_data_message=msg.format("[output_name]", "[output_value.mode]", "direct"),
+                no_personal_data_message=msg.format(
+                    "[output_name]", "[output_value.mode]", "direct"
+                ),
                 target=ErrorTarget.SPARK_JOB,
                 error_category=ErrorCategory.USER_ERROR,
             )

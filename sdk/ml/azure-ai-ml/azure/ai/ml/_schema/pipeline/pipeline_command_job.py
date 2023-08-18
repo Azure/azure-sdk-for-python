@@ -9,7 +9,12 @@ from typing import Any
 
 from marshmallow import fields, post_load
 
-from azure.ai.ml._schema.core.fields import ComputeField, EnvironmentField, NestedField, UnionField
+from azure.ai.ml._schema.core.fields import (
+    ComputeField,
+    EnvironmentField,
+    NestedField,
+    UnionField,
+)
 from azure.ai.ml._schema.job.command_job import CommandJobSchema
 from azure.ai.ml._schema.job.input_output_entry import OutputSchema
 

@@ -6,11 +6,15 @@ from typing import Any, Dict, List, Optional
 from azure.ai.ml._restclient.v2023_06_01_preview.models import (
     DiagnoseRequestProperties as RestDiagnoseRequestProperties,
 )
-from azure.ai.ml._restclient.v2023_06_01_preview.models import DiagnoseResponseResult as RestDiagnoseResponseResult
+from azure.ai.ml._restclient.v2023_06_01_preview.models import (
+    DiagnoseResponseResult as RestDiagnoseResponseResult,
+)
 from azure.ai.ml._restclient.v2023_06_01_preview.models import (
     DiagnoseResponseResultValue as RestDiagnoseResponseResultValue,
 )
-from azure.ai.ml._restclient.v2023_06_01_preview.models import DiagnoseResult as RestDiagnoseResult
+from azure.ai.ml._restclient.v2023_06_01_preview.models import (
+    DiagnoseResult as RestDiagnoseResult,
+)
 from azure.ai.ml._restclient.v2023_06_01_preview.models import (
     DiagnoseWorkspaceParameters as RestDiagnoseWorkspaceParameters,
 )
@@ -43,7 +47,9 @@ class DiagnoseRequestProperties:
         self.others = others
 
     @classmethod
-    def _from_rest_object(cls, rest_obj: RestDiagnoseRequestProperties) -> "DiagnoseRequestProperties":
+    def _from_rest_object(
+        cls, rest_obj: RestDiagnoseRequestProperties
+    ) -> "DiagnoseRequestProperties":
         return cls(
             udr=rest_obj.udr,
             nsg=rest_obj.nsg,
@@ -81,9 +87,15 @@ class DiagnoseResponseResult:
         self.value = value
 
     @classmethod
-    def _from_rest_object(cls, rest_obj: RestDiagnoseResponseResult) -> "DiagnoseResponseResult":
+    def _from_rest_object(
+        cls, rest_obj: RestDiagnoseResponseResult
+    ) -> "DiagnoseResponseResult":
         val = None
-        if rest_obj and rest_obj.value and isinstance(rest_obj.value, RestDiagnoseResponseResultValue):
+        if (
+            rest_obj
+            and rest_obj.value
+            and isinstance(rest_obj.value, RestDiagnoseResponseResultValue)
+        ):
             # pylint: disable=protected-access
             val = DiagnoseResponseResultValue._from_rest_object(rest_obj.value)
         return cls(value=val)
@@ -119,7 +131,9 @@ class DiagnoseResponseResultValue:
         self.other_results = other_results
 
     @classmethod
-    def _from_rest_object(cls, rest_obj: RestDiagnoseResponseResultValue) -> "DiagnoseResponseResultValue":
+    def _from_rest_object(
+        cls, rest_obj: RestDiagnoseResponseResultValue
+    ) -> "DiagnoseResponseResultValue":
         return cls(
             user_defined_route_results=rest_obj.user_defined_route_results,
             network_security_rule_results=rest_obj.network_security_rule_results,
@@ -187,7 +201,9 @@ class DiagnoseWorkspaceParameters:
         self.value = value
 
     @classmethod
-    def _from_rest_object(cls, rest_obj: RestDiagnoseWorkspaceParameters) -> "DiagnoseWorkspaceParameters":
+    def _from_rest_object(
+        cls, rest_obj: RestDiagnoseWorkspaceParameters
+    ) -> "DiagnoseWorkspaceParameters":
         val = None
         if rest_obj.value and isinstance(rest_obj.value, DiagnoseRequestProperties):
             # pylint: disable=protected-access

@@ -67,7 +67,11 @@ def do_while(body, mapping, max_iteration_count: int, condition=None):
         # pylint: disable=protected-access
         for source_output, body_input in mapping.items():
             # handle case that mapping key is a NodeOutput
-            output_name = source_output._port_name if isinstance(source_output, NodeOutput) else source_output
+            output_name = (
+                source_output._port_name
+                if isinstance(source_output, NodeOutput)
+                else source_output
+            )
             # if loop body output type is not specified, skip as we have no place to infer
             if body.outputs[output_name].type is None:
                 continue

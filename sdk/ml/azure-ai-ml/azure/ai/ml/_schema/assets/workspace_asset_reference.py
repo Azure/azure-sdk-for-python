@@ -22,6 +22,10 @@ class WorkspaceAssetReferenceSchema(AssetSchema):
 
     @post_load
     def make(self, data, **kwargs):
-        from azure.ai.ml.entities._assets.workspace_asset_reference import WorkspaceAssetReference
+        from azure.ai.ml.entities._assets.workspace_asset_reference import (
+            WorkspaceAssetReference,
+        )
 
-        return WorkspaceAssetReference(base_path=self.context[BASE_PATH_CONTEXT_KEY], **data)
+        return WorkspaceAssetReference(
+            base_path=self.context[BASE_PATH_CONTEXT_KEY], **data
+        )

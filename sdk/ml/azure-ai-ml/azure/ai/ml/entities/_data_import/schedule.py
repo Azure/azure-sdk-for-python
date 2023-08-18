@@ -11,10 +11,18 @@ from azure.ai.ml._restclient.v2023_04_01_preview.models import Schedule as RestS
 from azure.ai.ml._restclient.v2023_04_01_preview.models import ScheduleProperties
 from azure.ai.ml._schema._data_import.schedule import ImportDataScheduleSchema
 from azure.ai.ml._utils._experimental import experimental
-from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, ScheduleType
+from azure.ai.ml.constants._common import (
+    BASE_PATH_CONTEXT_KEY,
+    PARAMS_OVERRIDE_KEY,
+    ScheduleType,
+)
 from azure.ai.ml.entities._data_import.data_import import DataImport
 from azure.ai.ml.entities._schedule.schedule import Schedule
-from azure.ai.ml.entities._schedule.trigger import CronTrigger, RecurrenceTrigger, TriggerBase
+from azure.ai.ml.entities._schedule.trigger import (
+    CronTrigger,
+    RecurrenceTrigger,
+    TriggerBase,
+)
 from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._util import load_from_dict
 
@@ -90,7 +98,9 @@ class ImportDataSchedule(Schedule):
     def _from_rest_object(cls, obj: RestSchedule) -> "ImportDataSchedule":
         return cls(
             trigger=TriggerBase._from_rest_object(obj.properties.trigger),
-            import_data=DataImport._from_rest_object(obj.properties.action.data_import_definition),
+            import_data=DataImport._from_rest_object(
+                obj.properties.action.data_import_definition
+            ),
             name=obj.name,
             display_name=obj.properties.display_name,
             description=obj.properties.description,
@@ -107,7 +117,9 @@ class ImportDataSchedule(Schedule):
                 description=self.description,
                 properties=self.properties,
                 tags=self.tags,
-                action=ImportDataAction(data_import_definition=self.import_data._to_rest_object()),
+                action=ImportDataAction(
+                    data_import_definition=self.import_data._to_rest_object()
+                ),
                 display_name=self.display_name,
                 is_enabled=self._is_enabled,
                 trigger=self.trigger._to_rest_object(),

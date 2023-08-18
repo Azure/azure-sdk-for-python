@@ -201,10 +201,14 @@ class ArtifactCache:
             if response.status_code == 200:
                 artifacts_tool_path = tempfile.mktemp()  # nosec B306
                 artifacts_tool_uri = response.json()["uri"]
-                response = requests_pipeline.get(artifacts_tool_uri)  # pylint: disable=too-many-function-args
+                response = requests_pipeline.get(
+                    artifacts_tool_uri
+                )  # pylint: disable=too-many-function-args
                 with zipfile.ZipFile(BytesIO(response.content)) as zip_file:
                     zip_file.extractall(artifacts_tool_path)
-                os.environ["AZURE_DEVOPS_EXT_ARTIFACTTOOL_OVERRIDE_PATH"] = str(artifacts_tool_path.resolve())
+                os.environ["AZURE_DEVOPS_EXT_ARTIFACTTOOL_OVERRIDE_PATH"] = str(
+                    artifacts_tool_path.resolve()
+                )
                 self._artifacts_tool_path = artifacts_tool_path
             else:
                 _logger.warning("Download artifact tool failed: %s", response.text)
@@ -249,13 +253,13 @@ class ArtifactCache:
             )
 
             if result.returncode != 0:
-                error_msg = (
-                    f"Download package {name}:{version} from the feed {feed} failed {retries} times: {result.stderr}"
-                )
+                error_msg = f"Download package {name}:{version} from the feed {feed} failed {retries} times: {result.stderr}"
                 if retries < max_retries:
                     _logger.warning(error_msg)
                 else:
-                    error_msg = error_msg + f"\nDownload artifact debug info: {result.stdout}"
+                    error_msg = (
+                        error_msg + f"\nDownload artifact debug info: {result.stdout}"
+                    )
                     raise RuntimeError(error_msg)
             else:
                 return
@@ -278,7 +282,11 @@ class ArtifactCache:
         if checksum_path.exists():
             with open(checksum_path, "r", encoding=DefaultOpenEncoding.READ) as f:
                 checksum = f.read()
-                file_list = [os.path.join(root, f) for root, _, files in os.walk(path) for f in files]
+                file_list = [
+                    os.path.join(root, f)
+                    for root, _, files in os.walk(path)
+                    for f in files
+                ]
                 artifact_hash = self.hash_files_content(file_list)
                 return checksum == artifact_hash
         return False
@@ -409,16 +417,26 @@ class ArtifactCache:
         )
 
         if result.returncode != 0:
-            artifacts_tool_not_find_error_pattern = "No such file or directory: .*artifacttool"
+            artifacts_tool_not_find_error_pattern = (
+                "No such file or directory: .*artifacttool"
+            )
             if re.findall(artifacts_tool_not_find_error_pattern, result.stderr):
                 # When download artifacts tool failed retry download artifacts command
                 _logger.warning(
-                    "Download package %s:%s from the feed %s failed: %s", name, version, feed, result.stderr
+                    "Download package %s:%s from the feed %s failed: %s",
+                    name,
+                    version,
+                    feed,
+                    result.stderr,
                 )
                 download_cmd.append("--debug")
-                self._download_artifacts(download_cmd, organization, name, version, feed)
+                self._download_artifacts(
+                    download_cmd, organization, name, version, feed
+                )
             else:
-                raise RuntimeError(f"Download package {name}:{version} from the feed {feed} failed: {result.stderr}")
+                raise RuntimeError(
+                    f"Download package {name}:{version} from the feed {feed} failed: {result.stderr}"
+                )
         try:
             # Copy artifact package from temp folder to the cache path.
             if not all([organization, project]):
@@ -434,10 +452,16 @@ class ArtifactCache:
                 / version
             )
             artifact_package_path.parent.mkdir(exist_ok=True, parents=True)
-            file_list = [os.path.join(root, f) for root, _, files in os.walk(tempdir) for f in files]
+            file_list = [
+                os.path.join(root, f)
+                for root, _, files in os.walk(tempdir)
+                for f in files
+            ]
             artifact_hash = self.hash_files_content(file_list)
             os.rename(tempdir, artifact_package_path)
-            temp_checksum_file = os.path.join(tempfile.mkdtemp(), f"{version}_{self.POSTFIX_CHECKSUM}")
+            temp_checksum_file = os.path.join(
+                tempfile.mkdtemp(), f"{version}_{self.POSTFIX_CHECKSUM}"
+            )
             with open(temp_checksum_file, "w", encoding=DefaultOpenEncoding.WRITE) as f:
                 f.write(artifact_hash)
             os.rename(

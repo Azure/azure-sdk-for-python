@@ -14,7 +14,9 @@ module_logger = logging.getLogger(__name__)
 
 
 class PayloadResponseSchema(metaclass=PatchedSchemaMeta):
-    enabled = StringTransformedEnum(required=True, allowed_values=[Boolean.TRUE, Boolean.FALSE])
+    enabled = StringTransformedEnum(
+        required=True, allowed_values=[Boolean.TRUE, Boolean.FALSE]
+    )
 
     # pylint: disable=unused-argument
     @post_load

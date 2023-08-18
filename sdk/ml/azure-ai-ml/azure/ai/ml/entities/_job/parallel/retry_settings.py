@@ -35,7 +35,9 @@ class RetrySettings(RestTranslatableMixin, DictMixin):
         self.max_retries = max_retries
 
     def _to_dict(self) -> Dict:
-        return RetrySettingsSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)  # pylint: disable=no-member
+        return RetrySettingsSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(
+            self
+        )  # pylint: disable=no-member
 
     @classmethod
     def _load(
@@ -46,7 +48,9 @@ class RetrySettings(RestTranslatableMixin, DictMixin):
     ) -> "RetrySettings":
         params_override = params_override or []
         data = load_yaml(path)
-        return RetrySettings._load_from_dict(data=data, path=path, params_override=params_override)
+        return RetrySettings._load_from_dict(
+            data=data, path=path, params_override=params_override
+        )
 
     @classmethod
     def _load_from_dict(

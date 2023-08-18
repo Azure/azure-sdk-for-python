@@ -4,7 +4,9 @@
 
 from typing import Any, Dict, Optional, Union
 
-from azure.ai.ml._schema._deployment.batch.job_definition_schema import JobDefinitionSchema
+from azure.ai.ml._schema._deployment.batch.job_definition_schema import (
+    JobDefinitionSchema,
+)
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 from azure.ai.ml.entities._component.component import Component

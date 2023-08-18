@@ -63,20 +63,38 @@ class ResourceManagementClient(object):
         # type: (...) -> None
         if not base_url:
             base_url = "https://management.azure.com"
-        self._config = ResourceManagementClientConfiguration(credential, subscription_id, **kwargs)
-        self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        self._config = ResourceManagementClientConfiguration(
+            credential, subscription_id, **kwargs
+        )
+        self._client = ARMPipelineClient(
+            base_url=base_url, config=self._config, **kwargs
+        )
 
-        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
+        client_models = {
+            k: v for k, v in models.__dict__.items() if isinstance(v, type)
+        }
         self._serialize = Serializer(client_models)
         self._serialize.client_side_validation = False
         self._deserialize = Deserializer(client_models)
 
-        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
-        self.deployments = DeploymentsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.providers = ProvidersOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.resources = ResourcesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.resource_groups = ResourceGroupsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.tags = TagsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.operations = Operations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.deployments = DeploymentsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.providers = ProvidersOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.resources = ResourcesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.resource_groups = ResourceGroupsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.tags = TagsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.deployment_operations = DeploymentOperationsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )

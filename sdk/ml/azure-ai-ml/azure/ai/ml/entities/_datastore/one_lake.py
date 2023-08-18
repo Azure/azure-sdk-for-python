@@ -16,7 +16,10 @@ from azure.ai.ml._restclient.v2023_04_01_preview.models import (
 )
 from azure.ai.ml._schema._datastore.one_lake import OneLakeSchema
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, TYPE
-from azure.ai.ml.entities._credentials import NoneCredentialConfiguration, ServicePrincipalConfiguration
+from azure.ai.ml.entities._credentials import (
+    NoneCredentialConfiguration,
+    ServicePrincipalConfiguration,
+)
 from azure.ai.ml.entities._datastore.datastore import Datastore
 from azure.ai.ml.entities._datastore.utils import from_rest_datastore_credentials
 from azure.ai.ml.entities._mixins import DictMixin, RestTranslatableMixin
@@ -46,7 +49,9 @@ class LakeHouseArtifact(OneLakeArtifact):
     """
 
     def __init__(self, artifact_name: str):
-        super(LakeHouseArtifact, self).__init__(artifact_name=artifact_name, artifact_type="lake_house")
+        super(LakeHouseArtifact, self).__init__(
+            artifact_name=artifact_name, artifact_type="lake_house"
+        )
 
     def _to_datastore_rest_object(self) -> RestLakeHouseArtifact:
         return RestLakeHouseArtifact(artifact_name=self.artifact_name)
@@ -86,12 +91,19 @@ class OneLakeDatastore(Datastore):
         description: Optional[str] = None,
         tags: Optional[Dict] = None,
         properties: Optional[Dict] = None,
-        credentials: Optional[Union[NoneCredentialConfiguration, ServicePrincipalConfiguration]] = None,
+        credentials: Optional[
+            Union[NoneCredentialConfiguration, ServicePrincipalConfiguration]
+        ] = None,
         **kwargs
     ):
         kwargs[TYPE] = DatastoreType.ONE_LAKE
         super().__init__(
-            name=name, description=description, tags=tags, properties=properties, credentials=credentials, **kwargs
+            name=name,
+            description=description,
+            tags=tags,
+            properties=properties,
+            credentials=credentials,
+            **kwargs
         )
         self.artifact = artifact
         self.one_lake_workspace_name = one_lake_workspace_name
@@ -100,7 +112,9 @@ class OneLakeDatastore(Datastore):
     def _to_rest_object(self) -> DatastoreData:
         one_lake_ds = RestOneLakeDatastore(
             credentials=self.credentials._to_datastore_rest_object(),
-            artifact=RestLakeHouseArtifact(artifact_name=self.artifact["artifact_name"]),
+            artifact=RestLakeHouseArtifact(
+                artifact_name=self.artifact["artifact_name"]
+            ),
             one_lake_workspace_name=self.one_lake_workspace_name,
             endpoint=self.endpoint,
             description=self.description,
@@ -109,8 +123,12 @@ class OneLakeDatastore(Datastore):
         return DatastoreData(properties=one_lake_ds)
 
     @classmethod
-    def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs) -> "OneLakeDatastore":
-        return load_from_dict(OneLakeSchema, data, context, additional_message, **kwargs)
+    def _load_from_dict(
+        cls, data: Dict, context: Dict, additional_message: str, **kwargs
+    ) -> "OneLakeDatastore":
+        return load_from_dict(
+            OneLakeSchema, data, context, additional_message, **kwargs
+        )
 
     @classmethod
     def _from_rest_object(cls, datastore_resource: DatastoreData):

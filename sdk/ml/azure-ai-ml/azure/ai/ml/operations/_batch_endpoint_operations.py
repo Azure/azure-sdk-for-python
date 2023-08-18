@@ -13,10 +13,15 @@ from typing import TYPE_CHECKING, Dict, Optional
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
 from azure.ai.ml._artifacts._artifact_utilities import _upload_and_generate_remote_uri
-from azure.ai.ml._azure_environments import _get_aml_resource_id_from_metadata, _resource_to_scopes
+from azure.ai.ml._azure_environments import (
+    _get_aml_resource_id_from_metadata,
+    _resource_to_scopes,
+)
 from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml._restclient.v2020_09_01_dataplanepreview.models import BatchJobResource
-from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
+from azure.ai.ml._restclient.v2022_05_01 import (
+    AzureMachineLearningWorkspaces as ServiceClient052022,
+)
 from azure.ai.ml._schema._deployment.batch.batch_job import BatchJobSchema
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
@@ -28,7 +33,10 @@ from azure.ai.ml._scope_dependent_operations import (
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._arm_id_utils import is_ARM_id_for_resource, remove_aml_prefix
 from azure.ai.ml._utils._azureml_polling import AzureMLPolling
-from azure.ai.ml._utils._endpoint_utils import validate_response, convert_v1_dataset_to_v2
+from azure.ai.ml._utils._endpoint_utils import (
+    validate_response,
+    convert_v1_dataset_to_v2,
+)
 from azure.ai.ml._utils._http_utils import HttpPipeline
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils.utils import (
@@ -52,7 +60,13 @@ from azure.ai.ml.constants._common import (
 from azure.ai.ml.constants._endpoint import EndpointInvokeFields, EndpointYamlFields
 from azure.ai.ml.entities import BatchEndpoint, BatchJob
 from azure.ai.ml.entities._inputs_outputs import Input
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, MlException, ValidationErrorType, ValidationException
+from azure.ai.ml.exceptions import (
+    ErrorCategory,
+    ErrorTarget,
+    MlException,
+    ValidationErrorType,
+    ValidationException,
+)
 from azure.core.credentials import TokenCredential
 from azure.core.exceptions import HttpResponseError
 from azure.core.paging import ItemPaged
@@ -88,7 +102,9 @@ class BatchEndpointOperations(_ScopeDependentOperations):
         ops_logger.update_info(kwargs)
         self._batch_operation = service_client_05_2022.batch_endpoints
         self._batch_deployment_operation = service_client_05_2022.batch_deployments
-        self._batch_job_endpoint = kwargs.pop("service_client_09_2020_dataplanepreview").batch_job_endpoint
+        self._batch_job_endpoint = kwargs.pop(
+            "service_client_09_2020_dataplanepreview"
+        ).batch_job_endpoint
         self._all_operations = all_operations
         self._credentials = credentials
         self._init_kwargs = kwargs
@@ -169,8 +185,12 @@ class BatchEndpointOperations(_ScopeDependentOperations):
         return delete_poller
 
     @distributed_trace
-    @monitor_with_activity(logger, "BatchEndpoint.BeginCreateOrUpdate", ActivityType.PUBLICAPI)
-    def begin_create_or_update(self, endpoint: BatchEndpoint) -> LROPoller[BatchEndpoint]:
+    @monitor_with_activity(
+        logger, "BatchEndpoint.BeginCreateOrUpdate", ActivityType.PUBLICAPI
+    )
+    def begin_create_or_update(
+        self, endpoint: BatchEndpoint
+    ) -> LROPoller[BatchEndpoint]:
         """Create or update a batch endpoint.
 
         :param endpoint: The endpoint entity.
@@ -190,7 +210,9 @@ class BatchEndpointOperations(_ScopeDependentOperations):
                 body=endpoint_resource,
                 polling=True,
                 **self._init_kwargs,
-                cls=lambda response, deserialized, headers: BatchEndpoint._from_rest_object(deserialized),
+                cls=lambda response, deserialized, headers: BatchEndpoint._from_rest_object(
+                    deserialized
+                ),
             )
             return poller
 
@@ -244,9 +266,13 @@ class BatchEndpointOperations(_ScopeDependentOperations):
             # MFE expects a dictionary as input_data that's why we are using
             # "UriFolder" or "UriFile" as keys depending on the input type
             if input.type == "uri_folder":
-                params_override.append({EndpointYamlFields.BATCH_JOB_INPUT_DATA: {"UriFolder": input}})
+                params_override.append(
+                    {EndpointYamlFields.BATCH_JOB_INPUT_DATA: {"UriFolder": input}}
+                )
             elif input.type == "uri_file":
-                params_override.append({EndpointYamlFields.BATCH_JOB_INPUT_DATA: {"UriFile": input}})
+                params_override.append(
+                    {EndpointYamlFields.BATCH_JOB_INPUT_DATA: {"UriFile": input}}
+                )
             else:
                 msg = (
                     "Unsupported input type please use a dictionary of either a path on the datastore, public URI, "
@@ -264,7 +290,12 @@ class BatchEndpointOperations(_ScopeDependentOperations):
                 if (
                     isinstance(input_data, Input)
                     and input_data.type
-                    not in [InputTypes.NUMBER, InputTypes.BOOLEAN, InputTypes.INTEGER, InputTypes.STRING]
+                    not in [
+                        InputTypes.NUMBER,
+                        InputTypes.BOOLEAN,
+                        InputTypes.INTEGER,
+                        InputTypes.STRING,
+                    ]
                     and HTTP_PREFIX not in input_data.path
                 ):
                     self._resolve_input(input_data, os.getcwd())
@@ -281,7 +312,9 @@ class BatchEndpointOperations(_ScopeDependentOperations):
             PARAMS_OVERRIDE_KEY: params_override,
         }
 
-        batch_job = BatchJobSchema(context=context).load(data={})  # pylint: disable=no-member
+        batch_job = BatchJobSchema(context=context).load(
+            data={}
+        )  # pylint: disable=no-member
         # update output datastore to arm id if needed
         # TODO: Unify datastore name -> arm id logic, TASK: 1104172
         request = {}
@@ -290,7 +323,9 @@ class BatchEndpointOperations(_ScopeDependentOperations):
             and batch_job.output_dataset.datastore_id
             and (not is_ARM_id_for_resource(batch_job.output_dataset.datastore_id))
         ):
-            v2_dataset_dictionary = convert_v1_dataset_to_v2(batch_job.output_dataset, batch_job.output_file_name)
+            v2_dataset_dictionary = convert_v1_dataset_to_v2(
+                batch_job.output_dataset, batch_job.output_file_name
+            )
             batch_job.output_dataset = None
             batch_job.output_file_name = None
             request = BatchJobResource(properties=batch_job).serialize()
@@ -334,7 +369,9 @@ class BatchEndpointOperations(_ScopeDependentOperations):
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.ml.entities.BatchJob]
         """
 
-        workspace_operations = self._all_operations.all_operations[AzureMLResourceType.WORKSPACE]
+        workspace_operations = self._all_operations.all_operations[
+            AzureMLResourceType.WORKSPACE
+        ]
         mfe_base_uri = _get_mfe_base_url_from_discovery_service(
             workspace_operations, self._workspace_name, self._requests_pipeline
         )
@@ -351,7 +388,11 @@ class BatchEndpointOperations(_ScopeDependentOperations):
             return list(result)
 
     def _get_workspace_location(self) -> str:
-        return self._all_operations.all_operations[AzureMLResourceType.WORKSPACE].get(self._workspace_name).location
+        return (
+            self._all_operations.all_operations[AzureMLResourceType.WORKSPACE]
+            .get(self._workspace_name)
+            .location
+        )
 
     def _validate_deployment_name(self, endpoint_name, deployment_name):
         deployments_list = self._batch_deployment_operation.list(
@@ -390,7 +431,12 @@ class BatchEndpointOperations(_ScopeDependentOperations):
         if not entry.path:
             raise Exception("Input path can't be empty for batch endpoint invoke")
 
-        if entry.type in [InputTypes.NUMBER, InputTypes.BOOLEAN, InputTypes.INTEGER, InputTypes.STRING]:
+        if entry.type in [
+            InputTypes.NUMBER,
+            InputTypes.BOOLEAN,
+            InputTypes.INTEGER,
+            InputTypes.STRING,
+        ]:
             return
 
         try:
@@ -402,17 +448,25 @@ class BatchEndpointOperations(_ScopeDependentOperations):
                         no_personal_data_message="Invalid input path",
                         error_type=ValidationErrorType.INVALID_VALUE,
                     )
-            elif os.path.isabs(entry.path):  # absolute local path, upload, transform to remote url
-                if entry.type == AssetTypes.URI_FOLDER and not os.path.isdir(entry.path):
+            elif os.path.isabs(
+                entry.path
+            ):  # absolute local path, upload, transform to remote url
+                if entry.type == AssetTypes.URI_FOLDER and not os.path.isdir(
+                    entry.path
+                ):
                     raise ValidationException(
-                        message="There is no folder on target path: {}".format(entry.path),
+                        message="There is no folder on target path: {}".format(
+                            entry.path
+                        ),
                         target=ErrorTarget.BATCH_ENDPOINT,
                         no_personal_data_message="There is no folder on target path",
                         error_type=ValidationErrorType.FILE_OR_FOLDER_NOT_FOUND,
                     )
                 if entry.type == AssetTypes.URI_FILE and not os.path.isfile(entry.path):
                     raise ValidationException(
-                        message="There is no file on target path: {}".format(entry.path),
+                        message="There is no file on target path: {}".format(
+                            entry.path
+                        ),
                         target=ErrorTarget.BATCH_ENDPOINT,
                         no_personal_data_message="There is no file on target path",
                         error_type=ValidationErrorType.FILE_OR_FOLDER_NOT_FOUND,
@@ -423,14 +477,24 @@ class BatchEndpointOperations(_ScopeDependentOperations):
                     self._datastore_operations,
                     entry.path,
                 )
-                if entry.type == AssetTypes.URI_FOLDER and entry.path and not entry.path.endswith("/"):
+                if (
+                    entry.type == AssetTypes.URI_FOLDER
+                    and entry.path
+                    and not entry.path.endswith("/")
+                ):
                     entry.path = entry.path + "/"
-            elif ":" in entry.path or "@" in entry.path:  # Check registered file or folder datastore
+            elif (
+                ":" in entry.path or "@" in entry.path
+            ):  # Check registered file or folder datastore
                 # If we receive a datastore path in long/short form we don't need
                 # to get the arm asset id
-                if re.match(SHORT_URI_REGEX_FORMAT, entry.path) or re.match(LONG_URI_REGEX_FORMAT, entry.path):
+                if re.match(SHORT_URI_REGEX_FORMAT, entry.path) or re.match(
+                    LONG_URI_REGEX_FORMAT, entry.path
+                ):
                     return
-                if is_private_preview_enabled() and re.match(AZUREML_REGEX_FORMAT, entry.path):
+                if is_private_preview_enabled() and re.match(
+                    AZUREML_REGEX_FORMAT, entry.path
+                ):
                     return
                 asset_type = AzureMLResourceType.DATA
                 entry.path = remove_aml_prefix(entry.path)
@@ -445,7 +509,11 @@ class BatchEndpointOperations(_ScopeDependentOperations):
                     self._datastore_operations,
                     local_path,
                 )
-                if entry.type == AssetTypes.URI_FOLDER and entry.path and not entry.path.endswith("/"):
+                if (
+                    entry.type == AssetTypes.URI_FOLDER
+                    and entry.path
+                    and not entry.path.endswith("/")
+                ):
                     entry.path = entry.path + "/"
         except (MlException, HttpResponseError) as e:
             raise e

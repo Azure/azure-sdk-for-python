@@ -240,7 +240,9 @@ class IdentityConfiguration(msrest.serialization.Model):
         "identity_type": {"key": "identityType", "type": "str"},
     }
 
-    _subtype_map = {"identity_type": {"AMLToken": "AmlToken", "Managed": "ManagedIdentity"}}
+    _subtype_map = {
+        "identity_type": {"AMLToken": "AmlToken", "Managed": "ManagedIdentity"}
+    }
 
     def __init__(self, **kwargs):
         """ """
@@ -357,7 +359,9 @@ class AssetBase(ResourceBase):
         :keyword is_archived: Is the asset archived?.
         :paramtype is_archived: bool
         """
-        super(AssetBase, self).__init__(description=description, properties=properties, tags=tags, **kwargs)
+        super(AssetBase, self).__init__(
+            description=description, properties=properties, tags=tags, **kwargs
+        )
         self.is_anonymous = is_anonymous
         self.is_archived = is_archived
 
@@ -414,7 +418,9 @@ class AssetContainer(ResourceBase):
         :keyword is_archived: Is the asset archived?.
         :paramtype is_archived: bool
         """
-        super(AssetContainer, self).__init__(description=description, properties=properties, tags=tags, **kwargs)
+        super(AssetContainer, self).__init__(
+            description=description, properties=properties, tags=tags, **kwargs
+        )
         self.is_archived = is_archived
         self.latest_version = None
         self.next_version = None
@@ -524,7 +530,9 @@ class Datastore(ResourceBase):
         :keyword credentials: Required. Account credentials.
         :paramtype credentials: ~azure.mgmt.machinelearningservices.models.DatastoreCredentials
         """
-        super(Datastore, self).__init__(description=description, properties=properties, tags=tags, **kwargs)
+        super(Datastore, self).__init__(
+            description=description, properties=properties, tags=tags, **kwargs
+        )
         self.credentials = credentials
         self.datastore_type = "Datastore"  # type: str
         self.is_default = None
@@ -583,7 +591,10 @@ class AzureBlobDatastore(Datastore):
         "container_name": {"key": "containerName", "type": "str"},
         "endpoint": {"key": "endpoint", "type": "str"},
         "protocol": {"key": "protocol", "type": "str"},
-        "service_data_access_auth_identity": {"key": "serviceDataAccessAuthIdentity", "type": "str"},
+        "service_data_access_auth_identity": {
+            "key": "serviceDataAccessAuthIdentity",
+            "type": "str",
+        },
     }
 
     def __init__(
@@ -597,7 +608,9 @@ class AzureBlobDatastore(Datastore):
         container_name: Optional[str] = None,
         endpoint: Optional[str] = None,
         protocol: Optional[str] = None,
-        service_data_access_auth_identity: Optional[Union[str, "ServiceDataAccessAuthIdentity"]] = None,
+        service_data_access_auth_identity: Optional[
+            Union[str, "ServiceDataAccessAuthIdentity"]
+        ] = None,
         **kwargs
     ):
         """
@@ -624,7 +637,11 @@ class AzureBlobDatastore(Datastore):
          ~azure.mgmt.machinelearningservices.models.ServiceDataAccessAuthIdentity
         """
         super(AzureBlobDatastore, self).__init__(
-            description=description, properties=properties, tags=tags, credentials=credentials, **kwargs
+            description=description,
+            properties=properties,
+            tags=tags,
+            credentials=credentials,
+            **kwargs
         )
         self.datastore_type = "AzureBlob"  # type: str
         self.account_name = account_name
@@ -678,7 +695,10 @@ class AzureDataLakeGen1Datastore(Datastore):
         "credentials": {"key": "credentials", "type": "DatastoreCredentials"},
         "datastore_type": {"key": "datastoreType", "type": "str"},
         "is_default": {"key": "isDefault", "type": "bool"},
-        "service_data_access_auth_identity": {"key": "serviceDataAccessAuthIdentity", "type": "str"},
+        "service_data_access_auth_identity": {
+            "key": "serviceDataAccessAuthIdentity",
+            "type": "str",
+        },
         "store_name": {"key": "storeName", "type": "str"},
     }
 
@@ -690,7 +710,9 @@ class AzureDataLakeGen1Datastore(Datastore):
         description: Optional[str] = None,
         properties: Optional[Dict[str, str]] = None,
         tags: Optional[Dict[str, str]] = None,
-        service_data_access_auth_identity: Optional[Union[str, "ServiceDataAccessAuthIdentity"]] = None,
+        service_data_access_auth_identity: Optional[
+            Union[str, "ServiceDataAccessAuthIdentity"]
+        ] = None,
         **kwargs
     ):
         """
@@ -711,7 +733,11 @@ class AzureDataLakeGen1Datastore(Datastore):
         :paramtype store_name: str
         """
         super(AzureDataLakeGen1Datastore, self).__init__(
-            description=description, properties=properties, tags=tags, credentials=credentials, **kwargs
+            description=description,
+            properties=properties,
+            tags=tags,
+            credentials=credentials,
+            **kwargs
         )
         self.datastore_type = "AzureDataLakeGen1"  # type: str
         self.service_data_access_auth_identity = service_data_access_auth_identity
@@ -773,7 +799,10 @@ class AzureDataLakeGen2Datastore(Datastore):
         "endpoint": {"key": "endpoint", "type": "str"},
         "filesystem": {"key": "filesystem", "type": "str"},
         "protocol": {"key": "protocol", "type": "str"},
-        "service_data_access_auth_identity": {"key": "serviceDataAccessAuthIdentity", "type": "str"},
+        "service_data_access_auth_identity": {
+            "key": "serviceDataAccessAuthIdentity",
+            "type": "str",
+        },
     }
 
     def __init__(
@@ -787,7 +816,9 @@ class AzureDataLakeGen2Datastore(Datastore):
         tags: Optional[Dict[str, str]] = None,
         endpoint: Optional[str] = None,
         protocol: Optional[str] = None,
-        service_data_access_auth_identity: Optional[Union[str, "ServiceDataAccessAuthIdentity"]] = None,
+        service_data_access_auth_identity: Optional[
+            Union[str, "ServiceDataAccessAuthIdentity"]
+        ] = None,
         **kwargs
     ):
         """
@@ -814,7 +845,11 @@ class AzureDataLakeGen2Datastore(Datastore):
          ~azure.mgmt.machinelearningservices.models.ServiceDataAccessAuthIdentity
         """
         super(AzureDataLakeGen2Datastore, self).__init__(
-            description=description, properties=properties, tags=tags, credentials=credentials, **kwargs
+            description=description,
+            properties=properties,
+            tags=tags,
+            credentials=credentials,
+            **kwargs
         )
         self.datastore_type = "AzureDataLakeGen2"  # type: str
         self.account_name = account_name
@@ -879,7 +914,10 @@ class AzureFileDatastore(Datastore):
         "endpoint": {"key": "endpoint", "type": "str"},
         "file_share_name": {"key": "fileShareName", "type": "str"},
         "protocol": {"key": "protocol", "type": "str"},
-        "service_data_access_auth_identity": {"key": "serviceDataAccessAuthIdentity", "type": "str"},
+        "service_data_access_auth_identity": {
+            "key": "serviceDataAccessAuthIdentity",
+            "type": "str",
+        },
     }
 
     def __init__(
@@ -893,7 +931,9 @@ class AzureFileDatastore(Datastore):
         tags: Optional[Dict[str, str]] = None,
         endpoint: Optional[str] = None,
         protocol: Optional[str] = None,
-        service_data_access_auth_identity: Optional[Union[str, "ServiceDataAccessAuthIdentity"]] = None,
+        service_data_access_auth_identity: Optional[
+            Union[str, "ServiceDataAccessAuthIdentity"]
+        ] = None,
         **kwargs
     ):
         """
@@ -920,7 +960,11 @@ class AzureFileDatastore(Datastore):
          ~azure.mgmt.machinelearningservices.models.ServiceDataAccessAuthIdentity
         """
         super(AzureFileDatastore, self).__init__(
-            description=description, properties=properties, tags=tags, credentials=credentials, **kwargs
+            description=description,
+            properties=properties,
+            tags=tags,
+            credentials=credentials,
+            **kwargs
         )
         self.datastore_type = "AzureFile"  # type: str
         self.account_name = account_name
@@ -987,7 +1031,9 @@ class AzureMLBatchInferencingServer(InferencingServer):
         "code_configuration": {"key": "codeConfiguration", "type": "CodeConfiguration"},
     }
 
-    def __init__(self, *, code_configuration: Optional["CodeConfiguration"] = None, **kwargs):
+    def __init__(
+        self, *, code_configuration: Optional["CodeConfiguration"] = None, **kwargs
+    ):
         """
         :keyword code_configuration: Code configuration for AML batch inferencing server.
         :paramtype code_configuration: ~azure.mgmt.machinelearningservices.models.CodeConfiguration
@@ -1018,7 +1064,9 @@ class AzureMLOnlineInferencingServer(InferencingServer):
         "code_configuration": {"key": "codeConfiguration", "type": "CodeConfiguration"},
     }
 
-    def __init__(self, *, code_configuration: Optional["CodeConfiguration"] = None, **kwargs):
+    def __init__(
+        self, *, code_configuration: Optional["CodeConfiguration"] = None, **kwargs
+    ):
         """
         :keyword code_configuration: Code configuration for AML inferencing server.
         :paramtype code_configuration: ~azure.mgmt.machinelearningservices.models.CodeConfiguration
@@ -1064,7 +1112,13 @@ class EarlyTerminationPolicy(msrest.serialization.Model):
         }
     }
 
-    def __init__(self, *, delay_evaluation: Optional[int] = 0, evaluation_interval: Optional[int] = 0, **kwargs):
+    def __init__(
+        self,
+        *,
+        delay_evaluation: Optional[int] = 0,
+        evaluation_interval: Optional[int] = 0,
+        **kwargs
+    ):
         """
         :keyword delay_evaluation: Number of intervals by which to delay the first evaluation.
         :paramtype delay_evaluation: int
@@ -1128,7 +1182,9 @@ class BanditPolicy(EarlyTerminationPolicy):
         :paramtype slack_factor: float
         """
         super(BanditPolicy, self).__init__(
-            delay_evaluation=delay_evaluation, evaluation_interval=evaluation_interval, **kwargs
+            delay_evaluation=delay_evaluation,
+            evaluation_interval=evaluation_interval,
+            **kwargs
         )
         self.policy_type = "Bandit"  # type: str
         self.slack_amount = slack_amount
@@ -1154,10 +1210,15 @@ class BaseEnvironmentSource(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        "base_environment_source_type": {"key": "baseEnvironmentSourceType", "type": "str"},
+        "base_environment_source_type": {
+            "key": "baseEnvironmentSourceType",
+            "type": "str",
+        },
     }
 
-    _subtype_map = {"base_environment_source_type": {"EnvironmentAsset": "BaseEnvironmentId"}}
+    _subtype_map = {
+        "base_environment_source_type": {"EnvironmentAsset": "BaseEnvironmentId"}
+    }
 
     def __init__(self, **kwargs):
         """ """
@@ -1184,7 +1245,10 @@ class BaseEnvironmentId(BaseEnvironmentSource):
     }
 
     _attribute_map = {
-        "base_environment_source_type": {"key": "baseEnvironmentSourceType", "type": "str"},
+        "base_environment_source_type": {
+            "key": "baseEnvironmentSourceType",
+            "type": "str",
+        },
         "resource_id": {"key": "resourceId", "type": "str"},
     }
 
@@ -1251,7 +1315,13 @@ class BasicBinding(Binding):
         "source": {"key": "source", "type": "str"},
     }
 
-    def __init__(self, *, destination: Optional[str] = None, source: Optional[str] = None, **kwargs):
+    def __init__(
+        self,
+        *,
+        destination: Optional[str] = None,
+        source: Optional[str] = None,
+        **kwargs
+    ):
         """
         :keyword destination: Destination reference.
         :paramtype destination: str
@@ -1317,7 +1387,13 @@ class BlobReferenceSASRequestDto(msrest.serialization.Model):
         "blob_uri": {"key": "blobUri", "type": "str"},
     }
 
-    def __init__(self, *, asset_id: Optional[str] = None, blob_uri: Optional[str] = None, **kwargs):
+    def __init__(
+        self,
+        *,
+        asset_id: Optional[str] = None,
+        blob_uri: Optional[str] = None,
+        **kwargs
+    ):
         """
         :keyword asset_id:
         :paramtype asset_id: str
@@ -1344,7 +1420,14 @@ class BlobReferenceSASResponseDto(msrest.serialization.Model):
         },
     }
 
-    def __init__(self, *, blob_reference_for_consumption: Optional["BlobReferenceForConsumptionDto"] = None, **kwargs):
+    def __init__(
+        self,
+        *,
+        blob_reference_for_consumption: Optional[
+            "BlobReferenceForConsumptionDto"
+        ] = None,
+        **kwargs
+    ):
         """
         :keyword blob_reference_for_consumption:
         :paramtype blob_reference_for_consumption:
@@ -1386,7 +1469,13 @@ class BuildContext(msrest.serialization.Model):
         "dockerfile_path": {"key": "dockerfilePath", "type": "str"},
     }
 
-    def __init__(self, *, context_uri: str, dockerfile_path: Optional[str] = "Dockerfile", **kwargs):
+    def __init__(
+        self,
+        *,
+        context_uri: str,
+        dockerfile_path: Optional[str] = "Dockerfile",
+        **kwargs
+    ):
         """
         :keyword context_uri: Required. URI of the Docker build context used to build the image.
          Supports blob URIs on environment creation and may return blob or Git URIs.
@@ -1530,7 +1619,11 @@ class CodeConfiguration(msrest.serialization.Model):
     """
 
     _validation = {
-        "scoring_script": {"required": True, "min_length": 1, "pattern": r"[a-zA-Z0-9_]"},
+        "scoring_script": {
+            "required": True,
+            "min_length": 1,
+            "pattern": r"[a-zA-Z0-9_]",
+        },
     }
 
     _attribute_map = {
@@ -1691,7 +1784,11 @@ class CodeContainerDetails(AssetContainer):
         :paramtype is_archived: bool
         """
         super(CodeContainerDetails, self).__init__(
-            description=description, properties=properties, tags=tags, is_archived=is_archived, **kwargs
+            description=description,
+            properties=properties,
+            tags=tags,
+            is_archived=is_archived,
+            **kwargs
         )
 
 
@@ -1710,7 +1807,13 @@ class CodeContainerResourceArmPaginatedResult(msrest.serialization.Model):
         "value": {"key": "value", "type": "[CodeContainerData]"},
     }
 
-    def __init__(self, *, next_link: Optional[str] = None, value: Optional[List["CodeContainerData"]] = None, **kwargs):
+    def __init__(
+        self,
+        *,
+        next_link: Optional[str] = None,
+        value: Optional[List["CodeContainerData"]] = None,
+        **kwargs
+    ):
         """
         :keyword next_link: The link to the next page of CodeContainer objects. If null, there are no
          additional pages.
@@ -1847,7 +1950,13 @@ class CodeVersionResourceArmPaginatedResult(msrest.serialization.Model):
         "value": {"key": "value", "type": "[CodeVersionData]"},
     }
 
-    def __init__(self, *, next_link: Optional[str] = None, value: Optional[List["CodeVersionData"]] = None, **kwargs):
+    def __init__(
+        self,
+        *,
+        next_link: Optional[str] = None,
+        value: Optional[List["CodeVersionData"]] = None,
+        **kwargs
+    ):
         """
         :keyword next_link: The link to the next page of CodeVersion objects. If null, there are no
          additional pages.
@@ -1920,7 +2029,12 @@ class JobBase(ResourceBase):
     }
 
     _subtype_map = {
-        "job_type": {"Base": "Job", "Command": "CommandJob", "Pipeline": "PipelineJob", "Sweep": "SweepJob"}
+        "job_type": {
+            "Base": "Job",
+            "Command": "CommandJob",
+            "Pipeline": "PipelineJob",
+            "Sweep": "SweepJob",
+        }
     }
 
     def __init__(
@@ -1956,7 +2070,9 @@ class JobBase(ResourceBase):
          For local jobs, a job endpoint will have an endpoint value of FileStreamObject.
         :paramtype services: dict[str, ~azure.mgmt.machinelearningservices.models.JobService]
         """
-        super(JobBase, self).__init__(description=description, properties=properties, tags=tags, **kwargs)
+        super(JobBase, self).__init__(
+            description=description, properties=properties, tags=tags, **kwargs
+        )
         self.compute_id = compute_id
         self.display_name = display_name
         self.experiment_name = experiment_name
@@ -2181,7 +2297,9 @@ class JobLimits(msrest.serialization.Model):
         "timeout": {"key": "timeout", "type": "duration"},
     }
 
-    _subtype_map = {"job_limits_type": {"Command": "CommandJobLimits", "Sweep": "SweepJobLimits"}}
+    _subtype_map = {
+        "job_limits_type": {"Command": "CommandJobLimits", "Sweep": "SweepJobLimits"}
+    }
 
     def __init__(self, *, timeout: Optional[datetime.timedelta] = None, **kwargs):
         """
@@ -2331,7 +2449,11 @@ class ComponentContainerDetails(AssetContainer):
         :paramtype is_archived: bool
         """
         super(ComponentContainerDetails, self).__init__(
-            description=description, properties=properties, tags=tags, is_archived=is_archived, **kwargs
+            description=description,
+            properties=properties,
+            tags=tags,
+            is_archived=is_archived,
+            **kwargs
         )
 
 
@@ -2351,7 +2473,11 @@ class ComponentContainerResourceArmPaginatedResult(msrest.serialization.Model):
     }
 
     def __init__(
-        self, *, next_link: Optional[str] = None, value: Optional[List["ComponentContainerData"]] = None, **kwargs
+        self,
+        *,
+        next_link: Optional[str] = None,
+        value: Optional[List["ComponentContainerData"]] = None,
+        **kwargs
     ):
         """
         :keyword next_link: The link to the next page of ComponentContainer objects. If null, there are
@@ -2557,7 +2683,11 @@ class ComponentVersionResourceArmPaginatedResult(msrest.serialization.Model):
     }
 
     def __init__(
-        self, *, next_link: Optional[str] = None, value: Optional[List["ComponentVersionData"]] = None, **kwargs
+        self,
+        *,
+        next_link: Optional[str] = None,
+        value: Optional[List["ComponentVersionData"]] = None,
+        **kwargs
     ):
         """
         :keyword next_link: The link to the next page of ComponentVersion objects. If null, there are
@@ -2590,10 +2720,18 @@ class CustomInferencingServer(InferencingServer):
 
     _attribute_map = {
         "server_type": {"key": "serverType", "type": "str"},
-        "inference_configuration": {"key": "inferenceConfiguration", "type": "OnlineInferenceConfiguration"},
+        "inference_configuration": {
+            "key": "inferenceConfiguration",
+            "type": "OnlineInferenceConfiguration",
+        },
     }
 
-    def __init__(self, *, inference_configuration: Optional["OnlineInferenceConfiguration"] = None, **kwargs):
+    def __init__(
+        self,
+        *,
+        inference_configuration: Optional["OnlineInferenceConfiguration"] = None,
+        **kwargs
+    ):
         """
         :keyword inference_configuration: Inference configuration for custom inferencing.
         :paramtype inference_configuration:
@@ -2715,7 +2853,11 @@ class DataContainerDetails(AssetContainer):
         :paramtype data_type: str or ~azure.mgmt.machinelearningservices.models.DataType
         """
         super(DataContainerDetails, self).__init__(
-            description=description, properties=properties, tags=tags, is_archived=is_archived, **kwargs
+            description=description,
+            properties=properties,
+            tags=tags,
+            is_archived=is_archived,
+            **kwargs
         )
         self.data_type = data_type
 
@@ -2735,7 +2877,13 @@ class DataContainerResourceArmPaginatedResult(msrest.serialization.Model):
         "value": {"key": "value", "type": "[DataContainerData]"},
     }
 
-    def __init__(self, *, next_link: Optional[str] = None, value: Optional[List["DataContainerData"]] = None, **kwargs):
+    def __init__(
+        self,
+        *,
+        next_link: Optional[str] = None,
+        value: Optional[List["DataContainerData"]] = None,
+        **kwargs
+    ):
         """
         :keyword next_link: The link to the next page of DataContainer objects. If null, there are no
          additional pages.
@@ -2772,7 +2920,13 @@ class DataPathAssetReference(AssetReferenceBase):
         "path": {"key": "path", "type": "str"},
     }
 
-    def __init__(self, *, datastore_id: Optional[str] = None, path: Optional[str] = None, **kwargs):
+    def __init__(
+        self,
+        *,
+        datastore_id: Optional[str] = None,
+        path: Optional[str] = None,
+        **kwargs
+    ):
         """
         :keyword datastore_id: ARM resource ID of the datastore where the asset is located.
         :paramtype datastore_id: str
@@ -2904,11 +3058,18 @@ class DataVersionBaseDetails(AssetBase):
         "is_archived": {"key": "isArchived", "type": "bool"},
         "data_type": {"key": "dataType", "type": "str"},
         "data_uri": {"key": "dataUri", "type": "str"},
-        "intellectual_property": {"key": "intellectualProperty", "type": "IntellectualProperty"},
+        "intellectual_property": {
+            "key": "intellectualProperty",
+            "type": "IntellectualProperty",
+        },
     }
 
     _subtype_map = {
-        "data_type": {"mltable": "MLTableData", "uri_file": "UriFileDataVersion", "uri_folder": "UriFolderDataVersion"}
+        "data_type": {
+            "mltable": "MLTableData",
+            "uri_file": "UriFileDataVersion",
+            "uri_folder": "UriFolderDataVersion",
+        }
     }
 
     def __init__(
@@ -2971,7 +3132,11 @@ class DataVersionBaseResourceArmPaginatedResult(msrest.serialization.Model):
     }
 
     def __init__(
-        self, *, next_link: Optional[str] = None, value: Optional[List["DataVersionBaseData"]] = None, **kwargs
+        self,
+        *,
+        next_link: Optional[str] = None,
+        value: Optional[List["DataVersionBaseData"]] = None,
+        **kwargs
     ):
         """
         :keyword next_link: The link to the next page of DataVersionBase objects. If null, there are no
@@ -3006,7 +3171,13 @@ class DistributionConfiguration(msrest.serialization.Model):
         "distribution_type": {"key": "distributionType", "type": "str"},
     }
 
-    _subtype_map = {"distribution_type": {"Mpi": "Mpi", "PyTorch": "PyTorch", "TensorFlow": "TensorFlow"}}
+    _subtype_map = {
+        "distribution_type": {
+            "Mpi": "Mpi",
+            "PyTorch": "PyTorch",
+            "TensorFlow": "TensorFlow",
+        }
+    }
 
     def __init__(self, **kwargs):
         """ """
@@ -3028,7 +3199,13 @@ class DockerCredentialDto(msrest.serialization.Model):
         "user_name": {"key": "userName", "type": "str"},
     }
 
-    def __init__(self, *, password: Optional[str] = None, user_name: Optional[str] = None, **kwargs):
+    def __init__(
+        self,
+        *,
+        password: Optional[str] = None,
+        user_name: Optional[str] = None,
+        **kwargs
+    ):
         """
         :keyword password:
         :paramtype password: str
@@ -3140,7 +3317,11 @@ class EnvironmentContainerDetails(AssetContainer):
         :paramtype is_archived: bool
         """
         super(EnvironmentContainerDetails, self).__init__(
-            description=description, properties=properties, tags=tags, is_archived=is_archived, **kwargs
+            description=description,
+            properties=properties,
+            tags=tags,
+            is_archived=is_archived,
+            **kwargs
         )
 
 
@@ -3160,7 +3341,11 @@ class EnvironmentContainerResourceArmPaginatedResult(msrest.serialization.Model)
     }
 
     def __init__(
-        self, *, next_link: Optional[str] = None, value: Optional[List["EnvironmentContainerData"]] = None, **kwargs
+        self,
+        *,
+        next_link: Optional[str] = None,
+        value: Optional[List["EnvironmentContainerData"]] = None,
+        **kwargs
     ):
         """
         :keyword next_link: The link to the next page of EnvironmentContainer objects. If null, there
@@ -3293,8 +3478,14 @@ class EnvironmentVersionDetails(AssetBase):
         "conda_file": {"key": "condaFile", "type": "str"},
         "environment_type": {"key": "environmentType", "type": "str"},
         "image": {"key": "image", "type": "str"},
-        "inference_config": {"key": "inferenceConfig", "type": "InferenceContainerProperties"},
-        "intellectual_property": {"key": "intellectualProperty", "type": "IntellectualProperty"},
+        "inference_config": {
+            "key": "inferenceConfig",
+            "type": "InferenceContainerProperties",
+        },
+        "intellectual_property": {
+            "key": "intellectualProperty",
+            "type": "IntellectualProperty",
+        },
         "os_type": {"key": "osType", "type": "str"},
         "stage": {"key": "stage", "type": "str"},
     }
@@ -3394,7 +3585,11 @@ class EnvironmentVersionResourceArmPaginatedResult(msrest.serialization.Model):
     }
 
     def __init__(
-        self, *, next_link: Optional[str] = None, value: Optional[List["EnvironmentVersionData"]] = None, **kwargs
+        self,
+        *,
+        next_link: Optional[str] = None,
+        value: Optional[List["EnvironmentVersionData"]] = None,
+        **kwargs
     ):
         """
         :keyword next_link: The link to the next page of EnvironmentVersion objects. If null, there are
@@ -3660,7 +3855,13 @@ class IntellectualProperty(msrest.serialization.Model):
         "publisher": {"key": "publisher", "type": "str"},
     }
 
-    def __init__(self, *, publisher: str, protection_level: Optional[Union[str, "ProtectionLevel"]] = None, **kwargs):
+    def __init__(
+        self,
+        *,
+        publisher: str,
+        protection_level: Optional[Union[str, "ProtectionLevel"]] = None,
+        **kwargs
+    ):
         """
         :keyword protection_level: Protection level of the Intellectual Property. Possible values
          include: "All", "None".
@@ -3802,7 +4003,11 @@ class JobInput(msrest.serialization.Model):
     }
 
     _subtype_map = {
-        "job_input_type": {"Dataset": "JobInputDataset", "Literal": "JobInputLiteral", "Uri": "JobInputUri"}
+        "job_input_type": {
+            "Dataset": "JobInputDataset",
+            "Literal": "JobInputLiteral",
+            "Uri": "JobInputUri",
+        }
     }
 
     def __init__(self, *, description: Optional[str] = None, **kwargs):
@@ -3891,7 +4096,13 @@ class JobInputLiteral(JobInput):
         "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(self, *, description: Optional[str] = None, value: Optional[str] = None, **kwargs):
+    def __init__(
+        self,
+        *,
+        description: Optional[str] = None,
+        value: Optional[str] = None,
+        **kwargs
+    ):
         """
         :keyword description: Description for the input.
         :paramtype description: str
@@ -3979,7 +4190,9 @@ class JobOutput(msrest.serialization.Model):
         "job_output_type": {"key": "jobOutputType", "type": "str"},
     }
 
-    _subtype_map = {"job_output_type": {"Dataset": "JobOutputDataset", "Uri": "JobOutputUri"}}
+    _subtype_map = {
+        "job_output_type": {"Dataset": "JobOutputDataset", "Uri": "JobOutputUri"}
+    }
 
     def __init__(self, *, description: Optional[str] = None, **kwargs):
         """
@@ -4214,10 +4427,22 @@ class ManagedIdentityCredentialDto(msrest.serialization.Model):
 
     _attribute_map = {
         "managed_identity_type": {"key": "managedIdentityType", "type": "str"},
-        "user_managed_identity_client_id": {"key": "userManagedIdentityClientId", "type": "str"},
-        "user_managed_identity_principal_id": {"key": "userManagedIdentityPrincipalId", "type": "str"},
-        "user_managed_identity_resource_id": {"key": "userManagedIdentityResourceId", "type": "str"},
-        "user_managed_identity_tenant_id": {"key": "userManagedIdentityTenantId", "type": "str"},
+        "user_managed_identity_client_id": {
+            "key": "userManagedIdentityClientId",
+            "type": "str",
+        },
+        "user_managed_identity_principal_id": {
+            "key": "userManagedIdentityPrincipalId",
+            "type": "str",
+        },
+        "user_managed_identity_resource_id": {
+            "key": "userManagedIdentityResourceId",
+            "type": "str",
+        },
+        "user_managed_identity_tenant_id": {
+            "key": "userManagedIdentityTenantId",
+            "type": "str",
+        },
     }
 
     def __init__(
@@ -4279,7 +4504,13 @@ class MedianStoppingPolicy(EarlyTerminationPolicy):
         "policy_type": {"key": "policyType", "type": "str"},
     }
 
-    def __init__(self, *, delay_evaluation: Optional[int] = 0, evaluation_interval: Optional[int] = 0, **kwargs):
+    def __init__(
+        self,
+        *,
+        delay_evaluation: Optional[int] = 0,
+        evaluation_interval: Optional[int] = 0,
+        **kwargs
+    ):
         """
         :keyword delay_evaluation: Number of intervals by which to delay the first evaluation.
         :paramtype delay_evaluation: int
@@ -4287,7 +4518,9 @@ class MedianStoppingPolicy(EarlyTerminationPolicy):
         :paramtype evaluation_interval: int
         """
         super(MedianStoppingPolicy, self).__init__(
-            delay_evaluation=delay_evaluation, evaluation_interval=evaluation_interval, **kwargs
+            delay_evaluation=delay_evaluation,
+            evaluation_interval=evaluation_interval,
+            **kwargs
         )
         self.policy_type = "MedianStopping"  # type: str
 
@@ -4333,7 +4566,10 @@ class MLTableData(DataVersionBaseDetails):
         "is_archived": {"key": "isArchived", "type": "bool"},
         "data_type": {"key": "dataType", "type": "str"},
         "data_uri": {"key": "dataUri", "type": "str"},
-        "intellectual_property": {"key": "intellectualProperty", "type": "IntellectualProperty"},
+        "intellectual_property": {
+            "key": "intellectualProperty",
+            "type": "IntellectualProperty",
+        },
         "referenced_uris": {"key": "referencedUris", "type": "[str]"},
     }
 
@@ -4517,7 +4753,11 @@ class ModelContainerDetails(AssetContainer):
         :paramtype is_archived: bool
         """
         super(ModelContainerDetails, self).__init__(
-            description=description, properties=properties, tags=tags, is_archived=is_archived, **kwargs
+            description=description,
+            properties=properties,
+            tags=tags,
+            is_archived=is_archived,
+            **kwargs
         )
 
 
@@ -4537,7 +4777,11 @@ class ModelContainerResourceArmPaginatedResult(msrest.serialization.Model):
     }
 
     def __init__(
-        self, *, next_link: Optional[str] = None, value: Optional[List["ModelContainerData"]] = None, **kwargs
+        self,
+        *,
+        next_link: Optional[str] = None,
+        value: Optional[List["ModelContainerData"]] = None,
+        **kwargs
     ):
         """
         :keyword next_link: The link to the next page of ModelContainer objects. If null, there are no
@@ -4688,7 +4932,10 @@ class ModelVersionDetails(AssetBase):
         "is_anonymous": {"key": "isAnonymous", "type": "bool"},
         "is_archived": {"key": "isArchived", "type": "bool"},
         "flavors": {"key": "flavors", "type": "{FlavorData}"},
-        "intellectual_property": {"key": "intellectualProperty", "type": "IntellectualProperty"},
+        "intellectual_property": {
+            "key": "intellectualProperty",
+            "type": "IntellectualProperty",
+        },
         "job_name": {"key": "jobName", "type": "str"},
         "model_type": {"key": "modelType", "type": "str"},
         "model_uri": {"key": "modelUri", "type": "str"},
@@ -4768,7 +5015,13 @@ class ModelVersionResourceArmPaginatedResult(msrest.serialization.Model):
         "value": {"key": "value", "type": "[ModelVersionData]"},
     }
 
-    def __init__(self, *, next_link: Optional[str] = None, value: Optional[List["ModelVersionData"]] = None, **kwargs):
+    def __init__(
+        self,
+        *,
+        next_link: Optional[str] = None,
+        value: Optional[List["ModelVersionData"]] = None,
+        **kwargs
+    ):
         """
         :keyword next_link: The link to the next page of ModelVersion objects. If null, there are no
          additional pages.
@@ -4951,7 +5204,9 @@ class OutputPathAssetReference(AssetReferenceBase):
         "path": {"key": "path", "type": "str"},
     }
 
-    def __init__(self, *, job_id: Optional[str] = None, path: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, job_id: Optional[str] = None, path: Optional[str] = None, **kwargs
+    ):
         """
         :keyword job_id: ARM resource ID of the job.
         :paramtype job_id: str
@@ -5085,7 +5340,13 @@ class PackageInputPathVersion(PackageInputPathBase):
         "resource_version": {"key": "resourceVersion", "type": "str"},
     }
 
-    def __init__(self, *, resource_name: Optional[str] = None, resource_version: Optional[str] = None, **kwargs):
+    def __init__(
+        self,
+        *,
+        resource_name: Optional[str] = None,
+        resource_version: Optional[str] = None,
+        **kwargs
+    ):
         """
         :keyword resource_name: Input resource name.
         :paramtype resource_name: str
@@ -5131,11 +5392,17 @@ class PackageRequest(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        "base_environment_source": {"key": "baseEnvironmentSource", "type": "BaseEnvironmentSource"},
+        "base_environment_source": {
+            "key": "baseEnvironmentSource",
+            "type": "BaseEnvironmentSource",
+        },
         "environment_variables": {"key": "environmentVariables", "type": "{str}"},
         "inferencing_server": {"key": "inferencingServer", "type": "InferencingServer"},
         "inputs": {"key": "inputs", "type": "[ModelPackageInput]"},
-        "model_configuration": {"key": "modelConfiguration", "type": "ModelConfiguration"},
+        "model_configuration": {
+            "key": "modelConfiguration",
+            "type": "ModelConfiguration",
+        },
         "properties": {"key": "properties", "type": "{str}"},
         "sku_architecture_type": {"key": "skuArchitectureType", "type": "str"},
         "tags": {"key": "tags", "type": "{str}"},
@@ -5237,14 +5504,20 @@ class PackageResponse(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        "base_environment_source": {"key": "baseEnvironmentSource", "type": "BaseEnvironmentSource"},
+        "base_environment_source": {
+            "key": "baseEnvironmentSource",
+            "type": "BaseEnvironmentSource",
+        },
         "build_id": {"key": "buildId", "type": "str"},
         "build_state": {"key": "buildState", "type": "str"},
         "environment_variables": {"key": "environmentVariables", "type": "{str}"},
         "inferencing_server": {"key": "inferencingServer", "type": "InferencingServer"},
         "inputs": {"key": "inputs", "type": "[ModelPackageInput]"},
         "log_url": {"key": "logUrl", "type": "str"},
-        "model_configuration": {"key": "modelConfiguration", "type": "ModelConfiguration"},
+        "model_configuration": {
+            "key": "modelConfiguration",
+            "type": "ModelConfiguration",
+        },
         "properties": {"key": "properties", "type": "{str}"},
         "sku_architecture_type": {"key": "skuArchitectureType", "type": "str"},
         "tags": {"key": "tags", "type": "{str}"},
@@ -5252,7 +5525,11 @@ class PackageResponse(msrest.serialization.Model):
     }
 
     def __init__(
-        self, *, properties: Optional[Dict[str, str]] = None, sku_architecture_type: Optional[str] = None, **kwargs
+        self,
+        *,
+        properties: Optional[Dict[str, str]] = None,
+        sku_architecture_type: Optional[str] = None,
+        **kwargs
     ):
         """
         :keyword properties: Properties dictionary.
@@ -5519,10 +5796,15 @@ class ResourceManagementAssetReferenceData(Resource):
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
         "system_data": {"key": "systemData", "type": "SystemData"},
-        "properties": {"key": "properties", "type": "ResourceManagementAssetReferenceDetails"},
+        "properties": {
+            "key": "properties",
+            "type": "ResourceManagementAssetReferenceDetails",
+        },
     }
 
-    def __init__(self, *, properties: "ResourceManagementAssetReferenceDetails", **kwargs):
+    def __init__(
+        self, *, properties: "ResourceManagementAssetReferenceDetails", **kwargs
+    ):
         """
         :keyword properties: Required. Additional attributes of the entity.
         :paramtype properties:
@@ -5883,7 +6165,10 @@ class SweepJob(JobBase):
         "parent_job_name": {"key": "parentJobName", "type": "str"},
         "services": {"key": "services", "type": "{JobService}"},
         "status": {"key": "status", "type": "str"},
-        "early_termination": {"key": "earlyTermination", "type": "EarlyTerminationPolicy"},
+        "early_termination": {
+            "key": "earlyTermination",
+            "type": "EarlyTerminationPolicy",
+        },
         "identity": {"key": "identity", "type": "IdentityConfiguration"},
         "inputs": {"key": "inputs", "type": "{JobInput}"},
         "limits": {"key": "limits", "type": "SweepJobLimits"},
@@ -6120,8 +6405,14 @@ class TemporaryDataReferenceRequestDto(msrest.serialization.Model):
 
     _attribute_map = {
         "asset_id": {"key": "assetId", "type": "str"},
-        "temporary_data_reference_id": {"key": "temporaryDataReferenceId", "type": "str"},
-        "temporary_data_reference_type": {"key": "temporaryDataReferenceType", "type": "str"},
+        "temporary_data_reference_id": {
+            "key": "temporaryDataReferenceId",
+            "type": "str",
+        },
+        "temporary_data_reference_type": {
+            "key": "temporaryDataReferenceType",
+            "type": "str",
+        },
     }
 
     def __init__(
@@ -6172,15 +6463,25 @@ class TemporaryDataReferenceResponseDto(msrest.serialization.Model):
             "key": "imageReferenceForConsumption",
             "type": "ImageReferenceForConsumptionDto",
         },
-        "temporary_data_reference_id": {"key": "temporaryDataReferenceId", "type": "str"},
-        "temporary_data_reference_type": {"key": "temporaryDataReferenceType", "type": "str"},
+        "temporary_data_reference_id": {
+            "key": "temporaryDataReferenceId",
+            "type": "str",
+        },
+        "temporary_data_reference_type": {
+            "key": "temporaryDataReferenceType",
+            "type": "str",
+        },
     }
 
     def __init__(
         self,
         *,
-        blob_reference_for_consumption: Optional["BlobReferenceForConsumptionDto"] = None,
-        image_reference_for_consumption: Optional["ImageReferenceForConsumptionDto"] = None,
+        blob_reference_for_consumption: Optional[
+            "BlobReferenceForConsumptionDto"
+        ] = None,
+        image_reference_for_consumption: Optional[
+            "ImageReferenceForConsumptionDto"
+        ] = None,
         temporary_data_reference_id: Optional[str] = None,
         temporary_data_reference_type: Optional[str] = None,
         **kwargs
@@ -6228,7 +6529,13 @@ class TensorFlow(DistributionConfiguration):
         "worker_count": {"key": "workerCount", "type": "int"},
     }
 
-    def __init__(self, *, parameter_server_count: Optional[int] = 0, worker_count: Optional[int] = None, **kwargs):
+    def __init__(
+        self,
+        *,
+        parameter_server_count: Optional[int] = 0,
+        worker_count: Optional[int] = None,
+        **kwargs
+    ):
         """
         :keyword parameter_server_count: Number of parameter server tasks.
         :paramtype parameter_server_count: int
@@ -6332,10 +6639,18 @@ class TritonInferencingServer(InferencingServer):
 
     _attribute_map = {
         "server_type": {"key": "serverType", "type": "str"},
-        "inference_configuration": {"key": "inferenceConfiguration", "type": "OnlineInferenceConfiguration"},
+        "inference_configuration": {
+            "key": "inferenceConfiguration",
+            "type": "OnlineInferenceConfiguration",
+        },
     }
 
-    def __init__(self, *, inference_configuration: Optional["OnlineInferenceConfiguration"] = None, **kwargs):
+    def __init__(
+        self,
+        *,
+        inference_configuration: Optional["OnlineInferenceConfiguration"] = None,
+        **kwargs
+    ):
         """
         :keyword inference_configuration: Inference configuration for Triton.
         :paramtype inference_configuration:
@@ -6391,7 +6706,9 @@ class TruncationSelectionPolicy(EarlyTerminationPolicy):
         :paramtype truncation_percentage: int
         """
         super(TruncationSelectionPolicy, self).__init__(
-            delay_evaluation=delay_evaluation, evaluation_interval=evaluation_interval, **kwargs
+            delay_evaluation=delay_evaluation,
+            evaluation_interval=evaluation_interval,
+            **kwargs
         )
         self.policy_type = "TruncationSelection"  # type: str
         self.truncation_percentage = truncation_percentage
@@ -6436,7 +6753,10 @@ class UriFileDataVersion(DataVersionBaseDetails):
         "is_archived": {"key": "isArchived", "type": "bool"},
         "data_type": {"key": "dataType", "type": "str"},
         "data_uri": {"key": "dataUri", "type": "str"},
-        "intellectual_property": {"key": "intellectualProperty", "type": "IntellectualProperty"},
+        "intellectual_property": {
+            "key": "intellectualProperty",
+            "type": "IntellectualProperty",
+        },
     }
 
     def __init__(
@@ -6522,7 +6842,10 @@ class UriFolderDataVersion(DataVersionBaseDetails):
         "is_archived": {"key": "isArchived", "type": "bool"},
         "data_type": {"key": "dataType", "type": "str"},
         "data_uri": {"key": "dataUri", "type": "str"},
-        "intellectual_property": {"key": "intellectualProperty", "type": "IntellectualProperty"},
+        "intellectual_property": {
+            "key": "intellectualProperty",
+            "type": "IntellectualProperty",
+        },
     }
 
     def __init__(
@@ -6583,7 +6906,9 @@ class UriReference(msrest.serialization.Model):
         "folder": {"key": "folder", "type": "str"},
     }
 
-    def __init__(self, *, file: Optional[str] = None, folder: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, file: Optional[str] = None, folder: Optional[str] = None, **kwargs
+    ):
         """
         :keyword file: Single file uri path.
         :paramtype file: str

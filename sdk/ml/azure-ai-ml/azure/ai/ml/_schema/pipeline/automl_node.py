@@ -7,8 +7,14 @@ from typing import List
 
 from marshmallow import fields, post_dump, post_load, pre_dump
 
-from azure.ai.ml._schema._utils.data_binding_expression import support_data_binding_expression_for_fields
-from azure.ai.ml._schema.automl import AutoMLClassificationSchema, AutoMLForecastingSchema, AutoMLRegressionSchema
+from azure.ai.ml._schema._utils.data_binding_expression import (
+    support_data_binding_expression_for_fields,
+)
+from azure.ai.ml._schema.automl import (
+    AutoMLClassificationSchema,
+    AutoMLForecastingSchema,
+    AutoMLRegressionSchema,
+)
 from azure.ai.ml._schema.automl.image_vertical.image_classification import (
     ImageClassificationMultilabelSchema,
     ImageClassificationSchema,
@@ -17,8 +23,12 @@ from azure.ai.ml._schema.automl.image_vertical.image_object_detection import (
     ImageInstanceSegmentationSchema,
     ImageObjectDetectionSchema,
 )
-from azure.ai.ml._schema.automl.nlp_vertical.text_classification import TextClassificationSchema
-from azure.ai.ml._schema.automl.nlp_vertical.text_classification_multilabel import TextClassificationMultilabelSchema
+from azure.ai.ml._schema.automl.nlp_vertical.text_classification import (
+    TextClassificationSchema,
+)
+from azure.ai.ml._schema.automl.nlp_vertical.text_classification_multilabel import (
+    TextClassificationMultilabelSchema,
+)
 from azure.ai.ml._schema.automl.nlp_vertical.text_ner import TextNerSchema
 from azure.ai.ml._schema.core.fields import ComputeField, NestedField, UnionField
 from azure.ai.ml._schema.core.schema import PathAwareSchema
@@ -36,12 +46,16 @@ class AutoMLNodeMixin(PathAwareSchema):
     def __init__(self, **kwargs):
         super(AutoMLNodeMixin, self).__init__(**kwargs)
         # update field objects and add data binding support, won't bind task & type as data binding
-        support_data_binding_expression_for_fields(self, attrs_to_skip=["task_type", "type"])
+        support_data_binding_expression_for_fields(
+            self, attrs_to_skip=["task_type", "type"]
+        )
 
     compute = ComputeField(required=False)
     outputs = fields.Dict(
         keys=fields.Str(),
-        values=UnionField([NestedField(OutputSchema), OutputBindingStr], allow_none=True),
+        values=UnionField(
+            [NestedField(OutputSchema), OutputBindingStr], allow_none=True
+        ),
     )
 
     @pre_dump
@@ -94,7 +108,9 @@ class AutoMLTextClassificationNode(AutoMLNodeMixin, TextClassificationSchema):
     validation_data = UnionField([fields.Str(), NestedField(MLTableInputSchema)])
 
 
-class AutoMLTextClassificationMultilabelNode(AutoMLNodeMixin, TextClassificationMultilabelSchema):
+class AutoMLTextClassificationMultilabelNode(
+    AutoMLNodeMixin, TextClassificationMultilabelSchema
+):
     training_data = UnionField([fields.Str(), NestedField(MLTableInputSchema)])
     validation_data = UnionField([fields.Str(), NestedField(MLTableInputSchema)])
 
@@ -104,12 +120,16 @@ class AutoMLTextNerNode(AutoMLNodeMixin, TextNerSchema):
     validation_data = UnionField([fields.Str(), NestedField(MLTableInputSchema)])
 
 
-class ImageClassificationMulticlassNodeSchema(AutoMLNodeMixin, ImageClassificationSchema):
+class ImageClassificationMulticlassNodeSchema(
+    AutoMLNodeMixin, ImageClassificationSchema
+):
     training_data = UnionField([fields.Str(), NestedField(MLTableInputSchema)])
     validation_data = UnionField([fields.Str(), NestedField(MLTableInputSchema)])
 
 
-class ImageClassificationMultilabelNodeSchema(AutoMLNodeMixin, ImageClassificationMultilabelSchema):
+class ImageClassificationMultilabelNodeSchema(
+    AutoMLNodeMixin, ImageClassificationMultilabelSchema
+):
     training_data = UnionField([fields.Str(), NestedField(MLTableInputSchema)])
     validation_data = UnionField([fields.Str(), NestedField(MLTableInputSchema)])
 
@@ -119,7 +139,9 @@ class ImageObjectDetectionNodeSchema(AutoMLNodeMixin, ImageObjectDetectionSchema
     validation_data = UnionField([fields.Str(), NestedField(MLTableInputSchema)])
 
 
-class ImageInstanceSegmentationNodeSchema(AutoMLNodeMixin, ImageInstanceSegmentationSchema):
+class ImageInstanceSegmentationNodeSchema(
+    AutoMLNodeMixin, ImageInstanceSegmentationSchema
+):
     training_data = UnionField([fields.Str(), NestedField(MLTableInputSchema)])
     validation_data = UnionField([fields.Str(), NestedField(MLTableInputSchema)])
 

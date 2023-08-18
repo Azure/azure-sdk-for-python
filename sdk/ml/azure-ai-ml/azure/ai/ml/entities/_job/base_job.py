@@ -56,8 +56,12 @@ class _BaseJob(Job):
         return BaseJobSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
 
     @classmethod
-    def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs) -> "_BaseJob":
-        loaded_data = load_from_dict(BaseJobSchema, data, context, additional_message, **kwargs)
+    def _load_from_dict(
+        cls, data: Dict, context: Dict, additional_message: str, **kwargs
+    ) -> "_BaseJob":
+        loaded_data = load_from_dict(
+            BaseJobSchema, data, context, additional_message, **kwargs
+        )
         return _BaseJob(**loaded_data)
 
     @classmethod

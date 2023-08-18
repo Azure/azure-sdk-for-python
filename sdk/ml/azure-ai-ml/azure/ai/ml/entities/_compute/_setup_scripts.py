@@ -6,9 +6,15 @@
 import re
 from typing import Optional
 
-from azure.ai.ml._restclient.v2022_10_01_preview.models import ScriptReference as RestScriptReference
-from azure.ai.ml._restclient.v2022_10_01_preview.models import ScriptsToExecute as RestScriptsToExecute
-from azure.ai.ml._restclient.v2022_10_01_preview.models import SetupScripts as RestSetupScripts
+from azure.ai.ml._restclient.v2022_10_01_preview.models import (
+    ScriptReference as RestScriptReference,
+)
+from azure.ai.ml._restclient.v2022_10_01_preview.models import (
+    ScriptsToExecute as RestScriptsToExecute,
+)
+from azure.ai.ml._restclient.v2022_10_01_preview.models import (
+    SetupScripts as RestSetupScripts,
+)
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 
@@ -24,7 +30,11 @@ class ScriptReference(RestTranslatableMixin):
     """
 
     def __init__(
-        self, *, path: Optional[str] = None, command: Optional[str] = None, timeout_minutes: Optional[int] = None
+        self,
+        *,
+        path: Optional[str] = None,
+        command: Optional[str] = None,
+        timeout_minutes: Optional[int] = None,
     ) -> None:
         self.path = path
         self.command = command
@@ -62,15 +72,22 @@ class SetupScripts(RestTranslatableMixin):
     """
 
     def __init__(
-        self, *, startup_script: Optional[ScriptReference] = None, creation_script: Optional[ScriptReference] = None
+        self,
+        *,
+        startup_script: Optional[ScriptReference] = None,
+        creation_script: Optional[ScriptReference] = None,
     ) -> None:
         self.startup_script = startup_script
         self.creation_script = creation_script
 
     def _to_rest_object(self) -> RestScriptsToExecute:
         scripts_to_execute = RestScriptsToExecute(
-            startup_script=self.startup_script._to_rest_object() if self.startup_script else None,
-            creation_script=self.creation_script._to_rest_object() if self.creation_script else None,
+            startup_script=self.startup_script._to_rest_object()
+            if self.startup_script
+            else None,
+            creation_script=self.creation_script._to_rest_object()
+            if self.creation_script
+            else None,
         )
         return RestSetupScripts(scripts=scripts_to_execute)
 

@@ -91,10 +91,14 @@ class GroupInput(Input):
             if value.type is None:
                 # Skip check for parameter translated from pipeline job (lost type)
                 continue
-            if value.type not in IOConstants.INPUT_TYPE_COMBINATION and not isinstance(value, GroupInput):
+            if value.type not in IOConstants.INPUT_TYPE_COMBINATION and not isinstance(
+                value, GroupInput
+            ):
                 raise UserErrorException(msg.format(key, value.type))
             if key in names:
-                raise ValueError(f"Duplicate parameter name {value.name!r} found in Group values.")
+                raise ValueError(
+                    f"Duplicate parameter name {value.name!r} found in Group values."
+                )
             names.add(key)
 
     def flatten(self, group_parameter_name):
@@ -117,7 +121,9 @@ class GroupInput(Input):
 
     def _to_dict(self) -> dict:
         attr_dict = super()._to_dict()
-        attr_dict["values"] = {k: v._to_dict() for k, v in self.values.items()}  # pylint: disable=protected-access
+        attr_dict["values"] = {
+            k: v._to_dict() for k, v in self.values.items()
+        }  # pylint: disable=protected-access
         return attr_dict
 
     @staticmethod
@@ -140,13 +146,17 @@ class GroupInput(Input):
 
         for k, v in value.__dict__.items():
             if is_group(v):
-                attr_dict[k] = GroupInput.custom_class_value_to_attr_dict(v, [*group_names, k])
+                attr_dict[k] = GroupInput.custom_class_value_to_attr_dict(
+                    v, [*group_names, k]
+                )
                 continue
             data = v.value if isinstance(v, PyEnum) else v
             if GroupInput._is_group_attr_dict(data):
                 attr_dict[k] = data
                 continue
-            attr_dict[k] = PipelineInput(name=k, meta=group_definition.get(k), data=data, group_names=group_names)
+            attr_dict[k] = PipelineInput(
+                name=k, meta=group_definition.get(k), data=data, group_names=group_names
+            )
         return GroupInput._create_group_attr_dict(attr_dict)
 
     @staticmethod
@@ -232,7 +242,9 @@ class GroupInput(Input):
             self.optional = False
             return
         if default_value and not is_group(default_cls):
-            raise ValueError(f"Default value must be instance of parameter group, got {default_cls}.")
+            raise ValueError(
+                f"Default value must be instance of parameter group, got {default_cls}."
+            )
         if hasattr(default_value, "__dict__"):
             # Convert default value with customer type to _AttrDict
             self.default = GroupInput.custom_class_value_to_attr_dict(default_value)
@@ -240,5 +252,7 @@ class GroupInput(Input):
             for key, annotation in self.values.items():
                 if not hasattr(default_value, key):
                     continue
-                annotation._update_default(getattr(default_value, key))  # pylint: disable=protected-access
+                annotation._update_default(
+                    getattr(default_value, key)
+                )  # pylint: disable=protected-access
         self.optional = default_value is None

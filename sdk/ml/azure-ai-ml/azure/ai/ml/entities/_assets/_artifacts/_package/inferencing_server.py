@@ -31,11 +31,17 @@ class AzureMLOnlineInferencingServer:
         self.code_configuration = code_configuration
 
     @classmethod
-    def _from_rest_object(cls, rest_obj: RestAzureMLOnlineInferencingServer) -> "RestAzureMLOnlineInferencingServer":
-        return AzureMLOnlineInferencingServer(type=rest_obj.server_type, code_configuration=rest_obj.code_configuration)
+    def _from_rest_object(
+        cls, rest_obj: RestAzureMLOnlineInferencingServer
+    ) -> "RestAzureMLOnlineInferencingServer":
+        return AzureMLOnlineInferencingServer(
+            type=rest_obj.server_type, code_configuration=rest_obj.code_configuration
+        )
 
     def _to_rest_object(self) -> RestAzureMLOnlineInferencingServer:
-        return RestAzureMLOnlineInferencingServer(server_type=self.type, code_configuration=self.code_configuration)
+        return RestAzureMLOnlineInferencingServer(
+            server_type=self.type, code_configuration=self.code_configuration
+        )
 
 
 @experimental
@@ -52,11 +58,17 @@ class AzureMLBatchInferencingServer:
         self.code_configuration = code_configuration
 
     @classmethod
-    def _from_rest_object(cls, rest_obj: RestAzureMLBatchInferencingServer) -> "RestAzureMLBatchInferencingServer":
-        return AzureMLBatchInferencingServer(code_configuration=rest_obj.code_configuration)
+    def _from_rest_object(
+        cls, rest_obj: RestAzureMLBatchInferencingServer
+    ) -> "RestAzureMLBatchInferencingServer":
+        return AzureMLBatchInferencingServer(
+            code_configuration=rest_obj.code_configuration
+        )
 
     def _to_rest_object(self) -> RestAzureMLBatchInferencingServer:
-        return RestAzureMLBatchInferencingServer(server_type=self.type, code_configuration=self.code_configuration)
+        return RestAzureMLBatchInferencingServer(
+            server_type=self.type, code_configuration=self.code_configuration
+        )
 
 
 @experimental
@@ -73,13 +85,18 @@ class TritonInferencingServer:
         self.inference_configuration = inference_configuration
 
     @classmethod
-    def _from_rest_object(cls, rest_obj: RestTritonInferencingServer) -> "RestTritonInferencingServer":
+    def _from_rest_object(
+        cls, rest_obj: RestTritonInferencingServer
+    ) -> "RestTritonInferencingServer":
         return CustomInferencingServer(
-            type=rest_obj.server_type, inference_configuration=rest_obj.inference_configuration
+            type=rest_obj.server_type,
+            inference_configuration=rest_obj.inference_configuration,
         )
 
     def _to_rest_object(self) -> RestTritonInferencingServer:
-        return RestCustomInferencingServer(server_type=self.type, inference_configuration=self.inference_configuration)
+        return RestCustomInferencingServer(
+            server_type=self.type, inference_configuration=self.inference_configuration
+        )
 
 
 @experimental
@@ -135,7 +152,9 @@ class OnlineInferenceConfiguration:
         self.configuration = configuration
 
     @classmethod
-    def _from_rest_object(cls, rest_obj: RestOnlineInferenceConfiguration) -> "RestOnlineInferenceConfiguration":
+    def _from_rest_object(
+        cls, rest_obj: RestOnlineInferenceConfiguration
+    ) -> "RestOnlineInferenceConfiguration":
         return OnlineInferenceConfiguration(
             liveness_route=Route._from_rest_object(rest_obj.liveness_route),
             readiness_route=Route._from_rest_object(rest_obj.readiness_route),
@@ -163,15 +182,22 @@ class CustomInferencingServer:
     :ivar type: The type of the inferencing server.
     """
 
-    def __init__(self, *, inference_configuration: OnlineInferenceConfiguration = None, **kwargs):
+    def __init__(
+        self, *, inference_configuration: OnlineInferenceConfiguration = None, **kwargs
+    ):
         self.type = "custom"
         self.inference_configuration = inference_configuration
 
     @classmethod
-    def _from_rest_object(cls, rest_obj: RestCustomInferencingServer) -> "RestCustomInferencingServer":
+    def _from_rest_object(
+        cls, rest_obj: RestCustomInferencingServer
+    ) -> "RestCustomInferencingServer":
         return CustomInferencingServer(
-            type=rest_obj.server_type, inference_configuration=rest_obj.inference_configuration
+            type=rest_obj.server_type,
+            inference_configuration=rest_obj.inference_configuration,
         )
 
     def _to_rest_object(self) -> RestCustomInferencingServer:
-        return RestCustomInferencingServer(server_type=self.type, inference_configuration=self.inference_configuration)
+        return RestCustomInferencingServer(
+            server_type=self.type, inference_configuration=self.inference_configuration
+        )

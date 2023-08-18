@@ -10,10 +10,16 @@ from typing import Dict, Optional, Union
 from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     AzureDataLakeGen1Datastore as RestAzureDatalakeGen1Datastore,
 )
-from azure.ai.ml._restclient.v2023_04_01_preview.models import Datastore as DatastoreData, DatastoreType
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    Datastore as DatastoreData,
+    DatastoreType,
+)
 from azure.ai.ml._schema._datastore.adls_gen1 import AzureDataLakeGen1Schema
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, TYPE
-from azure.ai.ml.entities._credentials import CertificateConfiguration, ServicePrincipalConfiguration
+from azure.ai.ml.entities._credentials import (
+    CertificateConfiguration,
+    ServicePrincipalConfiguration,
+)
 from azure.ai.ml.entities._datastore.datastore import Datastore
 from azure.ai.ml.entities._datastore.utils import from_rest_datastore_credentials
 from azure.ai.ml.entities._util import load_from_dict
@@ -46,12 +52,19 @@ class AzureDataLakeGen1Datastore(Datastore):
         description: Optional[str] = None,
         tags: Optional[Dict] = None,
         properties: Optional[Dict] = None,
-        credentials: Optional[Union[CertificateConfiguration, ServicePrincipalConfiguration]] = None,
+        credentials: Optional[
+            Union[CertificateConfiguration, ServicePrincipalConfiguration]
+        ] = None,
         **kwargs
     ):
         kwargs[TYPE] = DatastoreType.AZURE_DATA_LAKE_GEN1
         super().__init__(
-            name=name, description=description, tags=tags, properties=properties, credentials=credentials, **kwargs
+            name=name,
+            description=description,
+            tags=tags,
+            properties=properties,
+            credentials=credentials,
+            **kwargs
         )
 
         self.store_name = store_name
@@ -69,7 +82,9 @@ class AzureDataLakeGen1Datastore(Datastore):
     def _load_from_dict(
         cls, data: Dict, context: Dict, additional_message: str, **kwargs
     ) -> "AzureDataLakeGen1Datastore":
-        return load_from_dict(AzureDataLakeGen1Schema, data, context, additional_message, **kwargs)
+        return load_from_dict(
+            AzureDataLakeGen1Schema, data, context, additional_message, **kwargs
+        )
 
     @classmethod
     def _from_rest_object(cls, datastore_resource: DatastoreData):

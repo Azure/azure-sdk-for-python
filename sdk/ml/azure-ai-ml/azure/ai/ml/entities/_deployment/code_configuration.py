@@ -5,10 +5,17 @@
 import logging
 from typing import Optional
 
-from azure.ai.ml._restclient.v2022_05_01.models import CodeConfiguration as RestCodeConfiguration
+from azure.ai.ml._restclient.v2022_05_01.models import (
+    CodeConfiguration as RestCodeConfiguration,
+)
 from azure.ai.ml.entities._assets import Code
 from azure.ai.ml.entities._mixins import DictMixin
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+from azure.ai.ml.exceptions import (
+    ErrorCategory,
+    ErrorTarget,
+    ValidationErrorType,
+    ValidationException,
+)
 
 module_logger = logging.getLogger(__name__)
 
@@ -50,7 +57,9 @@ class CodeConfiguration(DictMixin):
         return self._scoring_script
 
     def _to_rest_code_configuration(self) -> RestCodeConfiguration:
-        return RestCodeConfiguration(code_id=self.code, scoring_script=self.scoring_script)
+        return RestCodeConfiguration(
+            code_id=self.code, scoring_script=self.scoring_script
+        )
 
     def _validate(self) -> None:
         if self.code and not self.scoring_script:
@@ -64,7 +73,9 @@ class CodeConfiguration(DictMixin):
             )
 
     @staticmethod
-    def _from_rest_code_configuration(code_configuration: RestCodeConfiguration) -> Optional["CodeConfiguration"]:
+    def _from_rest_code_configuration(
+        code_configuration: RestCodeConfiguration,
+    ) -> Optional["CodeConfiguration"]:
         if code_configuration:
             return CodeConfiguration(
                 code=code_configuration.code_id,

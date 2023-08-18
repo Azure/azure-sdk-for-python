@@ -105,7 +105,9 @@ class InternalInput(Input):
         ...
 
     @classmethod
-    def _from_base(cls, _input: Optional[Union[Input, Dict]]) -> Optional["InternalInput"]:
+    def _from_base(
+        cls, _input: Optional[Union[Input, Dict]]
+    ) -> Optional["InternalInput"]:
         """Cast from Input or Dict to InternalInput.
 
         Do not guarantee to create a new object.

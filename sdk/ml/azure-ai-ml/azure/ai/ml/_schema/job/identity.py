@@ -28,7 +28,10 @@ module_logger = logging.getLogger(__name__)
 class ManagedIdentitySchema(metaclass=PatchedSchemaMeta):
     type = StringTransformedEnum(
         required=True,
-        allowed_values=[IdentityConfigurationType.MANAGED, ConnectionAuthType.MANAGED_IDENTITY],
+        allowed_values=[
+            IdentityConfigurationType.MANAGED,
+            ConnectionAuthType.MANAGED_IDENTITY,
+        ],
         casing_transform=camel_to_snake,
     )
     client_id = fields.Str()

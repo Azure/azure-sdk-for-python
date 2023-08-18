@@ -6,7 +6,15 @@
 import re
 from typing import Any, Dict, List
 
-from marshmallow import ValidationError, fields, post_dump, post_load, pre_dump, pre_load, validates
+from marshmallow import (
+    ValidationError,
+    fields,
+    post_dump,
+    post_load,
+    pre_dump,
+    pre_load,
+    validates,
+)
 
 from azure.ai.ml._schema.core.fields import CodeField, EnvironmentField, NestedField
 from azure.ai.ml._schema.core.schema import PathAwareSchema
@@ -109,7 +117,9 @@ class ParameterizedSparkSchema(PathAwareSchema):
         return data
 
     @post_dump(pass_original=True)
-    def serialize_field_names(self, data: Dict[str, Any], original_data: Dict[str, Any], **kwargs):
+    def serialize_field_names(
+        self, data: Dict[str, Any], original_data: Dict[str, Any], **kwargs
+    ):
         conf = data["conf"] if "conf" in data else {}
         if original_data.conf is not None and conf is not None:
             for field_name, value in original_data.conf.items():

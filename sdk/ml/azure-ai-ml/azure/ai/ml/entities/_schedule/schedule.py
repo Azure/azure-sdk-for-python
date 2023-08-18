@@ -11,23 +11,48 @@ from typing_extensions import Literal
 
 from azure.ai.ml._restclient.v2023_04_01_preview.models import JobBase as RestJobBase
 from azure.ai.ml._restclient.v2023_04_01_preview.models import JobScheduleAction
-from azure.ai.ml._restclient.v2023_04_01_preview.models import PipelineJob as RestPipelineJob
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    PipelineJob as RestPipelineJob,
+)
 from azure.ai.ml._restclient.v2023_04_01_preview.models import Schedule as RestSchedule
-from azure.ai.ml._restclient.v2023_04_01_preview.models import ScheduleActionType as RestScheduleActionType
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    ScheduleActionType as RestScheduleActionType,
+)
 from azure.ai.ml._restclient.v2023_04_01_preview.models import ScheduleProperties
 from azure.ai.ml._schema.schedule.schedule import JobScheduleSchema
-from azure.ai.ml._utils.utils import camel_to_snake, dump_yaml_to_file, is_private_preview_enabled
+from azure.ai.ml._utils.utils import (
+    camel_to_snake,
+    dump_yaml_to_file,
+    is_private_preview_enabled,
+)
 from azure.ai.ml.constants import JobType
-from azure.ai.ml.constants._common import ARM_ID_PREFIX, BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, ScheduleType
+from azure.ai.ml.constants._common import (
+    ARM_ID_PREFIX,
+    BASE_PATH_CONTEXT_KEY,
+    PARAMS_OVERRIDE_KEY,
+    ScheduleType,
+)
 from azure.ai.ml.entities._job.job import Job
 from azure.ai.ml.entities._job.pipeline.pipeline_job import PipelineJob
-from azure.ai.ml.entities._mixins import RestTranslatableMixin, TelemetryMixin, YamlTranslatableMixin
+from azure.ai.ml.entities._mixins import (
+    RestTranslatableMixin,
+    TelemetryMixin,
+    YamlTranslatableMixin,
+)
 from azure.ai.ml.entities._resource import Resource
 from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._util import load_from_dict
-from azure.ai.ml.entities._validation import MutableValidationResult, SchemaValidatableMixin
+from azure.ai.ml.entities._validation import (
+    MutableValidationResult,
+    SchemaValidatableMixin,
+)
 
-from ...exceptions import ErrorCategory, ErrorTarget, ScheduleException, ValidationException
+from ...exceptions import (
+    ErrorCategory,
+    ErrorTarget,
+    ScheduleException,
+    ValidationException,
+)
 from .. import CommandJob, SparkJob
 from .._builders import BaseNode
 from .trigger import CronTrigger, RecurrenceTrigger, TriggerBase
@@ -69,7 +94,13 @@ class Schedule(YamlTranslatableMixin, SchemaValidatableMixin, Resource):
     ) -> None:
         is_enabled = kwargs.pop("is_enabled", None)
         provisioning_state = kwargs.pop("provisioning_state", None)
-        super().__init__(name=name, description=description, tags=tags, properties=properties, **kwargs)
+        super().__init__(
+            name=name,
+            description=description,
+            tags=tags,
+            properties=properties,
+            **kwargs,
+        )
         self.trigger = trigger
         self.display_name = display_name
         self._is_enabled = is_enabled
@@ -90,14 +121,18 @@ class Schedule(YamlTranslatableMixin, SchemaValidatableMixin, Resource):
         """
         path = kwargs.pop("path", None)
         yaml_serialized = self._to_dict()
-        dump_yaml_to_file(dest, yaml_serialized, default_flow_style=False, path=path, **kwargs)
+        dump_yaml_to_file(
+            dest, yaml_serialized, default_flow_style=False, path=path, **kwargs
+        )
 
     @classmethod
     def _get_validation_error_target(cls) -> ErrorTarget:
         return ErrorTarget.SCHEDULE
 
     @classmethod
-    def _resolve_cls_and_type(cls, data, params_override):  # pylint: disable=unused-argument
+    def _resolve_cls_and_type(
+        cls, data, params_override
+    ):  # pylint: disable=unused-argument
         from azure.ai.ml.entities._data_import.schedule import ImportDataSchedule
         from azure.ai.ml.entities._monitoring.schedule import MonitorSchedule
 
@@ -109,13 +144,17 @@ class Schedule(YamlTranslatableMixin, SchemaValidatableMixin, Resource):
 
     @property
     def create_job(self) -> None:  # pylint: disable=useless-return
-        module_logger.warning("create_job is not a valid property of %s", str(type(self)))
+        module_logger.warning(
+            "create_job is not a valid property of %s", str(type(self))
+        )
         # return None here just to be explicit
         return None
 
     @create_job.setter
     def create_job(self, value) -> None:  # pylint: disable=unused-argument
-        module_logger.warning("create_job is not a valid property of %s", str(type(self)))
+        module_logger.warning(
+            "create_job is not a valid property of %s", str(type(self))
+        )
 
     @property
     def is_enabled(self) -> bool:
@@ -373,7 +412,11 @@ class JobSchedule(RestTranslatableMixin, Schedule, TelemetryMixin):
                 target=ErrorTarget.JOB,
                 error_category=ErrorCategory.SYSTEM_ERROR,
             )
-        if camel_to_snake(action.job_definition.job_type) not in [JobType.PIPELINE, JobType.COMMAND, JobType.SPARK]:
+        if camel_to_snake(action.job_definition.job_type) not in [
+            JobType.PIPELINE,
+            JobType.COMMAND,
+            JobType.SPARK,
+        ]:
             msg = f"Unsupported job type {action.job_definition.job_type} for schedule '{{}}'."
             raise ScheduleException(
                 message=msg.format(obj.name),
@@ -423,7 +466,9 @@ class JobSchedule(RestTranslatableMixin, Schedule, TelemetryMixin):
             # TODO: Update this after source job id move to JobBaseProperties
             # Rest pipeline job will hold a 'Default' as experiment_name,
             # MFE will add default if None, so pass an empty string here.
-            job_definition = RestPipelineJob(source_job_id=self.create_job, experiment_name="")
+            job_definition = RestPipelineJob(
+                source_job_id=self.create_job, experiment_name=""
+            )
         else:
             msg = "Unsupported job type '{}' in schedule {}."
             raise ValidationException(
@@ -451,7 +496,9 @@ class JobSchedule(RestTranslatableMixin, Schedule, TelemetryMixin):
             return super(JobSchedule, self).__str__()
 
     # pylint: disable-next=docstring-missing-param
-    def _get_telemetry_values(self, *args, **kwargs) -> Dict[Literal["trigger_type"], str]:
+    def _get_telemetry_values(
+        self, *args, **kwargs
+    ) -> Dict[Literal["trigger_type"], str]:
         """Return the telemetry values of schedule.
 
         :return: A dictionary with telemetry values

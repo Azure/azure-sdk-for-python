@@ -29,7 +29,12 @@ class AutoMLVertical(AutoMLJob):
 
     @abstractmethod
     def __init__(
-        self, task_type: str, training_data: Input, validation_data: Input, test_data: Optional[Input] = None, **kwargs
+        self,
+        task_type: str,
+        training_data: Input,
+        validation_data: Input,
+        test_data: Optional[Input] = None,
+        **kwargs
     ) -> None:
         """Initialize AutoMLVertical.
 

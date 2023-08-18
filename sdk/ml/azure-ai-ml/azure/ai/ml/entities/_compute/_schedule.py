@@ -5,9 +5,15 @@
 from typing import List, Optional, Union
 
 from azure.ai.ml._restclient.v2022_10_01_preview.models import ComputePowerAction
-from azure.ai.ml._restclient.v2022_10_01_preview.models import ComputeSchedules as RestComputeSchedules
-from azure.ai.ml._restclient.v2022_10_01_preview.models import ComputeStartStopSchedule as RestComputeStartStopSchedule
-from azure.ai.ml._restclient.v2022_10_01_preview.models import ScheduleStatus as ScheduleState
+from azure.ai.ml._restclient.v2022_10_01_preview.models import (
+    ComputeSchedules as RestComputeSchedules,
+)
+from azure.ai.ml._restclient.v2022_10_01_preview.models import (
+    ComputeStartStopSchedule as RestComputeStartStopSchedule,
+)
+from azure.ai.ml._restclient.v2022_10_01_preview.models import (
+    ScheduleStatus as ScheduleState,
+)
 from azure.ai.ml._restclient.v2022_10_01_preview.models import TriggerType
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
@@ -75,7 +81,9 @@ class ComputeStartStopSchedule(RestTranslatableMixin):
         return rest_object
 
     @classmethod
-    def _from_rest_object(cls, obj: RestComputeStartStopSchedule) -> "ComputeStartStopSchedule":
+    def _from_rest_object(
+        cls, obj: RestComputeStartStopSchedule
+    ) -> "ComputeStartStopSchedule":
         schedule = ComputeStartStopSchedule(
             action=obj.action,
             state=obj.status,
@@ -110,7 +118,9 @@ class ComputeSchedules(RestTranslatableMixin):
     :type kwargs: dict
     """
 
-    def __init__(self, *, compute_start_stop: Optional[List[ComputeStartStopSchedule]] = None):
+    def __init__(
+        self, *, compute_start_stop: Optional[List[ComputeStartStopSchedule]] = None
+    ):
         self.compute_start_stop = compute_start_stop
 
     def _to_rest_object(self) -> RestComputeSchedules:

@@ -122,7 +122,9 @@ def get_appinsights_log_handler(
                 return logging.NullHandler()
 
         child_namespace = component_name or __name__
-        current_logger = logging.getLogger(AML_INTERNAL_LOGGER_NAMESPACE).getChild(child_namespace)
+        current_logger = logging.getLogger(AML_INTERNAL_LOGGER_NAMESPACE).getChild(
+            child_namespace
+        )
         current_logger.propagate = False
         current_logger.setLevel(logging.CRITICAL)
 
@@ -182,7 +184,9 @@ class AzureMLSDKLogHandler(AzureLogHandler):
             "module": record.module,
             "level": record.levelname,
         }
-        if hasattr(record, "custom_dimensions") and isinstance(record.custom_dimensions, dict):
+        if hasattr(record, "custom_dimensions") and isinstance(
+            record.custom_dimensions, dict
+        ):
             properties.update(record.custom_dimensions)
 
         if record.exc_info:

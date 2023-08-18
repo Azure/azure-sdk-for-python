@@ -8,7 +8,10 @@ from azure.ai.ml._schema._utils.utils import validate_arm_str
 from azure.ai.ml._schema.core.fields import NestedField, StringTransformedEnum
 from azure.ai.ml._schema.core.schema import PathAwareSchema
 from azure.ai.ml._schema.workspace.customer_managed_key import CustomerManagedKeySchema
-from azure.ai.ml._schema.workspace.identity import IdentitySchema, UserAssignedIdentitySchema
+from azure.ai.ml._schema.workspace.identity import (
+    IdentitySchema,
+    UserAssignedIdentitySchema,
+)
 from azure.ai.ml._utils.utils import snake_to_pascal
 from azure.ai.ml.constants._common import PublicNetworkAccess
 from .compute_runtime_schema import ComputeRuntimeSchema

@@ -20,8 +20,16 @@ class SourceMetadataSchema(metaclass=PatchedSchemaMeta):
     path = fields.Str(required=False)
     timestamp_column = fields.Nested(TimestampColumnMetadataSchema, required=True)
     source_delay = fields.Nested(DelayMetadataSchema, required=False)
-    source_process_code = fields.Nested(SourceProcessCodeSchema, load_only=True, required=False)
-    dict = fields.Dict(keys=fields.Str(), values=fields.Str(), data_key="kwargs", load_only=True, required=False)
+    source_process_code = fields.Nested(
+        SourceProcessCodeSchema, load_only=True, required=False
+    )
+    dict = fields.Dict(
+        keys=fields.Str(),
+        values=fields.Str(),
+        data_key="kwargs",
+        load_only=True,
+        required=False,
+    )
 
     @post_load
     def make(self, data: Dict, **kwargs):

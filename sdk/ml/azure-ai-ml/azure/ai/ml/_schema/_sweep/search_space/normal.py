@@ -7,16 +7,24 @@
 from marshmallow import ValidationError, fields, post_load
 from marshmallow.decorators import pre_dump
 
-from azure.ai.ml._schema.core.fields import DumpableIntegerField, StringTransformedEnum, UnionField
+from azure.ai.ml._schema.core.fields import (
+    DumpableIntegerField,
+    StringTransformedEnum,
+    UnionField,
+)
 from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
 from azure.ai.ml.constants._common import TYPE
 from azure.ai.ml.constants._job.sweep import SearchSpace
 
 
 class NormalSchema(metaclass=PatchedSchemaMeta):
-    type = StringTransformedEnum(required=True, allowed_values=SearchSpace.NORMAL_LOGNORMAL)
+    type = StringTransformedEnum(
+        required=True, allowed_values=SearchSpace.NORMAL_LOGNORMAL
+    )
     mu = UnionField([DumpableIntegerField(strict=True), fields.Float()], required=True)
-    sigma = UnionField([DumpableIntegerField(strict=True), fields.Float()], required=True)
+    sigma = UnionField(
+        [DumpableIntegerField(strict=True), fields.Float()], required=True
+    )
 
     @post_load
     def make(self, data, **kwargs):
@@ -34,23 +42,31 @@ class NormalSchema(metaclass=PatchedSchemaMeta):
 
 
 class QNormalSchema(metaclass=PatchedSchemaMeta):
-    type = StringTransformedEnum(required=True, allowed_values=SearchSpace.QNORMAL_QLOGNORMAL)
+    type = StringTransformedEnum(
+        required=True, allowed_values=SearchSpace.QNORMAL_QLOGNORMAL
+    )
     mu = UnionField([DumpableIntegerField(strict=True), fields.Float()], required=True)
-    sigma = UnionField([DumpableIntegerField(strict=True), fields.Float()], required=True)
+    sigma = UnionField(
+        [DumpableIntegerField(strict=True), fields.Float()], required=True
+    )
     q = UnionField([DumpableIntegerField(strict=True), fields.Float()], required=True)
 
     @post_load
     def make(self, data, **kwargs):
         from azure.ai.ml.sweep import QLogNormal, QNormal
 
-        return QNormal(**data) if data[TYPE] == SearchSpace.QNORMAL else QLogNormal(**data)
+        return (
+            QNormal(**data) if data[TYPE] == SearchSpace.QNORMAL else QLogNormal(**data)
+        )
 
     @pre_dump
     def predump(self, data, **kwargs):
         from azure.ai.ml.sweep import QLogNormal, QNormal
 
         if not isinstance(data, (QNormal, QLogNormal)):
-            raise ValidationError("Cannot dump non-QNormal or non-QLogNormal object into QNormalSchema")
+            raise ValidationError(
+                "Cannot dump non-QNormal or non-QLogNormal object into QNormalSchema"
+            )
         return data
 
 

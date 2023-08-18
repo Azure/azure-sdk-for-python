@@ -70,7 +70,18 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
     """
 
     _EMPTY = Parameter.empty
-    _IO_KEYS = ["path", "type", "mode", "description", "default", "min", "max", "enum", "optional", "datastore"]
+    _IO_KEYS = [
+        "path",
+        "type",
+        "mode",
+        "description",
+        "default",
+        "min",
+        "max",
+        "enum",
+        "optional",
+        "datastore",
+    ]
 
     @overload
     def __init__(
@@ -328,7 +339,9 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
         :rtype: Union[int, float, bool, str, T]
         """
         if self.type == "integer":
-            return int(float(val))  # backend returns 10.0，for integer， parse it to float before int
+            return int(
+                float(val)
+            )  # backend returns 10.0，for integer， parse it to float before int
         if self.type == "number":
             return float(val)
         if self.type == "boolean":
@@ -423,8 +436,12 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
             if not isinstance(value, self._allowed_types):
                 msg = "Unexpected data type for parameter '{}'. Expected {} but got {}."
                 raise ValidationException(
-                    message=msg.format(self._port_name, self._allowed_types, type(value)),
-                    no_personal_data_message=msg.format("[_port_name]", self._allowed_types, type(value)),
+                    message=msg.format(
+                        self._port_name, self._allowed_types, type(value)
+                    ),
+                    no_personal_data_message=msg.format(
+                        "[_port_name]", self._allowed_types, type(value)
+                    ),
                     error_category=ErrorCategory.USER_ERROR,
                     target=ErrorTarget.PIPELINE,
                     error_type=ValidationErrorType.INVALID_VALUE,
@@ -478,7 +495,9 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
                     msg = "Invalid parameter for '{}' Input, parameter '{}' should be None but got '{}'"
                     raise ValidationException(
                         message=msg.format(type, key, value),
-                        no_personal_data_message=msg.format("[type]", "[parameter]", "[parameter_value]"),
+                        no_personal_data_message=msg.format(
+                            "[type]", "[parameter]", "[parameter_value]"
+                        ),
                         error_category=ErrorCategory.USER_ERROR,
                         target=ErrorTarget.PIPELINE,
                         error_type=ValidationErrorType.INVALID_VALUE,
@@ -501,7 +520,9 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
                 new_value = self._simple_parse(origin_value)
                 setattr(self, key, new_value)
         if self.optional:
-            self.optional = self._simple_parse(getattr(self, "optional", "false"), _type="boolean")
+            self.optional = self._simple_parse(
+                getattr(self, "optional", "false"), _type="boolean"
+            )
 
     @classmethod
     def _get_input_by_type(cls, t: type, optional=None) -> Optional["Input"]:
@@ -530,7 +551,9 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
     @classmethod
     def _map_from_rest_type(cls, _type):
         # this is for component rest object when using Input as component inputs
-        reversed_data_type_mapping = {v: k for k, v in IOConstants.TYPE_MAPPING_YAML_2_REST.items()}
+        reversed_data_type_mapping = {
+            v: k for k, v in IOConstants.TYPE_MAPPING_YAML_2_REST.items()
+        }
         # parse String -> string, Integer -> integer, etc
         if not isinstance(_type, list) and _type in reversed_data_type_mapping:
             return reversed_data_type_mapping[_type]

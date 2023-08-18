@@ -41,7 +41,9 @@ class ConditionNode(ControlFlowNode):
         self._false_block = false_block
 
     @classmethod
-    def _create_schema_for_validation(cls, context) -> PathAwareSchema:  # pylint: disable=unused-argument
+    def _create_schema_for_validation(
+        cls, context
+    ) -> PathAwareSchema:  # pylint: disable=unused-argument
         from azure.ai.ml._schema.pipeline.condition_node import ConditionNodeSchema
 
         return ConditionNodeSchema(context=context)
@@ -97,10 +99,16 @@ class ConditionNode(ControlFlowNode):
 
         # Check if output is a control output.
         # pylint: disable=protected-access
-        if isinstance(self.condition, InputOutputBase) and self.condition._meta is not None:
+        if (
+            isinstance(self.condition, InputOutputBase)
+            and self.condition._meta is not None
+        ):
             # pylint: disable=protected-access
             output_definition = self.condition._meta
-            if output_definition is not None and not output_definition._is_primitive_type:
+            if (
+                output_definition is not None
+                and not output_definition._is_primitive_type
+            ):
                 validation_result.append_error(
                     yaml_path="condition",
                     message=f"'condition' of dsl.condition node must be primitive type "
@@ -118,32 +126,43 @@ class ConditionNode(ControlFlowNode):
             )
 
         error_msg = (
-            "{!r} of dsl.condition node must be an instance of " f"{BaseNode}, {AutoMLJob} or {str}," "got {!r}."
+            "{!r} of dsl.condition node must be an instance of "
+            f"{BaseNode}, {AutoMLJob} or {str},"
+            "got {!r}."
         )
         blocks = self.true_block if self.true_block else []
         for block in blocks:
             if block is not None and not isinstance(block, (BaseNode, AutoMLJob, str)):
                 validation_result.append_error(
-                    yaml_path="true_block", message=error_msg.format("true_block", type(block))
+                    yaml_path="true_block",
+                    message=error_msg.format("true_block", type(block)),
                 )
         blocks = self.false_block if self.false_block else []
         for block in blocks:
             if block is not None and not isinstance(block, (BaseNode, AutoMLJob, str)):
                 validation_result.append_error(
-                    yaml_path="false_block", message=error_msg.format("false_block", type(block))
+                    yaml_path="false_block",
+                    message=error_msg.format("false_block", type(block)),
                 )
 
         # check if true/false block is valid binding
-        for name, blocks in {"true_block": self.true_block, "false_block": self.false_block}.items():
+        for name, blocks in {
+            "true_block": self.true_block,
+            "false_block": self.false_block,
+        }.items():
             blocks = blocks if blocks else []
             for block in blocks:
                 if block is None or not isinstance(block, str):
                     continue
                 error_tail = "for example, ${{parent.jobs.xxx}}"
-                if not is_data_binding_expression(block, ["parent", "jobs"], is_singular=False):
+                if not is_data_binding_expression(
+                    block, ["parent", "jobs"], is_singular=False
+                ):
                     validation_result.append_error(
                         yaml_path=name,
                         message=f"'{name}' of dsl.condition has invalid binding expression: {block}, {error_tail}",
                     )
 
-        return validation_result.try_raise(self._get_validation_error_target(), raise_error=raise_error)
+        return validation_result.try_raise(
+            self._get_validation_error_target(), raise_error=raise_error
+        )

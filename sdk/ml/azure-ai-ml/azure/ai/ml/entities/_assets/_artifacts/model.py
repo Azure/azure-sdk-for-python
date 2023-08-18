@@ -121,15 +121,21 @@ class Model(Artifact):  # pylint: disable=too-many-instance-attributes
         return load_from_dict(ModelSchema, data, context, **kwargs)
 
     def _to_dict(self) -> Dict:
-        return ModelSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)  # pylint: disable=no-member
+        return ModelSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(
+            self
+        )  # pylint: disable=no-member
 
     @classmethod
     def _from_rest_object(cls, model_rest_object: ModelVersion) -> "Model":
         rest_model_version: ModelVersionProperties = model_rest_object.properties
         arm_id = AMLVersionedArmId(arm_id=model_rest_object.id)
-        model_stage = rest_model_version.stage if hasattr(rest_model_version, "stage") else None
+        model_stage = (
+            rest_model_version.stage if hasattr(rest_model_version, "stage") else None
+        )
         if hasattr(rest_model_version, "flavors"):
-            flavors = {key: flavor.data for key, flavor in rest_model_version.flavors.items()}
+            flavors = {
+                key: flavor.data for key, flavor in rest_model_version.flavors.items()
+            }
         model = Model(
             id=model_rest_object.id,
             name=arm_id.asset_name,
@@ -141,23 +147,31 @@ class Model(Artifact):  # pylint: disable=too-many-instance-attributes
             properties=rest_model_version.properties,
             stage=model_stage,
             # pylint: disable=protected-access
-            creation_context=SystemData._from_rest_object(model_rest_object.system_data),
+            creation_context=SystemData._from_rest_object(
+                model_rest_object.system_data
+            ),
             type=rest_model_version.model_type,
             job_name=rest_model_version.job_name,
-            intellectual_property=IntellectualProperty._from_rest_object(rest_model_version.intellectual_property)
+            intellectual_property=IntellectualProperty._from_rest_object(
+                rest_model_version.intellectual_property
+            )
             if rest_model_version.intellectual_property
             else None,
         )
         return model
 
     @classmethod
-    def _from_container_rest_object(cls, model_container_rest_object: ModelContainer) -> "Model":
+    def _from_container_rest_object(
+        cls, model_container_rest_object: ModelContainer
+    ) -> "Model":
         model = Model(
             name=model_container_rest_object.name,
             version="1",
             id=model_container_rest_object.id,
             # pylint: disable=protected-access
-            creation_context=SystemData._from_rest_object(model_container_rest_object.system_data),
+            creation_context=SystemData._from_rest_object(
+                model_container_rest_object.system_data
+            ),
         )
         model.latest_version = model_container_rest_object.properties.latest_version
 
@@ -171,7 +185,9 @@ class Model(Artifact):  # pylint: disable=too-many-instance-attributes
             description=self.description,
             tags=self.tags,
             properties=self.properties,
-            flavors={key: FlavorData(data=dict(value)) for key, value in self.flavors.items()}
+            flavors={
+                key: FlavorData(data=dict(value)) for key, value in self.flavors.items()
+            }
             if self.flavors
             else None,  # flatten OrderedDict to dict
             model_type=self.type,
@@ -204,6 +220,8 @@ class Model(Artifact):  # pylint: disable=too-many-instance-attributes
             self._arm_type: {
                 ArmConstants.NAME: self.name,
                 ArmConstants.VERSION: self.version,
-                ArmConstants.PROPERTIES_PARAMETER_NAME: self._serialize.body(properties, "ModelVersionProperties"),
+                ArmConstants.PROPERTIES_PARAMETER_NAME: self._serialize.body(
+                    properties, "ModelVersionProperties"
+                ),
             }
         }

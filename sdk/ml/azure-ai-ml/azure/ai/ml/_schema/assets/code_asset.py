@@ -37,7 +37,9 @@ class AnonymousCodeAssetSchema(CodeAssetSchema, AnonymousAssetSchema):
     def make(self, data, **kwargs):
         from azure.ai.ml.entities._assets import Code
 
-        return Code(is_anonymous=True, base_path=self.context[BASE_PATH_CONTEXT_KEY], **data)
+        return Code(
+            is_anonymous=True, base_path=self.context[BASE_PATH_CONTEXT_KEY], **data
+        )
 
     @pre_dump
     def validate(self, data, **kwargs):

@@ -3,7 +3,12 @@
 # ---------------------------------------------------------
 from typing import Dict, Optional, Type, Union
 
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+from azure.ai.ml.exceptions import (
+    ErrorCategory,
+    ErrorTarget,
+    ValidationErrorType,
+    ValidationException,
+)
 
 from ..job_limits import SweepJobLimits
 from ..queue_settings import QueueSettings
@@ -40,7 +45,9 @@ from .search_space import (
 )
 
 # pylint: disable=unnecessary-lambda
-SAMPLING_ALGORITHM_TO_REST_CONSTRUCTOR: Dict[SamplingAlgorithmType, Type[RestSamplingAlgorithm]] = {
+SAMPLING_ALGORITHM_TO_REST_CONSTRUCTOR: Dict[
+    SamplingAlgorithmType, Type[RestSamplingAlgorithm]
+] = {
     SamplingAlgorithmType.RANDOM: RestRandomSamplingAlgorithm,
     SamplingAlgorithmType.GRID: RestGridSamplingAlgorithm,
     SamplingAlgorithmType.BAYESIAN: RestBayesianSamplingAlgorithm,
@@ -62,12 +69,23 @@ class ParameterizedSweep:
         limits: Optional[SweepJobLimits] = None,
         sampling_algorithm: Optional[Union[str, SamplingAlgorithm]] = None,
         objective: Optional[Union[Dict, Objective]] = None,
-        early_termination: Optional[Union[BanditPolicy, MedianStoppingPolicy, TruncationSelectionPolicy]] = None,
+        early_termination: Optional[
+            Union[BanditPolicy, MedianStoppingPolicy, TruncationSelectionPolicy]
+        ] = None,
         search_space: Optional[
             Dict[
                 str,
                 Union[
-                    Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+                    Choice,
+                    LogNormal,
+                    LogUniform,
+                    Normal,
+                    QLogNormal,
+                    QLogUniform,
+                    QNormal,
+                    QUniform,
+                    Randint,
+                    Uniform,
                 ],
             ]
         ] = None,
@@ -164,7 +182,9 @@ class ParameterizedSweep:
             if trial_timeout is not None:
                 self.limits.trial_timeout = trial_timeout
 
-    def set_objective(self, *, goal: Optional[str] = None, primary_metric: Optional[str] = None) -> None:
+    def set_objective(
+        self, *, goal: Optional[str] = None, primary_metric: Optional[str] = None
+    ) -> None:
         """Set the sweep object.. Leave parameters as None if you don't want to update corresponding values.
 
         :keyword goal: Defines supported metric goals for hyperparameter tuning. Acceptable values are:
@@ -192,7 +212,9 @@ class ParameterizedSweep:
         return self._sampling_algorithm
 
     @sampling_algorithm.setter
-    def sampling_algorithm(self, value: Optional[Union[SamplingAlgorithm, str]] = None) -> None:
+    def sampling_algorithm(
+        self, value: Optional[Union[SamplingAlgorithm, str]] = None
+    ) -> None:
         """Set sampling algorithm for sweep job.
 
         :param value: Sampling algorithm for sweep job.
@@ -202,7 +224,10 @@ class ParameterizedSweep:
             self._sampling_algorithm = None
         elif isinstance(value, SamplingAlgorithm):
             self._sampling_algorithm = value
-        elif isinstance(value, str) and value.lower().capitalize() in SAMPLING_ALGORITHM_CONSTRUCTOR:
+        elif (
+            isinstance(value, str)
+            and value.lower().capitalize() in SAMPLING_ALGORITHM_CONSTRUCTOR
+        ):
             self._sampling_algorithm = value
         else:
             msg = f"unsupported sampling algorithm: {value}"
@@ -217,7 +242,9 @@ class ParameterizedSweep:
     def _get_rest_sampling_algorithm(self) -> RestSamplingAlgorithm:
         # TODO: self.sampling_algorithm will always return SamplingAlgorithm
         if isinstance(self.sampling_algorithm, SamplingAlgorithm):
-            return self.sampling_algorithm._to_rest_object()  # pylint: disable=protected-access
+            return (
+                self.sampling_algorithm._to_rest_object()
+            )  # pylint: disable=protected-access
 
         if isinstance(self.sampling_algorithm, str):
             return SAMPLING_ALGORITHM_CONSTRUCTOR[  # pylint: disable=protected-access

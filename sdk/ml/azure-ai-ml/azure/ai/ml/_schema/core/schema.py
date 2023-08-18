@@ -14,7 +14,11 @@ from pydash import objects
 
 from azure.ai.ml._schema.core.schema_meta import PatchedBaseSchema, PatchedSchemaMeta
 from azure.ai.ml._utils.utils import load_yaml
-from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, FILE_PREFIX, PARAMS_OVERRIDE_KEY
+from azure.ai.ml.constants._common import (
+    BASE_PATH_CONTEXT_KEY,
+    FILE_PREFIX,
+    PARAMS_OVERRIDE_KEY,
+)
 
 module_logger = logging.getLogger(__name__)
 
@@ -25,8 +29,13 @@ class PathAwareSchema(PatchedBaseSchema, metaclass=PatchedSchemaMeta):
     def __init__(self, *args, **kwargs):
         # this will make context of all PathAwareSchema child class point to one object
         self.context = kwargs.get("context", None)
-        if self.context is None or self.context.get(BASE_PATH_CONTEXT_KEY, None) is None:
-            raise Exception("Base path for reading files is required when building PathAwareSchema")
+        if (
+            self.context is None
+            or self.context.get(BASE_PATH_CONTEXT_KEY, None) is None
+        ):
+            raise Exception(
+                "Base path for reading files is required when building PathAwareSchema"
+            )
         # set old base path, note it's an Path object and point to the same object with
         # self.context.get(BASE_PATH_CONTEXT_KEY)
         self.old_base_path = self.context.get(BASE_PATH_CONTEXT_KEY)

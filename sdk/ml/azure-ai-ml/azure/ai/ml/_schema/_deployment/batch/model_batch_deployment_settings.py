@@ -45,9 +45,15 @@ class ModelBatchDeploymentSettingsSchema(metaclass=PatchedSchemaMeta):
         metadata={"description": "Indicates how batch inferencing will handle output."},
         dump_default=BatchDeploymentOutputAction.APPEND_ROW,
     )
-    output_file_name = fields.Str(metadata={"description": "Customized output file name for append_row output action."})
+    output_file_name = fields.Str(
+        metadata={
+            "description": "Customized output file name for append_row output action."
+        }
+    )
     max_concurrency_per_instance = fields.Int(
-        metadata={"description": "Indicates maximum number of parallelism per instance."}
+        metadata={
+            "description": "Indicates maximum number of parallelism per instance."
+        }
     )
     environment_variables = fields.Dict()
 

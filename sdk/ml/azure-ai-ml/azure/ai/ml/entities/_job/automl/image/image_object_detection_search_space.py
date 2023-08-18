@@ -7,7 +7,9 @@
 
 from typing import Optional, Union
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import ImageModelDistributionSettingsObjectDetection
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    ImageModelDistributionSettingsObjectDetection,
+)
 from azure.ai.ml.entities import (
     Choice,
     LogNormal,
@@ -21,7 +23,10 @@ from azure.ai.ml.entities import (
     Uniform,
 )
 from azure.ai.ml.entities._job.automl.search_space import SearchSpace
-from azure.ai.ml.entities._job.automl.search_space_utils import _convert_from_rest_object, _convert_to_rest_object
+from azure.ai.ml.entities._job.automl.search_space_utils import (
+    _convert_from_rest_object,
+    _convert_to_rest_object,
+)
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 
@@ -597,12 +602,32 @@ class ImageObjectDetectionSearchSpace(RestTranslatableMixin):
         ] = None,
         early_stopping_delay: Optional[
             Union[
-                int, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+                int,
+                Choice,
+                LogNormal,
+                LogUniform,
+                Normal,
+                QLogNormal,
+                QLogUniform,
+                QNormal,
+                QUniform,
+                Randint,
+                Uniform,
             ]
         ] = None,
         early_stopping_patience: Optional[
             Union[
-                int, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+                int,
+                Choice,
+                LogNormal,
+                LogUniform,
+                Normal,
+                QLogNormal,
+                QLogUniform,
+                QNormal,
+                QUniform,
+                Randint,
+                Uniform,
             ]
         ] = None,
         enable_onnx_normalization: Optional[
@@ -622,17 +647,47 @@ class ImageObjectDetectionSearchSpace(RestTranslatableMixin):
         ] = None,
         evaluation_frequency: Optional[
             Union[
-                int, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+                int,
+                Choice,
+                LogNormal,
+                LogUniform,
+                Normal,
+                QLogNormal,
+                QLogUniform,
+                QNormal,
+                QUniform,
+                Randint,
+                Uniform,
             ]
         ] = None,
         gradient_accumulation_step: Optional[
             Union[
-                int, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+                int,
+                Choice,
+                LogNormal,
+                LogUniform,
+                Normal,
+                QLogNormal,
+                QLogUniform,
+                QNormal,
+                QUniform,
+                Randint,
+                Uniform,
             ]
         ] = None,
         layers_to_freeze: Optional[
             Union[
-                int, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+                int,
+                Choice,
+                LogNormal,
+                LogUniform,
+                Normal,
+                QLogNormal,
+                QLogUniform,
+                QNormal,
+                QUniform,
+                Randint,
+                Uniform,
             ]
         ] = None,
         learning_rate: Optional[
@@ -652,12 +707,32 @@ class ImageObjectDetectionSearchSpace(RestTranslatableMixin):
         ] = None,
         learning_rate_scheduler: Optional[
             Union[
-                str, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+                str,
+                Choice,
+                LogNormal,
+                LogUniform,
+                Normal,
+                QLogNormal,
+                QLogUniform,
+                QNormal,
+                QUniform,
+                Randint,
+                Uniform,
             ]
         ] = None,
         model_name: Optional[
             Union[
-                str, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+                str,
+                Choice,
+                LogNormal,
+                LogUniform,
+                Normal,
+                QLogNormal,
+                QLogUniform,
+                QNormal,
+                QUniform,
+                Randint,
+                Uniform,
             ]
         ] = None,
         momentum: Optional[
@@ -692,22 +767,62 @@ class ImageObjectDetectionSearchSpace(RestTranslatableMixin):
         ] = None,
         number_of_epochs: Optional[
             Union[
-                int, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+                int,
+                Choice,
+                LogNormal,
+                LogUniform,
+                Normal,
+                QLogNormal,
+                QLogUniform,
+                QNormal,
+                QUniform,
+                Randint,
+                Uniform,
             ]
         ] = None,
         number_of_workers: Optional[
             Union[
-                int, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+                int,
+                Choice,
+                LogNormal,
+                LogUniform,
+                Normal,
+                QLogNormal,
+                QLogUniform,
+                QNormal,
+                QUniform,
+                Randint,
+                Uniform,
             ]
         ] = None,
         optimizer: Optional[
             Union[
-                str, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+                str,
+                Choice,
+                LogNormal,
+                LogUniform,
+                Normal,
+                QLogNormal,
+                QLogUniform,
+                QNormal,
+                QUniform,
+                Randint,
+                Uniform,
             ]
         ] = None,
         random_seed: Optional[
             Union[
-                int, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+                int,
+                Choice,
+                LogNormal,
+                LogUniform,
+                Normal,
+                QLogNormal,
+                QLogUniform,
+                QNormal,
+                QUniform,
+                Randint,
+                Uniform,
             ]
         ] = None,
         step_lr_gamma: Optional[
@@ -727,17 +842,47 @@ class ImageObjectDetectionSearchSpace(RestTranslatableMixin):
         ] = None,
         step_lr_step_size: Optional[
             Union[
-                int, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+                int,
+                Choice,
+                LogNormal,
+                LogUniform,
+                Normal,
+                QLogNormal,
+                QLogUniform,
+                QNormal,
+                QUniform,
+                Randint,
+                Uniform,
             ]
         ] = None,
         training_batch_size: Optional[
             Union[
-                int, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+                int,
+                Choice,
+                LogNormal,
+                LogUniform,
+                Normal,
+                QLogNormal,
+                QLogUniform,
+                QNormal,
+                QUniform,
+                Randint,
+                Uniform,
             ]
         ] = None,
         validation_batch_size: Optional[
             Union[
-                int, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+                int,
+                Choice,
+                LogNormal,
+                LogUniform,
+                Normal,
+                QLogNormal,
+                QLogUniform,
+                QNormal,
+                QUniform,
+                Randint,
+                Uniform,
             ]
         ] = None,
         warmup_cosine_lr_cycles: Optional[
@@ -757,7 +902,17 @@ class ImageObjectDetectionSearchSpace(RestTranslatableMixin):
         ] = None,
         warmup_cosine_lr_warmup_epochs: Optional[
             Union[
-                int, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+                int,
+                Choice,
+                LogNormal,
+                LogUniform,
+                Normal,
+                QLogNormal,
+                QLogUniform,
+                QNormal,
+                QUniform,
+                Randint,
+                Uniform,
             ]
         ] = None,
         weight_decay: Optional[
@@ -777,7 +932,17 @@ class ImageObjectDetectionSearchSpace(RestTranslatableMixin):
         ] = None,
         box_detections_per_image: Optional[
             Union[
-                int, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+                int,
+                Choice,
+                LogNormal,
+                LogUniform,
+                Normal,
+                QLogNormal,
+                QLogUniform,
+                QNormal,
+                QUniform,
+                Randint,
+                Uniform,
             ]
         ] = None,
         box_score_threshold: Optional[
@@ -797,22 +962,62 @@ class ImageObjectDetectionSearchSpace(RestTranslatableMixin):
         ] = None,
         image_size: Optional[
             Union[
-                int, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+                int,
+                Choice,
+                LogNormal,
+                LogUniform,
+                Normal,
+                QLogNormal,
+                QLogUniform,
+                QNormal,
+                QUniform,
+                Randint,
+                Uniform,
             ]
         ] = None,
         max_size: Optional[
             Union[
-                int, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+                int,
+                Choice,
+                LogNormal,
+                LogUniform,
+                Normal,
+                QLogNormal,
+                QLogUniform,
+                QNormal,
+                QUniform,
+                Randint,
+                Uniform,
             ]
         ] = None,
         min_size: Optional[
             Union[
-                int, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+                int,
+                Choice,
+                LogNormal,
+                LogUniform,
+                Normal,
+                QLogNormal,
+                QLogUniform,
+                QNormal,
+                QUniform,
+                Randint,
+                Uniform,
             ]
         ] = None,
         model_size: Optional[
             Union[
-                str, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+                str,
+                Choice,
+                LogNormal,
+                LogUniform,
+                Normal,
+                QLogNormal,
+                QLogUniform,
+                QNormal,
+                QUniform,
+                Randint,
+                Uniform,
             ]
         ] = None,
         multi_scale: Optional[
@@ -847,7 +1052,17 @@ class ImageObjectDetectionSearchSpace(RestTranslatableMixin):
         ] = None,
         tile_grid_size: Optional[
             Union[
-                str, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+                str,
+                Choice,
+                LogNormal,
+                LogUniform,
+                Normal,
+                QLogNormal,
+                QLogUniform,
+                QNormal,
+                QUniform,
+                Randint,
+                Uniform,
             ]
         ] = None,
         tile_overlap_ratio: Optional[
@@ -897,7 +1112,17 @@ class ImageObjectDetectionSearchSpace(RestTranslatableMixin):
         ] = None,
         validation_metric_type: Optional[
             Union[
-                str, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+                str,
+                Choice,
+                LogNormal,
+                LogUniform,
+                Normal,
+                QLogNormal,
+                QLogUniform,
+                QNormal,
+                QUniform,
+                Randint,
+                Uniform,
             ]
         ] = None,
     ) -> None:
@@ -944,13 +1169,25 @@ class ImageObjectDetectionSearchSpace(RestTranslatableMixin):
 
     def _to_rest_object(self) -> ImageModelDistributionSettingsObjectDetection:
         return ImageModelDistributionSettingsObjectDetection(
-            ams_gradient=_convert_to_rest_object(self.ams_gradient) if self.ams_gradient is not None else None,
-            beta1=_convert_to_rest_object(self.beta1) if self.beta1 is not None else None,
-            beta2=_convert_to_rest_object(self.beta2) if self.beta2 is not None else None,
-            distributed=_convert_to_rest_object(self.distributed) if self.distributed is not None else None,
-            early_stopping=_convert_to_rest_object(self.early_stopping) if self.early_stopping is not None else None,
+            ams_gradient=_convert_to_rest_object(self.ams_gradient)
+            if self.ams_gradient is not None
+            else None,
+            beta1=_convert_to_rest_object(self.beta1)
+            if self.beta1 is not None
+            else None,
+            beta2=_convert_to_rest_object(self.beta2)
+            if self.beta2 is not None
+            else None,
+            distributed=_convert_to_rest_object(self.distributed)
+            if self.distributed is not None
+            else None,
+            early_stopping=_convert_to_rest_object(self.early_stopping)
+            if self.early_stopping is not None
+            else None,
             early_stopping_delay=(
-                _convert_to_rest_object(self.early_stopping_delay) if self.early_stopping_delay is not None else None
+                _convert_to_rest_object(self.early_stopping_delay)
+                if self.early_stopping_delay is not None
+                else None
             ),
             early_stopping_patience=(
                 _convert_to_rest_object(self.early_stopping_patience)
@@ -963,7 +1200,9 @@ class ImageObjectDetectionSearchSpace(RestTranslatableMixin):
                 else None
             ),
             evaluation_frequency=(
-                _convert_to_rest_object(self.evaluation_frequency) if self.evaluation_frequency is not None else None
+                _convert_to_rest_object(self.evaluation_frequency)
+                if self.evaluation_frequency is not None
+                else None
             ),
             gradient_accumulation_step=(
                 _convert_to_rest_object(self.gradient_accumulation_step)
@@ -971,34 +1210,60 @@ class ImageObjectDetectionSearchSpace(RestTranslatableMixin):
                 else None
             ),
             layers_to_freeze=(
-                _convert_to_rest_object(self.layers_to_freeze) if self.layers_to_freeze is not None else None
+                _convert_to_rest_object(self.layers_to_freeze)
+                if self.layers_to_freeze is not None
+                else None
             ),
-            learning_rate=_convert_to_rest_object(self.learning_rate) if self.learning_rate is not None else None,
+            learning_rate=_convert_to_rest_object(self.learning_rate)
+            if self.learning_rate is not None
+            else None,
             learning_rate_scheduler=(
                 _convert_to_rest_object(self.learning_rate_scheduler)
                 if self.learning_rate_scheduler is not None
                 else None
             ),
-            model_name=_convert_to_rest_object(self.model_name) if self.model_name is not None else None,
-            momentum=_convert_to_rest_object(self.momentum) if self.momentum is not None else None,
-            nesterov=_convert_to_rest_object(self.nesterov) if self.nesterov is not None else None,
+            model_name=_convert_to_rest_object(self.model_name)
+            if self.model_name is not None
+            else None,
+            momentum=_convert_to_rest_object(self.momentum)
+            if self.momentum is not None
+            else None,
+            nesterov=_convert_to_rest_object(self.nesterov)
+            if self.nesterov is not None
+            else None,
             number_of_epochs=(
-                _convert_to_rest_object(self.number_of_epochs) if self.number_of_epochs is not None else None
+                _convert_to_rest_object(self.number_of_epochs)
+                if self.number_of_epochs is not None
+                else None
             ),
             number_of_workers=(
-                _convert_to_rest_object(self.number_of_workers) if self.number_of_workers is not None else None
+                _convert_to_rest_object(self.number_of_workers)
+                if self.number_of_workers is not None
+                else None
             ),
-            optimizer=_convert_to_rest_object(self.optimizer) if self.optimizer is not None else None,
-            random_seed=_convert_to_rest_object(self.random_seed) if self.random_seed is not None else None,
-            step_lr_gamma=_convert_to_rest_object(self.step_lr_gamma) if self.step_lr_gamma is not None else None,
+            optimizer=_convert_to_rest_object(self.optimizer)
+            if self.optimizer is not None
+            else None,
+            random_seed=_convert_to_rest_object(self.random_seed)
+            if self.random_seed is not None
+            else None,
+            step_lr_gamma=_convert_to_rest_object(self.step_lr_gamma)
+            if self.step_lr_gamma is not None
+            else None,
             step_lr_step_size=(
-                _convert_to_rest_object(self.step_lr_step_size) if self.step_lr_step_size is not None else None
+                _convert_to_rest_object(self.step_lr_step_size)
+                if self.step_lr_step_size is not None
+                else None
             ),
             training_batch_size=(
-                _convert_to_rest_object(self.training_batch_size) if self.training_batch_size is not None else None
+                _convert_to_rest_object(self.training_batch_size)
+                if self.training_batch_size is not None
+                else None
             ),
             validation_batch_size=(
-                _convert_to_rest_object(self.validation_batch_size) if self.validation_batch_size is not None else None
+                _convert_to_rest_object(self.validation_batch_size)
+                if self.validation_batch_size is not None
+                else None
             ),
             warmup_cosine_lr_cycles=(
                 _convert_to_rest_object(self.warmup_cosine_lr_cycles)
@@ -1010,26 +1275,46 @@ class ImageObjectDetectionSearchSpace(RestTranslatableMixin):
                 if self.warmup_cosine_lr_warmup_epochs is not None
                 else None
             ),
-            weight_decay=_convert_to_rest_object(self.weight_decay) if self.weight_decay is not None else None,
+            weight_decay=_convert_to_rest_object(self.weight_decay)
+            if self.weight_decay is not None
+            else None,
             box_detections_per_image=(
                 _convert_to_rest_object(self.box_detections_per_image)
                 if self.box_detections_per_image is not None
                 else None
             ),
             box_score_threshold=(
-                _convert_to_rest_object(self.box_score_threshold) if self.box_score_threshold is not None else None
+                _convert_to_rest_object(self.box_score_threshold)
+                if self.box_score_threshold is not None
+                else None
             ),
-            image_size=_convert_to_rest_object(self.image_size) if self.image_size is not None else None,
-            max_size=_convert_to_rest_object(self.max_size) if self.max_size is not None else None,
-            min_size=_convert_to_rest_object(self.min_size) if self.min_size is not None else None,
-            model_size=_convert_to_rest_object(self.model_size) if self.model_size is not None else None,
-            multi_scale=_convert_to_rest_object(self.multi_scale) if self.multi_scale is not None else None,
+            image_size=_convert_to_rest_object(self.image_size)
+            if self.image_size is not None
+            else None,
+            max_size=_convert_to_rest_object(self.max_size)
+            if self.max_size is not None
+            else None,
+            min_size=_convert_to_rest_object(self.min_size)
+            if self.min_size is not None
+            else None,
+            model_size=_convert_to_rest_object(self.model_size)
+            if self.model_size is not None
+            else None,
+            multi_scale=_convert_to_rest_object(self.multi_scale)
+            if self.multi_scale is not None
+            else None,
             nms_iou_threshold=(
-                _convert_to_rest_object(self.nms_iou_threshold) if self.nms_iou_threshold is not None else None
+                _convert_to_rest_object(self.nms_iou_threshold)
+                if self.nms_iou_threshold is not None
+                else None
             ),
-            tile_grid_size=_convert_to_rest_object(self.tile_grid_size) if self.tile_grid_size is not None else None,
+            tile_grid_size=_convert_to_rest_object(self.tile_grid_size)
+            if self.tile_grid_size is not None
+            else None,
             tile_overlap_ratio=(
-                _convert_to_rest_object(self.tile_overlap_ratio) if self.tile_overlap_ratio is not None else None
+                _convert_to_rest_object(self.tile_overlap_ratio)
+                if self.tile_overlap_ratio is not None
+                else None
             ),
             tile_predictions_nms_threshold=(
                 _convert_to_rest_object(self.tile_predictions_nms_threshold)
@@ -1049,15 +1334,29 @@ class ImageObjectDetectionSearchSpace(RestTranslatableMixin):
         )
 
     @classmethod
-    def _from_rest_object(cls, obj: ImageModelDistributionSettingsObjectDetection) -> "ImageObjectDetectionSearchSpace":
+    def _from_rest_object(
+        cls, obj: ImageModelDistributionSettingsObjectDetection
+    ) -> "ImageObjectDetectionSearchSpace":
         return cls(
-            ams_gradient=_convert_from_rest_object(obj.ams_gradient) if obj.ams_gradient is not None else None,
-            beta1=_convert_from_rest_object(obj.beta1) if obj.beta1 is not None else None,
-            beta2=_convert_from_rest_object(obj.beta2) if obj.beta2 is not None else None,
-            distributed=_convert_from_rest_object(obj.distributed) if obj.distributed is not None else None,
-            early_stopping=_convert_from_rest_object(obj.early_stopping) if obj.early_stopping is not None else None,
+            ams_gradient=_convert_from_rest_object(obj.ams_gradient)
+            if obj.ams_gradient is not None
+            else None,
+            beta1=_convert_from_rest_object(obj.beta1)
+            if obj.beta1 is not None
+            else None,
+            beta2=_convert_from_rest_object(obj.beta2)
+            if obj.beta2 is not None
+            else None,
+            distributed=_convert_from_rest_object(obj.distributed)
+            if obj.distributed is not None
+            else None,
+            early_stopping=_convert_from_rest_object(obj.early_stopping)
+            if obj.early_stopping is not None
+            else None,
             early_stopping_delay=(
-                _convert_from_rest_object(obj.early_stopping_delay) if obj.early_stopping_delay is not None else None
+                _convert_from_rest_object(obj.early_stopping_delay)
+                if obj.early_stopping_delay is not None
+                else None
             ),
             early_stopping_patience=(
                 _convert_from_rest_object(obj.early_stopping_patience)
@@ -1070,7 +1369,9 @@ class ImageObjectDetectionSearchSpace(RestTranslatableMixin):
                 else None
             ),
             evaluation_frequency=(
-                _convert_from_rest_object(obj.evaluation_frequency) if obj.evaluation_frequency is not None else None
+                _convert_from_rest_object(obj.evaluation_frequency)
+                if obj.evaluation_frequency is not None
+                else None
             ),
             gradient_accumulation_step=(
                 _convert_from_rest_object(obj.gradient_accumulation_step)
@@ -1078,34 +1379,60 @@ class ImageObjectDetectionSearchSpace(RestTranslatableMixin):
                 else None
             ),
             layers_to_freeze=(
-                _convert_from_rest_object(obj.layers_to_freeze) if obj.layers_to_freeze is not None else None
+                _convert_from_rest_object(obj.layers_to_freeze)
+                if obj.layers_to_freeze is not None
+                else None
             ),
-            learning_rate=_convert_from_rest_object(obj.learning_rate) if obj.learning_rate is not None else None,
+            learning_rate=_convert_from_rest_object(obj.learning_rate)
+            if obj.learning_rate is not None
+            else None,
             learning_rate_scheduler=(
                 _convert_from_rest_object(obj.learning_rate_scheduler)
                 if obj.learning_rate_scheduler is not None
                 else None
             ),
-            model_name=_convert_from_rest_object(obj.model_name) if obj.model_name is not None else None,
-            momentum=_convert_from_rest_object(obj.momentum) if obj.momentum is not None else None,
-            nesterov=_convert_from_rest_object(obj.nesterov) if obj.nesterov is not None else None,
+            model_name=_convert_from_rest_object(obj.model_name)
+            if obj.model_name is not None
+            else None,
+            momentum=_convert_from_rest_object(obj.momentum)
+            if obj.momentum is not None
+            else None,
+            nesterov=_convert_from_rest_object(obj.nesterov)
+            if obj.nesterov is not None
+            else None,
             number_of_epochs=(
-                _convert_from_rest_object(obj.number_of_epochs) if obj.number_of_epochs is not None else None
+                _convert_from_rest_object(obj.number_of_epochs)
+                if obj.number_of_epochs is not None
+                else None
             ),
             number_of_workers=(
-                _convert_from_rest_object(obj.number_of_workers) if obj.number_of_workers is not None else None
+                _convert_from_rest_object(obj.number_of_workers)
+                if obj.number_of_workers is not None
+                else None
             ),
-            optimizer=_convert_from_rest_object(obj.optimizer) if obj.optimizer is not None else None,
-            random_seed=_convert_from_rest_object(obj.random_seed) if obj.random_seed is not None else None,
-            step_lr_gamma=_convert_from_rest_object(obj.step_lr_gamma) if obj.step_lr_gamma is not None else None,
+            optimizer=_convert_from_rest_object(obj.optimizer)
+            if obj.optimizer is not None
+            else None,
+            random_seed=_convert_from_rest_object(obj.random_seed)
+            if obj.random_seed is not None
+            else None,
+            step_lr_gamma=_convert_from_rest_object(obj.step_lr_gamma)
+            if obj.step_lr_gamma is not None
+            else None,
             step_lr_step_size=(
-                _convert_from_rest_object(obj.step_lr_step_size) if obj.step_lr_step_size is not None else None
+                _convert_from_rest_object(obj.step_lr_step_size)
+                if obj.step_lr_step_size is not None
+                else None
             ),
             training_batch_size=(
-                _convert_from_rest_object(obj.training_batch_size) if obj.training_batch_size is not None else None
+                _convert_from_rest_object(obj.training_batch_size)
+                if obj.training_batch_size is not None
+                else None
             ),
             validation_batch_size=(
-                _convert_from_rest_object(obj.validation_batch_size) if obj.validation_batch_size is not None else None
+                _convert_from_rest_object(obj.validation_batch_size)
+                if obj.validation_batch_size is not None
+                else None
             ),
             warmup_cosine_lr_cycles=(
                 _convert_from_rest_object(obj.warmup_cosine_lr_cycles)
@@ -1117,26 +1444,46 @@ class ImageObjectDetectionSearchSpace(RestTranslatableMixin):
                 if obj.warmup_cosine_lr_warmup_epochs is not None
                 else None
             ),
-            weight_decay=_convert_from_rest_object(obj.weight_decay) if obj.weight_decay is not None else None,
+            weight_decay=_convert_from_rest_object(obj.weight_decay)
+            if obj.weight_decay is not None
+            else None,
             box_detections_per_image=(
                 _convert_from_rest_object(obj.box_detections_per_image)
                 if obj.box_detections_per_image is not None
                 else None
             ),
             box_score_threshold=(
-                _convert_from_rest_object(obj.box_score_threshold) if obj.box_score_threshold is not None else None
+                _convert_from_rest_object(obj.box_score_threshold)
+                if obj.box_score_threshold is not None
+                else None
             ),
-            image_size=_convert_from_rest_object(obj.image_size) if obj.image_size is not None else None,
-            max_size=_convert_from_rest_object(obj.max_size) if obj.max_size is not None else None,
-            min_size=_convert_from_rest_object(obj.min_size) if obj.min_size is not None else None,
-            model_size=_convert_from_rest_object(obj.model_size) if obj.model_size is not None else None,
-            multi_scale=_convert_from_rest_object(obj.multi_scale) if obj.multi_scale is not None else None,
+            image_size=_convert_from_rest_object(obj.image_size)
+            if obj.image_size is not None
+            else None,
+            max_size=_convert_from_rest_object(obj.max_size)
+            if obj.max_size is not None
+            else None,
+            min_size=_convert_from_rest_object(obj.min_size)
+            if obj.min_size is not None
+            else None,
+            model_size=_convert_from_rest_object(obj.model_size)
+            if obj.model_size is not None
+            else None,
+            multi_scale=_convert_from_rest_object(obj.multi_scale)
+            if obj.multi_scale is not None
+            else None,
             nms_iou_threshold=(
-                _convert_from_rest_object(obj.nms_iou_threshold) if obj.nms_iou_threshold is not None else None
+                _convert_from_rest_object(obj.nms_iou_threshold)
+                if obj.nms_iou_threshold is not None
+                else None
             ),
-            tile_grid_size=_convert_from_rest_object(obj.tile_grid_size) if obj.tile_grid_size is not None else None,
+            tile_grid_size=_convert_from_rest_object(obj.tile_grid_size)
+            if obj.tile_grid_size is not None
+            else None,
             tile_overlap_ratio=(
-                _convert_from_rest_object(obj.tile_overlap_ratio) if obj.tile_overlap_ratio is not None else None
+                _convert_from_rest_object(obj.tile_overlap_ratio)
+                if obj.tile_overlap_ratio is not None
+                else None
             ),
             tile_predictions_nms_threshold=(
                 _convert_from_rest_object(obj.tile_predictions_nms_threshold)
@@ -1156,56 +1503,96 @@ class ImageObjectDetectionSearchSpace(RestTranslatableMixin):
         )
 
     @classmethod
-    def _from_search_space_object(cls, obj: SearchSpace) -> "ImageObjectDetectionSearchSpace":
+    def _from_search_space_object(
+        cls, obj: SearchSpace
+    ) -> "ImageObjectDetectionSearchSpace":
         return cls(
             ams_gradient=obj.ams_gradient if hasattr(obj, "ams_gradient") else None,
             beta1=obj.beta1 if hasattr(obj, "beta1") else None,
             beta2=obj.beta2 if hasattr(obj, "beta2") else None,
             distributed=obj.distributed if hasattr(obj, "distributed") else None,
-            early_stopping=obj.early_stopping if hasattr(obj, "early_stopping") else None,
-            early_stopping_delay=obj.early_stopping_delay if hasattr(obj, "early_stopping_delay") else None,
-            early_stopping_patience=obj.early_stopping_patience if hasattr(obj, "early_stopping_patience") else None,
+            early_stopping=obj.early_stopping
+            if hasattr(obj, "early_stopping")
+            else None,
+            early_stopping_delay=obj.early_stopping_delay
+            if hasattr(obj, "early_stopping_delay")
+            else None,
+            early_stopping_patience=obj.early_stopping_patience
+            if hasattr(obj, "early_stopping_patience")
+            else None,
             enable_onnx_normalization=obj.enable_onnx_normalization
             if hasattr(obj, "enable_onnx_normalization")
             else None,
-            evaluation_frequency=obj.evaluation_frequency if hasattr(obj, "evaluation_frequency") else None,
+            evaluation_frequency=obj.evaluation_frequency
+            if hasattr(obj, "evaluation_frequency")
+            else None,
             gradient_accumulation_step=obj.gradient_accumulation_step
             if hasattr(obj, "gradient_accumulation_step")
             else None,
-            layers_to_freeze=obj.layers_to_freeze if hasattr(obj, "layers_to_freeze") else None,
+            layers_to_freeze=obj.layers_to_freeze
+            if hasattr(obj, "layers_to_freeze")
+            else None,
             learning_rate=obj.learning_rate if hasattr(obj, "learning_rate") else None,
-            learning_rate_scheduler=obj.learning_rate_scheduler if hasattr(obj, "learning_rate_scheduler") else None,
+            learning_rate_scheduler=obj.learning_rate_scheduler
+            if hasattr(obj, "learning_rate_scheduler")
+            else None,
             model_name=obj.model_name if hasattr(obj, "model_name") else None,
             momentum=obj.momentum if hasattr(obj, "momentum") else None,
             nesterov=obj.nesterov if hasattr(obj, "nesterov") else None,
-            number_of_epochs=obj.number_of_epochs if hasattr(obj, "number_of_epochs") else None,
-            number_of_workers=obj.number_of_workers if hasattr(obj, "number_of_workers") else None,
+            number_of_epochs=obj.number_of_epochs
+            if hasattr(obj, "number_of_epochs")
+            else None,
+            number_of_workers=obj.number_of_workers
+            if hasattr(obj, "number_of_workers")
+            else None,
             optimizer=obj.optimizer if hasattr(obj, "optimizer") else None,
             random_seed=obj.random_seed if hasattr(obj, "random_seed") else None,
             step_lr_gamma=obj.step_lr_gamma if hasattr(obj, "step_lr_gamma") else None,
-            step_lr_step_size=obj.step_lr_step_size if hasattr(obj, "step_lr_step_size") else None,
-            training_batch_size=obj.training_batch_size if hasattr(obj, "training_batch_size") else None,
-            validation_batch_size=obj.validation_batch_size if hasattr(obj, "validation_batch_size") else None,
-            warmup_cosine_lr_cycles=obj.warmup_cosine_lr_cycles if hasattr(obj, "warmup_cosine_lr_cycles") else None,
+            step_lr_step_size=obj.step_lr_step_size
+            if hasattr(obj, "step_lr_step_size")
+            else None,
+            training_batch_size=obj.training_batch_size
+            if hasattr(obj, "training_batch_size")
+            else None,
+            validation_batch_size=obj.validation_batch_size
+            if hasattr(obj, "validation_batch_size")
+            else None,
+            warmup_cosine_lr_cycles=obj.warmup_cosine_lr_cycles
+            if hasattr(obj, "warmup_cosine_lr_cycles")
+            else None,
             warmup_cosine_lr_warmup_epochs=obj.warmup_cosine_lr_warmup_epochs
             if hasattr(obj, "warmup_cosine_lr_warmup_epochs")
             else None,
             weight_decay=obj.weight_decay if hasattr(obj, "weight_decay") else None,
-            box_detections_per_image=obj.box_detections_per_image if hasattr(obj, "box_detections_per_image") else None,
-            box_score_threshold=obj.box_score_threshold if hasattr(obj, "box_score_threshold") else None,
+            box_detections_per_image=obj.box_detections_per_image
+            if hasattr(obj, "box_detections_per_image")
+            else None,
+            box_score_threshold=obj.box_score_threshold
+            if hasattr(obj, "box_score_threshold")
+            else None,
             image_size=obj.image_size if hasattr(obj, "image_size") else None,
             max_size=obj.max_size if hasattr(obj, "max_size") else None,
             min_size=obj.min_size if hasattr(obj, "min_size") else None,
             model_size=obj.model_size if hasattr(obj, "model_size") else None,
             multi_scale=obj.multi_scale if hasattr(obj, "multi_scale") else None,
-            nms_iou_threshold=obj.nms_iou_threshold if hasattr(obj, "nms_iou_threshold") else None,
-            tile_grid_size=obj.tile_grid_size if hasattr(obj, "tile_grid_size") else None,
-            tile_overlap_ratio=obj.tile_overlap_ratio if hasattr(obj, "tile_overlap_ratio") else None,
+            nms_iou_threshold=obj.nms_iou_threshold
+            if hasattr(obj, "nms_iou_threshold")
+            else None,
+            tile_grid_size=obj.tile_grid_size
+            if hasattr(obj, "tile_grid_size")
+            else None,
+            tile_overlap_ratio=obj.tile_overlap_ratio
+            if hasattr(obj, "tile_overlap_ratio")
+            else None,
             tile_predictions_nms_threshold=obj.tile_predictions_nms_threshold
             if hasattr(obj, "tile_predictions_nms_threshold")
             else None,
-            validation_iou_threshold=obj.validation_iou_threshold if hasattr(obj, "validation_iou_threshold") else None,
-            validation_metric_type=obj.validation_metric_type if hasattr(obj, "validation_metric_type") else None,
+            validation_iou_threshold=obj.validation_iou_threshold
+            if hasattr(obj, "validation_iou_threshold")
+            else None,
+            validation_metric_type=obj.validation_metric_type
+            if hasattr(obj, "validation_metric_type")
+            else None,
         )
 
     def __eq__(self, other: object) -> bool:
@@ -1238,7 +1625,8 @@ class ImageObjectDetectionSearchSpace(RestTranslatableMixin):
             and self.training_batch_size == other.training_batch_size
             and self.validation_batch_size == other.validation_batch_size
             and self.warmup_cosine_lr_cycles == other.warmup_cosine_lr_cycles
-            and self.warmup_cosine_lr_warmup_epochs == other.warmup_cosine_lr_warmup_epochs
+            and self.warmup_cosine_lr_warmup_epochs
+            == other.warmup_cosine_lr_warmup_epochs
             and self.weight_decay == other.weight_decay
             and self.box_detections_per_image == other.box_detections_per_image
             and self.box_score_threshold == other.box_score_threshold
@@ -1250,7 +1638,8 @@ class ImageObjectDetectionSearchSpace(RestTranslatableMixin):
             and self.nms_iou_threshold == other.nms_iou_threshold
             and self.tile_grid_size == other.tile_grid_size
             and self.tile_overlap_ratio == other.tile_overlap_ratio
-            and self.tile_predictions_nms_threshold == other.tile_predictions_nms_threshold
+            and self.tile_predictions_nms_threshold
+            == other.tile_predictions_nms_threshold
             and self.validation_iou_threshold == other.validation_iou_threshold
             and self.validation_metric_type == other.validation_metric_type
         )

@@ -21,7 +21,9 @@ class Parallel(Command):
         kwargs.pop("type", None)
         super(Parallel, self).__init__(type=NodeType.PARALLEL, **kwargs)
         self._init = True
-        self._max_concurrency_per_instance = kwargs.pop("max_concurrency_per_instance", None)
+        self._max_concurrency_per_instance = kwargs.pop(
+            "max_concurrency_per_instance", None
+        )
         self._error_threshold = kwargs.pop("error_threshold", None)
         self._mini_batch_size = kwargs.pop("mini_batch_size", None)
         self._partition_keys = kwargs.pop("partition_keys", None)

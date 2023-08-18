@@ -4,7 +4,9 @@
 
 from marshmallow import fields
 
-from azure.ai.ml._schema._utils.data_binding_expression import support_data_binding_expression_for_fields
+from azure.ai.ml._schema._utils.data_binding_expression import (
+    support_data_binding_expression_for_fields,
+)
 from azure.ai.ml._schema.core.fields import NestedField, PrimitiveValueField, UnionField
 from azure.ai.ml._schema.job.input_output_entry import (
     DataInputSchema,
@@ -37,7 +39,12 @@ def InputsField(*, support_databinding: bool = False, **kwargs):
 
     return fields.Dict(
         keys=fields.Str(),
-        values=UnionField(value_fields, metadata={"description": "Inputs to a job."}, is_strict=True, **kwargs),
+        values=UnionField(
+            value_fields,
+            metadata={"description": "Inputs to a job."},
+            is_strict=True,
+            **kwargs
+        ),
     )
 
 

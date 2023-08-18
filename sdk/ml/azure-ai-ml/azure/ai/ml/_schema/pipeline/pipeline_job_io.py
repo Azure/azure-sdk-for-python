@@ -27,7 +27,9 @@ class OutputBindingStr(fields.Field):
         return schema
 
     def _serialize(self, value, attr, obj, **kwargs):
-        if isinstance(value, str) and re.match(ComponentJobConstants.OUTPUT_PATTERN, value):
+        if isinstance(value, str) and re.match(
+            ComponentJobConstants.OUTPUT_PATTERN, value
+        ):
             return value
         # _to_job_output in io.py will return Output
         # add this branch to judge whether original value is a simple binding or Output
@@ -48,6 +50,8 @@ class OutputBindingStr(fields.Field):
             and "version" not in value
         ):
             value = value["path"]
-        if isinstance(value, str) and re.match(ComponentJobConstants.OUTPUT_PATTERN, value):
+        if isinstance(value, str) and re.match(
+            ComponentJobConstants.OUTPUT_PATTERN, value
+        ):
             return value
         raise ValidationError(f"Invalid output binding string '{value}' passed")

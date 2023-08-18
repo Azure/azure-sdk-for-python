@@ -8,13 +8,25 @@ from os import PathLike
 from pathlib import Path
 from typing import IO, AnyStr, Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2023_06_01_preview.models import ManagedServiceIdentity as RestManagedServiceIdentity
-from azure.ai.ml._restclient.v2023_06_01_preview.models import FeatureStoreSettings as RestFeatureStoreSettings
-from azure.ai.ml._restclient.v2023_06_01_preview.models import Workspace as RestWorkspace
-from azure.ai.ml._restclient.v2023_06_01_preview.models import ManagedNetworkSettings as RestManagedNetwork
+from azure.ai.ml._restclient.v2023_06_01_preview.models import (
+    ManagedServiceIdentity as RestManagedServiceIdentity,
+)
+from azure.ai.ml._restclient.v2023_06_01_preview.models import (
+    FeatureStoreSettings as RestFeatureStoreSettings,
+)
+from azure.ai.ml._restclient.v2023_06_01_preview.models import (
+    Workspace as RestWorkspace,
+)
+from azure.ai.ml._restclient.v2023_06_01_preview.models import (
+    ManagedNetworkSettings as RestManagedNetwork,
+)
 from azure.ai.ml._schema.workspace.workspace import WorkspaceSchema
 from azure.ai.ml._utils.utils import dump_yaml_to_file, is_private_preview_enabled
-from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, WorkspaceResourceConstants
+from azure.ai.ml.constants._common import (
+    BASE_PATH_CONTEXT_KEY,
+    PARAMS_OVERRIDE_KEY,
+    WorkspaceResourceConstants,
+)
 from azure.ai.ml.entities._workspace_hub._constants import PROJECT_WORKSPACE_KIND
 from azure.ai.ml.entities._credentials import IdentityConfiguration
 from azure.ai.ml.entities._resource import Resource
@@ -107,7 +119,9 @@ class Workspace(Resource):
         self.print_as_yaml = True
         self._discovery_url = kwargs.pop("discovery_url", None)
         self._mlflow_tracking_uri = kwargs.pop("mlflow_tracking_uri", None)
-        self._feature_store_settings: Optional[FeatureStoreSettings] = kwargs.pop("feature_store_settings", None)
+        self._feature_store_settings: Optional[FeatureStoreSettings] = kwargs.pop(
+            "feature_store_settings", None
+        )
         super().__init__(name=name, description=description, tags=tags, **kwargs)
 
         self.display_name = display_name
@@ -160,7 +174,9 @@ class Workspace(Resource):
         """
         path = kwargs.pop("path", None)
         yaml_serialized = self._to_dict()
-        dump_yaml_to_file(dest, yaml_serialized, default_flow_style=False, path=path, **kwargs)
+        dump_yaml_to_file(
+            dest, yaml_serialized, default_flow_style=False, path=path, **kwargs
+        )
 
     def _to_dict(self) -> Dict:
         # pylint: disable=no-member
@@ -193,7 +209,8 @@ class Workspace(Resource):
                 key_uri=rest_obj.encryption.key_vault_properties.key_identifier,
             )
             if rest_obj.encryption
-            and rest_obj.encryption.status == WorkspaceResourceConstants.ENCRYPTION_STATUS_ENABLED
+            and rest_obj.encryption.status
+            == WorkspaceResourceConstants.ENCRYPTION_STATUS_ENABLED
             else None
         )
 
@@ -205,7 +222,9 @@ class Workspace(Resource):
         # TODO: remove this once it is included in API response
         managed_network = None
         if hasattr(rest_obj, "managed_network"):
-            if rest_obj.managed_network and isinstance(rest_obj.managed_network, RestManagedNetwork):
+            if rest_obj.managed_network and isinstance(
+                rest_obj.managed_network, RestManagedNetwork
+            ):
                 managed_network = ManagedNetwork._from_rest_object(  # pylint: disable=protected-access
                     rest_obj.managed_network
                 )
@@ -213,7 +232,9 @@ class Workspace(Resource):
         armid_parts = str(rest_obj.id).split("/")
         group = None if len(armid_parts) < 4 else armid_parts[4]
         identity = None
-        if rest_obj.identity and isinstance(rest_obj.identity, RestManagedServiceIdentity):
+        if rest_obj.identity and isinstance(
+            rest_obj.identity, RestManagedServiceIdentity
+        ):
             identity = IdentityConfiguration._from_workspace_rest_object(  # pylint: disable=protected-access
                 rest_obj.identity
             )
@@ -267,7 +288,9 @@ class Workspace(Resource):
     def _to_rest_object(self) -> RestWorkspace:
         feature_store_Settings = None
         if is_private_preview_enabled() and self._feature_store_settings:
-            feature_store_Settings = self._feature_store_settings._to_rest_object()  # pylint: disable=protected-access
+            feature_store_Settings = (
+                self._feature_store_settings._to_rest_object()
+            )  # pylint: disable=protected-access
 
         return RestWorkspace(
             identity=self.identity._to_workspace_rest_object()  # pylint: disable=protected-access

@@ -3,10 +3,18 @@
 # ---------------------------------------------------------
 from abc import ABC
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import BanditPolicy as RestBanditPolicy
-from azure.ai.ml._restclient.v2023_04_01_preview.models import EarlyTerminationPolicy as RestEarlyTerminationPolicy
-from azure.ai.ml._restclient.v2023_04_01_preview.models import EarlyTerminationPolicyType
-from azure.ai.ml._restclient.v2023_04_01_preview.models import MedianStoppingPolicy as RestMedianStoppingPolicy
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    BanditPolicy as RestBanditPolicy,
+)
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    EarlyTerminationPolicy as RestEarlyTerminationPolicy,
+)
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    EarlyTerminationPolicyType,
+)
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    MedianStoppingPolicy as RestMedianStoppingPolicy,
+)
 from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     TruncationSelectionPolicy as RestTruncationSelectionPolicy,
 )
@@ -26,19 +34,27 @@ class EarlyTerminationPolicy(ABC, RestTranslatableMixin):
         self.evaluation_interval = evaluation_interval
 
     @classmethod
-    def _from_rest_object(cls, obj: RestEarlyTerminationPolicy) -> "EarlyTerminationPolicy":
+    def _from_rest_object(
+        cls, obj: RestEarlyTerminationPolicy
+    ) -> "EarlyTerminationPolicy":
         if not obj:
             return None
 
         policy = None
         if obj.policy_type == EarlyTerminationPolicyType.BANDIT:
-            policy = BanditPolicy._from_rest_object(obj)  # pylint: disable=protected-access
+            policy = BanditPolicy._from_rest_object(
+                obj
+            )  # pylint: disable=protected-access
 
         if obj.policy_type == EarlyTerminationPolicyType.MEDIAN_STOPPING:
-            policy = MedianStoppingPolicy._from_rest_object(obj)  # pylint: disable=protected-access
+            policy = MedianStoppingPolicy._from_rest_object(
+                obj
+            )  # pylint: disable=protected-access
 
         if obj.policy_type == EarlyTerminationPolicyType.TRUNCATION_SELECTION:
-            policy = TruncationSelectionPolicy._from_rest_object(obj)  # pylint: disable=protected-access
+            policy = TruncationSelectionPolicy._from_rest_object(
+                obj
+            )  # pylint: disable=protected-access
 
         return policy
 
@@ -79,7 +95,9 @@ class BanditPolicy(EarlyTerminationPolicy):
         slack_amount: float = 0,
         slack_factor: float = 0,
     ) -> None:
-        super().__init__(delay_evaluation=delay_evaluation, evaluation_interval=evaluation_interval)
+        super().__init__(
+            delay_evaluation=delay_evaluation, evaluation_interval=evaluation_interval
+        )
         self.type = EarlyTerminationPolicyType.BANDIT.lower()
         self.slack_factor = slack_factor
         self.slack_amount = slack_amount
@@ -127,12 +145,15 @@ class MedianStoppingPolicy(EarlyTerminationPolicy):
         delay_evaluation: int = 0,
         evaluation_interval: int = 1,
     ) -> None:
-        super().__init__(delay_evaluation=delay_evaluation, evaluation_interval=evaluation_interval)
+        super().__init__(
+            delay_evaluation=delay_evaluation, evaluation_interval=evaluation_interval
+        )
         self.type = camel_to_snake(EarlyTerminationPolicyType.MEDIAN_STOPPING)
 
     def _to_rest_object(self) -> RestMedianStoppingPolicy:
         return RestMedianStoppingPolicy(
-            delay_evaluation=self.delay_evaluation, evaluation_interval=self.evaluation_interval
+            delay_evaluation=self.delay_evaluation,
+            evaluation_interval=self.evaluation_interval,
         )
 
     @classmethod
@@ -172,7 +193,9 @@ class TruncationSelectionPolicy(EarlyTerminationPolicy):
         evaluation_interval: int = 0,
         truncation_percentage: int = 0,
     ) -> None:
-        super().__init__(delay_evaluation=delay_evaluation, evaluation_interval=evaluation_interval)
+        super().__init__(
+            delay_evaluation=delay_evaluation, evaluation_interval=evaluation_interval
+        )
         self.type = camel_to_snake(EarlyTerminationPolicyType.TRUNCATION_SELECTION)
         self.truncation_percentage = truncation_percentage
 
@@ -184,7 +207,9 @@ class TruncationSelectionPolicy(EarlyTerminationPolicy):
         )
 
     @classmethod
-    def _from_rest_object(cls, obj: RestTruncationSelectionPolicy) -> "TruncationSelectionPolicy":
+    def _from_rest_object(
+        cls, obj: RestTruncationSelectionPolicy
+    ) -> "TruncationSelectionPolicy":
         return cls(
             delay_evaluation=obj.delay_evaluation,
             evaluation_interval=obj.evaluation_interval,

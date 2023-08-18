@@ -9,12 +9,17 @@ from os import PathLike
 from pathlib import Path
 from typing import Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import Workspace as RestWorkspace
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    Workspace as RestWorkspace,
+)
 from azure.ai.ml._schema._feature_store.feature_store_schema import FeatureStoreSchema
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
 from azure.ai.ml.entities import CustomerManagedKey, Workspace
-from azure.ai.ml.entities._credentials import IdentityConfiguration, ManagedIdentityConfiguration
+from azure.ai.ml.entities._credentials import (
+    IdentityConfiguration,
+    ManagedIdentityConfiguration,
+)
 from azure.ai.ml.entities._util import load_from_dict
 from azure.ai.ml.entities._workspace.compute_runtime import ComputeRuntime
 from azure.ai.ml.entities._workspace.feature_store_settings import FeatureStoreSettings
@@ -117,10 +122,14 @@ class FeatureStore(Workspace):
             if compute_runtime
             else ComputeRuntime(spark_runtime_version=DEFAULT_SPARK_RUNTIME_VERSION),
             offline_store_connection_name=(
-                OFFLINE_STORE_CONNECTION_NAME if materialization_identity and offline_store else None
+                OFFLINE_STORE_CONNECTION_NAME
+                if materialization_identity and offline_store
+                else None
             ),
             online_store_connection_name=(
-                ONLINE_STORE_CONNECTION_NAME if materialization_identity and online_store else None
+                ONLINE_STORE_CONNECTION_NAME
+                if materialization_identity and online_store
+                else None
             ),
         )
         self._workspace_id = kwargs.pop("workspace_id", "")

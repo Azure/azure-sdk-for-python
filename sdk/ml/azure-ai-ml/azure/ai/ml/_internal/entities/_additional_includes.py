@@ -24,7 +24,8 @@ class InternalAdditionalIncludes(AdditionalIncludes):
     def _is_artifact_includes(self):
         return any(
             map(
-                lambda x: isinstance(x, dict) and x.get("type", None) == AzureDevopsArtifactsType.ARTIFACT,
+                lambda x: isinstance(x, dict)
+                and x.get("type", None) == AzureDevopsArtifactsType.ARTIFACT,
                 self.origin_configs,
             )
         )

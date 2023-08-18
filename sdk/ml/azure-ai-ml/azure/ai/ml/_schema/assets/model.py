@@ -12,7 +12,11 @@ from azure.ai.ml._schema.core.fields import ExperimentalField, NestedField
 from azure.ai.ml._schema.core.intellectual_property import IntellectualPropertySchema
 from azure.ai.ml._schema.core.schema import PathAwareSchema
 from azure.ai.ml._schema.job import CreationContextSchema
-from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, AssetTypes, AzureMLResourceType
+from azure.ai.ml.constants._common import (
+    BASE_PATH_CONTEXT_KEY,
+    AssetTypes,
+    AzureMLResourceType,
+)
 
 from ..core.fields import ArmVersionedStr, StringTransformedEnum, VersionField
 
@@ -41,8 +45,12 @@ class ModelSchema(PathAwareSchema):
     creation_context = NestedField(CreationContextSchema, dump_only=True)
     job_name = fields.Str(dump_only=True)
     latest_version = fields.Str(dump_only=True)
-    datastore = fields.Str(metadata={"description": "Name of the datastore to upload to."}, required=False)
-    intellectual_property = ExperimentalField(NestedField(IntellectualPropertySchema, required=False), dump_only=True)
+    datastore = fields.Str(
+        metadata={"description": "Name of the datastore to upload to."}, required=False
+    )
+    intellectual_property = ExperimentalField(
+        NestedField(IntellectualPropertySchema, required=False), dump_only=True
+    )
 
     @pre_dump
     def validate(self, data, **kwargs):

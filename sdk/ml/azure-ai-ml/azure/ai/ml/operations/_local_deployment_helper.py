@@ -14,15 +14,23 @@ from typing import Iterable, Optional, Union
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
 from azure.ai.ml._exception_helper import log_and_raise_error
-from azure.ai.ml._local_endpoints import AzureMlImageContext, DockerfileResolver, LocalEndpointMode
+from azure.ai.ml._local_endpoints import (
+    AzureMlImageContext,
+    DockerfileResolver,
+    LocalEndpointMode,
+)
 from azure.ai.ml._local_endpoints.docker_client import (
     DockerClient,
     get_deployment_json_from_container,
     get_status_from_container,
 )
 from azure.ai.ml._local_endpoints.mdc_config_resolver import MdcConfigResolver
-from azure.ai.ml._local_endpoints.validators.code_validator import get_code_configuration_artifacts
-from azure.ai.ml._local_endpoints.validators.environment_validator import get_environment_artifacts
+from azure.ai.ml._local_endpoints.validators.code_validator import (
+    get_code_configuration_artifacts,
+)
+from azure.ai.ml._local_endpoints.validators.environment_validator import (
+    get_environment_artifacts,
+)
 from azure.ai.ml._local_endpoints.validators.model_validator import get_model_artifacts
 from azure.ai.ml._scope_dependent_operations import OperationsContainer
 from azure.ai.ml._utils._endpoint_utils import local_endpoint_polling_wrapper
@@ -30,7 +38,11 @@ from azure.ai.ml._utils.utils import DockerProxy
 from azure.ai.ml.constants._common import AzureMLResourceType, DefaultOpenEncoding
 from azure.ai.ml.constants._endpoint import LocalEndpointConstants
 from azure.ai.ml.entities import OnlineDeployment
-from azure.ai.ml.exceptions import InvalidLocalEndpointError, LocalEndpointNotFoundError, ValidationException
+from azure.ai.ml.exceptions import (
+    InvalidLocalEndpointError,
+    LocalEndpointNotFoundError,
+    ValidationException,
+)
 
 docker = DockerProxy()
 module_logger = logging.getLogger(__name__)
@@ -47,9 +59,15 @@ class _LocalDeploymentHelper(object):
         operation_container: OperationsContainer,
     ):
         self._docker_client = DockerClient()
-        self._model_operations = operation_container.all_operations.get(AzureMLResourceType.MODEL)
-        self._code_operations = operation_container.all_operations.get(AzureMLResourceType.CODE)
-        self._environment_operations = operation_container.all_operations.get(AzureMLResourceType.ENVIRONMENT)
+        self._model_operations = operation_container.all_operations.get(
+            AzureMLResourceType.MODEL
+        )
+        self._code_operations = operation_container.all_operations.get(
+            AzureMLResourceType.CODE
+        )
+        self._environment_operations = operation_container.all_operations.get(
+            AzureMLResourceType.ENVIRONMENT
+        )
 
     def create_or_update(
         self,
@@ -69,12 +87,21 @@ class _LocalDeploymentHelper(object):
         try:
             if deployment is None:
                 msg = "The entity provided for local endpoint was null. Please provide valid entity."
-                raise InvalidLocalEndpointError(message=msg, no_personal_data_message=msg)
+                raise InvalidLocalEndpointError(
+                    message=msg, no_personal_data_message=msg
+                )
 
             endpoint_metadata = None
             try:
-                self.get(endpoint_name=deployment.endpoint_name, deployment_name=deployment.name)
-                endpoint_metadata = json.dumps(self._docker_client.get_endpoint(endpoint_name=deployment.endpoint_name))
+                self.get(
+                    endpoint_name=deployment.endpoint_name,
+                    deployment_name=deployment.name,
+                )
+                endpoint_metadata = json.dumps(
+                    self._docker_client.get_endpoint(
+                        endpoint_name=deployment.endpoint_name
+                    )
+                )
                 operation_message = "Updating local deployment"
             except LocalEndpointNotFoundError:
                 operation_message = "Creating local deployment"
@@ -83,7 +110,9 @@ class _LocalDeploymentHelper(object):
             endpoint_metadata = (
                 endpoint_metadata
                 if endpoint_metadata
-                else _get_stubbed_endpoint_metadata(endpoint_name=deployment.endpoint_name)
+                else _get_stubbed_endpoint_metadata(
+                    endpoint_name=deployment.endpoint_name
+                )
             )
             local_endpoint_polling_wrapper(
                 func=self._create_deployment,
@@ -95,14 +124,18 @@ class _LocalDeploymentHelper(object):
                 endpoint_metadata=endpoint_metadata,
                 deployment_metadata=deployment_metadata,
             )
-            return self.get(endpoint_name=deployment.endpoint_name, deployment_name=deployment.name)
+            return self.get(
+                endpoint_name=deployment.endpoint_name, deployment_name=deployment.name
+            )
         except Exception as ex:  # pylint: disable=broad-except
             if isinstance(ex, (ValidationException, SchemaValidationError)):
                 log_and_raise_error(ex)
             else:
                 raise ex
 
-    def get_deployment_logs(self, endpoint_name: str, deployment_name: str, lines: int) -> str:
+    def get_deployment_logs(
+        self, endpoint_name: str, deployment_name: str, lines: int
+    ) -> str:
         """Get logs from a local endpoint.
 
         :param endpoint_name: Name of endpoint to invoke.
@@ -114,7 +147,9 @@ class _LocalDeploymentHelper(object):
         :return: The deployment logs
         :rtype: str
         """
-        return self._docker_client.logs(endpoint_name=endpoint_name, deployment_name=deployment_name, lines=lines)
+        return self._docker_client.logs(
+            endpoint_name=endpoint_name, deployment_name=deployment_name, lines=lines
+        )
 
     def get(self, endpoint_name: str, deployment_name: str) -> OnlineDeployment:
         """Get a local deployment.
@@ -132,7 +167,9 @@ class _LocalDeploymentHelper(object):
             include_stopped=True,
         )
         if container is None:
-            raise LocalEndpointNotFoundError(endpoint_name=endpoint_name, deployment_name=deployment_name)
+            raise LocalEndpointNotFoundError(
+                endpoint_name=endpoint_name, deployment_name=deployment_name
+            )
         return _convert_container_to_deployment(container=container)
 
     def list(self) -> Iterable[OnlineDeployment]:
@@ -157,7 +194,9 @@ class _LocalDeploymentHelper(object):
         """
         self._docker_client.delete(endpoint_name=name, deployment_name=deployment_name)
         try:
-            build_directory = _get_deployment_directory(endpoint_name=name, deployment_name=deployment_name)
+            build_directory = _get_deployment_directory(
+                endpoint_name=name, deployment_name=deployment_name
+            )
             shutil.rmtree(build_directory)
         except (PermissionError, OSError):
             pass
@@ -187,7 +226,9 @@ class _LocalDeploymentHelper(object):
         :type deployment_metadata: dict
         """
         deployment_name = deployment.name
-        deployment_directory = _create_build_directory(endpoint_name=endpoint_name, deployment_name=deployment_name)
+        deployment_directory = _create_build_directory(
+            endpoint_name=endpoint_name, deployment_name=deployment_name
+        )
         deployment_directory_path = str(deployment_directory.resolve())
 
         # Get assets for mounting into the container
@@ -199,7 +240,11 @@ class _LocalDeploymentHelper(object):
             download_path=deployment_directory_path,
         )
         # We always require the model, however it may be anonymous for local (model_name=None)
-        (model_name, model_version, model_directory_path,) = get_model_artifacts(
+        (
+            model_name,
+            model_version,
+            model_directory_path,
+        ) = get_model_artifacts(
             endpoint_name=endpoint_name,
             deployment=deployment,
             model_operations=self._model_operations,
@@ -244,7 +289,9 @@ class _LocalDeploymentHelper(object):
         is_byoc = inference_config is not None
         dockerfile = None
         if not is_byoc:
-            install_debugpy = local_endpoint_mode is LocalEndpointMode.VSCodeDevContainer
+            install_debugpy = (
+                local_endpoint_mode is LocalEndpointMode.VSCodeDevContainer
+            )
             if yaml_env_conda_file_path:
                 _write_conda_file(
                     conda_contents=yaml_env_conda_file_contents,
@@ -288,7 +335,11 @@ class _LocalDeploymentHelper(object):
             volumes.update(mdc_config.volumes)
 
         # Determine whether we need to use local context or downloaded context
-        build_directory = downloaded_build_context if downloaded_build_context else deployment_directory
+        build_directory = (
+            downloaded_build_context
+            if downloaded_build_context
+            else deployment_directory
+        )
         self._docker_client.create_deployment(
             endpoint_name=endpoint_name,
             deployment_name=deployment_name,
@@ -300,14 +351,18 @@ class _LocalDeploymentHelper(object):
             conda_yaml_contents=yaml_env_conda_file_contents,
             volumes=volumes,
             environment=environment_variables,
-            azureml_port=inference_config.scoring_route.port if is_byoc else LocalEndpointConstants.DOCKER_PORT,
+            azureml_port=inference_config.scoring_route.port
+            if is_byoc
+            else LocalEndpointConstants.DOCKER_PORT,
             local_endpoint_mode=local_endpoint_mode,
             prebuilt_image_name=yaml_base_image_name if is_byoc else None,
             local_enable_gpu=local_enable_gpu,
         )
 
 
-def _convert_container_to_deployment(container: "docker.models.containers.Container") -> OnlineDeployment:
+def _convert_container_to_deployment(
+    container: "docker.models.containers.Container",
+) -> OnlineDeployment:
     """Converts provided Container for local deployment to OnlineDeployment entity.
 
     :param container: Container for a local deployment.
@@ -330,7 +385,9 @@ def _convert_container_to_deployment(container: "docker.models.containers.Contai
     )
 
 
-def _write_conda_file(conda_contents: str, directory_path: Union[str, os.PathLike], conda_file_name: str):
+def _write_conda_file(
+    conda_contents: str, directory_path: Union[str, os.PathLike], conda_file_name: str
+):
     """Writes out conda file to provided directory.
 
     :param conda_contents: contents of conda yaml file provided by user
@@ -364,7 +421,9 @@ def _get_stubbed_endpoint_metadata(endpoint_name: str) -> dict:
 
 
 def _create_build_directory(endpoint_name: str, deployment_name: str) -> Path:
-    build_directory = _get_deployment_directory(endpoint_name=endpoint_name, deployment_name=deployment_name)
+    build_directory = _get_deployment_directory(
+        endpoint_name=endpoint_name, deployment_name=deployment_name
+    )
     build_directory.mkdir(parents=True, exist_ok=True)
     return build_directory
 

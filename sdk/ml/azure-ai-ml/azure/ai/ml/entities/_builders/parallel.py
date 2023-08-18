@@ -24,7 +24,11 @@ from .._job.parallel.parallel_job import ParallelJob
 from .._job.parallel.parallel_task import ParallelTask
 from .._job.parallel.retry_settings import RetrySettings
 from .._job.pipeline._io import NodeOutput, NodeWithGroupInputMixin
-from .._util import convert_ordered_dict_to_dict, get_rest_dict_for_node_attrs, validate_attribute_type
+from .._util import (
+    convert_ordered_dict_to_dict,
+    get_rest_dict_for_node_attrs,
+    validate_attribute_type,
+)
 from .base_node import BaseNode
 
 module_logger = logging.getLogger(__name__)
@@ -119,7 +123,9 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):
         **kwargs,
     ) -> None:
         # validate init params are valid type
-        validate_attribute_type(attrs_to_check=locals(), attr_type_map=self._attr_type_map())
+        validate_attribute_type(
+            attrs_to_check=locals(), attr_type_map=self._attr_type_map()
+        )
         kwargs.pop("type", None)
 
         BaseNode.__init__(
@@ -140,7 +146,9 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):
             """Convert str to int."""  # pylint: disable=pointless-string-statement
             pattern = re.compile(r"^\d+([kKmMgG][bB])*$")
             if not pattern.match(mini_batch_size):
-                raise ValueError(r"Parameter mini_batch_size must follow regex rule ^\d+([kKmMgG][bB])*$")
+                raise ValueError(
+                    r"Parameter mini_batch_size must follow regex rule ^\d+([kKmMgG][bB])*$"
+                )
 
             try:
                 mini_batch_size = int(mini_batch_size)
@@ -164,19 +172,27 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):
         self.error_threshold = error_threshold
         self.mini_batch_error_threshold = mini_batch_error_threshold
         self._resources = resources
-        self.environment_variables = {} if environment_variables is None else environment_variables
+        self.environment_variables = (
+            {} if environment_variables is None else environment_variables
+        )
 
         if isinstance(self.component, ParallelComponent):
             self.resources = self.resources or copy.deepcopy(self.component.resources)
             self.input_data = self.input_data or self.component.input_data
             self.max_concurrency_per_instance = (
-                self.max_concurrency_per_instance or self.component.max_concurrency_per_instance
+                self.max_concurrency_per_instance
+                or self.component.max_concurrency_per_instance
             )
             self.mini_batch_error_threshold = (
-                self.mini_batch_error_threshold or self.component.mini_batch_error_threshold
+                self.mini_batch_error_threshold
+                or self.component.mini_batch_error_threshold
             )
-            self.mini_batch_size = self.mini_batch_size or self.component.mini_batch_size
-            self.partition_keys = self.partition_keys or copy.deepcopy(self.component.partition_keys)
+            self.mini_batch_size = (
+                self.mini_batch_size or self.component.mini_batch_size
+            )
+            self.partition_keys = self.partition_keys or copy.deepcopy(
+                self.component.partition_keys
+            )
 
             if not self.task:
                 self.task = self.component.task
@@ -353,7 +369,9 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):
             elif isinstance(parallel_attr, dict):
                 rest_attr = parallel_attr
             else:
-                raise Exception(f"Expecting {base_type} for {attr}, got {type(parallel_attr)} instead.")
+                raise Exception(
+                    f"Expecting {base_type} for {attr}, got {type(parallel_attr)} instead."
+                )
         return convert_ordered_dict_to_dict(rest_attr)
 
     @classmethod
@@ -399,13 +417,23 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):
             task_code = obj["task"].code
             task_env = obj["task"].environment
             # remove azureml: prefix in code and environment which is added in _to_rest_object
-            if task_code and isinstance(task_code, str) and task_code.startswith(ARM_ID_PREFIX):
+            if (
+                task_code
+                and isinstance(task_code, str)
+                and task_code.startswith(ARM_ID_PREFIX)
+            ):
                 obj["task"].code = task_code[len(ARM_ID_PREFIX) :]
-            if task_env and isinstance(task_env, str) and task_env.startswith(ARM_ID_PREFIX):
+            if (
+                task_env
+                and isinstance(task_env, str)
+                and task_env.startswith(ARM_ID_PREFIX)
+            ):
                 obj["task"].environment = task_env[len(ARM_ID_PREFIX) :]
 
         if "resources" in obj and obj["resources"]:
-            obj["resources"] = JobResourceConfiguration._from_rest_object(obj["resources"])
+            obj["resources"] = JobResourceConfiguration._from_rest_object(
+                obj["resources"]
+            )
 
         if "partition_keys" in obj and obj["partition_keys"]:
             obj["partition_keys"] = json.dumps(obj["partition_keys"])

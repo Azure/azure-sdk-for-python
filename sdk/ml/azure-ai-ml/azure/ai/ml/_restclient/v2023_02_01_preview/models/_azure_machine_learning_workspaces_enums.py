@@ -196,7 +196,9 @@ class ClassificationModels(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     XG_BOOST_CLASSIFIER = "XGBoostClassifier"
 
 
-class ClassificationMultilabelPrimaryMetrics(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class ClassificationMultilabelPrimaryMetrics(
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     """Primary metrics for classification multilabel tasks."""
 
     #: AUC is the Area under the curve.
@@ -398,7 +400,6 @@ class DistributionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class EarlyTerminationPolicyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-
     BANDIT = "Bandit"
     MEDIAN_STOPPING = "MedianStopping"
     TRUNCATION_SELECTION = "TruncationSelection"
@@ -477,7 +478,6 @@ class ExportFormatType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class FeatureDataType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-
     STRING = "String"
     INTEGER = "Integer"
     LONG = "Long"
@@ -498,7 +498,6 @@ class FeatureLags(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class FeaturestoreJobType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-
     RECURRENT_MATERIALIZATION = "RecurrentMaterialization"
     BACKFILL_MATERIALIZATION = "BackfillMaterialization"
 
@@ -706,7 +705,6 @@ class JobInputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class JobLimitsType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-
     COMMAND = "Command"
     SWEEP = "Sweep"
 
@@ -792,7 +790,6 @@ class JobType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class KeyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-
     PRIMARY = "Primary"
     SECONDARY = "Secondary"
 
@@ -809,7 +806,6 @@ class LearningRateScheduler(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class ListViewType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-
     ACTIVE_ONLY = "ActiveOnly"
     ARCHIVED_ONLY = "ArchivedOnly"
     ALL = "All"
@@ -851,7 +847,6 @@ class ManagedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class MaterializationStoreType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-
     NONE = "None"
     ONLINE = "Online"
     OFFLINE = "Offline"
@@ -866,7 +861,6 @@ class MediaType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class MLAssistConfigurationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
@@ -1029,7 +1023,6 @@ class OperationTrigger(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class OrderString(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-
     CREATED_AT_DESC = "CreatedAtDesc"
     CREATED_AT_ASC = "CreatedAtAsc"
     UPDATED_AT_DESC = "UpdatedAtDesc"
@@ -1074,7 +1067,9 @@ class PackageInputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     URI_FOLDER = "UriFolder"
 
 
-class PrivateEndpointConnectionProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class PrivateEndpointConnectionProvisioningState(
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     """The current provisioning state."""
 
     SUCCEEDED = "Succeeded"
@@ -1083,7 +1078,9 @@ class PrivateEndpointConnectionProvisioningState(str, Enum, metaclass=CaseInsens
     FAILED = "Failed"
 
 
-class PrivateEndpointServiceConnectionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class PrivateEndpointServiceConnectionStatus(
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     """The private endpoint connection status."""
 
     PENDING = "Pending"
@@ -1249,26 +1246,22 @@ class RemoteLoginPortPublicAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class SamplingAlgorithmType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-
     GRID = "Grid"
     RANDOM = "Random"
     BAYESIAN = "Bayesian"
 
 
 class ScaleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-
     DEFAULT = "Default"
     TARGET_UTILIZATION = "TargetUtilization"
 
 
 class ScheduleActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-
     CREATE_JOB = "CreateJob"
     INVOKE_BATCH_ENDPOINT = "InvokeBatchEndpoint"
 
 
 class ScheduleListViewType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-
     ENABLED_ONLY = "EnabledOnly"
     DISABLED_ONLY = "DisabledOnly"
     ALL = "All"
@@ -1283,7 +1276,6 @@ class ScheduleProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class ScheduleProvisioningStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-
     CREATING = "Creating"
     UPDATING = "Updating"
     DELETING = "Deleting"
@@ -1320,7 +1312,6 @@ class SecretsType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class ServiceDataAccessAuthIdentity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-
     #: Do not use any identity for service data access.
     NONE = "None"
     #: Use the system assigned managed identity of the Workspace to authenticate service data access.
@@ -1374,7 +1365,6 @@ class SourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class SparkJobEntryType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-
     SPARK_JOB_PYTHON_ENTRY = "SparkJobPythonEntry"
     SPARK_JOB_SCALA_ENTRY = "SparkJobScalaEntry"
 
@@ -1434,7 +1424,6 @@ class Status(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class StatusMessageLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-
     ERROR = "Error"
     INFORMATION = "Information"
     WARNING = "Warning"
@@ -1552,13 +1541,11 @@ class TrainingMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class TriggerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-
     RECURRENCE = "Recurrence"
     CRON = "Cron"
 
 
 class UnderlyingResourceAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-
     DELETE = "Delete"
     DETACH = "Detach"
 

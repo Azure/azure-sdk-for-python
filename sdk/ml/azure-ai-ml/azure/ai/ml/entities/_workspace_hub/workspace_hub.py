@@ -9,8 +9,12 @@ from os import PathLike
 from pathlib import Path
 from typing import Dict, List, Optional, Union
 
-from azure.ai.ml._restclient.v2023_06_01_preview.models import Workspace as RestWorkspace
-from azure.ai.ml._restclient.v2023_06_01_preview.models import WorkspaceHubConfig as RestWorkspaceHubConfig
+from azure.ai.ml._restclient.v2023_06_01_preview.models import (
+    Workspace as RestWorkspace,
+)
+from azure.ai.ml._restclient.v2023_06_01_preview.models import (
+    WorkspaceHubConfig as RestWorkspaceHubConfig,
+)
 
 from azure.ai.ml._schema._workspace_hub.workspace_hub import WorkspaceHubSchema
 from azure.ai.ml.entities._workspace_hub.workspace_hub_config import WorkspaceHubConfig
@@ -48,7 +52,6 @@ class WorkspaceHub(Workspace):
         workspace_hub_config: Optional[WorkspaceHubConfig] = None,
         **kwargs,
     ):
-
         """WorkspaceHub.
 
         :param name: Name of the WorkspaceHub.
@@ -125,7 +128,9 @@ class WorkspaceHub(Workspace):
 
         workspace_hub_config = None
         if hasattr(rest_obj, "workspace_hub_config"):
-            if rest_obj.workspace_hub_config and isinstance(rest_obj.workspace_hub_config, RestWorkspaceHubConfig):
+            if rest_obj.workspace_hub_config and isinstance(
+                rest_obj.workspace_hub_config, RestWorkspaceHubConfig
+            ):
                 workspace_hub_config = WorkspaceHubConfig._from_rest_object(  # pylint: disable=protected-access
                     rest_obj.workspace_hub_config
                 )

@@ -62,9 +62,14 @@ def condition(
         condition = condition.resolve()
     if isinstance(condition, BaseNode):
         if len(condition.outputs) != 1:
-            error_message = (
-                f"Exactly one output is expected for condition node, {len(condition.outputs)} outputs found."
+            error_message = f"Exactly one output is expected for condition node, {len(condition.outputs)} outputs found."
+            raise UserErrorException(
+                message=error_message, no_personal_data_message=error_message
             )
-            raise UserErrorException(message=error_message, no_personal_data_message=error_message)
         condition = list(condition.outputs.values())[0]
-    return ConditionNode(condition=condition, true_block=true_block, false_block=false_block, _from_component_func=True)
+    return ConditionNode(
+        condition=condition,
+        true_block=true_block,
+        false_block=false_block,
+        _from_component_func=True,
+    )

@@ -9,7 +9,11 @@ import logging
 from marshmallow import fields, post_load
 from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml._schema.core.schema import PathAwareSchema
-from azure.ai.ml._schema.core.fields import StringTransformedEnum, UnionField, NestedField
+from azure.ai.ml._schema.core.fields import (
+    StringTransformedEnum,
+    UnionField,
+    NestedField,
+)
 
 module_logger = logging.getLogger(__name__)
 
@@ -30,7 +34,9 @@ class PackageInputPathIdSchema(PathBaseSchema):
 
     @post_load
     def make(self, data, **kwargs):
-        from azure.ai.ml.entities._assets._artifacts._package.model_package import PackageInputPathId
+        from azure.ai.ml.entities._assets._artifacts._package.model_package import (
+            PackageInputPathId,
+        )
 
         return PackageInputPathId(**data)
 
@@ -40,7 +46,9 @@ class PackageInputPathUrlSchema(PathBaseSchema):
 
     @post_load
     def make(self, data, **kwargs):
-        from azure.ai.ml.entities._assets._artifacts._package.model_package import PackageInputPathUrl
+        from azure.ai.ml.entities._assets._artifacts._package.model_package import (
+            PackageInputPathUrl,
+        )
 
         return PackageInputPathUrl(**data)
 
@@ -51,13 +59,17 @@ class PackageInputPathSchema(PathBaseSchema):
 
     @post_load
     def make(self, data, **kwargs):
-        from azure.ai.ml.entities._assets._artifacts._package.model_package import PackageInputPathVersion
+        from azure.ai.ml.entities._assets._artifacts._package.model_package import (
+            PackageInputPathVersion,
+        )
 
         return PackageInputPathVersion(**data)
 
 
 class ModelPackageInputSchema(PathAwareSchema):
-    type = StringTransformedEnum(allowed_values=["uri_file", "uri_folder"], casing_transform=camel_to_snake)
+    type = StringTransformedEnum(
+        allowed_values=["uri_file", "uri_folder"], casing_transform=camel_to_snake
+    )
     mode = StringTransformedEnum(
         allowed_values=[
             "read_only_mount",
@@ -76,6 +88,8 @@ class ModelPackageInputSchema(PathAwareSchema):
 
     @post_load
     def make(self, data, **kwargs):
-        from azure.ai.ml.entities._assets._artifacts._package.model_package import ModelPackageInput
+        from azure.ai.ml.entities._assets._artifacts._package.model_package import (
+            ModelPackageInput,
+        )
 
         return ModelPackageInput(**data)

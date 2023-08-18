@@ -6,7 +6,10 @@
 
 from marshmallow import post_load, pre_dump
 
-from azure.ai.ml._schema._sweep.sweep_fields_provider import EarlyTerminationField, SamplingAlgorithmField
+from azure.ai.ml._schema._sweep.sweep_fields_provider import (
+    EarlyTerminationField,
+    SamplingAlgorithmField,
+)
 from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
 
 

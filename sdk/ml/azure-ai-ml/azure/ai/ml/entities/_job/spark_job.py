@@ -12,7 +12,11 @@ from marshmallow import INCLUDE
 
 from azure.ai.ml._restclient.v2023_04_01_preview.models import JobBase
 from azure.ai.ml._restclient.v2023_04_01_preview.models import SparkJob as RestSparkJob
-from azure.ai.ml._schema.job.identity import AMLTokenIdentitySchema, ManagedIdentitySchema, UserIdentitySchema
+from azure.ai.ml._schema.job.identity import (
+    AMLTokenIdentitySchema,
+    ManagedIdentitySchema,
+    UserIdentitySchema,
+)
 from azure.ai.ml._schema.job.parameterized_spark import CONF_KEY_MAP
 from azure.ai.ml._schema.job.spark_job import SparkJobSchema
 from azure.ai.ml.constants import JobType
@@ -37,7 +41,11 @@ from azure.ai.ml.entities._util import load_from_dict
 from ..._schema import NestedField, UnionField
 from .job import Job
 from .job_io_mixin import JobIOMixin
-from .spark_helpers import _validate_compute_or_resources, _validate_input_output_mode, _validate_spark_configurations
+from .spark_helpers import (
+    _validate_compute_or_resources,
+    _validate_input_output_mode,
+    _validate_spark_configurations,
+)
 from .spark_job_entry import SparkJobEntry
 from .spark_job_entry_mixin import SparkJobEntryMixin
 from .spark_resource_configuration import SparkResourceConfiguration
@@ -136,7 +144,12 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
         outputs: Optional[Dict] = None,
         compute: Optional[str] = None,
         identity: Optional[
-            Union[Dict[str, str], ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]
+            Union[
+                Dict[str, str],
+                ManagedIdentityConfiguration,
+                AmlTokenConfiguration,
+                UserIdentityConfiguration,
+            ]
         ] = None,
         resources: Optional[Union[Dict, SparkResourceConfiguration]] = None,
         **kwargs,
@@ -159,7 +172,10 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
         self.compute = compute
         self.resources = resources
         self.identity = identity
-        if self.executor_instances is None and str(self.dynamic_allocation_enabled).lower() == "true":
+        if (
+            self.executor_instances is None
+            and str(self.dynamic_allocation_enabled).lower() == "true"
+        ):
             self.executor_instances = self.dynamic_allocation_min_executors
 
     @property
@@ -172,7 +188,9 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
         return self._resources
 
     @resources.setter
-    def resources(self, value: Optional[Union[Dict[str, str], SparkResourceConfiguration]]):
+    def resources(
+        self, value: Optional[Union[Dict[str, str], SparkResourceConfiguration]]
+    ):
         """Sets the compute resource configuration for the job.
 
         :param value: The compute resource configuration for the job.
@@ -185,7 +203,13 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
     @property
     def identity(
         self,
-    ) -> Optional[Union[ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]]:
+    ) -> Optional[
+        Union[
+            ManagedIdentityConfiguration,
+            AmlTokenConfiguration,
+            UserIdentityConfiguration,
+        ]
+    ]:
         """The identity that the Spark job will use while running on compute.
 
         :return: The identity that the Spark job will use while running on compute.
@@ -198,7 +222,12 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
     def identity(
         self,
         value: Optional[
-            Union[Dict[str, str], ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]
+            Union[
+                Dict[str, str],
+                ManagedIdentityConfiguration,
+                AmlTokenConfiguration,
+                UserIdentityConfiguration,
+            ]
         ],
     ):
         """Sets the identity that the Spark job will use while running on compute.
@@ -248,8 +277,12 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
         }
         if self.dynamic_allocation_enabled in ["True", "true", True]:
             conf["spark.dynamicAllocation.enabled"] = True
-            conf["spark.dynamicAllocation.minExecutors"] = self.dynamic_allocation_min_executors
-            conf["spark.dynamicAllocation.maxExecutors"] = self.dynamic_allocation_max_executors
+            conf[
+                "spark.dynamicAllocation.minExecutors"
+            ] = self.dynamic_allocation_min_executors
+            conf[
+                "spark.dynamicAllocation.maxExecutors"
+            ] = self.dynamic_allocation_max_executors
         if self.executor_instances is not None:
             conf["spark.executor.instances"] = self.executor_instances
 
@@ -279,8 +312,12 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
         return result
 
     @classmethod
-    def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs) -> "SparkJob":
-        loaded_data = load_from_dict(SparkJobSchema, data, context, additional_message, **kwargs)
+    def _load_from_dict(
+        cls, data: Dict, context: Dict, additional_message: str, **kwargs
+    ) -> "SparkJob":
+        loaded_data = load_from_dict(
+            SparkJobSchema, data, context, additional_message, **kwargs
+        )
         return SparkJob(base_path=context[BASE_PATH_CONTEXT_KEY], **loaded_data)
 
     @classmethod
@@ -302,7 +339,9 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
             code=rest_spark_job.code_id,
             compute=rest_spark_job.compute_id,
             environment=rest_spark_job.environment_id,
-            identity=_BaseJobIdentityConfiguration._from_rest_object(rest_spark_job.identity)
+            identity=_BaseJobIdentityConfiguration._from_rest_object(
+                rest_spark_job.identity
+            )
             if rest_spark_job.identity
             else None,
             args=rest_spark_job.args,
@@ -313,17 +352,29 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
             driver_memory=rest_spark_conf.get(SparkConfKey.DRIVER_MEMORY, None),
             executor_cores=rest_spark_conf.get(SparkConfKey.EXECUTOR_CORES, None),
             executor_memory=rest_spark_conf.get(SparkConfKey.EXECUTOR_MEMORY, None),
-            executor_instances=rest_spark_conf.get(SparkConfKey.EXECUTOR_INSTANCES, None),
-            dynamic_allocation_enabled=rest_spark_conf.get(SparkConfKey.DYNAMIC_ALLOCATION_ENABLED, None),
-            dynamic_allocation_min_executors=rest_spark_conf.get(SparkConfKey.DYNAMIC_ALLOCATION_MIN_EXECUTORS, None),
-            dynamic_allocation_max_executors=rest_spark_conf.get(SparkConfKey.DYNAMIC_ALLOCATION_MAX_EXECUTORS, None),
-            resources=SparkResourceConfiguration._from_rest_object(rest_spark_job.resources),
+            executor_instances=rest_spark_conf.get(
+                SparkConfKey.EXECUTOR_INSTANCES, None
+            ),
+            dynamic_allocation_enabled=rest_spark_conf.get(
+                SparkConfKey.DYNAMIC_ALLOCATION_ENABLED, None
+            ),
+            dynamic_allocation_min_executors=rest_spark_conf.get(
+                SparkConfKey.DYNAMIC_ALLOCATION_MIN_EXECUTORS, None
+            ),
+            dynamic_allocation_max_executors=rest_spark_conf.get(
+                SparkConfKey.DYNAMIC_ALLOCATION_MAX_EXECUTORS, None
+            ),
+            resources=SparkResourceConfiguration._from_rest_object(
+                rest_spark_job.resources
+            ),
             inputs=from_rest_inputs_to_dataset_literal(rest_spark_job.inputs),
             outputs=from_rest_data_outputs(rest_spark_job.outputs),
         )
         return spark_job
 
-    def _to_component(self, context: Optional[Dict] = None, **kwargs) -> "SparkComponent":
+    def _to_component(
+        self, context: Optional[Dict] = None, **kwargs
+    ) -> "SparkComponent":
         """Translate a spark job to component.
 
         :param context: Context of spark job YAML file.
@@ -360,8 +411,12 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
             conf=self.conf,
             properties=self.properties,
             environment=self.environment,
-            inputs=self._to_inputs(inputs=self.inputs, pipeline_job_dict=pipeline_job_dict),
-            outputs=self._to_outputs(outputs=self.outputs, pipeline_job_dict=pipeline_job_dict),
+            inputs=self._to_inputs(
+                inputs=self.inputs, pipeline_job_dict=pipeline_job_dict
+            ),
+            outputs=self._to_outputs(
+                outputs=self.outputs, pipeline_job_dict=pipeline_job_dict
+            ),
             args=self.args,
         )
 

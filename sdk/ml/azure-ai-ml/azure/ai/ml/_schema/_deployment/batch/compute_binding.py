@@ -26,11 +26,18 @@ class ComputeBindingSchema(metaclass=PatchedSchemaMeta):
         ]
     )
     instance_count = fields.Integer()
-    instance_type = fields.Str(metadata={"description": "The instance type to make available to this job."})
-    location = fields.Str(metadata={"description": "The locations where this job may run."})
+    instance_type = fields.Str(
+        metadata={"description": "The instance type to make available to this job."}
+    )
+    location = fields.Str(
+        metadata={"description": "The locations where this job may run."}
+    )
     properties = fields.Dict(keys=fields.Str())
 
     @validates_schema
     def validate(self, data: Any, **kwargs):
-        if data.get("target") == LOCAL_COMPUTE_TARGET and data.get("instance_count", 1) != 1:
+        if (
+            data.get("target") == LOCAL_COMPUTE_TARGET
+            and data.get("instance_count", 1) != 1
+        ):
             raise ValidationError("Local runs must have node count of 1.")

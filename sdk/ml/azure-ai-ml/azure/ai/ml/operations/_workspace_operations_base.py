@@ -9,7 +9,9 @@ from typing import Callable, Dict, Optional, Tuple
 
 from azure.ai.ml._arm_deployments import ArmDeploymentExecutor
 from azure.ai.ml._arm_deployments.arm_helper import get_template
-from azure.ai.ml._restclient.v2023_06_01_preview import AzureMachineLearningWorkspaces as ServiceClient062023Preview
+from azure.ai.ml._restclient.v2023_06_01_preview import (
+    AzureMachineLearningWorkspaces as ServiceClient062023Preview,
+)
 from azure.ai.ml._restclient.v2023_06_01_preview.models import (
     EncryptionKeyVaultUpdateProperties,
     EncryptionUpdateProperties,
@@ -32,12 +34,19 @@ from azure.ai.ml._utils._appinsights_utils import get_log_analytics_arm_id
 from azure.ai.ml._utils.utils import camel_to_snake, from_iso_duration_format_min_sec
 from azure.ai.ml._version import VERSION
 from azure.ai.ml.constants import ManagedServiceIdentityType
-from azure.ai.ml.constants._common import ArmConstants, LROConfigurations, WorkspaceResourceConstants
+from azure.ai.ml.constants._common import (
+    ArmConstants,
+    LROConfigurations,
+    WorkspaceResourceConstants,
+)
 from azure.ai.ml.entities import (
     Workspace,
 )
 from azure.ai.ml.entities._credentials import IdentityConfiguration
-from azure.ai.ml.entities._workspace_hub._constants import PROJECT_WORKSPACE_KIND, WORKSPACE_HUB_KIND
+from azure.ai.ml.entities._workspace_hub._constants import (
+    PROJECT_WORKSPACE_KIND,
+    WORKSPACE_HUB_KIND,
+)
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.core.credentials import TokenCredential
 from azure.core.polling import LROPoller, PollingMethod
@@ -81,7 +90,11 @@ class WorkspaceOperationsBase:
         **kwargs: Dict,
     ) -> LROPoller[Workspace]:
         existing_workspace = None
-        resource_group = kwargs.get("resource_group") or workspace.resource_group or self._resource_group_name
+        resource_group = (
+            kwargs.get("resource_group")
+            or workspace.resource_group
+            or self._resource_group_name
+        )
         try:
             existing_workspace = self.get(workspace.name, resource_group=resource_group)
         except Exception:  # pylint: disable=broad-except
@@ -93,14 +106,21 @@ class WorkspaceOperationsBase:
                 workspace.tags.pop("createdByToolkit")
             existing_workspace.tags.update(workspace.tags)
             workspace.tags = existing_workspace.tags
-            workspace.container_registry = workspace.container_registry or existing_workspace.container_registry
-            workspace.application_insights = workspace.application_insights or existing_workspace.application_insights
+            workspace.container_registry = (
+                workspace.container_registry or existing_workspace.container_registry
+            )
+            workspace.application_insights = (
+                workspace.application_insights
+                or existing_workspace.application_insights
+            )
             workspace.identity = workspace.identity or existing_workspace.identity
             workspace.primary_user_assigned_identity = (
-                workspace.primary_user_assigned_identity or existing_workspace.primary_user_assigned_identity
+                workspace.primary_user_assigned_identity
+                or existing_workspace.primary_user_assigned_identity
             )
             workspace._feature_store_settings = (
-                workspace._feature_store_settings or existing_workspace._feature_store_settings
+                workspace._feature_store_settings
+                or existing_workspace._feature_store_settings
             )
             return self.begin_update(
                 workspace,
@@ -114,7 +134,9 @@ class WorkspaceOperationsBase:
             workspace.tags["createdByToolkit"] = "sdk-v2-{}".format(VERSION)
 
         workspace.resource_group = resource_group
-        template, param, resources_being_deployed = self._populate_arm_paramaters(workspace, **kwargs)
+        template, param, resources_being_deployed = self._populate_arm_paramaters(
+            workspace, **kwargs
+        )
         # check if create with workspace hub request is valid
         if workspace._kind == PROJECT_WORKSPACE_KIND:
             if not all(
@@ -155,7 +177,11 @@ class WorkspaceOperationsBase:
         )
 
         def callback():
-            return get_callback() if get_callback else self.get(workspace.name, resource_group=resource_group)
+            return (
+                get_callback()
+                if get_callback
+                else self.get(workspace.name, resource_group=resource_group)
+            )
 
         return LROPoller(
             self._operation._client,
@@ -197,7 +223,9 @@ class WorkspaceOperationsBase:
         elif isinstance(managed_network, ManagedNetwork):
             managed_network = workspace.managed_network._to_rest_object()
 
-        container_registry = kwargs.get("container_registry", workspace.container_registry)
+        container_registry = kwargs.get(
+            "container_registry", workspace.container_registry
+        )
         # Empty string is for erasing the value of container_registry, None is to be ignored value
         if (
             container_registry is not None
@@ -216,7 +244,9 @@ class WorkspaceOperationsBase:
                 no_personal_data_message=msg,
                 error_category=ErrorCategory.USER_ERROR,
             )
-        application_insights = kwargs.get("application_insights", workspace.application_insights)
+        application_insights = kwargs.get(
+            "application_insights", workspace.application_insights
+        )
         # Empty string is for erasing the value of application_insights, None is to be ignored value
         if (
             application_insights is not None
@@ -235,7 +265,9 @@ class WorkspaceOperationsBase:
                 error_category=ErrorCategory.USER_ERROR,
             )
 
-        feature_store_settings = kwargs.get("feature_store_settings", workspace._feature_store_settings)
+        feature_store_settings = kwargs.get(
+            "feature_store_settings", workspace._feature_store_settings
+        )
         if feature_store_settings:
             feature_store_settings = feature_store_settings._to_rest_object()
 
@@ -243,11 +275,16 @@ class WorkspaceOperationsBase:
             tags=kwargs.get("tags", workspace.tags),
             description=kwargs.get("description", workspace.description),
             friendly_name=kwargs.get("display_name", workspace.display_name),
-            public_network_access=kwargs.get("public_network_access", workspace.public_network_access),
-            image_build_compute=kwargs.get("image_build_compute", workspace.image_build_compute),
+            public_network_access=kwargs.get(
+                "public_network_access", workspace.public_network_access
+            ),
+            image_build_compute=kwargs.get(
+                "image_build_compute", workspace.image_build_compute
+            ),
             identity=identity,
             primary_user_assigned_identity=kwargs.get(
-                "primary_user_assigned_identity", workspace.primary_user_assigned_identity
+                "primary_user_assigned_identity",
+                workspace.primary_user_assigned_identity,
             ),
             managed_network=managed_network,
             feature_store_settings=feature_store_settings,
@@ -257,7 +294,10 @@ class WorkspaceOperationsBase:
 
         # Only the key uri property of customer_managed_key can be updated.
         # Check if user is updating CMK key uri, if so, add to update_param
-        if workspace.customer_managed_key is not None and workspace.customer_managed_key.key_uri is not None:
+        if (
+            workspace.customer_managed_key is not None
+            and workspace.customer_managed_key.key_uri is not None
+        ):
             customer_managed_key_uri = workspace.customer_managed_key.key_uri
             update_param.encryption = EncryptionUpdateProperties(
                 key_vault_properties=EncryptionKeyVaultUpdateProperties(
@@ -265,7 +305,11 @@ class WorkspaceOperationsBase:
                 )
             )
 
-        resource_group = kwargs.get("resource_group") or workspace.resource_group or self._resource_group_name
+        resource_group = (
+            kwargs.get("resource_group")
+            or workspace.resource_group
+            or self._resource_group_name
+        )
 
         # pylint: disable=unused-argument
         def callback(_, deserialized, args):
@@ -275,11 +319,18 @@ class WorkspaceOperationsBase:
                 else Workspace._from_rest_object(deserialized)
             )
 
-        poller = self._operation.begin_update(resource_group, workspace_name, update_param, polling=True, cls=callback)
+        poller = self._operation.begin_update(
+            resource_group, workspace_name, update_param, polling=True, cls=callback
+        )
         return poller
 
     def begin_delete(
-        self, name: str, *, delete_dependent_resources: bool, permanently_delete: bool = False, **kwargs: Dict
+        self,
+        name: str,
+        *,
+        delete_dependent_resources: bool,
+        permanently_delete: bool = False,
+        **kwargs: Dict,
     ) -> LROPoller[None]:
         workspace = self.get(name, **kwargs)
         resource_group = kwargs.get("resource_group") or self._resource_group_name
@@ -328,7 +379,9 @@ class WorkspaceOperationsBase:
         return poller
 
     # pylint: disable=too-many-statements,too-many-branches,too-many-locals
-    def _populate_arm_paramaters(self, workspace: Workspace, **kwargs: Dict) -> Tuple[dict, dict, dict]:
+    def _populate_arm_paramaters(
+        self, workspace: Workspace, **kwargs: Dict
+    ) -> Tuple[dict, dict, dict]:
         resources_being_deployed = {}
         if not workspace.location:
             workspace.location = get_resource_group_location(
@@ -371,7 +424,9 @@ class WorkspaceOperationsBase:
             )
 
         if workspace.storage_account:
-            resource_name, group_name = get_resource_and_group_name(workspace.storage_account)
+            resource_name, group_name = get_resource_and_group_name(
+                workspace.storage_account
+            )
             _set_val(param["storageAccountName"], resource_name)
             _set_val(param["storageAccountOption"], "existing")
             _set_val(param["storageAccountResourceGroupName"], group_name)
@@ -384,7 +439,9 @@ class WorkspaceOperationsBase:
             )
 
         if workspace.application_insights:
-            resource_name, group_name = get_resource_and_group_name(workspace.application_insights)
+            resource_name, group_name = get_resource_and_group_name(
+                workspace.application_insights
+            )
             _set_val(param["applicationInsightsName"], resource_name)
             _set_val(param["applicationInsightsOption"], "existing")
             _set_val(
@@ -392,14 +449,20 @@ class WorkspaceOperationsBase:
                 group_name,
             )
         else:
-            log_analytics = _generate_log_analytics(workspace.name, resources_being_deployed)
+            log_analytics = _generate_log_analytics(
+                workspace.name, resources_being_deployed
+            )
             _set_val(param["logAnalyticsName"], log_analytics)
             _set_val(
                 param["logAnalyticsArmId"],
-                get_log_analytics_arm_id(self._subscription_id, self._resource_group_name, log_analytics),
+                get_log_analytics_arm_id(
+                    self._subscription_id, self._resource_group_name, log_analytics
+                ),
             )
 
-            app_insights = _generate_app_insights(workspace.name, resources_being_deployed)
+            app_insights = _generate_app_insights(
+                workspace.name, resources_being_deployed
+            )
             _set_val(param["applicationInsightsName"], app_insights)
             _set_val(
                 param["applicationInsightsResourceGroupName"],
@@ -407,7 +470,9 @@ class WorkspaceOperationsBase:
             )
 
         if workspace.container_registry:
-            resource_name, group_name = get_resource_and_group_name(workspace.container_registry)
+            resource_name, group_name = get_resource_and_group_name(
+                workspace.container_registry
+            )
             _set_val(param["containerRegistryName"], resource_name)
             _set_val(param["containerRegistryOption"], "existing")
             _set_val(param["containerRegistryResourceGroupName"], group_name)
@@ -456,11 +521,15 @@ class WorkspaceOperationsBase:
         _set_val(param["identity"], identity)
 
         if workspace.primary_user_assigned_identity:
-            _set_val(param["primaryUserAssignedIdentity"], workspace.primary_user_assigned_identity)
+            _set_val(
+                param["primaryUserAssignedIdentity"],
+                workspace.primary_user_assigned_identity,
+            )
 
         if workspace._feature_store_settings:
             _set_val(
-                param["spark_runtime_version"], workspace._feature_store_settings.compute_runtime.spark_runtime_version
+                param["spark_runtime_version"],
+                workspace._feature_store_settings.compute_runtime.spark_runtime_version,
             )
             _set_val(
                 param["offline_store_connection_name"],
@@ -481,16 +550,27 @@ class WorkspaceOperationsBase:
             offline_store_target = kwargs.get("offline_store_target", None)
             online_store_target = kwargs.get("online_store_target", None)
 
-            setup_materialization_store = (offline_store_target or online_store_target) and materialization_identity
+            setup_materialization_store = (
+                offline_store_target or online_store_target
+            ) and materialization_identity
 
-        _set_val(param["setup_materialization_store"], "true" if setup_materialization_store else "false")
+        _set_val(
+            param["setup_materialization_store"],
+            "true" if setup_materialization_store else "false",
+        )
         if setup_materialization_store:
             if offline_store_target is not None:
                 _set_val(param["offline_store_connection_target"], offline_store_target)
             if online_store_target is not None:
                 _set_val(param["online_store_connection_target"], online_store_target)
-            _set_val(param["materialization_identity_client_id"], materialization_identity.client_id)
-            _set_val(param["materialization_identity_resource_id"], materialization_identity.resource_id)
+            _set_val(
+                param["materialization_identity_client_id"],
+                materialization_identity.client_id,
+            )
+            _set_val(
+                param["materialization_identity_resource_id"],
+                materialization_identity.resource_id,
+            )
 
         managed_network = None
         if workspace.managed_network:
@@ -504,7 +584,10 @@ class WorkspaceOperationsBase:
         # Hub related param
         if workspace._kind and workspace._kind.lower() == WORKSPACE_HUB_KIND:
             if workspace.workspace_hub_config:
-                _set_val(param["workspace_hub_config"], workspace.workspace_hub_config._to_rest_object())
+                _set_val(
+                    param["workspace_hub_config"],
+                    workspace.workspace_hub_config._to_rest_object(),
+                )
             if workspace.existing_workspaces:
                 _set_val(param["existing_workspaces"], workspace.existing_workspaces)
 
@@ -549,7 +632,9 @@ def _generate_storage(name: str, resources_being_deployed: dict) -> str:
 
 
 def _generate_log_analytics(name: str, resources_being_deployed: dict) -> str:
-    log_analytics = get_name_for_dependent_resource(name, "logalytics")  # cspell:disable-line
+    log_analytics = get_name_for_dependent_resource(
+        name, "logalytics"
+    )  # cspell:disable-line
     resources_being_deployed[log_analytics] = (
         ArmConstants.LOG_ANALYTICS,
         None,
@@ -601,7 +686,9 @@ class CustomArmTemplateDeploymentPollingMethod(PollingMethod):
             error_msg = f"Unable to create resource. \n {error}\n"
             module_logger.error(error_msg)
             raise error
-        module_logger.info("Total time : %s\n", from_iso_duration_format_min_sec(total_duration))
+        module_logger.info(
+            "Total time : %s\n", from_iso_duration_format_min_sec(total_duration)
+        )
         return self.func()
 
     def initialize(self, *args, **kwargs):

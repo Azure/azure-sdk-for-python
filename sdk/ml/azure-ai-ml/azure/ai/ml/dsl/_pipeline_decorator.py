@@ -18,7 +18,11 @@ from azure.ai.ml._utils.utils import is_private_preview_enabled
 from azure.ai.ml.entities import Data, Model, PipelineJob, PipelineJobSettings
 from azure.ai.ml.entities._builders.pipeline import Pipeline
 from azure.ai.ml.entities._inputs_outputs import Input, is_group
-from azure.ai.ml.entities._job.pipeline._io import NodeOutput, PipelineInput, _GroupAttrDict
+from azure.ai.ml.entities._job.pipeline._io import (
+    NodeOutput,
+    PipelineInput,
+    _GroupAttrDict,
+)
 from azure.ai.ml.entities._job.pipeline._pipeline_expression import PipelineExpression
 from azure.ai.ml.exceptions import (
     MultipleValueError,
@@ -30,7 +34,10 @@ from azure.ai.ml.exceptions import (
 )
 
 from ..entities._builders import BaseNode
-from ._pipeline_component_builder import PipelineComponentBuilder, _is_inside_dsl_pipeline_func
+from ._pipeline_component_builder import (
+    PipelineComponentBuilder,
+    _is_inside_dsl_pipeline_func,
+)
 from ._settings import _dsl_settings_stack
 from ._utils import _resolve_source_file
 
@@ -96,7 +103,9 @@ def pipeline(
     experiment_name: Optional[str] = None,
     tags: Optional[Dict[str, str]] = None,
     **kwargs,
-) -> Union[Callable[[Callable[P, T]], Callable[P, PipelineJob]], Callable[P, PipelineJob]]:
+) -> Union[
+    Callable[[Callable[P, T]], Callable[P, PipelineJob]], Callable[P, PipelineJob]
+]:
     """Build a pipeline which contains all component nodes defined in this function.
 
     :param func: The user pipeline function to be decorated.
@@ -135,15 +144,23 @@ def pipeline(
     """
 
     def pipeline_decorator(func: Callable[P, T]) -> Callable[P, PipelineJob]:
-        if not isinstance(func, Callable):  # pylint: disable=isinstance-second-argument-not-valid-type
-            raise UserErrorException(f"Dsl pipeline decorator accept only function type, got {type(func)}.")
+        if not isinstance(
+            func, Callable
+        ):  # pylint: disable=isinstance-second-argument-not-valid-type
+            raise UserErrorException(
+                f"Dsl pipeline decorator accept only function type, got {type(func)}."
+            )
 
-        non_pipeline_inputs = kwargs.get("non_pipeline_inputs", []) or kwargs.get("non_pipeline_parameters", [])
+        non_pipeline_inputs = kwargs.get("non_pipeline_inputs", []) or kwargs.get(
+            "non_pipeline_parameters", []
+        )
         # compute variable names changed from default_compute_targe -> compute -> default_compute -> none
         # to support legacy usage, we support them with priority.
         compute = kwargs.get("compute", None)
         default_compute_target = kwargs.get("default_compute_target", None)
-        default_compute_target = kwargs.get("default_compute", None) or default_compute_target
+        default_compute_target = (
+            kwargs.get("default_compute", None) or default_compute_target
+        )
         continue_on_step_failure = kwargs.get("continue_on_step_failure", None)
         on_init = kwargs.get("on_init", None)
         on_finalize = kwargs.get("on_finalize", None)
@@ -187,16 +204,22 @@ def pipeline(
             _dsl_settings_stack.push()  # use this stack to track on_init/on_finalize settings
             try:
                 # Convert args to kwargs
-                provided_positional_kwargs = _validate_args(func, args, kwargs, non_pipeline_inputs)
+                provided_positional_kwargs = _validate_args(
+                    func, args, kwargs, non_pipeline_inputs
+                )
 
                 # When pipeline supports variable params, update pipeline component to support the inputs in **kwargs.
                 pipeline_parameters = {
-                    k: v for k, v in provided_positional_kwargs.items() if k not in non_pipeline_inputs
+                    k: v
+                    for k, v in provided_positional_kwargs.items()
+                    if k not in non_pipeline_inputs
                 }
                 pipeline_builder._update_inputs(pipeline_parameters)
 
                 non_pipeline_params_dict = {
-                    k: v for k, v in provided_positional_kwargs.items() if k in non_pipeline_inputs
+                    k: v
+                    for k, v in provided_positional_kwargs.items()
+                    if k in non_pipeline_inputs
                 }
 
                 # TODO: cache built pipeline component
@@ -211,9 +234,13 @@ def pipeline(
 
             # update on_init/on_finalize settings if init/finalize job is set
             if dsl_settings.init_job_set:
-                job_settings["on_init"] = dsl_settings.init_job_name(pipeline_component.jobs)
+                job_settings["on_init"] = dsl_settings.init_job_name(
+                    pipeline_component.jobs
+                )
             if dsl_settings.finalize_job_set:
-                job_settings["on_finalize"] = dsl_settings.finalize_job_name(pipeline_component.jobs)
+                job_settings["on_finalize"] = dsl_settings.finalize_job_name(
+                    pipeline_component.jobs
+                )
 
             # TODO: pass compute & default_compute separately?
             common_init_args = {
@@ -224,13 +251,20 @@ def pipeline(
             }
             if _is_inside_dsl_pipeline_func():
                 # on_init/on_finalize is not supported for pipeline component
-                if job_settings.get("on_init") is not None or job_settings.get("on_finalize") is not None:
-                    raise UserErrorException("On_init/on_finalize is not supported for pipeline component.")
+                if (
+                    job_settings.get("on_init") is not None
+                    or job_settings.get("on_finalize") is not None
+                ):
+                    raise UserErrorException(
+                        "On_init/on_finalize is not supported for pipeline component."
+                    )
                 # Build pipeline node instead of pipeline job if inside dsl.
                 built_pipeline = Pipeline(_from_component_func=True, **common_init_args)
                 if job_settings:
                     module_logger.warning(
-                        ("Job settings %s on pipeline function %r are ignored when using inside PipelineJob."),
+                        (
+                            "Job settings %s on pipeline function %r are ignored when using inside PipelineJob."
+                        ),
                         job_settings,
                         func.__name__,
                     )
@@ -258,26 +292,43 @@ def pipeline(
 # pylint: disable-next=docstring-missing-param,docstring-missing-return,docstring-missing-rtype
 def _validate_args(func, args, kwargs, non_pipeline_inputs):
     """Validate customer function args and convert them to kwargs."""
-    if not isinstance(non_pipeline_inputs, List) or any(not isinstance(param, str) for param in non_pipeline_inputs):
+    if not isinstance(non_pipeline_inputs, List) or any(
+        not isinstance(param, str) for param in non_pipeline_inputs
+    ):
         msg = "Type of 'non_pipeline_parameter' in dsl.pipeline should be a list of string"
         raise UserErrorException(message=msg, no_personal_data_message=msg)
     # Positional arguments validate
     is_support_variable_params = is_private_preview_enabled()
     all_parameters = signature(func).parameters
     # Implicit parameter are *args
-    var_positional_arg = next(filter(lambda param: param.kind == param.VAR_POSITIONAL, all_parameters.values()), None)
+    var_positional_arg = next(
+        filter(
+            lambda param: param.kind == param.VAR_POSITIONAL, all_parameters.values()
+        ),
+        None,
+    )
     if var_positional_arg:
-        raise UnsupportedParameterKindError(func.__name__, parameter_kind=f"*{var_positional_arg.name}")
+        raise UnsupportedParameterKindError(
+            func.__name__, parameter_kind=f"*{var_positional_arg.name}"
+        )
 
     non_pipeline_inputs = non_pipeline_inputs or []
-    unexpected_non_pipeline_inputs = [param for param in non_pipeline_inputs if param not in all_parameters]
+    unexpected_non_pipeline_inputs = [
+        param for param in non_pipeline_inputs if param not in all_parameters
+    ]
     if unexpected_non_pipeline_inputs:
         raise ParamValueNotExistsError(func.__name__, unexpected_non_pipeline_inputs)
 
     named_parameters = [
-        param for param in all_parameters.values() if param.kind not in [param.VAR_KEYWORD, param.VAR_POSITIONAL]
+        param
+        for param in all_parameters.values()
+        if param.kind not in [param.VAR_KEYWORD, param.VAR_POSITIONAL]
     ]
-    empty_parameters = {param.name: param for param in named_parameters if param.default is Parameter.empty}
+    empty_parameters = {
+        param.name: param
+        for param in named_parameters
+        if param.default is Parameter.empty
+    }
     # Implicit parameter are *args and **kwargs
     if not is_support_variable_params:
         if len(all_parameters.values()) != len(named_parameters):
@@ -289,7 +340,13 @@ def _validate_args(func, args, kwargs, non_pipeline_inputs):
             raise TooManyPositionalArgsError(func.__name__, min_num, max_num, len(args))
 
     func_args, provided_args = list(args), OrderedDict({})
-    provided_args = OrderedDict({param.name: func_args.pop(0) for param in named_parameters if len(func_args) > 0})
+    provided_args = OrderedDict(
+        {
+            param.name: func_args.pop(0)
+            for param in named_parameters
+            if len(func_args) > 0
+        }
+    )
     for _k, _v in kwargs.items():
         if not is_support_variable_params and _k not in all_parameters:
             raise UnexpectedKeywordError(func.__name__, _k, all_parameters.keys())
@@ -313,7 +370,11 @@ def _validate_args(func, args, kwargs, non_pipeline_inputs):
             data = next(iter(data.outputs.values()))
             provided_args[pipeline_input_name] = data
 
-        if data is not None and not _is_supported_data_type(data) and pipeline_input_name not in non_pipeline_inputs:
+        if (
+            data is not None
+            and not _is_supported_data_type(data)
+            and pipeline_input_name not in non_pipeline_inputs
+        ):
             msg = (
                 "Pipeline input expected an azure.ai.ml.Input or primitive types (str, bool, int or float), "
                 "but got type {}."

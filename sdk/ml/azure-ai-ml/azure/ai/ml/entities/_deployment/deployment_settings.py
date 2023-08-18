@@ -7,9 +7,15 @@
 import logging
 from typing import Optional
 
-from azure.ai.ml._restclient.v2022_05_01.models import BatchRetrySettings as RestBatchRetrySettings
-from azure.ai.ml._restclient.v2022_05_01.models import OnlineRequestSettings as RestOnlineRequestSettings
-from azure.ai.ml._restclient.v2022_05_01.models import ProbeSettings as RestProbeSettings
+from azure.ai.ml._restclient.v2022_05_01.models import (
+    BatchRetrySettings as RestBatchRetrySettings,
+)
+from azure.ai.ml._restclient.v2022_05_01.models import (
+    OnlineRequestSettings as RestOnlineRequestSettings,
+)
+from azure.ai.ml._restclient.v2022_05_01.models import (
+    ProbeSettings as RestProbeSettings,
+)
 from azure.ai.ml._utils.utils import (
     from_iso_duration_format,
     from_iso_duration_format_ms,
@@ -30,7 +36,9 @@ class BatchRetrySettings(RestTranslatableMixin):
     :type timeout: int, optional
     """
 
-    def __init__(self, *, max_retries: Optional[int] = None, timeout: Optional[int] = None):
+    def __init__(
+        self, *, max_retries: Optional[int] = None, timeout: Optional[int] = None
+    ):
         self.max_retries = max_retries
         self.timeout = timeout
 
@@ -41,7 +49,9 @@ class BatchRetrySettings(RestTranslatableMixin):
         )
 
     @classmethod
-    def _from_rest_object(cls, settings: RestBatchRetrySettings) -> "BatchRetrySettings":
+    def _from_rest_object(
+        cls, settings: RestBatchRetrySettings
+    ) -> "BatchRetrySettings":
         return (
             BatchRetrySettings(
                 max_retries=settings.max_retries,
@@ -88,16 +98,23 @@ class OnlineRequestSettings(RestTranslatableMixin):
     def _merge_with(self, other: "OnlineRequestSettings") -> None:
         if other:
             self.max_concurrent_requests_per_instance = (
-                other.max_concurrent_requests_per_instance or self.max_concurrent_requests_per_instance
+                other.max_concurrent_requests_per_instance
+                or self.max_concurrent_requests_per_instance
             )
-            self.request_timeout_ms = other.request_timeout_ms or self.request_timeout_ms
+            self.request_timeout_ms = (
+                other.request_timeout_ms or self.request_timeout_ms
+            )
             self.max_queue_wait_ms = other.max_queue_wait_ms or self.max_queue_wait_ms
 
     @classmethod
-    def _from_rest_object(cls, settings: RestOnlineRequestSettings) -> "OnlineRequestSettings":
+    def _from_rest_object(
+        cls, settings: RestOnlineRequestSettings
+    ) -> "OnlineRequestSettings":
         return (
             OnlineRequestSettings(
-                request_timeout_ms=from_iso_duration_format_ms(settings.request_timeout),
+                request_timeout_ms=from_iso_duration_format_ms(
+                    settings.request_timeout
+                ),
                 max_concurrent_requests_per_instance=settings.max_concurrent_requests_per_instance,
                 max_queue_wait_ms=from_iso_duration_format_ms(settings.max_queue_wait),
             )
@@ -112,7 +129,8 @@ class OnlineRequestSettings(RestTranslatableMixin):
             return False
         # only compare mutable fields
         return (
-            self.max_concurrent_requests_per_instance == other.max_concurrent_requests_per_instance
+            self.max_concurrent_requests_per_instance
+            == other.max_concurrent_requests_per_instance
             and self.request_timeout_ms == other.request_timeout_ms
             and self.max_queue_wait_ms == other.max_queue_wait_ms
         )

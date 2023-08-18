@@ -50,7 +50,9 @@ class DataQualityMetricThresholdSchema(MetricThresholdSchema):
 
     @post_load
     def make(self, data, **kwargs):
-        from azure.ai.ml.entities._monitoring.thresholds import DataQualityMetricThreshold
+        from azure.ai.ml.entities._monitoring.thresholds import (
+            DataQualityMetricThreshold,
+        )
 
         return DataQualityMetricThreshold(**data)
 
@@ -71,7 +73,9 @@ class PredictionDriftMetricThresholdSchema(MetricThresholdSchema):
 
     @post_load
     def make(self, data, **kwargs):
-        from azure.ai.ml.entities._monitoring.thresholds import PredictionDriftMetricThreshold
+        from azure.ai.ml.entities._monitoring.thresholds import (
+            PredictionDriftMetricThreshold,
+        )
 
         return PredictionDriftMetricThreshold(**data)
 
@@ -80,7 +84,9 @@ class PredictionDriftMetricThresholdSchema(MetricThresholdSchema):
 class FeatureAttributionDriftMetricThresholdSchema(MetricThresholdSchema):
     @post_load
     def make(self, data, **kwargs):
-        from azure.ai.ml.entities._monitoring.thresholds import FeatureAttributionDriftMetricThreshold
+        from azure.ai.ml.entities._monitoring.thresholds import (
+            FeatureAttributionDriftMetricThreshold,
+        )
 
         return FeatureAttributionDriftMetricThreshold(**data)
 
@@ -100,7 +106,9 @@ class ModelPerformanceMetricThresholdSchema(MetricThresholdSchema):
 
     @post_load
     def make(self, data, **kwargs):
-        from azure.ai.ml.entities._monitoring.thresholds import ModelPerformanceMetricThreshold
+        from azure.ai.ml.entities._monitoring.thresholds import (
+            ModelPerformanceMetricThreshold,
+        )
 
         return ModelPerformanceMetricThreshold(**data)
 
@@ -110,6 +118,8 @@ class CustomMonitoringMetricThresholdSchema(MetricThresholdSchema):
 
     @post_load
     def make(self, data, **kwargs):
-        from azure.ai.ml.entities._monitoring.thresholds import CustomMonitoringMetricThreshold
+        from azure.ai.ml.entities._monitoring.thresholds import (
+            CustomMonitoringMetricThreshold,
+        )
 
         return CustomMonitoringMetricThreshold(**data)

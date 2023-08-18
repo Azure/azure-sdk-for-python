@@ -31,10 +31,14 @@ class AcrAccountSku(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 # based on /subscriptions/{SubscriptionId}/resourceGroups/{ResourceGroupName}/
 # # ...providers/Microsoft.Storage/storageAccounts/{StorageAccountName}
 STORAGE_ACCOUNT_FORMAT = re.compile(
-    ("/subscriptions/(.*)/resourceGroups/(.*)/providers/Microsoft.Storage/storageAccounts/(.*)")
+    (
+        "/subscriptions/(.*)/resourceGroups/(.*)/providers/Microsoft.Storage/storageAccounts/(.*)"
+    )
 )
 # based on /subscriptions/{SubscriptionId}/resourceGroups/{ResourceGroupName}/
 # # ...providers/Microsoft.ContainerRegistry/registries/{AcrName}\
 ACR_ACCOUNT_FORMAT = re.compile(
-    ("/subscriptions/(.*)/resourceGroups/(.*)/providers/Microsoft.ContainerRegistry/registries/(.*)")
+    (
+        "/subscriptions/(.*)/resourceGroups/(.*)/providers/Microsoft.ContainerRegistry/registries/(.*)"
+    )
 )

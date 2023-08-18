@@ -15,6 +15,8 @@ class SourceProcessCodeSchema(metaclass=PatchedSchemaMeta):
 
     @post_load
     def make(self, data, **kwargs):
-        from azure.ai.ml.entities._feature_set.source_process_code_metadata import SourceProcessCodeMetadata
+        from azure.ai.ml.entities._feature_set.source_process_code_metadata import (
+            SourceProcessCodeMetadata,
+        )
 
         return SourceProcessCodeMetadata(**data)

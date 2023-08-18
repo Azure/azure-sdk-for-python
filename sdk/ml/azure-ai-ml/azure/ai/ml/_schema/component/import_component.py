@@ -10,18 +10,27 @@ from marshmallow import INCLUDE, fields, post_load, validate
 from azure.ai.ml._schema.assets.asset import AnonymousAssetSchema
 from azure.ai.ml._schema.component.component import ComponentSchema
 from azure.ai.ml._schema.component.input_output import OutputPortSchema, ParameterSchema
-from azure.ai.ml._schema.core.fields import FileRefField, NestedField, StringTransformedEnum
+from azure.ai.ml._schema.core.fields import (
+    FileRefField,
+    NestedField,
+    StringTransformedEnum,
+)
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 from azure.ai.ml.constants._component import ComponentSource, NodeType
 
 
 class ImportComponentSchema(ComponentSchema):
     class Meta:
-        exclude = ["inputs", "outputs"]  # inputs or outputs property not applicable to import job
+        exclude = [
+            "inputs",
+            "outputs",
+        ]  # inputs or outputs property not applicable to import job
 
     type = StringTransformedEnum(allowed_values=[NodeType.IMPORT])
     source = fields.Dict(
-        keys=fields.Str(validate=validate.OneOf(["type", "connection", "query", "path"])),
+        keys=fields.Str(
+            validate=validate.OneOf(["type", "connection", "query", "path"])
+        ),
         values=NestedField(ParameterSchema),
         required=True,
     )
@@ -66,9 +75,9 @@ class ImportComponentFileRefField(FileRefField):
         # Update base_path to parent path of component file.
         component_schema_context = deepcopy(self.context)
         component_schema_context[BASE_PATH_CONTEXT_KEY] = source_path.parent
-        component = AnonymousImportComponentSchema(context=component_schema_context).load(
-            component_dict, unknown=INCLUDE
-        )
+        component = AnonymousImportComponentSchema(
+            context=component_schema_context
+        ).load(component_dict, unknown=INCLUDE)
         component._source_path = source_path
         component._source = ComponentSource.YAML_COMPONENT
         return component

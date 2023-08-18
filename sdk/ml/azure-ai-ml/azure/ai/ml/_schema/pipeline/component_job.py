@@ -6,7 +6,15 @@
 
 import logging
 
-from marshmallow import INCLUDE, ValidationError, fields, post_dump, post_load, pre_dump, validates
+from marshmallow import (
+    INCLUDE,
+    ValidationError,
+    fields,
+    post_dump,
+    post_load,
+    pre_dump,
+    validates,
+)
 
 from ..._schema.component import (
     AnonymousCommandComponentSchema,
@@ -39,8 +47,16 @@ from ..core.fields import (
     UnionField,
 )
 from ..core.schema import PathAwareSchema
-from ..job import ParameterizedCommandSchema, ParameterizedParallelSchema, ParameterizedSparkSchema
-from ..job.identity import AMLTokenIdentitySchema, ManagedIdentitySchema, UserIdentitySchema
+from ..job import (
+    ParameterizedCommandSchema,
+    ParameterizedParallelSchema,
+    ParameterizedSparkSchema,
+)
+from ..job.identity import (
+    AMLTokenIdentitySchema,
+    ManagedIdentitySchema,
+    UserIdentitySchema,
+)
 from ..job.input_output_entry import DatabaseSchema, FileSystemSchema, OutputSchema
 from ..job.input_output_fields_provider import InputsField
 from ..job.job_limits import CommandJobLimitsSchema
@@ -65,7 +81,9 @@ class BaseNodeSchema(PathAwareSchema):
     inputs = InputsField(support_databinding=True)
     outputs = fields.Dict(
         keys=fields.Str(),
-        values=UnionField([OutputBindingStr, NestedField(OutputSchema)], allow_none=True),
+        values=UnionField(
+            [OutputBindingStr, NestedField(OutputSchema)], allow_none=True
+        ),
     )
     properties = fields.Dict(keys=fields.Str(), values=fields.Str(allow_none=True))
     comment = fields.Str()
@@ -75,11 +93,15 @@ class BaseNodeSchema(PathAwareSchema):
         # data binding expression is not supported inside component field, while validation error
         # message will be very long when component is an object as error message will include
         # str(component), so just add component to skip list. The same to trial in Sweep.
-        support_data_binding_expression_for_fields(self, ["type", "component", "trial", "inputs"])
+        support_data_binding_expression_for_fields(
+            self, ["type", "component", "trial", "inputs"]
+        )
 
     @post_dump(pass_original=True)
     # pylint: disable-next=docstring-missing-param,docstring-missing-return,docstring-missing-rtype
-    def add_user_setting_attr_dict(self, data, original_data, **kwargs):  # pylint: disable=unused-argument
+    def add_user_setting_attr_dict(
+        self, data, original_data, **kwargs
+    ):  # pylint: disable=unused-argument
         """Support serializing unknown fields for pipeline node."""
         if isinstance(original_data, _AttrDict):
             user_setting_attr_dict = original_data._get_attrs()
@@ -104,7 +126,11 @@ class BaseNodeSchema(PathAwareSchema):
 
 def _delete_type_for_binding(io):
     for key in io:
-        if isinstance(io[key], Input) and io[key].path and is_data_binding_expression(io[key].path):
+        if (
+            isinstance(io[key], Input)
+            and io[key].path
+            and is_data_binding_expression(io[key].path)
+        ):
             io[key].type = None
 
 
@@ -146,7 +172,9 @@ class CommandSchema(BaseNodeSchema, ParameterizedCommandSchema):
             # for registry type assets
             RegistryStr(),
             # existing component
-            ArmVersionedStr(azureml_type=AzureMLResourceType.COMPONENT, allow_default_version=True),
+            ArmVersionedStr(
+                azureml_type=AzureMLResourceType.COMPONENT, allow_default_version=True
+            ),
         ],
         required=True,
     )
@@ -223,7 +251,9 @@ class SweepSchema(BaseNodeSchema, ParameterizedSweepSchema):
         },
         plain_union_fields=[
             # existing component
-            ArmVersionedStr(azureml_type=AzureMLResourceType.COMPONENT, allow_default_version=True),
+            ArmVersionedStr(
+                azureml_type=AzureMLResourceType.COMPONENT, allow_default_version=True
+            ),
         ],
         required=True,
     )
@@ -257,7 +287,9 @@ class ParallelSchema(BaseNodeSchema, ParameterizedParallelSchema):
             # for registry type assets
             RegistryStr(),
             # existing component
-            ArmVersionedStr(azureml_type=AzureMLResourceType.COMPONENT, allow_default_version=True),
+            ArmVersionedStr(
+                azureml_type=AzureMLResourceType.COMPONENT, allow_default_version=True
+            ),
         ],
         required=True,
     )
@@ -292,7 +324,9 @@ class ImportSchema(BaseNodeSchema):
             # for registry type assets
             RegistryStr(),
             # existing component
-            ArmVersionedStr(azureml_type=AzureMLResourceType.COMPONENT, allow_default_version=True),
+            ArmVersionedStr(
+                azureml_type=AzureMLResourceType.COMPONENT, allow_default_version=True
+            ),
         ],
         required=True,
     )
@@ -328,7 +362,9 @@ class SparkSchema(BaseNodeSchema, ParameterizedSparkSchema):
             # for registry type assets
             RegistryStr(),
             # existing component
-            ArmVersionedStr(azureml_type=AzureMLResourceType.COMPONENT, allow_default_version=True),
+            ArmVersionedStr(
+                azureml_type=AzureMLResourceType.COMPONENT, allow_default_version=True
+            ),
         ],
         required=True,
     )
@@ -389,11 +425,15 @@ class DataTransferCopySchema(BaseNodeSchema):
             # for registry type assets
             RegistryStr(),
             # existing component
-            ArmVersionedStr(azureml_type=AzureMLResourceType.COMPONENT, allow_default_version=True),
+            ArmVersionedStr(
+                azureml_type=AzureMLResourceType.COMPONENT, allow_default_version=True
+            ),
         ],
         required=True,
     )
-    task = StringTransformedEnum(allowed_values=[DataTransferTaskType.COPY_DATA], required=True)
+    task = StringTransformedEnum(
+        allowed_values=[DataTransferTaskType.COPY_DATA], required=True
+    )
     type = StringTransformedEnum(allowed_values=[NodeType.DATA_TRANSFER], required=True)
     compute = ComputeField()
 
@@ -424,21 +464,34 @@ class DataTransferImportSchema(BaseNodeSchema):
             # for registry type assets
             RegistryStr(),
             # existing component
-            ArmVersionedStr(azureml_type=AzureMLResourceType.COMPONENT, allow_default_version=True),
+            ArmVersionedStr(
+                azureml_type=AzureMLResourceType.COMPONENT, allow_default_version=True
+            ),
         ],
         required=True,
     )
-    task = StringTransformedEnum(allowed_values=[DataTransferTaskType.IMPORT_DATA], required=True)
+    task = StringTransformedEnum(
+        allowed_values=[DataTransferTaskType.IMPORT_DATA], required=True
+    )
     type = StringTransformedEnum(allowed_values=[NodeType.DATA_TRANSFER], required=True)
     compute = ComputeField()
-    source = UnionField([NestedField(DatabaseSchema), NestedField(FileSystemSchema)], required=True, allow_none=False)
+    source = UnionField(
+        [NestedField(DatabaseSchema), NestedField(FileSystemSchema)],
+        required=True,
+        allow_none=False,
+    )
     outputs = fields.Dict(
-        keys=fields.Str(), values=UnionField([OutputBindingStr, NestedField(OutputSchema)]), allow_none=False
+        keys=fields.Str(),
+        values=UnionField([OutputBindingStr, NestedField(OutputSchema)]),
+        allow_none=False,
     )
 
     @validates("inputs")
     def inputs_key(self, value):
-        raise ValidationError(f"inputs field is not a valid filed in task type " f"{DataTransferTaskType.IMPORT_DATA}.")
+        raise ValidationError(
+            f"inputs field is not a valid filed in task type "
+            f"{DataTransferTaskType.IMPORT_DATA}."
+        )
 
     @validates("outputs")
     def outputs_key(self, value):
@@ -475,7 +528,9 @@ class DataTransferExportSchema(BaseNodeSchema):
             # for registry type assets
             RegistryStr(),
             # existing component
-            ArmVersionedStr(azureml_type=AzureMLResourceType.COMPONENT, allow_default_version=True),
+            ArmVersionedStr(
+                azureml_type=AzureMLResourceType.COMPONENT, allow_default_version=True
+            ),
         ],
         required=True,
     )
@@ -483,7 +538,11 @@ class DataTransferExportSchema(BaseNodeSchema):
     type = StringTransformedEnum(allowed_values=[NodeType.DATA_TRANSFER])
     compute = ComputeField()
     inputs = InputsField(support_databinding=True, allow_none=False)
-    sink = UnionField([NestedField(DatabaseSchema), NestedField(FileSystemSchema)], required=True, allow_none=False)
+    sink = UnionField(
+        [NestedField(DatabaseSchema), NestedField(FileSystemSchema)],
+        required=True,
+        allow_none=False,
+    )
 
     @validates("inputs")
     def inputs_key(self, value):
@@ -496,7 +555,8 @@ class DataTransferExportSchema(BaseNodeSchema):
     @validates("outputs")
     def outputs_key(self, value):
         raise ValidationError(
-            f"outputs field is not a valid filed in task type " f"{DataTransferTaskType.EXPORT_DATA}."
+            f"outputs field is not a valid filed in task type "
+            f"{DataTransferTaskType.EXPORT_DATA}."
         )
 
     @post_load

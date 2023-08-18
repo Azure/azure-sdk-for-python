@@ -10,8 +10,16 @@ from marshmallow import INCLUDE
 from azure.ai.ml import Output
 from azure.ai.ml._schema import NestedField
 from azure.ai.ml._schema.pipeline.component_job import SweepSchema
-from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, SOURCE_PATH_CONTEXT_KEY, CommonYamlFields
-from azure.ai.ml.constants._component import ControlFlowType, DataTransferTaskType, NodeType
+from azure.ai.ml.constants._common import (
+    BASE_PATH_CONTEXT_KEY,
+    SOURCE_PATH_CONTEXT_KEY,
+    CommonYamlFields,
+)
+from azure.ai.ml.constants._component import (
+    ControlFlowType,
+    DataTransferTaskType,
+    NodeType,
+)
 from azure.ai.ml.constants._compute import ComputeType
 from azure.ai.ml.dsl._component_func import to_component_func
 from azure.ai.ml.dsl._overrides_definition import OverrideDefinition
@@ -165,8 +173,12 @@ class _PipelineNodeFactory:
         self,
         _type: str,
         *,
-        create_instance_func: Optional[Callable[..., Union[BaseNode, AutoMLJob]]] = None,
-        load_from_rest_object_func: Optional[Callable[[Any], Union[BaseNode, AutoMLJob, ControlFlowNode]]] = None,
+        create_instance_func: Optional[
+            Callable[..., Union[BaseNode, AutoMLJob]]
+        ] = None,
+        load_from_rest_object_func: Optional[
+            Callable[[Any], Union[BaseNode, AutoMLJob, ControlFlowNode]]
+        ] = None,
         nested_schema: Optional[Union[NestedField, List[NestedField]]] = None,
     ):
         """Register a type of node.
@@ -189,20 +201,28 @@ class _PipelineNodeFactory:
             self._load_from_rest_object_funcs[_type] = load_from_rest_object_func
         if nested_schema is not None:
             from azure.ai.ml._schema.core.fields import TypeSensitiveUnionField
-            from azure.ai.ml._schema.pipeline.pipeline_component import PipelineComponentSchema
+            from azure.ai.ml._schema.pipeline.pipeline_component import (
+                PipelineComponentSchema,
+            )
             from azure.ai.ml._schema.pipeline.pipeline_job import PipelineJobSchema
 
             for declared_fields in [
                 PipelineJobSchema._declared_fields,
                 PipelineComponentSchema._declared_fields,
             ]:
-                jobs_value_field: TypeSensitiveUnionField = declared_fields["jobs"].value_field
+                jobs_value_field: TypeSensitiveUnionField = declared_fields[
+                    "jobs"
+                ].value_field
                 if not isinstance(nested_schema, list):
                     nested_schema = [nested_schema]
                 for nested_field in nested_schema:
-                    jobs_value_field.insert_type_sensitive_field(type_name=_type, field=nested_field)
+                    jobs_value_field.insert_type_sensitive_field(
+                        type_name=_type, field=nested_field
+                    )
 
-    def load_from_dict(self, *, data: dict, _type: Optional[str] = None) -> Union[BaseNode, AutoMLJob]:
+    def load_from_dict(
+        self, *, data: dict, _type: Optional[str] = None
+    ) -> Union[BaseNode, AutoMLJob]:
         """Load a node from a dict.
 
         :keyword data: A dict containing the node's data.
@@ -213,14 +233,20 @@ class _PipelineNodeFactory:
         :rtype: Union[BaseNode, AutoMLJob]
         """
         if _type is None:
-            _type = data[CommonYamlFields.TYPE] if CommonYamlFields.TYPE in data else NodeType.COMMAND
+            _type = (
+                data[CommonYamlFields.TYPE]
+                if CommonYamlFields.TYPE in data
+                else NodeType.COMMAND
+            )
             # todo: refine Hard code for now to support different task type for DataTransfer node
             if _type == NodeType.DATA_TRANSFER:
                 _type = "_".join([NodeType.DATA_TRANSFER, data.get("task", " ")])
         else:
             data[CommonYamlFields.TYPE] = _type
 
-        new_instance: Union[BaseNode, AutoMLJob] = self.get_create_instance_func(_type)()
+        new_instance: Union[BaseNode, AutoMLJob] = self.get_create_instance_func(
+            _type
+        )()
 
         if isinstance(new_instance, BaseNode):
             # parse component
@@ -248,11 +274,19 @@ class _PipelineNodeFactory:
         """
 
         # TODO: Remove in PuP with native import job/component type support in MFE/Designer
-        if "computeId" in obj and obj["computeId"] and obj["computeId"].endswith("/" + ComputeType.ADF):
+        if (
+            "computeId" in obj
+            and obj["computeId"]
+            and obj["computeId"].endswith("/" + ComputeType.ADF)
+        ):
             _type = NodeType.IMPORT
 
         if _type is None:
-            _type = obj[CommonYamlFields.TYPE] if CommonYamlFields.TYPE in obj else NodeType.COMMAND
+            _type = (
+                obj[CommonYamlFields.TYPE]
+                if CommonYamlFields.TYPE in obj
+                else NodeType.COMMAND
+            )
             # todo: refine Hard code for now to support different task type for DataTransfer node
             if _type == NodeType.DATA_TRANSFER:
                 _type = "_".join([NodeType.DATA_TRANSFER, obj.get("task", " ")])
@@ -282,7 +316,9 @@ class _PipelineNodeFactory:
 
 def _generate_component_function(
     component_entity: Component,
-    override_definitions: Optional[Mapping[str, OverrideDefinition]] = None,  # pylint: disable=unused-argument
+    override_definitions: Optional[
+        Mapping[str, OverrideDefinition]
+    ] = None,  # pylint: disable=unused-argument
 ) -> Callable[..., Union[Command, Parallel]]:
     # Generate a function which returns a component node.
     def create_component_func(**kwargs):
@@ -292,11 +328,17 @@ def _generate_component_function(
             _type = "_".join([NodeType.DATA_TRANSFER, component_entity.task])
             if component_entity.task == DataTransferTaskType.IMPORT_DATA:
                 return pipeline_node_factory.load_from_dict(
-                    data=dict(component=component_entity, **kwargs, _from_component_func=True),
+                    data=dict(
+                        component=component_entity, **kwargs, _from_component_func=True
+                    ),
                     _type=_type,
                 )
         return pipeline_node_factory.load_from_dict(
-            data={"component": component_entity, "inputs": kwargs, "_from_component_func": True},
+            data={
+                "component": component_entity,
+                "inputs": kwargs,
+                "_from_component_func": True,
+            },
             _type=_type,
         )
 

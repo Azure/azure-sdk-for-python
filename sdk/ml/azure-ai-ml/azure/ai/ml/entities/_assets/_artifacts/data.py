@@ -24,11 +24,21 @@ from azure.ai.ml._restclient.v2023_04_01_preview.models import (
 from azure.ai.ml._schema import DataSchema
 from azure.ai.ml._utils._arm_id_utils import get_arm_id_object_from_id
 from azure.ai.ml._utils.utils import is_url
-from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, SHORT_URI_FORMAT, AssetTypes
+from azure.ai.ml.constants._common import (
+    BASE_PATH_CONTEXT_KEY,
+    PARAMS_OVERRIDE_KEY,
+    SHORT_URI_FORMAT,
+    AssetTypes,
+)
 from azure.ai.ml.entities._assets import Artifact
 from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._util import load_from_dict
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+from azure.ai.ml.exceptions import (
+    ErrorCategory,
+    ErrorTarget,
+    ValidationErrorType,
+    ValidationException,
+)
 
 from .artifact import ArtifactStorageInfo
 
@@ -121,7 +131,11 @@ class Data(Artifact):
     def path(self, value: str) -> None:
         # Call the parent setter to resolve the path with base_path if it was a local path
         super(Data, type(self)).path.fset(self, value)
-        if self.type == AssetTypes.URI_FOLDER and self._path is not None and not is_url(self._path):
+        if (
+            self.type == AssetTypes.URI_FOLDER
+            and self._path is not None
+            and not is_url(self._path)
+        ):
             self._path = Path(os.path.join(self._path, ""))
 
     @classmethod
@@ -177,11 +191,17 @@ class Data(Artifact):
         return DataVersionBase(properties=data_version_details)
 
     @classmethod
-    def _from_container_rest_object(cls, data_container_rest_object: DataContainer) -> "Data":
-        data_rest_object_details: DataContainerProperties = data_container_rest_object.properties
+    def _from_container_rest_object(
+        cls, data_container_rest_object: DataContainer
+    ) -> "Data":
+        data_rest_object_details: DataContainerProperties = (
+            data_container_rest_object.properties
+        )
         data = Data(
             name=data_container_rest_object.name,
-            creation_context=SystemData._from_rest_object(data_container_rest_object.system_data),
+            creation_context=SystemData._from_rest_object(
+                data_container_rest_object.system_data
+            ),
             tags=data_rest_object_details.tags,
             properties=data_rest_object_details.properties,
             type=getDataAssetType(data_rest_object_details.data_type),
@@ -191,7 +211,9 @@ class Data(Artifact):
 
     @classmethod
     def _from_rest_object(cls, data_rest_object: DataVersionBase) -> "Data":
-        data_rest_object_details: DataVersionBaseProperties = data_rest_object.properties
+        data_rest_object_details: DataVersionBaseProperties = (
+            data_rest_object.properties
+        )
         arm_id_object = get_arm_id_object_from_id(data_rest_object.id)
         path = data_rest_object_details.data_uri
         data = Data(
@@ -206,7 +228,9 @@ class Data(Artifact):
             creation_context=SystemData._from_rest_object(data_rest_object.system_data),
             is_anonymous=data_rest_object_details.is_anonymous,
             referenced_uris=getattr(data_rest_object_details, "referenced_uris", None),
-            auto_delete_setting=getattr(data_rest_object_details, "auto_delete_setting", None),
+            auto_delete_setting=getattr(
+                data_rest_object_details, "auto_delete_setting", None
+            ),
         )
         return data
 
@@ -228,4 +252,6 @@ class Data(Artifact):
             groups = re.search(regex, asset_artifact.datastore_arm_id)
             if groups:
                 datastore_name = groups.group(1)
-                self.path = SHORT_URI_FORMAT.format(datastore_name, asset_artifact.relative_path)
+                self.path = SHORT_URI_FORMAT.format(
+                    datastore_name, asset_artifact.relative_path
+                )

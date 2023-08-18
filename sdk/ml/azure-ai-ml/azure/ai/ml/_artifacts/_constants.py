@@ -25,28 +25,28 @@ CHANGED_ASSET_PATH_MSG = (
     "and cannot be overwritten. Please provide a unique name or version "
     "to successfully create a new code asset."
 )
-CHANGED_ASSET_PATH_MSG_NO_PERSONAL_DATA = "The code asset is already linked to an asset."
-EMPTY_DIRECTORY_ERROR = "Directory {0} is empty. path or local_path must be a non-empty directory."
+CHANGED_ASSET_PATH_MSG_NO_PERSONAL_DATA = (
+    "The code asset is already linked to an asset."
+)
+EMPTY_DIRECTORY_ERROR = (
+    "Directory {0} is empty. path or local_path must be a non-empty directory."
+)
 FILE_SIZE_WARNING = (
     "Your file exceeds 100 MB. If you experience low speeds, latency, or broken connections, we recommend using "
     "the AzCopyv10 tool for this file transfer.\n\nExample: azcopy copy '{source}' '{destination}' "  # cspell:disable-line
     "\n\nSee https://docs.microsoft.com/azure/storage/common/storage-use-azcopy-v10 for more information."
 )
 INVALID_MLTABLE_METADATA_SCHEMA_MSG = "Invalid MLTable metadata schema"
-INVALID_MLTABLE_METADATA_SCHEMA_ERROR = (
-    "{jsonSchemaErrorPath}{jsonSchemaMessage}\n{invalidMLTableMsg}:\n{invalidSchemaSnippet}"
-)
+INVALID_MLTABLE_METADATA_SCHEMA_ERROR = "{jsonSchemaErrorPath}{jsonSchemaMessage}\n{invalidMLTableMsg}:\n{invalidSchemaSnippet}"
 BLOB_DATASTORE_IS_HDI_FOLDER_KEY = "hdi_isfolder"
 BLOB_STORAGE_CLIENT_NAME = "BlobStorageClient"
 GEN2_STORAGE_CLIENT_NAME = "Gen2StorageClient"
 DEFAULT_CONNECTION_TIMEOUT = 14400
-STORAGE_URI_REGEX = (
-    r"(https:\/\/([a-zA-Z0-9@:%_\\\-+~#?&=]+)[a-zA-Z0-9@:%._\\\-+~#?&=]+\.?)\/([a-zA-Z0-9@:%._\\\-+~#?&=]+)\/(.*)"
-)
+STORAGE_URI_REGEX = r"(https:\/\/([a-zA-Z0-9@:%_\\\-+~#?&=]+)[a-zA-Z0-9@:%._\\\-+~#?&=]+\.?)\/([a-zA-Z0-9@:%._\\\-+~#?&=]+)\/(.*)"
 
-WORKSPACE_MANAGED_DATASTORE_WITH_SLASH = "azureml://datastores/workspacemanageddatastore/"
-WORKSPACE_MANAGED_DATASTORE = "azureml://datastores/workspacemanageddatastore"
-AUTO_DELETE_SETTING_NOT_ALLOWED_ERROR_NO_PERSONAL_DATA = (
-    "Auto delete setting cannot be specified in JobOutput now. Please remove it and try again."
+WORKSPACE_MANAGED_DATASTORE_WITH_SLASH = (
+    "azureml://datastores/workspacemanageddatastore/"
 )
+WORKSPACE_MANAGED_DATASTORE = "azureml://datastores/workspacemanageddatastore"
+AUTO_DELETE_SETTING_NOT_ALLOWED_ERROR_NO_PERSONAL_DATA = "Auto delete setting cannot be specified in JobOutput now. Please remove it and try again."
 INVALID_MANAGED_DATASTORE_PATH_ERROR_NO_PERSONAL_DATA = f'Cannot specify a sub-path for workspace managed datastore. Please set "{WORKSPACE_MANAGED_DATASTORE}" as the path.'

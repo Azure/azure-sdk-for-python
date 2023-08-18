@@ -14,7 +14,12 @@ from ..._utils._experimental import experimental
 from ..._utils.utils import is_data_binding_expression
 from ...constants._job.job import JobPriorityValues, JobTierNames
 from ...entities._mixins import DictMixin, RestTranslatableMixin
-from ...exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+from ...exceptions import (
+    ErrorCategory,
+    ErrorTarget,
+    ValidationErrorType,
+    ValidationException,
+)
 
 module_logger = logging.getLogger(__name__)
 
@@ -44,23 +49,44 @@ class QueueSettings(RestTranslatableMixin, DictMixin):
 
     def _to_rest_object(self) -> RestQueueSettings:
         self._validate()
-        job_tier = JobTierNames.ENTITY_TO_REST.get(self.job_tier.lower(), None) if self.job_tier else None
-        priority = JobPriorityValues.ENTITY_TO_REST.get(self.priority.lower(), None) if self.priority else None
+        job_tier = (
+            JobTierNames.ENTITY_TO_REST.get(self.job_tier.lower(), None)
+            if self.job_tier
+            else None
+        )
+        priority = (
+            JobPriorityValues.ENTITY_TO_REST.get(self.priority.lower(), None)
+            if self.priority
+            else None
+        )
         return RestQueueSettings(job_tier=job_tier, priority=priority)
 
     @classmethod
-    def _from_rest_object(cls, obj: Union[Dict[str, Any], RestQueueSettings, None]) -> Optional["QueueSettings"]:
+    def _from_rest_object(
+        cls, obj: Union[Dict[str, Any], RestQueueSettings, None]
+    ) -> Optional["QueueSettings"]:
         if obj is None:
             return None
         if isinstance(obj, dict):
             queue_settings = RestQueueSettings.from_dict(obj)
             return cls._from_rest_object(queue_settings)
-        job_tier = JobTierNames.REST_TO_ENTITY.get(obj.job_tier, None) if obj.job_tier else None
-        priority = JobPriorityValues.REST_TO_ENTITY.get(obj.priority, None) if obj.priority else None
+        job_tier = (
+            JobTierNames.REST_TO_ENTITY.get(obj.job_tier, None)
+            if obj.job_tier
+            else None
+        )
+        priority = (
+            JobPriorityValues.REST_TO_ENTITY.get(obj.priority, None)
+            if obj.priority
+            else None
+        )
         return cls(job_tier=job_tier, priority=priority)
 
     def _validate(self):
-        for key, enum_class in [("job_tier", JobTierNames), ("priority", JobPriorityValues)]:
+        for key, enum_class in [
+            ("job_tier", JobTierNames),
+            ("priority", JobPriorityValues),
+        ]:
             value = getattr(self, key)
             if is_data_binding_expression(value):
                 msg = (

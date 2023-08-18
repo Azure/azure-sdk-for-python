@@ -23,7 +23,11 @@ from uuid import uuid4
 
 from marshmallow import ValidationError
 
-from azure.ai.ml._utils.utils import _is_user_error_from_exception_type, _is_user_error_from_status_code, _str_to_bool
+from azure.ai.ml._utils.utils import (
+    _is_user_error_from_exception_type,
+    _is_user_error_from_status_code,
+    _str_to_bool,
+)
 from azure.ai.ml.exceptions import ErrorCategory, MlException
 from azure.core.exceptions import HttpResponseError
 
@@ -129,7 +133,9 @@ def error_preprocess(activityLogger, exception):
             error_category = ErrorCategory.UNKNOWN
         activityLogger.activity_info["errorCategory"] = error_category
         if exception.inner_exception:
-            activityLogger.activity_info["innerException"] = type(exception.inner_exception).__name__
+            activityLogger.activity_info["innerException"] = type(
+                exception.inner_exception
+            ).__name__
     elif isinstance(exception, MlException):
         # If exception is MlException, it will have error_category, message and target attributes and will log those
         # information in log_activity, no need more actions here.
@@ -139,12 +145,16 @@ def error_preprocess(activityLogger, exception):
         activityLogger.activity_info["errorMessage"] = str(exception)
         activityLogger.activity_info["errorCategory"] = ErrorCategory.USER_ERROR
     else:
-        activityLogger.activity_info["errorMessage"] = "Got error {0}: '{1}' while calling {2}".format(
+        activityLogger.activity_info[
+            "errorMessage"
+        ] = "Got error {0}: '{1}' while calling {2}".format(
             exception.__class__.__name__,
             exception,
             activityLogger.activity_info["activity_name"],
         )
-        if _is_user_error_from_exception_type(exception) or _is_user_error_from_exception_type(exception.__cause__):
+        if _is_user_error_from_exception_type(
+            exception
+        ) or _is_user_error_from_exception_type(exception.__cause__):
             activityLogger.activity_info["errorCategory"] = ErrorCategory.USER_ERROR
         else:
             # Todo: should check KeyError, TypeError, ValueError caused by user before request or raise in code directly
@@ -207,7 +217,8 @@ def log_activity(
                 in [ErrorCategory.SYSTEM_ERROR, ErrorCategory.UNKNOWN]
             ) or (
                 "errorCategory" in activityLogger.activity_info
-                and activityLogger.activity_info["errorCategory"] in [ErrorCategory.SYSTEM_ERROR, ErrorCategory.UNKNOWN]
+                and activityLogger.activity_info["errorCategory"]
+                in [ErrorCategory.SYSTEM_ERROR, ErrorCategory.UNKNOWN]
             ):
                 raise Exception("Got InternalSDKError", e) from e
             raise
@@ -219,8 +230,10 @@ def log_activity(
 
             activityLogger.activity_info["completionStatus"] = completion_status
             activityLogger.activity_info["durationMs"] = duration_ms
-            message = "ActivityCompleted: Activity={}, HowEnded={}, Duration={} [ms]".format(
-                activity_name, completion_status, duration_ms
+            message = (
+                "ActivityCompleted: Activity={}, HowEnded={}, Duration={} [ms]".format(
+                    activity_name, completion_status, duration_ms
+                )
             )
             if exception:
                 message += ", Exception={}".format(type(exception).__name__)
@@ -229,13 +242,17 @@ def log_activity(
                     activityLogger.activity_info[
                         "errorMessage"
                     ] = exception.no_personal_data_message  # pylint: disable=no-member
-                    activityLogger.activity_info["errorTarget"] = exception.target  # pylint: disable=no-member
+                    activityLogger.activity_info[
+                        "errorTarget"
+                    ] = exception.target  # pylint: disable=no-member
                     activityLogger.activity_info[
                         "errorCategory"
                     ] = exception.error_category  # pylint: disable=no-member
                     if exception.inner_exception:  # pylint: disable=no-member
                         # pylint: disable=no-member
-                        activityLogger.activity_info["innerException"] = type(exception.inner_exception).__name__
+                        activityLogger.activity_info["innerException"] = type(
+                            exception.inner_exception
+                        ).__name__
                 activityLogger.error(message)
             else:
                 activityLogger.info(message)
@@ -271,7 +288,9 @@ def monitor_with_activity(
     def monitor(f):
         @functools.wraps(f)
         def wrapper(*args, **kwargs):
-            with log_activity(logger, activity_name or f.__name__, activity_type, custom_dimensions):
+            with log_activity(
+                logger, activity_name or f.__name__, activity_type, custom_dimensions
+            ):
                 return f(*args, **kwargs)
 
         return wrapper
@@ -338,7 +357,11 @@ def monitor_with_telemetry_mixin(
             from azure.ai.ml.entities._mixins import TelemetryMixin
 
             try:
-                return value._get_telemetry_values() if isinstance(value, TelemetryMixin) else {}
+                return (
+                    value._get_telemetry_values()
+                    if isinstance(value, TelemetryMixin)
+                    else {}
+                )
             except Exception:  # pylint: disable=broad-except
                 return {}
 
@@ -346,11 +369,15 @@ def monitor_with_telemetry_mixin(
         def wrapper(*args, **kwargs):
             parameter_dimensions = _collect_from_parameters(f, args, kwargs, extra_keys)
             dimensions = {**parameter_dimensions, **(custom_dimensions or {})}
-            with log_activity(logger, activity_name or f.__name__, activity_type, dimensions) as activityLogger:
+            with log_activity(
+                logger, activity_name or f.__name__, activity_type, dimensions
+            ) as activityLogger:
                 return_value = f(*args, **kwargs)
                 if not parameter_dimensions:
                     # collect from return if no dimensions from parameter
-                    activityLogger.activity_info.update(_collect_from_return_value(return_value))
+                    activityLogger.activity_info.update(
+                        _collect_from_return_value(return_value)
+                    )
                 return return_value
 
         return wrapper

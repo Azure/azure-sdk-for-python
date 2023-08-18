@@ -12,7 +12,12 @@ from azure.ai.ml.constants import JobType
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, TYPE
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._util import load_from_dict
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+from azure.ai.ml.exceptions import (
+    ErrorCategory,
+    ErrorTarget,
+    ValidationErrorType,
+    ValidationException,
+)
 
 from ..job import Job
 from ..job_io_mixin import JobIOMixin
@@ -79,21 +84,29 @@ class ParallelJob(Job, ParameterizedParallel, JobIOMixin):
         self.outputs = outputs
 
     def _to_dict(self):
-        return ParallelJobSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)  # pylint: disable=no-member
+        return ParallelJobSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(
+            self
+        )  # pylint: disable=no-member
 
     def _to_rest_object(self):
         pass
 
     @classmethod
-    def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs) -> "ParallelJob":
-        loaded_data = load_from_dict(ParallelJobSchema, data, context, additional_message, **kwargs)
+    def _load_from_dict(
+        cls, data: Dict, context: Dict, additional_message: str, **kwargs
+    ) -> "ParallelJob":
+        loaded_data = load_from_dict(
+            ParallelJobSchema, data, context, additional_message, **kwargs
+        )
         return ParallelJob(base_path=context[BASE_PATH_CONTEXT_KEY], **loaded_data)
 
     @classmethod
     def _load_from_rest(cls, obj: JobBaseData):
         pass
 
-    def _to_component(self, context: Optional[Dict] = None, **kwargs) -> "ParallelComponent":
+    def _to_component(
+        self, context: Optional[Dict] = None, **kwargs
+    ) -> "ParallelComponent":
         """Translate a parallel job to component job.
 
         :param context: Context of parallel job YAML file.
@@ -119,8 +132,12 @@ class ParallelJob(Job, ParameterizedParallel, JobIOMixin):
             max_concurrency_per_instance=self.max_concurrency_per_instance,
             error_threshold=self.error_threshold,
             mini_batch_error_threshold=self.mini_batch_error_threshold,
-            inputs=self._to_inputs(inputs=self.inputs, pipeline_job_dict=pipeline_job_dict),
-            outputs=self._to_outputs(outputs=self.outputs, pipeline_job_dict=pipeline_job_dict),
+            inputs=self._to_inputs(
+                inputs=self.inputs, pipeline_job_dict=pipeline_job_dict
+            ),
+            outputs=self._to_outputs(
+                outputs=self.outputs, pipeline_job_dict=pipeline_job_dict
+            ),
             resources=self.resources if self.resources else None,
         )
 

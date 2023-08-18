@@ -21,14 +21,24 @@ The directory would typically represent a project directory"""
 
 
 def create_merkletree(file_or_folder_path, exclude_function):
-    root = DirTreeNode("", "Directory", datetime.fromtimestamp(os.path.getmtime(file_or_folder_path)).isoformat())
+    root = DirTreeNode(
+        "",
+        "Directory",
+        datetime.fromtimestamp(os.path.getmtime(file_or_folder_path)).isoformat(),
+    )
     if os.path.isdir(file_or_folder_path):
         folder_path = file_or_folder_path
         _create_merkletree_helper(folder_path, root, exclude_function)
     else:
         file_path = file_or_folder_path
-        file_node = DirTreeNode(file_path, "File", datetime.fromtimestamp(os.path.getmtime(file_path)).isoformat())
-        hexdigest_hash, bytehash = _get_hash(os.path.normpath(file_path), file_path, "File")
+        file_node = DirTreeNode(
+            file_path,
+            "File",
+            datetime.fromtimestamp(os.path.getmtime(file_path)).isoformat(),
+        )
+        hexdigest_hash, bytehash = _get_hash(
+            os.path.normpath(file_path), file_path, "File"
+        )
         if hexdigest_hash and bytehash:
             file_node.add_hash(hexdigest_hash, bytehash)
             root.add_child(file_node)
@@ -66,13 +76,21 @@ def _create_merkletree_helper(projectDir, rootNode, exclude_function):
         path = os.path.normpath(join(projectDir, f))
         if not exclude_function(path):
             if isfile(join(projectDir, f)):
-                newNode = DirTreeNode(f, "File", datetime.fromtimestamp(os.path.getmtime(path)).isoformat())
+                newNode = DirTreeNode(
+                    f,
+                    "File",
+                    datetime.fromtimestamp(os.path.getmtime(path)).isoformat(),
+                )
                 hexdigest_hash, bytehash = _get_hash(path, f, "File")
                 if hexdigest_hash and bytehash:
                     newNode.add_hash(hexdigest_hash, bytehash)
                     rootNode.add_child(newNode)
             else:
-                newNode = DirTreeNode(f, "Directory", datetime.fromtimestamp(os.path.getmtime(path)).isoformat())
+                newNode = DirTreeNode(
+                    f,
+                    "Directory",
+                    datetime.fromtimestamp(os.path.getmtime(path)).isoformat(),
+                )
                 rootNode.add_child(newNode)
                 _create_merkletree_helper(path, newNode, exclude_function)
 
@@ -100,7 +118,14 @@ hexdigest is used so that we can serialize the tree using json"""
 
 
 class DirTreeNode(object):
-    def __init__(self, name=None, file_type=None, timestamp=None, hexdigest_hash=None, bytehash=None):
+    def __init__(
+        self,
+        name=None,
+        file_type=None,
+        timestamp=None,
+        hexdigest_hash=None,
+        bytehash=None,
+    ):
         self.file_type = file_type
         self.name = name
         self.timestamp = timestamp

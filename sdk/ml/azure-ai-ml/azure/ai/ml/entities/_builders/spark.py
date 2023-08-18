@@ -16,7 +16,11 @@ from marshmallow import INCLUDE, Schema
 from ..._restclient.v2023_04_01_preview.models import JobBase as JobBaseData
 from ..._restclient.v2023_04_01_preview.models import SparkJob as RestSparkJob
 from ..._schema import NestedField, PathAwareSchema, UnionField
-from ..._schema.job.identity import AMLTokenIdentitySchema, ManagedIdentitySchema, UserIdentitySchema
+from ..._schema.job.identity import (
+    AMLTokenIdentitySchema,
+    ManagedIdentitySchema,
+    UserIdentitySchema,
+)
 from ..._schema.job.parameterized_spark import CONF_KEY_MAP
 from ..._schema.job.spark_job import SparkJobSchema
 from ..._utils.utils import is_url
@@ -55,7 +59,12 @@ from .._job.spark_helpers import (
     _validate_spark_configurations,
 )
 from .._job.spark_job_entry_mixin import SparkJobEntry, SparkJobEntryMixin
-from .._util import convert_ordered_dict_to_dict, get_rest_dict_for_node_attrs, load_from_dict, validate_attribute_type
+from .._util import (
+    convert_ordered_dict_to_dict,
+    get_rest_dict_for_node_attrs,
+    load_from_dict,
+    validate_attribute_type,
+)
 from .base_node import BaseNode
 
 module_logger = logging.getLogger(__name__)
@@ -134,7 +143,12 @@ class Spark(BaseNode, SparkJobEntryMixin):
         *,
         component: Union[str, SparkComponent],
         identity: Optional[
-            Union[Dict[str, str], ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]
+            Union[
+                Dict[str, str],
+                ManagedIdentityConfiguration,
+                AmlTokenConfiguration,
+                UserIdentityConfiguration,
+            ]
         ] = None,
         driver_cores: Optional[int] = None,
         driver_memory: Optional[str] = None,
@@ -172,11 +186,19 @@ class Spark(BaseNode, SparkJobEntryMixin):
         **kwargs,
     ) -> None:
         # validate init params are valid type
-        validate_attribute_type(attrs_to_check=locals(), attr_type_map=self._attr_type_map())
+        validate_attribute_type(
+            attrs_to_check=locals(), attr_type_map=self._attr_type_map()
+        )
         kwargs.pop("type", None)
 
         BaseNode.__init__(
-            self, type=NodeType.SPARK, inputs=inputs, outputs=outputs, component=component, compute=compute, **kwargs
+            self,
+            type=NodeType.SPARK,
+            inputs=inputs,
+            outputs=outputs,
+            component=component,
+            compute=compute,
+            **kwargs,
         )
 
         # init mark for _AttrDict
@@ -201,15 +223,24 @@ class Spark(BaseNode, SparkJobEntryMixin):
             self.driver_memory = self.driver_memory or component.driver_memory
             self.executor_cores = self.executor_cores or component.executor_cores
             self.executor_memory = self.executor_memory or component.executor_memory
-            self.executor_instances = self.executor_instances or component.executor_instances
-            self.dynamic_allocation_enabled = self.dynamic_allocation_enabled or component.dynamic_allocation_enabled
+            self.executor_instances = (
+                self.executor_instances or component.executor_instances
+            )
+            self.dynamic_allocation_enabled = (
+                self.dynamic_allocation_enabled or component.dynamic_allocation_enabled
+            )
             self.dynamic_allocation_min_executors = (
-                self.dynamic_allocation_min_executors or component.dynamic_allocation_min_executors
+                self.dynamic_allocation_min_executors
+                or component.dynamic_allocation_min_executors
             )
             self.dynamic_allocation_max_executors = (
-                self.dynamic_allocation_max_executors or component.dynamic_allocation_max_executors
+                self.dynamic_allocation_max_executors
+                or component.dynamic_allocation_max_executors
             )
-        if self.executor_instances is None and str(self.dynamic_allocation_enabled).lower() == "true":
+        if (
+            self.executor_instances is None
+            and str(self.dynamic_allocation_enabled).lower() == "true"
+        ):
             self.executor_instances = self.dynamic_allocation_min_executors
         # When create standalone job or pipeline job, following fields will always get value from component or get
         # default None, because we will not pass those fields to Spark. But in following cases, we expect to get
@@ -268,7 +299,13 @@ class Spark(BaseNode, SparkJobEntryMixin):
     @property
     def identity(
         self,
-    ) -> Optional[Union[ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]]:
+    ) -> Optional[
+        Union[
+            ManagedIdentityConfiguration,
+            AmlTokenConfiguration,
+            UserIdentityConfiguration,
+        ]
+    ]:
         """The identity that the Spark job will use while running on compute.
 
         :rtype: Union[~azure.ai.ml.entities.ManagedIdentityConfiguration, ~azure.ai.ml.entities.AmlTokenConfiguration,
@@ -287,7 +324,12 @@ class Spark(BaseNode, SparkJobEntryMixin):
     @identity.setter
     def identity(
         self,
-        value: Union[Dict[str, str], ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration],
+        value: Union[
+            Dict[str, str],
+            ManagedIdentityConfiguration,
+            AmlTokenConfiguration,
+            UserIdentityConfiguration,
+        ],
     ):
         """Sets the identity that the Spark job will use while running on compute.
 
@@ -339,10 +381,14 @@ class Spark(BaseNode, SparkJobEntryMixin):
         obj = super()._from_rest_object_to_init_params(obj)
 
         if "resources" in obj and obj["resources"]:
-            obj["resources"] = SparkResourceConfiguration._from_rest_object(obj["resources"])
+            obj["resources"] = SparkResourceConfiguration._from_rest_object(
+                obj["resources"]
+            )
 
         if "identity" in obj and obj["identity"]:
-            obj["identity"] = _BaseJobIdentityConfiguration._from_rest_object(obj["identity"])
+            obj["identity"] = _BaseJobIdentityConfiguration._from_rest_object(
+                obj["identity"]
+            )
 
         if "entry" in obj and obj["entry"]:
             obj["entry"] = SparkJobEntry._from_rest_object(obj["entry"])
@@ -356,10 +402,14 @@ class Spark(BaseNode, SparkJobEntryMixin):
         return obj
 
     @classmethod
-    def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs) -> "Spark":
+    def _load_from_dict(
+        cls, data: Dict, context: Dict, additional_message: str, **kwargs
+    ) -> "Spark":
         from .spark_func import spark
 
-        loaded_data = load_from_dict(SparkJobSchema, data, context, additional_message, **kwargs)
+        loaded_data = load_from_dict(
+            SparkJobSchema, data, context, additional_message, **kwargs
+        )
         spark_job = spark(base_path=context[BASE_PATH_CONTEXT_KEY], **loaded_data)
 
         return spark_job
@@ -386,7 +436,9 @@ class Spark(BaseNode, SparkJobEntryMixin):
             code=rest_spark_job.code_id,
             compute=rest_spark_job.compute_id,
             environment=rest_spark_job.environment_id,
-            identity=_BaseJobIdentityConfiguration._from_rest_object(rest_spark_job.identity)
+            identity=_BaseJobIdentityConfiguration._from_rest_object(
+                rest_spark_job.identity
+            )
             if rest_spark_job.identity
             else None,
             args=rest_spark_job.args,
@@ -397,11 +449,21 @@ class Spark(BaseNode, SparkJobEntryMixin):
             driver_memory=rest_spark_conf.get(SparkConfKey.DRIVER_MEMORY, None),
             executor_cores=rest_spark_conf.get(SparkConfKey.EXECUTOR_CORES, None),
             executor_memory=rest_spark_conf.get(SparkConfKey.EXECUTOR_MEMORY, None),
-            executor_instances=rest_spark_conf.get(SparkConfKey.EXECUTOR_INSTANCES, None),
-            dynamic_allocation_enabled=rest_spark_conf.get(SparkConfKey.DYNAMIC_ALLOCATION_ENABLED, None),
-            dynamic_allocation_min_executors=rest_spark_conf.get(SparkConfKey.DYNAMIC_ALLOCATION_MIN_EXECUTORS, None),
-            dynamic_allocation_max_executors=rest_spark_conf.get(SparkConfKey.DYNAMIC_ALLOCATION_MAX_EXECUTORS, None),
-            resources=SparkResourceConfiguration._from_rest_object(rest_spark_job.resources),
+            executor_instances=rest_spark_conf.get(
+                SparkConfKey.EXECUTOR_INSTANCES, None
+            ),
+            dynamic_allocation_enabled=rest_spark_conf.get(
+                SparkConfKey.DYNAMIC_ALLOCATION_ENABLED, None
+            ),
+            dynamic_allocation_min_executors=rest_spark_conf.get(
+                SparkConfKey.DYNAMIC_ALLOCATION_MIN_EXECUTORS, None
+            ),
+            dynamic_allocation_max_executors=rest_spark_conf.get(
+                SparkConfKey.DYNAMIC_ALLOCATION_MAX_EXECUTORS, None
+            ),
+            resources=SparkResourceConfiguration._from_rest_object(
+                rest_spark_job.resources
+            ),
             inputs=from_rest_inputs_to_dataset_literal(rest_spark_job.inputs),
             outputs=from_rest_data_outputs(rest_spark_job.outputs),
         )
@@ -522,7 +584,11 @@ class Spark(BaseNode, SparkJobEntryMixin):
         )
         validation_result = self._create_empty_validation_result()
         # validate whether component entry exists to ensure code path is correct, especially when code is default value
-        if self.code is None or is_remote_code or not isinstance(self.entry, SparkJobEntry):
+        if (
+            self.code is None
+            or is_remote_code
+            or not isinstance(self.entry, SparkJobEntry)
+        ):
             # skip validate when code is not a local path or code is None, or self.entry is not SparkJobEntry object
             pass
         else:
@@ -532,7 +598,8 @@ class Spark(BaseNode, SparkJobEntryMixin):
                     code_path = code_path.resolve().absolute()
                 else:
                     validation_result.append_error(
-                        message=f"Code path {code_path} doesn't exist.", yaml_path="component.code"
+                        message=f"Code path {code_path} doesn't exist.",
+                        yaml_path="component.code",
                     )
                 entry_path = code_path / self.entry.entry
             else:
@@ -544,9 +611,12 @@ class Spark(BaseNode, SparkJobEntryMixin):
             ):
                 if not entry_path.exists():
                     validation_result.append_error(
-                        message=f"Entry {entry_path} doesn't exist.", yaml_path="component.entry"
+                        message=f"Entry {entry_path} doesn't exist.",
+                        yaml_path="component.entry",
                     )
-        return validation_result.try_raise(error_target=self._get_validation_error_target(), raise_error=raise_error)
+        return validation_result.try_raise(
+            error_target=self._get_validation_error_target(), raise_error=raise_error
+        )
 
     def _validate_fields(self) -> MutableValidationResult:
         validation_result = self._create_empty_validation_result()
@@ -564,9 +634,13 @@ class Spark(BaseNode, SparkJobEntryMixin):
             if m:
                 io_type, io_name = m.groups()
                 if io_type == "Input":
-                    validation_result.append_error(message=msg, yaml_path=f"inputs.{io_name}")
+                    validation_result.append_error(
+                        message=msg, yaml_path=f"inputs.{io_name}"
+                    )
                 else:
-                    validation_result.append_error(message=msg, yaml_path=f"outputs.{io_name}")
+                    validation_result.append_error(
+                        message=msg, yaml_path=f"outputs.{io_name}"
+                    )
 
         try:
             _validate_spark_configurations(self)

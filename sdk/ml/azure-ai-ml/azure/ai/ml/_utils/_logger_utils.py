@@ -20,7 +20,9 @@ def initialize_logger_info(module_logger: logging.Logger, terminator="\n") -> No
 
 class OpsLogger:
     def __init__(self, name: str):
-        self.package_logger: logging.Logger = logging.getLogger(AML_INTERNAL_LOGGER_NAMESPACE + name)
+        self.package_logger: logging.Logger = logging.getLogger(
+            AML_INTERNAL_LOGGER_NAMESPACE + name
+        )
         self.package_logger.propagate = False
         self.module_logger = logging.getLogger(name)
         self.custom_dimensions = {}

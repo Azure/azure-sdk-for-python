@@ -6,9 +6,17 @@ import logging
 from abc import ABC
 from typing import Optional, Union
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import CommandJobLimits as RestCommandJobLimits
-from azure.ai.ml._restclient.v2023_04_01_preview.models import SweepJobLimits as RestSweepJobLimits
-from azure.ai.ml._utils.utils import from_iso_duration_format, is_data_binding_expression, to_iso_duration_format
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    CommandJobLimits as RestCommandJobLimits,
+)
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    SweepJobLimits as RestSweepJobLimits,
+)
+from azure.ai.ml._utils.utils import (
+    from_iso_duration_format,
+    is_data_binding_expression,
+    to_iso_duration_format,
+)
 from azure.ai.ml.constants import JobType
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
@@ -60,7 +68,9 @@ class CommandJobLimits(JobLimits):
         return RestCommandJobLimits(timeout=to_iso_duration_format(self.timeout))
 
     @classmethod
-    def _from_rest_object(cls, obj: Union[RestCommandJobLimits, dict]) -> Optional["CommandJobLimits"]:
+    def _from_rest_object(
+        cls, obj: Union[RestCommandJobLimits, dict]
+    ) -> Optional["CommandJobLimits"]:
         if not obj:
             return None
         if isinstance(obj, dict):

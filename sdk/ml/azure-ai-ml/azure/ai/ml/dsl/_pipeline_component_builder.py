@@ -12,7 +12,10 @@ from inspect import Parameter, signature
 from typing import Any, Callable, Dict, Union
 
 from azure.ai.ml._utils._func_utils import get_outputs_and_locals
-from azure.ai.ml._utils.utils import is_valid_node_name, parse_args_description_from_docstring
+from azure.ai.ml._utils.utils import (
+    is_valid_node_name,
+    parse_args_description_from_docstring,
+)
 from azure.ai.ml.constants._component import ComponentSource, IOConstants
 from azure.ai.ml.constants._job.pipeline import COMPONENT_IO_KEYWORDS
 from azure.ai.ml.dsl._utils import _sanitize_python_variable_name
@@ -20,11 +23,24 @@ from azure.ai.ml.entities import PipelineJob
 from azure.ai.ml.entities._builders import BaseNode
 from azure.ai.ml.entities._builders.control_flow_node import ControlFlowNode
 from azure.ai.ml.entities._component.pipeline_component import PipelineComponent
-from azure.ai.ml.entities._inputs_outputs import GroupInput, Input, Output, _get_param_with_standard_annotation
-from azure.ai.ml.entities._inputs_outputs.utils import _get_annotation_by_value, is_group
+from azure.ai.ml.entities._inputs_outputs import (
+    GroupInput,
+    Input,
+    Output,
+    _get_param_with_standard_annotation,
+)
+from azure.ai.ml.entities._inputs_outputs.utils import (
+    _get_annotation_by_value,
+    is_group,
+)
 from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
 from azure.ai.ml.entities._job.pipeline._attr_dict import has_attr_safe
-from azure.ai.ml.entities._job.pipeline._io import NodeOutput, PipelineInput, PipelineOutput, _GroupAttrDict
+from azure.ai.ml.entities._job.pipeline._io import (
+    NodeOutput,
+    PipelineInput,
+    PipelineOutput,
+    _GroupAttrDict,
+)
 from azure.ai.ml.entities._util import copy_output_setting
 
 # We need to limit the depth of pipeline to avoid the built graph goes too deep and prevent potential
@@ -51,7 +67,10 @@ class _PipelineComponentBuilderStack:
         return self.items.pop()
 
     def push(self, item):
-        error_msg = f"{self.__class__.__name__} only " f"allows pushing `{PipelineComponentBuilder.__name__}` element"
+        error_msg = (
+            f"{self.__class__.__name__} only "
+            f"allows pushing `{PipelineComponentBuilder.__name__}` element"
+        )
         assert isinstance(item, PipelineComponentBuilder), error_msg
 
         # TODO: validate cycle
@@ -63,7 +82,9 @@ class _PipelineComponentBuilderStack:
             msg = "Pipeline {} depth exceeds limitation. Max depth: {}"
             raise UserErrorException(
                 message=msg.format(current_pipeline, _BUILDER_STACK_MAX_DEPTH),
-                no_personal_data_message=msg.format("[current_pipeline]", _BUILDER_STACK_MAX_DEPTH),
+                no_personal_data_message=msg.format(
+                    "[current_pipeline]", _BUILDER_STACK_MAX_DEPTH
+                ),
             )
 
     def is_empty(self):
@@ -155,7 +176,11 @@ class PipelineComponentBuilder:
         self.nodes.append(node)
 
     def build(
-        self, *, user_provided_kwargs=None, non_pipeline_inputs_dict=None, non_pipeline_inputs=None
+        self,
+        *,
+        user_provided_kwargs=None,
+        non_pipeline_inputs_dict=None,
+        non_pipeline_inputs=None,
     ) -> PipelineComponent:
         """Build a pipeline component from current pipeline builder.
 
@@ -214,16 +239,24 @@ class PipelineComponentBuilder:
                 self._validate_group_annotation(k, v)
             elif isinstance(v, Output):
                 # TODO(2097468): automatically change it to Input when used in input annotation
-                raise UserErrorException("Output annotation cannot be used in @pipeline.")
+                raise UserErrorException(
+                    "Output annotation cannot be used in @pipeline."
+                )
             elif isinstance(v, Input):
                 if v.type not in IOConstants.PRIMITIVE_STR_2_TYPE:
                     # TODO(2097478): support port type groups
-                    raise UserErrorException(f"Only primitive types can be used as input of group, got {v.type}")
+                    raise UserErrorException(
+                        f"Only primitive types can be used as input of group, got {v.type}"
+                    )
             else:
-                raise UserErrorException(f"Unsupported annotation type {type(v)} for group field {name}.{k}")
+                raise UserErrorException(
+                    f"Unsupported annotation type {type(v)} for group field {name}.{k}"
+                )
 
     def _build_inputs(self, func):
-        inputs = _get_param_with_standard_annotation(func, is_func=True, skip_params=self.non_pipeline_parameter_names)
+        inputs = _get_param_with_standard_annotation(
+            func, is_func=True, skip_params=self.non_pipeline_parameter_names
+        )
         for k, v in inputs.items():
             if isinstance(v, GroupInput):
                 self._validate_group_annotation(name=k, val=v)
@@ -232,7 +265,9 @@ class PipelineComponentBuilder:
                 v["description"] = self._args_description[k]
         return inputs
 
-    def _build_pipeline_outputs(self, outputs: typing.Dict[str, NodeOutput]) -> Dict[str, PipelineOutput]:
+    def _build_pipeline_outputs(
+        self, outputs: typing.Dict[str, NodeOutput]
+    ) -> Dict[str, PipelineOutput]:
         """Validate if dsl.pipeline returns valid outputs and set output binding. Create PipelineOutput as pipeline's
         output definition based on node outputs from return.
 
@@ -248,16 +283,29 @@ class PipelineComponentBuilder:
         if is_group(outputs):
             outputs = {key: val for key, val in outputs.__dict__.items() if val}
         if not isinstance(outputs, dict):
-            raise UserErrorException(message=error_msg, no_personal_data_message=error_msg)
+            raise UserErrorException(
+                message=error_msg, no_personal_data_message=error_msg
+            )
         output_dict = {}
         output_meta_dict = {}
         for key, value in outputs.items():
-            if not isinstance(key, str) or not isinstance(value, NodeOutput) or value._owner is None:
-                raise UserErrorException(message=error_msg, no_personal_data_message=error_msg)
+            if (
+                not isinstance(key, str)
+                or not isinstance(value, NodeOutput)
+                or value._owner is None
+            ):
+                raise UserErrorException(
+                    message=error_msg, no_personal_data_message=error_msg
+                )
             if value._meta is not None:
                 meta = value._meta
             else:
-                meta = Output(type=value.type, path=value.path, mode=value.mode, description=value.description)
+                meta = Output(
+                    type=value.type,
+                    path=value.path,
+                    mode=value.mode,
+                    description=value.description,
+                )
 
             # Hack: map internal output type to pipeline output type
             def _map_internal_output_type(_meta: Output) -> str:
@@ -273,7 +321,11 @@ class PipelineComponentBuilder:
                 return _meta.map_pipeline_output_type()
 
             # Note: Here we set PipelineOutput as Pipeline's output definition as we need output binding.
-            output_meta = Output(type=_map_internal_output_type(meta), description=meta.description, mode=meta.mode)
+            output_meta = Output(
+                type=_map_internal_output_type(meta),
+                description=meta.description,
+                mode=meta.mode,
+            )
             pipeline_output = PipelineOutput(
                 port_name=key,
                 data=None,
@@ -286,7 +338,9 @@ class PipelineComponentBuilder:
                 binding_output=value,
             )
             # copy node level output setting to pipeline output
-            copy_output_setting(source=value._owner.outputs[value._port_name], target=pipeline_output)
+            copy_output_setting(
+                source=value._owner.outputs[value._port_name], target=pipeline_output
+            )
 
             value._owner.outputs[value._port_name]._data = pipeline_output
 
@@ -306,7 +360,9 @@ class PipelineComponentBuilder:
             group_defaults[key].insert_group_name_for_items(key)
         return group_defaults
 
-    def _update_nodes_variable_names(self, func_variables: dict) -> Dict[str, Union[BaseNode, AutoMLJob]]:
+    def _update_nodes_variable_names(
+        self, func_variables: dict
+    ) -> Dict[str, Union[BaseNode, AutoMLJob]]:
         """Update nodes list to ordered dict with variable name key and component object value.
 
         Variable naming priority:
@@ -339,7 +395,9 @@ class PipelineComponentBuilder:
         def _get_name_or_component_name(node: Union[BaseNode, AutoMLJob]):
             # TODO(1979547): refactor this
             if isinstance(node, AutoMLJob):
-                return node.name or _sanitize_python_variable_name(node.__class__.__name__)
+                return node.name or _sanitize_python_variable_name(
+                    node.__class__.__name__
+                )
             if isinstance(node, ControlFlowNode):
                 return _sanitize_python_variable_name(node.__class__.__name__)
             return node.name or node._get_component_name()
@@ -384,7 +442,9 @@ class PipelineComponentBuilder:
         for node in self.nodes:
             _id = node._instance_id
             if _id in id_name_dict:
-                compname_udfname_dict[_get_name_or_component_name(node)] = id_name_dict[_id]
+                compname_udfname_dict[_get_name_or_component_name(node)] = id_name_dict[
+                    _id
+                ]
 
         # Refine and fill default name
         # If component name is same, append '_{count}' suffix
@@ -397,8 +457,14 @@ class PipelineComponentBuilder:
                 if target_name not in name_count_dict:
                     name_count_dict[target_name] = 0
                 name_count_dict[target_name] += 1
-                suffix = "" if name_count_dict[target_name] == 1 else f"_{name_count_dict[target_name] - 1}"
-                id_name_dict[_id] = f"{_sanitize_python_variable_name(target_name)}{suffix}"
+                suffix = (
+                    ""
+                    if name_count_dict[target_name] == 1
+                    else f"_{name_count_dict[target_name] - 1}"
+                )
+                id_name_dict[
+                    _id
+                ] = f"{_sanitize_python_variable_name(target_name)}{suffix}"
             final_name = id_name_dict[_id]
             node.name = final_name
             result[final_name] = node
@@ -407,7 +473,9 @@ class PipelineComponentBuilder:
             self._validate_keyword_in_node_io(node)
         return result
 
-    def _update_inputs(self, pipeline_inputs: Dict[str, Union[PipelineInput, Input, NodeOutput, Any]]):
+    def _update_inputs(
+        self, pipeline_inputs: Dict[str, Union[PipelineInput, Input, NodeOutput, Any]]
+    ):
         """Update the pipeline inputs by the dict.
 
         :param pipeline_inputs: The pipeline inputs
@@ -439,7 +507,9 @@ class PipelineComponentBuilder:
         return_annotation = inspect.signature(func).return_annotation
 
         if is_group(return_annotation):
-            outputs = _get_param_with_standard_annotation(return_annotation, is_func=False)
+            outputs = _get_param_with_standard_annotation(
+                return_annotation, is_func=False
+            )
         elif isinstance(return_annotation, Output):
             outputs = {cls.DEFAULT_OUTPUT_NAME: return_annotation}
         else:
@@ -449,7 +519,9 @@ class PipelineComponentBuilder:
         output_annotations = {}
         for key, val in outputs.items():
             if isinstance(val, GroupInput):
-                raise UserErrorException(message="Nested group annotation is not supported in pipeline output.")
+                raise UserErrorException(
+                    message="Nested group annotation is not supported in pipeline output."
+                )
             # normalize annotation since currently annotation in @group will be converted to Input
             if isinstance(val, Input):
                 val = Output(type=val.type)
@@ -461,7 +533,9 @@ class PipelineComponentBuilder:
             output_annotations[key] = val._to_dict()
         return output_annotations
 
-    def _validate_inferred_outputs(self, output_meta_dict: dict, output_dict: Dict[str, PipelineOutput]):
+    def _validate_inferred_outputs(
+        self, output_meta_dict: dict, output_dict: Dict[str, PipelineOutput]
+    ):
         """Validate inferred output dict against annotation.
 
         :param output_meta_dict: The output meta dict
@@ -471,7 +545,9 @@ class PipelineComponentBuilder:
         """
         if not self.output_annotation:
             return
-        error_prefix = "Unmatched outputs between actual pipeline output and output in annotation"
+        error_prefix = (
+            "Unmatched outputs between actual pipeline output and output in annotation"
+        )
         if output_meta_dict.keys() != self.output_annotation.keys():
             raise UserErrorException(
                 "{}: actual pipeline component outputs: {}, annotation outputs: {}".format(
@@ -527,7 +603,9 @@ class PipelineComponentBuilder:
                 )
 
 
-def _build_pipeline_parameter(func, *, user_provided_kwargs, group_default_kwargs=None, non_pipeline_inputs=None):
+def _build_pipeline_parameter(
+    func, *, user_provided_kwargs, group_default_kwargs=None, non_pipeline_inputs=None
+):
     # Pass group defaults into kwargs to support group.item can be used even if no default on function.
     # example:
     # @group
@@ -543,7 +621,9 @@ def _build_pipeline_parameter(func, *, user_provided_kwargs, group_default_kwarg
     if group_default_kwargs:
         transformed_kwargs.update(
             {
-                key: _wrap_pipeline_parameter(key, default_value=value, actual_value=value)
+                key: _wrap_pipeline_parameter(
+                    key, default_value=value, actual_value=value
+                )
                 for key, value in group_default_kwargs.items()
                 if key not in non_pipeline_inputs
             }
@@ -564,15 +644,21 @@ def _build_pipeline_parameter(func, *, user_provided_kwargs, group_default_kwarg
             and left_args.kind != Parameter.VAR_KEYWORD
             and left_args.name not in non_pipeline_inputs
         ):
-            default_value = left_args.default if left_args.default is not Parameter.empty else None
+            default_value = (
+                left_args.default if left_args.default is not Parameter.empty else None
+            )
             actual_value = user_provided_kwargs.get(left_args.name)
             transformed_kwargs[left_args.name] = _wrap_pipeline_parameter(
-                key=left_args.name, default_value=default_value, actual_value=actual_value
+                key=left_args.name,
+                default_value=default_value,
+                actual_value=actual_value,
             )
     # Add variable kwargs to transformed_kwargs.
     for key, value in user_provided_kwargs.items():
         if key not in transformed_kwargs:
-            transformed_kwargs[key] = _wrap_pipeline_parameter(key=key, default_value=None, actual_value=value)
+            transformed_kwargs[key] = _wrap_pipeline_parameter(
+                key=key, default_value=None, actual_value=value
+            )
     return transformed_kwargs
 
 
@@ -583,10 +669,18 @@ def _wrap_pipeline_parameter(key, default_value, actual_value, group_names=None)
         group_names.append(key)
         return _GroupAttrDict(
             {
-                k: _wrap_pipeline_parameter(k, default_value=v, actual_value=v, group_names=group_names)
+                k: _wrap_pipeline_parameter(
+                    k, default_value=v, actual_value=v, group_names=group_names
+                )
                 for k, v in default_value.items()
             }
         )
     # Note: this PipelineInput object is built to mark input as a data binding.
     # It only exists in dsl.pipeline function execution time and won't store in pipeline job or pipeline component.
-    return PipelineInput(name=key, meta=None, default_data=default_value, data=actual_value, group_names=group_names)
+    return PipelineInput(
+        name=key,
+        meta=None,
+        default_data=default_value,
+        data=actual_value,
+        group_names=group_names,
+    )

@@ -13,7 +13,11 @@ from azure.ai.ml.constants._common import AssetTypes
 from azure.ai.ml.constants._component import ComponentJobConstants
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job.pipeline._io import PipelineInput, PipelineOutput
-from azure.ai.ml.entities._job.sweep.search_space import Choice, Randint, SweepDistribution
+from azure.ai.ml.entities._job.sweep.search_space import (
+    Choice,
+    Randint,
+    SweepDistribution,
+)
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, JobException
 
 
@@ -26,7 +30,9 @@ class ComponentTranslatableMixin:
     }
 
     @classmethod
-    def _find_source_from_parent_inputs(cls, input: str, pipeline_job_inputs: dict) -> Tuple[str, Optional[str]]:
+    def _find_source_from_parent_inputs(
+        cls, input: str, pipeline_job_inputs: dict
+    ) -> Tuple[str, Optional[str]]:
         """Find source type and mode of input/output from parent input.
 
         :param input: The input name
@@ -49,10 +55,14 @@ class ComponentTranslatableMixin:
         input_type = type(input_data)
         if input_type in cls._PYTHON_SDK_TYPE_MAPPING:
             return cls._PYTHON_SDK_TYPE_MAPPING[input_type], None
-        return getattr(input_data, "type", AssetTypes.URI_FOLDER), getattr(input_data, "mode", None)
+        return getattr(input_data, "type", AssetTypes.URI_FOLDER), getattr(
+            input_data, "mode", None
+        )
 
     @classmethod
-    def _find_source_from_parent_outputs(cls, input: str, pipeline_job_outputs: dict) -> Tuple[str, Optional[str]]:
+    def _find_source_from_parent_outputs(
+        cls, input: str, pipeline_job_outputs: dict
+    ) -> Tuple[str, Optional[str]]:
         """Find source type and mode of input/output from parent output.
 
         :param input: The input name
@@ -85,7 +95,9 @@ class ComponentTranslatableMixin:
             else:
                 output_data_mode = None
             return output_data_type, output_data_mode
-        return getattr(output_data, "type", AssetTypes.URI_FOLDER), getattr(output_data, "mode", None)
+        return getattr(output_data, "type", AssetTypes.URI_FOLDER), getattr(
+            output_data, "mode", None
+        )
 
     @classmethod
     def _find_source_from_other_jobs(
@@ -142,7 +154,9 @@ class ComponentTranslatableMixin:
                         #  otherwise _input_job's input/output is bound to pipeline input/output, we continue
                         #  infer the type according to _source._data. Will return corresponding pipeline
                         #  input/output type because we didn't get the component.
-                        source_type, _ = cls._find_source_input_output_type(_source._data, pipeline_job_dict)
+                        source_type, _ = cls._find_source_input_output_type(
+                            _source._data, pipeline_job_dict
+                        )
                 return source_type, source_mode
             except AttributeError as e:
                 msg = "Failed to get referenced component type {}."
@@ -156,7 +170,9 @@ class ComponentTranslatableMixin:
             # If source has not parsed to Command yet, infer type
             _source = get(_input_job, f"{_io_type}.{_name}")
             if isinstance(_source, str):
-                source_type, _ = cls._find_source_input_output_type(_source, pipeline_job_dict)
+                source_type, _ = cls._find_source_input_output_type(
+                    _source, pipeline_job_dict
+                )
                 return source_type, source_mode
             return getattr(_source, "type", AssetTypes.URI_FOLDER), source_mode
         if isinstance(_input_job, AutoMLJob):
@@ -180,7 +196,9 @@ class ComponentTranslatableMixin:
         )
 
     @classmethod
-    def _find_source_input_output_type(cls, input: str, pipeline_job_dict: dict) -> Tuple[str, Optional[str]]:
+    def _find_source_input_output_type(
+        cls, input: str, pipeline_job_dict: dict
+    ) -> Tuple[str, Optional[str]]:
         """Find source type and mode of input/output.
 
         :param input: The input binding
@@ -199,7 +217,9 @@ class ComponentTranslatableMixin:
             return cls._find_source_from_parent_outputs(input, pipeline_job_outputs)
         if is_data_binding_expression(input, ["parent", "jobs"]):
             try:
-                return cls._find_source_from_other_jobs(input, jobs_dict, pipeline_job_dict)
+                return cls._find_source_from_other_jobs(
+                    input, jobs_dict, pipeline_job_dict
+                )
             except JobException as e:
                 raise e
             except Exception as e:
@@ -238,17 +258,22 @@ class ComponentTranslatableMixin:
         pipeline_job_dict = pipeline_job_dict or {}
         input_variable = {}
 
-        if isinstance(input, str) and bool(re.search(ComponentJobConstants.INPUT_PATTERN, input)):
+        if isinstance(input, str) and bool(
+            re.search(ComponentJobConstants.INPUT_PATTERN, input)
+        ):
             # handle input bindings
-            input_variable["type"], input_variable["mode"] = cls._find_source_input_output_type(
-                input, pipeline_job_dict
-            )
+            (
+                input_variable["type"],
+                input_variable["mode"],
+            ) = cls._find_source_input_output_type(input, pipeline_job_dict)
 
         elif isinstance(input, Input):
             input_variable = input._to_dict()
         elif isinstance(input, SweepDistribution):
             if isinstance(input, Choice):
-                input_variable["type"] = cls._PYTHON_SDK_TYPE_MAPPING[type(input.values[0])]
+                input_variable["type"] = cls._PYTHON_SDK_TYPE_MAPPING[
+                    type(input.values[0])
+                ]
             elif isinstance(input, Randint):
                 input_variable["type"] = cls._PYTHON_SDK_TYPE_MAPPING[int]
             else:
@@ -274,14 +299,18 @@ class ComponentTranslatableMixin:
         return Input(**input_variable)
 
     @classmethod
-    def _to_input_builder_function(cls, input: Union[Input, str, bool, int, float]) -> Input:
+    def _to_input_builder_function(
+        cls, input: Union[Input, str, bool, int, float]
+    ) -> Input:
         input_variable = {}
 
         if isinstance(input, Input):
             input_variable = input._to_dict()
         elif isinstance(input, SweepDistribution):
             if isinstance(input, Choice):
-                input_variable["type"] = cls._PYTHON_SDK_TYPE_MAPPING[type(input.values[0])]
+                input_variable["type"] = cls._PYTHON_SDK_TYPE_MAPPING[
+                    type(input.values[0])
+                ]
             elif isinstance(input, Randint):
                 input_variable["type"] = cls._PYTHON_SDK_TYPE_MAPPING[int]
             else:
@@ -321,11 +350,14 @@ class ComponentTranslatableMixin:
             return Output(**output_variable)
         output_variable = {}
 
-        if isinstance(output, str) and bool(re.search(ComponentJobConstants.OUTPUT_PATTERN, output)):
+        if isinstance(output, str) and bool(
+            re.search(ComponentJobConstants.OUTPUT_PATTERN, output)
+        ):
             # handle output bindings
-            output_variable["type"], output_variable["mode"] = cls._find_source_input_output_type(
-                output, pipeline_job_dict
-            )
+            (
+                output_variable["type"],
+                output_variable["mode"],
+            ) = cls._find_source_input_output_type(output, pipeline_job_dict)
 
         elif isinstance(output, Output):
             output_variable = output._to_dict()
@@ -348,7 +380,9 @@ class ComponentTranslatableMixin:
             )
         return Output(**output_variable)
 
-    def _to_inputs(self, inputs: Dict[str, Union[Input, str, bool, int, float]], **kwargs) -> Dict[str, Input]:
+    def _to_inputs(
+        self, inputs: Dict[str, Union[Input, str, bool, int, float]], **kwargs
+    ) -> Dict[str, Input]:
         """Translate inputs to Inputs.
 
         :param inputs: mapping from input name to input object.
@@ -359,7 +393,9 @@ class ComponentTranslatableMixin:
         pipeline_job_dict = kwargs.get("pipeline_job_dict", {})
         translated_component_inputs = {}
         for io_name, io_value in inputs.items():
-            translated_component_inputs[io_name] = self._to_input(io_value, pipeline_job_dict)
+            translated_component_inputs[io_name] = self._to_input(
+                io_value, pipeline_job_dict
+            )
         return translated_component_inputs
 
     def _to_outputs(self, outputs: Dict[str, Output], **kwargs) -> Dict[str, Output]:
@@ -374,7 +410,9 @@ class ComponentTranslatableMixin:
         pipeline_job_dict = kwargs.get("pipeline_job_dict", {})
         translated_component_outputs = {}
         for output_name, output_value in outputs.items():
-            translated_component_outputs[output_name] = self._to_output(output_value, pipeline_job_dict)
+            translated_component_outputs[output_name] = self._to_output(
+                output_value, pipeline_job_dict
+            )
         return translated_component_outputs
 
     def _to_component(self, context: Optional[Dict] = None, **kwargs) -> "Component":

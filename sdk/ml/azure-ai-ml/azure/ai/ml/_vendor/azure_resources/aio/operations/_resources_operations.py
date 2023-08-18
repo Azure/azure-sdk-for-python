@@ -24,7 +24,9 @@ from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 from ... import models
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[
+    Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]
+]
 
 
 class ResourcesOperations:
@@ -88,7 +90,11 @@ class ResourcesOperations:
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop("cls", None)  # type: ClsType["models.ResourceListResult"]
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+        }
         error_map.update(kwargs.pop("error_map", {}))
         api_version = "2020-06-01"
         accept = "application/json"
@@ -96,7 +102,9 @@ class ResourcesOperations:
         def prepare_request(next_link=None):
             # Construct headers
             header_parameters = {}  # type: Dict[str, Any]
-            header_parameters["Accept"] = self._serialize.header("accept", accept, "str")
+            header_parameters["Accept"] = self._serialize.header(
+                "accept", accept, "str"
+            )
 
             if not next_link:
                 # Construct URL
@@ -111,19 +119,27 @@ class ResourcesOperations:
                         pattern=r"^[-\w\._\(\)]+$",
                     ),
                     "subscriptionId": self._serialize.url(
-                        "self._config.subscription_id", self._config.subscription_id, "str"
+                        "self._config.subscription_id",
+                        self._config.subscription_id,
+                        "str",
                     ),
                 }
                 url = self._client.format_url(url, **path_format_arguments)
                 # Construct parameters
                 query_parameters = {}  # type: Dict[str, Any]
                 if filter is not None:
-                    query_parameters["$filter"] = self._serialize.query("filter", filter, "str")
+                    query_parameters["$filter"] = self._serialize.query(
+                        "filter", filter, "str"
+                    )
                 if expand is not None:
-                    query_parameters["$expand"] = self._serialize.query("expand", expand, "str")
+                    query_parameters["$expand"] = self._serialize.query(
+                        "expand", expand, "str"
+                    )
                 if top is not None:
                     query_parameters["$top"] = self._serialize.query("top", top, "int")
-                query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
+                query_parameters["api-version"] = self._serialize.query(
+                    "api_version", api_version, "str"
+                )
 
                 request = self._client.get(url, query_parameters, header_parameters)
             else:
@@ -142,11 +158,17 @@ class ResourcesOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(
+                request, stream=False, **kwargs
+            )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                map_error(
+                    status_code=response.status_code,
+                    response=response,
+                    error_map=error_map,
+                )
                 raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -156,10 +178,17 @@ class ResourcesOperations:
     list_by_resource_group.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/resources"}  # type: ignore
 
     async def _move_resources_initial(
-        self, source_resource_group_name: str, parameters: "models.ResourcesMoveInfo", **kwargs
+        self,
+        source_resource_group_name: str,
+        parameters: "models.ResourcesMoveInfo",
+        **kwargs
     ) -> None:
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+        }
         error_map.update(kwargs.pop("error_map", {}))
         api_version = "2020-06-01"
         content_type = kwargs.pop("content_type", "application/json")
@@ -176,28 +205,40 @@ class ResourcesOperations:
                 min_length=1,
                 pattern=r"^[-\w\._\(\)]+$",
             ),
-            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
+            "subscriptionId": self._serialize.url(
+                "self._config.subscription_id", self._config.subscription_id, "str"
+            ),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
-        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
+        query_parameters["api-version"] = self._serialize.query(
+            "api_version", api_version, "str"
+        )
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters["Content-Type"] = self._serialize.header("content_type", content_type, "str")
+        header_parameters["Content-Type"] = self._serialize.header(
+            "content_type", content_type, "str"
+        )
         header_parameters["Accept"] = self._serialize.header("accept", accept, "str")
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, "ResourcesMoveInfo")
         body_content_kwargs["content"] = body_content
-        request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        request = self._client.post(
+            url, query_parameters, header_parameters, **body_content_kwargs
+        )
+        pipeline_response = await self._client._pipeline.run(
+            request, stream=False, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [202, 204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
@@ -206,7 +247,10 @@ class ResourcesOperations:
     _move_resources_initial.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{sourceResourceGroupName}/moveResources"}  # type: ignore
 
     async def begin_move_resources(
-        self, source_resource_group_name: str, parameters: "models.ResourcesMoveInfo", **kwargs
+        self,
+        source_resource_group_name: str,
+        parameters: "models.ResourcesMoveInfo",
+        **kwargs
     ) -> AsyncLROPoller[None]:
         """Moves resources from one resource group to another resource group.
 
@@ -263,15 +307,24 @@ class ResourcesOperations:
                 deserialization_callback=get_long_running_output,
             )
         else:
-            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+            return AsyncLROPoller(
+                self._client, raw_result, get_long_running_output, polling_method
+            )
 
     begin_move_resources.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{sourceResourceGroupName}/moveResources"}  # type: ignore
 
     async def _validate_move_resources_initial(
-        self, source_resource_group_name: str, parameters: "models.ResourcesMoveInfo", **kwargs
+        self,
+        source_resource_group_name: str,
+        parameters: "models.ResourcesMoveInfo",
+        **kwargs
     ) -> None:
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+        }
         error_map.update(kwargs.pop("error_map", {}))
         api_version = "2020-06-01"
         content_type = kwargs.pop("content_type", "application/json")
@@ -288,28 +341,40 @@ class ResourcesOperations:
                 min_length=1,
                 pattern=r"^[-\w\._\(\)]+$",
             ),
-            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
+            "subscriptionId": self._serialize.url(
+                "self._config.subscription_id", self._config.subscription_id, "str"
+            ),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
-        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
+        query_parameters["api-version"] = self._serialize.query(
+            "api_version", api_version, "str"
+        )
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters["Content-Type"] = self._serialize.header("content_type", content_type, "str")
+        header_parameters["Content-Type"] = self._serialize.header(
+            "content_type", content_type, "str"
+        )
         header_parameters["Accept"] = self._serialize.header("accept", accept, "str")
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, "ResourcesMoveInfo")
         body_content_kwargs["content"] = body_content
-        request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        request = self._client.post(
+            url, query_parameters, header_parameters, **body_content_kwargs
+        )
+        pipeline_response = await self._client._pipeline.run(
+            request, stream=False, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [202, 204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
@@ -318,7 +383,10 @@ class ResourcesOperations:
     _validate_move_resources_initial.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{sourceResourceGroupName}/validateMoveResources"}  # type: ignore
 
     async def begin_validate_move_resources(
-        self, source_resource_group_name: str, parameters: "models.ResourcesMoveInfo", **kwargs
+        self,
+        source_resource_group_name: str,
+        parameters: "models.ResourcesMoveInfo",
+        **kwargs
     ) -> AsyncLROPoller[None]:
         """Validates whether resources can be moved from one resource group to another resource group.
 
@@ -377,12 +445,18 @@ class ResourcesOperations:
                 deserialization_callback=get_long_running_output,
             )
         else:
-            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+            return AsyncLROPoller(
+                self._client, raw_result, get_long_running_output, polling_method
+            )
 
     begin_validate_move_resources.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{sourceResourceGroupName}/validateMoveResources"}  # type: ignore
 
     def list(
-        self, filter: Optional[str] = None, expand: Optional[str] = None, top: Optional[int] = None, **kwargs
+        self,
+        filter: Optional[str] = None,
+        expand: Optional[str] = None,
+        top: Optional[int] = None,
+        **kwargs
     ) -> AsyncIterable["models.ResourceListResult"]:
         """Get all the resources in a subscription.
 
@@ -413,7 +487,11 @@ class ResourcesOperations:
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop("cls", None)  # type: ClsType["models.ResourceListResult"]
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+        }
         error_map.update(kwargs.pop("error_map", {}))
         api_version = "2020-06-01"
         accept = "application/json"
@@ -421,26 +499,36 @@ class ResourcesOperations:
         def prepare_request(next_link=None):
             # Construct headers
             header_parameters = {}  # type: Dict[str, Any]
-            header_parameters["Accept"] = self._serialize.header("accept", accept, "str")
+            header_parameters["Accept"] = self._serialize.header(
+                "accept", accept, "str"
+            )
 
             if not next_link:
                 # Construct URL
                 url = self.list.metadata["url"]  # type: ignore
                 path_format_arguments = {
                     "subscriptionId": self._serialize.url(
-                        "self._config.subscription_id", self._config.subscription_id, "str"
+                        "self._config.subscription_id",
+                        self._config.subscription_id,
+                        "str",
                     ),
                 }
                 url = self._client.format_url(url, **path_format_arguments)
                 # Construct parameters
                 query_parameters = {}  # type: Dict[str, Any]
                 if filter is not None:
-                    query_parameters["$filter"] = self._serialize.query("filter", filter, "str")
+                    query_parameters["$filter"] = self._serialize.query(
+                        "filter", filter, "str"
+                    )
                 if expand is not None:
-                    query_parameters["$expand"] = self._serialize.query("expand", expand, "str")
+                    query_parameters["$expand"] = self._serialize.query(
+                        "expand", expand, "str"
+                    )
                 if top is not None:
                     query_parameters["$top"] = self._serialize.query("top", top, "int")
-                query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
+                query_parameters["api-version"] = self._serialize.query(
+                    "api_version", api_version, "str"
+                )
 
                 request = self._client.get(url, query_parameters, header_parameters)
             else:
@@ -459,11 +547,17 @@ class ResourcesOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(
+                request, stream=False, **kwargs
+            )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                map_error(
+                    status_code=response.status_code,
+                    response=response,
+                    error_map=error_map,
+                )
                 raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -503,7 +597,11 @@ class ResourcesOperations:
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+        }
         error_map.update(kwargs.pop("error_map", {}))
         accept = "application/json"
 
@@ -524,26 +622,36 @@ class ResourcesOperations:
             "parentResourcePath": self._serialize.url(
                 "parent_resource_path", parent_resource_path, "str", skip_quote=True
             ),
-            "resourceType": self._serialize.url("resource_type", resource_type, "str", skip_quote=True),
+            "resourceType": self._serialize.url(
+                "resource_type", resource_type, "str", skip_quote=True
+            ),
             "resourceName": self._serialize.url("resource_name", resource_name, "str"),
-            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
+            "subscriptionId": self._serialize.url(
+                "self._config.subscription_id", self._config.subscription_id, "str"
+            ),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
-        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
+        query_parameters["api-version"] = self._serialize.query(
+            "api_version", api_version, "str"
+        )
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters["Accept"] = self._serialize.header("accept", accept, "str")
 
         request = self._client.head(url, query_parameters, header_parameters)
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(
+            request, stream=False, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [204, 404]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
@@ -564,7 +672,11 @@ class ResourcesOperations:
         **kwargs
     ) -> None:
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+        }
         error_map.update(kwargs.pop("error_map", {}))
         accept = "application/json"
 
@@ -585,26 +697,36 @@ class ResourcesOperations:
             "parentResourcePath": self._serialize.url(
                 "parent_resource_path", parent_resource_path, "str", skip_quote=True
             ),
-            "resourceType": self._serialize.url("resource_type", resource_type, "str", skip_quote=True),
+            "resourceType": self._serialize.url(
+                "resource_type", resource_type, "str", skip_quote=True
+            ),
             "resourceName": self._serialize.url("resource_name", resource_name, "str"),
-            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
+            "subscriptionId": self._serialize.url(
+                "self._config.subscription_id", self._config.subscription_id, "str"
+            ),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
-        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
+        query_parameters["api-version"] = self._serialize.query(
+            "api_version", api_version, "str"
+        )
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters["Accept"] = self._serialize.header("accept", accept, "str")
 
         request = self._client.delete(url, query_parameters, header_parameters)
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(
+            request, stream=False, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202, 204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
@@ -684,7 +806,9 @@ class ResourcesOperations:
                 deserialization_callback=get_long_running_output,
             )
         else:
-            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+            return AsyncLROPoller(
+                self._client, raw_result, get_long_running_output, polling_method
+            )
 
     begin_delete.metadata = {"url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{parentResourcePath}/{resourceType}/{resourceName}"}  # type: ignore
 
@@ -699,8 +823,14 @@ class ResourcesOperations:
         parameters: "models.GenericResource",
         **kwargs
     ) -> Optional["models.GenericResource"]:
-        cls = kwargs.pop("cls", None)  # type: ClsType[Optional["models.GenericResource"]]
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop(
+            "cls", None
+        )  # type: ClsType[Optional["models.GenericResource"]]
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+        }
         error_map.update(kwargs.pop("error_map", {}))
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
@@ -722,30 +852,44 @@ class ResourcesOperations:
             "parentResourcePath": self._serialize.url(
                 "parent_resource_path", parent_resource_path, "str", skip_quote=True
             ),
-            "resourceType": self._serialize.url("resource_type", resource_type, "str", skip_quote=True),
+            "resourceType": self._serialize.url(
+                "resource_type", resource_type, "str", skip_quote=True
+            ),
             "resourceName": self._serialize.url("resource_name", resource_name, "str"),
-            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
+            "subscriptionId": self._serialize.url(
+                "self._config.subscription_id", self._config.subscription_id, "str"
+            ),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
-        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
+        query_parameters["api-version"] = self._serialize.query(
+            "api_version", api_version, "str"
+        )
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters["Content-Type"] = self._serialize.header("content_type", content_type, "str")
+        header_parameters["Content-Type"] = self._serialize.header(
+            "content_type", content_type, "str"
+        )
         header_parameters["Accept"] = self._serialize.header("accept", accept, "str")
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, "GenericResource")
         body_content_kwargs["content"] = body_content
-        request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        request = self._client.put(
+            url, query_parameters, header_parameters, **body_content_kwargs
+        )
+        pipeline_response = await self._client._pipeline.run(
+            request, stream=False, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 201, 202]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -841,7 +985,9 @@ class ResourcesOperations:
                 deserialization_callback=get_long_running_output,
             )
         else:
-            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+            return AsyncLROPoller(
+                self._client, raw_result, get_long_running_output, polling_method
+            )
 
     begin_create_or_update.metadata = {"url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{parentResourcePath}/{resourceType}/{resourceName}"}  # type: ignore
 
@@ -856,8 +1002,14 @@ class ResourcesOperations:
         parameters: "models.GenericResource",
         **kwargs
     ) -> Optional["models.GenericResource"]:
-        cls = kwargs.pop("cls", None)  # type: ClsType[Optional["models.GenericResource"]]
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop(
+            "cls", None
+        )  # type: ClsType[Optional["models.GenericResource"]]
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+        }
         error_map.update(kwargs.pop("error_map", {}))
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
@@ -879,30 +1031,44 @@ class ResourcesOperations:
             "parentResourcePath": self._serialize.url(
                 "parent_resource_path", parent_resource_path, "str", skip_quote=True
             ),
-            "resourceType": self._serialize.url("resource_type", resource_type, "str", skip_quote=True),
+            "resourceType": self._serialize.url(
+                "resource_type", resource_type, "str", skip_quote=True
+            ),
             "resourceName": self._serialize.url("resource_name", resource_name, "str"),
-            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
+            "subscriptionId": self._serialize.url(
+                "self._config.subscription_id", self._config.subscription_id, "str"
+            ),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
-        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
+        query_parameters["api-version"] = self._serialize.query(
+            "api_version", api_version, "str"
+        )
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters["Content-Type"] = self._serialize.header("content_type", content_type, "str")
+        header_parameters["Content-Type"] = self._serialize.header(
+            "content_type", content_type, "str"
+        )
         header_parameters["Accept"] = self._serialize.header("accept", accept, "str")
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, "GenericResource")
         body_content_kwargs["content"] = body_content
-        request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        request = self._client.patch(
+            url, query_parameters, header_parameters, **body_content_kwargs
+        )
+        pipeline_response = await self._client._pipeline.run(
+            request, stream=False, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -995,7 +1161,9 @@ class ResourcesOperations:
                 deserialization_callback=get_long_running_output,
             )
         else:
-            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+            return AsyncLROPoller(
+                self._client, raw_result, get_long_running_output, polling_method
+            )
 
     begin_update.metadata = {"url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{parentResourcePath}/{resourceType}/{resourceName}"}  # type: ignore
 
@@ -1030,7 +1198,11 @@ class ResourcesOperations:
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop("cls", None)  # type: ClsType["models.GenericResource"]
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+        }
         error_map.update(kwargs.pop("error_map", {}))
         accept = "application/json"
 
@@ -1051,26 +1223,36 @@ class ResourcesOperations:
             "parentResourcePath": self._serialize.url(
                 "parent_resource_path", parent_resource_path, "str", skip_quote=True
             ),
-            "resourceType": self._serialize.url("resource_type", resource_type, "str", skip_quote=True),
+            "resourceType": self._serialize.url(
+                "resource_type", resource_type, "str", skip_quote=True
+            ),
             "resourceName": self._serialize.url("resource_name", resource_name, "str"),
-            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
+            "subscriptionId": self._serialize.url(
+                "self._config.subscription_id", self._config.subscription_id, "str"
+            ),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
-        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
+        query_parameters["api-version"] = self._serialize.query(
+            "api_version", api_version, "str"
+        )
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters["Accept"] = self._serialize.header("accept", accept, "str")
 
         request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(
+            request, stream=False, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("GenericResource", pipeline_response)
@@ -1082,7 +1264,9 @@ class ResourcesOperations:
 
     get.metadata = {"url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{parentResourcePath}/{resourceType}/{resourceName}"}  # type: ignore
 
-    async def check_existence_by_id(self, resource_id: str, api_version: str, **kwargs) -> bool:
+    async def check_existence_by_id(
+        self, resource_id: str, api_version: str, **kwargs
+    ) -> bool:
         """Checks by ID whether a resource exists.
 
         :param resource_id: The fully qualified ID of the resource, including the resource name and
@@ -1097,31 +1281,43 @@ class ResourcesOperations:
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+        }
         error_map.update(kwargs.pop("error_map", {}))
         accept = "application/json"
 
         # Construct URL
         url = self.check_existence_by_id.metadata["url"]  # type: ignore
         path_format_arguments = {
-            "resourceId": self._serialize.url("resource_id", resource_id, "str", skip_quote=True),
+            "resourceId": self._serialize.url(
+                "resource_id", resource_id, "str", skip_quote=True
+            ),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
-        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
+        query_parameters["api-version"] = self._serialize.query(
+            "api_version", api_version, "str"
+        )
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters["Accept"] = self._serialize.header("accept", accept, "str")
 
         request = self._client.head(url, query_parameters, header_parameters)
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(
+            request, stream=False, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [204, 404]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
@@ -1131,33 +1327,47 @@ class ResourcesOperations:
 
     check_existence_by_id.metadata = {"url": "/{resourceId}"}  # type: ignore
 
-    async def _delete_by_id_initial(self, resource_id: str, api_version: str, **kwargs) -> None:
+    async def _delete_by_id_initial(
+        self, resource_id: str, api_version: str, **kwargs
+    ) -> None:
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+        }
         error_map.update(kwargs.pop("error_map", {}))
         accept = "application/json"
 
         # Construct URL
         url = self._delete_by_id_initial.metadata["url"]  # type: ignore
         path_format_arguments = {
-            "resourceId": self._serialize.url("resource_id", resource_id, "str", skip_quote=True),
+            "resourceId": self._serialize.url(
+                "resource_id", resource_id, "str", skip_quote=True
+            ),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
-        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
+        query_parameters["api-version"] = self._serialize.query(
+            "api_version", api_version, "str"
+        )
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters["Accept"] = self._serialize.header("accept", accept, "str")
 
         request = self._client.delete(url, query_parameters, header_parameters)
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(
+            request, stream=False, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202, 204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
@@ -1165,7 +1375,9 @@ class ResourcesOperations:
 
     _delete_by_id_initial.metadata = {"url": "/{resourceId}"}  # type: ignore
 
-    async def begin_delete_by_id(self, resource_id: str, api_version: str, **kwargs) -> AsyncLROPoller[None]:
+    async def begin_delete_by_id(
+        self, resource_id: str, api_version: str, **kwargs
+    ) -> AsyncLROPoller[None]:
         """Deletes a resource by ID.
 
         :param resource_id: The fully qualified ID of the resource, including the resource name and
@@ -1190,7 +1402,10 @@ class ResourcesOperations:
         cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
         if cont_token is None:
             raw_result = await self._delete_by_id_initial(
-                resource_id=resource_id, api_version=api_version, cls=lambda x, y, z: x, **kwargs
+                resource_id=resource_id,
+                api_version=api_version,
+                cls=lambda x, y, z: x,
+                **kwargs
             )
 
         kwargs.pop("error_map", None)
@@ -1214,15 +1429,27 @@ class ResourcesOperations:
                 deserialization_callback=get_long_running_output,
             )
         else:
-            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+            return AsyncLROPoller(
+                self._client, raw_result, get_long_running_output, polling_method
+            )
 
     begin_delete_by_id.metadata = {"url": "/{resourceId}"}  # type: ignore
 
     async def _create_or_update_by_id_initial(
-        self, resource_id: str, api_version: str, parameters: "models.GenericResource", **kwargs
+        self,
+        resource_id: str,
+        api_version: str,
+        parameters: "models.GenericResource",
+        **kwargs
     ) -> Optional["models.GenericResource"]:
-        cls = kwargs.pop("cls", None)  # type: ClsType[Optional["models.GenericResource"]]
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop(
+            "cls", None
+        )  # type: ClsType[Optional["models.GenericResource"]]
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+        }
         error_map.update(kwargs.pop("error_map", {}))
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
@@ -1230,28 +1457,40 @@ class ResourcesOperations:
         # Construct URL
         url = self._create_or_update_by_id_initial.metadata["url"]  # type: ignore
         path_format_arguments = {
-            "resourceId": self._serialize.url("resource_id", resource_id, "str", skip_quote=True),
+            "resourceId": self._serialize.url(
+                "resource_id", resource_id, "str", skip_quote=True
+            ),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
-        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
+        query_parameters["api-version"] = self._serialize.query(
+            "api_version", api_version, "str"
+        )
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters["Content-Type"] = self._serialize.header("content_type", content_type, "str")
+        header_parameters["Content-Type"] = self._serialize.header(
+            "content_type", content_type, "str"
+        )
         header_parameters["Accept"] = self._serialize.header("accept", accept, "str")
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, "GenericResource")
         body_content_kwargs["content"] = body_content
-        request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        request = self._client.put(
+            url, query_parameters, header_parameters, **body_content_kwargs
+        )
+        pipeline_response = await self._client._pipeline.run(
+            request, stream=False, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 201, 202]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -1269,7 +1508,11 @@ class ResourcesOperations:
     _create_or_update_by_id_initial.metadata = {"url": "/{resourceId}"}  # type: ignore
 
     async def begin_create_or_update_by_id(
-        self, resource_id: str, api_version: str, parameters: "models.GenericResource", **kwargs
+        self,
+        resource_id: str,
+        api_version: str,
+        parameters: "models.GenericResource",
+        **kwargs
     ) -> AsyncLROPoller["models.GenericResource"]:
         """Create a resource by ID.
 
@@ -1297,7 +1540,11 @@ class ResourcesOperations:
         cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
         if cont_token is None:
             raw_result = await self._create_or_update_by_id_initial(
-                resource_id=resource_id, api_version=api_version, parameters=parameters, cls=lambda x, y, z: x, **kwargs
+                resource_id=resource_id,
+                api_version=api_version,
+                parameters=parameters,
+                cls=lambda x, y, z: x,
+                **kwargs
             )
 
         kwargs.pop("error_map", None)
@@ -1324,15 +1571,27 @@ class ResourcesOperations:
                 deserialization_callback=get_long_running_output,
             )
         else:
-            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+            return AsyncLROPoller(
+                self._client, raw_result, get_long_running_output, polling_method
+            )
 
     begin_create_or_update_by_id.metadata = {"url": "/{resourceId}"}  # type: ignore
 
     async def _update_by_id_initial(
-        self, resource_id: str, api_version: str, parameters: "models.GenericResource", **kwargs
+        self,
+        resource_id: str,
+        api_version: str,
+        parameters: "models.GenericResource",
+        **kwargs
     ) -> Optional["models.GenericResource"]:
-        cls = kwargs.pop("cls", None)  # type: ClsType[Optional["models.GenericResource"]]
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop(
+            "cls", None
+        )  # type: ClsType[Optional["models.GenericResource"]]
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+        }
         error_map.update(kwargs.pop("error_map", {}))
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
@@ -1340,28 +1599,40 @@ class ResourcesOperations:
         # Construct URL
         url = self._update_by_id_initial.metadata["url"]  # type: ignore
         path_format_arguments = {
-            "resourceId": self._serialize.url("resource_id", resource_id, "str", skip_quote=True),
+            "resourceId": self._serialize.url(
+                "resource_id", resource_id, "str", skip_quote=True
+            ),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
-        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
+        query_parameters["api-version"] = self._serialize.query(
+            "api_version", api_version, "str"
+        )
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters["Content-Type"] = self._serialize.header("content_type", content_type, "str")
+        header_parameters["Content-Type"] = self._serialize.header(
+            "content_type", content_type, "str"
+        )
         header_parameters["Accept"] = self._serialize.header("accept", accept, "str")
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, "GenericResource")
         body_content_kwargs["content"] = body_content
-        request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        request = self._client.patch(
+            url, query_parameters, header_parameters, **body_content_kwargs
+        )
+        pipeline_response = await self._client._pipeline.run(
+            request, stream=False, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -1376,7 +1647,11 @@ class ResourcesOperations:
     _update_by_id_initial.metadata = {"url": "/{resourceId}"}  # type: ignore
 
     async def begin_update_by_id(
-        self, resource_id: str, api_version: str, parameters: "models.GenericResource", **kwargs
+        self,
+        resource_id: str,
+        api_version: str,
+        parameters: "models.GenericResource",
+        **kwargs
     ) -> AsyncLROPoller["models.GenericResource"]:
         """Updates a resource by ID.
 
@@ -1404,7 +1679,11 @@ class ResourcesOperations:
         cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
         if cont_token is None:
             raw_result = await self._update_by_id_initial(
-                resource_id=resource_id, api_version=api_version, parameters=parameters, cls=lambda x, y, z: x, **kwargs
+                resource_id=resource_id,
+                api_version=api_version,
+                parameters=parameters,
+                cls=lambda x, y, z: x,
+                **kwargs
             )
 
         kwargs.pop("error_map", None)
@@ -1431,11 +1710,15 @@ class ResourcesOperations:
                 deserialization_callback=get_long_running_output,
             )
         else:
-            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+            return AsyncLROPoller(
+                self._client, raw_result, get_long_running_output, polling_method
+            )
 
     begin_update_by_id.metadata = {"url": "/{resourceId}"}  # type: ignore
 
-    async def get_by_id(self, resource_id: str, api_version: str, **kwargs) -> "models.GenericResource":
+    async def get_by_id(
+        self, resource_id: str, api_version: str, **kwargs
+    ) -> "models.GenericResource":
         """Gets a resource by ID.
 
         :param resource_id: The fully qualified ID of the resource, including the resource name and
@@ -1450,31 +1733,43 @@ class ResourcesOperations:
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop("cls", None)  # type: ClsType["models.GenericResource"]
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+        }
         error_map.update(kwargs.pop("error_map", {}))
         accept = "application/json"
 
         # Construct URL
         url = self.get_by_id.metadata["url"]  # type: ignore
         path_format_arguments = {
-            "resourceId": self._serialize.url("resource_id", resource_id, "str", skip_quote=True),
+            "resourceId": self._serialize.url(
+                "resource_id", resource_id, "str", skip_quote=True
+            ),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
-        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
+        query_parameters["api-version"] = self._serialize.query(
+            "api_version", api_version, "str"
+        )
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters["Accept"] = self._serialize.header("accept", accept, "str")
 
         request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(
+            request, stream=False, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("GenericResource", pipeline_response)

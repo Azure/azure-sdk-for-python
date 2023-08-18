@@ -6,11 +6,23 @@ from os import PathLike
 from pathlib import Path
 from typing import Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2022_05_01.models import CodeVersionData, CodeVersionDetails
+from azure.ai.ml._restclient.v2022_05_01.models import (
+    CodeVersionData,
+    CodeVersionDetails,
+)
 from azure.ai.ml._schema import CodeAssetSchema
 from azure.ai.ml._utils._arm_id_utils import AMLVersionedArmId
-from azure.ai.ml._utils._asset_utils import IgnoreFile, get_content_hash, get_content_hash_version, get_ignore_file
-from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, ArmConstants
+from azure.ai.ml._utils._asset_utils import (
+    IgnoreFile,
+    get_content_hash,
+    get_content_hash_version,
+    get_ignore_file,
+)
+from azure.ai.ml.constants._common import (
+    BASE_PATH_CONTEXT_KEY,
+    PARAMS_OVERRIDE_KEY,
+    ArmConstants,
+)
 from azure.ai.ml.entities._assets import Artifact
 from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._util import load_from_dict
@@ -64,7 +76,9 @@ class Code(Artifact):
         self._arm_type = ArmConstants.CODE_VERSION_TYPE
         if self.path and os.path.isabs(self.path):
             # Only calculate hash for local files
-            self._ignore_file = get_ignore_file(self.path) if ignore_file is None else ignore_file
+            self._ignore_file = (
+                get_ignore_file(self.path) if ignore_file is None else ignore_file
+            )
             self._hash_sha256 = get_content_hash(self.path, self._ignore_file)
 
     @classmethod
@@ -84,7 +98,9 @@ class Code(Artifact):
         return load_from_dict(CodeAssetSchema, data, context, **kwargs)
 
     def _to_dict(self) -> Dict:
-        return CodeAssetSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)  # pylint: disable=no-member
+        return CodeAssetSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(
+            self
+        )  # pylint: disable=no-member
 
     @classmethod
     def _from_rest_object(cls, code_rest_object: CodeVersionData) -> "Code":
@@ -109,7 +125,9 @@ class Code(Artifact):
         if hasattr(self, "_hash_sha256"):
             properties["hash_sha256"] = self._hash_sha256
             properties["hash_version"] = get_content_hash_version()
-        code_version = CodeVersionDetails(code_uri=self.path, is_anonymous=self._is_anonymous, properties=properties)
+        code_version = CodeVersionDetails(
+            code_uri=self.path, is_anonymous=self._is_anonymous, properties=properties
+        )
         code_version_resource = CodeVersionData(properties=code_version)
 
         return code_version_resource
@@ -123,9 +141,13 @@ class Code(Artifact):
         if asset_artifact.is_file:
             # Code paths cannot be pointers to single files. It must be a pointer to a container
             # Skipping the setter to avoid being resolved as a local path
-            self._path = asset_artifact.subdir_path  # pylint: disable=attribute-defined-outside-init
+            self._path = (
+                asset_artifact.subdir_path
+            )  # pylint: disable=attribute-defined-outside-init
         else:
-            self._path = asset_artifact.full_storage_path  # pylint: disable=attribute-defined-outside-init
+            self._path = (
+                asset_artifact.full_storage_path
+            )  # pylint: disable=attribute-defined-outside-init
 
     def _to_arm_resource_param(self, **kwargs):  # pylint: disable=unused-argument
         properties = self._to_rest_object().properties
@@ -134,6 +156,8 @@ class Code(Artifact):
             self._arm_type: {
                 ArmConstants.NAME: self.name,
                 ArmConstants.VERSION: self.version,
-                ArmConstants.PROPERTIES_PARAMETER_NAME: self._serialize.body(properties, "CodeVersionDetails"),
+                ArmConstants.PROPERTIES_PARAMETER_NAME: self._serialize.body(
+                    properties, "CodeVersionDetails"
+                ),
             }
         }

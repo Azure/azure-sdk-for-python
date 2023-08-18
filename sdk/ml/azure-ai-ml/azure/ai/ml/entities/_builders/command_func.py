@@ -30,7 +30,9 @@ from azure.ai.ml.entities._job.job_service import (
     TensorBoardJobService,
     VsCodeJobService,
 )
-from azure.ai.ml.entities._job.pipeline._component_translatable import ComponentTranslatableMixin
+from azure.ai.ml.entities._job.pipeline._component_translatable import (
+    ComponentTranslatableMixin,
+)
 from azure.ai.ml.entities._job.sweep.search_space import SweepDistribution
 from azure.ai.ml.exceptions import ErrorTarget, ValidationErrorType, ValidationException
 
@@ -63,7 +65,9 @@ def _parse_input(input_value):
         component_input = Input(**input_value)
     elif isinstance(input_value, (SweepDistribution, str, bool, int, float)):
         # Input bindings are not supported
-        component_input = ComponentTranslatableMixin._to_input_builder_function(input_value)
+        component_input = ComponentTranslatableMixin._to_input_builder_function(
+            input_value
+        )
         job_input = input_value
     else:
         msg = f"Unsupported input type: {type(input_value)}, only Input, dict, str, bool, int and float are supported."
@@ -89,7 +93,9 @@ def _parse_output(output_value):
     elif isinstance(output_value, dict):  # When output value is a non-empty dictionary
         job_output = Output(**output_value)
         component_output = Output(**output_value)
-    elif isinstance(output_value, str):  # When output is passed in from pipeline job yaml
+    elif isinstance(
+        output_value, str
+    ):  # When output is passed in from pipeline job yaml
         job_output = output_value
     else:
         msg = f"Unsupported output type: {type(output_value)}, only Output and dict are supported."
@@ -124,7 +130,13 @@ def command(
     environment: Optional[Union[str, Environment]] = None,
     environment_variables: Optional[Dict] = None,
     distribution: Optional[
-        Union[Dict, MpiDistribution, TensorFlowDistribution, PyTorchDistribution, RayDistribution]
+        Union[
+            Dict,
+            MpiDistribution,
+            TensorFlowDistribution,
+            PyTorchDistribution,
+            RayDistribution,
+        ]
     ] = None,
     compute: Optional[str] = None,
     inputs: Optional[Dict] = None,
@@ -136,10 +148,25 @@ def command(
     shm_size: Optional[str] = None,
     timeout: Optional[int] = None,
     code: Optional[Union[str, os.PathLike]] = None,
-    identity: Optional[Union[ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]] = None,
+    identity: Optional[
+        Union[
+            ManagedIdentityConfiguration,
+            AmlTokenConfiguration,
+            UserIdentityConfiguration,
+        ]
+    ] = None,
     is_deterministic: bool = True,
     services: Optional[
-        Dict[str, Union[JobService, JupyterLabJobService, SshJobService, TensorBoardJobService, VsCodeJobService]]
+        Dict[
+            str,
+            Union[
+                JobService,
+                JupyterLabJobService,
+                SshJobService,
+                TensorBoardJobService,
+                VsCodeJobService,
+            ],
+        ]
     ] = None,
     job_tier: Optional[str] = None,
     priority: Optional[str] = None,
@@ -232,10 +259,14 @@ def command(
     # pylint: disable=too-many-locals
     inputs = inputs or {}
     outputs = outputs or {}
-    component_inputs, job_inputs = _parse_inputs_outputs(inputs, parse_func=_parse_input)
+    component_inputs, job_inputs = _parse_inputs_outputs(
+        inputs, parse_func=_parse_input
+    )
     # job inputs can not be None
     job_inputs = {k: v for k, v in job_inputs.items() if v is not None}
-    component_outputs, job_outputs = _parse_inputs_outputs(outputs, parse_func=_parse_output)
+    component_outputs, job_outputs = _parse_inputs_outputs(
+        outputs, parse_func=_parse_output
+    )
 
     component = kwargs.pop("component", None)
     if component is None:

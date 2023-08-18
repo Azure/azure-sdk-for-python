@@ -8,7 +8,11 @@ from marshmallow import ValidationError
 from ..exceptions import ValidationException
 from . import Component, Job
 from ._load_functions import _load_common_raising_marshmallow_error, _try_load_yaml_dict
-from ._validation import SchemaValidatableMixin, ValidationResult, _ValidationResultBuilder
+from ._validation import (
+    SchemaValidatableMixin,
+    ValidationResult,
+    _ValidationResultBuilder,
+)
 
 
 def validate_common(cls, path, validate_func, params_override=None) -> ValidationResult:
@@ -16,10 +20,15 @@ def validate_common(cls, path, validate_func, params_override=None) -> Validatio
     yaml_dict = _try_load_yaml_dict(path)
 
     try:
-        cls, _ = cls._resolve_cls_and_type(data=yaml_dict, params_override=params_override)
+        cls, _ = cls._resolve_cls_and_type(
+            data=yaml_dict, params_override=params_override
+        )
 
         entity = _load_common_raising_marshmallow_error(
-            cls=cls, yaml_dict=yaml_dict, relative_origin=path, params_override=params_override
+            cls=cls,
+            yaml_dict=yaml_dict,
+            relative_origin=path,
+            params_override=params_override,
         )
 
         if validate_func is not None:

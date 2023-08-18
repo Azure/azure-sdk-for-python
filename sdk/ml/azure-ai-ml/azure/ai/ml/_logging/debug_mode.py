@@ -42,8 +42,13 @@ def stack_info() -> list:
 
 
 def connection_info(gc_objects: list) -> List[ConnectionInfo]:
-    connections = [obj for obj in gc_objects if isinstance(obj, http.client.HTTPConnection)]
-    return [ConnectionInfo(host=c.host, port=c.port, hasSocket=(c.sock is not None)) for c in connections]
+    connections = [
+        obj for obj in gc_objects if isinstance(obj, http.client.HTTPConnection)
+    ]
+    return [
+        ConnectionInfo(host=c.host, port=c.port, hasSocket=(c.sock is not None))
+        for c in connections
+    ]
 
 
 # pylint: disable=client-incorrect-naming-convention
@@ -62,7 +67,10 @@ class diagnostic_log(object):
     """
 
     def __init__(
-        self, log_path: Optional[str] = None, namespaces: Optional[list] = None, context_name: Optional[str] = None
+        self,
+        log_path: Optional[str] = None,
+        namespaces: Optional[list] = None,
+        context_name: Optional[str] = None,
     ):
         self._namespaces = INTERESTING_NAMESPACES if namespaces is None else namespaces
         self._filename = LOG_FILE if log_path is None else log_path
@@ -85,7 +93,9 @@ class diagnostic_log(object):
     def start_capture(self) -> None:
         """Start the capture of debug logs."""
         if self._capturing:
-            module_logger.warning("Debug logs are already enabled at %s", self._filename)
+            module_logger.warning(
+                "Debug logs are already enabled at %s", self._filename
+            )
             return
 
         print("Debug logs are being sent to {}".format(self._filename))

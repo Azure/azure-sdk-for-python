@@ -9,12 +9,19 @@ import logging
 from pathlib import Path
 from typing import Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import CommandJob as RestCommandJob
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    CommandJob as RestCommandJob,
+)
 from azure.ai.ml._restclient.v2023_04_01_preview.models import JobBase
 from azure.ai.ml._schema.job.command_job import CommandJobSchema
 from azure.ai.ml._utils.utils import map_single_brackets_and_warn
 from azure.ai.ml.constants import JobType
-from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, LOCAL_COMPUTE_PROPERTY, LOCAL_COMPUTE_TARGET, TYPE
+from azure.ai.ml.constants._common import (
+    BASE_PATH_CONTEXT_KEY,
+    LOCAL_COMPUTE_PROPERTY,
+    LOCAL_COMPUTE_TARGET,
+    TYPE,
+)
 from azure.ai.ml.entities._credentials import (
     AmlTokenConfiguration,
     ManagedIdentityConfiguration,
@@ -40,7 +47,12 @@ from azure.ai.ml.entities._job.job_service import (
 )
 from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._util import load_from_dict
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+from azure.ai.ml.exceptions import (
+    ErrorCategory,
+    ErrorTarget,
+    ValidationErrorType,
+    ValidationException,
+)
 
 from .job import Job
 from .job_io_mixin import JobIOMixin
@@ -113,10 +125,23 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
         outputs: Optional[Dict[str, Output]] = None,
         limits: Optional[CommandJobLimits] = None,
         identity: Optional[
-            Union[ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]
+            Union[
+                ManagedIdentityConfiguration,
+                AmlTokenConfiguration,
+                UserIdentityConfiguration,
+            ]
         ] = None,
         services: Optional[
-            Dict[str, Union[JobService, JupyterLabJobService, SshJobService, TensorBoardJobService, VsCodeJobService]]
+            Dict[
+                str,
+                Union[
+                    JobService,
+                    JupyterLabJobService,
+                    SshJobService,
+                    TensorBoardJobService,
+                    VsCodeJobService,
+                ],
+            ]
         ] = None,
         **kwargs,
     ) -> None:
@@ -160,7 +185,9 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
             if resources.properties is None:
                 resources.properties = {}
             # This is the format of the October Api response. We need to match it exactly
-            resources.properties[LOCAL_COMPUTE_PROPERTY] = {LOCAL_COMPUTE_PROPERTY: True}
+            resources.properties[LOCAL_COMPUTE_PROPERTY] = {
+                LOCAL_COMPUTE_PROPERTY: True
+            }
 
         properties = RestCommandJob(
             display_name=self.display_name,
@@ -173,22 +200,30 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
             inputs=to_rest_dataset_literal_inputs(self.inputs, job_type=self.type),
             outputs=to_rest_data_outputs(self.outputs),
             environment_id=self.environment,
-            distribution=self.distribution._to_rest_object() if self.distribution else None,
+            distribution=self.distribution._to_rest_object()
+            if self.distribution
+            else None,
             tags=self.tags,
             identity=self.identity._to_job_rest_object() if self.identity else None,
             environment_variables=self.environment_variables,
             resources=resources._to_rest_object() if resources else None,
             limits=self.limits._to_rest_object() if self.limits else None,
             services=JobServiceBase._to_rest_job_services(self.services),
-            queue_settings=self.queue_settings._to_rest_object() if self.queue_settings else None,
+            queue_settings=self.queue_settings._to_rest_object()
+            if self.queue_settings
+            else None,
         )
         result = JobBase(properties=properties)
         result.name = self.name
         return result
 
     @classmethod
-    def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs) -> "CommandJob":
-        loaded_data = load_from_dict(CommandJobSchema, data, context, additional_message, **kwargs)
+    def _load_from_dict(
+        cls, data: Dict, context: Dict, additional_message: str, **kwargs
+    ) -> "CommandJob":
+        loaded_data = load_from_dict(
+            CommandJobSchema, data, context, additional_message, **kwargs
+        )
         return CommandJob(base_path=context[BASE_PATH_CONTEXT_KEY], **loaded_data)
 
     @classmethod
@@ -205,22 +240,32 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
             experiment_name=rest_command_job.experiment_name,
             services=JobServiceBase._from_rest_job_services(rest_command_job.services),
             status=rest_command_job.status,
-            creation_context=SystemData._from_rest_object(obj.system_data) if obj.system_data else None,
+            creation_context=SystemData._from_rest_object(obj.system_data)
+            if obj.system_data
+            else None,
             code=rest_command_job.code_id,
             compute=rest_command_job.compute_id,
             environment=rest_command_job.environment_id,
-            distribution=DistributionConfiguration._from_rest_object(rest_command_job.distribution),
+            distribution=DistributionConfiguration._from_rest_object(
+                rest_command_job.distribution
+            ),
             parameters=rest_command_job.parameters,
             # pylint: disable=protected-access
-            identity=_BaseJobIdentityConfiguration._from_rest_object(rest_command_job.identity)
+            identity=_BaseJobIdentityConfiguration._from_rest_object(
+                rest_command_job.identity
+            )
             if rest_command_job.identity
             else None,
             environment_variables=rest_command_job.environment_variables,
-            resources=JobResourceConfiguration._from_rest_object(rest_command_job.resources),
+            resources=JobResourceConfiguration._from_rest_object(
+                rest_command_job.resources
+            ),
             limits=CommandJobLimits._from_rest_object(rest_command_job.limits),
             inputs=from_rest_inputs_to_dataset_literal(rest_command_job.inputs),
             outputs=from_rest_data_outputs(rest_command_job.outputs),
-            queue_settings=QueueSettings._from_rest_object(rest_command_job.queue_settings),
+            queue_settings=QueueSettings._from_rest_object(
+                rest_command_job.queue_settings
+            ),
         )
         # Handle special case of local job
         if (
@@ -232,7 +277,9 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
             command_job.resources.properties.pop(LOCAL_COMPUTE_PROPERTY)
         return command_job
 
-    def _to_component(self, context: Optional[Dict] = None, **kwargs) -> "CommandComponent":
+    def _to_component(
+        self, context: Optional[Dict] = None, **kwargs
+    ) -> "CommandComponent":
         """Translate a command job to component.
 
         :param context: Context of command job YAML file.
@@ -255,8 +302,12 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
             command=self.command,
             environment=self.environment,
             description=self.description,
-            inputs=self._to_inputs(inputs=self.inputs, pipeline_job_dict=pipeline_job_dict),
-            outputs=self._to_outputs(outputs=self.outputs, pipeline_job_dict=pipeline_job_dict),
+            inputs=self._to_inputs(
+                inputs=self.inputs, pipeline_job_dict=pipeline_job_dict
+            ),
+            outputs=self._to_outputs(
+                outputs=self.outputs, pipeline_job_dict=pipeline_job_dict
+            ),
             resources=self.resources if self.resources else None,
             distribution=self.distribution if self.distribution else None,
         )

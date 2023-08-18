@@ -61,9 +61,9 @@ class SparkComponentFileRefField(FileRefField):
         # Update base_path to parent path of component file.
         component_schema_context = deepcopy(self.context)
         component_schema_context[BASE_PATH_CONTEXT_KEY] = source_path.parent
-        component = AnonymousSparkComponentSchema(context=component_schema_context).load(
-            component_dict, unknown=INCLUDE
-        )
+        component = AnonymousSparkComponentSchema(
+            context=component_schema_context
+        ).load(component_dict, unknown=INCLUDE)
         component._source_path = source_path
         component._source = ComponentSource.YAML_COMPONENT
         return component

@@ -12,7 +12,9 @@ from azure.ai.ml.entities._credentials import NoneCredentialConfiguration
 # TODO: Move classes in this file to azure.ai.ml.entities._credentials
 @experimental
 class BaseKerberosCredentials(NoneCredentialConfiguration):
-    def __init__(self, kerberos_realm: str, kerberos_kdc_address: str, kerberos_principal: str):
+    def __init__(
+        self, kerberos_realm: str, kerberos_kdc_address: str, kerberos_principal: str
+    ):
         super().__init__()
         self.kerberos_realm = kerberos_realm
         self.kerberos_kdc_address = kerberos_kdc_address
@@ -53,7 +55,9 @@ class KerberosKeytabCredentials(BaseKerberosCredentials):
         )
 
     @classmethod
-    def _from_rest_object(cls, obj: model_preview.KerberosKeytabCredentials) -> "KerberosKeytabCredentials":
+    def _from_rest_object(
+        cls, obj: model_preview.KerberosKeytabCredentials
+    ) -> "KerberosKeytabCredentials":
         return cls(
             kerberos_kdc_address=obj.kerberos_kdc_address,
             kerberos_principal=obj.kerberos_principal,
@@ -96,7 +100,9 @@ class KerberosPasswordCredentials(BaseKerberosCredentials):
         self.kerberos_password = kerberos_password
 
     def _to_rest_object(self) -> model_preview.KerberosPasswordCredentials:
-        secrets = model_preview.KerberosPasswordSecrets(kerberos_password=self.kerberos_password)
+        secrets = model_preview.KerberosPasswordSecrets(
+            kerberos_password=self.kerberos_password
+        )
         return model_preview.KerberosPasswordCredentials(
             kerberos_kdc_address=self.kerberos_kdc_address,
             kerberos_principal=self.kerberos_principal,
@@ -105,7 +111,9 @@ class KerberosPasswordCredentials(BaseKerberosCredentials):
         )
 
     @classmethod
-    def _from_rest_object(cls, obj: model_preview.KerberosPasswordCredentials) -> "KerberosPasswordCredentials":
+    def _from_rest_object(
+        cls, obj: model_preview.KerberosPasswordCredentials
+    ) -> "KerberosPasswordCredentials":
         return cls(
             kerberos_kdc_address=obj.kerberos_kdc_address,
             kerberos_principal=obj.kerberos_principal,

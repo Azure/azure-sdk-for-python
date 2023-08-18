@@ -33,12 +33,16 @@ class MPIDistributionSchema(metaclass=PatchedSchemaMeta):
         from azure.ai.ml import MpiDistribution
 
         if not isinstance(data, MpiDistribution):
-            raise ValidationError("Cannot dump non-MpiDistribution object into MpiDistributionSchema")
+            raise ValidationError(
+                "Cannot dump non-MpiDistribution object into MpiDistributionSchema"
+            )
         return data
 
 
 class TensorFlowDistributionSchema(metaclass=PatchedSchemaMeta):
-    type = StringTransformedEnum(required=True, allowed_values=DistributionType.TENSORFLOW)
+    type = StringTransformedEnum(
+        required=True, allowed_values=DistributionType.TENSORFLOW
+    )
     parameter_server_count = fields.Int()
     worker_count = fields.Int()
 
@@ -54,7 +58,9 @@ class TensorFlowDistributionSchema(metaclass=PatchedSchemaMeta):
         from azure.ai.ml import TensorFlowDistribution
 
         if not isinstance(data, TensorFlowDistribution):
-            raise ValidationError("Cannot dump non-TensorFlowDistribution object into TensorFlowDistributionSchema")
+            raise ValidationError(
+                "Cannot dump non-TensorFlowDistribution object into TensorFlowDistributionSchema"
+            )
         return data
 
 
@@ -74,7 +80,9 @@ class PyTorchDistributionSchema(metaclass=PatchedSchemaMeta):
         from azure.ai.ml import PyTorchDistribution
 
         if not isinstance(data, PyTorchDistribution):
-            raise ValidationError("Cannot dump non-PyTorchDistribution object into PyTorchDistributionSchema")
+            raise ValidationError(
+                "Cannot dump non-PyTorchDistribution object into PyTorchDistributionSchema"
+            )
         return data
 
 
@@ -100,5 +108,7 @@ class RayDistributionSchema(metaclass=PatchedSchemaMeta):
         from azure.ai.ml import RayDistribution
 
         if not isinstance(data, RayDistribution):
-            raise ValidationError("Cannot dump non-RayDistribution object into RayDistributionSchema")
+            raise ValidationError(
+                "Cannot dump non-RayDistribution object into RayDistributionSchema"
+            )
         return data

@@ -103,61 +103,81 @@ class FeatureSourceDtoType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     PARQUET = "parquet"
 
 
-class FeaturestoreentitiesVersionedEntityKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class FeaturestoreentitiesVersionedEntityKind(
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     INVALID = "Invalid"
     LINEAGE_ROOT = "LineageRoot"
     VERSIONED = "Versioned"
     UNVERSIONED = "Unversioned"
 
 
-class GenericTriggerAnnotationsEntityStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class GenericTriggerAnnotationsEntityStatus(
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     ACTIVE = "Active"
     DEPRECATED = "Deprecated"
     DISABLED = "Disabled"
 
 
-class GenericTriggerAnnotationsManagedType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class GenericTriggerAnnotationsManagedType(
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     CUSTOMER = "Customer"
     SYSTEM = "System"
 
 
-class GenericTriggerAnnotationsProvisioningStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class GenericTriggerAnnotationsProvisioningStatus(
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     COMPLETED = "Completed"
     PROVISIONING = "Provisioning"
     FAILED = "Failed"
 
 
-class GenericTriggerAnnotationsScheduleActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class GenericTriggerAnnotationsScheduleActionType(
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     CREATE_JOB = "CreateJob"
     INVOKE_ENDPOINT = "InvokeEndpoint"
     IMPORT_DATA = "ImportData"
     MODEL_MONITOR = "ModelMonitor"
 
 
-class GenericTriggerAnnotationsScheduleMethod(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class GenericTriggerAnnotationsScheduleMethod(
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     CRON = "Cron"
     RECURRENCE = "Recurrence"
 
 
-class GenericTriggerAnnotationsTriggerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class GenericTriggerAnnotationsTriggerType(
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     SCHEDULE = "Schedule"
     ONCE = "Once"
 
 
-class GenerictriggersUnversionedEntityKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class GenerictriggersUnversionedEntityKind(
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     INVALID = "Invalid"
     LINEAGE_ROOT = "LineageRoot"
     VERSIONED = "Versioned"
     UNVERSIONED = "Unversioned"
 
 
-class IndependentPipelineAnnotationsEntityStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class IndependentPipelineAnnotationsEntityStatus(
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     ACTIVE = "Active"
     DEPRECATED = "Deprecated"
     DISABLED = "Disabled"
 
 
-class IndependentPipelineAnnotationsLastRunStatusCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class IndependentPipelineAnnotationsLastRunStatusCode(
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     NOT_STARTED = "NotStarted"
     RUNNING = "Running"
     FAILED = "Failed"
@@ -168,7 +188,9 @@ class IndependentPipelineAnnotationsLastRunStatusCode(str, Enum, metaclass=CaseI
     CANCEL_REQUESTED = "CancelRequested"
 
 
-class IndependentpipelinesUnversionedEntityKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class IndependentpipelinesUnversionedEntityKind(
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     INVALID = "Invalid"
     LINEAGE_ROOT = "LineageRoot"
     VERSIONED = "Versioned"
@@ -202,7 +224,9 @@ class IndexEntitiesRequestOrderDirection(str, Enum, metaclass=CaseInsensitiveEnu
     DESC = "Desc"
 
 
-class MaterializationSettingsMaterializationStoreType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class MaterializationSettingsMaterializationStoreType(
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     NONE = "None"
     ONLINE = "Online"
     OFFLINE = "Offline"
@@ -216,7 +240,9 @@ class ModelsVersionedEntityKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     UNVERSIONED = "Unversioned"
 
 
-class ModuleAnnotationsAmlModuleEntityStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class ModuleAnnotationsAmlModuleEntityStatus(
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     ACTIVE = "Active"
     DEPRECATED = "Deprecated"
     DISABLED = "Disabled"
@@ -246,7 +272,9 @@ class NotificationSettingEmailOnItem(str, Enum, metaclass=CaseInsensitiveEnumMet
     JOB_CANCELLED = "JobCancelled"
 
 
-class OnlineendpointsUnversionedEntityKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class OnlineendpointsUnversionedEntityKind(
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     INVALID = "Invalid"
     LINEAGE_ROOT = "LineageRoot"
     VERSIONED = "Versioned"
@@ -259,7 +287,9 @@ class PipelineAnnotationsEntityStatus(str, Enum, metaclass=CaseInsensitiveEnumMe
     DISABLED = "Disabled"
 
 
-class PipelineAnnotationsLastRunStatusCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class PipelineAnnotationsLastRunStatusCode(
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     NOT_STARTED = "NotStarted"
     RUNNING = "Running"
     FAILED = "Failed"
@@ -270,7 +300,9 @@ class PipelineAnnotationsLastRunStatusCode(str, Enum, metaclass=CaseInsensitiveE
     CANCEL_REQUESTED = "CancelRequested"
 
 
-class PipelineDraftAnnotationsEntityStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class PipelineDraftAnnotationsEntityStatus(
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     ACTIVE = "Active"
     DEPRECATED = "Deprecated"
     DISABLED = "Disabled"

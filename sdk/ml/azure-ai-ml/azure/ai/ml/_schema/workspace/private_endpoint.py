@@ -14,7 +14,9 @@ from .endpoint_connection import EndpointConnectionSchema
 
 class PrivateEndpointSchema(metaclass=PatchedSchemaMeta):
     approval_type = fields.Str()
-    connections = fields.Dict(keys=fields.Str(), values=NestedField(EndpointConnectionSchema))
+    connections = fields.Dict(
+        keys=fields.Str(), values=NestedField(EndpointConnectionSchema)
+    )
 
     @post_load
     def make(self, data, **kwargs):

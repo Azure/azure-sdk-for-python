@@ -4,9 +4,13 @@
 
 from typing import Dict
 
-from azure.ai.ml._schema._deployment.online.deployment_collection_schema import DeploymentCollectionSchema
+from azure.ai.ml._schema._deployment.online.deployment_collection_schema import (
+    DeploymentCollectionSchema,
+)
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
-from azure.ai.ml._restclient.v2023_04_01_preview.models import Collection as RestCollection
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    Collection as RestCollection,
+)
 from azure.ai.ml._utils._experimental import experimental
 
 
@@ -23,7 +27,9 @@ class DeploymentCollection:
 
     """
 
-    def __init__(self, *, enabled: str = None, data: str = None, client_id: str = None, **kwargs):
+    def __init__(
+        self, *, enabled: str = None, data: str = None, client_id: str = None, **kwargs
+    ):
         self.enabled = enabled  # maps to data_collection_mode
         self.data = data  # maps to data_id
         self.sampling_rate = kwargs.get(
@@ -33,7 +39,9 @@ class DeploymentCollection:
 
     def _to_dict(self) -> Dict:
         # pylint: disable=no-member
-        return DeploymentCollectionSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        return DeploymentCollectionSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(
+            self
+        )
 
     @classmethod
     def _from_rest_object(cls, rest_obj: RestCollection) -> "DeploymentCollection":

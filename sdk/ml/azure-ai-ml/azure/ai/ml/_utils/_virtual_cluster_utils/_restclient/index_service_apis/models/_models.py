@@ -145,7 +145,10 @@ class BatchendpointsUnversionedEntitiesResponse(msrest.serialization.Model):
             "key": "entityContainerIdsToEntityContainerMetadata",
             "type": "{IndexEntityContainerMetadata}",
         },
-        "number_of_entity_containers_not_queried": {"key": "numberOfEntityContainersNotQueried", "type": "int"},
+        "number_of_entity_containers_not_queried": {
+            "key": "numberOfEntityContainersNotQueried",
+            "type": "int",
+        },
         "fanout_data": {"key": "fanoutData", "type": "{SingleShardFanoutData}"},
         "shard_errors": {"key": "shardErrors", "type": "{ErrorResponse}"},
         "is_multi_workspace_query_with_skip_set_which_will_no_longer_be_a_supported_calling_pattern": {
@@ -188,11 +191,14 @@ class BatchendpointsUnversionedEntitiesResponse(msrest.serialization.Model):
         self.entity_container_ids_to_entity_container_metadata = kwargs.get(
             "entity_container_ids_to_entity_container_metadata", None
         )
-        self.number_of_entity_containers_not_queried = kwargs.get("number_of_entity_containers_not_queried", None)
+        self.number_of_entity_containers_not_queried = kwargs.get(
+            "number_of_entity_containers_not_queried", None
+        )
         self.fanout_data = kwargs.get("fanout_data", None)
         self.shard_errors = kwargs.get("shard_errors", None)
         self.is_multi_workspace_query_with_skip_set_which_will_no_longer_be_a_supported_calling_pattern = kwargs.get(
-            "is_multi_workspace_query_with_skip_set_which_will_no_longer_be_a_supported_calling_pattern", None
+            "is_multi_workspace_query_with_skip_set_which_will_no_longer_be_a_supported_calling_pattern",
+            None,
         )
 
 
@@ -667,7 +673,10 @@ class CrossRegionIndexEntitiesRequest(msrest.serialization.Model):
 
     _attribute_map = {
         "resource_ids": {"key": "resourceIds", "type": "[ResourceInformation]"},
-        "index_entities_request": {"key": "indexEntitiesRequest", "type": "IndexEntitiesRequest"},
+        "index_entities_request": {
+            "key": "indexEntitiesRequest",
+            "type": "IndexEntitiesRequest",
+        },
     }
 
     def __init__(self, **kwargs):
@@ -697,10 +706,16 @@ class CrossRegionIndexEntitiesResponse(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        "index_entities_response": {"key": "indexEntitiesResponse", "type": "IndexEntitiesResponse"},
+        "index_entities_response": {
+            "key": "indexEntitiesResponse",
+            "type": "IndexEntitiesResponse",
+        },
         "regional_errors": {"key": "regionalErrors", "type": "{ErrorResponse}"},
         "shard_errors": {"key": "shardErrors", "type": "{{ErrorResponse}}"},
-        "number_of_resources_not_included_in_search": {"key": "numberOfResourcesNotIncludedInSearch", "type": "int"},
+        "number_of_resources_not_included_in_search": {
+            "key": "numberOfResourcesNotIncludedInSearch",
+            "type": "int",
+        },
     }
 
     def __init__(self, **kwargs):
@@ -719,7 +734,9 @@ class CrossRegionIndexEntitiesResponse(msrest.serialization.Model):
         self.index_entities_response = kwargs.get("index_entities_response", None)
         self.regional_errors = kwargs.get("regional_errors", None)
         self.shard_errors = kwargs.get("shard_errors", None)
-        self.number_of_resources_not_included_in_search = kwargs.get("number_of_resources_not_included_in_search", None)
+        self.number_of_resources_not_included_in_search = kwargs.get(
+            "number_of_resources_not_included_in_search", None
+        )
 
 
 class CudaAttribute(msrest.serialization.Model):
@@ -968,7 +985,10 @@ class DatasetsVersionedEntitiesResponse(msrest.serialization.Model):
             "key": "entityContainerIdsToEntityContainerMetadata",
             "type": "{IndexEntityContainerMetadata}",
         },
-        "number_of_entity_containers_not_queried": {"key": "numberOfEntityContainersNotQueried", "type": "int"},
+        "number_of_entity_containers_not_queried": {
+            "key": "numberOfEntityContainersNotQueried",
+            "type": "int",
+        },
         "fanout_data": {"key": "fanoutData", "type": "{SingleShardFanoutData}"},
         "shard_errors": {"key": "shardErrors", "type": "{ErrorResponse}"},
         "is_multi_workspace_query_with_skip_set_which_will_no_longer_be_a_supported_calling_pattern": {
@@ -1011,11 +1031,14 @@ class DatasetsVersionedEntitiesResponse(msrest.serialization.Model):
         self.entity_container_ids_to_entity_container_metadata = kwargs.get(
             "entity_container_ids_to_entity_container_metadata", None
         )
-        self.number_of_entity_containers_not_queried = kwargs.get("number_of_entity_containers_not_queried", None)
+        self.number_of_entity_containers_not_queried = kwargs.get(
+            "number_of_entity_containers_not_queried", None
+        )
         self.fanout_data = kwargs.get("fanout_data", None)
         self.shard_errors = kwargs.get("shard_errors", None)
         self.is_multi_workspace_query_with_skip_set_which_will_no_longer_be_a_supported_calling_pattern = kwargs.get(
-            "is_multi_workspace_query_with_skip_set_which_will_no_longer_be_a_supported_calling_pattern", None
+            "is_multi_workspace_query_with_skip_set_which_will_no_longer_be_a_supported_calling_pattern",
+            None,
         )
 
 
@@ -1272,7 +1295,10 @@ class DatastoresUnversionedEntitiesResponse(msrest.serialization.Model):
             "key": "entityContainerIdsToEntityContainerMetadata",
             "type": "{IndexEntityContainerMetadata}",
         },
-        "number_of_entity_containers_not_queried": {"key": "numberOfEntityContainersNotQueried", "type": "int"},
+        "number_of_entity_containers_not_queried": {
+            "key": "numberOfEntityContainersNotQueried",
+            "type": "int",
+        },
         "fanout_data": {"key": "fanoutData", "type": "{SingleShardFanoutData}"},
         "shard_errors": {"key": "shardErrors", "type": "{ErrorResponse}"},
         "is_multi_workspace_query_with_skip_set_which_will_no_longer_be_a_supported_calling_pattern": {
@@ -1315,11 +1341,14 @@ class DatastoresUnversionedEntitiesResponse(msrest.serialization.Model):
         self.entity_container_ids_to_entity_container_metadata = kwargs.get(
             "entity_container_ids_to_entity_container_metadata", None
         )
-        self.number_of_entity_containers_not_queried = kwargs.get("number_of_entity_containers_not_queried", None)
+        self.number_of_entity_containers_not_queried = kwargs.get(
+            "number_of_entity_containers_not_queried", None
+        )
         self.fanout_data = kwargs.get("fanout_data", None)
         self.shard_errors = kwargs.get("shard_errors", None)
         self.is_multi_workspace_query_with_skip_set_which_will_no_longer_be_a_supported_calling_pattern = kwargs.get(
-            "is_multi_workspace_query_with_skip_set_which_will_no_longer_be_a_supported_calling_pattern", None
+            "is_multi_workspace_query_with_skip_set_which_will_no_longer_be_a_supported_calling_pattern",
+            None,
         )
 
 
@@ -1559,7 +1588,10 @@ class DefinitionProperties(msrest.serialization.Model):
     _attribute_map = {
         "automatically_saved": {"key": "automaticallySaved", "type": "bool"},
         "definition_hash": {"key": "definitionHash", "type": "str"},
-        "environment_attributes": {"key": "environmentAttributes", "type": "EnvironmentAttributes"},
+        "environment_attributes": {
+            "key": "environmentAttributes",
+            "type": "EnvironmentAttributes",
+        },
         "stage": {"key": "stage", "type": "str"},
         "creation_context": {"key": "creationContext", "type": "CreationContext"},
     }
@@ -1647,7 +1679,10 @@ class EnvironmentAttributes(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        "machine_learning_framework": {"key": "machineLearningFramework", "type": "VersionedAttribute"},
+        "machine_learning_framework": {
+            "key": "machineLearningFramework",
+            "type": "VersionedAttribute",
+        },
         "mpi": {"key": "mpi", "type": "VersionedAttribute"},
         "runtime": {"key": "runtime", "type": "VersionedAttribute"},
         "cuda": {"key": "cuda", "type": "CudaAttribute"},
@@ -1716,7 +1751,10 @@ class EnvironmentsVersionedEntitiesResponse(msrest.serialization.Model):
             "key": "entityContainerIdsToEntityContainerMetadata",
             "type": "{IndexEntityContainerMetadata}",
         },
-        "number_of_entity_containers_not_queried": {"key": "numberOfEntityContainersNotQueried", "type": "int"},
+        "number_of_entity_containers_not_queried": {
+            "key": "numberOfEntityContainersNotQueried",
+            "type": "int",
+        },
         "fanout_data": {"key": "fanoutData", "type": "{SingleShardFanoutData}"},
         "shard_errors": {"key": "shardErrors", "type": "{ErrorResponse}"},
         "is_multi_workspace_query_with_skip_set_which_will_no_longer_be_a_supported_calling_pattern": {
@@ -1759,11 +1797,14 @@ class EnvironmentsVersionedEntitiesResponse(msrest.serialization.Model):
         self.entity_container_ids_to_entity_container_metadata = kwargs.get(
             "entity_container_ids_to_entity_container_metadata", None
         )
-        self.number_of_entity_containers_not_queried = kwargs.get("number_of_entity_containers_not_queried", None)
+        self.number_of_entity_containers_not_queried = kwargs.get(
+            "number_of_entity_containers_not_queried", None
+        )
         self.fanout_data = kwargs.get("fanout_data", None)
         self.shard_errors = kwargs.get("shard_errors", None)
         self.is_multi_workspace_query_with_skip_set_which_will_no_longer_be_a_supported_calling_pattern = kwargs.get(
-            "is_multi_workspace_query_with_skip_set_which_will_no_longer_be_a_supported_calling_pattern", None
+            "is_multi_workspace_query_with_skip_set_which_will_no_longer_be_a_supported_calling_pattern",
+            None,
         )
 
 
@@ -2101,7 +2142,10 @@ class FeatureentitiesVersionedEntitiesResponse(msrest.serialization.Model):
             "key": "entityContainerIdsToEntityContainerMetadata",
             "type": "{IndexEntityContainerMetadata}",
         },
-        "number_of_entity_containers_not_queried": {"key": "numberOfEntityContainersNotQueried", "type": "int"},
+        "number_of_entity_containers_not_queried": {
+            "key": "numberOfEntityContainersNotQueried",
+            "type": "int",
+        },
         "fanout_data": {"key": "fanoutData", "type": "{SingleShardFanoutData}"},
         "shard_errors": {"key": "shardErrors", "type": "{ErrorResponse}"},
         "is_multi_workspace_query_with_skip_set_which_will_no_longer_be_a_supported_calling_pattern": {
@@ -2144,11 +2188,14 @@ class FeatureentitiesVersionedEntitiesResponse(msrest.serialization.Model):
         self.entity_container_ids_to_entity_container_metadata = kwargs.get(
             "entity_container_ids_to_entity_container_metadata", None
         )
-        self.number_of_entity_containers_not_queried = kwargs.get("number_of_entity_containers_not_queried", None)
+        self.number_of_entity_containers_not_queried = kwargs.get(
+            "number_of_entity_containers_not_queried", None
+        )
         self.fanout_data = kwargs.get("fanout_data", None)
         self.shard_errors = kwargs.get("shard_errors", None)
         self.is_multi_workspace_query_with_skip_set_which_will_no_longer_be_a_supported_calling_pattern = kwargs.get(
-            "is_multi_workspace_query_with_skip_set_which_will_no_longer_be_a_supported_calling_pattern", None
+            "is_multi_workspace_query_with_skip_set_which_will_no_longer_be_a_supported_calling_pattern",
+            None,
         )
 
 
@@ -2208,7 +2255,10 @@ class FeatureentitiesVersionedEntity(msrest.serialization.Model):
         "schema_id": {"key": "schemaId", "type": "str"},
         "entity_id": {"key": "entityId", "type": "str"},
         "kind": {"key": "kind", "type": "str"},
-        "annotations": {"key": "annotations", "type": "FeatureEntityVersionAnnotations"},
+        "annotations": {
+            "key": "annotations",
+            "type": "FeatureEntityVersionAnnotations",
+        },
         "properties": {"key": "properties", "type": "FeatureEntityVersionProperties"},
         "internal": {"key": "internal", "type": "{object}"},
         "update_sequence": {"key": "updateSequence", "type": "int"},
@@ -2420,7 +2470,10 @@ class FeaturesetsVersionedEntitiesResponse(msrest.serialization.Model):
             "key": "entityContainerIdsToEntityContainerMetadata",
             "type": "{IndexEntityContainerMetadata}",
         },
-        "number_of_entity_containers_not_queried": {"key": "numberOfEntityContainersNotQueried", "type": "int"},
+        "number_of_entity_containers_not_queried": {
+            "key": "numberOfEntityContainersNotQueried",
+            "type": "int",
+        },
         "fanout_data": {"key": "fanoutData", "type": "{SingleShardFanoutData}"},
         "shard_errors": {"key": "shardErrors", "type": "{ErrorResponse}"},
         "is_multi_workspace_query_with_skip_set_which_will_no_longer_be_a_supported_calling_pattern": {
@@ -2463,11 +2516,14 @@ class FeaturesetsVersionedEntitiesResponse(msrest.serialization.Model):
         self.entity_container_ids_to_entity_container_metadata = kwargs.get(
             "entity_container_ids_to_entity_container_metadata", None
         )
-        self.number_of_entity_containers_not_queried = kwargs.get("number_of_entity_containers_not_queried", None)
+        self.number_of_entity_containers_not_queried = kwargs.get(
+            "number_of_entity_containers_not_queried", None
+        )
         self.fanout_data = kwargs.get("fanout_data", None)
         self.shard_errors = kwargs.get("shard_errors", None)
         self.is_multi_workspace_query_with_skip_set_which_will_no_longer_be_a_supported_calling_pattern = kwargs.get(
-            "is_multi_workspace_query_with_skip_set_which_will_no_longer_be_a_supported_calling_pattern", None
+            "is_multi_workspace_query_with_skip_set_which_will_no_longer_be_a_supported_calling_pattern",
+            None,
         )
 
 
@@ -2647,10 +2703,19 @@ class FeatureSetVersionAnnotations(msrest.serialization.Model):
         "entities": {"key": "entities", "type": "[str]"},
         "features": {"key": "features", "type": "[Feature]"},
         "stage": {"key": "stage", "type": "str"},
-        "materialization_settings": {"key": "materializationSettings", "type": "MaterializationSettings"},
+        "materialization_settings": {
+            "key": "materializationSettings",
+            "type": "MaterializationSettings",
+        },
         "source": {"key": "source", "type": "FeatureSourceDto"},
-        "feature_transformation_code": {"key": "featureTransformationCode", "type": "FeatureTransformationDto"},
-        "temporal_join_lookback": {"key": "temporalJoinLookback", "type": "TimeDeltaDto"},
+        "feature_transformation_code": {
+            "key": "featureTransformationCode",
+            "type": "FeatureTransformationDto",
+        },
+        "temporal_join_lookback": {
+            "key": "temporalJoinLookback",
+            "type": "TimeDeltaDto",
+        },
         "source_lookback": {"key": "sourceLookback", "type": "TimeDeltaDto"},
         "timestamp_column": {"key": "timestampColumn", "type": "TimestampColumnDto"},
         "description": {"key": "description", "type": "str"},
@@ -2823,7 +2888,10 @@ class FeaturestoreentitiesVersionedEntitiesResponse(msrest.serialization.Model):
             "key": "entityContainerIdsToEntityContainerMetadata",
             "type": "{IndexEntityContainerMetadata}",
         },
-        "number_of_entity_containers_not_queried": {"key": "numberOfEntityContainersNotQueried", "type": "int"},
+        "number_of_entity_containers_not_queried": {
+            "key": "numberOfEntityContainersNotQueried",
+            "type": "int",
+        },
         "fanout_data": {"key": "fanoutData", "type": "{SingleShardFanoutData}"},
         "shard_errors": {"key": "shardErrors", "type": "{ErrorResponse}"},
         "is_multi_workspace_query_with_skip_set_which_will_no_longer_be_a_supported_calling_pattern": {
@@ -2866,11 +2934,14 @@ class FeaturestoreentitiesVersionedEntitiesResponse(msrest.serialization.Model):
         self.entity_container_ids_to_entity_container_metadata = kwargs.get(
             "entity_container_ids_to_entity_container_metadata", None
         )
-        self.number_of_entity_containers_not_queried = kwargs.get("number_of_entity_containers_not_queried", None)
+        self.number_of_entity_containers_not_queried = kwargs.get(
+            "number_of_entity_containers_not_queried", None
+        )
         self.fanout_data = kwargs.get("fanout_data", None)
         self.shard_errors = kwargs.get("shard_errors", None)
         self.is_multi_workspace_query_with_skip_set_which_will_no_longer_be_a_supported_calling_pattern = kwargs.get(
-            "is_multi_workspace_query_with_skip_set_which_will_no_longer_be_a_supported_calling_pattern", None
+            "is_multi_workspace_query_with_skip_set_which_will_no_longer_be_a_supported_calling_pattern",
+            None,
         )
 
 
@@ -2930,7 +3001,10 @@ class FeaturestoreentitiesVersionedEntity(msrest.serialization.Model):
         "schema_id": {"key": "schemaId", "type": "str"},
         "entity_id": {"key": "entityId", "type": "str"},
         "kind": {"key": "kind", "type": "str"},
-        "annotations": {"key": "annotations", "type": "FeatureEntityVersionAnnotations"},
+        "annotations": {
+            "key": "annotations",
+            "type": "FeatureEntityVersionAnnotations",
+        },
         "properties": {"key": "properties", "type": "FeatureEntityVersionProperties"},
         "internal": {"key": "internal", "type": "{object}"},
         "update_sequence": {"key": "updateSequence", "type": "int"},
@@ -3306,7 +3380,10 @@ class GenerictriggersUnversionedEntitiesResponse(msrest.serialization.Model):
             "key": "entityContainerIdsToEntityContainerMetadata",
             "type": "{IndexEntityContainerMetadata}",
         },
-        "number_of_entity_containers_not_queried": {"key": "numberOfEntityContainersNotQueried", "type": "int"},
+        "number_of_entity_containers_not_queried": {
+            "key": "numberOfEntityContainersNotQueried",
+            "type": "int",
+        },
         "fanout_data": {"key": "fanoutData", "type": "{SingleShardFanoutData}"},
         "shard_errors": {"key": "shardErrors", "type": "{ErrorResponse}"},
         "is_multi_workspace_query_with_skip_set_which_will_no_longer_be_a_supported_calling_pattern": {
@@ -3349,11 +3426,14 @@ class GenerictriggersUnversionedEntitiesResponse(msrest.serialization.Model):
         self.entity_container_ids_to_entity_container_metadata = kwargs.get(
             "entity_container_ids_to_entity_container_metadata", None
         )
-        self.number_of_entity_containers_not_queried = kwargs.get("number_of_entity_containers_not_queried", None)
+        self.number_of_entity_containers_not_queried = kwargs.get(
+            "number_of_entity_containers_not_queried", None
+        )
         self.fanout_data = kwargs.get("fanout_data", None)
         self.shard_errors = kwargs.get("shard_errors", None)
         self.is_multi_workspace_query_with_skip_set_which_will_no_longer_be_a_supported_calling_pattern = kwargs.get(
-            "is_multi_workspace_query_with_skip_set_which_will_no_longer_be_a_supported_calling_pattern", None
+            "is_multi_workspace_query_with_skip_set_which_will_no_longer_be_a_supported_calling_pattern",
+            None,
         )
 
 
@@ -3714,7 +3794,10 @@ class IndependentpipelinesUnversionedEntitiesResponse(msrest.serialization.Model
             "key": "entityContainerIdsToEntityContainerMetadata",
             "type": "{IndexEntityContainerMetadata}",
         },
-        "number_of_entity_containers_not_queried": {"key": "numberOfEntityContainersNotQueried", "type": "int"},
+        "number_of_entity_containers_not_queried": {
+            "key": "numberOfEntityContainersNotQueried",
+            "type": "int",
+        },
         "fanout_data": {"key": "fanoutData", "type": "{SingleShardFanoutData}"},
         "shard_errors": {"key": "shardErrors", "type": "{ErrorResponse}"},
         "is_multi_workspace_query_with_skip_set_which_will_no_longer_be_a_supported_calling_pattern": {
@@ -3757,11 +3840,14 @@ class IndependentpipelinesUnversionedEntitiesResponse(msrest.serialization.Model
         self.entity_container_ids_to_entity_container_metadata = kwargs.get(
             "entity_container_ids_to_entity_container_metadata", None
         )
-        self.number_of_entity_containers_not_queried = kwargs.get("number_of_entity_containers_not_queried", None)
+        self.number_of_entity_containers_not_queried = kwargs.get(
+            "number_of_entity_containers_not_queried", None
+        )
         self.fanout_data = kwargs.get("fanout_data", None)
         self.shard_errors = kwargs.get("shard_errors", None)
         self.is_multi_workspace_query_with_skip_set_which_will_no_longer_be_a_supported_calling_pattern = kwargs.get(
-            "is_multi_workspace_query_with_skip_set_which_will_no_longer_be_a_supported_calling_pattern", None
+            "is_multi_workspace_query_with_skip_set_which_will_no_longer_be_a_supported_calling_pattern",
+            None,
         )
 
 
@@ -4110,18 +4196,30 @@ class IndexEntitiesLocalOperationRequest(msrest.serialization.Model):
         "search_builder": {"key": "searchBuilder", "type": "str"},
         "search_mode": {"key": "searchMode", "type": "str"},
         "free_text_search": {"key": "freeTextSearch", "type": "str"},
-        "free_text_search_columns": {"key": "freeTextSearchColumns", "type": "[FreeTextSearchColumn]"},
+        "free_text_search_columns": {
+            "key": "freeTextSearchColumns",
+            "type": "[FreeTextSearchColumn]",
+        },
         "filters": {"key": "filters", "type": "[IndexEntitiesRequestFilter]"},
-        "asset_resource_filters": {"key": "assetResourceFilters", "type": "[IndexEntitiesRequestFilter]"},
+        "asset_resource_filters": {
+            "key": "assetResourceFilters",
+            "type": "[IndexEntitiesRequestFilter]",
+        },
         "order": {"key": "order", "type": "[IndexEntitiesRequestOrder]"},
         "page_size": {"key": "pageSize", "type": "int"},
         "skip": {"key": "skip", "type": "int"},
         "continuation_token": {"key": "continuationToken", "type": "str"},
-        "include_total_result_count": {"key": "includeTotalResultCount", "type": "bool"},
+        "include_total_result_count": {
+            "key": "includeTotalResultCount",
+            "type": "bool",
+        },
         "resources": {"key": "resources", "type": "[ResourceInformation]"},
         "cmk_fanout": {"key": "cmkFanout", "type": "bool"},
         "include_fanout_data": {"key": "includeFanoutData", "type": "bool"},
-        "shard_id_to_shard_skips": {"key": "shardIdToShardSkips", "type": "{SingleShardFanoutData}"},
+        "shard_id_to_shard_skips": {
+            "key": "shardIdToShardSkips",
+            "type": "{SingleShardFanoutData}",
+        },
     }
 
     def __init__(self, **kwargs):
@@ -4226,18 +4324,30 @@ class IndexEntitiesRequest(msrest.serialization.Model):
         "search_builder": {"key": "searchBuilder", "type": "str"},
         "search_mode": {"key": "searchMode", "type": "str"},
         "free_text_search": {"key": "freeTextSearch", "type": "str"},
-        "free_text_search_columns": {"key": "freeTextSearchColumns", "type": "[FreeTextSearchColumn]"},
+        "free_text_search_columns": {
+            "key": "freeTextSearchColumns",
+            "type": "[FreeTextSearchColumn]",
+        },
         "filters": {"key": "filters", "type": "[IndexEntitiesRequestFilter]"},
-        "asset_resource_filters": {"key": "assetResourceFilters", "type": "[IndexEntitiesRequestFilter]"},
+        "asset_resource_filters": {
+            "key": "assetResourceFilters",
+            "type": "[IndexEntitiesRequestFilter]",
+        },
         "order": {"key": "order", "type": "[IndexEntitiesRequestOrder]"},
         "page_size": {"key": "pageSize", "type": "int"},
         "skip": {"key": "skip", "type": "int"},
         "continuation_token": {"key": "continuationToken", "type": "str"},
-        "include_total_result_count": {"key": "includeTotalResultCount", "type": "bool"},
+        "include_total_result_count": {
+            "key": "includeTotalResultCount",
+            "type": "bool",
+        },
         "resources": {"key": "resources", "type": "[ResourceInformation]"},
         "cmk_fanout": {"key": "cmkFanout", "type": "bool"},
         "include_fanout_data": {"key": "includeFanoutData", "type": "bool"},
-        "shard_id_to_shard_skips": {"key": "shardIdToShardSkips", "type": "{SingleShardFanoutData}"},
+        "shard_id_to_shard_skips": {
+            "key": "shardIdToShardSkips",
+            "type": "{SingleShardFanoutData}",
+        },
     }
 
     def __init__(self, **kwargs):
@@ -4409,7 +4519,10 @@ class IndexEntitiesResponse(msrest.serialization.Model):
             "key": "entityContainerIdsToEntityContainerMetadata",
             "type": "{IndexEntityContainerMetadata}",
         },
-        "number_of_entity_containers_not_queried": {"key": "numberOfEntityContainersNotQueried", "type": "int"},
+        "number_of_entity_containers_not_queried": {
+            "key": "numberOfEntityContainersNotQueried",
+            "type": "int",
+        },
         "fanout_data": {"key": "fanoutData", "type": "{SingleShardFanoutData}"},
         "shard_errors": {"key": "shardErrors", "type": "{ErrorResponse}"},
         "is_multi_workspace_query_with_skip_set_which_will_no_longer_be_a_supported_calling_pattern": {
@@ -4452,11 +4565,14 @@ class IndexEntitiesResponse(msrest.serialization.Model):
         self.entity_container_ids_to_entity_container_metadata = kwargs.get(
             "entity_container_ids_to_entity_container_metadata", None
         )
-        self.number_of_entity_containers_not_queried = kwargs.get("number_of_entity_containers_not_queried", None)
+        self.number_of_entity_containers_not_queried = kwargs.get(
+            "number_of_entity_containers_not_queried", None
+        )
         self.fanout_data = kwargs.get("fanout_data", None)
         self.shard_errors = kwargs.get("shard_errors", None)
         self.is_multi_workspace_query_with_skip_set_which_will_no_longer_be_a_supported_calling_pattern = kwargs.get(
-            "is_multi_workspace_query_with_skip_set_which_will_no_longer_be_a_supported_calling_pattern", None
+            "is_multi_workspace_query_with_skip_set_which_will_no_longer_be_a_supported_calling_pattern",
+            None,
         )
 
 
@@ -4725,7 +4841,10 @@ class IndexResourceDiscoveryResponseItem(msrest.serialization.Model):
         "tags": {"key": "tags", "type": "{str}"},
         "is_customer_managed": {"key": "isCustomerManaged", "type": "bool"},
         "is_private_link_resource": {"key": "isPrivateLinkResource", "type": "bool"},
-        "is_private_link_resource_behind_vnet": {"key": "isPrivateLinkResourceBehindVnet", "type": "bool"},
+        "is_private_link_resource_behind_vnet": {
+            "key": "isPrivateLinkResourceBehindVnet",
+            "type": "bool",
+        },
     }
 
     def __init__(self, **kwargs):
@@ -4764,7 +4883,9 @@ class IndexResourceDiscoveryResponseItem(msrest.serialization.Model):
         self.tags = kwargs.get("tags", None)
         self.is_customer_managed = kwargs.get("is_customer_managed", None)
         self.is_private_link_resource = kwargs.get("is_private_link_resource", None)
-        self.is_private_link_resource_behind_vnet = kwargs.get("is_private_link_resource_behind_vnet", None)
+        self.is_private_link_resource_behind_vnet = kwargs.get(
+            "is_private_link_resource_behind_vnet", None
+        )
 
 
 class IndexResourceDiscoveryResponseItemPaginatedResult(msrest.serialization.Model):
@@ -4793,7 +4914,9 @@ class IndexResourceDiscoveryResponseItemPaginatedResult(msrest.serialization.Mod
         :keyword next_link:
         :paramtype next_link: str
         """
-        super(IndexResourceDiscoveryResponseItemPaginatedResult, self).__init__(**kwargs)
+        super(IndexResourceDiscoveryResponseItemPaginatedResult, self).__init__(
+            **kwargs
+        )
         self.value = kwargs.get("value", None)
         self.continuation_token = kwargs.get("continuation_token", None)
         self.next_link = kwargs.get("next_link", None)
@@ -4941,9 +5064,15 @@ class JobCost(msrest.serialization.Model):
 
     _attribute_map = {
         "charged_cpu_core_seconds": {"key": "chargedCpuCoreSeconds", "type": "float"},
-        "charged_cpu_memory_megabyte_seconds": {"key": "chargedCpuMemoryMegabyteSeconds", "type": "float"},
+        "charged_cpu_memory_megabyte_seconds": {
+            "key": "chargedCpuMemoryMegabyteSeconds",
+            "type": "float",
+        },
         "charged_gpu_seconds": {"key": "chargedGpuSeconds", "type": "float"},
-        "charged_node_utilization_seconds": {"key": "chargedNodeUtilizationSeconds", "type": "float"},
+        "charged_node_utilization_seconds": {
+            "key": "chargedNodeUtilizationSeconds",
+            "type": "float",
+        },
     }
 
     def __init__(self, **kwargs):
@@ -4959,9 +5088,13 @@ class JobCost(msrest.serialization.Model):
         """
         super(JobCost, self).__init__(**kwargs)
         self.charged_cpu_core_seconds = kwargs["charged_cpu_core_seconds"]
-        self.charged_cpu_memory_megabyte_seconds = kwargs["charged_cpu_memory_megabyte_seconds"]
+        self.charged_cpu_memory_megabyte_seconds = kwargs[
+            "charged_cpu_memory_megabyte_seconds"
+        ]
         self.charged_gpu_seconds = kwargs["charged_gpu_seconds"]
-        self.charged_node_utilization_seconds = kwargs["charged_node_utilization_seconds"]
+        self.charged_node_utilization_seconds = kwargs[
+            "charged_node_utilization_seconds"
+        ]
 
 
 class MaterializationComputeResource(msrest.serialization.Model):
@@ -5017,7 +5150,10 @@ class MaterializationSettings(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        "materialization_store_type": {"key": "materializationStoreType", "type": "str"},
+        "materialization_store_type": {
+            "key": "materializationStoreType",
+            "type": "str",
+        },
         "schedule": {"key": "schedule", "type": "Recurrence"},
         "notification": {"key": "notification", "type": "NotificationSetting"},
         "resource": {"key": "resource", "type": "MaterializationComputeResource"},
@@ -5082,7 +5218,10 @@ class ModelAnnotations(msrest.serialization.Model):
         "datasets": {"key": "datasets", "type": "[DatasetReference]"},
         "sample_input_data": {"key": "sampleInputData", "type": "str"},
         "sample_output_data": {"key": "sampleOutputData", "type": "str"},
-        "resource_requirements": {"key": "resourceRequirements", "type": "ContainerResourceRequirements"},
+        "resource_requirements": {
+            "key": "resourceRequirements",
+            "type": "ContainerResourceRequirements",
+        },
         "description": {"key": "description", "type": "str"},
         "archived": {"key": "archived", "type": "bool"},
         "tags": {"key": "tags", "type": "{str}"},
@@ -5311,7 +5450,10 @@ class ModelsVersionedEntitiesResponse(msrest.serialization.Model):
             "key": "entityContainerIdsToEntityContainerMetadata",
             "type": "{IndexEntityContainerMetadata}",
         },
-        "number_of_entity_containers_not_queried": {"key": "numberOfEntityContainersNotQueried", "type": "int"},
+        "number_of_entity_containers_not_queried": {
+            "key": "numberOfEntityContainersNotQueried",
+            "type": "int",
+        },
         "fanout_data": {"key": "fanoutData", "type": "{SingleShardFanoutData}"},
         "shard_errors": {"key": "shardErrors", "type": "{ErrorResponse}"},
         "is_multi_workspace_query_with_skip_set_which_will_no_longer_be_a_supported_calling_pattern": {
@@ -5354,11 +5496,14 @@ class ModelsVersionedEntitiesResponse(msrest.serialization.Model):
         self.entity_container_ids_to_entity_container_metadata = kwargs.get(
             "entity_container_ids_to_entity_container_metadata", None
         )
-        self.number_of_entity_containers_not_queried = kwargs.get("number_of_entity_containers_not_queried", None)
+        self.number_of_entity_containers_not_queried = kwargs.get(
+            "number_of_entity_containers_not_queried", None
+        )
         self.fanout_data = kwargs.get("fanout_data", None)
         self.shard_errors = kwargs.get("shard_errors", None)
         self.is_multi_workspace_query_with_skip_set_which_will_no_longer_be_a_supported_calling_pattern = kwargs.get(
-            "is_multi_workspace_query_with_skip_set_which_will_no_longer_be_a_supported_calling_pattern", None
+            "is_multi_workspace_query_with_skip_set_which_will_no_longer_be_a_supported_calling_pattern",
+            None,
         )
 
 
@@ -5602,7 +5747,10 @@ class ModuleAnnotations(msrest.serialization.Model):
         "runconfig": {"key": "runconfig", "type": "str"},
         "control_outputs": {"key": "controlOutputs", "type": "[ControlOutput]"},
         "parameters": {"key": "parameters", "type": "[StructuredInterfaceParameter]"},
-        "metadata_parameters": {"key": "metadataParameters", "type": "[StructuredInterfaceParameter]"},
+        "metadata_parameters": {
+            "key": "metadataParameters",
+            "type": "[StructuredInterfaceParameter]",
+        },
         "aml_module_name": {"key": "amlModuleName", "type": "str"},
         "aml_module_entity_status": {"key": "amlModuleEntityStatus", "type": "str"},
         "module_type": {"key": "moduleType", "type": "str"},
@@ -5790,7 +5938,10 @@ class ModulesVersionedEntitiesResponse(msrest.serialization.Model):
             "key": "entityContainerIdsToEntityContainerMetadata",
             "type": "{IndexEntityContainerMetadata}",
         },
-        "number_of_entity_containers_not_queried": {"key": "numberOfEntityContainersNotQueried", "type": "int"},
+        "number_of_entity_containers_not_queried": {
+            "key": "numberOfEntityContainersNotQueried",
+            "type": "int",
+        },
         "fanout_data": {"key": "fanoutData", "type": "{SingleShardFanoutData}"},
         "shard_errors": {"key": "shardErrors", "type": "{ErrorResponse}"},
         "is_multi_workspace_query_with_skip_set_which_will_no_longer_be_a_supported_calling_pattern": {
@@ -5833,11 +5984,14 @@ class ModulesVersionedEntitiesResponse(msrest.serialization.Model):
         self.entity_container_ids_to_entity_container_metadata = kwargs.get(
             "entity_container_ids_to_entity_container_metadata", None
         )
-        self.number_of_entity_containers_not_queried = kwargs.get("number_of_entity_containers_not_queried", None)
+        self.number_of_entity_containers_not_queried = kwargs.get(
+            "number_of_entity_containers_not_queried", None
+        )
         self.fanout_data = kwargs.get("fanout_data", None)
         self.shard_errors = kwargs.get("shard_errors", None)
         self.is_multi_workspace_query_with_skip_set_which_will_no_longer_be_a_supported_calling_pattern = kwargs.get(
-            "is_multi_workspace_query_with_skip_set_which_will_no_longer_be_a_supported_calling_pattern", None
+            "is_multi_workspace_query_with_skip_set_which_will_no_longer_be_a_supported_calling_pattern",
+            None,
         )
 
 
@@ -6151,7 +6305,10 @@ class OnlineendpointsUnversionedEntitiesResponse(msrest.serialization.Model):
             "key": "entityContainerIdsToEntityContainerMetadata",
             "type": "{IndexEntityContainerMetadata}",
         },
-        "number_of_entity_containers_not_queried": {"key": "numberOfEntityContainersNotQueried", "type": "int"},
+        "number_of_entity_containers_not_queried": {
+            "key": "numberOfEntityContainersNotQueried",
+            "type": "int",
+        },
         "fanout_data": {"key": "fanoutData", "type": "{SingleShardFanoutData}"},
         "shard_errors": {"key": "shardErrors", "type": "{ErrorResponse}"},
         "is_multi_workspace_query_with_skip_set_which_will_no_longer_be_a_supported_calling_pattern": {
@@ -6194,11 +6351,14 @@ class OnlineendpointsUnversionedEntitiesResponse(msrest.serialization.Model):
         self.entity_container_ids_to_entity_container_metadata = kwargs.get(
             "entity_container_ids_to_entity_container_metadata", None
         )
-        self.number_of_entity_containers_not_queried = kwargs.get("number_of_entity_containers_not_queried", None)
+        self.number_of_entity_containers_not_queried = kwargs.get(
+            "number_of_entity_containers_not_queried", None
+        )
         self.fanout_data = kwargs.get("fanout_data", None)
         self.shard_errors = kwargs.get("shard_errors", None)
         self.is_multi_workspace_query_with_skip_set_which_will_no_longer_be_a_supported_calling_pattern = kwargs.get(
-            "is_multi_workspace_query_with_skip_set_which_will_no_longer_be_a_supported_calling_pattern", None
+            "is_multi_workspace_query_with_skip_set_which_will_no_longer_be_a_supported_calling_pattern",
+            None,
         )
 
 
@@ -6683,7 +6843,10 @@ class PipelinedraftsUnversionedEntitiesResponse(msrest.serialization.Model):
             "key": "entityContainerIdsToEntityContainerMetadata",
             "type": "{IndexEntityContainerMetadata}",
         },
-        "number_of_entity_containers_not_queried": {"key": "numberOfEntityContainersNotQueried", "type": "int"},
+        "number_of_entity_containers_not_queried": {
+            "key": "numberOfEntityContainersNotQueried",
+            "type": "int",
+        },
         "fanout_data": {"key": "fanoutData", "type": "{SingleShardFanoutData}"},
         "shard_errors": {"key": "shardErrors", "type": "{ErrorResponse}"},
         "is_multi_workspace_query_with_skip_set_which_will_no_longer_be_a_supported_calling_pattern": {
@@ -6726,11 +6889,14 @@ class PipelinedraftsUnversionedEntitiesResponse(msrest.serialization.Model):
         self.entity_container_ids_to_entity_container_metadata = kwargs.get(
             "entity_container_ids_to_entity_container_metadata", None
         )
-        self.number_of_entity_containers_not_queried = kwargs.get("number_of_entity_containers_not_queried", None)
+        self.number_of_entity_containers_not_queried = kwargs.get(
+            "number_of_entity_containers_not_queried", None
+        )
         self.fanout_data = kwargs.get("fanout_data", None)
         self.shard_errors = kwargs.get("shard_errors", None)
         self.is_multi_workspace_query_with_skip_set_which_will_no_longer_be_a_supported_calling_pattern = kwargs.get(
-            "is_multi_workspace_query_with_skip_set_which_will_no_longer_be_a_supported_calling_pattern", None
+            "is_multi_workspace_query_with_skip_set_which_will_no_longer_be_a_supported_calling_pattern",
+            None,
         )
 
 
@@ -6944,7 +7110,10 @@ class PipelineRunAnnotations(msrest.serialization.Model):
         "step_properties": {"key": "stepProperties", "type": "{str}"},
         "entity_status": {"key": "entityStatus", "type": "str"},
         "status": {"key": "status", "type": "ExperimentStatus"},
-        "run_history_experiment_name": {"key": "runHistoryExperimentName", "type": "str"},
+        "run_history_experiment_name": {
+            "key": "runHistoryExperimentName",
+            "type": "str",
+        },
         "has_errors": {"key": "hasErrors", "type": "bool"},
         "has_warnings": {"key": "hasWarnings", "type": "bool"},
         "last_modified_date": {"key": "lastModifiedDate", "type": "iso-8601"},
@@ -7072,7 +7241,10 @@ class PipelinerunsUnversionedEntitiesResponse(msrest.serialization.Model):
             "key": "entityContainerIdsToEntityContainerMetadata",
             "type": "{IndexEntityContainerMetadata}",
         },
-        "number_of_entity_containers_not_queried": {"key": "numberOfEntityContainersNotQueried", "type": "int"},
+        "number_of_entity_containers_not_queried": {
+            "key": "numberOfEntityContainersNotQueried",
+            "type": "int",
+        },
         "fanout_data": {"key": "fanoutData", "type": "{SingleShardFanoutData}"},
         "shard_errors": {"key": "shardErrors", "type": "{ErrorResponse}"},
         "is_multi_workspace_query_with_skip_set_which_will_no_longer_be_a_supported_calling_pattern": {
@@ -7115,11 +7287,14 @@ class PipelinerunsUnversionedEntitiesResponse(msrest.serialization.Model):
         self.entity_container_ids_to_entity_container_metadata = kwargs.get(
             "entity_container_ids_to_entity_container_metadata", None
         )
-        self.number_of_entity_containers_not_queried = kwargs.get("number_of_entity_containers_not_queried", None)
+        self.number_of_entity_containers_not_queried = kwargs.get(
+            "number_of_entity_containers_not_queried", None
+        )
         self.fanout_data = kwargs.get("fanout_data", None)
         self.shard_errors = kwargs.get("shard_errors", None)
         self.is_multi_workspace_query_with_skip_set_which_will_no_longer_be_a_supported_calling_pattern = kwargs.get(
-            "is_multi_workspace_query_with_skip_set_which_will_no_longer_be_a_supported_calling_pattern", None
+            "is_multi_workspace_query_with_skip_set_which_will_no_longer_be_a_supported_calling_pattern",
+            None,
         )
 
 
@@ -7265,7 +7440,10 @@ class PipelinesVersionedEntitiesResponse(msrest.serialization.Model):
             "key": "entityContainerIdsToEntityContainerMetadata",
             "type": "{IndexEntityContainerMetadata}",
         },
-        "number_of_entity_containers_not_queried": {"key": "numberOfEntityContainersNotQueried", "type": "int"},
+        "number_of_entity_containers_not_queried": {
+            "key": "numberOfEntityContainersNotQueried",
+            "type": "int",
+        },
         "fanout_data": {"key": "fanoutData", "type": "{SingleShardFanoutData}"},
         "shard_errors": {"key": "shardErrors", "type": "{ErrorResponse}"},
         "is_multi_workspace_query_with_skip_set_which_will_no_longer_be_a_supported_calling_pattern": {
@@ -7308,11 +7486,14 @@ class PipelinesVersionedEntitiesResponse(msrest.serialization.Model):
         self.entity_container_ids_to_entity_container_metadata = kwargs.get(
             "entity_container_ids_to_entity_container_metadata", None
         )
-        self.number_of_entity_containers_not_queried = kwargs.get("number_of_entity_containers_not_queried", None)
+        self.number_of_entity_containers_not_queried = kwargs.get(
+            "number_of_entity_containers_not_queried", None
+        )
         self.fanout_data = kwargs.get("fanout_data", None)
         self.shard_errors = kwargs.get("shard_errors", None)
         self.is_multi_workspace_query_with_skip_set_which_will_no_longer_be_a_supported_calling_pattern = kwargs.get(
-            "is_multi_workspace_query_with_skip_set_which_will_no_longer_be_a_supported_calling_pattern", None
+            "is_multi_workspace_query_with_skip_set_which_will_no_longer_be_a_supported_calling_pattern",
+            None,
         )
 
 
@@ -7706,8 +7887,14 @@ class ResourceDiscoveryContainerMetadata(msrest.serialization.Model):
         "asset_container_type": {"key": "assetContainerType", "type": "str"},
         "immutable_resource_id": {"key": "immutableResourceId", "type": "str"},
         "asset_resource_type": {"key": "assetResourceType", "type": "str"},
-        "is_customer_managed_resource": {"key": "isCustomerManagedResource", "type": "bool"},
-        "is_private_link_behind_vnet": {"key": "isPrivateLinkBehindVnet", "type": "bool"},
+        "is_customer_managed_resource": {
+            "key": "isCustomerManagedResource",
+            "type": "bool",
+        },
+        "is_private_link_behind_vnet": {
+            "key": "isPrivateLinkBehindVnet",
+            "type": "bool",
+        },
         "is_public_container": {"key": "isPublicContainer", "type": "bool"},
         "is_public_resource": {"key": "isPublicResource", "type": "bool"},
         "regions": {"key": "regions", "type": "[ResourceRegion]"},
@@ -7757,8 +7944,12 @@ class ResourceDiscoveryContainerMetadata(msrest.serialization.Model):
         self.asset_container_type = kwargs.get("asset_container_type", None)
         self.immutable_resource_id = kwargs.get("immutable_resource_id", None)
         self.asset_resource_type = kwargs.get("asset_resource_type", None)
-        self.is_customer_managed_resource = kwargs.get("is_customer_managed_resource", None)
-        self.is_private_link_behind_vnet = kwargs.get("is_private_link_behind_vnet", None)
+        self.is_customer_managed_resource = kwargs.get(
+            "is_customer_managed_resource", None
+        )
+        self.is_private_link_behind_vnet = kwargs.get(
+            "is_private_link_behind_vnet", None
+        )
         self.is_public_container = kwargs.get("is_public_container", None)
         self.is_public_resource = kwargs.get("is_public_resource", None)
         self.regions = kwargs.get("regions", None)
@@ -7790,7 +7981,9 @@ class ResourceDiscoveryContainerMetadataPaginatedResult(msrest.serialization.Mod
         :keyword next_link:
         :paramtype next_link: str
         """
-        super(ResourceDiscoveryContainerMetadataPaginatedResult, self).__init__(**kwargs)
+        super(ResourceDiscoveryContainerMetadataPaginatedResult, self).__init__(
+            **kwargs
+        )
         self.value = kwargs.get("value", None)
         self.continuation_token = kwargs.get("continuation_token", None)
         self.next_link = kwargs.get("next_link", None)
@@ -8060,18 +8253,33 @@ class RunAnnotations(msrest.serialization.Model):
         "status": {"key": "status", "type": "str"},
         "primary_metric_name": {"key": "primaryMetricName", "type": "str"},
         "estimated_cost": {"key": "estimatedCost", "type": "float"},
-        "primary_metric_summary": {"key": "primaryMetricSummary", "type": "RunIndexMetricSummaryJValue"},
+        "primary_metric_summary": {
+            "key": "primaryMetricSummary",
+            "type": "RunIndexMetricSummaryJValue",
+        },
         "metrics": {"key": "metrics", "type": "{RunIndexMetricSummaryObject}"},
         "parameters": {"key": "parameters", "type": "{object}"},
         "settings": {"key": "settings", "type": "{str}"},
         "modified_time": {"key": "modifiedTime", "type": "iso-8601"},
-        "retain_for_lifetime_of_workspace": {"key": "retainForLifetimeOfWorkspace", "type": "bool"},
+        "retain_for_lifetime_of_workspace": {
+            "key": "retainForLifetimeOfWorkspace",
+            "type": "bool",
+        },
         "error": {"key": "error", "type": "IndexedErrorResponse"},
-        "resource_metric_summary": {"key": "resourceMetricSummary", "type": "RunIndexResourceMetricSummary"},
+        "resource_metric_summary": {
+            "key": "resourceMetricSummary",
+            "type": "RunIndexResourceMetricSummary",
+        },
         "job_cost": {"key": "jobCost", "type": "JobCost"},
         "compute_duration": {"key": "computeDuration", "type": "str"},
-        "compute_duration_milliseconds": {"key": "computeDurationMilliseconds", "type": "float"},
-        "effective_start_time_utc": {"key": "effectiveStartTimeUtc", "type": "iso-8601"},
+        "compute_duration_milliseconds": {
+            "key": "computeDurationMilliseconds",
+            "type": "float",
+        },
+        "effective_start_time_utc": {
+            "key": "effectiveStartTimeUtc",
+            "type": "iso-8601",
+        },
         "name": {"key": "name", "type": "str"},
         "description": {"key": "description", "type": "str"},
         "archived": {"key": "archived", "type": "bool"},
@@ -8131,7 +8339,9 @@ class RunAnnotations(msrest.serialization.Model):
         self.parameters = kwargs["parameters"]
         self.settings = kwargs["settings"]
         self.modified_time = kwargs["modified_time"]
-        self.retain_for_lifetime_of_workspace = kwargs["retain_for_lifetime_of_workspace"]
+        self.retain_for_lifetime_of_workspace = kwargs[
+            "retain_for_lifetime_of_workspace"
+        ]
         self.error = kwargs["error"]
         self.resource_metric_summary = kwargs["resource_metric_summary"]
         self.job_cost = kwargs["job_cost"]
@@ -8275,8 +8485,14 @@ class RunIndexResourceMetricSummary(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        "gpu_utilization_percent_last_hour": {"key": "gpuUtilizationPercentLastHour", "type": "float"},
-        "gpu_memory_utilization_percent_last_hour": {"key": "gpuMemoryUtilizationPercentLastHour", "type": "float"},
+        "gpu_utilization_percent_last_hour": {
+            "key": "gpuUtilizationPercentLastHour",
+            "type": "float",
+        },
+        "gpu_memory_utilization_percent_last_hour": {
+            "key": "gpuMemoryUtilizationPercentLastHour",
+            "type": "float",
+        },
         "gpu_energy_joules": {"key": "gpuEnergyJoules", "type": "float"},
         "resource_metric_names": {"key": "resourceMetricNames", "type": "[str]"},
     }
@@ -8293,8 +8509,12 @@ class RunIndexResourceMetricSummary(msrest.serialization.Model):
         :paramtype resource_metric_names: list[str]
         """
         super(RunIndexResourceMetricSummary, self).__init__(**kwargs)
-        self.gpu_utilization_percent_last_hour = kwargs["gpu_utilization_percent_last_hour"]
-        self.gpu_memory_utilization_percent_last_hour = kwargs["gpu_memory_utilization_percent_last_hour"]
+        self.gpu_utilization_percent_last_hour = kwargs[
+            "gpu_utilization_percent_last_hour"
+        ]
+        self.gpu_memory_utilization_percent_last_hour = kwargs[
+            "gpu_memory_utilization_percent_last_hour"
+        ]
         self.gpu_energy_joules = kwargs["gpu_energy_joules"]
         self.resource_metric_names = kwargs["resource_metric_names"]
 
@@ -8516,7 +8736,10 @@ class RunsUnversionedEntitiesResponse(msrest.serialization.Model):
             "key": "entityContainerIdsToEntityContainerMetadata",
             "type": "{IndexEntityContainerMetadata}",
         },
-        "number_of_entity_containers_not_queried": {"key": "numberOfEntityContainersNotQueried", "type": "int"},
+        "number_of_entity_containers_not_queried": {
+            "key": "numberOfEntityContainersNotQueried",
+            "type": "int",
+        },
         "fanout_data": {"key": "fanoutData", "type": "{SingleShardFanoutData}"},
         "shard_errors": {"key": "shardErrors", "type": "{ErrorResponse}"},
         "is_multi_workspace_query_with_skip_set_which_will_no_longer_be_a_supported_calling_pattern": {
@@ -8559,11 +8782,14 @@ class RunsUnversionedEntitiesResponse(msrest.serialization.Model):
         self.entity_container_ids_to_entity_container_metadata = kwargs.get(
             "entity_container_ids_to_entity_container_metadata", None
         )
-        self.number_of_entity_containers_not_queried = kwargs.get("number_of_entity_containers_not_queried", None)
+        self.number_of_entity_containers_not_queried = kwargs.get(
+            "number_of_entity_containers_not_queried", None
+        )
         self.fanout_data = kwargs.get("fanout_data", None)
         self.shard_errors = kwargs.get("shard_errors", None)
         self.is_multi_workspace_query_with_skip_set_which_will_no_longer_be_a_supported_calling_pattern = kwargs.get(
-            "is_multi_workspace_query_with_skip_set_which_will_no_longer_be_a_supported_calling_pattern", None
+            "is_multi_workspace_query_with_skip_set_which_will_no_longer_be_a_supported_calling_pattern",
+            None,
         )
 
 
@@ -9071,7 +9297,10 @@ class UxPresenceResource(msrest.serialization.Model):
         "tags": {"key": "tags", "type": "{str}"},
         "is_customer_managed": {"key": "isCustomerManaged", "type": "bool"},
         "is_private_link_resource": {"key": "isPrivateLinkResource", "type": "bool"},
-        "is_private_link_resource_behind_vnet": {"key": "isPrivateLinkResourceBehindVnet", "type": "bool"},
+        "is_private_link_resource_behind_vnet": {
+            "key": "isPrivateLinkResourceBehindVnet",
+            "type": "bool",
+        },
     }
 
     def __init__(self, **kwargs):
@@ -9110,7 +9339,9 @@ class UxPresenceResource(msrest.serialization.Model):
         self.tags = kwargs.get("tags", None)
         self.is_customer_managed = kwargs.get("is_customer_managed", None)
         self.is_private_link_resource = kwargs.get("is_private_link_resource", None)
-        self.is_private_link_resource_behind_vnet = kwargs.get("is_private_link_resource_behind_vnet", None)
+        self.is_private_link_resource_behind_vnet = kwargs.get(
+            "is_private_link_resource_behind_vnet", None
+        )
 
 
 class UxWarmUpRequest(msrest.serialization.Model):

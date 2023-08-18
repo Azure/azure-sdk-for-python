@@ -44,7 +44,11 @@ class MdcConfigResolver(object):
         if len(data_collector.collections) <= 0:
             return
 
-        sampling_percentage = int(data_collector.sampling_rate * 100) if data_collector.sampling_rate else 100
+        sampling_percentage = (
+            int(data_collector.sampling_rate * 100)
+            if data_collector.sampling_rate
+            else 100
+        )
 
         self.mdc_config = {"collections": {}, "runMode": "local"}
         custom_logging_enabled = False
@@ -57,15 +61,22 @@ class MdcConfigResolver(object):
 
                 self.mdc_config["collections"][lower_k] = {
                     "enabled": True,
-                    "sampling_percentage": int(v.sampling_rate * 100) if v.sampling_rate else sampling_percentage,
+                    "sampling_percentage": int(v.sampling_rate * 100)
+                    if v.sampling_rate
+                    else sampling_percentage,
                 }
 
         if not custom_logging_enabled:
             self.mdc_config = None
             return
 
-        if data_collector.request_logging and data_collector.request_logging.capture_headers:
-            self.mdc_config["captureHeaders"] = data_collector.request_logging.capture_headers
+        if (
+            data_collector.request_logging
+            and data_collector.request_logging.capture_headers
+        ):
+            self.mdc_config[
+                "captureHeaders"
+            ] = data_collector.request_logging.capture_headers
 
     def write_file(self, directory_path: str) -> None:
         """Writes this mdc configuration to a file in provided directory.
@@ -84,4 +95,8 @@ class MdcConfigResolver(object):
         self.environment_variables = {"AZUREML_MDC_CONFIG_PATH": self.config_path}
         local_path = os.path.join(directory_path, self.local_config_name)
 
-        self.volumes = {f"{local_path}:{self.config_path}:z": {local_path: {"bind": self.config_path}}}
+        self.volumes = {
+            f"{local_path}:{self.config_path}:z": {
+                local_path: {"bind": self.config_path}
+            }
+        }

@@ -39,10 +39,14 @@ class ConditionNodeSchema(ControlFlowSchema):
         false_block = _normalize_blocks("false_block")
 
         if not true_block and not false_block:
-            raise ValidationError("True block and false block cannot be empty at the same time.")
+            raise ValidationError(
+                "True block and false block cannot be empty at the same time."
+            )
 
         intersection = set(true_block).intersection(set(false_block))
         if intersection:
-            raise ValidationError(f"True block and false block cannot contain same nodes: {intersection}")
+            raise ValidationError(
+                f"True block and false block cannot contain same nodes: {intersection}"
+            )
 
         return data

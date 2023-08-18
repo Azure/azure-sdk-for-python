@@ -22,10 +22,14 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from ... import models as _models
 from ..._vendor import _convert_request
-from ...operations._index_entities_operations import build_get_entites_cross_region_request
+from ...operations._index_entities_operations import (
+    build_get_entites_cross_region_request,
+)
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[
+    Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]
+]
 
 
 class IndexEntitiesOperations:
@@ -52,7 +56,9 @@ class IndexEntitiesOperations:
 
     @distributed_trace
     def get_entites_cross_region(
-        self, body: Optional["_models.CrossRegionIndexEntitiesRequest"] = None, **kwargs: Any
+        self,
+        body: Optional["_models.CrossRegionIndexEntitiesRequest"] = None,
+        **kwargs: Any
     ) -> AsyncIterable["_models.IndexEntitiesResponse"]:
         """get_entites_cross_region.
 
@@ -65,16 +71,24 @@ class IndexEntitiesOperations:
          ~azure.core.async_paging.AsyncItemPaged[~index_service_apis.models.IndexEntitiesResponse]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        content_type = kwargs.pop("content_type", "application/json-patch+json")  # type: Optional[str]
+        content_type = kwargs.pop(
+            "content_type", "application/json-patch+json"
+        )  # type: Optional[str]
 
         cls = kwargs.pop("cls", None)  # type: ClsType["_models.IndexEntitiesResponse"]
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+        }
         error_map.update(kwargs.pop("error_map", {}))
 
         def prepare_request(next_link=None):
             if not next_link:
                 if body is not None:
-                    _json = self._serialize.body(body, "CrossRegionIndexEntitiesRequest")
+                    _json = self._serialize.body(
+                        body, "CrossRegionIndexEntitiesRequest"
+                    )
                 else:
                     _json = None
 
@@ -88,7 +102,9 @@ class IndexEntitiesOperations:
 
             else:
                 if body is not None:
-                    _json = self._serialize.body(body, "CrossRegionIndexEntitiesRequest")
+                    _json = self._serialize.body(
+                        body, "CrossRegionIndexEntitiesRequest"
+                    )
                 else:
                     _json = None
 
@@ -112,13 +128,19 @@ class IndexEntitiesOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+            pipeline_response = (
+                await self._client._pipeline.run(  # pylint: disable=protected-access
+                    request, stream=False, **kwargs
+                )
             )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                map_error(
+                    status_code=response.status_code,
+                    response=response,
+                    error_map=error_map,
+                )
                 raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
             return pipeline_response

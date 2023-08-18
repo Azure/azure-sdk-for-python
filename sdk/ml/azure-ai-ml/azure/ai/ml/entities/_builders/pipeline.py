@@ -13,7 +13,11 @@ from azure.ai.ml.entities._validation import MutableValidationResult
 
 from ..._schema import PathAwareSchema
 from .._job.pipeline.pipeline_job_settings import PipelineJobSettings
-from .._util import convert_ordered_dict_to_dict, copy_output_setting, validate_attribute_type
+from .._util import (
+    convert_ordered_dict_to_dict,
+    copy_output_setting,
+    validate_attribute_type,
+)
 from .base_node import BaseNode
 
 module_logger = logging.getLogger(__name__)
@@ -58,7 +62,9 @@ class Pipeline(BaseNode):
         **kwargs,
     ) -> None:
         # validate init params are valid type
-        validate_attribute_type(attrs_to_check=locals(), attr_type_map=self._attr_type_map())
+        validate_attribute_type(
+            attrs_to_check=locals(), attr_type_map=self._attr_type_map()
+        )
         kwargs.pop("type", None)
 
         BaseNode.__init__(
@@ -112,7 +118,11 @@ class Pipeline(BaseNode):
             elif isinstance(value, dict):
                 value = PipelineJobSettings(**value)
             else:
-                raise TypeError("settings must be PipelineJobSettings or dict but got {}".format(type(value)))
+                raise TypeError(
+                    "settings must be PipelineJobSettings or dict but got {}".format(
+                        type(value)
+                    )
+                )
         self._settings = value
 
     @classmethod
@@ -173,7 +183,9 @@ class Pipeline(BaseNode):
         validation_result = super(Pipeline, self)._customized_validate()
         ignored_keys = PipelineComponent._check_ignored_keys(self)
         if ignored_keys:
-            validation_result.append_warning(message=f"{ignored_keys} ignored on node {self.name!r}.")
+            validation_result.append_warning(
+                message=f"{ignored_keys} ignored on node {self.name!r}."
+            )
         if isinstance(self.component, PipelineComponent):
             validation_result.merge_with(self.component._customized_validate())
         return validation_result

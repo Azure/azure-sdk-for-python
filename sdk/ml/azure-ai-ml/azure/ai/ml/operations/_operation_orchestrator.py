@@ -11,8 +11,15 @@ from typing import Any, Optional, Tuple, Union
 
 from typing_extensions import Protocol
 
-from azure.ai.ml._artifacts._artifact_utilities import _check_and_upload_env_build_context, _check_and_upload_path
-from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationsContainer, OperationScope
+from azure.ai.ml._artifacts._artifact_utilities import (
+    _check_and_upload_env_build_context,
+    _check_and_upload_path,
+)
+from azure.ai.ml._scope_dependent_operations import (
+    OperationConfig,
+    OperationsContainer,
+    OperationScope,
+)
 from azure.ai.ml._utils._arm_id_utils import (
     AMLLabelledArmId,
     AMLNamedArmId,
@@ -26,7 +33,10 @@ from azure.ai.ml._utils._arm_id_utils import (
     parse_name_label,
     parse_prefixed_name_version,
 )
-from azure.ai.ml._utils._asset_utils import _resolve_label_to_asset, get_storage_info_for_non_registry_asset
+from azure.ai.ml._utils._asset_utils import (
+    _resolve_label_to_asset,
+    get_storage_info_for_non_registry_asset,
+)
 from azure.ai.ml._utils._storage_utils import AzureMLDatastorePathUri
 from azure.ai.ml.constants._common import (
     ARM_ID_PREFIX,
@@ -104,7 +114,9 @@ class OperationOrchestrator(object):
 
     @property
     def _virtual_cluster(self):
-        return self._operation_container.all_operations[AzureMLResourceType.VIRTUALCLUSTER]
+        return self._operation_container.all_operations[
+            AzureMLResourceType.VIRTUALCLUSTER
+        ]
 
     def get_asset_arm_id(
         self,
@@ -157,7 +169,11 @@ class OperationOrchestrator(object):
                 if azureml_type == AzureMLResourceType.ENVIRONMENT:
                     azureml_prefix = "azureml:"
                     # return the same value if resolved result is passed in
-                    _asset = asset[len(azureml_prefix) :] if asset.startswith(azureml_prefix) else asset
+                    _asset = (
+                        asset[len(azureml_prefix) :]
+                        if asset.startswith(azureml_prefix)
+                        else asset
+                    )
                     if _asset.startswith(CURATED_ENV_PREFIX) or re.match(
                         REGISTRY_VERSION_PATTERN, f"{azureml_prefix}{_asset}"
                     ):
@@ -165,7 +181,10 @@ class OperationOrchestrator(object):
 
                 name, label = parse_name_label(asset)
                 # TODO: remove this condition after label is fully supported for all versioned resources
-                if label == DEFAULT_LABEL_NAME and azureml_type == AzureMLResourceType.COMPONENT:
+                if (
+                    label == DEFAULT_LABEL_NAME
+                    and azureml_type == AzureMLResourceType.COMPONENT
+                ):
                     return LABELLED_RESOURCE_ID_FORMAT.format(
                         self._operation_scope.subscription_id,
                         self._operation_scope.resource_group_name,
@@ -175,7 +194,9 @@ class OperationOrchestrator(object):
                         name,
                         label,
                     )
-                name, version = self._resolve_name_version_from_name_label(asset, azureml_type)
+                name, version = self._resolve_name_version_from_name_label(
+                    asset, azureml_type
+                )
                 if not version:
                     name, version = parse_prefixed_name_version(asset)
 
@@ -229,14 +250,28 @@ class OperationOrchestrator(object):
             try:
                 # TODO: once the asset redesign is finished, this logic can be replaced with unified API
                 if azureml_type == AzureMLResourceType.CODE and isinstance(asset, Code):
-                    result = self._get_code_asset_arm_id(asset, register_asset=register_asset)
-                elif azureml_type == AzureMLResourceType.ENVIRONMENT and isinstance(asset, Environment):
-                    result = self._get_environment_arm_id(asset, register_asset=register_asset)
-                elif azureml_type == AzureMLResourceType.MODEL and isinstance(asset, Model):
-                    result = self._get_model_arm_id(asset, register_asset=register_asset)
-                elif azureml_type == AzureMLResourceType.DATA and isinstance(asset, Data):
+                    result = self._get_code_asset_arm_id(
+                        asset, register_asset=register_asset
+                    )
+                elif azureml_type == AzureMLResourceType.ENVIRONMENT and isinstance(
+                    asset, Environment
+                ):
+                    result = self._get_environment_arm_id(
+                        asset, register_asset=register_asset
+                    )
+                elif azureml_type == AzureMLResourceType.MODEL and isinstance(
+                    asset, Model
+                ):
+                    result = self._get_model_arm_id(
+                        asset, register_asset=register_asset
+                    )
+                elif azureml_type == AzureMLResourceType.DATA and isinstance(
+                    asset, Data
+                ):
                     result = self._get_data_arm_id(asset, register_asset=register_asset)
-                elif azureml_type == AzureMLResourceType.COMPONENT and isinstance(asset, Component):
+                elif azureml_type == AzureMLResourceType.COMPONENT and isinstance(
+                    asset, Component
+                ):
                     result = self._get_component_arm_id(asset)
                 else:
                     msg = "Unsupported azureml type {} for asset: {}"
@@ -266,7 +301,9 @@ class OperationOrchestrator(object):
             error_type=ValidationErrorType.INVALID_VALUE,
         )
 
-    def _get_code_asset_arm_id(self, code_asset: Code, register_asset: bool = True) -> Union[Code, str]:
+    def _get_code_asset_arm_id(
+        self, code_asset: Code, register_asset: bool = True
+    ) -> Union[Code, str]:
         try:
             self._validate_datastore_name(code_asset.path)
             if register_asset:
@@ -305,14 +342,18 @@ class OperationOrchestrator(object):
                 error_category=ErrorCategory.SYSTEM_ERROR,
             ) from e
 
-    def _get_environment_arm_id(self, environment: Environment, register_asset: bool = True) -> Union[str, Environment]:
+    def _get_environment_arm_id(
+        self, environment: Environment, register_asset: bool = True
+    ) -> Union[str, Environment]:
         if register_asset:
             if environment.id:
                 return environment.id
             env_response = self._environments.create_or_update(environment)
             return env_response.id
         environment = _check_and_upload_env_build_context(
-            environment=environment, operations=self._environments, show_progress=self._operation_config.show_progress
+            environment=environment,
+            operations=self._environments,
+            show_progress=self._operation_config.show_progress,
         )
         environment._id = get_arm_id_with_version(
             self._operation_scope,
@@ -322,7 +363,9 @@ class OperationOrchestrator(object):
         )
         return environment
 
-    def _get_model_arm_id(self, model: Model, register_asset: bool = True) -> Union[str, Model]:
+    def _get_model_arm_id(
+        self, model: Model, register_asset: bool = True
+    ) -> Union[str, Model]:
         try:
             self._validate_datastore_name(model.path)
 
@@ -354,7 +397,9 @@ class OperationOrchestrator(object):
                 error_category=ErrorCategory.SYSTEM_ERROR,
             ) from e
 
-    def _get_data_arm_id(self, data_asset: Data, register_asset: bool = True) -> Union[str, Data]:
+    def _get_data_arm_id(
+        self, data_asset: Data, register_asset: bool = True
+    ) -> Union[str, Data]:
         self._validate_datastore_name(data_asset.path)
 
         if register_asset:
@@ -380,7 +425,9 @@ class OperationOrchestrator(object):
         # Register the component if necessary, and FILL BACK the arm id to component to reduce remote call.
         if not component.id:
             component._id = self._component.create_or_update(
-                component, is_anonymous=True, show_progress=self._operation_config.show_progress
+                component,
+                is_anonymous=True,
+                show_progress=self._operation_config.show_progress,
             ).id
         return component.id
 
@@ -389,7 +436,9 @@ class OperationOrchestrator(object):
         subscription_id = match.group("subscription_id")
         resource_group_name = match.group("resource_group_name")
         vc_name = match.group("name")
-        arm_id = SINGULARITY_ID_FORMAT.format(subscription_id, resource_group_name, vc_name)
+        arm_id = SINGULARITY_ID_FORMAT.format(
+            subscription_id, resource_group_name, vc_name
+        )
         vc = self._virtual_cluster.get(arm_id)
         return vc["id"]
 
@@ -412,7 +461,9 @@ class OperationOrchestrator(object):
             )
         return match_vcs[0]["id"]
 
-    def _resolve_name_version_from_name_label(self, aml_id: str, azureml_type: str) -> Tuple[str, Optional[str]]:
+    def _resolve_name_version_from_name_label(
+        self, aml_id: str, azureml_type: str
+    ) -> Tuple[str, Optional[str]]:
         """Given an AzureML id of the form name@label, resolves the label to the actual ID.
 
         :param aml_id: AzureML id of the form name@label
@@ -454,7 +505,9 @@ class OperationOrchestrator(object):
 
         if arm_id:
             if not isinstance(arm_id, str):
-                msg = "arm_id cannot be resolved: str expected but got {}".format(type(arm_id))
+                msg = "arm_id cannot be resolved: str expected but got {}".format(
+                    type(arm_id)
+                )
                 raise ValidationException(
                     message=msg,
                     no_personal_data_message=msg,
@@ -466,13 +519,17 @@ class OperationOrchestrator(object):
                 if arm_id_obj.is_registry_id:
                     return arm_id
                 if self._match(arm_id_obj):
-                    return VERSIONED_RESOURCE_NAME.format(arm_id_obj.asset_name, arm_id_obj.asset_version)
+                    return VERSIONED_RESOURCE_NAME.format(
+                        arm_id_obj.asset_name, arm_id_obj.asset_version
+                    )
             except ValidationException:
                 pass  # fall back to named arm id
             try:
                 arm_id_obj = AMLLabelledArmId(arm_id)
                 if self._match(arm_id_obj):
-                    return LABELLED_RESOURCE_NAME.format(arm_id_obj.asset_name, arm_id_obj.asset_label)
+                    return LABELLED_RESOURCE_NAME.format(
+                        arm_id_obj.asset_name, arm_id_obj.asset_label
+                    )
             except ValidationException:
                 pass  # fall back to named arm id
             try:
@@ -490,7 +547,9 @@ class OperationOrchestrator(object):
             and id_.workspace_name == self._operation_scope.workspace_name
         )
 
-    def _validate_datastore_name(self, datastore_uri: Optional[Union[str, PathLike]]) -> None:
+    def _validate_datastore_name(
+        self, datastore_uri: Optional[Union[str, PathLike]]
+    ) -> None:
         if datastore_uri:
             try:
                 if isinstance(datastore_uri, str):
@@ -501,12 +560,16 @@ class OperationOrchestrator(object):
                 elif isinstance(datastore_uri, PathLike):
                     return
 
-                if datastore_uri.startswith(HTTPS_PREFIX) and datastore_uri.count("/") == 7:
+                if (
+                    datastore_uri.startswith(HTTPS_PREFIX)
+                    and datastore_uri.count("/") == 7
+                ):
                     # only long-form (i.e. "https://x.blob.core.windows.net/datastore/LocalUpload/guid/x/x")
                     # format includes datastore
                     datastore_name = datastore_uri.split("/")[3]
                 elif datastore_uri.startswith(ARM_ID_PREFIX) and not (
-                    re.match(MLFLOW_URI_REGEX_FORMAT, datastore_uri) or re.match(JOB_URI_REGEX_FORMAT, datastore_uri)
+                    re.match(MLFLOW_URI_REGEX_FORMAT, datastore_uri)
+                    or re.match(JOB_URI_REGEX_FORMAT, datastore_uri)
                 ):
                     datastore_name = AzureMLDatastorePathUri(datastore_uri).datastore
                 else:

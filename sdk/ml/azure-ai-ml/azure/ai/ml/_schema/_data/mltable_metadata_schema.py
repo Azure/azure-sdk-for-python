@@ -34,7 +34,14 @@ class MLTableMetadataSchema(YamlFileSchema):
 
     @post_load
     def make(self, data: Dict, **kwargs):
-        from azure.ai.ml.entities._data.mltable_metadata import MLTableMetadata, MLTableMetadataPath
+        from azure.ai.ml.entities._data.mltable_metadata import (
+            MLTableMetadata,
+            MLTableMetadataPath,
+        )
 
-        paths = [MLTableMetadataPath(pathDict=pathDict) for pathDict in data.pop("paths")]
-        return MLTableMetadata(base_path=self.context[BASE_PATH_CONTEXT_KEY], **data, paths=paths)
+        paths = [
+            MLTableMetadataPath(pathDict=pathDict) for pathDict in data.pop("paths")
+        ]
+        return MLTableMetadata(
+            base_path=self.context[BASE_PATH_CONTEXT_KEY], **data, paths=paths
+        )

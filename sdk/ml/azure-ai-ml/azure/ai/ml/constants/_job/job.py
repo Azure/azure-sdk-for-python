@@ -110,7 +110,12 @@ class JobServiceTypeNames:
 
     REST_TO_ENTITY = {v: k for k, v in ENTITY_TO_REST.items()}
 
-    NAMES_ALLOWED_FOR_PUBLIC = [EntityNames.JUPYTER_LAB, EntityNames.SSH, EntityNames.TENSOR_BOARD, EntityNames.VS_CODE]
+    NAMES_ALLOWED_FOR_PUBLIC = [
+        EntityNames.JUPYTER_LAB,
+        EntityNames.SSH,
+        EntityNames.TENSOR_BOARD,
+        EntityNames.VS_CODE,
+    ]
 
 
 class JobTierNames:
@@ -135,7 +140,12 @@ class JobTierNames:
 
     REST_TO_ENTITY = {v: k for k, v in ENTITY_TO_REST.items()}
 
-    ALLOWED_NAMES = [EntityNames.Spot, EntityNames.Basic, EntityNames.Standard, EntityNames.Premium]
+    ALLOWED_NAMES = [
+        EntityNames.Spot,
+        EntityNames.Basic,
+        EntityNames.Standard,
+        EntityNames.Premium,
+    ]
 
 
 class JobPriorityValues:

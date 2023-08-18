@@ -6,7 +6,12 @@ import json
 
 from marshmallow import INCLUDE, fields, pre_dump, pre_load
 
-from azure.ai.ml._schema.core.fields import DataBindingStr, NestedField, StringTransformedEnum, UnionField
+from azure.ai.ml._schema.core.fields import (
+    DataBindingStr,
+    NestedField,
+    StringTransformedEnum,
+    UnionField,
+)
 from azure.ai.ml._schema.core.schema import PathAwareSchema
 from azure.ai.ml.constants._component import ControlFlowType
 
@@ -28,7 +33,9 @@ class BaseLoopSchema(ControlFlowSchema):
     body = DataBindingStr()
 
     @pre_dump
-    def convert_control_flow_body_to_binding_str(self, data, **kwargs):  # pylint: disable= unused-argument
+    def convert_control_flow_body_to_binding_str(
+        self, data, **kwargs
+    ):  # pylint: disable= unused-argument
         result = copy.copy(data)
         # Update body object to data_binding_str
         result._body = data._get_body_binding_str()
@@ -74,8 +81,12 @@ class DoWhileSchema(BaseLoopSchema):
         return result
 
     @pre_dump
-    def convert_control_flow_body_to_binding_str(self, data, **kwargs):  # pylint: disable= unused-argument
-        return super(DoWhileSchema, self).convert_control_flow_body_to_binding_str(data, **kwargs)
+    def convert_control_flow_body_to_binding_str(
+        self, data, **kwargs
+    ):  # pylint: disable= unused-argument
+        return super(DoWhileSchema, self).convert_control_flow_body_to_binding_str(
+            data, **kwargs
+        )
 
 
 class ParallelForSchema(BaseLoopSchema):
@@ -93,7 +104,9 @@ class ParallelForSchema(BaseLoopSchema):
     max_concurrency = fields.Int()
     outputs = fields.Dict(
         keys=fields.Str(),
-        values=UnionField([OutputBindingStr, NestedField(OutputSchema)], allow_none=True),
+        values=UnionField(
+            [OutputBindingStr, NestedField(OutputSchema)], allow_none=True
+        ),
     )
 
     @pre_load
@@ -109,8 +122,12 @@ class ParallelForSchema(BaseLoopSchema):
         return data
 
     @pre_dump
-    def convert_control_flow_body_to_binding_str(self, data, **kwargs):  # pylint: disable= unused-argument
-        return super(ParallelForSchema, self).convert_control_flow_body_to_binding_str(data, **kwargs)
+    def convert_control_flow_body_to_binding_str(
+        self, data, **kwargs
+    ):  # pylint: disable= unused-argument
+        return super(ParallelForSchema, self).convert_control_flow_body_to_binding_str(
+            data, **kwargs
+        )
 
     @pre_dump
     def resolve_outputs(self, job, **kwargs):  # pylint: disable=unused-argument

@@ -6,7 +6,11 @@
 
 from typing import Any, Dict, Optional
 
-from azure.ai.ml._restclient.v2022_10_01_preview.models import ComputeResource, Kubernetes, KubernetesProperties
+from azure.ai.ml._restclient.v2022_10_01_preview.models import (
+    ComputeResource,
+    Kubernetes,
+    KubernetesProperties,
+)
 from azure.ai.ml._schema.compute.kubernetes_compute import KubernetesComputeSchema
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, TYPE
 from azure.ai.ml.constants._compute import ComputeType
@@ -73,7 +77,9 @@ class KubernetesCompute(Compute):
             created_on=prop.additional_properties.get("createdOn", None),
             properties=prop.properties.as_dict() if prop.properties else None,
             namespace=prop.properties.namespace,
-            identity=IdentityConfiguration._from_compute_rest_object(rest_obj.identity) if rest_obj.identity else None,
+            identity=IdentityConfiguration._from_compute_rest_object(rest_obj.identity)
+            if rest_obj.identity
+            else None,
         )
 
     def _to_dict(self) -> Dict:
@@ -81,7 +87,9 @@ class KubernetesCompute(Compute):
         return KubernetesComputeSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
 
     @classmethod
-    def _load_from_dict(cls, data: Dict, context: Dict, **kwargs) -> "KubernetesCompute":
+    def _load_from_dict(
+        cls, data: Dict, context: Dict, **kwargs
+    ) -> "KubernetesCompute":
         if not data:
             data = {"namespace": "default"}
         if "namespace" not in data:
@@ -103,6 +111,8 @@ class KubernetesCompute(Compute):
             location=self.location,
             properties=kubernetes_comp,
             name=self.name,
-            identity=(self.identity._to_compute_rest_object() if self.identity else None),
+            identity=(
+                self.identity._to_compute_rest_object() if self.identity else None
+            ),
             tags=self.tags,
         )

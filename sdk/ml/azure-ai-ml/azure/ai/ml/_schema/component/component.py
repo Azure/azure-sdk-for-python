@@ -4,7 +4,11 @@
 
 from marshmallow import fields, post_dump, pre_dump, pre_load
 
-from azure.ai.ml._schema.component.input_output import InputPortSchema, OutputPortSchema, ParameterSchema
+from azure.ai.ml._schema.component.input_output import (
+    InputPortSchema,
+    OutputPortSchema,
+    ParameterSchema,
+)
 from azure.ai.ml._schema.core.fields import (
     ArmVersionedStr,
     ExperimentalField,
@@ -54,7 +58,9 @@ class ComponentSchema(AssetSchema):
     )
     # hide in private preview
     if is_private_preview_enabled():
-        intellectual_property = ExperimentalField(NestedField(IntellectualPropertySchema))
+        intellectual_property = ExperimentalField(
+            NestedField(IntellectualPropertySchema)
+        )
 
     def __init__(self, *args, **kwargs):
         # Remove schema_ignored to enable serialize and deserialize schema.
@@ -68,7 +74,9 @@ class ComponentSchema(AssetSchema):
         return data
 
     @pre_dump
-    def add_private_fields_to_dump(self, data, **kwargs):  # pylint: disable=unused-argument
+    def add_private_fields_to_dump(
+        self, data, **kwargs
+    ):  # pylint: disable=unused-argument
         # The ipp field is set on the component object as "_intellectual_property".
         # We need to set it as "intellectual_property" before dumping so that Marshmallow
         # can pick up the field correctly on dump and show it back to the user.
@@ -78,7 +86,9 @@ class ComponentSchema(AssetSchema):
         return data
 
     @post_dump
-    def convert_input_value_to_str(self, data, **kwargs):  # pylint:disable=unused-argument
+    def convert_input_value_to_str(
+        self, data, **kwargs
+    ):  # pylint:disable=unused-argument
         if isinstance(data, dict) and data.get("inputs", None):
             input_dict = data["inputs"]
             for input_value in input_dict.values():

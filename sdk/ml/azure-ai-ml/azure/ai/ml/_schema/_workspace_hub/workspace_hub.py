@@ -12,7 +12,9 @@ from azure.ai.ml._schema.workspace.identity import IdentitySchema
 from azure.ai.ml._utils.utils import snake_to_pascal
 from azure.ai.ml.constants._common import PublicNetworkAccess
 from azure.ai.ml._schema.workspace.networking import ManagedNetworkSchema
-from azure.ai.ml._schema._workspace_hub.workspace_hub_config import WorkspaceHubConfigSchema
+from azure.ai.ml._schema._workspace_hub.workspace_hub_config import (
+    WorkspaceHubConfigSchema,
+)
 
 from azure.ai.ml._schema import ExperimentalField
 from azure.ai.ml._utils._experimental import experimental

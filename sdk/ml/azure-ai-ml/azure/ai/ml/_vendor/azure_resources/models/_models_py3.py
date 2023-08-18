@@ -456,7 +456,9 @@ class DeploymentOperation(msrest.serialization.Model):
         "properties": {"key": "properties", "type": "DeploymentOperationProperties"},
     }
 
-    def __init__(self, *, properties: Optional["DeploymentOperationProperties"] = None, **kwargs):
+    def __init__(
+        self, *, properties: Optional["DeploymentOperationProperties"] = None, **kwargs
+    ):
         super(DeploymentOperation, self).__init__(**kwargs)
         self.id = None
         self.operation_id = None
@@ -555,7 +557,9 @@ class DeploymentOperationsListResult(msrest.serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["DeploymentOperation"]] = None, **kwargs):
+    def __init__(
+        self, *, value: Optional[List["DeploymentOperation"]] = None, **kwargs
+    ):
         super(DeploymentOperationsListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = None
@@ -607,7 +611,10 @@ class DeploymentProperties(msrest.serialization.Model):
         "parameters_link": {"key": "parametersLink", "type": "ParametersLink"},
         "mode": {"key": "mode", "type": "str"},
         "debug_setting": {"key": "debugSetting", "type": "DebugSetting"},
-        "on_error_deployment": {"key": "onErrorDeployment", "type": "OnErrorDeployment"},
+        "on_error_deployment": {
+            "key": "onErrorDeployment",
+            "type": "OnErrorDeployment",
+        },
     }
 
     def __init__(
@@ -713,10 +720,16 @@ class DeploymentPropertiesExtended(msrest.serialization.Model):
         "parameters_link": {"key": "parametersLink", "type": "ParametersLink"},
         "mode": {"key": "mode", "type": "str"},
         "debug_setting": {"key": "debugSetting", "type": "DebugSetting"},
-        "on_error_deployment": {"key": "onErrorDeployment", "type": "OnErrorDeploymentExtended"},
+        "on_error_deployment": {
+            "key": "onErrorDeployment",
+            "type": "OnErrorDeploymentExtended",
+        },
         "template_hash": {"key": "templateHash", "type": "str"},
         "output_resources": {"key": "outputResources", "type": "[ResourceReference]"},
-        "validated_resources": {"key": "validatedResources", "type": "[ResourceReference]"},
+        "validated_resources": {
+            "key": "validatedResources",
+            "type": "[ResourceReference]",
+        },
         "error": {"key": "error", "type": "ErrorResponse"},
     }
 
@@ -762,7 +775,9 @@ class DeploymentValidateResult(msrest.serialization.Model):
         "properties": {"key": "properties", "type": "DeploymentPropertiesExtended"},
     }
 
-    def __init__(self, *, properties: Optional["DeploymentPropertiesExtended"] = None, **kwargs):
+    def __init__(
+        self, *, properties: Optional["DeploymentPropertiesExtended"] = None, **kwargs
+    ):
         super(DeploymentValidateResult, self).__init__(**kwargs)
         self.error = None
         self.properties = properties
@@ -788,7 +803,13 @@ class DeploymentWhatIf(msrest.serialization.Model):
         "properties": {"key": "properties", "type": "DeploymentWhatIfProperties"},
     }
 
-    def __init__(self, *, properties: "DeploymentWhatIfProperties", location: Optional[str] = None, **kwargs):
+    def __init__(
+        self,
+        *,
+        properties: "DeploymentWhatIfProperties",
+        location: Optional[str] = None,
+        **kwargs
+    ):
         super(DeploymentWhatIf, self).__init__(**kwargs)
         self.location = location
         self.properties = properties
@@ -843,8 +864,14 @@ class DeploymentWhatIfProperties(DeploymentProperties):
         "parameters_link": {"key": "parametersLink", "type": "ParametersLink"},
         "mode": {"key": "mode", "type": "str"},
         "debug_setting": {"key": "debugSetting", "type": "DebugSetting"},
-        "on_error_deployment": {"key": "onErrorDeployment", "type": "OnErrorDeployment"},
-        "what_if_settings": {"key": "whatIfSettings", "type": "DeploymentWhatIfSettings"},
+        "on_error_deployment": {
+            "key": "onErrorDeployment",
+            "type": "OnErrorDeployment",
+        },
+        "what_if_settings": {
+            "key": "whatIfSettings",
+            "type": "DeploymentWhatIfSettings",
+        },
     }
 
     def __init__(
@@ -886,7 +913,12 @@ class DeploymentWhatIfSettings(msrest.serialization.Model):
         "result_format": {"key": "resultFormat", "type": "str"},
     }
 
-    def __init__(self, *, result_format: Optional[Union[str, "WhatIfResultFormat"]] = None, **kwargs):
+    def __init__(
+        self,
+        *,
+        result_format: Optional[Union[str, "WhatIfResultFormat"]] = None,
+        **kwargs
+    ):
         super(DeploymentWhatIfSettings, self).__init__(**kwargs)
         self.result_format = result_format
 
@@ -978,7 +1010,13 @@ class ExportTemplateRequest(msrest.serialization.Model):
         "options": {"key": "options", "type": "str"},
     }
 
-    def __init__(self, *, resources: Optional[List[str]] = None, options: Optional[str] = None, **kwargs):
+    def __init__(
+        self,
+        *,
+        resources: Optional[List[str]] = None,
+        options: Optional[str] = None,
+        **kwargs
+    ):
         super(ExportTemplateRequest, self).__init__(**kwargs)
         self.resources = resources
         self.options = options
@@ -1015,7 +1053,13 @@ class Resource(msrest.serialization.Model):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, *, location: Optional[str] = None, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(
+        self,
+        *,
+        location: Optional[str] = None,
+        tags: Optional[Dict[str, str]] = None,
+        **kwargs
+    ):
         super(Resource, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -1265,14 +1309,19 @@ class Identity(msrest.serialization.Model):
         "principal_id": {"key": "principalId", "type": "str"},
         "tenant_id": {"key": "tenantId", "type": "str"},
         "type": {"key": "type", "type": "str"},
-        "user_assigned_identities": {"key": "userAssignedIdentities", "type": "{IdentityUserAssignedIdentitiesValue}"},
+        "user_assigned_identities": {
+            "key": "userAssignedIdentities",
+            "type": "{IdentityUserAssignedIdentitiesValue}",
+        },
     }
 
     def __init__(
         self,
         *,
         type: Optional[Union[str, "ResourceIdentityType"]] = None,
-        user_assigned_identities: Optional[Dict[str, "IdentityUserAssignedIdentitiesValue"]] = None,
+        user_assigned_identities: Optional[
+            Dict[str, "IdentityUserAssignedIdentitiesValue"]
+        ] = None,
         **kwargs
     ):
         super(Identity, self).__init__(**kwargs)
@@ -1387,7 +1436,13 @@ class Operation(msrest.serialization.Model):
         "display": {"key": "display", "type": "OperationDisplay"},
     }
 
-    def __init__(self, *, name: Optional[str] = None, display: Optional["OperationDisplay"] = None, **kwargs):
+    def __init__(
+        self,
+        *,
+        name: Optional[str] = None,
+        display: Optional["OperationDisplay"] = None,
+        **kwargs
+    ):
         super(Operation, self).__init__(**kwargs)
         self.name = name
         self.display = display
@@ -1443,7 +1498,13 @@ class OperationListResult(msrest.serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["Operation"]] = None, next_link: Optional[str] = None, **kwargs):
+    def __init__(
+        self,
+        *,
+        value: Optional[List["Operation"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs
+    ):
         super(OperationListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -1719,7 +1780,13 @@ class ResourceGroupExportResult(msrest.serialization.Model):
         "error": {"key": "error", "type": "ErrorResponse"},
     }
 
-    def __init__(self, *, template: Optional[object] = None, error: Optional["ErrorResponse"] = None, **kwargs):
+    def __init__(
+        self,
+        *,
+        template: Optional[object] = None,
+        error: Optional["ErrorResponse"] = None,
+        **kwargs
+    ):
         super(ResourceGroupExportResult, self).__init__(**kwargs)
         self.template = template
         self.error = error
@@ -1739,7 +1806,13 @@ class ResourceGroupFilter(msrest.serialization.Model):
         "tag_value": {"key": "tagValue", "type": "str"},
     }
 
-    def __init__(self, *, tag_name: Optional[str] = None, tag_value: Optional[str] = None, **kwargs):
+    def __init__(
+        self,
+        *,
+        tag_name: Optional[str] = None,
+        tag_value: Optional[str] = None,
+        **kwargs
+    ):
         super(ResourceGroupFilter, self).__init__(**kwargs)
         self.tag_name = tag_name
         self.tag_value = tag_value
@@ -1849,7 +1922,9 @@ class ResourceListResult(msrest.serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["GenericResourceExpanded"]] = None, **kwargs):
+    def __init__(
+        self, *, value: Optional[List["GenericResourceExpanded"]] = None, **kwargs
+    ):
         super(ResourceListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = None
@@ -1932,7 +2007,13 @@ class ResourcesMoveInfo(msrest.serialization.Model):
         "target_resource_group": {"key": "targetResourceGroup", "type": "str"},
     }
 
-    def __init__(self, *, resources: Optional[List[str]] = None, target_resource_group: Optional[str] = None, **kwargs):
+    def __init__(
+        self,
+        *,
+        resources: Optional[List[str]] = None,
+        target_resource_group: Optional[str] = None,
+        **kwargs
+    ):
         super(ResourcesMoveInfo, self).__init__(**kwargs)
         self.resources = resources
         self.target_resource_group = target_resource_group
@@ -1963,7 +2044,12 @@ class ScopedDeployment(msrest.serialization.Model):
     }
 
     def __init__(
-        self, *, location: str, properties: "DeploymentProperties", tags: Optional[Dict[str, str]] = None, **kwargs
+        self,
+        *,
+        location: str,
+        properties: "DeploymentProperties",
+        tags: Optional[Dict[str, str]] = None,
+        **kwargs
     ):
         super(ScopedDeployment, self).__init__(**kwargs)
         self.location = location
@@ -1992,7 +2078,9 @@ class ScopedDeploymentWhatIf(msrest.serialization.Model):
         "properties": {"key": "properties", "type": "DeploymentWhatIfProperties"},
     }
 
-    def __init__(self, *, location: str, properties: "DeploymentWhatIfProperties", **kwargs):
+    def __init__(
+        self, *, location: str, properties: "DeploymentWhatIfProperties", **kwargs
+    ):
         super(ScopedDeploymentWhatIf, self).__init__(**kwargs)
         self.location = location
         self.properties = properties
@@ -2058,7 +2146,13 @@ class StatusMessage(msrest.serialization.Model):
         "error": {"key": "error", "type": "ErrorResponse"},
     }
 
-    def __init__(self, *, status: Optional[str] = None, error: Optional["ErrorResponse"] = None, **kwargs):
+    def __init__(
+        self,
+        *,
+        status: Optional[str] = None,
+        error: Optional["ErrorResponse"] = None,
+        **kwargs
+    ):
         super(StatusMessage, self).__init__(**kwargs)
         self.status = status
         self.error = error
@@ -2094,7 +2188,9 @@ class TagCount(msrest.serialization.Model):
         "value": {"key": "value", "type": "int"},
     }
 
-    def __init__(self, *, type: Optional[str] = None, value: Optional[int] = None, **kwargs):
+    def __init__(
+        self, *, type: Optional[str] = None, value: Optional[int] = None, **kwargs
+    ):
         super(TagCount, self).__init__(**kwargs)
         self.type = type
         self.value = value
@@ -2273,7 +2369,13 @@ class TagValue(msrest.serialization.Model):
         "count": {"key": "count", "type": "TagCount"},
     }
 
-    def __init__(self, *, tag_value: Optional[str] = None, count: Optional["TagCount"] = None, **kwargs):
+    def __init__(
+        self,
+        *,
+        tag_value: Optional[str] = None,
+        count: Optional["TagCount"] = None,
+        **kwargs
+    ):
         super(TagValue, self).__init__(**kwargs)
         self.id = None
         self.tag_value = tag_value
@@ -2325,7 +2427,13 @@ class TemplateHashResult(msrest.serialization.Model):
         "template_hash": {"key": "templateHash", "type": "str"},
     }
 
-    def __init__(self, *, minified_template: Optional[str] = None, template_hash: Optional[str] = None, **kwargs):
+    def __init__(
+        self,
+        *,
+        minified_template: Optional[str] = None,
+        template_hash: Optional[str] = None,
+        **kwargs
+    ):
         super(TemplateHashResult, self).__init__(**kwargs)
         self.minified_template = minified_template
         self.template_hash = template_hash

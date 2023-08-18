@@ -58,10 +58,14 @@ def import_job(
     """
     inputs = source._to_job_inputs() if source else kwargs.pop("inputs")
     outputs = {"output": output} if output else kwargs.pop("outputs")
-    component_inputs, job_inputs = _parse_inputs_outputs(inputs, parse_func=_parse_input)
+    component_inputs, job_inputs = _parse_inputs_outputs(
+        inputs, parse_func=_parse_input
+    )
     # job inputs can not be None
     job_inputs = {k: v for k, v in job_inputs.items() if v is not None}
-    component_outputs, job_outputs = _parse_inputs_outputs(outputs, parse_func=_parse_output)
+    component_outputs, job_outputs = _parse_inputs_outputs(
+        outputs, parse_func=_parse_output
+    )
 
     component = kwargs.pop("component", None)
 

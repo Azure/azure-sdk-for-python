@@ -6,8 +6,15 @@ from typing import Dict, List, Tuple, Type, Union
 
 from azure.ai.ml._restclient.v2023_04_01_preview.models import InputDeliveryMode
 from azure.ai.ml._restclient.v2023_04_01_preview.models import JobInput as RestJobInput
-from azure.ai.ml._restclient.v2023_04_01_preview.models import JobOutput as RestJobOutput
-from azure.ai.ml._restclient.v2023_04_01_preview.models import Mpi, PyTorch, TensorFlow, Ray
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    JobOutput as RestJobOutput,
+)
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    Mpi,
+    PyTorch,
+    TensorFlow,
+    Ray,
+)
 from azure.ai.ml.constants._component import ComponentJobConstants
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job._input_output_helpers import (
@@ -55,9 +62,13 @@ def process_sdk_component_job_io(
                 # add mode to literal value for binding input
                 if mode:
                     if isinstance(io_value, Input):
-                        io_bindings[io_name].update({"mode": INPUT_MOUNT_MAPPING_TO_REST[mode]})
+                        io_bindings[io_name].update(
+                            {"mode": INPUT_MOUNT_MAPPING_TO_REST[mode]}
+                        )
                     else:
-                        io_bindings[io_name].update({"mode": OUTPUT_MOUNT_MAPPING_TO_REST[mode]})
+                        io_bindings[io_name].update(
+                            {"mode": OUTPUT_MOUNT_MAPPING_TO_REST[mode]}
+                        )
                 if name or version:
                     assert isinstance(io_value, Output)
                     if name:
@@ -73,7 +84,9 @@ def process_sdk_component_job_io(
                 msg = "{} has changed to {}, please change to use new format."
                 raise ValidationException(
                     message=msg.format(path, new_format),
-                    no_personal_data_message=msg.format("[io_value]", "[io_value_new_format]"),
+                    no_personal_data_message=msg.format(
+                        "[io_value]", "[io_value_new_format]"
+                    ),
                     target=ErrorTarget.PIPELINE,
                     error_category=ErrorCategory.USER_ERROR,
                 )
@@ -128,9 +141,13 @@ def from_dict_to_rest_io(
                         io_mode = DIRTY_MODE_MAPPING[io_mode]
                         val["mode"] = io_mode
                     if io_mode in OUTPUT_MOUNT_MAPPING_FROM_REST:
-                        io_bindings[key].update({"mode": OUTPUT_MOUNT_MAPPING_FROM_REST[io_mode]})
+                        io_bindings[key].update(
+                            {"mode": OUTPUT_MOUNT_MAPPING_FROM_REST[io_mode]}
+                        )
                     else:
-                        io_bindings[key].update({"mode": INPUT_MOUNT_MAPPING_FROM_REST[io_mode]})
+                        io_bindings[key].update(
+                            {"mode": INPUT_MOUNT_MAPPING_FROM_REST[io_mode]}
+                        )
                 # add name and version for binding input
                 if io_name or io_version:
                     assert rest_object_class.__name__ == "JobOutput"
@@ -175,7 +192,9 @@ def from_dict_to_rest_distribution(
         return TensorFlow(**distribution_dict)
     if target_type == "ray":
         return Ray(**distribution_dict)
-    msg = "Distribution type must be pytorch, mpi, tensorflow or ray: {}".format(target_type)
+    msg = "Distribution type must be pytorch, mpi, tensorflow or ray: {}".format(
+        target_type
+    )
     raise ValidationException(
         message=msg,
         no_personal_data_message=msg,

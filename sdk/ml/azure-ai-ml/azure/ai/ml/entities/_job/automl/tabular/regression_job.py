@@ -6,24 +6,42 @@
 
 from typing import Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import AutoMLJob as RestAutoMLJob
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    AutoMLJob as RestAutoMLJob,
+)
 from azure.ai.ml._restclient.v2023_04_01_preview.models import JobBase
-from azure.ai.ml._restclient.v2023_04_01_preview.models import Regression as RestRegression
-from azure.ai.ml._restclient.v2023_04_01_preview.models import RegressionPrimaryMetrics, TaskType
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    Regression as RestRegression,
+)
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    RegressionPrimaryMetrics,
+    TaskType,
+)
 from azure.ai.ml._utils.utils import camel_to_snake, is_data_binding_expression
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 from azure.ai.ml.constants._job.automl import AutoMLConstants
 from azure.ai.ml.entities._credentials import _BaseJobIdentityConfiguration
-from azure.ai.ml.entities._job._input_output_helpers import from_rest_data_outputs, to_rest_data_outputs
-from azure.ai.ml.entities._job.automl.tabular import AutoMLTabular, TabularFeaturizationSettings, TabularLimitSettings
-from azure.ai.ml.entities._job.automl.training_settings import RegressionTrainingSettings
+from azure.ai.ml.entities._job._input_output_helpers import (
+    from_rest_data_outputs,
+    to_rest_data_outputs,
+)
+from azure.ai.ml.entities._job.automl.tabular import (
+    AutoMLTabular,
+    TabularFeaturizationSettings,
+    TabularLimitSettings,
+)
+from azure.ai.ml.entities._job.automl.training_settings import (
+    RegressionTrainingSettings,
+)
 from azure.ai.ml.entities._util import load_from_dict
 
 
 class RegressionJob(AutoMLTabular):
     """Configuration for AutoML Regression Job."""
 
-    _DEFAULT_PRIMARY_METRIC = RegressionPrimaryMetrics.NORMALIZED_ROOT_MEAN_SQUARED_ERROR
+    _DEFAULT_PRIMARY_METRIC = (
+        RegressionPrimaryMetrics.NORMALIZED_ROOT_MEAN_SQUARED_ERROR
+    )
 
     def __init__(
         self,
@@ -84,9 +102,13 @@ class RegressionJob(AutoMLTabular):
             n_cross_validations=self.n_cross_validations,
             test_data=self.test_data,
             test_data_size=self.test_data_size,
-            featurization_settings=self._featurization._to_rest_object() if self._featurization else None,
+            featurization_settings=self._featurization._to_rest_object()
+            if self._featurization
+            else None,
             limit_settings=self._limits._to_rest_object() if self._limits else None,
-            training_settings=self._training._to_rest_object() if self._training else None,
+            training_settings=self._training._to_rest_object()
+            if self._training
+            else None,
             primary_metric=self.primary_metric,
             log_verbosity=self.log_verbosity,
         )
@@ -133,7 +155,9 @@ class RegressionJob(AutoMLTabular):
             "compute": properties.compute_id,
             "outputs": from_rest_data_outputs(properties.outputs),
             "resources": properties.resources,
-            "identity": _BaseJobIdentityConfiguration._from_rest_object(properties.identity)
+            "identity": _BaseJobIdentityConfiguration._from_rest_object(
+                properties.identity
+            )
             if properties.identity
             else None,
             "queue_settings": properties.queue_settings,
@@ -149,13 +173,17 @@ class RegressionJob(AutoMLTabular):
             n_cross_validations=task_details.n_cross_validations,
             test_data=task_details.test_data,
             test_data_size=task_details.test_data_size,
-            featurization=TabularFeaturizationSettings._from_rest_object(task_details.featurization_settings)
+            featurization=TabularFeaturizationSettings._from_rest_object(
+                task_details.featurization_settings
+            )
             if task_details.featurization_settings
             else None,
             limits=TabularLimitSettings._from_rest_object(task_details.limit_settings)
             if task_details.limit_settings
             else None,
-            training=RegressionTrainingSettings._from_rest_object(task_details.training_settings)
+            training=RegressionTrainingSettings._from_rest_object(
+                task_details.training_settings
+            )
             if task_details.training_settings
             else None,
             primary_metric=task_details.primary_metric,
@@ -176,13 +204,19 @@ class RegressionJob(AutoMLTabular):
         additional_message: str,
         **kwargs,
     ) -> "RegressionJob":
-        from azure.ai.ml._schema.automl.table_vertical.regression import AutoMLRegressionSchema
+        from azure.ai.ml._schema.automl.table_vertical.regression import (
+            AutoMLRegressionSchema,
+        )
         from azure.ai.ml._schema.pipeline.automl_node import AutoMLRegressionNodeSchema
 
         if kwargs.pop("inside_pipeline", False):
-            loaded_data = load_from_dict(AutoMLRegressionNodeSchema, data, context, additional_message, **kwargs)
+            loaded_data = load_from_dict(
+                AutoMLRegressionNodeSchema, data, context, additional_message, **kwargs
+            )
         else:
-            loaded_data = load_from_dict(AutoMLRegressionSchema, data, context, additional_message, **kwargs)
+            loaded_data = load_from_dict(
+                AutoMLRegressionSchema, data, context, additional_message, **kwargs
+            )
         job_instance = cls._create_instance_from_schema_dict(loaded_data)
         return job_instance
 
@@ -204,14 +238,22 @@ class RegressionJob(AutoMLTabular):
         job.set_data(**data_settings)
         return job
 
-    def _to_dict(self, inside_pipeline=False) -> Dict:  # pylint: disable=arguments-differ
-        from azure.ai.ml._schema.automl.table_vertical.regression import AutoMLRegressionSchema
+    def _to_dict(
+        self, inside_pipeline=False
+    ) -> Dict:  # pylint: disable=arguments-differ
+        from azure.ai.ml._schema.automl.table_vertical.regression import (
+            AutoMLRegressionSchema,
+        )
         from azure.ai.ml._schema.pipeline.automl_node import AutoMLRegressionNodeSchema
 
         if inside_pipeline:
-            schema_dict = AutoMLRegressionNodeSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+            schema_dict = AutoMLRegressionNodeSchema(
+                context={BASE_PATH_CONTEXT_KEY: "./"}
+            ).dump(self)
         else:
-            schema_dict = AutoMLRegressionSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+            schema_dict = AutoMLRegressionSchema(
+                context={BASE_PATH_CONTEXT_KEY: "./"}
+            ).dump(self)
 
         return schema_dict
 

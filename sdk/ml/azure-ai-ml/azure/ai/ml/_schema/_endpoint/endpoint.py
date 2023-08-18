@@ -18,10 +18,17 @@ module_logger = logging.getLogger(__name__)
 
 class EndpointSchema(PathAwareSchema):
     id = fields.Str()
-    name = fields.Str(required=True, validate=validate.Regexp(EndpointConfigurations.NAME_REGEX_PATTERN))
-    description = fields.Str(metadata={"description": "Description of the inference endpoint."})
+    name = fields.Str(
+        required=True,
+        validate=validate.Regexp(EndpointConfigurations.NAME_REGEX_PATTERN),
+    )
+    description = fields.Str(
+        metadata={"description": "Description of the inference endpoint."}
+    )
     tags = fields.Dict()
-    provisioning_state = fields.Str(metadata={"description": "Provisioning state for the endpoint."})
+    provisioning_state = fields.Str(
+        metadata={"description": "Provisioning state for the endpoint."}
+    )
     properties = fields.Dict()
     auth_mode = StringTransformedEnum(
         allowed_values=[
@@ -35,7 +42,9 @@ class EndpointSchema(PathAwareSchema):
             aad_token is only valid for batch endpoint."""
         },
     )
-    scoring_uri = fields.Str(metadata={"description": "The endpoint uri that can be used for scoring"})
+    scoring_uri = fields.Str(
+        metadata={"description": "The endpoint uri that can be used for scoring"}
+    )
     location = fields.Str()
     openapi_uri = fields.Str(metadata={"description": "Endpoint Open API URI."})
     identity = NestedField(IdentitySchema)

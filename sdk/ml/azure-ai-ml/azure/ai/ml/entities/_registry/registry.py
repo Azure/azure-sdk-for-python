@@ -8,7 +8,9 @@ from os import PathLike
 from pathlib import Path
 from typing import IO, AnyStr, Dict, List, Optional, Union
 
-from azure.ai.ml._restclient.v2022_10_01_preview.models import ManagedServiceIdentity as RestManagedServiceIdentity
+from azure.ai.ml._restclient.v2022_10_01_preview.models import (
+    ManagedServiceIdentity as RestManagedServiceIdentity,
+)
 from azure.ai.ml._restclient.v2022_10_01_preview.models import (
     ManagedServiceIdentityType as RestManagedServiceIdentityType,
 )
@@ -114,7 +116,10 @@ class Registry(Resource):
         # since the use cases for variable/multiple ACRs are extremely
         # limited, and would probably just confuse most users.
         if self.replication_locations and len(self.replication_locations) > 0:
-            if self.replication_locations[0].acr_config and len(self.replication_locations[0].acr_config) > 0:
+            if (
+                self.replication_locations[0].acr_config
+                and len(self.replication_locations[0].acr_config) > 0
+            ):
                 self.container_registry = self.replication_locations[0].acr_config[0]
 
         return schema.dump(self)
@@ -154,7 +159,9 @@ class Registry(Resource):
                 for details in real_registry.region_details  # pylint: disable=protected-access
             ]
         identity = None
-        if rest_obj.identity and isinstance(rest_obj.identity, RestManagedServiceIdentity):
+        if rest_obj.identity and isinstance(
+            rest_obj.identity, RestManagedServiceIdentity
+        ):
             identity = IdentityConfiguration._from_rest_object(rest_obj.identity)
         return Registry(
             name=rest_obj.name,
@@ -164,7 +171,9 @@ class Registry(Resource):
             location=rest_obj.location,
             public_network_access=real_registry.public_network_access,
             discovery_url=real_registry.discovery_url,
-            intellectual_property=IntellectualProperty(publisher=real_registry.intellectual_property_publisher)
+            intellectual_property=IntellectualProperty(
+                publisher=real_registry.intellectual_property_publisher
+            )
             if real_registry.intellectual_property_publisher
             else None,
             managed_resource_group=real_registry.managed_resource_group,
@@ -191,7 +200,10 @@ class Registry(Resource):
         for region_detail in input[REPLICATION_LOCATIONS]:
             # Apply container_registry as acr_config of each region detail
             if global_acr_exists:
-                if not hasattr(region_detail, "acr_details") or len(region_detail.acr_details) == 0:
+                if (
+                    not hasattr(region_detail, "acr_details")
+                    or len(region_detail.acr_details) == 0
+                ):
                     region_detail.acr_config = [acr_input]
 
     def _to_rest_object(self) -> RestRegistry:
@@ -200,10 +212,14 @@ class Registry(Resource):
         :return: Rest registry.
         :rtype: RestRegistry
         """
-        identity = RestManagedServiceIdentity(type=RestManagedServiceIdentityType.SYSTEM_ASSIGNED)
+        identity = RestManagedServiceIdentity(
+            type=RestManagedServiceIdentityType.SYSTEM_ASSIGNED
+        )
         replication_locations = []
         if self.replication_locations:
-            replication_locations = [details._to_rest_object() for details in self.replication_locations]
+            replication_locations = [
+                details._to_rest_object() for details in self.replication_locations
+            ]
         # Notes about this construction.
         # RestRegistry.properties.tags: this property exists due to swagger inheritance
         # issues, don't actually use it, use top level RestRegistry.tags instead

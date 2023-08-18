@@ -7,7 +7,10 @@ from enum import Enum
 from pathlib import Path
 from typing import Iterable, List, Optional, Union
 
-from azure.ai.ml._utils._arm_id_utils import is_ARM_id_for_resource, is_registry_id_for_resource
+from azure.ai.ml._utils._arm_id_utils import (
+    is_ARM_id_for_resource,
+    is_registry_id_for_resource,
+)
 from azure.ai.ml._utils._asset_utils import IgnoreFile, get_ignore_file
 from azure.ai.ml._utils.utils import is_private_preview_enabled
 from azure.ai.ml.constants._common import AzureMLResourceType
@@ -86,7 +89,10 @@ class ComponentIgnoreFile(IgnoreFile):
         :return: True if the file should be excluded, False otherwise.
         :rtype: bool
         """
-        if self._additional_includes_file_name and self._get_rel_path(file_path) == self._additional_includes_file_name:
+        if (
+            self._additional_includes_file_name
+            and self._get_rel_path(file_path) == self._additional_includes_file_name
+        ):
             return True
         for ignore_file in self._extra_ignore_list:
             if ignore_file.is_file_excluded(file_path):
@@ -103,7 +109,9 @@ class ComponentIgnoreFile(IgnoreFile):
         """
         if other_path.is_file():
             return self
-        return ComponentIgnoreFile(other_path, extra_ignore_list=self._extra_ignore_list + [self])
+        return ComponentIgnoreFile(
+            other_path, extra_ignore_list=self._extra_ignore_list + [self]
+        )
 
     def _get_ignore_list(self) -> List[str]:
         """Retrieves the list of ignores from ignore file
@@ -115,7 +123,10 @@ class ComponentIgnoreFile(IgnoreFile):
         """
         if not super(ComponentIgnoreFile, self).exists():
             return self._COMPONENT_CODE_IGNORES
-        return super(ComponentIgnoreFile, self)._get_ignore_list() + self._COMPONENT_CODE_IGNORES
+        return (
+            super(ComponentIgnoreFile, self)._get_ignore_list()
+            + self._COMPONENT_CODE_IGNORES
+        )
 
 
 class CodeType(Enum):
@@ -139,9 +150,9 @@ def _get_code_type(origin_code_value) -> CodeType:
         # So origin_code_value should never be a Code object, or an exception will be raised
         # in validation stage.
         return CodeType.UNKNOWN
-    if is_ARM_id_for_resource(origin_code_value, AzureMLResourceType.CODE) or is_registry_id_for_resource(
-        origin_code_value
-    ):
+    if is_ARM_id_for_resource(
+        origin_code_value, AzureMLResourceType.CODE
+    ) or is_registry_id_for_resource(origin_code_value):
         return CodeType.ARM_ID
     if origin_code_value.startswith("git+"):
         return CodeType.GIT
@@ -264,7 +275,11 @@ class ComponentCodeMixin:
             yield None
         else:
             base_path = self._get_base_path_for_code()
-            absolute_path = origin_code_value if os.path.isabs(origin_code_value) else base_path / origin_code_value
+            absolute_path = (
+                origin_code_value
+                if os.path.isabs(origin_code_value)
+                else base_path / origin_code_value
+            )
 
             yield Code(
                 base_path=base_path,

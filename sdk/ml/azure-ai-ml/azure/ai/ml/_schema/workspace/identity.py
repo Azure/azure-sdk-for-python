@@ -11,7 +11,10 @@ from azure.ai.ml._schema.core.fields import NestedField, StringTransformedEnum
 from azure.ai.ml._schema.core.schema_meta import PatchedSchemaMeta
 from azure.ai.ml._utils.utils import camel_to_snake, snake_to_camel
 from azure.ai.ml.constants._workspace import ManagedServiceIdentityType
-from azure.ai.ml.entities._credentials import IdentityConfiguration, ManagedIdentityConfiguration
+from azure.ai.ml.entities._credentials import (
+    IdentityConfiguration,
+    ManagedIdentityConfiguration,
+)
 
 
 class UserAssignedIdentitySchema(metaclass=PatchedSchemaMeta):
@@ -38,19 +41,25 @@ class IdentitySchema(metaclass=PatchedSchemaMeta):
     principal_id = fields.Str(required=False)
     tenant_id = fields.Str(required=False)
     user_assigned_identities = fields.Dict(
-        keys=fields.Str(required=True), values=NestedField(UserAssignedIdentitySchema, allow_none=True), allow_none=True
+        keys=fields.Str(required=True),
+        values=NestedField(UserAssignedIdentitySchema, allow_none=True),
+        allow_none=True,
     )
 
     @pre_dump
     def predump(self, data, **kwargs):
         if data and isinstance(data, IdentityConfiguration):
-            data.user_assigned_identities = self.uai_list2dict(data.user_assigned_identities)
+            data.user_assigned_identities = self.uai_list2dict(
+                data.user_assigned_identities
+            )
         return data
 
     @post_load
     def make(self, data, **kwargs):
         if data.get("user_assigned_identities", False):
-            data["user_assigned_identities"] = self.uai_dict2list(data.pop("user_assigned_identities"))
+            data["user_assigned_identities"] = self.uai_dict2list(
+                data.pop("user_assigned_identities")
+            )
         data["type"] = snake_to_camel(data.pop("type"))
         return IdentityConfiguration(**data)
 
@@ -61,7 +70,11 @@ class IdentitySchema(metaclass=PatchedSchemaMeta):
                 continue
             c_id = meta.client_id
             p_id = meta.principal_id
-            res.append(ManagedIdentityConfiguration(resource_id=resource_id, client_id=c_id, principal_id=p_id))
+            res.append(
+                ManagedIdentityConfiguration(
+                    resource_id=resource_id, client_id=c_id, principal_id=p_id
+                )
+            )
         return res
 
     def uai_list2dict(self, uai_list):

@@ -26,10 +26,14 @@ from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
 from ... import models as _models
 from ..._vendor import _convert_request
-from ...operations._resource_management_asset_reference_operations import build_import_method_request_initial
+from ...operations._resource_management_asset_reference_operations import (
+    build_import_method_request_initial,
+)
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[
+    Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]
+]
 
 
 class ResourceManagementAssetReferenceOperations:
@@ -62,11 +66,19 @@ class ResourceManagementAssetReferenceOperations:
         **kwargs: Any
     ) -> Optional[Any]:
         cls = kwargs.pop("cls", None)  # type: ClsType[Optional[Any]]
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+        }
         error_map.update(kwargs.pop("error_map", {}))
 
-        api_version = kwargs.pop("api_version", "2021-10-01-dataplanepreview")  # type: str
-        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
+        api_version = kwargs.pop(
+            "api_version", "2021-10-01-dataplanepreview"
+        )  # type: str
+        content_type = kwargs.pop(
+            "content_type", "application/json"
+        )  # type: Optional[str]
 
         _json = self._serialize.body(body, "ResourceManagementAssetReferenceData")
 
@@ -82,11 +94,15 @@ class ResourceManagementAssetReferenceOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(
+            request, stream=False, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -95,8 +111,12 @@ class ResourceManagementAssetReferenceOperations:
             deserialized = self._deserialize("object", pipeline_response)
 
         if response.status_code == 202:
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+            response_headers["Location"] = self._deserialize(
+                "str", response.headers.get("Location")
+            )
+            response_headers["Retry-After"] = self._deserialize(
+                "int", response.headers.get("Retry-After")
+            )
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
@@ -147,9 +167,15 @@ class ResourceManagementAssetReferenceOperations:
         :rtype: ~azure.core.polling.AsyncLROPoller[any]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop("api_version", "2021-10-01-dataplanepreview")  # type: str
-        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
-        polling = kwargs.pop("polling", True)  # type: Union[bool, azure.core.polling.AsyncPollingMethod]
+        api_version = kwargs.pop(
+            "api_version", "2021-10-01-dataplanepreview"
+        )  # type: str
+        content_type = kwargs.pop(
+            "content_type", "application/json"
+        )  # type: Optional[str]
+        polling = kwargs.pop(
+            "polling", True
+        )  # type: Union[bool, azure.core.polling.AsyncPollingMethod]
         cls = kwargs.pop("cls", None)  # type: ClsType[Any]
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
@@ -173,7 +199,9 @@ class ResourceManagementAssetReferenceOperations:
             return deserialized
 
         if polling is True:
-            polling_method = AsyncARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
+            polling_method = AsyncARMPolling(
+                lro_delay, lro_options={"final-state-via": "location"}, **kwargs
+            )
         elif polling is False:
             polling_method = AsyncNoPolling()
         else:
@@ -186,6 +214,8 @@ class ResourceManagementAssetReferenceOperations:
                 deserialization_callback=get_long_running_output,
             )
         else:
-            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+            return AsyncLROPoller(
+                self._client, raw_result, get_long_running_output, polling_method
+            )
 
     begin_import_method.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/import"}  # type: ignore

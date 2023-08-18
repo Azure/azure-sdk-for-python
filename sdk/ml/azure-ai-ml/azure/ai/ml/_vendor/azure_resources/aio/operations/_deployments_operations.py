@@ -24,7 +24,9 @@ from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 from ... import models
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[
+    Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]
+]
 
 
 class DeploymentsOperations:
@@ -49,9 +51,15 @@ class DeploymentsOperations:
         self._deserialize = deserializer
         self._config = config
 
-    async def _delete_at_scope_initial(self, scope: str, deployment_name: str, **kwargs) -> None:
+    async def _delete_at_scope_initial(
+        self, scope: str, deployment_name: str, **kwargs
+    ) -> None:
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+        }
         error_map.update(kwargs.pop("error_map", {}))
         api_version = "2020-06-01"
         accept = "application/json"
@@ -61,25 +69,36 @@ class DeploymentsOperations:
         path_format_arguments = {
             "scope": self._serialize.url("scope", scope, "str", skip_quote=True),
             "deploymentName": self._serialize.url(
-                "deployment_name", deployment_name, "str", max_length=64, min_length=1, pattern=r"^[-\w\._\(\)]+$"
+                "deployment_name",
+                deployment_name,
+                "str",
+                max_length=64,
+                min_length=1,
+                pattern=r"^[-\w\._\(\)]+$",
             ),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
-        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
+        query_parameters["api-version"] = self._serialize.query(
+            "api_version", api_version, "str"
+        )
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters["Accept"] = self._serialize.header("accept", accept, "str")
 
         request = self._client.delete(url, query_parameters, header_parameters)
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(
+            request, stream=False, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [202, 204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
@@ -87,7 +106,9 @@ class DeploymentsOperations:
 
     _delete_at_scope_initial.metadata = {"url": "/{scope}/providers/Microsoft.Resources/deployments/{deploymentName}"}  # type: ignore
 
-    async def begin_delete_at_scope(self, scope: str, deployment_name: str, **kwargs) -> AsyncLROPoller[None]:
+    async def begin_delete_at_scope(
+        self, scope: str, deployment_name: str, **kwargs
+    ) -> AsyncLROPoller[None]:
         """Deletes a deployment from the deployment history.
 
         A template deployment that is currently running cannot be deleted. Deleting a template
@@ -118,7 +139,10 @@ class DeploymentsOperations:
         cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
         if cont_token is None:
             raw_result = await self._delete_at_scope_initial(
-                scope=scope, deployment_name=deployment_name, cls=lambda x, y, z: x, **kwargs
+                scope=scope,
+                deployment_name=deployment_name,
+                cls=lambda x, y, z: x,
+                **kwargs
             )
 
         kwargs.pop("error_map", None)
@@ -142,11 +166,15 @@ class DeploymentsOperations:
                 deserialization_callback=get_long_running_output,
             )
         else:
-            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+            return AsyncLROPoller(
+                self._client, raw_result, get_long_running_output, polling_method
+            )
 
     begin_delete_at_scope.metadata = {"url": "/{scope}/providers/Microsoft.Resources/deployments/{deploymentName}"}  # type: ignore
 
-    async def check_existence_at_scope(self, scope: str, deployment_name: str, **kwargs) -> bool:
+    async def check_existence_at_scope(
+        self, scope: str, deployment_name: str, **kwargs
+    ) -> bool:
         """Checks whether the deployment exists.
 
         :param scope: The resource scope.
@@ -159,7 +187,11 @@ class DeploymentsOperations:
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+        }
         error_map.update(kwargs.pop("error_map", {}))
         api_version = "2020-06-01"
         accept = "application/json"
@@ -169,25 +201,36 @@ class DeploymentsOperations:
         path_format_arguments = {
             "scope": self._serialize.url("scope", scope, "str", skip_quote=True),
             "deploymentName": self._serialize.url(
-                "deployment_name", deployment_name, "str", max_length=64, min_length=1, pattern=r"^[-\w\._\(\)]+$"
+                "deployment_name",
+                deployment_name,
+                "str",
+                max_length=64,
+                min_length=1,
+                pattern=r"^[-\w\._\(\)]+$",
             ),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
-        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
+        query_parameters["api-version"] = self._serialize.query(
+            "api_version", api_version, "str"
+        )
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters["Accept"] = self._serialize.header("accept", accept, "str")
 
         request = self._client.head(url, query_parameters, header_parameters)
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(
+            request, stream=False, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [204, 404]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
@@ -198,10 +241,18 @@ class DeploymentsOperations:
     check_existence_at_scope.metadata = {"url": "/{scope}/providers/Microsoft.Resources/deployments/{deploymentName}"}  # type: ignore
 
     async def _create_or_update_at_scope_initial(
-        self, scope: str, deployment_name: str, parameters: "models.Deployment", **kwargs
+        self,
+        scope: str,
+        deployment_name: str,
+        parameters: "models.Deployment",
+        **kwargs
     ) -> "models.DeploymentExtended":
         cls = kwargs.pop("cls", None)  # type: ClsType["models.DeploymentExtended"]
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+        }
         error_map.update(kwargs.pop("error_map", {}))
         api_version = "2020-06-01"
         content_type = kwargs.pop("content_type", "application/json")
@@ -212,29 +263,44 @@ class DeploymentsOperations:
         path_format_arguments = {
             "scope": self._serialize.url("scope", scope, "str", skip_quote=True),
             "deploymentName": self._serialize.url(
-                "deployment_name", deployment_name, "str", max_length=64, min_length=1, pattern=r"^[-\w\._\(\)]+$"
+                "deployment_name",
+                deployment_name,
+                "str",
+                max_length=64,
+                min_length=1,
+                pattern=r"^[-\w\._\(\)]+$",
             ),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
-        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
+        query_parameters["api-version"] = self._serialize.query(
+            "api_version", api_version, "str"
+        )
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters["Content-Type"] = self._serialize.header("content_type", content_type, "str")
+        header_parameters["Content-Type"] = self._serialize.header(
+            "content_type", content_type, "str"
+        )
         header_parameters["Accept"] = self._serialize.header("accept", accept, "str")
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, "Deployment")
         body_content_kwargs["content"] = body_content
-        request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        request = self._client.put(
+            url, query_parameters, header_parameters, **body_content_kwargs
+        )
+        pipeline_response = await self._client._pipeline.run(
+            request, stream=False, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 201]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -251,7 +317,11 @@ class DeploymentsOperations:
     _create_or_update_at_scope_initial.metadata = {"url": "/{scope}/providers/Microsoft.Resources/deployments/{deploymentName}"}  # type: ignore
 
     async def begin_create_or_update_at_scope(
-        self, scope: str, deployment_name: str, parameters: "models.Deployment", **kwargs
+        self,
+        scope: str,
+        deployment_name: str,
+        parameters: "models.Deployment",
+        **kwargs
     ) -> AsyncLROPoller["models.DeploymentExtended"]:
         """Deploys resources at a given scope.
 
@@ -279,7 +349,11 @@ class DeploymentsOperations:
         cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
         if cont_token is None:
             raw_result = await self._create_or_update_at_scope_initial(
-                scope=scope, deployment_name=deployment_name, parameters=parameters, cls=lambda x, y, z: x, **kwargs
+                scope=scope,
+                deployment_name=deployment_name,
+                parameters=parameters,
+                cls=lambda x, y, z: x,
+                **kwargs
             )
 
         kwargs.pop("error_map", None)
@@ -306,11 +380,15 @@ class DeploymentsOperations:
                 deserialization_callback=get_long_running_output,
             )
         else:
-            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+            return AsyncLROPoller(
+                self._client, raw_result, get_long_running_output, polling_method
+            )
 
     begin_create_or_update_at_scope.metadata = {"url": "/{scope}/providers/Microsoft.Resources/deployments/{deploymentName}"}  # type: ignore
 
-    async def get_at_scope(self, scope: str, deployment_name: str, **kwargs) -> "models.DeploymentExtended":
+    async def get_at_scope(
+        self, scope: str, deployment_name: str, **kwargs
+    ) -> "models.DeploymentExtended":
         """Gets a deployment.
 
         :param scope: The resource scope.
@@ -323,7 +401,11 @@ class DeploymentsOperations:
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop("cls", None)  # type: ClsType["models.DeploymentExtended"]
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+        }
         error_map.update(kwargs.pop("error_map", {}))
         api_version = "2020-06-01"
         accept = "application/json"
@@ -333,25 +415,36 @@ class DeploymentsOperations:
         path_format_arguments = {
             "scope": self._serialize.url("scope", scope, "str", skip_quote=True),
             "deploymentName": self._serialize.url(
-                "deployment_name", deployment_name, "str", max_length=64, min_length=1, pattern=r"^[-\w\._\(\)]+$"
+                "deployment_name",
+                deployment_name,
+                "str",
+                max_length=64,
+                min_length=1,
+                pattern=r"^[-\w\._\(\)]+$",
             ),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
-        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
+        query_parameters["api-version"] = self._serialize.query(
+            "api_version", api_version, "str"
+        )
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters["Accept"] = self._serialize.header("accept", accept, "str")
 
         request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(
+            request, stream=False, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("DeploymentExtended", pipeline_response)
@@ -381,7 +474,11 @@ class DeploymentsOperations:
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+        }
         error_map.update(kwargs.pop("error_map", {}))
         api_version = "2020-06-01"
         accept = "application/json"
@@ -391,25 +488,36 @@ class DeploymentsOperations:
         path_format_arguments = {
             "scope": self._serialize.url("scope", scope, "str", skip_quote=True),
             "deploymentName": self._serialize.url(
-                "deployment_name", deployment_name, "str", max_length=64, min_length=1, pattern=r"^[-\w\._\(\)]+$"
+                "deployment_name",
+                deployment_name,
+                "str",
+                max_length=64,
+                min_length=1,
+                pattern=r"^[-\w\._\(\)]+$",
             ),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
-        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
+        query_parameters["api-version"] = self._serialize.query(
+            "api_version", api_version, "str"
+        )
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters["Accept"] = self._serialize.header("accept", accept, "str")
 
         request = self._client.post(url, query_parameters, header_parameters)
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(
+            request, stream=False, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
@@ -418,10 +526,20 @@ class DeploymentsOperations:
     cancel_at_scope.metadata = {"url": "/{scope}/providers/Microsoft.Resources/deployments/{deploymentName}/cancel"}  # type: ignore
 
     async def _validate_at_scope_initial(
-        self, scope: str, deployment_name: str, parameters: "models.Deployment", **kwargs
+        self,
+        scope: str,
+        deployment_name: str,
+        parameters: "models.Deployment",
+        **kwargs
     ) -> Optional["models.DeploymentValidateResult"]:
-        cls = kwargs.pop("cls", None)  # type: ClsType[Optional["models.DeploymentValidateResult"]]
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop(
+            "cls", None
+        )  # type: ClsType[Optional["models.DeploymentValidateResult"]]
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+        }
         error_map.update(kwargs.pop("error_map", {}))
         api_version = "2020-06-01"
         content_type = kwargs.pop("content_type", "application/json")
@@ -432,37 +550,56 @@ class DeploymentsOperations:
         path_format_arguments = {
             "scope": self._serialize.url("scope", scope, "str", skip_quote=True),
             "deploymentName": self._serialize.url(
-                "deployment_name", deployment_name, "str", max_length=64, min_length=1, pattern=r"^[-\w\._\(\)]+$"
+                "deployment_name",
+                deployment_name,
+                "str",
+                max_length=64,
+                min_length=1,
+                pattern=r"^[-\w\._\(\)]+$",
             ),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
-        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
+        query_parameters["api-version"] = self._serialize.query(
+            "api_version", api_version, "str"
+        )
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters["Content-Type"] = self._serialize.header("content_type", content_type, "str")
+        header_parameters["Content-Type"] = self._serialize.header(
+            "content_type", content_type, "str"
+        )
         header_parameters["Accept"] = self._serialize.header("accept", accept, "str")
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, "Deployment")
         body_content_kwargs["content"] = body_content
-        request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        request = self._client.post(
+            url, query_parameters, header_parameters, **body_content_kwargs
+        )
+        pipeline_response = await self._client._pipeline.run(
+            request, stream=False, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202, 400]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize("DeploymentValidateResult", pipeline_response)
+            deserialized = self._deserialize(
+                "DeploymentValidateResult", pipeline_response
+            )
 
         if response.status_code == 400:
-            deserialized = self._deserialize("DeploymentValidateResult", pipeline_response)
+            deserialized = self._deserialize(
+                "DeploymentValidateResult", pipeline_response
+            )
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -472,7 +609,11 @@ class DeploymentsOperations:
     _validate_at_scope_initial.metadata = {"url": "/{scope}/providers/Microsoft.Resources/deployments/{deploymentName}/validate"}  # type: ignore
 
     async def begin_validate_at_scope(
-        self, scope: str, deployment_name: str, parameters: "models.Deployment", **kwargs
+        self,
+        scope: str,
+        deployment_name: str,
+        parameters: "models.Deployment",
+        **kwargs
     ) -> AsyncLROPoller["models.DeploymentValidateResult"]:
         """Validates whether the specified template is syntactically correct and will be accepted by Azure
         Resource Manager..
@@ -494,19 +635,27 @@ class DeploymentsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop("polling", True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop("cls", None)  # type: ClsType["models.DeploymentValidateResult"]
+        cls = kwargs.pop(
+            "cls", None
+        )  # type: ClsType["models.DeploymentValidateResult"]
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
         if cont_token is None:
             raw_result = await self._validate_at_scope_initial(
-                scope=scope, deployment_name=deployment_name, parameters=parameters, cls=lambda x, y, z: x, **kwargs
+                scope=scope,
+                deployment_name=deployment_name,
+                parameters=parameters,
+                cls=lambda x, y, z: x,
+                **kwargs
             )
 
         kwargs.pop("error_map", None)
         kwargs.pop("content_type", None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("DeploymentValidateResult", pipeline_response)
+            deserialized = self._deserialize(
+                "DeploymentValidateResult", pipeline_response
+            )
 
             if cls:
                 return cls(pipeline_response, deserialized, {})
@@ -526,7 +675,9 @@ class DeploymentsOperations:
                 deserialization_callback=get_long_running_output,
             )
         else:
-            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+            return AsyncLROPoller(
+                self._client, raw_result, get_long_running_output, polling_method
+            )
 
     begin_validate_at_scope.metadata = {"url": "/{scope}/providers/Microsoft.Resources/deployments/{deploymentName}/validate"}  # type: ignore
 
@@ -545,7 +696,11 @@ class DeploymentsOperations:
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop("cls", None)  # type: ClsType["models.DeploymentExportResult"]
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+        }
         error_map.update(kwargs.pop("error_map", {}))
         api_version = "2020-06-01"
         accept = "application/json"
@@ -555,25 +710,36 @@ class DeploymentsOperations:
         path_format_arguments = {
             "scope": self._serialize.url("scope", scope, "str", skip_quote=True),
             "deploymentName": self._serialize.url(
-                "deployment_name", deployment_name, "str", max_length=64, min_length=1, pattern=r"^[-\w\._\(\)]+$"
+                "deployment_name",
+                deployment_name,
+                "str",
+                max_length=64,
+                min_length=1,
+                pattern=r"^[-\w\._\(\)]+$",
             ),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
-        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
+        query_parameters["api-version"] = self._serialize.query(
+            "api_version", api_version, "str"
+        )
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters["Accept"] = self._serialize.header("accept", accept, "str")
 
         request = self._client.post(url, query_parameters, header_parameters)
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(
+            request, stream=False, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("DeploymentExportResult", pipeline_response)
@@ -586,7 +752,11 @@ class DeploymentsOperations:
     export_template_at_scope.metadata = {"url": "/{scope}/providers/Microsoft.Resources/deployments/{deploymentName}/exportTemplate"}  # type: ignore
 
     def list_at_scope(
-        self, scope: str, filter: Optional[str] = None, top: Optional[int] = None, **kwargs
+        self,
+        scope: str,
+        filter: Optional[str] = None,
+        top: Optional[int] = None,
+        **kwargs
     ) -> AsyncIterable["models.DeploymentListResult"]:
         """Get all the deployments at the given scope.
 
@@ -603,7 +773,11 @@ class DeploymentsOperations:
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop("cls", None)  # type: ClsType["models.DeploymentListResult"]
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+        }
         error_map.update(kwargs.pop("error_map", {}))
         api_version = "2020-06-01"
         accept = "application/json"
@@ -611,22 +785,30 @@ class DeploymentsOperations:
         def prepare_request(next_link=None):
             # Construct headers
             header_parameters = {}  # type: Dict[str, Any]
-            header_parameters["Accept"] = self._serialize.header("accept", accept, "str")
+            header_parameters["Accept"] = self._serialize.header(
+                "accept", accept, "str"
+            )
 
             if not next_link:
                 # Construct URL
                 url = self.list_at_scope.metadata["url"]  # type: ignore
                 path_format_arguments = {
-                    "scope": self._serialize.url("scope", scope, "str", skip_quote=True),
+                    "scope": self._serialize.url(
+                        "scope", scope, "str", skip_quote=True
+                    ),
                 }
                 url = self._client.format_url(url, **path_format_arguments)
                 # Construct parameters
                 query_parameters = {}  # type: Dict[str, Any]
                 if filter is not None:
-                    query_parameters["$filter"] = self._serialize.query("filter", filter, "str")
+                    query_parameters["$filter"] = self._serialize.query(
+                        "filter", filter, "str"
+                    )
                 if top is not None:
                     query_parameters["$top"] = self._serialize.query("top", top, "int")
-                query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
+                query_parameters["api-version"] = self._serialize.query(
+                    "api_version", api_version, "str"
+                )
 
                 request = self._client.get(url, query_parameters, header_parameters)
             else:
@@ -645,11 +827,17 @@ class DeploymentsOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(
+                request, stream=False, **kwargs
+            )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                map_error(
+                    status_code=response.status_code,
+                    response=response,
+                    error_map=error_map,
+                )
                 raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -658,9 +846,15 @@ class DeploymentsOperations:
 
     list_at_scope.metadata = {"url": "/{scope}/providers/Microsoft.Resources/deployments/"}  # type: ignore
 
-    async def _delete_at_tenant_scope_initial(self, deployment_name: str, **kwargs) -> None:
+    async def _delete_at_tenant_scope_initial(
+        self, deployment_name: str, **kwargs
+    ) -> None:
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+        }
         error_map.update(kwargs.pop("error_map", {}))
         api_version = "2020-06-01"
         accept = "application/json"
@@ -669,25 +863,36 @@ class DeploymentsOperations:
         url = self._delete_at_tenant_scope_initial.metadata["url"]  # type: ignore
         path_format_arguments = {
             "deploymentName": self._serialize.url(
-                "deployment_name", deployment_name, "str", max_length=64, min_length=1, pattern=r"^[-\w\._\(\)]+$"
+                "deployment_name",
+                deployment_name,
+                "str",
+                max_length=64,
+                min_length=1,
+                pattern=r"^[-\w\._\(\)]+$",
             ),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
-        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
+        query_parameters["api-version"] = self._serialize.query(
+            "api_version", api_version, "str"
+        )
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters["Accept"] = self._serialize.header("accept", accept, "str")
 
         request = self._client.delete(url, query_parameters, header_parameters)
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(
+            request, stream=False, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [202, 204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
@@ -695,7 +900,9 @@ class DeploymentsOperations:
 
     _delete_at_tenant_scope_initial.metadata = {"url": "/providers/Microsoft.Resources/deployments/{deploymentName}"}  # type: ignore
 
-    async def begin_delete_at_tenant_scope(self, deployment_name: str, **kwargs) -> AsyncLROPoller[None]:
+    async def begin_delete_at_tenant_scope(
+        self, deployment_name: str, **kwargs
+    ) -> AsyncLROPoller[None]:
         """Deletes a deployment from the deployment history.
 
         A template deployment that is currently running cannot be deleted. Deleting a template
@@ -748,11 +955,15 @@ class DeploymentsOperations:
                 deserialization_callback=get_long_running_output,
             )
         else:
-            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+            return AsyncLROPoller(
+                self._client, raw_result, get_long_running_output, polling_method
+            )
 
     begin_delete_at_tenant_scope.metadata = {"url": "/providers/Microsoft.Resources/deployments/{deploymentName}"}  # type: ignore
 
-    async def check_existence_at_tenant_scope(self, deployment_name: str, **kwargs) -> bool:
+    async def check_existence_at_tenant_scope(
+        self, deployment_name: str, **kwargs
+    ) -> bool:
         """Checks whether the deployment exists.
 
         :param deployment_name: The name of the deployment.
@@ -763,7 +974,11 @@ class DeploymentsOperations:
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+        }
         error_map.update(kwargs.pop("error_map", {}))
         api_version = "2020-06-01"
         accept = "application/json"
@@ -772,25 +987,36 @@ class DeploymentsOperations:
         url = self.check_existence_at_tenant_scope.metadata["url"]  # type: ignore
         path_format_arguments = {
             "deploymentName": self._serialize.url(
-                "deployment_name", deployment_name, "str", max_length=64, min_length=1, pattern=r"^[-\w\._\(\)]+$"
+                "deployment_name",
+                deployment_name,
+                "str",
+                max_length=64,
+                min_length=1,
+                pattern=r"^[-\w\._\(\)]+$",
             ),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
-        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
+        query_parameters["api-version"] = self._serialize.query(
+            "api_version", api_version, "str"
+        )
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters["Accept"] = self._serialize.header("accept", accept, "str")
 
         request = self._client.head(url, query_parameters, header_parameters)
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(
+            request, stream=False, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [204, 404]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
@@ -804,7 +1030,11 @@ class DeploymentsOperations:
         self, deployment_name: str, parameters: "models.ScopedDeployment", **kwargs
     ) -> "models.DeploymentExtended":
         cls = kwargs.pop("cls", None)  # type: ClsType["models.DeploymentExtended"]
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+        }
         error_map.update(kwargs.pop("error_map", {}))
         api_version = "2020-06-01"
         content_type = kwargs.pop("content_type", "application/json")
@@ -814,29 +1044,44 @@ class DeploymentsOperations:
         url = self._create_or_update_at_tenant_scope_initial.metadata["url"]  # type: ignore
         path_format_arguments = {
             "deploymentName": self._serialize.url(
-                "deployment_name", deployment_name, "str", max_length=64, min_length=1, pattern=r"^[-\w\._\(\)]+$"
+                "deployment_name",
+                deployment_name,
+                "str",
+                max_length=64,
+                min_length=1,
+                pattern=r"^[-\w\._\(\)]+$",
             ),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
-        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
+        query_parameters["api-version"] = self._serialize.query(
+            "api_version", api_version, "str"
+        )
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters["Content-Type"] = self._serialize.header("content_type", content_type, "str")
+        header_parameters["Content-Type"] = self._serialize.header(
+            "content_type", content_type, "str"
+        )
         header_parameters["Accept"] = self._serialize.header("accept", accept, "str")
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, "ScopedDeployment")
         body_content_kwargs["content"] = body_content
-        request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        request = self._client.put(
+            url, query_parameters, header_parameters, **body_content_kwargs
+        )
+        pipeline_response = await self._client._pipeline.run(
+            request, stream=False, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 201]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -879,7 +1124,10 @@ class DeploymentsOperations:
         cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
         if cont_token is None:
             raw_result = await self._create_or_update_at_tenant_scope_initial(
-                deployment_name=deployment_name, parameters=parameters, cls=lambda x, y, z: x, **kwargs
+                deployment_name=deployment_name,
+                parameters=parameters,
+                cls=lambda x, y, z: x,
+                **kwargs
             )
 
         kwargs.pop("error_map", None)
@@ -906,11 +1154,15 @@ class DeploymentsOperations:
                 deserialization_callback=get_long_running_output,
             )
         else:
-            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+            return AsyncLROPoller(
+                self._client, raw_result, get_long_running_output, polling_method
+            )
 
     begin_create_or_update_at_tenant_scope.metadata = {"url": "/providers/Microsoft.Resources/deployments/{deploymentName}"}  # type: ignore
 
-    async def get_at_tenant_scope(self, deployment_name: str, **kwargs) -> "models.DeploymentExtended":
+    async def get_at_tenant_scope(
+        self, deployment_name: str, **kwargs
+    ) -> "models.DeploymentExtended":
         """Gets a deployment.
 
         :param deployment_name: The name of the deployment.
@@ -921,7 +1173,11 @@ class DeploymentsOperations:
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop("cls", None)  # type: ClsType["models.DeploymentExtended"]
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+        }
         error_map.update(kwargs.pop("error_map", {}))
         api_version = "2020-06-01"
         accept = "application/json"
@@ -930,25 +1186,36 @@ class DeploymentsOperations:
         url = self.get_at_tenant_scope.metadata["url"]  # type: ignore
         path_format_arguments = {
             "deploymentName": self._serialize.url(
-                "deployment_name", deployment_name, "str", max_length=64, min_length=1, pattern=r"^[-\w\._\(\)]+$"
+                "deployment_name",
+                deployment_name,
+                "str",
+                max_length=64,
+                min_length=1,
+                pattern=r"^[-\w\._\(\)]+$",
             ),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
-        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
+        query_parameters["api-version"] = self._serialize.query(
+            "api_version", api_version, "str"
+        )
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters["Accept"] = self._serialize.header("accept", accept, "str")
 
         request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(
+            request, stream=False, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("DeploymentExtended", pipeline_response)
@@ -976,7 +1243,11 @@ class DeploymentsOperations:
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+        }
         error_map.update(kwargs.pop("error_map", {}))
         api_version = "2020-06-01"
         accept = "application/json"
@@ -985,25 +1256,36 @@ class DeploymentsOperations:
         url = self.cancel_at_tenant_scope.metadata["url"]  # type: ignore
         path_format_arguments = {
             "deploymentName": self._serialize.url(
-                "deployment_name", deployment_name, "str", max_length=64, min_length=1, pattern=r"^[-\w\._\(\)]+$"
+                "deployment_name",
+                deployment_name,
+                "str",
+                max_length=64,
+                min_length=1,
+                pattern=r"^[-\w\._\(\)]+$",
             ),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
-        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
+        query_parameters["api-version"] = self._serialize.query(
+            "api_version", api_version, "str"
+        )
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters["Accept"] = self._serialize.header("accept", accept, "str")
 
         request = self._client.post(url, query_parameters, header_parameters)
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(
+            request, stream=False, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
@@ -1014,8 +1296,14 @@ class DeploymentsOperations:
     async def _validate_at_tenant_scope_initial(
         self, deployment_name: str, parameters: "models.ScopedDeployment", **kwargs
     ) -> Optional["models.DeploymentValidateResult"]:
-        cls = kwargs.pop("cls", None)  # type: ClsType[Optional["models.DeploymentValidateResult"]]
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop(
+            "cls", None
+        )  # type: ClsType[Optional["models.DeploymentValidateResult"]]
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+        }
         error_map.update(kwargs.pop("error_map", {}))
         api_version = "2020-06-01"
         content_type = kwargs.pop("content_type", "application/json")
@@ -1025,37 +1313,56 @@ class DeploymentsOperations:
         url = self._validate_at_tenant_scope_initial.metadata["url"]  # type: ignore
         path_format_arguments = {
             "deploymentName": self._serialize.url(
-                "deployment_name", deployment_name, "str", max_length=64, min_length=1, pattern=r"^[-\w\._\(\)]+$"
+                "deployment_name",
+                deployment_name,
+                "str",
+                max_length=64,
+                min_length=1,
+                pattern=r"^[-\w\._\(\)]+$",
             ),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
-        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
+        query_parameters["api-version"] = self._serialize.query(
+            "api_version", api_version, "str"
+        )
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters["Content-Type"] = self._serialize.header("content_type", content_type, "str")
+        header_parameters["Content-Type"] = self._serialize.header(
+            "content_type", content_type, "str"
+        )
         header_parameters["Accept"] = self._serialize.header("accept", accept, "str")
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, "ScopedDeployment")
         body_content_kwargs["content"] = body_content
-        request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        request = self._client.post(
+            url, query_parameters, header_parameters, **body_content_kwargs
+        )
+        pipeline_response = await self._client._pipeline.run(
+            request, stream=False, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202, 400]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize("DeploymentValidateResult", pipeline_response)
+            deserialized = self._deserialize(
+                "DeploymentValidateResult", pipeline_response
+            )
 
         if response.status_code == 400:
-            deserialized = self._deserialize("DeploymentValidateResult", pipeline_response)
+            deserialized = self._deserialize(
+                "DeploymentValidateResult", pipeline_response
+            )
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -1085,19 +1392,26 @@ class DeploymentsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop("polling", True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop("cls", None)  # type: ClsType["models.DeploymentValidateResult"]
+        cls = kwargs.pop(
+            "cls", None
+        )  # type: ClsType["models.DeploymentValidateResult"]
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
         if cont_token is None:
             raw_result = await self._validate_at_tenant_scope_initial(
-                deployment_name=deployment_name, parameters=parameters, cls=lambda x, y, z: x, **kwargs
+                deployment_name=deployment_name,
+                parameters=parameters,
+                cls=lambda x, y, z: x,
+                **kwargs
             )
 
         kwargs.pop("error_map", None)
         kwargs.pop("content_type", None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("DeploymentValidateResult", pipeline_response)
+            deserialized = self._deserialize(
+                "DeploymentValidateResult", pipeline_response
+            )
 
             if cls:
                 return cls(pipeline_response, deserialized, {})
@@ -1117,15 +1431,26 @@ class DeploymentsOperations:
                 deserialization_callback=get_long_running_output,
             )
         else:
-            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+            return AsyncLROPoller(
+                self._client, raw_result, get_long_running_output, polling_method
+            )
 
     begin_validate_at_tenant_scope.metadata = {"url": "/providers/Microsoft.Resources/deployments/{deploymentName}/validate"}  # type: ignore
 
     async def _what_if_at_tenant_scope_initial(
-        self, deployment_name: str, parameters: "models.ScopedDeploymentWhatIf", **kwargs
+        self,
+        deployment_name: str,
+        parameters: "models.ScopedDeploymentWhatIf",
+        **kwargs
     ) -> Optional["models.WhatIfOperationResult"]:
-        cls = kwargs.pop("cls", None)  # type: ClsType[Optional["models.WhatIfOperationResult"]]
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop(
+            "cls", None
+        )  # type: ClsType[Optional["models.WhatIfOperationResult"]]
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+        }
         error_map.update(kwargs.pop("error_map", {}))
         api_version = "2020-06-01"
         content_type = kwargs.pop("content_type", "application/json")
@@ -1135,29 +1460,44 @@ class DeploymentsOperations:
         url = self._what_if_at_tenant_scope_initial.metadata["url"]  # type: ignore
         path_format_arguments = {
             "deploymentName": self._serialize.url(
-                "deployment_name", deployment_name, "str", max_length=64, min_length=1, pattern=r"^[-\w\._\(\)]+$"
+                "deployment_name",
+                deployment_name,
+                "str",
+                max_length=64,
+                min_length=1,
+                pattern=r"^[-\w\._\(\)]+$",
             ),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
-        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
+        query_parameters["api-version"] = self._serialize.query(
+            "api_version", api_version, "str"
+        )
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters["Content-Type"] = self._serialize.header("content_type", content_type, "str")
+        header_parameters["Content-Type"] = self._serialize.header(
+            "content_type", content_type, "str"
+        )
         header_parameters["Accept"] = self._serialize.header("accept", accept, "str")
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, "ScopedDeploymentWhatIf")
         body_content_kwargs["content"] = body_content
-        request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        request = self._client.post(
+            url, query_parameters, header_parameters, **body_content_kwargs
+        )
+        pipeline_response = await self._client._pipeline.run(
+            request, stream=False, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -1166,8 +1506,12 @@ class DeploymentsOperations:
             deserialized = self._deserialize("WhatIfOperationResult", pipeline_response)
 
         if response.status_code == 202:
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("str", response.headers.get("Retry-After"))
+            response_headers["Location"] = self._deserialize(
+                "str", response.headers.get("Location")
+            )
+            response_headers["Retry-After"] = self._deserialize(
+                "str", response.headers.get("Retry-After")
+            )
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
@@ -1177,7 +1521,10 @@ class DeploymentsOperations:
     _what_if_at_tenant_scope_initial.metadata = {"url": "/providers/Microsoft.Resources/deployments/{deploymentName}/whatIf"}  # type: ignore
 
     async def begin_what_if_at_tenant_scope(
-        self, deployment_name: str, parameters: "models.ScopedDeploymentWhatIf", **kwargs
+        self,
+        deployment_name: str,
+        parameters: "models.ScopedDeploymentWhatIf",
+        **kwargs
     ) -> AsyncLROPoller["models.WhatIfOperationResult"]:
         """Returns changes that will be made by the deployment if executed at the scope of the tenant
         group.
@@ -1202,7 +1549,10 @@ class DeploymentsOperations:
         cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
         if cont_token is None:
             raw_result = await self._what_if_at_tenant_scope_initial(
-                deployment_name=deployment_name, parameters=parameters, cls=lambda x, y, z: x, **kwargs
+                deployment_name=deployment_name,
+                parameters=parameters,
+                cls=lambda x, y, z: x,
+                **kwargs
             )
 
         kwargs.pop("error_map", None)
@@ -1216,7 +1566,9 @@ class DeploymentsOperations:
             return deserialized
 
         if polling is True:
-            polling_method = AsyncARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
+            polling_method = AsyncARMPolling(
+                lro_delay, lro_options={"final-state-via": "location"}, **kwargs
+            )
         elif polling is False:
             polling_method = AsyncNoPolling()
         else:
@@ -1229,11 +1581,15 @@ class DeploymentsOperations:
                 deserialization_callback=get_long_running_output,
             )
         else:
-            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+            return AsyncLROPoller(
+                self._client, raw_result, get_long_running_output, polling_method
+            )
 
     begin_what_if_at_tenant_scope.metadata = {"url": "/providers/Microsoft.Resources/deployments/{deploymentName}/whatIf"}  # type: ignore
 
-    async def export_template_at_tenant_scope(self, deployment_name: str, **kwargs) -> "models.DeploymentExportResult":
+    async def export_template_at_tenant_scope(
+        self, deployment_name: str, **kwargs
+    ) -> "models.DeploymentExportResult":
         """Exports the template used for specified deployment.
 
         :param deployment_name: The name of the deployment.
@@ -1244,7 +1600,11 @@ class DeploymentsOperations:
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop("cls", None)  # type: ClsType["models.DeploymentExportResult"]
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+        }
         error_map.update(kwargs.pop("error_map", {}))
         api_version = "2020-06-01"
         accept = "application/json"
@@ -1253,25 +1613,36 @@ class DeploymentsOperations:
         url = self.export_template_at_tenant_scope.metadata["url"]  # type: ignore
         path_format_arguments = {
             "deploymentName": self._serialize.url(
-                "deployment_name", deployment_name, "str", max_length=64, min_length=1, pattern=r"^[-\w\._\(\)]+$"
+                "deployment_name",
+                deployment_name,
+                "str",
+                max_length=64,
+                min_length=1,
+                pattern=r"^[-\w\._\(\)]+$",
             ),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
-        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
+        query_parameters["api-version"] = self._serialize.query(
+            "api_version", api_version, "str"
+        )
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters["Accept"] = self._serialize.header("accept", accept, "str")
 
         request = self._client.post(url, query_parameters, header_parameters)
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(
+            request, stream=False, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("DeploymentExportResult", pipeline_response)
@@ -1299,7 +1670,11 @@ class DeploymentsOperations:
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop("cls", None)  # type: ClsType["models.DeploymentListResult"]
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+        }
         error_map.update(kwargs.pop("error_map", {}))
         api_version = "2020-06-01"
         accept = "application/json"
@@ -1307,7 +1682,9 @@ class DeploymentsOperations:
         def prepare_request(next_link=None):
             # Construct headers
             header_parameters = {}  # type: Dict[str, Any]
-            header_parameters["Accept"] = self._serialize.header("accept", accept, "str")
+            header_parameters["Accept"] = self._serialize.header(
+                "accept", accept, "str"
+            )
 
             if not next_link:
                 # Construct URL
@@ -1315,10 +1692,14 @@ class DeploymentsOperations:
                 # Construct parameters
                 query_parameters = {}  # type: Dict[str, Any]
                 if filter is not None:
-                    query_parameters["$filter"] = self._serialize.query("filter", filter, "str")
+                    query_parameters["$filter"] = self._serialize.query(
+                        "filter", filter, "str"
+                    )
                 if top is not None:
                     query_parameters["$top"] = self._serialize.query("top", top, "int")
-                query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
+                query_parameters["api-version"] = self._serialize.query(
+                    "api_version", api_version, "str"
+                )
 
                 request = self._client.get(url, query_parameters, header_parameters)
             else:
@@ -1337,11 +1718,17 @@ class DeploymentsOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(
+                request, stream=False, **kwargs
+            )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                map_error(
+                    status_code=response.status_code,
+                    response=response,
+                    error_map=error_map,
+                )
                 raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -1350,9 +1737,15 @@ class DeploymentsOperations:
 
     list_at_tenant_scope.metadata = {"url": "/providers/Microsoft.Resources/deployments/"}  # type: ignore
 
-    async def _delete_at_management_group_scope_initial(self, group_id: str, deployment_name: str, **kwargs) -> None:
+    async def _delete_at_management_group_scope_initial(
+        self, group_id: str, deployment_name: str, **kwargs
+    ) -> None:
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+        }
         error_map.update(kwargs.pop("error_map", {}))
         api_version = "2020-06-01"
         accept = "application/json"
@@ -1360,27 +1753,40 @@ class DeploymentsOperations:
         # Construct URL
         url = self._delete_at_management_group_scope_initial.metadata["url"]  # type: ignore
         path_format_arguments = {
-            "groupId": self._serialize.url("group_id", group_id, "str", max_length=90, min_length=1),
+            "groupId": self._serialize.url(
+                "group_id", group_id, "str", max_length=90, min_length=1
+            ),
             "deploymentName": self._serialize.url(
-                "deployment_name", deployment_name, "str", max_length=64, min_length=1, pattern=r"^[-\w\._\(\)]+$"
+                "deployment_name",
+                deployment_name,
+                "str",
+                max_length=64,
+                min_length=1,
+                pattern=r"^[-\w\._\(\)]+$",
             ),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
-        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
+        query_parameters["api-version"] = self._serialize.query(
+            "api_version", api_version, "str"
+        )
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters["Accept"] = self._serialize.header("accept", accept, "str")
 
         request = self._client.delete(url, query_parameters, header_parameters)
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(
+            request, stream=False, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [202, 204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
@@ -1421,7 +1827,10 @@ class DeploymentsOperations:
         cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
         if cont_token is None:
             raw_result = await self._delete_at_management_group_scope_initial(
-                group_id=group_id, deployment_name=deployment_name, cls=lambda x, y, z: x, **kwargs
+                group_id=group_id,
+                deployment_name=deployment_name,
+                cls=lambda x, y, z: x,
+                **kwargs
             )
 
         kwargs.pop("error_map", None)
@@ -1445,11 +1854,15 @@ class DeploymentsOperations:
                 deserialization_callback=get_long_running_output,
             )
         else:
-            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+            return AsyncLROPoller(
+                self._client, raw_result, get_long_running_output, polling_method
+            )
 
     begin_delete_at_management_group_scope.metadata = {"url": "/providers/Microsoft.Management/managementGroups/{groupId}/providers/Microsoft.Resources/deployments/{deploymentName}"}  # type: ignore
 
-    async def check_existence_at_management_group_scope(self, group_id: str, deployment_name: str, **kwargs) -> bool:
+    async def check_existence_at_management_group_scope(
+        self, group_id: str, deployment_name: str, **kwargs
+    ) -> bool:
         """Checks whether the deployment exists.
 
         :param group_id: The management group ID.
@@ -1462,7 +1875,11 @@ class DeploymentsOperations:
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+        }
         error_map.update(kwargs.pop("error_map", {}))
         api_version = "2020-06-01"
         accept = "application/json"
@@ -1470,27 +1887,40 @@ class DeploymentsOperations:
         # Construct URL
         url = self.check_existence_at_management_group_scope.metadata["url"]  # type: ignore
         path_format_arguments = {
-            "groupId": self._serialize.url("group_id", group_id, "str", max_length=90, min_length=1),
+            "groupId": self._serialize.url(
+                "group_id", group_id, "str", max_length=90, min_length=1
+            ),
             "deploymentName": self._serialize.url(
-                "deployment_name", deployment_name, "str", max_length=64, min_length=1, pattern=r"^[-\w\._\(\)]+$"
+                "deployment_name",
+                deployment_name,
+                "str",
+                max_length=64,
+                min_length=1,
+                pattern=r"^[-\w\._\(\)]+$",
             ),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
-        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
+        query_parameters["api-version"] = self._serialize.query(
+            "api_version", api_version, "str"
+        )
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters["Accept"] = self._serialize.header("accept", accept, "str")
 
         request = self._client.head(url, query_parameters, header_parameters)
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(
+            request, stream=False, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [204, 404]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
@@ -1501,10 +1931,18 @@ class DeploymentsOperations:
     check_existence_at_management_group_scope.metadata = {"url": "/providers/Microsoft.Management/managementGroups/{groupId}/providers/Microsoft.Resources/deployments/{deploymentName}"}  # type: ignore
 
     async def _create_or_update_at_management_group_scope_initial(
-        self, group_id: str, deployment_name: str, parameters: "models.ScopedDeployment", **kwargs
+        self,
+        group_id: str,
+        deployment_name: str,
+        parameters: "models.ScopedDeployment",
+        **kwargs
     ) -> "models.DeploymentExtended":
         cls = kwargs.pop("cls", None)  # type: ClsType["models.DeploymentExtended"]
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+        }
         error_map.update(kwargs.pop("error_map", {}))
         api_version = "2020-06-01"
         content_type = kwargs.pop("content_type", "application/json")
@@ -1513,31 +1951,48 @@ class DeploymentsOperations:
         # Construct URL
         url = self._create_or_update_at_management_group_scope_initial.metadata["url"]  # type: ignore
         path_format_arguments = {
-            "groupId": self._serialize.url("group_id", group_id, "str", max_length=90, min_length=1),
+            "groupId": self._serialize.url(
+                "group_id", group_id, "str", max_length=90, min_length=1
+            ),
             "deploymentName": self._serialize.url(
-                "deployment_name", deployment_name, "str", max_length=64, min_length=1, pattern=r"^[-\w\._\(\)]+$"
+                "deployment_name",
+                deployment_name,
+                "str",
+                max_length=64,
+                min_length=1,
+                pattern=r"^[-\w\._\(\)]+$",
             ),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
-        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
+        query_parameters["api-version"] = self._serialize.query(
+            "api_version", api_version, "str"
+        )
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters["Content-Type"] = self._serialize.header("content_type", content_type, "str")
+        header_parameters["Content-Type"] = self._serialize.header(
+            "content_type", content_type, "str"
+        )
         header_parameters["Accept"] = self._serialize.header("accept", accept, "str")
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, "ScopedDeployment")
         body_content_kwargs["content"] = body_content
-        request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        request = self._client.put(
+            url, query_parameters, header_parameters, **body_content_kwargs
+        )
+        pipeline_response = await self._client._pipeline.run(
+            request, stream=False, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 201]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -1554,7 +2009,11 @@ class DeploymentsOperations:
     _create_or_update_at_management_group_scope_initial.metadata = {"url": "/providers/Microsoft.Management/managementGroups/{groupId}/providers/Microsoft.Resources/deployments/{deploymentName}"}  # type: ignore
 
     async def begin_create_or_update_at_management_group_scope(
-        self, group_id: str, deployment_name: str, parameters: "models.ScopedDeployment", **kwargs
+        self,
+        group_id: str,
+        deployment_name: str,
+        parameters: "models.ScopedDeployment",
+        **kwargs
     ) -> AsyncLROPoller["models.DeploymentExtended"]:
         """Deploys resources at management group scope.
 
@@ -1613,7 +2072,9 @@ class DeploymentsOperations:
                 deserialization_callback=get_long_running_output,
             )
         else:
-            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+            return AsyncLROPoller(
+                self._client, raw_result, get_long_running_output, polling_method
+            )
 
     begin_create_or_update_at_management_group_scope.metadata = {"url": "/providers/Microsoft.Management/managementGroups/{groupId}/providers/Microsoft.Resources/deployments/{deploymentName}"}  # type: ignore
 
@@ -1632,7 +2093,11 @@ class DeploymentsOperations:
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop("cls", None)  # type: ClsType["models.DeploymentExtended"]
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+        }
         error_map.update(kwargs.pop("error_map", {}))
         api_version = "2020-06-01"
         accept = "application/json"
@@ -1640,27 +2105,40 @@ class DeploymentsOperations:
         # Construct URL
         url = self.get_at_management_group_scope.metadata["url"]  # type: ignore
         path_format_arguments = {
-            "groupId": self._serialize.url("group_id", group_id, "str", max_length=90, min_length=1),
+            "groupId": self._serialize.url(
+                "group_id", group_id, "str", max_length=90, min_length=1
+            ),
             "deploymentName": self._serialize.url(
-                "deployment_name", deployment_name, "str", max_length=64, min_length=1, pattern=r"^[-\w\._\(\)]+$"
+                "deployment_name",
+                deployment_name,
+                "str",
+                max_length=64,
+                min_length=1,
+                pattern=r"^[-\w\._\(\)]+$",
             ),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
-        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
+        query_parameters["api-version"] = self._serialize.query(
+            "api_version", api_version, "str"
+        )
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters["Accept"] = self._serialize.header("accept", accept, "str")
 
         request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(
+            request, stream=False, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("DeploymentExtended", pipeline_response)
@@ -1672,7 +2150,9 @@ class DeploymentsOperations:
 
     get_at_management_group_scope.metadata = {"url": "/providers/Microsoft.Management/managementGroups/{groupId}/providers/Microsoft.Resources/deployments/{deploymentName}"}  # type: ignore
 
-    async def cancel_at_management_group_scope(self, group_id: str, deployment_name: str, **kwargs) -> None:
+    async def cancel_at_management_group_scope(
+        self, group_id: str, deployment_name: str, **kwargs
+    ) -> None:
         """Cancels a currently running template deployment.
 
         You can cancel a deployment only if the provisioningState is Accepted or Running. After the
@@ -1690,7 +2170,11 @@ class DeploymentsOperations:
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+        }
         error_map.update(kwargs.pop("error_map", {}))
         api_version = "2020-06-01"
         accept = "application/json"
@@ -1698,27 +2182,40 @@ class DeploymentsOperations:
         # Construct URL
         url = self.cancel_at_management_group_scope.metadata["url"]  # type: ignore
         path_format_arguments = {
-            "groupId": self._serialize.url("group_id", group_id, "str", max_length=90, min_length=1),
+            "groupId": self._serialize.url(
+                "group_id", group_id, "str", max_length=90, min_length=1
+            ),
             "deploymentName": self._serialize.url(
-                "deployment_name", deployment_name, "str", max_length=64, min_length=1, pattern=r"^[-\w\._\(\)]+$"
+                "deployment_name",
+                deployment_name,
+                "str",
+                max_length=64,
+                min_length=1,
+                pattern=r"^[-\w\._\(\)]+$",
             ),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
-        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
+        query_parameters["api-version"] = self._serialize.query(
+            "api_version", api_version, "str"
+        )
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters["Accept"] = self._serialize.header("accept", accept, "str")
 
         request = self._client.post(url, query_parameters, header_parameters)
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(
+            request, stream=False, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
@@ -1727,10 +2224,20 @@ class DeploymentsOperations:
     cancel_at_management_group_scope.metadata = {"url": "/providers/Microsoft.Management/managementGroups/{groupId}/providers/Microsoft.Resources/deployments/{deploymentName}/cancel"}  # type: ignore
 
     async def _validate_at_management_group_scope_initial(
-        self, group_id: str, deployment_name: str, parameters: "models.ScopedDeployment", **kwargs
+        self,
+        group_id: str,
+        deployment_name: str,
+        parameters: "models.ScopedDeployment",
+        **kwargs
     ) -> Optional["models.DeploymentValidateResult"]:
-        cls = kwargs.pop("cls", None)  # type: ClsType[Optional["models.DeploymentValidateResult"]]
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop(
+            "cls", None
+        )  # type: ClsType[Optional["models.DeploymentValidateResult"]]
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+        }
         error_map.update(kwargs.pop("error_map", {}))
         api_version = "2020-06-01"
         content_type = kwargs.pop("content_type", "application/json")
@@ -1739,39 +2246,60 @@ class DeploymentsOperations:
         # Construct URL
         url = self._validate_at_management_group_scope_initial.metadata["url"]  # type: ignore
         path_format_arguments = {
-            "groupId": self._serialize.url("group_id", group_id, "str", max_length=90, min_length=1),
+            "groupId": self._serialize.url(
+                "group_id", group_id, "str", max_length=90, min_length=1
+            ),
             "deploymentName": self._serialize.url(
-                "deployment_name", deployment_name, "str", max_length=64, min_length=1, pattern=r"^[-\w\._\(\)]+$"
+                "deployment_name",
+                deployment_name,
+                "str",
+                max_length=64,
+                min_length=1,
+                pattern=r"^[-\w\._\(\)]+$",
             ),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
-        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
+        query_parameters["api-version"] = self._serialize.query(
+            "api_version", api_version, "str"
+        )
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters["Content-Type"] = self._serialize.header("content_type", content_type, "str")
+        header_parameters["Content-Type"] = self._serialize.header(
+            "content_type", content_type, "str"
+        )
         header_parameters["Accept"] = self._serialize.header("accept", accept, "str")
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, "ScopedDeployment")
         body_content_kwargs["content"] = body_content
-        request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        request = self._client.post(
+            url, query_parameters, header_parameters, **body_content_kwargs
+        )
+        pipeline_response = await self._client._pipeline.run(
+            request, stream=False, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202, 400]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize("DeploymentValidateResult", pipeline_response)
+            deserialized = self._deserialize(
+                "DeploymentValidateResult", pipeline_response
+            )
 
         if response.status_code == 400:
-            deserialized = self._deserialize("DeploymentValidateResult", pipeline_response)
+            deserialized = self._deserialize(
+                "DeploymentValidateResult", pipeline_response
+            )
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -1781,7 +2309,11 @@ class DeploymentsOperations:
     _validate_at_management_group_scope_initial.metadata = {"url": "/providers/Microsoft.Management/managementGroups/{groupId}/providers/Microsoft.Resources/deployments/{deploymentName}/validate"}  # type: ignore
 
     async def begin_validate_at_management_group_scope(
-        self, group_id: str, deployment_name: str, parameters: "models.ScopedDeployment", **kwargs
+        self,
+        group_id: str,
+        deployment_name: str,
+        parameters: "models.ScopedDeployment",
+        **kwargs
     ) -> AsyncLROPoller["models.DeploymentValidateResult"]:
         """Validates whether the specified template is syntactically correct and will be accepted by Azure
         Resource Manager..
@@ -1803,7 +2335,9 @@ class DeploymentsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop("polling", True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop("cls", None)  # type: ClsType["models.DeploymentValidateResult"]
+        cls = kwargs.pop(
+            "cls", None
+        )  # type: ClsType["models.DeploymentValidateResult"]
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
         if cont_token is None:
@@ -1819,7 +2353,9 @@ class DeploymentsOperations:
         kwargs.pop("content_type", None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("DeploymentValidateResult", pipeline_response)
+            deserialized = self._deserialize(
+                "DeploymentValidateResult", pipeline_response
+            )
 
             if cls:
                 return cls(pipeline_response, deserialized, {})
@@ -1839,15 +2375,27 @@ class DeploymentsOperations:
                 deserialization_callback=get_long_running_output,
             )
         else:
-            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+            return AsyncLROPoller(
+                self._client, raw_result, get_long_running_output, polling_method
+            )
 
     begin_validate_at_management_group_scope.metadata = {"url": "/providers/Microsoft.Management/managementGroups/{groupId}/providers/Microsoft.Resources/deployments/{deploymentName}/validate"}  # type: ignore
 
     async def _what_if_at_management_group_scope_initial(
-        self, group_id: str, deployment_name: str, parameters: "models.ScopedDeploymentWhatIf", **kwargs
+        self,
+        group_id: str,
+        deployment_name: str,
+        parameters: "models.ScopedDeploymentWhatIf",
+        **kwargs
     ) -> Optional["models.WhatIfOperationResult"]:
-        cls = kwargs.pop("cls", None)  # type: ClsType[Optional["models.WhatIfOperationResult"]]
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop(
+            "cls", None
+        )  # type: ClsType[Optional["models.WhatIfOperationResult"]]
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+        }
         error_map.update(kwargs.pop("error_map", {}))
         api_version = "2020-06-01"
         content_type = kwargs.pop("content_type", "application/json")
@@ -1856,31 +2404,48 @@ class DeploymentsOperations:
         # Construct URL
         url = self._what_if_at_management_group_scope_initial.metadata["url"]  # type: ignore
         path_format_arguments = {
-            "groupId": self._serialize.url("group_id", group_id, "str", max_length=90, min_length=1),
+            "groupId": self._serialize.url(
+                "group_id", group_id, "str", max_length=90, min_length=1
+            ),
             "deploymentName": self._serialize.url(
-                "deployment_name", deployment_name, "str", max_length=64, min_length=1, pattern=r"^[-\w\._\(\)]+$"
+                "deployment_name",
+                deployment_name,
+                "str",
+                max_length=64,
+                min_length=1,
+                pattern=r"^[-\w\._\(\)]+$",
             ),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
-        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
+        query_parameters["api-version"] = self._serialize.query(
+            "api_version", api_version, "str"
+        )
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters["Content-Type"] = self._serialize.header("content_type", content_type, "str")
+        header_parameters["Content-Type"] = self._serialize.header(
+            "content_type", content_type, "str"
+        )
         header_parameters["Accept"] = self._serialize.header("accept", accept, "str")
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, "ScopedDeploymentWhatIf")
         body_content_kwargs["content"] = body_content
-        request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        request = self._client.post(
+            url, query_parameters, header_parameters, **body_content_kwargs
+        )
+        pipeline_response = await self._client._pipeline.run(
+            request, stream=False, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -1889,8 +2454,12 @@ class DeploymentsOperations:
             deserialized = self._deserialize("WhatIfOperationResult", pipeline_response)
 
         if response.status_code == 202:
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("str", response.headers.get("Retry-After"))
+            response_headers["Location"] = self._deserialize(
+                "str", response.headers.get("Location")
+            )
+            response_headers["Retry-After"] = self._deserialize(
+                "str", response.headers.get("Retry-After")
+            )
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
@@ -1900,7 +2469,11 @@ class DeploymentsOperations:
     _what_if_at_management_group_scope_initial.metadata = {"url": "/providers/Microsoft.Management/managementGroups/{groupId}/providers/Microsoft.Resources/deployments/{deploymentName}/whatIf"}  # type: ignore
 
     async def begin_what_if_at_management_group_scope(
-        self, group_id: str, deployment_name: str, parameters: "models.ScopedDeploymentWhatIf", **kwargs
+        self,
+        group_id: str,
+        deployment_name: str,
+        parameters: "models.ScopedDeploymentWhatIf",
+        **kwargs
     ) -> AsyncLROPoller["models.WhatIfOperationResult"]:
         """Returns changes that will be made by the deployment if executed at the scope of the management
         group.
@@ -1945,7 +2518,9 @@ class DeploymentsOperations:
             return deserialized
 
         if polling is True:
-            polling_method = AsyncARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
+            polling_method = AsyncARMPolling(
+                lro_delay, lro_options={"final-state-via": "location"}, **kwargs
+            )
         elif polling is False:
             polling_method = AsyncNoPolling()
         else:
@@ -1958,7 +2533,9 @@ class DeploymentsOperations:
                 deserialization_callback=get_long_running_output,
             )
         else:
-            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+            return AsyncLROPoller(
+                self._client, raw_result, get_long_running_output, polling_method
+            )
 
     begin_what_if_at_management_group_scope.metadata = {"url": "/providers/Microsoft.Management/managementGroups/{groupId}/providers/Microsoft.Resources/deployments/{deploymentName}/whatIf"}  # type: ignore
 
@@ -1977,7 +2554,11 @@ class DeploymentsOperations:
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop("cls", None)  # type: ClsType["models.DeploymentExportResult"]
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+        }
         error_map.update(kwargs.pop("error_map", {}))
         api_version = "2020-06-01"
         accept = "application/json"
@@ -1985,27 +2566,40 @@ class DeploymentsOperations:
         # Construct URL
         url = self.export_template_at_management_group_scope.metadata["url"]  # type: ignore
         path_format_arguments = {
-            "groupId": self._serialize.url("group_id", group_id, "str", max_length=90, min_length=1),
+            "groupId": self._serialize.url(
+                "group_id", group_id, "str", max_length=90, min_length=1
+            ),
             "deploymentName": self._serialize.url(
-                "deployment_name", deployment_name, "str", max_length=64, min_length=1, pattern=r"^[-\w\._\(\)]+$"
+                "deployment_name",
+                deployment_name,
+                "str",
+                max_length=64,
+                min_length=1,
+                pattern=r"^[-\w\._\(\)]+$",
             ),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
-        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
+        query_parameters["api-version"] = self._serialize.query(
+            "api_version", api_version, "str"
+        )
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters["Accept"] = self._serialize.header("accept", accept, "str")
 
         request = self._client.post(url, query_parameters, header_parameters)
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(
+            request, stream=False, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("DeploymentExportResult", pipeline_response)
@@ -2018,7 +2612,11 @@ class DeploymentsOperations:
     export_template_at_management_group_scope.metadata = {"url": "/providers/Microsoft.Management/managementGroups/{groupId}/providers/Microsoft.Resources/deployments/{deploymentName}/exportTemplate"}  # type: ignore
 
     def list_at_management_group_scope(
-        self, group_id: str, filter: Optional[str] = None, top: Optional[int] = None, **kwargs
+        self,
+        group_id: str,
+        filter: Optional[str] = None,
+        top: Optional[int] = None,
+        **kwargs
     ) -> AsyncIterable["models.DeploymentListResult"]:
         """Get all the deployments for a management group.
 
@@ -2035,7 +2633,11 @@ class DeploymentsOperations:
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop("cls", None)  # type: ClsType["models.DeploymentListResult"]
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+        }
         error_map.update(kwargs.pop("error_map", {}))
         api_version = "2020-06-01"
         accept = "application/json"
@@ -2043,22 +2645,30 @@ class DeploymentsOperations:
         def prepare_request(next_link=None):
             # Construct headers
             header_parameters = {}  # type: Dict[str, Any]
-            header_parameters["Accept"] = self._serialize.header("accept", accept, "str")
+            header_parameters["Accept"] = self._serialize.header(
+                "accept", accept, "str"
+            )
 
             if not next_link:
                 # Construct URL
                 url = self.list_at_management_group_scope.metadata["url"]  # type: ignore
                 path_format_arguments = {
-                    "groupId": self._serialize.url("group_id", group_id, "str", max_length=90, min_length=1),
+                    "groupId": self._serialize.url(
+                        "group_id", group_id, "str", max_length=90, min_length=1
+                    ),
                 }
                 url = self._client.format_url(url, **path_format_arguments)
                 # Construct parameters
                 query_parameters = {}  # type: Dict[str, Any]
                 if filter is not None:
-                    query_parameters["$filter"] = self._serialize.query("filter", filter, "str")
+                    query_parameters["$filter"] = self._serialize.query(
+                        "filter", filter, "str"
+                    )
                 if top is not None:
                     query_parameters["$top"] = self._serialize.query("top", top, "int")
-                query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
+                query_parameters["api-version"] = self._serialize.query(
+                    "api_version", api_version, "str"
+                )
 
                 request = self._client.get(url, query_parameters, header_parameters)
             else:
@@ -2077,11 +2687,17 @@ class DeploymentsOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(
+                request, stream=False, **kwargs
+            )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                map_error(
+                    status_code=response.status_code,
+                    response=response,
+                    error_map=error_map,
+                )
                 raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -2090,9 +2706,15 @@ class DeploymentsOperations:
 
     list_at_management_group_scope.metadata = {"url": "/providers/Microsoft.Management/managementGroups/{groupId}/providers/Microsoft.Resources/deployments/"}  # type: ignore
 
-    async def _delete_at_subscription_scope_initial(self, deployment_name: str, **kwargs) -> None:
+    async def _delete_at_subscription_scope_initial(
+        self, deployment_name: str, **kwargs
+    ) -> None:
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+        }
         error_map.update(kwargs.pop("error_map", {}))
         api_version = "2020-06-01"
         accept = "application/json"
@@ -2101,26 +2723,39 @@ class DeploymentsOperations:
         url = self._delete_at_subscription_scope_initial.metadata["url"]  # type: ignore
         path_format_arguments = {
             "deploymentName": self._serialize.url(
-                "deployment_name", deployment_name, "str", max_length=64, min_length=1, pattern=r"^[-\w\._\(\)]+$"
+                "deployment_name",
+                deployment_name,
+                "str",
+                max_length=64,
+                min_length=1,
+                pattern=r"^[-\w\._\(\)]+$",
             ),
-            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
+            "subscriptionId": self._serialize.url(
+                "self._config.subscription_id", self._config.subscription_id, "str"
+            ),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
-        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
+        query_parameters["api-version"] = self._serialize.query(
+            "api_version", api_version, "str"
+        )
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters["Accept"] = self._serialize.header("accept", accept, "str")
 
         request = self._client.delete(url, query_parameters, header_parameters)
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(
+            request, stream=False, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [202, 204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
@@ -2128,7 +2763,9 @@ class DeploymentsOperations:
 
     _delete_at_subscription_scope_initial.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Resources/deployments/{deploymentName}"}  # type: ignore
 
-    async def begin_delete_at_subscription_scope(self, deployment_name: str, **kwargs) -> AsyncLROPoller[None]:
+    async def begin_delete_at_subscription_scope(
+        self, deployment_name: str, **kwargs
+    ) -> AsyncLROPoller[None]:
         """Deletes a deployment from the deployment history.
 
         A template deployment that is currently running cannot be deleted. Deleting a template
@@ -2181,11 +2818,15 @@ class DeploymentsOperations:
                 deserialization_callback=get_long_running_output,
             )
         else:
-            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+            return AsyncLROPoller(
+                self._client, raw_result, get_long_running_output, polling_method
+            )
 
     begin_delete_at_subscription_scope.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Resources/deployments/{deploymentName}"}  # type: ignore
 
-    async def check_existence_at_subscription_scope(self, deployment_name: str, **kwargs) -> bool:
+    async def check_existence_at_subscription_scope(
+        self, deployment_name: str, **kwargs
+    ) -> bool:
         """Checks whether the deployment exists.
 
         :param deployment_name: The name of the deployment.
@@ -2196,7 +2837,11 @@ class DeploymentsOperations:
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+        }
         error_map.update(kwargs.pop("error_map", {}))
         api_version = "2020-06-01"
         accept = "application/json"
@@ -2205,26 +2850,39 @@ class DeploymentsOperations:
         url = self.check_existence_at_subscription_scope.metadata["url"]  # type: ignore
         path_format_arguments = {
             "deploymentName": self._serialize.url(
-                "deployment_name", deployment_name, "str", max_length=64, min_length=1, pattern=r"^[-\w\._\(\)]+$"
+                "deployment_name",
+                deployment_name,
+                "str",
+                max_length=64,
+                min_length=1,
+                pattern=r"^[-\w\._\(\)]+$",
             ),
-            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
+            "subscriptionId": self._serialize.url(
+                "self._config.subscription_id", self._config.subscription_id, "str"
+            ),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
-        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
+        query_parameters["api-version"] = self._serialize.query(
+            "api_version", api_version, "str"
+        )
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters["Accept"] = self._serialize.header("accept", accept, "str")
 
         request = self._client.head(url, query_parameters, header_parameters)
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(
+            request, stream=False, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [204, 404]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
@@ -2238,7 +2896,11 @@ class DeploymentsOperations:
         self, deployment_name: str, parameters: "models.Deployment", **kwargs
     ) -> "models.DeploymentExtended":
         cls = kwargs.pop("cls", None)  # type: ClsType["models.DeploymentExtended"]
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+        }
         error_map.update(kwargs.pop("error_map", {}))
         api_version = "2020-06-01"
         content_type = kwargs.pop("content_type", "application/json")
@@ -2248,30 +2910,47 @@ class DeploymentsOperations:
         url = self._create_or_update_at_subscription_scope_initial.metadata["url"]  # type: ignore
         path_format_arguments = {
             "deploymentName": self._serialize.url(
-                "deployment_name", deployment_name, "str", max_length=64, min_length=1, pattern=r"^[-\w\._\(\)]+$"
+                "deployment_name",
+                deployment_name,
+                "str",
+                max_length=64,
+                min_length=1,
+                pattern=r"^[-\w\._\(\)]+$",
             ),
-            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
+            "subscriptionId": self._serialize.url(
+                "self._config.subscription_id", self._config.subscription_id, "str"
+            ),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
-        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
+        query_parameters["api-version"] = self._serialize.query(
+            "api_version", api_version, "str"
+        )
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters["Content-Type"] = self._serialize.header("content_type", content_type, "str")
+        header_parameters["Content-Type"] = self._serialize.header(
+            "content_type", content_type, "str"
+        )
         header_parameters["Accept"] = self._serialize.header("accept", accept, "str")
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, "Deployment")
         body_content_kwargs["content"] = body_content
-        request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        request = self._client.put(
+            url, query_parameters, header_parameters, **body_content_kwargs
+        )
+        pipeline_response = await self._client._pipeline.run(
+            request, stream=False, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 201]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -2314,7 +2993,10 @@ class DeploymentsOperations:
         cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
         if cont_token is None:
             raw_result = await self._create_or_update_at_subscription_scope_initial(
-                deployment_name=deployment_name, parameters=parameters, cls=lambda x, y, z: x, **kwargs
+                deployment_name=deployment_name,
+                parameters=parameters,
+                cls=lambda x, y, z: x,
+                **kwargs
             )
 
         kwargs.pop("error_map", None)
@@ -2341,11 +3023,15 @@ class DeploymentsOperations:
                 deserialization_callback=get_long_running_output,
             )
         else:
-            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+            return AsyncLROPoller(
+                self._client, raw_result, get_long_running_output, polling_method
+            )
 
     begin_create_or_update_at_subscription_scope.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Resources/deployments/{deploymentName}"}  # type: ignore
 
-    async def get_at_subscription_scope(self, deployment_name: str, **kwargs) -> "models.DeploymentExtended":
+    async def get_at_subscription_scope(
+        self, deployment_name: str, **kwargs
+    ) -> "models.DeploymentExtended":
         """Gets a deployment.
 
         :param deployment_name: The name of the deployment.
@@ -2356,7 +3042,11 @@ class DeploymentsOperations:
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop("cls", None)  # type: ClsType["models.DeploymentExtended"]
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+        }
         error_map.update(kwargs.pop("error_map", {}))
         api_version = "2020-06-01"
         accept = "application/json"
@@ -2365,26 +3055,39 @@ class DeploymentsOperations:
         url = self.get_at_subscription_scope.metadata["url"]  # type: ignore
         path_format_arguments = {
             "deploymentName": self._serialize.url(
-                "deployment_name", deployment_name, "str", max_length=64, min_length=1, pattern=r"^[-\w\._\(\)]+$"
+                "deployment_name",
+                deployment_name,
+                "str",
+                max_length=64,
+                min_length=1,
+                pattern=r"^[-\w\._\(\)]+$",
             ),
-            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
+            "subscriptionId": self._serialize.url(
+                "self._config.subscription_id", self._config.subscription_id, "str"
+            ),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
-        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
+        query_parameters["api-version"] = self._serialize.query(
+            "api_version", api_version, "str"
+        )
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters["Accept"] = self._serialize.header("accept", accept, "str")
 
         request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(
+            request, stream=False, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("DeploymentExtended", pipeline_response)
@@ -2396,7 +3099,9 @@ class DeploymentsOperations:
 
     get_at_subscription_scope.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Resources/deployments/{deploymentName}"}  # type: ignore
 
-    async def cancel_at_subscription_scope(self, deployment_name: str, **kwargs) -> None:
+    async def cancel_at_subscription_scope(
+        self, deployment_name: str, **kwargs
+    ) -> None:
         """Cancels a currently running template deployment.
 
         You can cancel a deployment only if the provisioningState is Accepted or Running. After the
@@ -2412,7 +3117,11 @@ class DeploymentsOperations:
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+        }
         error_map.update(kwargs.pop("error_map", {}))
         api_version = "2020-06-01"
         accept = "application/json"
@@ -2421,26 +3130,39 @@ class DeploymentsOperations:
         url = self.cancel_at_subscription_scope.metadata["url"]  # type: ignore
         path_format_arguments = {
             "deploymentName": self._serialize.url(
-                "deployment_name", deployment_name, "str", max_length=64, min_length=1, pattern=r"^[-\w\._\(\)]+$"
+                "deployment_name",
+                deployment_name,
+                "str",
+                max_length=64,
+                min_length=1,
+                pattern=r"^[-\w\._\(\)]+$",
             ),
-            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
+            "subscriptionId": self._serialize.url(
+                "self._config.subscription_id", self._config.subscription_id, "str"
+            ),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
-        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
+        query_parameters["api-version"] = self._serialize.query(
+            "api_version", api_version, "str"
+        )
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters["Accept"] = self._serialize.header("accept", accept, "str")
 
         request = self._client.post(url, query_parameters, header_parameters)
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(
+            request, stream=False, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
@@ -2451,8 +3173,14 @@ class DeploymentsOperations:
     async def _validate_at_subscription_scope_initial(
         self, deployment_name: str, parameters: "models.Deployment", **kwargs
     ) -> Optional["models.DeploymentValidateResult"]:
-        cls = kwargs.pop("cls", None)  # type: ClsType[Optional["models.DeploymentValidateResult"]]
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop(
+            "cls", None
+        )  # type: ClsType[Optional["models.DeploymentValidateResult"]]
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+        }
         error_map.update(kwargs.pop("error_map", {}))
         api_version = "2020-06-01"
         content_type = kwargs.pop("content_type", "application/json")
@@ -2462,38 +3190,59 @@ class DeploymentsOperations:
         url = self._validate_at_subscription_scope_initial.metadata["url"]  # type: ignore
         path_format_arguments = {
             "deploymentName": self._serialize.url(
-                "deployment_name", deployment_name, "str", max_length=64, min_length=1, pattern=r"^[-\w\._\(\)]+$"
+                "deployment_name",
+                deployment_name,
+                "str",
+                max_length=64,
+                min_length=1,
+                pattern=r"^[-\w\._\(\)]+$",
             ),
-            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
+            "subscriptionId": self._serialize.url(
+                "self._config.subscription_id", self._config.subscription_id, "str"
+            ),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
-        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
+        query_parameters["api-version"] = self._serialize.query(
+            "api_version", api_version, "str"
+        )
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters["Content-Type"] = self._serialize.header("content_type", content_type, "str")
+        header_parameters["Content-Type"] = self._serialize.header(
+            "content_type", content_type, "str"
+        )
         header_parameters["Accept"] = self._serialize.header("accept", accept, "str")
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, "Deployment")
         body_content_kwargs["content"] = body_content
-        request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        request = self._client.post(
+            url, query_parameters, header_parameters, **body_content_kwargs
+        )
+        pipeline_response = await self._client._pipeline.run(
+            request, stream=False, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202, 400]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize("DeploymentValidateResult", pipeline_response)
+            deserialized = self._deserialize(
+                "DeploymentValidateResult", pipeline_response
+            )
 
         if response.status_code == 400:
-            deserialized = self._deserialize("DeploymentValidateResult", pipeline_response)
+            deserialized = self._deserialize(
+                "DeploymentValidateResult", pipeline_response
+            )
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -2523,19 +3272,26 @@ class DeploymentsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop("polling", True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop("cls", None)  # type: ClsType["models.DeploymentValidateResult"]
+        cls = kwargs.pop(
+            "cls", None
+        )  # type: ClsType["models.DeploymentValidateResult"]
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
         if cont_token is None:
             raw_result = await self._validate_at_subscription_scope_initial(
-                deployment_name=deployment_name, parameters=parameters, cls=lambda x, y, z: x, **kwargs
+                deployment_name=deployment_name,
+                parameters=parameters,
+                cls=lambda x, y, z: x,
+                **kwargs
             )
 
         kwargs.pop("error_map", None)
         kwargs.pop("content_type", None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("DeploymentValidateResult", pipeline_response)
+            deserialized = self._deserialize(
+                "DeploymentValidateResult", pipeline_response
+            )
 
             if cls:
                 return cls(pipeline_response, deserialized, {})
@@ -2555,15 +3311,23 @@ class DeploymentsOperations:
                 deserialization_callback=get_long_running_output,
             )
         else:
-            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+            return AsyncLROPoller(
+                self._client, raw_result, get_long_running_output, polling_method
+            )
 
     begin_validate_at_subscription_scope.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Resources/deployments/{deploymentName}/validate"}  # type: ignore
 
     async def _what_if_at_subscription_scope_initial(
         self, deployment_name: str, parameters: "models.DeploymentWhatIf", **kwargs
     ) -> Optional["models.WhatIfOperationResult"]:
-        cls = kwargs.pop("cls", None)  # type: ClsType[Optional["models.WhatIfOperationResult"]]
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop(
+            "cls", None
+        )  # type: ClsType[Optional["models.WhatIfOperationResult"]]
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+        }
         error_map.update(kwargs.pop("error_map", {}))
         api_version = "2020-06-01"
         content_type = kwargs.pop("content_type", "application/json")
@@ -2573,30 +3337,47 @@ class DeploymentsOperations:
         url = self._what_if_at_subscription_scope_initial.metadata["url"]  # type: ignore
         path_format_arguments = {
             "deploymentName": self._serialize.url(
-                "deployment_name", deployment_name, "str", max_length=64, min_length=1, pattern=r"^[-\w\._\(\)]+$"
+                "deployment_name",
+                deployment_name,
+                "str",
+                max_length=64,
+                min_length=1,
+                pattern=r"^[-\w\._\(\)]+$",
             ),
-            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
+            "subscriptionId": self._serialize.url(
+                "self._config.subscription_id", self._config.subscription_id, "str"
+            ),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
-        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
+        query_parameters["api-version"] = self._serialize.query(
+            "api_version", api_version, "str"
+        )
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters["Content-Type"] = self._serialize.header("content_type", content_type, "str")
+        header_parameters["Content-Type"] = self._serialize.header(
+            "content_type", content_type, "str"
+        )
         header_parameters["Accept"] = self._serialize.header("accept", accept, "str")
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, "DeploymentWhatIf")
         body_content_kwargs["content"] = body_content
-        request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        request = self._client.post(
+            url, query_parameters, header_parameters, **body_content_kwargs
+        )
+        pipeline_response = await self._client._pipeline.run(
+            request, stream=False, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -2605,8 +3386,12 @@ class DeploymentsOperations:
             deserialized = self._deserialize("WhatIfOperationResult", pipeline_response)
 
         if response.status_code == 202:
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("str", response.headers.get("Retry-After"))
+            response_headers["Location"] = self._deserialize(
+                "str", response.headers.get("Location")
+            )
+            response_headers["Retry-After"] = self._deserialize(
+                "str", response.headers.get("Retry-After")
+            )
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
@@ -2641,7 +3426,10 @@ class DeploymentsOperations:
         cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
         if cont_token is None:
             raw_result = await self._what_if_at_subscription_scope_initial(
-                deployment_name=deployment_name, parameters=parameters, cls=lambda x, y, z: x, **kwargs
+                deployment_name=deployment_name,
+                parameters=parameters,
+                cls=lambda x, y, z: x,
+                **kwargs
             )
 
         kwargs.pop("error_map", None)
@@ -2655,7 +3443,9 @@ class DeploymentsOperations:
             return deserialized
 
         if polling is True:
-            polling_method = AsyncARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
+            polling_method = AsyncARMPolling(
+                lro_delay, lro_options={"final-state-via": "location"}, **kwargs
+            )
         elif polling is False:
             polling_method = AsyncNoPolling()
         else:
@@ -2668,7 +3458,9 @@ class DeploymentsOperations:
                 deserialization_callback=get_long_running_output,
             )
         else:
-            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+            return AsyncLROPoller(
+                self._client, raw_result, get_long_running_output, polling_method
+            )
 
     begin_what_if_at_subscription_scope.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Resources/deployments/{deploymentName}/whatIf"}  # type: ignore
 
@@ -2685,7 +3477,11 @@ class DeploymentsOperations:
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop("cls", None)  # type: ClsType["models.DeploymentExportResult"]
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+        }
         error_map.update(kwargs.pop("error_map", {}))
         api_version = "2020-06-01"
         accept = "application/json"
@@ -2694,26 +3490,39 @@ class DeploymentsOperations:
         url = self.export_template_at_subscription_scope.metadata["url"]  # type: ignore
         path_format_arguments = {
             "deploymentName": self._serialize.url(
-                "deployment_name", deployment_name, "str", max_length=64, min_length=1, pattern=r"^[-\w\._\(\)]+$"
+                "deployment_name",
+                deployment_name,
+                "str",
+                max_length=64,
+                min_length=1,
+                pattern=r"^[-\w\._\(\)]+$",
             ),
-            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
+            "subscriptionId": self._serialize.url(
+                "self._config.subscription_id", self._config.subscription_id, "str"
+            ),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
-        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
+        query_parameters["api-version"] = self._serialize.query(
+            "api_version", api_version, "str"
+        )
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters["Accept"] = self._serialize.header("accept", accept, "str")
 
         request = self._client.post(url, query_parameters, header_parameters)
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(
+            request, stream=False, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("DeploymentExportResult", pipeline_response)
@@ -2741,7 +3550,11 @@ class DeploymentsOperations:
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop("cls", None)  # type: ClsType["models.DeploymentListResult"]
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+        }
         error_map.update(kwargs.pop("error_map", {}))
         api_version = "2020-06-01"
         accept = "application/json"
@@ -2749,24 +3562,32 @@ class DeploymentsOperations:
         def prepare_request(next_link=None):
             # Construct headers
             header_parameters = {}  # type: Dict[str, Any]
-            header_parameters["Accept"] = self._serialize.header("accept", accept, "str")
+            header_parameters["Accept"] = self._serialize.header(
+                "accept", accept, "str"
+            )
 
             if not next_link:
                 # Construct URL
                 url = self.list_at_subscription_scope.metadata["url"]  # type: ignore
                 path_format_arguments = {
                     "subscriptionId": self._serialize.url(
-                        "self._config.subscription_id", self._config.subscription_id, "str"
+                        "self._config.subscription_id",
+                        self._config.subscription_id,
+                        "str",
                     ),
                 }
                 url = self._client.format_url(url, **path_format_arguments)
                 # Construct parameters
                 query_parameters = {}  # type: Dict[str, Any]
                 if filter is not None:
-                    query_parameters["$filter"] = self._serialize.query("filter", filter, "str")
+                    query_parameters["$filter"] = self._serialize.query(
+                        "filter", filter, "str"
+                    )
                 if top is not None:
                     query_parameters["$top"] = self._serialize.query("top", top, "int")
-                query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
+                query_parameters["api-version"] = self._serialize.query(
+                    "api_version", api_version, "str"
+                )
 
                 request = self._client.get(url, query_parameters, header_parameters)
             else:
@@ -2785,11 +3606,17 @@ class DeploymentsOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(
+                request, stream=False, **kwargs
+            )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                map_error(
+                    status_code=response.status_code,
+                    response=response,
+                    error_map=error_map,
+                )
                 raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -2798,9 +3625,15 @@ class DeploymentsOperations:
 
     list_at_subscription_scope.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Resources/deployments/"}  # type: ignore
 
-    async def _delete_initial(self, resource_group_name: str, deployment_name: str, **kwargs) -> None:
+    async def _delete_initial(
+        self, resource_group_name: str, deployment_name: str, **kwargs
+    ) -> None:
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+        }
         error_map.update(kwargs.pop("error_map", {}))
         api_version = "2020-06-01"
         accept = "application/json"
@@ -2817,26 +3650,39 @@ class DeploymentsOperations:
                 pattern=r"^[-\w\._\(\)]+$",
             ),
             "deploymentName": self._serialize.url(
-                "deployment_name", deployment_name, "str", max_length=64, min_length=1, pattern=r"^[-\w\._\(\)]+$"
+                "deployment_name",
+                deployment_name,
+                "str",
+                max_length=64,
+                min_length=1,
+                pattern=r"^[-\w\._\(\)]+$",
             ),
-            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
+            "subscriptionId": self._serialize.url(
+                "self._config.subscription_id", self._config.subscription_id, "str"
+            ),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
-        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
+        query_parameters["api-version"] = self._serialize.query(
+            "api_version", api_version, "str"
+        )
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters["Accept"] = self._serialize.header("accept", accept, "str")
 
         request = self._client.delete(url, query_parameters, header_parameters)
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(
+            request, stream=False, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [202, 204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
@@ -2844,7 +3690,9 @@ class DeploymentsOperations:
 
     _delete_initial.metadata = {"url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deployments/{deploymentName}"}  # type: ignore
 
-    async def begin_delete(self, resource_group_name: str, deployment_name: str, **kwargs) -> AsyncLROPoller[None]:
+    async def begin_delete(
+        self, resource_group_name: str, deployment_name: str, **kwargs
+    ) -> AsyncLROPoller[None]:
         """Deletes a deployment from the deployment history.
 
         A template deployment that is currently running cannot be deleted. Deleting a template
@@ -2904,11 +3752,15 @@ class DeploymentsOperations:
                 deserialization_callback=get_long_running_output,
             )
         else:
-            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+            return AsyncLROPoller(
+                self._client, raw_result, get_long_running_output, polling_method
+            )
 
     begin_delete.metadata = {"url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deployments/{deploymentName}"}  # type: ignore
 
-    async def check_existence(self, resource_group_name: str, deployment_name: str, **kwargs) -> bool:
+    async def check_existence(
+        self, resource_group_name: str, deployment_name: str, **kwargs
+    ) -> bool:
         """Checks whether the deployment exists.
 
         :param resource_group_name: The name of the resource group with the deployment to check. The
@@ -2922,7 +3774,11 @@ class DeploymentsOperations:
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+        }
         error_map.update(kwargs.pop("error_map", {}))
         api_version = "2020-06-01"
         accept = "application/json"
@@ -2939,26 +3795,39 @@ class DeploymentsOperations:
                 pattern=r"^[-\w\._\(\)]+$",
             ),
             "deploymentName": self._serialize.url(
-                "deployment_name", deployment_name, "str", max_length=64, min_length=1, pattern=r"^[-\w\._\(\)]+$"
+                "deployment_name",
+                deployment_name,
+                "str",
+                max_length=64,
+                min_length=1,
+                pattern=r"^[-\w\._\(\)]+$",
             ),
-            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
+            "subscriptionId": self._serialize.url(
+                "self._config.subscription_id", self._config.subscription_id, "str"
+            ),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
-        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
+        query_parameters["api-version"] = self._serialize.query(
+            "api_version", api_version, "str"
+        )
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters["Accept"] = self._serialize.header("accept", accept, "str")
 
         request = self._client.head(url, query_parameters, header_parameters)
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(
+            request, stream=False, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [204, 404]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
@@ -2969,10 +3838,18 @@ class DeploymentsOperations:
     check_existence.metadata = {"url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deployments/{deploymentName}"}  # type: ignore
 
     async def _create_or_update_initial(
-        self, resource_group_name: str, deployment_name: str, parameters: "models.Deployment", **kwargs
+        self,
+        resource_group_name: str,
+        deployment_name: str,
+        parameters: "models.Deployment",
+        **kwargs
     ) -> "models.DeploymentExtended":
         cls = kwargs.pop("cls", None)  # type: ClsType["models.DeploymentExtended"]
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+        }
         error_map.update(kwargs.pop("error_map", {}))
         api_version = "2020-06-01"
         content_type = kwargs.pop("content_type", "application/json")
@@ -2990,30 +3867,47 @@ class DeploymentsOperations:
                 pattern=r"^[-\w\._\(\)]+$",
             ),
             "deploymentName": self._serialize.url(
-                "deployment_name", deployment_name, "str", max_length=64, min_length=1, pattern=r"^[-\w\._\(\)]+$"
+                "deployment_name",
+                deployment_name,
+                "str",
+                max_length=64,
+                min_length=1,
+                pattern=r"^[-\w\._\(\)]+$",
             ),
-            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
+            "subscriptionId": self._serialize.url(
+                "self._config.subscription_id", self._config.subscription_id, "str"
+            ),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
-        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
+        query_parameters["api-version"] = self._serialize.query(
+            "api_version", api_version, "str"
+        )
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters["Content-Type"] = self._serialize.header("content_type", content_type, "str")
+        header_parameters["Content-Type"] = self._serialize.header(
+            "content_type", content_type, "str"
+        )
         header_parameters["Accept"] = self._serialize.header("accept", accept, "str")
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, "Deployment")
         body_content_kwargs["content"] = body_content
-        request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        request = self._client.put(
+            url, query_parameters, header_parameters, **body_content_kwargs
+        )
+        pipeline_response = await self._client._pipeline.run(
+            request, stream=False, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 201]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -3030,7 +3924,11 @@ class DeploymentsOperations:
     _create_or_update_initial.metadata = {"url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deployments/{deploymentName}"}  # type: ignore
 
     async def begin_create_or_update(
-        self, resource_group_name: str, deployment_name: str, parameters: "models.Deployment", **kwargs
+        self,
+        resource_group_name: str,
+        deployment_name: str,
+        parameters: "models.Deployment",
+        **kwargs
     ) -> AsyncLROPoller["models.DeploymentExtended"]:
         """Deploys resources to a resource group.
 
@@ -3090,11 +3988,15 @@ class DeploymentsOperations:
                 deserialization_callback=get_long_running_output,
             )
         else:
-            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+            return AsyncLROPoller(
+                self._client, raw_result, get_long_running_output, polling_method
+            )
 
     begin_create_or_update.metadata = {"url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deployments/{deploymentName}"}  # type: ignore
 
-    async def get(self, resource_group_name: str, deployment_name: str, **kwargs) -> "models.DeploymentExtended":
+    async def get(
+        self, resource_group_name: str, deployment_name: str, **kwargs
+    ) -> "models.DeploymentExtended":
         """Gets a deployment.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -3107,7 +4009,11 @@ class DeploymentsOperations:
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop("cls", None)  # type: ClsType["models.DeploymentExtended"]
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+        }
         error_map.update(kwargs.pop("error_map", {}))
         api_version = "2020-06-01"
         accept = "application/json"
@@ -3124,26 +4030,39 @@ class DeploymentsOperations:
                 pattern=r"^[-\w\._\(\)]+$",
             ),
             "deploymentName": self._serialize.url(
-                "deployment_name", deployment_name, "str", max_length=64, min_length=1, pattern=r"^[-\w\._\(\)]+$"
+                "deployment_name",
+                deployment_name,
+                "str",
+                max_length=64,
+                min_length=1,
+                pattern=r"^[-\w\._\(\)]+$",
             ),
-            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
+            "subscriptionId": self._serialize.url(
+                "self._config.subscription_id", self._config.subscription_id, "str"
+            ),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
-        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
+        query_parameters["api-version"] = self._serialize.query(
+            "api_version", api_version, "str"
+        )
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters["Accept"] = self._serialize.header("accept", accept, "str")
 
         request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(
+            request, stream=False, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("DeploymentExtended", pipeline_response)
@@ -3155,7 +4074,9 @@ class DeploymentsOperations:
 
     get.metadata = {"url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deployments/{deploymentName}"}  # type: ignore
 
-    async def cancel(self, resource_group_name: str, deployment_name: str, **kwargs) -> None:
+    async def cancel(
+        self, resource_group_name: str, deployment_name: str, **kwargs
+    ) -> None:
         """Cancels a currently running template deployment.
 
         You can cancel a deployment only if the provisioningState is Accepted or Running. After the
@@ -3173,7 +4094,11 @@ class DeploymentsOperations:
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+        }
         error_map.update(kwargs.pop("error_map", {}))
         api_version = "2020-06-01"
         accept = "application/json"
@@ -3190,26 +4115,39 @@ class DeploymentsOperations:
                 pattern=r"^[-\w\._\(\)]+$",
             ),
             "deploymentName": self._serialize.url(
-                "deployment_name", deployment_name, "str", max_length=64, min_length=1, pattern=r"^[-\w\._\(\)]+$"
+                "deployment_name",
+                deployment_name,
+                "str",
+                max_length=64,
+                min_length=1,
+                pattern=r"^[-\w\._\(\)]+$",
             ),
-            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
+            "subscriptionId": self._serialize.url(
+                "self._config.subscription_id", self._config.subscription_id, "str"
+            ),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
-        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
+        query_parameters["api-version"] = self._serialize.query(
+            "api_version", api_version, "str"
+        )
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters["Accept"] = self._serialize.header("accept", accept, "str")
 
         request = self._client.post(url, query_parameters, header_parameters)
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(
+            request, stream=False, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
@@ -3218,10 +4156,20 @@ class DeploymentsOperations:
     cancel.metadata = {"url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deployments/{deploymentName}/cancel"}  # type: ignore
 
     async def _validate_initial(
-        self, resource_group_name: str, deployment_name: str, parameters: "models.Deployment", **kwargs
+        self,
+        resource_group_name: str,
+        deployment_name: str,
+        parameters: "models.Deployment",
+        **kwargs
     ) -> Optional["models.DeploymentValidateResult"]:
-        cls = kwargs.pop("cls", None)  # type: ClsType[Optional["models.DeploymentValidateResult"]]
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop(
+            "cls", None
+        )  # type: ClsType[Optional["models.DeploymentValidateResult"]]
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+        }
         error_map.update(kwargs.pop("error_map", {}))
         api_version = "2020-06-01"
         content_type = kwargs.pop("content_type", "application/json")
@@ -3239,38 +4187,59 @@ class DeploymentsOperations:
                 pattern=r"^[-\w\._\(\)]+$",
             ),
             "deploymentName": self._serialize.url(
-                "deployment_name", deployment_name, "str", max_length=64, min_length=1, pattern=r"^[-\w\._\(\)]+$"
+                "deployment_name",
+                deployment_name,
+                "str",
+                max_length=64,
+                min_length=1,
+                pattern=r"^[-\w\._\(\)]+$",
             ),
-            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
+            "subscriptionId": self._serialize.url(
+                "self._config.subscription_id", self._config.subscription_id, "str"
+            ),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
-        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
+        query_parameters["api-version"] = self._serialize.query(
+            "api_version", api_version, "str"
+        )
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters["Content-Type"] = self._serialize.header("content_type", content_type, "str")
+        header_parameters["Content-Type"] = self._serialize.header(
+            "content_type", content_type, "str"
+        )
         header_parameters["Accept"] = self._serialize.header("accept", accept, "str")
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, "Deployment")
         body_content_kwargs["content"] = body_content
-        request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        request = self._client.post(
+            url, query_parameters, header_parameters, **body_content_kwargs
+        )
+        pipeline_response = await self._client._pipeline.run(
+            request, stream=False, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202, 400]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize("DeploymentValidateResult", pipeline_response)
+            deserialized = self._deserialize(
+                "DeploymentValidateResult", pipeline_response
+            )
 
         if response.status_code == 400:
-            deserialized = self._deserialize("DeploymentValidateResult", pipeline_response)
+            deserialized = self._deserialize(
+                "DeploymentValidateResult", pipeline_response
+            )
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -3280,7 +4249,11 @@ class DeploymentsOperations:
     _validate_initial.metadata = {"url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deployments/{deploymentName}/validate"}  # type: ignore
 
     async def begin_validate(
-        self, resource_group_name: str, deployment_name: str, parameters: "models.Deployment", **kwargs
+        self,
+        resource_group_name: str,
+        deployment_name: str,
+        parameters: "models.Deployment",
+        **kwargs
     ) -> AsyncLROPoller["models.DeploymentValidateResult"]:
         """Validates whether the specified template is syntactically correct and will be accepted by Azure
         Resource Manager..
@@ -3303,7 +4276,9 @@ class DeploymentsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop("polling", True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop("cls", None)  # type: ClsType["models.DeploymentValidateResult"]
+        cls = kwargs.pop(
+            "cls", None
+        )  # type: ClsType["models.DeploymentValidateResult"]
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
         if cont_token is None:
@@ -3319,7 +4294,9 @@ class DeploymentsOperations:
         kwargs.pop("content_type", None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("DeploymentValidateResult", pipeline_response)
+            deserialized = self._deserialize(
+                "DeploymentValidateResult", pipeline_response
+            )
 
             if cls:
                 return cls(pipeline_response, deserialized, {})
@@ -3339,15 +4316,27 @@ class DeploymentsOperations:
                 deserialization_callback=get_long_running_output,
             )
         else:
-            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+            return AsyncLROPoller(
+                self._client, raw_result, get_long_running_output, polling_method
+            )
 
     begin_validate.metadata = {"url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deployments/{deploymentName}/validate"}  # type: ignore
 
     async def _what_if_initial(
-        self, resource_group_name: str, deployment_name: str, parameters: "models.DeploymentWhatIf", **kwargs
+        self,
+        resource_group_name: str,
+        deployment_name: str,
+        parameters: "models.DeploymentWhatIf",
+        **kwargs
     ) -> Optional["models.WhatIfOperationResult"]:
-        cls = kwargs.pop("cls", None)  # type: ClsType[Optional["models.WhatIfOperationResult"]]
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop(
+            "cls", None
+        )  # type: ClsType[Optional["models.WhatIfOperationResult"]]
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+        }
         error_map.update(kwargs.pop("error_map", {}))
         api_version = "2020-06-01"
         content_type = kwargs.pop("content_type", "application/json")
@@ -3365,30 +4354,47 @@ class DeploymentsOperations:
                 pattern=r"^[-\w\._\(\)]+$",
             ),
             "deploymentName": self._serialize.url(
-                "deployment_name", deployment_name, "str", max_length=64, min_length=1, pattern=r"^[-\w\._\(\)]+$"
+                "deployment_name",
+                deployment_name,
+                "str",
+                max_length=64,
+                min_length=1,
+                pattern=r"^[-\w\._\(\)]+$",
             ),
-            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
+            "subscriptionId": self._serialize.url(
+                "self._config.subscription_id", self._config.subscription_id, "str"
+            ),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
-        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
+        query_parameters["api-version"] = self._serialize.query(
+            "api_version", api_version, "str"
+        )
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters["Content-Type"] = self._serialize.header("content_type", content_type, "str")
+        header_parameters["Content-Type"] = self._serialize.header(
+            "content_type", content_type, "str"
+        )
         header_parameters["Accept"] = self._serialize.header("accept", accept, "str")
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, "DeploymentWhatIf")
         body_content_kwargs["content"] = body_content
-        request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        request = self._client.post(
+            url, query_parameters, header_parameters, **body_content_kwargs
+        )
+        pipeline_response = await self._client._pipeline.run(
+            request, stream=False, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -3397,8 +4403,12 @@ class DeploymentsOperations:
             deserialized = self._deserialize("WhatIfOperationResult", pipeline_response)
 
         if response.status_code == 202:
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("str", response.headers.get("Retry-After"))
+            response_headers["Location"] = self._deserialize(
+                "str", response.headers.get("Location")
+            )
+            response_headers["Retry-After"] = self._deserialize(
+                "str", response.headers.get("Retry-After")
+            )
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
@@ -3408,7 +4418,11 @@ class DeploymentsOperations:
     _what_if_initial.metadata = {"url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deployments/{deploymentName}/whatIf"}  # type: ignore
 
     async def begin_what_if(
-        self, resource_group_name: str, deployment_name: str, parameters: "models.DeploymentWhatIf", **kwargs
+        self,
+        resource_group_name: str,
+        deployment_name: str,
+        parameters: "models.DeploymentWhatIf",
+        **kwargs
     ) -> AsyncLROPoller["models.WhatIfOperationResult"]:
         """Returns changes that will be made by the deployment if executed at the scope of the resource
         group.
@@ -3454,7 +4468,9 @@ class DeploymentsOperations:
             return deserialized
 
         if polling is True:
-            polling_method = AsyncARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
+            polling_method = AsyncARMPolling(
+                lro_delay, lro_options={"final-state-via": "location"}, **kwargs
+            )
         elif polling is False:
             polling_method = AsyncNoPolling()
         else:
@@ -3467,7 +4483,9 @@ class DeploymentsOperations:
                 deserialization_callback=get_long_running_output,
             )
         else:
-            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+            return AsyncLROPoller(
+                self._client, raw_result, get_long_running_output, polling_method
+            )
 
     begin_what_if.metadata = {"url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deployments/{deploymentName}/whatIf"}  # type: ignore
 
@@ -3486,7 +4504,11 @@ class DeploymentsOperations:
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop("cls", None)  # type: ClsType["models.DeploymentExportResult"]
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+        }
         error_map.update(kwargs.pop("error_map", {}))
         api_version = "2020-06-01"
         accept = "application/json"
@@ -3503,26 +4525,39 @@ class DeploymentsOperations:
                 pattern=r"^[-\w\._\(\)]+$",
             ),
             "deploymentName": self._serialize.url(
-                "deployment_name", deployment_name, "str", max_length=64, min_length=1, pattern=r"^[-\w\._\(\)]+$"
+                "deployment_name",
+                deployment_name,
+                "str",
+                max_length=64,
+                min_length=1,
+                pattern=r"^[-\w\._\(\)]+$",
             ),
-            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
+            "subscriptionId": self._serialize.url(
+                "self._config.subscription_id", self._config.subscription_id, "str"
+            ),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
-        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
+        query_parameters["api-version"] = self._serialize.query(
+            "api_version", api_version, "str"
+        )
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters["Accept"] = self._serialize.header("accept", accept, "str")
 
         request = self._client.post(url, query_parameters, header_parameters)
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(
+            request, stream=False, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("DeploymentExportResult", pipeline_response)
@@ -3535,7 +4570,11 @@ class DeploymentsOperations:
     export_template.metadata = {"url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deployments/{deploymentName}/exportTemplate"}  # type: ignore
 
     def list_by_resource_group(
-        self, resource_group_name: str, filter: Optional[str] = None, top: Optional[int] = None, **kwargs
+        self,
+        resource_group_name: str,
+        filter: Optional[str] = None,
+        top: Optional[int] = None,
+        **kwargs
     ) -> AsyncIterable["models.DeploymentListResult"]:
         """Get all the deployments for a resource group.
 
@@ -3553,7 +4592,11 @@ class DeploymentsOperations:
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop("cls", None)  # type: ClsType["models.DeploymentListResult"]
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+        }
         error_map.update(kwargs.pop("error_map", {}))
         api_version = "2020-06-01"
         accept = "application/json"
@@ -3561,7 +4604,9 @@ class DeploymentsOperations:
         def prepare_request(next_link=None):
             # Construct headers
             header_parameters = {}  # type: Dict[str, Any]
-            header_parameters["Accept"] = self._serialize.header("accept", accept, "str")
+            header_parameters["Accept"] = self._serialize.header(
+                "accept", accept, "str"
+            )
 
             if not next_link:
                 # Construct URL
@@ -3576,17 +4621,23 @@ class DeploymentsOperations:
                         pattern=r"^[-\w\._\(\)]+$",
                     ),
                     "subscriptionId": self._serialize.url(
-                        "self._config.subscription_id", self._config.subscription_id, "str"
+                        "self._config.subscription_id",
+                        self._config.subscription_id,
+                        "str",
                     ),
                 }
                 url = self._client.format_url(url, **path_format_arguments)
                 # Construct parameters
                 query_parameters = {}  # type: Dict[str, Any]
                 if filter is not None:
-                    query_parameters["$filter"] = self._serialize.query("filter", filter, "str")
+                    query_parameters["$filter"] = self._serialize.query(
+                        "filter", filter, "str"
+                    )
                 if top is not None:
                     query_parameters["$top"] = self._serialize.query("top", top, "int")
-                query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
+                query_parameters["api-version"] = self._serialize.query(
+                    "api_version", api_version, "str"
+                )
 
                 request = self._client.get(url, query_parameters, header_parameters)
             else:
@@ -3605,11 +4656,17 @@ class DeploymentsOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(
+                request, stream=False, **kwargs
+            )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                map_error(
+                    status_code=response.status_code,
+                    response=response,
+                    error_map=error_map,
+                )
                 raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -3618,7 +4675,9 @@ class DeploymentsOperations:
 
     list_by_resource_group.metadata = {"url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deployments/"}  # type: ignore
 
-    async def calculate_template_hash(self, template: object, **kwargs) -> "models.TemplateHashResult":
+    async def calculate_template_hash(
+        self, template: object, **kwargs
+    ) -> "models.TemplateHashResult":
         """Calculate the hash of the given template.
 
         :param template: The template provided to calculate hash.
@@ -3629,7 +4688,11 @@ class DeploymentsOperations:
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop("cls", None)  # type: ClsType["models.TemplateHashResult"]
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+        }
         error_map.update(kwargs.pop("error_map", {}))
         api_version = "2020-06-01"
         content_type = kwargs.pop("content_type", "application/json")
@@ -3640,22 +4703,32 @@ class DeploymentsOperations:
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
-        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
+        query_parameters["api-version"] = self._serialize.query(
+            "api_version", api_version, "str"
+        )
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters["Content-Type"] = self._serialize.header("content_type", content_type, "str")
+        header_parameters["Content-Type"] = self._serialize.header(
+            "content_type", content_type, "str"
+        )
         header_parameters["Accept"] = self._serialize.header("accept", accept, "str")
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(template, "object")
         body_content_kwargs["content"] = body_content
-        request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        request = self._client.post(
+            url, query_parameters, header_parameters, **body_content_kwargs
+        )
+        pipeline_response = await self._client._pipeline.run(
+            request, stream=False, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("TemplateHashResult", pipeline_response)

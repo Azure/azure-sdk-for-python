@@ -15,7 +15,9 @@ from azure.ai.ml._schema import (
     RegistryStr,
 )
 from azure.ai.ml._schema._deployment.deployment import DeploymentSchema
-from azure.ai.ml._schema.pipeline.pipeline_component import PipelineComponentFileRefField
+from azure.ai.ml._schema.pipeline.pipeline_component import (
+    PipelineComponentFileRefField,
+)
 from azure.ai.ml.constants._common import AzureMLResourceType
 
 module_logger = logging.getLogger(__name__)
@@ -27,7 +29,9 @@ class PipelineComponentBatchDeploymentSchema(DeploymentSchema):
     component = UnionField(
         [
             RegistryStr(azureml_type=AzureMLResourceType.COMPONENT),
-            ArmVersionedStr(azureml_type=AzureMLResourceType.COMPONENT, allow_default_version=True),
+            ArmVersionedStr(
+                azureml_type=AzureMLResourceType.COMPONENT, allow_default_version=True
+            ),
             PipelineComponentFileRefField(),
         ]
     )

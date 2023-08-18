@@ -160,7 +160,9 @@ class FileStorageClient:
             Only used if `in_directory` and `show_progress` are True.
         :type callback: Optional[Callable[[Dict], None]], optional
         """
-        validate_content = os.stat(source).st_size > 0  # don't do checksum for empty files
+        validate_content = (
+            os.stat(source).st_size > 0
+        )  # don't do checksum for empty files
 
         with open(source, "rb") as data:
             if in_directory:
@@ -188,7 +190,9 @@ class FileStorageClient:
                             raw_response_hook=pbar.update_to,
                         )
                 else:
-                    self.directory_client.upload_file(file_name=dest, data=data, validate_content=validate_content)
+                    self.directory_client.upload_file(
+                        file_name=dest, data=data, validate_content=validate_content
+                    )
         self.uploaded_file_count = self.uploaded_file_count + 1
 
     def upload_dir(
@@ -217,7 +221,11 @@ class FileStorageClient:
         prefix = "" if dest == "" else dest + "/"
         prefix += os.path.basename(source) + "/"
 
-        upload_paths = sorted(get_upload_files_from_folder(source_path, prefix=prefix, ignore_file=ignore_file))
+        upload_paths = sorted(
+            get_upload_files_from_folder(
+                source_path, prefix=prefix, ignore_file=ignore_file
+            )
+        )
         self.total_file_count = len(upload_paths)
 
         for root, *_ in os.walk(source):
@@ -229,7 +237,9 @@ class FileStorageClient:
             subdir = subdir.create_subdirectory(trunc_root)
 
         if show_progress:
-            with DirectoryUploadProgressBar(dir_size=get_directory_size(source_path), msg=msg) as pbar:
+            with DirectoryUploadProgressBar(
+                dir_size=get_directory_size(source_path), msg=msg
+            ) as pbar:
                 for src, destination in upload_paths:
                     self.upload_file(
                         src,
@@ -259,11 +269,13 @@ class FileStorageClient:
         """
         # get dictionary of asset ids and if each asset is a file or directory (e.g. {"ijd930j23d8": True})
         default_directory_items = {
-            item["name"]: item["is_directory"] for item in self.directory_client.list_directories_and_files()
+            item["name"]: item["is_directory"]
+            for item in self.directory_client.list_directories_and_files()
         }
         try:
             legacy_directory_items = {
-                item["name"]: item["is_directory"] for item in self.legacy_directory_client.list_directories_and_files()
+                item["name"]: item["is_directory"]
+                for item in self.legacy_directory_client.list_directories_and_files()
             }
         except ResourceNotFoundError:
             # if the legacy directory does not exist, a ResourceNotFoundError is thrown. For a new file share
@@ -275,14 +287,18 @@ class FileStorageClient:
         existing_items = {**default_directory_items, **legacy_directory_items}
 
         if asset_id in existing_items:
-            client, properties = self._get_asset_metadata(asset_id, default_directory_items, legacy_directory_items)
+            client, properties = self._get_asset_metadata(
+                asset_id, default_directory_items, legacy_directory_items
+            )
             metadata = properties.get("metadata")
             if metadata and UPLOAD_CONFIRMATION.items() <= metadata.items():
                 self.name = metadata.get("name")
                 self.version = metadata.get("version")
                 return True
             if not self.legacy:
-                delete(client)  # If past upload never reached upload confirmation, delete and proceed to upload
+                delete(
+                    client
+                )  # If past upload never reached upload confirmation, delete and proceed to upload
         return False
 
     def download(
@@ -307,7 +323,9 @@ class FileStorageClient:
             max_concurrency=max_concurrency,
         )
 
-    def _set_confirmation_metadata(self, source: str, dest: str, name: str, version: str) -> None:
+    def _set_confirmation_metadata(
+        self, source: str, dest: str, name: str, version: str
+    ) -> None:
         metadata_dict = _build_metadata_dict(name, version)
         if os.path.isdir(source):
             properties = self.directory_client.get_subdirectory_client(dest)
@@ -413,7 +431,9 @@ def recursive_download(
         for f in folders:
             sub_client = client.get_subdirectory_client(f["name"])
             destination = "/".join((destination, f["name"]))
-            recursive_download(sub_client, destination=destination, max_concurrency=max_concurrency)
+            recursive_download(
+                sub_client, destination=destination, max_concurrency=max_concurrency
+            )
     except Exception as e:
         msg = f"Saving fileshare directory with prefix {starts_with} was unsuccessful."
         raise MlException(

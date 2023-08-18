@@ -40,5 +40,7 @@ class WorkspaceSchema(PathAwareSchema):
     identity = NestedField(IdentitySchema)
     primary_user_assigned_identity = fields.Str()
     workspace_hub = fields.Str(validate=validate_arm_str)
-    managed_network = ExperimentalField(NestedField(ManagedNetworkSchema, unknown=EXCLUDE))
+    managed_network = ExperimentalField(
+        NestedField(ManagedNetworkSchema, unknown=EXCLUDE)
+    )
     enable_data_isolation = fields.Bool()

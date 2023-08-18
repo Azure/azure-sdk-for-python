@@ -9,8 +9,12 @@ from typing import Dict, List, Optional, Union
 
 from marshmallow import INCLUDE
 
-from azure.ai.ml._schema._feature_set.featureset_spec_metadata_schema import FeaturesetSpecMetadataSchema
-from azure.ai.ml._schema._feature_set.featureset_spec_properties_schema import FeaturesetSpecPropertiesSchema
+from azure.ai.ml._schema._feature_set.featureset_spec_metadata_schema import (
+    FeaturesetSpecMetadataSchema,
+)
+from azure.ai.ml._schema._feature_set.featureset_spec_properties_schema import (
+    FeaturesetSpecPropertiesSchema,
+)
 from azure.ai.ml._utils.utils import load_yaml
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 from azure.ai.ml.entities._util import load_from_dict
@@ -71,7 +75,16 @@ class FeaturesetSpecMetadata(object):
         context = {
             BASE_PATH_CONTEXT_KEY: Path(yaml_path).parent if yaml_path else Path("./"),
         }
-        return load_from_dict(FeaturesetSpecMetadataSchema, yaml_data, context, "", unknown=INCLUDE, **kwargs)
+        return load_from_dict(
+            FeaturesetSpecMetadataSchema,
+            yaml_data,
+            context,
+            "",
+            unknown=INCLUDE,
+            **kwargs,
+        )
 
     def _to_dict(self) -> Dict:
-        return FeaturesetSpecPropertiesSchema(context={BASE_PATH_CONTEXT_KEY: "./"}, unknown=INCLUDE).dump(self)
+        return FeaturesetSpecPropertiesSchema(
+            context={BASE_PATH_CONTEXT_KEY: "./"}, unknown=INCLUDE
+        ).dump(self)

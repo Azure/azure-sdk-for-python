@@ -7,7 +7,9 @@ from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import Dict, Optional
 
-from azure.ai.ml._restclient.v2022_02_01_preview.models import CommandJob as RestCommandJob
+from azure.ai.ml._restclient.v2022_02_01_preview.models import (
+    CommandJob as RestCommandJob,
+)
 from azure.ai.ml._restclient.v2022_02_01_preview.models import JobBaseData
 from azure.ai.ml._schema.job.import_job import ImportJobSchema
 from azure.ai.ml._utils.utils import is_private_preview_enabled
@@ -181,7 +183,8 @@ class ImportJob(Job, JobIOMixin):
             compute_id=self.compute,
             experiment_name=self.experiment_name,
             inputs=to_rest_dataset_literal_inputs(
-                self.source._to_job_inputs(), job_type=self.type  # pylint: disable=protected-access
+                self.source._to_job_inputs(),
+                job_type=self.type,  # pylint: disable=protected-access
             ),
             outputs=to_rest_data_outputs({"output": self.output}),
             # TODO: Remove in PuP with native import job/component type support in MFE/Designer
@@ -193,7 +196,8 @@ class ImportJob(Job, JobIOMixin):
             # but chance should be very low in PrP
             command="import",
             environment_id=self.compute.replace(
-                "/computes/DataFactory", "/environments/AzureML-sklearn-0.24-ubuntu18.04-py37-cpu"
+                "/computes/DataFactory",
+                "/environments/AzureML-sklearn-0.24-ubuntu18.04-py37-cpu",
             ),
         )
         result = JobBaseData(properties=properties)
@@ -201,8 +205,12 @@ class ImportJob(Job, JobIOMixin):
         return result
 
     @classmethod
-    def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs) -> "ImportJob":
-        loaded_data = load_from_dict(ImportJobSchema, data, context, additional_message, **kwargs)
+    def _load_from_dict(
+        cls, data: Dict, context: Dict, additional_message: str, **kwargs
+    ) -> "ImportJob":
+        loaded_data = load_from_dict(
+            ImportJobSchema, data, context, additional_message, **kwargs
+        )
         return ImportJob(base_path=context[BASE_PATH_CONTEXT_KEY], **loaded_data)
 
     @classmethod
@@ -219,12 +227,16 @@ class ImportJob(Job, JobIOMixin):
             experiment_name=rest_command_job.experiment_name,
             status=rest_command_job.status,
             creation_context=obj.system_data,
-            source=ImportSource._from_job_inputs(inputs),  # pylint: disable=protected-access
+            source=ImportSource._from_job_inputs(
+                inputs
+            ),  # pylint: disable=protected-access
             output=outputs["output"] if "output" in outputs else None,
         )
         return import_job
 
-    def _to_component(self, context: Optional[Dict] = None, **kwargs) -> "ImportComponent":
+    def _to_component(
+        self, context: Optional[Dict] = None, **kwargs
+    ) -> "ImportComponent":
         """Translate a import job to component.
 
         :param context: Context of import job YAML file.
@@ -247,7 +259,9 @@ class ImportJob(Job, JobIOMixin):
                 inputs=self.source._to_job_inputs(),  # pylint: disable=protected-access
                 pipeline_job_dict=pipeline_job_dict,
             ),
-            output=self._to_outputs(outputs={"output": self.output}, pipeline_job_dict=pipeline_job_dict)["output"],
+            output=self._to_outputs(
+                outputs={"output": self.output}, pipeline_job_dict=pipeline_job_dict
+            )["output"],
         )
 
     def _to_node(self, context: Optional[Dict] = None, **kwargs) -> "Import":

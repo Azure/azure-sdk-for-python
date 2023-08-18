@@ -5,13 +5,21 @@ from pathlib import Path
 from typing import Dict, Optional
 
 from azure.ai.ml._restclient.v2022_10_01_preview.models import ComputeResource
-from azure.ai.ml._restclient.v2022_10_01_preview.models import VirtualMachine as VMResource
+from azure.ai.ml._restclient.v2022_10_01_preview.models import (
+    VirtualMachine as VMResource,
+)
 from azure.ai.ml._restclient.v2022_10_01_preview.models import (
     VirtualMachineSchemaProperties,
     VirtualMachineSshCredentials,
 )
-from azure.ai.ml._schema.compute.virtual_machine_compute import VirtualMachineComputeSchema
-from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, DefaultOpenEncoding, TYPE
+from azure.ai.ml._schema.compute.virtual_machine_compute import (
+    VirtualMachineComputeSchema,
+)
+from azure.ai.ml.constants._common import (
+    BASE_PATH_CONTEXT_KEY,
+    DefaultOpenEncoding,
+    TYPE,
+)
 from azure.ai.ml.constants._compute import ComputeType
 from azure.ai.ml.entities._compute.compute import Compute
 from azure.ai.ml.entities._util import load_from_dict
@@ -121,17 +129,25 @@ class VirtualMachineCompute(Compute):
 
     def _to_dict(self) -> Dict:
         # pylint: disable=no-member
-        return VirtualMachineComputeSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        return VirtualMachineComputeSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(
+            self
+        )
 
     @classmethod
-    def _load_from_dict(cls, data: Dict, context: Dict, **kwargs) -> "VirtualMachineCompute":
-        loaded_data = load_from_dict(VirtualMachineComputeSchema, data, context, **kwargs)
+    def _load_from_dict(
+        cls, data: Dict, context: Dict, **kwargs
+    ) -> "VirtualMachineCompute":
+        loaded_data = load_from_dict(
+            VirtualMachineComputeSchema, data, context, **kwargs
+        )
         return VirtualMachineCompute(**loaded_data)
 
     def _to_rest_object(self) -> ComputeResource:
         ssh_key_value = None
         if self.ssh_settings and self.ssh_settings.ssh_private_key_file:
-            ssh_key_value = Path(self.ssh_settings.ssh_private_key_file).read_text(encoding=DefaultOpenEncoding.READ)
+            ssh_key_value = Path(self.ssh_settings.ssh_private_key_file).read_text(
+                encoding=DefaultOpenEncoding.READ
+            )
         credentials = VirtualMachineSshCredentials(
             username=self.ssh_settings.admin_username if self.ssh_settings else None,
             password=self.ssh_settings.admin_password if self.ssh_settings else None,
@@ -146,5 +162,10 @@ class VirtualMachineCompute(Compute):
             resource_id=self.resource_id,
             description=self.description,
         )
-        resource = ComputeResource(name=self.name, location=self.location, tags=self.tags, properties=vm_compute)
+        resource = ComputeResource(
+            name=self.name,
+            location=self.location,
+            tags=self.tags,
+            properties=vm_compute,
+        )
         return resource

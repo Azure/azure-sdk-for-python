@@ -6,31 +6,66 @@ import collections.abc
 import re
 from typing import Any, Dict, Union
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import CustomModelJobInput as RestCustomModelJobInput
-from azure.ai.ml._restclient.v2023_04_01_preview.models import CustomModelJobOutput as RestCustomModelJobOutput
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    CustomModelJobInput as RestCustomModelJobInput,
+)
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    CustomModelJobOutput as RestCustomModelJobOutput,
+)
 from azure.ai.ml._restclient.v2023_04_01_preview.models import InputDeliveryMode
 from azure.ai.ml._restclient.v2023_04_01_preview.models import JobInput as RestJobInput
 from azure.ai.ml._restclient.v2023_04_01_preview.models import JobInputType
-from azure.ai.ml._restclient.v2023_04_01_preview.models import JobOutput as RestJobOutput
-from azure.ai.ml._restclient.v2023_04_01_preview.models import JobOutputType, LiteralJobInput
-from azure.ai.ml._restclient.v2023_04_01_preview.models import MLFlowModelJobInput as RestMLFlowModelJobInput
-from azure.ai.ml._restclient.v2023_04_01_preview.models import MLFlowModelJobOutput as RestMLFlowModelJobOutput
-from azure.ai.ml._restclient.v2023_04_01_preview.models import MLTableJobInput as RestMLTableJobInput
-from azure.ai.ml._restclient.v2023_04_01_preview.models import MLTableJobOutput as RestMLTableJobOutput
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    JobOutput as RestJobOutput,
+)
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    JobOutputType,
+    LiteralJobInput,
+)
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    MLFlowModelJobInput as RestMLFlowModelJobInput,
+)
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    MLFlowModelJobOutput as RestMLFlowModelJobOutput,
+)
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    MLTableJobInput as RestMLTableJobInput,
+)
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    MLTableJobOutput as RestMLTableJobOutput,
+)
 from azure.ai.ml._restclient.v2023_04_01_preview.models import OutputDeliveryMode
-from azure.ai.ml._restclient.v2023_04_01_preview.models import TritonModelJobInput as RestTritonModelJobInput
-from azure.ai.ml._restclient.v2023_04_01_preview.models import TritonModelJobOutput as RestTritonModelJobOutput
-from azure.ai.ml._restclient.v2023_04_01_preview.models import UriFileJobInput as RestUriFileJobInput
-from azure.ai.ml._restclient.v2023_04_01_preview.models import UriFileJobOutput as RestUriFileJobOutput
-from azure.ai.ml._restclient.v2023_04_01_preview.models import UriFolderJobInput as RestUriFolderJobInput
-from azure.ai.ml._restclient.v2023_04_01_preview.models import UriFolderJobOutput as RestUriFolderJobOutput
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    TritonModelJobInput as RestTritonModelJobInput,
+)
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    TritonModelJobOutput as RestTritonModelJobOutput,
+)
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    UriFileJobInput as RestUriFileJobInput,
+)
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    UriFileJobOutput as RestUriFileJobOutput,
+)
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    UriFolderJobInput as RestUriFolderJobInput,
+)
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    UriFolderJobOutput as RestUriFolderJobOutput,
+)
 from azure.ai.ml._utils.utils import is_data_binding_expression
 from azure.ai.ml.constants import AssetTypes, InputOutputModes, JobType
 from azure.ai.ml.constants._component import IOConstants
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job.input_output_entry import InputOutputEntry
 from azure.ai.ml.entities._util import normalize_job_input_output_type
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, JobException, ValidationErrorType, ValidationException
+from azure.ai.ml.exceptions import (
+    ErrorCategory,
+    ErrorTarget,
+    JobException,
+    ValidationErrorType,
+    ValidationException,
+)
 
 INPUT_MOUNT_MAPPING_FROM_REST = {
     InputDeliveryMode.READ_WRITE_MOUNT: InputOutputModes.RW_MOUNT,
@@ -131,13 +166,20 @@ def build_input_output(
     return item
 
 
-def _validate_inputs_for(input_consumer_name: str, input_consumer: str, inputs: Dict[str, Any]) -> None:
+def _validate_inputs_for(
+    input_consumer_name: str, input_consumer: str, inputs: Dict[str, Any]
+) -> None:
     implicit_inputs = re.findall(r"\${{inputs\.([\w\.-]+)}}", input_consumer)
     # optional inputs no need to validate whether they're in inputs
-    optional_inputs = re.findall(r"\[[\w\.\s-]*\${{inputs\.([\w\.-]+)}}]", input_consumer)
+    optional_inputs = re.findall(
+        r"\[[\w\.\s-]*\${{inputs\.([\w\.-]+)}}]", input_consumer
+    )
     for key in implicit_inputs:
         if inputs.get(key, None) is None and key not in optional_inputs:
-            msg = "Inputs to job does not contain '{}' referenced in " + input_consumer_name
+            msg = (
+                "Inputs to job does not contain '{}' referenced in "
+                + input_consumer_name
+            )
             raise ValidationException(
                 message=msg.format(key),
                 no_personal_data_message=msg.format("[key]"),
@@ -172,9 +214,7 @@ def validate_pipeline_input_key_characters(key: str) -> None:
     # Note: ([a-zA-Z_]+[a-zA-Z0-9_]*) is a valid single key,
     # so a valid pipeline key is: ^{single_key}([.]{single_key})*$
     if re.match(IOConstants.VALID_KEY_PATTERN, key) is None:
-        msg = (
-            "Pipeline input key name {} must be composed letters, numbers, and underscores with optional split by dots."
-        )
+        msg = "Pipeline input key name {} must be composed letters, numbers, and underscores with optional split by dots."
         raise ValidationException(
             message=msg.format(key),
             no_personal_data_message=msg.format("[key]"),
@@ -207,7 +247,11 @@ def to_rest_dataset_literal_inputs(
             # We pass job_type=None for pipeline node, and want skip this check for nodes.
             validate_key_contains_allowed_characters(input_name)
         if isinstance(input_value, Input):
-            if input_value.path and isinstance(input_value.path, str) and is_data_binding_expression(input_value.path):
+            if (
+                input_value.path
+                and isinstance(input_value.path, str)
+                and is_data_binding_expression(input_value.path)
+            ):
                 input_data = LiteralJobInput(value=input_value.path)
                 # set mode attribute manually for binding job input
                 if input_value.mode:
@@ -219,7 +263,9 @@ def to_rest_dataset_literal_inputs(
                 if input_value.type in target_cls_dict:
                     input_data = target_cls_dict[input_value.type](
                         uri=input_value.path,
-                        mode=INPUT_MOUNT_MAPPING_TO_REST[input_value.mode.lower()] if input_value.mode else None,
+                        mode=INPUT_MOUNT_MAPPING_TO_REST[input_value.mode.lower()]
+                        if input_value.mode
+                        else None,
                     )
 
                 else:
@@ -281,7 +327,9 @@ def from_rest_inputs_to_dataset_literal(
                 input_data = Input(
                     type=type_transfer_dict[input_value.job_input_type],
                     path=path,
-                    mode=INPUT_MOUNT_MAPPING_FROM_REST[input_value.mode] if input_value.mode else None,
+                    mode=INPUT_MOUNT_MAPPING_FROM_REST[input_value.mode]
+                    if input_value.mode
+                    else None,
                 )
         elif input_value.job_input_type in (JobInputType.LITERAL, JobInputType.LITERAL):
             # otherwise, the input is a literal, so just unpack the InputData value field
@@ -318,13 +366,17 @@ def to_rest_data_outputs(outputs: Dict[str, Output]) -> Dict[str, RestJobOutput]
         else:
             target_cls_dict = get_output_rest_cls_dict()
 
-            output_value_type = output_value.type if output_value.type else AssetTypes.URI_FOLDER
+            output_value_type = (
+                output_value.type if output_value.type else AssetTypes.URI_FOLDER
+            )
             if output_value_type in target_cls_dict:
                 output = target_cls_dict[output_value_type](
                     asset_name=output_value.name,
                     asset_version=output_value.version,
                     uri=output_value.path,
-                    mode=OUTPUT_MOUNT_MAPPING_TO_REST[output_value.mode.lower()] if output_value.mode else None,
+                    mode=OUTPUT_MOUNT_MAPPING_TO_REST[output_value.mode.lower()]
+                    if output_value.mode
+                    else None,
                     description=output_value.description,
                 )
             else:
@@ -363,7 +415,9 @@ def from_rest_data_outputs(outputs: Dict[str, RestJobOutput]) -> Dict[str, Outpu
             from_rest_outputs[output_name] = Output(
                 type=output_type_mapping[output_value.job_output_type],
                 path=output_value.uri,
-                mode=OUTPUT_MOUNT_MAPPING_FROM_REST[output_value.mode] if output_value.mode else None,
+                mode=OUTPUT_MOUNT_MAPPING_FROM_REST[output_value.mode]
+                if output_value.mode
+                else None,
                 description=output_value.description,
                 name=output_value.asset_name,
                 version=output_value.asset_version,

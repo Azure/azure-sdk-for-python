@@ -27,18 +27,15 @@ class DebugInfoResponse(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'stack_trace': {'key': 'stackTrace', 'type': 'str'},
-        'inner_exception': {'key': 'innerException', 'type': 'DebugInfoResponse'},
-        'data': {'key': 'data', 'type': '{object}'},
-        'error_response': {'key': 'errorResponse', 'type': 'ErrorResponse'},
+        "type": {"key": "type", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "stack_trace": {"key": "stackTrace", "type": "str"},
+        "inner_exception": {"key": "innerException", "type": "DebugInfoResponse"},
+        "data": {"key": "data", "type": "{object}"},
+        "error_response": {"key": "errorResponse", "type": "ErrorResponse"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword type:
         :paramtype type: str
@@ -54,12 +51,12 @@ class DebugInfoResponse(msrest.serialization.Model):
         :paramtype error_response: ~azure.mgmt.machinelearningservices.models.ErrorResponse
         """
         super(DebugInfoResponse, self).__init__(**kwargs)
-        self.type = kwargs.get('type', None)
-        self.message = kwargs.get('message', None)
-        self.stack_trace = kwargs.get('stack_trace', None)
-        self.inner_exception = kwargs.get('inner_exception', None)
-        self.data = kwargs.get('data', None)
-        self.error_response = kwargs.get('error_response', None)
+        self.type = kwargs.get("type", None)
+        self.message = kwargs.get("message", None)
+        self.stack_trace = kwargs.get("stack_trace", None)
+        self.inner_exception = kwargs.get("inner_exception", None)
+        self.data = kwargs.get("data", None)
+        self.error_response = kwargs.get("error_response", None)
 
 
 class ErrorAdditionalInfo(msrest.serialization.Model):
@@ -72,14 +69,11 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'info': {'key': 'info', 'type': 'object'},
+        "type": {"key": "type", "type": "str"},
+        "info": {"key": "info", "type": "object"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword type:
         :paramtype type: str
@@ -87,8 +81,8 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
         :paramtype info: any
         """
         super(ErrorAdditionalInfo, self).__init__(**kwargs)
-        self.type = kwargs.get('type', None)
-        self.info = kwargs.get('info', None)
+        self.type = kwargs.get("type", None)
+        self.info = kwargs.get("info", None)
 
 
 class ErrorResponse(msrest.serialization.Model):
@@ -112,19 +106,16 @@ class ErrorResponse(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'additional_properties': {'key': '', 'type': '{object}'},
-        'error': {'key': 'error', 'type': 'RootError'},
-        'correlation': {'key': 'correlation', 'type': '{str}'},
-        'environment': {'key': 'environment', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'time': {'key': 'time', 'type': 'iso-8601'},
-        'component_name': {'key': 'componentName', 'type': 'str'},
+        "additional_properties": {"key": "", "type": "{object}"},
+        "error": {"key": "error", "type": "RootError"},
+        "correlation": {"key": "correlation", "type": "{str}"},
+        "environment": {"key": "environment", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "time": {"key": "time", "type": "iso-8601"},
+        "component_name": {"key": "componentName", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -143,13 +134,13 @@ class ErrorResponse(msrest.serialization.Model):
         :paramtype component_name: str
         """
         super(ErrorResponse, self).__init__(**kwargs)
-        self.additional_properties = kwargs.get('additional_properties', None)
-        self.error = kwargs.get('error', None)
-        self.correlation = kwargs.get('correlation', None)
-        self.environment = kwargs.get('environment', None)
-        self.location = kwargs.get('location', None)
-        self.time = kwargs.get('time', None)
-        self.component_name = kwargs.get('component_name', None)
+        self.additional_properties = kwargs.get("additional_properties", None)
+        self.error = kwargs.get("error", None)
+        self.correlation = kwargs.get("correlation", None)
+        self.environment = kwargs.get("environment", None)
+        self.location = kwargs.get("location", None)
+        self.time = kwargs.get("time", None)
+        self.component_name = kwargs.get("component_name", None)
 
 
 class InnerErrorResponse(msrest.serialization.Model):
@@ -162,14 +153,11 @@ class InnerErrorResponse(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'inner_error': {'key': 'innerError', 'type': 'InnerErrorResponse'},
+        "code": {"key": "code", "type": "str"},
+        "inner_error": {"key": "innerError", "type": "InnerErrorResponse"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword code:
         :paramtype code: str
@@ -177,8 +165,8 @@ class InnerErrorResponse(msrest.serialization.Model):
         :paramtype inner_error: ~azure.mgmt.machinelearningservices.models.InnerErrorResponse
         """
         super(InnerErrorResponse, self).__init__(**kwargs)
-        self.code = kwargs.get('code', None)
-        self.inner_error = kwargs.get('inner_error', None)
+        self.code = kwargs.get("code", None)
+        self.inner_error = kwargs.get("inner_error", None)
 
 
 class RegistryDiscoveryDto(msrest.serialization.Model):
@@ -203,20 +191,20 @@ class RegistryDiscoveryDto(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'registry_name': {'key': 'registryName', 'type': 'str'},
-        'tenant_id': {'key': 'tenantId', 'type': 'str'},
-        'primary_region': {'key': 'primaryRegion', 'type': 'str'},
-        'regions': {'key': 'regions', 'type': '[str]'},
-        'subscription_id': {'key': 'subscriptionId', 'type': 'str'},
-        'resource_group': {'key': 'resourceGroup', 'type': 'str'},
-        'workspace_name': {'key': 'workspaceName', 'type': 'str'},
-        'primary_region_resource_provider_uri': {'key': 'primaryRegionResourceProviderUri', 'type': 'str'},
+        "registry_name": {"key": "registryName", "type": "str"},
+        "tenant_id": {"key": "tenantId", "type": "str"},
+        "primary_region": {"key": "primaryRegion", "type": "str"},
+        "regions": {"key": "regions", "type": "[str]"},
+        "subscription_id": {"key": "subscriptionId", "type": "str"},
+        "resource_group": {"key": "resourceGroup", "type": "str"},
+        "workspace_name": {"key": "workspaceName", "type": "str"},
+        "primary_region_resource_provider_uri": {
+            "key": "primaryRegionResourceProviderUri",
+            "type": "str",
+        },
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword registry_name:
         :paramtype registry_name: str
@@ -236,14 +224,16 @@ class RegistryDiscoveryDto(msrest.serialization.Model):
         :paramtype primary_region_resource_provider_uri: str
         """
         super(RegistryDiscoveryDto, self).__init__(**kwargs)
-        self.registry_name = kwargs.get('registry_name', None)
-        self.tenant_id = kwargs.get('tenant_id', None)
-        self.primary_region = kwargs.get('primary_region', None)
-        self.regions = kwargs.get('regions', None)
-        self.subscription_id = kwargs.get('subscription_id', None)
-        self.resource_group = kwargs.get('resource_group', None)
-        self.workspace_name = kwargs.get('workspace_name', None)
-        self.primary_region_resource_provider_uri = kwargs.get('primary_region_resource_provider_uri', None)
+        self.registry_name = kwargs.get("registry_name", None)
+        self.tenant_id = kwargs.get("tenant_id", None)
+        self.primary_region = kwargs.get("primary_region", None)
+        self.regions = kwargs.get("regions", None)
+        self.subscription_id = kwargs.get("subscription_id", None)
+        self.resource_group = kwargs.get("resource_group", None)
+        self.workspace_name = kwargs.get("workspace_name", None)
+        self.primary_region_resource_provider_uri = kwargs.get(
+            "primary_region_resource_provider_uri", None
+        )
 
 
 class RootError(msrest.serialization.Model):
@@ -276,24 +266,21 @@ class RootError(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'severity': {'key': 'severity', 'type': 'int'},
-        'message': {'key': 'message', 'type': 'str'},
-        'message_format': {'key': 'messageFormat', 'type': 'str'},
-        'message_parameters': {'key': 'messageParameters', 'type': '{str}'},
-        'reference_code': {'key': 'referenceCode', 'type': 'str'},
-        'details_uri': {'key': 'detailsUri', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[RootError]'},
-        'inner_error': {'key': 'innerError', 'type': 'InnerErrorResponse'},
-        'debug_info': {'key': 'debugInfo', 'type': 'DebugInfoResponse'},
-        'additional_info': {'key': 'additionalInfo', 'type': '[ErrorAdditionalInfo]'},
+        "code": {"key": "code", "type": "str"},
+        "severity": {"key": "severity", "type": "int"},
+        "message": {"key": "message", "type": "str"},
+        "message_format": {"key": "messageFormat", "type": "str"},
+        "message_parameters": {"key": "messageParameters", "type": "{str}"},
+        "reference_code": {"key": "referenceCode", "type": "str"},
+        "details_uri": {"key": "detailsUri", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[RootError]"},
+        "inner_error": {"key": "innerError", "type": "InnerErrorResponse"},
+        "debug_info": {"key": "debugInfo", "type": "DebugInfoResponse"},
+        "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword code:
         :paramtype code: str
@@ -322,15 +309,15 @@ class RootError(msrest.serialization.Model):
          list[~azure.mgmt.machinelearningservices.models.ErrorAdditionalInfo]
         """
         super(RootError, self).__init__(**kwargs)
-        self.code = kwargs.get('code', None)
-        self.severity = kwargs.get('severity', None)
-        self.message = kwargs.get('message', None)
-        self.message_format = kwargs.get('message_format', None)
-        self.message_parameters = kwargs.get('message_parameters', None)
-        self.reference_code = kwargs.get('reference_code', None)
-        self.details_uri = kwargs.get('details_uri', None)
-        self.target = kwargs.get('target', None)
-        self.details = kwargs.get('details', None)
-        self.inner_error = kwargs.get('inner_error', None)
-        self.debug_info = kwargs.get('debug_info', None)
-        self.additional_info = kwargs.get('additional_info', None)
+        self.code = kwargs.get("code", None)
+        self.severity = kwargs.get("severity", None)
+        self.message = kwargs.get("message", None)
+        self.message_format = kwargs.get("message_format", None)
+        self.message_parameters = kwargs.get("message_parameters", None)
+        self.reference_code = kwargs.get("reference_code", None)
+        self.details_uri = kwargs.get("details_uri", None)
+        self.target = kwargs.get("target", None)
+        self.details = kwargs.get("details", None)
+        self.inner_error = kwargs.get("inner_error", None)
+        self.debug_info = kwargs.get("debug_info", None)
+        self.additional_info = kwargs.get("additional_info", None)

@@ -15,9 +15,16 @@ from azure.ai.ml.constants._component import IOConstants
 from azure.ai.ml.entities._assets._artifacts.data import Data
 from azure.ai.ml.entities._assets._artifacts.model import Model
 from azure.ai.ml.entities._inputs_outputs import Input, Output
-from azure.ai.ml.entities._job.pipeline._pipeline_expression import PipelineExpressionMixin
+from azure.ai.ml.entities._job.pipeline._pipeline_expression import (
+    PipelineExpressionMixin,
+)
 from azure.ai.ml.entities._util import resolve_pipeline_parameter
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, UserErrorException, ValidationException
+from azure.ai.ml.exceptions import (
+    ErrorCategory,
+    ErrorTarget,
+    UserErrorException,
+    ValidationException,
+)
 
 
 T = TypeVar("T")
@@ -107,7 +114,9 @@ class InputOutputBase(ABC):
         self._mode = self._get_mode(original_data=data, data=self._data, kwargs=kwargs)
         self._description = (
             self._data.description
-            if self._data is not None and hasattr(self._data, "description") and self._data.description
+            if self._data is not None
+            and hasattr(self._data, "description")
+            and self._data.description
             else kwargs.pop("description", None)
         )
         # TODO: remove this
@@ -248,7 +257,11 @@ class InputOutputBase(ABC):
         # pipeline level inputs won't pass mode to bound node level inputs
         if isinstance(original_data, PipelineInput):
             return None
-        return data.mode if data is not None and hasattr(data, "mode") else kwargs.pop("mode", None)
+        return (
+            data.mode
+            if data is not None and hasattr(data, "mode")
+            else kwargs.pop("mode", None)
+        )
 
     @property
     def _is_primitive_type(self):
@@ -263,7 +276,9 @@ class NodeInput(InputOutputBase):
         port_name: str,
         meta: Input,
         *,
-        data: Optional[Union[int, bool, float, str, Output, "PipelineInput", Input]] = None,
+        data: Optional[
+            Union[int, bool, float, str, Output, "PipelineInput", Input]
+        ] = None,
         owner: Optional[Union["BaseComponent", "PipelineJob"]] = None,
         **kwargs,
     ):
@@ -333,12 +348,18 @@ class NodeInput(InputOutputBase):
                 )
             return data
         # for data binding case, set is_singular=False for case like "${{parent.inputs.job_in_folder}}/sample1.csv"
-        if isinstance(data, Input) or is_data_binding_expression(data, is_singular=False):
+        if isinstance(data, Input) or is_data_binding_expression(
+            data, is_singular=False
+        ):
             return data
         if isinstance(data, (Data, Model)):
             return _data_to_input(data)
         # self._meta.type could be None when sub pipeline has no annotation
-        if isinstance(self._meta, Input) and self._meta.type and not self._meta._is_primitive_type:
+        if (
+            isinstance(self._meta, Input)
+            and self._meta.type
+            and not self._meta._is_primitive_type
+        ):
             if isinstance(data, str):
                 return Input(type=self._meta.type, path=data)
             msg = "only path input is supported now but get {}: {}."
@@ -579,13 +600,17 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
             )
 
     def _assert_name_and_version(self):
-        if self.name and not (re.match("^[A-Za-z0-9_-]*$", self.name) and len(self.name) <= 255):
+        if self.name and not (
+            re.match("^[A-Za-z0-9_-]*$", self.name) and len(self.name) <= 255
+        ):
             raise UserErrorException(
                 f"The output name {self.name} can only contain alphanumeric characters, dashes and underscores, "
                 f"with a limit of 255 characters."
             )
         if self.version and not self.name:
-            raise UserErrorException("Output name is required when output version is specified.")
+            raise UserErrorException(
+                "Output name is required when output version is specified."
+            )
 
     def _build_default_data(self):
         """Build default data when output not configured."""
@@ -620,7 +645,9 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
             # None data means this output is not configured.
             result = None
         elif isinstance(self._data, str):
-            result = Output(path=self._data, mode=self.mode, name=self.name, version=self.version)
+            result = Output(
+                path=self._data, mode=self.mode, name=self.name, version=self.version
+            )
         elif isinstance(self._data, Output):
             result = self._data
         elif isinstance(self._data, PipelineOutput):
@@ -664,7 +691,9 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
 class PipelineInput(NodeInput, PipelineExpressionMixin):
     """Define one input of a Pipeline."""
 
-    def __init__(self, name: str, meta: Input, group_names: Optional[List[str]] = None, **kwargs):
+    def __init__(
+        self, name: str, meta: Input, group_names: Optional[List[str]] = None, **kwargs
+    ):
         """Initialize a PipelineInput.
 
         :param name: The name of the input.
@@ -696,7 +725,10 @@ class PipelineInput(NodeInput, PipelineExpressionMixin):
         # use this to break self loop
         original_data_cache = set()
         original_data = self._original_data
-        while isinstance(original_data, PipelineInput) and original_data not in original_data_cache:
+        while (
+            isinstance(original_data, PipelineInput)
+            and original_data not in original_data_cache
+        ):
             original_data_cache.add(original_data)
             original_data = original_data._original_data
         return original_data
@@ -727,7 +759,9 @@ class PipelineInput(NodeInput, PipelineExpressionMixin):
         # Unidiomatic typecheck: Checks that data is _exactly_ this type, and not potentially a subtype
         if type(data) is NodeInput:  # pylint: disable=unidiomatic-typecheck
             msg = "Can not bind input to another component's input."
-            raise ValidationException(message=msg, no_personal_data_message=msg, target=ErrorTarget.PIPELINE)
+            raise ValidationException(
+                message=msg, no_personal_data_message=msg, target=ErrorTarget.PIPELINE
+            )
         if isinstance(data, (PipelineInput, NodeOutput)):
             # If value is input or output, it's a data binding, owner is required to convert it to
             # a data binding, eg: ${{parent.inputs.xxx}}
@@ -746,7 +780,11 @@ class PipelineInput(NodeInput, PipelineExpressionMixin):
         return data
 
     def _data_binding(self) -> str:
-        full_name = "%s.%s" % (".".join(self._group_names), self._port_name) if self._group_names else self._port_name
+        full_name = (
+            "%s.%s" % (".".join(self._group_names), self._port_name)
+            if self._group_names
+            else self._port_name
+        )
         return f"${{{{parent.inputs.{full_name}}}}}"
 
     def _to_input(self) -> Input:
@@ -789,7 +827,11 @@ class PipelineOutput(NodeOutput):
         elif self._data is None and self._meta and self._meta.type:
             # For un-configured pipeline output with meta, we need to return Output with accurate type,
             # so it won't default to uri_folder.
-            result = Output(type=self._meta.type, mode=self._meta.mode, description=self._meta.description)
+            result = Output(
+                type=self._meta.type,
+                mode=self._meta.mode,
+                description=self._meta.description,
+            )
         else:
             result = super(PipelineOutput, self)._to_job_output()
         # Copy meta type to avoid built output's None type default to uri_folder.

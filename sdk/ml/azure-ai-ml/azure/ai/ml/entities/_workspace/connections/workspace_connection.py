@@ -25,7 +25,9 @@ from azure.ai.ml._restclient.v2023_06_01_preview.models import (
     ConnectionAuthType,
     AccessKeyAuthTypeWorkspaceConnectionProperties,
 )
-from azure.ai.ml._schema.workspace.connections.workspace_connection import WorkspaceConnectionSchema
+from azure.ai.ml._schema.workspace.connections.workspace_connection import (
+    WorkspaceConnectionSchema,
+)
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils.utils import _snake_to_camel, camel_to_snake, dump_yaml_to_file
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
@@ -161,7 +163,9 @@ class WorkspaceConnection(Resource):
         """
         path = kwargs.pop("path", None)
         yaml_serialized = self._to_dict()
-        dump_yaml_to_file(dest, yaml_serialized, default_flow_style=False, path=path, **kwargs)
+        dump_yaml_to_file(
+            dest, yaml_serialized, default_flow_style=False, path=path, **kwargs
+        )
 
     @classmethod
     def _load(
@@ -180,41 +184,69 @@ class WorkspaceConnection(Resource):
         return cls._load_from_dict(data=data, context=context, **kwargs)
 
     @classmethod
-    def _load_from_dict(cls, data: Dict, context: Dict, **kwargs) -> "WorkspaceConnection":
+    def _load_from_dict(
+        cls, data: Dict, context: Dict, **kwargs
+    ) -> "WorkspaceConnection":
         loaded_data = load_from_dict(WorkspaceConnectionSchema, data, context, **kwargs)
         return loaded_data
 
     def _to_dict(self) -> Dict:
         # pylint: disable=no-member
-        return WorkspaceConnectionSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        return WorkspaceConnectionSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(
+            self
+        )
 
     @classmethod
-    def _from_rest_object(cls, rest_obj: RestWorkspaceConnection) -> "WorkspaceConnection":
+    def _from_rest_object(
+        cls, rest_obj: RestWorkspaceConnection
+    ) -> "WorkspaceConnection":
         if not rest_obj:
             return None
 
         properties = rest_obj.properties
 
         if properties.auth_type == ConnectionAuthType.PAT:
-            credentials = PatTokenConfiguration._from_workspace_connection_rest_object(properties.credentials)
+            credentials = PatTokenConfiguration._from_workspace_connection_rest_object(
+                properties.credentials
+            )
         if properties.auth_type == ConnectionAuthType.SAS:
-            credentials = SasTokenConfiguration._from_workspace_connection_rest_object(properties.credentials)
+            credentials = SasTokenConfiguration._from_workspace_connection_rest_object(
+                properties.credentials
+            )
         if properties.auth_type == ConnectionAuthType.MANAGED_IDENTITY:
-            credentials = ManagedIdentityConfiguration._from_workspace_connection_rest_object(properties.credentials)
+            credentials = (
+                ManagedIdentityConfiguration._from_workspace_connection_rest_object(
+                    properties.credentials
+                )
+            )
         if properties.auth_type == ConnectionAuthType.USERNAME_PASSWORD:
-            credentials = UsernamePasswordConfiguration._from_workspace_connection_rest_object(properties.credentials)
+            credentials = (
+                UsernamePasswordConfiguration._from_workspace_connection_rest_object(
+                    properties.credentials
+                )
+            )
         if properties.auth_type == ConnectionAuthType.ACCESS_KEY:
-            credentials = AccessKeyConfiguration._from_workspace_connection_rest_object(properties.credentials)
+            credentials = AccessKeyConfiguration._from_workspace_connection_rest_object(
+                properties.credentials
+            )
         if properties.auth_type == ConnectionAuthType.SERVICE_PRINCIPAL:
-            credentials = ServicePrincipalConfiguration._from_workspace_connection_rest_object(properties.credentials)
+            credentials = (
+                ServicePrincipalConfiguration._from_workspace_connection_rest_object(
+                    properties.credentials
+                )
+            )
         if properties.auth_type == ConnectionAuthType.API_KEY:
-            credentials = ApiKeyConfiguration._from_workspace_connection_rest_object(properties.credentials)
+            credentials = ApiKeyConfiguration._from_workspace_connection_rest_object(
+                properties.credentials
+            )
 
         workspace_connection = WorkspaceConnection(
             id=rest_obj.id,
             name=rest_obj.name,
             target=properties.target,
-            creation_context=SystemData._from_rest_object(rest_obj.system_data) if rest_obj.system_data else None,
+            creation_context=SystemData._from_rest_object(rest_obj.system_data)
+            if rest_obj.system_data
+            else None,
             type=camel_to_snake(properties.category),
             credentials=credentials,
             metadata=properties.metadata if hasattr(properties, "metadata") else None,
@@ -230,21 +262,37 @@ class WorkspaceConnection(Resource):
         auth_type = self.credentials.type if self._credentials else None
 
         if auth_type == camel_to_snake(ConnectionAuthType.PAT):
-            workspace_connection_properties_class = PATAuthTypeWorkspaceConnectionProperties
+            workspace_connection_properties_class = (
+                PATAuthTypeWorkspaceConnectionProperties
+            )
         elif auth_type == camel_to_snake(ConnectionAuthType.MANAGED_IDENTITY):
-            workspace_connection_properties_class = ManagedIdentityAuthTypeWorkspaceConnectionProperties
+            workspace_connection_properties_class = (
+                ManagedIdentityAuthTypeWorkspaceConnectionProperties
+            )
         elif auth_type == camel_to_snake(ConnectionAuthType.USERNAME_PASSWORD):
-            workspace_connection_properties_class = UsernamePasswordAuthTypeWorkspaceConnectionProperties
+            workspace_connection_properties_class = (
+                UsernamePasswordAuthTypeWorkspaceConnectionProperties
+            )
         elif auth_type == camel_to_snake(ConnectionAuthType.ACCESS_KEY):
-            workspace_connection_properties_class = AccessKeyAuthTypeWorkspaceConnectionProperties
+            workspace_connection_properties_class = (
+                AccessKeyAuthTypeWorkspaceConnectionProperties
+            )
         elif auth_type == camel_to_snake(ConnectionAuthType.SAS):
-            workspace_connection_properties_class = SASAuthTypeWorkspaceConnectionProperties
+            workspace_connection_properties_class = (
+                SASAuthTypeWorkspaceConnectionProperties
+            )
         elif auth_type == camel_to_snake(ConnectionAuthType.SERVICE_PRINCIPAL):
-            workspace_connection_properties_class = ServicePrincipalAuthTypeWorkspaceConnectionProperties
+            workspace_connection_properties_class = (
+                ServicePrincipalAuthTypeWorkspaceConnectionProperties
+            )
         elif auth_type == camel_to_snake(ConnectionAuthType.API_KEY):
-            workspace_connection_properties_class = ApiKeyAuthWorkspaceConnectionProperties
+            workspace_connection_properties_class = (
+                ApiKeyAuthWorkspaceConnectionProperties
+            )
         elif auth_type is None:
-            workspace_connection_properties_class = NoneAuthTypeWorkspaceConnectionProperties
+            workspace_connection_properties_class = (
+                NoneAuthTypeWorkspaceConnectionProperties
+            )
 
         properties = workspace_connection_properties_class(
             target=self.target,

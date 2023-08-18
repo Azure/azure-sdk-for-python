@@ -10,7 +10,12 @@ from typing import IO, AnyStr, Dict, Optional, Union
 from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml._utils.utils import dump_yaml_to_file
 from azure.ai.ml.entities._resource import Resource
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+from azure.ai.ml.exceptions import (
+    ErrorCategory,
+    ErrorTarget,
+    ValidationErrorType,
+    ValidationException,
+)
 
 
 class Asset(Resource):
@@ -123,7 +128,9 @@ class Asset(Resource):
         """
         path = kwargs.pop("path", None)
         yaml_serialized = self._to_dict()
-        dump_yaml_to_file(dest, yaml_serialized, default_flow_style=False, path=path, **kwargs)
+        dump_yaml_to_file(
+            dest, yaml_serialized, default_flow_style=False, path=path, **kwargs
+        )
 
     def __eq__(self, other) -> bool:
         return (

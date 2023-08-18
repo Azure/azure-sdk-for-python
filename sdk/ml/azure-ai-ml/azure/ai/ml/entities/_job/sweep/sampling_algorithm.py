@@ -7,9 +7,15 @@ from typing import Optional, Union
 from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     BayesianSamplingAlgorithm as RestBayesianSamplingAlgorithm,
 )
-from azure.ai.ml._restclient.v2023_04_01_preview.models import GridSamplingAlgorithm as RestGridSamplingAlgorithm
-from azure.ai.ml._restclient.v2023_04_01_preview.models import RandomSamplingAlgorithm as RestRandomSamplingAlgorithm
-from azure.ai.ml._restclient.v2023_04_01_preview.models import SamplingAlgorithm as RestSamplingAlgorithm
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    GridSamplingAlgorithm as RestGridSamplingAlgorithm,
+)
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    RandomSamplingAlgorithm as RestRandomSamplingAlgorithm,
+)
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    SamplingAlgorithm as RestSamplingAlgorithm,
+)
 from azure.ai.ml._restclient.v2023_04_01_preview.models import SamplingAlgorithmType
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
@@ -30,13 +36,19 @@ class SamplingAlgorithm(ABC, RestTranslatableMixin):
 
         sampling_algorithm = None
         if obj.sampling_algorithm_type == SamplingAlgorithmType.RANDOM:
-            sampling_algorithm = RandomSamplingAlgorithm._from_rest_object(obj)  # pylint: disable=protected-access
+            sampling_algorithm = RandomSamplingAlgorithm._from_rest_object(
+                obj
+            )  # pylint: disable=protected-access
 
         if obj.sampling_algorithm_type == SamplingAlgorithmType.GRID:
-            sampling_algorithm = GridSamplingAlgorithm._from_rest_object(obj)  # pylint: disable=protected-access
+            sampling_algorithm = GridSamplingAlgorithm._from_rest_object(
+                obj
+            )  # pylint: disable=protected-access
 
         if obj.sampling_algorithm_type == SamplingAlgorithmType.BAYESIAN:
-            sampling_algorithm = BayesianSamplingAlgorithm._from_rest_object(obj)  # pylint: disable=protected-access
+            sampling_algorithm = BayesianSamplingAlgorithm._from_rest_object(
+                obj
+            )  # pylint: disable=protected-access
 
         return sampling_algorithm
 
@@ -84,7 +96,9 @@ class RandomSamplingAlgorithm(SamplingAlgorithm):
         )
 
     @classmethod
-    def _from_rest_object(cls, obj: RestRandomSamplingAlgorithm) -> "RandomSamplingAlgorithm":
+    def _from_rest_object(
+        cls, obj: RestRandomSamplingAlgorithm
+    ) -> "RandomSamplingAlgorithm":
         return cls(
             rule=obj.rule,
             seed=obj.seed,
@@ -115,7 +129,9 @@ class GridSamplingAlgorithm(SamplingAlgorithm):
 
     @classmethod
     # pylint: disable=unused-argument
-    def _from_rest_object(cls, obj: RestGridSamplingAlgorithm) -> "GridSamplingAlgorithm":
+    def _from_rest_object(
+        cls, obj: RestGridSamplingAlgorithm
+    ) -> "GridSamplingAlgorithm":
         return cls()
 
 
@@ -142,5 +158,7 @@ class BayesianSamplingAlgorithm(SamplingAlgorithm):
 
     @classmethod
     # pylint: disable=unused-argument
-    def _from_rest_object(cls, obj: RestBayesianSamplingAlgorithm) -> "BayesianSamplingAlgorithm":
+    def _from_rest_object(
+        cls, obj: RestBayesianSamplingAlgorithm
+    ) -> "BayesianSamplingAlgorithm":
         return cls()

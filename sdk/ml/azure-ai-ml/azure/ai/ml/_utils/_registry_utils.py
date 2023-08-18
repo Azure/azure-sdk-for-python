@@ -7,8 +7,12 @@ from typing import Tuple
 
 from typing_extensions import Literal
 
-from azure.ai.ml._restclient.registry_discovery import AzureMachineLearningWorkspaces as ServiceClientRegistryDiscovery
-from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import AzureMachineLearningWorkspaces
+from azure.ai.ml._restclient.registry_discovery import (
+    AzureMachineLearningWorkspaces as ServiceClientRegistryDiscovery,
+)
+from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
+    AzureMachineLearningWorkspaces,
+)
 from azure.ai.ml._restclient.v2021_10_01_dataplanepreview.models import (
     BlobReferenceSASRequestDto,
     TemporaryDataReferenceRequestDto,
@@ -35,7 +39,9 @@ class RegistryDiscovery:
     ):
         self.credential = credential
         self.registry_name = registry_name
-        self.service_client_registry_discovery_client = service_client_registry_discovery_client
+        self.service_client_registry_discovery_client = (
+            service_client_registry_discovery_client
+        )
         self.kwargs = kwargs
         self._resource_group = None
         self._subscription_id = None
@@ -50,7 +56,9 @@ class RegistryDiscovery:
             _check_region_fqdn(self.workspace_region, response)
             self._base_url = f"https://cert-{self.workspace_region}.experiments.azureml.net/{MFE_PATH_PREFIX}"
         else:
-            self._base_url = f"{response.primary_region_resource_provider_uri}{MFE_PATH_PREFIX}"
+            self._base_url = (
+                f"{response.primary_region_resource_provider_uri}{MFE_PATH_PREFIX}"
+            )
         self._subscription_id = response.subscription_id
         self._resource_group = response.resource_group
 
@@ -86,7 +94,9 @@ class RegistryDiscovery:
         return self._resource_group
 
 
-def get_sas_uri_for_registry_asset(service_client, name, version, resource_group, registry, body) -> str:
+def get_sas_uri_for_registry_asset(
+    service_client, name, version, resource_group, registry, body
+) -> str:
     """Get sas_uri for registry asset.
 
     :param service_client: Service client
@@ -112,7 +122,9 @@ def get_sas_uri_for_registry_asset(service_client, name, version, resource_group
             registry_name=registry,
             body=body,
         )
-        sas_uri = res.blob_reference_for_consumption.credential.additional_properties["sasUri"]
+        sas_uri = res.blob_reference_for_consumption.credential.additional_properties[
+            "sasUri"
+        ]
     except HttpResponseError as e:
         # "Asset already exists" exception is thrown from service with error code 409, that we need to ignore
         if e.status_code == 409:
@@ -139,7 +151,9 @@ def get_asset_body_for_registry_storage(
     :rtype: TemporaryDataReferenceRequestDto
     """
     body = TemporaryDataReferenceRequestDto(
-        asset_id=REGISTRY_ASSET_ID.format(registry_name, asset_type, asset_name, asset_version),
+        asset_id=REGISTRY_ASSET_ID.format(
+            registry_name, asset_type, asset_name, asset_version
+        ),
         temporary_data_reference_type="TemporaryBlobReference",
     )
     return body
@@ -176,16 +190,30 @@ def get_storage_details_for_registry_assets(
     :rtype: Tuple[str, Literal["NoCredentials", "SAS"]]
     """
     body = BlobReferenceSASRequestDto(
-        asset_id=REGISTRY_ASSET_ID.format(reg_name, asset_type, asset_name, asset_version),
+        asset_id=REGISTRY_ASSET_ID.format(
+            reg_name, asset_type, asset_name, asset_version
+        ),
         blob_uri=uri,
     )
     sas_uri = service_client.data_references.get_blob_reference_sas(
-        name=asset_name, version=asset_version, resource_group_name=rg_name, registry_name=reg_name, body=body
+        name=asset_name,
+        version=asset_version,
+        resource_group_name=rg_name,
+        registry_name=reg_name,
+        body=body,
     )
-    if sas_uri.blob_reference_for_consumption.credential.credential_type == "no_credentials":
+    if (
+        sas_uri.blob_reference_for_consumption.credential.credential_type
+        == "no_credentials"
+    ):
         return sas_uri.blob_reference_for_consumption.blob_uri, "NoCredentials"
 
-    return sas_uri.blob_reference_for_consumption.credential.additional_properties["sasUri"], "SAS"
+    return (
+        sas_uri.blob_reference_for_consumption.credential.additional_properties[
+            "sasUri"
+        ],
+        "SAS",
+    )
 
 
 def get_registry_client(credential, registry_name, workspace_location, **kwargs):
@@ -200,7 +228,9 @@ def get_registry_client(credential, registry_name, workspace_location, **kwargs)
     registry_discovery = RegistryDiscovery(
         credential, registry_name, service_client_registry_discovery_client, **kwargs
     )
-    service_client_10_2021_dataplanepreview = registry_discovery.get_registry_service_client()
+    service_client_10_2021_dataplanepreview = (
+        registry_discovery.get_registry_service_client()
+    )
     subscription_id = registry_discovery.subscription_id
     resource_group_name = registry_discovery.resource_group
     return service_client_10_2021_dataplanepreview, resource_group_name, subscription_id
@@ -210,5 +240,7 @@ def _check_region_fqdn(workspace_region, response):
     if workspace_region in response.additional_properties["registryFqdns"].keys():
         return
     regions = list(response.additional_properties["registryFqdns"].keys())
-    raise Exception(f"Workspace region {workspace_region} not supported by the \
-                    registry {response.registry_name} regions {regions}")
+    raise Exception(
+        f"Workspace region {workspace_region} not supported by the \
+                    registry {response.registry_name} regions {regions}"
+    )

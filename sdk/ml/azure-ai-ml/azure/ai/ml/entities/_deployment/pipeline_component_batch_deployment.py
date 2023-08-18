@@ -57,7 +57,9 @@ class PipelineComponentBatchDeployment(Deployment):
         self.component = component
         self.settings = settings
 
-    def _to_rest_object(self, location: str) -> "RestBatchDeployment":  # pylint: disable=arguments-differ
+    def _to_rest_object(
+        self, location: str
+    ) -> "RestBatchDeployment":  # pylint: disable=arguments-differ
         if isinstance(self.component, PipelineComponent):
             id_asset_ref = IdAssetReference(asset_id=self.component.id)
 
@@ -73,7 +75,10 @@ class PipelineComponentBatchDeployment(Deployment):
                 settings=self.settings, component_id=id_asset_ref
             )
         return RestBatchDeployment(
-            location=location, properties=BatchDeploymentProperties(deployment_configuration=batch_pipeline_config)
+            location=location,
+            properties=BatchDeploymentProperties(
+                deployment_configuration=batch_pipeline_config
+            ),
         )
 
     @classmethod
@@ -92,7 +97,9 @@ class PipelineComponentBatchDeployment(Deployment):
             BASE_PATH_CONTEXT_KEY: Path(yaml_path).parent if yaml_path else Path.cwd(),
             PARAMS_OVERRIDE_KEY: params_override,
         }
-        return load_from_dict(PipelineComponentBatchDeploymentSchema, data, context, **kwargs)
+        return load_from_dict(
+            PipelineComponentBatchDeploymentSchema, data, context, **kwargs
+        )
 
     @classmethod
     def _update_params(cls, params_override) -> None:
@@ -102,15 +109,23 @@ class PipelineComponentBatchDeployment(Deployment):
                 param["endpoint_name"] = endpoint_name.lower()
 
     @classmethod
-    def _from_rest_object(cls, deployment: RestBatchDeployment):  # pylint: disable=arguments-renamed
+    def _from_rest_object(
+        cls, deployment: RestBatchDeployment
+    ):  # pylint: disable=arguments-renamed
         return PipelineComponentBatchDeployment(
             name=deployment.name,
-            component=deployment.properties.additional_properties["deploymentConfiguration"]["componentId"]["assetId"],
-            settings=deployment.properties.additional_properties["deploymentConfiguration"]["settings"],
+            component=deployment.properties.additional_properties[
+                "deploymentConfiguration"
+            ]["componentId"]["assetId"],
+            settings=deployment.properties.additional_properties[
+                "deploymentConfiguration"
+            ]["settings"],
             endpoint_name=_parse_endpoint_name_from_deployment_id(deployment.id),
         )
 
     def _to_dict(self) -> Dict:
-        return PipelineComponentBatchDeploymentSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(
+        return PipelineComponentBatchDeploymentSchema(
+            context={BASE_PATH_CONTEXT_KEY: "./"}
+        ).dump(
             self
         )  # pylint: disable=no-member

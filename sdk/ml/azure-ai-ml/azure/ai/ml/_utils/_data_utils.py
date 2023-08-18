@@ -14,10 +14,21 @@ import yaml
 from jsonschema import Draft7Validator, ValidationError
 from jsonschema.exceptions import best_match
 
-from azure.ai.ml._artifacts._artifact_utilities import get_datastore_info, get_storage_client
-from azure.ai.ml._artifacts._constants import INVALID_MLTABLE_METADATA_SCHEMA_ERROR, INVALID_MLTABLE_METADATA_SCHEMA_MSG
+from azure.ai.ml._artifacts._artifact_utilities import (
+    get_datastore_info,
+    get_storage_client,
+)
+from azure.ai.ml._artifacts._constants import (
+    INVALID_MLTABLE_METADATA_SCHEMA_ERROR,
+    INVALID_MLTABLE_METADATA_SCHEMA_MSG,
+)
 from azure.ai.ml.constants._common import DefaultOpenEncoding
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+from azure.ai.ml.exceptions import (
+    ErrorCategory,
+    ErrorTarget,
+    ValidationErrorType,
+    ValidationException,
+)
 from azure.ai.ml.operations._datastore_operations import DatastoreOperations
 
 from ._http_utils import HttpPipeline
@@ -27,7 +38,9 @@ from .utils import load_yaml
 module_logger = logging.getLogger(__name__)
 
 
-def download_mltable_metadata_schema(mltable_schema_url: str, requests_pipeline: HttpPipeline):
+def download_mltable_metadata_schema(
+    mltable_schema_url: str, requests_pipeline: HttpPipeline
+):
     response = requests_pipeline.get(mltable_schema_url)
     return response.json()
 
@@ -50,20 +63,26 @@ def read_remote_mltable_metadata_contents(
         return yaml.safe_load(yaml_file)
     if scheme == "azureml":
         datastore_path_uri = AzureMLDatastorePathUri(base_uri)
-        datastore_info = get_datastore_info(datastore_operations, datastore_path_uri.datastore)
+        datastore_info = get_datastore_info(
+            datastore_operations, datastore_path_uri.datastore
+        )
         storage_client = get_storage_client(**datastore_info)
         with TemporaryDirectory() as tmp_dir:
             starts_with = datastore_path_uri.path.rstrip("/")
             storage_client.download(f"{starts_with}/MLTable", tmp_dir)
             downloaded_mltable_path = Path(tmp_dir, "MLTable")
-            with open(downloaded_mltable_path, "r", encoding=DefaultOpenEncoding.READ) as f:
+            with open(
+                downloaded_mltable_path, "r", encoding=DefaultOpenEncoding.READ
+            ) as f:
                 return yaml.safe_load(f)
     return None
 
 
 def validate_mltable_metadata(*, mltable_metadata_dict: Dict, mltable_schema: Dict):
     # use json-schema to validate dict
-    error: Union[ValidationError, None] = best_match(Draft7Validator(mltable_schema).iter_errors(mltable_metadata_dict))
+    error: Union[ValidationError, None] = best_match(
+        Draft7Validator(mltable_schema).iter_errors(mltable_metadata_dict)
+    )
     if error:
         err_path = ".".join(error.path)
         err_path = f"{err_path}: " if err_path != "" else ""

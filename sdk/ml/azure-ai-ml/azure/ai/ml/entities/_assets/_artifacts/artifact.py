@@ -34,7 +34,9 @@ class ArtifactStorageInfo:
 
     @property
     def full_storage_path(self) -> str:
-        return urljoin(self.storage_account_url, f"{self.container_name}/{self.relative_path}")
+        return urljoin(
+            self.storage_account_url, f"{self.container_name}/{self.relative_path}"
+        )
 
     @property
     def subdir_path(self) -> str:
@@ -93,7 +95,12 @@ class Artifact(Asset):
 
     @path.setter
     def path(self, value: Optional[Union[str, PathLike]]) -> None:
-        if not value or is_url(value) or Path(value).is_absolute() or is_mlflow_uri(value):
+        if (
+            not value
+            or is_url(value)
+            or Path(value).is_absolute()
+            or is_mlflow_uri(value)
+        ):
             self._path = value
         else:
             self._path = Path(self.base_path, value).resolve()

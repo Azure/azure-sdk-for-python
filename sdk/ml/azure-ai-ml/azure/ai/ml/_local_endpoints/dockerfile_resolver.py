@@ -74,7 +74,11 @@ class DockerfileResolver(object):
         :return: Dockerfile Contents
         :rtype: str
         """
-        return "" if len(self._instructions) == 0 else "\n".join([str(instr) for instr in self._instructions])
+        return (
+            ""
+            if len(self._instructions) == 0
+            else "\n".join([str(instr) for instr in self._instructions])
+        )
 
     def _construct(self, install_debugpy: bool = False) -> None:
         """Internal use only.
@@ -116,7 +120,11 @@ class DockerfileResolver(object):
             )
             if install_debugpy:
                 self._instructions.extend(
-                    [Run(f"conda run -n {LocalEndpointConstants.CONDA_ENV_NAME} pip install debugpy")]
+                    [
+                        Run(
+                            f"conda run -n {LocalEndpointConstants.CONDA_ENV_NAME} pip install debugpy"
+                        )
+                    ]
                 )
             self._instructions.extend(
                 [
@@ -142,7 +150,9 @@ class DockerfileResolver(object):
                 ]
             )
 
-    def write_file(self, directory_path: str, file_prefix: Optional[str] = None) -> None:
+    def write_file(
+        self, directory_path: str, file_prefix: Optional[str] = None
+    ) -> None:
         """Writes this Dockerfile to a file in provided directory and file name prefix.
 
         :param directory_path: absolute path of local directory to write Dockerfile.
@@ -152,5 +162,7 @@ class DockerfileResolver(object):
         """
         file_name = f"{file_prefix}.Dockerfile" if file_prefix else "Dockerfile"
         self._local_dockerfile_path = str(Path(directory_path, file_name).resolve())
-        with open(self._local_dockerfile_path, "w", encoding=DefaultOpenEncoding.WRITE) as f:
+        with open(
+            self._local_dockerfile_path, "w", encoding=DefaultOpenEncoding.WRITE
+        ) as f:
             f.write(f"{str(self)}\n")

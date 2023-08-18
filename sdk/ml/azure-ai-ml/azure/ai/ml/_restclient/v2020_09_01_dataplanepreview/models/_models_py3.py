@@ -28,12 +28,12 @@ class AssetJobInput(msrest.serialization.Model):
     """
 
     _validation = {
-        'uri': {'required': True, 'pattern': r'[a-zA-Z0-9_]'},
+        "uri": {"required": True, "pattern": r"[a-zA-Z0-9_]"},
     }
 
     _attribute_map = {
-        'mode': {'key': 'mode', 'type': 'str'},
-        'uri': {'key': 'uri', 'type': 'str'},
+        "mode": {"key": "mode", "type": "str"},
+        "uri": {"key": "uri", "type": "str"},
     }
 
     def __init__(
@@ -66,8 +66,8 @@ class AssetJobOutput(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'mode': {'key': 'mode', 'type': 'str'},
-        'uri': {'key': 'uri', 'type': 'str'},
+        "mode": {"key": "mode", "type": "str"},
+        "uri": {"key": "uri", "type": "str"},
     }
 
     def __init__(
@@ -154,33 +154,39 @@ class BatchJob(msrest.serialization.Model):
     """
 
     _validation = {
-        'interaction_endpoints': {'readonly': True},
-        'output': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'status': {'readonly': True},
+        "interaction_endpoints": {"readonly": True},
+        "output": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "status": {"readonly": True},
     }
 
     _attribute_map = {
-        'compute': {'key': 'compute', 'type': 'ComputeConfiguration'},
-        'dataset': {'key': 'dataset', 'type': 'InferenceDataInputBase'},
-        'description': {'key': 'description', 'type': 'str'},
-        'error_threshold': {'key': 'errorThreshold', 'type': 'int'},
-        'input_data': {'key': 'inputData', 'type': '{JobInput}'},
-        'interaction_endpoints': {'key': 'interactionEndpoints', 'type': '{JobEndpoint}'},
-        'logging_level': {'key': 'loggingLevel', 'type': 'str'},
-        'max_concurrency_per_instance': {'key': 'maxConcurrencyPerInstance', 'type': 'int'},
-        'mini_batch_size': {'key': 'miniBatchSize', 'type': 'long'},
-        'name': {'key': 'name', 'type': 'str'},
-        'output': {'key': 'output', 'type': 'JobOutputArtifacts'},
-        'output_data': {'key': 'outputData', 'type': '{JobOutputV2}'},
-        'output_dataset': {'key': 'outputDataset', 'type': 'DataVersion'},
-        'output_file_name': {'key': 'outputFileName', 'type': 'str'},
-        'partition_keys': {'key': 'partitionKeys', 'type': '[str]'},
-        'properties': {'key': 'properties', 'type': '{str}'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'retry_settings': {'key': 'retrySettings', 'type': 'BatchRetrySettings'},
-        'status': {'key': 'status', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "compute": {"key": "compute", "type": "ComputeConfiguration"},
+        "dataset": {"key": "dataset", "type": "InferenceDataInputBase"},
+        "description": {"key": "description", "type": "str"},
+        "error_threshold": {"key": "errorThreshold", "type": "int"},
+        "input_data": {"key": "inputData", "type": "{JobInput}"},
+        "interaction_endpoints": {
+            "key": "interactionEndpoints",
+            "type": "{JobEndpoint}",
+        },
+        "logging_level": {"key": "loggingLevel", "type": "str"},
+        "max_concurrency_per_instance": {
+            "key": "maxConcurrencyPerInstance",
+            "type": "int",
+        },
+        "mini_batch_size": {"key": "miniBatchSize", "type": "long"},
+        "name": {"key": "name", "type": "str"},
+        "output": {"key": "output", "type": "JobOutputArtifacts"},
+        "output_data": {"key": "outputData", "type": "{JobOutputV2}"},
+        "output_dataset": {"key": "outputDataset", "type": "DataVersion"},
+        "output_file_name": {"key": "outputFileName", "type": "str"},
+        "partition_keys": {"key": "partitionKeys", "type": "[str]"},
+        "properties": {"key": "properties", "type": "{str}"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "retry_settings": {"key": "retrySettings", "type": "BatchRetrySettings"},
+        "status": {"key": "status", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
     def __init__(
@@ -289,23 +295,19 @@ class Resource(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs):
+        """ """
         super(Resource, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -334,27 +336,22 @@ class BatchJobResource(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'properties': {'required': True},
-        'system_data': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "properties": {"required": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'BatchJob'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "properties": {"key": "properties", "type": "BatchJob"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
-    def __init__(
-        self,
-        *,
-        properties: "BatchJob",
-        **kwargs
-    ):
+    def __init__(self, *, properties: "BatchJob", **kwargs):
         """
         :keyword properties: Required. [Required] Additional attributes of the entity.
         :paramtype properties: ~azure.mgmt.machinelearningservices.models.BatchJob
@@ -375,8 +372,8 @@ class BatchJobResourceArmPaginatedResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'value': {'key': 'value', 'type': '[BatchJobResource]'},
+        "next_link": {"key": "nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[BatchJobResource]"},
     }
 
     def __init__(
@@ -408,8 +405,8 @@ class BatchRetrySettings(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'max_retries': {'key': 'maxRetries', 'type': 'int'},
-        'timeout': {'key': 'timeout', 'type': 'duration'},
+        "max_retries": {"key": "maxRetries", "type": "int"},
+        "timeout": {"key": "timeout", "type": "duration"},
     }
 
     def __init__(
@@ -449,12 +446,12 @@ class ComputeConfiguration(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'instance_count': {'key': 'instanceCount', 'type': 'int'},
-        'instance_type': {'key': 'instanceType', 'type': 'str'},
-        'is_local': {'key': 'isLocal', 'type': 'bool'},
-        'location': {'key': 'location', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': '{str}'},
-        'target': {'key': 'target', 'type': 'str'},
+        "instance_count": {"key": "instanceCount", "type": "int"},
+        "instance_type": {"key": "instanceType", "type": "str"},
+        "is_local": {"key": "isLocal", "type": "bool"},
+        "location": {"key": "location", "type": "str"},
+        "properties": {"key": "properties", "type": "{str}"},
+        "target": {"key": "target", "type": "str"},
     }
 
     def __init__(
@@ -509,24 +506,27 @@ class JobInput(msrest.serialization.Model):
     """
 
     _validation = {
-        'job_input_type': {'required': True},
+        "job_input_type": {"required": True},
     }
 
     _attribute_map = {
-        'description': {'key': 'description', 'type': 'str'},
-        'job_input_type': {'key': 'jobInputType', 'type': 'str'},
+        "description": {"key": "description", "type": "str"},
+        "job_input_type": {"key": "jobInputType", "type": "str"},
     }
 
     _subtype_map = {
-        'job_input_type': {'CustomModel': 'CustomModelJobInput', 'Literal': 'LiteralJobInput', 'MLFlowModel': 'MLFlowModelJobInput', 'MLTable': 'MLTableJobInput', 'TritonModel': 'TritonModelJobInput', 'UriFile': 'UriFileJobInput', 'UriFolder': 'UriFolderJobInput'}
+        "job_input_type": {
+            "CustomModel": "CustomModelJobInput",
+            "Literal": "LiteralJobInput",
+            "MLFlowModel": "MLFlowModelJobInput",
+            "MLTable": "MLTableJobInput",
+            "TritonModel": "TritonModelJobInput",
+            "UriFile": "UriFileJobInput",
+            "UriFolder": "UriFolderJobInput",
+        }
     }
 
-    def __init__(
-        self,
-        *,
-        description: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, description: Optional[str] = None, **kwargs):
         """
         :keyword description: Description for the input.
         :paramtype description: str
@@ -555,15 +555,15 @@ class CustomModelJobInput(JobInput, AssetJobInput):
     """
 
     _validation = {
-        'uri': {'required': True, 'pattern': r'[a-zA-Z0-9_]'},
-        'job_input_type': {'required': True},
+        "uri": {"required": True, "pattern": r"[a-zA-Z0-9_]"},
+        "job_input_type": {"required": True},
     }
 
     _attribute_map = {
-        'mode': {'key': 'mode', 'type': 'str'},
-        'uri': {'key': 'uri', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'job_input_type': {'key': 'jobInputType', 'type': 'str'},
+        "mode": {"key": "mode", "type": "str"},
+        "uri": {"key": "uri", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "job_input_type": {"key": "jobInputType", "type": "str"},
     }
 
     def __init__(
@@ -583,10 +583,12 @@ class CustomModelJobInput(JobInput, AssetJobInput):
         :keyword description: Description for the input.
         :paramtype description: str
         """
-        super(CustomModelJobInput, self).__init__(description=description, mode=mode, uri=uri, **kwargs)
+        super(CustomModelJobInput, self).__init__(
+            description=description, mode=mode, uri=uri, **kwargs
+        )
         self.mode = mode
         self.uri = uri
-        self.job_input_type = 'CustomModel'  # type: str
+        self.job_input_type = "CustomModel"  # type: str
         self.description = description
 
 
@@ -606,24 +608,26 @@ class JobOutputV2(msrest.serialization.Model):
     """
 
     _validation = {
-        'job_output_type': {'required': True},
+        "job_output_type": {"required": True},
     }
 
     _attribute_map = {
-        'description': {'key': 'description', 'type': 'str'},
-        'job_output_type': {'key': 'jobOutputType', 'type': 'str'},
+        "description": {"key": "description", "type": "str"},
+        "job_output_type": {"key": "jobOutputType", "type": "str"},
     }
 
     _subtype_map = {
-        'job_output_type': {'CustomModel': 'CustomModelJobOutput', 'MLFlowModel': 'MLFlowModelJobOutput', 'MLTable': 'MLTableJobOutput', 'TritonModel': 'TritonModelJobOutput', 'UriFile': 'UriFileJobOutput', 'UriFolder': 'UriFolderJobOutput'}
+        "job_output_type": {
+            "CustomModel": "CustomModelJobOutput",
+            "MLFlowModel": "MLFlowModelJobOutput",
+            "MLTable": "MLTableJobOutput",
+            "TritonModel": "TritonModelJobOutput",
+            "UriFile": "UriFileJobOutput",
+            "UriFolder": "UriFolderJobOutput",
+        }
     }
 
-    def __init__(
-        self,
-        *,
-        description: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, description: Optional[str] = None, **kwargs):
         """
         :keyword description: Description for the output.
         :paramtype description: str
@@ -651,14 +655,14 @@ class CustomModelJobOutput(JobOutputV2, AssetJobOutput):
     """
 
     _validation = {
-        'job_output_type': {'required': True},
+        "job_output_type": {"required": True},
     }
 
     _attribute_map = {
-        'mode': {'key': 'mode', 'type': 'str'},
-        'uri': {'key': 'uri', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'job_output_type': {'key': 'jobOutputType', 'type': 'str'},
+        "mode": {"key": "mode", "type": "str"},
+        "uri": {"key": "uri", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "job_output_type": {"key": "jobOutputType", "type": "str"},
     }
 
     def __init__(
@@ -678,10 +682,12 @@ class CustomModelJobOutput(JobOutputV2, AssetJobOutput):
         :keyword description: Description for the output.
         :paramtype description: str
         """
-        super(CustomModelJobOutput, self).__init__(description=description, mode=mode, uri=uri, **kwargs)
+        super(CustomModelJobOutput, self).__init__(
+            description=description, mode=mode, uri=uri, **kwargs
+        )
         self.mode = mode
         self.uri = uri
-        self.job_output_type = 'CustomModel'  # type: str
+        self.job_output_type = "CustomModel"  # type: str
         self.description = description
 
 
@@ -707,17 +713,17 @@ class DataVersion(msrest.serialization.Model):
     """
 
     _validation = {
-        'path': {'required': True, 'pattern': r'[a-zA-Z0-9_]'},
+        "path": {"required": True, "pattern": r"[a-zA-Z0-9_]"},
     }
 
     _attribute_map = {
-        'dataset_type': {'key': 'datasetType', 'type': 'str'},
-        'datastore_id': {'key': 'datastoreId', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'is_anonymous': {'key': 'isAnonymous', 'type': 'bool'},
-        'path': {'key': 'path', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': '{str}'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "dataset_type": {"key": "datasetType", "type": "str"},
+        "datastore_id": {"key": "datastoreId", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "is_anonymous": {"key": "isAnonymous", "type": "bool"},
+        "path": {"key": "path", "type": "str"},
+        "properties": {"key": "properties", "type": "{str}"},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
     def __init__(
@@ -770,22 +776,16 @@ class ErrorDetail(msrest.serialization.Model):
     """
 
     _validation = {
-        'code': {'required': True},
-        'message': {'required': True},
+        "code": {"required": True},
+        "message": {"required": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        code: str,
-        message: str,
-        **kwargs
-    ):
+    def __init__(self, *, code: str, message: str, **kwargs):
         """
         :keyword code: Required. Error code.
         :paramtype code: str
@@ -811,23 +811,19 @@ class ErrorResponse(msrest.serialization.Model):
     """
 
     _validation = {
-        'code': {'readonly': True},
-        'message': {'readonly': True},
-        'details': {'readonly': True},
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "details": {"readonly": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[ErrorDetail]'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "details": {"key": "details", "type": "[ErrorDetail]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs):
+        """ """
         super(ErrorResponse, self).__init__(**kwargs)
         self.code = None
         self.message = None
@@ -849,23 +845,23 @@ class InferenceDataInputBase(msrest.serialization.Model):
     """
 
     _validation = {
-        'data_input_type': {'required': True},
+        "data_input_type": {"required": True},
     }
 
     _attribute_map = {
-        'data_input_type': {'key': 'dataInputType', 'type': 'str'},
+        "data_input_type": {"key": "dataInputType", "type": "str"},
     }
 
     _subtype_map = {
-        'data_input_type': {'DataUrl': 'InferenceDataUrlInput', 'DatasetId': 'InferenceDatasetIdInput', 'DatasetVersion': 'InferenceDatasetInput'}
+        "data_input_type": {
+            "DataUrl": "InferenceDataUrlInput",
+            "DatasetId": "InferenceDatasetIdInput",
+            "DatasetVersion": "InferenceDatasetInput",
+        }
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs):
+        """ """
         super(InferenceDataInputBase, self).__init__(**kwargs)
         self.data_input_type = None  # type: Optional[str]
 
@@ -884,26 +880,21 @@ class InferenceDatasetIdInput(InferenceDataInputBase):
     """
 
     _validation = {
-        'data_input_type': {'required': True},
+        "data_input_type": {"required": True},
     }
 
     _attribute_map = {
-        'data_input_type': {'key': 'dataInputType', 'type': 'str'},
-        'dataset_id': {'key': 'datasetId', 'type': 'str'},
+        "data_input_type": {"key": "dataInputType", "type": "str"},
+        "dataset_id": {"key": "datasetId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        dataset_id: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, dataset_id: Optional[str] = None, **kwargs):
         """
         :keyword dataset_id: ARM ID of the input dataset.
         :paramtype dataset_id: str
         """
         super(InferenceDatasetIdInput, self).__init__(**kwargs)
-        self.data_input_type = 'DatasetId'  # type: str
+        self.data_input_type = "DatasetId"  # type: str
         self.dataset_id = dataset_id
 
 
@@ -923,13 +914,13 @@ class InferenceDatasetInput(InferenceDataInputBase):
     """
 
     _validation = {
-        'data_input_type': {'required': True},
+        "data_input_type": {"required": True},
     }
 
     _attribute_map = {
-        'data_input_type': {'key': 'dataInputType', 'type': 'str'},
-        'dataset_name': {'key': 'datasetName', 'type': 'str'},
-        'dataset_version': {'key': 'datasetVersion', 'type': 'str'},
+        "data_input_type": {"key": "dataInputType", "type": "str"},
+        "dataset_name": {"key": "datasetName", "type": "str"},
+        "dataset_version": {"key": "datasetVersion", "type": "str"},
     }
 
     def __init__(
@@ -946,7 +937,7 @@ class InferenceDatasetInput(InferenceDataInputBase):
         :paramtype dataset_version: str
         """
         super(InferenceDatasetInput, self).__init__(**kwargs)
-        self.data_input_type = 'DatasetVersion'  # type: str
+        self.data_input_type = "DatasetVersion"  # type: str
         self.dataset_name = dataset_name
         self.dataset_version = dataset_version
 
@@ -965,27 +956,22 @@ class InferenceDataUrlInput(InferenceDataInputBase):
     """
 
     _validation = {
-        'data_input_type': {'required': True},
-        'path': {'required': True, 'pattern': r'[a-zA-Z0-9_]'},
+        "data_input_type": {"required": True},
+        "path": {"required": True, "pattern": r"[a-zA-Z0-9_]"},
     }
 
     _attribute_map = {
-        'data_input_type': {'key': 'dataInputType', 'type': 'str'},
-        'path': {'key': 'path', 'type': 'str'},
+        "data_input_type": {"key": "dataInputType", "type": "str"},
+        "path": {"key": "path", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        path: str,
-        **kwargs
-    ):
+    def __init__(self, *, path: str, **kwargs):
         """
         :keyword path: Required. Asset path to the input data, say a blob URL.
         :paramtype path: str
         """
         super(InferenceDataUrlInput, self).__init__(**kwargs)
-        self.data_input_type = 'DataUrl'  # type: str
+        self.data_input_type = "DataUrl"  # type: str
         self.path = path
 
 
@@ -1003,10 +989,10 @@ class JobEndpoint(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'endpoint': {'key': 'endpoint', 'type': 'str'},
-        'job_endpoint_type': {'key': 'jobEndpointType', 'type': 'str'},
-        'port': {'key': 'port', 'type': 'int'},
-        'properties': {'key': 'properties', 'type': '{str}'},
+        "endpoint": {"key": "endpoint", "type": "str"},
+        "job_endpoint_type": {"key": "jobEndpointType", "type": "str"},
+        "port": {"key": "port", "type": "int"},
+        "properties": {"key": "properties", "type": "{str}"},
     }
 
     def __init__(
@@ -1047,21 +1033,17 @@ class JobOutputArtifacts(msrest.serialization.Model):
     """
 
     _validation = {
-        'datastore_id': {'readonly': True},
-        'path': {'readonly': True},
+        "datastore_id": {"readonly": True},
+        "path": {"readonly": True},
     }
 
     _attribute_map = {
-        'datastore_id': {'key': 'datastoreId', 'type': 'str'},
-        'path': {'key': 'path', 'type': 'str'},
+        "datastore_id": {"key": "datastoreId", "type": "str"},
+        "path": {"key": "path", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs):
+        """ """
         super(JobOutputArtifacts, self).__init__(**kwargs)
         self.datastore_id = None
         self.path = None
@@ -1077,8 +1059,8 @@ class LabelClass(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'subclasses': {'key': 'subclasses', 'type': '{LabelClass}'},
+        "display_name": {"key": "displayName", "type": "str"},
+        "subclasses": {"key": "subclasses", "type": "{LabelClass}"},
     }
 
     def __init__(
@@ -1115,23 +1097,17 @@ class LiteralJobInput(JobInput):
     """
 
     _validation = {
-        'job_input_type': {'required': True},
-        'value': {'required': True, 'pattern': r'[a-zA-Z0-9_]'},
+        "job_input_type": {"required": True},
+        "value": {"required": True, "pattern": r"[a-zA-Z0-9_]"},
     }
 
     _attribute_map = {
-        'description': {'key': 'description', 'type': 'str'},
-        'job_input_type': {'key': 'jobInputType', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
+        "description": {"key": "description", "type": "str"},
+        "job_input_type": {"key": "jobInputType", "type": "str"},
+        "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: str,
-        description: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: str, description: Optional[str] = None, **kwargs):
         """
         :keyword description: Description for the input.
         :paramtype description: str
@@ -1139,7 +1115,7 @@ class LiteralJobInput(JobInput):
         :paramtype value: str
         """
         super(LiteralJobInput, self).__init__(description=description, **kwargs)
-        self.job_input_type = 'Literal'  # type: str
+        self.job_input_type = "Literal"  # type: str
         self.value = value
 
 
@@ -1162,15 +1138,15 @@ class MLFlowModelJobInput(JobInput, AssetJobInput):
     """
 
     _validation = {
-        'uri': {'required': True, 'pattern': r'[a-zA-Z0-9_]'},
-        'job_input_type': {'required': True},
+        "uri": {"required": True, "pattern": r"[a-zA-Z0-9_]"},
+        "job_input_type": {"required": True},
     }
 
     _attribute_map = {
-        'mode': {'key': 'mode', 'type': 'str'},
-        'uri': {'key': 'uri', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'job_input_type': {'key': 'jobInputType', 'type': 'str'},
+        "mode": {"key": "mode", "type": "str"},
+        "uri": {"key": "uri", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "job_input_type": {"key": "jobInputType", "type": "str"},
     }
 
     def __init__(
@@ -1190,10 +1166,12 @@ class MLFlowModelJobInput(JobInput, AssetJobInput):
         :keyword description: Description for the input.
         :paramtype description: str
         """
-        super(MLFlowModelJobInput, self).__init__(description=description, mode=mode, uri=uri, **kwargs)
+        super(MLFlowModelJobInput, self).__init__(
+            description=description, mode=mode, uri=uri, **kwargs
+        )
         self.mode = mode
         self.uri = uri
-        self.job_input_type = 'MLFlowModel'  # type: str
+        self.job_input_type = "MLFlowModel"  # type: str
         self.description = description
 
 
@@ -1215,14 +1193,14 @@ class MLFlowModelJobOutput(JobOutputV2, AssetJobOutput):
     """
 
     _validation = {
-        'job_output_type': {'required': True},
+        "job_output_type": {"required": True},
     }
 
     _attribute_map = {
-        'mode': {'key': 'mode', 'type': 'str'},
-        'uri': {'key': 'uri', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'job_output_type': {'key': 'jobOutputType', 'type': 'str'},
+        "mode": {"key": "mode", "type": "str"},
+        "uri": {"key": "uri", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "job_output_type": {"key": "jobOutputType", "type": "str"},
     }
 
     def __init__(
@@ -1242,10 +1220,12 @@ class MLFlowModelJobOutput(JobOutputV2, AssetJobOutput):
         :keyword description: Description for the output.
         :paramtype description: str
         """
-        super(MLFlowModelJobOutput, self).__init__(description=description, mode=mode, uri=uri, **kwargs)
+        super(MLFlowModelJobOutput, self).__init__(
+            description=description, mode=mode, uri=uri, **kwargs
+        )
         self.mode = mode
         self.uri = uri
-        self.job_output_type = 'MLFlowModel'  # type: str
+        self.job_output_type = "MLFlowModel"  # type: str
         self.description = description
 
 
@@ -1268,15 +1248,15 @@ class MLTableJobInput(JobInput, AssetJobInput):
     """
 
     _validation = {
-        'uri': {'required': True, 'pattern': r'[a-zA-Z0-9_]'},
-        'job_input_type': {'required': True},
+        "uri": {"required": True, "pattern": r"[a-zA-Z0-9_]"},
+        "job_input_type": {"required": True},
     }
 
     _attribute_map = {
-        'mode': {'key': 'mode', 'type': 'str'},
-        'uri': {'key': 'uri', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'job_input_type': {'key': 'jobInputType', 'type': 'str'},
+        "mode": {"key": "mode", "type": "str"},
+        "uri": {"key": "uri", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "job_input_type": {"key": "jobInputType", "type": "str"},
     }
 
     def __init__(
@@ -1296,10 +1276,12 @@ class MLTableJobInput(JobInput, AssetJobInput):
         :keyword description: Description for the input.
         :paramtype description: str
         """
-        super(MLTableJobInput, self).__init__(description=description, mode=mode, uri=uri, **kwargs)
+        super(MLTableJobInput, self).__init__(
+            description=description, mode=mode, uri=uri, **kwargs
+        )
         self.mode = mode
         self.uri = uri
-        self.job_input_type = 'MLTable'  # type: str
+        self.job_input_type = "MLTable"  # type: str
         self.description = description
 
 
@@ -1321,14 +1303,14 @@ class MLTableJobOutput(JobOutputV2, AssetJobOutput):
     """
 
     _validation = {
-        'job_output_type': {'required': True},
+        "job_output_type": {"required": True},
     }
 
     _attribute_map = {
-        'mode': {'key': 'mode', 'type': 'str'},
-        'uri': {'key': 'uri', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'job_output_type': {'key': 'jobOutputType', 'type': 'str'},
+        "mode": {"key": "mode", "type": "str"},
+        "uri": {"key": "uri", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "job_output_type": {"key": "jobOutputType", "type": "str"},
     }
 
     def __init__(
@@ -1348,10 +1330,12 @@ class MLTableJobOutput(JobOutputV2, AssetJobOutput):
         :keyword description: Description for the output.
         :paramtype description: str
         """
-        super(MLTableJobOutput, self).__init__(description=description, mode=mode, uri=uri, **kwargs)
+        super(MLTableJobOutput, self).__init__(
+            description=description, mode=mode, uri=uri, **kwargs
+        )
         self.mode = mode
         self.uri = uri
-        self.job_output_type = 'MLTable'  # type: str
+        self.job_output_type = "MLTable"  # type: str
         self.description = description
 
 
@@ -1375,12 +1359,12 @@ class SystemData(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'created_by': {'key': 'createdBy', 'type': 'str'},
-        'created_by_type': {'key': 'createdByType', 'type': 'str'},
-        'created_at': {'key': 'createdAt', 'type': 'iso-8601'},
-        'last_modified_by': {'key': 'lastModifiedBy', 'type': 'str'},
-        'last_modified_by_type': {'key': 'lastModifiedByType', 'type': 'str'},
-        'last_modified_at': {'key': 'lastModifiedAt', 'type': 'iso-8601'},
+        "created_by": {"key": "createdBy", "type": "str"},
+        "created_by_type": {"key": "createdByType", "type": "str"},
+        "created_at": {"key": "createdAt", "type": "iso-8601"},
+        "last_modified_by": {"key": "lastModifiedBy", "type": "str"},
+        "last_modified_by_type": {"key": "lastModifiedByType", "type": "str"},
+        "last_modified_at": {"key": "lastModifiedAt", "type": "iso-8601"},
     }
 
     def __init__(
@@ -1439,15 +1423,15 @@ class TritonModelJobInput(JobInput, AssetJobInput):
     """
 
     _validation = {
-        'uri': {'required': True, 'pattern': r'[a-zA-Z0-9_]'},
-        'job_input_type': {'required': True},
+        "uri": {"required": True, "pattern": r"[a-zA-Z0-9_]"},
+        "job_input_type": {"required": True},
     }
 
     _attribute_map = {
-        'mode': {'key': 'mode', 'type': 'str'},
-        'uri': {'key': 'uri', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'job_input_type': {'key': 'jobInputType', 'type': 'str'},
+        "mode": {"key": "mode", "type": "str"},
+        "uri": {"key": "uri", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "job_input_type": {"key": "jobInputType", "type": "str"},
     }
 
     def __init__(
@@ -1467,10 +1451,12 @@ class TritonModelJobInput(JobInput, AssetJobInput):
         :keyword description: Description for the input.
         :paramtype description: str
         """
-        super(TritonModelJobInput, self).__init__(description=description, mode=mode, uri=uri, **kwargs)
+        super(TritonModelJobInput, self).__init__(
+            description=description, mode=mode, uri=uri, **kwargs
+        )
         self.mode = mode
         self.uri = uri
-        self.job_input_type = 'TritonModel'  # type: str
+        self.job_input_type = "TritonModel"  # type: str
         self.description = description
 
 
@@ -1492,14 +1478,14 @@ class TritonModelJobOutput(JobOutputV2, AssetJobOutput):
     """
 
     _validation = {
-        'job_output_type': {'required': True},
+        "job_output_type": {"required": True},
     }
 
     _attribute_map = {
-        'mode': {'key': 'mode', 'type': 'str'},
-        'uri': {'key': 'uri', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'job_output_type': {'key': 'jobOutputType', 'type': 'str'},
+        "mode": {"key": "mode", "type": "str"},
+        "uri": {"key": "uri", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "job_output_type": {"key": "jobOutputType", "type": "str"},
     }
 
     def __init__(
@@ -1519,10 +1505,12 @@ class TritonModelJobOutput(JobOutputV2, AssetJobOutput):
         :keyword description: Description for the output.
         :paramtype description: str
         """
-        super(TritonModelJobOutput, self).__init__(description=description, mode=mode, uri=uri, **kwargs)
+        super(TritonModelJobOutput, self).__init__(
+            description=description, mode=mode, uri=uri, **kwargs
+        )
         self.mode = mode
         self.uri = uri
-        self.job_output_type = 'TritonModel'  # type: str
+        self.job_output_type = "TritonModel"  # type: str
         self.description = description
 
 
@@ -1545,15 +1533,15 @@ class UriFileJobInput(JobInput, AssetJobInput):
     """
 
     _validation = {
-        'uri': {'required': True, 'pattern': r'[a-zA-Z0-9_]'},
-        'job_input_type': {'required': True},
+        "uri": {"required": True, "pattern": r"[a-zA-Z0-9_]"},
+        "job_input_type": {"required": True},
     }
 
     _attribute_map = {
-        'mode': {'key': 'mode', 'type': 'str'},
-        'uri': {'key': 'uri', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'job_input_type': {'key': 'jobInputType', 'type': 'str'},
+        "mode": {"key": "mode", "type": "str"},
+        "uri": {"key": "uri", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "job_input_type": {"key": "jobInputType", "type": "str"},
     }
 
     def __init__(
@@ -1573,10 +1561,12 @@ class UriFileJobInput(JobInput, AssetJobInput):
         :keyword description: Description for the input.
         :paramtype description: str
         """
-        super(UriFileJobInput, self).__init__(description=description, mode=mode, uri=uri, **kwargs)
+        super(UriFileJobInput, self).__init__(
+            description=description, mode=mode, uri=uri, **kwargs
+        )
         self.mode = mode
         self.uri = uri
-        self.job_input_type = 'UriFile'  # type: str
+        self.job_input_type = "UriFile"  # type: str
         self.description = description
 
 
@@ -1598,14 +1588,14 @@ class UriFileJobOutput(JobOutputV2, AssetJobOutput):
     """
 
     _validation = {
-        'job_output_type': {'required': True},
+        "job_output_type": {"required": True},
     }
 
     _attribute_map = {
-        'mode': {'key': 'mode', 'type': 'str'},
-        'uri': {'key': 'uri', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'job_output_type': {'key': 'jobOutputType', 'type': 'str'},
+        "mode": {"key": "mode", "type": "str"},
+        "uri": {"key": "uri", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "job_output_type": {"key": "jobOutputType", "type": "str"},
     }
 
     def __init__(
@@ -1625,10 +1615,12 @@ class UriFileJobOutput(JobOutputV2, AssetJobOutput):
         :keyword description: Description for the output.
         :paramtype description: str
         """
-        super(UriFileJobOutput, self).__init__(description=description, mode=mode, uri=uri, **kwargs)
+        super(UriFileJobOutput, self).__init__(
+            description=description, mode=mode, uri=uri, **kwargs
+        )
         self.mode = mode
         self.uri = uri
-        self.job_output_type = 'UriFile'  # type: str
+        self.job_output_type = "UriFile"  # type: str
         self.description = description
 
 
@@ -1651,15 +1643,15 @@ class UriFolderJobInput(JobInput, AssetJobInput):
     """
 
     _validation = {
-        'uri': {'required': True, 'pattern': r'[a-zA-Z0-9_]'},
-        'job_input_type': {'required': True},
+        "uri": {"required": True, "pattern": r"[a-zA-Z0-9_]"},
+        "job_input_type": {"required": True},
     }
 
     _attribute_map = {
-        'mode': {'key': 'mode', 'type': 'str'},
-        'uri': {'key': 'uri', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'job_input_type': {'key': 'jobInputType', 'type': 'str'},
+        "mode": {"key": "mode", "type": "str"},
+        "uri": {"key": "uri", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "job_input_type": {"key": "jobInputType", "type": "str"},
     }
 
     def __init__(
@@ -1679,10 +1671,12 @@ class UriFolderJobInput(JobInput, AssetJobInput):
         :keyword description: Description for the input.
         :paramtype description: str
         """
-        super(UriFolderJobInput, self).__init__(description=description, mode=mode, uri=uri, **kwargs)
+        super(UriFolderJobInput, self).__init__(
+            description=description, mode=mode, uri=uri, **kwargs
+        )
         self.mode = mode
         self.uri = uri
-        self.job_input_type = 'UriFolder'  # type: str
+        self.job_input_type = "UriFolder"  # type: str
         self.description = description
 
 
@@ -1704,14 +1698,14 @@ class UriFolderJobOutput(JobOutputV2, AssetJobOutput):
     """
 
     _validation = {
-        'job_output_type': {'required': True},
+        "job_output_type": {"required": True},
     }
 
     _attribute_map = {
-        'mode': {'key': 'mode', 'type': 'str'},
-        'uri': {'key': 'uri', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'job_output_type': {'key': 'jobOutputType', 'type': 'str'},
+        "mode": {"key": "mode", "type": "str"},
+        "uri": {"key": "uri", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "job_output_type": {"key": "jobOutputType", "type": "str"},
     }
 
     def __init__(
@@ -1731,8 +1725,10 @@ class UriFolderJobOutput(JobOutputV2, AssetJobOutput):
         :keyword description: Description for the output.
         :paramtype description: str
         """
-        super(UriFolderJobOutput, self).__init__(description=description, mode=mode, uri=uri, **kwargs)
+        super(UriFolderJobOutput, self).__init__(
+            description=description, mode=mode, uri=uri, **kwargs
+        )
         self.mode = mode
         self.uri = uri
-        self.job_output_type = 'UriFolder'  # type: str
+        self.job_output_type = "UriFolder"  # type: str
         self.description = description

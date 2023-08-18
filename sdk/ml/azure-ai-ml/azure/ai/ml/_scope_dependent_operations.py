@@ -7,7 +7,12 @@
 import logging
 from typing import Callable, Dict, Optional, TypeVar, cast
 
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+from azure.ai.ml.exceptions import (
+    ErrorCategory,
+    ErrorTarget,
+    ValidationErrorType,
+    ValidationException,
+)
 
 T = TypeVar("T")
 module_logger = logging.getLogger(__name__)
@@ -86,7 +91,9 @@ class OperationScope(object):
 
 
 class _ScopeDependentOperations(object):
-    def __init__(self, operation_scope: OperationScope, operation_config: OperationConfig):
+    def __init__(
+        self, operation_scope: OperationScope, operation_config: OperationConfig
+    ):
         self._operation_scope = operation_scope
         self._operation_config = operation_config
         self._scope_kwargs = {

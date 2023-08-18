@@ -16,7 +16,9 @@ from azure.ai.ml._restclient.v2023_04_01_preview.models import (
 from azure.ai.ml._schema.automl.image_vertical.image_model_distribution_settings import (
     ImageModelDistributionSettingsClassificationSchema,
 )
-from azure.ai.ml._schema.automl.image_vertical.image_model_settings import ImageModelSettingsClassificationSchema
+from azure.ai.ml._schema.automl.image_vertical.image_model_settings import (
+    ImageModelSettingsClassificationSchema,
+)
 from azure.ai.ml._schema.automl.image_vertical.image_vertical import ImageVerticalSchema
 from azure.ai.ml._schema.core.fields import NestedField, StringTransformedEnum
 from azure.ai.ml._utils.utils import camel_to_snake
@@ -25,7 +27,9 @@ from azure.ai.ml.constants._job.automl import AutoMLConstants
 
 class ImageClassificationBaseSchema(ImageVerticalSchema):
     training_parameters = NestedField(ImageModelSettingsClassificationSchema())
-    search_space = fields.List(NestedField(ImageModelDistributionSettingsClassificationSchema()))
+    search_space = fields.List(
+        NestedField(ImageModelDistributionSettingsClassificationSchema())
+    )
 
 
 class ImageClassificationSchema(ImageClassificationBaseSchema):

@@ -9,9 +9,18 @@ from typing import Dict, Optional
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
 from azure.ai.ml._exception_helper import log_and_raise_error
-from azure.ai.ml._restclient.v2023_04_01_preview.models import ListViewType, FeaturestoreEntityVersion
-from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient042023Preview
-from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope, _ScopeDependentOperations
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    ListViewType,
+    FeaturestoreEntityVersion,
+)
+from azure.ai.ml._restclient.v2023_04_01_preview import (
+    AzureMachineLearningWorkspaces as ServiceClient042023Preview,
+)
+from azure.ai.ml._scope_dependent_operations import (
+    OperationConfig,
+    OperationScope,
+    _ScopeDependentOperations,
+)
 from azure.ai.ml.exceptions import ValidationException
 
 
@@ -20,7 +29,9 @@ from azure.ai.ml._utils._feature_store_utils import (
     _archive_or_restore,
 )
 from azure.ai.ml._utils._logger_utils import OpsLogger
-from azure.ai.ml.entities._feature_store_entity.feature_store_entity import FeatureStoreEntity
+from azure.ai.ml.entities._feature_store_entity.feature_store_entity import (
+    FeatureStoreEntity,
+)
 from azure.core.polling import LROPoller
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
@@ -44,7 +55,9 @@ class FeatureStoreEntityOperations(_ScopeDependentOperations):
         service_client: ServiceClient042023Preview,
         **kwargs: Dict,
     ):
-        super(FeatureStoreEntityOperations, self).__init__(operation_scope, operation_config)
+        super(FeatureStoreEntityOperations, self).__init__(
+            operation_scope, operation_config
+        )
         ops_logger.update_info(kwargs)
         self._operation = service_client.featurestore_entity_versions
         self._container_operation = service_client.featurestore_entity_containers
@@ -74,20 +87,26 @@ class FeatureStoreEntityOperations(_ScopeDependentOperations):
             return self._operation.list(
                 workspace_name=self._workspace_name,
                 name=name,
-                cls=lambda objs: [FeatureStoreEntity._from_rest_object(obj) for obj in objs],
+                cls=lambda objs: [
+                    FeatureStoreEntity._from_rest_object(obj) for obj in objs
+                ],
                 list_view_type=list_view_type,
                 **self._scope_kwargs,
                 **kwargs,
             )
         return self._container_operation.list(
             workspace_name=self._workspace_name,
-            cls=lambda objs: [FeatureStoreEntity._from_container_rest_object(obj) for obj in objs],
+            cls=lambda objs: [
+                FeatureStoreEntity._from_container_rest_object(obj) for obj in objs
+            ],
             list_view_type=list_view_type,
             **self._scope_kwargs,
             **kwargs,
         )
 
-    def _get(self, name: str, version: str = None, **kwargs: Dict) -> FeaturestoreEntityVersion:
+    def _get(
+        self, name: str, version: str = None, **kwargs: Dict
+    ) -> FeaturestoreEntityVersion:
         return self._operation.get(
             resource_group_name=self._resource_group_name,
             workspace_name=self._workspace_name,
@@ -113,12 +132,16 @@ class FeatureStoreEntityOperations(_ScopeDependentOperations):
         """
         try:
             feature_store_entity_version_resource = self._get(name, version, **kwargs)
-            return FeatureStoreEntity._from_rest_object(feature_store_entity_version_resource)
+            return FeatureStoreEntity._from_rest_object(
+                feature_store_entity_version_resource
+            )
         except (ValidationException, SchemaValidationError) as ex:
             log_and_raise_error(ex)
 
     @distributed_trace
-    @monitor_with_activity(logger, "FeatureStoreEntity.BeginCreateOrUpdate", ActivityType.PUBLICAPI)
+    @monitor_with_activity(
+        logger, "FeatureStoreEntity.BeginCreateOrUpdate", ActivityType.PUBLICAPI
+    )
     def begin_create_or_update(
         self, feature_store_entity: FeatureStoreEntity, **kwargs: Dict
     ) -> LROPoller[FeatureStoreEntity]:
@@ -129,7 +152,9 @@ class FeatureStoreEntityOperations(_ScopeDependentOperations):
         :return: An instance of LROPoller that returns a FeatureStoreEntity.
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.FeatureStoreEntity]
         """
-        feature_store_entity_resource = FeatureStoreEntity._to_rest_object(feature_store_entity)
+        feature_store_entity_resource = FeatureStoreEntity._to_rest_object(
+            feature_store_entity
+        )
 
         return self._operation.begin_create_or_update(
             resource_group_name=self._resource_group_name,
@@ -137,7 +162,9 @@ class FeatureStoreEntityOperations(_ScopeDependentOperations):
             name=feature_store_entity.name,
             version=feature_store_entity.version,
             body=feature_store_entity_resource,
-            cls=lambda response, deserialized, headers: FeatureStoreEntity._from_rest_object(deserialized),
+            cls=lambda response, deserialized, headers: FeatureStoreEntity._from_rest_object(
+                deserialized
+            ),
             **kwargs,
         )
 

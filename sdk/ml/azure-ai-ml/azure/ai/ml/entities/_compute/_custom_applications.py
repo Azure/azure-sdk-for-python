@@ -52,7 +52,9 @@ class EndpointsSettings:
     """
 
     def __init__(self, *, target: int, published: int):
-        EndpointsSettings._validate_endpoint_settings(target=target, published=published)
+        EndpointsSettings._validate_endpoint_settings(
+            target=target, published=published
+        )
         self.target = target
         self.published = published
 
@@ -158,7 +160,9 @@ class CustomApplications:
         environment_variables = None
         if self.environment_variables:
             environment_variables = {
-                name: RestEnvironmentVariable(type=RestEnvironmentVariableType.LOCAL, value=value)
+                name: RestEnvironmentVariable(
+                    type=RestEnvironmentVariableType.LOCAL, value=value
+                )
                 for name, value in self.environment_variables.items()
             }
 
@@ -199,7 +203,9 @@ class CustomApplications:
             endpoints=endpoints,
             environment_variables=environment_variables,
             bind_mounts=bind_mounts,
-            type=obj.additional_properties.pop("type", CustomApplicationDefaults.DOCKER),
+            type=obj.additional_properties.pop(
+                "type", CustomApplicationDefaults.DOCKER
+            ),
             **obj.additional_properties,
         )
 
@@ -216,7 +222,9 @@ def validate_custom_applications(custom_apps: List[CustomApplications]):
             error_category=ErrorCategory.USER_ERROR,
         )
 
-    published_ports = [endpoint.published for app in custom_apps for endpoint in app.endpoints]
+    published_ports = [
+        endpoint.published for app in custom_apps for endpoint in app.endpoints
+    ]
 
     if len(set(published_ports)) != len(published_ports):
         raise ValidationException(

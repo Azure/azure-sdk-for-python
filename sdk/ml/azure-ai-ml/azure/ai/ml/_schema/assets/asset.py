@@ -37,6 +37,7 @@ class AnonymousAssetSchema(AssetSchema):
         data.pop("version", None)
         if name is not None:
             module_logger.warning(
-                "Warning: the provided asset name '%s' will not be used for anonymous registration.", name
+                "Warning: the provided asset name '%s' will not be used for anonymous registration.",
+                name,
             )
         return data

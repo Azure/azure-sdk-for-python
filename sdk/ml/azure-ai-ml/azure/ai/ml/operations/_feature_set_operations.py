@@ -20,9 +20,20 @@ from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     FeaturesetVersionBackfillRequest,
     FeatureWindow,
 )
-from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient042023Preview
-from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope, _ScopeDependentOperations
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+from azure.ai.ml._restclient.v2023_04_01_preview import (
+    AzureMachineLearningWorkspaces as ServiceClient042023Preview,
+)
+from azure.ai.ml._scope_dependent_operations import (
+    OperationConfig,
+    OperationScope,
+    _ScopeDependentOperations,
+)
+from azure.ai.ml.exceptions import (
+    ErrorCategory,
+    ErrorTarget,
+    ValidationErrorType,
+    ValidationException,
+)
 from azure.ai.ml._artifacts._artifact_utilities import _check_and_upload_path
 from azure.ai.ml.operations._datastore_operations import DatastoreOperations
 
@@ -35,10 +46,18 @@ from azure.ai.ml._utils._feature_store_utils import (
 )
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml.entities._assets._artifacts.feature_set import FeatureSet
-from azure.ai.ml.entities._feature_set.featureset_spec_metadata import FeaturesetSpecMetadata
-from azure.ai.ml.entities._feature_set.materialization_compute_resource import MaterializationComputeResource
-from azure.ai.ml.entities._feature_set.feature_set_materialization_metadata import FeatureSetMaterializationMetadata
-from azure.ai.ml.entities._feature_set.feature_set_backfill_metadata import FeatureSetBackfillMetadata
+from azure.ai.ml.entities._feature_set.featureset_spec_metadata import (
+    FeaturesetSpecMetadata,
+)
+from azure.ai.ml.entities._feature_set.materialization_compute_resource import (
+    MaterializationComputeResource,
+)
+from azure.ai.ml.entities._feature_set.feature_set_materialization_metadata import (
+    FeatureSetMaterializationMetadata,
+)
+from azure.ai.ml.entities._feature_set.feature_set_backfill_metadata import (
+    FeatureSetBackfillMetadata,
+)
 from azure.ai.ml.entities._feature_set.feature import Feature
 from azure.core.polling import LROPoller
 from azure.core.paging import ItemPaged
@@ -103,7 +122,9 @@ class FeatureSetOperations(_ScopeDependentOperations):
             )
         return self._container_operation.list(
             workspace_name=self._workspace_name,
-            cls=lambda objs: [FeatureSet._from_container_rest_object(obj) for obj in objs],
+            cls=lambda objs: [
+                FeatureSet._from_container_rest_object(obj) for obj in objs
+            ],
             list_view_type=list_view_type,
             **self._scope_kwargs,
             **kwargs,
@@ -140,8 +161,12 @@ class FeatureSetOperations(_ScopeDependentOperations):
             log_and_raise_error(ex)
 
     @distributed_trace
-    @monitor_with_activity(logger, "FeatureSet.BeginCreateOrUpdate", ActivityType.PUBLICAPI)
-    def begin_create_or_update(self, featureset: FeatureSet, **kwargs: Dict) -> LROPoller[FeatureSet]:
+    @monitor_with_activity(
+        logger, "FeatureSet.BeginCreateOrUpdate", ActivityType.PUBLICAPI
+    )
+    def begin_create_or_update(
+        self, featureset: FeatureSet, **kwargs: Dict
+    ) -> LROPoller[FeatureSet]:
         """Create or update FeatureSet
 
         :param featureset: FeatureSet definition.
@@ -152,11 +177,16 @@ class FeatureSetOperations(_ScopeDependentOperations):
 
         featureset_spec = self._validate_and_get_feature_set_spec(featureset)
         featureset.properties["featuresetPropertiesVersion"] = "1"
-        featureset.properties["featuresetProperties"] = json.dumps(featureset_spec._to_dict())
+        featureset.properties["featuresetProperties"] = json.dumps(
+            featureset_spec._to_dict()
+        )
 
         sas_uri = None
         featureset, _ = _check_and_upload_path(
-            artifact=featureset, asset_operations=self, sas_uri=sas_uri, artifact_type=ErrorTarget.FEATURE_SET
+            artifact=featureset,
+            asset_operations=self,
+            sas_uri=sas_uri,
+            artifact_type=ErrorTarget.FEATURE_SET,
         )
 
         featureset_resource = FeatureSet._to_rest_object(featureset)
@@ -168,7 +198,9 @@ class FeatureSetOperations(_ScopeDependentOperations):
             version=featureset.version,
             body=featureset_resource,
             **kwargs,
-            cls=lambda response, deserialized, headers: FeatureSet._from_rest_object(deserialized),
+            cls=lambda response, deserialized, headers: FeatureSet._from_rest_object(
+                deserialized
+            ),
         )
 
     @distributed_trace
@@ -211,15 +243,20 @@ class FeatureSetOperations(_ScopeDependentOperations):
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.FeatureSetBackfillMetadata]
         """
 
-        request_body: FeaturesetVersionBackfillRequest = FeaturesetVersionBackfillRequest(
-            description=description,
-            display_name=display_name,
-            feature_window=FeatureWindow(
-                feature_window_start=feature_window_start_time, feature_window_end=feature_window_end_time
-            ),
-            resource=compute_resource._to_rest_object() if compute_resource else None,
-            spark_configuration=spark_configuration,
-            tags=tags,
+        request_body: FeaturesetVersionBackfillRequest = (
+            FeaturesetVersionBackfillRequest(
+                description=description,
+                display_name=display_name,
+                feature_window=FeatureWindow(
+                    feature_window_start=feature_window_start_time,
+                    feature_window_end=feature_window_end_time,
+                ),
+                resource=compute_resource._to_rest_object()
+                if compute_resource
+                else None,
+                spark_configuration=spark_configuration,
+                tags=tags,
+            )
         )
         return self._operation.begin_backfill(
             resource_group_name=self._resource_group_name,
@@ -228,11 +265,15 @@ class FeatureSetOperations(_ScopeDependentOperations):
             version=version,
             body=request_body,
             **kwargs,
-            cls=lambda response, deserialized, headers: FeatureSetBackfillMetadata._from_rest_object(deserialized),
+            cls=lambda response, deserialized, headers: FeatureSetBackfillMetadata._from_rest_object(
+                deserialized
+            ),
         )
 
     @distributed_trace
-    @monitor_with_activity(logger, "FeatureSet.ListMaterializationOperation", ActivityType.PUBLICAPI)
+    @monitor_with_activity(
+        logger, "FeatureSet.ListMaterializationOperation", ActivityType.PUBLICAPI
+    )
     def list_materialization_operations(
         self,
         name: str,
@@ -258,8 +299,16 @@ class FeatureSetOperations(_ScopeDependentOperations):
         :return: An iterator like instance of ~azure.ai.ml.entities.FeatureSetMaterializationMetadata objects
         :rtype: ~azure.core.paging.ItemPaged[FeatureSetMaterializationMetadata]
         """
-        feature_window_start_time = _datetime_to_str(feature_window_start_time) if feature_window_start_time else None
-        feature_window_end_time = _datetime_to_str(feature_window_end_time) if feature_window_end_time else None
+        feature_window_start_time = (
+            _datetime_to_str(feature_window_start_time)
+            if feature_window_start_time
+            else None
+        )
+        feature_window_end_time = (
+            _datetime_to_str(feature_window_end_time)
+            if feature_window_end_time
+            else None
+        )
         materialization_jobs = self._operation.list_materialization_jobs(
             resource_group_name=self._resource_group_name,
             workspace_name=self._workspace_name,
@@ -269,7 +318,9 @@ class FeatureSetOperations(_ScopeDependentOperations):
             feature_window_start=feature_window_start_time,
             feature_window_end=feature_window_end_time,
             **kwargs,
-            cls=lambda objs: [FeatureSetMaterializationMetadata._from_rest_object(obj) for obj in objs],
+            cls=lambda objs: [
+                FeatureSetMaterializationMetadata._from_rest_object(obj) for obj in objs
+            ],
         )
         return materialization_jobs
 
@@ -315,7 +366,9 @@ class FeatureSetOperations(_ScopeDependentOperations):
 
     @distributed_trace
     @monitor_with_activity(logger, "FeatureSet.GetFeature", ActivityType.PUBLICAPI)
-    def get_feature(self, feature_set_name: str, version: str, *, feature_name: str, **kwargs: Dict) -> "Feature":
+    def get_feature(
+        self, feature_set_name: str, version: str, *, feature_name: str, **kwargs: Dict
+    ) -> "Feature":
         """Get Feature
 
         :param feature_set_name: Feature set name.
@@ -392,7 +445,9 @@ class FeatureSetOperations(_ScopeDependentOperations):
             **kwargs,
         )
 
-    def _validate_and_get_feature_set_spec(self, featureset: FeatureSet) -> FeaturesetSpecMetadata:
+    def _validate_and_get_feature_set_spec(
+        self, featureset: FeatureSet
+    ) -> FeaturesetSpecMetadata:
         # pylint: disable=no-member
         if not (featureset.specification and featureset.specification.path):
             msg = "Missing FeatureSet specification path. Path is required for feature set."
@@ -413,12 +468,18 @@ class FeatureSetOperations(_ScopeDependentOperations):
                 )
                 featureset_spec_path = None
             except Exception as ex:  # pylint: disable=broad-except
-                module_logger.info("Unable to access FeaturesetSpec at path %s", featureset_spec_path)
+                module_logger.info(
+                    "Unable to access FeaturesetSpec at path %s", featureset_spec_path
+                )
                 raise ex
-            return FeaturesetSpecMetadata._load(featureset_spec_contents, featureset_spec_path)
+            return FeaturesetSpecMetadata._load(
+                featureset_spec_contents, featureset_spec_path
+            )
 
         if not os.path.isabs(featureset_spec_path):
-            featureset_spec_path = Path(featureset.base_path, featureset_spec_path).resolve()
+            featureset_spec_path = Path(
+                featureset.base_path, featureset_spec_path
+            ).resolve()
 
         if not os.path.isdir(featureset_spec_path):
             raise ValidationException(
@@ -431,4 +492,6 @@ class FeatureSetOperations(_ScopeDependentOperations):
 
         featureset_spec_contents = read_feature_set_metadata(path=featureset_spec_path)
         featureset_spec_yaml_path = Path(featureset_spec_path, "FeatureSetSpec.yaml")
-        return FeaturesetSpecMetadata._load(featureset_spec_contents, featureset_spec_yaml_path)
+        return FeaturesetSpecMetadata._load(
+            featureset_spec_contents, featureset_spec_yaml_path
+        )

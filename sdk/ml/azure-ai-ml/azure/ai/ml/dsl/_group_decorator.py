@@ -11,7 +11,10 @@ from typing import Any, Callable, Dict, List, Type, TypeVar, Union
 
 from azure.ai.ml import Input, Output
 from azure.ai.ml.constants._component import IOConstants
-from azure.ai.ml.entities._inputs_outputs import GroupInput, _get_param_with_standard_annotation
+from azure.ai.ml.entities._inputs_outputs import (
+    GroupInput,
+    _get_param_with_standard_annotation,
+)
 from azure.ai.ml.entities._inputs_outputs.utils import Annotation
 
 T = TypeVar("T")
@@ -227,7 +230,10 @@ def group(_cls: Type[T]) -> Type[T]:
                 return val.default
             return None
 
-        locals = {f"_type_{key}": _get_data_type_from_annotation(val) for key, val in fields.items()}
+        locals = {
+            f"_type_{key}": _get_data_type_from_annotation(val)
+            for key, val in fields.items()
+        }
         # Collect field defaults if val is parameter and is optional
         defaults = {f"_default_{key}": _get_default(key) for key, val in fields.items()}
         locals.update(defaults)
@@ -240,9 +246,13 @@ def group(_cls: Type[T]) -> Type[T]:
         # If no body lines, use 'pass'.
         if not body_lines:
             body_lines = ["pass"]
-        return _create_fn("__init__", _init_param, body_lines, locals=locals, return_type=None)
+        return _create_fn(
+            "__init__", _init_param, body_lines, locals=locals, return_type=None
+        )
 
-    def _create_repr_fn(fields: Dict[str, Union[Annotation, Input, Output]]) -> Callable[..., str]:
+    def _create_repr_fn(
+        fields: Dict[str, Union[Annotation, Input, Output]]
+    ) -> Callable[..., str]:
         """Generate the __repr__ function for user-defined class.
 
         :param fields: The fields
@@ -255,7 +265,11 @@ def group(_cls: Type[T]) -> Type[T]:
         fn = _create_fn(
             "__repr__",
             ("self",),
-            ['return self.__class__.__qualname__ + f"(' + ", ".join([f"{k}={{self.{k}!r}}" for k in fields]) + ')"'],
+            [
+                'return self.__class__.__qualname__ + f"('
+                + ", ".join([f"{k}={{self.{k}!r}}" for k in fields])
+                + ')"'
+            ],
             return_type=str,
         )
 
@@ -282,7 +296,9 @@ def group(_cls: Type[T]) -> Type[T]:
 
         return _recursive_repr(fn)
 
-    def _process_class(cls: Type[T], all_fields: Dict[str, Union[Annotation, Input, Output]]) -> Type[T]:
+    def _process_class(
+        cls: Type[T], all_fields: Dict[str, Union[Annotation, Input, Output]]
+    ) -> Type[T]:
         setattr(cls, "__init__", _create_init_fn(cls, all_fields))
         setattr(cls, "__repr__", _create_repr_fn(all_fields))
         return cls
@@ -290,7 +306,9 @@ def group(_cls: Type[T]) -> Type[T]:
     def _wrap(cls: Type[T]) -> Type[T]:
         all_fields = _get_param_with_standard_annotation(cls)
         # Set group info on cls
-        setattr(cls, IOConstants.GROUP_ATTR_NAME, GroupInput(all_fields, _group_class=cls))
+        setattr(
+            cls, IOConstants.GROUP_ATTR_NAME, GroupInput(all_fields, _group_class=cls)
+        )
         # Add init, repr, eq to class with user-defined annotation type
         return _process_class(cls, all_fields)
 

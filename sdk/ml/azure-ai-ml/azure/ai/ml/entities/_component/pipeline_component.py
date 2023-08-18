@@ -13,11 +13,18 @@ from typing import Dict, List, Optional, Tuple, Union
 
 from marshmallow import Schema
 
-from azure.ai.ml._restclient.v2022_10_01.models import ComponentVersion, ComponentVersionProperties
+from azure.ai.ml._restclient.v2022_10_01.models import (
+    ComponentVersion,
+    ComponentVersionProperties,
+)
 from azure.ai.ml._schema import PathAwareSchema
 from azure.ai.ml._schema.pipeline.pipeline_component import PipelineComponentSchema
 from azure.ai.ml._utils.utils import hash_dict, is_data_binding_expression
-from azure.ai.ml.constants._common import ARM_ID_PREFIX, ASSET_ARM_ID_REGEX_FORMAT, COMPONENT_TYPE
+from azure.ai.ml.constants._common import (
+    ARM_ID_PREFIX,
+    ASSET_ARM_ID_REGEX_FORMAT,
+    COMPONENT_TYPE,
+)
 from azure.ai.ml.constants._component import ComponentSource, NodeType
 from azure.ai.ml.constants._job.pipeline import ValidationErrorCode
 from azure.ai.ml.entities._builders import BaseNode, Command
@@ -147,7 +154,9 @@ class PipelineComponent(Component):
         for node_name, node in self.jobs.items():
             if isinstance(node, BaseNode):
                 # Node inputs will be validated.
-                validation_result.merge_with(node._validate(), "jobs.{}".format(node_name))
+                validation_result.merge_with(
+                    node._validate(), "jobs.{}".format(node_name)
+                )
                 if isinstance(node.component, Component):
                     # Validate binding if not remote resource.
                     validation_result.merge_with(self._validate_binding_inputs(node))
@@ -155,7 +164,9 @@ class PipelineComponent(Component):
                 pass
             elif isinstance(node, ControlFlowNode):
                 # Validate control flow node.
-                validation_result.merge_with(node._validate(), "jobs.{}".format(node_name))
+                validation_result.merge_with(
+                    node._validate(), "jobs.{}".format(node_name)
+                )
             else:
                 validation_result.append_error(
                     yaml_path="jobs.{}".format(node_name),
@@ -164,7 +175,9 @@ class PipelineComponent(Component):
 
         return validation_result
 
-    def _validate_compute_is_set(self, *, parent_node_name=None) -> MutableValidationResult:
+    def _validate_compute_is_set(
+        self, *, parent_node_name=None
+    ) -> MutableValidationResult:
         """Validate compute in pipeline component.
 
         This function will only be called from pipeline_job._validate_compute_is_set
@@ -186,10 +199,19 @@ class PipelineComponent(Component):
         parent_node_name = parent_node_name if parent_node_name else ""
         for node_name, node in self.jobs.items():
             full_node_name = f"{parent_node_name}{node_name}.jobs."
-            if node.type == NodeType.PIPELINE and isinstance(node._component, PipelineComponent):
-                validation_result.merge_with(node._component._validate_compute_is_set(parent_node_name=full_node_name))
+            if node.type == NodeType.PIPELINE and isinstance(
+                node._component, PipelineComponent
+            ):
+                validation_result.merge_with(
+                    node._component._validate_compute_is_set(
+                        parent_node_name=full_node_name
+                    )
+                )
                 continue
-            if isinstance(node, BaseNode) and node._skip_required_compute_missing_validation:
+            if (
+                isinstance(node, BaseNode)
+                and node._skip_required_compute_missing_validation
+            ):
                 continue
             if has_attr_safe(node, "compute") and node.compute is None:
                 no_compute_nodes.append(node_name)
@@ -223,13 +245,17 @@ class PipelineComponent(Component):
                     binding_dict[pipeline_input_name].append(component_input_name)
                     if pipeline_input_name not in optional_binding_in_expression_dict:
                         optional_binding_in_expression_dict[pipeline_input_name] = []
-                    optional_binding_in_expression_dict[pipeline_input_name].append(pipeline_input_name)
+                    optional_binding_in_expression_dict[pipeline_input_name].append(
+                        pipeline_input_name
+                    )
             else:
                 if isinstance(component_binding_input, Input):
                     component_binding_input = component_binding_input.path
                 if is_data_binding_expression(component_binding_input, ["parent"]):
                     # data binding may have more than one PipelineInput now
-                    for pipeline_input_name in PipelineExpression.parse_pipeline_inputs_from_data_binding(
+                    for (
+                        pipeline_input_name
+                    ) in PipelineExpression.parse_pipeline_inputs_from_data_binding(
                         component_binding_input
                     ):
                         if pipeline_input_name not in self.inputs:
@@ -238,10 +264,21 @@ class PipelineComponent(Component):
                             binding_dict[pipeline_input_name] = []
                         binding_dict[pipeline_input_name].append(component_input_name)
                         # for data binding expression "${{parent.inputs.pipeline_input}}", it should not be optional
-                        if len(component_binding_input.replace("${{parent.inputs." + pipeline_input_name + "}}", "")):
-                            if pipeline_input_name not in optional_binding_in_expression_dict:
-                                optional_binding_in_expression_dict[pipeline_input_name] = []
-                            optional_binding_in_expression_dict[pipeline_input_name].append(pipeline_input_name)
+                        if len(
+                            component_binding_input.replace(
+                                "${{parent.inputs." + pipeline_input_name + "}}", ""
+                            )
+                        ):
+                            if (
+                                pipeline_input_name
+                                not in optional_binding_in_expression_dict
+                            ):
+                                optional_binding_in_expression_dict[
+                                    pipeline_input_name
+                                ] = []
+                            optional_binding_in_expression_dict[
+                                pipeline_input_name
+                            ].append(pipeline_input_name)
         return binding_dict, optional_binding_in_expression_dict
 
     def _validate_binding_inputs(self, node: BaseNode) -> MutableValidationResult:
@@ -260,11 +297,16 @@ class PipelineComponent(Component):
         # e.g. Add {'group_name.item': PipelineInput} for {'group_name': GroupInput}
         for name, val in node.component.inputs.items():
             if isinstance(val, GroupInput):
-                component_definition_inputs.update(val.flatten(group_parameter_name=name))
+                component_definition_inputs.update(
+                    val.flatten(group_parameter_name=name)
+                )
             component_definition_inputs[name] = val
         # Collect binding relation dict {'pipeline_input': ['node_input']}
         validation_result = self._create_empty_validation_result()
-        binding_dict, optional_binding_in_expression_dict = self._get_input_binding_dict(node)
+        (
+            binding_dict,
+            optional_binding_in_expression_dict,
+        ) = self._get_input_binding_dict(node)
 
         # Validate links required and optional
         for pipeline_input_name, binding_inputs in binding_dict.items():
@@ -272,7 +314,9 @@ class PipelineComponent(Component):
             required_bindings = []
             for name in binding_inputs:
                 # not check optional/required for pipeline input used in pipeline expression
-                if name in optional_binding_in_expression_dict.get(pipeline_input_name, []):
+                if name in optional_binding_in_expression_dict.get(
+                    pipeline_input_name, []
+                ):
                     continue
                 if component_definition_inputs[name].optional is not True:
                     required_bindings.append(f"{node.name}.inputs.{name}")
@@ -367,7 +411,9 @@ class PipelineComponent(Component):
 
     @classmethod
     def _resolve_sub_nodes(cls, rest_jobs):
-        from azure.ai.ml.entities._job.pipeline._load_component import pipeline_node_factory
+        from azure.ai.ml.entities._job.pipeline._load_component import (
+            pipeline_node_factory,
+        )
 
         sub_nodes = {}
         if rest_jobs is None:
@@ -375,16 +421,22 @@ class PipelineComponent(Component):
         for node_name, node in rest_jobs.items():
             # TODO: Remove this ad-hoc fix after unified arm id format in object
             component_id = node.get("componentId", "")
-            if isinstance(component_id, str) and re.match(ASSET_ARM_ID_REGEX_FORMAT, component_id):
+            if isinstance(component_id, str) and re.match(
+                ASSET_ARM_ID_REGEX_FORMAT, component_id
+            ):
                 node["componentId"] = component_id[len(ARM_ID_PREFIX) :]
             if not LoopNode._is_loop_node_dict(node):
                 # skip resolve LoopNode first since it may reference other nodes
                 # use node factory instead of BaseNode._from_rest_object here as AutoMLJob is not a BaseNode
-                sub_nodes[node_name] = pipeline_node_factory.load_from_rest_object(obj=node)
+                sub_nodes[node_name] = pipeline_node_factory.load_from_rest_object(
+                    obj=node
+                )
         for node_name, node in rest_jobs.items():
             if LoopNode._is_loop_node_dict(node):
                 # resolve LoopNode after all other nodes are resolved
-                sub_nodes[node_name] = pipeline_node_factory.load_from_rest_object(obj=node, pipeline_jobs=sub_nodes)
+                sub_nodes[node_name] = pipeline_node_factory.load_from_rest_object(
+                    obj=node, pipeline_jobs=sub_nodes
+                )
         return sub_nodes
 
     @classmethod
@@ -407,10 +459,15 @@ class PipelineComponent(Component):
         """
         examine_mapping = {
             "compute": lambda val: val is not None,
-            "settings": lambda val: val is not None and any(v is not None for v in val._to_dict().values()),
+            "settings": lambda val: val is not None
+            and any(v is not None for v in val._to_dict().values()),
         }
         # Avoid new attr added by use `try_get_non...` instead of `hasattr` or `getattr` directly.
-        return [k for k, has_set in examine_mapping.items() if has_set(try_get_non_arbitrary_attr(obj, k))]
+        return [
+            k
+            for k, has_set in examine_mapping.items()
+            if has_set(try_get_non_arbitrary_attr(obj, k))
+        ]
 
     def _get_telemetry_values(self, *args, **kwargs):
         telemetry_values = super()._get_telemetry_values()
@@ -456,7 +513,9 @@ class PipelineComponent(Component):
             if isinstance(job, (BaseNode, ControlFlowNode)):
                 rest_node_dict = job._to_rest_object()
             elif isinstance(job, AutoMLJob):
-                rest_node_dict = json.loads(json.dumps(job._to_dict(inside_pipeline=True)))
+                rest_node_dict = json.loads(
+                    json.dumps(job._to_dict(inside_pipeline=True))
+                )
             else:
                 msg = f"Non supported job type in Pipeline jobs: {type(job)}"
                 raise ValidationException(
@@ -476,7 +535,9 @@ class PipelineComponent(Component):
         """
         ignored_keys = self._check_ignored_keys(self)
         if ignored_keys:
-            module_logger.warning("%s ignored on pipeline component %r.", ignored_keys, self.name)
+            module_logger.warning(
+                "%s ignored on pipeline component %r.", ignored_keys, self.name
+            )
         component = self._to_dict()
         # add source type to component rest object
         component["_source"] = self._source
@@ -485,7 +546,9 @@ class PipelineComponent(Component):
         if self._intellectual_property:
             # hack while full pass through supported is worked on for IPP fields
             component.pop("intellectual_property")
-            component["intellectualProperty"] = self._intellectual_property._to_rest_object().serialize()
+            component[
+                "intellectualProperty"
+            ] = self._intellectual_property._to_rest_object().serialize()
         properties = ComponentVersionProperties(
             component_spec=component,
             description=self.description,

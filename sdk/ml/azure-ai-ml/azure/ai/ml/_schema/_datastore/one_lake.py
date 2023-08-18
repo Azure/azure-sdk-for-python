@@ -8,9 +8,17 @@ from typing import Any, Dict
 
 from marshmallow import fields, post_load, Schema
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import DatastoreType, OneLakeArtifactType
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    DatastoreType,
+    OneLakeArtifactType,
+)
 
-from azure.ai.ml._schema.core.fields import NestedField, PathAwareSchema, StringTransformedEnum, UnionField
+from azure.ai.ml._schema.core.fields import (
+    NestedField,
+    PathAwareSchema,
+    StringTransformedEnum,
+    UnionField,
+)
 from azure.ai.ml._utils.utils import camel_to_snake
 
 from .credentials import NoneCredentialsSchema, ServicePrincipalSchema

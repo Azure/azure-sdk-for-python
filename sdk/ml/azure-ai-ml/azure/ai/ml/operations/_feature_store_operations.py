@@ -12,14 +12,20 @@ from azure.core.exceptions import ResourceNotFoundError
 from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace
 
-from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient042023Preview
+from azure.ai.ml._restclient.v2023_04_01_preview import (
+    AzureMachineLearningWorkspaces as ServiceClient042023Preview,
+)
 from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml.constants import ManagedServiceIdentityType
 from azure.ai.ml.constants._common import Scope
-from azure.ai.ml.entities import IdentityConfiguration, ManagedIdentityConfiguration, WorkspaceConnection
+from azure.ai.ml.entities import (
+    IdentityConfiguration,
+    ManagedIdentityConfiguration,
+    WorkspaceConnection,
+)
 from azure.ai.ml.entities._feature_store._constants import (
     FEATURE_STORE_KIND,
     OFFLINE_MATERIALIZATION_STORE_TYPE,
@@ -30,7 +36,9 @@ from azure.ai.ml.entities._feature_store._constants import (
     ONLINE_STORE_CONNECTION_NAME,
 )
 from azure.ai.ml.entities._feature_store.feature_store import FeatureStore
-from azure.ai.ml.entities._feature_store.materialization_store import MaterializationStore
+from azure.ai.ml.entities._feature_store.materialization_store import (
+    MaterializationStore,
+)
 from azure.ai.ml.entities._workspace.feature_store_settings import FeatureStoreSettings
 
 from ._workspace_operations_base import WorkspaceOperationsBase
@@ -68,7 +76,9 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
     @distributed_trace
     @monitor_with_activity(logger, "FeatureStore.List", ActivityType.PUBLICAPI)
     # pylint: disable=unused-argument
-    def list(self, *, scope: str = Scope.RESOURCE_GROUP, **kwargs: Dict) -> Iterable[FeatureStore]:
+    def list(
+        self, *, scope: str = Scope.RESOURCE_GROUP, **kwargs: Dict
+    ) -> Iterable[FeatureStore]:
         """List all feature stores that the user has access to in the current
         resource group or subscription.
 
@@ -82,14 +92,18 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
             return self._operation.list_by_subscription(
                 cls=lambda objs: [
                     FeatureStore._from_rest_object(filterObj)
-                    for filterObj in filter(lambda ws: ws.kind.lower() == FEATURE_STORE_KIND, objs)
+                    for filterObj in filter(
+                        lambda ws: ws.kind.lower() == FEATURE_STORE_KIND, objs
+                    )
                 ],
             )
         return self._operation.list_by_resource_group(
             self._resource_group_name,
             cls=lambda objs: [
                 FeatureStore._from_rest_object(filterObj)
-                for filterObj in filter(lambda ws: ws.kind.lower() == FEATURE_STORE_KIND, objs)
+                for filterObj in filter(
+                    lambda ws: ws.kind.lower() == FEATURE_STORE_KIND, objs
+                )
             ],
         )
 
@@ -108,7 +122,11 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
         feature_store = None
         resource_group = kwargs.get("resource_group") or self._resource_group_name
         rest_workspace_obj = self._operation.get(resource_group, name)
-        if rest_workspace_obj and rest_workspace_obj.kind and rest_workspace_obj.kind.lower() == FEATURE_STORE_KIND:
+        if (
+            rest_workspace_obj
+            and rest_workspace_obj.kind
+            and rest_workspace_obj.kind.lower() == FEATURE_STORE_KIND
+        ):
             feature_store = FeatureStore._from_rest_object(rest_workspace_obj)
 
         if feature_store:
@@ -119,7 +137,9 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
             ):
                 try:
                     offline_store_connection = self._workspace_connection_operation.get(
-                        resource_group, name, rest_workspace_obj.feature_store_settings.offline_store_connection_name
+                        resource_group,
+                        name,
+                        rest_workspace_obj.feature_store_settings.offline_store_connection_name,
                     )
                 except ResourceNotFoundError:
                     pass
@@ -127,10 +147,12 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
             if offline_store_connection:
                 if (
                     offline_store_connection.properties
-                    and offline_store_connection.properties.category == OFFLINE_STORE_CONNECTION_CATEGORY
+                    and offline_store_connection.properties.category
+                    == OFFLINE_STORE_CONNECTION_CATEGORY
                 ):
                     feature_store.offline_store = MaterializationStore(
-                        type=OFFLINE_MATERIALIZATION_STORE_TYPE, target=offline_store_connection.properties.target
+                        type=OFFLINE_MATERIALIZATION_STORE_TYPE,
+                        target=offline_store_connection.properties.target,
                     )
 
             online_store_connection = None
@@ -140,7 +162,9 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
             ):
                 try:
                     online_store_connection = self._workspace_connection_operation.get(
-                        resource_group, name, rest_workspace_obj.feature_store_settings.online_store_connection_name
+                        resource_group,
+                        name,
+                        rest_workspace_obj.feature_store_settings.online_store_connection_name,
                     )
                 except ResourceNotFoundError:
                     pass
@@ -148,22 +172,33 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
             if online_store_connection:
                 if (
                     online_store_connection.properties
-                    and online_store_connection.properties.category == ONLINE_STORE_CONNECTION_CATEGORY
+                    and online_store_connection.properties.category
+                    == ONLINE_STORE_CONNECTION_CATEGORY
                 ):
                     feature_store.online_store = MaterializationStore(
-                        type=ONLINE_MATERIALIZATION_STORE_TYPE, target=online_store_connection.properties.target
+                        type=ONLINE_MATERIALIZATION_STORE_TYPE,
+                        target=online_store_connection.properties.target,
                     )
 
             # materialization identity = identity when created through feature store operations
-            if (offline_store_connection and offline_store_connection.name == OFFLINE_STORE_CONNECTION_NAME) or (
-                online_store_connection and online_store_connection.name == ONLINE_STORE_CONNECTION_NAME
+            if (
+                offline_store_connection
+                and offline_store_connection.name == OFFLINE_STORE_CONNECTION_NAME
+            ) or (
+                online_store_connection
+                and online_store_connection.name == ONLINE_STORE_CONNECTION_NAME
             ):
                 if (
                     feature_store.identity
                     and feature_store.identity.user_assigned_identities
-                    and isinstance(feature_store.identity.user_assigned_identities[0], ManagedIdentityConfiguration)
+                    and isinstance(
+                        feature_store.identity.user_assigned_identities[0],
+                        ManagedIdentityConfiguration,
+                    )
                 ):
-                    feature_store.materialization_identity = feature_store.identity.user_assigned_identities[0]
+                    feature_store.materialization_identity = (
+                        feature_store.identity.user_assigned_identities[0]
+                    )
 
         return feature_store
 
@@ -192,20 +227,32 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
             rest_workspace_obj = self._operation.get(resource_group, feature_store.name)
             if rest_workspace_obj:
                 return self.begin_update(
-                    feature_store=feature_store, update_dependent_resources=update_dependent_resources, kwargs=kwargs
+                    feature_store=feature_store,
+                    update_dependent_resources=update_dependent_resources,
+                    kwargs=kwargs,
                 )
         except Exception:  # pylint: disable=broad-except
             pass
 
-        if feature_store.offline_store and feature_store.offline_store.type != OFFLINE_MATERIALIZATION_STORE_TYPE:
+        if (
+            feature_store.offline_store
+            and feature_store.offline_store.type != OFFLINE_MATERIALIZATION_STORE_TYPE
+        ):
             raise ValidationError("offline store type should be azure_data_lake_gen2")
         if feature_store.offline_store and not feature_store.materialization_identity:
-            raise ValidationError("materialization_identity is required to setup offline store")
+            raise ValidationError(
+                "materialization_identity is required to setup offline store"
+            )
 
-        if feature_store.online_store and feature_store.online_store.type != ONLINE_MATERIALIZATION_STORE_TYPE:
+        if (
+            feature_store.online_store
+            and feature_store.online_store.type != ONLINE_MATERIALIZATION_STORE_TYPE
+        ):
             raise ValidationError("online store type should be redis")
         if feature_store.online_store and not feature_store.materialization_identity:
-            raise ValidationError("materialization_identity is required to setup online store")
+            raise ValidationError(
+                "materialization_identity is required to setup online store"
+            )
 
         def get_callback():
             return self.get(feature_store.name)
@@ -214,8 +261,12 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
             workspace=feature_store,
             update_dependent_resources=update_dependent_resources,
             get_callback=get_callback,
-            offline_store_target=feature_store.offline_store.target if feature_store.offline_store else None,
-            online_store_target=feature_store.online_store.target if feature_store.online_store else None,
+            offline_store_target=feature_store.offline_store.target
+            if feature_store.offline_store
+            else None,
+            online_store_target=feature_store.online_store.target
+            if feature_store.online_store
+            else None,
             materialization_identity=feature_store.materialization_identity,
             **kwargs,
         )
@@ -249,24 +300,33 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
         resource_group = kwargs.get("resource_group", self._resource_group_name)
         rest_workspace_obj = self._operation.get(resource_group, feature_store.name)
         if not (
-            rest_workspace_obj and rest_workspace_obj.kind and rest_workspace_obj.kind.lower() == FEATURE_STORE_KIND
+            rest_workspace_obj
+            and rest_workspace_obj.kind
+            and rest_workspace_obj.kind.lower() == FEATURE_STORE_KIND
         ):
-            raise ValidationError("{0} is not a feature store".format(feature_store.name))
+            raise ValidationError(
+                "{0} is not a feature store".format(feature_store.name)
+            )
 
         resource_group = kwargs.get("resource_group") or self._resource_group_name
         offline_store = kwargs.get("offline_store", feature_store.offline_store)
         online_store = kwargs.get("online_store", feature_store.online_store)
         existing_materialization_identity = None
         if rest_workspace_obj.identity:
-            identity = IdentityConfiguration._from_workspace_rest_object(rest_workspace_obj.identity)
+            identity = IdentityConfiguration._from_workspace_rest_object(
+                rest_workspace_obj.identity
+            )
             if (
                 identity
                 and identity.user_assigned_identities
-                and isinstance(identity.user_assigned_identities[0], ManagedIdentityConfiguration)
+                and isinstance(
+                    identity.user_assigned_identities[0], ManagedIdentityConfiguration
+                )
             ):
                 existing_materialization_identity = identity.user_assigned_identities[0]
         materialization_identity = kwargs.get(
-            "materialization_identity", feature_store.materialization_identity or existing_materialization_identity
+            "materialization_identity",
+            feature_store.materialization_identity or existing_materialization_identity,
         )
 
         if offline_store and offline_store.type != OFFLINE_MATERIALIZATION_STORE_TYPE:
@@ -286,7 +346,8 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
             if existing_offline_store_connection:
                 if (
                     not existing_offline_store_connection.properties
-                    or existing_offline_store_connection.properties.target != offline_store.target
+                    or existing_offline_store_connection.properties.target
+                    != offline_store.target
                 ):
                     module_logger.info(
                         "Warning: You have changed the offline store connection, "
@@ -311,7 +372,8 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
             if existing_online_store_connection:
                 if (
                     not existing_online_store_connection.properties
-                    or existing_online_store_connection.properties.target != online_store.target
+                    or existing_online_store_connection.properties.target
+                    != online_store.target
                 ):
                     module_logger.info(
                         "Warning: You have changed the online store connection, "
@@ -319,7 +381,9 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
                         "will not be available. You have to run backfill again."
                     )
 
-        feature_store_settings = FeatureStoreSettings._from_rest_object(rest_workspace_obj.feature_store_settings)
+        feature_store_settings = FeatureStoreSettings._from_rest_object(
+            rest_workspace_obj.feature_store_settings
+        )
 
         if offline_store:
             if materialization_identity:
@@ -334,16 +398,22 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
                     target=offline_store.target,
                     credentials=materialization_identity,
                 )
-                rest_offline_store_connection = offline_store_connection._to_rest_object()
+                rest_offline_store_connection = (
+                    offline_store_connection._to_rest_object()
+                )
                 self._workspace_connection_operation.create(
                     resource_group_name=resource_group,
                     workspace_name=feature_store.name,
                     connection_name=offline_store_connection_name,
                     parameters=rest_offline_store_connection,
                 )
-                feature_store_settings.offline_store_connection_name = offline_store_connection_name
+                feature_store_settings.offline_store_connection_name = (
+                    offline_store_connection_name
+                )
             else:
-                raise ValidationError("Materialization identity is required to setup offline store connection")
+                raise ValidationError(
+                    "Materialization identity is required to setup offline store connection"
+                )
 
         if online_store:
             if materialization_identity:
@@ -365,14 +435,20 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
                     connection_name=online_store_connection_name,
                     parameters=rest_online_store_connection,
                 )
-                feature_store_settings.online_store_connection_name = online_store_connection_name
+                feature_store_settings.online_store_connection_name = (
+                    online_store_connection_name
+                )
             else:
-                raise ValidationError("Materialization identity is required to setup online store connection")
+                raise ValidationError(
+                    "Materialization identity is required to setup online store connection"
+                )
 
         identity = kwargs.pop("identity", feature_store.identity)
         if materialization_identity:
             identity = IdentityConfiguration(
-                type=camel_to_snake(ManagedServiceIdentityType.SYSTEM_ASSIGNED_USER_ASSIGNED),
+                type=camel_to_snake(
+                    ManagedServiceIdentityType.SYSTEM_ASSIGNED_USER_ASSIGNED
+                ),
                 # At most 1 UAI can be attached to workspace when materialization is enabled
                 user_assigned_identities=[materialization_identity],
             )
@@ -391,7 +467,9 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
 
     @distributed_trace
     @monitor_with_activity(logger, "FeatureStore.BeginDelete", ActivityType.PUBLICAPI)
-    def begin_delete(self, name: str, *, delete_dependent_resources: bool = False, **kwargs: Dict) -> LROPoller[None]:
+    def begin_delete(
+        self, name: str, *, delete_dependent_resources: bool = False, **kwargs: Dict
+    ) -> LROPoller[None]:
         """Delete a FeatureStore.
 
         :param name: Name of the FeatureStore
@@ -406,8 +484,12 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
         resource_group = kwargs.get("resource_group") or self._resource_group_name
         rest_workspace_obj = self._operation.get(resource_group, name)
         if not (
-            rest_workspace_obj and rest_workspace_obj.kind and rest_workspace_obj.kind.lower() == FEATURE_STORE_KIND
+            rest_workspace_obj
+            and rest_workspace_obj.kind
+            and rest_workspace_obj.kind.lower() == FEATURE_STORE_KIND
         ):
             raise ValidationError("{0} is not a feature store".format(name))
 
-        return super().begin_delete(name=name, delete_dependent_resources=delete_dependent_resources, **kwargs)
+        return super().begin_delete(
+            name=name, delete_dependent_resources=delete_dependent_resources, **kwargs
+        )

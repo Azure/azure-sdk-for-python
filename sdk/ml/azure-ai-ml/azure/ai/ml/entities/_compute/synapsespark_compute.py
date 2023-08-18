@@ -59,7 +59,9 @@ class AutoScaleSettings:
         )
 
     @classmethod
-    def _from_auto_scale_settings(cls, autoscaleprops: AutoScaleProperties) -> "AutoScaleSettings":
+    def _from_auto_scale_settings(
+        cls, autoscaleprops: AutoScaleProperties
+    ) -> "AutoScaleSettings":
         return cls(
             min_node_count=autoscaleprops.min_node_count,
             max_node_count=autoscaleprops.max_node_count,
@@ -86,7 +88,9 @@ class AutoPauseSettings:
             :caption: Configuring AutoPauseSettings on SynapseSparkCompute.
     """
 
-    def __init__(self, *, delay_in_minutes: Optional[int] = None, enabled: Optional[bool] = None) -> None:
+    def __init__(
+        self, *, delay_in_minutes: Optional[int] = None, enabled: Optional[bool] = None
+    ) -> None:
         self.delay_in_minutes = delay_in_minutes
         self.auto_pause_enabled = enabled
 
@@ -97,7 +101,9 @@ class AutoPauseSettings:
         )
 
     @classmethod
-    def _from_auto_pause_settings(cls, autopauseprops: AutoPauseProperties) -> "AutoPauseSettings":
+    def _from_auto_pause_settings(
+        cls, autopauseprops: AutoPauseProperties
+    ) -> "AutoPauseSettings":
         return cls(
             delay_in_minutes=autopauseprops.delay_in_minutes,
             enabled=autopauseprops.enabled,
@@ -158,7 +164,13 @@ class SynapseSparkCompute(Compute):
         **kwargs,
     ) -> None:
         kwargs[TYPE] = ComputeType.SYNAPSESPARK
-        super().__init__(name=name, description=description, location=kwargs.pop("location", None), tags=tags, **kwargs)
+        super().__init__(
+            name=name,
+            description=description,
+            location=kwargs.pop("location", None),
+            tags=tags,
+            **kwargs,
+        )
         self.identity = identity
         self.node_count = node_count
         self.node_family = node_family
@@ -172,14 +184,18 @@ class SynapseSparkCompute(Compute):
         prop = rest_obj.properties
         scale_settings = (
             # pylint: disable=protected-access
-            AutoScaleSettings._from_auto_scale_settings(prop.properties.auto_scale_properties)
+            AutoScaleSettings._from_auto_scale_settings(
+                prop.properties.auto_scale_properties
+            )
             if prop.properties.auto_scale_properties
             else None
         )
 
         auto_pause_settings = (
             # pylint: disable=protected-access
-            AutoPauseSettings._from_auto_pause_settings(prop.properties.auto_pause_properties)
+            AutoPauseSettings._from_auto_pause_settings(
+                prop.properties.auto_pause_properties
+            )
             if prop.properties.auto_pause_properties
             else None
         )
@@ -197,7 +213,9 @@ class SynapseSparkCompute(Compute):
             node_size=prop.properties.node_size if prop.properties else None,
             spark_version=prop.properties.spark_version if prop.properties else None,
             # pylint: disable=protected-access
-            identity=IdentityConfiguration._from_compute_rest_object(rest_obj.identity) if rest_obj.identity else None,
+            identity=IdentityConfiguration._from_compute_rest_object(rest_obj.identity)
+            if rest_obj.identity
+            else None,
             scale_settings=scale_settings,
             auto_pause_settings=auto_pause_settings,
             provisioning_state=prop.provisioning_state,
@@ -208,10 +226,14 @@ class SynapseSparkCompute(Compute):
 
     def _to_dict(self) -> Dict:
         # pylint: disable=no-member
-        return SynapseSparkComputeSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        return SynapseSparkComputeSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(
+            self
+        )
 
     @classmethod
-    def _load_from_dict(cls, data: Dict, context: Dict, **kwargs) -> "SynapseSparkCompute":
+    def _load_from_dict(
+        cls, data: Dict, context: Dict, **kwargs
+    ) -> "SynapseSparkCompute":
         loaded_data = load_from_dict(SynapseSparkComputeSchema, data, context, **kwargs)
         return SynapseSparkCompute(**loaded_data)
 

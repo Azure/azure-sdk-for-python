@@ -68,19 +68,31 @@ class InternalSparkComponent(
         # verification. This usually happens when we use to_component(SparkJob) or builder function spark() as a node
         # in pipeline sdk
         conf = conf or {}
-        self.driver_cores = driver_cores or conf.get(RestSparkConfKey.DRIVER_CORES, None)
-        self.driver_memory = driver_memory or conf.get(RestSparkConfKey.DRIVER_MEMORY, None)
-        self.executor_cores = executor_cores or conf.get(RestSparkConfKey.EXECUTOR_CORES, None)
-        self.executor_memory = executor_memory or conf.get(RestSparkConfKey.EXECUTOR_MEMORY, None)
-        self.executor_instances = executor_instances or conf.get(RestSparkConfKey.EXECUTOR_INSTANCES, None)
+        self.driver_cores = driver_cores or conf.get(
+            RestSparkConfKey.DRIVER_CORES, None
+        )
+        self.driver_memory = driver_memory or conf.get(
+            RestSparkConfKey.DRIVER_MEMORY, None
+        )
+        self.executor_cores = executor_cores or conf.get(
+            RestSparkConfKey.EXECUTOR_CORES, None
+        )
+        self.executor_memory = executor_memory or conf.get(
+            RestSparkConfKey.EXECUTOR_MEMORY, None
+        )
+        self.executor_instances = executor_instances or conf.get(
+            RestSparkConfKey.EXECUTOR_INSTANCES, None
+        )
         self.dynamic_allocation_enabled = dynamic_allocation_enabled or conf.get(
             RestSparkConfKey.DYNAMIC_ALLOCATION_ENABLED, None
         )
-        self.dynamic_allocation_min_executors = dynamic_allocation_min_executors or conf.get(
-            RestSparkConfKey.DYNAMIC_ALLOCATION_MIN_EXECUTORS, None
+        self.dynamic_allocation_min_executors = (
+            dynamic_allocation_min_executors
+            or conf.get(RestSparkConfKey.DYNAMIC_ALLOCATION_MIN_EXECUTORS, None)
         )
-        self.dynamic_allocation_max_executors = dynamic_allocation_max_executors or conf.get(
-            RestSparkConfKey.DYNAMIC_ALLOCATION_MAX_EXECUTORS, None
+        self.dynamic_allocation_max_executors = (
+            dynamic_allocation_max_executors
+            or conf.get(RestSparkConfKey.DYNAMIC_ALLOCATION_MAX_EXECUTORS, None)
         )
 
         self.conf = conf
@@ -92,8 +104,13 @@ class InternalSparkComponent(
 
     @property
     def environment(self):
-        if isinstance(self._environment, Environment) and self._environment.image is None:
-            return Environment(conda_file=self._environment.conda_file, image=DUMMY_IMAGE)
+        if (
+            isinstance(self._environment, Environment)
+            and self._environment.image is None
+        ):
+            return Environment(
+                conda_file=self._environment.conda_file, image=DUMMY_IMAGE
+            )
         return self._environment
 
     @environment.setter
@@ -109,7 +126,9 @@ class InternalSparkComponent(
             )
             if internal_environment.conda:
                 self._environment.conda_file = {
-                    "dependencies": internal_environment.conda[InternalEnvironment.CONDA_DEPENDENCIES]
+                    "dependencies": internal_environment.conda[
+                        InternalEnvironment.CONDA_DEPENDENCIES
+                    ]
                 }
             if internal_environment.docker:
                 self._environment.image = internal_environment.docker["image"]
@@ -145,12 +164,16 @@ class InternalSparkComponent(
     def _to_rest_object(self):
         result = super()._to_rest_object()
         if "pyFiles" in result.properties.component_spec:
-            result.properties.component_spec["py_files"] = result.properties.component_spec.pop("pyFiles")
+            result.properties.component_spec[
+                "py_files"
+            ] = result.properties.component_spec.pop("pyFiles")
         return result
 
     @classmethod
     def _from_rest_object_to_init_params(cls, obj) -> Dict:
         if "py_files" in obj.properties.component_spec:
-            obj.properties.component_spec["pyFiles"] = obj.properties.component_spec.pop("py_files")
+            obj.properties.component_spec[
+                "pyFiles"
+            ] = obj.properties.component_spec.pop("py_files")
         result = super()._from_rest_object_to_init_params(obj)
         return result

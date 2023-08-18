@@ -5,7 +5,9 @@
 from datetime import datetime, timedelta
 from typing import Dict, Optional
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import FeaturesetJob as RestFeaturesetJob
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    FeaturesetJob as RestFeaturesetJob,
+)
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 from azure.ai.ml.entities._system_data import SystemData
@@ -45,7 +47,9 @@ class FeatureSetMaterializationMetadata(RestTranslatableMixin):
         self.tags = tags
 
     @classmethod
-    def _from_rest_object(cls, obj: RestFeaturesetJob) -> "FeatureSetMaterializationMetadata":
+    def _from_rest_object(
+        cls, obj: RestFeaturesetJob
+    ) -> "FeatureSetMaterializationMetadata":
         if not obj:
             return None
         return FeatureSetMaterializationMetadata(

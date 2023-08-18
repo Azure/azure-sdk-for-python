@@ -17,12 +17,25 @@ from azure.ai.ml._restclient.v2023_02_01_preview.models import (
 from azure.ai.ml._schema._feature_set.feature_set_schema import FeatureSetSchema
 from azure.ai.ml._utils._arm_id_utils import AMLNamedArmId, get_arm_id_object_from_id
 from azure.ai.ml._utils._experimental import experimental
-from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, LONG_URI_FORMAT, PARAMS_OVERRIDE_KEY
+from azure.ai.ml.constants._common import (
+    BASE_PATH_CONTEXT_KEY,
+    LONG_URI_FORMAT,
+    PARAMS_OVERRIDE_KEY,
+)
 from azure.ai.ml.entities._assets import Artifact
-from azure.ai.ml.entities._feature_set.feature_set_specification import FeatureSetSpecification
-from azure.ai.ml.entities._feature_set.materialization_settings import MaterializationSettings
+from azure.ai.ml.entities._feature_set.feature_set_specification import (
+    FeatureSetSpecification,
+)
+from azure.ai.ml.entities._feature_set.materialization_settings import (
+    MaterializationSettings,
+)
 from azure.ai.ml.entities._util import load_from_dict
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+from azure.ai.ml.exceptions import (
+    ErrorCategory,
+    ErrorTarget,
+    ValidationErrorType,
+    ValidationException,
+)
 
 from .artifact import ArtifactStorageInfo
 
@@ -98,13 +111,19 @@ class FeatureSet(Artifact):
             specification=self.specification._to_rest_object(),
             stage=self.stage,
         )
-        return FeaturesetVersion(name=self.name, properties=featureset_version_properties)
+        return FeaturesetVersion(
+            name=self.name, properties=featureset_version_properties
+        )
 
     @classmethod
-    def _from_rest_object(cls, featureset_rest_object: FeaturesetVersion) -> "FeatureSet":
+    def _from_rest_object(
+        cls, featureset_rest_object: FeaturesetVersion
+    ) -> "FeatureSet":
         if not featureset_rest_object:
             return None
-        featureset_rest_object_details: FeaturesetVersionProperties = featureset_rest_object.properties
+        featureset_rest_object_details: FeaturesetVersionProperties = (
+            featureset_rest_object.properties
+        )
         arm_id_object = get_arm_id_object_from_id(featureset_rest_object.id)
         featureset = FeatureSet(
             id=featureset_rest_object.id,
@@ -116,7 +135,9 @@ class FeatureSet(Artifact):
             materialization_settings=MaterializationSettings._from_rest_object(
                 featureset_rest_object_details.materialization_settings
             ),
-            specification=FeatureSetSpecification._from_rest_object(featureset_rest_object_details.specification),
+            specification=FeatureSetSpecification._from_rest_object(
+                featureset_rest_object_details.specification
+            ),
             stage=featureset_rest_object_details.stage,
             properties=featureset_rest_object_details.properties,
         )

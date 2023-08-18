@@ -73,8 +73,13 @@ class ParameterizedSpark(SparkJobEntryMixin):
         :return: The Azure ML environment to run the Spark component or job in.
         :rtype: Optional[Union[str, ~azure.ai.ml.entities.Environment]]
         """
-        if isinstance(self._environment, Environment) and self._environment.image is None:
-            return Environment(conda_file=self._environment.conda_file, image=DUMMY_IMAGE)
+        if (
+            isinstance(self._environment, Environment)
+            and self._environment.image is None
+        ):
+            return Environment(
+                conda_file=self._environment.conda_file, image=DUMMY_IMAGE
+            )
         return self._environment
 
     @environment.setter

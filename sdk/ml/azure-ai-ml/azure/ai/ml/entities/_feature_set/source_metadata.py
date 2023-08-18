@@ -6,8 +6,15 @@
 
 from typing import Dict
 
-from azure.ai.ml.entities._feature_set.source_process_code_metadata import SourceProcessCodeMetadata
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+from azure.ai.ml.entities._feature_set.source_process_code_metadata import (
+    SourceProcessCodeMetadata,
+)
+from azure.ai.ml.exceptions import (
+    ErrorCategory,
+    ErrorTarget,
+    ValidationErrorType,
+    ValidationException,
+)
 
 from .delay_metadata import DelayMetadata
 from .timestamp_column_metadata import TimestampColumnMetadata

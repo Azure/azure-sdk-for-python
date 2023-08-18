@@ -19,7 +19,12 @@ import strictyaml
 from marshmallow import Schema, ValidationError
 
 from .._schema import PathAwareSchema
-from .._vendor.azure_resources.models import Deployment, DeploymentProperties, DeploymentValidateResult, ErrorResponse
+from .._vendor.azure_resources.models import (
+    Deployment,
+    DeploymentProperties,
+    DeploymentValidateResult,
+    ErrorResponse,
+)
 from ..constants._common import BASE_PATH_CONTEXT_KEY, OperationStatus
 from ..entities._job.pipeline._attr_dict import try_get_non_arbitrary_attr
 from ..entities._util import convert_ordered_dict_to_dict, decorate_validation_error
@@ -128,7 +133,9 @@ class ValidationResult(object):
 
     def _to_dict(self) -> typing.Dict[str, typing.Any]:
         result = {
-            "result": OperationStatus.SUCCEEDED if self.passed else OperationStatus.FAILED,
+            "result": OperationStatus.SUCCEEDED
+            if self.passed
+            else OperationStatus.FAILED,
         }
         for diagnostic_type, diagnostics in [
             ("errors", self._errors),
@@ -139,7 +146,9 @@ class ValidationResult(object):
                 message = {
                     "message": diagnostic.message,
                     "path": diagnostic.yaml_path,
-                    "value": pydash.get(self._target_obj, diagnostic.yaml_path, diagnostic.value),
+                    "value": pydash.get(
+                        self._target_obj, diagnostic.yaml_path, diagnostic.value
+                    ),
                 }
                 if diagnostic.local_path:
                     message["location"] = str(diagnostic.local_path)
@@ -202,7 +211,9 @@ class MutableValidationResult(ValidationResult):
             if overwrite:
                 keys_to_remove = set(map(lambda x: x.yaml_path, source_diagnostics))
                 target_diagnostics[:] = [
-                    diagnostic for diagnostic in target_diagnostics if diagnostic.yaml_path not in keys_to_remove
+                    diagnostic
+                    for diagnostic in target_diagnostics
+                    if diagnostic.yaml_path not in keys_to_remove
                 ]
             for diagnostic in source_diagnostics:
                 if condition_skip and condition_skip(diagnostic):
@@ -212,7 +223,9 @@ class MutableValidationResult(ValidationResult):
                     if new_diagnostic.yaml_path == "*":
                         new_diagnostic.yaml_path = field_name
                     else:
-                        new_diagnostic.yaml_path = field_name + "." + new_diagnostic.yaml_path
+                        new_diagnostic.yaml_path = (
+                            field_name + "." + new_diagnostic.yaml_path
+                        )
                 target_diagnostics.append(new_diagnostic)
         return self
 
@@ -267,7 +280,8 @@ class MutableValidationResult(ValidationResult):
 
             raise ValidationException(
                 message=message,
-                no_personal_data_message="validation failed on the following fields: " + ", ".join(self.error_messages),
+                no_personal_data_message="validation failed on the following fields: "
+                + ", ".join(self.error_messages),
                 target=error_target,
                 error_category=error_category,
             )
@@ -299,7 +313,9 @@ class MutableValidationResult(ValidationResult):
         )
         return self
 
-    def resolve_location_for_diagnostics(self, source_path: str, resolve_value: bool = False):
+    def resolve_location_for_diagnostics(
+        self, source_path: str, resolve_value: bool = False
+    ):
         """Resolve location/value for diagnostics based on the source path where the validatable object is loaded.
 
         Location includes local path of the exact file (can be different from the source path) & line number of the
@@ -361,10 +377,14 @@ class SchemaValidatableMixin:
     def _create_schema_for_validation_with_base_path(cls, base_path=None):
         # Note that, although context can be passed here, nested.schema will be initialized only once
         # base_path works well because it's fixed after loaded
-        return cls._create_schema_for_validation(context={BASE_PATH_CONTEXT_KEY: base_path or Path.cwd()})
+        return cls._create_schema_for_validation(
+            context={BASE_PATH_CONTEXT_KEY: base_path or Path.cwd()}
+        )
 
     @classmethod
-    def _load_with_schema(cls, data, *, context=None, raise_original_exception=False, **kwargs):
+    def _load_with_schema(
+        cls, data, *, context=None, raise_original_exception=False, **kwargs
+    ):
         if context is None:
             schema = cls._create_schema_for_validation_with_base_path()
         else:
@@ -432,7 +452,9 @@ class SchemaValidatableMixin:
             runtime.
         :rtype: PathAwareSchema.
         """
-        return self._create_schema_for_validation_with_base_path(self.__base_path_for_validation)
+        return self._create_schema_for_validation_with_base_path(
+            self.__base_path_for_validation
+        )
 
     def _dump_for_validation(self) -> typing.Dict:
         """Convert the resource to a dictionary.
@@ -453,7 +475,9 @@ class SchemaValidatableMixin:
         """
         result = self.__schema_validate()
         result.merge_with(self._customized_validate())
-        return result.try_raise(raise_error=raise_error, error_target=self._get_validation_error_target())
+        return result.try_raise(
+            raise_error=raise_error, error_target=self._get_validation_error_target()
+        )
 
     def _customized_validate(self) -> MutableValidationResult:
         """Validate the resource with customized logic.
@@ -508,7 +532,9 @@ class _ValidationResultBuilder:
         return MutableValidationResult()
 
     @classmethod
-    def from_rest_object(cls, rest_obj: DeploymentValidateResult) -> MutableValidationResult:
+    def from_rest_object(
+        cls, rest_obj: DeploymentValidateResult
+    ) -> MutableValidationResult:
         """Create a validation result from a rest object. Note that the created validation result does not have
         target_obj so should only be used for merging.
 
@@ -531,7 +557,10 @@ class _ValidationResultBuilder:
 
     @classmethod
     def from_single_message(
-        cls, singular_error_message: Optional[str] = None, yaml_path: str = "*", data: Optional[dict] = None
+        cls,
+        singular_error_message: Optional[str] = None,
+        yaml_path: str = "*",
+        data: Optional[dict] = None,
     ):
         """Create a validation result with only 1 diagnostic.
 
@@ -551,7 +580,11 @@ class _ValidationResultBuilder:
 
     @classmethod
     def from_validation_error(
-        cls, error: ValidationError, *, source_path: Optional[str] = None, error_on_unknown_field=False
+        cls,
+        error: ValidationError,
+        *,
+        source_path: Optional[str] = None,
+        error_on_unknown_field=False,
     ) -> MutableValidationResult:
         """Create a validation result from a ValidationError, which will be raised in marshmallow.Schema.load. Please
         use this function only for exception in loading file.
@@ -564,7 +597,9 @@ class _ValidationResultBuilder:
         :rtype: MutableValidationResult
         """
         obj = cls.from_validation_messages(
-            error.messages, data=error.data, error_on_unknown_field=error_on_unknown_field
+            error.messages,
+            data=error.data,
+            error_on_unknown_field=error_on_unknown_field,
         )
         if source_path:
             obj.resolve_location_for_diagnostics(source_path, resolve_value=True)
@@ -572,7 +607,11 @@ class _ValidationResultBuilder:
 
     @classmethod
     def from_validation_messages(
-        cls, errors: typing.Dict, data: typing.Dict, *, error_on_unknown_field: bool = False
+        cls,
+        errors: typing.Dict,
+        data: typing.Dict,
+        *,
+        error_on_unknown_field: bool = False,
     ) -> MutableValidationResult:
         """Create a validation result from error messages, which will be returned by marshmallow.Schema.validate.
 
@@ -587,7 +626,9 @@ class _ValidationResultBuilder:
         """
         instance = MutableValidationResult(target_obj=data)
         errors = copy.deepcopy(errors)
-        cls._from_validation_messages_recursively(errors, [], instance, error_on_unknown_field=error_on_unknown_field)
+        cls._from_validation_messages_recursively(
+            errors, [], instance, error_on_unknown_field=error_on_unknown_field
+        )
         return instance
 
     @classmethod
@@ -610,16 +651,22 @@ class _ValidationResultBuilder:
             for field, msgs in errors.items():
                 # fields.Dict
                 if field in ["key", "value"]:
-                    cls._from_validation_messages_recursively(msgs, path_stack, instance, error_on_unknown_field)
+                    cls._from_validation_messages_recursively(
+                        msgs, path_stack, instance, error_on_unknown_field
+                    )
                 else:
                     # Todo: Add hack logic here to deal with error message in nested TypeSensitiveUnionField in
                     #  DataTransfer: will be a nested dict with None field as dictionary key.
                     #  open a item to track: https://msdata.visualstudio.com/Vienna/_workitems/edit/2244262/
                     if field is None:
-                        cls._from_validation_messages_recursively(msgs, path_stack, instance, error_on_unknown_field)
+                        cls._from_validation_messages_recursively(
+                            msgs, path_stack, instance, error_on_unknown_field
+                        )
                     else:
                         path_stack.append(field)
-                        cls._from_validation_messages_recursively(msgs, path_stack, instance, error_on_unknown_field)
+                        cls._from_validation_messages_recursively(
+                            msgs, path_stack, instance, error_on_unknown_field
+                        )
                         path_stack.pop()
 
         # detailed error message
@@ -636,12 +683,19 @@ class _ValidationResultBuilder:
             def msg2str(msg):
                 if isinstance(msg, str):
                     return msg
-                if isinstance(msg, dict) and len(msg) == 1 and "_schema" in msg and len(msg["_schema"]) == 1:
+                if (
+                    isinstance(msg, dict)
+                    and len(msg) == 1
+                    and "_schema" in msg
+                    and len(msg["_schema"]) == 1
+                ):
                     return msg["_schema"][0]
 
                 return str(msg)
 
-            instance.append_error(message="; ".join([msg2str(x) for x in errors]), yaml_path=cur_path)
+            instance.append_error(
+                message="; ".join([msg2str(x) for x in errors]), yaml_path=cur_path
+            )
         # unknown error
         else:
             instance.append_error(message=str(errors), yaml_path=cur_path)
@@ -677,7 +731,10 @@ class _YamlLocationResolver:
             try:
                 loaded_yaml = strictyaml.load(f.read())
             except Exception as e:  # pylint: disable=broad-except
-                msg = "Can't load source file %s as a strict yaml:\n%s" % (source_path, str(e))
+                msg = "Can't load source file %s as a strict yaml:\n%s" % (
+                    source_path,
+                    str(e),
+                )
                 module_logger.debug(msg)
                 return None, None
 
@@ -792,7 +849,9 @@ class RemoteValidatableMixin(RestTranslatableMixin):
         """
         raise NotImplementedError()
 
-    def _to_preflight_resource(self, location: str, workspace_name: str) -> PreflightResource:
+    def _to_preflight_resource(
+        self, location: str, workspace_name: str
+    ) -> PreflightResource:
         """Return the preflight resource to be used in remote validation.
 
         :param location: The location of the resource.
@@ -811,7 +870,9 @@ class RemoteValidatableMixin(RestTranslatableMixin):
             api_version="2023-03-01-preview",
         )
 
-    def _build_rest_object_for_remote_validation(self, location: str, workspace_name: str) -> Deployment:
+    def _build_rest_object_for_remote_validation(
+        self, location: str, workspace_name: str
+    ) -> Deployment:
         return Deployment(
             properties=DeploymentProperties(
                 mode="Incremental",
@@ -819,7 +880,11 @@ class RemoteValidatableMixin(RestTranslatableMixin):
                     _schema="https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
                     content_version="1.0.0.0",
                     parameters={},
-                    resources=[self._to_preflight_resource(location=location, workspace_name=workspace_name)],
+                    resources=[
+                        self._to_preflight_resource(
+                            location=location, workspace_name=workspace_name
+                        )
+                    ],
                 ),
             )
         )

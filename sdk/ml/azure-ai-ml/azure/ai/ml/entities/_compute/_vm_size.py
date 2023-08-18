@@ -65,7 +65,11 @@ class VmSize(RestTranslatableMixin):
         self.memory_gb = memory_gb
         self.low_priority_capable = low_priority_capable
         self.premium_io = premium_io
-        self.supported_compute_types = ",".join(map(str, supported_compute_types)) if supported_compute_types else None
+        self.supported_compute_types = (
+            ",".join(map(str, supported_compute_types))
+            if supported_compute_types
+            else None
+        )
 
     @classmethod
     def _from_rest_object(cls, obj: VirtualMachineSize) -> "VmSize":
@@ -87,7 +91,9 @@ class VmSize(RestTranslatableMixin):
 
         path = kwargs.pop("path", None)
         yaml_serialized = self._to_dict()
-        dump_yaml_to_file(dest, yaml_serialized, default_flow_style=False, path=path, **kwargs)
+        dump_yaml_to_file(
+            dest, yaml_serialized, default_flow_style=False, path=path, **kwargs
+        )
 
     def _to_dict(self) -> Dict:
         # pylint: disable=no-member

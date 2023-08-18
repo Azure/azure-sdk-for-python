@@ -23,18 +23,15 @@ class AssetJobInput(msrest.serialization.Model):
     """
 
     _validation = {
-        'uri': {'required': True, 'pattern': r'[a-zA-Z0-9_]'},
+        "uri": {"required": True, "pattern": r"[a-zA-Z0-9_]"},
     }
 
     _attribute_map = {
-        'mode': {'key': 'mode', 'type': 'str'},
-        'uri': {'key': 'uri', 'type': 'str'},
+        "mode": {"key": "mode", "type": "str"},
+        "uri": {"key": "uri", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword mode: Input Asset Delivery Mode. Possible values include: "ReadOnlyMount",
          "ReadWriteMount", "Download", "Direct", "EvalMount", "EvalDownload".
@@ -43,8 +40,8 @@ class AssetJobInput(msrest.serialization.Model):
         :paramtype uri: str
         """
         super(AssetJobInput, self).__init__(**kwargs)
-        self.mode = kwargs.get('mode', None)
-        self.uri = kwargs['uri']
+        self.mode = kwargs.get("mode", None)
+        self.uri = kwargs["uri"]
 
 
 class AssetJobOutput(msrest.serialization.Model):
@@ -58,14 +55,11 @@ class AssetJobOutput(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'mode': {'key': 'mode', 'type': 'str'},
-        'uri': {'key': 'uri', 'type': 'str'},
+        "mode": {"key": "mode", "type": "str"},
+        "uri": {"key": "uri", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword mode: Output Asset Delivery Mode. Possible values include: "ReadWriteMount", "Upload".
         :paramtype mode: str or ~azure.mgmt.machinelearningservices.models.OutputDeliveryMode
@@ -74,8 +68,8 @@ class AssetJobOutput(msrest.serialization.Model):
         :paramtype uri: str
         """
         super(AssetJobOutput, self).__init__(**kwargs)
-        self.mode = kwargs.get('mode', None)
-        self.uri = kwargs.get('uri', None)
+        self.mode = kwargs.get("mode", None)
+        self.uri = kwargs.get("uri", None)
 
 
 class BatchJob(msrest.serialization.Model):
@@ -143,39 +137,42 @@ class BatchJob(msrest.serialization.Model):
     """
 
     _validation = {
-        'interaction_endpoints': {'readonly': True},
-        'output': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'status': {'readonly': True},
+        "interaction_endpoints": {"readonly": True},
+        "output": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "status": {"readonly": True},
     }
 
     _attribute_map = {
-        'compute': {'key': 'compute', 'type': 'ComputeConfiguration'},
-        'dataset': {'key': 'dataset', 'type': 'InferenceDataInputBase'},
-        'description': {'key': 'description', 'type': 'str'},
-        'error_threshold': {'key': 'errorThreshold', 'type': 'int'},
-        'input_data': {'key': 'inputData', 'type': '{JobInput}'},
-        'interaction_endpoints': {'key': 'interactionEndpoints', 'type': '{JobEndpoint}'},
-        'logging_level': {'key': 'loggingLevel', 'type': 'str'},
-        'max_concurrency_per_instance': {'key': 'maxConcurrencyPerInstance', 'type': 'int'},
-        'mini_batch_size': {'key': 'miniBatchSize', 'type': 'long'},
-        'name': {'key': 'name', 'type': 'str'},
-        'output': {'key': 'output', 'type': 'JobOutputArtifacts'},
-        'output_data': {'key': 'outputData', 'type': '{JobOutputV2}'},
-        'output_dataset': {'key': 'outputDataset', 'type': 'DataVersion'},
-        'output_file_name': {'key': 'outputFileName', 'type': 'str'},
-        'partition_keys': {'key': 'partitionKeys', 'type': '[str]'},
-        'properties': {'key': 'properties', 'type': '{str}'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'retry_settings': {'key': 'retrySettings', 'type': 'BatchRetrySettings'},
-        'status': {'key': 'status', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "compute": {"key": "compute", "type": "ComputeConfiguration"},
+        "dataset": {"key": "dataset", "type": "InferenceDataInputBase"},
+        "description": {"key": "description", "type": "str"},
+        "error_threshold": {"key": "errorThreshold", "type": "int"},
+        "input_data": {"key": "inputData", "type": "{JobInput}"},
+        "interaction_endpoints": {
+            "key": "interactionEndpoints",
+            "type": "{JobEndpoint}",
+        },
+        "logging_level": {"key": "loggingLevel", "type": "str"},
+        "max_concurrency_per_instance": {
+            "key": "maxConcurrencyPerInstance",
+            "type": "int",
+        },
+        "mini_batch_size": {"key": "miniBatchSize", "type": "long"},
+        "name": {"key": "name", "type": "str"},
+        "output": {"key": "output", "type": "JobOutputArtifacts"},
+        "output_data": {"key": "outputData", "type": "{JobOutputV2}"},
+        "output_dataset": {"key": "outputDataset", "type": "DataVersion"},
+        "output_file_name": {"key": "outputFileName", "type": "str"},
+        "partition_keys": {"key": "partitionKeys", "type": "[str]"},
+        "properties": {"key": "properties", "type": "{str}"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "retry_settings": {"key": "retrySettings", "type": "BatchRetrySettings"},
+        "status": {"key": "status", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword compute: Compute configuration used to set instance count.
         :paramtype compute: ~azure.mgmt.machinelearningservices.models.ComputeConfiguration
@@ -223,26 +220,28 @@ class BatchJob(msrest.serialization.Model):
         :paramtype tags: dict[str, str]
         """
         super(BatchJob, self).__init__(**kwargs)
-        self.compute = kwargs.get('compute', None)
-        self.dataset = kwargs.get('dataset', None)
-        self.description = kwargs.get('description', None)
-        self.error_threshold = kwargs.get('error_threshold', None)
-        self.input_data = kwargs.get('input_data', None)
+        self.compute = kwargs.get("compute", None)
+        self.dataset = kwargs.get("dataset", None)
+        self.description = kwargs.get("description", None)
+        self.error_threshold = kwargs.get("error_threshold", None)
+        self.input_data = kwargs.get("input_data", None)
         self.interaction_endpoints = None
-        self.logging_level = kwargs.get('logging_level', None)
-        self.max_concurrency_per_instance = kwargs.get('max_concurrency_per_instance', None)
-        self.mini_batch_size = kwargs.get('mini_batch_size', None)
-        self.name = kwargs.get('name', None)
+        self.logging_level = kwargs.get("logging_level", None)
+        self.max_concurrency_per_instance = kwargs.get(
+            "max_concurrency_per_instance", None
+        )
+        self.mini_batch_size = kwargs.get("mini_batch_size", None)
+        self.name = kwargs.get("name", None)
         self.output = None
-        self.output_data = kwargs.get('output_data', None)
-        self.output_dataset = kwargs.get('output_dataset', None)
-        self.output_file_name = kwargs.get('output_file_name', None)
-        self.partition_keys = kwargs.get('partition_keys', None)
-        self.properties = kwargs.get('properties', None)
+        self.output_data = kwargs.get("output_data", None)
+        self.output_dataset = kwargs.get("output_dataset", None)
+        self.output_file_name = kwargs.get("output_file_name", None)
+        self.partition_keys = kwargs.get("partition_keys", None)
+        self.properties = kwargs.get("properties", None)
         self.provisioning_state = None
-        self.retry_settings = kwargs.get('retry_settings', None)
+        self.retry_settings = kwargs.get("retry_settings", None)
         self.status = None
-        self.tags = kwargs.get('tags', None)
+        self.tags = kwargs.get("tags", None)
 
 
 class Resource(msrest.serialization.Model):
@@ -261,23 +260,19 @@ class Resource(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs):
+        """ """
         super(Resource, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -306,31 +301,28 @@ class BatchJobResource(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'properties': {'required': True},
-        'system_data': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "properties": {"required": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'BatchJob'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "properties": {"key": "properties", "type": "BatchJob"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword properties: Required. [Required] Additional attributes of the entity.
         :paramtype properties: ~azure.mgmt.machinelearningservices.models.BatchJob
         """
         super(BatchJobResource, self).__init__(**kwargs)
-        self.properties = kwargs['properties']
+        self.properties = kwargs["properties"]
         self.system_data = None
 
 
@@ -345,14 +337,11 @@ class BatchJobResourceArmPaginatedResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'value': {'key': 'value', 'type': '[BatchJobResource]'},
+        "next_link": {"key": "nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[BatchJobResource]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword next_link: The link to the next page of BatchJob objects. If null, there are no
          additional pages.
@@ -361,8 +350,8 @@ class BatchJobResourceArmPaginatedResult(msrest.serialization.Model):
         :paramtype value: list[~azure.mgmt.machinelearningservices.models.BatchJobResource]
         """
         super(BatchJobResourceArmPaginatedResult, self).__init__(**kwargs)
-        self.next_link = kwargs.get('next_link', None)
-        self.value = kwargs.get('value', None)
+        self.next_link = kwargs.get("next_link", None)
+        self.value = kwargs.get("value", None)
 
 
 class BatchRetrySettings(msrest.serialization.Model):
@@ -375,14 +364,11 @@ class BatchRetrySettings(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'max_retries': {'key': 'maxRetries', 'type': 'int'},
-        'timeout': {'key': 'timeout', 'type': 'duration'},
+        "max_retries": {"key": "maxRetries", "type": "int"},
+        "timeout": {"key": "timeout", "type": "duration"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword max_retries: Maximum retry count for a mini-batch.
         :paramtype max_retries: int
@@ -390,8 +376,8 @@ class BatchRetrySettings(msrest.serialization.Model):
         :paramtype timeout: ~datetime.timedelta
         """
         super(BatchRetrySettings, self).__init__(**kwargs)
-        self.max_retries = kwargs.get('max_retries', None)
-        self.timeout = kwargs.get('timeout', None)
+        self.max_retries = kwargs.get("max_retries", None)
+        self.timeout = kwargs.get("timeout", None)
 
 
 class ComputeConfiguration(msrest.serialization.Model):
@@ -413,18 +399,15 @@ class ComputeConfiguration(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'instance_count': {'key': 'instanceCount', 'type': 'int'},
-        'instance_type': {'key': 'instanceType', 'type': 'str'},
-        'is_local': {'key': 'isLocal', 'type': 'bool'},
-        'location': {'key': 'location', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': '{str}'},
-        'target': {'key': 'target', 'type': 'str'},
+        "instance_count": {"key": "instanceCount", "type": "int"},
+        "instance_type": {"key": "instanceType", "type": "str"},
+        "is_local": {"key": "isLocal", "type": "bool"},
+        "location": {"key": "location", "type": "str"},
+        "properties": {"key": "properties", "type": "{str}"},
+        "target": {"key": "target", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword instance_count: Number of instances or nodes.
         :paramtype instance_count: int
@@ -441,12 +424,12 @@ class ComputeConfiguration(msrest.serialization.Model):
         :paramtype target: str
         """
         super(ComputeConfiguration, self).__init__(**kwargs)
-        self.instance_count = kwargs.get('instance_count', None)
-        self.instance_type = kwargs.get('instance_type', None)
-        self.is_local = kwargs.get('is_local', None)
-        self.location = kwargs.get('location', None)
-        self.properties = kwargs.get('properties', None)
-        self.target = kwargs.get('target', None)
+        self.instance_count = kwargs.get("instance_count", None)
+        self.instance_type = kwargs.get("instance_type", None)
+        self.is_local = kwargs.get("is_local", None)
+        self.location = kwargs.get("location", None)
+        self.properties = kwargs.get("properties", None)
+        self.target = kwargs.get("target", None)
 
 
 class JobInput(msrest.serialization.Model):
@@ -466,28 +449,33 @@ class JobInput(msrest.serialization.Model):
     """
 
     _validation = {
-        'job_input_type': {'required': True},
+        "job_input_type": {"required": True},
     }
 
     _attribute_map = {
-        'description': {'key': 'description', 'type': 'str'},
-        'job_input_type': {'key': 'jobInputType', 'type': 'str'},
+        "description": {"key": "description", "type": "str"},
+        "job_input_type": {"key": "jobInputType", "type": "str"},
     }
 
     _subtype_map = {
-        'job_input_type': {'CustomModel': 'CustomModelJobInput', 'Literal': 'LiteralJobInput', 'MLFlowModel': 'MLFlowModelJobInput', 'MLTable': 'MLTableJobInput', 'TritonModel': 'TritonModelJobInput', 'UriFile': 'UriFileJobInput', 'UriFolder': 'UriFolderJobInput'}
+        "job_input_type": {
+            "CustomModel": "CustomModelJobInput",
+            "Literal": "LiteralJobInput",
+            "MLFlowModel": "MLFlowModelJobInput",
+            "MLTable": "MLTableJobInput",
+            "TritonModel": "TritonModelJobInput",
+            "UriFile": "UriFileJobInput",
+            "UriFolder": "UriFolderJobInput",
+        }
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword description: Description for the input.
         :paramtype description: str
         """
         super(JobInput, self).__init__(**kwargs)
-        self.description = kwargs.get('description', None)
+        self.description = kwargs.get("description", None)
         self.job_input_type = None  # type: Optional[str]
 
 
@@ -510,21 +498,18 @@ class CustomModelJobInput(JobInput, AssetJobInput):
     """
 
     _validation = {
-        'uri': {'required': True, 'pattern': r'[a-zA-Z0-9_]'},
-        'job_input_type': {'required': True},
+        "uri": {"required": True, "pattern": r"[a-zA-Z0-9_]"},
+        "job_input_type": {"required": True},
     }
 
     _attribute_map = {
-        'mode': {'key': 'mode', 'type': 'str'},
-        'uri': {'key': 'uri', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'job_input_type': {'key': 'jobInputType', 'type': 'str'},
+        "mode": {"key": "mode", "type": "str"},
+        "uri": {"key": "uri", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "job_input_type": {"key": "jobInputType", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword mode: Input Asset Delivery Mode. Possible values include: "ReadOnlyMount",
          "ReadWriteMount", "Download", "Direct", "EvalMount", "EvalDownload".
@@ -535,10 +520,10 @@ class CustomModelJobInput(JobInput, AssetJobInput):
         :paramtype description: str
         """
         super(CustomModelJobInput, self).__init__(**kwargs)
-        self.mode = kwargs.get('mode', None)
-        self.uri = kwargs['uri']
-        self.job_input_type = 'CustomModel'  # type: str
-        self.description = kwargs.get('description', None)
+        self.mode = kwargs.get("mode", None)
+        self.uri = kwargs["uri"]
+        self.job_input_type = "CustomModel"  # type: str
+        self.description = kwargs.get("description", None)
 
 
 class JobOutputV2(msrest.serialization.Model):
@@ -557,28 +542,32 @@ class JobOutputV2(msrest.serialization.Model):
     """
 
     _validation = {
-        'job_output_type': {'required': True},
+        "job_output_type": {"required": True},
     }
 
     _attribute_map = {
-        'description': {'key': 'description', 'type': 'str'},
-        'job_output_type': {'key': 'jobOutputType', 'type': 'str'},
+        "description": {"key": "description", "type": "str"},
+        "job_output_type": {"key": "jobOutputType", "type": "str"},
     }
 
     _subtype_map = {
-        'job_output_type': {'CustomModel': 'CustomModelJobOutput', 'MLFlowModel': 'MLFlowModelJobOutput', 'MLTable': 'MLTableJobOutput', 'TritonModel': 'TritonModelJobOutput', 'UriFile': 'UriFileJobOutput', 'UriFolder': 'UriFolderJobOutput'}
+        "job_output_type": {
+            "CustomModel": "CustomModelJobOutput",
+            "MLFlowModel": "MLFlowModelJobOutput",
+            "MLTable": "MLTableJobOutput",
+            "TritonModel": "TritonModelJobOutput",
+            "UriFile": "UriFileJobOutput",
+            "UriFolder": "UriFolderJobOutput",
+        }
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword description: Description for the output.
         :paramtype description: str
         """
         super(JobOutputV2, self).__init__(**kwargs)
-        self.description = kwargs.get('description', None)
+        self.description = kwargs.get("description", None)
         self.job_output_type = None  # type: Optional[str]
 
 
@@ -600,20 +589,17 @@ class CustomModelJobOutput(JobOutputV2, AssetJobOutput):
     """
 
     _validation = {
-        'job_output_type': {'required': True},
+        "job_output_type": {"required": True},
     }
 
     _attribute_map = {
-        'mode': {'key': 'mode', 'type': 'str'},
-        'uri': {'key': 'uri', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'job_output_type': {'key': 'jobOutputType', 'type': 'str'},
+        "mode": {"key": "mode", "type": "str"},
+        "uri": {"key": "uri", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "job_output_type": {"key": "jobOutputType", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword mode: Output Asset Delivery Mode. Possible values include: "ReadWriteMount", "Upload".
         :paramtype mode: str or ~azure.mgmt.machinelearningservices.models.OutputDeliveryMode
@@ -624,10 +610,10 @@ class CustomModelJobOutput(JobOutputV2, AssetJobOutput):
         :paramtype description: str
         """
         super(CustomModelJobOutput, self).__init__(**kwargs)
-        self.mode = kwargs.get('mode', None)
-        self.uri = kwargs.get('uri', None)
-        self.job_output_type = 'CustomModel'  # type: str
-        self.description = kwargs.get('description', None)
+        self.mode = kwargs.get("mode", None)
+        self.uri = kwargs.get("uri", None)
+        self.job_output_type = "CustomModel"  # type: str
+        self.description = kwargs.get("description", None)
 
 
 class DataVersion(msrest.serialization.Model):
@@ -652,23 +638,20 @@ class DataVersion(msrest.serialization.Model):
     """
 
     _validation = {
-        'path': {'required': True, 'pattern': r'[a-zA-Z0-9_]'},
+        "path": {"required": True, "pattern": r"[a-zA-Z0-9_]"},
     }
 
     _attribute_map = {
-        'dataset_type': {'key': 'datasetType', 'type': 'str'},
-        'datastore_id': {'key': 'datastoreId', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'is_anonymous': {'key': 'isAnonymous', 'type': 'bool'},
-        'path': {'key': 'path', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': '{str}'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "dataset_type": {"key": "datasetType", "type": "str"},
+        "datastore_id": {"key": "datastoreId", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "is_anonymous": {"key": "isAnonymous", "type": "bool"},
+        "path": {"key": "path", "type": "str"},
+        "properties": {"key": "properties", "type": "{str}"},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword dataset_type: The Format of dataset. Possible values include: "Simple", "Dataflow".
         :paramtype dataset_type: str or ~azure.mgmt.machinelearningservices.models.DatasetType
@@ -686,13 +669,13 @@ class DataVersion(msrest.serialization.Model):
         :paramtype tags: dict[str, str]
         """
         super(DataVersion, self).__init__(**kwargs)
-        self.dataset_type = kwargs.get('dataset_type', None)
-        self.datastore_id = kwargs.get('datastore_id', None)
-        self.description = kwargs.get('description', None)
-        self.is_anonymous = kwargs.get('is_anonymous', None)
-        self.path = kwargs['path']
-        self.properties = kwargs.get('properties', None)
-        self.tags = kwargs.get('tags', None)
+        self.dataset_type = kwargs.get("dataset_type", None)
+        self.datastore_id = kwargs.get("datastore_id", None)
+        self.description = kwargs.get("description", None)
+        self.is_anonymous = kwargs.get("is_anonymous", None)
+        self.path = kwargs["path"]
+        self.properties = kwargs.get("properties", None)
+        self.tags = kwargs.get("tags", None)
 
 
 class ErrorDetail(msrest.serialization.Model):
@@ -707,19 +690,16 @@ class ErrorDetail(msrest.serialization.Model):
     """
 
     _validation = {
-        'code': {'required': True},
-        'message': {'required': True},
+        "code": {"required": True},
+        "message": {"required": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword code: Required. Error code.
         :paramtype code: str
@@ -727,8 +707,8 @@ class ErrorDetail(msrest.serialization.Model):
         :paramtype message: str
         """
         super(ErrorDetail, self).__init__(**kwargs)
-        self.code = kwargs['code']
-        self.message = kwargs['message']
+        self.code = kwargs["code"]
+        self.message = kwargs["message"]
 
 
 class ErrorResponse(msrest.serialization.Model):
@@ -745,23 +725,19 @@ class ErrorResponse(msrest.serialization.Model):
     """
 
     _validation = {
-        'code': {'readonly': True},
-        'message': {'readonly': True},
-        'details': {'readonly': True},
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "details": {"readonly": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[ErrorDetail]'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "details": {"key": "details", "type": "[ErrorDetail]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs):
+        """ """
         super(ErrorResponse, self).__init__(**kwargs)
         self.code = None
         self.message = None
@@ -783,23 +759,23 @@ class InferenceDataInputBase(msrest.serialization.Model):
     """
 
     _validation = {
-        'data_input_type': {'required': True},
+        "data_input_type": {"required": True},
     }
 
     _attribute_map = {
-        'data_input_type': {'key': 'dataInputType', 'type': 'str'},
+        "data_input_type": {"key": "dataInputType", "type": "str"},
     }
 
     _subtype_map = {
-        'data_input_type': {'DataUrl': 'InferenceDataUrlInput', 'DatasetId': 'InferenceDatasetIdInput', 'DatasetVersion': 'InferenceDatasetInput'}
+        "data_input_type": {
+            "DataUrl": "InferenceDataUrlInput",
+            "DatasetId": "InferenceDatasetIdInput",
+            "DatasetVersion": "InferenceDatasetInput",
+        }
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs):
+        """ """
         super(InferenceDataInputBase, self).__init__(**kwargs)
         self.data_input_type = None  # type: Optional[str]
 
@@ -818,25 +794,22 @@ class InferenceDatasetIdInput(InferenceDataInputBase):
     """
 
     _validation = {
-        'data_input_type': {'required': True},
+        "data_input_type": {"required": True},
     }
 
     _attribute_map = {
-        'data_input_type': {'key': 'dataInputType', 'type': 'str'},
-        'dataset_id': {'key': 'datasetId', 'type': 'str'},
+        "data_input_type": {"key": "dataInputType", "type": "str"},
+        "dataset_id": {"key": "datasetId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword dataset_id: ARM ID of the input dataset.
         :paramtype dataset_id: str
         """
         super(InferenceDatasetIdInput, self).__init__(**kwargs)
-        self.data_input_type = 'DatasetId'  # type: str
-        self.dataset_id = kwargs.get('dataset_id', None)
+        self.data_input_type = "DatasetId"  # type: str
+        self.dataset_id = kwargs.get("dataset_id", None)
 
 
 class InferenceDatasetInput(InferenceDataInputBase):
@@ -855,19 +828,16 @@ class InferenceDatasetInput(InferenceDataInputBase):
     """
 
     _validation = {
-        'data_input_type': {'required': True},
+        "data_input_type": {"required": True},
     }
 
     _attribute_map = {
-        'data_input_type': {'key': 'dataInputType', 'type': 'str'},
-        'dataset_name': {'key': 'datasetName', 'type': 'str'},
-        'dataset_version': {'key': 'datasetVersion', 'type': 'str'},
+        "data_input_type": {"key": "dataInputType", "type": "str"},
+        "dataset_name": {"key": "datasetName", "type": "str"},
+        "dataset_version": {"key": "datasetVersion", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword dataset_name: Name of the input dataset.
         :paramtype dataset_name: str
@@ -875,9 +845,9 @@ class InferenceDatasetInput(InferenceDataInputBase):
         :paramtype dataset_version: str
         """
         super(InferenceDatasetInput, self).__init__(**kwargs)
-        self.data_input_type = 'DatasetVersion'  # type: str
-        self.dataset_name = kwargs.get('dataset_name', None)
-        self.dataset_version = kwargs.get('dataset_version', None)
+        self.data_input_type = "DatasetVersion"  # type: str
+        self.dataset_name = kwargs.get("dataset_name", None)
+        self.dataset_version = kwargs.get("dataset_version", None)
 
 
 class InferenceDataUrlInput(InferenceDataInputBase):
@@ -894,26 +864,23 @@ class InferenceDataUrlInput(InferenceDataInputBase):
     """
 
     _validation = {
-        'data_input_type': {'required': True},
-        'path': {'required': True, 'pattern': r'[a-zA-Z0-9_]'},
+        "data_input_type": {"required": True},
+        "path": {"required": True, "pattern": r"[a-zA-Z0-9_]"},
     }
 
     _attribute_map = {
-        'data_input_type': {'key': 'dataInputType', 'type': 'str'},
-        'path': {'key': 'path', 'type': 'str'},
+        "data_input_type": {"key": "dataInputType", "type": "str"},
+        "path": {"key": "path", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword path: Required. Asset path to the input data, say a blob URL.
         :paramtype path: str
         """
         super(InferenceDataUrlInput, self).__init__(**kwargs)
-        self.data_input_type = 'DataUrl'  # type: str
-        self.path = kwargs['path']
+        self.data_input_type = "DataUrl"  # type: str
+        self.path = kwargs["path"]
 
 
 class JobEndpoint(msrest.serialization.Model):
@@ -930,16 +897,13 @@ class JobEndpoint(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'endpoint': {'key': 'endpoint', 'type': 'str'},
-        'job_endpoint_type': {'key': 'jobEndpointType', 'type': 'str'},
-        'port': {'key': 'port', 'type': 'int'},
-        'properties': {'key': 'properties', 'type': '{str}'},
+        "endpoint": {"key": "endpoint", "type": "str"},
+        "job_endpoint_type": {"key": "jobEndpointType", "type": "str"},
+        "port": {"key": "port", "type": "int"},
+        "properties": {"key": "properties", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword endpoint: Url for endpoint.
         :paramtype endpoint: str
@@ -951,10 +915,10 @@ class JobEndpoint(msrest.serialization.Model):
         :paramtype properties: dict[str, str]
         """
         super(JobEndpoint, self).__init__(**kwargs)
-        self.endpoint = kwargs.get('endpoint', None)
-        self.job_endpoint_type = kwargs.get('job_endpoint_type', None)
-        self.port = kwargs.get('port', None)
-        self.properties = kwargs.get('properties', None)
+        self.endpoint = kwargs.get("endpoint", None)
+        self.job_endpoint_type = kwargs.get("job_endpoint_type", None)
+        self.port = kwargs.get("port", None)
+        self.properties = kwargs.get("properties", None)
 
 
 class JobOutputArtifacts(msrest.serialization.Model):
@@ -969,21 +933,17 @@ class JobOutputArtifacts(msrest.serialization.Model):
     """
 
     _validation = {
-        'datastore_id': {'readonly': True},
-        'path': {'readonly': True},
+        "datastore_id": {"readonly": True},
+        "path": {"readonly": True},
     }
 
     _attribute_map = {
-        'datastore_id': {'key': 'datastoreId', 'type': 'str'},
-        'path': {'key': 'path', 'type': 'str'},
+        "datastore_id": {"key": "datastoreId", "type": "str"},
+        "path": {"key": "path", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs):
+        """ """
         super(JobOutputArtifacts, self).__init__(**kwargs)
         self.datastore_id = None
         self.path = None
@@ -999,14 +959,11 @@ class LabelClass(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'subclasses': {'key': 'subclasses', 'type': '{LabelClass}'},
+        "display_name": {"key": "displayName", "type": "str"},
+        "subclasses": {"key": "subclasses", "type": "{LabelClass}"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword display_name: Display name of the label class.
         :paramtype display_name: str
@@ -1014,8 +971,8 @@ class LabelClass(msrest.serialization.Model):
         :paramtype subclasses: dict[str, ~azure.mgmt.machinelearningservices.models.LabelClass]
         """
         super(LabelClass, self).__init__(**kwargs)
-        self.display_name = kwargs.get('display_name', None)
-        self.subclasses = kwargs.get('subclasses', None)
+        self.display_name = kwargs.get("display_name", None)
+        self.subclasses = kwargs.get("subclasses", None)
 
 
 class LiteralJobInput(JobInput):
@@ -1034,20 +991,17 @@ class LiteralJobInput(JobInput):
     """
 
     _validation = {
-        'job_input_type': {'required': True},
-        'value': {'required': True, 'pattern': r'[a-zA-Z0-9_]'},
+        "job_input_type": {"required": True},
+        "value": {"required": True, "pattern": r"[a-zA-Z0-9_]"},
     }
 
     _attribute_map = {
-        'description': {'key': 'description', 'type': 'str'},
-        'job_input_type': {'key': 'jobInputType', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
+        "description": {"key": "description", "type": "str"},
+        "job_input_type": {"key": "jobInputType", "type": "str"},
+        "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword description: Description for the input.
         :paramtype description: str
@@ -1055,8 +1009,8 @@ class LiteralJobInput(JobInput):
         :paramtype value: str
         """
         super(LiteralJobInput, self).__init__(**kwargs)
-        self.job_input_type = 'Literal'  # type: str
-        self.value = kwargs['value']
+        self.job_input_type = "Literal"  # type: str
+        self.value = kwargs["value"]
 
 
 class MLFlowModelJobInput(JobInput, AssetJobInput):
@@ -1078,21 +1032,18 @@ class MLFlowModelJobInput(JobInput, AssetJobInput):
     """
 
     _validation = {
-        'uri': {'required': True, 'pattern': r'[a-zA-Z0-9_]'},
-        'job_input_type': {'required': True},
+        "uri": {"required": True, "pattern": r"[a-zA-Z0-9_]"},
+        "job_input_type": {"required": True},
     }
 
     _attribute_map = {
-        'mode': {'key': 'mode', 'type': 'str'},
-        'uri': {'key': 'uri', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'job_input_type': {'key': 'jobInputType', 'type': 'str'},
+        "mode": {"key": "mode", "type": "str"},
+        "uri": {"key": "uri", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "job_input_type": {"key": "jobInputType", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword mode: Input Asset Delivery Mode. Possible values include: "ReadOnlyMount",
          "ReadWriteMount", "Download", "Direct", "EvalMount", "EvalDownload".
@@ -1103,10 +1054,10 @@ class MLFlowModelJobInput(JobInput, AssetJobInput):
         :paramtype description: str
         """
         super(MLFlowModelJobInput, self).__init__(**kwargs)
-        self.mode = kwargs.get('mode', None)
-        self.uri = kwargs['uri']
-        self.job_input_type = 'MLFlowModel'  # type: str
-        self.description = kwargs.get('description', None)
+        self.mode = kwargs.get("mode", None)
+        self.uri = kwargs["uri"]
+        self.job_input_type = "MLFlowModel"  # type: str
+        self.description = kwargs.get("description", None)
 
 
 class MLFlowModelJobOutput(JobOutputV2, AssetJobOutput):
@@ -1127,20 +1078,17 @@ class MLFlowModelJobOutput(JobOutputV2, AssetJobOutput):
     """
 
     _validation = {
-        'job_output_type': {'required': True},
+        "job_output_type": {"required": True},
     }
 
     _attribute_map = {
-        'mode': {'key': 'mode', 'type': 'str'},
-        'uri': {'key': 'uri', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'job_output_type': {'key': 'jobOutputType', 'type': 'str'},
+        "mode": {"key": "mode", "type": "str"},
+        "uri": {"key": "uri", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "job_output_type": {"key": "jobOutputType", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword mode: Output Asset Delivery Mode. Possible values include: "ReadWriteMount", "Upload".
         :paramtype mode: str or ~azure.mgmt.machinelearningservices.models.OutputDeliveryMode
@@ -1151,10 +1099,10 @@ class MLFlowModelJobOutput(JobOutputV2, AssetJobOutput):
         :paramtype description: str
         """
         super(MLFlowModelJobOutput, self).__init__(**kwargs)
-        self.mode = kwargs.get('mode', None)
-        self.uri = kwargs.get('uri', None)
-        self.job_output_type = 'MLFlowModel'  # type: str
-        self.description = kwargs.get('description', None)
+        self.mode = kwargs.get("mode", None)
+        self.uri = kwargs.get("uri", None)
+        self.job_output_type = "MLFlowModel"  # type: str
+        self.description = kwargs.get("description", None)
 
 
 class MLTableJobInput(JobInput, AssetJobInput):
@@ -1176,21 +1124,18 @@ class MLTableJobInput(JobInput, AssetJobInput):
     """
 
     _validation = {
-        'uri': {'required': True, 'pattern': r'[a-zA-Z0-9_]'},
-        'job_input_type': {'required': True},
+        "uri": {"required": True, "pattern": r"[a-zA-Z0-9_]"},
+        "job_input_type": {"required": True},
     }
 
     _attribute_map = {
-        'mode': {'key': 'mode', 'type': 'str'},
-        'uri': {'key': 'uri', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'job_input_type': {'key': 'jobInputType', 'type': 'str'},
+        "mode": {"key": "mode", "type": "str"},
+        "uri": {"key": "uri", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "job_input_type": {"key": "jobInputType", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword mode: Input Asset Delivery Mode. Possible values include: "ReadOnlyMount",
          "ReadWriteMount", "Download", "Direct", "EvalMount", "EvalDownload".
@@ -1201,10 +1146,10 @@ class MLTableJobInput(JobInput, AssetJobInput):
         :paramtype description: str
         """
         super(MLTableJobInput, self).__init__(**kwargs)
-        self.mode = kwargs.get('mode', None)
-        self.uri = kwargs['uri']
-        self.job_input_type = 'MLTable'  # type: str
-        self.description = kwargs.get('description', None)
+        self.mode = kwargs.get("mode", None)
+        self.uri = kwargs["uri"]
+        self.job_input_type = "MLTable"  # type: str
+        self.description = kwargs.get("description", None)
 
 
 class MLTableJobOutput(JobOutputV2, AssetJobOutput):
@@ -1225,20 +1170,17 @@ class MLTableJobOutput(JobOutputV2, AssetJobOutput):
     """
 
     _validation = {
-        'job_output_type': {'required': True},
+        "job_output_type": {"required": True},
     }
 
     _attribute_map = {
-        'mode': {'key': 'mode', 'type': 'str'},
-        'uri': {'key': 'uri', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'job_output_type': {'key': 'jobOutputType', 'type': 'str'},
+        "mode": {"key": "mode", "type": "str"},
+        "uri": {"key": "uri", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "job_output_type": {"key": "jobOutputType", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword mode: Output Asset Delivery Mode. Possible values include: "ReadWriteMount", "Upload".
         :paramtype mode: str or ~azure.mgmt.machinelearningservices.models.OutputDeliveryMode
@@ -1249,10 +1191,10 @@ class MLTableJobOutput(JobOutputV2, AssetJobOutput):
         :paramtype description: str
         """
         super(MLTableJobOutput, self).__init__(**kwargs)
-        self.mode = kwargs.get('mode', None)
-        self.uri = kwargs.get('uri', None)
-        self.job_output_type = 'MLTable'  # type: str
-        self.description = kwargs.get('description', None)
+        self.mode = kwargs.get("mode", None)
+        self.uri = kwargs.get("uri", None)
+        self.job_output_type = "MLTable"  # type: str
+        self.description = kwargs.get("description", None)
 
 
 class SystemData(msrest.serialization.Model):
@@ -1275,18 +1217,15 @@ class SystemData(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'created_by': {'key': 'createdBy', 'type': 'str'},
-        'created_by_type': {'key': 'createdByType', 'type': 'str'},
-        'created_at': {'key': 'createdAt', 'type': 'iso-8601'},
-        'last_modified_by': {'key': 'lastModifiedBy', 'type': 'str'},
-        'last_modified_by_type': {'key': 'lastModifiedByType', 'type': 'str'},
-        'last_modified_at': {'key': 'lastModifiedAt', 'type': 'iso-8601'},
+        "created_by": {"key": "createdBy", "type": "str"},
+        "created_by_type": {"key": "createdByType", "type": "str"},
+        "created_at": {"key": "createdAt", "type": "iso-8601"},
+        "last_modified_by": {"key": "lastModifiedBy", "type": "str"},
+        "last_modified_by_type": {"key": "lastModifiedByType", "type": "str"},
+        "last_modified_at": {"key": "lastModifiedAt", "type": "iso-8601"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword created_by: The identity that created the resource.
         :paramtype created_by: str
@@ -1305,12 +1244,12 @@ class SystemData(msrest.serialization.Model):
         :paramtype last_modified_at: ~datetime.datetime
         """
         super(SystemData, self).__init__(**kwargs)
-        self.created_by = kwargs.get('created_by', None)
-        self.created_by_type = kwargs.get('created_by_type', None)
-        self.created_at = kwargs.get('created_at', None)
-        self.last_modified_by = kwargs.get('last_modified_by', None)
-        self.last_modified_by_type = kwargs.get('last_modified_by_type', None)
-        self.last_modified_at = kwargs.get('last_modified_at', None)
+        self.created_by = kwargs.get("created_by", None)
+        self.created_by_type = kwargs.get("created_by_type", None)
+        self.created_at = kwargs.get("created_at", None)
+        self.last_modified_by = kwargs.get("last_modified_by", None)
+        self.last_modified_by_type = kwargs.get("last_modified_by_type", None)
+        self.last_modified_at = kwargs.get("last_modified_at", None)
 
 
 class TritonModelJobInput(JobInput, AssetJobInput):
@@ -1332,21 +1271,18 @@ class TritonModelJobInput(JobInput, AssetJobInput):
     """
 
     _validation = {
-        'uri': {'required': True, 'pattern': r'[a-zA-Z0-9_]'},
-        'job_input_type': {'required': True},
+        "uri": {"required": True, "pattern": r"[a-zA-Z0-9_]"},
+        "job_input_type": {"required": True},
     }
 
     _attribute_map = {
-        'mode': {'key': 'mode', 'type': 'str'},
-        'uri': {'key': 'uri', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'job_input_type': {'key': 'jobInputType', 'type': 'str'},
+        "mode": {"key": "mode", "type": "str"},
+        "uri": {"key": "uri", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "job_input_type": {"key": "jobInputType", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword mode: Input Asset Delivery Mode. Possible values include: "ReadOnlyMount",
          "ReadWriteMount", "Download", "Direct", "EvalMount", "EvalDownload".
@@ -1357,10 +1293,10 @@ class TritonModelJobInput(JobInput, AssetJobInput):
         :paramtype description: str
         """
         super(TritonModelJobInput, self).__init__(**kwargs)
-        self.mode = kwargs.get('mode', None)
-        self.uri = kwargs['uri']
-        self.job_input_type = 'TritonModel'  # type: str
-        self.description = kwargs.get('description', None)
+        self.mode = kwargs.get("mode", None)
+        self.uri = kwargs["uri"]
+        self.job_input_type = "TritonModel"  # type: str
+        self.description = kwargs.get("description", None)
 
 
 class TritonModelJobOutput(JobOutputV2, AssetJobOutput):
@@ -1381,20 +1317,17 @@ class TritonModelJobOutput(JobOutputV2, AssetJobOutput):
     """
 
     _validation = {
-        'job_output_type': {'required': True},
+        "job_output_type": {"required": True},
     }
 
     _attribute_map = {
-        'mode': {'key': 'mode', 'type': 'str'},
-        'uri': {'key': 'uri', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'job_output_type': {'key': 'jobOutputType', 'type': 'str'},
+        "mode": {"key": "mode", "type": "str"},
+        "uri": {"key": "uri", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "job_output_type": {"key": "jobOutputType", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword mode: Output Asset Delivery Mode. Possible values include: "ReadWriteMount", "Upload".
         :paramtype mode: str or ~azure.mgmt.machinelearningservices.models.OutputDeliveryMode
@@ -1405,10 +1338,10 @@ class TritonModelJobOutput(JobOutputV2, AssetJobOutput):
         :paramtype description: str
         """
         super(TritonModelJobOutput, self).__init__(**kwargs)
-        self.mode = kwargs.get('mode', None)
-        self.uri = kwargs.get('uri', None)
-        self.job_output_type = 'TritonModel'  # type: str
-        self.description = kwargs.get('description', None)
+        self.mode = kwargs.get("mode", None)
+        self.uri = kwargs.get("uri", None)
+        self.job_output_type = "TritonModel"  # type: str
+        self.description = kwargs.get("description", None)
 
 
 class UriFileJobInput(JobInput, AssetJobInput):
@@ -1430,21 +1363,18 @@ class UriFileJobInput(JobInput, AssetJobInput):
     """
 
     _validation = {
-        'uri': {'required': True, 'pattern': r'[a-zA-Z0-9_]'},
-        'job_input_type': {'required': True},
+        "uri": {"required": True, "pattern": r"[a-zA-Z0-9_]"},
+        "job_input_type": {"required": True},
     }
 
     _attribute_map = {
-        'mode': {'key': 'mode', 'type': 'str'},
-        'uri': {'key': 'uri', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'job_input_type': {'key': 'jobInputType', 'type': 'str'},
+        "mode": {"key": "mode", "type": "str"},
+        "uri": {"key": "uri", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "job_input_type": {"key": "jobInputType", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword mode: Input Asset Delivery Mode. Possible values include: "ReadOnlyMount",
          "ReadWriteMount", "Download", "Direct", "EvalMount", "EvalDownload".
@@ -1455,10 +1385,10 @@ class UriFileJobInput(JobInput, AssetJobInput):
         :paramtype description: str
         """
         super(UriFileJobInput, self).__init__(**kwargs)
-        self.mode = kwargs.get('mode', None)
-        self.uri = kwargs['uri']
-        self.job_input_type = 'UriFile'  # type: str
-        self.description = kwargs.get('description', None)
+        self.mode = kwargs.get("mode", None)
+        self.uri = kwargs["uri"]
+        self.job_input_type = "UriFile"  # type: str
+        self.description = kwargs.get("description", None)
 
 
 class UriFileJobOutput(JobOutputV2, AssetJobOutput):
@@ -1479,20 +1409,17 @@ class UriFileJobOutput(JobOutputV2, AssetJobOutput):
     """
 
     _validation = {
-        'job_output_type': {'required': True},
+        "job_output_type": {"required": True},
     }
 
     _attribute_map = {
-        'mode': {'key': 'mode', 'type': 'str'},
-        'uri': {'key': 'uri', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'job_output_type': {'key': 'jobOutputType', 'type': 'str'},
+        "mode": {"key": "mode", "type": "str"},
+        "uri": {"key": "uri", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "job_output_type": {"key": "jobOutputType", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword mode: Output Asset Delivery Mode. Possible values include: "ReadWriteMount", "Upload".
         :paramtype mode: str or ~azure.mgmt.machinelearningservices.models.OutputDeliveryMode
@@ -1503,10 +1430,10 @@ class UriFileJobOutput(JobOutputV2, AssetJobOutput):
         :paramtype description: str
         """
         super(UriFileJobOutput, self).__init__(**kwargs)
-        self.mode = kwargs.get('mode', None)
-        self.uri = kwargs.get('uri', None)
-        self.job_output_type = 'UriFile'  # type: str
-        self.description = kwargs.get('description', None)
+        self.mode = kwargs.get("mode", None)
+        self.uri = kwargs.get("uri", None)
+        self.job_output_type = "UriFile"  # type: str
+        self.description = kwargs.get("description", None)
 
 
 class UriFolderJobInput(JobInput, AssetJobInput):
@@ -1528,21 +1455,18 @@ class UriFolderJobInput(JobInput, AssetJobInput):
     """
 
     _validation = {
-        'uri': {'required': True, 'pattern': r'[a-zA-Z0-9_]'},
-        'job_input_type': {'required': True},
+        "uri": {"required": True, "pattern": r"[a-zA-Z0-9_]"},
+        "job_input_type": {"required": True},
     }
 
     _attribute_map = {
-        'mode': {'key': 'mode', 'type': 'str'},
-        'uri': {'key': 'uri', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'job_input_type': {'key': 'jobInputType', 'type': 'str'},
+        "mode": {"key": "mode", "type": "str"},
+        "uri": {"key": "uri", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "job_input_type": {"key": "jobInputType", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword mode: Input Asset Delivery Mode. Possible values include: "ReadOnlyMount",
          "ReadWriteMount", "Download", "Direct", "EvalMount", "EvalDownload".
@@ -1553,10 +1477,10 @@ class UriFolderJobInput(JobInput, AssetJobInput):
         :paramtype description: str
         """
         super(UriFolderJobInput, self).__init__(**kwargs)
-        self.mode = kwargs.get('mode', None)
-        self.uri = kwargs['uri']
-        self.job_input_type = 'UriFolder'  # type: str
-        self.description = kwargs.get('description', None)
+        self.mode = kwargs.get("mode", None)
+        self.uri = kwargs["uri"]
+        self.job_input_type = "UriFolder"  # type: str
+        self.description = kwargs.get("description", None)
 
 
 class UriFolderJobOutput(JobOutputV2, AssetJobOutput):
@@ -1577,20 +1501,17 @@ class UriFolderJobOutput(JobOutputV2, AssetJobOutput):
     """
 
     _validation = {
-        'job_output_type': {'required': True},
+        "job_output_type": {"required": True},
     }
 
     _attribute_map = {
-        'mode': {'key': 'mode', 'type': 'str'},
-        'uri': {'key': 'uri', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'job_output_type': {'key': 'jobOutputType', 'type': 'str'},
+        "mode": {"key": "mode", "type": "str"},
+        "uri": {"key": "uri", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "job_output_type": {"key": "jobOutputType", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword mode: Output Asset Delivery Mode. Possible values include: "ReadWriteMount", "Upload".
         :paramtype mode: str or ~azure.mgmt.machinelearningservices.models.OutputDeliveryMode
@@ -1601,7 +1522,7 @@ class UriFolderJobOutput(JobOutputV2, AssetJobOutput):
         :paramtype description: str
         """
         super(UriFolderJobOutput, self).__init__(**kwargs)
-        self.mode = kwargs.get('mode', None)
-        self.uri = kwargs.get('uri', None)
-        self.job_output_type = 'UriFolder'  # type: str
-        self.description = kwargs.get('description', None)
+        self.mode = kwargs.get("mode", None)
+        self.uri = kwargs.get("uri", None)
+        self.job_output_type = "UriFolder"  # type: str
+        self.description = kwargs.get("description", None)

@@ -37,7 +37,12 @@ class ResourceSettings(RestTranslatableMixin):
             :caption: Configuring ResourceSettings for a Kubernetes deployment.
     """
 
-    def __init__(self, cpu: Optional[str] = None, memory: Optional[str] = None, gpu: Optional[str] = None) -> None:
+    def __init__(
+        self,
+        cpu: Optional[str] = None,
+        memory: Optional[str] = None,
+        gpu: Optional[str] = None,
+    ) -> None:
         self.cpu = cpu
         self.memory = memory
         self.gpu = gpu
@@ -46,7 +51,9 @@ class ResourceSettings(RestTranslatableMixin):
         return ContainerResourceSettings(cpu=self.cpu, memory=self.memory, gpu=self.gpu)
 
     @classmethod
-    def _from_rest_object(cls, settings: ContainerResourceSettings) -> "ResourceSettings":
+    def _from_rest_object(
+        cls, settings: ContainerResourceSettings
+    ) -> "ResourceSettings":
         return (
             ResourceSettings(
                 cpu=settings.cpu,
@@ -69,7 +76,11 @@ class ResourceSettings(RestTranslatableMixin):
         if not other:
             return False
         # only compare mutable fields
-        return self.cpu == other.cpu and self.memory == other.memory and self.gpu == other.gpu
+        return (
+            self.cpu == other.cpu
+            and self.memory == other.memory
+            and self.gpu == other.gpu
+        )
 
     def __ne__(self, other: object) -> bool:
         return not self.__eq__(other)

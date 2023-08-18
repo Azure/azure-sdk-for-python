@@ -32,17 +32,27 @@ class IndexServiceAPIs:
     :type base_url: str
     """
 
-    def __init__(self, credential: "AsyncTokenCredential", base_url: str = "", **kwargs: Any) -> None:
+    def __init__(
+        self, credential: "AsyncTokenCredential", base_url: str = "", **kwargs: Any
+    ) -> None:
         self._config = IndexServiceAPIsConfiguration(credential=credential, **kwargs)
-        self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        self._client = AsyncARMPipelineClient(
+            base_url=base_url, config=self._config, **kwargs
+        )
 
-        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
+        client_models = {
+            k: v for k, v in models.__dict__.items() if isinstance(v, type)
+        }
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.index_entities = IndexEntitiesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.index_entities = IndexEntitiesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
-    def _send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
+    def _send_request(
+        self, request: HttpRequest, **kwargs: Any
+    ) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest

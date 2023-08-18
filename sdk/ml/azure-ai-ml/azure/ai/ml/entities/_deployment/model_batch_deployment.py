@@ -8,18 +8,29 @@ from typing import Any, Dict, Optional, Union
 
 from azure.ai.ml.entities._job.resource_configuration import ResourceConfiguration
 from azure.ai.ml._restclient.v2022_05_01.models import BatchDeploymentData
-from azure.ai.ml._restclient.v2022_05_01.models import BatchDeploymentDetails as RestBatchDeployment
-from azure.ai.ml._restclient.v2022_05_01.models import CodeConfiguration as RestCodeConfiguration
+from azure.ai.ml._restclient.v2022_05_01.models import (
+    BatchDeploymentDetails as RestBatchDeployment,
+)
+from azure.ai.ml._restclient.v2022_05_01.models import (
+    CodeConfiguration as RestCodeConfiguration,
+)
 from azure.ai.ml._restclient.v2022_05_01.models import IdAssetReference
 from azure.ai.ml._restclient.v2022_05_01.models import BatchOutputAction
 from azure.ai.ml.constants._deployment import BatchDeploymentOutputAction
 from azure.ai.ml.entities._assets import Environment, Model
 from azure.ai.ml.entities import BatchDeployment, Deployment
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+from azure.ai.ml.exceptions import (
+    ErrorCategory,
+    ErrorTarget,
+    ValidationErrorType,
+    ValidationException,
+)
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
 from azure.ai.ml.entities._util import load_from_dict
 from azure.ai.ml._utils._experimental import experimental
-from azure.ai.ml._schema._deployment.batch.model_batch_deployment import ModelBatchDeploymentSchema
+from azure.ai.ml._schema._deployment.batch.model_batch_deployment import (
+    ModelBatchDeploymentSchema,
+)
 from .model_batch_deployment_settings import ModelBatchDeploymentSettings
 from .code_configuration import CodeConfiguration
 
@@ -60,7 +71,9 @@ class ModelBatchDeployment(Deployment):
         resources: Optional[ResourceConfiguration] = None,
         compute: Optional[str] = None,
         code_configuration: Optional[CodeConfiguration] = None,
-        code_path: Optional[Union[str, PathLike]] = None,  # promoted property from code_configuration.code
+        code_path: Optional[
+            Union[str, PathLike]
+        ] = None,  # promoted property from code_configuration.code
         scoring_script: Optional[
             Union[str, PathLike]
         ] = None,  # promoted property from code_configuration.scoring_script
@@ -94,7 +107,9 @@ class ModelBatchDeployment(Deployment):
             logging_level=settings.logging_level,
         )
 
-    def _to_rest_object(self, location: str) -> BatchDeploymentData:  # pylint: disable=arguments-differ
+    def _to_rest_object(
+        self, location: str
+    ) -> BatchDeploymentData:  # pylint: disable=arguments-differ
         self._validate()
         code_config = (
             RestCodeConfiguration(
@@ -116,7 +131,9 @@ class ModelBatchDeployment(Deployment):
                 deployment_settings.output_action
             ),
             error_threshold=deployment_settings.error_threshold,
-            resources=self.resources._to_rest_object() if self.resources else None,  # pylint: disable=protected-access
+            resources=self.resources._to_rest_object()
+            if self.resources
+            else None,  # pylint: disable=protected-access
             retry_settings=deployment_settings.retry_settings._to_rest_object()  # pylint: disable=protected-access
             if deployment_settings.retry_settings
             else None,
@@ -127,7 +144,9 @@ class ModelBatchDeployment(Deployment):
             compute=self.compute,
             properties=self.properties,
         )
-        return BatchDeploymentData(location=location, properties=batch_deployment, tags=self.tags)
+        return BatchDeploymentData(
+            location=location, properties=batch_deployment, tags=self.tags
+        )
 
     @classmethod
     def _load(
@@ -177,7 +196,8 @@ class ModelBatchDeployment(Deployment):
     def _validate_output_action(self) -> None:
         if (
             self.model_deployment_settings.output_action
-            and self.model_deployment_settings.output_action == BatchDeploymentOutputAction.SUMMARY_ONLY
+            and self.model_deployment_settings.output_action
+            == BatchDeploymentOutputAction.SUMMARY_ONLY
             and self.model_deployment_settings.output_file_name
         ):
             msg = "When output_action is set to {}, the output_file_name need not to be specified."
@@ -191,4 +211,6 @@ class ModelBatchDeployment(Deployment):
             )
 
     def _to_dict(self) -> Dict:
-        return ModelBatchDeploymentSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)  # pylint: disable=no-member
+        return ModelBatchDeploymentSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(
+            self
+        )  # pylint: disable=no-member

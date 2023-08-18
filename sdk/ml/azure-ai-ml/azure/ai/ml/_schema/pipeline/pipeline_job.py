@@ -17,7 +17,10 @@ from azure.ai.ml._schema.core.fields import (
     UnionField,
 )
 from azure.ai.ml._schema.job import BaseJobSchema
-from azure.ai.ml._schema.job.input_output_fields_provider import InputsField, OutputsField
+from azure.ai.ml._schema.job.input_output_fields_provider import (
+    InputsField,
+    OutputsField,
+)
 from azure.ai.ml._schema.pipeline.component_job import _resolve_inputs_outputs
 from azure.ai.ml._schema.pipeline.pipeline_component import (
     PipelineComponentFileRefField,
@@ -44,7 +47,9 @@ class PipelineJobSchema(BaseJobSchema):
             # for registry type assets
             RegistryStr(azureml_type=AzureMLResourceType.COMPONENT),
             # existing component
-            ArmVersionedStr(azureml_type=AzureMLResourceType.COMPONENT, allow_default_version=True),
+            ArmVersionedStr(
+                azureml_type=AzureMLResourceType.COMPONENT, allow_default_version=True
+            ),
             # component file reference
             PipelineComponentFileRefField(),
         ],
@@ -64,7 +69,9 @@ class PipelineJobSchema(BaseJobSchema):
 
     @pre_load()
     def check_exclusive_fields(self, data: dict, **kwargs) -> dict:
-        error_msg = "'jobs' and 'component' are mutually exclusive fields in pipeline job."
+        error_msg = (
+            "'jobs' and 'component' are mutually exclusive fields in pipeline job."
+        )
         # When loading from yaml, data["component"] must be a local path (str)
         # Otherwise, data["component"] can be a PipelineComponent so data["jobs"] must exist
         if isinstance(data.get("component"), str) and data.get("jobs"):

@@ -6,7 +6,11 @@
 
 from marshmallow import fields, post_load
 
-from azure.ai.ml._schema.core.fields import NestedField, StringTransformedEnum, UnionField
+from azure.ai.ml._schema.core.fields import (
+    NestedField,
+    StringTransformedEnum,
+    UnionField,
+)
 from azure.ai.ml._schema.core.schema_meta import PatchedSchemaMeta
 from azure.ai.ml._schema.job.input_output_entry import OutputSchema
 from azure.ai.ml.constants import ImportSourceType, JobType
@@ -50,5 +54,8 @@ class ImportJobSchema(BaseJobSchema):
         exclude = ["compute"]  # compute property not applicable to import job
 
     type = StringTransformedEnum(allowed_values=JobType.IMPORT)
-    source = UnionField([NestedField(DatabaseImportSourceSchema), NestedField(FileImportSourceSchema)], required=True)
+    source = UnionField(
+        [NestedField(DatabaseImportSourceSchema), NestedField(FileImportSourceSchema)],
+        required=True,
+    )
     output = NestedField(OutputSchema, required=True)

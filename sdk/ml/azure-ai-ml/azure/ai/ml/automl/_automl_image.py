@@ -14,11 +14,21 @@ from azure.ai.ml._restclient.v2023_04_01_preview.models import (
 )
 from azure.ai.ml.entities._builders.base_node import pipeline_node_decorator
 from azure.ai.ml.entities._inputs_outputs import Input
-from azure.ai.ml.entities._job.automl.image.automl_image_object_detection_base import AutoMLImageObjectDetectionBase
-from azure.ai.ml.entities._job.automl.image.image_classification_job import ImageClassificationJob
-from azure.ai.ml.entities._job.automl.image.image_classification_multilabel_job import ImageClassificationMultilabelJob
-from azure.ai.ml.entities._job.automl.image.image_instance_segmentation_job import ImageInstanceSegmentationJob
-from azure.ai.ml.entities._job.automl.image.image_object_detection_job import ImageObjectDetectionJob
+from azure.ai.ml.entities._job.automl.image.automl_image_object_detection_base import (
+    AutoMLImageObjectDetectionBase,
+)
+from azure.ai.ml.entities._job.automl.image.image_classification_job import (
+    ImageClassificationJob,
+)
+from azure.ai.ml.entities._job.automl.image.image_classification_multilabel_job import (
+    ImageClassificationMultilabelJob,
+)
+from azure.ai.ml.entities._job.automl.image.image_instance_segmentation_job import (
+    ImageInstanceSegmentationJob,
+)
+from azure.ai.ml.entities._job.automl.image.image_object_detection_job import (
+    ImageObjectDetectionJob,
+)
 
 TImageJob = TypeVar("TImageJob", bound=AutoMLImageObjectDetectionBase)
 

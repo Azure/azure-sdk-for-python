@@ -6,8 +6,12 @@
 
 from typing import Dict, Iterable, Optional
 
-from azure.ai.ml._restclient.v2023_06_01_preview import AzureMachineLearningWorkspaces as ServiceClient062023Preview
-from azure.ai.ml._restclient.v2023_06_01_preview.models import ManagedNetworkProvisionOptions
+from azure.ai.ml._restclient.v2023_06_01_preview import (
+    AzureMachineLearningWorkspaces as ServiceClient062023Preview,
+)
+from azure.ai.ml._restclient.v2023_06_01_preview.models import (
+    ManagedNetworkProvisionOptions,
+)
 
 from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope
 
@@ -120,10 +124,14 @@ class WorkspaceOperations(WorkspaceOperationsBase):
         :rtype: ~azure.core.polling.LROPoller[None]
         """
         workspace_name = self._check_workspace_name(name)
-        return self._operation.begin_resync_keys(self._resource_group_name, workspace_name)
+        return self._operation.begin_resync_keys(
+            self._resource_group_name, workspace_name
+        )
 
     @experimental
-    @monitor_with_activity(logger, "Workspace.BeginProvisionNetwork", ActivityType.PUBLICAPI)
+    @monitor_with_activity(
+        logger, "Workspace.BeginProvisionNetwork", ActivityType.PUBLICAPI
+    )
     @distributed_trace
     def begin_provision_network(
         self,
@@ -147,10 +155,14 @@ class WorkspaceOperations(WorkspaceOperationsBase):
             workspace_name,
             ManagedNetworkProvisionOptions(include_spark=include_spark),
             polling=True,
-            cls=lambda response, deserialized, headers: ManagedNetworkProvisionStatus._from_rest_object(deserialized),
+            cls=lambda response, deserialized, headers: ManagedNetworkProvisionStatus._from_rest_object(
+                deserialized
+            ),
             **kwargs,
         )
-        module_logger.info("Provision network request initiated for workspace: %s\n", workspace_name)
+        module_logger.info(
+            "Provision network request initiated for workspace: %s\n", workspace_name
+        )
         return poller
 
     @monitor_with_activity(logger, "Workspace.BeginCreate", ActivityType.PUBLICAPI)
@@ -174,7 +186,9 @@ class WorkspaceOperations(WorkspaceOperationsBase):
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.Workspace]
         """
 
-        return super().begin_create(workspace, update_dependent_resources=update_dependent_resources, **kwargs)
+        return super().begin_create(
+            workspace, update_dependent_resources=update_dependent_resources, **kwargs
+        )
 
     @monitor_with_activity(logger, "Workspace.BeginUpdate", ActivityType.PUBLICAPI)
     @distributed_trace
@@ -185,12 +199,19 @@ class WorkspaceOperations(WorkspaceOperationsBase):
         update_dependent_resources: bool = False,
         **kwargs: Dict,
     ) -> LROPoller[Workspace]:
-        return super().begin_update(workspace, update_dependent_resources=update_dependent_resources, **kwargs)
+        return super().begin_update(
+            workspace, update_dependent_resources=update_dependent_resources, **kwargs
+        )
 
     @monitor_with_activity(logger, "Workspace.BeginDelete", ActivityType.PUBLICAPI)
     @distributed_trace
     def begin_delete(
-        self, name: str, *, delete_dependent_resources: bool, permanently_delete: bool = False, **kwargs: Dict
+        self,
+        name: str,
+        *,
+        delete_dependent_resources: bool,
+        permanently_delete: bool = False,
+        **kwargs: Dict,
     ) -> LROPoller[None]:
         """Delete a workspace.
 
@@ -207,12 +228,17 @@ class WorkspaceOperations(WorkspaceOperationsBase):
         :rtype: ~azure.core.polling.LROPoller[None]
         """
         return super().begin_delete(
-            name, delete_dependent_resources=delete_dependent_resources, permanently_delete=permanently_delete, **kwargs
+            name,
+            delete_dependent_resources=delete_dependent_resources,
+            permanently_delete=permanently_delete,
+            **kwargs,
         )
 
     @distributed_trace
     @monitor_with_activity(logger, "Workspace.BeginDiagnose", ActivityType.PUBLICAPI)
-    def begin_diagnose(self, name: str, **kwargs: Dict) -> LROPoller[DiagnoseResponseResultValue]:
+    def begin_diagnose(
+        self, name: str, **kwargs: Dict
+    ) -> LROPoller[DiagnoseResponseResultValue]:
         """Diagnose workspace setup problems.
 
         If your workspace is not working as expected, you can run this diagnosis to
@@ -226,16 +252,22 @@ class WorkspaceOperations(WorkspaceOperationsBase):
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.DiagnoseResponseResultValue]
         """
         resource_group = kwargs.get("resource_group") or self._resource_group_name
-        parameters = DiagnoseWorkspaceParameters(value=DiagnoseRequestProperties())._to_rest_object()
+        parameters = DiagnoseWorkspaceParameters(
+            value=DiagnoseRequestProperties()
+        )._to_rest_object()
 
         # pylint: disable=unused-argument
         def callback(_, deserialized, args):
-            diagnose_response_result = DiagnoseResponseResult._from_rest_object(deserialized)
+            diagnose_response_result = DiagnoseResponseResult._from_rest_object(
+                deserialized
+            )
             res = None
             if diagnose_response_result:
                 res = diagnose_response_result.value
             return res
 
-        poller = self._operation.begin_diagnose(resource_group, name, parameters, polling=True, cls=callback)
+        poller = self._operation.begin_diagnose(
+            resource_group, name, parameters, polling=True, cls=callback
+        )
         module_logger.info("Diagnose request initiated for workspace: %s\n", name)
         return poller

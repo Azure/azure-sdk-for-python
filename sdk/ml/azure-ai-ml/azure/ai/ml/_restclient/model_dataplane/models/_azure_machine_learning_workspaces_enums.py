@@ -11,7 +11,6 @@ from azure.core import CaseInsensitiveEnumMeta
 
 
 class ComputeEnvironmentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-
     ACS = "ACS"
     FPGA = "FPGA"
     ACI = "ACI"
@@ -27,34 +26,34 @@ class ComputeEnvironmentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     BATCHAMLCOMPUTE = "BATCHAMLCOMPUTE"
     UNKNOWN = "UNKNOWN"
 
-class DeploymentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
+class DeploymentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     GRPC_REALTIME_ENDPOINT = "GRPCRealtimeEndpoint"
     HTTP_REALTIME_ENDPOINT = "HttpRealtimeEndpoint"
     BATCH = "Batch"
 
-class EntityKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
+class EntityKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     INVALID = "Invalid"
     LINEAGE_ROOT = "LineageRoot"
     VERSIONED = "Versioned"
     UNVERSIONED = "Unversioned"
 
-class ListViewType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
+class ListViewType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ACTIVE_ONLY = "ActiveOnly"
     ARCHIVED_ONLY = "ArchivedOnly"
     ALL = "All"
 
-class ModelFormatEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
+class ModelFormatEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CUSTOM = "CUSTOM"
     MLFLOW = "MLFLOW"
     TRITON = "TRITON"
     PRESETS = "PRESETS"
 
-class ModelSchemaDataType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
+class ModelSchemaDataType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     UNDEFINED = "undefined"
     BOOL = "bool"
     UINT8 = "uint8"
@@ -73,15 +72,15 @@ class ModelSchemaDataType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     COMPLEX128 = "complex128"
     STRING = "string"
 
-class OrderString(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
+class OrderString(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CREATED_AT_DESC = "CreatedAtDesc"
     CREATED_AT_ASC = "CreatedAtAsc"
     UPDATED_AT_DESC = "UpdatedAtDesc"
     UPDATED_AT_ASC = "UpdatedAtAsc"
 
-class WebServiceState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
+class WebServiceState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     TRANSITIONING = "Transitioning"
     HEALTHY = "Healthy"
     UNHEALTHY = "Unhealthy"

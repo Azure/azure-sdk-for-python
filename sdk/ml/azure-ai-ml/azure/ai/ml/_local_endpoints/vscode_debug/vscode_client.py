@@ -7,7 +7,9 @@ import binascii
 import re
 
 from azure.ai.ml._local_endpoints.utilities.commandline_utility import run_cli_command
-from azure.ai.ml._local_endpoints.vscode_debug.devcontainer_resolver import DevContainerResolver
+from azure.ai.ml._local_endpoints.vscode_debug.devcontainer_resolver import (
+    DevContainerResolver,
+)
 from azure.ai.ml.exceptions import VSCodeCommandNotFound
 
 
@@ -48,5 +50,7 @@ class VSCodeClient(object):
 
 
 def _encode_hex(path: str):
-    vscode_path = re.sub("\\s+", "", path)  # pylint: disable=specify-parameter-names-in-call
+    vscode_path = re.sub(
+        "\\s+", "", path
+    )  # pylint: disable=specify-parameter-names-in-call
     return binascii.hexlify(vscode_path.encode()).decode("ascii")

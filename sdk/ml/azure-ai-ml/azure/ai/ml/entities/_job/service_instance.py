@@ -48,12 +48,16 @@ class ServiceInstance(RestTranslatableMixin, DictMixin):
 
     @classmethod
     # pylint: disable=arguments-differ
-    def _from_rest_object(cls, obj: ServiceInstanceResult, node_index: int) -> "ServiceInstance":
+    def _from_rest_object(
+        cls, obj: ServiceInstanceResult, node_index: int
+    ) -> "ServiceInstance":
         return cls(
             type=obj.type,
             port=obj.port,
             status=obj.status,
             error=obj.error.error.message if obj.error and obj.error.error else None,
-            endpoint=obj.endpoint.replace("<nodeIndex>", str(node_index)) if obj.endpoint else obj.endpoint,
+            endpoint=obj.endpoint.replace("<nodeIndex>", str(node_index))
+            if obj.endpoint
+            else obj.endpoint,
             properties=obj.properties,
         )
