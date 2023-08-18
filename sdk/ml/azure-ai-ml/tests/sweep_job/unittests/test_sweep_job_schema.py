@@ -162,7 +162,7 @@ class TestSweepJobSchema:
         )
         rest = sweep._to_rest_object()
 
-        if rest.properties.resources:
+        if hasattr(rest.properties, 'resources') and rest.properties.resources:
             if "instance_count" in expected_resources:
                 assert rest.properties.resources.instance_count == expected_resources["instance_count"]
             if "instance_type" in expected_resources:
