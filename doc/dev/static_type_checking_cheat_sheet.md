@@ -9,13 +9,13 @@ This cheat sheet details guidance for typing as it relates to the Python SDK. Us
 - Do not use comment style type hints. Use inline, annotation style.
 
 ```python
+# Yes:
+def create_table(table_name: str) -> Table:
+    ...
+
 # No:
 def create_table(table_name):
     # type: (str) -> Table
-    ...
-
-# Yes:
-def create_table(table_name: str) -> Table:
     ...
 ```
 
@@ -24,30 +24,30 @@ def create_table(table_name: str) -> Table:
 - You should annotate variables if the type in the code is different from expected, provides more value than what is already provided by Python itself, or if the type checker requires it.
 
 ```python
-# No:
-table_name: str = "mytable"  # I can tell it's a string, not necessary
-create_table(table_name)
-
 # Yes:
 table_map: dict[str, Table] = {}  # clarifies what the dictionary expects
 table_map[table_name] = create_table(table_name)
+
+# No:
+table_name: str = "mytable"  # I can tell it's a string, not necessary
+create_table(table_name)
 ```
 
 - You do not need to annotate `self` or `cls`.
 - Do return `None` from a constructor.
 
 ```python
-# No:
-class KeyCredential:
-
-    def __init__(self):
-        ...  # I do not get type checked
-
 # Yes:
 class KeyCredential:
 
     def __init__(self) -> None:
         ...
+
+# No:
+class KeyCredential:
+
+    def __init__(self):
+        ...  # I do not get type checked
 ```
 
 - Do provide type annotations for all public instance variables on a model. Do this by adding class-level type hints
@@ -98,15 +98,14 @@ from typing_extensions import TypedDict
 ```python
 from typing import TYPE_CHECKING
 
-# No:
-if TYPE_CHECKING:
-    from typing import Union, TypeVar, Any
-
-
 # Yes:
 if TYPE_CHECKING:
     from a import b  # avoiding a circular import
     from expensive import c  # avoiding runtime costs
+
+# No:
+if TYPE_CHECKING:
+    from typing import Union, TypeVar, Any
 ```
 
 ### Ignoring type checkers
@@ -188,12 +187,12 @@ def foo(
 - Do specify type parameters for collection types. If not specified, these will be assumed as `Any`.
 
 ```python
-# No:
-def get_entity(entity_id) -> dict:  # seen by type checker as dict[Any, Any]
-    ...
-
 # Yes:
 def get_entity(entity_id: str) -> dict[str, str]:
+    ...
+
+# No:
+def get_entity(entity_id) -> dict:  # seen by type checker as dict[Any, Any]
     ...
 ```
 
@@ -323,16 +322,16 @@ S = TypeVar("S", bound=str)  # limited to str or any subtype of str
 ```python
 from typing import TypeVar, Generic
 
-# No:
-T = TypeVar("T", covariant=True)
-
-class LROPoller(Generic["T"]):
-    ...
-
 # Yes:
 PollingReturnType_co = TypeVar("PollingReturnType_co", covariant=True)
 
 class LROPoller(Generic[PollingReturnType_co]):
+    ...
+
+# No:
+T = TypeVar("T", covariant=True)
+
+class LROPoller(Generic["T"]):
     ...
 ```
 
