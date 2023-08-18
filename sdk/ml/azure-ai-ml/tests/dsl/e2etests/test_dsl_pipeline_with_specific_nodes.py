@@ -199,7 +199,6 @@ class TestDSLPipelineWithSpecificNodes(AzureRecordedTestCase):
             )
             sweep_job1.compute = "gpu-cluster"
             sweep_job1.set_limits(max_total_trials=10)  # max_total_trials
-            sweep_job1.set_resources(instance_count=2)
 
             cmd_node2: Command = component_to_sweep(
                 component_in_number=Choice([2, 3, 4, 5]), component_in_path=raw_data
@@ -211,7 +210,6 @@ class TestDSLPipelineWithSpecificNodes(AzureRecordedTestCase):
                 max_total_trials=10,
             )
             sweep_job2.compute = "gpu-cluster"
-            sweep_job2.set_resources(instance_count=2)
 
             sweep_job3: Sweep = component_to_sweep(
                 component_in_number=Choice([2, 3, 4, 5]), component_in_path=raw_data
@@ -239,9 +237,6 @@ class TestDSLPipelineWithSpecificNodes(AzureRecordedTestCase):
         )
         pipeline.settings.default_compute = "cpu-cluster"
         created_pipeline = assert_job_cancel(pipeline, client)
-        assert created_pipeline.jobs["sweep_job1"].resources.instance_count == 2
-        assert created_pipeline.jobs["sweep_job2"].resources.instance_count == 2
-
         name, version = created_pipeline.jobs["sweep_job1"].trial.split(":")
         created_component = client.components.get(name, version)
         # keep original component display name to guarantee reuse

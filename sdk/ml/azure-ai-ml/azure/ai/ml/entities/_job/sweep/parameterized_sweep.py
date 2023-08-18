@@ -125,11 +125,11 @@ class ParameterizedSweep:
         return self._limits
 
     @resources.setter
-    def resources(self, value: Union[dict, JobResourceConfiguration]):
+    def resources(self, value: Union[dict, JobResourceConfiguration]) -> None:
         """Set Resources for sweep job.
 
-        :param resources: Compute Resource configuration for the job.
-        :type resources: ~azure.ai.ml.entities.ResourceConfiguration
+        :param value: Compute Resource configuration for the job.
+        :type value: ~azure.ai.ml.entities.ResourceConfiguration
         """
         if isinstance(value, dict):
             value = JobResourceConfiguration(**value)
