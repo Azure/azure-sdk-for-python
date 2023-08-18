@@ -50,7 +50,7 @@ from azure.core.pipeline.policies import (
     SansIOHTTPPolicy,
     SensitiveHeaderCleanupPolicy,
 )
-from azure.core.pipeline.transport._base import PipelineClientBase
+from azure.core.pipeline.transport._base import PipelineClientBase, _format_url_section
 from azure.core.pipeline.transport import (
     HttpTransport,
     RequestsTransport,
@@ -206,16 +206,14 @@ def test_format_url_double_query():
 
 def test_format_url_braces_with_dot():
     base_url = "https://bing.com/{aaa.bbb}"
-    client = PipelineClientBase(base_url)
-    request = client._request("GET", base_url, None, None, None, None, None)
-    assert request
+    url = _format_url_section(base_url)
+    assert url
 
 
 def test_format_url_single_brace():
     base_url = "https://bing.com/{aaa.bbb"
-    client = PipelineClientBase(base_url)
-    request = client._request("GET", base_url, None, None, None, None, None)
-    assert request
+    url = _format_url_section(base_url)
+    assert url
 
 
 def test_format_incorrect_endpoint():
