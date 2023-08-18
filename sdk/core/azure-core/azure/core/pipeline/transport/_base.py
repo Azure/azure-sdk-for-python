@@ -30,7 +30,7 @@ import json
 import logging
 import time
 import copy
-from urllib.parse import urlparse, quote
+from urllib.parse import urlparse
 import xml.etree.ElementTree as ET
 
 from typing import (
@@ -591,8 +591,7 @@ class PipelineClientBase:
         :return: An HttpRequest object
         :rtype: ~azure.core.pipeline.transport.HttpRequest
         """
-        encoded_url = url.replace("{", quote("{")).replace("}", quote("}"))
-        request = HttpRequest(method, self.format_url(encoded_url))
+        request = HttpRequest(method, self.format_url(url))
 
         if params:
             request.format_parameters(params)
@@ -623,7 +622,7 @@ class PipelineClientBase:
 
         return request
 
-    def format_url(self, url_template: str, **kwargs: Any) -> str:
+    def format_url(self, url_template: str, **kwargs) -> str:
         """Format request URL with the client base URL, unless the
         supplied URL is already absolute.
 
@@ -817,7 +816,7 @@ class PipelineClientBase:
         return request
 
     def options(
-        self, url: str, params: Optional[Dict[str, str]] = None, headers: Optional[Dict[str, str]] = None, **kwargs: Any
+        self, url: str, params: Optional[Dict[str, str]] = None, headers: Optional[Dict[str, str]] = None, **kwargs
     ) -> HttpRequest:
         """Create a OPTIONS request object.
 
