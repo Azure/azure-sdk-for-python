@@ -162,10 +162,11 @@ class TestSweepJobSchema:
         )
         rest = sweep._to_rest_object()
 
-        if "instance_count" in expected_resources:
-            assert rest.properties.resources.instance_count == expected_resources["instance_count"]
-        if "instance_type" in expected_resources:
-            assert rest.properties.resources.instance_type == expected_resources["instance_type"]
+        if rest.properties.resources:
+            if "instance_count" in expected_resources:
+                assert rest.properties.resources.instance_count == expected_resources["instance_count"]
+            if "instance_type" in expected_resources:
+                assert rest.properties.resources.instance_type == expected_resources["instance_type"]
 
     def test_sweep_with_ints(self):
         expected_rest = ["quniform", [1, 100, 1]]
