@@ -106,7 +106,7 @@ class Resource(abc.ABC):
         return self._base_path
 
     @abc.abstractmethod
-    def dump(self, dest: Union[str, PathLike, IO[AnyStr]]) -> None:
+    def dump(self, dest: Union[str, PathLike, IO[AnyStr]], **kwargs) -> None:
         """Dump the object content into a file.
 
         :param dest: The local path or file stream to write the YAML content to.
@@ -136,6 +136,7 @@ class Resource(abc.ABC):
         data: Optional[Dict] = None,
         yaml_path: Optional[Union[PathLike, str]] = None,
         params_override: Optional[list] = None,
+        **kwargs,
     ) -> "Resource":
         """Construct a resource object from a file. @classmethod.
 
@@ -154,9 +155,7 @@ class Resource(abc.ABC):
         """
 
     # pylint: disable:unused-argument
-    def _get_arm_resource(
-        self,
-    ) -> Dict:
+    def _get_arm_resource(self, **kwargs) -> Dict:
         """Get arm resource.
 
         :keyword kwargs: A dictionary of additional configuration parameters.
