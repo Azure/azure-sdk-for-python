@@ -29,10 +29,10 @@ from azure.monitor.opentelemetry._constants import (
     SAMPLING_RATIO_ARG,
 )
 from azure.monitor.opentelemetry._types import ConfigurationValue
-from azure.monitor.opentelemetry._vendor.v0_39b0.opentelemetry.instrumentation.dependencies import (
+from azure.monitor.opentelemetry._vendor.v0_40b0.opentelemetry.instrumentation.dependencies import (
     get_dependency_conflicts,
 )
-from azure.monitor.opentelemetry._vendor.v0_39b0.opentelemetry.instrumentation.instrumentor import (
+from azure.monitor.opentelemetry._vendor.v0_40b0.opentelemetry.instrumentation.instrumentor import (
     BaseInstrumentor,
 )
 from azure.monitor.opentelemetry.exporter import (  # pylint: disable=import-error
@@ -53,7 +53,7 @@ _SUPPORTED_INSTRUMENTED_LIBRARIES_DEPENDENCIES_MAP = {
     "psycopg2": ("psycopg2 >= 2.7.3.1",),
     "requests": ("requests ~= 2.0",),
     "urllib": tuple(),
-    "urllib3": ("urllib3 >= 1.0.0, < 2.0.0",),
+    "urllib3": ("urllib3 >= 1.0.0, < 3.0.0",),
 }
 
 

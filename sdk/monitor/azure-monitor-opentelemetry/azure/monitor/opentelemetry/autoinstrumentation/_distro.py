@@ -17,7 +17,7 @@ from opentelemetry.sdk.environment_variables import (
 
 from azure.core.settings import settings
 from azure.core.tracing.ext.opentelemetry_span import OpenTelemetrySpan
-from azure.monitor.opentelemetry._vendor.v0_39b0.opentelemetry.instrumentation.distro import (
+from azure.monitor.opentelemetry._vendor.v0_40b0.opentelemetry.instrumentation.distro import (
     BaseDistro,
 )
 from azure.monitor.opentelemetry.diagnostics._diagnostic_logging import (

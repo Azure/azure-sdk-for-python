@@ -101,13 +101,13 @@ setup(
             "azure_monitor_opentelemetry_configurator = azure.monitor.opentelemetry.autoinstrumentation._configurator:AzureMonitorConfigurator"
         ],
         "azure_monitor_opentelemetry_instrumentor": [
-            "django = azure.monitor.opentelemetry._vendor.v0_39b0.opentelemetry.instrumentation.django:DjangoInstrumentor",
-            "fastapi = azure.monitor.opentelemetry._vendor.v0_39b0.opentelemetry.instrumentation.fastapi:FastAPIInstrumentor",
-            "flask = azure.monitor.opentelemetry._vendor.v0_39b0.opentelemetry.instrumentation.flask:FlaskInstrumentor",
-            "psycopg2 = azure.monitor.opentelemetry._vendor.v0_39b0.opentelemetry.instrumentation.psycopg2:Psycopg2Instrumentor",
-            "requests = azure.monitor.opentelemetry._vendor.v0_39b0.opentelemetry.instrumentation.requests:RequestsInstrumentor",
-            "urllib = azure.monitor.opentelemetry._vendor.v0_39b0.opentelemetry.instrumentation.urllib:URLLibInstrumentor",
-            "urllib3 = azure.monitor.opentelemetry._vendor.v0_39b0.opentelemetry.instrumentation.urllib3:URLLib3Instrumentor",
+            "django = azure.monitor.opentelemetry._vendor.v0_40b0.opentelemetry.instrumentation.django:DjangoInstrumentor",
+            "fastapi = azure.monitor.opentelemetry._vendor.v0_40b0.opentelemetry.instrumentation.fastapi:FastAPIInstrumentor",
+            "flask = azure.monitor.opentelemetry._vendor.v0_40b0.opentelemetry.instrumentation.flask:FlaskInstrumentor",
+            "psycopg2 = azure.monitor.opentelemetry._vendor.v0_40b0.opentelemetry.instrumentation.psycopg2:Psycopg2Instrumentor",
+            "requests = azure.monitor.opentelemetry._vendor.v0_40b0.opentelemetry.instrumentation.requests:RequestsInstrumentor",
+            "urllib = azure.monitor.opentelemetry._vendor.v0_40b0.opentelemetry.instrumentation.urllib:URLLibInstrumentor",
+            "urllib3 = azure.monitor.opentelemetry._vendor.v0_40b0.opentelemetry.instrumentation.urllib3:URLLib3Instrumentor",
         ],
     },
 )
