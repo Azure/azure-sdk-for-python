@@ -400,6 +400,7 @@ class CallConnectionClient:
         *,
         loop: bool = False,
         operation_context: Optional[str] = None,
+        callback_url: Optional[str] = None,
         **kwargs
     ) -> None:
         """Play media to specific participant(s) in this call.
@@ -418,6 +419,8 @@ class CallConnectionClient:
         :paramtype loop: bool
         :keyword operation_context: Value that can be used to track this call and its associated events.
         :paramtype operation_context: str or None
+        :keyword callback_url: Url that overrides original callback URI for this request.
+        :paramtype callback_url: str
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -435,6 +438,7 @@ class CallConnectionClient:
             play_to=audience,
             play_options=PlayOptions(loop=loop),
             operation_context=operation_context,
+            callback_uri=callback_url,
             **kwargs
         )
         self._call_media_client.play(self._call_connection_id, play_request)
@@ -446,6 +450,7 @@ class CallConnectionClient:
         *,
         loop: bool = False,
         operation_context: Optional[str] = None,
+        callback_url: Optional[str] = None,
         **kwargs
     ) -> None:
         """Play media to all participants in this call.
@@ -457,6 +462,8 @@ class CallConnectionClient:
         :paramtype loop: bool
         :keyword operation_context: Value that can be used to track this call and its associated events.
         :paramtype operation_context: str or None
+        :keyword callback_url: Url that overrides original callback URI for this request.
+        :paramtype callback_url: str
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -469,6 +476,7 @@ class CallConnectionClient:
             play_source=play_source,
             loop=loop,
             operation_context=operation_context,
+            callback_url=callback_url,
             **kwargs
     )
 
@@ -489,6 +497,7 @@ class CallConnectionClient:
         choices: Optional[List["Choice"]] = None,
         end_silence_timeout_in_ms: Optional[int] = None,
         speech_recognition_model_endpoint_id: Optional[str] = None,
+        callback_url: Optional[str] = None,
         **kwargs
     ) -> None:
         """Recognize tones from specific participant in this call.
@@ -522,6 +531,8 @@ class CallConnectionClient:
         :keyword speech_recognition_model_endpoint_id:
         Endpoint id where the custom speech recognition model was deployed.
         :paramtype speech_recognition_model_endpoint_id:
+        :keyword callback_url: Url that overrides original callback URI for this request.
+        :paramtype callback_url: str
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -570,6 +581,7 @@ class CallConnectionClient:
             interrupt_call_media_operation=interrupt_call_media_operation,
             operation_context=operation_context,
             recognize_options=options,
+            callback_uri=callback_url
         )
         self._call_media_client.recognize(
             self._call_connection_id,
@@ -621,6 +633,7 @@ class CallConnectionClient:
         target_participant: 'CommunicationIdentifier',
         *,
         operation_context: Optional[str] = None,
+        callback_url: Optional[str] = None,
         **kwargs
     ) -> None:
         """Stop continuous Dtmf recognition by unsubscribing to tones.
@@ -629,13 +642,16 @@ class CallConnectionClient:
         :type target_participant: ~azure.communication.callautomation.CommunicationIdentifier
         :keyword operation_context: The value to identify context of the operation.
         :paramtype operation_context: str
+        :keyword callback_url: Url that overrides original callback URI for this request.
+        :paramtype callback_url: str
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         continuous_dtmf_recognition_request = ContinuousDtmfRecognitionRequest(
             target_participant=serialize_identifier(target_participant),
-            operation_context=operation_context
+            operation_context=operation_context,
+            callback_uri=callback_url
         )
         self._call_media_client.stop_continuous_dtmf_recognition(
             self._call_connection_id,
@@ -650,6 +666,7 @@ class CallConnectionClient:
         target_participant: 'CommunicationIdentifier',
         *,
         operation_context: Optional[str] = None,
+        callback_url: Optional[str] = None,
         **kwargs
     ) -> None:
         """Send Dtmf tones to this call.
@@ -660,6 +677,8 @@ class CallConnectionClient:
         :type target_participant: ~azure.communication.callautomation.CommunicationIdentifier
         :keyword operation_context: The value to identify context of the operation.
         :paramtype operation_context: str
+        :keyword callback_url: Url that overrides original callback URI for this request.
+        :paramtype callback_url: str
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -667,7 +686,8 @@ class CallConnectionClient:
         send_dtmf_request = SendDtmfRequest(
             tones=tones,
             target_participant=serialize_identifier(target_participant),
-            operation_context=operation_context
+            operation_context=operation_context,
+            callback_uri=callback_url
         )
         self._call_media_client.send_dtmf(
             self._call_connection_id,
