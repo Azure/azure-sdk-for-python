@@ -762,9 +762,8 @@ def test_multipart_receive_with_one_changeset(http_request, mock_response):
 @pytest.mark.parametrize("http_request,mock_response", request_and_responses_product(MOCK_RESPONSES))
 def test_multipart_receive_with_empty_changeset(http_request, mock_response):
 
-    changeset = http_request(None, None)
+    changeset = http_request("POST", "https://emptyurl.com")
     changeset.set_multipart_mixed()
-
     request = http_request("POST", "http://account.blob.core.windows.net/?comp=batch")
     request.set_multipart_mixed(changeset)
 
@@ -788,14 +787,107 @@ def test_multipart_receive_with_empty_changeset(http_request, mock_response):
     response = mock_response(
         request, body_as_bytes, "multipart/mixed; boundary=batchresponse_b1e4a276-83db-40e9-b21f-f5bc7f7f905f"
     )
-
     parts = []
     for part in response.parts():
         parts.append(part)
     assert len(parts) == 1
-
     res0 = parts[0]
     assert res0.status_code == 400
+    assert res0.reason == "Bad Request"
+    assert "DataServiceVersion" in res0.headers
+    assert res0.request.method == "POST"
+    assert res0.request.url == "https://emptyurl.com"
+
+    # Test against all HTTP verbs to see if http.client.HttpResponse has any concerns.
+    changeset = http_request("PUT", None)
+    changeset.set_multipart_mixed()
+    request = http_request("POST", "http://account.blob.core.windows.net/?comp=batch")
+    request.set_multipart_mixed(changeset)
+    response = mock_response(
+        request, body_as_bytes, "multipart/mixed; boundary=batchresponse_b1e4a276-83db-40e9-b21f-f5bc7f7f905f"
+    )
+    parts = []
+    for part in response.parts():
+        parts.append(part)
+    assert len(parts) == 1
+    res0 = parts[0]
+    assert res0.status_code == 400
+    assert res0.reason == "Bad Request"
+    assert "DataServiceVersion" in res0.headers
+    assert res0.request.method == "PUT"
+    assert res0.request.url == None
+
+    changeset = http_request("GET", None)
+    changeset.set_multipart_mixed()
+    request = http_request("POST", "http://account.blob.core.windows.net/?comp=batch")
+    request.set_multipart_mixed(changeset)
+    response = mock_response(
+        request, body_as_bytes, "multipart/mixed; boundary=batchresponse_b1e4a276-83db-40e9-b21f-f5bc7f7f905f"
+    )
+    parts = []
+    for part in response.parts():
+        parts.append(part)
+    assert len(parts) == 1
+    res0 = parts[0]
+    assert res0.status_code == 400
+    assert res0.reason == "Bad Request"
+    assert "DataServiceVersion" in res0.headers
+    assert res0.request.method == "GET"
+    assert res0.request.url == None
+
+    changeset = http_request("PATCH", None)
+    changeset.set_multipart_mixed()
+    request = http_request("POST", "http://account.blob.core.windows.net/?comp=batch")
+    request.set_multipart_mixed(changeset)
+    response = mock_response(
+        request, body_as_bytes, "multipart/mixed; boundary=batchresponse_b1e4a276-83db-40e9-b21f-f5bc7f7f905f"
+    )
+    parts = []
+    for part in response.parts():
+        parts.append(part)
+    assert len(parts) == 1
+    res0 = parts[0]
+    assert res0.status_code == 400
+    assert res0.reason == "Bad Request"
+    assert "DataServiceVersion" in res0.headers
+    assert res0.request.method == "PATCH"
+    assert res0.request.url == None
+
+    changeset = http_request("DELETE", None)
+    changeset.set_multipart_mixed()
+    request = http_request("POST", "http://account.blob.core.windows.net/?comp=batch")
+    request.set_multipart_mixed(changeset)
+    response = mock_response(
+        request, body_as_bytes, "multipart/mixed; boundary=batchresponse_b1e4a276-83db-40e9-b21f-f5bc7f7f905f"
+    )
+    parts = []
+    for part in response.parts():
+        parts.append(part)
+    assert len(parts) == 1
+    res0 = parts[0]
+    assert res0.status_code == 400
+    assert res0.reason == "Bad Request"
+    assert "DataServiceVersion" in res0.headers
+    assert res0.request.method == "DELETE"
+    assert res0.request.url == None
+
+    changeset = http_request("HEAD", None)
+    changeset.set_multipart_mixed()
+    request = http_request("POST", "http://account.blob.core.windows.net/?comp=batch")
+    request.set_multipart_mixed(changeset)
+    response = mock_response(
+        request, body_as_bytes, "multipart/mixed; boundary=batchresponse_b1e4a276-83db-40e9-b21f-f5bc7f7f905f"
+    )
+    parts = []
+    for part in response.parts():
+        parts.append(part)
+    assert len(parts) == 1
+    res0 = parts[0]
+    assert res0.status_code == 400
+    assert res0.reason == "Bad Request"
+    assert "DataServiceVersion" in res0.headers
+    assert res0.request.method == "HEAD"
+    assert res0.request.url == None
 
 @pytest.mark.parametrize("http_request,mock_response", request_and_responses_product(MOCK_RESPONSES))
 def test_multipart_receive_with_multiple_changesets(http_request, mock_response):
