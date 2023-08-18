@@ -6,6 +6,8 @@
 
 - Unpin OTel SDK/API version
     ([#310](https://github.com/microsoft/ApplicationInsights-Python/pull/310))
+- Update vendored instrumentations to 0.40b0
+    ([#31719](https://github.com/Azure/azure-sdk-for-python/pull/31719))
 
 ### Breaking Changes
 
