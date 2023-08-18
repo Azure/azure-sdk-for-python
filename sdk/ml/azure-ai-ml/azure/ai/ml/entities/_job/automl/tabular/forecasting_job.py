@@ -6,21 +6,40 @@
 
 from typing import Dict, List, Optional, Union
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import AutoMLJob as RestAutoMLJob
-from azure.ai.ml._restclient.v2023_04_01_preview.models import Forecasting as RestForecasting
-from azure.ai.ml._restclient.v2023_04_01_preview.models import ForecastingPrimaryMetrics, JobBase, TaskType
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    AutoMLJob as RestAutoMLJob,
+)
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    Forecasting as RestForecasting,
+)
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    ForecastingPrimaryMetrics,
+    JobBase,
+    TaskType,
+)
 from azure.ai.ml._utils.utils import camel_to_snake, is_data_binding_expression
 from azure.ai.ml.constants import TabularTrainingMode
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 from azure.ai.ml.constants._job.automl import AutoMLConstants
 from azure.ai.ml.entities._credentials import _BaseJobIdentityConfiguration
-from azure.ai.ml.entities._job._input_output_helpers import from_rest_data_outputs, to_rest_data_outputs
-from azure.ai.ml.entities._job.automl.stack_ensemble_settings import StackEnsembleSettings
+from azure.ai.ml.entities._job._input_output_helpers import (
+    from_rest_data_outputs,
+    to_rest_data_outputs,
+)
+from azure.ai.ml.entities._job.automl.stack_ensemble_settings import (
+    StackEnsembleSettings,
+)
 from azure.ai.ml.entities._job.automl.tabular.automl_tabular import AutoMLTabular
-from azure.ai.ml.entities._job.automl.tabular.featurization_settings import TabularFeaturizationSettings
-from azure.ai.ml.entities._job.automl.tabular.forecasting_settings import ForecastingSettings
+from azure.ai.ml.entities._job.automl.tabular.featurization_settings import (
+    TabularFeaturizationSettings,
+)
+from azure.ai.ml.entities._job.automl.tabular.forecasting_settings import (
+    ForecastingSettings,
+)
 from azure.ai.ml.entities._job.automl.tabular.limit_settings import TabularLimitSettings
-from azure.ai.ml.entities._job.automl.training_settings import ForecastingTrainingSettings
+from azure.ai.ml.entities._job.automl.training_settings import (
+    ForecastingTrainingSettings,
+)
 from azure.ai.ml.entities._util import load_from_dict
 
 
@@ -31,13 +50,15 @@ class ForecastingJob(AutoMLTabular):
     :param primary_metric: The primary metric to use for model selection.
     :type primary_metric: Optional[str]
     :param forecasting_settings: The settings for the forecasting task.
-    :type forecasting_settings: 
+    :type forecasting_settings:
         Optional[~azure.ai.ml.entities._job.automl.tabular.forecasting_settings.ForecastingSettings]
     :param kwargs: Job-specific arguments
     :type kwargs: Dict[str, Any]
     """
 
-    _DEFAULT_PRIMARY_METRIC = ForecastingPrimaryMetrics.NORMALIZED_ROOT_MEAN_SQUARED_ERROR
+    _DEFAULT_PRIMARY_METRIC = (
+        ForecastingPrimaryMetrics.NORMALIZED_ROOT_MEAN_SQUARED_ERROR
+    )
 
     def __init__(
         self,
@@ -79,7 +100,7 @@ class ForecastingJob(AutoMLTabular):
         Set the primary metric to use for model selection.
 
         :param value: The primary metric for model selection.
-        :rtype: Optional[str]
+        :type: Union[str, ForecastingPrimaryMetrics]
         """
         if is_data_binding_expression(str(value), ["parent"]):
             self._primary_metric = value
@@ -141,7 +162,7 @@ class ForecastingJob(AutoMLTabular):
             should predict out. When task type is forecasting, this parameter is required. For more information on
             setting forecasting parameters, see `Auto-train a time-series forecast model <https://docs.microsoft.com/
             azure/machine-learning/how-to-auto-train-forecast>`_.
-        :type forecast_horizon: Optional[Union[str, int]]
+        :type forecast_horizon: Optional[Union[int, str]]
         :keyword time_series_id_column_names:
             The names of columns used to group a time series.
             It can be used to create multiple series. If time series id column names is not defined or
@@ -190,7 +211,7 @@ class ForecastingJob(AutoMLTabular):
             when you only want to consider a certain amount of history when training the model.
             If set to 'auto', rolling window will be estimated as the last
             value where the PACF is more then the significance threshold. Please see target_lags section for details.
-        :paramtype target_rolling_window_size: Optional[Union[int, str]]
+        :paramtype target_rolling_window_size: Optional[Union[str, int]]
         :keyword country_or_region_for_holidays: The country/region used to generate holiday features.
             These should be ISO 3166 two-letter country/region codes, for example 'US' or 'GB'.
         :paramtype country_or_region_for_holidays: Optional[str]
@@ -316,7 +337,10 @@ class ForecastingJob(AutoMLTabular):
             three days apart.
         :paramtype cv_step_size: Optional[int]
         :keyword features_unknown_at_forecast_time:
-            The column of features/regressors that are available at training time but unknown at forecast time.
+            The feature columns that are available for training but unknown at the time of forecast/inference.
+            If features_unknown_at_forecast_time is set to an empty list, it is assumed that
+            all the feature columns in the dataset are known at inference time. If this parameter is not set
+            the support for future features is not enabled.
         :paramtype features_unknown_at_forecast_time: Optional[Union[str, List[str]]]
         """
         self._forecasting_settings = self._forecasting_settings or ForecastingSettings()
@@ -327,13 +351,19 @@ class ForecastingJob(AutoMLTabular):
             else self._forecasting_settings.country_or_region_for_holidays
         )
         self._forecasting_settings.cv_step_size = (
-            cv_step_size if cv_step_size is not None else self._forecasting_settings.cv_step_size
+            cv_step_size
+            if cv_step_size is not None
+            else self._forecasting_settings.cv_step_size
         )
         self._forecasting_settings.forecast_horizon = (
-            forecast_horizon if forecast_horizon is not None else self._forecasting_settings.forecast_horizon
+            forecast_horizon
+            if forecast_horizon is not None
+            else self._forecasting_settings.forecast_horizon
         )
         self._forecasting_settings.target_lags = (
-            target_lags if target_lags is not None else self._forecasting_settings.target_lags
+            target_lags
+            if target_lags is not None
+            else self._forecasting_settings.target_lags
         )
         self._forecasting_settings.target_rolling_window_size = (
             target_rolling_window_size
@@ -344,12 +374,18 @@ class ForecastingJob(AutoMLTabular):
             frequency if frequency is not None else self._forecasting_settings.frequency
         )
         self._forecasting_settings.feature_lags = (
-            feature_lags if feature_lags is not None else self._forecasting_settings.feature_lags
+            feature_lags
+            if feature_lags is not None
+            else self._forecasting_settings.feature_lags
         )
         self._forecasting_settings.seasonality = (
-            seasonality if seasonality is not None else self._forecasting_settings.seasonality
+            seasonality
+            if seasonality is not None
+            else self._forecasting_settings.seasonality
         )
-        self._forecasting_settings.use_stl = use_stl if use_stl is not None else self._forecasting_settings.use_stl
+        self._forecasting_settings.use_stl = (
+            use_stl if use_stl is not None else self._forecasting_settings.use_stl
+        )
         self._forecasting_settings.short_series_handling_config = (
             short_series_handling_config
             if short_series_handling_config is not None
@@ -361,7 +397,9 @@ class ForecastingJob(AutoMLTabular):
             else self._forecasting_settings.target_aggregate_function
         )
         self._forecasting_settings.time_column_name = (
-            time_column_name if time_column_name is not None else self._forecasting_settings.time_column_name
+            time_column_name
+            if time_column_name is not None
+            else self._forecasting_settings.time_column_name
         )
         self._forecasting_settings.time_series_id_column_names = (
             time_series_id_column_names
@@ -479,9 +517,13 @@ class ForecastingJob(AutoMLTabular):
             n_cross_validations=self.n_cross_validations,
             test_data=self.test_data,
             test_data_size=self.test_data_size,
-            featurization_settings=self._featurization._to_rest_object() if self._featurization else None,
+            featurization_settings=self._featurization._to_rest_object()
+            if self._featurization
+            else None,
             limit_settings=self._limits._to_rest_object() if self._limits else None,
-            training_settings=self._training._to_rest_object() if self._training else None,
+            training_settings=self._training._to_rest_object()
+            if self._training
+            else None,
             primary_metric=self.primary_metric,
             log_verbosity=self.log_verbosity,
             forecasting_settings=self._forecasting_settings._to_rest_object(),
@@ -530,7 +572,9 @@ class ForecastingJob(AutoMLTabular):
             "compute": properties.compute_id,
             "outputs": from_rest_data_outputs(properties.outputs),
             "resources": properties.resources,
-            "identity": _BaseJobIdentityConfiguration._from_rest_object(properties.identity)
+            "identity": _BaseJobIdentityConfiguration._from_rest_object(
+                properties.identity
+            )
             if properties.identity
             else None,
             "queue_settings": properties.queue_settings,
@@ -546,17 +590,23 @@ class ForecastingJob(AutoMLTabular):
             n_cross_validations=task_details.n_cross_validations,
             test_data=task_details.test_data,
             test_data_size=task_details.test_data_size,
-            featurization=TabularFeaturizationSettings._from_rest_object(task_details.featurization_settings)
+            featurization=TabularFeaturizationSettings._from_rest_object(
+                task_details.featurization_settings
+            )
             if task_details.featurization_settings
             else None,
             limits=TabularLimitSettings._from_rest_object(task_details.limit_settings)
             if task_details.limit_settings
             else None,
-            training=ForecastingTrainingSettings._from_rest_object(task_details.training_settings)
+            training=ForecastingTrainingSettings._from_rest_object(
+                task_details.training_settings
+            )
             if task_details.training_settings
             else None,
             primary_metric=task_details.primary_metric,
-            forecasting_settings=ForecastingSettings._from_rest_object(task_details.forecasting_settings)
+            forecasting_settings=ForecastingSettings._from_rest_object(
+                task_details.forecasting_settings
+            )
             if task_details.forecasting_settings
             else None,
             log_verbosity=task_details.log_verbosity,
@@ -576,13 +626,19 @@ class ForecastingJob(AutoMLTabular):
         additional_message: str,
         **kwargs,
     ) -> "ForecastingJob":
-        from azure.ai.ml._schema.automl.table_vertical.forecasting import AutoMLForecastingSchema
+        from azure.ai.ml._schema.automl.table_vertical.forecasting import (
+            AutoMLForecastingSchema,
+        )
         from azure.ai.ml._schema.pipeline.automl_node import AutoMLForecastingNodeSchema
 
         if kwargs.pop("inside_pipeline", False):
-            loaded_data = load_from_dict(AutoMLForecastingNodeSchema, data, context, additional_message, **kwargs)
+            loaded_data = load_from_dict(
+                AutoMLForecastingNodeSchema, data, context, additional_message, **kwargs
+            )
         else:
-            loaded_data = load_from_dict(AutoMLForecastingSchema, data, context, additional_message, **kwargs)
+            loaded_data = load_from_dict(
+                AutoMLForecastingSchema, data, context, additional_message, **kwargs
+            )
         job_instance = cls._create_instance_from_schema_dict(loaded_data)
         return job_instance
 
@@ -604,14 +660,22 @@ class ForecastingJob(AutoMLTabular):
         job.set_data(**data_settings)
         return job
 
-    def _to_dict(self, inside_pipeline=False) -> Dict:  # pylint: disable=arguments-differ
-        from azure.ai.ml._schema.automl.table_vertical.forecasting import AutoMLForecastingSchema
+    def _to_dict(
+        self, inside_pipeline=False
+    ) -> Dict:  # pylint: disable=arguments-differ
+        from azure.ai.ml._schema.automl.table_vertical.forecasting import (
+            AutoMLForecastingSchema,
+        )
         from azure.ai.ml._schema.pipeline.automl_node import AutoMLForecastingNodeSchema
 
         if inside_pipeline:
-            schema_dict = AutoMLForecastingNodeSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+            schema_dict = AutoMLForecastingNodeSchema(
+                context={BASE_PATH_CONTEXT_KEY: "./"}
+            ).dump(self)
         else:
-            schema_dict = AutoMLForecastingSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+            schema_dict = AutoMLForecastingSchema(
+                context={BASE_PATH_CONTEXT_KEY: "./"}
+            ).dump(self)
         return schema_dict
 
     def __eq__(self, other):
@@ -621,7 +685,10 @@ class ForecastingJob(AutoMLTabular):
         if not super(ForecastingJob, self).__eq__(other):
             return False
 
-        return self.primary_metric == other.primary_metric and self._forecasting_settings == other._forecasting_settings
+        return (
+            self.primary_metric == other.primary_metric
+            and self._forecasting_settings == other._forecasting_settings
+        )
 
     def __ne__(self, other):
         return not self.__eq__(other)

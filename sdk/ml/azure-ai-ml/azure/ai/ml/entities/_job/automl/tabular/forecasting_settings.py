@@ -17,7 +17,9 @@ from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     CustomTargetRollingWindowSize,
     ForecastHorizonMode,
 )
-from azure.ai.ml._restclient.v2023_04_01_preview.models import ForecastingSettings as RestForecastingSettings
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    ForecastingSettings as RestForecastingSettings,
+)
 from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     SeasonalityMode,
     TargetLagsMode,
@@ -31,7 +33,7 @@ class ForecastingSettings(RestTranslatableMixin):
 
     :param country_or_region_for_holidays: The country/region used to generate holiday features. These should be ISO
         3166 two-letter country/region code, for example 'US' or 'GB'.
-    :type country_or_region_for_holidays: str
+    :type country_or_region_for_holidays: Optional[str]
     :param cv_step_size:
         Number of periods between the origin_time of one CV fold and the next fold. For
         example, if `n_step` = 3 for daily data, the origin time for each fold will be
@@ -44,7 +46,7 @@ class ForecastingSettings(RestTranslatableMixin):
         should predict out. When task type is forecasting, this parameter is required. For more information on
         setting forecasting parameters, see `Auto-train a time-series forecast model <https://docs.microsoft.com/
         azure/machine-learning/how-to-auto-train-forecast>`_.
-    :type forecast_horizon: Optional[Union[str, int]]
+    :type forecast_horizon: Optional[Union[int, str]]
     :param target_lags:
         The number of past periods to lag from the target column. By default the lags are turned off.
 
@@ -102,7 +104,7 @@ class ForecastingSettings(RestTranslatableMixin):
     :param seasonality: Set time series seasonality as an integer multiple of the series frequency.
                 If seasonality is set to 'auto', it will be inferred.
                 If set to None, the time series is assumed non-seasonal which is equivalent to seasonality=1.
-    :type seasonality: Optional[Union[str, int]]
+    :type seasonality: Optional[Union[int, str]]
     :param use_stl: Configure STL Decomposition of the time-series target column.
                 use_stl can take three values: None (default) - no stl decomposition, 'season' - only generate
                 season component and season_trend - generate both season and trend components.
@@ -266,14 +268,20 @@ class ForecastingSettings(RestTranslatableMixin):
         if isinstance(self.target_lags, str):
             target_lags = AutoTargetLags()
         elif self.target_lags:
-            lags = [self.target_lags] if not isinstance(self.target_lags, list) else self.target_lags
+            lags = (
+                [self.target_lags]
+                if not isinstance(self.target_lags, list)
+                else self.target_lags
+            )
             target_lags = CustomTargetLags(values=lags)
 
         target_rolling_window_size = None
         if isinstance(self.target_rolling_window_size, str):
             target_rolling_window_size = AutoTargetRollingWindowSize()
         elif self.target_rolling_window_size:
-            target_rolling_window_size = CustomTargetRollingWindowSize(value=self.target_rolling_window_size)
+            target_rolling_window_size = CustomTargetRollingWindowSize(
+                value=self.target_rolling_window_size
+            )
 
         seasonality = None
         if isinstance(self.seasonality, str):
@@ -282,11 +290,17 @@ class ForecastingSettings(RestTranslatableMixin):
             seasonality = CustomSeasonality(value=self.seasonality)
 
         time_series_id_column_names = self.time_series_id_column_names
-        if isinstance(self.time_series_id_column_names, str) and self.time_series_id_column_names:
+        if (
+            isinstance(self.time_series_id_column_names, str)
+            and self.time_series_id_column_names
+        ):
             time_series_id_column_names = [self.time_series_id_column_names]
 
         features_unknown_at_forecast_time = self.features_unknown_at_forecast_time
-        if isinstance(self.features_unknown_at_forecast_time, str) and self.features_unknown_at_forecast_time:
+        if (
+            isinstance(self.features_unknown_at_forecast_time, str)
+            and self.features_unknown_at_forecast_time
+        ):
             features_unknown_at_forecast_time = [self.features_unknown_at_forecast_time]
 
         return RestForecastingSettings(
@@ -309,7 +323,10 @@ class ForecastingSettings(RestTranslatableMixin):
     @classmethod
     def _from_rest_object(cls, obj: RestForecastingSettings) -> "ForecastingSettings":
         forecast_horizon = None
-        if obj.forecast_horizon and obj.forecast_horizon.mode == ForecastHorizonMode.AUTO:
+        if (
+            obj.forecast_horizon
+            and obj.forecast_horizon.mode == ForecastHorizonMode.AUTO
+        ):
             forecast_horizon = obj.forecast_horizon.mode.lower()
         elif obj.forecast_horizon:
             forecast_horizon = obj.forecast_horizon.value
@@ -322,7 +339,10 @@ class ForecastingSettings(RestTranslatableMixin):
             target_lags = rest_target_lags.values
 
         target_rolling_window_size = None
-        if obj.target_rolling_window_size and obj.target_rolling_window_size.mode == TargetRollingWindowSizeMode.AUTO:
+        if (
+            obj.target_rolling_window_size
+            and obj.target_rolling_window_size.mode == TargetRollingWindowSizeMode.AUTO
+        ):
             target_rolling_window_size = obj.target_rolling_window_size.mode.lower()
         elif obj.target_rolling_window_size:
             target_rolling_window_size = obj.target_rolling_window_size.value
@@ -367,7 +387,8 @@ class ForecastingSettings(RestTranslatableMixin):
             and self.target_aggregate_function == other.target_aggregate_function
             and self.time_column_name == other.time_column_name
             and self.time_series_id_column_names == other.time_series_id_column_names
-            and self.features_unknown_at_forecast_time == other.features_unknown_at_forecast_time
+            and self.features_unknown_at_forecast_time
+            == other.features_unknown_at_forecast_time
         )
 
     def __ne__(self, other: object) -> bool:
