@@ -66,15 +66,15 @@ class TestEventGridPublisherClientExceptionsAsync(AzureRecordedTestCase):
         ):
             await client.send(eg_event)
 
-    # @pytest.mark.skip("TestProxy recording gives ServiceRequestError")
+    @pytest.mark.skip("TestProxy recording gives ServiceRequestError")
     @EventGridPreparer()
     @recorded_by_proxy_async
     @pytest.mark.asyncio
-    async def test_raise_on_bad_resource(self, eventgrid_topic_key):
-        akc_credential = AzureKeyCredential(eventgrid_topic_key)
+    async def test_raise_on_bad_resource(self):
+        credential = self.get_credential(EventGridPublisherClient, is_async=True)
         client = EventGridPublisherClient(
             "https://bad-resource.westus-1.eventgrid.azure.net/api/events",
-            akc_credential,
+            credential,
         )
         eg_event = EventGridEvent(
             subject="sample",
