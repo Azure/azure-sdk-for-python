@@ -6,9 +6,7 @@
 
 from typing import Dict, Optional
 
-from azure.ai.ml._restclient.v2022_10_01_preview.models import (
-    AmlCompute as AmlComputeRest,
-)
+from azure.ai.ml._restclient.v2022_10_01_preview.models import AmlCompute as AmlComputeRest
 from azure.ai.ml._restclient.v2022_10_01_preview.models import (
     AmlComputeProperties,
     ComputeResource,
@@ -18,11 +16,7 @@ from azure.ai.ml._restclient.v2022_10_01_preview.models import (
 )
 from azure.ai.ml._schema._utils.utils import get_subnet_str
 from azure.ai.ml._schema.compute.aml_compute import AmlComputeSchema
-from azure.ai.ml._utils.utils import (
-    camel_to_snake,
-    snake_to_pascal,
-    to_iso_duration_format,
-)
+from azure.ai.ml._utils.utils import camel_to_snake, snake_to_pascal, to_iso_duration_format
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, TYPE
 from azure.ai.ml.constants._compute import ComputeDefaults, ComputeType
 from azure.ai.ml.entities._credentials import IdentityConfiguration
@@ -72,42 +66,43 @@ class AmlComputeSshSettings:
 
 
 class AmlCompute(Compute):
-    """Aml Compute resource.
+    """AzureML Compute resource.
 
-    :param name: Name of the compute
+    :param name: Name of the compute resource.
     :type name: str
-    :param description: Description of the resource.
-    :type description: str
-    :param size: Compute Size, defaults to None.
-    :type size: str
+    :param description: Description of the compute resource.
+    :type description: Optional[str]
+    :param size: Size of the compute. Defaults to None.
+    :type size: Optional[str]
     :param tags: A set of tags. Contains resource tags defined as key/value pairs.
     :type tags: Optional[dict[str, str]]
     :param ssh_settings: SSH settings to access the AzureML compute cluster.
-    :type ssh_settings: AmlComputeSshSettings
+    :type ssh_settings: Optional[~azure.ai.ml.entities.AmlComputeSshSettings]
     :param network_settings: Virtual network settings for the AzureML compute cluster.
-    :type network_settings: NetworkSettings
+    :type network_settings: Optional[~azure.ai.ml.entities.NetworkSettings]
     :param idle_time_before_scale_down: Node Idle Time before scaling down amlCompute. Defaults to None.
-    :type idle_time_before_scale_down: int
-    :param identity:  The identity configuration, identities that are associated with the compute cluster.
-    :type identity: IdentityConfiguration
-    :param tier: Virtual Machine tier. Possible values include: "Dedicated", "LowPriority". Defaults to None.
-    :type tier: str
+    :type idle_time_before_scale_down: Optional[int]
+    :param identity:  The identities that are associated with the compute cluster.
+    :type identity: Optional[~azure.ai.ml.entities.IdentityConfiguration]
+    :param tier: Virtual Machine tier. Accepted values include: "Dedicated", "LowPriority". Defaults to None.
+    :type tier: Optional[str]
     :param min_instances: Minimum number of instances. Defaults to None.
-    :type min_instances: int
+    :type min_instances: Optional[int]
     :param max_instances: Maximum number of instances. Defaults to None.
-    :type max_instances: int
-    :param ssh_public_access_enabled: State of the public SSH port. Possible values are:
-     False - Indicates that the public ssh port is closed on all nodes of the cluster. True -
-     Indicates that the public ssh port is open on all nodes of the cluster. None -
-     Indicates that the public ssh port is closed on all nodes of the cluster if VNet is defined,
-     else is open all public nodes. It can be default only during cluster creation time, after
-     creation it will be either True or False. Possible values include: True, False, None. Default value: None.
-     :type ssh_public_access_enabled: bool
-    :param enable_node_public_ip: Enable or disable node public IP address provisioning. Possible values are:
-     True - Indicates that the compute nodes will have public IPs provisioned.
-     False - Indicates that the compute nodes will have a private endpoint and no public IPs.
-     Default Value: True.
-    :type enable_node_public_ip: Optional[bool]
+    :type max_instances: Optional[int]
+    :param ssh_public_access_enabled: State of the public SSH port. Accepted values are:
+        * False - Indicates that the public SSH port is closed on all nodes of the cluster.
+        * True - Indicates that the public SSH port is open on all nodes of the cluster.
+        * None - Indicates that the public SSH port is closed on all nodes of the cluster if VNet is defined,
+        else is open all public nodes.
+        It can be None only during cluster creation time. After creation it will be either True or False.
+        Defaults to None.
+    :type ssh_public_access_enabled: Optional[bool]
+    :param enable_node_public_ip: Enable or disable node public IP address provisioning. Accepted values are:
+        * True - Indicates that the compute nodes will have public IPs provisioned.
+        * False - Indicates that the compute nodes will have a private endpoint and no public IPs.
+        Defaults to True.
+    :type enable_node_public_ip: bool
     """
 
     def __init__(
@@ -127,7 +122,7 @@ class AmlCompute(Compute):
         tier: Optional[str] = None,
         enable_node_public_ip: bool = True,
         **kwargs,
-    ):
+    ) -> None:
         kwargs[TYPE] = ComputeType.AMLCOMPUTE
         super().__init__(
             name=name,
