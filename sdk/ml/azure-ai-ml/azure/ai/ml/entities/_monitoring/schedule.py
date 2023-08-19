@@ -38,19 +38,19 @@ class MonitorSchedule(Schedule, RestTranslatableMixin):
     """Monitor schedule.
 
     :keyword name: The schedule name.
-    :type name: str
+    :paramtype name: str
     :keyword trigger: The schedule trigger.
-    :type trigger: Union[~azure.ai.ml.entities.CronTrigger, ~azure.ai.ml.entities.RecurrenceTrigger]
+    :paramtype trigger: Union[~azure.ai.ml.entities.CronTrigger, ~azure.ai.ml.entities.RecurrenceTrigger]
     :keyword create_monitor: The schedule action monitor definition.
-    :type create_monitor: ~azure.ai.ml.entities.MonitorDefinition
+    :paramtype create_monitor: ~azure.ai.ml.entities.MonitorDefinition
     :keyword display_name: The display name of the schedule.
-    :type display_name: Optional[str]
+    :paramtype display_name: Optional[str]
     :keyword description: A description of the schedule.
-    :type description: Optional[str]
+    :paramtype description: Optional[str]
     :keyword tags: Tag dictionary. Tags can be added, removed, and updated.
-    :type tags: Optional[dict[str, str]]
+    :paramtype tags: Optional[dict[str, str]]
     :keyword properties: The job property dictionary.
-    :type properties: Optional[dict[str, str]]
+    :paramtype properties: Optional[dict[str, str]]
     """
 
     def __init__(
@@ -139,7 +139,7 @@ class MonitorSchedule(Schedule, RestTranslatableMixin):
             If dest is an open file, the file will be written to directly.
         :type dest: Union[PathLike, str, IO[AnyStr]]
         :keyword kwargs: Additional arguments to pass to the YAML serializer.
-        :type kwargs: dict
+        :paramtype kwargs: dict
         :raises FileExistsError: Raised if dest is a file path and the file already exists.
         :raises IOError: Raised if dest is an open file and the file is not writable.
         """

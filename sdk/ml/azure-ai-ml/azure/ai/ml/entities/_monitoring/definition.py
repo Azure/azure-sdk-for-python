@@ -39,18 +39,18 @@ class MonitorDefinition(RestTranslatableMixin):
     """Monitor definition
 
     :keyword compute: The Spark resource configuration to be associated with the monitor
-    :type compute: ~azure.ai.ml.entities.SparkResourceConfiguration
+    :paramtype compute: ~azure.ai.ml.entities.SparkResourceConfiguration
     :keyword monitoring_target: The ARM ID object associated with the model or deployment that is being monitored.
-    :type monitoring_target: Optional[~azure.ai.ml.entities.MonitoringTarget]
+    :paramtype monitoring_target: Optional[~azure.ai.ml.entities.MonitoringTarget]
     :keyword monitoring_signals: The dictionary of signals to monitor. The key is the name of the signal and the value
         is the DataSignal object. Accepted values for the DataSignal objects are DataDriftSignal, DataQualitySignal,
         PredictionDriftSignal, FeatureAttributionDriftSignal, and CustomMonitoringSignal.
-    :type monitoring_signals: Optional[Dict[str, Union[~azure.ai.ml.entities.DataDriftSignal
+    :paramtype monitoring_signals: Optional[Dict[str, Union[~azure.ai.ml.entities.DataDriftSignal
         , ~azure.ai.ml.entities.DataQualitySignal, ~azure.ai.ml.entities.PredictionDriftSignal
         , ~azure.ai.ml.entities.FeatureAttributionDriftSignal
         , ~azure.ai.ml.entities.CustomMonitoringSignal]]]
     :keyword alert_notification: The alert configuration for the monitor.
-    :type alert_notification: Optional[Union[Literal['azmonitoring'], ~azure.ai.ml.entities.AlertNotification]]
+    :paramtype alert_notification: Optional[Union[Literal['azmonitoring'], ~azure.ai.ml.entities.AlertNotification]]
 
     .. admonition:: Example:
 

@@ -36,7 +36,7 @@ class CommandJobLimits(JobLimits):
     """Limits for Command Jobs.
 
     :keyword timeout: The maximum run duration, in seconds, after which the job will be cancelled.
-    :type timeout: Optional[Union[int, str]]
+    :paramtype timeout: Optional[Union[int, str]]
 
     .. admonition:: Example:
 
@@ -77,13 +77,13 @@ class SweepJobLimits(JobLimits):
     """Limits for Sweep Jobs.
 
     :keyword max_concurrent_trials: The maximum number of concurrent trials for the Sweep Job.
-    :type max_concurrent_trials: Optional[int]
+    :paramtype max_concurrent_trials: Optional[int]
     :keyword max_total_trials: The maximum number of total trials for the Sweep Job.
-    :type max_total_trials: Optional[int]
+    :paramtype max_total_trials: Optional[int]
     :keyword timeout: The maximum run duration, in seconds, after which the job will be cancelled.
-    :type timeout: Optional[int]
+    :paramtype timeout: Optional[int]
     :keyword trial_timeout: The timeout value, in seconds, for each Sweep Job trial.
-    :type trial_timeout: Optional[int]
+    :paramtype trial_timeout: Optional[int]
 
     .. admonition:: Example:
 
@@ -178,7 +178,7 @@ class DoWhileJobLimits(JobLimits):
     """DoWhile Job limit class.
 
     :keyword max_iteration_count: The maximum number of iterations for the DoWhile Job.
-    :type max_iteration_count: Optional[int]
+    :paramtype max_iteration_count: Optional[int]
     """
 
     def __init__(

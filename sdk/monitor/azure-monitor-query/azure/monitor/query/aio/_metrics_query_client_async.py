@@ -39,18 +39,18 @@ class MetricsQueryClient(object):  # pylint: disable=client-accepts-api-version-
     """
 
     def __init__(self, credential: AsyncTokenCredential, **kwargs: Any) -> None:
-        endpoint = kwargs.pop("endpoint", "https://management.azure.com")
-        audience = kwargs.pop("audience", endpoint)
-        if not endpoint.startswith("https://") and not endpoint.startswith("http://"):
-            endpoint = "https://" + endpoint
-        self._endpoint = endpoint
-        auth_policy = kwargs.pop("authentication_policy", None)
-        self._client = MonitorMetricsClient(
-            credential=credential,
-            endpoint=self._endpoint,
-            authentication_policy=auth_policy or get_authentication_policy(credential, audience),
-            **kwargs
+        self._endpoint = kwargs.pop("endpoint", "https://management.azure.com")
+        if not self._endpoint.startswith("https://") and not self._endpoint.startswith("http://"):
+            self._endpoint = "https://" + self._endpoint
+        audience = kwargs.pop("audience", self._endpoint)
+        authentication_policy = kwargs.pop("authentication_policy", None) or get_authentication_policy(
+            credential, audience
         )
+
+        self._client = MonitorMetricsClient(
+            credential=credential, endpoint=self._endpoint, authentication_policy=authentication_policy, **kwargs
+        )
+
         self._metrics_op = self._client.metrics
         self._namespace_op = self._client.metric_namespaces
         self._definitions_op = self._client.metric_definitions
@@ -100,7 +100,7 @@ class MetricsQueryClient(object):  # pylint: disable=client-accepts-api-version-
         :paramtype metric_namespace: Optional[str]
         :return: A MetricsQueryResult object.
         :rtype: ~azure.monitor.query.MetricsQueryResult
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
 
@@ -137,7 +137,7 @@ class MetricsQueryClient(object):  # pylint: disable=client-accepts-api-version-
         :paramtype start_time: Optional[~datetime.datetime]
         :return: An iterator like instance of either MetricNamespace or the result of cls(response)
         :rtype: ~azure.core.paging.AsyncItemPaged[:class: `~azure.monitor.query.MetricNamespace`]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
 
@@ -172,7 +172,7 @@ class MetricsQueryClient(object):  # pylint: disable=client-accepts-api-version-
         :paramtype namespace: Optional[str]
         :return: An iterator like instance of either MetricDefinition or the result of cls(response)
         :rtype: ~azure.core.paging.AsyncItemPaged[:class: `~azure.monitor.query.MetricDefinition`]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
 
@@ -199,7 +199,7 @@ class MetricsQueryClient(object):  # pylint: disable=client-accepts-api-version-
         await self._client.__aenter__()
         return self
 
-    async def __aexit__(self, *args: "Any") -> None:
+    async def __aexit__(self, *args: Any) -> None:
         await self._client.__aexit__(*args)
 
     async def close(self) -> None:

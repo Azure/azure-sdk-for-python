@@ -47,10 +47,10 @@ class RandomSamplingAlgorithm(SamplingAlgorithm):
     :keyword rule: The specific type of random algorithm. Accepted values are: "random" and "sobol".
     :type rule: str
     :keyword seed: The seed for random number generation.
-    :type seed: int
+    :paramtype seed: int
     :keyword logbase: A positive number or the number "e" in string format to be used as the base for log
         based random sampling.
-    :type logbase: Union[float, str]
+    :paramtype logbase: Union[float, str]
 
     .. admonition:: Example:
 

@@ -77,9 +77,9 @@ class DataSegment(RestTranslatableMixin):
     """Data segment for monitoring.
 
     :keyword feature_name: The feature to segment the data on.
-    :type feature_name: str
+    :paramtype feature_name: str
     :keyword feature_values: A list of values for the given segmented feature to filter.
-    :type feature_values: list[str]
+    :paramtype feature_values: list[str]
     """
 
     def __init__(
@@ -107,7 +107,7 @@ class MonitorFeatureFilter(RestTranslatableMixin):
     """Monitor feature filter
 
     :keyword top_n_feature_importance: The number of top features to include. Defaults to 10.
-    :type top_n_feature_importance: int
+    :paramtype top_n_feature_importance: int
     """
 
     def __init__(
@@ -301,11 +301,11 @@ class MonitoringSignal(RestTranslatableMixin):
     This class should not be instantiated directly. Instead, use one of its subclasses.
 
     :keyword target_dataset: The target dataset definition for monitor input.
-    :type target_dataset: ~azure.ai.ml.entities.TargetDataset
+    :paramtype target_dataset: ~azure.ai.ml.entities.TargetDataset
     :keyword baseline_dataset: The baseline dataset definition for monitor input.
-    :type baseline_dataset: ~azure.ai.ml.entities.MonitorInputData
+    :paramtype baseline_dataset: ~azure.ai.ml.entities.MonitorInputData
     :keyword metric_thresholds: The metric thresholds for the signal.
-    :type metric_thresholds: Union[
+    :paramtype metric_thresholds: Union[
         ~azure.ai.ml.entities.DataDriftMetricThreshold,
         ~azure.ai.ml.entities.DataQualityMetricThreshold,
         ~azure.ai.ml.entities.PredictionDriftMetricThreshold,
@@ -319,7 +319,7 @@ class MonitoringSignal(RestTranslatableMixin):
             ~azure.ai.ml.entities.CustomMonitoringMetricThreshold
         ]]]
     :keyword alert_enabled: Whether or not to enable alerts for the signal. Defaults to True.
-    :type alert_enabled: bool
+    :paramtype alert_enabled: bool
     """
 
     def __init__(
@@ -364,13 +364,13 @@ class DataSignal(MonitoringSignal):
     This class should not be instantiated directly. Instead, use one of its subclasses.
 
     :keyword target_dataset: The target dataset definition for monitor input.
-    :type target_dataset: ~azure.ai.ml.entities.TargetDataset
+    :paramtype target_dataset: ~azure.ai.ml.entities.TargetDataset
     :keyword baseline_dataset: The baseline dataset definition for monitor input.
-    :type baseline_dataset: ~azure.ai.ml.entities.MonitorInputData
+    :paramtype baseline_dataset: ~azure.ai.ml.entities.MonitorInputData
     :keyword features: The features to include in the signal.
-    :type features: Union[list[str], ~azure.ai.ml.entities.MonitorFeatureFilter, Literal[ALL_FEATURES]]
+    :paramtype features: Union[list[str], ~azure.ai.ml.entities.MonitorFeatureFilter, Literal[ALL_FEATURES]]
     :keyword metric_thresholds: The metric thresholds for the signal.
-    :type metric_thresholds: list[Union[
+    :paramtype metric_thresholds: list[Union[
         ~azure.ai.ml.entities.DataDriftMetricThreshold,
         ~azure.ai.ml.entities.DataQualityMetricThreshold,
         ~azure.ai.ml.entities.PredictionDriftMetricThreshold,
@@ -378,7 +378,7 @@ class DataSignal(MonitoringSignal):
         ~azure.ai.ml.entities.CustomMonitoringMetricThreshold
     ]]
     :keyword alert_enabled: Whether or not to enable alerts for the signal. Defaults to True.
-    :type alert_enabled: bool
+    :paramtype alert_enabled: bool
     """
 
     def __init__(
@@ -419,10 +419,10 @@ class DataDriftSignal(DataSignal):
     :param alert_enabled: The current notification mode for this signal
     :type alert_enabled: bool
     :keyword data_segment: The data segment used for scoping on a subset of the data population.
-    :type data_segment: ~azure.ai.ml.entities.DataSegment
+    :paramtype data_segment: ~azure.ai.ml.entities.DataSegment
     :keyword features: The feature filter identifying which feature(s) to
         calculate drift over.
-    :type features: Union[list[str], ~azure.ai.ml.entities.MonitorFeatureFilter, Literal['all_features']]
+    :paramtype features: Union[list[str], ~azure.ai.ml.entities.MonitorFeatureFilter, Literal['all_features']]
     """
 
     def __init__(
@@ -493,13 +493,13 @@ class PredictionDriftSignal(MonitoringSignal):
     """Prediction drift signal.
 
     :keyword baseline_dataset: The dataset to calculate drift against.
-    :type baseline_dataset: ~azure.ai.ml.entities.MonitorInputData
+    :paramtype baseline_dataset: ~azure.ai.ml.entities.MonitorInputData
     :keyword target_dataset: The dataset for which drift will be calculated.
-    :type target_dataset: ~azure.ai.ml.entities.TargetDataset
+    :paramtype target_dataset: ~azure.ai.ml.entities.TargetDataset
     :keyword metric_thresholds: A list of metrics to calculate and their associated thresholds
-    :type metric_thresholds: list[~azure.ai.ml.entities.PredictionDriftMetricThreshold]
+    :paramtype metric_thresholds: list[~azure.ai.ml.entities.PredictionDriftMetricThreshold]
     :keyword alert_enabled: Whether or not to enable alerts for the signal. Defaults to True.
-    :type alert_enabled: bool
+    :paramtype alert_enabled: bool
     """
 
     def __init__(
@@ -558,17 +558,17 @@ class DataQualitySignal(DataSignal):
 
 
     :keyword target_dataset: The data for which quality will be calculated.
-    :type target_dataset: ~azure.ai.ml.entities.TargetDataset
+    :paramtype target_dataset: ~azure.ai.ml.entities.TargetDataset
     :keyword baseline_dataset: The data to calculate quality against.
-    :type baseline_dataset: ~azure.ai.ml.entities.MonitorInputData
+    :paramtype baseline_dataset: ~azure.ai.ml.entities.MonitorInputData
     :keyword metric_thresholds: A list of metrics to calculate and their
         associated thresholds.
-    :type metric_thresholds: list[~azure.ai.ml.entities.DataQualityMetricThreshold]
+    :paramtype metric_thresholds: list[~azure.ai.ml.entities.DataQualityMetricThreshold]
     :keyword alert_enabled: Whether or not to enable alerts for the signal. Defaults to True.
-    :type alert_enabled: bool
+    :paramtype alert_enabled: bool
     :keyword features: The feature filter identifying which feature(s) to
         calculate quality over.
-    :type features: Union[list[str], ~azure.ai.ml.entities.MonitorFeatureFilter, Literal['all_features']]
+    :paramtype features: Union[list[str], ~azure.ai.ml.entities.MonitorFeatureFilter, Literal['all_features']]
     """
 
     def __init__(
@@ -642,16 +642,16 @@ class ModelSignal(MonitoringSignal):
     This class should not be instantiated directly. Instead, use one of its subclasses.
 
     :keyword target_dataset: The data for which quality will be calculated.
-    :type target_dataset: ~azure.ai.ml.entities.TargetDataset
+    :paramtype target_dataset: ~azure.ai.ml.entities.TargetDataset
     :keyword baseline_dataset: The data to calculate quality against.
-    :type baseline_dataset: ~azure.ai.ml.entities.MonitorInputData
+    :paramtype baseline_dataset: ~azure.ai.ml.entities.MonitorInputData
     :keyword metric_thresholds: A list of metrics to calculate and their
         associated thresholds.
-    :type metric_thresholds: list[~azure.ai.ml.entities.MetricThreshold]
+    :paramtype metric_thresholds: list[~azure.ai.ml.entities.MetricThreshold]
     :keyword model_type: The type of model to monitor.
-    :type model_type: ~azure.ai.ml.constants.MonitorModelType
+    :paramtype model_type: ~azure.ai.ml.constants.MonitorModelType
     :keyword alert_enabled: Whether or not to enable alerts for the signal. Defaults to True.
-    :type alert_enabled: bool
+    :paramtype alert_enabled: bool
     """
 
     def __init__(
@@ -725,16 +725,16 @@ class FeatureAttributionDriftSignal(RestTranslatableMixin):
     """Feature attribution drift signal
 
     :keyword target_dataset: The data for which drift will be calculated.
-    :type target_dataset: ~azure.ai.ml.entities.TargetDataset
+    :paramtype target_dataset: ~azure.ai.ml.entities.TargetDataset
     :keyword baseline_dataset: The data to calculate drift against.
-    :type baseline_dataset: ~azure.ai.ml.entities.MonitorInputData
+    :paramtype baseline_dataset: ~azure.ai.ml.entities.MonitorInputData
     :keyword metric_thresholds: A list of metrics to calculate and their
         associated thresholds.
-    :type metric_thresholds: ~azure.ai.ml.entities.FeatureAttributionDriftMetricThreshold
+    :paramtype metric_thresholds: ~azure.ai.ml.entities.FeatureAttributionDriftMetricThreshold
     :keyword model_type: The model type.
-    :type model_type: ~azure.ai.ml.constants.MonitorModelType
+    :paramtype model_type: ~azure.ai.ml.constants.MonitorModelType
     :keyword alert_enabled: Whether or not to enable alerts for the signal. Defaults to True.
-    :type alert_enabled: bool
+    :paramtype alert_enabled: bool
     """
 
     def __init__(
@@ -780,18 +780,18 @@ class ModelPerformanceSignal(ModelSignal):
     """Model performance signal.
 
     :keyword target_dataset: The data for which performance will be calculated.
-    :type target_dataset: ~azure.ai.ml.entities.TargetDataset
+    :paramtype target_dataset: ~azure.ai.ml.entities.TargetDataset
     :keyword baseline_dataset: The data to calculate performance against.
-    :type baseline_dataset: ~azure.ai.ml.entities.MonitorInputData
+    :paramtype baseline_dataset: ~azure.ai.ml.entities.MonitorInputData
     :keyword metric_thresholds: A list of metrics to calculate and their
         associated thresholds.
-    :type metric_thresholds: ~azure.ai.ml.entities.ModelPerformanceMetricThreshold
+    :paramtype metric_thresholds: ~azure.ai.ml.entities.ModelPerformanceMetricThreshold
     :keyword model_type: The model type.
-    :type model_type: ~azure.ai.ml.constants.MonitorModelType
+    :paramtype model_type: ~azure.ai.ml.constants.MonitorModelType
     :keyword data_segment: The data segment to calculate performance against.
-    :type data_segment: ~azure.ai.ml.entities.DataSegment
+    :paramtype data_segment: ~azure.ai.ml.entities.DataSegment
     :keyword alert_enabled: Whether or not to enable alerts for the signal. Defaults to True.
-    :type alert_enabled: bool
+    :paramtype alert_enabled: bool
     """
 
     def __init__(
@@ -869,18 +869,18 @@ class CustomMonitoringSignal(RestTranslatableMixin):
 
     :keyword input_datasets: A dictionary of input datasets for monitoring.
         Each key is the component input port name, and its value is the data asset.
-    :type input_datasets: Optional[dict[str, ~azure.ai.ml.entities.MonitorInputData]]
+    :paramtype input_datasets: Optional[dict[str, ~azure.ai.ml.entities.MonitorInputData]]
     :keyword metric_thresholds: A list of metrics to calculate and their
         associated thresholds.
-    :type metric_thresholds: list[~azure.ai.ml.entities.CustomMonitoringMetricThreshold]
+    :paramtype metric_thresholds: list[~azure.ai.ml.entities.CustomMonitoringMetricThreshold]
     :keyword component_id: The ARM (Azure Resource Manager) ID of the component resource used to
         calculate the custom metrics.
-    :type component_id: str
+    :paramtype component_id: str
     :keyword alert_enabled: Whether or not to enable alerts for the signal. Defaults to True.
-    :type alert_enabled: bool
+    :paramtype alert_enabled: bool
     :keyword data_window_size: The number of days a single monitor looks back
         over the target
-    :type data_window_size: Optional[int]
+    :paramtype data_window_size: Optional[int]
     """
 
     def __init__(

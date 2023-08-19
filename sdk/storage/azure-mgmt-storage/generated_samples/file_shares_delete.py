@@ -29,14 +29,13 @@ def main():
         subscription_id="{subscription-id}",
     )
 
-    response = client.file_shares.delete(
+    client.file_shares.delete(
         resource_group_name="res4079",
         account_name="sto4506",
         share_name="share9689",
     )
-    print(response)
 
 
-# x-ms-original-file: specification/storage/resource-manager/Microsoft.Storage/stable/2022-09-01/examples/FileSharesDelete.json
+# x-ms-original-file: specification/storage/resource-manager/Microsoft.Storage/stable/2023-01-01/examples/FileSharesDelete.json
 if __name__ == "__main__":
     main()
