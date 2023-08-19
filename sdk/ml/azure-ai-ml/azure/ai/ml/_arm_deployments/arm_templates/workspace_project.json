@@ -521,6 +521,42 @@
             "metadata": {
                 "description": "Resource Id of Hub used for lean workspace."
             }
+        },
+        "materialization_identity_name": {
+            "defaultValue": "empty",
+            "type": "string",
+            "metadata": {
+                "description": "Feature store materialization identity name"
+            }
+        },
+        "grant_materialization_identity_permissions": {
+            "type": "string",
+            "defaultValue": "false",
+            "allowedValues": [
+                "false",
+                "true"
+            ],
+            "metadata": {
+                "description": "Whether to grant materialization identity permissions"
+            }
+        },        
+        "workspace_hub_config" : {
+            "type": "object",
+            "defaultValue": {},
+            "metadata": {
+                "description": "Additional configuration for WorkspaceHub."
+            }
+        },        
+        "set_up_feature_store" : {
+            "type": "string",
+            "defaultValue": "false",
+            "allowedValues": [
+                "false",
+                "true"
+            ],
+            "metadata": {
+                "description": "A flag to determine whether to set up feature store"
+            }
         }
     },
     "variables": {

@@ -10,9 +10,9 @@ class MonitoringTarget:
     """Monitoring target.
 
     :keyword endpoint_deployment_id: The ARM ID of the target deployment. Mutually exclusive with model_id.
-    :type endpoint_deployment_id: Optional[str]
+    :paramtype endpoint_deployment_id: Optional[str]
     :keyword model_id: ARM ID of the target model ID. Mutually exclusive with endpoint_deployment_id.
-    :type model_id: Optional[str]
+    :paramtype model_id: Optional[str]
 
     .. admonition:: Example:
 

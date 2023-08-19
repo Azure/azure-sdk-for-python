@@ -29,11 +29,11 @@ class Compute(Resource, RestTranslatableMixin):
     :param name: Name of the compute
     :type name: str
     :param location: The resource location, defaults to workspace location.
-    :type location: Optional[str], optional
+    :type location: Optional[str]
     :param description: Description of the resource.
-    :type description: Optional[str], optional
+    :type description: Optional[str]
     :param resource_id: ARM resource id of the underlying compute.
-    :type resource_id: str, optional
+    :type resource_id: str
     :param tags: A set of tags. Contains resource tags defined as key/value pairs.
     :type tags: Optional[dict[str, str]]
     """
@@ -212,9 +212,9 @@ class NetworkSettings:
         """Network settings for a compute.
 
         :param vnet_name: The virtual network name, defaults to None
-        :type vnet_name: str, optional
+        :type vnet_name: str
         :param subnet: The subnet name, defaults to None
-        :type subnet: str, optional
+        :type subnet: str
         """
         self.vnet_name = vnet_name
         self.subnet = subnet

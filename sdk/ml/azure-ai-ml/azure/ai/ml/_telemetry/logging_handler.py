@@ -97,13 +97,13 @@ def get_appinsights_log_handler(
     :param args: Optional arguments for formatting messages.
     :type args: list
     :keyword instrumentation_key: The Application Insights instrumentation key.
-    :type instrumentation_key: str
+    :paramtype instrumentation_key: str
     :keyword component_name: The component name.
-    :type component_name: str
+    :paramtype component_name: str
     :keyword enable_telemetry: Whether to enable telemetry. Will be overriden to False if not in a Jupyter Notebook.
-    :type enable_telemetry: bool
+    :paramtype enable_telemetry: bool
     :keyword kwargs: Optional keyword arguments for adding additional information to messages.
-    :type kwargs: dict
+    :paramtype kwargs: dict
     :return: The logging handler.
     :rtype: AzureMLSDKLogHandler
     """

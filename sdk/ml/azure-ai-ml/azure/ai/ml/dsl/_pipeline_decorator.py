@@ -102,20 +102,20 @@ def pipeline(
     :param func: The user pipeline function to be decorated.
     :type func: types.FunctionType
     :keyword name: The name of pipeline component, defaults to function name.
-    :type name: str
+    :paramtype name: str
     :keyword version: The version of pipeline component, defaults to "1".
-    :type version: str
+    :paramtype version: str
     :keyword display_name: The display name of pipeline component, defaults to function name.
-    :type display_name: str
+    :paramtype display_name: str
     :keyword description: The description of the built pipeline.
-    :type description: str
+    :paramtype description: str
     :keyword experiment_name: Name of the experiment the job will be created under, \
                 if None is provided, experiment will be set to current directory.
-    :type experiment_name: str
+    :paramtype experiment_name: str
     :keyword tags: The tags of pipeline component.
-    :type tags: dict[str, str]
+    :paramtype tags: dict[str, str]
     :keyword kwargs: A dictionary of additional configuration parameters.
-    :type kwargs: dict
+    :paramtype kwargs: dict
 
     .. admonition:: Example:
 
