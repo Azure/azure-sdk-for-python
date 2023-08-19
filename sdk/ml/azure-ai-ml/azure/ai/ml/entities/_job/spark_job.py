@@ -78,37 +78,6 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
     :keyword identity: The identity that the Spark job will use while running on compute.
     :paramtype identity: Optional[Union[dict[str, str], ~azure.ai.ml.ManagedIdentityConfiguration,
         ~azure.ai.ml.AmlTokenConfiguration, ~azure.ai.ml.UserIdentityConfiguration]]
-    :keyword resources: The compute resource configuration for the job.
-    :paramtype resources: Optional[Union[dict, ~azure.ai.ml.entities.SparkResourceConfiguration]]
-    :keyword experiment_name: The name of the experiment the job will be created under.
-    :paramtype experiment_name: str
-    :keyword name: The name of the job.
-    :paramtype name: str
-    :keyword display_name: The job display name.
-    :paramtype display_name: str
-    :keyword description: The job description.
-    :paramtype description: str
-    :keyword tags: The tag dictionary. Tags can be added, removed, and updated.
-    :paramtype tags: dict[str, str]
-    :keyword code: The source code to run the job. Can be a local path or "http:", "https:", or "azureml:" url pointing
-        to a remote location.
-    :type code: Union[str, os.PathLike]
-    :keyword entry: The file or class entry point.
-    :paramtype entry: dict[str, str]
-    :keyword py_files: The list of .zip, .egg or .py files to place on the PYTHONPATH for Python apps.
-    :paramtype py_files: list[str]
-    :keyword jars: The list of .JAR files to include on the driver and executor classpaths.
-    :paramtype jars: list[str]
-    :keyword files: The list of files to be placed in the working directory of each executor.
-    :paramtype files: list[str]
-    :keyword archives: The list of archives to be extracted into the working directory of each executor.
-    :paramtype archives: list[str]
-    :keyword conf: A dictionary with pre-defined Spark configurations key and values.
-    :paramtype conf: dict[str, str]
-    :keyword environment: The Azure ML environment to run the job in.
-    :paramtype environment: Union[str, ~azure.ai.ml.entities.Environment]
-    :keyword args: The arguments for the job.
-    :paramtype args: str
 
     .. admonition:: Example:
 

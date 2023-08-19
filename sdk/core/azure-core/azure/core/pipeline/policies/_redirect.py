@@ -26,19 +26,28 @@
 """
 This module is the requests implementation of Pipeline ABC
 """
-from typing import Optional, TypeVar
 import logging
 from urllib.parse import urlparse
+from typing import Optional, TypeVar, Dict, Any, Union, Type
+from typing_extensions import Literal
 
 from azure.core.exceptions import TooManyRedirectsError
 from azure.core.pipeline import PipelineResponse, PipelineRequest
-from azure.core.pipeline.transport import HttpResponse as LegacyHttpResponse, HttpRequest as LegacyHttpRequest
-from azure.core.rest import HttpResponse, HttpRequest
+from azure.core.pipeline.transport import (
+    HttpResponse as LegacyHttpResponse,
+    HttpRequest as LegacyHttpRequest,
+    AsyncHttpResponse as LegacyAsyncHttpResponse,
+)
+from azure.core.rest import HttpResponse, HttpRequest, AsyncHttpResponse
 from ._base import HTTPPolicy, RequestHistory
 from ._utils import get_domain
 
 HTTPResponseType = TypeVar("HTTPResponseType", HttpResponse, LegacyHttpResponse)
+AllHttpResponseType = TypeVar(
+    "AllHttpResponseType", HttpResponse, LegacyHttpResponse, AsyncHttpResponse, LegacyAsyncHttpResponse
+)
 HTTPRequestType = TypeVar("HTTPRequestType", HttpRequest, LegacyHttpRequest)
+ClsRedirectPolicy = TypeVar("ClsRedirectPolicy", bound="RedirectPolicyBase")
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -64,7 +73,7 @@ class RedirectPolicyBase:
 
     REDIRECT_HEADERS_BLACKLIST = frozenset(["Authorization"])
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         self.allow: bool = kwargs.get("permit_redirects", True)
         self.max_redirects: int = kwargs.get("redirect_max", 30)
 
@@ -75,7 +84,7 @@ class RedirectPolicyBase:
         super(RedirectPolicyBase, self).__init__()
 
     @classmethod
-    def no_redirects(cls):
+    def no_redirects(cls: Type[ClsRedirectPolicy]) -> ClsRedirectPolicy:
         """Disable redirects.
 
         :return: A redirect policy with redirects disabled.
@@ -83,7 +92,7 @@ class RedirectPolicyBase:
         """
         return cls(permit_redirects=False)
 
-    def configure_redirects(self, options):
+    def configure_redirects(self, options: Dict[str, Any]) -> Dict[str, Any]:
         """Configures the redirect settings.
 
         :param options: Keyword arguments from context.
@@ -97,7 +106,9 @@ class RedirectPolicyBase:
             "history": [],
         }
 
-    def get_redirect_location(self, response):
+    def get_redirect_location(
+        self, response: PipelineResponse[Any, AllHttpResponseType]
+    ) -> Union[str, None, Literal[False]]:
         """Checks for redirect status code and gets redirect location.
 
         :param response: The PipelineResponse object
@@ -119,7 +130,9 @@ class RedirectPolicyBase:
 
         return False
 
-    def increment(self, settings, response, redirect_location):
+    def increment(
+        self, settings: Dict[str, Any], response: PipelineResponse[Any, AllHttpResponseType], redirect_location: str
+    ) -> bool:
         """Increment the redirect attempts for this request.
 
         :param dict settings: The redirect settings
@@ -177,7 +190,7 @@ class RedirectPolicy(RedirectPolicyBase, HTTPPolicy[HTTPRequestType, HTTPRespons
         :rtype: ~azure.core.pipeline.PipelineResponse
         :raises: ~azure.core.exceptions.TooManyRedirectsError if maximum redirects exceeded.
         """
-        retryable = True
+        retryable: bool = True
         redirect_settings = self.configure_redirects(request.context.options)
         original_domain = get_domain(request.http_request.url) if redirect_settings["allow"] else None
         while retryable:

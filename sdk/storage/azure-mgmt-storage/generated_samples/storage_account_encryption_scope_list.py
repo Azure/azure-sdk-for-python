@@ -31,12 +31,12 @@ def main():
 
     response = client.encryption_scopes.list(
         resource_group_name="resource-group-name",
-        account_name="{storage-account-name}",
+        account_name="accountname",
     )
     for item in response:
         print(item)
 
 
-# x-ms-original-file: specification/storage/resource-manager/Microsoft.Storage/stable/2022-09-01/examples/StorageAccountEncryptionScopeList.json
+# x-ms-original-file: specification/storage/resource-manager/Microsoft.Storage/stable/2023-01-01/examples/StorageAccountEncryptionScopeList.json
 if __name__ == "__main__":
     main()
