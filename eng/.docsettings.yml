@@ -76,6 +76,7 @@ known_content_issues:
   - ['sdk/monitor/azure-monitor-query/samples/README.md', '#4554']
   - ['sdk/graphrbac/azure-graphrbac/README.md', '#4554']
   - ['sdk/loganalytics/azure-loganalytics/README.md', '#4554']
+  - ['sdk/schemaregistry/azure-schemaregistry-avroserializer/README.md', '#4554']
   - ['sdk/servicebus/azure-servicebus/README.md', '#4554']
   - ['sdk/servicebus/azure-servicebus/tests/perf_tests/README.md', '#4554']
   - ['sdk/servicebus/azure-servicebus/stress/scripts/README.md', '#4554']

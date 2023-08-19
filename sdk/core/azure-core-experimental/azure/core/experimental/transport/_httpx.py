@@ -196,7 +196,7 @@ class HttpXTransport(HttpTransport):
             "headers": request.headers.items(),
             "data": request.data,
             "files": request.files,
-            "timeout": timeout if timeout else request.timeout,
+            "timeout": timeout,
             **kwargs,
         }
 
@@ -205,11 +205,11 @@ class HttpXTransport(HttpTransport):
 
         stream_ctx: Optional[ContextManager] = None
         try:
-            if stream_response:
+            if stream_response and self.client:
                 stream_ctx = self.client.stream(**parameters)
                 if stream_ctx:
                     response = stream_ctx.__enter__()
-            else:
+            elif self.client:
                 response = self.client.request(**parameters)
         except (
             httpx.ReadTimeout,

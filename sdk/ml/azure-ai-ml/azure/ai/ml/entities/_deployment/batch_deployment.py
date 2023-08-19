@@ -37,17 +37,17 @@ class BatchDeployment(Deployment):  # pylint: disable=too-many-instance-attribut
     :param name: the name of the batch deployment
     :type name: str
     :param description: Description of the resource.
-    :type description: str, optional
+    :type description: str
     :param tags: Tag dictionary. Tags can be added, removed, and updated.
     :type tags: dict[str, str]
     :param properties: The asset property dictionary.
     :type properties: dict[str, str]
     :param model: Model entity for the endpoint deployment, defaults to None
-    :type model: Union[str, Model], optional
+    :type model: Union[str, Model]
     :param code_configuration: defaults to None
-    :type code_configuration: CodeConfiguration, optional
+    :type code_configuration: CodeConfiguration
     :param environment: Environment entity for the endpoint deployment., defaults to None
-    :type environment: Union[str, Environment], optional
+    :type environment: Union[str, Environment]
     :param compute: Compute target for batch inference operation.
     :type compute: str
     :param output_action: Indicates how the output will be organized. Possible values include:
@@ -63,23 +63,23 @@ class BatchDeployment(Deployment):  # pylint: disable=too-many-instance-attribut
         -1 value indicates, ignore all failures during batch inference
         For FileDataset count of file failures
         For TabularDataset, this is the count of record failures, defaults to -1
-    :type error_threshold: int, optional
+    :type error_threshold: int
     :param retry_settings: Retry settings for a batch inference operation, defaults to None
-    :type retry_settings: BatchRetrySettings, optional
+    :type retry_settings: BatchRetrySettings
     :param resources: Indicates compute configuration for the job.
     :type resources: ~azure.mgmt.machinelearningservices.models.ResourceConfiguration
     :param logging_level: Logging level for batch inference operation, defaults to "info"
-    :type logging_level: str, optional
+    :type logging_level: str
     :param mini_batch_size: Size of the mini-batch passed to each batch invocation, defaults to 10
-    :type mini_batch_size: int, optional
+    :type mini_batch_size: int
     :param environment_variables: Environment variables that will be set in deployment.
-    :type environment_variables: dict, optional
+    :type environment_variables: dict
     :param code_path: Folder path to local code assets. Equivalent to code_configuration.code.
-    :type code_path: Union[str, PathLike], optional
+    :type code_path: Union[str, PathLike]
     :param scoring_script: Scoring script name. Equivalent to code_configuration.code.scoring_script.
-    :type scoring_script: Union[str, PathLike], optional
+    :type scoring_script: Union[str, PathLike]
     :param instance_count: Number of instances the interfering will run on. Equivalent to resources.instance_count.
-    :type instance_count: int, optional
+    :type instance_count: int
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if BatchDeployment cannot be successfully validated.
         Details will be provided in the error message.
     """

@@ -1,0 +1,26 @@
+{
+    "materialization_identity_resource_id": {
+        "value": ""
+    },
+    "offline_store_target": {
+        "value": ""
+    },
+    "online_store_target": {
+        "value": ""
+    },
+    "workspace_name": {
+        "value": ""
+    },
+    "resource_group_name": {
+        "value": ""
+    },
+    "update_offline_store_role_assignment": {
+        "value": "false"
+    },
+    "update_online_store_role_assignment": {
+        "value": "false"
+    },
+    "update_workspace_role_assignment": {
+        "value": "false"
+    }
+}

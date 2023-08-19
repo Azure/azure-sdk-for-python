@@ -13,6 +13,7 @@ from base_testcase import TestMetricsAdvisorClientBase
 
 class TestMetricsAdvisorCredential(TestMetricsAdvisorClientBase):
 
+    @pytest.mark.skip("InternalServerError")
     @recorded_by_proxy
     def test_credential_rotate_both_keys(self):
         credential = MetricsAdvisorKeyCredential(self.subscription_key, self.api_key)
@@ -42,6 +43,7 @@ class TestMetricsAdvisorCredential(TestMetricsAdvisorClientBase):
         result = client.get_feedback(feedback_id=self.feedback_id)
         assert result
 
+    @pytest.mark.skip("InternalServerError")
     @recorded_by_proxy
     def test_credential_rotate_sub_key_only(self):
         credential = MetricsAdvisorKeyCredential(self.subscription_key, self.api_key)
@@ -69,6 +71,7 @@ class TestMetricsAdvisorCredential(TestMetricsAdvisorClientBase):
         result = client.get_feedback(feedback_id=self.feedback_id)
         assert result
 
+    @pytest.mark.skip("InternalServerError")
     @recorded_by_proxy
     def test_credential_rotate_api_key_only(self):
         credential = MetricsAdvisorKeyCredential(self.subscription_key, self.api_key)

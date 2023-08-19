@@ -19,11 +19,11 @@ class KwParameter(Parameter):
     :type name: str
     :param default: The default value of the parameter.
     :param annotation: The annotation type of the parameter, defaults to `Parameter.empty`.
-    :type annotation: Any, optional
+    :type annotation: Any
     :param _type: The type of the parameter, defaults to "str".
-    :type _type: str, optional
+    :type _type: str
     :param _optional: Indicates if the parameter is optional, defaults to False.
-    :type _optional: bool, optional
+    :type _optional: bool
     """
 
     def __init__(self, name, default, annotation=Parameter.empty, _type="str", _optional=False) -> None:
