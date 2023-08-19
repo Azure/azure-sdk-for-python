@@ -10,9 +10,13 @@ from pathlib import Path
 from typing import Any, Dict, Optional, Union
 
 from azure.ai.ml._restclient.v2022_05_01.models import BatchDeploymentData
-from azure.ai.ml._restclient.v2022_05_01.models import BatchDeploymentDetails as RestBatchDeployment
+from azure.ai.ml._restclient.v2022_05_01.models import (
+    BatchDeploymentDetails as RestBatchDeployment,
+)
 from azure.ai.ml._restclient.v2022_05_01.models import BatchOutputAction
-from azure.ai.ml._restclient.v2022_05_01.models import CodeConfiguration as RestCodeConfiguration
+from azure.ai.ml._restclient.v2022_05_01.models import (
+    CodeConfiguration as RestCodeConfiguration,
+)
 from azure.ai.ml._restclient.v2022_05_01.models import IdAssetReference
 from azure.ai.ml._schema._deployment.batch.batch_deployment import BatchDeploymentSchema
 from azure.ai.ml._utils._arm_id_utils import _parse_endpoint_name_from_deployment_id
@@ -23,7 +27,12 @@ from azure.ai.ml.entities._deployment.deployment_settings import BatchRetrySetti
 from azure.ai.ml.entities._job.resource_configuration import ResourceConfiguration
 from azure.ai.ml.entities._util import load_from_dict
 from azure.ai.ml.entities._system_data import SystemData
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+from azure.ai.ml.exceptions import (
+    ErrorCategory,
+    ErrorTarget,
+    ValidationErrorType,
+    ValidationException,
+)
 
 from .code_configuration import CodeConfiguration
 from .deployment import Deployment
@@ -105,11 +114,15 @@ class BatchDeployment(Deployment):  # pylint: disable=too-many-instance-attribut
         mini_batch_size: Optional[int] = None,
         max_concurrency_per_instance: Optional[int] = None,
         environment_variables: Optional[Dict[str, str]] = None,
-        code_path: Optional[Union[str, PathLike]] = None,  # promoted property from code_configuration.code
+        code_path: Optional[
+            Union[str, PathLike]
+        ] = None,  # promoted property from code_configuration.code
         scoring_script: Optional[
             Union[str, PathLike]
         ] = None,  # promoted property from code_configuration.scoring_script
-        instance_count: Optional[int] = None,  # promoted property from resources.instance_count
+        instance_count: Optional[
+            int
+        ] = None,  # promoted property from resources.instance_count
         **kwargs,
     ) -> None:
         self._provisioning_state = kwargs.pop("provisioning_state", None)
@@ -173,7 +186,9 @@ class BatchDeployment(Deployment):  # pylint: disable=too-many-instance-attribut
         self.resources.instance_count = value
 
     def _to_dict(self) -> Dict:
-        return BatchDeploymentSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)  # pylint: disable=no-member
+        return BatchDeploymentSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(
+            self
+        )  # pylint: disable=no-member
 
     @classmethod
     def _rest_output_action_to_yaml_output_action(cls, rest_output_action: str) -> str:
@@ -193,7 +208,9 @@ class BatchDeployment(Deployment):  # pylint: disable=too-many-instance-attribut
 
         return output_switcher.get(yaml_output_action, yaml_output_action)
 
-    def _to_rest_object(self, location: str) -> BatchDeploymentData:  # pylint: disable=arguments-differ
+    def _to_rest_object(
+        self, location: str
+    ) -> BatchDeploymentData:  # pylint: disable=arguments-differ
         self._validate()
         code_config = (
             RestCodeConfiguration(
@@ -214,9 +231,13 @@ class BatchDeployment(Deployment):  # pylint: disable=too-many-instance-attribut
             environment_id=environment,
             model=model,
             output_file_name=self.output_file_name,
-            output_action=BatchDeployment._yaml_output_action_to_rest_output_action(self.output_action),
+            output_action=BatchDeployment._yaml_output_action_to_rest_output_action(
+                self.output_action
+            ),
             error_threshold=self.error_threshold,
-            retry_settings=self.retry_settings._to_rest_object() if self.retry_settings else None,
+            retry_settings=self.retry_settings._to_rest_object()
+            if self.retry_settings
+            else None,
             logging_level=self.logging_level,
             mini_batch_size=self.mini_batch_size,
             max_concurrency_per_instance=self.max_concurrency_per_instance,
@@ -224,13 +245,23 @@ class BatchDeployment(Deployment):  # pylint: disable=too-many-instance-attribut
             properties=self.properties,
         )
 
-        return BatchDeploymentData(location=location, properties=batch_deployment, tags=self.tags)
+        return BatchDeploymentData(
+            location=location, properties=batch_deployment, tags=self.tags
+        )
 
     @classmethod
-    def _from_rest_object(cls, deployment: BatchDeploymentData):  # pylint: disable=arguments-renamed
-        modelId = deployment.properties.model.asset_id if deployment.properties.model else None
+    def _from_rest_object(
+        cls, deployment: BatchDeploymentData
+    ):  # pylint: disable=arguments-renamed
+        modelId = (
+            deployment.properties.model.asset_id
+            if deployment.properties.model
+            else None
+        )
         code_configuration = (
-            CodeConfiguration._from_rest_code_configuration(deployment.properties.code_configuration)
+            CodeConfiguration._from_rest_code_configuration(
+                deployment.properties.code_configuration
+            )
             if deployment.properties.code_configuration
             else None
         )
@@ -243,16 +274,24 @@ class BatchDeployment(Deployment):  # pylint: disable=too-many-instance-attribut
             environment=deployment.properties.environment_id,
             code_configuration=code_configuration,
             output_file_name=deployment.properties.output_file_name
-            if cls._rest_output_action_to_yaml_output_action(deployment.properties.output_action)
+            if cls._rest_output_action_to_yaml_output_action(
+                deployment.properties.output_action
+            )
             == BatchDeploymentOutputAction.APPEND_ROW
             else None,
-            output_action=cls._rest_output_action_to_yaml_output_action(deployment.properties.output_action),
+            output_action=cls._rest_output_action_to_yaml_output_action(
+                deployment.properties.output_action
+            ),
             error_threshold=deployment.properties.error_threshold,
-            retry_settings=BatchRetrySettings._from_rest_object(deployment.properties.retry_settings),
+            retry_settings=BatchRetrySettings._from_rest_object(
+                deployment.properties.retry_settings
+            ),
             logging_level=deployment.properties.logging_level,
             mini_batch_size=deployment.properties.mini_batch_size,
             compute=deployment.properties.compute,
-            resources=ResourceConfiguration._from_rest_object(deployment.properties.resources),
+            resources=ResourceConfiguration._from_rest_object(
+                deployment.properties.resources
+            ),
             environment_variables=deployment.properties.environment_variables,
             max_concurrency_per_instance=deployment.properties.max_concurrency_per_instance,
             endpoint_name=_parse_endpoint_name_from_deployment_id(deployment.id),

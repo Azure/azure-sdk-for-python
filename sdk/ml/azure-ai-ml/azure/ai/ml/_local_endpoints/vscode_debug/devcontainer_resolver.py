@@ -105,7 +105,9 @@ class DevContainerResolver:
         self._properties.update(Settings().to_dict())
 
         if self._environment:
-            self._properties.update(ContainerEnv(environment_variables=self._environment).to_dict())
+            self._properties.update(
+                ContainerEnv(environment_variables=self._environment).to_dict()
+            )
         if self._mounts:
             self._properties.update(Mounts(mounts=self._mounts).to_dict())
         if self._labels:
@@ -150,7 +152,9 @@ def _reformat_mounts(mounts: Dict[str, Dict[str, Dict[str, str]]]) -> List[str]:
     for mount_dict in mounts.values():
         for source, dest in mount_dict.items():
             for mount_type, container_dest in dest.items():
-                devcontainer_mounts.append(f"source={source},target={container_dest},type={mount_type}")
+                devcontainer_mounts.append(
+                    f"source={source},target={container_dest},type={mount_type}"
+                )
     return devcontainer_mounts
 
 

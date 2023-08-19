@@ -60,7 +60,9 @@ class ParameterizedParallel:
         self.error_threshold = error_threshold
         self.mini_batch_error_threshold = mini_batch_error_threshold
         self.resources = resources
-        self.environment_variables = dict(environment_variables) if environment_variables else {}
+        self.environment_variables = (
+            dict(environment_variables) if environment_variables else {}
+        )
 
     @property
     def task(self) -> ParallelTask:

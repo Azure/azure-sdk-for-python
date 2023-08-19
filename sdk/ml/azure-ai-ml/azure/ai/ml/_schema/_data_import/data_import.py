@@ -15,7 +15,11 @@ from ..assets.data import DataSchema
 
 @experimental
 class DataImportSchema(DataSchema):
-    source = UnionField([NestedField(DatabaseSchema), NestedField(FileSystemSchema)], required=True, allow_none=False)
+    source = UnionField(
+        [NestedField(DatabaseSchema), NestedField(FileSystemSchema)],
+        required=True,
+        allow_none=False,
+    )
 
     @post_load
     def make(self, data, **kwargs):

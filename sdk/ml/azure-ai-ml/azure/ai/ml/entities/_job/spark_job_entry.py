@@ -5,8 +5,13 @@
 
 from typing import Optional, Union
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import SparkJobEntry as RestSparkJobEntry
-from azure.ai.ml._restclient.v2023_04_01_preview.models import SparkJobPythonEntry, SparkJobScalaEntry
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    SparkJobEntry as RestSparkJobEntry,
+)
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    SparkJobPythonEntry,
+    SparkJobScalaEntry,
+)
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 
@@ -37,12 +42,16 @@ class SparkJobEntry(RestTranslatableMixin):
             :caption: Creating SparkComponent.
     """
 
-    def __init__(self, *, entry: str, type: str = SparkJobEntryType.SPARK_JOB_FILE_ENTRY) -> None:
+    def __init__(
+        self, *, entry: str, type: str = SparkJobEntryType.SPARK_JOB_FILE_ENTRY
+    ) -> None:
         self.entry_type = type
         self.entry = entry
 
     @classmethod
-    def _from_rest_object(cls, obj: Union[SparkJobPythonEntry, SparkJobScalaEntry]) -> Optional["SparkJobEntry"]:
+    def _from_rest_object(
+        cls, obj: Union[SparkJobPythonEntry, SparkJobScalaEntry]
+    ) -> Optional["SparkJobEntry"]:
         if obj is None:
             return None
         if isinstance(obj, dict):
@@ -52,7 +61,9 @@ class SparkJobEntry(RestTranslatableMixin):
                 entry=obj.__dict__.get("file", None),
                 type=SparkJobEntryType.SPARK_JOB_FILE_ENTRY,
             )
-        return SparkJobEntry(entry=obj.class_name, type=SparkJobEntryType.SPARK_JOB_CLASS_ENTRY)
+        return SparkJobEntry(
+            entry=obj.class_name, type=SparkJobEntryType.SPARK_JOB_CLASS_ENTRY
+        )
 
     def _to_rest_object(self) -> Union[SparkJobPythonEntry, SparkJobScalaEntry]:
         if self.entry_type == SparkJobEntryType.SPARK_JOB_FILE_ENTRY:

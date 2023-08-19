@@ -26,8 +26,14 @@ from azure.ai.ml.entities._job.pipeline._io.mixin import NodeWithGroupInputMixin
 from azure.ai.ml.entities._job.pipeline._pipeline_expression import PipelineExpression
 from azure.ai.ml.entities._job.sweep.search_space import SweepDistribution
 from azure.ai.ml.entities._mixins import YamlTranslatableMixin
-from azure.ai.ml.entities._util import convert_ordered_dict_to_dict, resolve_pipeline_parameters
-from azure.ai.ml.entities._validation import MutableValidationResult, SchemaValidatableMixin
+from azure.ai.ml.entities._util import (
+    convert_ordered_dict_to_dict,
+    resolve_pipeline_parameters,
+)
+from azure.ai.ml.entities._validation import (
+    MutableValidationResult,
+    SchemaValidatableMixin,
+)
 from azure.ai.ml.exceptions import ErrorTarget
 
 module_logger = logging.getLogger(__name__)
@@ -43,9 +49,14 @@ def parse_inputs_outputs(data: dict) -> dict:
     """
 
     if "inputs" in data:
-        data["inputs"] = {key: build_input_output(val) for key, val in data["inputs"].items()}
+        data["inputs"] = {
+            key: build_input_output(val) for key, val in data["inputs"].items()
+        }
     if "outputs" in data:
-        data["outputs"] = {key: build_input_output(val, inputs=False) for key, val in data["outputs"].items()}
+        data["outputs"] = {
+            key: build_input_output(val, inputs=False)
+            for key, val in data["outputs"].items()
+        }
     return data
 
 
@@ -76,7 +87,13 @@ def pipeline_node_decorator(func):
 
 
 # pylint: disable=too-many-instance-attributes
-class BaseNode(Job, YamlTranslatableMixin, _AttrDict, SchemaValidatableMixin, NodeWithGroupInputMixin):
+class BaseNode(
+    Job,
+    YamlTranslatableMixin,
+    _AttrDict,
+    SchemaValidatableMixin,
+    NodeWithGroupInputMixin,
+):
     """Base class for node in pipeline, used for component version consumption. Can't be instantiated directly.
 
     You should not instantiate this class directly. Instead, you should
@@ -183,9 +200,13 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, SchemaValidatableMixin, No
         self._job_inputs, self._job_outputs = inputs, outputs
         if isinstance(component, Component):
             # Build the inputs from component input definition and given inputs, unfilled inputs will be None
-            self._inputs = self._build_inputs_dict(inputs or {}, input_definition_dict=component.inputs)
+            self._inputs = self._build_inputs_dict(
+                inputs or {}, input_definition_dict=component.inputs
+            )
             # Build the outputs from component output definition and given outputs, unfilled outputs will be None
-            self._outputs = self._build_outputs_dict(outputs or {}, output_definition_dict=component.outputs)
+            self._outputs = self._build_outputs_dict(
+                outputs or {}, output_definition_dict=component.outputs
+            )
         else:
             # Build inputs/outputs dict without meta when definition not available
             self._inputs = self._build_inputs_dict(inputs or {})
@@ -353,7 +374,9 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, SchemaValidatableMixin, No
                     message=f"Input of command {self.name} is a SweepDistribution, "
                     f"please use command.sweep to transform the command into a sweep node.",
                 )
-        return validation_result.try_raise(self._get_validation_error_target(), raise_error=raise_error)
+        return validation_result.try_raise(
+            self._get_validation_error_target(), raise_error=raise_error
+        )
 
     def _customized_validate(self) -> MutableValidationResult:
         """Validate the resource with customized logic.
@@ -397,7 +420,9 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, SchemaValidatableMixin, No
         if CommonYamlFields.TYPE not in obj:
             obj[CommonYamlFields.TYPE] = NodeType.COMMAND
 
-        from azure.ai.ml.entities._job.pipeline._load_component import pipeline_node_factory
+        from azure.ai.ml.entities._job.pipeline._load_component import (
+            pipeline_node_factory,
+        )
 
         # todo: refine Hard code for now to support different task type for DataTransfer node
         _type = obj[CommonYamlFields.TYPE]
@@ -438,7 +463,9 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, SchemaValidatableMixin, No
         if "distribution" in obj and obj["distribution"]:
             from azure.ai.ml.entities._job.distribution import DistributionConfiguration
 
-            obj["distribution"] = DistributionConfiguration._from_rest_object(obj["distribution"])
+            obj["distribution"] = DistributionConfiguration._from_rest_object(
+                obj["distribution"]
+            )
 
         return obj
 
@@ -538,7 +565,11 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, SchemaValidatableMixin, No
                 if isinstance(output_obj, NodeOutput):
                     outputs[output_name] = output_obj._data
                 else:
-                    raise TypeError("unsupported built output type: {}: {}".format(output_name, type(output_obj)))
+                    raise TypeError(
+                        "unsupported built output type: {}: {}".format(
+                            output_name, type(output_obj)
+                        )
+                    )
         return outputs
 
     def _get_telemetry_values(self):
@@ -547,7 +578,9 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, SchemaValidatableMixin, No
 
     def _register_in_current_pipeline_component_builder(self):
         """Register this node in current pipeline component builder by adding self to a global stack."""
-        from azure.ai.ml.dsl._pipeline_component_builder import _add_component_to_current_definition_builder
+        from azure.ai.ml.dsl._pipeline_component_builder import (
+            _add_component_to_current_definition_builder,
+        )
 
         # TODO: would it be better if we make _add_component_to_current_definition_builder a public function of
         #  _PipelineComponentBuilderStack and make _PipelineComponentBuilderStack a singleton?

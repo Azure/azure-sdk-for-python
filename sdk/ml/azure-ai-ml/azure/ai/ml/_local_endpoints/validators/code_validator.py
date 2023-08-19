@@ -6,7 +6,9 @@
 
 from pathlib import Path
 
-from azure.ai.ml._artifacts._artifact_utilities import download_artifact_from_storage_url
+from azure.ai.ml._artifacts._artifact_utilities import (
+    download_artifact_from_storage_url,
+)
 from azure.ai.ml._utils._arm_id_utils import parse_prefixed_name_version
 from azure.ai.ml._utils.utils import is_url
 from azure.ai.ml.constants._common import ARM_ID_PREFIX
@@ -81,14 +83,17 @@ def _local_code_path_is_valid(deployment: OnlineDeployment):
 
 
 def _local_scoring_script_is_valid(deployment: OnlineDeployment):
-    return deployment.code_configuration and deployment.code_configuration.scoring_script
+    return (
+        deployment.code_configuration and deployment.code_configuration.scoring_script
+    )
 
 
 def _code_configuration_contains_cloud_artifacts(deployment: OnlineDeployment):
     # If the deployment.code_configuration.code is a string, then it is the cloud code artifact name or full arm ID
 
     return isinstance(deployment.code_configuration.code, str) and (
-        is_url(deployment.code_configuration.code) or deployment.code_configuration.code.startswith(ARM_ID_PREFIX)
+        is_url(deployment.code_configuration.code)
+        or deployment.code_configuration.code.startswith(ARM_ID_PREFIX)
     )
 
 
@@ -98,7 +103,9 @@ def _get_local_code_configuration_artifacts(
     return Path(deployment._base_path, deployment.code_configuration.code).resolve()
 
 
-def _get_cloud_code_configuration_artifacts(code: str, code_operations: CodeOperations, download_path: str) -> str:
+def _get_cloud_code_configuration_artifacts(
+    code: str, code_operations: CodeOperations, download_path: str
+) -> str:
     name, version = parse_prefixed_name_version(code)
     code_asset = code_operations.get(name=name, version=version)
 

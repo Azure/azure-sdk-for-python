@@ -124,7 +124,15 @@ class Scope(InternalBaseNode):
 
     @classmethod
     def _picked_fields_from_dict_to_rest_object(cls) -> List[str]:
-        return ["custom_job_name_suffix", "scope_param", "adla_account_name", "priority", "auto_token", "tokens", "vcp"]
+        return [
+            "custom_job_name_suffix",
+            "scope_param",
+            "adla_account_name",
+            "priority",
+            "auto_token",
+            "tokens",
+            "vcp",
+        ]
 
     @classmethod
     def _create_schema_for_validation(cls, context) -> Union[PathAwareSchema, Schema]:

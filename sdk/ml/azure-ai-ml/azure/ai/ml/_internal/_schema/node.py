@@ -20,7 +20,9 @@ class InternalBaseNodeSchema(BaseNodeSchema):
             # for registry type assets
             RegistryStr(azureml_type=AzureMLResourceType.ENVIRONMENT),
             # existing component
-            ArmVersionedStr(azureml_type=AzureMLResourceType.COMPONENT, allow_default_version=True),
+            ArmVersionedStr(
+                azureml_type=AzureMLResourceType.COMPONENT, allow_default_version=True
+            ),
             # inline component or component file reference starting with FILE prefix
             NestedField(InternalComponentSchema, unknown=INCLUDE),
         ],

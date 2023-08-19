@@ -9,7 +9,11 @@ from azure.ai.ml._restclient.v2023_06_01_preview.models import ListWorkspaceKeys
 
 class ContainerRegistryCredential:
     def __init__(
-        self, *, location: Optional[str] = None, username: Optional[str] = None, passwords: Optional[List[str]] = None
+        self,
+        *,
+        location: Optional[str] = None,
+        username: Optional[str] = None,
+        passwords: Optional[List[str]] = None
     ):
         """Key for ACR associated with given workspace.
 
@@ -27,7 +31,12 @@ class ContainerRegistryCredential:
 
 
 class NotebookAccessKeys:
-    def __init__(self, *, primary_access_key: Optional[str] = None, secondary_access_key: Optional[str] = None):
+    def __init__(
+        self,
+        *,
+        primary_access_key: Optional[str] = None,
+        secondary_access_key: Optional[str] = None
+    ):
         """Key for notebook resource associated with given workspace.
 
         :param primary_access_key:  Primary access key of notebook resource
@@ -77,14 +86,20 @@ class WorkspaceKeys:
         container_registry_credentials = None
         notebook_access_keys = None
 
-        if hasattr(rest_obj, "container_registry_credentials") and rest_obj.container_registry_credentials is not None:
+        if (
+            hasattr(rest_obj, "container_registry_credentials")
+            and rest_obj.container_registry_credentials is not None
+        ):
             container_registry_credentials = ContainerRegistryCredential(
                 location=rest_obj.container_registry_credentials.location,
                 username=rest_obj.container_registry_credentials.username,
                 passwords=rest_obj.container_registry_credentials.passwords,
             )
 
-        if hasattr(rest_obj, "notebook_access_keys") and rest_obj.notebook_access_keys is not None:
+        if (
+            hasattr(rest_obj, "notebook_access_keys")
+            and rest_obj.notebook_access_keys is not None
+        ):
             notebook_access_keys = NotebookAccessKeys(
                 primary_access_key=rest_obj.notebook_access_keys.primary_access_key,
                 secondary_access_key=rest_obj.notebook_access_keys.secondary_access_key,

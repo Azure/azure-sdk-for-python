@@ -19,7 +19,9 @@ class PascalCaseProperty(BaseProperty):
         return result
 
 
-class AISuperComputerStorageReferenceConfiguration(PascalCaseProperty):  # pylint: disable=name-too-long
+class AISuperComputerStorageReferenceConfiguration(
+    PascalCaseProperty
+):  # pylint: disable=name-too-long
     _KEY_MAPPING = {
         "container_name": "ContainerName",
         "relative_path": "RelativePath",
@@ -81,7 +83,9 @@ class AISuperComputerScalePolicy(PascalCaseProperty):
         self.min_instance_type_count = min_instance_type_count
 
 
-class AISuperComputerConfiguration(PascalCaseProperty):  # pylint: disable=too-many-instance-attributes
+class AISuperComputerConfiguration(
+    PascalCaseProperty
+):  # pylint: disable=too-many-instance-attributes
     """A class to manage AI Super Computer Configuration."""
 
     _KEY_MAPPING = {
@@ -111,7 +115,9 @@ class AISuperComputerConfiguration(PascalCaseProperty):  # pylint: disable=too-m
         image_version: Optional[str] = None,
         location: Optional[str] = None,
         locations: Optional[List[str]] = None,
-        ai_super_computer_storage_data: Optional[Dict[str, AISuperComputerStorageReferenceConfiguration]] = None,
+        ai_super_computer_storage_data: Optional[
+            Dict[str, AISuperComputerStorageReferenceConfiguration]
+        ] = None,
         interactive: Optional[bool] = None,
         scale_policy: Optional[AISuperComputerScalePolicy] = None,
         virtual_cluster_arm_id: Optional[str] = None,

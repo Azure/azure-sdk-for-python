@@ -69,11 +69,15 @@ class WorkspaceAssetReference(Asset):
             destination_version=self.version,
             source_asset_id=self.asset_id,
         )
-        resource_management = ResourceManagementAssetReferenceData(properties=resource_management_details)
+        resource_management = ResourceManagementAssetReferenceData(
+            properties=resource_management_details
+        )
         return resource_management
 
     @classmethod
-    def _from_rest_object(cls, resource_object: ResourceManagementAssetReferenceData) -> "WorkspaceAssetReference":
+    def _from_rest_object(
+        cls, resource_object: ResourceManagementAssetReferenceData
+    ) -> "WorkspaceAssetReference":
         resource_management = WorkspaceAssetReference(
             name=resource_object.properties.destination_name,
             version=resource_object.properties.destination_version,
@@ -84,4 +88,6 @@ class WorkspaceAssetReference(Asset):
 
     def _to_dict(self) -> Dict:
         # pylint: disable=no-member
-        return WorkspaceAssetReferenceSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        return WorkspaceAssetReferenceSchema(
+            context={BASE_PATH_CONTEXT_KEY: "./"}
+        ).dump(self)

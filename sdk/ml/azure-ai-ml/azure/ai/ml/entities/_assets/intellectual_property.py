@@ -4,7 +4,9 @@
 
 from typing import Any
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import IntellectualProperty as RestIntellectualProperty
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    IntellectualProperty as RestIntellectualProperty,
+)
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._assets import IPProtectionLevel
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
@@ -30,12 +32,19 @@ class IntellectualProperty(RestTranslatableMixin):
             :caption: Configuring intellectual property settings on a CommandComponent.
     """
 
-    def __init__(self, *, publisher: str = None, protection_level: IPProtectionLevel = IPProtectionLevel.ALL) -> None:
+    def __init__(
+        self,
+        *,
+        publisher: str = None,
+        protection_level: IPProtectionLevel = IPProtectionLevel.ALL
+    ) -> None:
         self.publisher = publisher
         self.protection_level = protection_level
 
     def _to_rest_object(self) -> RestIntellectualProperty:
-        return RestIntellectualProperty(publisher=self.publisher, protection_level=self.protection_level)
+        return RestIntellectualProperty(
+            publisher=self.publisher, protection_level=self.protection_level
+        )
 
     @classmethod
     def _from_rest_object(cls, obj: RestIntellectualProperty) -> "IntellectualProperty":
@@ -44,4 +53,7 @@ class IntellectualProperty(RestTranslatableMixin):
     def __eq__(self, other: Any) -> bool:
         if not isinstance(other, IntellectualProperty):
             return NotImplemented
-        return self.publisher == other.publisher and self.protection_level == other.protection_level
+        return (
+            self.publisher == other.publisher
+            and self.protection_level == other.protection_level
+        )

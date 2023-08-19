@@ -14,6 +14,8 @@ class AlertNotificationSchema(metaclass=PatchedSchemaMeta):
 
     @post_load
     def make(self, data, **kwargs):
-        from azure.ai.ml.entities._monitoring.alert_notification import AlertNotification
+        from azure.ai.ml.entities._monitoring.alert_notification import (
+            AlertNotification,
+        )
 
         return AlertNotification(**data)

@@ -58,4 +58,6 @@ class ManagedIdentityBase(GetTokenMixin):
 
     def _request_token(self, *scopes, **kwargs):
         # type: (*str, **Any) -> AccessToken
-        return cast(ManagedIdentityClient, self._client).request_token(*scopes, **kwargs)
+        return cast(ManagedIdentityClient, self._client).request_token(
+            *scopes, **kwargs
+        )

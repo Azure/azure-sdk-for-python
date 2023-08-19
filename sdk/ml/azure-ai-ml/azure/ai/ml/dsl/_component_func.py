@@ -9,7 +9,9 @@ from typing import Callable, Mapping
 from azure.ai.ml.dsl._dynamic import KwParameter, create_kw_function_from_parameters
 from azure.ai.ml.entities import Component as ComponentEntity
 from azure.ai.ml.entities._builders import Command
-from azure.ai.ml.entities._component.datatransfer_component import DataTransferImportComponent
+from azure.ai.ml.entities._component.datatransfer_component import (
+    DataTransferImportComponent,
+)
 
 
 def get_dynamic_input_parameter(inputs: Mapping):
@@ -49,7 +51,9 @@ def get_dynamic_source_parameter(source):
     ]
 
 
-def to_component_func(entity: ComponentEntity, component_creation_func) -> Callable[..., Command]:
+def to_component_func(
+    entity: ComponentEntity, component_creation_func
+) -> Callable[..., Command]:
     """Convert a ComponentEntity to a callable component function.
 
     :param entity: The ComponentEntity to convert.
@@ -76,13 +80,17 @@ def to_component_func(entity: ComponentEntity, component_creation_func) -> Calla
 
     for name, item in entity.inputs.items():
         if isinstance(item, GroupInput):
-            flattened_group_keys.extend(list(item.flatten(group_parameter_name=name).keys()))
+            flattened_group_keys.extend(
+                list(item.flatten(group_parameter_name=name).keys())
+            )
 
     doc_string = entity.description
     # Try add yaml to doc string
     try:
         yaml_str = entity._yaml_str if entity._yaml_str else entity._to_yaml()
-        doc_string = "{0}\n\nComponent yaml:\n```yaml\n{1}\n```".format(doc_string, yaml_str)
+        doc_string = "{0}\n\nComponent yaml:\n```yaml\n{1}\n```".format(
+            doc_string, yaml_str
+        )
     except Exception:  # pylint: disable=broad-except
         pass
 

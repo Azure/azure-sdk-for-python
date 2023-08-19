@@ -9,18 +9,32 @@ from os import PathLike
 from pathlib import Path
 from typing import IO, AnyStr, Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import CreateMonitorAction, RecurrenceFrequency
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    CreateMonitorAction,
+    RecurrenceFrequency,
+)
 from azure.ai.ml._restclient.v2023_04_01_preview.models import Schedule as RestSchedule
 from azure.ai.ml._restclient.v2023_04_01_preview.models import ScheduleProperties
 from azure.ai.ml._schema.monitoring.schedule import MonitorScheduleSchema
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils.utils import dump_yaml_to_file
-from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, ScheduleType
-from azure.ai.ml.constants._monitoring import SPARK_INSTANCE_TYPE_KEY, SPARK_RUNTIME_VERSION
+from azure.ai.ml.constants._common import (
+    BASE_PATH_CONTEXT_KEY,
+    PARAMS_OVERRIDE_KEY,
+    ScheduleType,
+)
+from azure.ai.ml.constants._monitoring import (
+    SPARK_INSTANCE_TYPE_KEY,
+    SPARK_RUNTIME_VERSION,
+)
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 from azure.ai.ml.entities._monitoring.definition import MonitorDefinition
 from azure.ai.ml.entities._schedule.schedule import Schedule
-from azure.ai.ml.entities._schedule.trigger import CronTrigger, RecurrenceTrigger, TriggerBase
+from azure.ai.ml.entities._schedule.trigger import (
+    CronTrigger,
+    RecurrenceTrigger,
+    TriggerBase,
+)
 from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._util import load_from_dict
 
@@ -105,7 +119,10 @@ class MonitorSchedule(Schedule, RestTranslatableMixin):
         if isinstance(self.trigger, RecurrenceTrigger):
             frequency = self.trigger.frequency.lower()
             interval = self.trigger.interval
-            if frequency == RecurrenceFrequency.MINUTE.lower() or frequency == RecurrenceFrequency.HOUR.lower():
+            if (
+                frequency == RecurrenceFrequency.MINUTE.lower()
+                or frequency == RecurrenceFrequency.HOUR.lower()
+            ):
                 default_data_window_size = "P1D"
             elif frequency == RecurrenceFrequency.DAY.lower():
                 default_data_window_size = f"P{interval}D"
@@ -143,10 +160,14 @@ class MonitorSchedule(Schedule, RestTranslatableMixin):
         """
         path = kwargs.pop("path", None)
         yaml_serialized = self._to_dict()
-        dump_yaml_to_file(dest, yaml_serialized, default_flow_style=False, path=path, **kwargs)
+        dump_yaml_to_file(
+            dest, yaml_serialized, default_flow_style=False, path=path, **kwargs
+        )
 
     def _to_dict(self) -> Dict:
-        return MonitorScheduleSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)  # pylint: disable=no-member
+        return MonitorScheduleSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(
+            self
+        )  # pylint: disable=no-member
 
     @classmethod
     def _from_rest_object(cls, obj: RestSchedule) -> "MonitorSchedule":
@@ -164,7 +185,9 @@ class MonitorSchedule(Schedule, RestTranslatableMixin):
             properties=properties.properties,
             provisioning_state=properties.provisioning_state,
             is_enabled=properties.is_enabled,
-            creation_context=SystemData._from_rest_object(obj.system_data) if obj.system_data else None,
+            creation_context=SystemData._from_rest_object(obj.system_data)
+            if obj.system_data
+            else None,
         )
 
     def _create_default_monitor_definition(self):

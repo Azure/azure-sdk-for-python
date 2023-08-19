@@ -29,7 +29,9 @@ class GetTokenMixin(abc.ABC):
 
     @abc.abstractmethod
     # pylint: disable-next=docstring-missing-param
-    async def _acquire_token_silently(self, *scopes: str, **kwargs: "Any") -> "Optional[AccessToken]":
+    async def _acquire_token_silently(
+        self, *scopes: str, **kwargs: "Any"
+    ) -> "Optional[AccessToken]":
         """Attempt to acquire an access token from a cache or by redeeming a refresh token."""
 
     @abc.abstractmethod

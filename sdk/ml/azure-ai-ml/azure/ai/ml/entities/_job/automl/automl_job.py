@@ -62,7 +62,11 @@ class AutoMLJob(Job, JobIOMixin, AutoMLNodeIOMixin, ABC):
         *,
         resources: Optional[ResourceConfiguration] = None,
         identity: Optional[
-            Union[ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]
+            Union[
+                ManagedIdentityConfiguration,
+                AmlTokenConfiguration,
+                UserIdentityConfiguration,
+            ]
         ] = None,
         queue_settings: Optional[QueueSettings] = None,
         **kwargs: Any,
@@ -142,7 +146,9 @@ class AutoMLJob(Job, JobIOMixin, AutoMLNodeIOMixin, ABC):
         :rtype: AutoMLJob
         """
         task_type = (
-            camel_to_snake(obj.properties.task_details.task_type) if obj.properties.task_details.task_type else None
+            camel_to_snake(obj.properties.task_details.task_type)
+            if obj.properties.task_details.task_type
+            else None
         )
         class_type = cls._get_task_mapping().get(task_type, None)
         if class_type:
@@ -229,7 +235,11 @@ class AutoMLJob(Job, JobIOMixin, AutoMLNodeIOMixin, ABC):
             ImageInstanceSegmentationJob,
             ImageObjectDetectionJob,
         )
-        from .nlp import TextClassificationJob, TextClassificationMultilabelJob, TextNerJob
+        from .nlp import (
+            TextClassificationJob,
+            TextClassificationMultilabelJob,
+            TextNerJob,
+        )
         from .tabular import ClassificationJob, ForecastingJob, RegressionJob
 
         # create a mapping of task type to job class
@@ -238,12 +248,18 @@ class AutoMLJob(Job, JobIOMixin, AutoMLNodeIOMixin, ABC):
             camel_to_snake(TaskType.REGRESSION): RegressionJob,
             camel_to_snake(TaskType.FORECASTING): ForecastingJob,
             camel_to_snake(TaskType.IMAGE_CLASSIFICATION): ImageClassificationJob,
-            camel_to_snake(TaskType.IMAGE_CLASSIFICATION_MULTILABEL): ImageClassificationMultilabelJob,
+            camel_to_snake(
+                TaskType.IMAGE_CLASSIFICATION_MULTILABEL
+            ): ImageClassificationMultilabelJob,
             camel_to_snake(TaskType.IMAGE_OBJECT_DETECTION): ImageObjectDetectionJob,
-            camel_to_snake(TaskType.IMAGE_INSTANCE_SEGMENTATION): ImageInstanceSegmentationJob,
+            camel_to_snake(
+                TaskType.IMAGE_INSTANCE_SEGMENTATION
+            ): ImageInstanceSegmentationJob,
             camel_to_snake(TaskType.TEXT_NER): TextNerJob,
             camel_to_snake(TaskType.TEXT_CLASSIFICATION): TextClassificationJob,
-            camel_to_snake(TaskType.TEXT_CLASSIFICATION_MULTILABEL): TextClassificationMultilabelJob,
+            camel_to_snake(
+                TaskType.TEXT_CLASSIFICATION_MULTILABEL
+            ): TextClassificationMultilabelJob,
         }
 
     def _resolve_data_inputs(self, rest_job):
@@ -255,7 +271,9 @@ class AutoMLJob(Job, JobIOMixin, AutoMLNodeIOMixin, ABC):
         if isinstance(rest_job.training_data, Input):
             rest_job.training_data = MLTableJobInput(uri=rest_job.training_data.path)
         if isinstance(rest_job.validation_data, Input):
-            rest_job.validation_data = MLTableJobInput(uri=rest_job.validation_data.path)
+            rest_job.validation_data = MLTableJobInput(
+                uri=rest_job.validation_data.path
+            )
         if hasattr(rest_job, "test_data") and isinstance(rest_job.test_data, Input):
             rest_job.test_data = MLTableJobInput(uri=rest_job.test_data.path)
 
@@ -263,11 +281,15 @@ class AutoMLJob(Job, JobIOMixin, AutoMLNodeIOMixin, ABC):
         """Restore MLTableJobInputs to JobInputs within data_settings."""
         if isinstance(self.training_data, MLTableJobInput):
             self.training_data = Input(
-                type=AssetTypes.MLTABLE, path=self.training_data.uri  # pylint: disable=no-member
+                type=AssetTypes.MLTABLE,
+                path=self.training_data.uri,  # pylint: disable=no-member
             )
         if isinstance(self.validation_data, MLTableJobInput):
             self.validation_data = Input(
-                type=AssetTypes.MLTABLE, path=self.validation_data.uri  # pylint: disable=no-member
+                type=AssetTypes.MLTABLE,
+                path=self.validation_data.uri,  # pylint: disable=no-member
             )
         if hasattr(self, "test_data") and isinstance(self.test_data, MLTableJobInput):
-            self.test_data = Input(type=AssetTypes.MLTABLE, path=self.test_data.uri)  # pylint: disable=no-member
+            self.test_data = Input(
+                type=AssetTypes.MLTABLE, path=self.test_data.uri
+            )  # pylint: disable=no-member

@@ -7,7 +7,12 @@ from inspect import Parameter, Signature
 from typing import Callable, Dict, Sequence
 
 from azure.ai.ml.entities import Component
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, UnexpectedKeywordError, ValidationException
+from azure.ai.ml.exceptions import (
+    ErrorCategory,
+    ErrorTarget,
+    UnexpectedKeywordError,
+    ValidationException,
+)
 
 module_logger = logging.getLogger(__name__)
 
@@ -26,13 +31,19 @@ class KwParameter(Parameter):
     :type _optional: bool, optional
     """
 
-    def __init__(self, name, default, annotation=Parameter.empty, _type="str", _optional=False) -> None:
-        super().__init__(name, Parameter.KEYWORD_ONLY, default=default, annotation=annotation)
+    def __init__(
+        self, name, default, annotation=Parameter.empty, _type="str", _optional=False
+    ) -> None:
+        super().__init__(
+            name, Parameter.KEYWORD_ONLY, default=default, annotation=annotation
+        )
         self._type = _type
         self._optional = _optional
 
 
-def _replace_function_name(func: types.FunctionType, new_name: str) -> types.FunctionType:
+def _replace_function_name(
+    func: types.FunctionType, new_name: str
+) -> types.FunctionType:
     """Replaces the name of a function with a new name
 
     :param func: The function to update
@@ -105,10 +116,14 @@ def _assert_arg_valid(kwargs: dict, keys: list, func_name: str):
                 if key != lower_key:
                     # raise warning if name not match sanitize version
                     module_logger.warning(
-                        "Component input name %s, treat it as %s", key, lower2original_parameter_names[lower_key]
+                        "Component input name %s, treat it as %s",
+                        key,
+                        lower2original_parameter_names[lower_key],
                     )
             else:
-                raise UnexpectedKeywordError(func_name=func_name, keyword=key, keywords=keys)
+                raise UnexpectedKeywordError(
+                    func_name=func_name, keyword=key, keywords=keys
+                )
     # update kwargs to align with yaml definition
     for key in kwargs_need_to_update:
         kwargs[lower2original_parameter_names[key.lower()]] = kwargs.pop(key)
@@ -152,7 +167,9 @@ def create_kw_function_from_parameters(
     :rtype: Callable
     :raises ValidationException: If the provided function parameters are not keyword-only.
     """
-    if any(p.default == p.empty or p.kind != Parameter.KEYWORD_ONLY for p in parameters):
+    if any(
+        p.default == p.empty or p.kind != Parameter.KEYWORD_ONLY for p in parameters
+    ):
         msg = "This function only accept keyword only parameters."
         raise ValidationException(
             message=msg,
@@ -165,7 +182,11 @@ def create_kw_function_from_parameters(
     def f(**kwargs):
         # We need to make sure all keys of kwargs are valid.
         # Merge valid group keys with original keys.
-        _assert_arg_valid(kwargs, [*list(default_kwargs.keys()), *flattened_group_keys], func_name=func_name)
+        _assert_arg_valid(
+            kwargs,
+            [*list(default_kwargs.keys()), *flattened_group_keys],
+            func_name=func_name,
+        )
         # We need to put the default args to the kwargs before invoking the original function.
         _update_dct_if_not_exist(kwargs, default_kwargs)
         return func(**kwargs)

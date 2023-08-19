@@ -87,7 +87,9 @@ class ParameterizedCommand:
         super().__init__(**kwargs)
         self.command = command
         self.code = code
-        self.environment_variables = dict(environment_variables) if environment_variables else {}
+        self.environment_variables = (
+            dict(environment_variables) if environment_variables else {}
+        )
         self.environment = environment
         self.distribution: Union[
             MpiDistribution,
@@ -101,7 +103,9 @@ class ParameterizedCommand:
     @property
     def distribution(
         self,
-    ) -> Union[MpiDistribution, TensorFlowDistribution, PyTorchDistribution, RayDistribution]:
+    ) -> Union[
+        MpiDistribution, TensorFlowDistribution, PyTorchDistribution, RayDistribution
+    ]:
         """The configuration for the distributed command component or job.
 
         :return: The distribution configuration.
@@ -111,7 +115,9 @@ class ParameterizedCommand:
         return self._distribution
 
     @distribution.setter
-    def distribution(self, value: Union[dict, PyTorchDistribution, MpiDistribution]) -> None:
+    def distribution(
+        self, value: Union[dict, PyTorchDistribution, MpiDistribution]
+    ) -> None:
         """Sets the configuration for the distributed command component or job.
 
         :param value: The distribution configuration for distributed jobs.
@@ -124,7 +130,9 @@ class ParameterizedCommand:
                     NestedField(PyTorchDistributionSchema, unknown=INCLUDE),
                     NestedField(TensorFlowDistributionSchema, unknown=INCLUDE),
                     NestedField(MPIDistributionSchema, unknown=INCLUDE),
-                    ExperimentalField(NestedField(RayDistributionSchema, unknown=INCLUDE)),
+                    ExperimentalField(
+                        NestedField(RayDistributionSchema, unknown=INCLUDE)
+                    ),
                 ]
             )
             value = dist_schema._deserialize(value=value, attr=None, data=None)
@@ -157,8 +165,12 @@ class ParameterizedCommand:
             code=sweep_job.trial.code_id,
             environment_variables=sweep_job.trial.environment_variables,
             environment=sweep_job.trial.environment_id,
-            distribution=DistributionConfiguration._from_rest_object(sweep_job.trial.distribution),
-            resources=JobResourceConfiguration._from_rest_object(sweep_job.trial.resources),
+            distribution=DistributionConfiguration._from_rest_object(
+                sweep_job.trial.distribution
+            ),
+            resources=JobResourceConfiguration._from_rest_object(
+                sweep_job.trial.resources
+            ),
             queue_settings=QueueSettings._from_rest_object(sweep_job.queue_settings),
         )
         return parameterized_command

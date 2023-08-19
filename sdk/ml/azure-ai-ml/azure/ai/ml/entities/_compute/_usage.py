@@ -14,7 +14,9 @@ from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 
 class UsageName:
-    def __init__(self, *, value: Optional[str] = None, localized_value: Optional[str] = None) -> None:
+    def __init__(
+        self, *, value: Optional[str] = None, localized_value: Optional[str] = None
+    ) -> None:
         """The usage name.
 
         :param value: The name of the resource.
@@ -55,7 +57,6 @@ class Usage(RestTranslatableMixin):
         limit: Optional[int] = None,
         name: Optional[UsageName] = None,
     ) -> None:
-
         self.id = id
         self.aml_workspace_location = aml_workspace_location
         self.type = type
@@ -84,7 +85,9 @@ class Usage(RestTranslatableMixin):
         """
         path = kwargs.pop("path", None)
         yaml_serialized = self._to_dict()
-        dump_yaml_to_file(dest, yaml_serialized, default_flow_style=False, path=path, **kwargs)
+        dump_yaml_to_file(
+            dest, yaml_serialized, default_flow_style=False, path=path, **kwargs
+        )
 
     def _to_dict(self) -> Dict:
         # pylint: disable=no-member

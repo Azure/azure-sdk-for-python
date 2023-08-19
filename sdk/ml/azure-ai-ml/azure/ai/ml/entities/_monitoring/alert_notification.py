@@ -48,5 +48,7 @@ class AlertNotification(RestTranslatableMixin):
         )
 
     @classmethod
-    def _from_rest_object(cls, obj: EmailMonitoringAlertNotificationSettings) -> "AlertNotification":
+    def _from_rest_object(
+        cls, obj: EmailMonitoringAlertNotificationSettings
+    ) -> "AlertNotification":
         return cls(emails=obj.email_notification_setting.emails)

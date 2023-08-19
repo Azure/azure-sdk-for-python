@@ -25,23 +25,25 @@ HTTPS_PREFIX = "https"
 ARM_ID_FULL_PREFIX = "/subscriptions/"
 AZUREML_RESOURCE_PROVIDER = "Microsoft.MachineLearningServices"
 RESOURCE_ID_FORMAT = "/subscriptions/{}/resourceGroups/{}/providers/{}/workspaces/{}"
-NAMED_RESOURCE_ID_FORMAT = "/subscriptions/{}/resourceGroups/{}/providers/{}/workspaces/{}/{}/{}"
-NAMED_RESOURCE_ID_FORMAT_WITH_PARENT = "/subscriptions/{}/resourceGroups/{}/providers/{}/workspaces/{}/{}/{}/{}/{}"
-LEVEL_ONE_NAMED_RESOURCE_ID_FORMAT = "/subscriptions/{}/resourceGroups/{}/providers/{}/{}/{}"
-VERSIONED_RESOURCE_ID_FORMAT = "/subscriptions/{}/resourceGroups/{}/providers/{}/workspaces/{}/{}/{}/versions/{}"
-LABELLED_RESOURCE_ID_FORMAT = "/subscriptions/{}/resourceGroups/{}/providers/{}/workspaces/{}/{}/{}/labels/{}"
-DATASTORE_RESOURCE_ID = (
-    "/subscriptions/{}/resourceGroups/{}/providers/Microsoft.MachineLearningServices/workspaces/{}/datastores/{}"
+NAMED_RESOURCE_ID_FORMAT = (
+    "/subscriptions/{}/resourceGroups/{}/providers/{}/workspaces/{}/{}/{}"
 )
-PROVIDER_RESOURCE_ID_WITH_VERSION = (
-    "/subscriptions/{}/resourceGroups/{}/providers/Microsoft.MachineLearningServices/workspaces/{}/{}/{}/versions/{}"
+NAMED_RESOURCE_ID_FORMAT_WITH_PARENT = (
+    "/subscriptions/{}/resourceGroups/{}/providers/{}/workspaces/{}/{}/{}/{}/{}"
 )
-SINGULARITY_ID_FORMAT = (
-    "/subscriptions/{}/resourceGroups/{}/providers/Microsoft.MachineLearningServices/virtualclusters/{}"
+LEVEL_ONE_NAMED_RESOURCE_ID_FORMAT = (
+    "/subscriptions/{}/resourceGroups/{}/providers/{}/{}/{}"
 )
-SINGULARITY_ID_REGEX_FORMAT = (
-    "/subscriptions/.*/resourceGroups/.*/providers/Microsoft.MachineLearningServices/virtualclusters/.*"
+VERSIONED_RESOURCE_ID_FORMAT = (
+    "/subscriptions/{}/resourceGroups/{}/providers/{}/workspaces/{}/{}/{}/versions/{}"
 )
+LABELLED_RESOURCE_ID_FORMAT = (
+    "/subscriptions/{}/resourceGroups/{}/providers/{}/workspaces/{}/{}/{}/labels/{}"
+)
+DATASTORE_RESOURCE_ID = "/subscriptions/{}/resourceGroups/{}/providers/Microsoft.MachineLearningServices/workspaces/{}/datastores/{}"
+PROVIDER_RESOURCE_ID_WITH_VERSION = "/subscriptions/{}/resourceGroups/{}/providers/Microsoft.MachineLearningServices/workspaces/{}/{}/{}/versions/{}"
+SINGULARITY_ID_FORMAT = "/subscriptions/{}/resourceGroups/{}/providers/Microsoft.MachineLearningServices/virtualclusters/{}"
+SINGULARITY_ID_REGEX_FORMAT = "/subscriptions/.*/resourceGroups/.*/providers/Microsoft.MachineLearningServices/virtualclusters/.*"
 SINGULARITY_FULL_NAME_REGEX_FORMAT = (
     "^(azureml:)?//subscriptions/(?P<subscription_id>[^/]+)/resourceGroups/(?P<resource_group_name>[^/]+)/"
     "virtualclusters/(?P<name>[^/]+)"
@@ -61,15 +63,23 @@ TID_FMT = "&tid={}"
 AZUREML_PRIVATE_FEATURES_ENV_VAR = "AZURE_ML_CLI_PRIVATE_FEATURES_ENABLED"
 AZUREML_INTERNAL_COMPONENTS_ENV_VAR = "AZURE_ML_INTERNAL_COMPONENTS_ENABLED"
 AZUREML_DISABLE_ON_DISK_CACHE_ENV_VAR = "AZURE_ML_DISABLE_ON_DISK_CACHE"
-AZUREML_COMPONENT_REGISTRATION_MAX_WORKERS = "AZURE_ML_COMPONENT_REGISTRATION_MAX_WORKERS"
-AZUREML_DISABLE_CONCURRENT_COMPONENT_REGISTRATION = "AZURE_ML_DISABLE_CONCURRENT_COMPONENT_REGISTRATION"
-AZUREML_INTERNAL_COMPONENTS_SCHEMA_PREFIX = "https://componentsdk.azureedge.net/jsonschema/"
+AZUREML_COMPONENT_REGISTRATION_MAX_WORKERS = (
+    "AZURE_ML_COMPONENT_REGISTRATION_MAX_WORKERS"
+)
+AZUREML_DISABLE_CONCURRENT_COMPONENT_REGISTRATION = (
+    "AZURE_ML_DISABLE_CONCURRENT_COMPONENT_REGISTRATION"
+)
+AZUREML_INTERNAL_COMPONENTS_SCHEMA_PREFIX = (
+    "https://componentsdk.azureedge.net/jsonschema/"
+)
 COMMON_RUNTIME_ENV_VAR = "AZUREML_COMPUTE_USE_COMMON_RUNTIME"
 ENDPOINT_DEPLOYMENT_START_MSG = (
     "{}/#blade/HubsExtension/DeploymentDetailsBlade/overview/id/"
     "%2Fsubscriptions%2F{}%2FresourceGroups%2F{}%2Fproviders%2FMicrosoft.Resources%2Fdeployments%2F{}\n"
 )
-AZUREML_LOCAL_ENDPOINTS_NOT_IMPLEMENTED_ERROR = "This operation for local endpoints is not supported yet."
+AZUREML_LOCAL_ENDPOINTS_NOT_IMPLEMENTED_ERROR = (
+    "This operation for local endpoints is not supported yet."
+)
 BATCH_JOB_NOT_SUPPORTED_ERROR_CODE = "BatchJobNotSupported"
 ENVIRONMENT_VARIABLES = "environment_variables"
 LIMITED_RESULTSET_WARNING_FORMAT = "Displaying top {} results from the list command."
@@ -79,49 +89,49 @@ LOCAL_COMPUTE_PROPERTY = "IsLocal"
 SERVERLESS_COMPUTE = "serverless"
 CONDA_FILE = "conda_file"
 DOCKER_FILE_NAME = "Dockerfile"
-COMPUTE_UPDATE_ERROR = (
-    "Only AmlCompute/KubernetesCompute cluster properties are supported, compute name {}, is {} type."
-)
+COMPUTE_UPDATE_ERROR = "Only AmlCompute/KubernetesCompute cluster properties are supported, compute name {}, is {} type."
 MAX_AUTOINCREMENT_ATTEMPTS = 3
 REGISTRY_URI_REGEX_FORMAT = "azureml://registries/*"
 REGISTRY_URI_FORMAT = "azureml://registries/"
 INTERNAL_REGISTRY_URI_FORMAT = "azureml://feeds/"
-REGISTRY_VERSION_PATTERN = "^azureml://registries/([^/]+)/([^/]+)/([^/]+)/versions/([^/]+)"
+REGISTRY_VERSION_PATTERN = (
+    "^azureml://registries/([^/]+)/([^/]+)/([^/]+)/versions/([^/]+)"
+)
 REGISTRY_ASSET_ID = "azureml://registries/{}/{}/{}/versions/{}"
 SHORT_URI_FORMAT = "azureml://datastores/{}/paths/{}"
 DATASTORE_SHORT_URI = "azureml://datastores/"
 MLFLOW_URI_FORMAT = "runs:/{}/{}"
 JOB_URI_FORMAT = "azureml://jobs/{}/outputs/{}/paths/{}"
-LONG_URI_FORMAT = "azureml://subscriptions/{}/resourcegroups/{}/workspaces/{}/datastores/{}/paths/{}"
+LONG_URI_FORMAT = (
+    "azureml://subscriptions/{}/resourcegroups/{}/workspaces/{}/datastores/{}/paths/{}"
+)
 SHORT_URI_REGEX_FORMAT = "azureml://datastores/([^/]+)/paths/(.+)"
 MLFLOW_URI_REGEX_FORMAT = "runs:/([^/?]+)/(.+)"
 AZUREML_REGEX_FORMAT = "azureml:([^/]+):(.+)"
 JOB_URI_REGEX_FORMAT = "azureml://jobs/([^/]+)/outputs/([^/]+)/paths/(.+)"
 OUTPUT_URI_REGEX_FORMAT = "azureml://datastores/([^/]+)/(ExperimentRun/.+)"
-LONG_URI_REGEX_FORMAT = (
-    "azureml://subscriptions/([^/]+)/resource[gG]roups/([^/]+)/workspaces/([^/]+)/datastores/([^/]+)/paths/(.+)"
-)
+LONG_URI_REGEX_FORMAT = "azureml://subscriptions/([^/]+)/resource[gG]roups/([^/]+)/workspaces/([^/]+)/datastores/([^/]+)/paths/(.+)"
 ASSET_ARM_ID_REGEX_FORMAT = (
     "azureml:/subscriptions/([^/]+)/resource[gG]roups/([^/]+)/"
     "providers/Microsoft.MachineLearningServices/workspaces/([^/]+)/([^/]+)/([^/]+)/versions/(.+)"
 )
-ASSET_ID_REGEX_FORMAT = (
-    "azureml://subscriptions/([^/]+)/resource[gG]roups/([^/]+)/workspaces/([^/]+)/([^/]+)/([^/]+)/versions/(.+)"
-)
+ASSET_ID_REGEX_FORMAT = "azureml://subscriptions/([^/]+)/resource[gG]roups/([^/]+)/workspaces/([^/]+)/([^/]+)/([^/]+)/versions/(.+)"
 ASSET_ID_RESOURCE_REGEX_FORMAT = "azureml://resource[gG]roups/([^/]+)/workspaces/([^/]+)/([^/]+)/([^/]+)/versions/(.+)"
 MODEL_ID_REGEX_FORMAT = "azureml://models/([^/]+)/versions/(.+)"
 DATA_ID_REGEX_FORMAT = "azureml://data/([^/]+)/versions/(.+)"
-ASSET_ID_URI_REGEX_FORMAT = "azureml://locations/([^/]+)/workspaces/([^/]+)/([^/]+)/([^/]+)/versions/(.+)"
+ASSET_ID_URI_REGEX_FORMAT = (
+    "azureml://locations/([^/]+)/workspaces/([^/]+)/([^/]+)/([^/]+)/versions/(.+)"
+)
 AZUREML_CLI_SYSTEM_EXECUTED_ENV_VAR = "AZUREML_CLI_SYSTEM_EXECUTED"
 DOCSTRING_TEMPLATE = ".. note::    {0} {1}\n\n"
 DOCSTRING_DEFAULT_INDENTATION = 8
 EXPERIMENTAL_CLASS_MESSAGE = "This is an experimental class,"
 EXPERIMENTAL_METHOD_MESSAGE = "This is an experimental method,"
 EXPERIMENTAL_FIELD_MESSAGE = "This is an experimental field,"
-EXPERIMENTAL_LINK_MESSAGE = (
-    "and may change at any time. Please see https://aka.ms/azuremlexperimental for more information."
+EXPERIMENTAL_LINK_MESSAGE = "and may change at any time. Please see https://aka.ms/azuremlexperimental for more information."
+REF_DOC_YAML_SCHEMA_ERROR_MSG_FORMAT = (
+    "\nVisit this link to refer to the {} schema if needed: {}."
 )
-REF_DOC_YAML_SCHEMA_ERROR_MSG_FORMAT = "\nVisit this link to refer to the {} schema if needed: {}."
 STORAGE_AUTH_MISMATCH_ERROR = "AuthorizationPermissionMismatch"
 SWEEP_JOB_BEST_CHILD_RUN_ID_PROPERTY_NAME = "best_child_run_id"
 BATCH_JOB_CHILD_RUN_OUTPUT_NAME = "score"
@@ -136,7 +146,9 @@ CREATE_ENVIRONMENT_ERROR_MESSAGE = (
 API_URL_KEY = "api"
 ANONYMOUS_ENV_NAME = "CliV2AnonymousEnvironment"
 SKIP_VALIDATION_MESSAGE = "To skip this validation use the --skip-validation param"
-MLTABLE_METADATA_SCHEMA_URL_FALLBACK = "https://azuremlschemasprod.azureedge.net/latest/MLTable.schema.json"
+MLTABLE_METADATA_SCHEMA_URL_FALLBACK = (
+    "https://azuremlschemasprod.azureedge.net/latest/MLTable.schema.json"
+)
 INVOCATION_BAT_FILE = "Invocation.bat"
 INVOCATION_BASH_FILE = "Invocation.sh"
 AZUREML_RUN_SETUP_DIR = "azureml-setup"
@@ -252,7 +264,15 @@ class AzureMLResourceType:
         DATASTORE,
         SCHEDULE,
     }
-    VERSIONED_TYPES = {MODEL, DATA, CODE, ENVIRONMENT, COMPONENT, FEATURE_SET, FEATURE_STORE_ENTITY}
+    VERSIONED_TYPES = {
+        MODEL,
+        DATA,
+        CODE,
+        ENVIRONMENT,
+        COMPONENT,
+        FEATURE_SET,
+        FEATURE_STORE_ENTITY,
+    }
 
 
 class ArmConstants:
@@ -272,7 +292,9 @@ class ArmConstants:
     ENDPOINT_IDENTITY_PARAMETER_NAME = "onlineEndpointIdentity"
     ENDPOINT_PARAMETER_NAME = "onlineEndpoint"
     ENDPOINT_PROPERTIES_PARAMETER_NAME = "onlineEndpointProperties"
-    ENDPOINT_PROPERTIES_TRAFFIC_UPDATE_PARAMETER_NAME = "onlineEndpointPropertiesTrafficUpdate"
+    ENDPOINT_PROPERTIES_TRAFFIC_UPDATE_PARAMETER_NAME = (
+        "onlineEndpointPropertiesTrafficUpdate"
+    )
     ENDPOINT_NAME_PARAMETER_NAME = "onlineEndpointName"
     ENDPOINT_TAGS_PARAMETER_NAME = "onlineEndpointTags"
     DEPLOYMENTS_PARAMETER_NAME = "onlineDeployments"
@@ -332,7 +354,9 @@ class ArmConstants:
     AZURE_MGMT_KEYVAULT_API_VERSION = "2019-09-01"
     AZURE_MGMT_CONTAINER_REG_API_VERSION = "2019-05-01"
 
-    DEFAULT_URL = "https://management.azure.com/metadata/endpoints?api-version=2019-05-01"
+    DEFAULT_URL = (
+        "https://management.azure.com/metadata/endpoints?api-version=2019-05-01"
+    )
     METADATA_URL_ENV_NAME = "ARM_CLOUD_METADATA_URL"
     REGISTRY_DISCOVERY_DEFAULT_REGION = "west"
     REGISTRY_DISCOVERY_REGION_ENV_NAME = "REGISTRY_DISCOVERY_ENDPOINT_REGION"
@@ -450,12 +474,20 @@ class YAMLRefDocLinks:
     PIPELINE_JOB = "https://aka.ms/ml-cli-v2-job-pipeline-yaml-reference"
     DATASTORE_BLOB = "https://aka.ms/ml-cli-v2-datastore-blob-yaml-reference"
     DATASTORE_FILE = "https://aka.ms/ml-cli-v2-datastore-file-yaml-reference"
-    DATASTORE_DATA_LAKE_GEN_1 = "https://aka.ms/ml-cli-v2-datastore-data-lake-gen1-yaml-reference"
-    DATASTORE_DATA_LAKE_GEN_2 = "https://aka.ms/ml-cli-v2-datastore-data-lake-gen2-yaml-reference"
+    DATASTORE_DATA_LAKE_GEN_1 = (
+        "https://aka.ms/ml-cli-v2-datastore-data-lake-gen1-yaml-reference"
+    )
+    DATASTORE_DATA_LAKE_GEN_2 = (
+        "https://aka.ms/ml-cli-v2-datastore-data-lake-gen2-yaml-reference"
+    )
     ONLINE_ENDPOINT = "https://aka.ms/ml-cli-v2-endpoint-online-yaml-reference"
     BATCH_ENDPOINT = "https://aka.ms/ml-cli-v2-endpoint-batch-yaml-reference"
-    MANAGED_ONLINE_DEPLOYMENT = "https://aka.ms/ml-cli-v2-deployment-managed-online-yaml-reference"
-    KUBERNETES_ONLINE_DEPLOYMENT = "https://aka.ms/ml-cli-v2-deployment-kubernetes-online-yaml-reference"
+    MANAGED_ONLINE_DEPLOYMENT = (
+        "https://aka.ms/ml-cli-v2-deployment-managed-online-yaml-reference"
+    )
+    KUBERNETES_ONLINE_DEPLOYMENT = (
+        "https://aka.ms/ml-cli-v2-deployment-kubernetes-online-yaml-reference"
+    )
     BATCH_DEPLOYMENT = "https://aka.ms/ml-cli-v2-deployment-batch-yaml-reference"
     COMMAND_COMPONENT = "https://aka.ms/ml-cli-v2-component-command-yaml-reference"
     PARALLEL_COMPONENT = "https://aka.ms/ml-cli-v2-component-parallel-yaml-reference"

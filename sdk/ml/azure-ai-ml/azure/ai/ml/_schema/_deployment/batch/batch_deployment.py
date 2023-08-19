@@ -16,13 +16,24 @@ from azure.ai.ml._schema import (
     RegistryStr,
 )
 from azure.ai.ml._schema._deployment.deployment import DeploymentSchema
-from azure.ai.ml._schema.core.fields import ComputeField, NestedField, StringTransformedEnum
+from azure.ai.ml._schema.core.fields import (
+    ComputeField,
+    NestedField,
+    StringTransformedEnum,
+)
 from azure.ai.ml._schema.job.creation_context import CreationContextSchema
-from azure.ai.ml._schema.pipeline.pipeline_component import PipelineComponentFileRefField
+from azure.ai.ml._schema.pipeline.pipeline_component import (
+    PipelineComponentFileRefField,
+)
 from azure.ai.ml.constants._common import AzureMLResourceType
-from azure.ai.ml._schema.job_resource_configuration import JobResourceConfigurationSchema
+from azure.ai.ml._schema.job_resource_configuration import (
+    JobResourceConfigurationSchema,
+)
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
-from azure.ai.ml.constants._deployment import BatchDeploymentOutputAction, BatchDeploymentType
+from azure.ai.ml.constants._deployment import (
+    BatchDeploymentOutputAction,
+    BatchDeploymentType,
+)
 
 from .batch_deployment_settings import BatchRetrySettingsSchema
 
@@ -56,20 +67,29 @@ class BatchDeploymentSchema(DeploymentSchema):
         metadata={"description": "Indicates how batch inferencing will handle output."},
         dump_default=BatchDeploymentOutputAction.APPEND_ROW,
     )
-    output_file_name = fields.Str(metadata={"description": "Customized output file name for append_row output action."})
+    output_file_name = fields.Str(
+        metadata={
+            "description": "Customized output file name for append_row output action."
+        }
+    )
     max_concurrency_per_instance = fields.Int(
-        metadata={"description": "Indicates maximum number of parallelism per instance."}
+        metadata={
+            "description": "Indicates maximum number of parallelism per instance."
+        }
     )
     resources = NestedField(JobResourceConfigurationSchema)
     type = StringTransformedEnum(
-        allowed_values=[BatchDeploymentType.PIPELINE, BatchDeploymentType.MODEL], required=False
+        allowed_values=[BatchDeploymentType.PIPELINE, BatchDeploymentType.MODEL],
+        required=False,
     )
 
     job_definition = ArmStr(azureml_type=AzureMLResourceType.JOB)
     component = UnionField(
         [
             RegistryStr(azureml_type=AzureMLResourceType.COMPONENT),
-            ArmVersionedStr(azureml_type=AzureMLResourceType.COMPONENT, allow_default_version=True),
+            ArmVersionedStr(
+                azureml_type=AzureMLResourceType.COMPONENT, allow_default_version=True
+            ),
             PipelineComponentFileRefField(),
         ]
     )
@@ -78,15 +98,24 @@ class BatchDeploymentSchema(DeploymentSchema):
 
     @post_load
     def make(self, data: Any, **kwargs: Any) -> Any:
-        from azure.ai.ml.entities import BatchDeployment, ModelBatchDeployment, PipelineComponentBatchDeployment
+        from azure.ai.ml.entities import (
+            BatchDeployment,
+            ModelBatchDeployment,
+            PipelineComponentBatchDeployment,
+        )
 
         if "type" not in data:
-            return BatchDeployment(base_path=self.context[BASE_PATH_CONTEXT_KEY], **data)
+            return BatchDeployment(
+                base_path=self.context[BASE_PATH_CONTEXT_KEY], **data
+            )
         elif data["type"] == BatchDeploymentType.PIPELINE:
             return PipelineComponentBatchDeployment(**data)
         elif data["type"] == BatchDeploymentType.MODEL:
-            return ModelBatchDeployment(base_path=self.context[BASE_PATH_CONTEXT_KEY], **data)
+            return ModelBatchDeployment(
+                base_path=self.context[BASE_PATH_CONTEXT_KEY], **data
+            )
         else:
             raise ValidationError(
-                "Deployment type must be of type " + f"{BatchDeploymentType.PIPELINE} or {BatchDeploymentType.MODEL}."
+                "Deployment type must be of type "
+                + f"{BatchDeploymentType.PIPELINE} or {BatchDeploymentType.MODEL}."
             )

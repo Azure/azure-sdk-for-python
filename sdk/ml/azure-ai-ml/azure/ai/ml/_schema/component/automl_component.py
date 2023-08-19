@@ -17,7 +17,9 @@ class AutoMLComponentSchema(ComponentSchema):
     type = StringTransformedEnum(required=True, allowed_values=JobType.AUTOML)
     task = StringTransformedEnum(
         # TODO: verify if this works
-        allowed_values=[t for t in TaskType],  # pylint: disable=unnecessary-comprehension
+        allowed_values=[
+            t for t in TaskType
+        ],  # pylint: disable=unnecessary-comprehension
         casing_transform=camel_to_snake,
         required=True,
     )

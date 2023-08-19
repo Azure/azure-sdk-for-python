@@ -4,14 +4,18 @@
 
 from typing import Optional
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import FeaturesetSpecification as RestFeaturesetSpecification
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    FeaturesetSpecification as RestFeaturesetSpecification,
+)
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 
 @experimental
 class FeatureSetSpecification(RestTranslatableMixin):
-    def __init__(self, *, path: Optional[str] = None, **kwargs):  # pylint: disable=unused-argument
+    def __init__(
+        self, *, path: Optional[str] = None, **kwargs
+    ):  # pylint: disable=unused-argument
         """
         :param path: Specifies the spec path.
         :type path: str
@@ -22,7 +26,9 @@ class FeatureSetSpecification(RestTranslatableMixin):
         return RestFeaturesetSpecification(path=self.path)
 
     @classmethod
-    def _from_rest_object(cls, obj: RestFeaturesetSpecification) -> "FeatureSetSpecification":
+    def _from_rest_object(
+        cls, obj: RestFeaturesetSpecification
+    ) -> "FeatureSetSpecification":
         if not obj:
             return None
         return FeatureSetSpecification(path=obj.path)

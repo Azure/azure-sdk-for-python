@@ -23,7 +23,11 @@ from azure.ai.ml._utils._http_utils import HttpPipeline
 from azure.ai.ml._utils.utils import DockerProxy
 from azure.ai.ml.constants._endpoint import EndpointInvokeFields, LocalEndpointConstants
 from azure.ai.ml.entities import OnlineEndpoint
-from azure.ai.ml.exceptions import InvalidLocalEndpointError, LocalEndpointNotFoundError, ValidationException
+from azure.ai.ml.exceptions import (
+    InvalidLocalEndpointError,
+    LocalEndpointNotFoundError,
+    ValidationException,
+)
 
 docker = DockerProxy()
 module_logger = logging.getLogger(__name__)
@@ -49,7 +53,9 @@ class _LocalEndpointHelper(object):
         try:
             if endpoint is None:
                 msg = "The entity provided for local endpoint was null. Please provide valid entity."
-                raise InvalidLocalEndpointError(message=msg, no_personal_data_message=msg)
+                raise InvalidLocalEndpointError(
+                    message=msg, no_personal_data_message=msg
+                )
 
             try:
                 self.get(endpoint_name=endpoint.name)
@@ -69,7 +75,9 @@ class _LocalEndpointHelper(object):
             else:
                 raise ex
 
-    def invoke(self, endpoint_name: str, data: dict, deployment_name: Optional[str] = None) -> str:
+    def invoke(
+        self, endpoint_name: str, data: dict, deployment_name: Optional[str] = None
+    ) -> str:
         """Invoke a local endpoint.
 
         :param endpoint_name: Name of endpoint to invoke.
@@ -82,16 +90,22 @@ class _LocalEndpointHelper(object):
         :rtype: str
         """
         # get_scoring_uri will throw user error if there are multiple deployments and no deployment_name is specified
-        scoring_uri = self._docker_client.get_scoring_uri(endpoint_name=endpoint_name, deployment_name=deployment_name)
+        scoring_uri = self._docker_client.get_scoring_uri(
+            endpoint_name=endpoint_name, deployment_name=deployment_name
+        )
         if scoring_uri:
             headers = {}
             if deployment_name is not None:
                 headers[EndpointInvokeFields.MODEL_DEPLOYMENT] = deployment_name
-            return self._requests_pipeline.post(scoring_uri, json=data, headers=headers).text()
+            return self._requests_pipeline.post(
+                scoring_uri, json=data, headers=headers
+            ).text()
         endpoint_stub = self._endpoint_stub.get(endpoint_name=endpoint_name)
         if endpoint_stub:
             return self._endpoint_stub.invoke()
-        raise LocalEndpointNotFoundError(endpoint_name=endpoint_name, deployment_name=deployment_name)
+        raise LocalEndpointNotFoundError(
+            endpoint_name=endpoint_name, deployment_name=deployment_name
+        )
 
     def get(self, endpoint_name: str) -> OnlineEndpoint:
         """Get a local endpoint.
@@ -101,10 +115,14 @@ class _LocalEndpointHelper(object):
         :return OnlineEndpoint:
         """
         endpoint = self._endpoint_stub.get(endpoint_name=endpoint_name)
-        container = self._docker_client.get_endpoint_container(endpoint_name=endpoint_name, include_stopped=True)
+        container = self._docker_client.get_endpoint_container(
+            endpoint_name=endpoint_name, include_stopped=True
+        )
         if endpoint:
             if container:
-                return _convert_container_to_endpoint(container=container, endpoint_json=endpoint.dump())
+                return _convert_container_to_endpoint(
+                    container=container, endpoint_json=endpoint.dump()
+                )
             return endpoint
         if container:
             return _convert_container_to_endpoint(container=container)
@@ -129,13 +147,19 @@ class _LocalEndpointHelper(object):
             # override certain endpoint properties with deployment information and remove it from containers list.
             # Otherwise, return endpoint spec.
             if container:
-                endpoints.append(_convert_container_to_endpoint(endpoint_json=endpoint_json, container=container))
+                endpoints.append(
+                    _convert_container_to_endpoint(
+                        endpoint_json=endpoint_json, container=container
+                    )
+                )
                 containers.remove(container)
             else:
                 endpoints.append(
                     OnlineEndpoint._load(
                         data=endpoint_json,
-                        params_override=[{"location": LocalEndpointConstants.ENDPOINT_STATE_LOCATION}],
+                        params_override=[
+                            {"location": LocalEndpointConstants.ENDPOINT_STATE_LOCATION}
+                        ],
                     )
                 )
         # Iterate through any deployments that don't have an explicit local endpoint stub.
@@ -152,7 +176,9 @@ class _LocalEndpointHelper(object):
         endpoint_stub = self._endpoint_stub.get(endpoint_name=name)
         if endpoint_stub:
             self._endpoint_stub.delete(endpoint_name=name)
-            endpoint_container = self._docker_client.get_endpoint_container(endpoint_name=name)
+            endpoint_container = self._docker_client.get_endpoint_container(
+                endpoint_name=name
+            )
             if endpoint_container:
                 self._docker_client.delete(endpoint_name=name)
         else:

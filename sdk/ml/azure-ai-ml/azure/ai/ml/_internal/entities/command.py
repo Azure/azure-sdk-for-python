@@ -6,7 +6,12 @@ from typing import Dict, List, Union
 
 from marshmallow import INCLUDE, Schema
 
-from ... import MpiDistribution, PyTorchDistribution, TensorFlowDistribution, RayDistribution
+from ... import (
+    MpiDistribution,
+    PyTorchDistribution,
+    TensorFlowDistribution,
+    RayDistribution,
+)
 from ..._schema import PathAwareSchema
 from ..._schema.core.fields import DistributionField
 from ...entities import CommandJobLimits, JobResourceConfiguration
@@ -122,8 +127,12 @@ class Command(InternalBaseNode):
         rest_obj = super()._to_rest_object(**kwargs)
         rest_obj.update(
             {
-                "limits": get_rest_dict_for_node_attrs(self.limits, clear_empty_value=True),
-                "resources": get_rest_dict_for_node_attrs(self.resources, clear_empty_value=True),
+                "limits": get_rest_dict_for_node_attrs(
+                    self.limits, clear_empty_value=True
+                ),
+                "resources": get_rest_dict_for_node_attrs(
+                    self.resources, clear_empty_value=True
+                ),
             }
         )
         return rest_obj
@@ -133,7 +142,9 @@ class Command(InternalBaseNode):
         obj = InternalBaseNode._from_rest_object_to_init_params(obj)
 
         if "resources" in obj and obj["resources"]:
-            obj["resources"] = JobResourceConfiguration._from_rest_object(obj["resources"])
+            obj["resources"] = JobResourceConfiguration._from_rest_object(
+                obj["resources"]
+            )
 
         # handle limits
         if "limits" in obj and obj["limits"]:
@@ -164,7 +175,9 @@ class Distributed(Command):
     @property
     def distribution(
         self,
-    ) -> Union[PyTorchDistribution, MpiDistribution, TensorFlowDistribution, RayDistribution]:
+    ) -> Union[
+        PyTorchDistribution, MpiDistribution, TensorFlowDistribution, RayDistribution
+    ]:
         """The distribution config of component, e.g. distribution={'type': 'mpi'}.
 
         :return: The distribution config
@@ -175,7 +188,13 @@ class Distributed(Command):
     @distribution.setter
     def distribution(
         self,
-        value: Union[Dict, PyTorchDistribution, TensorFlowDistribution, MpiDistribution, RayDistribution],
+        value: Union[
+            Dict,
+            PyTorchDistribution,
+            TensorFlowDistribution,
+            MpiDistribution,
+            RayDistribution,
+        ],
     ):
         if isinstance(value, dict):
             dist_schema = DistributionField(unknown=INCLUDE)
@@ -194,7 +213,9 @@ class Distributed(Command):
 
     def _to_rest_object(self, **kwargs) -> dict:
         rest_obj = super()._to_rest_object(**kwargs)
-        distribution = self.distribution._to_rest_object() if self.distribution else None  # pylint: disable=no-member
+        distribution = (
+            self.distribution._to_rest_object() if self.distribution else None
+        )  # pylint: disable=no-member
         rest_obj.update(
             {
                 "distribution": get_rest_dict_for_node_attrs(distribution),

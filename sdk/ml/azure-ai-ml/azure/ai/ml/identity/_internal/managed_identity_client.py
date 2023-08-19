@@ -51,11 +51,17 @@ class ManagedIdentityClientBase(ABC):
                 if response.http_response.content_type.startswith("application/json"):
                     message = "Failed to deserialize JSON from response"
                 else:
-                    message = 'Unexpected content type "{}"'.format(response.http_response.content_type)
-                raise ClientAuthenticationError(message=message, response=response.http_response) from ex
+                    message = 'Unexpected content type "{}"'.format(
+                        response.http_response.content_type
+                    )
+                raise ClientAuthenticationError(
+                    message=message, response=response.http_response
+                ) from ex
 
         if not content:
-            raise ClientAuthenticationError(message="No token received.", response=response.http_response)
+            raise ClientAuthenticationError(
+                message="No token received.", response=response.http_response
+            )
 
         if not ("access_token" in content or "token" in content) or not (
             "expires_in" in content or "expires_on" in content or "expiresOn" in content
@@ -73,7 +79,9 @@ class ManagedIdentityClientBase(ABC):
             self._content_callback(content)
 
         if "expires_in" in content or "expires_on" in content:
-            expires_on = int(content.get("expires_on") or int(content["expires_in"]) + request_time)
+            expires_on = int(
+                content.get("expires_on") or int(content["expires_in"]) + request_time
+            )
         else:
             expires_on = int(isodate.parse_datetime(content["expiresOn"]).timestamp())
         content["expires_on"] = expires_on
@@ -92,7 +100,9 @@ class ManagedIdentityClientBase(ABC):
     def get_cached_token(self, *scopes):
         # type: (*str) -> Optional[AccessToken]
         resource = _scopes_to_resource(*scopes)
-        tokens = self._cache.find(TokenCache.CredentialType.ACCESS_TOKEN, target=[resource])
+        tokens = self._cache.find(
+            TokenCache.CredentialType.ACCESS_TOKEN, target=[resource]
+        )
         for token in tokens:
             expires_on = int(token["expires_on"])
             if expires_on > time.time():
@@ -125,8 +135,12 @@ class ManagedIdentityClient(ManagedIdentityClientBase):
         resource = _scopes_to_resource(*scopes)
         request = self._request_factory(resource)
         request_time = int(time.time())
-        response = self._pipeline.run(request, retry_on_methods=[request.method], **kwargs)
-        token = self._process_response(response=response, request_time=request_time, resource=resource)
+        response = self._pipeline.run(
+            request, retry_on_methods=[request.method], **kwargs
+        )
+        token = self._process_response(
+            response=response, request_time=request_time, resource=resource
+        )
         return token
 
     def _build_pipeline(self, **kwargs):

@@ -22,7 +22,9 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 from ... import models
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[
+    Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]
+]
 
 
 class ProvidersOperations:
@@ -47,7 +49,9 @@ class ProvidersOperations:
         self._deserialize = deserializer
         self._config = config
 
-    async def unregister(self, resource_provider_namespace: str, **kwargs) -> "models.Provider":
+    async def unregister(
+        self, resource_provider_namespace: str, **kwargs
+    ) -> "models.Provider":
         """Unregister a subscription from a resource provider.
 
         :param resource_provider_namespace: The namespace of the resource provider to unregister.
@@ -58,7 +62,11 @@ class ProvidersOperations:
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop("cls", None)  # type: ClsType["models.Provider"]
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+        }
         error_map.update(kwargs.pop("error_map", {}))
         api_version = "2020-06-01"
         accept = "application/json"
@@ -69,24 +77,32 @@ class ProvidersOperations:
             "resourceProviderNamespace": self._serialize.url(
                 "resource_provider_namespace", resource_provider_namespace, "str"
             ),
-            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
+            "subscriptionId": self._serialize.url(
+                "self._config.subscription_id", self._config.subscription_id, "str"
+            ),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
-        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
+        query_parameters["api-version"] = self._serialize.query(
+            "api_version", api_version, "str"
+        )
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters["Accept"] = self._serialize.header("accept", accept, "str")
 
         request = self._client.post(url, query_parameters, header_parameters)
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(
+            request, stream=False, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("Provider", pipeline_response)
@@ -98,7 +114,9 @@ class ProvidersOperations:
 
     unregister.metadata = {"url": "/subscriptions/{subscriptionId}/providers/{resourceProviderNamespace}/unregister"}  # type: ignore
 
-    async def register(self, resource_provider_namespace: str, **kwargs) -> "models.Provider":
+    async def register(
+        self, resource_provider_namespace: str, **kwargs
+    ) -> "models.Provider":
         """Registers a subscription with a resource provider.
 
         :param resource_provider_namespace: The namespace of the resource provider to register.
@@ -109,7 +127,11 @@ class ProvidersOperations:
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop("cls", None)  # type: ClsType["models.Provider"]
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+        }
         error_map.update(kwargs.pop("error_map", {}))
         api_version = "2020-06-01"
         accept = "application/json"
@@ -120,24 +142,32 @@ class ProvidersOperations:
             "resourceProviderNamespace": self._serialize.url(
                 "resource_provider_namespace", resource_provider_namespace, "str"
             ),
-            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
+            "subscriptionId": self._serialize.url(
+                "self._config.subscription_id", self._config.subscription_id, "str"
+            ),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
-        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
+        query_parameters["api-version"] = self._serialize.query(
+            "api_version", api_version, "str"
+        )
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters["Accept"] = self._serialize.header("accept", accept, "str")
 
         request = self._client.post(url, query_parameters, header_parameters)
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(
+            request, stream=False, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("Provider", pipeline_response)
@@ -166,7 +196,11 @@ class ProvidersOperations:
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop("cls", None)  # type: ClsType["models.ProviderListResult"]
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+        }
         error_map.update(kwargs.pop("error_map", {}))
         api_version = "2020-06-01"
         accept = "application/json"
@@ -174,14 +208,18 @@ class ProvidersOperations:
         def prepare_request(next_link=None):
             # Construct headers
             header_parameters = {}  # type: Dict[str, Any]
-            header_parameters["Accept"] = self._serialize.header("accept", accept, "str")
+            header_parameters["Accept"] = self._serialize.header(
+                "accept", accept, "str"
+            )
 
             if not next_link:
                 # Construct URL
                 url = self.list.metadata["url"]  # type: ignore
                 path_format_arguments = {
                     "subscriptionId": self._serialize.url(
-                        "self._config.subscription_id", self._config.subscription_id, "str"
+                        "self._config.subscription_id",
+                        self._config.subscription_id,
+                        "str",
                     ),
                 }
                 url = self._client.format_url(url, **path_format_arguments)
@@ -190,8 +228,12 @@ class ProvidersOperations:
                 if top is not None:
                     query_parameters["$top"] = self._serialize.query("top", top, "int")
                 if expand is not None:
-                    query_parameters["$expand"] = self._serialize.query("expand", expand, "str")
-                query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
+                    query_parameters["$expand"] = self._serialize.query(
+                        "expand", expand, "str"
+                    )
+                query_parameters["api-version"] = self._serialize.query(
+                    "api_version", api_version, "str"
+                )
 
                 request = self._client.get(url, query_parameters, header_parameters)
             else:
@@ -210,11 +252,17 @@ class ProvidersOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(
+                request, stream=False, **kwargs
+            )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                map_error(
+                    status_code=response.status_code,
+                    response=response,
+                    error_map=error_map,
+                )
                 raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -240,7 +288,11 @@ class ProvidersOperations:
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop("cls", None)  # type: ClsType["models.ProviderListResult"]
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+        }
         error_map.update(kwargs.pop("error_map", {}))
         api_version = "2020-06-01"
         accept = "application/json"
@@ -248,7 +300,9 @@ class ProvidersOperations:
         def prepare_request(next_link=None):
             # Construct headers
             header_parameters = {}  # type: Dict[str, Any]
-            header_parameters["Accept"] = self._serialize.header("accept", accept, "str")
+            header_parameters["Accept"] = self._serialize.header(
+                "accept", accept, "str"
+            )
 
             if not next_link:
                 # Construct URL
@@ -258,8 +312,12 @@ class ProvidersOperations:
                 if top is not None:
                     query_parameters["$top"] = self._serialize.query("top", top, "int")
                 if expand is not None:
-                    query_parameters["$expand"] = self._serialize.query("expand", expand, "str")
-                query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
+                    query_parameters["$expand"] = self._serialize.query(
+                        "expand", expand, "str"
+                    )
+                query_parameters["api-version"] = self._serialize.query(
+                    "api_version", api_version, "str"
+                )
 
                 request = self._client.get(url, query_parameters, header_parameters)
             else:
@@ -278,11 +336,17 @@ class ProvidersOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(
+                request, stream=False, **kwargs
+            )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                map_error(
+                    status_code=response.status_code,
+                    response=response,
+                    error_map=error_map,
+                )
                 raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -291,7 +355,9 @@ class ProvidersOperations:
 
     list_at_tenant_scope.metadata = {"url": "/providers"}  # type: ignore
 
-    async def get(self, resource_provider_namespace: str, expand: Optional[str] = None, **kwargs) -> "models.Provider":
+    async def get(
+        self, resource_provider_namespace: str, expand: Optional[str] = None, **kwargs
+    ) -> "models.Provider":
         """Gets the specified resource provider.
 
         :param resource_provider_namespace: The namespace of the resource provider.
@@ -305,7 +371,11 @@ class ProvidersOperations:
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop("cls", None)  # type: ClsType["models.Provider"]
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+        }
         error_map.update(kwargs.pop("error_map", {}))
         api_version = "2020-06-01"
         accept = "application/json"
@@ -316,7 +386,9 @@ class ProvidersOperations:
             "resourceProviderNamespace": self._serialize.url(
                 "resource_provider_namespace", resource_provider_namespace, "str"
             ),
-            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
+            "subscriptionId": self._serialize.url(
+                "self._config.subscription_id", self._config.subscription_id, "str"
+            ),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -324,18 +396,24 @@ class ProvidersOperations:
         query_parameters = {}  # type: Dict[str, Any]
         if expand is not None:
             query_parameters["$expand"] = self._serialize.query("expand", expand, "str")
-        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
+        query_parameters["api-version"] = self._serialize.query(
+            "api_version", api_version, "str"
+        )
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters["Accept"] = self._serialize.header("accept", accept, "str")
 
         request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(
+            request, stream=False, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("Provider", pipeline_response)
@@ -363,7 +441,11 @@ class ProvidersOperations:
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop("cls", None)  # type: ClsType["models.Provider"]
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+        }
         error_map.update(kwargs.pop("error_map", {}))
         api_version = "2020-06-01"
         accept = "application/json"
@@ -381,18 +463,24 @@ class ProvidersOperations:
         query_parameters = {}  # type: Dict[str, Any]
         if expand is not None:
             query_parameters["$expand"] = self._serialize.query("expand", expand, "str")
-        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
+        query_parameters["api-version"] = self._serialize.query(
+            "api_version", api_version, "str"
+        )
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters["Accept"] = self._serialize.header("accept", accept, "str")
 
         request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(
+            request, stream=False, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("Provider", pipeline_response)

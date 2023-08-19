@@ -3,9 +3,18 @@
 # ---------------------------------------------------------
 
 from azure.ai.ml._schema.core.fields import NestedField
-from azure.ai.ml._schema.job.identity import AMLTokenIdentitySchema, ManagedIdentitySchema, UserIdentitySchema
-from azure.ai.ml._schema.job.input_output_fields_provider import InputsField, OutputsField
-from azure.ai.ml._schema.spark_resource_configuration import SparkResourceConfigurationSchema
+from azure.ai.ml._schema.job.identity import (
+    AMLTokenIdentitySchema,
+    ManagedIdentitySchema,
+    UserIdentitySchema,
+)
+from azure.ai.ml._schema.job.input_output_fields_provider import (
+    InputsField,
+    OutputsField,
+)
+from azure.ai.ml._schema.spark_resource_configuration import (
+    SparkResourceConfigurationSchema,
+)
 from azure.ai.ml.constants import JobType
 
 from ..core.fields import ComputeField, StringTransformedEnum, UnionField

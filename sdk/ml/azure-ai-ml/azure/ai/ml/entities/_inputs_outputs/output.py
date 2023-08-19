@@ -58,10 +58,24 @@ class Output(_InputOutputBase):
             :caption: Creating a CommandJob with a folder output.
     """
 
-    _IO_KEYS = ["name", "version", "path", "type", "mode", "description", "early_available"]
+    _IO_KEYS = [
+        "name",
+        "version",
+        "path",
+        "type",
+        "mode",
+        "description",
+        "early_available",
+    ]
 
     @overload
-    def __init__(self, type: Literal["uri_folder"] = "uri_folder", path=None, mode=None, description=None) -> None:
+    def __init__(
+        self,
+        type: Literal["uri_folder"] = "uri_folder",
+        path=None,
+        mode=None,
+        description=None,
+    ) -> None:
         """Define a URI folder output.
 
         :param type: The type of the data output. Can only be set to "uri_folder".
@@ -84,7 +98,13 @@ class Output(_InputOutputBase):
         """
 
     @overload
-    def __init__(self, type: Literal["uri_file"] = "uri_file", path=None, mode=None, description=None):
+    def __init__(
+        self,
+        type: Literal["uri_file"] = "uri_file",
+        path=None,
+        mode=None,
+        description=None,
+    ):
         """Define a URI file outputs.
 
         :param type: The type of the data output. Can only be set to 'uri_file'.
@@ -106,7 +126,15 @@ class Output(_InputOutputBase):
         :type version: str
         """
 
-    def __init__(self, *, type=AssetTypes.URI_FOLDER, path=None, mode=None, description=None, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        type=AssetTypes.URI_FOLDER,
+        path=None,
+        mode=None,
+        description=None,
+        **kwargs,
+    ) -> None:
         super(Output, self).__init__(type=type)
         # As an annotation, it is not allowed to initialize the _port_name.
         self._port_name = None
@@ -131,8 +159,12 @@ class Output(_InputOutputBase):
         self._normalize_self_properties()
 
     def _get_hint(self, new_line_style=False):
-        comment_str = self.description.replace('"', '\\"') if self.description else self.type
-        return '"""%s"""' % comment_str if comment_str and new_line_style else comment_str
+        comment_str = (
+            self.description.replace('"', '\\"') if self.description else self.type
+        )
+        return (
+            '"""%s"""' % comment_str if comment_str and new_line_style else comment_str
+        )
 
     def _to_dict(self) -> Dict:
         """Convert the Output object to a dict.
@@ -159,7 +191,9 @@ class Output(_InputOutputBase):
     def _normalize_self_properties(self):
         # parse value from string to its original type. eg: "false" -> False
         if self.early_available:
-            self.early_available = self._simple_parse(getattr(self, "early_available", "false"), _type="boolean")
+            self.early_available = self._simple_parse(
+                getattr(self, "early_available", "false"), _type="boolean"
+            )
 
     @classmethod
     def _from_rest_object(cls, obj: Dict) -> "Output":
@@ -167,10 +201,14 @@ class Output(_InputOutputBase):
         return Output(**obj)
 
     def _assert_name_and_version(self):
-        if self.name and not (re.match("^[A-Za-z0-9_-]*$", self.name) and len(self.name) <= 255):
+        if self.name and not (
+            re.match("^[A-Za-z0-9_-]*$", self.name) and len(self.name) <= 255
+        ):
             raise UserErrorException(
                 f"The output name {self.name} can only contain alphanumeric characters, dashes and underscores, "
                 f"with a limit of 255 characters."
             )
         if self.version and not self.name:
-            raise UserErrorException("Output name is required when output version is specified.")
+            raise UserErrorException(
+                "Output name is required when output version is specified."
+            )

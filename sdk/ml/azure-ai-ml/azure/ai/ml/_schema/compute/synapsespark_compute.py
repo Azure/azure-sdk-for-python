@@ -38,7 +38,9 @@ class AutoPauseSettingsSchema(PathAwareSchema):
 
 
 class SynapseSparkComputeSchema(ComputeSchema):
-    type = StringTransformedEnum(allowed_values=[ComputeType.SYNAPSESPARK], required=True)
+    type = StringTransformedEnum(
+        allowed_values=[ComputeType.SYNAPSESPARK], required=True
+    )
     resource_id = fields.Str(required=True)
     identity = NestedField(IdentitySchema)
     node_family = fields.Str(dump_only=True)

@@ -8,7 +8,9 @@ import logging
 
 from marshmallow import ValidationError, fields, post_load, pre_dump
 
-from azure.ai.ml._restclient.v2022_02_01_preview.models import EarlyTerminationPolicyType
+from azure.ai.ml._restclient.v2022_02_01_preview.models import (
+    EarlyTerminationPolicyType,
+)
 from azure.ai.ml._schema.core.fields import StringTransformedEnum
 from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
 from azure.ai.ml._utils.utils import camel_to_snake
@@ -42,7 +44,9 @@ class BanditPolicySchema(EarlyTerminationPolicySchema):
         from azure.ai.ml.sweep import BanditPolicy
 
         if not isinstance(data, BanditPolicy):
-            raise ValidationError("Cannot dump non-BanditPolicy object into BanditPolicySchema")
+            raise ValidationError(
+                "Cannot dump non-BanditPolicy object into BanditPolicySchema"
+            )
         return data
 
 
@@ -65,7 +69,9 @@ class MedianStoppingPolicySchema(EarlyTerminationPolicySchema):
         from azure.ai.ml.sweep import MedianStoppingPolicy
 
         if not isinstance(data, MedianStoppingPolicy):
-            raise ValidationError("Cannot dump non-MedicanStoppingPolicy object into MedianStoppingPolicySchema")
+            raise ValidationError(
+                "Cannot dump non-MedicanStoppingPolicy object into MedianStoppingPolicySchema"
+            )
         return data
 
 

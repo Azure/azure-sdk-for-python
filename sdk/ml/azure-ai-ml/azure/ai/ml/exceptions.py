@@ -399,7 +399,9 @@ class ValidationException(MlException):
         if error_type in list(ValidationErrorType):
             self._error_type = error_type
         else:
-            raise Exception(f"Error type {error_type} is not a member of the ValidationErrorType enum class.")
+            raise Exception(
+                f"Error type {error_type} is not a member of the ValidationErrorType enum class."
+            )
 
     @property
     def error_type(self):
@@ -502,15 +504,22 @@ class UnsupportedParameterKindError(UserErrorException):
 
     def __init__(self, func_name, parameter_kind=None):
         parameter_kind = parameter_kind or "*args or **kwargs"
-        msg = "%r: dsl pipeline does not accept %s as parameters." % (func_name, parameter_kind)
-        super(UnsupportedParameterKindError, self).__init__(message=msg, no_personal_data_message=msg)
+        msg = "%r: dsl pipeline does not accept %s as parameters." % (
+            func_name,
+            parameter_kind,
+        )
+        super(UnsupportedParameterKindError, self).__init__(
+            message=msg, no_personal_data_message=msg
+        )
 
 
 class KeywordError(UserErrorException):
     """Super class of all type keyword error."""
 
     def __init__(self, message, no_personal_data_message=None):
-        super().__init__(message=message, no_personal_data_message=no_personal_data_message)
+        super().__init__(
+            message=message, no_personal_data_message=no_personal_data_message
+        )
 
 
 class UnexpectedKeywordError(KeywordError):
@@ -518,7 +527,11 @@ class UnexpectedKeywordError(KeywordError):
 
     def __init__(self, func_name, keyword, keywords=None):
         message = "%s() got an unexpected keyword argument %r" % (func_name, keyword)
-        message += ", valid keywords: %s." % ", ".join("%r" % key for key in keywords) if keywords else "."
+        message += (
+            ", valid keywords: %s." % ", ".join("%r" % key for key in keywords)
+            if keywords
+            else "."
+        )
         super().__init__(message=message, no_personal_data_message=message)
 
 
@@ -527,7 +540,11 @@ class UnexpectedAttributeError(KeywordError, AttributeError):
 
     def __init__(self, keyword, keywords=None):
         message = "Got an unexpected attribute %r" % keyword
-        message += ", valid attributes: %s." % ", ".join("%r" % key for key in keywords) if keywords else "."
+        message += (
+            ", valid attributes: %s." % ", ".join("%r" % key for key in keywords)
+            if keywords
+            else "."
+        )
         super().__init__(message=message, no_personal_data_message=message)
 
 
@@ -567,7 +584,10 @@ class ParamValueNotExistsError(KeywordError):
     """Exception raised when items in non_pipeline_inputs not in keyword parameters in dynamic functions."""
 
     def __init__(self, func_name, keywords):
-        message = "%s() got unexpected params in non_pipeline_inputs %r." % (func_name, keywords)
+        message = "%s() got unexpected params in non_pipeline_inputs %r." % (
+            func_name,
+            keywords,
+        )
         super().__init__(message=message, no_personal_data_message=message)
 
 
@@ -606,7 +626,9 @@ class LocalEndpointNotFoundError(MlException):
 class LocalEndpointInFailedStateError(MlException):
     """Exception raised when local endpoint is in Failed state."""
 
-    def __init__(self, endpoint_name, deployment_name=None, error_category=ErrorCategory.UNKNOWN):
+    def __init__(
+        self, endpoint_name, deployment_name=None, error_category=ErrorCategory.UNKNOWN
+    ):
         resource_name = (
             f"Local deployment ({endpoint_name} / {deployment_name})"
             if deployment_name
@@ -670,7 +692,9 @@ class InvalidLocalEndpointError(MlException):
 class LocalEndpointImageBuildError(MlException):
     """Exception raised when local endpoint's Docker image build is unsuccessful."""
 
-    def __init__(self, error: Union[str, Exception], error_category=ErrorCategory.UNKNOWN):
+    def __init__(
+        self, error: Union[str, Exception], error_category=ErrorCategory.UNKNOWN
+    ):
         err = f"Building the local endpoint image failed with error: {str(error)}"
         super().__init__(
             message=err,
@@ -748,7 +772,9 @@ class RequiredLocalArtifactsNotFoundError(MlException):
 class JobParsingError(MlException):
     """Exception that the job data returned by MFE cannot be parsed."""
 
-    def __init__(self, error_category, no_personal_data_message, message, *args, **kwargs):
+    def __init__(
+        self, error_category, no_personal_data_message, message, *args, **kwargs
+    ):
         super(JobParsingError, self).__init__(
             message=message,
             target=ErrorTarget.JOB,
@@ -762,12 +788,18 @@ class JobParsingError(MlException):
 class PipelineChildJobError(MlException):
     """Exception that the pipeline child job is not supported."""
 
-    ERROR_MESSAGE_TEMPLATE = "az ml job {command} is not supported on pipeline child job, {prompt_message}."
+    ERROR_MESSAGE_TEMPLATE = (
+        "az ml job {command} is not supported on pipeline child job, {prompt_message}."
+    )
     PROMPT_STUDIO_UI_MESSAGE = "please go to studio UI to do related actions{url}"
     PROMPT_PARENT_MESSAGE = "please use this command on pipeline parent job"
 
-    def __init__(self, job_id: str, command: str = "parse", prompt_studio_ui: bool = False):
-        from azure.ai.ml.entities._job._studio_url_from_job_id import studio_url_from_job_id
+    def __init__(
+        self, job_id: str, command: str = "parse", prompt_studio_ui: bool = False
+    ):
+        from azure.ai.ml.entities._job._studio_url_from_job_id import (
+            studio_url_from_job_id,
+        )
 
         if prompt_studio_ui:
             url = studio_url_from_job_id(job_id)
@@ -778,7 +810,9 @@ class PipelineChildJobError(MlException):
             prompt_message = self.PROMPT_PARENT_MESSAGE
 
         super(PipelineChildJobError, self).__init__(
-            message=self.ERROR_MESSAGE_TEMPLATE.format(command=command, prompt_message=prompt_message),
+            message=self.ERROR_MESSAGE_TEMPLATE.format(
+                command=command, prompt_message=prompt_message
+            ),
             no_personal_data_message="Pipeline child job is not supported currently.",
             target=ErrorTarget.JOB,
             error_category=ErrorCategory.USER_ERROR,

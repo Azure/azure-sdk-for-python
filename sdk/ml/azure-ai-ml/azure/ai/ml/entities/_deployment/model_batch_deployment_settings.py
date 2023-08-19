@@ -8,7 +8,9 @@ from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 from azure.ai.ml.constants._deployment import BatchDeploymentOutputAction
 from azure.ai.ml.entities._deployment.deployment_settings import BatchRetrySettings
 from azure.ai.ml._utils._experimental import experimental
-from azure.ai.ml._schema._deployment.batch.model_batch_deployment_settings import ModelBatchDeploymentSettingsSchema
+from azure.ai.ml._schema._deployment.batch.model_batch_deployment_settings import (
+    ModelBatchDeploymentSettingsSchema,
+)
 
 
 @experimental
@@ -68,4 +70,6 @@ class ModelBatchDeploymentSettings:
 
 def _to_dict(self) -> Dict:
     # pylint: disable=no-member
-    return ModelBatchDeploymentSettingsSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+    return ModelBatchDeploymentSettingsSchema(
+        context={BASE_PATH_CONTEXT_KEY: "./"}
+    ).dump(self)

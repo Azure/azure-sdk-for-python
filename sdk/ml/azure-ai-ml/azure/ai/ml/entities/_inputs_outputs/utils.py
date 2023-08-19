@@ -76,7 +76,9 @@ def _get_annotation_cls_by_type(
 
 # pylint: disable=too-many-statements
 def _get_param_with_standard_annotation(
-    cls_or_func: Union[Callable, Type], is_func: bool = False, skip_params: Optional[List[str]] = None
+    cls_or_func: Union[Callable, Type],
+    is_func: bool = False,
+    skip_params: Optional[List[str]] = None,
 ) -> Dict[str, Union[Annotation, "Input", "Output"]]:
     """Standardize function parameters or class fields with dsl.types annotation.
 
@@ -124,11 +126,15 @@ def _get_param_with_standard_annotation(
                 annotation = EnumInput(type="string", enum=annotation)
             # Handle Group annotation
             if is_group(annotation):
-                annotation: GroupInput = copy.deepcopy(getattr(annotation, IOConstants.GROUP_ATTR_NAME))
+                annotation: GroupInput = copy.deepcopy(
+                    getattr(annotation, IOConstants.GROUP_ATTR_NAME)
+                )
             # Try creating annotation by type when got like 'param: int'
             if not _is_dsl_type_cls(annotation) and not _is_dsl_types(annotation):
                 origin_annotation = annotation
-                annotation: Input = _get_annotation_cls_by_type(annotation, raise_error=False)
+                annotation: Input = _get_annotation_cls_by_type(
+                    annotation, raise_error=False
+                )
                 if not annotation:
                     msg = f"Unsupported annotation type {origin_annotation!r} for parameter {name!r}."
                     raise UserErrorException(msg)
@@ -136,7 +142,8 @@ def _get_param_with_standard_annotation(
         return annotation_fields
 
     def _merge_field_keys(
-        annotation_fields: Dict[str, Union[Annotation, Input, Output]], defaults_dict: Dict[str, Any]
+        annotation_fields: Dict[str, Union[Annotation, Input, Output]],
+        defaults_dict: Dict[str, Any],
     ) -> List[str]:
         """Merge field keys from annotations and cls dict to get all fields in class.
 
@@ -176,7 +183,10 @@ def _get_param_with_standard_annotation(
             return complete_annotation
         if isinstance(complete_annotation, Input):
             # Non-parameter Input has no default attribute
-            if complete_annotation._is_primitive_type and complete_annotation.default is not None:
+            if (
+                complete_annotation._is_primitive_type
+                and complete_annotation.default is not None
+            ):
                 # logger.warning(
                 #     f"Warning: Default value of f{complete_annotation.name!r} is set twice: "
                 #     f"{complete_annotation.default!r} and {default!r}, will use {default!r}"
@@ -192,7 +202,8 @@ def _get_param_with_standard_annotation(
         return complete_annotation
 
     def _update_fields_with_default(
-        annotation_fields: Dict[str, Union[Annotation, Input, Output]], defaults_dict: Dict[str, Any]
+        annotation_fields: Dict[str, Union[Annotation, Input, Output]],
+        defaults_dict: Dict[str, Any],
     ) -> Dict[str, Union[Annotation, Input, Output]]:
         """Use public values in class dict to update annotations.
 
@@ -213,7 +224,9 @@ def _get_param_with_standard_annotation(
                 else _get_annotation_by_value(defaults_dict.get(name, Input._EMPTY))
             )
             # Create annotation if is class type and update default
-            annotation = _update_annotation_with_default(annotation, name, defaults_dict.get(name, Input._EMPTY))
+            annotation = _update_annotation_with_default(
+                annotation, name, defaults_dict.get(name, Input._EMPTY)
+            )
             all_fields[name] = annotation
         return all_fields
 
@@ -232,7 +245,10 @@ def _get_param_with_standard_annotation(
         for base in cls_or_func.__mro__[-1:0:-1]:
             if is_group(base):
                 # merge and reorder fields from current base with previous
-                _fields = _merge_and_reorder(_fields, copy.deepcopy(getattr(base, IOConstants.GROUP_ATTR_NAME).values))
+                _fields = _merge_and_reorder(
+                    _fields,
+                    copy.deepcopy(getattr(base, IOConstants.GROUP_ATTR_NAME).values),
+                )
         return _fields
 
     def _merge_and_reorder(
@@ -276,7 +292,10 @@ def _get_param_with_standard_annotation(
 
         def _split(
             _fields: Dict[str, Union[Annotation, Input, Output]]
-        ) -> Tuple[Dict[str, Union[Annotation, Input, Output]], Dict[str, Union[Annotation, Input, Output]]]:
+        ) -> Tuple[
+            Dict[str, Union[Annotation, Input, Output]],
+            Dict[str, Union[Annotation, Input, Output]],
+        ]:
             """Split fields to two parts from the first default field.
 
             :param _fields: The fields
@@ -324,7 +343,9 @@ def _get_param_with_standard_annotation(
     if not is_func:
         # Only consider public fields in class dict
         defaults_dict: Dict[str, Any] = {
-            key: val for key, val in cls_or_func.__dict__.items() if not key.startswith("_") and key not in skip_params
+            key: val
+            for key, val in cls_or_func.__dict__.items()
+            if not key.startswith("_") and key not in skip_params
         }
     else:
         # Infer parameter type from value if is function
@@ -338,7 +359,9 @@ def _get_param_with_standard_annotation(
     return all_fields
 
 
-def _update_io_from_mldesigner(annotations: Dict[str, Annotation]) -> Dict[str, Union[Annotation, "Input", "Output"]]:
+def _update_io_from_mldesigner(
+    annotations: Dict[str, Annotation]
+) -> Dict[str, Union[Annotation, "Input", "Output"]]:
     """Translates IOBase from mldesigner package to azure.ml.entities.Input/Output.
 
     This function depends on:
@@ -371,9 +394,14 @@ def _update_io_from_mldesigner(annotations: Dict[str, Annotation]) -> Dict[str, 
         :return: Return true if type is subclass of mldesigner._input_output._Param
         :rtype: bool
         """
-        return any(io.__module__.startswith(mldesigner_pkg) and item.__name__ == param_name for item in getmro(io))
+        return any(
+            io.__module__.startswith(mldesigner_pkg) and item.__name__ == param_name
+            for item in getmro(io)
+        )
 
-    def _is_input_or_output_type(io: type, type_str: Literal["Input", "Output", "Meta"]):
+    def _is_input_or_output_type(
+        io: type, type_str: Literal["Input", "Output", "Meta"]
+    ):
         """Checks whether a type is an Input or Output type
 
         :param io: A type
@@ -398,7 +426,11 @@ def _update_io_from_mldesigner(annotations: Dict[str, Annotation]) -> Dict[str, 
                 # mldesigner.Output -> entities.Output
                 io = Output
             elif _is_primitive_type(io):
-                io = Output(type=io.TYPE_NAME) if key == return_annotation_key else Input(type=io.TYPE_NAME)
+                io = (
+                    Output(type=io.TYPE_NAME)
+                    if key == return_annotation_key
+                    else Input(type=io.TYPE_NAME)
+                )
         elif hasattr(io, "_to_io_entity_args_dict"):
             try:
                 if _is_input_or_output_type(type(io), "Input"):
@@ -417,7 +449,9 @@ def _update_io_from_mldesigner(annotations: Dict[str, Annotation]) -> Dict[str, 
                             else Input(**io._to_io_entity_args_dict())
                         )
             except BaseException as e:
-                raise UserErrorException(f"Failed to parse {io} to azure-ai-ml Input/Output: {str(e)}") from e
+                raise UserErrorException(
+                    f"Failed to parse {io} to azure-ai-ml Input/Output: {str(e)}"
+                ) from e
                 # Handle Annotated annotation
         elif get_origin(io) is Annotated:
             hint_type, arg, *hint_args = get_args(io)  # pylint: disable=unused-variable
@@ -430,7 +464,8 @@ def _update_io_from_mldesigner(annotations: Dict[str, Annotation]) -> Dict[str, 
                     )
                 if arg.type is not None and arg.type != hint_type:
                     raise UserErrorException(
-                        f"Meta class type {arg.type} should be same as Annotated type: " f"{hint_type}"
+                        f"Meta class type {arg.type} should be same as Annotated type: "
+                        f"{hint_type}"
                     )
                 arg.type = hint_type
                 io = (

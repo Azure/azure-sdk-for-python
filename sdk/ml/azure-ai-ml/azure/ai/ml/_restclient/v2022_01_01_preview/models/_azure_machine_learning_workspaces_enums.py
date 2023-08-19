@@ -21,12 +21,13 @@ class AllocationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     STEADY = "Steady"
     RESIZING = "Resizing"
 
+
 class AllowRecoverSoftDeletedWorkspace(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Allow a soft deleted workspace to be recovered
-    """
+    """Allow a soft deleted workspace to be recovered"""
 
     TRUE = "True"
     FALSE = "False"
+
 
 class ApplicationSharingPolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Policy for sharing applications on this compute instance among users of parent workspace. If
@@ -37,29 +38,29 @@ class ApplicationSharingPolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     PERSONAL = "Personal"
     SHARED = "Shared"
 
+
 class BillingCurrency(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Three lettered code specifying the currency of the VM price. Example: USD
-    """
+    """Three lettered code specifying the currency of the VM price. Example: USD"""
 
     USD = "USD"
 
+
 class ClusterPurpose(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Intended usage of the cluster
-    """
+    """Intended usage of the cluster"""
 
     FAST_PROD = "FastProd"
     DENSE_PROD = "DenseProd"
     DEV_TEST = "DevTest"
 
+
 class ComputeInstanceAuthorizationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The Compute Instance Authorization type. Available values are personal (default).
-    """
+    """The Compute Instance Authorization type. Available values are personal (default)."""
 
     PERSONAL = "personal"
 
+
 class ComputeInstanceState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Current state of an ComputeInstance.
-    """
+    """Current state of an ComputeInstance."""
 
     CREATING = "Creating"
     CREATE_FAILED = "CreateFailed"
@@ -77,16 +78,16 @@ class ComputeInstanceState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     UNKNOWN = "Unknown"
     UNUSABLE = "Unusable"
 
+
 class ComputePowerAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The compute power action.
-    """
+    """The compute power action."""
 
     START = "Start"
     STOP = "Stop"
 
+
 class ComputeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of compute
-    """
+    """The type of compute"""
 
     AKS = "AKS"
     KUBERNETES = "Kubernetes"
@@ -99,9 +100,9 @@ class ComputeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DATA_LAKE_ANALYTICS = "DataLakeAnalytics"
     SYNAPSE_SPARK = "SynapseSpark"
 
+
 class ConnectionAuthType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Authentication type of the connection target
-    """
+    """Authentication type of the connection target"""
 
     PAT = "PAT"
     MANAGED_IDENTITY = "ManagedIdentity"
@@ -110,26 +111,26 @@ class ConnectionAuthType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SAS = "SAS"
     SERVICE_PRINCIPAL = "ServicePrincipal"
 
+
 class ConnectionCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Category of the connection
-    """
+    """Category of the connection"""
 
     PYTHON_FEED = "PythonFeed"
     CONTAINER_REGISTRY = "ContainerRegistry"
     GIT = "Git"
     FEATURE_STORE = "FeatureStore"
 
+
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of identity that created the resource.
-    """
+    """The type of identity that created the resource."""
 
     USER = "User"
     APPLICATION = "Application"
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
 
-class DaysOfWeek(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
+class DaysOfWeek(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SUNDAY = "Sunday"
     MONDAY = "Monday"
     TUESDAY = "Tuesday"
@@ -138,27 +139,28 @@ class DaysOfWeek(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     FRIDAY = "Friday"
     SATURDAY = "Saturday"
 
+
 class DiagnoseResultLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Level of workspace setup error
-    """
+    """Level of workspace setup error"""
 
     WARNING = "Warning"
     ERROR = "Error"
     INFORMATION = "Information"
 
+
 class EncryptionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Indicates whether or not the encryption is enabled for the workspace.
-    """
+    """Indicates whether or not the encryption is enabled for the workspace."""
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
+
 class LoadBalancerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Load Balancer Type
-    """
+    """Load Balancer Type"""
 
     PUBLIC_IP = "PublicIp"
     INTERNAL_LOAD_BALANCER = "InternalLoadBalancer"
+
 
 class NodeState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """State of the compute node. Values are idle, running, preparing, unusable, leaving and
@@ -172,9 +174,9 @@ class NodeState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     LEAVING = "leaving"
     PREEMPTED = "preempted"
 
+
 class OperationName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Name of the last operation.
-    """
+    """Name of the last operation."""
 
     CREATE = "Create"
     START = "Start"
@@ -183,9 +185,9 @@ class OperationName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     REIMAGE = "Reimage"
     DELETE = "Delete"
 
+
 class OperationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Operation status.
-    """
+    """Operation status."""
 
     IN_PROGRESS = "InProgress"
     SUCCEEDED = "Succeeded"
@@ -196,31 +198,36 @@ class OperationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     REIMAGE_FAILED = "ReimageFailed"
     DELETE_FAILED = "DeleteFailed"
 
+
 class OsType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Compute OS Type
-    """
+    """Compute OS Type"""
 
     LINUX = "Linux"
     WINDOWS = "Windows"
 
-class PrivateEndpointConnectionProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The current provisioning state.
-    """
+
+class PrivateEndpointConnectionProvisioningState(
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
+    """The current provisioning state."""
 
     SUCCEEDED = "Succeeded"
     CREATING = "Creating"
     DELETING = "Deleting"
     FAILED = "Failed"
 
-class PrivateEndpointServiceConnectionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The private endpoint connection status.
-    """
+
+class PrivateEndpointServiceConnectionStatus(
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
+    """The private endpoint connection status."""
 
     PENDING = "Pending"
     APPROVED = "Approved"
     REJECTED = "Rejected"
     DISCONNECTED = "Disconnected"
     TIMEOUT = "Timeout"
+
 
 class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The current deployment state of workspace resource. The provisioningState is to indicate states
@@ -235,30 +242,30 @@ class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     FAILED = "Failed"
     CANCELED = "Canceled"
 
+
 class ProvisioningStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The current deployment state of schedule.
-    """
+    """The current deployment state of schedule."""
 
     COMPLETED = "Completed"
     PROVISIONING = "Provisioning"
     FAILED = "Failed"
 
+
 class PublicNetworkAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Whether requests from Public Network are allowed.
-    """
+    """Whether requests from Public Network are allowed."""
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
+
 class QuotaUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """An enum describing the unit of quota measurement.
-    """
+    """An enum describing the unit of quota measurement."""
 
     COUNT = "Count"
 
+
 class RecurrenceFrequency(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The recurrence frequency.
-    """
+    """The recurrence frequency."""
 
     NOT_SPECIFIED = "NotSpecified"
     SECOND = "Second"
@@ -268,6 +275,7 @@ class RecurrenceFrequency(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     WEEK = "Week"
     MONTH = "Month"
     YEAR = "Year"
+
 
 class RemoteLoginPortPublicAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """State of the public SSH port. Possible values are: Disabled - Indicates that the public ssh
@@ -282,34 +290,35 @@ class RemoteLoginPortPublicAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DISABLED = "Disabled"
     NOT_SPECIFIED = "NotSpecified"
 
+
 class ResourceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The identity type.
-    """
+    """The identity type."""
 
     SYSTEM_ASSIGNED = "SystemAssigned"
     SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned,UserAssigned"
     USER_ASSIGNED = "UserAssigned"
     NONE = "None"
 
+
 class ScheduleStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The schedule status.
-    """
+    """The schedule status."""
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
+
 class ScheduleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The schedule type.
-    """
+    """The schedule type."""
 
     COMPUTE_START_STOP = "ComputeStartStop"
 
+
 class SoftDeleteEnabled(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """create a workspace with soft delete capability
-    """
+    """create a workspace with soft delete capability"""
 
     TRUE = "True"
     FALSE = "False"
+
 
 class SshPublicAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """State of the public SSH port. Possible values are: Disabled - Indicates that the public ssh
@@ -320,17 +329,17 @@ class SshPublicAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
+
 class SslConfigurationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Enable or disable ssl for scoring
-    """
+    """Enable or disable ssl for scoring"""
 
     DISABLED = "Disabled"
     ENABLED = "Enabled"
     AUTO = "Auto"
 
+
 class Status(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Status of update workspace quota.
-    """
+    """Status of update workspace quota."""
 
     UNDEFINED = "Undefined"
     SUCCESS = "Success"
@@ -341,53 +350,53 @@ class Status(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     OPERATION_NOT_SUPPORTED_FOR_SKU = "OperationNotSupportedForSku"
     OPERATION_NOT_ENABLED_FOR_REGION = "OperationNotEnabledForRegion"
 
+
 class TriggerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The schedule trigger type.
-    """
+    """The schedule trigger type."""
 
     RECURRENCE = "Recurrence"
     CRON = "Cron"
 
-class UnderlyingResourceAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
+class UnderlyingResourceAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DELETE = "Delete"
     DETACH = "Detach"
 
+
 class UnitOfMeasure(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The unit of time measurement for the specified VM price. Example: OneHour
-    """
+    """The unit of time measurement for the specified VM price. Example: OneHour"""
 
     ONE_HOUR = "OneHour"
 
+
 class UsageUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """An enum describing the unit of usage measurement.
-    """
+    """An enum describing the unit of usage measurement."""
 
     COUNT = "Count"
 
+
 class ValueFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """format for the workspace connection value
-    """
+    """format for the workspace connection value"""
 
     JSON = "JSON"
 
+
 class VMPriceOSType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Operating system type used by the VM.
-    """
+    """Operating system type used by the VM."""
 
     LINUX = "Linux"
     WINDOWS = "Windows"
 
+
 class VmPriority(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Virtual Machine priority
-    """
+    """Virtual Machine priority"""
 
     DEDICATED = "Dedicated"
     LOW_PRIORITY = "LowPriority"
 
+
 class VMTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of the VM.
-    """
+    """The type of the VM."""
 
     STANDARD = "Standard"
     LOW_PRIORITY = "LowPriority"

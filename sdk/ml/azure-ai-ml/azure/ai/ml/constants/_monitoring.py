@@ -15,11 +15,19 @@ ALL_FEATURES = "all_features"
 AZMONITORING = "azmonitoring"
 
 DEPLOYMENT_MODEL_INPUTS_NAME_KEY = "data_collector.collections.model_inputs.data.name"
-DEPLOYMENT_MODEL_INPUTS_VERSION_KEY = "data_collector.collections.model_inputs.data.version"
+DEPLOYMENT_MODEL_INPUTS_VERSION_KEY = (
+    "data_collector.collections.model_inputs.data.version"
+)
 DEPLOYMENT_MODEL_OUTPUTS_NAME_KEY = "data_collector.collections.model_outputs.data.name"
-DEPLOYMENT_MODEL_OUTPUTS_VERSION_KEY = "data_collector.collections.model_outputs.data.version"
-DEPLOYMENT_MODEL_INPUTS_COLLECTION_KEY = "data_collector.collections.model_inputs.enabled"
-DEPLOYMENT_MODEL_OUTPUTS_COLLECTION_KEY = "data_collector.collections.model_outputs.enabled"
+DEPLOYMENT_MODEL_OUTPUTS_VERSION_KEY = (
+    "data_collector.collections.model_outputs.data.version"
+)
+DEPLOYMENT_MODEL_INPUTS_COLLECTION_KEY = (
+    "data_collector.collections.model_inputs.enabled"
+)
+DEPLOYMENT_MODEL_OUTPUTS_COLLECTION_KEY = (
+    "data_collector.collections.model_outputs.enabled"
+)
 
 
 SPARK_INSTANCE_TYPE_KEY = "compute.spark.resources.instance_type"

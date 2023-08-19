@@ -3,7 +3,9 @@
 # ---------------------------------------------------------
 
 from typing import Dict, Iterable
-from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient122022Preview
+from azure.ai.ml._restclient.v2023_04_01_preview import (
+    AzureMachineLearningWorkspaces as ServiceClient122022Preview,
+)
 from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope
 
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
@@ -36,28 +38,42 @@ class WorkspaceOutboundRuleOperations:
         self._init_kwargs = kwargs
 
     @monitor_with_activity(logger, "WorkspaceOutboundRule.Get", ActivityType.PUBLICAPI)
-    def get(self, resource_group: str, ws_name: str, outbound_rule_name: str, **kwargs) -> OutboundRule:
+    def get(
+        self, resource_group: str, ws_name: str, outbound_rule_name: str, **kwargs
+    ) -> OutboundRule:
         workspace_name = self._check_workspace_name(ws_name)
         resource_group = kwargs.get("resource_group") or self._resource_group_name
 
-        obj = self._rule_operation.get(resource_group, workspace_name, outbound_rule_name)
-        return OutboundRule._from_rest_object(obj.properties, name=obj.name)  # pylint: disable=protected-access
+        obj = self._rule_operation.get(
+            resource_group, workspace_name, outbound_rule_name
+        )
+        return OutboundRule._from_rest_object(
+            obj.properties, name=obj.name
+        )  # pylint: disable=protected-access
 
     @monitor_with_activity(logger, "WorkspaceOutboundRule.List", ActivityType.PUBLICAPI)
-    def list(self, resource_group: str, ws_name: str, **kwargs) -> Iterable[OutboundRule]:
+    def list(
+        self, resource_group: str, ws_name: str, **kwargs
+    ) -> Iterable[OutboundRule]:
         workspace_name = self._check_workspace_name(ws_name)
         resource_group = kwargs.get("resource_group") or self._resource_group_name
 
         rest_rules = self._rule_operation.list(resource_group, workspace_name)
 
         result = [
-            OutboundRule._from_rest_object(rest_obj=obj.properties, name=obj.name)  # pylint: disable=protected-access
+            OutboundRule._from_rest_object(
+                rest_obj=obj.properties, name=obj.name
+            )  # pylint: disable=protected-access
             for obj in rest_rules
         ]
         return result
 
-    @monitor_with_activity(logger, "WorkspaceOutboundRule.Remove", ActivityType.PUBLICAPI)
-    def begin_remove(self, resource_group: str, ws_name: str, outbound_rule_name: str, **kwargs) -> LROPoller[None]:
+    @monitor_with_activity(
+        logger, "WorkspaceOutboundRule.Remove", ActivityType.PUBLICAPI
+    )
+    def begin_remove(
+        self, resource_group: str, ws_name: str, outbound_rule_name: str, **kwargs
+    ) -> LROPoller[None]:
         workspace_name = self._check_workspace_name(ws_name)
         resource_group = kwargs.get("resource_group") or self._resource_group_name
 
@@ -66,7 +82,9 @@ class WorkspaceOutboundRuleOperations:
             workspace_name=workspace_name,
             rule_name=outbound_rule_name,
         )
-        module_logger.info("Delete request initiated for outbound rule: %s\n", outbound_rule_name)
+        module_logger.info(
+            "Delete request initiated for outbound rule: %s\n", outbound_rule_name
+        )
         return poller
 
     def _check_workspace_name(self, name) -> str:

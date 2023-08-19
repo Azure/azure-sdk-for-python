@@ -6,9 +6,14 @@
 
 from typing import Optional, Union
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import ImageModelDistributionSettingsClassification
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    ImageModelDistributionSettingsClassification,
+)
 from azure.ai.ml.entities._job.automl.search_space import SearchSpace
-from azure.ai.ml.entities._job.automl.search_space_utils import _convert_from_rest_object, _convert_to_rest_object
+from azure.ai.ml.entities._job.automl.search_space_utils import (
+    _convert_from_rest_object,
+    _convert_to_rest_object,
+)
 from azure.ai.ml.entities._job.sweep.search_space import SweepDistribution
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
@@ -179,13 +184,25 @@ class ImageClassificationSearchSpace(RestTranslatableMixin):
 
     def _to_rest_object(self) -> ImageModelDistributionSettingsClassification:
         return ImageModelDistributionSettingsClassification(
-            ams_gradient=_convert_to_rest_object(self.ams_gradient) if self.ams_gradient is not None else None,
-            beta1=_convert_to_rest_object(self.beta1) if self.beta1 is not None else None,
-            beta2=_convert_to_rest_object(self.beta2) if self.beta2 is not None else None,
-            distributed=_convert_to_rest_object(self.distributed) if self.distributed is not None else None,
-            early_stopping=_convert_to_rest_object(self.early_stopping) if self.early_stopping is not None else None,
+            ams_gradient=_convert_to_rest_object(self.ams_gradient)
+            if self.ams_gradient is not None
+            else None,
+            beta1=_convert_to_rest_object(self.beta1)
+            if self.beta1 is not None
+            else None,
+            beta2=_convert_to_rest_object(self.beta2)
+            if self.beta2 is not None
+            else None,
+            distributed=_convert_to_rest_object(self.distributed)
+            if self.distributed is not None
+            else None,
+            early_stopping=_convert_to_rest_object(self.early_stopping)
+            if self.early_stopping is not None
+            else None,
             early_stopping_delay=(
-                _convert_to_rest_object(self.early_stopping_delay) if self.early_stopping_delay is not None else None
+                _convert_to_rest_object(self.early_stopping_delay)
+                if self.early_stopping_delay is not None
+                else None
             ),
             early_stopping_patience=(
                 _convert_to_rest_object(self.early_stopping_patience)
@@ -198,7 +215,9 @@ class ImageClassificationSearchSpace(RestTranslatableMixin):
                 else None
             ),
             evaluation_frequency=(
-                _convert_to_rest_object(self.evaluation_frequency) if self.evaluation_frequency is not None else None
+                _convert_to_rest_object(self.evaluation_frequency)
+                if self.evaluation_frequency is not None
+                else None
             ),
             gradient_accumulation_step=(
                 _convert_to_rest_object(self.gradient_accumulation_step)
@@ -206,34 +225,60 @@ class ImageClassificationSearchSpace(RestTranslatableMixin):
                 else None
             ),
             layers_to_freeze=(
-                _convert_to_rest_object(self.layers_to_freeze) if self.layers_to_freeze is not None else None
+                _convert_to_rest_object(self.layers_to_freeze)
+                if self.layers_to_freeze is not None
+                else None
             ),
-            learning_rate=_convert_to_rest_object(self.learning_rate) if self.learning_rate is not None else None,
+            learning_rate=_convert_to_rest_object(self.learning_rate)
+            if self.learning_rate is not None
+            else None,
             learning_rate_scheduler=(
                 _convert_to_rest_object(self.learning_rate_scheduler)
                 if self.learning_rate_scheduler is not None
                 else None
             ),
-            model_name=_convert_to_rest_object(self.model_name) if self.model_name is not None else None,
-            momentum=_convert_to_rest_object(self.momentum) if self.momentum is not None else None,
-            nesterov=_convert_to_rest_object(self.nesterov) if self.nesterov is not None else None,
+            model_name=_convert_to_rest_object(self.model_name)
+            if self.model_name is not None
+            else None,
+            momentum=_convert_to_rest_object(self.momentum)
+            if self.momentum is not None
+            else None,
+            nesterov=_convert_to_rest_object(self.nesterov)
+            if self.nesterov is not None
+            else None,
             number_of_epochs=(
-                _convert_to_rest_object(self.number_of_epochs) if self.number_of_epochs is not None else None
+                _convert_to_rest_object(self.number_of_epochs)
+                if self.number_of_epochs is not None
+                else None
             ),
             number_of_workers=(
-                _convert_to_rest_object(self.number_of_workers) if self.number_of_workers is not None else None
+                _convert_to_rest_object(self.number_of_workers)
+                if self.number_of_workers is not None
+                else None
             ),
-            optimizer=_convert_to_rest_object(self.optimizer) if self.optimizer is not None else None,
-            random_seed=_convert_to_rest_object(self.random_seed) if self.random_seed is not None else None,
-            step_lr_gamma=_convert_to_rest_object(self.step_lr_gamma) if self.step_lr_gamma is not None else None,
+            optimizer=_convert_to_rest_object(self.optimizer)
+            if self.optimizer is not None
+            else None,
+            random_seed=_convert_to_rest_object(self.random_seed)
+            if self.random_seed is not None
+            else None,
+            step_lr_gamma=_convert_to_rest_object(self.step_lr_gamma)
+            if self.step_lr_gamma is not None
+            else None,
             step_lr_step_size=(
-                _convert_to_rest_object(self.step_lr_step_size) if self.step_lr_step_size is not None else None
+                _convert_to_rest_object(self.step_lr_step_size)
+                if self.step_lr_step_size is not None
+                else None
             ),
             training_batch_size=(
-                _convert_to_rest_object(self.training_batch_size) if self.training_batch_size is not None else None
+                _convert_to_rest_object(self.training_batch_size)
+                if self.training_batch_size is not None
+                else None
             ),
             validation_batch_size=(
-                _convert_to_rest_object(self.validation_batch_size) if self.validation_batch_size is not None else None
+                _convert_to_rest_object(self.validation_batch_size)
+                if self.validation_batch_size is not None
+                else None
             ),
             warmup_cosine_lr_cycles=(
                 _convert_to_rest_object(self.warmup_cosine_lr_cycles)
@@ -245,31 +290,53 @@ class ImageClassificationSearchSpace(RestTranslatableMixin):
                 if self.warmup_cosine_lr_warmup_epochs is not None
                 else None
             ),
-            weight_decay=_convert_to_rest_object(self.weight_decay) if self.weight_decay is not None else None,
+            weight_decay=_convert_to_rest_object(self.weight_decay)
+            if self.weight_decay is not None
+            else None,
             training_crop_size=(
-                _convert_to_rest_object(self.training_crop_size) if self.training_crop_size is not None else None
+                _convert_to_rest_object(self.training_crop_size)
+                if self.training_crop_size is not None
+                else None
             ),
             validation_crop_size=(
-                _convert_to_rest_object(self.validation_crop_size) if self.validation_crop_size is not None else None
+                _convert_to_rest_object(self.validation_crop_size)
+                if self.validation_crop_size is not None
+                else None
             ),
             validation_resize_size=(
                 _convert_to_rest_object(self.validation_resize_size)
                 if self.validation_resize_size is not None
                 else None
             ),
-            weighted_loss=_convert_to_rest_object(self.weighted_loss) if self.weighted_loss is not None else None,
+            weighted_loss=_convert_to_rest_object(self.weighted_loss)
+            if self.weighted_loss is not None
+            else None,
         )
 
     @classmethod
-    def _from_rest_object(cls, obj: ImageModelDistributionSettingsClassification) -> "ImageClassificationSearchSpace":
+    def _from_rest_object(
+        cls, obj: ImageModelDistributionSettingsClassification
+    ) -> "ImageClassificationSearchSpace":
         return cls(
-            ams_gradient=_convert_from_rest_object(obj.ams_gradient) if obj.ams_gradient is not None else None,
-            beta1=_convert_from_rest_object(obj.beta1) if obj.beta1 is not None else None,
-            beta2=_convert_from_rest_object(obj.beta2) if obj.beta2 is not None else None,
-            distributed=_convert_from_rest_object(obj.distributed) if obj.distributed is not None else None,
-            early_stopping=_convert_from_rest_object(obj.early_stopping) if obj.early_stopping is not None else None,
+            ams_gradient=_convert_from_rest_object(obj.ams_gradient)
+            if obj.ams_gradient is not None
+            else None,
+            beta1=_convert_from_rest_object(obj.beta1)
+            if obj.beta1 is not None
+            else None,
+            beta2=_convert_from_rest_object(obj.beta2)
+            if obj.beta2 is not None
+            else None,
+            distributed=_convert_from_rest_object(obj.distributed)
+            if obj.distributed is not None
+            else None,
+            early_stopping=_convert_from_rest_object(obj.early_stopping)
+            if obj.early_stopping is not None
+            else None,
             early_stopping_delay=(
-                _convert_from_rest_object(obj.early_stopping_delay) if obj.early_stopping_delay is not None else None
+                _convert_from_rest_object(obj.early_stopping_delay)
+                if obj.early_stopping_delay is not None
+                else None
             ),
             early_stopping_patience=(
                 _convert_from_rest_object(obj.early_stopping_patience)
@@ -282,7 +349,9 @@ class ImageClassificationSearchSpace(RestTranslatableMixin):
                 else None
             ),
             evaluation_frequency=(
-                _convert_from_rest_object(obj.evaluation_frequency) if obj.evaluation_frequency is not None else None
+                _convert_from_rest_object(obj.evaluation_frequency)
+                if obj.evaluation_frequency is not None
+                else None
             ),
             gradient_accumulation_step=(
                 _convert_from_rest_object(obj.gradient_accumulation_step)
@@ -290,34 +359,60 @@ class ImageClassificationSearchSpace(RestTranslatableMixin):
                 else None
             ),
             layers_to_freeze=(
-                _convert_from_rest_object(obj.layers_to_freeze) if obj.layers_to_freeze is not None else None
+                _convert_from_rest_object(obj.layers_to_freeze)
+                if obj.layers_to_freeze is not None
+                else None
             ),
-            learning_rate=_convert_from_rest_object(obj.learning_rate) if obj.learning_rate is not None else None,
+            learning_rate=_convert_from_rest_object(obj.learning_rate)
+            if obj.learning_rate is not None
+            else None,
             learning_rate_scheduler=(
                 _convert_from_rest_object(obj.learning_rate_scheduler)
                 if obj.learning_rate_scheduler is not None
                 else None
             ),
-            model_name=_convert_from_rest_object(obj.model_name) if obj.model_name is not None else None,
-            momentum=_convert_from_rest_object(obj.momentum) if obj.momentum is not None else None,
-            nesterov=_convert_from_rest_object(obj.nesterov) if obj.nesterov is not None else None,
+            model_name=_convert_from_rest_object(obj.model_name)
+            if obj.model_name is not None
+            else None,
+            momentum=_convert_from_rest_object(obj.momentum)
+            if obj.momentum is not None
+            else None,
+            nesterov=_convert_from_rest_object(obj.nesterov)
+            if obj.nesterov is not None
+            else None,
             number_of_epochs=(
-                _convert_from_rest_object(obj.number_of_epochs) if obj.number_of_epochs is not None else None
+                _convert_from_rest_object(obj.number_of_epochs)
+                if obj.number_of_epochs is not None
+                else None
             ),
             number_of_workers=(
-                _convert_from_rest_object(obj.number_of_workers) if obj.number_of_workers is not None else None
+                _convert_from_rest_object(obj.number_of_workers)
+                if obj.number_of_workers is not None
+                else None
             ),
-            optimizer=_convert_from_rest_object(obj.optimizer) if obj.optimizer is not None else None,
-            random_seed=_convert_from_rest_object(obj.random_seed) if obj.random_seed is not None else None,
-            step_lr_gamma=_convert_from_rest_object(obj.step_lr_gamma) if obj.step_lr_gamma is not None else None,
+            optimizer=_convert_from_rest_object(obj.optimizer)
+            if obj.optimizer is not None
+            else None,
+            random_seed=_convert_from_rest_object(obj.random_seed)
+            if obj.random_seed is not None
+            else None,
+            step_lr_gamma=_convert_from_rest_object(obj.step_lr_gamma)
+            if obj.step_lr_gamma is not None
+            else None,
             step_lr_step_size=(
-                _convert_from_rest_object(obj.step_lr_step_size) if obj.step_lr_step_size is not None else None
+                _convert_from_rest_object(obj.step_lr_step_size)
+                if obj.step_lr_step_size is not None
+                else None
             ),
             training_batch_size=(
-                _convert_from_rest_object(obj.training_batch_size) if obj.training_batch_size is not None else None
+                _convert_from_rest_object(obj.training_batch_size)
+                if obj.training_batch_size is not None
+                else None
             ),
             validation_batch_size=(
-                _convert_from_rest_object(obj.validation_batch_size) if obj.validation_batch_size is not None else None
+                _convert_from_rest_object(obj.validation_batch_size)
+                if obj.validation_batch_size is not None
+                else None
             ),
             warmup_cosine_lr_cycles=(
                 _convert_from_rest_object(obj.warmup_cosine_lr_cycles)
@@ -329,60 +424,100 @@ class ImageClassificationSearchSpace(RestTranslatableMixin):
                 if obj.warmup_cosine_lr_warmup_epochs is not None
                 else None
             ),
-            weight_decay=_convert_from_rest_object(obj.weight_decay) if obj.weight_decay is not None else None,
+            weight_decay=_convert_from_rest_object(obj.weight_decay)
+            if obj.weight_decay is not None
+            else None,
             training_crop_size=(
-                _convert_from_rest_object(obj.training_crop_size) if obj.training_crop_size is not None else None
+                _convert_from_rest_object(obj.training_crop_size)
+                if obj.training_crop_size is not None
+                else None
             ),
             validation_crop_size=(
-                _convert_from_rest_object(obj.validation_crop_size) if obj.validation_crop_size is not None else None
+                _convert_from_rest_object(obj.validation_crop_size)
+                if obj.validation_crop_size is not None
+                else None
             ),
             validation_resize_size=(
                 _convert_from_rest_object(obj.validation_resize_size)
                 if obj.validation_resize_size is not None
                 else None
             ),
-            weighted_loss=_convert_from_rest_object(obj.weighted_loss) if obj.weighted_loss is not None else None,
+            weighted_loss=_convert_from_rest_object(obj.weighted_loss)
+            if obj.weighted_loss is not None
+            else None,
         )
 
     @classmethod
-    def _from_search_space_object(cls, obj: SearchSpace) -> "ImageClassificationSearchSpace":
+    def _from_search_space_object(
+        cls, obj: SearchSpace
+    ) -> "ImageClassificationSearchSpace":
         return cls(
             ams_gradient=obj.ams_gradient if hasattr(obj, "ams_gradient") else None,
             beta1=obj.beta1 if hasattr(obj, "beta1") else None,
             beta2=obj.beta2 if hasattr(obj, "beta2") else None,
             distributed=obj.distributed if hasattr(obj, "distributed") else None,
-            early_stopping=obj.early_stopping if hasattr(obj, "early_stopping") else None,
-            early_stopping_delay=obj.early_stopping_delay if hasattr(obj, "early_stopping_delay") else None,
-            early_stopping_patience=obj.early_stopping_patience if hasattr(obj, "early_stopping_patience") else None,
+            early_stopping=obj.early_stopping
+            if hasattr(obj, "early_stopping")
+            else None,
+            early_stopping_delay=obj.early_stopping_delay
+            if hasattr(obj, "early_stopping_delay")
+            else None,
+            early_stopping_patience=obj.early_stopping_patience
+            if hasattr(obj, "early_stopping_patience")
+            else None,
             enable_onnx_normalization=obj.enable_onnx_normalization
             if hasattr(obj, "enable_onnx_normalization")
             else None,
-            evaluation_frequency=obj.evaluation_frequency if hasattr(obj, "evaluation_frequency") else None,
+            evaluation_frequency=obj.evaluation_frequency
+            if hasattr(obj, "evaluation_frequency")
+            else None,
             gradient_accumulation_step=obj.gradient_accumulation_step
             if hasattr(obj, "gradient_accumulation_step")
             else None,
-            layers_to_freeze=obj.layers_to_freeze if hasattr(obj, "layers_to_freeze") else None,
+            layers_to_freeze=obj.layers_to_freeze
+            if hasattr(obj, "layers_to_freeze")
+            else None,
             learning_rate=obj.learning_rate if hasattr(obj, "learning_rate") else None,
-            learning_rate_scheduler=obj.learning_rate_scheduler if hasattr(obj, "learning_rate_scheduler") else None,
+            learning_rate_scheduler=obj.learning_rate_scheduler
+            if hasattr(obj, "learning_rate_scheduler")
+            else None,
             model_name=obj.model_name if hasattr(obj, "model_name") else None,
             momentum=obj.momentum if hasattr(obj, "momentum") else None,
             nesterov=obj.nesterov if hasattr(obj, "nesterov") else None,
-            number_of_epochs=obj.number_of_epochs if hasattr(obj, "number_of_epochs") else None,
-            number_of_workers=obj.number_of_workers if hasattr(obj, "number_of_workers") else None,
+            number_of_epochs=obj.number_of_epochs
+            if hasattr(obj, "number_of_epochs")
+            else None,
+            number_of_workers=obj.number_of_workers
+            if hasattr(obj, "number_of_workers")
+            else None,
             optimizer=obj.optimizer if hasattr(obj, "optimizer") else None,
             random_seed=obj.random_seed if hasattr(obj, "random_seed") else None,
             step_lr_gamma=obj.step_lr_gamma if hasattr(obj, "step_lr_gamma") else None,
-            step_lr_step_size=obj.step_lr_step_size if hasattr(obj, "step_lr_step_size") else None,
-            training_batch_size=obj.training_batch_size if hasattr(obj, "training_batch_size") else None,
-            validation_batch_size=obj.validation_batch_size if hasattr(obj, "validation_batch_size") else None,
-            warmup_cosine_lr_cycles=obj.warmup_cosine_lr_cycles if hasattr(obj, "warmup_cosine_lr_cycles") else None,
+            step_lr_step_size=obj.step_lr_step_size
+            if hasattr(obj, "step_lr_step_size")
+            else None,
+            training_batch_size=obj.training_batch_size
+            if hasattr(obj, "training_batch_size")
+            else None,
+            validation_batch_size=obj.validation_batch_size
+            if hasattr(obj, "validation_batch_size")
+            else None,
+            warmup_cosine_lr_cycles=obj.warmup_cosine_lr_cycles
+            if hasattr(obj, "warmup_cosine_lr_cycles")
+            else None,
             warmup_cosine_lr_warmup_epochs=obj.warmup_cosine_lr_warmup_epochs
             if hasattr(obj, "warmup_cosine_lr_warmup_epochs")
             else None,
             weight_decay=obj.weight_decay if hasattr(obj, "weight_decay") else None,
-            training_crop_size=obj.training_crop_size if hasattr(obj, "training_crop_size") else None,
-            validation_crop_size=obj.validation_crop_size if hasattr(obj, "validation_crop_size") else None,
-            validation_resize_size=obj.validation_resize_size if hasattr(obj, "validation_resize_size") else None,
+            training_crop_size=obj.training_crop_size
+            if hasattr(obj, "training_crop_size")
+            else None,
+            validation_crop_size=obj.validation_crop_size
+            if hasattr(obj, "validation_crop_size")
+            else None,
+            validation_resize_size=obj.validation_resize_size
+            if hasattr(obj, "validation_resize_size")
+            else None,
             weighted_loss=obj.weighted_loss if hasattr(obj, "weighted_loss") else None,
         )
 
@@ -416,7 +551,8 @@ class ImageClassificationSearchSpace(RestTranslatableMixin):
             and self.training_batch_size == other.training_batch_size
             and self.validation_batch_size == other.validation_batch_size
             and self.warmup_cosine_lr_cycles == other.warmup_cosine_lr_cycles
-            and self.warmup_cosine_lr_warmup_epochs == other.warmup_cosine_lr_warmup_epochs
+            and self.warmup_cosine_lr_warmup_epochs
+            == other.warmup_cosine_lr_warmup_epochs
             and self.weight_decay == other.weight_decay
             and self.training_crop_size == other.training_crop_size
             and self.validation_crop_size == other.validation_crop_size

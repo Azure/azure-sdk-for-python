@@ -8,13 +8,20 @@ from base64 import b64encode
 from pathlib import Path
 from typing import Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import Datastore as DatastoreData, DatastoreType
-from azure.ai.ml._restclient.v2023_04_01_preview.models import HdfsDatastore as RestHdfsDatastore
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    Datastore as DatastoreData,
+    DatastoreType,
+)
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    HdfsDatastore as RestHdfsDatastore,
+)
 from azure.ai.ml._schema._datastore._on_prem import HdfsSchema
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, TYPE
 from azure.ai.ml.entities._datastore.datastore import Datastore
-from azure.ai.ml.entities._datastore.utils import _from_rest_datastore_credentials_preview
+from azure.ai.ml.entities._datastore.utils import (
+    _from_rest_datastore_credentials_preview,
+)
 from azure.ai.ml.entities._util import load_from_dict
 
 from ._constants import HTTP
@@ -61,7 +68,12 @@ class HdfsDatastore(Datastore):
     ):
         kwargs[TYPE] = DatastoreType.HDFS
         super().__init__(
-            name=name, description=description, tags=tags, properties=properties, credentials=credentials, **kwargs
+            name=name,
+            description=description,
+            tags=tags,
+            properties=properties,
+            credentials=credentials,
+            **kwargs
         )
 
         self.hdfs_server_certificate = hdfs_server_certificate
@@ -84,7 +96,9 @@ class HdfsDatastore(Datastore):
         return DatastoreData(properties=hdfs_ds)
 
     @classmethod
-    def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs) -> "HdfsDatastore":
+    def _load_from_dict(
+        cls, data: Dict, context: Dict, additional_message: str, **kwargs
+    ) -> "HdfsDatastore":
         return load_from_dict(HdfsSchema, data, context, additional_message)
 
     @classmethod
@@ -93,7 +107,9 @@ class HdfsDatastore(Datastore):
         return HdfsDatastore(
             name=datastore_resource.name,
             id=datastore_resource.id,
-            credentials=_from_rest_datastore_credentials_preview(properties.credentials),
+            credentials=_from_rest_datastore_credentials_preview(
+                properties.credentials
+            ),
             hdfs_server_certificate=properties.hdfs_server_certificate,
             name_node_address=properties.name_node_address,
             protocol=properties.protocol,

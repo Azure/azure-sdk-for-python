@@ -99,7 +99,9 @@ class AzureMLDatastorePathUri:
     def to_short_uri(self) -> str:
         return SHORT_URI_FORMAT.format(self.datastore, self.path)
 
-    def to_long_uri(self, subscription_id: str, resource_group_name: str, workspace_name: str) -> str:
+    def to_long_uri(
+        self, subscription_id: str, resource_group_name: str, workspace_name: str
+    ) -> str:
         return LONG_URI_FORMAT.format(
             subscription_id,
             resource_group_name,
@@ -149,13 +151,17 @@ def get_storage_client(
     """
     client_builders = {
         DatastoreType.AZURE_BLOB: lambda credential, container_name, account_url: BlobStorageClient(
-            credential=credential, account_url=account_url, container_name=container_name
+            credential=credential,
+            account_url=account_url,
+            container_name=container_name,
         ),
         DatastoreType.AZURE_DATA_LAKE_GEN2: lambda credential, container_name, account_url: Gen2StorageClient(
             credential=credential, file_system=container_name, account_url=account_url
         ),
         DatastoreType.AZURE_FILE: lambda credential, container_name, account_url: FileStorageClient(
-            credential=credential, file_share_name=container_name, account_url=account_url
+            credential=credential,
+            file_share_name=container_name,
+            account_url=account_url,
         ),
     }
 
@@ -173,7 +179,9 @@ def get_storage_client(
 
     storage_endpoint = _get_storage_endpoint_from_metadata()
     if not account_url and storage_endpoint:
-        account_url = STORAGE_ACCOUNT_URLS[storage_type].format(storage_account, storage_endpoint)
+        account_url = STORAGE_ACCOUNT_URLS[storage_type].format(
+            storage_account, storage_endpoint
+        )
     return client_builders[storage_type](credential, container_name, account_url)
 
 
@@ -187,7 +195,9 @@ def get_artifact_path_from_storage_url(blob_url: str, container_name: dict) -> s
     return blob_url
 
 
-def get_ds_name_and_path_prefix(asset_uri: str, registry_name: Optional[str] = None) -> Tuple[str, str]:
+def get_ds_name_and_path_prefix(
+    asset_uri: str, registry_name: Optional[str] = None
+) -> Tuple[str, str]:
     if registry_name:
         try:
             split_paths = re.findall(STORAGE_URI_REGEX, asset_uri)

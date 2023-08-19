@@ -64,7 +64,9 @@ class FederatedLearningSilo:
 
     def _to_dict(self) -> Dict:
         # JIT import to avoid experimental warnings on unrelated calls
-        from azure.ai.ml._schema.assets.federated_learning_silo import FederatedLearningSiloSchema
+        from azure.ai.ml._schema.assets.federated_learning_silo import (
+            FederatedLearningSiloSchema,
+        )
 
         # pylint: disable=no-member
         schema = FederatedLearningSiloSchema(context={BASE_PATH_CONTEXT_KEY: "./"})
@@ -74,7 +76,11 @@ class FederatedLearningSilo:
     @classmethod
     def _load_from_dict(cls, silo_dict: dict) -> "FederatedLearningSilo":
         data_input = silo_dict.get("inputs", {})
-        return FederatedLearningSilo(compute=silo_dict["compute"], datastore=silo_dict["datastore"], inputs=data_input)
+        return FederatedLearningSilo(
+            compute=silo_dict["compute"],
+            datastore=silo_dict["datastore"],
+            inputs=data_input,
+        )
 
     # simple load based off mltable metadata loading style
     @classmethod
@@ -115,7 +121,8 @@ class FederatedLearningSilo:
         """
         yaml_dict = load_yaml(yaml_path)
         return [
-            FederatedLearningSilo._load_from_dict(silo_dict=silo_yaml_dict) for silo_yaml_dict in yaml_dict[list_arg]
+            FederatedLearningSilo._load_from_dict(silo_dict=silo_yaml_dict)
+            for silo_yaml_dict in yaml_dict[list_arg]
         ]
 
     # There are no to/from rest object functions because this object has no

@@ -6,7 +6,9 @@ import json
 import logging
 from typing import Any, Dict, Optional
 
-from azure.ai.ml._restclient.v2020_09_01_dataplanepreview.models import ComputeConfiguration as RestComputeConfiguration
+from azure.ai.ml._restclient.v2020_09_01_dataplanepreview.models import (
+    ComputeConfiguration as RestComputeConfiguration,
+)
 from azure.ai.ml.constants._common import LOCAL_COMPUTE_TARGET
 from azure.ai.ml.constants._job.job import JobComputePropertyFields
 from azure.ai.ml.entities._mixins import DictMixin, RestTranslatableMixin
@@ -49,7 +51,9 @@ class ComputeConfiguration(RestTranslatableMixin, DictMixin):
                         # Map Singularity -> AISupercomputer in SDK until MFE does mapping
                         key = JobComputePropertyFields.AISUPERCOMPUTER
                     # Ensure keymatch is case invariant
-                    elif key.lower() == JobComputePropertyFields.AISUPERCOMPUTER.lower():
+                    elif (
+                        key.lower() == JobComputePropertyFields.AISUPERCOMPUTER.lower()
+                    ):
                         key = JobComputePropertyFields.AISUPERCOMPUTER
                     serialized_properties[key] = json.dumps(value)
                 except Exception:  # pylint: disable=broad-except

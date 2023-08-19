@@ -17,7 +17,9 @@ module_logger = logging.getLogger(__name__)
 
 class BatchRetrySettingsSchema(metaclass=PatchedSchemaMeta):
     max_retries = fields.Int(
-        metadata={"description": "The number of maximum tries for a failed or timeout mini batch."},
+        metadata={
+            "description": "The number of maximum tries for a failed or timeout mini batch."
+        },
     )
     timeout = fields.Int(metadata={"description": "The timeout for a mini batch."})
 

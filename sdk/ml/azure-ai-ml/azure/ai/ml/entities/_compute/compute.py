@@ -12,7 +12,11 @@ from typing import IO, AnyStr, Dict, Optional, Union
 from azure.ai.ml._restclient.v2022_10_01_preview.models import ComputeResource
 from azure.ai.ml._schema.compute.compute import ComputeSchema
 from azure.ai.ml._utils.utils import dump_yaml_to_file
-from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, CommonYamlFields
+from azure.ai.ml.constants._common import (
+    BASE_PATH_CONTEXT_KEY,
+    PARAMS_OVERRIDE_KEY,
+    CommonYamlFields,
+)
 from azure.ai.ml.constants._compute import ComputeType
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 from azure.ai.ml.entities._resource import Resource
@@ -118,7 +122,9 @@ class Compute(Resource, RestTranslatableMixin):
             ComputeType.KUBERNETES.lower(): KubernetesCompute,
             ComputeType.SYNAPSESPARK.lower(): SynapseSparkCompute,
         }
-        compute_type = obj.properties.compute_type.lower() if obj.properties.compute_type else None
+        compute_type = (
+            obj.properties.compute_type.lower() if obj.properties.compute_type else None
+        )
 
         class_type = mapping.get(compute_type, None)
         if class_type:
@@ -146,7 +152,9 @@ class Compute(Resource, RestTranslatableMixin):
         """
         path = kwargs.pop("path", None)
         yaml_serialized = self._to_dict()
-        dump_yaml_to_file(dest, yaml_serialized, default_flow_style=False, path=path, **kwargs)
+        dump_yaml_to_file(
+            dest, yaml_serialized, default_flow_style=False, path=path, **kwargs
+        )
 
     def _to_dict(self) -> Dict:
         # pylint: disable=no-member
@@ -174,8 +182,12 @@ class Compute(Resource, RestTranslatableMixin):
             VirtualMachineCompute,
         )
 
-        type_in_override = find_type_in_override(params_override) if params_override else None
-        compute_type = type_in_override or data.get(CommonYamlFields.TYPE, None)  # override takes the priority
+        type_in_override = (
+            find_type_in_override(params_override) if params_override else None
+        )
+        compute_type = type_in_override or data.get(
+            CommonYamlFields.TYPE, None
+        )  # override takes the priority
         if compute_type:
             if compute_type.lower() == ComputeType.VIRTUALMACHINE:
                 return VirtualMachineCompute._load_from_dict(data, context, **kwargs)

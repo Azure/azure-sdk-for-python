@@ -9,7 +9,9 @@ from azure.ai.ml._schema.component.retry_settings import RetrySettingsSchema
 from azure.ai.ml._schema.core.fields import DumpableEnumField, NestedField
 from azure.ai.ml._schema.core.schema import PathAwareSchema
 from azure.ai.ml._schema.job.input_output_entry import InputLiteralValueSchema
-from azure.ai.ml._schema.job_resource_configuration import JobResourceConfigurationSchema
+from azure.ai.ml._schema.job_resource_configuration import (
+    JobResourceConfigurationSchema,
+)
 from azure.ai.ml.constants._common import LoggingLevel
 
 from ..core.fields import UnionField
@@ -31,14 +33,19 @@ class ParameterizedParallelSchema(PathAwareSchema):
         metadata={"description": "The batch size of current job."},
     )
     partition_keys = fields.List(
-        fields.Str(), metadata={"description": "The keys used to partition input data into mini-batches"}
+        fields.Str(),
+        metadata={
+            "description": "The keys used to partition input data into mini-batches"
+        },
     )
     input_data = fields.Str()
     resources = NestedField(JobResourceConfigurationSchema)
     retry_settings = NestedField(RetrySettingsSchema, unknown=INCLUDE)
     max_concurrency_per_instance = fields.Integer(
         dump_default=1,
-        metadata={"description": "The max parallellism that each compute instance has."},
+        metadata={
+            "description": "The max parallellism that each compute instance has."
+        },
     )
     error_threshold = fields.Integer(
         dump_default=-1,

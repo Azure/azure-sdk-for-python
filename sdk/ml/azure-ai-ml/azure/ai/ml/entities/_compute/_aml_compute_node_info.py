@@ -29,11 +29,15 @@ class AmlComputeNodeInfo:
         self.run_id = value
 
     @classmethod
-    def _from_rest_object(cls, rest_obj: AmlComputeNodeInformation) -> "AmlComputeNodeInfo":
+    def _from_rest_object(
+        cls, rest_obj: AmlComputeNodeInformation
+    ) -> "AmlComputeNodeInfo":
         result = cls()
         result.__dict__.update(rest_obj.as_dict())
         return result
 
     def _to_dict(self) -> Dict:
         # pylint: disable=no-member
-        return AmlComputeNodeInfoSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        return AmlComputeNodeInfoSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(
+            self
+        )

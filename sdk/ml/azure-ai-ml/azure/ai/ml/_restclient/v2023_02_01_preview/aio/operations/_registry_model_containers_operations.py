@@ -35,7 +35,9 @@ from ...operations._registry_model_containers_operations import (
 )
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[
+    Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]
+]
 
 
 class RegistryModelContainersOperations:
@@ -90,13 +92,18 @@ class RegistryModelContainersOperations:
         """
         api_version = kwargs.pop("api_version", "2023-02-01-preview")  # type: str
 
-        cls = kwargs.pop("cls", None)  # type: ClsType["_models.ModelContainerResourceArmPaginatedResult"]
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop(
+            "cls", None
+        )  # type: ClsType["_models.ModelContainerResourceArmPaginatedResult"]
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+        }
         error_map.update(kwargs.pop("error_map", {}))
 
         def prepare_request(next_link=None):
             if not next_link:
-
                 request = build_list_request(
                     subscription_id=self._config.subscription_id,
                     resource_group_name=resource_group_name,
@@ -110,7 +117,6 @@ class RegistryModelContainersOperations:
                 request.url = self._client.format_url(request.url)
 
             else:
-
                 request = build_list_request(
                     subscription_id=self._config.subscription_id,
                     resource_group_name=resource_group_name,
@@ -126,7 +132,9 @@ class RegistryModelContainersOperations:
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize("ModelContainerResourceArmPaginatedResult", pipeline_response)
+            deserialized = self._deserialize(
+                "ModelContainerResourceArmPaginatedResult", pipeline_response
+            )
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -135,15 +143,25 @@ class RegistryModelContainersOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+            pipeline_response = (
+                await self._client._pipeline.run(  # pylint: disable=protected-access
+                    request, stream=False, **kwargs
+                )
             )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+                map_error(
+                    status_code=response.status_code,
+                    response=response,
+                    error_map=error_map,
+                )
+                error = self._deserialize.failsafe_deserialize(
+                    _models.ErrorResponse, pipeline_response
+                )
+                raise HttpResponseError(
+                    response=response, model=error, error_format=ARMErrorFormat
+                )
 
             return pipeline_response
 
@@ -152,10 +170,18 @@ class RegistryModelContainersOperations:
     list.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/models"}  # type: ignore
 
     async def _delete_initial(  # pylint: disable=inconsistent-return-statements
-        self, resource_group_name: str, registry_name: str, model_name: str, **kwargs: Any
+        self,
+        resource_group_name: str,
+        registry_name: str,
+        model_name: str,
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+        }
         error_map.update(kwargs.pop("error_map", {}))
 
         api_version = kwargs.pop("api_version", "2023-02-01-preview")  # type: str
@@ -171,13 +197,17 @@ class RegistryModelContainersOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        pipeline_response = (
+            await self._client._pipeline.run(  # pylint: disable=protected-access
+                request, stream=False, **kwargs
+            )
         )
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202, 204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -185,8 +215,12 @@ class RegistryModelContainersOperations:
             response_headers["x-ms-async-operation-timeout"] = self._deserialize(
                 "duration", response.headers.get("x-ms-async-operation-timeout")
             )
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+            response_headers["Location"] = self._deserialize(
+                "str", response.headers.get("Location")
+            )
+            response_headers["Retry-After"] = self._deserialize(
+                "int", response.headers.get("Retry-After")
+            )
 
         if cls:
             return cls(pipeline_response, None, response_headers)
@@ -195,7 +229,11 @@ class RegistryModelContainersOperations:
 
     @distributed_trace_async
     async def begin_delete(  # pylint: disable=inconsistent-return-statements
-        self, resource_group_name: str, registry_name: str, model_name: str, **kwargs: Any
+        self,
+        resource_group_name: str,
+        registry_name: str,
+        model_name: str,
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Delete container.
 
@@ -240,7 +278,9 @@ class RegistryModelContainersOperations:
                 return cls(pipeline_response, None, {})
 
         if polling is True:
-            polling_method = AsyncARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
+            polling_method = AsyncARMPolling(
+                lro_delay, lro_options={"final-state-via": "location"}, **kwargs
+            )
         elif polling is False:
             polling_method = AsyncNoPolling()
         else:
@@ -252,13 +292,19 @@ class RegistryModelContainersOperations:
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return AsyncLROPoller(
+            self._client, raw_result, get_long_running_output, polling_method
+        )
 
     begin_delete.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/models/{modelName}"}  # type: ignore
 
     @distributed_trace_async
     async def get(
-        self, resource_group_name: str, registry_name: str, model_name: str, **kwargs: Any
+        self,
+        resource_group_name: str,
+        registry_name: str,
+        model_name: str,
+        **kwargs: Any
     ) -> "_models.ModelContainer":
         """Get container.
 
@@ -276,7 +322,11 @@ class RegistryModelContainersOperations:
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop("cls", None)  # type: ClsType["_models.ModelContainer"]
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+        }
         error_map.update(kwargs.pop("error_map", {}))
 
         api_version = kwargs.pop("api_version", "2023-02-01-preview")  # type: str
@@ -292,15 +342,23 @@ class RegistryModelContainersOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        pipeline_response = (
+            await self._client._pipeline.run(  # pylint: disable=protected-access
+                request, stream=False, **kwargs
+            )
         )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse, pipeline_response
+            )
+            raise HttpResponseError(
+                response=response, model=error, error_format=ARMErrorFormat
+            )
 
         deserialized = self._deserialize("ModelContainer", pipeline_response)
 
@@ -320,11 +378,17 @@ class RegistryModelContainersOperations:
         **kwargs: Any
     ) -> "_models.ModelContainer":
         cls = kwargs.pop("cls", None)  # type: ClsType["_models.ModelContainer"]
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+        }
         error_map.update(kwargs.pop("error_map", {}))
 
         api_version = kwargs.pop("api_version", "2023-02-01-preview")  # type: str
-        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
+        content_type = kwargs.pop(
+            "content_type", "application/json"
+        )  # type: Optional[str]
 
         _json = self._serialize.body(body, "ModelContainer")
 
@@ -341,13 +405,17 @@ class RegistryModelContainersOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        pipeline_response = (
+            await self._client._pipeline.run(  # pylint: disable=protected-access
+                request, stream=False, **kwargs
+            )
         )
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 201]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -407,7 +475,9 @@ class RegistryModelContainersOperations:
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = kwargs.pop("api_version", "2023-02-01-preview")  # type: str
-        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
+        content_type = kwargs.pop(
+            "content_type", "application/json"
+        )  # type: Optional[str]
         polling = kwargs.pop("polling", True)  # type: Union[bool, AsyncPollingMethod]
         cls = kwargs.pop("cls", None)  # type: ClsType["_models.ModelContainer"]
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -433,7 +503,9 @@ class RegistryModelContainersOperations:
             return deserialized
 
         if polling is True:
-            polling_method = AsyncARMPolling(lro_delay, lro_options={"final-state-via": "original-uri"}, **kwargs)
+            polling_method = AsyncARMPolling(
+                lro_delay, lro_options={"final-state-via": "original-uri"}, **kwargs
+            )
         elif polling is False:
             polling_method = AsyncNoPolling()
         else:
@@ -445,6 +517,8 @@ class RegistryModelContainersOperations:
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return AsyncLROPoller(
+            self._client, raw_result, get_long_running_output, polling_method
+        )
 
     begin_create_or_update.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/models/{modelName}"}  # type: ignore

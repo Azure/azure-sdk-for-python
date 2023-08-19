@@ -37,15 +37,20 @@ def package_deployment(deployment: Deployment, all_ops) -> Deployment:
         code_configuration = None
 
     if isinstance(deployment, OnlineDeployment):
-        inferencing_server = AzureMLOnlineInferencingServer(code_configuration=code_configuration)
+        inferencing_server = AzureMLOnlineInferencingServer(
+            code_configuration=code_configuration
+        )
     elif isinstance(deployment, BatchDeployment):
-        inferencing_server = AzureMLBatchInferencingServer(code_configuration=code_configuration)
+        inferencing_server = AzureMLBatchInferencingServer(
+            code_configuration=code_configuration
+        )
     else:
         inferencing_server = None
 
     if deployment.environment:
         base_environment_source = BaseEnvironmentId(
-            base_environment_source_type="EnvironmentAsset", resource_id=deployment.environment
+            base_environment_source_type="EnvironmentAsset",
+            resource_id=deployment.environment,
         )
     else:
         base_environment_source = None
@@ -56,12 +61,19 @@ def package_deployment(deployment: Deployment, all_ops) -> Deployment:
         inferencing_server=inferencing_server,
     )
     if deployment.environment:
-        package_request.base_environment_source.resource_id = "azureml:/" + deployment.environment
+        package_request.base_environment_source.resource_id = (
+            "azureml:/" + deployment.environment
+        )
     if deployment.code_configuration:
-        package_request.inferencing_server.code_configuration.code_id = "azureml:/" + deployment.code_configuration.code
+        package_request.inferencing_server.code_configuration.code_id = (
+            "azureml:/" + deployment.code_configuration.code
+        )
     try:
         packaged_env = model_ops.begin_package(
-            model_name, model_version, package_request=package_request, skip_to_rest=True
+            model_name,
+            model_version,
+            package_request=package_request,
+            skip_to_rest=True,
         )
         deployment.environment = packaged_env.id
         deployment.model = None

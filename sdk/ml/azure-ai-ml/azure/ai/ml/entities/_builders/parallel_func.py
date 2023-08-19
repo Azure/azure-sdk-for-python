@@ -192,10 +192,14 @@ def parallel_run_function(
     # pylint: disable=too-many-locals
     inputs = inputs or {}
     outputs = outputs or {}
-    component_inputs, job_inputs = _parse_inputs_outputs(inputs, parse_func=_parse_input)
+    component_inputs, job_inputs = _parse_inputs_outputs(
+        inputs, parse_func=_parse_input
+    )
     # job inputs can not be None
     job_inputs = {k: v for k, v in job_inputs.items() if v is not None}
-    component_outputs, job_outputs = _parse_inputs_outputs(outputs, parse_func=_parse_output)
+    component_outputs, job_outputs = _parse_inputs_outputs(
+        outputs, parse_func=_parse_output
+    )
 
     component = kwargs.pop("component", None)
 
@@ -248,9 +252,17 @@ def parallel_run_function(
         **kwargs,
     )
 
-    if instance_count is not None or instance_type is not None or docker_args is not None or shm_size is not None:
+    if (
+        instance_count is not None
+        or instance_type is not None
+        or docker_args is not None
+        or shm_size is not None
+    ):
         parallel_obj.set_resources(
-            instance_count=instance_count, instance_type=instance_type, docker_args=docker_args, shm_size=shm_size
+            instance_count=instance_count,
+            instance_type=instance_type,
+            docker_args=docker_args,
+            shm_size=shm_size,
         )
 
     return parallel_obj

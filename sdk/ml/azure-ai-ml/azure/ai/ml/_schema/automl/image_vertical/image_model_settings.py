@@ -64,7 +64,9 @@ class ImageModelSettingsClassificationSchema(ImageModelSettingsSchema):
 
     @post_load
     def make(self, data, **kwargs):
-        from azure.ai.ml.entities._job.automl.image.image_model_settings import ImageModelSettingsClassification
+        from azure.ai.ml.entities._job.automl.image.image_model_settings import (
+            ImageModelSettingsClassification,
+        )
 
         return ImageModelSettingsClassification(**data)
 
@@ -75,7 +77,9 @@ class ImageModelSettingsObjectDetectionSchema(ImageModelSettingsSchema):
     image_size = fields.Int()
     max_size = fields.Int()
     min_size = fields.Int()
-    model_size = StringTransformedEnum(allowed_values=[o.value for o in ModelSize], casing_transform=camel_to_snake)
+    model_size = StringTransformedEnum(
+        allowed_values=[o.value for o in ModelSize], casing_transform=camel_to_snake
+    )
     multi_scale = fields.Bool()
     nms_iou_threshold = fields.Float()
     tile_grid_size = fields.Str()
@@ -91,6 +95,8 @@ class ImageModelSettingsObjectDetectionSchema(ImageModelSettingsSchema):
 
     @post_load
     def make(self, data, **kwargs):
-        from azure.ai.ml.entities._job.automl.image.image_model_settings import ImageModelSettingsObjectDetection
+        from azure.ai.ml.entities._job.automl.image.image_model_settings import (
+            ImageModelSettingsObjectDetection,
+        )
 
         return ImageModelSettingsObjectDetection(**data)

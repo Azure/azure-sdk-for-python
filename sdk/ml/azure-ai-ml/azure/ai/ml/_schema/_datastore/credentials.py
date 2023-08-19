@@ -34,7 +34,9 @@ class AccountKeySchema(metaclass=PatchedSchemaMeta):
     @pre_dump
     def predump(self, data, **kwargs):
         if not isinstance(data, AccountKeyConfiguration):
-            raise ValidationError("Cannot dump non-AccountKeyCredentials object into AccountKeyCredentials")
+            raise ValidationError(
+                "Cannot dump non-AccountKeyCredentials object into AccountKeyCredentials"
+            )
         return data
 
 
@@ -48,7 +50,9 @@ class SasTokenSchema(metaclass=PatchedSchemaMeta):
     @pre_dump
     def predump(self, data, **kwargs):
         if not isinstance(data, SasTokenConfiguration):
-            raise ValidationError("Cannot dump non-SasTokenCredentials object into SasTokenCredentials")
+            raise ValidationError(
+                "Cannot dump non-SasTokenCredentials object into SasTokenCredentials"
+            )
         return data
 
 
@@ -69,7 +73,9 @@ class ServicePrincipalSchema(BaseTenantCredentialSchema):
     @pre_dump
     def predump(self, data, **kwargs):
         if not isinstance(data, ServicePrincipalConfiguration):
-            raise ValidationError("Cannot dump non-ServicePrincipalCredentials object into ServicePrincipalCredentials")
+            raise ValidationError(
+                "Cannot dump non-ServicePrincipalCredentials object into ServicePrincipalCredentials"
+            )
         return data
 
 
@@ -84,5 +90,7 @@ class CertificateSchema(BaseTenantCredentialSchema):
     @pre_dump
     def predump(self, data, **kwargs):
         if not isinstance(data, CertificateConfiguration):
-            raise ValidationError("Cannot dump non-CertificateCredentials object into CertificateCredentials")
+            raise ValidationError(
+                "Cannot dump non-CertificateCredentials object into CertificateCredentials"
+            )
         return data

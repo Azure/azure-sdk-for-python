@@ -8,7 +8,12 @@ from os import PathLike
 from typing import IO, Any, AnyStr, Dict, Optional, Union
 
 from azure.ai.ml.entities._resource import Resource
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+from azure.ai.ml.exceptions import (
+    ErrorCategory,
+    ErrorTarget,
+    ValidationErrorType,
+    ValidationException,
+)
 
 module_logger = logging.getLogger(__name__)
 
@@ -111,7 +116,9 @@ class Endpoint(Resource):  # pylint: disable=too-many-instance-attributes
         return self._provisioning_state
 
     @abstractmethod
-    def dump(self, dest: Optional[Union[str, PathLike, IO[AnyStr]]] = None, **kwargs) -> None:
+    def dump(
+        self, dest: Optional[Union[str, PathLike, IO[AnyStr]]] = None, **kwargs
+    ) -> None:
         pass
 
     @classmethod
@@ -137,8 +144,14 @@ class Endpoint(Resource):  # pylint: disable=too-many-instance-attributes
                 self.properties = {**self.properties, **other.properties}
             self.auth_mode = other.auth_mode or self.auth_mode
             if hasattr(other, "traffic"):
-                self.traffic = other.traffic  # pylint: disable=attribute-defined-outside-init
+                self.traffic = (
+                    other.traffic
+                )  # pylint: disable=attribute-defined-outside-init
             if hasattr(other, "mirror_traffic"):
-                self.mirror_traffic = other.mirror_traffic  # pylint: disable=attribute-defined-outside-init
+                self.mirror_traffic = (
+                    other.mirror_traffic
+                )  # pylint: disable=attribute-defined-outside-init
             if hasattr(other, "defaults"):
-                self.defaults = other.defaults  # pylint: disable=attribute-defined-outside-init
+                self.defaults = (
+                    other.defaults
+                )  # pylint: disable=attribute-defined-outside-init

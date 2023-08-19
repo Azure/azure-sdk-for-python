@@ -293,8 +293,14 @@ class AcrDetails(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        "system_created_acr_account": {"key": "systemCreatedAcrAccount", "type": "SystemCreatedAcrAccount"},
-        "user_created_acr_account": {"key": "userCreatedAcrAccount", "type": "UserCreatedAcrAccount"},
+        "system_created_acr_account": {
+            "key": "systemCreatedAcrAccount",
+            "type": "SystemCreatedAcrAccount",
+        },
+        "user_created_acr_account": {
+            "key": "userCreatedAcrAccount",
+            "type": "UserCreatedAcrAccount",
+        },
     }
 
     def __init__(self, **kwargs):
@@ -658,11 +664,15 @@ class AksNetworkingConfiguration(msrest.serialization.Model):
     """
 
     _validation = {
-        "service_cidr": {"pattern": r"^([0-9]{1,3}\.){3}[0-9]{1,3}(\/([0-9]|[1-2][0-9]|3[0-2]))?$"},
+        "service_cidr": {
+            "pattern": r"^([0-9]{1,3}\.){3}[0-9]{1,3}(\/([0-9]|[1-2][0-9]|3[0-2]))?$"
+        },
         "dns_service_ip": {
             "pattern": r"^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
         },
-        "docker_bridge_cidr": {"pattern": r"^([0-9]{1,3}\.){3}[0-9]{1,3}(\/([0-9]|[1-2][0-9]|3[0-2]))?$"},
+        "docker_bridge_cidr": {
+            "pattern": r"^([0-9]{1,3}\.){3}[0-9]{1,3}(\/([0-9]|[1-2][0-9]|3[0-2]))?$"
+        },
     }
 
     _attribute_map = {
@@ -733,7 +743,10 @@ class AKSSchemaProperties(msrest.serialization.Model):
         "agent_vm_size": {"key": "agentVmSize", "type": "str"},
         "cluster_purpose": {"key": "clusterPurpose", "type": "str"},
         "ssl_configuration": {"key": "sslConfiguration", "type": "SslConfiguration"},
-        "aks_networking_configuration": {"key": "aksNetworkingConfiguration", "type": "AksNetworkingConfiguration"},
+        "aks_networking_configuration": {
+            "key": "aksNetworkingConfiguration",
+            "type": "AksNetworkingConfiguration",
+        },
         "load_balancer_type": {"key": "loadBalancerType", "type": "str"},
         "load_balancer_subnet": {"key": "loadBalancerSubnet", "type": "str"},
     }
@@ -768,7 +781,9 @@ class AKSSchemaProperties(msrest.serialization.Model):
         self.agent_vm_size = kwargs.get("agent_vm_size", None)
         self.cluster_purpose = kwargs.get("cluster_purpose", "FastProd")
         self.ssl_configuration = kwargs.get("ssl_configuration", None)
-        self.aks_networking_configuration = kwargs.get("aks_networking_configuration", None)
+        self.aks_networking_configuration = kwargs.get(
+            "aks_networking_configuration", None
+        )
         self.load_balancer_type = kwargs.get("load_balancer_type", "PublicIp")
         self.load_balancer_subnet = kwargs.get("load_balancer_subnet", None)
 
@@ -1090,14 +1105,26 @@ class AmlComputeProperties(msrest.serialization.Model):
         "os_type": {"key": "osType", "type": "str"},
         "vm_size": {"key": "vmSize", "type": "str"},
         "vm_priority": {"key": "vmPriority", "type": "str"},
-        "virtual_machine_image": {"key": "virtualMachineImage", "type": "VirtualMachineImage"},
+        "virtual_machine_image": {
+            "key": "virtualMachineImage",
+            "type": "VirtualMachineImage",
+        },
         "isolated_network": {"key": "isolatedNetwork", "type": "bool"},
         "scale_settings": {"key": "scaleSettings", "type": "ScaleSettings"},
-        "user_account_credentials": {"key": "userAccountCredentials", "type": "UserAccountCredentials"},
+        "user_account_credentials": {
+            "key": "userAccountCredentials",
+            "type": "UserAccountCredentials",
+        },
         "subnet": {"key": "subnet", "type": "ResourceId"},
-        "remote_login_port_public_access": {"key": "remoteLoginPortPublicAccess", "type": "str"},
+        "remote_login_port_public_access": {
+            "key": "remoteLoginPortPublicAccess",
+            "type": "str",
+        },
         "allocation_state": {"key": "allocationState", "type": "str"},
-        "allocation_state_transition_time": {"key": "allocationStateTransitionTime", "type": "iso-8601"},
+        "allocation_state_transition_time": {
+            "key": "allocationStateTransitionTime",
+            "type": "iso-8601",
+        },
         "errors": {"key": "errors", "type": "[ErrorResponse]"},
         "current_node_count": {"key": "currentNodeCount", "type": "int"},
         "target_node_count": {"key": "targetNodeCount", "type": "int"},
@@ -1155,7 +1182,9 @@ class AmlComputeProperties(msrest.serialization.Model):
         self.scale_settings = kwargs.get("scale_settings", None)
         self.user_account_credentials = kwargs.get("user_account_credentials", None)
         self.subnet = kwargs.get("subnet", None)
-        self.remote_login_port_public_access = kwargs.get("remote_login_port_public_access", "NotSpecified")
+        self.remote_login_port_public_access = kwargs.get(
+            "remote_login_port_public_access", "NotSpecified"
+        )
         self.allocation_state = None
         self.allocation_state_transition_time = None
         self.errors = None
@@ -1279,7 +1308,11 @@ class IdentityConfiguration(msrest.serialization.Model):
     }
 
     _subtype_map = {
-        "identity_type": {"AMLToken": "AmlToken", "Managed": "ManagedIdentity", "UserIdentity": "UserIdentity"}
+        "identity_type": {
+            "AMLToken": "AmlToken",
+            "Managed": "ManagedIdentity",
+            "UserIdentity": "UserIdentity",
+        }
     }
 
     def __init__(self, **kwargs):
@@ -1657,7 +1690,9 @@ class ForecastHorizon(msrest.serialization.Model):
         "mode": {"key": "mode", "type": "str"},
     }
 
-    _subtype_map = {"mode": {"Auto": "AutoForecastHorizon", "Custom": "CustomForecastHorizon"}}
+    _subtype_map = {
+        "mode": {"Auto": "AutoForecastHorizon", "Custom": "CustomForecastHorizon"}
+    }
 
     def __init__(self, **kwargs):
         """ """
@@ -1780,7 +1815,10 @@ class JobBaseProperties(ResourceBase):
         "identity": {"key": "identity", "type": "IdentityConfiguration"},
         "is_archived": {"key": "isArchived", "type": "bool"},
         "job_type": {"key": "jobType", "type": "str"},
-        "notification_setting": {"key": "notificationSetting", "type": "NotificationSetting"},
+        "notification_setting": {
+            "key": "notificationSetting",
+            "type": "NotificationSetting",
+        },
         "services": {"key": "services", "type": "{JobService}"},
         "status": {"key": "status", "type": "str"},
     }
@@ -1914,7 +1952,10 @@ class AutoMLJob(JobBaseProperties):
         "identity": {"key": "identity", "type": "IdentityConfiguration"},
         "is_archived": {"key": "isArchived", "type": "bool"},
         "job_type": {"key": "jobType", "type": "str"},
-        "notification_setting": {"key": "notificationSetting", "type": "NotificationSetting"},
+        "notification_setting": {
+            "key": "notificationSetting",
+            "type": "NotificationSetting",
+        },
         "services": {"key": "services", "type": "{JobService}"},
         "status": {"key": "status", "type": "str"},
         "environment_id": {"key": "environmentId", "type": "str"},
@@ -2069,7 +2110,9 @@ class NCrossValidations(msrest.serialization.Model):
         "mode": {"key": "mode", "type": "str"},
     }
 
-    _subtype_map = {"mode": {"Auto": "AutoNCrossValidations", "Custom": "CustomNCrossValidations"}}
+    _subtype_map = {
+        "mode": {"Auto": "AutoNCrossValidations", "Custom": "CustomNCrossValidations"}
+    }
 
     def __init__(self, **kwargs):
         """ """
@@ -2286,7 +2329,12 @@ class TargetRollingWindowSize(msrest.serialization.Model):
         "mode": {"key": "mode", "type": "str"},
     }
 
-    _subtype_map = {"mode": {"Auto": "AutoTargetRollingWindowSize", "Custom": "CustomTargetRollingWindowSize"}}
+    _subtype_map = {
+        "mode": {
+            "Auto": "AutoTargetRollingWindowSize",
+            "Custom": "CustomTargetRollingWindowSize",
+        }
+    }
 
     def __init__(self, **kwargs):
         """ """
@@ -2473,7 +2521,10 @@ class AzureBlobDatastore(DatastoreProperties, AzureDatastore):
         "container_name": {"key": "containerName", "type": "str"},
         "endpoint": {"key": "endpoint", "type": "str"},
         "protocol": {"key": "protocol", "type": "str"},
-        "service_data_access_auth_identity": {"key": "serviceDataAccessAuthIdentity", "type": "str"},
+        "service_data_access_auth_identity": {
+            "key": "serviceDataAccessAuthIdentity",
+            "type": "str",
+        },
     }
 
     def __init__(self, **kwargs):
@@ -2512,7 +2563,9 @@ class AzureBlobDatastore(DatastoreProperties, AzureDatastore):
         self.container_name = kwargs.get("container_name", None)
         self.endpoint = kwargs.get("endpoint", None)
         self.protocol = kwargs.get("protocol", None)
-        self.service_data_access_auth_identity = kwargs.get("service_data_access_auth_identity", None)
+        self.service_data_access_auth_identity = kwargs.get(
+            "service_data_access_auth_identity", None
+        )
         self.description = kwargs.get("description", None)
         self.properties = kwargs.get("properties", None)
         self.tags = kwargs.get("tags", None)
@@ -2571,7 +2624,10 @@ class AzureDataLakeGen1Datastore(DatastoreProperties, AzureDatastore):
         "credentials": {"key": "credentials", "type": "DatastoreCredentials"},
         "datastore_type": {"key": "datastoreType", "type": "str"},
         "is_default": {"key": "isDefault", "type": "bool"},
-        "service_data_access_auth_identity": {"key": "serviceDataAccessAuthIdentity", "type": "str"},
+        "service_data_access_auth_identity": {
+            "key": "serviceDataAccessAuthIdentity",
+            "type": "str",
+        },
         "store_name": {"key": "storeName", "type": "str"},
     }
 
@@ -2601,7 +2657,9 @@ class AzureDataLakeGen1Datastore(DatastoreProperties, AzureDatastore):
         self.resource_group = kwargs.get("resource_group", None)
         self.subscription_id = kwargs.get("subscription_id", None)
         self.datastore_type = "AzureDataLakeGen1"  # type: str
-        self.service_data_access_auth_identity = kwargs.get("service_data_access_auth_identity", None)
+        self.service_data_access_auth_identity = kwargs.get(
+            "service_data_access_auth_identity", None
+        )
         self.store_name = kwargs["store_name"]
         self.description = kwargs.get("description", None)
         self.properties = kwargs.get("properties", None)
@@ -2672,7 +2730,10 @@ class AzureDataLakeGen2Datastore(DatastoreProperties, AzureDatastore):
         "endpoint": {"key": "endpoint", "type": "str"},
         "filesystem": {"key": "filesystem", "type": "str"},
         "protocol": {"key": "protocol", "type": "str"},
-        "service_data_access_auth_identity": {"key": "serviceDataAccessAuthIdentity", "type": "str"},
+        "service_data_access_auth_identity": {
+            "key": "serviceDataAccessAuthIdentity",
+            "type": "str",
+        },
     }
 
     def __init__(self, **kwargs):
@@ -2711,7 +2772,9 @@ class AzureDataLakeGen2Datastore(DatastoreProperties, AzureDatastore):
         self.endpoint = kwargs.get("endpoint", None)
         self.filesystem = kwargs["filesystem"]
         self.protocol = kwargs.get("protocol", None)
-        self.service_data_access_auth_identity = kwargs.get("service_data_access_auth_identity", None)
+        self.service_data_access_auth_identity = kwargs.get(
+            "service_data_access_auth_identity", None
+        )
         self.description = kwargs.get("description", None)
         self.properties = kwargs.get("properties", None)
         self.tags = kwargs.get("tags", None)
@@ -2782,7 +2845,10 @@ class AzureFileDatastore(DatastoreProperties, AzureDatastore):
         "endpoint": {"key": "endpoint", "type": "str"},
         "file_share_name": {"key": "fileShareName", "type": "str"},
         "protocol": {"key": "protocol", "type": "str"},
-        "service_data_access_auth_identity": {"key": "serviceDataAccessAuthIdentity", "type": "str"},
+        "service_data_access_auth_identity": {
+            "key": "serviceDataAccessAuthIdentity",
+            "type": "str",
+        },
     }
 
     def __init__(self, **kwargs):
@@ -2822,7 +2888,9 @@ class AzureFileDatastore(DatastoreProperties, AzureDatastore):
         self.endpoint = kwargs.get("endpoint", None)
         self.file_share_name = kwargs["file_share_name"]
         self.protocol = kwargs.get("protocol", None)
-        self.service_data_access_auth_identity = kwargs.get("service_data_access_auth_identity", None)
+        self.service_data_access_auth_identity = kwargs.get(
+            "service_data_access_auth_identity", None
+        )
         self.description = kwargs.get("description", None)
         self.properties = kwargs.get("properties", None)
         self.tags = kwargs.get("tags", None)
@@ -3044,10 +3112,15 @@ class BaseEnvironmentSource(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        "base_environment_source_type": {"key": "baseEnvironmentSourceType", "type": "str"},
+        "base_environment_source_type": {
+            "key": "baseEnvironmentSourceType",
+            "type": "str",
+        },
     }
 
-    _subtype_map = {"base_environment_source_type": {"EnvironmentAsset": "BaseEnvironmentId"}}
+    _subtype_map = {
+        "base_environment_source_type": {"EnvironmentAsset": "BaseEnvironmentId"}
+    }
 
     def __init__(self, **kwargs):
         """ """
@@ -3074,7 +3147,10 @@ class BaseEnvironmentId(BaseEnvironmentSource):
     }
 
     _attribute_map = {
-        "base_environment_source_type": {"key": "baseEnvironmentSourceType", "type": "str"},
+        "base_environment_source_type": {
+            "key": "baseEnvironmentSourceType",
+            "type": "str",
+        },
         "resource_id": {"key": "resourceId", "type": "str"},
     }
 
@@ -3373,10 +3449,16 @@ class BatchDeploymentProperties(EndpointDeploymentPropertiesBase):
         "environment_variables": {"key": "environmentVariables", "type": "{str}"},
         "properties": {"key": "properties", "type": "{str}"},
         "compute": {"key": "compute", "type": "str"},
-        "deployment_properties": {"key": "deploymentProperties", "type": "BatchDeploymentPropertiesAutoGenerated"},
+        "deployment_properties": {
+            "key": "deploymentProperties",
+            "type": "BatchDeploymentPropertiesAutoGenerated",
+        },
         "error_threshold": {"key": "errorThreshold", "type": "int"},
         "logging_level": {"key": "loggingLevel", "type": "str"},
-        "max_concurrency_per_instance": {"key": "maxConcurrencyPerInstance", "type": "int"},
+        "max_concurrency_per_instance": {
+            "key": "maxConcurrencyPerInstance",
+            "type": "int",
+        },
         "mini_batch_size": {"key": "miniBatchSize", "type": "long"},
         "model": {"key": "model", "type": "AssetReferenceBase"},
         "output_action": {"key": "outputAction", "type": "str"},
@@ -3440,7 +3522,9 @@ class BatchDeploymentProperties(EndpointDeploymentPropertiesBase):
         self.deployment_properties = kwargs.get("deployment_properties", None)
         self.error_threshold = kwargs.get("error_threshold", -1)
         self.logging_level = kwargs.get("logging_level", None)
-        self.max_concurrency_per_instance = kwargs.get("max_concurrency_per_instance", 1)
+        self.max_concurrency_per_instance = kwargs.get(
+            "max_concurrency_per_instance", 1
+        )
         self.mini_batch_size = kwargs.get("mini_batch_size", 10)
         self.model = kwargs.get("model", None)
         self.output_action = kwargs.get("output_action", None)
@@ -3472,7 +3556,11 @@ class BatchDeploymentPropertiesAutoGenerated(msrest.serialization.Model):
         "deployment_property_type": {"key": "deploymentPropertyType", "type": "str"},
     }
 
-    _subtype_map = {"deployment_property_type": {"PipelineComponent": "BatchPipelineComponentDeploymentProperties"}}
+    _subtype_map = {
+        "deployment_property_type": {
+            "PipelineComponent": "BatchPipelineComponentDeploymentProperties"
+        }
+    }
 
     def __init__(self, **kwargs):
         """ """
@@ -3771,7 +3859,9 @@ class BatchEndpointTrackedResourceArmPaginatedResult(msrest.serialization.Model)
         self.value = kwargs.get("value", None)
 
 
-class BatchPipelineComponentDeploymentProperties(BatchDeploymentPropertiesAutoGenerated):
+class BatchPipelineComponentDeploymentProperties(
+    BatchDeploymentPropertiesAutoGenerated
+):
     """Properties for a Batch Pipeline Component Deployment.
 
     All required parameters must be populated in order to send to Azure.
@@ -4141,10 +4231,19 @@ class TableVertical(msrest.serialization.Model):
 
     _attribute_map = {
         "cv_split_column_names": {"key": "cvSplitColumnNames", "type": "[str]"},
-        "featurization_settings": {"key": "featurizationSettings", "type": "TableVerticalFeaturizationSettings"},
+        "featurization_settings": {
+            "key": "featurizationSettings",
+            "type": "TableVerticalFeaturizationSettings",
+        },
         "fixed_parameters": {"key": "fixedParameters", "type": "TableFixedParameters"},
-        "limit_settings": {"key": "limitSettings", "type": "TableVerticalLimitSettings"},
-        "n_cross_validations": {"key": "nCrossValidations", "type": "NCrossValidations"},
+        "limit_settings": {
+            "key": "limitSettings",
+            "type": "TableVerticalLimitSettings",
+        },
+        "n_cross_validations": {
+            "key": "nCrossValidations",
+            "type": "NCrossValidations",
+        },
         "search_space": {"key": "searchSpace", "type": "[TableParameterSubspace]"},
         "sweep_settings": {"key": "sweepSettings", "type": "TableSweepSettings"},
         "test_data": {"key": "testData", "type": "MLTableJobInput"},
@@ -4281,10 +4380,19 @@ class Classification(AutoMLVertical, TableVertical):
 
     _attribute_map = {
         "cv_split_column_names": {"key": "cvSplitColumnNames", "type": "[str]"},
-        "featurization_settings": {"key": "featurizationSettings", "type": "TableVerticalFeaturizationSettings"},
+        "featurization_settings": {
+            "key": "featurizationSettings",
+            "type": "TableVerticalFeaturizationSettings",
+        },
         "fixed_parameters": {"key": "fixedParameters", "type": "TableFixedParameters"},
-        "limit_settings": {"key": "limitSettings", "type": "TableVerticalLimitSettings"},
-        "n_cross_validations": {"key": "nCrossValidations", "type": "NCrossValidations"},
+        "limit_settings": {
+            "key": "limitSettings",
+            "type": "TableVerticalLimitSettings",
+        },
+        "n_cross_validations": {
+            "key": "nCrossValidations",
+            "type": "NCrossValidations",
+        },
         "search_space": {"key": "searchSpace", "type": "[TableParameterSubspace]"},
         "sweep_settings": {"key": "sweepSettings", "type": "TableSweepSettings"},
         "test_data": {"key": "testData", "type": "MLTableJobInput"},
@@ -4298,7 +4406,10 @@ class Classification(AutoMLVertical, TableVertical):
         "training_data": {"key": "trainingData", "type": "MLTableJobInput"},
         "positive_label": {"key": "positiveLabel", "type": "str"},
         "primary_metric": {"key": "primaryMetric", "type": "str"},
-        "training_settings": {"key": "trainingSettings", "type": "ClassificationTrainingSettings"},
+        "training_settings": {
+            "key": "trainingSettings",
+            "type": "ClassificationTrainingSettings",
+        },
     }
 
     def __init__(self, **kwargs):
@@ -4413,12 +4524,24 @@ class TrainingSettings(msrest.serialization.Model):
 
     _attribute_map = {
         "enable_dnn_training": {"key": "enableDnnTraining", "type": "bool"},
-        "enable_model_explainability": {"key": "enableModelExplainability", "type": "bool"},
-        "enable_onnx_compatible_models": {"key": "enableOnnxCompatibleModels", "type": "bool"},
+        "enable_model_explainability": {
+            "key": "enableModelExplainability",
+            "type": "bool",
+        },
+        "enable_onnx_compatible_models": {
+            "key": "enableOnnxCompatibleModels",
+            "type": "bool",
+        },
         "enable_stack_ensemble": {"key": "enableStackEnsemble", "type": "bool"},
         "enable_vote_ensemble": {"key": "enableVoteEnsemble", "type": "bool"},
-        "ensemble_model_download_timeout": {"key": "ensembleModelDownloadTimeout", "type": "duration"},
-        "stack_ensemble_settings": {"key": "stackEnsembleSettings", "type": "StackEnsembleSettings"},
+        "ensemble_model_download_timeout": {
+            "key": "ensembleModelDownloadTimeout",
+            "type": "duration",
+        },
+        "stack_ensemble_settings": {
+            "key": "stackEnsembleSettings",
+            "type": "StackEnsembleSettings",
+        },
         "training_mode": {"key": "trainingMode", "type": "str"},
     }
 
@@ -4452,11 +4575,17 @@ class TrainingSettings(msrest.serialization.Model):
         """
         super(TrainingSettings, self).__init__(**kwargs)
         self.enable_dnn_training = kwargs.get("enable_dnn_training", False)
-        self.enable_model_explainability = kwargs.get("enable_model_explainability", True)
-        self.enable_onnx_compatible_models = kwargs.get("enable_onnx_compatible_models", False)
+        self.enable_model_explainability = kwargs.get(
+            "enable_model_explainability", True
+        )
+        self.enable_onnx_compatible_models = kwargs.get(
+            "enable_onnx_compatible_models", False
+        )
         self.enable_stack_ensemble = kwargs.get("enable_stack_ensemble", True)
         self.enable_vote_ensemble = kwargs.get("enable_vote_ensemble", True)
-        self.ensemble_model_download_timeout = kwargs.get("ensemble_model_download_timeout", "PT5M")
+        self.ensemble_model_download_timeout = kwargs.get(
+            "ensemble_model_download_timeout", "PT5M"
+        )
         self.stack_ensemble_settings = kwargs.get("stack_ensemble_settings", None)
         self.training_mode = kwargs.get("training_mode", None)
 
@@ -4499,15 +4628,33 @@ class ClassificationTrainingSettings(TrainingSettings):
 
     _attribute_map = {
         "enable_dnn_training": {"key": "enableDnnTraining", "type": "bool"},
-        "enable_model_explainability": {"key": "enableModelExplainability", "type": "bool"},
-        "enable_onnx_compatible_models": {"key": "enableOnnxCompatibleModels", "type": "bool"},
+        "enable_model_explainability": {
+            "key": "enableModelExplainability",
+            "type": "bool",
+        },
+        "enable_onnx_compatible_models": {
+            "key": "enableOnnxCompatibleModels",
+            "type": "bool",
+        },
         "enable_stack_ensemble": {"key": "enableStackEnsemble", "type": "bool"},
         "enable_vote_ensemble": {"key": "enableVoteEnsemble", "type": "bool"},
-        "ensemble_model_download_timeout": {"key": "ensembleModelDownloadTimeout", "type": "duration"},
-        "stack_ensemble_settings": {"key": "stackEnsembleSettings", "type": "StackEnsembleSettings"},
+        "ensemble_model_download_timeout": {
+            "key": "ensembleModelDownloadTimeout",
+            "type": "duration",
+        },
+        "stack_ensemble_settings": {
+            "key": "stackEnsembleSettings",
+            "type": "StackEnsembleSettings",
+        },
         "training_mode": {"key": "trainingMode", "type": "str"},
-        "allowed_training_algorithms": {"key": "allowedTrainingAlgorithms", "type": "[str]"},
-        "blocked_training_algorithms": {"key": "blockedTrainingAlgorithms", "type": "[str]"},
+        "allowed_training_algorithms": {
+            "key": "allowedTrainingAlgorithms",
+            "type": "[str]",
+        },
+        "blocked_training_algorithms": {
+            "key": "blockedTrainingAlgorithms",
+            "type": "[str]",
+        },
     }
 
     def __init__(self, **kwargs):
@@ -4545,8 +4692,12 @@ class ClassificationTrainingSettings(TrainingSettings):
          ~azure.mgmt.machinelearningservices.models.ClassificationModels]
         """
         super(ClassificationTrainingSettings, self).__init__(**kwargs)
-        self.allowed_training_algorithms = kwargs.get("allowed_training_algorithms", None)
-        self.blocked_training_algorithms = kwargs.get("blocked_training_algorithms", None)
+        self.allowed_training_algorithms = kwargs.get(
+            "allowed_training_algorithms", None
+        )
+        self.blocked_training_algorithms = kwargs.get(
+            "blocked_training_algorithms", None
+        )
 
 
 class ClusterUpdateParameters(msrest.serialization.Model):
@@ -4557,7 +4708,10 @@ class ClusterUpdateParameters(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        "properties": {"key": "properties.properties", "type": "ScaleSettingsInformation"},
+        "properties": {
+            "key": "properties.properties",
+            "type": "ScaleSettingsInformation",
+        },
     }
 
     def __init__(self, **kwargs):
@@ -4609,7 +4763,11 @@ class ExportSummary(msrest.serialization.Model):
     }
 
     _subtype_map = {
-        "format": {"CSV": "CsvExportSummary", "Coco": "CocoExportSummary", "Dataset": "DatasetExportSummary"}
+        "format": {
+            "CSV": "CsvExportSummary",
+            "Coco": "CocoExportSummary",
+            "Dataset": "DatasetExportSummary",
+        }
     }
 
     def __init__(self, **kwargs):
@@ -4686,7 +4844,11 @@ class CodeConfiguration(msrest.serialization.Model):
     """
 
     _validation = {
-        "scoring_script": {"required": True, "min_length": 1, "pattern": r"[a-zA-Z0-9_]"},
+        "scoring_script": {
+            "required": True,
+            "min_length": 1,
+            "pattern": r"[a-zA-Z0-9_]",
+        },
     }
 
     _attribute_map = {
@@ -5084,10 +5246,16 @@ class CommandJob(JobBaseProperties):
         "identity": {"key": "identity", "type": "IdentityConfiguration"},
         "is_archived": {"key": "isArchived", "type": "bool"},
         "job_type": {"key": "jobType", "type": "str"},
-        "notification_setting": {"key": "notificationSetting", "type": "NotificationSetting"},
+        "notification_setting": {
+            "key": "notificationSetting",
+            "type": "NotificationSetting",
+        },
         "services": {"key": "services", "type": "{JobService}"},
         "status": {"key": "status", "type": "str"},
-        "autologger_settings": {"key": "autologgerSettings", "type": "AutologgerSettings"},
+        "autologger_settings": {
+            "key": "autologgerSettings",
+            "type": "AutologgerSettings",
+        },
         "code_id": {"key": "codeId", "type": "str"},
         "command": {"key": "command", "type": "str"},
         "distribution": {"key": "distribution", "type": "DistributionConfiguration"},
@@ -5197,7 +5365,9 @@ class JobLimits(msrest.serialization.Model):
         "timeout": {"key": "timeout", "type": "duration"},
     }
 
-    _subtype_map = {"job_limits_type": {"Command": "CommandJobLimits", "Sweep": "SweepJobLimits"}}
+    _subtype_map = {
+        "job_limits_type": {"Command": "CommandJobLimits", "Sweep": "SweepJobLimits"}
+    }
 
     def __init__(self, **kwargs):
         """
@@ -6076,23 +6246,38 @@ class ComputeInstanceProperties(msrest.serialization.Model):
     _attribute_map = {
         "vm_size": {"key": "vmSize", "type": "str"},
         "subnet": {"key": "subnet", "type": "ResourceId"},
-        "application_sharing_policy": {"key": "applicationSharingPolicy", "type": "str"},
-        "autologger_settings": {"key": "autologgerSettings", "type": "ComputeInstanceAutologgerSettings"},
+        "application_sharing_policy": {
+            "key": "applicationSharingPolicy",
+            "type": "str",
+        },
+        "autologger_settings": {
+            "key": "autologgerSettings",
+            "type": "ComputeInstanceAutologgerSettings",
+        },
         "ssh_settings": {"key": "sshSettings", "type": "ComputeInstanceSshSettings"},
         "custom_services": {"key": "customServices", "type": "[CustomService]"},
         "os_image_metadata": {"key": "osImageMetadata", "type": "ImageMetadata"},
-        "connectivity_endpoints": {"key": "connectivityEndpoints", "type": "ComputeInstanceConnectivityEndpoints"},
+        "connectivity_endpoints": {
+            "key": "connectivityEndpoints",
+            "type": "ComputeInstanceConnectivityEndpoints",
+        },
         "applications": {"key": "applications", "type": "[ComputeInstanceApplication]"},
         "created_by": {"key": "createdBy", "type": "ComputeInstanceCreatedBy"},
         "errors": {"key": "errors", "type": "[ErrorResponse]"},
         "state": {"key": "state", "type": "str"},
-        "compute_instance_authorization_type": {"key": "computeInstanceAuthorizationType", "type": "str"},
+        "compute_instance_authorization_type": {
+            "key": "computeInstanceAuthorizationType",
+            "type": "str",
+        },
         "personal_compute_instance_settings": {
             "key": "personalComputeInstanceSettings",
             "type": "PersonalComputeInstanceSettings",
         },
         "setup_scripts": {"key": "setupScripts", "type": "SetupScripts"},
-        "last_operation": {"key": "lastOperation", "type": "ComputeInstanceLastOperation"},
+        "last_operation": {
+            "key": "lastOperation",
+            "type": "ComputeInstanceLastOperation",
+        },
         "schedules": {"key": "schedules", "type": "ComputeSchedules"},
         "idle_time_before_shutdown": {"key": "idleTimeBeforeShutdown", "type": "str"},
         "enable_node_public_ip": {"key": "enableNodePublicIp", "type": "bool"},
@@ -6146,7 +6331,9 @@ class ComputeInstanceProperties(msrest.serialization.Model):
         super(ComputeInstanceProperties, self).__init__(**kwargs)
         self.vm_size = kwargs.get("vm_size", None)
         self.subnet = kwargs.get("subnet", None)
-        self.application_sharing_policy = kwargs.get("application_sharing_policy", "Shared")
+        self.application_sharing_policy = kwargs.get(
+            "application_sharing_policy", "Shared"
+        )
         self.autologger_settings = kwargs.get("autologger_settings", None)
         self.ssh_settings = kwargs.get("ssh_settings", None)
         self.custom_services = kwargs.get("custom_services", None)
@@ -6156,8 +6343,12 @@ class ComputeInstanceProperties(msrest.serialization.Model):
         self.created_by = None
         self.errors = None
         self.state = None
-        self.compute_instance_authorization_type = kwargs.get("compute_instance_authorization_type", "personal")
-        self.personal_compute_instance_settings = kwargs.get("personal_compute_instance_settings", None)
+        self.compute_instance_authorization_type = kwargs.get(
+            "compute_instance_authorization_type", "personal"
+        )
+        self.personal_compute_instance_settings = kwargs.get(
+            "personal_compute_instance_settings", None
+        )
         self.setup_scripts = kwargs.get("setup_scripts", None)
         self.last_operation = None
         self.schedules = kwargs.get("schedules", None)
@@ -6339,7 +6530,10 @@ class ComputeSchedules(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        "compute_start_stop": {"key": "computeStartStop", "type": "[ComputeStartStopSchedule]"},
+        "compute_start_stop": {
+            "key": "computeStartStop",
+            "type": "[ComputeStartStopSchedule]",
+        },
     }
 
     def __init__(self, **kwargs):
@@ -6435,8 +6629,14 @@ class ContainerResourceRequirements(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        "container_resource_limits": {"key": "containerResourceLimits", "type": "ContainerResourceSettings"},
-        "container_resource_requests": {"key": "containerResourceRequests", "type": "ContainerResourceSettings"},
+        "container_resource_limits": {
+            "key": "containerResourceLimits",
+            "type": "ContainerResourceSettings",
+        },
+        "container_resource_requests": {
+            "key": "containerResourceRequests",
+            "type": "ContainerResourceSettings",
+        },
     }
 
     def __init__(self, **kwargs):
@@ -6450,7 +6650,9 @@ class ContainerResourceRequirements(msrest.serialization.Model):
         """
         super(ContainerResourceRequirements, self).__init__(**kwargs)
         self.container_resource_limits = kwargs.get("container_resource_limits", None)
-        self.container_resource_requests = kwargs.get("container_resource_requests", None)
+        self.container_resource_requests = kwargs.get(
+            "container_resource_requests", None
+        )
 
 
 class ContainerResourceSettings(msrest.serialization.Model):
@@ -6547,7 +6749,9 @@ class TriggerBase(msrest.serialization.Model):
         "trigger_type": {"key": "triggerType", "type": "str"},
     }
 
-    _subtype_map = {"trigger_type": {"Cron": "CronTrigger", "Recurrence": "RecurrenceTrigger"}}
+    _subtype_map = {
+        "trigger_type": {"Cron": "CronTrigger", "Recurrence": "RecurrenceTrigger"}
+    }
 
     def __init__(self, **kwargs):
         """
@@ -6735,7 +6939,10 @@ class CustomInferencingServer(InferencingServer):
 
     _attribute_map = {
         "server_type": {"key": "serverType", "type": "str"},
-        "inference_configuration": {"key": "inferenceConfiguration", "type": "OnlineInferenceConfiguration"},
+        "inference_configuration": {
+            "key": "inferenceConfiguration",
+            "type": "OnlineInferenceConfiguration",
+        },
     }
 
     def __init__(self, **kwargs):
@@ -7036,7 +7243,10 @@ class CustomService(msrest.serialization.Model):
         "additional_properties": {"key": "", "type": "{object}"},
         "name": {"key": "name", "type": "str"},
         "image": {"key": "image", "type": "Image"},
-        "environment_variables": {"key": "environmentVariables", "type": "{EnvironmentVariable}"},
+        "environment_variables": {
+            "key": "environmentVariables",
+            "type": "{EnvironmentVariable}",
+        },
         "docker": {"key": "docker", "type": "Docker"},
         "endpoints": {"key": "endpoints", "type": "[Endpoint]"},
         "volumes": {"key": "volumes", "type": "[VolumeDefinition]"},
@@ -7538,7 +7748,10 @@ class DataLakeAnalyticsSchema(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        "properties": {"key": "properties", "type": "DataLakeAnalyticsSchemaProperties"},
+        "properties": {
+            "key": "properties",
+            "type": "DataLakeAnalyticsSchemaProperties",
+        },
     }
 
     def __init__(self, **kwargs):
@@ -7600,7 +7813,10 @@ class DataLakeAnalytics(Compute, DataLakeAnalyticsSchema):
     }
 
     _attribute_map = {
-        "properties": {"key": "properties", "type": "DataLakeAnalyticsSchemaProperties"},
+        "properties": {
+            "key": "properties",
+            "type": "DataLakeAnalyticsSchemaProperties",
+        },
         "compute_type": {"key": "computeType", "type": "str"},
         "compute_location": {"key": "computeLocation", "type": "str"},
         "provisioning_state": {"key": "provisioningState", "type": "str"},
@@ -7650,7 +7866,10 @@ class DataLakeAnalyticsSchemaProperties(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        "data_lake_store_account_name": {"key": "dataLakeStoreAccountName", "type": "str"},
+        "data_lake_store_account_name": {
+            "key": "dataLakeStoreAccountName",
+            "type": "str",
+        },
     }
 
     def __init__(self, **kwargs):
@@ -7659,7 +7878,9 @@ class DataLakeAnalyticsSchemaProperties(msrest.serialization.Model):
         :paramtype data_lake_store_account_name: str
         """
         super(DataLakeAnalyticsSchemaProperties, self).__init__(**kwargs)
-        self.data_lake_store_account_name = kwargs.get("data_lake_store_account_name", None)
+        self.data_lake_store_account_name = kwargs.get(
+            "data_lake_store_account_name", None
+        )
 
 
 class DataPathAssetReference(AssetReferenceBase):
@@ -7910,7 +8131,11 @@ class DataVersionBaseProperties(AssetBase):
     }
 
     _subtype_map = {
-        "data_type": {"mltable": "MLTableData", "uri_file": "UriFileDataVersion", "uri_folder": "UriFolderDataVersion"}
+        "data_type": {
+            "mltable": "MLTableData",
+            "uri_file": "UriFileDataVersion",
+            "uri_folder": "UriFolderDataVersion",
+        }
     }
 
     def __init__(self, **kwargs):
@@ -7984,7 +8209,10 @@ class OnlineScaleSettings(msrest.serialization.Model):
     }
 
     _subtype_map = {
-        "scale_type": {"Default": "DefaultScaleSettings", "TargetUtilization": "TargetUtilizationScaleSettings"}
+        "scale_type": {
+            "Default": "DefaultScaleSettings",
+            "TargetUtilization": "TargetUtilizationScaleSettings",
+        }
     }
 
     def __init__(self, **kwargs):
@@ -8255,14 +8483,35 @@ class DiagnoseResponseResultValue(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        "user_defined_route_results": {"key": "userDefinedRouteResults", "type": "[DiagnoseResult]"},
-        "network_security_rule_results": {"key": "networkSecurityRuleResults", "type": "[DiagnoseResult]"},
-        "resource_lock_results": {"key": "resourceLockResults", "type": "[DiagnoseResult]"},
-        "dns_resolution_results": {"key": "dnsResolutionResults", "type": "[DiagnoseResult]"},
-        "storage_account_results": {"key": "storageAccountResults", "type": "[DiagnoseResult]"},
+        "user_defined_route_results": {
+            "key": "userDefinedRouteResults",
+            "type": "[DiagnoseResult]",
+        },
+        "network_security_rule_results": {
+            "key": "networkSecurityRuleResults",
+            "type": "[DiagnoseResult]",
+        },
+        "resource_lock_results": {
+            "key": "resourceLockResults",
+            "type": "[DiagnoseResult]",
+        },
+        "dns_resolution_results": {
+            "key": "dnsResolutionResults",
+            "type": "[DiagnoseResult]",
+        },
+        "storage_account_results": {
+            "key": "storageAccountResults",
+            "type": "[DiagnoseResult]",
+        },
         "key_vault_results": {"key": "keyVaultResults", "type": "[DiagnoseResult]"},
-        "container_registry_results": {"key": "containerRegistryResults", "type": "[DiagnoseResult]"},
-        "application_insights_results": {"key": "applicationInsightsResults", "type": "[DiagnoseResult]"},
+        "container_registry_results": {
+            "key": "containerRegistryResults",
+            "type": "[DiagnoseResult]",
+        },
+        "application_insights_results": {
+            "key": "applicationInsightsResults",
+            "type": "[DiagnoseResult]",
+        },
         "other_results": {"key": "otherResults", "type": "[DiagnoseResult]"},
     }
 
@@ -8296,13 +8545,17 @@ class DiagnoseResponseResultValue(msrest.serialization.Model):
         """
         super(DiagnoseResponseResultValue, self).__init__(**kwargs)
         self.user_defined_route_results = kwargs.get("user_defined_route_results", None)
-        self.network_security_rule_results = kwargs.get("network_security_rule_results", None)
+        self.network_security_rule_results = kwargs.get(
+            "network_security_rule_results", None
+        )
         self.resource_lock_results = kwargs.get("resource_lock_results", None)
         self.dns_resolution_results = kwargs.get("dns_resolution_results", None)
         self.storage_account_results = kwargs.get("storage_account_results", None)
         self.key_vault_results = kwargs.get("key_vault_results", None)
         self.container_registry_results = kwargs.get("container_registry_results", None)
-        self.application_insights_results = kwargs.get("application_insights_results", None)
+        self.application_insights_results = kwargs.get(
+            "application_insights_results", None
+        )
         self.other_results = kwargs.get("other_results", None)
 
 
@@ -8381,7 +8634,13 @@ class DistributionConfiguration(msrest.serialization.Model):
         "distribution_type": {"key": "distributionType", "type": "str"},
     }
 
-    _subtype_map = {"distribution_type": {"Mpi": "Mpi", "PyTorch": "PyTorch", "TensorFlow": "TensorFlow"}}
+    _subtype_map = {
+        "distribution_type": {
+            "Mpi": "Mpi",
+            "PyTorch": "PyTorch",
+            "TensorFlow": "TensorFlow",
+        }
+    }
 
     def __init__(self, **kwargs):
         """ """
@@ -8509,7 +8768,10 @@ class EncryptionProperty(msrest.serialization.Model):
     _attribute_map = {
         "status": {"key": "status", "type": "str"},
         "identity": {"key": "identity", "type": "IdentityForCmk"},
-        "key_vault_properties": {"key": "keyVaultProperties", "type": "EncryptionKeyVaultProperties"},
+        "key_vault_properties": {
+            "key": "keyVaultProperties",
+            "type": "EncryptionKeyVaultProperties",
+        },
     }
 
     def __init__(self, **kwargs):
@@ -8545,7 +8807,10 @@ class EncryptionUpdateProperties(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        "key_vault_properties": {"key": "keyVaultProperties", "type": "EncryptionKeyVaultUpdateProperties"},
+        "key_vault_properties": {
+            "key": "keyVaultProperties",
+            "type": "EncryptionKeyVaultUpdateProperties",
+        },
     }
 
     def __init__(self, **kwargs):
@@ -8689,7 +8954,12 @@ class ScheduleActionBase(msrest.serialization.Model):
         "action_type": {"key": "actionType", "type": "str"},
     }
 
-    _subtype_map = {"action_type": {"CreateJob": "JobScheduleAction", "InvokeBatchEndpoint": "EndpointScheduleAction"}}
+    _subtype_map = {
+        "action_type": {
+            "CreateJob": "JobScheduleAction",
+            "InvokeBatchEndpoint": "EndpointScheduleAction",
+        }
+    }
 
     def __init__(self, **kwargs):
         """ """
@@ -8722,7 +8992,10 @@ class EndpointScheduleAction(ScheduleActionBase):
 
     _attribute_map = {
         "action_type": {"key": "actionType", "type": "str"},
-        "endpoint_invocation_definition": {"key": "endpointInvocationDefinition", "type": "object"},
+        "endpoint_invocation_definition": {
+            "key": "endpointInvocationDefinition",
+            "type": "object",
+        },
     }
 
     def __init__(self, **kwargs):
@@ -9030,7 +9303,10 @@ class EnvironmentVersionProperties(AssetBase):
         "conda_file": {"key": "condaFile", "type": "str"},
         "environment_type": {"key": "environmentType", "type": "str"},
         "image": {"key": "image", "type": "str"},
-        "inference_config": {"key": "inferenceConfig", "type": "InferenceContainerProperties"},
+        "inference_config": {
+            "key": "inferenceConfig",
+            "type": "InferenceContainerProperties",
+        },
         "os_type": {"key": "osType", "type": "str"},
         "provisioning_state": {"key": "provisioningState", "type": "str"},
     }
@@ -9794,7 +10070,10 @@ class FeaturesetVersionProperties(AssetBase):
         "is_anonymous": {"key": "isAnonymous", "type": "bool"},
         "is_archived": {"key": "isArchived", "type": "bool"},
         "entities": {"key": "entities", "type": "[str]"},
-        "materialization_settings": {"key": "materializationSettings", "type": "MaterializationSettings"},
+        "materialization_settings": {
+            "key": "materializationSettings",
+            "type": "MaterializationSettings",
+        },
         "provisioning_state": {"key": "provisioningState", "type": "str"},
         "specification": {"key": "specification", "type": "FeaturesetSpecification"},
         "stage": {"key": "stage", "type": "str"},
@@ -9894,7 +10173,10 @@ class FeaturestoreEntityContainer(Resource):
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
         "system_data": {"key": "systemData", "type": "SystemData"},
-        "properties": {"key": "properties", "type": "FeaturestoreEntityContainerProperties"},
+        "properties": {
+            "key": "properties",
+            "type": "FeaturestoreEntityContainerProperties",
+        },
     }
 
     def __init__(self, **kwargs):
@@ -9984,7 +10266,9 @@ class FeaturestoreEntityContainerResourceArmPaginatedResult(msrest.serialization
         :keyword value: An array of objects of type FeaturestoreEntityContainer.
         :paramtype value: list[~azure.mgmt.machinelearningservices.models.FeaturestoreEntityContainer]
         """
-        super(FeaturestoreEntityContainerResourceArmPaginatedResult, self).__init__(**kwargs)
+        super(FeaturestoreEntityContainerResourceArmPaginatedResult, self).__init__(
+            **kwargs
+        )
         self.next_link = kwargs.get("next_link", None)
         self.value = kwargs.get("value", None)
 
@@ -10025,7 +10309,10 @@ class FeaturestoreEntityVersion(Resource):
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
         "system_data": {"key": "systemData", "type": "SystemData"},
-        "properties": {"key": "properties", "type": "FeaturestoreEntityVersionProperties"},
+        "properties": {
+            "key": "properties",
+            "type": "FeaturestoreEntityVersionProperties",
+        },
     }
 
     def __init__(self, **kwargs):
@@ -10118,7 +10405,9 @@ class FeaturestoreEntityVersionResourceArmPaginatedResult(msrest.serialization.M
         :keyword value: An array of objects of type FeaturestoreEntityVersion.
         :paramtype value: list[~azure.mgmt.machinelearningservices.models.FeaturestoreEntityVersion]
         """
-        super(FeaturestoreEntityVersionResourceArmPaginatedResult, self).__init__(**kwargs)
+        super(FeaturestoreEntityVersionResourceArmPaginatedResult, self).__init__(
+            **kwargs
+        )
         self.next_link = kwargs.get("next_link", None)
         self.value = kwargs.get("value", None)
 
@@ -10261,10 +10550,19 @@ class Forecasting(AutoMLVertical, TableVertical):
 
     _attribute_map = {
         "cv_split_column_names": {"key": "cvSplitColumnNames", "type": "[str]"},
-        "featurization_settings": {"key": "featurizationSettings", "type": "TableVerticalFeaturizationSettings"},
+        "featurization_settings": {
+            "key": "featurizationSettings",
+            "type": "TableVerticalFeaturizationSettings",
+        },
         "fixed_parameters": {"key": "fixedParameters", "type": "TableFixedParameters"},
-        "limit_settings": {"key": "limitSettings", "type": "TableVerticalLimitSettings"},
-        "n_cross_validations": {"key": "nCrossValidations", "type": "NCrossValidations"},
+        "limit_settings": {
+            "key": "limitSettings",
+            "type": "TableVerticalLimitSettings",
+        },
+        "n_cross_validations": {
+            "key": "nCrossValidations",
+            "type": "NCrossValidations",
+        },
         "search_space": {"key": "searchSpace", "type": "[TableParameterSubspace]"},
         "sweep_settings": {"key": "sweepSettings", "type": "TableSweepSettings"},
         "test_data": {"key": "testData", "type": "MLTableJobInput"},
@@ -10276,9 +10574,15 @@ class Forecasting(AutoMLVertical, TableVertical):
         "target_column_name": {"key": "targetColumnName", "type": "str"},
         "task_type": {"key": "taskType", "type": "str"},
         "training_data": {"key": "trainingData", "type": "MLTableJobInput"},
-        "forecasting_settings": {"key": "forecastingSettings", "type": "ForecastingSettings"},
+        "forecasting_settings": {
+            "key": "forecastingSettings",
+            "type": "ForecastingSettings",
+        },
         "primary_metric": {"key": "primaryMetric", "type": "str"},
-        "training_settings": {"key": "trainingSettings", "type": "ForecastingTrainingSettings"},
+        "training_settings": {
+            "key": "trainingSettings",
+            "type": "ForecastingTrainingSettings",
+        },
     }
 
     def __init__(self, **kwargs):
@@ -10417,18 +10721,30 @@ class ForecastingSettings(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        "country_or_region_for_holidays": {"key": "countryOrRegionForHolidays", "type": "str"},
+        "country_or_region_for_holidays": {
+            "key": "countryOrRegionForHolidays",
+            "type": "str",
+        },
         "cv_step_size": {"key": "cvStepSize", "type": "int"},
         "feature_lags": {"key": "featureLags", "type": "str"},
         "forecast_horizon": {"key": "forecastHorizon", "type": "ForecastHorizon"},
         "frequency": {"key": "frequency", "type": "str"},
         "seasonality": {"key": "seasonality", "type": "Seasonality"},
-        "short_series_handling_config": {"key": "shortSeriesHandlingConfig", "type": "str"},
+        "short_series_handling_config": {
+            "key": "shortSeriesHandlingConfig",
+            "type": "str",
+        },
         "target_aggregate_function": {"key": "targetAggregateFunction", "type": "str"},
         "target_lags": {"key": "targetLags", "type": "TargetLags"},
-        "target_rolling_window_size": {"key": "targetRollingWindowSize", "type": "TargetRollingWindowSize"},
+        "target_rolling_window_size": {
+            "key": "targetRollingWindowSize",
+            "type": "TargetRollingWindowSize",
+        },
         "time_column_name": {"key": "timeColumnName", "type": "str"},
-        "time_series_id_column_names": {"key": "timeSeriesIdColumnNames", "type": "[str]"},
+        "time_series_id_column_names": {
+            "key": "timeSeriesIdColumnNames",
+            "type": "[str]",
+        },
         "use_stl": {"key": "useStl", "type": "str"},
     }
 
@@ -10487,18 +10803,24 @@ class ForecastingSettings(msrest.serialization.Model):
         :paramtype use_stl: str or ~azure.mgmt.machinelearningservices.models.UseStl
         """
         super(ForecastingSettings, self).__init__(**kwargs)
-        self.country_or_region_for_holidays = kwargs.get("country_or_region_for_holidays", None)
+        self.country_or_region_for_holidays = kwargs.get(
+            "country_or_region_for_holidays", None
+        )
         self.cv_step_size = kwargs.get("cv_step_size", None)
         self.feature_lags = kwargs.get("feature_lags", None)
         self.forecast_horizon = kwargs.get("forecast_horizon", None)
         self.frequency = kwargs.get("frequency", None)
         self.seasonality = kwargs.get("seasonality", None)
-        self.short_series_handling_config = kwargs.get("short_series_handling_config", None)
+        self.short_series_handling_config = kwargs.get(
+            "short_series_handling_config", None
+        )
         self.target_aggregate_function = kwargs.get("target_aggregate_function", None)
         self.target_lags = kwargs.get("target_lags", None)
         self.target_rolling_window_size = kwargs.get("target_rolling_window_size", None)
         self.time_column_name = kwargs.get("time_column_name", None)
-        self.time_series_id_column_names = kwargs.get("time_series_id_column_names", None)
+        self.time_series_id_column_names = kwargs.get(
+            "time_series_id_column_names", None
+        )
         self.use_stl = kwargs.get("use_stl", None)
 
 
@@ -10540,15 +10862,33 @@ class ForecastingTrainingSettings(TrainingSettings):
 
     _attribute_map = {
         "enable_dnn_training": {"key": "enableDnnTraining", "type": "bool"},
-        "enable_model_explainability": {"key": "enableModelExplainability", "type": "bool"},
-        "enable_onnx_compatible_models": {"key": "enableOnnxCompatibleModels", "type": "bool"},
+        "enable_model_explainability": {
+            "key": "enableModelExplainability",
+            "type": "bool",
+        },
+        "enable_onnx_compatible_models": {
+            "key": "enableOnnxCompatibleModels",
+            "type": "bool",
+        },
         "enable_stack_ensemble": {"key": "enableStackEnsemble", "type": "bool"},
         "enable_vote_ensemble": {"key": "enableVoteEnsemble", "type": "bool"},
-        "ensemble_model_download_timeout": {"key": "ensembleModelDownloadTimeout", "type": "duration"},
-        "stack_ensemble_settings": {"key": "stackEnsembleSettings", "type": "StackEnsembleSettings"},
+        "ensemble_model_download_timeout": {
+            "key": "ensembleModelDownloadTimeout",
+            "type": "duration",
+        },
+        "stack_ensemble_settings": {
+            "key": "stackEnsembleSettings",
+            "type": "StackEnsembleSettings",
+        },
         "training_mode": {"key": "trainingMode", "type": "str"},
-        "allowed_training_algorithms": {"key": "allowedTrainingAlgorithms", "type": "[str]"},
-        "blocked_training_algorithms": {"key": "blockedTrainingAlgorithms", "type": "[str]"},
+        "allowed_training_algorithms": {
+            "key": "allowedTrainingAlgorithms",
+            "type": "[str]",
+        },
+        "blocked_training_algorithms": {
+            "key": "blockedTrainingAlgorithms",
+            "type": "[str]",
+        },
     }
 
     def __init__(self, **kwargs):
@@ -10586,8 +10926,12 @@ class ForecastingTrainingSettings(TrainingSettings):
          ~azure.mgmt.machinelearningservices.models.ForecastingModels]
         """
         super(ForecastingTrainingSettings, self).__init__(**kwargs)
-        self.allowed_training_algorithms = kwargs.get("allowed_training_algorithms", None)
-        self.blocked_training_algorithms = kwargs.get("blocked_training_algorithms", None)
+        self.allowed_training_algorithms = kwargs.get(
+            "allowed_training_algorithms", None
+        )
+        self.blocked_training_algorithms = kwargs.get(
+            "blocked_training_algorithms", None
+        )
 
 
 class FQDNEndpoint(msrest.serialization.Model):
@@ -10928,7 +11272,10 @@ class HDInsightProperties(msrest.serialization.Model):
     _attribute_map = {
         "ssh_port": {"key": "sshPort", "type": "int"},
         "address": {"key": "address", "type": "str"},
-        "administrator_account": {"key": "administratorAccount", "type": "VirtualMachineSshCredentials"},
+        "administrator_account": {
+            "key": "administratorAccount",
+            "type": "VirtualMachineSshCredentials",
+        },
     }
 
     def __init__(self, **kwargs):
@@ -11144,8 +11491,14 @@ class ImageClassificationBase(ImageVertical):
         "sweep_settings": {"key": "sweepSettings", "type": "ImageSweepSettings"},
         "validation_data": {"key": "validationData", "type": "MLTableJobInput"},
         "validation_data_size": {"key": "validationDataSize", "type": "float"},
-        "model_settings": {"key": "modelSettings", "type": "ImageModelSettingsClassification"},
-        "search_space": {"key": "searchSpace", "type": "[ImageModelDistributionSettingsClassification]"},
+        "model_settings": {
+            "key": "modelSettings",
+            "type": "ImageModelSettingsClassification",
+        },
+        "search_space": {
+            "key": "searchSpace",
+            "type": "[ImageModelDistributionSettingsClassification]",
+        },
     }
 
     def __init__(self, **kwargs):
@@ -11229,8 +11582,14 @@ class ImageClassification(AutoMLVertical, ImageClassificationBase):
         "sweep_settings": {"key": "sweepSettings", "type": "ImageSweepSettings"},
         "validation_data": {"key": "validationData", "type": "MLTableJobInput"},
         "validation_data_size": {"key": "validationDataSize", "type": "float"},
-        "model_settings": {"key": "modelSettings", "type": "ImageModelSettingsClassification"},
-        "search_space": {"key": "searchSpace", "type": "[ImageModelDistributionSettingsClassification]"},
+        "model_settings": {
+            "key": "modelSettings",
+            "type": "ImageModelSettingsClassification",
+        },
+        "search_space": {
+            "key": "searchSpace",
+            "type": "[ImageModelDistributionSettingsClassification]",
+        },
         "log_verbosity": {"key": "logVerbosity", "type": "str"},
         "target_column_name": {"key": "targetColumnName", "type": "str"},
         "task_type": {"key": "taskType", "type": "str"},
@@ -11341,8 +11700,14 @@ class ImageClassificationMultilabel(AutoMLVertical, ImageClassificationBase):
         "sweep_settings": {"key": "sweepSettings", "type": "ImageSweepSettings"},
         "validation_data": {"key": "validationData", "type": "MLTableJobInput"},
         "validation_data_size": {"key": "validationDataSize", "type": "float"},
-        "model_settings": {"key": "modelSettings", "type": "ImageModelSettingsClassification"},
-        "search_space": {"key": "searchSpace", "type": "[ImageModelDistributionSettingsClassification]"},
+        "model_settings": {
+            "key": "modelSettings",
+            "type": "ImageModelSettingsClassification",
+        },
+        "search_space": {
+            "key": "searchSpace",
+            "type": "[ImageModelDistributionSettingsClassification]",
+        },
         "log_verbosity": {"key": "logVerbosity", "type": "str"},
         "target_column_name": {"key": "targetColumnName", "type": "str"},
         "task_type": {"key": "taskType", "type": "str"},
@@ -11432,8 +11797,14 @@ class ImageObjectDetectionBase(ImageVertical):
         "sweep_settings": {"key": "sweepSettings", "type": "ImageSweepSettings"},
         "validation_data": {"key": "validationData", "type": "MLTableJobInput"},
         "validation_data_size": {"key": "validationDataSize", "type": "float"},
-        "model_settings": {"key": "modelSettings", "type": "ImageModelSettingsObjectDetection"},
-        "search_space": {"key": "searchSpace", "type": "[ImageModelDistributionSettingsObjectDetection]"},
+        "model_settings": {
+            "key": "modelSettings",
+            "type": "ImageModelSettingsObjectDetection",
+        },
+        "search_space": {
+            "key": "searchSpace",
+            "type": "[ImageModelDistributionSettingsObjectDetection]",
+        },
     }
 
     def __init__(self, **kwargs):
@@ -11516,8 +11887,14 @@ class ImageInstanceSegmentation(AutoMLVertical, ImageObjectDetectionBase):
         "sweep_settings": {"key": "sweepSettings", "type": "ImageSweepSettings"},
         "validation_data": {"key": "validationData", "type": "MLTableJobInput"},
         "validation_data_size": {"key": "validationDataSize", "type": "float"},
-        "model_settings": {"key": "modelSettings", "type": "ImageModelSettingsObjectDetection"},
-        "search_space": {"key": "searchSpace", "type": "[ImageModelDistributionSettingsObjectDetection]"},
+        "model_settings": {
+            "key": "modelSettings",
+            "type": "ImageModelSettingsObjectDetection",
+        },
+        "search_space": {
+            "key": "searchSpace",
+            "type": "[ImageModelDistributionSettingsObjectDetection]",
+        },
         "log_verbosity": {"key": "logVerbosity", "type": "str"},
         "target_column_name": {"key": "targetColumnName", "type": "str"},
         "task_type": {"key": "taskType", "type": "str"},
@@ -11748,7 +12125,10 @@ class ImageModelDistributionSettings(msrest.serialization.Model):
         "early_stopping_patience": {"key": "earlyStoppingPatience", "type": "str"},
         "enable_onnx_normalization": {"key": "enableOnnxNormalization", "type": "str"},
         "evaluation_frequency": {"key": "evaluationFrequency", "type": "str"},
-        "gradient_accumulation_step": {"key": "gradientAccumulationStep", "type": "str"},
+        "gradient_accumulation_step": {
+            "key": "gradientAccumulationStep",
+            "type": "str",
+        },
         "layers_to_freeze": {"key": "layersToFreeze", "type": "str"},
         "learning_rate": {"key": "learningRate", "type": "str"},
         "learning_rate_scheduler": {"key": "learningRateScheduler", "type": "str"},
@@ -11764,7 +12144,10 @@ class ImageModelDistributionSettings(msrest.serialization.Model):
         "training_batch_size": {"key": "trainingBatchSize", "type": "str"},
         "validation_batch_size": {"key": "validationBatchSize", "type": "str"},
         "warmup_cosine_lr_cycles": {"key": "warmupCosineLRCycles", "type": "str"},
-        "warmup_cosine_lr_warmup_epochs": {"key": "warmupCosineLRWarmupEpochs", "type": "str"},
+        "warmup_cosine_lr_warmup_epochs": {
+            "key": "warmupCosineLRWarmupEpochs",
+            "type": "str",
+        },
         "weight_decay": {"key": "weightDecay", "type": "str"},
     }
 
@@ -11878,7 +12261,9 @@ class ImageModelDistributionSettings(msrest.serialization.Model):
         self.training_batch_size = kwargs.get("training_batch_size", None)
         self.validation_batch_size = kwargs.get("validation_batch_size", None)
         self.warmup_cosine_lr_cycles = kwargs.get("warmup_cosine_lr_cycles", None)
-        self.warmup_cosine_lr_warmup_epochs = kwargs.get("warmup_cosine_lr_warmup_epochs", None)
+        self.warmup_cosine_lr_warmup_epochs = kwargs.get(
+            "warmup_cosine_lr_warmup_epochs", None
+        )
         self.weight_decay = kwargs.get("weight_decay", None)
 
 
@@ -12001,7 +12386,10 @@ class ImageModelDistributionSettingsClassification(ImageModelDistributionSetting
         "early_stopping_patience": {"key": "earlyStoppingPatience", "type": "str"},
         "enable_onnx_normalization": {"key": "enableOnnxNormalization", "type": "str"},
         "evaluation_frequency": {"key": "evaluationFrequency", "type": "str"},
-        "gradient_accumulation_step": {"key": "gradientAccumulationStep", "type": "str"},
+        "gradient_accumulation_step": {
+            "key": "gradientAccumulationStep",
+            "type": "str",
+        },
         "layers_to_freeze": {"key": "layersToFreeze", "type": "str"},
         "learning_rate": {"key": "learningRate", "type": "str"},
         "learning_rate_scheduler": {"key": "learningRateScheduler", "type": "str"},
@@ -12017,7 +12405,10 @@ class ImageModelDistributionSettingsClassification(ImageModelDistributionSetting
         "training_batch_size": {"key": "trainingBatchSize", "type": "str"},
         "validation_batch_size": {"key": "validationBatchSize", "type": "str"},
         "warmup_cosine_lr_cycles": {"key": "warmupCosineLRCycles", "type": "str"},
-        "warmup_cosine_lr_warmup_epochs": {"key": "warmupCosineLRWarmupEpochs", "type": "str"},
+        "warmup_cosine_lr_warmup_epochs": {
+            "key": "warmupCosineLRWarmupEpochs",
+            "type": "str",
+        },
         "weight_decay": {"key": "weightDecay", "type": "str"},
         "training_crop_size": {"key": "trainingCropSize", "type": "str"},
         "validation_crop_size": {"key": "validationCropSize", "type": "str"},
@@ -12286,7 +12677,10 @@ class ImageModelDistributionSettingsObjectDetection(ImageModelDistributionSettin
         "early_stopping_patience": {"key": "earlyStoppingPatience", "type": "str"},
         "enable_onnx_normalization": {"key": "enableOnnxNormalization", "type": "str"},
         "evaluation_frequency": {"key": "evaluationFrequency", "type": "str"},
-        "gradient_accumulation_step": {"key": "gradientAccumulationStep", "type": "str"},
+        "gradient_accumulation_step": {
+            "key": "gradientAccumulationStep",
+            "type": "str",
+        },
         "layers_to_freeze": {"key": "layersToFreeze", "type": "str"},
         "learning_rate": {"key": "learningRate", "type": "str"},
         "learning_rate_scheduler": {"key": "learningRateScheduler", "type": "str"},
@@ -12302,7 +12696,10 @@ class ImageModelDistributionSettingsObjectDetection(ImageModelDistributionSettin
         "training_batch_size": {"key": "trainingBatchSize", "type": "str"},
         "validation_batch_size": {"key": "validationBatchSize", "type": "str"},
         "warmup_cosine_lr_cycles": {"key": "warmupCosineLRCycles", "type": "str"},
-        "warmup_cosine_lr_warmup_epochs": {"key": "warmupCosineLRWarmupEpochs", "type": "str"},
+        "warmup_cosine_lr_warmup_epochs": {
+            "key": "warmupCosineLRWarmupEpochs",
+            "type": "str",
+        },
         "weight_decay": {"key": "weightDecay", "type": "str"},
         "box_detections_per_image": {"key": "boxDetectionsPerImage", "type": "str"},
         "box_score_threshold": {"key": "boxScoreThreshold", "type": "str"},
@@ -12314,7 +12711,10 @@ class ImageModelDistributionSettingsObjectDetection(ImageModelDistributionSettin
         "nms_iou_threshold": {"key": "nmsIouThreshold", "type": "str"},
         "tile_grid_size": {"key": "tileGridSize", "type": "str"},
         "tile_overlap_ratio": {"key": "tileOverlapRatio", "type": "str"},
-        "tile_predictions_nms_threshold": {"key": "tilePredictionsNmsThreshold", "type": "str"},
+        "tile_predictions_nms_threshold": {
+            "key": "tilePredictionsNmsThreshold",
+            "type": "str",
+        },
         "validation_iou_threshold": {"key": "validationIouThreshold", "type": "str"},
         "validation_metric_type": {"key": "validationMetricType", "type": "str"},
     }
@@ -12465,7 +12865,9 @@ class ImageModelDistributionSettingsObjectDetection(ImageModelDistributionSettin
         self.nms_iou_threshold = kwargs.get("nms_iou_threshold", None)
         self.tile_grid_size = kwargs.get("tile_grid_size", None)
         self.tile_overlap_ratio = kwargs.get("tile_overlap_ratio", None)
-        self.tile_predictions_nms_threshold = kwargs.get("tile_predictions_nms_threshold", None)
+        self.tile_predictions_nms_threshold = kwargs.get(
+            "tile_predictions_nms_threshold", None
+        )
         self.validation_iou_threshold = kwargs.get("validation_iou_threshold", None)
         self.validation_metric_type = kwargs.get("validation_metric_type", None)
 
@@ -12580,7 +12982,10 @@ class ImageModelSettings(msrest.serialization.Model):
         "early_stopping_patience": {"key": "earlyStoppingPatience", "type": "int"},
         "enable_onnx_normalization": {"key": "enableOnnxNormalization", "type": "bool"},
         "evaluation_frequency": {"key": "evaluationFrequency", "type": "int"},
-        "gradient_accumulation_step": {"key": "gradientAccumulationStep", "type": "int"},
+        "gradient_accumulation_step": {
+            "key": "gradientAccumulationStep",
+            "type": "int",
+        },
         "layers_to_freeze": {"key": "layersToFreeze", "type": "int"},
         "learning_rate": {"key": "learningRate", "type": "float"},
         "learning_rate_scheduler": {"key": "learningRateScheduler", "type": "str"},
@@ -12596,7 +13001,10 @@ class ImageModelSettings(msrest.serialization.Model):
         "training_batch_size": {"key": "trainingBatchSize", "type": "int"},
         "validation_batch_size": {"key": "validationBatchSize", "type": "int"},
         "warmup_cosine_lr_cycles": {"key": "warmupCosineLRCycles", "type": "float"},
-        "warmup_cosine_lr_warmup_epochs": {"key": "warmupCosineLRWarmupEpochs", "type": "int"},
+        "warmup_cosine_lr_warmup_epochs": {
+            "key": "warmupCosineLRWarmupEpochs",
+            "type": "int",
+        },
         "weight_decay": {"key": "weightDecay", "type": "float"},
     }
 
@@ -12725,7 +13133,9 @@ class ImageModelSettings(msrest.serialization.Model):
         self.training_batch_size = kwargs.get("training_batch_size", None)
         self.validation_batch_size = kwargs.get("validation_batch_size", None)
         self.warmup_cosine_lr_cycles = kwargs.get("warmup_cosine_lr_cycles", None)
-        self.warmup_cosine_lr_warmup_epochs = kwargs.get("warmup_cosine_lr_warmup_epochs", None)
+        self.warmup_cosine_lr_warmup_epochs = kwargs.get(
+            "warmup_cosine_lr_warmup_epochs", None
+        )
         self.weight_decay = kwargs.get("weight_decay", None)
 
 
@@ -12852,7 +13262,10 @@ class ImageModelSettingsClassification(ImageModelSettings):
         "early_stopping_patience": {"key": "earlyStoppingPatience", "type": "int"},
         "enable_onnx_normalization": {"key": "enableOnnxNormalization", "type": "bool"},
         "evaluation_frequency": {"key": "evaluationFrequency", "type": "int"},
-        "gradient_accumulation_step": {"key": "gradientAccumulationStep", "type": "int"},
+        "gradient_accumulation_step": {
+            "key": "gradientAccumulationStep",
+            "type": "int",
+        },
         "layers_to_freeze": {"key": "layersToFreeze", "type": "int"},
         "learning_rate": {"key": "learningRate", "type": "float"},
         "learning_rate_scheduler": {"key": "learningRateScheduler", "type": "str"},
@@ -12868,7 +13281,10 @@ class ImageModelSettingsClassification(ImageModelSettings):
         "training_batch_size": {"key": "trainingBatchSize", "type": "int"},
         "validation_batch_size": {"key": "validationBatchSize", "type": "int"},
         "warmup_cosine_lr_cycles": {"key": "warmupCosineLRCycles", "type": "float"},
-        "warmup_cosine_lr_warmup_epochs": {"key": "warmupCosineLRWarmupEpochs", "type": "int"},
+        "warmup_cosine_lr_warmup_epochs": {
+            "key": "warmupCosineLRWarmupEpochs",
+            "type": "int",
+        },
         "weight_decay": {"key": "weightDecay", "type": "float"},
         "training_crop_size": {"key": "trainingCropSize", "type": "int"},
         "validation_crop_size": {"key": "validationCropSize", "type": "int"},
@@ -13153,7 +13569,10 @@ class ImageModelSettingsObjectDetection(ImageModelSettings):
         "early_stopping_patience": {"key": "earlyStoppingPatience", "type": "int"},
         "enable_onnx_normalization": {"key": "enableOnnxNormalization", "type": "bool"},
         "evaluation_frequency": {"key": "evaluationFrequency", "type": "int"},
-        "gradient_accumulation_step": {"key": "gradientAccumulationStep", "type": "int"},
+        "gradient_accumulation_step": {
+            "key": "gradientAccumulationStep",
+            "type": "int",
+        },
         "layers_to_freeze": {"key": "layersToFreeze", "type": "int"},
         "learning_rate": {"key": "learningRate", "type": "float"},
         "learning_rate_scheduler": {"key": "learningRateScheduler", "type": "str"},
@@ -13169,7 +13588,10 @@ class ImageModelSettingsObjectDetection(ImageModelSettings):
         "training_batch_size": {"key": "trainingBatchSize", "type": "int"},
         "validation_batch_size": {"key": "validationBatchSize", "type": "int"},
         "warmup_cosine_lr_cycles": {"key": "warmupCosineLRCycles", "type": "float"},
-        "warmup_cosine_lr_warmup_epochs": {"key": "warmupCosineLRWarmupEpochs", "type": "int"},
+        "warmup_cosine_lr_warmup_epochs": {
+            "key": "warmupCosineLRWarmupEpochs",
+            "type": "int",
+        },
         "weight_decay": {"key": "weightDecay", "type": "float"},
         "box_detections_per_image": {"key": "boxDetectionsPerImage", "type": "int"},
         "box_score_threshold": {"key": "boxScoreThreshold", "type": "float"},
@@ -13181,7 +13603,10 @@ class ImageModelSettingsObjectDetection(ImageModelSettings):
         "nms_iou_threshold": {"key": "nmsIouThreshold", "type": "float"},
         "tile_grid_size": {"key": "tileGridSize", "type": "str"},
         "tile_overlap_ratio": {"key": "tileOverlapRatio", "type": "float"},
-        "tile_predictions_nms_threshold": {"key": "tilePredictionsNmsThreshold", "type": "float"},
+        "tile_predictions_nms_threshold": {
+            "key": "tilePredictionsNmsThreshold",
+            "type": "float",
+        },
         "validation_iou_threshold": {"key": "validationIouThreshold", "type": "float"},
         "validation_metric_type": {"key": "validationMetricType", "type": "str"},
     }
@@ -13344,7 +13769,9 @@ class ImageModelSettingsObjectDetection(ImageModelSettings):
         self.nms_iou_threshold = kwargs.get("nms_iou_threshold", None)
         self.tile_grid_size = kwargs.get("tile_grid_size", None)
         self.tile_overlap_ratio = kwargs.get("tile_overlap_ratio", None)
-        self.tile_predictions_nms_threshold = kwargs.get("tile_predictions_nms_threshold", None)
+        self.tile_predictions_nms_threshold = kwargs.get(
+            "tile_predictions_nms_threshold", None
+        )
         self.validation_iou_threshold = kwargs.get("validation_iou_threshold", None)
         self.validation_metric_type = kwargs.get("validation_metric_type", None)
 
@@ -13403,8 +13830,14 @@ class ImageObjectDetection(AutoMLVertical, ImageObjectDetectionBase):
         "sweep_settings": {"key": "sweepSettings", "type": "ImageSweepSettings"},
         "validation_data": {"key": "validationData", "type": "MLTableJobInput"},
         "validation_data_size": {"key": "validationDataSize", "type": "float"},
-        "model_settings": {"key": "modelSettings", "type": "ImageModelSettingsObjectDetection"},
-        "search_space": {"key": "searchSpace", "type": "[ImageModelDistributionSettingsObjectDetection]"},
+        "model_settings": {
+            "key": "modelSettings",
+            "type": "ImageModelSettingsObjectDetection",
+        },
+        "search_space": {
+            "key": "searchSpace",
+            "type": "[ImageModelDistributionSettingsObjectDetection]",
+        },
         "log_verbosity": {"key": "logVerbosity", "type": "str"},
         "target_column_name": {"key": "targetColumnName", "type": "str"},
         "task_type": {"key": "taskType", "type": "str"},
@@ -13477,7 +13910,10 @@ class ImageSweepSettings(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        "early_termination": {"key": "earlyTermination", "type": "EarlyTerminationPolicy"},
+        "early_termination": {
+            "key": "earlyTermination",
+            "type": "EarlyTerminationPolicy",
+        },
         "sampling_algorithm": {"key": "samplingAlgorithm", "type": "str"},
     }
 
@@ -14230,7 +14666,10 @@ class OnlineDeploymentProperties(EndpointDeploymentPropertiesBase):
         "environment_variables": {"key": "environmentVariables", "type": "{str}"},
         "properties": {"key": "properties", "type": "{str}"},
         "app_insights_enabled": {"key": "appInsightsEnabled", "type": "bool"},
-        "egress_public_network_access": {"key": "egressPublicNetworkAccess", "type": "str"},
+        "egress_public_network_access": {
+            "key": "egressPublicNetworkAccess",
+            "type": "str",
+        },
         "endpoint_compute_type": {"key": "endpointComputeType", "type": "str"},
         "instance_type": {"key": "instanceType", "type": "str"},
         "liveness_probe": {"key": "livenessProbe", "type": "ProbeSettings"},
@@ -14243,7 +14682,10 @@ class OnlineDeploymentProperties(EndpointDeploymentPropertiesBase):
     }
 
     _subtype_map = {
-        "endpoint_compute_type": {"Kubernetes": "KubernetesOnlineDeployment", "Managed": "ManagedOnlineDeployment"}
+        "endpoint_compute_type": {
+            "Kubernetes": "KubernetesOnlineDeployment",
+            "Managed": "ManagedOnlineDeployment",
+        }
     }
 
     def __init__(self, **kwargs):
@@ -14287,7 +14729,9 @@ class OnlineDeploymentProperties(EndpointDeploymentPropertiesBase):
         """
         super(OnlineDeploymentProperties, self).__init__(**kwargs)
         self.app_insights_enabled = kwargs.get("app_insights_enabled", False)
-        self.egress_public_network_access = kwargs.get("egress_public_network_access", None)
+        self.egress_public_network_access = kwargs.get(
+            "egress_public_network_access", None
+        )
         self.endpoint_compute_type = "OnlineDeploymentProperties"  # type: str
         self.instance_type = kwargs.get("instance_type", None)
         self.liveness_probe = kwargs.get("liveness_probe", None)
@@ -14368,7 +14812,10 @@ class KubernetesOnlineDeployment(OnlineDeploymentProperties):
         "environment_variables": {"key": "environmentVariables", "type": "{str}"},
         "properties": {"key": "properties", "type": "{str}"},
         "app_insights_enabled": {"key": "appInsightsEnabled", "type": "bool"},
-        "egress_public_network_access": {"key": "egressPublicNetworkAccess", "type": "str"},
+        "egress_public_network_access": {
+            "key": "egressPublicNetworkAccess",
+            "type": "str",
+        },
         "endpoint_compute_type": {"key": "endpointComputeType", "type": "str"},
         "instance_type": {"key": "instanceType", "type": "str"},
         "liveness_probe": {"key": "livenessProbe", "type": "ProbeSettings"},
@@ -14429,7 +14876,9 @@ class KubernetesOnlineDeployment(OnlineDeploymentProperties):
         """
         super(KubernetesOnlineDeployment, self).__init__(**kwargs)
         self.endpoint_compute_type = "Kubernetes"  # type: str
-        self.container_resource_requirements = kwargs.get("container_resource_requirements", None)
+        self.container_resource_requirements = kwargs.get(
+            "container_resource_requirements", None
+        )
 
 
 class KubernetesProperties(msrest.serialization.Model):
@@ -14456,9 +14905,15 @@ class KubernetesProperties(msrest.serialization.Model):
 
     _attribute_map = {
         "relay_connection_string": {"key": "relayConnectionString", "type": "str"},
-        "service_bus_connection_string": {"key": "serviceBusConnectionString", "type": "str"},
+        "service_bus_connection_string": {
+            "key": "serviceBusConnectionString",
+            "type": "str",
+        },
         "extension_principal_id": {"key": "extensionPrincipalId", "type": "str"},
-        "extension_instance_release_train": {"key": "extensionInstanceReleaseTrain", "type": "str"},
+        "extension_instance_release_train": {
+            "key": "extensionInstanceReleaseTrain",
+            "type": "str",
+        },
         "vc_name": {"key": "vcName", "type": "str"},
         "namespace": {"key": "namespace", "type": "str"},
         "default_instance_type": {"key": "defaultInstanceType", "type": "str"},
@@ -14487,9 +14942,13 @@ class KubernetesProperties(msrest.serialization.Model):
         """
         super(KubernetesProperties, self).__init__(**kwargs)
         self.relay_connection_string = kwargs.get("relay_connection_string", None)
-        self.service_bus_connection_string = kwargs.get("service_bus_connection_string", None)
+        self.service_bus_connection_string = kwargs.get(
+            "service_bus_connection_string", None
+        )
         self.extension_principal_id = kwargs.get("extension_principal_id", None)
-        self.extension_instance_release_train = kwargs.get("extension_instance_release_train", None)
+        self.extension_instance_release_train = kwargs.get(
+            "extension_instance_release_train", None
+        )
         self.vc_name = kwargs.get("vc_name", None)
         self.namespace = kwargs.get("namespace", "default")
         self.default_instance_type = kwargs.get("default_instance_type", None)
@@ -14654,7 +15113,12 @@ class LabelingJobMediaProperties(msrest.serialization.Model):
         "media_type": {"key": "mediaType", "type": "str"},
     }
 
-    _subtype_map = {"media_type": {"Image": "LabelingJobImageProperties", "Text": "LabelingJobTextProperties"}}
+    _subtype_map = {
+        "media_type": {
+            "Image": "LabelingJobImageProperties",
+            "Text": "LabelingJobTextProperties",
+        }
+    }
 
     def __init__(self, **kwargs):
         """ """
@@ -14804,15 +15268,30 @@ class LabelingJobProperties(JobBaseProperties):
         "identity": {"key": "identity", "type": "IdentityConfiguration"},
         "is_archived": {"key": "isArchived", "type": "bool"},
         "job_type": {"key": "jobType", "type": "str"},
-        "notification_setting": {"key": "notificationSetting", "type": "NotificationSetting"},
+        "notification_setting": {
+            "key": "notificationSetting",
+            "type": "NotificationSetting",
+        },
         "services": {"key": "services", "type": "{JobService}"},
         "status": {"key": "status", "type": "str"},
         "created_date_time": {"key": "createdDateTime", "type": "iso-8601"},
-        "data_configuration": {"key": "dataConfiguration", "type": "LabelingDataConfiguration"},
-        "job_instructions": {"key": "jobInstructions", "type": "LabelingJobInstructions"},
+        "data_configuration": {
+            "key": "dataConfiguration",
+            "type": "LabelingDataConfiguration",
+        },
+        "job_instructions": {
+            "key": "jobInstructions",
+            "type": "LabelingJobInstructions",
+        },
         "label_categories": {"key": "labelCategories", "type": "{LabelCategory}"},
-        "labeling_job_media_properties": {"key": "labelingJobMediaProperties", "type": "LabelingJobMediaProperties"},
-        "ml_assist_configuration": {"key": "mlAssistConfiguration", "type": "MLAssistConfiguration"},
+        "labeling_job_media_properties": {
+            "key": "labelingJobMediaProperties",
+            "type": "LabelingJobMediaProperties",
+        },
+        "ml_assist_configuration": {
+            "key": "mlAssistConfiguration",
+            "type": "MLAssistConfiguration",
+        },
         "progress_metrics": {"key": "progressMetrics", "type": "ProgressMetrics"},
         "project_id": {"key": "projectId", "type": "str"},
         "provisioning_state": {"key": "provisioningState", "type": "str"},
@@ -14868,7 +15347,9 @@ class LabelingJobProperties(JobBaseProperties):
         self.data_configuration = kwargs.get("data_configuration", None)
         self.job_instructions = kwargs.get("job_instructions", None)
         self.label_categories = kwargs.get("label_categories", None)
-        self.labeling_job_media_properties = kwargs.get("labeling_job_media_properties", None)
+        self.labeling_job_media_properties = kwargs.get(
+            "labeling_job_media_properties", None
+        )
         self.ml_assist_configuration = kwargs.get("ml_assist_configuration", None)
         self.progress_metrics = None
         self.project_id = None
@@ -15077,12 +15558,18 @@ class ListWorkspaceKeysResult(msrest.serialization.Model):
     _attribute_map = {
         "user_storage_key": {"key": "userStorageKey", "type": "str"},
         "user_storage_resource_id": {"key": "userStorageResourceId", "type": "str"},
-        "app_insights_instrumentation_key": {"key": "appInsightsInstrumentationKey", "type": "str"},
+        "app_insights_instrumentation_key": {
+            "key": "appInsightsInstrumentationKey",
+            "type": "str",
+        },
         "container_registry_credentials": {
             "key": "containerRegistryCredentials",
             "type": "RegistryListCredentialsResult",
         },
-        "notebook_access_keys": {"key": "notebookAccessKeys", "type": "ListNotebookKeysResult"},
+        "notebook_access_keys": {
+            "key": "notebookAccessKeys",
+            "type": "ListNotebookKeysResult",
+        },
     }
 
     def __init__(self, **kwargs):
@@ -15212,7 +15699,9 @@ class ManagedIdentity(IdentityConfiguration):
         self.resource_id = kwargs.get("resource_id", None)
 
 
-class ManagedIdentityAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2):
+class ManagedIdentityAuthTypeWorkspaceConnectionProperties(
+    WorkspaceConnectionPropertiesV2
+):
     """ManagedIdentityAuthTypeWorkspaceConnectionProperties.
 
     All required parameters must be populated in order to send to Azure.
@@ -15246,7 +15735,10 @@ class ManagedIdentityAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPr
         "target": {"key": "target", "type": "str"},
         "value": {"key": "value", "type": "str"},
         "value_format": {"key": "valueFormat", "type": "str"},
-        "credentials": {"key": "credentials", "type": "WorkspaceConnectionManagedIdentity"},
+        "credentials": {
+            "key": "credentials",
+            "type": "WorkspaceConnectionManagedIdentity",
+        },
     }
 
     def __init__(self, **kwargs):
@@ -15266,7 +15758,9 @@ class ManagedIdentityAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPr
         :paramtype credentials:
          ~azure.mgmt.machinelearningservices.models.WorkspaceConnectionManagedIdentity
         """
-        super(ManagedIdentityAuthTypeWorkspaceConnectionProperties, self).__init__(**kwargs)
+        super(ManagedIdentityAuthTypeWorkspaceConnectionProperties, self).__init__(
+            **kwargs
+        )
         self.auth_type = "ManagedIdentity"  # type: str
         self.credentials = kwargs.get("credentials", None)
 
@@ -15336,7 +15830,10 @@ class ManagedOnlineDeployment(OnlineDeploymentProperties):
         "environment_variables": {"key": "environmentVariables", "type": "{str}"},
         "properties": {"key": "properties", "type": "{str}"},
         "app_insights_enabled": {"key": "appInsightsEnabled", "type": "bool"},
-        "egress_public_network_access": {"key": "egressPublicNetworkAccess", "type": "str"},
+        "egress_public_network_access": {
+            "key": "egressPublicNetworkAccess",
+            "type": "str",
+        },
         "endpoint_compute_type": {"key": "endpointComputeType", "type": "str"},
         "instance_type": {"key": "instanceType", "type": "str"},
         "liveness_probe": {"key": "livenessProbe", "type": "ProbeSettings"},
@@ -15426,7 +15923,10 @@ class ManagedServiceIdentity(msrest.serialization.Model):
         "principal_id": {"key": "principalId", "type": "str"},
         "tenant_id": {"key": "tenantId", "type": "str"},
         "type": {"key": "type", "type": "str"},
-        "user_assigned_identities": {"key": "userAssignedIdentities", "type": "{UserAssignedIdentity}"},
+        "user_assigned_identities": {
+            "key": "userAssignedIdentities",
+            "type": "{UserAssignedIdentity}",
+        },
     }
 
     def __init__(self, **kwargs):
@@ -15574,7 +16074,10 @@ class MLAssistConfiguration(msrest.serialization.Model):
     }
 
     _subtype_map = {
-        "ml_assist": {"Disabled": "MLAssistConfigurationDisabled", "Enabled": "MLAssistConfigurationEnabled"}
+        "ml_assist": {
+            "Disabled": "MLAssistConfigurationDisabled",
+            "Enabled": "MLAssistConfigurationEnabled",
+        }
     }
 
     def __init__(self, **kwargs):
@@ -15630,7 +16133,10 @@ class MLAssistConfigurationEnabled(MLAssistConfiguration):
 
     _attribute_map = {
         "ml_assist": {"key": "mlAssist", "type": "str"},
-        "inferencing_compute_binding": {"key": "inferencingComputeBinding", "type": "str"},
+        "inferencing_compute_binding": {
+            "key": "inferencingComputeBinding",
+            "type": "str",
+        },
         "training_compute_binding": {"key": "trainingComputeBinding", "type": "str"},
     }
 
@@ -16337,7 +16843,10 @@ class NlpFixedParameters(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        "gradient_accumulation_steps": {"key": "gradientAccumulationSteps", "type": "int"},
+        "gradient_accumulation_steps": {
+            "key": "gradientAccumulationSteps",
+            "type": "int",
+        },
         "learning_rate": {"key": "learningRate", "type": "float"},
         "learning_rate_scheduler": {"key": "learningRateScheduler", "type": "str"},
         "model_name": {"key": "modelName", "type": "str"},
@@ -16374,7 +16883,9 @@ class NlpFixedParameters(msrest.serialization.Model):
         :paramtype weight_decay: float
         """
         super(NlpFixedParameters, self).__init__(**kwargs)
-        self.gradient_accumulation_steps = kwargs.get("gradient_accumulation_steps", None)
+        self.gradient_accumulation_steps = kwargs.get(
+            "gradient_accumulation_steps", None
+        )
         self.learning_rate = kwargs.get("learning_rate", None)
         self.learning_rate_scheduler = kwargs.get("learning_rate_scheduler", None)
         self.model_name = kwargs.get("model_name", None)
@@ -16411,7 +16922,10 @@ class NlpParameterSubspace(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        "gradient_accumulation_steps": {"key": "gradientAccumulationSteps", "type": "str"},
+        "gradient_accumulation_steps": {
+            "key": "gradientAccumulationSteps",
+            "type": "str",
+        },
         "learning_rate": {"key": "learningRate", "type": "str"},
         "learning_rate_scheduler": {"key": "learningRateScheduler", "type": "str"},
         "model_name": {"key": "modelName", "type": "str"},
@@ -16446,7 +16960,9 @@ class NlpParameterSubspace(msrest.serialization.Model):
         :paramtype weight_decay: str
         """
         super(NlpParameterSubspace, self).__init__(**kwargs)
-        self.gradient_accumulation_steps = kwargs.get("gradient_accumulation_steps", None)
+        self.gradient_accumulation_steps = kwargs.get(
+            "gradient_accumulation_steps", None
+        )
         self.learning_rate = kwargs.get("learning_rate", None)
         self.learning_rate_scheduler = kwargs.get("learning_rate_scheduler", None)
         self.model_name = kwargs.get("model_name", None)
@@ -16475,7 +16991,10 @@ class NlpSweepSettings(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        "early_termination": {"key": "earlyTermination", "type": "EarlyTerminationPolicy"},
+        "early_termination": {
+            "key": "earlyTermination",
+            "type": "EarlyTerminationPolicy",
+        },
         "sampling_algorithm": {"key": "samplingAlgorithm", "type": "str"},
     }
 
@@ -16515,7 +17034,10 @@ class NlpVertical(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        "featurization_settings": {"key": "featurizationSettings", "type": "NlpVerticalFeaturizationSettings"},
+        "featurization_settings": {
+            "key": "featurizationSettings",
+            "type": "NlpVerticalFeaturizationSettings",
+        },
         "fixed_parameters": {"key": "fixedParameters", "type": "NlpFixedParameters"},
         "limit_settings": {"key": "limitSettings", "type": "NlpVerticalLimitSettings"},
         "search_space": {"key": "searchSpace", "type": "[NlpParameterSubspace]"},
@@ -16836,7 +17358,10 @@ class NotebookResourceInfo(msrest.serialization.Model):
     _attribute_map = {
         "fqdn": {"key": "fqdn", "type": "str"},
         "resource_id": {"key": "resourceId", "type": "str"},
-        "notebook_preparation_error": {"key": "notebookPreparationError", "type": "NotebookPreparationError"},
+        "notebook_preparation_error": {
+            "key": "notebookPreparationError",
+            "type": "NotebookPreparationError",
+        },
     }
 
     def __init__(self, **kwargs):
@@ -17021,7 +17546,9 @@ class OnlineDeploymentTrackedResourceArmPaginatedResult(msrest.serialization.Mod
         :keyword value: An array of objects of type OnlineDeployment.
         :paramtype value: list[~azure.mgmt.machinelearningservices.models.OnlineDeployment]
         """
-        super(OnlineDeploymentTrackedResourceArmPaginatedResult, self).__init__(**kwargs)
+        super(OnlineDeploymentTrackedResourceArmPaginatedResult, self).__init__(
+            **kwargs
+        )
         self.next_link = kwargs.get("next_link", None)
         self.value = kwargs.get("value", None)
 
@@ -17293,7 +17820,10 @@ class OnlineRequestSettings(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        "max_concurrent_requests_per_instance": {"key": "maxConcurrentRequestsPerInstance", "type": "int"},
+        "max_concurrent_requests_per_instance": {
+            "key": "maxConcurrentRequestsPerInstance",
+            "type": "int",
+        },
         "max_queue_wait": {"key": "maxQueueWait", "type": "duration"},
         "request_timeout": {"key": "requestTimeout", "type": "duration"},
     }
@@ -17312,7 +17842,9 @@ class OnlineRequestSettings(msrest.serialization.Model):
         :paramtype request_timeout: ~datetime.timedelta
         """
         super(OnlineRequestSettings, self).__init__(**kwargs)
-        self.max_concurrent_requests_per_instance = kwargs.get("max_concurrent_requests_per_instance", 1)
+        self.max_concurrent_requests_per_instance = kwargs.get(
+            "max_concurrent_requests_per_instance", 1
+        )
         self.max_queue_wait = kwargs.get("max_queue_wait", "PT0.5S")
         self.request_timeout = kwargs.get("request_timeout", "PT5S")
 
@@ -17519,14 +18051,23 @@ class PackageRequest(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        "base_environment_source": {"key": "baseEnvironmentSource", "type": "BaseEnvironmentSource"},
+        "base_environment_source": {
+            "key": "baseEnvironmentSource",
+            "type": "BaseEnvironmentSource",
+        },
         "environment_variables": {"key": "environmentVariables", "type": "{str}"},
         "inferencing_server": {"key": "inferencingServer", "type": "InferencingServer"},
         "inputs": {"key": "inputs", "type": "[ModelPackageInput]"},
-        "model_configuration": {"key": "modelConfiguration", "type": "ModelConfiguration"},
+        "model_configuration": {
+            "key": "modelConfiguration",
+            "type": "ModelConfiguration",
+        },
         "tags": {"key": "tags", "type": "{str}"},
         "target_environment_name": {"key": "targetEnvironmentName", "type": "str"},
-        "target_environment_version": {"key": "targetEnvironmentVersion", "type": "str"},
+        "target_environment_version": {
+            "key": "targetEnvironmentVersion",
+            "type": "str",
+        },
     }
 
     def __init__(self, **kwargs):
@@ -17607,14 +18148,23 @@ class PackageResponse(PackageRequest):
     }
 
     _attribute_map = {
-        "base_environment_source": {"key": "baseEnvironmentSource", "type": "BaseEnvironmentSource"},
+        "base_environment_source": {
+            "key": "baseEnvironmentSource",
+            "type": "BaseEnvironmentSource",
+        },
         "environment_variables": {"key": "environmentVariables", "type": "{str}"},
         "inferencing_server": {"key": "inferencingServer", "type": "InferencingServer"},
         "inputs": {"key": "inputs", "type": "[ModelPackageInput]"},
-        "model_configuration": {"key": "modelConfiguration", "type": "ModelConfiguration"},
+        "model_configuration": {
+            "key": "modelConfiguration",
+            "type": "ModelConfiguration",
+        },
         "tags": {"key": "tags", "type": "{str}"},
         "target_environment_name": {"key": "targetEnvironmentName", "type": "str"},
-        "target_environment_version": {"key": "targetEnvironmentVersion", "type": "str"},
+        "target_environment_version": {
+            "key": "targetEnvironmentVersion",
+            "type": "str",
+        },
         "build_id": {"key": "buildId", "type": "str"},
         "build_state": {"key": "buildState", "type": "str"},
         "log_url": {"key": "logUrl", "type": "str"},
@@ -17695,7 +18245,9 @@ class PartialBatchDeployment(msrest.serialization.Model):
         self.description = kwargs.get("description", None)
 
 
-class PartialBatchDeploymentPartialMinimalTrackedResourceWithProperties(msrest.serialization.Model):
+class PartialBatchDeploymentPartialMinimalTrackedResourceWithProperties(
+    msrest.serialization.Model
+):
     """Strictly used in update requests.
 
     :ivar properties: Additional attributes of the entity.
@@ -17716,7 +18268,9 @@ class PartialBatchDeploymentPartialMinimalTrackedResourceWithProperties(msrest.s
         :keyword tags: A set of tags. Resource tags.
         :paramtype tags: dict[str, str]
         """
-        super(PartialBatchDeploymentPartialMinimalTrackedResourceWithProperties, self).__init__(**kwargs)
+        super(
+            PartialBatchDeploymentPartialMinimalTrackedResourceWithProperties, self
+        ).__init__(**kwargs)
         self.properties = kwargs.get("properties", None)
         self.tags = kwargs.get("tags", None)
 
@@ -17737,7 +18291,10 @@ class PartialManagedServiceIdentity(msrest.serialization.Model):
 
     _attribute_map = {
         "type": {"key": "type", "type": "str"},
-        "user_assigned_identities": {"key": "userAssignedIdentities", "type": "{object}"},
+        "user_assigned_identities": {
+            "key": "userAssignedIdentities",
+            "type": "{object}",
+        },
     }
 
     def __init__(self, **kwargs):
@@ -17989,7 +18546,10 @@ class PATAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2):
         "target": {"key": "target", "type": "str"},
         "value": {"key": "value", "type": "str"},
         "value_format": {"key": "valueFormat", "type": "str"},
-        "credentials": {"key": "credentials", "type": "WorkspaceConnectionPersonalAccessToken"},
+        "credentials": {
+            "key": "credentials",
+            "type": "WorkspaceConnectionPersonalAccessToken",
+        },
     }
 
     def __init__(self, **kwargs):
@@ -18102,7 +18662,10 @@ class PipelineJob(JobBaseProperties):
         "identity": {"key": "identity", "type": "IdentityConfiguration"},
         "is_archived": {"key": "isArchived", "type": "bool"},
         "job_type": {"key": "jobType", "type": "str"},
-        "notification_setting": {"key": "notificationSetting", "type": "NotificationSetting"},
+        "notification_setting": {
+            "key": "notificationSetting",
+            "type": "NotificationSetting",
+        },
         "services": {"key": "services", "type": "{JobService}"},
         "status": {"key": "status", "type": "str"},
         "inputs": {"key": "inputs", "type": "{JobInput}"},
@@ -18241,7 +18804,10 @@ class PrivateEndpointConnection(Resource):
         "location": {"key": "location", "type": "str"},
         "tags": {"key": "tags", "type": "{str}"},
         "sku": {"key": "sku", "type": "Sku"},
-        "private_endpoint": {"key": "properties.privateEndpoint", "type": "PrivateEndpoint"},
+        "private_endpoint": {
+            "key": "properties.privateEndpoint",
+            "type": "PrivateEndpoint",
+        },
         "private_link_service_connection_state": {
             "key": "properties.privateLinkServiceConnectionState",
             "type": "PrivateLinkServiceConnectionState",
@@ -18272,7 +18838,9 @@ class PrivateEndpointConnection(Resource):
         self.tags = kwargs.get("tags", None)
         self.sku = kwargs.get("sku", None)
         self.private_endpoint = kwargs.get("private_endpoint", None)
-        self.private_link_service_connection_state = kwargs.get("private_link_service_connection_state", None)
+        self.private_link_service_connection_state = kwargs.get(
+            "private_link_service_connection_state", None
+        )
         self.provisioning_state = None
 
 
@@ -18504,7 +19072,10 @@ class ProgressMetrics(msrest.serialization.Model):
 
     _attribute_map = {
         "completed_datapoint_count": {"key": "completedDatapointCount", "type": "long"},
-        "incremental_data_last_refresh_date_time": {"key": "incrementalDataLastRefreshDateTime", "type": "iso-8601"},
+        "incremental_data_last_refresh_date_time": {
+            "key": "incrementalDataLastRefreshDateTime",
+            "type": "iso-8601",
+        },
         "skipped_datapoint_count": {"key": "skippedDatapointCount", "type": "long"},
         "total_datapoint_count": {"key": "totalDatapointCount", "type": "long"},
     }
@@ -18992,12 +19563,24 @@ class RegistryProperties(ResourceBase):
         "tags": {"key": "tags", "type": "{str}"},
         "public_network_access": {"key": "publicNetworkAccess", "type": "str"},
         "discovery_url": {"key": "discoveryUrl", "type": "str"},
-        "intellectual_property_publisher": {"key": "intellectualPropertyPublisher", "type": "str"},
-        "managed_resource_group": {"key": "managedResourceGroup", "type": "ArmResourceId"},
+        "intellectual_property_publisher": {
+            "key": "intellectualPropertyPublisher",
+            "type": "str",
+        },
+        "managed_resource_group": {
+            "key": "managedResourceGroup",
+            "type": "ArmResourceId",
+        },
         "ml_flow_registry_uri": {"key": "mlFlowRegistryUri", "type": "str"},
         "private_link_count": {"key": "privateLinkCount", "type": "int"},
-        "region_details": {"key": "regionDetails", "type": "[RegistryRegionArmDetails]"},
-        "managed_resource_group_tags": {"key": "managedResourceGroupTags", "type": "{str}"},
+        "region_details": {
+            "key": "regionDetails",
+            "type": "[RegistryRegionArmDetails]",
+        },
+        "managed_resource_group_tags": {
+            "key": "managedResourceGroupTags",
+            "type": "{str}",
+        },
     }
 
     def __init__(self, **kwargs):
@@ -19030,12 +19613,16 @@ class RegistryProperties(ResourceBase):
         super(RegistryProperties, self).__init__(**kwargs)
         self.public_network_access = kwargs.get("public_network_access", None)
         self.discovery_url = kwargs.get("discovery_url", None)
-        self.intellectual_property_publisher = kwargs.get("intellectual_property_publisher", None)
+        self.intellectual_property_publisher = kwargs.get(
+            "intellectual_property_publisher", None
+        )
         self.managed_resource_group = kwargs.get("managed_resource_group", None)
         self.ml_flow_registry_uri = kwargs.get("ml_flow_registry_uri", None)
         self.private_link_count = kwargs.get("private_link_count", None)
         self.region_details = kwargs.get("region_details", None)
-        self.managed_resource_group_tags = kwargs.get("managed_resource_group_tags", None)
+        self.managed_resource_group_tags = kwargs.get(
+            "managed_resource_group_tags", None
+        )
 
 
 class RegistryRegionArmDetails(msrest.serialization.Model):
@@ -19053,7 +19640,10 @@ class RegistryRegionArmDetails(msrest.serialization.Model):
     _attribute_map = {
         "acr_details": {"key": "acrDetails", "type": "[AcrDetails]"},
         "location": {"key": "location", "type": "str"},
-        "storage_account_details": {"key": "storageAccountDetails", "type": "[StorageAccountDetails]"},
+        "storage_account_details": {
+            "key": "storageAccountDetails",
+            "type": "[StorageAccountDetails]",
+        },
     }
 
     def __init__(self, **kwargs):
@@ -19170,10 +19760,19 @@ class Regression(AutoMLVertical, TableVertical):
 
     _attribute_map = {
         "cv_split_column_names": {"key": "cvSplitColumnNames", "type": "[str]"},
-        "featurization_settings": {"key": "featurizationSettings", "type": "TableVerticalFeaturizationSettings"},
+        "featurization_settings": {
+            "key": "featurizationSettings",
+            "type": "TableVerticalFeaturizationSettings",
+        },
         "fixed_parameters": {"key": "fixedParameters", "type": "TableFixedParameters"},
-        "limit_settings": {"key": "limitSettings", "type": "TableVerticalLimitSettings"},
-        "n_cross_validations": {"key": "nCrossValidations", "type": "NCrossValidations"},
+        "limit_settings": {
+            "key": "limitSettings",
+            "type": "TableVerticalLimitSettings",
+        },
+        "n_cross_validations": {
+            "key": "nCrossValidations",
+            "type": "NCrossValidations",
+        },
         "search_space": {"key": "searchSpace", "type": "[TableParameterSubspace]"},
         "sweep_settings": {"key": "sweepSettings", "type": "TableSweepSettings"},
         "test_data": {"key": "testData", "type": "MLTableJobInput"},
@@ -19186,7 +19785,10 @@ class Regression(AutoMLVertical, TableVertical):
         "task_type": {"key": "taskType", "type": "str"},
         "training_data": {"key": "trainingData", "type": "MLTableJobInput"},
         "primary_metric": {"key": "primaryMetric", "type": "str"},
-        "training_settings": {"key": "trainingSettings", "type": "RegressionTrainingSettings"},
+        "training_settings": {
+            "key": "trainingSettings",
+            "type": "RegressionTrainingSettings",
+        },
     }
 
     def __init__(self, **kwargs):
@@ -19305,15 +19907,33 @@ class RegressionTrainingSettings(TrainingSettings):
 
     _attribute_map = {
         "enable_dnn_training": {"key": "enableDnnTraining", "type": "bool"},
-        "enable_model_explainability": {"key": "enableModelExplainability", "type": "bool"},
-        "enable_onnx_compatible_models": {"key": "enableOnnxCompatibleModels", "type": "bool"},
+        "enable_model_explainability": {
+            "key": "enableModelExplainability",
+            "type": "bool",
+        },
+        "enable_onnx_compatible_models": {
+            "key": "enableOnnxCompatibleModels",
+            "type": "bool",
+        },
         "enable_stack_ensemble": {"key": "enableStackEnsemble", "type": "bool"},
         "enable_vote_ensemble": {"key": "enableVoteEnsemble", "type": "bool"},
-        "ensemble_model_download_timeout": {"key": "ensembleModelDownloadTimeout", "type": "duration"},
-        "stack_ensemble_settings": {"key": "stackEnsembleSettings", "type": "StackEnsembleSettings"},
+        "ensemble_model_download_timeout": {
+            "key": "ensembleModelDownloadTimeout",
+            "type": "duration",
+        },
+        "stack_ensemble_settings": {
+            "key": "stackEnsembleSettings",
+            "type": "StackEnsembleSettings",
+        },
         "training_mode": {"key": "trainingMode", "type": "str"},
-        "allowed_training_algorithms": {"key": "allowedTrainingAlgorithms", "type": "[str]"},
-        "blocked_training_algorithms": {"key": "blockedTrainingAlgorithms", "type": "[str]"},
+        "allowed_training_algorithms": {
+            "key": "allowedTrainingAlgorithms",
+            "type": "[str]",
+        },
+        "blocked_training_algorithms": {
+            "key": "blockedTrainingAlgorithms",
+            "type": "[str]",
+        },
     }
 
     def __init__(self, **kwargs):
@@ -19351,8 +19971,12 @@ class RegressionTrainingSettings(TrainingSettings):
          ~azure.mgmt.machinelearningservices.models.RegressionModels]
         """
         super(RegressionTrainingSettings, self).__init__(**kwargs)
-        self.allowed_training_algorithms = kwargs.get("allowed_training_algorithms", None)
-        self.blocked_training_algorithms = kwargs.get("blocked_training_algorithms", None)
+        self.allowed_training_algorithms = kwargs.get(
+            "allowed_training_algorithms", None
+        )
+        self.blocked_training_algorithms = kwargs.get(
+            "blocked_training_algorithms", None
+        )
 
 
 class ResourceId(msrest.serialization.Model):
@@ -19524,7 +20148,10 @@ class SASAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2):
         "target": {"key": "target", "type": "str"},
         "value": {"key": "value", "type": "str"},
         "value_format": {"key": "valueFormat", "type": "str"},
-        "credentials": {"key": "credentials", "type": "WorkspaceConnectionSharedAccessSignature"},
+        "credentials": {
+            "key": "credentials",
+            "type": "WorkspaceConnectionSharedAccessSignature",
+        },
     }
 
     def __init__(self, **kwargs):
@@ -19635,7 +20262,10 @@ class ScaleSettings(msrest.serialization.Model):
     _attribute_map = {
         "max_node_count": {"key": "maxNodeCount", "type": "int"},
         "min_node_count": {"key": "minNodeCount", "type": "int"},
-        "node_idle_time_before_scale_down": {"key": "nodeIdleTimeBeforeScaleDown", "type": "duration"},
+        "node_idle_time_before_scale_down": {
+            "key": "nodeIdleTimeBeforeScaleDown",
+            "type": "duration",
+        },
     }
 
     def __init__(self, **kwargs):
@@ -19651,7 +20281,9 @@ class ScaleSettings(msrest.serialization.Model):
         super(ScaleSettings, self).__init__(**kwargs)
         self.max_node_count = kwargs["max_node_count"]
         self.min_node_count = kwargs.get("min_node_count", 0)
-        self.node_idle_time_before_scale_down = kwargs.get("node_idle_time_before_scale_down", None)
+        self.node_idle_time_before_scale_down = kwargs.get(
+            "node_idle_time_before_scale_down", None
+        )
 
 
 class ScaleSettingsInformation(msrest.serialization.Model):
@@ -19940,7 +20572,9 @@ class ServiceManagedResourcesSettings(msrest.serialization.Model):
         self.cosmos_db = kwargs.get("cosmos_db", None)
 
 
-class ServicePrincipalAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2):
+class ServicePrincipalAuthTypeWorkspaceConnectionProperties(
+    WorkspaceConnectionPropertiesV2
+):
     """ServicePrincipalAuthTypeWorkspaceConnectionProperties.
 
     All required parameters must be populated in order to send to Azure.
@@ -19974,7 +20608,10 @@ class ServicePrincipalAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionP
         "target": {"key": "target", "type": "str"},
         "value": {"key": "value", "type": "str"},
         "value_format": {"key": "valueFormat", "type": "str"},
-        "credentials": {"key": "credentials", "type": "WorkspaceConnectionServicePrincipal"},
+        "credentials": {
+            "key": "credentials",
+            "type": "WorkspaceConnectionServicePrincipal",
+        },
     }
 
     def __init__(self, **kwargs):
@@ -19994,7 +20631,9 @@ class ServicePrincipalAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionP
         :paramtype credentials:
          ~azure.mgmt.machinelearningservices.models.WorkspaceConnectionServicePrincipal
         """
-        super(ServicePrincipalAuthTypeWorkspaceConnectionProperties, self).__init__(**kwargs)
+        super(ServicePrincipalAuthTypeWorkspaceConnectionProperties, self).__init__(
+            **kwargs
+        )
         self.auth_type = "ServicePrincipal"  # type: str
         self.credentials = kwargs.get("credentials", None)
 
@@ -20131,7 +20770,10 @@ class SharedPrivateLinkResource(msrest.serialization.Model):
 
     _attribute_map = {
         "name": {"key": "name", "type": "str"},
-        "private_link_resource_id": {"key": "properties.privateLinkResourceId", "type": "str"},
+        "private_link_resource_id": {
+            "key": "properties.privateLinkResourceId",
+            "type": "str",
+        },
         "group_id": {"key": "properties.groupId", "type": "str"},
         "request_message": {"key": "properties.requestMessage", "type": "str"},
         "status": {"key": "properties.status", "type": "str"},
@@ -20449,7 +21091,10 @@ class SparkJob(JobBaseProperties):
         "identity": {"key": "identity", "type": "IdentityConfiguration"},
         "is_archived": {"key": "isArchived", "type": "bool"},
         "job_type": {"key": "jobType", "type": "str"},
-        "notification_setting": {"key": "notificationSetting", "type": "NotificationSetting"},
+        "notification_setting": {
+            "key": "notificationSetting",
+            "type": "NotificationSetting",
+        },
         "services": {"key": "services", "type": "{JobService}"},
         "status": {"key": "status", "type": "str"},
         "archives": {"key": "archives", "type": "[str]"},
@@ -20737,8 +21382,14 @@ class StackEnsembleSettings(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        "stack_meta_learner_k_wargs": {"key": "stackMetaLearnerKWargs", "type": "object"},
-        "stack_meta_learner_train_percentage": {"key": "stackMetaLearnerTrainPercentage", "type": "float"},
+        "stack_meta_learner_k_wargs": {
+            "key": "stackMetaLearnerKWargs",
+            "type": "object",
+        },
+        "stack_meta_learner_train_percentage": {
+            "key": "stackMetaLearnerTrainPercentage",
+            "type": "float",
+        },
         "stack_meta_learner_type": {"key": "stackMetaLearnerType", "type": "str"},
     }
 
@@ -20760,7 +21411,9 @@ class StackEnsembleSettings(msrest.serialization.Model):
         """
         super(StackEnsembleSettings, self).__init__(**kwargs)
         self.stack_meta_learner_k_wargs = kwargs.get("stack_meta_learner_k_wargs", None)
-        self.stack_meta_learner_train_percentage = kwargs.get("stack_meta_learner_train_percentage", 0.2)
+        self.stack_meta_learner_train_percentage = kwargs.get(
+            "stack_meta_learner_train_percentage", 0.2
+        )
         self.stack_meta_learner_type = kwargs.get("stack_meta_learner_type", None)
 
 
@@ -20815,8 +21468,14 @@ class StorageAccountDetails(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        "system_created_storage_account": {"key": "systemCreatedStorageAccount", "type": "SystemCreatedStorageAccount"},
-        "user_created_storage_account": {"key": "userCreatedStorageAccount", "type": "UserCreatedStorageAccount"},
+        "system_created_storage_account": {
+            "key": "systemCreatedStorageAccount",
+            "type": "SystemCreatedStorageAccount",
+        },
+        "user_created_storage_account": {
+            "key": "userCreatedStorageAccount",
+            "type": "UserCreatedStorageAccount",
+        },
     }
 
     def __init__(self, **kwargs):
@@ -20829,8 +21488,12 @@ class StorageAccountDetails(msrest.serialization.Model):
          ~azure.mgmt.machinelearningservices.models.UserCreatedStorageAccount
         """
         super(StorageAccountDetails, self).__init__(**kwargs)
-        self.system_created_storage_account = kwargs.get("system_created_storage_account", None)
-        self.user_created_storage_account = kwargs.get("user_created_storage_account", None)
+        self.system_created_storage_account = kwargs.get(
+            "system_created_storage_account", None
+        )
+        self.user_created_storage_account = kwargs.get(
+            "user_created_storage_account", None
+        )
 
 
 class SweepJob(JobBaseProperties):
@@ -20915,10 +21578,16 @@ class SweepJob(JobBaseProperties):
         "identity": {"key": "identity", "type": "IdentityConfiguration"},
         "is_archived": {"key": "isArchived", "type": "bool"},
         "job_type": {"key": "jobType", "type": "str"},
-        "notification_setting": {"key": "notificationSetting", "type": "NotificationSetting"},
+        "notification_setting": {
+            "key": "notificationSetting",
+            "type": "NotificationSetting",
+        },
         "services": {"key": "services", "type": "{JobService}"},
         "status": {"key": "status", "type": "str"},
-        "early_termination": {"key": "earlyTermination", "type": "EarlyTerminationPolicy"},
+        "early_termination": {
+            "key": "earlyTermination",
+            "type": "EarlyTerminationPolicy",
+        },
         "inputs": {"key": "inputs", "type": "{JobInput}"},
         "limits": {"key": "limits", "type": "SweepJobLimits"},
         "objective": {"key": "objective", "type": "Objective"},
@@ -21147,8 +21816,14 @@ class SynapseSparkProperties(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        "auto_scale_properties": {"key": "autoScaleProperties", "type": "AutoScaleProperties"},
-        "auto_pause_properties": {"key": "autoPauseProperties", "type": "AutoPauseProperties"},
+        "auto_scale_properties": {
+            "key": "autoScaleProperties",
+            "type": "AutoScaleProperties",
+        },
+        "auto_pause_properties": {
+            "key": "autoPauseProperties",
+            "type": "AutoPauseProperties",
+        },
         "spark_version": {"key": "sparkVersion", "type": "str"},
         "node_count": {"key": "nodeCount", "type": "int"},
         "node_size": {"key": "nodeSize", "type": "str"},
@@ -21246,7 +21921,10 @@ class SystemCreatedStorageAccount(msrest.serialization.Model):
 
     _attribute_map = {
         "arm_resource_id": {"key": "armResourceId", "type": "ArmResourceId"},
-        "storage_account_hns_enabled": {"key": "storageAccountHnsEnabled", "type": "bool"},
+        "storage_account_hns_enabled": {
+            "key": "storageAccountHnsEnabled",
+            "type": "bool",
+        },
         "storage_account_type": {"key": "storageAccountType", "type": "str"},
         "allow_blob_public_access": {"key": "allowBlobPublicAccess", "type": "bool"},
     }
@@ -21272,7 +21950,9 @@ class SystemCreatedStorageAccount(msrest.serialization.Model):
         """
         super(SystemCreatedStorageAccount, self).__init__(**kwargs)
         self.arm_resource_id = kwargs.get("arm_resource_id", None)
-        self.storage_account_hns_enabled = kwargs.get("storage_account_hns_enabled", None)
+        self.storage_account_hns_enabled = kwargs.get(
+            "storage_account_hns_enabled", None
+        )
         self.storage_account_type = kwargs.get("storage_account_type", None)
         self.allow_blob_public_access = kwargs.get("allow_blob_public_access", None)
 
@@ -21659,7 +22339,10 @@ class TableSweepSettings(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        "early_termination": {"key": "earlyTermination", "type": "EarlyTerminationPolicy"},
+        "early_termination": {
+            "key": "earlyTermination",
+            "type": "EarlyTerminationPolicy",
+        },
         "sampling_algorithm": {"key": "samplingAlgorithm", "type": "str"},
     }
 
@@ -21709,7 +22392,10 @@ class TableVerticalFeaturizationSettings(FeaturizationSettings):
         "column_name_and_types": {"key": "columnNameAndTypes", "type": "{str}"},
         "enable_dnn_featurization": {"key": "enableDnnFeaturization", "type": "bool"},
         "mode": {"key": "mode", "type": "str"},
-        "transformer_params": {"key": "transformerParams", "type": "{[ColumnTransformer]}"},
+        "transformer_params": {
+            "key": "transformerParams",
+            "type": "{[ColumnTransformer]}",
+        },
     }
 
     def __init__(self, **kwargs):
@@ -21850,7 +22536,10 @@ class TargetUtilizationScaleSettings(OnlineScaleSettings):
         "max_instances": {"key": "maxInstances", "type": "int"},
         "min_instances": {"key": "minInstances", "type": "int"},
         "polling_interval": {"key": "pollingInterval", "type": "duration"},
-        "target_utilization_percentage": {"key": "targetUtilizationPercentage", "type": "int"},
+        "target_utilization_percentage": {
+            "key": "targetUtilizationPercentage",
+            "type": "int",
+        },
     }
 
     def __init__(self, **kwargs):
@@ -21871,7 +22560,9 @@ class TargetUtilizationScaleSettings(OnlineScaleSettings):
         self.max_instances = kwargs.get("max_instances", 1)
         self.min_instances = kwargs.get("min_instances", 1)
         self.polling_interval = kwargs.get("polling_interval", "PT1S")
-        self.target_utilization_percentage = kwargs.get("target_utilization_percentage", 70)
+        self.target_utilization_percentage = kwargs.get(
+            "target_utilization_percentage", 70
+        )
 
 
 class TensorFlow(DistributionConfiguration):
@@ -21958,7 +22649,10 @@ class TextClassification(AutoMLVertical, NlpVertical):
     }
 
     _attribute_map = {
-        "featurization_settings": {"key": "featurizationSettings", "type": "NlpVerticalFeaturizationSettings"},
+        "featurization_settings": {
+            "key": "featurizationSettings",
+            "type": "NlpVerticalFeaturizationSettings",
+        },
         "fixed_parameters": {"key": "fixedParameters", "type": "NlpFixedParameters"},
         "limit_settings": {"key": "limitSettings", "type": "NlpVerticalLimitSettings"},
         "search_space": {"key": "searchSpace", "type": "[NlpParameterSubspace]"},
@@ -22067,7 +22761,10 @@ class TextClassificationMultilabel(AutoMLVertical, NlpVertical):
     }
 
     _attribute_map = {
-        "featurization_settings": {"key": "featurizationSettings", "type": "NlpVerticalFeaturizationSettings"},
+        "featurization_settings": {
+            "key": "featurizationSettings",
+            "type": "NlpVerticalFeaturizationSettings",
+        },
         "fixed_parameters": {"key": "fixedParameters", "type": "NlpFixedParameters"},
         "limit_settings": {"key": "limitSettings", "type": "NlpVerticalLimitSettings"},
         "search_space": {"key": "searchSpace", "type": "[NlpParameterSubspace]"},
@@ -22172,7 +22869,10 @@ class TextNer(AutoMLVertical, NlpVertical):
     }
 
     _attribute_map = {
-        "featurization_settings": {"key": "featurizationSettings", "type": "NlpVerticalFeaturizationSettings"},
+        "featurization_settings": {
+            "key": "featurizationSettings",
+            "type": "NlpVerticalFeaturizationSettings",
+        },
         "fixed_parameters": {"key": "fixedParameters", "type": "NlpFixedParameters"},
         "limit_settings": {"key": "limitSettings", "type": "NlpVerticalLimitSettings"},
         "search_space": {"key": "searchSpace", "type": "[NlpParameterSubspace]"},
@@ -22327,7 +23027,10 @@ class TritonInferencingServer(InferencingServer):
 
     _attribute_map = {
         "server_type": {"key": "serverType", "type": "str"},
-        "inference_configuration": {"key": "inferenceConfiguration", "type": "OnlineInferenceConfiguration"},
+        "inference_configuration": {
+            "key": "inferenceConfiguration",
+            "type": "OnlineInferenceConfiguration",
+        },
     }
 
     def __init__(self, **kwargs):
@@ -23109,7 +23812,9 @@ class UserIdentity(IdentityConfiguration):
         self.identity_type = "UserIdentity"  # type: str
 
 
-class UsernamePasswordAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2):
+class UsernamePasswordAuthTypeWorkspaceConnectionProperties(
+    WorkspaceConnectionPropertiesV2
+):
     """UsernamePasswordAuthTypeWorkspaceConnectionProperties.
 
     All required parameters must be populated in order to send to Azure.
@@ -23143,7 +23848,10 @@ class UsernamePasswordAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionP
         "target": {"key": "target", "type": "str"},
         "value": {"key": "value", "type": "str"},
         "value_format": {"key": "valueFormat", "type": "str"},
-        "credentials": {"key": "credentials", "type": "WorkspaceConnectionUsernamePassword"},
+        "credentials": {
+            "key": "credentials",
+            "type": "WorkspaceConnectionUsernamePassword",
+        },
     }
 
     def __init__(self, **kwargs):
@@ -23163,7 +23871,9 @@ class UsernamePasswordAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionP
         :paramtype credentials:
          ~azure.mgmt.machinelearningservices.models.WorkspaceConnectionUsernamePassword
         """
-        super(UsernamePasswordAuthTypeWorkspaceConnectionProperties, self).__init__(**kwargs)
+        super(UsernamePasswordAuthTypeWorkspaceConnectionProperties, self).__init__(
+            **kwargs
+        )
         self.auth_type = "UsernamePassword"  # type: str
         self.credentials = kwargs.get("credentials", None)
 
@@ -23329,8 +24039,14 @@ class VirtualMachineSchemaProperties(msrest.serialization.Model):
         "ssh_port": {"key": "sshPort", "type": "int"},
         "notebook_server_port": {"key": "notebookServerPort", "type": "int"},
         "address": {"key": "address", "type": "str"},
-        "administrator_account": {"key": "administratorAccount", "type": "VirtualMachineSshCredentials"},
-        "is_notebook_instance_compute": {"key": "isNotebookInstanceCompute", "type": "bool"},
+        "administrator_account": {
+            "key": "administratorAccount",
+            "type": "VirtualMachineSshCredentials",
+        },
+        "is_notebook_instance_compute": {
+            "key": "isNotebookInstanceCompute",
+            "type": "bool",
+        },
     }
 
     def __init__(self, **kwargs):
@@ -23356,7 +24072,9 @@ class VirtualMachineSchemaProperties(msrest.serialization.Model):
         self.notebook_server_port = kwargs.get("notebook_server_port", None)
         self.address = kwargs.get("address", None)
         self.administrator_account = kwargs.get("administrator_account", None)
-        self.is_notebook_instance_compute = kwargs.get("is_notebook_instance_compute", None)
+        self.is_notebook_instance_compute = kwargs.get(
+            "is_notebook_instance_compute", None
+        )
 
 
 class VirtualMachineSecretsSchema(msrest.serialization.Model):
@@ -23368,7 +24086,10 @@ class VirtualMachineSecretsSchema(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        "administrator_account": {"key": "administratorAccount", "type": "VirtualMachineSshCredentials"},
+        "administrator_account": {
+            "key": "administratorAccount",
+            "type": "VirtualMachineSshCredentials",
+        },
     }
 
     def __init__(self, **kwargs):
@@ -23400,7 +24121,10 @@ class VirtualMachineSecrets(ComputeSecrets, VirtualMachineSecretsSchema):
     }
 
     _attribute_map = {
-        "administrator_account": {"key": "administratorAccount", "type": "VirtualMachineSshCredentials"},
+        "administrator_account": {
+            "key": "administratorAccount",
+            "type": "VirtualMachineSshCredentials",
+        },
         "compute_type": {"key": "computeType", "type": "str"},
     }
 
@@ -23468,7 +24192,10 @@ class VirtualMachineSize(msrest.serialization.Model):
         "memory_gb": {"key": "memoryGB", "type": "float"},
         "low_priority_capable": {"key": "lowPriorityCapable", "type": "bool"},
         "premium_io": {"key": "premiumIO", "type": "bool"},
-        "estimated_vm_prices": {"key": "estimatedVMPrices", "type": "EstimatedVMPrices"},
+        "estimated_vm_prices": {
+            "key": "estimatedVMPrices",
+            "type": "EstimatedVMPrices",
+        },
         "supported_compute_types": {"key": "supportedComputeTypes", "type": "[str]"},
     }
 
@@ -23772,18 +24499,30 @@ class Workspace(Resource):
         "description": {"key": "properties.description", "type": "str"},
         "friendly_name": {"key": "properties.friendlyName", "type": "str"},
         "key_vault": {"key": "properties.keyVault", "type": "str"},
-        "application_insights": {"key": "properties.applicationInsights", "type": "str"},
+        "application_insights": {
+            "key": "properties.applicationInsights",
+            "type": "str",
+        },
         "container_registry": {"key": "properties.containerRegistry", "type": "str"},
         "storage_account": {"key": "properties.storageAccount", "type": "str"},
         "discovery_url": {"key": "properties.discoveryUrl", "type": "str"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
         "encryption": {"key": "properties.encryption", "type": "EncryptionProperty"},
         "hbi_workspace": {"key": "properties.hbiWorkspace", "type": "bool"},
-        "service_provisioned_resource_group": {"key": "properties.serviceProvisionedResourceGroup", "type": "str"},
+        "service_provisioned_resource_group": {
+            "key": "properties.serviceProvisionedResourceGroup",
+            "type": "str",
+        },
         "private_link_count": {"key": "properties.privateLinkCount", "type": "int"},
         "image_build_compute": {"key": "properties.imageBuildCompute", "type": "str"},
-        "allow_public_access_when_behind_vnet": {"key": "properties.allowPublicAccessWhenBehindVnet", "type": "bool"},
-        "public_network_access": {"key": "properties.publicNetworkAccess", "type": "str"},
+        "allow_public_access_when_behind_vnet": {
+            "key": "properties.allowPublicAccessWhenBehindVnet",
+            "type": "bool",
+        },
+        "public_network_access": {
+            "key": "properties.publicNetworkAccess",
+            "type": "str",
+        },
         "private_endpoint_connections": {
             "key": "properties.privateEndpointConnections",
             "type": "[PrivateEndpointConnection]",
@@ -23792,19 +24531,28 @@ class Workspace(Resource):
             "key": "properties.sharedPrivateLinkResources",
             "type": "[SharedPrivateLinkResource]",
         },
-        "notebook_info": {"key": "properties.notebookInfo", "type": "NotebookResourceInfo"},
+        "notebook_info": {
+            "key": "properties.notebookInfo",
+            "type": "NotebookResourceInfo",
+        },
         "service_managed_resources_settings": {
             "key": "properties.serviceManagedResourcesSettings",
             "type": "ServiceManagedResourcesSettings",
         },
-        "primary_user_assigned_identity": {"key": "properties.primaryUserAssignedIdentity", "type": "str"},
+        "primary_user_assigned_identity": {
+            "key": "properties.primaryUserAssignedIdentity",
+            "type": "str",
+        },
         "tenant_id": {"key": "properties.tenantId", "type": "str"},
         "storage_hns_enabled": {"key": "properties.storageHnsEnabled", "type": "bool"},
         "ml_flow_tracking_uri": {"key": "properties.mlFlowTrackingUri", "type": "str"},
         "v1_legacy_mode": {"key": "properties.v1LegacyMode", "type": "bool"},
         "soft_deleted_at": {"key": "properties.softDeletedAt", "type": "str"},
         "scheduled_purge_date": {"key": "properties.scheduledPurgeDate", "type": "str"},
-        "system_datastores_auth_mode": {"key": "properties.systemDatastoresAuthMode", "type": "str"},
+        "system_datastores_auth_mode": {
+            "key": "properties.systemDatastoresAuthMode",
+            "type": "str",
+        },
     }
 
     def __init__(self, **kwargs):
@@ -23885,20 +24633,30 @@ class Workspace(Resource):
         self.service_provisioned_resource_group = None
         self.private_link_count = None
         self.image_build_compute = kwargs.get("image_build_compute", None)
-        self.allow_public_access_when_behind_vnet = kwargs.get("allow_public_access_when_behind_vnet", False)
+        self.allow_public_access_when_behind_vnet = kwargs.get(
+            "allow_public_access_when_behind_vnet", False
+        )
         self.public_network_access = kwargs.get("public_network_access", None)
         self.private_endpoint_connections = None
-        self.shared_private_link_resources = kwargs.get("shared_private_link_resources", None)
+        self.shared_private_link_resources = kwargs.get(
+            "shared_private_link_resources", None
+        )
         self.notebook_info = None
-        self.service_managed_resources_settings = kwargs.get("service_managed_resources_settings", None)
-        self.primary_user_assigned_identity = kwargs.get("primary_user_assigned_identity", None)
+        self.service_managed_resources_settings = kwargs.get(
+            "service_managed_resources_settings", None
+        )
+        self.primary_user_assigned_identity = kwargs.get(
+            "primary_user_assigned_identity", None
+        )
         self.tenant_id = None
         self.storage_hns_enabled = None
         self.ml_flow_tracking_uri = None
         self.v1_legacy_mode = kwargs.get("v1_legacy_mode", False)
         self.soft_deleted_at = None
         self.scheduled_purge_date = None
-        self.system_datastores_auth_mode = kwargs.get("system_datastores_auth_mode", None)
+        self.system_datastores_auth_mode = kwargs.get(
+            "system_datastores_auth_mode", None
+        )
 
 
 class WorkspaceConnectionAccessKey(msrest.serialization.Model):
@@ -24021,7 +24779,9 @@ class WorkspaceConnectionPropertiesV2BasicResource(Resource):
         self.properties = kwargs["properties"]
 
 
-class WorkspaceConnectionPropertiesV2BasicResourceArmPaginatedResult(msrest.serialization.Model):
+class WorkspaceConnectionPropertiesV2BasicResourceArmPaginatedResult(
+    msrest.serialization.Model
+):
     """WorkspaceConnectionPropertiesV2BasicResourceArmPaginatedResult.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -24038,7 +24798,10 @@ class WorkspaceConnectionPropertiesV2BasicResourceArmPaginatedResult(msrest.seri
     }
 
     _attribute_map = {
-        "value": {"key": "value", "type": "[WorkspaceConnectionPropertiesV2BasicResource]"},
+        "value": {
+            "key": "value",
+            "type": "[WorkspaceConnectionPropertiesV2BasicResource]",
+        },
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
@@ -24048,7 +24811,9 @@ class WorkspaceConnectionPropertiesV2BasicResourceArmPaginatedResult(msrest.seri
         :paramtype value:
          list[~azure.mgmt.machinelearningservices.models.WorkspaceConnectionPropertiesV2BasicResource]
         """
-        super(WorkspaceConnectionPropertiesV2BasicResourceArmPaginatedResult, self).__init__(**kwargs)
+        super(
+            WorkspaceConnectionPropertiesV2BasicResourceArmPaginatedResult, self
+        ).__init__(**kwargs)
         self.value = kwargs.get("value", None)
         self.next_link = None
 
@@ -24205,11 +24970,23 @@ class WorkspaceUpdateParameters(msrest.serialization.Model):
             "key": "properties.serviceManagedResourcesSettings",
             "type": "ServiceManagedResourcesSettings",
         },
-        "primary_user_assigned_identity": {"key": "properties.primaryUserAssignedIdentity", "type": "str"},
-        "public_network_access": {"key": "properties.publicNetworkAccess", "type": "str"},
-        "application_insights": {"key": "properties.applicationInsights", "type": "str"},
+        "primary_user_assigned_identity": {
+            "key": "properties.primaryUserAssignedIdentity",
+            "type": "str",
+        },
+        "public_network_access": {
+            "key": "properties.publicNetworkAccess",
+            "type": "str",
+        },
+        "application_insights": {
+            "key": "properties.applicationInsights",
+            "type": "str",
+        },
         "container_registry": {"key": "properties.containerRegistry", "type": "str"},
-        "encryption": {"key": "properties.encryption", "type": "EncryptionUpdateProperties"},
+        "encryption": {
+            "key": "properties.encryption",
+            "type": "EncryptionUpdateProperties",
+        },
     }
 
     def __init__(self, **kwargs):
@@ -24251,8 +25028,12 @@ class WorkspaceUpdateParameters(msrest.serialization.Model):
         self.description = kwargs.get("description", None)
         self.friendly_name = kwargs.get("friendly_name", None)
         self.image_build_compute = kwargs.get("image_build_compute", None)
-        self.service_managed_resources_settings = kwargs.get("service_managed_resources_settings", None)
-        self.primary_user_assigned_identity = kwargs.get("primary_user_assigned_identity", None)
+        self.service_managed_resources_settings = kwargs.get(
+            "service_managed_resources_settings", None
+        )
+        self.primary_user_assigned_identity = kwargs.get(
+            "primary_user_assigned_identity", None
+        )
         self.public_network_access = kwargs.get("public_network_access", None)
         self.application_insights = kwargs.get("application_insights", None)
         self.container_registry = kwargs.get("container_registry", None)

@@ -16,7 +16,8 @@ from azure.ai.ml.constants._registry import AcrAccountSku
 class SystemCreatedAcrAccountSchema(metaclass=PatchedSchemaMeta):
     arm_resource_id = fields.Str(dump_only=True)
     acr_account_sku = StringTransformedEnum(
-        allowed_values=[sku.value for sku in AcrAccountSku], casing_transform=lambda x: x.lower()
+        allowed_values=[sku.value for sku in AcrAccountSku],
+        casing_transform=lambda x: x.lower(),
     )
 
     @post_load
@@ -31,5 +32,7 @@ class SystemCreatedAcrAccountSchema(metaclass=PatchedSchemaMeta):
         from azure.ai.ml.entities import SystemCreatedAcrAccount
 
         if not isinstance(data, SystemCreatedAcrAccount):
-            raise ValidationError("Cannot dump non-SystemCreatedAcrAccount object into SystemCreatedAcrAccountSchema")
+            raise ValidationError(
+                "Cannot dump non-SystemCreatedAcrAccount object into SystemCreatedAcrAccountSchema"
+            )
         return data

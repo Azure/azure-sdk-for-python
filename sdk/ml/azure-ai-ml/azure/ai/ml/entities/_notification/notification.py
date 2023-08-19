@@ -4,7 +4,9 @@
 
 from typing import List, Optional
 
-from azure.ai.ml._restclient.v2023_02_01_preview.models import NotificationSetting as RestNotificationSetting
+from azure.ai.ml._restclient.v2023_02_01_preview.models import (
+    NotificationSetting as RestNotificationSetting,
+)
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
@@ -21,7 +23,12 @@ class Notification(RestTranslatableMixin):
     :paramtype emails: Optional[list[str]]
     """
 
-    def __init__(self, *, email_on: Optional[List[str]] = None, emails: Optional[List[str]] = None) -> None:
+    def __init__(
+        self,
+        *,
+        email_on: Optional[List[str]] = None,
+        emails: Optional[List[str]] = None
+    ) -> None:
         self.email_on = email_on
         self.emails = emails
 

@@ -26,20 +26,34 @@ from azure.ai.ml.entities._datastore.datastore import Datastore
 from azure.ai.ml.entities._deployment.batch_deployment import BatchDeployment
 from azure.ai.ml.entities._deployment.model_batch_deployment import ModelBatchDeployment
 from azure.ai.ml.entities._deployment.online_deployment import OnlineDeployment
-from azure.ai.ml.entities._deployment.pipeline_component_batch_deployment import PipelineComponentBatchDeployment
+from azure.ai.ml.entities._deployment.pipeline_component_batch_deployment import (
+    PipelineComponentBatchDeployment,
+)
 from azure.ai.ml.entities._endpoint.batch_endpoint import BatchEndpoint
 from azure.ai.ml.entities._endpoint.online_endpoint import OnlineEndpoint
 from azure.ai.ml.entities._feature_store.feature_store import FeatureStore
-from azure.ai.ml.entities._feature_store_entity.feature_store_entity import FeatureStoreEntity
+from azure.ai.ml.entities._feature_store_entity.feature_store_entity import (
+    FeatureStoreEntity,
+)
 from azure.ai.ml.entities._job.job import Job
 from azure.ai.ml.entities._registry.registry import Registry
 from azure.ai.ml.entities._resource import Resource
 from azure.ai.ml.entities._schedule.schedule import Schedule
-from azure.ai.ml.entities._validation import SchemaValidatableMixin, _ValidationResultBuilder
-from azure.ai.ml.entities._workspace.connections.workspace_connection import WorkspaceConnection
+from azure.ai.ml.entities._validation import (
+    SchemaValidatableMixin,
+    _ValidationResultBuilder,
+)
+from azure.ai.ml.entities._workspace.connections.workspace_connection import (
+    WorkspaceConnection,
+)
 from azure.ai.ml.entities._workspace.workspace import Workspace
 from azure.ai.ml.entities._workspace_hub.workspace_hub import WorkspaceHub
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+from azure.ai.ml.exceptions import (
+    ErrorCategory,
+    ErrorTarget,
+    ValidationErrorType,
+    ValidationException,
+)
 
 module_logger = logging.getLogger(__name__)
 
@@ -75,7 +89,8 @@ def load_common(
     if source is None and path is not None:
         source = path
         warnings.warn(
-            "the 'path' input for load functions is deprecated. Please use 'source' instead.", DeprecationWarning
+            "the 'path' input for load functions is deprecated. Please use 'source' instead.",
+            DeprecationWarning,
         )
 
     if relative_origin is None:
@@ -91,13 +106,19 @@ def load_common(
     yaml_dict = _try_load_yaml_dict(source)
 
     # pylint: disable=protected-access
-    cls, type_str = cls._resolve_cls_and_type(data=yaml_dict, params_override=params_override)
+    cls, type_str = cls._resolve_cls_and_type(
+        data=yaml_dict, params_override=params_override
+    )
 
     try:
-        return _load_common_raising_marshmallow_error(cls, yaml_dict, relative_origin, params_override, **kwargs)
+        return _load_common_raising_marshmallow_error(
+            cls, yaml_dict, relative_origin, params_override, **kwargs
+        )
     except ValidationError as e:
         if issubclass(cls, SchemaValidatableMixin):
-            validation_result = _ValidationResultBuilder.from_validation_error(e, source_path=relative_origin)
+            validation_result = _ValidationResultBuilder.from_validation_error(
+                e, source_path=relative_origin
+            )
             validation_result.try_raise(
                 # pylint: disable=protected-access
                 error_target=cls._get_validation_error_target(),
@@ -124,7 +145,9 @@ def _try_load_yaml_dict(source: Union[str, PathLike, IO[AnyStr]]) -> dict:
             error_category=ErrorCategory.USER_ERROR,
             error_type=ValidationErrorType.CANNOT_PARSE,
         )
-    if not isinstance(yaml_dict, dict):  # This happens when a YAML file is mal formatted.
+    if not isinstance(
+        yaml_dict, dict
+    ):  # This happens when a YAML file is mal formatted.
         msg = "Expect dict but get {} after parsing yaml file"
         raise ValidationException(
             message=msg.format(type(yaml_dict)),
@@ -144,7 +167,12 @@ def _load_common_raising_marshmallow_error(
     **kwargs,
 ) -> Resource:
     # pylint: disable=protected-access
-    return cls._load(data=yaml_dict, yaml_path=relative_origin, params_override=params_override, **kwargs)
+    return cls._load(
+        data=yaml_dict,
+        yaml_path=relative_origin,
+        params_override=params_override,
+        **kwargs,
+    )
 
 
 def load_job(
@@ -614,7 +642,9 @@ def load_pipeline_component_batch_deployment(
     :return: Constructed pipeline component batch deployment object.
     :rtype: PipelineComponentBatchDeployment
     """
-    return load_common(PipelineComponentBatchDeployment, source, relative_origin, **kwargs)
+    return load_common(
+        PipelineComponentBatchDeployment, source, relative_origin, **kwargs
+    )
 
 
 def load_online_endpoint(

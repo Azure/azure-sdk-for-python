@@ -46,8 +46,12 @@ class JobStatus(object):
 
 class RunHistoryConstants(object):
     _DEFAULT_GET_CONTENT_TIMEOUT = (5, 120)
-    _WAIT_COMPLETION_POLLING_INTERVAL_MIN = os.environ.get("AZUREML_RUN_POLLING_INTERVAL_MIN", 2)
-    _WAIT_COMPLETION_POLLING_INTERVAL_MAX = os.environ.get("AZUREML_RUN_POLLING_INTERVAL_MAX", 60)
+    _WAIT_COMPLETION_POLLING_INTERVAL_MIN = os.environ.get(
+        "AZUREML_RUN_POLLING_INTERVAL_MIN", 2
+    )
+    _WAIT_COMPLETION_POLLING_INTERVAL_MAX = os.environ.get(
+        "AZUREML_RUN_POLLING_INTERVAL_MAX", 60
+    )
     ALL_STATUSES = [
         JobStatus.QUEUED,
         JobStatus.PREPARING,

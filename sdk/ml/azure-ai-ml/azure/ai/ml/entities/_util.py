@@ -16,14 +16,22 @@ from .._restclient.v2022_02_01_preview.models import JobInputType as JobInputTyp
 from .._restclient.v2023_04_01_preview.models import JobInputType as JobInputType10
 from .._restclient.v2023_04_01_preview.models import JobInput as RestJobInput
 from .._restclient.v2023_04_01_preview.models import JobOutput as RestJobOutput
-from .._schema._datastore import AzureBlobSchema, AzureDataLakeGen1Schema, AzureDataLakeGen2Schema, AzureFileSchema
+from .._schema._datastore import (
+    AzureBlobSchema,
+    AzureDataLakeGen1Schema,
+    AzureDataLakeGen2Schema,
+    AzureFileSchema,
+)
 from .._schema._deployment.batch.batch_deployment import BatchDeploymentSchema
 from .._schema._deployment.online.online_deployment import (
     KubernetesOnlineDeploymentSchema,
     ManagedOnlineDeploymentSchema,
 )
 from .._schema._endpoint.batch.batch_endpoint import BatchEndpointSchema
-from .._schema._endpoint.online.online_endpoint import KubernetesOnlineEndpointSchema, ManagedOnlineEndpointSchema
+from .._schema._endpoint.online.online_endpoint import (
+    KubernetesOnlineEndpointSchema,
+    ManagedOnlineEndpointSchema,
+)
 from .._schema._sweep import SweepJobSchema
 from .._schema.assets.data import DataSchema
 from .._schema.assets.environment import EnvironmentSchema
@@ -37,7 +45,10 @@ from .._schema.job import CommandJobSchema, ParallelJobSchema
 from .._schema.pipeline.pipeline_job import PipelineJobSchema
 from .._schema.schedule.schedule import JobScheduleSchema
 from .._schema.workspace import WorkspaceSchema
-from .._utils.utils import is_internal_components_enabled, try_enable_internal_components
+from .._utils.utils import (
+    is_internal_components_enabled,
+    try_enable_internal_components,
+)
 from ..constants._common import (
     AZUREML_INTERNAL_COMPONENTS_ENV_VAR,
     AZUREML_INTERNAL_COMPONENTS_SCHEMA_PREFIX,
@@ -49,15 +60,24 @@ from ..constants._common import (
 from ..constants._component import NodeType
 from ..constants._endpoint import EndpointYamlFields
 from ..entities._mixins import RestTranslatableMixin
-from ..exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+from ..exceptions import (
+    ErrorCategory,
+    ErrorTarget,
+    ValidationErrorType,
+    ValidationException,
+)
 
 # Maps schema class name to formatted error message pointing to Microsoft docs reference page for a schema's YAML
 REF_DOC_ERROR_MESSAGE_MAP = {
-    DataSchema: REF_DOC_YAML_SCHEMA_ERROR_MSG_FORMAT.format(YAMLRefDocSchemaNames.DATA, YAMLRefDocLinks.DATA),
+    DataSchema: REF_DOC_YAML_SCHEMA_ERROR_MSG_FORMAT.format(
+        YAMLRefDocSchemaNames.DATA, YAMLRefDocLinks.DATA
+    ),
     EnvironmentSchema: REF_DOC_YAML_SCHEMA_ERROR_MSG_FORMAT.format(
         YAMLRefDocSchemaNames.ENVIRONMENT, YAMLRefDocLinks.ENVIRONMENT
     ),
-    ModelSchema: REF_DOC_YAML_SCHEMA_ERROR_MSG_FORMAT.format(YAMLRefDocSchemaNames.MODEL, YAMLRefDocLinks.MODEL),
+    ModelSchema: REF_DOC_YAML_SCHEMA_ERROR_MSG_FORMAT.format(
+        YAMLRefDocSchemaNames.MODEL, YAMLRefDocLinks.MODEL
+    ),
     CommandComponentSchema: REF_DOC_YAML_SCHEMA_ERROR_MSG_FORMAT.format(
         YAMLRefDocSchemaNames.COMMAND_COMPONENT, YAMLRefDocLinks.COMMAND_COMPONENT
     ),
@@ -141,15 +161,21 @@ def is_compute_in_override(params_override: Optional[list] = None) -> bool:
     return any(EndpointYamlFields.COMPUTE in param for param in params_override)
 
 
-def load_from_dict(schema: Any, data: Dict, context: Dict, additional_message: str = "", **kwargs):
+def load_from_dict(
+    schema: Any, data: Dict, context: Dict, additional_message: str = "", **kwargs
+):
     try:
         return schema(context=context).load(data, **kwargs)
     except ValidationError as e:
         pretty_error = json.dumps(e.normalized_messages(), indent=2)
-        raise ValidationError(decorate_validation_error(schema, pretty_error, additional_message)) from e
+        raise ValidationError(
+            decorate_validation_error(schema, pretty_error, additional_message)
+        ) from e
 
 
-def decorate_validation_error(schema: Any, pretty_error: str, additional_message: str = "") -> str:
+def decorate_validation_error(
+    schema: Any, pretty_error: str, additional_message: str = ""
+) -> str:
     ref_doc_link_error_msg = REF_DOC_ERROR_MESSAGE_MAP.get(schema, "")
     if ref_doc_link_error_msg:
         additional_message += f"\n{ref_doc_link_error_msg}"
@@ -168,7 +194,9 @@ def get_md5_string(text):
         raise ex
 
 
-def validate_attribute_type(attrs_to_check: Dict[str, Any], attr_type_map: Dict[str, Type]) -> None:
+def validate_attribute_type(
+    attrs_to_check: Dict[str, Any], attr_type_map: Dict[str, Type]
+) -> None:
     """Validate if attributes of object are set with valid types, raise error
     if don't.
 
@@ -186,7 +214,9 @@ def validate_attribute_type(attrs_to_check: Dict[str, Any], attr_type_map: Dict[
             msg = "Expecting {} for {}, got {} instead."
             raise ValidationException(
                 message=msg.format(expecting_type, attr, type(attr_val)),
-                no_personal_data_message=msg.format(expecting_type, "[attr]", type(attr_val)),
+                no_personal_data_message=msg.format(
+                    expecting_type, "[attr]", type(attr_val)
+                ),
                 target=ErrorTarget.GENERAL,
                 error_type=ValidationErrorType.INVALID_VALUE,
             )
@@ -207,7 +237,9 @@ def is_empty_target(obj: Optional[Dict]) -> bool:
     )
 
 
-def convert_ordered_dict_to_dict(target_object: Union[Dict, List], remove_empty: bool = True) -> Union[Dict, List]:
+def convert_ordered_dict_to_dict(
+    target_object: Union[Dict, List], remove_empty: bool = True
+) -> Union[Dict, List]:
     """Convert ordered dict to dict. Remove keys with None value.
     This is a workaround for rest request must be in dict instead of
     ordered dict.
@@ -237,7 +269,9 @@ def convert_ordered_dict_to_dict(target_object: Union[Dict, List], remove_empty:
     return target_object
 
 
-def _general_copy(src: Union[str, os.PathLike], dst: Union[str, os.PathLike], make_dirs: bool = True):
+def _general_copy(
+    src: Union[str, os.PathLike], dst: Union[str, os.PathLike], make_dirs: bool = True
+):
     """Wrapped `shutil.copy2` function for possible "Function not implemented" exception raised by it.
 
     Background: `shutil.copy2` will throw OSError when dealing with Azure File.
@@ -274,7 +308,9 @@ def _dump_data_binding_expression_in_fields(obj):
 T = TypeVar("T")
 
 
-def get_rest_dict_for_node_attrs(target_obj: T, clear_empty_value: bool = False) -> Union[T, Dict]:
+def get_rest_dict_for_node_attrs(
+    target_obj: T, clear_empty_value: bool = False
+) -> Union[T, Dict]:
     """Convert object to dict and convert OrderedDict to dict.
     Allow data binding expression as value, disregarding of the type defined in rest object.
 
@@ -313,15 +349,23 @@ def get_rest_dict_for_node_attrs(target_obj: T, clear_empty_value: bool = False)
         from azure.ai.ml.entities._credentials import _BaseIdentityConfiguration
 
         if isinstance(target_obj, _BaseIdentityConfiguration):
-            return get_rest_dict_for_node_attrs(target_obj._to_job_rest_object(), clear_empty_value=clear_empty_value)
-        return get_rest_dict_for_node_attrs(target_obj._to_rest_object(), clear_empty_value=clear_empty_value)
+            return get_rest_dict_for_node_attrs(
+                target_obj._to_job_rest_object(), clear_empty_value=clear_empty_value
+            )
+        return get_rest_dict_for_node_attrs(
+            target_obj._to_rest_object(), clear_empty_value=clear_empty_value
+        )
 
     if isinstance(target_obj, msrest.serialization.Model):
         # can't use result.as_dict() as data binding expression may not fit rest object structure
-        return get_rest_dict_for_node_attrs(target_obj.__dict__, clear_empty_value=clear_empty_value)
+        return get_rest_dict_for_node_attrs(
+            target_obj.__dict__, clear_empty_value=clear_empty_value
+        )
 
     if isinstance(target_obj, PipelineInput):
-        return get_rest_dict_for_node_attrs(str(target_obj), clear_empty_value=clear_empty_value)
+        return get_rest_dict_for_node_attrs(
+            str(target_obj), clear_empty_value=clear_empty_value
+        )
 
     if not isinstance(target_obj, (str, int, float, bool)):
         raise ValueError("Unexpected type {}".format(type(target_obj)))
@@ -345,7 +389,9 @@ class _DummyRestModelFromDict(msrest.serialization.Model):
         return super().__getattribute__(item)
 
 
-def from_rest_dict_to_dummy_rest_object(rest_dict: Optional[Dict]) -> _DummyRestModelFromDict:
+def from_rest_dict_to_dummy_rest_object(
+    rest_dict: Optional[Dict],
+) -> _DummyRestModelFromDict:
     """Create a dummy rest object based on a rest dict, which is a primitive dict containing
     attributes in a rest object.
     For example, for a rest object class like:
@@ -378,7 +424,9 @@ def extract_label(input_str: str):
 
 
 @overload
-def resolve_pipeline_parameters(pipeline_parameters: None, remove_empty: bool = False) -> None:
+def resolve_pipeline_parameters(
+    pipeline_parameters: None, remove_empty: bool = False
+) -> None:
     ...
 
 
@@ -430,7 +478,9 @@ def resolve_pipeline_parameter(data: T) -> Union[T, str, "NodeOutput"]:
     from azure.ai.ml.entities._builders.base_node import BaseNode
     from azure.ai.ml.entities._builders.pipeline import Pipeline
     from azure.ai.ml.entities._job.pipeline._io import OutputsAttrDict
-    from azure.ai.ml.entities._job.pipeline._pipeline_expression import PipelineExpression
+    from azure.ai.ml.entities._job.pipeline._pipeline_expression import (
+        PipelineExpression,
+    )
     from azure.ai.ml.entities._job.pipeline._io import NodeOutput
 
     if isinstance(data, PipelineExpression):
@@ -446,7 +496,8 @@ def resolve_pipeline_parameter(data: T) -> Union[T, str, "NodeOutput"]:
         output_len = len(data)
         if output_len != 1:
             raise ValidationException(
-                message="Setting input failed: Exactly 1 output is required, got %d. (%s)" % (output_len, data),
+                message="Setting input failed: Exactly 1 output is required, got %d. (%s)"
+                % (output_len, data),
                 no_personal_data_message="multiple output(s) found of specified outputs, exactly 1 output required.",
                 target=ErrorTarget.PIPELINE,
             )
@@ -454,7 +505,9 @@ def resolve_pipeline_parameter(data: T) -> Union[T, str, "NodeOutput"]:
     return data
 
 
-def normalize_job_input_output_type(input_output_value: Union[RestJobOutput, RestJobInput, Dict]):
+def normalize_job_input_output_type(
+    input_output_value: Union[RestJobOutput, RestJobInput, Dict]
+):
     """Normalizes the `job_input_type`, `job_output_type`, and `type` keys for REST job output and input objects.
 
     :param input_output_value: Either a REST input or REST output of a job
@@ -482,21 +535,29 @@ def normalize_job_input_output_type(input_output_value: Union[RestJobOutput, Res
         hasattr(input_output_value, "job_input_type")
         and input_output_value.job_input_type in FEB_JUN_JOB_INPUT_OUTPUT_TYPE_MAPPING
     ):
-        input_output_value.job_input_type = FEB_JUN_JOB_INPUT_OUTPUT_TYPE_MAPPING[input_output_value.job_input_type]
+        input_output_value.job_input_type = FEB_JUN_JOB_INPUT_OUTPUT_TYPE_MAPPING[
+            input_output_value.job_input_type
+        ]
     elif (
         hasattr(input_output_value, "job_output_type")
         and input_output_value.job_output_type in FEB_JUN_JOB_INPUT_OUTPUT_TYPE_MAPPING
     ):
-        input_output_value.job_output_type = FEB_JUN_JOB_INPUT_OUTPUT_TYPE_MAPPING[input_output_value.job_output_type]
+        input_output_value.job_output_type = FEB_JUN_JOB_INPUT_OUTPUT_TYPE_MAPPING[
+            input_output_value.job_output_type
+        ]
     elif isinstance(input_output_value, dict):
         job_output_type = input_output_value.get("job_output_type", None)
         job_input_type = input_output_value.get("job_input_type", None)
         job_type = input_output_value.get("type", None)
 
         if job_output_type and job_output_type in FEB_JUN_JOB_INPUT_OUTPUT_TYPE_MAPPING:
-            input_output_value["job_output_type"] = FEB_JUN_JOB_INPUT_OUTPUT_TYPE_MAPPING[job_output_type]
+            input_output_value[
+                "job_output_type"
+            ] = FEB_JUN_JOB_INPUT_OUTPUT_TYPE_MAPPING[job_output_type]
         if job_input_type and job_input_type in FEB_JUN_JOB_INPUT_OUTPUT_TYPE_MAPPING:
-            input_output_value["job_input_type"] = FEB_JUN_JOB_INPUT_OUTPUT_TYPE_MAPPING[job_input_type]
+            input_output_value[
+                "job_input_type"
+            ] = FEB_JUN_JOB_INPUT_OUTPUT_TYPE_MAPPING[job_input_type]
         if job_type and job_type in FEB_JUN_JOB_INPUT_OUTPUT_TYPE_MAPPING:
             input_output_value["type"] = FEB_JUN_JOB_INPUT_OUTPUT_TYPE_MAPPING[job_type]
 

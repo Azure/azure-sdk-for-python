@@ -8,7 +8,9 @@ from typing import Dict, Iterable, Optional
 
 from marshmallow import ValidationError
 
-from azure.ai.ml._restclient.v2023_06_01_preview import AzureMachineLearningWorkspaces as ServiceClient062023Preview
+from azure.ai.ml._restclient.v2023_06_01_preview import (
+    AzureMachineLearningWorkspaces as ServiceClient062023Preview,
+)
 from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope
 
 # from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
@@ -67,14 +69,18 @@ class WorkspaceHubOperations(WorkspaceOperationsBase):
             return self._operation.list_by_subscription(
                 cls=lambda objs: [
                     WorkspaceHub._from_rest_object(filterObj)
-                    for filterObj in filter(lambda ws: ws.kind.lower() == WORKSPACE_HUB_KIND, objs)
+                    for filterObj in filter(
+                        lambda ws: ws.kind.lower() == WORKSPACE_HUB_KIND, objs
+                    )
                 ]
             )
         return self._operation.list_by_resource_group(
             self._resource_group_name,
             cls=lambda objs: [
                 WorkspaceHub._from_rest_object(filterObj)
-                for filterObj in filter(lambda ws: ws.kind.lower() == WORKSPACE_HUB_KIND, objs)
+                for filterObj in filter(
+                    lambda ws: ws.kind.lower() == WORKSPACE_HUB_KIND, objs
+                )
             ],
         )
 
@@ -93,7 +99,11 @@ class WorkspaceHubOperations(WorkspaceOperationsBase):
         workspace_hub = None
         resource_group = kwargs.get("resource_group") or self._resource_group_name
         rest_workspace_obj = self._operation.get(resource_group, name)
-        if rest_workspace_obj and rest_workspace_obj.kind and rest_workspace_obj.kind.lower() == WORKSPACE_HUB_KIND:
+        if (
+            rest_workspace_obj
+            and rest_workspace_obj.kind
+            and rest_workspace_obj.kind.lower() == WORKSPACE_HUB_KIND
+        ):
             workspace_hub = WorkspaceHub._from_rest_object(rest_workspace_obj)
 
         return workspace_hub
@@ -149,9 +159,13 @@ class WorkspaceHubOperations(WorkspaceOperationsBase):
         resource_group = kwargs.get("resource_group") or self._resource_group_name
         rest_workspace_obj = self._operation.get(resource_group, workspace_hub.name)
         if not (
-            rest_workspace_obj and rest_workspace_obj.kind and rest_workspace_obj.kind.lower() == WORKSPACE_HUB_KIND
+            rest_workspace_obj
+            and rest_workspace_obj.kind
+            and rest_workspace_obj.kind.lower() == WORKSPACE_HUB_KIND
         ):
-            raise ValidationError("{0} is not a WorkspaceHub".format(workspace_hub.name))
+            raise ValidationError(
+                "{0} is not a WorkspaceHub".format(workspace_hub.name)
+            )
 
         def deserialize_callback(rest_obj):
             return WorkspaceHub._from_rest_object(rest_obj=rest_obj)
@@ -166,7 +180,12 @@ class WorkspaceHubOperations(WorkspaceOperationsBase):
     # @monitor_with_activity(logger, "Hub.BeginDelete", ActivityType.PUBLICAPI)
     @distributed_trace
     def begin_delete(
-        self, name: str, *, delete_dependent_resources: bool, permanently_delete: bool = False, **kwargs: Dict
+        self,
+        name: str,
+        *,
+        delete_dependent_resources: bool,
+        permanently_delete: bool = False,
+        **kwargs: Dict,
     ) -> LROPoller:
         """Delete a WorkspaceHub.
 
@@ -185,13 +204,20 @@ class WorkspaceHubOperations(WorkspaceOperationsBase):
         resource_group = kwargs.get("resource_group") or self._resource_group_name
         rest_workspace_obj = self._operation.get(resource_group, name)
         if not (
-            rest_workspace_obj and rest_workspace_obj.kind and rest_workspace_obj.kind.lower() == WORKSPACE_HUB_KIND
+            rest_workspace_obj
+            and rest_workspace_obj.kind
+            and rest_workspace_obj.kind.lower() == WORKSPACE_HUB_KIND
         ):
             raise ValidationError("{0} is not a WorkspaceHub".format(name))
         if hasattr(rest_workspace_obj, "workspace_hub_config") and hasattr(
-            rest_workspace_obj.workspace_hub_config, "additional_workspace_storage_accounts"
+            rest_workspace_obj.workspace_hub_config,
+            "additional_workspace_storage_accounts",
         ):
-            for storageaccount in rest_workspace_obj.workspace_hub_config.additional_workspace_storage_accounts:
+            for (
+                storageaccount
+            ) in (
+                rest_workspace_obj.workspace_hub_config.additional_workspace_storage_accounts
+            ):
                 delete_resource_by_arm_id(
                     self._credentials,
                     self._subscription_id,

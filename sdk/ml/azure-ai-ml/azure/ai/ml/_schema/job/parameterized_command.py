@@ -13,7 +13,9 @@ from azure.ai.ml._schema.core.fields import (
 )
 from azure.ai.ml._schema.core.schema import PathAwareSchema
 from azure.ai.ml._schema.job.input_output_entry import InputLiteralValueSchema
-from azure.ai.ml._schema.job_resource_configuration import JobResourceConfigurationSchema
+from azure.ai.ml._schema.job_resource_configuration import (
+    JobResourceConfigurationSchema,
+)
 from azure.ai.ml._schema.queue_settings import QueueSettingsSchema
 
 from ..core.fields import UnionField

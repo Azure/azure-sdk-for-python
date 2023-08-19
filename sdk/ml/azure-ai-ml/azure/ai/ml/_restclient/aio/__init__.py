@@ -7,4 +7,5 @@
 # --------------------------------------------------------------------------
 
 from ._azure_machine_learning_workspaces import AzureMachineLearningWorkspaces
-__all__ = ['AzureMachineLearningWorkspaces']
+
+__all__ = ["AzureMachineLearningWorkspaces"]

@@ -44,7 +44,9 @@ def choice_and_single_value_schema_of_type(cls, **kwargs):
     # Reshuffling the order of fields for allowing choice of booleans.
     # The reason is, while dumping [Bool, Choice[Bool]] is parsing even dict as True.
     # Since all unionFields are parsed sequentially, to avoid this, we are giving the "type" field at the end.
-    return UnionField([NestedField(choice_schema_of_type(cls, **kwargs)), cls(**kwargs)])
+    return UnionField(
+        [NestedField(choice_schema_of_type(cls, **kwargs)), cls(**kwargs)]
+    )
 
 
 FLOAT_SEARCH_SPACE_DISTRIBUTION_FIELD = UnionField(
@@ -71,26 +73,40 @@ INT_SEARCH_SPACE_DISTRIBUTION_FIELD = UnionField(
     ]
 )
 
-STRING_SEARCH_SPACE_DISTRIBUTION_FIELD = choice_and_single_value_schema_of_type(DumpableStringField)
-BOOL_SEARCH_SPACE_DISTRIBUTION_FIELD = choice_and_single_value_schema_of_type(fields.Bool)
+STRING_SEARCH_SPACE_DISTRIBUTION_FIELD = choice_and_single_value_schema_of_type(
+    DumpableStringField
+)
+BOOL_SEARCH_SPACE_DISTRIBUTION_FIELD = choice_and_single_value_schema_of_type(
+    fields.Bool
+)
 
-model_size_enum_args = {"allowed_values": [o.value for o in ModelSize], "casing_transform": camel_to_snake}
+model_size_enum_args = {
+    "allowed_values": [o.value for o in ModelSize],
+    "casing_transform": camel_to_snake,
+}
 learning_rate_scheduler_enum_args = {
     "allowed_values": [o.value for o in LearningRateScheduler],
     "casing_transform": camel_to_snake,
 }
-optimizer_enum_args = {"allowed_values": [o.value for o in StochasticOptimizer], "casing_transform": camel_to_snake}
+optimizer_enum_args = {
+    "allowed_values": [o.value for o in StochasticOptimizer],
+    "casing_transform": camel_to_snake,
+}
 validation_metric_enum_args = {
     "allowed_values": [o.value for o in ValidationMetricType],
     "casing_transform": camel_to_snake,
 }
 
 
-MODEL_SIZE_DISTRIBUTION_FIELD = choice_and_single_value_schema_of_type(StringTransformedEnum, **model_size_enum_args)
+MODEL_SIZE_DISTRIBUTION_FIELD = choice_and_single_value_schema_of_type(
+    StringTransformedEnum, **model_size_enum_args
+)
 LEARNING_RATE_SCHEDULER_DISTRIBUTION_FIELD = choice_and_single_value_schema_of_type(
     StringTransformedEnum, **learning_rate_scheduler_enum_args
 )
-OPTIMIZER_DISTRIBUTION_FIELD = choice_and_single_value_schema_of_type(StringTransformedEnum, **optimizer_enum_args)
+OPTIMIZER_DISTRIBUTION_FIELD = choice_and_single_value_schema_of_type(
+    StringTransformedEnum, **optimizer_enum_args
+)
 VALIDATION_METRIC_DISTRIBUTION_FIELD = choice_and_single_value_schema_of_type(
     StringTransformedEnum, **validation_metric_enum_args
 )
@@ -127,7 +143,9 @@ class ImageModelDistributionSettingsSchema(metaclass=PatchedSchemaMeta):
 
 
 # pylint: disable-next=name-too-long
-class ImageModelDistributionSettingsClassificationSchema(ImageModelDistributionSettingsSchema):
+class ImageModelDistributionSettingsClassificationSchema(
+    ImageModelDistributionSettingsSchema
+):
     model_name = STRING_SEARCH_SPACE_DISTRIBUTION_FIELD
     training_crop_size = INT_SEARCH_SPACE_DISTRIBUTION_FIELD
     validation_crop_size = INT_SEARCH_SPACE_DISTRIBUTION_FIELD
@@ -141,7 +159,9 @@ class ImageModelDistributionSettingsClassificationSchema(ImageModelDistributionS
             # explicitly for creating the autoRest Object from sdk job.
             # Hence for pipeline job, we explicitly convert Sweep Distribution dict to str after dump in this method.
             # For standalone automl job, same conversion happens in image_classification_job._to_rest_object()
-            from azure.ai.ml.entities._job.automl.search_space_utils import _convert_sweep_dist_dict_to_str_dict
+            from azure.ai.ml.entities._job.automl.search_space_utils import (
+                _convert_sweep_dist_dict_to_str_dict,
+            )
 
             data = _convert_sweep_dist_dict_to_str_dict(data)
         return data
@@ -149,7 +169,9 @@ class ImageModelDistributionSettingsClassificationSchema(ImageModelDistributionS
     @pre_load
     def before_make(self, data, **kwargs):
         if self.context.get("inside_pipeline", False):  # pylint: disable=no-member
-            from azure.ai.ml.entities._job.automl.search_space_utils import _convert_sweep_dist_str_to_dict
+            from azure.ai.ml.entities._job.automl.search_space_utils import (
+                _convert_sweep_dist_str_to_dict,
+            )
 
             # Converting Sweep Distribution str to Sweep Distribution dict for complying with search_space schema.
             data = _convert_sweep_dist_str_to_dict(data)
@@ -163,7 +185,9 @@ class ImageModelDistributionSettingsClassificationSchema(ImageModelDistributionS
 
 
 # pylint: disable-next=name-too-long
-class ImageModelDistributionSettingsDetectionCommonSchema(ImageModelDistributionSettingsSchema):
+class ImageModelDistributionSettingsDetectionCommonSchema(
+    ImageModelDistributionSettingsSchema
+):
     box_detections_per_image = INT_SEARCH_SPACE_DISTRIBUTION_FIELD
     box_score_threshold = FLOAT_SEARCH_SPACE_DISTRIBUTION_FIELD
     image_size = INT_SEARCH_SPACE_DISTRIBUTION_FIELD
@@ -185,7 +209,9 @@ class ImageModelDistributionSettingsDetectionCommonSchema(ImageModelDistribution
             # explicitly for creating the autoRest Object from sdk job object.
             # Hence for pipeline job, we explicitly convert Sweep Distribution dict to str after dump in this method.
             # For standalone automl job, same conversion happens in image_object_detection_job._to_rest_object()
-            from azure.ai.ml.entities._job.automl.search_space_utils import _convert_sweep_dist_dict_to_str_dict
+            from azure.ai.ml.entities._job.automl.search_space_utils import (
+                _convert_sweep_dist_dict_to_str_dict,
+            )
 
             data = _convert_sweep_dist_dict_to_str_dict(data)
         return data
@@ -193,7 +219,9 @@ class ImageModelDistributionSettingsDetectionCommonSchema(ImageModelDistribution
     @pre_load
     def before_make(self, data, **kwargs):
         if self.context.get("inside_pipeline", False):  # pylint: disable=no-member
-            from azure.ai.ml.entities._job.automl.search_space_utils import _convert_sweep_dist_str_to_dict
+            from azure.ai.ml.entities._job.automl.search_space_utils import (
+                _convert_sweep_dist_str_to_dict,
+            )
 
             # Converting Sweep Distribution str to Sweep Distribution dict for complying with search_space schema.
             data = _convert_sweep_dist_str_to_dict(data)
@@ -207,10 +235,14 @@ class ImageModelDistributionSettingsDetectionCommonSchema(ImageModelDistribution
 
 
 # pylint: disable-next=name-too-long
-class ImageModelDistributionSettingsObjectDetectionSchema(ImageModelDistributionSettingsDetectionCommonSchema):
+class ImageModelDistributionSettingsObjectDetectionSchema(
+    ImageModelDistributionSettingsDetectionCommonSchema
+):
     model_name = STRING_SEARCH_SPACE_DISTRIBUTION_FIELD
 
 
 # pylint: disable-next=name-too-long
-class ImageModelDistributionSettingsInstanceSegmentationSchema(ImageModelDistributionSettingsObjectDetectionSchema):
+class ImageModelDistributionSettingsInstanceSegmentationSchema(
+    ImageModelDistributionSettingsObjectDetectionSchema
+):
     model_name = STRING_SEARCH_SPACE_DISTRIBUTION_FIELD

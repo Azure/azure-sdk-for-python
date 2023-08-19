@@ -15,6 +15,8 @@ class TimestampColumnMetadataSchema(metaclass=PatchedSchemaMeta):
 
     @post_load
     def make(self, data, **kwargs):
-        from azure.ai.ml.entities._feature_set.timestamp_column_metadata import TimestampColumnMetadata
+        from azure.ai.ml.entities._feature_set.timestamp_column_metadata import (
+            TimestampColumnMetadata,
+        )
 
         return TimestampColumnMetadata(**data)

@@ -22,7 +22,9 @@ class SweepDistribution(ABC, RestTranslatableMixin):
     :type type: str
     """
 
-    def __init__(self, *, type: Optional[str] = None) -> None:  # pylint: disable=redefined-builtin
+    def __init__(
+        self, *, type: Optional[str] = None
+    ) -> None:  # pylint: disable=redefined-builtin
         self.type = type
 
     @classmethod
@@ -75,7 +77,9 @@ class Choice(SweepDistribution):
             :caption: Using Choice distribution to set values for a hyperparameter sweep
     """
 
-    def __init__(self, values: Optional[List[Union[float, str, dict]]] = None, **kwargs) -> None:
+    def __init__(
+        self, values: Optional[List[Union[float, str, dict]]] = None, **kwargs
+    ) -> None:
         kwargs.setdefault(TYPE, SearchSpace.CHOICE)
         super().__init__(**kwargs)
         self.values = values
@@ -136,7 +140,9 @@ class Normal(SweepDistribution):
             :caption: Configuring Normal distributions for a hyperparameter sweep on a Command job.
     """
 
-    def __init__(self, mu: Optional[float] = None, sigma: Optional[float] = None, **kwargs) -> None:
+    def __init__(
+        self, mu: Optional[float] = None, sigma: Optional[float] = None, **kwargs
+    ) -> None:
         kwargs.setdefault(TYPE, SearchSpace.NORMAL)
         super().__init__(**kwargs)
         self.mu = mu
@@ -169,7 +175,9 @@ class LogNormal(Normal):
             :caption: Configuring LogNormal distributions for a hyperparameter sweep on a Command job.
     """
 
-    def __init__(self, mu: Optional[float] = None, sigma: Optional[float] = None, **kwargs) -> None:
+    def __init__(
+        self, mu: Optional[float] = None, sigma: Optional[float] = None, **kwargs
+    ) -> None:
         kwargs.setdefault(TYPE, SearchSpace.LOGNORMAL)
         super().__init__(mu=mu, sigma=sigma, **kwargs)
 
@@ -196,7 +204,11 @@ class QNormal(Normal):
     """
 
     def __init__(
-        self, mu: Optional[float] = None, sigma: Optional[float] = None, q: Optional[int] = None, **kwargs
+        self,
+        mu: Optional[float] = None,
+        sigma: Optional[float] = None,
+        q: Optional[int] = None,
+        **kwargs,
     ) -> None:
         kwargs.setdefault(TYPE, SearchSpace.QNORMAL)
         super().__init__(mu=mu, sigma=sigma, **kwargs)
@@ -231,7 +243,11 @@ class QLogNormal(QNormal):
     """
 
     def __init__(
-        self, mu: Optional[float] = None, sigma: Optional[float] = None, q: Optional[int] = None, **kwargs
+        self,
+        mu: Optional[float] = None,
+        sigma: Optional[float] = None,
+        q: Optional[int] = None,
+        **kwargs,
     ) -> None:
         kwargs.setdefault(TYPE, SearchSpace.QLOGNORMAL)
         super().__init__(mu=mu, sigma=sigma, q=q, **kwargs)
@@ -287,7 +303,12 @@ class Uniform(SweepDistribution):
             during a hyperparameter sweep on a Command job.
     """
 
-    def __init__(self, min_value: Optional[float] = None, max_value: Optional[float] = None, **kwargs) -> None:
+    def __init__(
+        self,
+        min_value: Optional[float] = None,
+        max_value: Optional[float] = None,
+        **kwargs,
+    ) -> None:
         kwargs.setdefault(TYPE, SearchSpace.UNIFORM)
         super().__init__(**kwargs)
         self.min_value = min_value
@@ -319,7 +340,12 @@ class LogUniform(Uniform):
             :caption: Configuring a LogUniform distribution for a hyperparameter sweep job learning rate
     """
 
-    def __init__(self, min_value: Optional[float] = None, max_value: Optional[float] = None, **kwargs) -> None:
+    def __init__(
+        self,
+        min_value: Optional[float] = None,
+        max_value: Optional[float] = None,
+        **kwargs,
+    ) -> None:
         kwargs.setdefault(TYPE, SearchSpace.LOGUNIFORM)
         super().__init__(min_value=min_value, max_value=max_value, **kwargs)
 
@@ -386,7 +412,11 @@ class QLogUniform(QUniform):
     """
 
     def __init__(
-        self, min_value: Optional[float] = None, max_value: Optional[float] = None, q: Optional[int] = None, **kwargs
+        self,
+        min_value: Optional[float] = None,
+        max_value: Optional[float] = None,
+        q: Optional[int] = None,
+        **kwargs,
     ) -> None:
         kwargs.setdefault(TYPE, SearchSpace.QLOGUNIFORM)
         super().__init__(min_value=min_value, max_value=max_value, q=q, **kwargs)

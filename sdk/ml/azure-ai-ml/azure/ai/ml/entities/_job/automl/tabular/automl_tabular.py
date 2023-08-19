@@ -18,7 +18,9 @@ from azure.ai.ml.constants import TabularTrainingMode
 from azure.ai.ml.constants._job.automl import AutoMLConstants
 from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._job.automl.automl_vertical import AutoMLVertical
-from azure.ai.ml.entities._job.automl.stack_ensemble_settings import StackEnsembleSettings
+from azure.ai.ml.entities._job.automl.stack_ensemble_settings import (
+    StackEnsembleSettings,
+)
 from azure.ai.ml.entities._job.automl.tabular.featurization_settings import (
     ColumnTransformer,
     TabularFeaturizationSettings,
@@ -147,7 +149,9 @@ class AutoMLTabular(AutoMLVertical, ABC):
         :param value: str or LogVerbosity
         :type value: typing.Union[str, LogVerbosity]
         """
-        self._log_verbosity = None if value is None else LogVerbosity[camel_to_snake(value).upper()]
+        self._log_verbosity = (
+            None if value is None else LogVerbosity[camel_to_snake(value).upper()]
+        )
 
     @property
     def limits(self) -> TabularLimitSettings:
@@ -325,20 +329,38 @@ class AutoMLTabular(AutoMLVertical, ABC):
         """
         self._limits = self._limits or TabularLimitSettings()
         self._limits.enable_early_termination = (
-            enable_early_termination if enable_early_termination is not None else self._limits.enable_early_termination
+            enable_early_termination
+            if enable_early_termination is not None
+            else self._limits.enable_early_termination
         )
-        self._limits.exit_score = exit_score if exit_score is not None else self._limits.exit_score
+        self._limits.exit_score = (
+            exit_score if exit_score is not None else self._limits.exit_score
+        )
         self._limits.max_concurrent_trials = (
-            max_concurrent_trials if max_concurrent_trials is not None else self._limits.max_concurrent_trials
+            max_concurrent_trials
+            if max_concurrent_trials is not None
+            else self._limits.max_concurrent_trials
         )
         self._limits.max_cores_per_trial = (
-            max_cores_per_trial if max_cores_per_trial is not None else self._limits.max_cores_per_trial
+            max_cores_per_trial
+            if max_cores_per_trial is not None
+            else self._limits.max_cores_per_trial
         )
-        self._limits.max_nodes = max_nodes if max_nodes is not None else self._limits.max_nodes
-        self._limits.max_trials = max_trials if max_trials is not None else self._limits.max_trials
-        self._limits.timeout_minutes = timeout_minutes if timeout_minutes is not None else self._limits.timeout_minutes
+        self._limits.max_nodes = (
+            max_nodes if max_nodes is not None else self._limits.max_nodes
+        )
+        self._limits.max_trials = (
+            max_trials if max_trials is not None else self._limits.max_trials
+        )
+        self._limits.timeout_minutes = (
+            timeout_minutes
+            if timeout_minutes is not None
+            else self._limits.timeout_minutes
+        )
         self._limits.trial_timeout_minutes = (
-            trial_timeout_minutes if trial_timeout_minutes is not None else self._limits.trial_timeout_minutes
+            trial_timeout_minutes
+            if trial_timeout_minutes is not None
+            else self._limits.trial_timeout_minutes
         )
 
     def set_training(
@@ -416,7 +438,9 @@ class AutoMLTabular(AutoMLVertical, ABC):
             else self._training.enable_onnx_compatible_models
         )
         self._training.enable_dnn_training = (
-            enable_dnn_training if enable_dnn_training is not None else self._training.enable_dnn_training
+            enable_dnn_training
+            if enable_dnn_training is not None
+            else self._training.enable_dnn_training
         )
         self._training.enable_model_explainability = (
             enable_model_explainability
@@ -424,13 +448,19 @@ class AutoMLTabular(AutoMLVertical, ABC):
             else self._training.enable_model_explainability
         )
         self._training.enable_stack_ensemble = (
-            enable_stack_ensemble if enable_stack_ensemble is not None else self._training.enable_stack_ensemble
+            enable_stack_ensemble
+            if enable_stack_ensemble is not None
+            else self._training.enable_stack_ensemble
         )
         self._training.enable_vote_ensemble = (
-            enable_vote_ensemble if enable_vote_ensemble is not None else self._training.enable_vote_ensemble
+            enable_vote_ensemble
+            if enable_vote_ensemble is not None
+            else self._training.enable_vote_ensemble
         )
         self._training.stack_ensemble_settings = (
-            stack_ensemble_settings if stack_ensemble_settings is not None else self._training.stack_ensemble_settings
+            stack_ensemble_settings
+            if stack_ensemble_settings is not None
+            else self._training.stack_ensemble_settings
         )
         self._training.ensemble_model_download_timeout = (
             ensemble_model_download_timeout
@@ -440,7 +470,9 @@ class AutoMLTabular(AutoMLVertical, ABC):
 
         self._training.allowed_training_algorithms = allowed_training_algorithms
         self._training.blocked_training_algorithms = blocked_training_algorithms
-        self._training.training_mode = training_mode if training_mode is not None else self._training.training_mode
+        self._training.training_mode = (
+            training_mode if training_mode is not None else self._training.training_mode
+        )
 
     def set_featurization(
         self,
@@ -474,16 +506,24 @@ class AutoMLTabular(AutoMLVertical, ABC):
         """
         self._featurization = self._featurization or TabularFeaturizationSettings()
         self._featurization.blocked_transformers = (
-            blocked_transformers if blocked_transformers is not None else self._featurization.blocked_transformers
+            blocked_transformers
+            if blocked_transformers is not None
+            else self._featurization.blocked_transformers
         )
         self._featurization.column_name_and_types = (
-            column_name_and_types if column_name_and_types is not None else self._featurization.column_name_and_types
+            column_name_and_types
+            if column_name_and_types is not None
+            else self._featurization.column_name_and_types
         )
         self._featurization.dataset_language = (
-            dataset_language if dataset_language is not None else self._featurization.dataset_language
+            dataset_language
+            if dataset_language is not None
+            else self._featurization.dataset_language
         )
         self._featurization.transformer_params = (
-            transformer_params if transformer_params is not None else self._featurization.transformer_params
+            transformer_params
+            if transformer_params is not None
+            else self._featurization.transformer_params
         )
         self._featurization.mode = mode or self._featurization.mode
         self._featurization.enable_dnn_featurization = (
@@ -526,19 +566,41 @@ class AutoMLTabular(AutoMLVertical, ABC):
         :keyword test_data_size: Test data size, defaults to None
         :paramtype test_data_size: typing.Optional[float]
         """
-        self.target_column_name = target_column_name if target_column_name is not None else self.target_column_name
-        self.weight_column_name = weight_column_name if weight_column_name is not None else self.weight_column_name
-        self.training_data = training_data if training_data is not None else self.training_data
-        self.validation_data = validation_data if validation_data is not None else self.validation_data
+        self.target_column_name = (
+            target_column_name
+            if target_column_name is not None
+            else self.target_column_name
+        )
+        self.weight_column_name = (
+            weight_column_name
+            if weight_column_name is not None
+            else self.weight_column_name
+        )
+        self.training_data = (
+            training_data if training_data is not None else self.training_data
+        )
+        self.validation_data = (
+            validation_data if validation_data is not None else self.validation_data
+        )
         self.validation_data_size = (
-            validation_data_size if validation_data_size is not None else self.validation_data_size
+            validation_data_size
+            if validation_data_size is not None
+            else self.validation_data_size
         )
         self.cv_split_column_names = (
-            cv_split_column_names if cv_split_column_names is not None else self.cv_split_column_names
+            cv_split_column_names
+            if cv_split_column_names is not None
+            else self.cv_split_column_names
         )
-        self.n_cross_validations = n_cross_validations if n_cross_validations is not None else self.n_cross_validations
+        self.n_cross_validations = (
+            n_cross_validations
+            if n_cross_validations is not None
+            else self.n_cross_validations
+        )
         self.test_data = test_data if test_data is not None else self.test_data
-        self.test_data_size = test_data_size if test_data_size is not None else self.test_data_size
+        self.test_data_size = (
+            test_data_size if test_data_size is not None else self.test_data_size
+        )
 
     def _validation_data_to_rest(self, rest_obj):
         """Validation data serialization.
@@ -550,7 +612,9 @@ class AutoMLTabular(AutoMLVertical, ABC):
             n_cross_val = rest_obj.n_cross_validations
             # Convert n_cross_validations int value to CustomNCrossValidations
             if isinstance(n_cross_val, int) and n_cross_val > 1:
-                rest_obj.n_cross_validations = CustomNCrossValidations(value=n_cross_val)
+                rest_obj.n_cross_validations = CustomNCrossValidations(
+                    value=n_cross_val
+                )
             # Convert n_cross_validations str value to AutoNCrossValidations
             elif isinstance(n_cross_val, str):
                 rest_obj.n_cross_validations = AutoNCrossValidations()

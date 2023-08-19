@@ -17,13 +17,18 @@ from azure.ai.ml.entities._job.distribution import (
     RayDistribution,
     TensorFlowDistribution,
 )
-from azure.ai.ml.entities._job.job_resource_configuration import JobResourceConfiguration
+from azure.ai.ml.entities._job.job_resource_configuration import (
+    JobResourceConfiguration,
+)
 from azure.ai.ml.entities._job.parameterized_command import ParameterizedCommand
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 
 from ..._restclient.v2022_10_01.models import ComponentVersion
 from ..._schema import PathAwareSchema
-from ..._utils.utils import get_all_data_binding_expressions, parse_args_description_from_docstring
+from ..._utils.utils import (
+    get_all_data_binding_expressions,
+    parse_args_description_from_docstring,
+)
 from .._util import convert_ordered_dict_to_dict, validate_attribute_type
 from .._validation import MutableValidationResult
 from ._additional_includes import AdditionalIncludesMixin
@@ -105,19 +110,28 @@ class CommandComponent(Component, ParameterizedCommand, AdditionalIncludesMixin)
         code: Optional[str] = None,
         environment: Optional[Union[str, Environment]] = None,
         distribution: Optional[
-            Union[PyTorchDistribution, MpiDistribution, TensorFlowDistribution, RayDistribution]
+            Union[
+                PyTorchDistribution,
+                MpiDistribution,
+                TensorFlowDistribution,
+                RayDistribution,
+            ]
         ] = None,
         resources: Optional[JobResourceConfiguration] = None,
         inputs: Optional[Dict] = None,
         outputs: Optional[Dict] = None,
-        instance_count: Optional[int] = None,  # promoted property from resources.instance_count
+        instance_count: Optional[
+            int
+        ] = None,  # promoted property from resources.instance_count
         is_deterministic: bool = True,
         additional_includes: Optional[List] = None,
         properties: Optional[Dict] = None,
         **kwargs,
     ) -> None:
         # validate init params are valid type
-        validate_attribute_type(attrs_to_check=locals(), attr_type_map=self._attr_type_map())
+        validate_attribute_type(
+            attrs_to_check=locals(), attr_type_map=self._attr_type_map()
+        )
 
         kwargs[COMPONENT_TYPE] = NodeType.COMMAND
 
@@ -205,7 +219,9 @@ class CommandComponent(Component, ParameterizedCommand, AdditionalIncludesMixin)
         }
 
     def _to_dict(self) -> Dict:
-        return convert_ordered_dict_to_dict({**self._other_parameter, **super(CommandComponent, self)._to_dict()})
+        return convert_ordered_dict_to_dict(
+            {**self._other_parameter, **super(CommandComponent, self)._to_dict()}
+        )
 
     @classmethod
     def _from_rest_object_to_init_params(cls, obj: ComponentVersion) -> Dict:
@@ -213,7 +229,9 @@ class CommandComponent(Component, ParameterizedCommand, AdditionalIncludesMixin)
         distribution = obj.properties.component_spec.pop("distribution", None)
         init_kwargs = super()._from_rest_object_to_init_params(obj)
         if distribution:
-            init_kwargs["distribution"] = DistributionConfiguration._from_rest_object(distribution)
+            init_kwargs["distribution"] = DistributionConfiguration._from_rest_object(
+                distribution
+            )
         return init_kwargs
 
     def _get_environment_id(self) -> Union[str, None]:
@@ -230,7 +248,9 @@ class CommandComponent(Component, ParameterizedCommand, AdditionalIncludesMixin)
 
     def _customized_validate(self):
         validation_result = super(CommandComponent, self)._customized_validate()
-        self._append_diagnostics_and_check_if_origin_code_reliable_for_local_path_validation(validation_result)
+        self._append_diagnostics_and_check_if_origin_code_reliable_for_local_path_validation(
+            validation_result
+        )
         validation_result.merge_with(self._validate_command())
         validation_result.merge_with(self._validate_early_available_output())
         return validation_result
@@ -240,14 +260,18 @@ class CommandComponent(Component, ParameterizedCommand, AdditionalIncludesMixin)
         # command
         if self.command:
             invalid_expressions = []
-            for data_binding_expression in get_all_data_binding_expressions(self.command, is_singular=False):
+            for data_binding_expression in get_all_data_binding_expressions(
+                self.command, is_singular=False
+            ):
                 if not self._is_valid_data_binding_expression(data_binding_expression):
                     invalid_expressions.append(data_binding_expression)
 
             if invalid_expressions:
                 validation_result.append_error(
                     yaml_path="command",
-                    message="Invalid data binding expression: {}".format(", ".join(invalid_expressions)),
+                    message="Invalid data binding expression: {}".format(
+                        ", ".join(invalid_expressions)
+                    ),
                 )
         return validation_result
 

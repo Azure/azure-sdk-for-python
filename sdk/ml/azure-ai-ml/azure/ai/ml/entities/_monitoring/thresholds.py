@@ -6,7 +6,11 @@ from typing import Any, List
 
 from typing_extensions import Literal
 
-from azure.ai.ml.constants._monitoring import MonitorMetricName, MonitorFeatureType, MonitorModelType
+from azure.ai.ml.constants._monitoring import (
+    MonitorMetricName,
+    MonitorFeatureType,
+    MonitorModelType,
+)
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     MonitoringThreshold,
@@ -61,7 +65,9 @@ class DataDriftMetricThreshold(MetricThreshold):
     def __init__(
         self,
         *,
-        applicable_feature_type: Literal[MonitorFeatureType.CATEGORICAL, MonitorFeatureType.NUMERICAL],
+        applicable_feature_type: Literal[
+            MonitorFeatureType.CATEGORICAL, MonitorFeatureType.NUMERICAL
+        ],
         metric_name: Literal[
             MonitorMetricName.JENSEN_SHANNON_DISTANCE,
             MonitorMetricName.NORMALIZED_WASSERSTEIN_DISTANCE,
@@ -77,7 +83,11 @@ class DataDriftMetricThreshold(MetricThreshold):
 
     def _to_rest_object(self) -> DataDriftMetricThresholdBase:
         metric = snake_to_camel(self.metric_name)
-        threshold = MonitoringThreshold(value=self.threshold) if self.threshold is not None else None
+        threshold = (
+            MonitoringThreshold(value=self.threshold)
+            if self.threshold is not None
+            else None
+        )
         return (
             NumericalDataDriftMetricThreshold(
                 metric=metric,
@@ -91,7 +101,9 @@ class DataDriftMetricThreshold(MetricThreshold):
         )
 
     @classmethod
-    def _from_rest_object(cls, obj: DataDriftMetricThresholdBase) -> "DataDriftMetricThreshold":
+    def _from_rest_object(
+        cls, obj: DataDriftMetricThresholdBase
+    ) -> "DataDriftMetricThreshold":
         return cls(
             applicable_feature_type=obj.data_type.lower(),
             metric_name=camel_to_snake(obj.metric),
@@ -146,7 +158,9 @@ class PredictionDriftMetricThreshold(MetricThreshold):
     def __init__(
         self,
         *,
-        applicable_feature_type: Literal[MonitorFeatureType.CATEGORICAL, MonitorFeatureType.NUMERICAL],
+        applicable_feature_type: Literal[
+            MonitorFeatureType.CATEGORICAL, MonitorFeatureType.NUMERICAL
+        ],
         metric_name: Literal[
             MonitorMetricName.JENSEN_SHANNON_DISTANCE,
             MonitorMetricName.NORMALIZED_WASSERSTEIN_DISTANCE,
@@ -162,7 +176,11 @@ class PredictionDriftMetricThreshold(MetricThreshold):
 
     def _to_rest_object(self) -> PredictionDriftMetricThresholdBase:
         metric = snake_to_camel(self.metric_name)
-        threshold = MonitoringThreshold(value=self.threshold) if self.threshold is not None else None
+        threshold = (
+            MonitoringThreshold(value=self.threshold)
+            if self.threshold is not None
+            else None
+        )
         return (
             NumericalPredictionDriftMetricThreshold(
                 metric=metric,
@@ -176,7 +194,9 @@ class PredictionDriftMetricThreshold(MetricThreshold):
         )
 
     @classmethod
-    def _from_rest_object(cls, obj: PredictionDriftMetricThresholdBase) -> "PredictionDriftMetricThreshold":
+    def _from_rest_object(
+        cls, obj: PredictionDriftMetricThresholdBase
+    ) -> "PredictionDriftMetricThreshold":
         return cls(
             applicable_feature_type=obj.data_type.lower(),
             metric_name=camel_to_snake(obj.metric),
@@ -230,7 +250,9 @@ class DataQualityMetricThreshold(MetricThreshold):
     def __init__(
         self,
         *,
-        applicable_feature_type: Literal[MonitorFeatureType.CATEGORICAL, MonitorFeatureType.NUMERICAL],
+        applicable_feature_type: Literal[
+            MonitorFeatureType.CATEGORICAL, MonitorFeatureType.NUMERICAL
+        ],
         metric_name: Literal[
             MonitorMetricName.NULL_VALUE_RATE,
             MonitorMetricName.DATA_TYPE_ERROR_RATE,
@@ -244,7 +266,11 @@ class DataQualityMetricThreshold(MetricThreshold):
 
     def _to_rest_object(self) -> DataQualityMetricThresholdBase:
         metric = snake_to_camel(self.metric_name)
-        threshold = MonitoringThreshold(value=self.threshold) if self.threshold is not None else None
+        threshold = (
+            MonitoringThreshold(value=self.threshold)
+            if self.threshold is not None
+            else None
+        )
         return (
             NumericalDataQualityMetricThreshold(
                 metric=metric,
@@ -258,7 +284,9 @@ class DataQualityMetricThreshold(MetricThreshold):
         )
 
     @classmethod
-    def _from_rest_object(cls, obj: DataQualityMetricThresholdBase) -> "DataQualityMetricThreshold":
+    def _from_rest_object(
+        cls, obj: DataQualityMetricThresholdBase
+    ) -> "DataQualityMetricThreshold":
         return cls(
             applicable_feature_type=obj.data_type.lower(),
             metric_name=camel_to_snake(obj.metric),
@@ -333,11 +361,15 @@ class FeatureAttributionDriftMetricThreshold(MetricThreshold):
     def _to_rest_object(self) -> FeatureAttributionMetricThreshold:
         return FeatureAttributionMetricThreshold(
             metric=snake_to_camel(self.metric_name),
-            threshold=MonitoringThreshold(value=self.threshold) if self.threshold else None,
+            threshold=MonitoringThreshold(value=self.threshold)
+            if self.threshold
+            else None,
         )
 
     @classmethod
-    def _from_rest_object(cls, obj: FeatureAttributionMetricThreshold) -> "FeatureAttributionDriftMetricThreshold":
+    def _from_rest_object(
+        cls, obj: FeatureAttributionMetricThreshold
+    ) -> "FeatureAttributionDriftMetricThreshold":
         return cls(threshold=obj.threshold.value if obj.threshold else None)
 
 
@@ -370,7 +402,11 @@ class ModelPerformanceMetricThreshold(MetricThreshold):
             metric = RegressionModelPerformanceMetric.ROOT_MEAN_SQUARED_ERROR
         else:
             metric = snake_to_camel(self.metric_name)
-        threshold = MonitoringThreshold(value=self.threshold) if self.threshold is not None else None
+        threshold = (
+            MonitoringThreshold(value=self.threshold)
+            if self.threshold is not None
+            else None
+        )
         return (
             RegressionModelPerformanceMetricThreshold(
                 metric=metric,
@@ -384,7 +420,9 @@ class ModelPerformanceMetricThreshold(MetricThreshold):
         )
 
     @classmethod
-    def _from_rest_object(cls, obj: ModelPerformanceMetricThresholdBase) -> "ModelPerformanceMetricThreshold":
+    def _from_rest_object(
+        cls, obj: ModelPerformanceMetricThresholdBase
+    ) -> "ModelPerformanceMetricThreshold":
         if obj.metric == RegressionModelPerformanceMetric.MEAN_ABSOLUTE_ERROR:
             metric_name = MonitorMetricName.MAE
         elif obj.metric == RegressionModelPerformanceMetric.MEAN_SQUARED_ERROR:
@@ -393,7 +431,10 @@ class ModelPerformanceMetricThreshold(MetricThreshold):
             metric_name = MonitorMetricName.RMSE
         else:
             metric_name = snake_to_camel(obj.metric)
-        return cls(metric_name=metric_name, threshold=obj.threshold.value if obj.threshold else None)
+        return cls(
+            metric_name=metric_name,
+            threshold=obj.threshold.value if obj.threshold else None,
+        )
 
 
 @experimental
@@ -419,9 +460,16 @@ class CustomMonitoringMetricThreshold(MetricThreshold):
     def _to_rest_object(self) -> CustomMetricThreshold:
         return CustomMetricThreshold(
             metric=self.metric_name,
-            threshold=MonitoringThreshold(value=self.threshold) if self.threshold is not None else None,
+            threshold=MonitoringThreshold(value=self.threshold)
+            if self.threshold is not None
+            else None,
         )
 
     @classmethod
-    def _from_rest_object(cls, obj: CustomMetricThreshold) -> "CustomMonitoringMetricThreshold":
-        return cls(metric_name=obj.metric, threshold=obj.threshold.value if obj.threshold else None)
+    def _from_rest_object(
+        cls, obj: CustomMetricThreshold
+    ) -> "CustomMonitoringMetricThreshold":
+        return cls(
+            metric_name=obj.metric,
+            threshold=obj.threshold.value if obj.threshold else None,
+        )

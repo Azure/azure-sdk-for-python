@@ -338,7 +338,9 @@ try:
     from ._models_py3 import PackageResponse
     from ._models_py3 import PaginatedComputeResourcesList
     from ._models_py3 import PartialBatchDeployment
-    from ._models_py3 import PartialBatchDeploymentPartialMinimalTrackedResourceWithProperties
+    from ._models_py3 import (
+        PartialBatchDeploymentPartialMinimalTrackedResourceWithProperties,
+    )
     from ._models_py3 import PartialManagedServiceIdentity
     from ._models_py3 import PartialMinimalTrackedResource
     from ._models_py3 import PartialMinimalTrackedResourceWithIdentity
@@ -475,7 +477,9 @@ try:
     from ._models_py3 import WorkspaceConnectionPersonalAccessToken
     from ._models_py3 import WorkspaceConnectionPropertiesV2
     from ._models_py3 import WorkspaceConnectionPropertiesV2BasicResource
-    from ._models_py3 import WorkspaceConnectionPropertiesV2BasicResourceArmPaginatedResult
+    from ._models_py3 import (
+        WorkspaceConnectionPropertiesV2BasicResourceArmPaginatedResult,
+    )
     from ._models_py3 import WorkspaceConnectionServicePrincipal
     from ._models_py3 import WorkspaceConnectionSharedAccessSignature
     from ._models_py3 import WorkspaceConnectionUsernamePassword

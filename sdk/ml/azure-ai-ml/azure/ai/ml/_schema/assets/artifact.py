@@ -16,7 +16,9 @@ module_logger = logging.getLogger(__name__)
 
 
 class ArtifactSchema(AssetSchema):
-    datastore = fields.Str(metadata={"description": "Name of the datastore to upload to."}, required=False)
+    datastore = fields.Str(
+        metadata={"description": "Name of the datastore to upload to."}, required=False
+    )
 
     @post_load
     def make(self, data, **kwargs):

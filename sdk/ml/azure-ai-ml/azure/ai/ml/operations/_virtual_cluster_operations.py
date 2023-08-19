@@ -25,7 +25,11 @@ from azure.ai.ml._utils.azure_resource_utils import (
     get_virtual_cluster_by_name,
     get_virtual_clusters_from_subscriptions,
 )
-from azure.ai.ml.constants._common import AZUREML_RESOURCE_PROVIDER, LEVEL_ONE_NAMED_RESOURCE_ID_FORMAT, Scope
+from azure.ai.ml.constants._common import (
+    AZUREML_RESOURCE_PROVIDER,
+    LEVEL_ONE_NAMED_RESOURCE_ID_FORMAT,
+    Scope,
+)
 from azure.ai.ml.entities import Job
 from azure.ai.ml.exceptions import UserErrorException, ValidationException
 
@@ -60,7 +64,9 @@ class VirtualClusterOperations:
         TODO: Remove this property and the rest client when list job by virtual cluster is added to virtual cluster rp
         """
         self._index_service = IndexServiceAPIs(
-            credential=self._credentials, base_url="https://westus2.api.azureml.ms", **self._service_client_kwargs
+            credential=self._credentials,
+            base_url="https://westus2.api.azureml.ms",
+            **self._service_client_kwargs,
         )
 
     @distributed_trace
@@ -80,11 +86,15 @@ class VirtualClusterOperations:
         elif scope.lower() == Scope.SUBSCRIPTION:
             subscription_list = [self._subscription_id]
         else:
-            message = f"Invalid scope: {scope}. Valid values are 'subscription' or None."
+            message = (
+                f"Invalid scope: {scope}. Valid values are 'subscription' or None."
+            )
             raise UserErrorException(message=message, no_personal_data_message=message)
 
         try:
-            return get_virtual_clusters_from_subscriptions(self._credentials, subscription_list=subscription_list)
+            return get_virtual_clusters_from_subscriptions(
+                self._credentials, subscription_list=subscription_list
+            )
         except ImportError as e:
             raise UserErrorException(
                 message="Met ImportError when trying to list virtual clusters. "
@@ -106,28 +116,45 @@ class VirtualClusterOperations:
 
         def make_id(entity_type: str) -> str:
             return LEVEL_ONE_NAMED_RESOURCE_ID_FORMAT.format(
-                self._subscription_id, self._resource_group_name, AZUREML_RESOURCE_PROVIDER, entity_type, name
+                self._subscription_id,
+                self._resource_group_name,
+                AZUREML_RESOURCE_PROVIDER,
+                entity_type,
+                name,
             )
 
         # List of virtual cluster ids to match
         # Needs to include several capitalizations for historical reasons. Will be fixed in a service side change
-        vc_ids = [make_id("virtualClusters"), make_id("virtualclusters"), make_id("virtualClusters").lower()]
+        vc_ids = [
+            make_id("virtualClusters"),
+            make_id("virtualclusters"),
+            make_id("virtualClusters").lower(),
+        ]
 
         filters = [
             IndexEntitiesRequestFilter(field="type", operator="eq", values=["runs"]),
-            IndexEntitiesRequestFilter(field="annotations/archived", operator="eq", values=["false"]),
-            IndexEntitiesRequestFilter(field="properties/userProperties/azureml.VC", operator="eq", values=vc_ids),
+            IndexEntitiesRequestFilter(
+                field="annotations/archived", operator="eq", values=["false"]
+            ),
+            IndexEntitiesRequestFilter(
+                field="properties/userProperties/azureml.VC",
+                operator="eq",
+                values=vc_ids,
+            ),
         ]
         order = [
             IndexEntitiesRequestOrder(
-                field="properties/creationContext/createdTime", direction=IndexEntitiesRequestOrderDirection.DESC
+                field="properties/creationContext/createdTime",
+                direction=IndexEntitiesRequestOrderDirection.DESC,
             )
         ]
         index_entities_request = IndexEntitiesRequest(filters=filters, order=order)
 
         # cspell:ignore entites
         return self._index_service.index_entities.get_entites_cross_region(
-            body=CrossRegionIndexEntitiesRequest(index_entities_request=index_entities_request),
+            body=CrossRegionIndexEntitiesRequest(
+                index_entities_request=index_entities_request
+            ),
             cls=lambda objs: [index_entity_response_to_job(obj) for obj in objs],
         )
 
@@ -150,7 +177,10 @@ class VirtualClusterOperations:
             sub_id = arm_id.subscription_id
 
             return get_generic_resource_by_id(
-                arm_id=name, credential=self._credentials, subscription_id=sub_id, api_version="2021-03-01-preview"
+                arm_id=name,
+                credential=self._credentials,
+                subscription_id=sub_id,
+                api_version="2021-03-01-preview",
             )
         except ValidationException:
             return get_virtual_cluster_by_name(

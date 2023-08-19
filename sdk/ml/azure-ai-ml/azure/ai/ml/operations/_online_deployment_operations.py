@@ -14,7 +14,9 @@ from marshmallow.exceptions import ValidationError as SchemaValidationError
 from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml._local_endpoints import LocalEndpointMode
 from azure.ai.ml._restclient.v2022_02_01_preview.models import DeploymentLogsRequest
-from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient042023Preview
+from azure.ai.ml._restclient.v2023_04_01_preview import (
+    AzureMachineLearningWorkspaces as ServiceClient042023Preview,
+)
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationsContainer,
@@ -24,11 +26,22 @@ from azure.ai.ml._scope_dependent_operations import (
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._arm_id_utils import AMLVersionedArmId
 from azure.ai.ml._utils._azureml_polling import AzureMLPolling
-from azure.ai.ml._utils._endpoint_utils import upload_dependencies, validate_scoring_script
+from azure.ai.ml._utils._endpoint_utils import (
+    upload_dependencies,
+    validate_scoring_script,
+)
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils._package_utils import package_deployment
-from azure.ai.ml.constants._common import ARM_ID_PREFIX, AzureMLResourceType, LROConfigurations
-from azure.ai.ml.constants._deployment import DEFAULT_MDC_PATH, EndpointDeploymentLogContainerType, SmallSKUs
+from azure.ai.ml.constants._common import (
+    ARM_ID_PREFIX,
+    AzureMLResourceType,
+    LROConfigurations,
+)
+from azure.ai.ml.constants._deployment import (
+    DEFAULT_MDC_PATH,
+    EndpointDeploymentLogContainerType,
+    SmallSKUs,
+)
 from azure.ai.ml.entities import Data, OnlineDeployment
 from azure.ai.ml.exceptions import (
     ErrorCategory,
@@ -67,17 +80,23 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
         credentials: Optional[TokenCredential] = None,
         **kwargs: Dict,
     ):
-        super(OnlineDeploymentOperations, self).__init__(operation_scope, operation_config)
+        super(OnlineDeploymentOperations, self).__init__(
+            operation_scope, operation_config
+        )
         ops_logger.update_info(kwargs)
         self._local_deployment_helper = local_deployment_helper
         self._online_deployment = service_client_04_2023_preview.online_deployments
-        self._online_endpoint_operations = service_client_04_2023_preview.online_endpoints
+        self._online_endpoint_operations = (
+            service_client_04_2023_preview.online_endpoints
+        )
         self._all_operations = all_operations
         self._credentials = credentials
         self._init_kwargs = kwargs
 
     @distributed_trace
-    @monitor_with_activity(logger, "OnlineDeployment.BeginCreateOrUpdate", ActivityType.PUBLICAPI)
+    @monitor_with_activity(
+        logger, "OnlineDeployment.BeginCreateOrUpdate", ActivityType.PUBLICAPI
+    )
     def begin_create_or_update(
         self,
         deployment: OnlineDeployment,
@@ -144,7 +163,11 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
                     local_endpoint_mode=self._get_local_endpoint_mode(vscode_debug),
                     local_enable_gpu=local_enable_gpu,
                 )
-            if deployment and deployment.instance_type and deployment.instance_type.lower() in SmallSKUs:
+            if (
+                deployment
+                and deployment.instance_type
+                and deployment.instance_type.lower() in SmallSKUs
+            ):
                 module_logger.warning(
                     "Instance type %s may be too small for compute resources. "  # pylint: disable=line-too-long
                     "Minimum recommended compute SKU is Standard_DS3_v2 for general purpose endpoints. Learn more about SKUs here: "  # pylint: disable=line-too-long
@@ -156,7 +179,9 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
                 and deployment
                 and deployment.code_configuration
                 and not deployment.code_configuration.code.startswith(ARM_ID_PREFIX)
-                and not re.match(AMLVersionedArmId.REGEX_PATTERN, deployment.code_configuration.code)
+                and not re.match(
+                    AMLVersionedArmId.REGEX_PATTERN, deployment.code_configuration.code
+                )
             ):
                 validate_scoring_script(deployment)
 
@@ -185,7 +210,9 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
             try:
                 location = self._get_workspace_location()
                 if kwargs.pop("package_model", False):
-                    deployment = package_deployment(deployment, self._all_operations.all_operations)
+                    deployment = package_deployment(
+                        deployment, self._all_operations.all_operations
+                    )
                     module_logger.info("\nStarting deployment")
 
                 deployment_rest = deployment._to_rest_object(location=location)
@@ -203,7 +230,9 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
                     ),
                     polling_interval=LROConfigurations.POLL_INTERVAL,
                     **self._init_kwargs,
-                    cls=lambda response, deserialized, headers: OnlineDeployment._from_rest_object(deserialized),
+                    cls=lambda response, deserialized, headers: OnlineDeployment._from_rest_object(
+                        deserialized
+                    ),
                 )
                 return poller
             except Exception as ex:
@@ -216,7 +245,9 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
 
     @distributed_trace
     @monitor_with_activity(logger, "OnlineDeployment.Get", ActivityType.PUBLICAPI)
-    def get(self, name: str, endpoint_name: str, *, local: Optional[bool] = False) -> OnlineDeployment:
+    def get(
+        self, name: str, endpoint_name: str, *, local: Optional[bool] = False
+    ) -> OnlineDeployment:
         """Get a deployment resource.
 
         :param name: The name of the deployment
@@ -230,7 +261,9 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
         :rtype: ~azure.ai.ml.entities.OnlineDeployment
         """
         if local:
-            deployment = self._local_deployment_helper.get(endpoint_name=endpoint_name, deployment_name=name)
+            deployment = self._local_deployment_helper.get(
+                endpoint_name=endpoint_name, deployment_name=name
+            )
         else:
             deployment = OnlineDeployment._from_rest_object(
                 self._online_deployment.get(
@@ -247,7 +280,9 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
 
     @distributed_trace
     @monitor_with_activity(logger, "OnlineDeployment.Delete", ActivityType.PUBLICAPI)
-    def begin_delete(self, name: str, endpoint_name: str, *, local: Optional[bool] = False) -> LROPoller[None]:
+    def begin_delete(
+        self, name: str, endpoint_name: str, *, local: Optional[bool] = False
+    ) -> LROPoller[None]:
         """Delete a deployment.
 
         :param name: The name of the deployment
@@ -261,7 +296,9 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
         :rtype: ~azure.core.polling.LROPoller[None]
         """
         if local:
-            return self._local_deployment_helper.delete(name=endpoint_name, deployment_name=name)
+            return self._local_deployment_helper.delete(
+                name=endpoint_name, deployment_name=name
+            )
         return self._online_deployment.begin_delete(
             endpoint_name=endpoint_name,
             deployment_name=name,
@@ -302,7 +339,9 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
                 endpoint_name=endpoint_name, deployment_name=name, lines=lines
             )
         if container_type:
-            container_type = self._validate_deployment_log_container_type(container_type)
+            container_type = self._validate_deployment_log_container_type(
+                container_type
+            )
         log_request = DeploymentLogsRequest(container_type=container_type, tail=lines)
         return self._online_deployment.get_logs(
             resource_group_name=self._resource_group_name,
@@ -315,7 +354,9 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
 
     @distributed_trace
     @monitor_with_activity(logger, "OnlineDeployment.List", ActivityType.PUBLICAPI)
-    def list(self, endpoint_name: str, *, local: bool = False) -> ItemPaged[OnlineDeployment]:
+    def list(
+        self, endpoint_name: str, *, local: bool = False
+    ) -> ItemPaged[OnlineDeployment]:
         """List a deployment resource.
 
         :param endpoint_name: The name of the endpoint
@@ -368,10 +409,18 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
         :return: The workspace location
         :rtype: str
         """
-        return self._all_operations.all_operations[AzureMLResourceType.WORKSPACE].get(self._workspace_name).location
+        return (
+            self._all_operations.all_operations[AzureMLResourceType.WORKSPACE]
+            .get(self._workspace_name)
+            .location
+        )
 
     def _get_local_endpoint_mode(self, vscode_debug):
-        return LocalEndpointMode.VSCodeDevContainer if vscode_debug else LocalEndpointMode.DetachedContainer
+        return (
+            LocalEndpointMode.VSCodeDevContainer
+            if vscode_debug
+            else LocalEndpointMode.DetachedContainer
+        )
 
     def _register_collection_data_assets(self, deployment: OnlineDeployment) -> None:
         for name, value in deployment.data_collector.collections.items():
@@ -395,10 +444,14 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
             )
 
             try:
-                result = self._all_operations._all_operations[AzureMLResourceType.DATA].create_or_update(data_object)
+                result = self._all_operations._all_operations[
+                    AzureMLResourceType.DATA
+                ].create_or_update(data_object)
             except Exception as e:
                 if "already exists" in str(e):
-                    result = self._all_operations._all_operations[AzureMLResourceType.DATA].get(data_name, data_version)
+                    result = self._all_operations._all_operations[
+                        AzureMLResourceType.DATA
+                    ].get(data_name, data_version)
                 else:
                     raise e
             deployment.data_collector.collections[name].data = (

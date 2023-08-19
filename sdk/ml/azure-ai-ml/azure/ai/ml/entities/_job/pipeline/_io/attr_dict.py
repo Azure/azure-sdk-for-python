@@ -8,7 +8,11 @@ from typing import Dict, Optional, Union
 from azure.ai.ml.entities._assets import Data
 from azure.ai.ml.entities._inputs_outputs import GroupInput, Input, Output
 from azure.ai.ml.entities._job.pipeline._attr_dict import K, V
-from azure.ai.ml.entities._job.pipeline._io.base import NodeInput, NodeOutput, PipelineInput
+from azure.ai.ml.entities._job.pipeline._io.base import (
+    NodeInput,
+    NodeOutput,
+    PipelineInput,
+)
 from azure.ai.ml.exceptions import (
     ErrorCategory,
     ErrorTarget,
@@ -28,7 +32,9 @@ class InputsAttrDict(dict):
         msg = "Pipeline/component input should be a \
         azure.ai.ml.entities._job.pipeline._io.NodeInput with owner, got {}."
         for val in inputs.values():
-            if isinstance(val, NodeInput) and val._owner is not None:  # pylint: disable=protected-access
+            if (
+                isinstance(val, NodeInput) and val._owner is not None
+            ):  # pylint: disable=protected-access
                 continue
             if isinstance(val, _GroupAttrDict):
                 continue
@@ -46,10 +52,16 @@ class InputsAttrDict(dict):
     ):
         # Extract enum value.
         value = value.value if isinstance(value, Enum) else value
-        original_input = self.__getattr__(key)  # Note that an exception will be raised if the keyword is invalid.
-        if isinstance(original_input, _GroupAttrDict) or isinstance(value, _GroupAttrDict):
+        original_input = self.__getattr__(
+            key
+        )  # Note that an exception will be raised if the keyword is invalid.
+        if isinstance(original_input, _GroupAttrDict) or isinstance(
+            value, _GroupAttrDict
+        ):
             # Set the value directly if is parameter group.
-            self._set_group_with_type_check(key, GroupInput.custom_class_value_to_attr_dict(value))
+            self._set_group_with_type_check(
+                key, GroupInput.custom_class_value_to_attr_dict(value)
+            )
             return
         original_input._data = original_input._build_data(value)
 
@@ -75,7 +87,9 @@ class _GroupAttrDict(InputsAttrDict):
     def _validate_inputs(cls, inputs):
         msg = "Pipeline/component input should be a azure.ai.ml.entities._job.pipeline._io.NodeInput, got {}."
         for val in inputs.values():
-            if isinstance(val, NodeInput) and val._owner is not None:  # pylint: disable=protected-access
+            if (
+                isinstance(val, NodeInput) and val._owner is not None
+            ):  # pylint: disable=protected-access
                 continue
             if isinstance(val, _GroupAttrDict):
                 continue
@@ -97,7 +111,9 @@ class _GroupAttrDict(InputsAttrDict):
     def __getitem__(self, item: K) -> V:
         # We raise this exception instead of KeyError
         if item not in self:
-            raise UnexpectedKeywordError(func_name="ParameterGroup", keyword=item, keywords=list(self))
+            raise UnexpectedKeywordError(
+                func_name="ParameterGroup", keyword=item, keywords=list(self)
+            )
         return super().__getitem__(item)
 
     # For Jupyter Notebook auto-completion
@@ -115,7 +131,9 @@ class _GroupAttrDict(InputsAttrDict):
             if isinstance(v, _GroupAttrDict):
                 flattened_parameters.update(v.flatten(flattened_name))
             elif isinstance(v, NodeInput):
-                flattened_parameters[flattened_name] = v._to_job_input()  # pylint: disable=protected-access
+                flattened_parameters[
+                    flattened_name
+                ] = v._to_job_input()  # pylint: disable=protected-access
             else:
                 raise ValidationException(
                     message=msg % (flattened_name, type(v)),
@@ -131,7 +149,9 @@ class _GroupAttrDict(InputsAttrDict):
                 v.insert_group_name_for_items(group_name)
             elif isinstance(v, PipelineInput):
                 # Insert group names for pipeline input
-                v._group_names = [group_name] + v._group_names  # pylint: disable=protected-access
+                v._group_names = [
+                    group_name
+                ] + v._group_names  # pylint: disable=protected-access
 
 
 class OutputsAttrDict(dict):
@@ -160,8 +180,16 @@ class OutputsAttrDict(dict):
     def __setattr__(self, key: str, value: Union[Data, Output]):
         if isinstance(value, Output):
             mode = value.mode
-            value = Output(type=value.type, path=value.path, mode=mode, name=value.name, version=value.version)
-        original_output = self.__getattr__(key)  # Note that an exception will be raised if the keyword is invalid.
+            value = Output(
+                type=value.type,
+                path=value.path,
+                mode=mode,
+                name=value.name,
+                version=value.version,
+            )
+        original_output = self.__getattr__(
+            key
+        )  # Note that an exception will be raised if the keyword is invalid.
         original_output._data = original_output._build_data(value)
 
     def __setitem__(self, key: str, value: Output):

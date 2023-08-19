@@ -5,8 +5,12 @@
 # pylint: disable=unused-argument
 
 from azure.ai.ml._schema.automl.automl_vertical import AutoMLVerticalSchema
-from azure.ai.ml._schema.automl.image_vertical.image_limit_settings import ImageLimitsSchema
-from azure.ai.ml._schema.automl.image_vertical.image_sweep_settings import ImageSweepSettingsSchema
+from azure.ai.ml._schema.automl.image_vertical.image_limit_settings import (
+    ImageLimitsSchema,
+)
+from azure.ai.ml._schema.automl.image_vertical.image_sweep_settings import (
+    ImageSweepSettingsSchema,
+)
 from azure.ai.ml._schema.core.fields import NestedField, UnionField, fields
 from azure.ai.ml._schema.job.input_output_entry import MLTableInputSchema
 

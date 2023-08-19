@@ -8,7 +8,9 @@ from os import PathLike
 from pathlib import Path
 from typing import Dict, List, Optional, Union
 
-from azure.ai.ml._restclient.v2023_06_01_preview.models import WorkspaceHubConfig as RestWorkspaceHubConfig
+from azure.ai.ml._restclient.v2023_06_01_preview.models import (
+    WorkspaceHubConfig as RestWorkspaceHubConfig,
+)
 from azure.ai.ml._schema._workspace_hub.workspace_hub import WorkspaceHubConfigSchema
 from azure.ai.ml.entities._util import load_from_dict
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
@@ -32,7 +34,9 @@ class WorkspaceHubConfig:
             workspaceHub, it will be the workspaceHub's resource group by default.
         :type default_workspace_resource_group: str
         """
-        self.additional_workspace_storage_accounts = additional_workspace_storage_accounts
+        self.additional_workspace_storage_accounts = (
+            additional_workspace_storage_accounts
+        )
         self.default_workspace_resource_group = default_workspace_resource_group
 
     def _to_rest_object(self) -> RestWorkspaceHubConfig:
@@ -50,7 +54,9 @@ class WorkspaceHubConfig:
 
     def _to_dict(self) -> Dict:
         # pylint: disable=no-member
-        return WorkspaceHubConfigSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        return WorkspaceHubConfigSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(
+            self
+        )
 
     @classmethod
     def _load(
@@ -66,5 +72,7 @@ class WorkspaceHubConfig:
             BASE_PATH_CONTEXT_KEY: Path(yaml_path).parent if yaml_path else Path("./"),
             PARAMS_OVERRIDE_KEY: params_override,
         }
-        loaded_schema = load_from_dict(WorkspaceHubConfigSchema, data, context, **kwargs)
+        loaded_schema = load_from_dict(
+            WorkspaceHubConfigSchema, data, context, **kwargs
+        )
         return WorkspaceHubConfig(**loaded_schema)

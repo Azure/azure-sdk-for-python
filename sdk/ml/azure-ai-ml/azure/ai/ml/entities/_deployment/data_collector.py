@@ -5,12 +5,16 @@
 
 from typing import Dict, Optional
 
-from azure.ai.ml._schema._deployment.online.data_collector_schema import DataCollectorSchema
+from azure.ai.ml._schema._deployment.online.data_collector_schema import (
+    DataCollectorSchema,
+)
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 from azure.ai.ml.entities._deployment.request_logging import RequestLogging
 from azure.ai.ml.entities._deployment.deployment_collection import DeploymentCollection
-from azure.ai.ml._restclient.v2023_04_01_preview.models import DataCollector as RestDataCollector
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    DataCollector as RestDataCollector,
+)
 
 
 @experimental
@@ -83,5 +87,7 @@ class DataCollector:
             for k, v in self.collections.items():
                 rest_collections[k] = v._to_rest_object()
         return RestDataCollector(
-            collections=rest_collections, rolling_rate=self.rolling_rate, request_logging=self.request_logging
+            collections=rest_collections,
+            rolling_rate=self.rolling_rate,
+            request_logging=self.request_logging,
         )

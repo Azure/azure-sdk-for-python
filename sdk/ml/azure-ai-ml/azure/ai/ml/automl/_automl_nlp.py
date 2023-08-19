@@ -8,8 +8,12 @@ from typing import Optional
 
 from azure.ai.ml.entities._builders.base_node import pipeline_node_decorator
 from azure.ai.ml.entities._inputs_outputs import Input
-from azure.ai.ml.entities._job.automl.nlp.text_classification_job import TextClassificationJob
-from azure.ai.ml.entities._job.automl.nlp.text_classification_multilabel_job import TextClassificationMultilabelJob
+from azure.ai.ml.entities._job.automl.nlp.text_classification_job import (
+    TextClassificationJob,
+)
+from azure.ai.ml.entities._job.automl.nlp.text_classification_multilabel_job import (
+    TextClassificationMultilabelJob,
+)
 from azure.ai.ml.entities._job.automl.nlp.text_ner_job import TextNerJob
 
 

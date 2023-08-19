@@ -42,7 +42,10 @@ from azure.ai.ml._utils._storage_utils import (
 from azure.ai.ml._utils.utils import is_mlflow_uri, is_url
 from azure.ai.ml.constants._common import SHORT_URI_FORMAT, STORAGE_ACCOUNT_URLS
 from azure.ai.ml.entities import Environment
-from azure.ai.ml.entities._assets._artifacts.artifact import Artifact, ArtifactStorageInfo
+from azure.ai.ml.entities._assets._artifacts.artifact import (
+    Artifact,
+    ArtifactStorageInfo,
+)
 from azure.ai.ml.entities._credentials import AccountKeyConfiguration
 from azure.ai.ml.entities._datastore._constants import WORKSPACE_BLOB_STORE
 from azure.ai.ml.exceptions import ErrorTarget, ValidationException
@@ -56,7 +59,10 @@ def _get_datastore_name(*, datastore_name: Optional[str] = WORKSPACE_BLOB_STORE)
     try:
         datastore_name = get_resource_name_from_arm_id(datastore_name)
     except (ValueError, AttributeError, ValidationException):
-        module_logger.debug("datastore_name %s is not a full arm id. Proceed with a shortened name.\n", datastore_name)
+        module_logger.debug(
+            "datastore_name %s is not a full arm id. Proceed with a shortened name.\n",
+            datastore_name,
+        )
     datastore_name = remove_aml_prefix(datastore_name)
     if is_ARM_id_for_resource(datastore_name):
         datastore_name = get_resource_name_from_arm_id(datastore_name)
@@ -69,7 +75,12 @@ def get_datastore_info(
     *,
     credential=None,
     **kwargs,
-) -> Dict[Literal["storage_type", "storage_account", "account_url", "container_name", "credential"], str]:
+) -> Dict[
+    Literal[
+        "storage_type", "storage_account", "account_url", "container_name", "credential"
+    ],
+    str,
+]:
     """Get datastore account, type, and auth information.
 
     :param operations: DatastoreOperations object
@@ -129,7 +140,16 @@ def get_datastore_info(
 
 
 def list_logs_in_datastore(
-    ds_info: Dict[Literal["storage_type", "storage_account", "account_url", "container_name", "credential"], str],
+    ds_info: Dict[
+        Literal[
+            "storage_type",
+            "storage_account",
+            "account_url",
+            "container_name",
+            "credential",
+        ],
+        str,
+    ],
     prefix: str,
     legacy_log_folder_name: str,
 ) -> Dict[str, str]:
@@ -151,7 +171,9 @@ def list_logs_in_datastore(
         DatastoreType.AZURE_BLOB,
         DatastoreType.AZURE_DATA_LAKE_GEN2,
     ]:
-        raise Exception("Only Blob and Azure DataLake Storage Gen2 datastores are supported.")
+        raise Exception(
+            "Only Blob and Azure DataLake Storage Gen2 datastores are supported."
+        )
 
     storage_client = get_storage_client(
         credential=ds_info["credential"],
@@ -186,7 +208,9 @@ def list_logs_in_datastore(
                 expiry=datetime.utcnow() + timedelta(minutes=30),
             )
 
-        log_dict[sub_name] = "{}/{}/{}?{}".format(ds_info["account_url"], ds_info["container_name"], item_name, token)
+        log_dict[sub_name] = "{}/{}/{}?{}".format(
+            ds_info["account_url"], ds_info["container_name"], item_name, token
+        )
     return log_dict
 
 
@@ -232,7 +256,9 @@ def upload_artifact(
     :rtype: ArtifactStorageInfo
     """
     if sas_uri:
-        storage_client = get_storage_client(credential=None, storage_account=None, account_url=sas_uri)
+        storage_client = get_storage_client(
+            credential=None, storage_account=None, account_url=sas_uri
+        )
     else:
         datastore_name = _get_datastore_name(datastore_name=datastore_name)
         datastore_info = get_datastore_info(datastore_operation, datastore_name)
@@ -251,11 +277,17 @@ def upload_artifact(
         name=artifact_info["name"],
         version=artifact_info["version"],
         relative_path=artifact_info["remote path"],
-        datastore_arm_id=get_datastore_arm_id(datastore_name, operation_scope) if not sas_uri else None,
+        datastore_arm_id=get_datastore_arm_id(datastore_name, operation_scope)
+        if not sas_uri
+        else None,
         container_name=(
-            storage_client.container if isinstance(storage_client, BlobStorageClient) else storage_client.file_system
+            storage_client.container
+            if isinstance(storage_client, BlobStorageClient)
+            else storage_client.file_system
         ),
-        storage_account_url=datastore_info.get("account_url") if not sas_uri else sas_uri,
+        storage_account_url=datastore_info.get("account_url")
+        if not sas_uri
+        else sas_uri,
         indicator_file=artifact_info["indicator file"],
         is_file=Path(local_path).is_file(),
     )
@@ -284,7 +316,9 @@ def download_artifact(
     :return: Path that files were written to
     :rtype: str
     """
-    starts_with = starts_with.as_posix() if isinstance(starts_with, Path) else starts_with
+    starts_with = (
+        starts_with.as_posix() if isinstance(starts_with, Path) else starts_with
+    )
     datastore_name = _get_datastore_name(datastore_name=datastore_name)
     if datastore_info is None:
         datastore_info = get_datastore_info(datastore_operation, datastore_name)
@@ -326,7 +360,9 @@ def download_artifact_from_storage_url(
     )
 
 
-def download_artifact_from_aml_uri(uri: str, destination: str, datastore_operation: DatastoreOperations) -> str:
+def download_artifact_from_aml_uri(
+    uri: str, destination: str, datastore_operation: DatastoreOperations
+) -> str:
     """Downloads artifact pointed to by URI of the form `azureml://...` to destination.
 
     :param str uri: AzureML uri of artifact to download
@@ -345,7 +381,9 @@ def download_artifact_from_aml_uri(uri: str, destination: str, datastore_operati
 
 
 def aml_datastore_path_exists(
-    uri: str, datastore_operation: DatastoreOperations, datastore_info: Optional[dict] = None
+    uri: str,
+    datastore_operation: DatastoreOperations,
+    datastore_info: Optional[dict] = None,
 ) -> bool:
     """Checks whether `uri` of the form "azureml://" points to either a directory or a file.
 
@@ -356,7 +394,9 @@ def aml_datastore_path_exists(
     :rtype: bool
     """
     parsed_uri = AzureMLDatastorePathUri(uri)
-    datastore_info = datastore_info or get_datastore_info(datastore_operation, parsed_uri.datastore)
+    datastore_info = datastore_info or get_datastore_info(
+        datastore_operation, parsed_uri.datastore
+    )
     return get_storage_client(**datastore_info).exists(parsed_uri.path)
 
 
@@ -440,8 +480,12 @@ def _update_blob_metadata(name, version, indicator_file, storage_client) -> None
 
 
 def _update_gen2_metadata(name, version, indicator_file, storage_client) -> None:
-    artifact_directory_client = storage_client.file_system_client.get_directory_client(indicator_file)
-    artifact_directory_client.set_metadata(_build_metadata_dict(name=name, version=version))
+    artifact_directory_client = storage_client.file_system_client.get_directory_client(
+        indicator_file
+    )
+    artifact_directory_client.set_metadata(
+        _build_metadata_dict(name=name, version=version)
+    )
 
 
 T = TypeVar("T", bound=Artifact)
@@ -449,7 +493,9 @@ T = TypeVar("T", bound=Artifact)
 
 def _check_and_upload_path(
     artifact: T,
-    asset_operations: Union["DataOperations", "ModelOperations", "CodeOperations", "FeatureSetOperations"],
+    asset_operations: Union[
+        "DataOperations", "ModelOperations", "CodeOperations", "FeatureSetOperations"
+    ],
     artifact_type: str,
     datastore_name: Optional[str] = None,
     sas_uri: Optional[str] = None,
@@ -508,7 +554,9 @@ def _check_and_upload_path(
             ignore_file=getattr(artifact, "_ignore_file", None),
             blob_uri=blob_uri,
         )
-        indicator_file = uploaded_artifact.indicator_file  # reference to storage contents
+        indicator_file = (
+            uploaded_artifact.indicator_file
+        )  # reference to storage contents
         if artifact._is_anonymous:
             artifact.name, artifact.version = (
                 uploaded_artifact.name,

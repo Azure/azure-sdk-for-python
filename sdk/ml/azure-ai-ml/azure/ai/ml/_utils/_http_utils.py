@@ -45,7 +45,9 @@ def _request_function(f: Callable[["HttpPipeline"], None]):
     def _(_: Callable[Concatenate[str, P], Any] = HttpRequest):
         @wraps(f)
         # pylint: disable-next=docstring-missing-param
-        def decorated(self: "HttpPipeline", *args: P.args, **kwargs: P.kwargs) -> HttpResponse:
+        def decorated(
+            self: "HttpPipeline", *args: P.args, **kwargs: P.kwargs
+        ) -> HttpResponse:
             """A function that sends an HTTP request and returns the response.
 
             Accepts the same parameters as azure.core.rest.HttpRequest, except for the method.
@@ -111,14 +113,36 @@ class HttpPipeline(Pipeline):
         :param RedirectPolicy redirect_policy:
         """
         config = config or Configuration()
-        config.headers_policy = headers_policy or config.headers_policy or HeadersPolicy(**kwargs)
-        config.proxy_policy = proxy_policy or config.proxy_policy or ProxyPolicy(**kwargs)
-        config.redirect_policy = redirect_policy or config.redirect_policy or RedirectPolicy(**kwargs)
-        config.retry_policy = retry_policy or config.retry_policy or RetryPolicy(**kwargs)
-        config.custom_hook_policy = custom_hook_policy or config.custom_hook_policy or CustomHookPolicy(**kwargs)
-        config.logging_policy = logging_policy or config.logging_policy or NetworkTraceLoggingPolicy(**kwargs)
-        config.http_logging_policy = http_logging_policy or config.http_logging_policy or HttpLoggingPolicy(**kwargs)
-        config.user_agent_policy = user_agent_policy or config.user_agent_policy or UserAgentPolicy(**kwargs)
+        config.headers_policy = (
+            headers_policy or config.headers_policy or HeadersPolicy(**kwargs)
+        )
+        config.proxy_policy = (
+            proxy_policy or config.proxy_policy or ProxyPolicy(**kwargs)
+        )
+        config.redirect_policy = (
+            redirect_policy or config.redirect_policy or RedirectPolicy(**kwargs)
+        )
+        config.retry_policy = (
+            retry_policy or config.retry_policy or RetryPolicy(**kwargs)
+        )
+        config.custom_hook_policy = (
+            custom_hook_policy
+            or config.custom_hook_policy
+            or CustomHookPolicy(**kwargs)
+        )
+        config.logging_policy = (
+            logging_policy
+            or config.logging_policy
+            or NetworkTraceLoggingPolicy(**kwargs)
+        )
+        config.http_logging_policy = (
+            http_logging_policy
+            or config.http_logging_policy
+            or HttpLoggingPolicy(**kwargs)
+        )
+        config.user_agent_policy = (
+            user_agent_policy or config.user_agent_policy or UserAgentPolicy(**kwargs)
+        )
         config.polling_interval = kwargs.get("polling_interval", 30)
 
         super().__init__(
@@ -150,7 +174,11 @@ class HttpPipeline(Pipeline):
         :rtype: Self
         """
         cls = self.__class__
-        return cls(config=self._config, transport=kwargs.pop("transport", self._transport), **kwargs)
+        return cls(
+            config=self._config,
+            transport=kwargs.pop("transport", self._transport),
+            **kwargs,
+        )
 
     @_request_function
     def delete(self) -> None:

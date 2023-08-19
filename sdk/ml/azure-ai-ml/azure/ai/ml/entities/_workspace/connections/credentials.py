@@ -107,7 +107,9 @@ class ManagedIdentityCredentials(WorkspaceConnectionCredentials):
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, ManagedIdentityCredentials):
             return NotImplemented
-        return self.client_id == other.client_id and self.resource_id == other.resource_id
+        return (
+            self.client_id == other.client_id and self.resource_id == other.resource_id
+        )
 
 
 class ServicePrincipalCredentials(WorkspaceConnectionCredentials):
@@ -180,7 +182,9 @@ class AccessKeyCredentials(WorkspaceConnectionCredentials):
         self.secret_access_key = secret_access_key
 
     def _to_rest_object(self) -> UsernamePassword:
-        return UsernamePassword(username=self.access_key_id, password=self.secret_access_key)
+        return UsernamePassword(
+            username=self.access_key_id, password=self.secret_access_key
+        )
 
     @classmethod
     def _from_rest_object(cls, obj: UsernamePassword) -> "AccessKeyCredentials":
@@ -192,4 +196,7 @@ class AccessKeyCredentials(WorkspaceConnectionCredentials):
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, AccessKeyCredentials):
             return NotImplemented
-        return self.access_key_id == other.access_key_id and self.secret_access_key == other.secret_access_key
+        return (
+            self.access_key_id == other.access_key_id
+            and self.secret_access_key == other.secret_access_key
+        )

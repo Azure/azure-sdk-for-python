@@ -9,13 +9,24 @@ from os import PathLike
 from pathlib import Path
 from typing import IO, Any, AnyStr, Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2022_02_01_preview.models import EndpointAuthKeys as RestEndpointAuthKeys
+from azure.ai.ml._restclient.v2022_02_01_preview.models import (
+    EndpointAuthKeys as RestEndpointAuthKeys,
+)
 from azure.ai.ml._restclient.v2022_02_01_preview.models import EndpointAuthMode
-from azure.ai.ml._restclient.v2022_02_01_preview.models import EndpointAuthToken as RestEndpointAuthToken
+from azure.ai.ml._restclient.v2022_02_01_preview.models import (
+    EndpointAuthToken as RestEndpointAuthToken,
+)
 from azure.ai.ml._restclient.v2022_02_01_preview.models import OnlineEndpointData
-from azure.ai.ml._restclient.v2022_02_01_preview.models import OnlineEndpointDetails as RestOnlineEndpoint
-from azure.ai.ml._restclient.v2022_05_01.models import ManagedServiceIdentity as RestManagedServiceIdentityConfiguration
-from azure.ai.ml._schema._endpoint import KubernetesOnlineEndpointSchema, ManagedOnlineEndpointSchema
+from azure.ai.ml._restclient.v2022_02_01_preview.models import (
+    OnlineEndpointDetails as RestOnlineEndpoint,
+)
+from azure.ai.ml._restclient.v2022_05_01.models import (
+    ManagedServiceIdentity as RestManagedServiceIdentityConfiguration,
+)
+from azure.ai.ml._schema._endpoint import (
+    KubernetesOnlineEndpointSchema,
+    ManagedOnlineEndpointSchema,
+)
 from azure.ai.ml._utils.utils import dict_eq
 from azure.ai.ml.constants._common import (
     AAD_TOKEN_YAML,
@@ -28,9 +39,17 @@ from azure.ai.ml.constants._endpoint import EndpointYamlFields
 from azure.ai.ml.entities._credentials import IdentityConfiguration
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 from azure.ai.ml.entities._util import is_compute_in_override, load_from_dict
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+from azure.ai.ml.exceptions import (
+    ErrorCategory,
+    ErrorTarget,
+    ValidationErrorType,
+    ValidationException,
+)
 
-from ._endpoint_helpers import validate_endpoint_or_deployment_name, validate_identity_type_defined
+from ._endpoint_helpers import (
+    validate_endpoint_or_deployment_name,
+    validate_identity_type_defined,
+)
 from .endpoint import Endpoint
 
 module_logger = logging.getLogger(__name__)
@@ -171,7 +190,9 @@ class OnlineEndpoint(Endpoint):
             tags=self.tags,
         )
 
-    def _to_rest_online_endpoint_traffic_update(self, location: str, no_validation: bool = False) -> OnlineEndpointData:
+    def _to_rest_online_endpoint_traffic_update(
+        self, location: str, no_validation: bool = False
+    ) -> OnlineEndpointData:
         if not no_validation:
             # validate_deployment_name_matches_traffic(self.deployments, self.traffic)
             validate_identity_type_defined(self.identity)
@@ -216,7 +237,11 @@ class OnlineEndpoint(Endpoint):
     def _from_rest_object(cls, obj: OnlineEndpointData) -> "OnlineEndpoint":
         auth_mode = cls._rest_auth_mode_to_yaml_auth_mode(obj.properties.auth_mode)
         # pylint: disable=protected-access
-        identity = IdentityConfiguration._from_online_endpoint_rest_object(obj.identity) if obj.identity else None
+        identity = (
+            IdentityConfiguration._from_online_endpoint_rest_object(obj.identity)
+            if obj.identity
+            else None
+        )
         if obj.properties.compute:
             endpoint = KubernetesOnlineEndpoint(
                 id=obj.id,
@@ -287,7 +312,9 @@ class OnlineEndpoint(Endpoint):
             PARAMS_OVERRIDE_KEY: params_override,
         }
 
-        if data.get(EndpointYamlFields.COMPUTE) or is_compute_in_override(params_override):
+        if data.get(EndpointYamlFields.COMPUTE) or is_compute_in_override(
+            params_override
+        ):
             return load_from_dict(KubernetesOnlineEndpointSchema, data, context)
 
         return load_from_dict(ManagedOnlineEndpointSchema, data, context)
@@ -381,7 +408,9 @@ class KubernetesOnlineEndpoint(OnlineEndpoint):
 
     def dump(
         self,
-        dest: Optional[Union[str, PathLike, IO[AnyStr]]] = None,  # pylint: disable=unused-argument
+        dest: Optional[
+            Union[str, PathLike, IO[AnyStr]]
+        ] = None,  # pylint: disable=unused-argument
         **kwargs,  # pylint: disable=unused-argument
     ) -> Dict[str, Any]:
         context = {BASE_PATH_CONTEXT_KEY: Path(".").parent}
@@ -392,8 +421,12 @@ class KubernetesOnlineEndpoint(OnlineEndpoint):
         resource.properties.compute = self.compute
         return resource
 
-    def _to_rest_online_endpoint_traffic_update(self, location: str, no_validation: bool = False) -> OnlineEndpointData:
-        resource = super()._to_rest_online_endpoint_traffic_update(location, no_validation)
+    def _to_rest_online_endpoint_traffic_update(
+        self, location: str, no_validation: bool = False
+    ) -> OnlineEndpointData:
+        resource = super()._to_rest_online_endpoint_traffic_update(
+            location, no_validation
+        )
         resource.properties.compute = self.compute
         return resource
 
@@ -412,7 +445,9 @@ class KubernetesOnlineEndpoint(OnlineEndpoint):
             self.compute = other.compute or self.compute
 
     def _to_dict(self) -> Dict:
-        return KubernetesOnlineEndpointSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        return KubernetesOnlineEndpointSchema(
+            context={BASE_PATH_CONTEXT_KEY: "./"}
+        ).dump(self)
 
 
 class ManagedOnlineEndpoint(OnlineEndpoint):
@@ -505,14 +540,18 @@ class ManagedOnlineEndpoint(OnlineEndpoint):
 
     def dump(
         self,
-        dest: Optional[Union[str, PathLike, IO[AnyStr]]] = None,  # pylint: disable=unused-argument
+        dest: Optional[
+            Union[str, PathLike, IO[AnyStr]]
+        ] = None,  # pylint: disable=unused-argument
         **kwargs,  # pylint: disable=unused-argument
     ) -> Dict[str, Any]:
         context = {BASE_PATH_CONTEXT_KEY: Path(".").parent}
         return ManagedOnlineEndpointSchema(context=context).dump(self)
 
     def _to_dict(self) -> Dict:
-        return ManagedOnlineEndpointSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        return ManagedOnlineEndpointSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(
+            self
+        )
 
 
 class EndpointAuthKeys(RestTranslatableMixin):
@@ -540,7 +579,9 @@ class EndpointAuthKeys(RestTranslatableMixin):
         return cls(primary_key=obj.primary_key, secondary_key=obj.secondary_key)
 
     def _to_rest_object(self) -> RestEndpointAuthKeys:
-        return RestEndpointAuthKeys(primary_key=self.primary_key, secondary_key=self.secondary_key)
+        return RestEndpointAuthKeys(
+            primary_key=self.primary_key, secondary_key=self.secondary_key
+        )
 
 
 class EndpointAuthToken(RestTranslatableMixin):

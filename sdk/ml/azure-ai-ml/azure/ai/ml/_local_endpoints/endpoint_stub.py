@@ -84,7 +84,9 @@ class EndpointStub:
         """
         endpoint_cache_path = self._get_endpoint_cache_file(endpoint_name=endpoint.name)
         endpoint_metadata = json.dumps(endpoint.dump())
-        endpoint_cache_path.write_text(endpoint_metadata, encoding=DefaultOpenEncoding.WRITE)
+        endpoint_cache_path.write_text(
+            endpoint_metadata, encoding=DefaultOpenEncoding.WRITE
+        )
         return endpoint_cache_path
 
     def _get_endpoint_cache_file(self, endpoint_name: str) -> Path:

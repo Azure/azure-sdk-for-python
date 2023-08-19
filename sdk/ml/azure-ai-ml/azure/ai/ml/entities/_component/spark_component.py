@@ -116,7 +116,9 @@ class SparkComponent(
         **kwargs,
     ) -> None:
         # validate init params are valid type
-        validate_attribute_type(attrs_to_check=locals(), attr_type_map=self._attr_type_map())
+        validate_attribute_type(
+            attrs_to_check=locals(), attr_type_map=self._attr_type_map()
+        )
 
         kwargs[COMPONENT_TYPE] = NodeType.SPARK
 
@@ -140,19 +142,31 @@ class SparkComponent(
         # verification. This usually happens when we use to_component(SparkJob) or builder function spark() as a node
         # in pipeline sdk
         conf = conf or {}
-        self.driver_cores = driver_cores or conf.get(RestSparkConfKey.DRIVER_CORES, None)
-        self.driver_memory = driver_memory or conf.get(RestSparkConfKey.DRIVER_MEMORY, None)
-        self.executor_cores = executor_cores or conf.get(RestSparkConfKey.EXECUTOR_CORES, None)
-        self.executor_memory = executor_memory or conf.get(RestSparkConfKey.EXECUTOR_MEMORY, None)
-        self.executor_instances = executor_instances or conf.get(RestSparkConfKey.EXECUTOR_INSTANCES, None)
+        self.driver_cores = driver_cores or conf.get(
+            RestSparkConfKey.DRIVER_CORES, None
+        )
+        self.driver_memory = driver_memory or conf.get(
+            RestSparkConfKey.DRIVER_MEMORY, None
+        )
+        self.executor_cores = executor_cores or conf.get(
+            RestSparkConfKey.EXECUTOR_CORES, None
+        )
+        self.executor_memory = executor_memory or conf.get(
+            RestSparkConfKey.EXECUTOR_MEMORY, None
+        )
+        self.executor_instances = executor_instances or conf.get(
+            RestSparkConfKey.EXECUTOR_INSTANCES, None
+        )
         self.dynamic_allocation_enabled = dynamic_allocation_enabled or conf.get(
             RestSparkConfKey.DYNAMIC_ALLOCATION_ENABLED, None
         )
-        self.dynamic_allocation_min_executors = dynamic_allocation_min_executors or conf.get(
-            RestSparkConfKey.DYNAMIC_ALLOCATION_MIN_EXECUTORS, None
+        self.dynamic_allocation_min_executors = (
+            dynamic_allocation_min_executors
+            or conf.get(RestSparkConfKey.DYNAMIC_ALLOCATION_MIN_EXECUTORS, None)
         )
-        self.dynamic_allocation_max_executors = dynamic_allocation_max_executors or conf.get(
-            RestSparkConfKey.DYNAMIC_ALLOCATION_MAX_EXECUTORS, None
+        self.dynamic_allocation_max_executors = (
+            dynamic_allocation_max_executors
+            or conf.get(RestSparkConfKey.DYNAMIC_ALLOCATION_MAX_EXECUTORS, None)
         )
 
     @classmethod
@@ -168,11 +182,15 @@ class SparkComponent(
 
     def _customized_validate(self) -> MutableValidationResult:
         validation_result = super()._customized_validate()
-        self._append_diagnostics_and_check_if_origin_code_reliable_for_local_path_validation(validation_result)
+        self._append_diagnostics_and_check_if_origin_code_reliable_for_local_path_validation(
+            validation_result
+        )
         return validation_result
 
     def _to_dict(self) -> Dict:
-        return convert_ordered_dict_to_dict({**self._other_parameter, **super(SparkComponent, self)._to_dict()})
+        return convert_ordered_dict_to_dict(
+            {**self._other_parameter, **super(SparkComponent, self)._to_dict()}
+        )
 
     def _to_ordered_dict_for_yaml_dump(self) -> Dict:
         """Dump the component content into a sorted yaml string.

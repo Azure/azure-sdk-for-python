@@ -42,7 +42,6 @@ class CredentialsType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class DataReferenceCredentialType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-
     SAS = "SAS"
     DOCKER_CREDENTIALS = "DockerCredentials"
     MANAGED_IDENTITY = "ManagedIdentity"
@@ -75,7 +74,6 @@ class DistributionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class EarlyTerminationPolicyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-
     BANDIT = "Bandit"
     MEDIAN_STOPPING = "MedianStopping"
     TRUNCATION_SELECTION = "TruncationSelection"
@@ -136,7 +134,6 @@ class JobInputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class JobLimitsType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-
     COMMAND = "Command"
     SWEEP = "Sweep"
 
@@ -177,7 +174,6 @@ class JobType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class ListViewType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-
     ACTIVE_ONLY = "ActiveOnly"
     ARCHIVED_ONLY = "ArchivedOnly"
     ALL = "All"
@@ -236,7 +232,6 @@ class ReferenceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class SamplingAlgorithm(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-
     GRID = "Grid"
     RANDOM = "Random"
     BAYESIAN = "Bayesian"
@@ -252,7 +247,6 @@ class SecretsType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class ServiceDataAccessAuthIdentity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-
     NONE = "None"
     WORKSPACE_SYSTEM_ASSIGNED_IDENTITY = "WorkspaceSystemAssignedIdentity"
     WORKSPACE_USER_ASSIGNED_IDENTITY = "WorkspaceUserAssignedIdentity"

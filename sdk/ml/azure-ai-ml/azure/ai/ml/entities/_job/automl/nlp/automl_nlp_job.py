@@ -12,14 +12,18 @@ from azure.ai.ml._restclient.v2023_04_01_preview.models import (
 from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._job.automl.automl_vertical import AutoMLVertical
-from azure.ai.ml.entities._job.automl.nlp.nlp_featurization_settings import NlpFeaturizationSettings
+from azure.ai.ml.entities._job.automl.nlp.nlp_featurization_settings import (
+    NlpFeaturizationSettings,
+)
 from azure.ai.ml.entities._job.automl.nlp.nlp_fixed_parameters import NlpFixedParameters
 from azure.ai.ml.entities._job.automl.nlp.nlp_limit_settings import NlpLimitSettings
 from azure.ai.ml.entities._job.automl.nlp.nlp_search_space import NlpSearchSpace
 from azure.ai.ml.entities._job.automl.nlp.nlp_sweep_settings import NlpSweepSettings
 from azure.ai.ml.entities._job.automl.search_space import SearchSpace
 from azure.ai.ml.entities._job.automl.utils import cast_to_specific_search_space
-from azure.ai.ml.entities._job.sweep.early_termination_policy import EarlyTerminationPolicy
+from azure.ai.ml.entities._job.sweep.early_termination_policy import (
+    EarlyTerminationPolicy,
+)
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 
 
@@ -41,7 +45,12 @@ class AutoMLNLPJob(AutoMLVertical, ABC):
         search_space: Optional[List[NlpSearchSpace]] = None,
         **kwargs,
     ):
-        super().__init__(task_type, training_data=training_data, validation_data=validation_data, **kwargs)
+        super().__init__(
+            task_type,
+            training_data=training_data,
+            validation_data=validation_data,
+            **kwargs,
+        )
         self.log_verbosity = log_verbosity
         self.primary_metric = primary_metric
 
@@ -64,7 +73,9 @@ class AutoMLNLPJob(AutoMLVertical, ABC):
         elif isinstance(value, NlpFixedParameters):
             self._training_parameters = value
             # Convert parameters from snake case to enum.
-            self.set_training_parameters(learning_rate_scheduler=value.learning_rate_scheduler)
+            self.set_training_parameters(
+                learning_rate_scheduler=value.learning_rate_scheduler
+            )
         else:
             if not isinstance(value, dict):
                 msg = "Expected a dictionary for nlp training parameters."
@@ -103,7 +114,10 @@ class AutoMLNLPJob(AutoMLVertical, ABC):
                 error_category=ErrorCategory.USER_ERROR,
             )
 
-        self._search_space = [cast_to_specific_search_space(item, NlpSearchSpace, self.task_type) for item in value]
+        self._search_space = [
+            cast_to_specific_search_space(item, NlpSearchSpace, self.task_type)
+            for item in value
+        ]
 
     @property
     def primary_metric(self):
@@ -119,7 +133,9 @@ class AutoMLNLPJob(AutoMLVertical, ABC):
 
     @log_verbosity.setter
     def log_verbosity(self, value: Union[str, LogVerbosity]):
-        self._log_verbosity = None if value is None else LogVerbosity[camel_to_snake(value).upper()]
+        self._log_verbosity = (
+            None if value is None else LogVerbosity[camel_to_snake(value).upper()]
+        )
 
     @property
     def limits(self) -> NlpLimitSettings:
@@ -178,7 +194,9 @@ class AutoMLNLPJob(AutoMLVertical, ABC):
                 )
             self.set_featurization(**value)
 
-    def set_data(self, *, training_data: Input, target_column_name: str, validation_data: Input) -> None:
+    def set_data(
+        self, *, training_data: Input, target_column_name: str, validation_data: Input
+    ) -> None:
         # Properties for NlpVerticalDataSettings
         self.target_column_name = target_column_name
         self.training_data = training_data
@@ -219,7 +237,9 @@ class AutoMLNLPJob(AutoMLVertical, ABC):
         else:
             self._sweep = NlpSweepSettings(sampling_algorithm=sampling_algorithm)
 
-        self._sweep.early_termination = early_termination or self._sweep.early_termination
+        self._sweep.early_termination = (
+            early_termination or self._sweep.early_termination
+        )
 
     def set_training_parameters(
         self,
@@ -263,7 +283,9 @@ class AutoMLNLPJob(AutoMLVertical, ABC):
         )
 
         self._training_parameters.learning_rate = (
-            learning_rate if learning_rate is not None else self._training_parameters.learning_rate
+            learning_rate
+            if learning_rate is not None
+            else self._training_parameters.learning_rate
         )
 
         self._training_parameters.learning_rate_scheduler = (
@@ -273,15 +295,21 @@ class AutoMLNLPJob(AutoMLVertical, ABC):
         )
 
         self._training_parameters.model_name = (
-            model_name if model_name is not None else self._training_parameters.model_name
+            model_name
+            if model_name is not None
+            else self._training_parameters.model_name
         )
 
         self._training_parameters.number_of_epochs = (
-            number_of_epochs if number_of_epochs is not None else self._training_parameters.number_of_epochs
+            number_of_epochs
+            if number_of_epochs is not None
+            else self._training_parameters.number_of_epochs
         )
 
         self._training_parameters.training_batch_size = (
-            training_batch_size if training_batch_size is not None else self._training_parameters.training_batch_size
+            training_batch_size
+            if training_batch_size is not None
+            else self._training_parameters.training_batch_size
         )
 
         self._training_parameters.validation_batch_size = (
@@ -291,11 +319,15 @@ class AutoMLNLPJob(AutoMLVertical, ABC):
         )
 
         self._training_parameters.warmup_ratio = (
-            warmup_ratio if warmup_ratio is not None else self._training_parameters.warmup_ratio
+            warmup_ratio
+            if warmup_ratio is not None
+            else self._training_parameters.warmup_ratio
         )
 
         self._training_parameters.weight_decay = (
-            weight_decay if weight_decay is not None else self._training_parameters.weight_decay
+            weight_decay
+            if weight_decay is not None
+            else self._training_parameters.weight_decay
         )
 
     def set_featurization(self, *, dataset_language: Optional[str] = None) -> None:
@@ -313,15 +345,26 @@ class AutoMLNLPJob(AutoMLVertical, ABC):
         self._search_space = self._search_space or []
         if isinstance(value, list):
             self._search_space.extend(
-                [cast_to_specific_search_space(item, NlpSearchSpace, self.task_type) for item in value]
+                [
+                    cast_to_specific_search_space(item, NlpSearchSpace, self.task_type)
+                    for item in value
+                ]
             )
         else:
-            self._search_space.append(cast_to_specific_search_space(value, NlpSearchSpace, self.task_type))
+            self._search_space.append(
+                cast_to_specific_search_space(value, NlpSearchSpace, self.task_type)
+            )
 
     @classmethod
-    def _get_search_space_from_str(cls, search_space_str: Optional[str]) -> Optional[List]:
+    def _get_search_space_from_str(
+        cls, search_space_str: Optional[str]
+    ) -> Optional[List]:
         if search_space_str is not None:
-            return [NlpSearchSpace._from_rest_object(entry) for entry in search_space_str if entry is not None]
+            return [
+                NlpSearchSpace._from_rest_object(entry)
+                for entry in search_space_str
+                if entry is not None
+            ]
         return None
 
     def _restore_data_inputs(self):

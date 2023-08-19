@@ -61,14 +61,18 @@ def _add_class_docstring(cls: Type[T]) -> Type[T]:
 
         @functools.wraps(func)
         def wrapped(*args, **kwargs):
-            message = "Class {0}: {1} {2}".format(cls.__name__, EXPERIMENTAL_CLASS_MESSAGE, EXPERIMENTAL_LINK_MESSAGE)
+            message = "Class {0}: {1} {2}".format(
+                cls.__name__, EXPERIMENTAL_CLASS_MESSAGE, EXPERIMENTAL_LINK_MESSAGE
+            )
             if not _should_skip_warning() and not _is_warning_cached(message):
                 module_logger.warning(message)
             return func(*args, **kwargs)
 
         return wrapped
 
-    doc_string = DOCSTRING_TEMPLATE.format(EXPERIMENTAL_CLASS_MESSAGE, EXPERIMENTAL_LINK_MESSAGE)
+    doc_string = DOCSTRING_TEMPLATE.format(
+        EXPERIMENTAL_CLASS_MESSAGE, EXPERIMENTAL_LINK_MESSAGE
+    )
     if cls.__doc__:
         cls.__doc__ = _add_note_to_docstring(cls.__doc__, doc_string)
     else:
@@ -85,7 +89,9 @@ def _add_method_docstring(func: Callable[P, T] = None) -> Callable[P, T]:
     :return: A wrapped method marked as experimental
     :rtype: Callable[P,T]
     """
-    doc_string = DOCSTRING_TEMPLATE.format(EXPERIMENTAL_METHOD_MESSAGE, EXPERIMENTAL_LINK_MESSAGE)
+    doc_string = DOCSTRING_TEMPLATE.format(
+        EXPERIMENTAL_METHOD_MESSAGE, EXPERIMENTAL_LINK_MESSAGE
+    )
     if func.__doc__:
         func.__doc__ = _add_note_to_docstring(func.__doc__, doc_string)
     else:
@@ -94,7 +100,9 @@ def _add_method_docstring(func: Callable[P, T] = None) -> Callable[P, T]:
 
     @functools.wraps(func)
     def wrapped(*args: P.args, **kwargs: P.kwargs) -> T:
-        message = "Method {0}: {1} {2}".format(func.__name__, EXPERIMENTAL_METHOD_MESSAGE, EXPERIMENTAL_LINK_MESSAGE)
+        message = "Method {0}: {1} {2}".format(
+            func.__name__, EXPERIMENTAL_METHOD_MESSAGE, EXPERIMENTAL_LINK_MESSAGE
+        )
         if not _should_skip_warning() and not _is_warning_cached(message):
             module_logger.warning(message)
         return func(*args, **kwargs)

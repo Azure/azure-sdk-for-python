@@ -28,7 +28,9 @@ from ..._vendor import _convert_request
 from ...operations._quotas_operations import build_list_request, build_update_request
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[
+    Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]
+]
 
 
 class QuotasOperations:
@@ -68,12 +70,20 @@ class QuotasOperations:
         :rtype: ~azure.mgmt.machinelearningservices.models.UpdateWorkspaceQuotasResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop("cls", None)  # type: ClsType["_models.UpdateWorkspaceQuotasResult"]
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop(
+            "cls", None
+        )  # type: ClsType["_models.UpdateWorkspaceQuotasResult"]
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+        }
         error_map.update(kwargs.pop("error_map", {}))
 
         api_version = kwargs.pop("api_version", "2023-02-01-preview")  # type: str
-        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
+        content_type = kwargs.pop(
+            "content_type", "application/json"
+        )  # type: Optional[str]
 
         _json = self._serialize.body(parameters, "QuotaUpdateParameters")
 
@@ -88,17 +98,27 @@ class QuotasOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        pipeline_response = (
+            await self._client._pipeline.run(  # pylint: disable=protected-access
+                request, stream=False, **kwargs
+            )
         )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse, pipeline_response
+            )
+            raise HttpResponseError(
+                response=response, model=error, error_format=ARMErrorFormat
+            )
 
-        deserialized = self._deserialize("UpdateWorkspaceQuotasResult", pipeline_response)
+        deserialized = self._deserialize(
+            "UpdateWorkspaceQuotasResult", pipeline_response
+        )
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -108,7 +128,9 @@ class QuotasOperations:
     update.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.MachineLearningServices/locations/{location}/updateQuotas"}  # type: ignore
 
     @distributed_trace
-    def list(self, location: str, **kwargs: Any) -> AsyncIterable["_models.ListWorkspaceQuotas"]:
+    def list(
+        self, location: str, **kwargs: Any
+    ) -> AsyncIterable["_models.ListWorkspaceQuotas"]:
         """Gets the currently assigned Workspace Quotas based on VMFamily.
 
         :param location: The location for which resource usage is queried.
@@ -122,12 +144,15 @@ class QuotasOperations:
         api_version = kwargs.pop("api_version", "2023-02-01-preview")  # type: str
 
         cls = kwargs.pop("cls", None)  # type: ClsType["_models.ListWorkspaceQuotas"]
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+        }
         error_map.update(kwargs.pop("error_map", {}))
 
         def prepare_request(next_link=None):
             if not next_link:
-
                 request = build_list_request(
                     subscription_id=self._config.subscription_id,
                     location=location,
@@ -138,7 +163,6 @@ class QuotasOperations:
                 request.url = self._client.format_url(request.url)
 
             else:
-
                 request = build_list_request(
                     subscription_id=self._config.subscription_id,
                     location=location,
@@ -160,15 +184,25 @@ class QuotasOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+            pipeline_response = (
+                await self._client._pipeline.run(  # pylint: disable=protected-access
+                    request, stream=False, **kwargs
+                )
             )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+                map_error(
+                    status_code=response.status_code,
+                    response=response,
+                    error_map=error_map,
+                )
+                error = self._deserialize.failsafe_deserialize(
+                    _models.ErrorResponse, pipeline_response
+                )
+                raise HttpResponseError(
+                    response=response, model=error, error_format=ARMErrorFormat
+                )
 
             return pipeline_response
 

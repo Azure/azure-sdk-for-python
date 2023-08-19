@@ -29,7 +29,9 @@ def generate_defaults(job: Job, rest_job: JobBaseData) -> None:
 
     # Default experiment to current folder name or "Default"
     if not job.experiment_name:
-        rest_job.properties.experiment_name = Path("./").resolve().stem.replace(" ", "") or DEFAULT_EXPERIMENT_NAME
+        rest_job.properties.experiment_name = (
+            Path("./").resolve().stem.replace(" ", "") or DEFAULT_EXPERIMENT_NAME
+        )
 
 
 @singledispatch

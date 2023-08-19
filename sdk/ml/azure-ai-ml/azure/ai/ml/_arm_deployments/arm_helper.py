@@ -51,6 +51,10 @@ deployment_message_mapping = {
 def get_template(resource_type: str) -> Dict[str, Any]:
     if resource_type not in template_mapping:
         msg = "can't find the template for the resource {}".format(resource_type)
-        raise ValidationException(message=msg, no_personal_data_message=msg, target=ErrorTarget.ARM_RESOURCE)
-    template_path = path.join(path.dirname(__file__), "arm_templates", template_mapping[resource_type])
+        raise ValidationException(
+            message=msg, no_personal_data_message=msg, target=ErrorTarget.ARM_RESOURCE
+        )
+    template_path = path.join(
+        path.dirname(__file__), "arm_templates", template_mapping[resource_type]
+    )
     return load_json(file_path=template_path)

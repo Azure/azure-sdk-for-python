@@ -11,7 +11,10 @@ from marshmallow import INCLUDE, fields, post_load, pre_dump
 from azure.ai.ml._schema._utils.utils import _resolve_group_inputs_for_component
 from azure.ai.ml._schema.assets.asset import AnonymousAssetSchema
 from azure.ai.ml._schema.component.component import ComponentSchema
-from azure.ai.ml._schema.component.input_output import OutputPortSchema, PrimitiveOutputSchema
+from azure.ai.ml._schema.component.input_output import (
+    OutputPortSchema,
+    PrimitiveOutputSchema,
+)
 from azure.ai.ml._schema.core.fields import (
     ArmVersionedStr,
     FileRefField,
@@ -36,7 +39,10 @@ from azure.ai.ml._schema.pipeline.component_job import (
     _resolve_inputs_outputs,
 )
 from azure.ai.ml._schema.pipeline.condition_node import ConditionNodeSchema
-from azure.ai.ml._schema.pipeline.control_flow_job import DoWhileSchema, ParallelForSchema
+from azure.ai.ml._schema.pipeline.control_flow_job import (
+    DoWhileSchema,
+    ParallelForSchema,
+)
 from azure.ai.ml._schema.pipeline.pipeline_command_job import PipelineCommandJobSchema
 from azure.ai.ml._schema.pipeline.pipeline_datatransfer_job import (
     PipelineDataTransferCopyJobSchema,
@@ -89,9 +95,15 @@ def PipelineJobsField():
     # Note: the private node types only available when private preview flag opened before init of pipeline job
     # schema class.
     if is_private_preview_enabled():
-        pipeline_enable_job_type[ControlFlowType.DO_WHILE] = [NestedField(DoWhileSchema, unknown=INCLUDE)]
-        pipeline_enable_job_type[ControlFlowType.IF_ELSE] = [NestedField(ConditionNodeSchema, unknown=INCLUDE)]
-        pipeline_enable_job_type[ControlFlowType.PARALLEL_FOR] = [NestedField(ParallelForSchema, unknown=INCLUDE)]
+        pipeline_enable_job_type[ControlFlowType.DO_WHILE] = [
+            NestedField(DoWhileSchema, unknown=INCLUDE)
+        ]
+        pipeline_enable_job_type[ControlFlowType.IF_ELSE] = [
+            NestedField(ConditionNodeSchema, unknown=INCLUDE)
+        ]
+        pipeline_enable_job_type[ControlFlowType.PARALLEL_FOR] = [
+            NestedField(ParallelForSchema, unknown=INCLUDE)
+        ]
 
     # Todo: Put data_transfer logic to the last to avoid error message conflict, open a item to track:
     #  https://msdata.visualstudio.com/Vienna/_workitems/edit/2244262/
@@ -131,7 +143,9 @@ def _post_load_pipeline_jobs(context, data: dict) -> dict:
     from azure.ai.ml.entities._builders.do_while import DoWhile
     from azure.ai.ml.entities._builders.parallel_for import ParallelFor
     from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
-    from azure.ai.ml.entities._job.pipeline._component_translatable import ComponentTranslatableMixin
+    from azure.ai.ml.entities._job.pipeline._component_translatable import (
+        ComponentTranslatableMixin,
+    )
 
     # parse inputs/outputs
     data = parse_inputs_outputs(data)
@@ -152,7 +166,9 @@ def _post_load_pipeline_jobs(context, data: dict) -> dict:
                 job_type = job_instance.get("type")
                 if job_type == ControlFlowType.IF_ELSE:
                     # Convert to if-else node.
-                    job_instance = ConditionNode._create_instance_from_schema_dict(loaded_data=job_instance)
+                    job_instance = ConditionNode._create_instance_from_schema_dict(
+                        loaded_data=job_instance
+                    )
                 elif job_instance.get("type") == ControlFlowType.DO_WHILE:
                     # Convert to do-while node.
                     job_instance = DoWhile._create_instance_from_schema_dict(
@@ -167,13 +183,19 @@ def _post_load_pipeline_jobs(context, data: dict) -> dict:
 
     for key, job_instance in jobs.items():
         # Translate job to node if translatable and overrides to_node.
-        if isinstance(job_instance, ComponentTranslatableMixin) and "_to_node" in type(job_instance).__dict__:
+        if (
+            isinstance(job_instance, ComponentTranslatableMixin)
+            and "_to_node" in type(job_instance).__dict__
+        ):
             # set source as YAML
             job_instance = job_instance._to_node(
                 context=context,
                 pipeline_job_dict=data,
             )
-            if job_instance.type == NodeType.DATA_TRANSFER and job_instance.task != DataTransferTaskType.COPY_DATA:
+            if (
+                job_instance.type == NodeType.DATA_TRANSFER
+                and job_instance.task != DataTransferTaskType.COPY_DATA
+            ):
                 job_instance._source = ComponentSource.BUILTIN
             else:
                 job_instance.component._source = ComponentSource.YAML_JOB
@@ -248,7 +270,9 @@ class PipelineComponentFileRefField(FileRefField):
         component_schema_context = deepcopy(self.context)
         # pylint: disable=no-member
         value = _resolve_group_inputs_for_component(value)
-        return _AnonymousPipelineComponentSchema(context=component_schema_context)._serialize(value, **kwargs)
+        return _AnonymousPipelineComponentSchema(
+            context=component_schema_context
+        )._serialize(value, **kwargs)
 
     def _deserialize(self, value, attr, data, **kwargs):
         # Get component info from component yaml file.
@@ -260,9 +284,9 @@ class PipelineComponentFileRefField(FileRefField):
         component_schema_context = deepcopy(self.context)
         component_schema_context[BASE_PATH_CONTEXT_KEY] = source_path.parent
         # pylint: disable=no-member
-        component = _AnonymousPipelineComponentSchema(context=component_schema_context).load(
-            component_dict, unknown=INCLUDE
-        )
+        component = _AnonymousPipelineComponentSchema(
+            context=component_schema_context
+        ).load(component_dict, unknown=INCLUDE)
         component._source_path = source_path
         component._source = ComponentSource.YAML_COMPONENT
         return component
@@ -278,7 +302,9 @@ class PipelineSchema(BaseNodeSchema):
             # for registry type assets
             RegistryStr(azureml_type=AzureMLResourceType.COMPONENT),
             # existing component
-            ArmVersionedStr(azureml_type=AzureMLResourceType.COMPONENT, allow_default_version=True),
+            ArmVersionedStr(
+                azureml_type=AzureMLResourceType.COMPONENT, allow_default_version=True
+            ),
             # component file reference
             PipelineComponentFileRefField(),
         ],

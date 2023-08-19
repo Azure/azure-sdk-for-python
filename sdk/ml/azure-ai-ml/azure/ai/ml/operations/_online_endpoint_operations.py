@@ -10,8 +10,13 @@ from typing import Dict, Optional, Union
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
 from azure.ai.ml._exception_helper import log_and_raise_error
-from azure.ai.ml._restclient.v2022_02_01_preview import AzureMachineLearningWorkspaces as ServiceClient022022Preview
-from azure.ai.ml._restclient.v2022_02_01_preview.models import KeyType, RegenerateEndpointKeysRequest
+from azure.ai.ml._restclient.v2022_02_01_preview import (
+    AzureMachineLearningWorkspaces as ServiceClient022022Preview,
+)
+from azure.ai.ml._restclient.v2022_02_01_preview.models import (
+    KeyType,
+    RegenerateEndpointKeysRequest,
+)
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationsContainer,
@@ -28,8 +33,16 @@ from azure.ai.ml.constants._common import KEY, AzureMLResourceType, LROConfigura
 from azure.ai.ml.constants._endpoint import EndpointInvokeFields, EndpointKeyType
 from azure.ai.ml.entities import OnlineDeployment, OnlineEndpoint
 from azure.ai.ml.entities._assets import Data
-from azure.ai.ml.entities._endpoint.online_endpoint import EndpointAuthKeys, EndpointAuthToken
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+from azure.ai.ml.entities._endpoint.online_endpoint import (
+    EndpointAuthKeys,
+    EndpointAuthToken,
+)
+from azure.ai.ml.exceptions import (
+    ErrorCategory,
+    ErrorTarget,
+    ValidationErrorType,
+    ValidationException,
+)
 from azure.ai.ml.operations._local_endpoint_helper import _LocalEndpointHelper
 from azure.core.credentials import TokenCredential
 from azure.core.paging import ItemPaged
@@ -64,10 +77,14 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
         credentials: Optional[TokenCredential] = None,
         **kwargs: Dict,
     ):
-        super(OnlineEndpointOperations, self).__init__(operation_scope, operation_config)
+        super(OnlineEndpointOperations, self).__init__(
+            operation_scope, operation_config
+        )
         ops_logger.update_info(kwargs)
         self._online_operation = service_client_02_2022_preview.online_endpoints
-        self._online_deployment_operation = service_client_02_2022_preview.online_deployments
+        self._online_deployment_operation = (
+            service_client_02_2022_preview.online_deployments
+        )
         self._all_operations = all_operations
         self._local_endpoint_helper = local_endpoint_helper
         self._credentials = credentials
@@ -149,16 +166,18 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
         converted_endpoint = OnlineEndpoint._from_rest_object(endpoint)
         if deployments_list:
             for deployment in deployments_list:
-                if not converted_endpoint.traffic.get(deployment.name) and not converted_endpoint.mirror_traffic.get(
+                if not converted_endpoint.traffic.get(
                     deployment.name
-                ):
+                ) and not converted_endpoint.mirror_traffic.get(deployment.name):
                     converted_endpoint.traffic[deployment.name] = 0
 
         return converted_endpoint
 
     @distributed_trace
     @monitor_with_activity(logger, "OnlineEndpoint.BeginDelete", ActivityType.PUBLICAPI)
-    def begin_delete(self, name: Optional[str] = None, *, local: bool = False) -> LROPoller[None]:
+    def begin_delete(
+        self, name: Optional[str] = None, *, local: bool = False
+    ) -> LROPoller[None]:
         """Delete an Online Endpoint.
 
         :param name: Name of the endpoint.
@@ -193,8 +212,12 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
         return delete_poller
 
     @distributed_trace
-    @monitor_with_activity(logger, "OnlineEndpoint.BeginDeleteOrUpdate", ActivityType.PUBLICAPI)
-    def begin_create_or_update(self, endpoint: OnlineEndpoint, *, local: bool = False) -> LROPoller[OnlineEndpoint]:
+    @monitor_with_activity(
+        logger, "OnlineEndpoint.BeginDeleteOrUpdate", ActivityType.PUBLICAPI
+    )
+    def begin_create_or_update(
+        self, endpoint: OnlineEndpoint, *, local: bool = False
+    ) -> LROPoller[OnlineEndpoint]:
         """Create or update an endpoint.
 
         :param endpoint: The endpoint entity.
@@ -224,7 +247,9 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
                     endpoint.traffic = _strip_zeroes_from_traffic(endpoint.traffic)
 
                 if endpoint.mirror_traffic:
-                    endpoint.mirror_traffic = _strip_zeroes_from_traffic(endpoint.mirror_traffic)
+                    endpoint.mirror_traffic = _strip_zeroes_from_traffic(
+                        endpoint.mirror_traffic
+                    )
 
                 endpoint_resource = endpoint._to_rest_online_endpoint(location=location)
                 orchestrators = OperationOrchestrator(
@@ -233,16 +258,20 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
                     operation_config=self._operation_config,
                 )
                 if hasattr(endpoint_resource.properties, "compute"):
-                    endpoint_resource.properties.compute = orchestrators.get_asset_arm_id(
-                        endpoint_resource.properties.compute,
-                        azureml_type=AzureMLResourceType.COMPUTE,
+                    endpoint_resource.properties.compute = (
+                        orchestrators.get_asset_arm_id(
+                            endpoint_resource.properties.compute,
+                            azureml_type=AzureMLResourceType.COMPUTE,
+                        )
                     )
                 poller = self._online_operation.begin_create_or_update(
                     resource_group_name=self._resource_group_name,
                     workspace_name=self._workspace_name,
                     endpoint_name=endpoint.name,
                     body=endpoint_resource,
-                    cls=lambda response, deserialized, headers: OnlineEndpoint._from_rest_object(deserialized),
+                    cls=lambda response, deserialized, headers: OnlineEndpoint._from_rest_object(
+                        deserialized
+                    ),
                     **self._init_kwargs,
                 )
                 return poller
@@ -256,7 +285,9 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
                 raise ex
 
     @distributed_trace
-    @monitor_with_activity(logger, "OnlineEndpoint.BeginGenerateKeys", ActivityType.PUBLICAPI)
+    @monitor_with_activity(
+        logger, "OnlineEndpoint.BeginGenerateKeys", ActivityType.PUBLICAPI
+    )
     def begin_regenerate_keys(
         self,
         name: str,
@@ -298,7 +329,9 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
         *,
         request_file: Optional[str] = None,
         deployment_name: Optional[str] = None,
-        input_data: Optional[Union[str, Data]] = None,  # pylint: disable=unused-argument
+        input_data: Optional[
+            Union[str, Data]
+        ] = None,  # pylint: disable=unused-argument
         params_override=None,
         local: bool = False,
         **kwargs,  # pylint: disable=unused-argument
@@ -340,7 +373,9 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
             endpoint_name=endpoint_name,
             **self._init_kwargs,
         )
-        keys = self._get_online_credentials(name=endpoint_name, auth_mode=endpoint.properties.auth_mode)
+        keys = self._get_online_credentials(
+            name=endpoint_name, auth_mode=endpoint.properties.auth_mode
+        )
         if isinstance(keys, EndpointAuthKeys):
             key = keys.primary_key
         elif isinstance(keys, EndpointAuthToken):
@@ -353,12 +388,18 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
         if deployment_name:
             headers[EndpointInvokeFields.MODEL_DEPLOYMENT] = deployment_name
 
-        response = self._requests_pipeline.post(endpoint.properties.scoring_uri, json=data, headers=headers)
+        response = self._requests_pipeline.post(
+            endpoint.properties.scoring_uri, json=data, headers=headers
+        )
         validate_response(response)
         return response.text()
 
     def _get_workspace_location(self) -> str:
-        return self._all_operations.all_operations[AzureMLResourceType.WORKSPACE].get(self._workspace_name).location
+        return (
+            self._all_operations.all_operations[AzureMLResourceType.WORKSPACE]
+            .get(self._workspace_name)
+            .location
+        )
 
     def _get_online_credentials(
         self, name: str, auth_mode: Optional[str] = None
@@ -402,9 +443,13 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
             **self._init_kwargs,
         )
         if key_type.lower() == EndpointKeyType.PRIMARY_KEY_TYPE:
-            key_request = RegenerateEndpointKeysRequest(key_type=KeyType.Primary, key_value=keys.primary_key)
+            key_request = RegenerateEndpointKeysRequest(
+                key_type=KeyType.Primary, key_value=keys.primary_key
+            )
         elif key_type.lower() == EndpointKeyType.SECONDARY_KEY_TYPE:
-            key_request = RegenerateEndpointKeysRequest(key_type=KeyType.Secondary, key_value=keys.secondary_key)
+            key_request = RegenerateEndpointKeysRequest(
+                key_type=KeyType.Secondary, key_value=keys.secondary_key
+            )
         else:
             msg = "Key type must be 'primary' or 'secondary'."
             raise ValidationException(

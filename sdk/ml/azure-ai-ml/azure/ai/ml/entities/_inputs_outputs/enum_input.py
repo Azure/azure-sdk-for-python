@@ -5,7 +5,12 @@
 from enum import EnumMeta
 from typing import Iterable, Optional, Sequence, Type, Union
 
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+from azure.ai.ml.exceptions import (
+    ErrorCategory,
+    ErrorTarget,
+    ValidationErrorType,
+    ValidationException,
+)
 
 from .input import Input
 
@@ -38,7 +43,9 @@ class EnumInput(Input):
         else:
             self._enum_class = None
             self._str2enum = {v: v for v in enum_values}
-        super().__init__(type="string", default=default, enum=enum_values, description=description)
+        super().__init__(
+            type="string", default=default, enum=enum_values, description=description
+        )
 
     @property
     def _allowed_types(self):

@@ -11,7 +11,11 @@ from azure.ai.ml._schema.core.schema_meta import PatchedSchemaMeta
 
 
 class SparkResourceConfigurationSchema(metaclass=PatchedSchemaMeta):
-    instance_type = fields.Str(metadata={"description": "Optional type of VM used as supported by the compute target."})
+    instance_type = fields.Str(
+        metadata={
+            "description": "Optional type of VM used as supported by the compute target."
+        }
+    )
     runtime_version = UnionField([fields.Str(), fields.Number()])
 
     @post_load

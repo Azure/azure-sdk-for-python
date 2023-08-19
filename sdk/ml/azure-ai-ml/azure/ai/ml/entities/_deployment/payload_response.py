@@ -3,7 +3,9 @@
 # ---------------------------------------------------------
 
 from typing import Dict
-from azure.ai.ml._schema._deployment.online.payload_response_schema import PayloadResponseSchema
+from azure.ai.ml._schema._deployment.online.payload_response_schema import (
+    PayloadResponseSchema,
+)
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 
 

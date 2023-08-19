@@ -65,7 +65,11 @@ class _AttrDict(Generic[K, V], dict, ABC):
             if not isinstance(data, dict):
                 return data
             # skip empty dicts as default value of _AttrDict is empty dict
-            return {k: remove_empty_values(v) for k, v in data.items() if v or not isinstance(v, dict)}
+            return {
+                k: remove_empty_values(v)
+                for k, v in data.items()
+                if v or not isinstance(v, dict)
+            }
 
         return remove_empty_values(self)
 
@@ -110,7 +114,9 @@ class _AttrDict(Generic[K, V], dict, ABC):
         try:
             return super().__getitem__(key)
         except KeyError:
-            allowed_keys = self._allowed_keys.get(key, None) if self._key_restriction else None
+            allowed_keys = (
+                self._allowed_keys.get(key, None) if self._key_restriction else None
+            )
             result = _AttrDict(allowed_keys=allowed_keys)
             self.__setattr__(key, result)
             return result

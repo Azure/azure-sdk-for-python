@@ -4,8 +4,13 @@
 
 from typing import Optional
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import TableVerticalLimitSettings as RestTabularLimitSettings
-from azure.ai.ml._utils.utils import from_iso_duration_format_mins, to_iso_duration_format_mins
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    TableVerticalLimitSettings as RestTabularLimitSettings,
+)
+from azure.ai.ml._utils.utils import (
+    from_iso_duration_format_mins,
+    to_iso_duration_format_mins,
+)
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 

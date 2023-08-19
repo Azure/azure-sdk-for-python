@@ -52,7 +52,9 @@ class _CacheContent:
     arm_id: Optional[str] = None
 
     def update_on_disk_hash(self):
-        self.on_disk_hash = CachedNodeResolver.calc_on_disk_hash_for_component(self.component_ref, self.in_memory_hash)
+        self.on_disk_hash = CachedNodeResolver.calc_on_disk_hash_for_component(
+            self.component_ref, self.in_memory_hash
+        )
 
 
 class CachedNodeResolver(object):
@@ -129,7 +131,11 @@ class CachedNodeResolver(object):
         """
         default_max_workers = min(32, (os.cpu_count() or 1) + 4)
         try:
-            max_workers = int(os.environ.get(AZUREML_COMPONENT_REGISTRATION_MAX_WORKERS, default_max_workers))
+            max_workers = int(
+                os.environ.get(
+                    AZUREML_COMPONENT_REGISTRATION_MAX_WORKERS, default_max_workers
+                )
+            )
         except ValueError:
             logger.info(
                 "Environment variable %s with value %s set but failed to parse. "
@@ -166,15 +172,23 @@ class CachedNodeResolver(object):
         # Note that here we assume that the content of code folder won't change during the submission
         if component._source_path:  # pylint: disable=protected-access
             object_hash = hashlib.sha256()
-            object_hash.update(component._get_anonymous_hash().encode("utf-8"))  # pylint: disable=protected-access
-            object_hash.update(component._source_path.encode("utf-8"))  # pylint: disable=protected-access
+            object_hash.update(
+                component._get_anonymous_hash().encode("utf-8")
+            )  # pylint: disable=protected-access
+            object_hash.update(
+                component._source_path.encode("utf-8")
+            )  # pylint: disable=protected-access
             return _YAML_SOURCE_PREFIX + object_hash.hexdigest()
         # For components without code, like pipeline component, their dependencies have already
         # been resolved before calling this function, so we can use their anonymous hash directly
-        return _ANONYMOUS_HASH_PREFIX + component._get_anonymous_hash()  # pylint: disable=protected-access
+        return (
+            _ANONYMOUS_HASH_PREFIX + component._get_anonymous_hash()
+        )  # pylint: disable=protected-access
 
     @staticmethod
-    def calc_on_disk_hash_for_component(component: Component, in_memory_hash: str) -> str:
+    def calc_on_disk_hash_for_component(
+        component: Component, in_memory_hash: str
+    ) -> str:
         """Get a hash for a component.
 
         This function will calculate the hash based on the component's code folder if the component has code, so it's
@@ -204,7 +218,11 @@ class CachedNodeResolver(object):
             if hasattr(code, "_upload_hash"):
                 content_hash = code._upload_hash  # pylint: disable=protected-access
             else:
-                code_path = code.path if os.path.isabs(code.path) else os.path.join(code.base_path, code.path)
+                code_path = (
+                    code.path
+                    if os.path.isabs(code.path)
+                    else os.path.join(code.base_path, code.path)
+                )
                 if os.path.exists(code_path):
                     content_hash = get_object_hash(code_path)
                 else:
@@ -249,9 +267,15 @@ class CachedNodeResolver(object):
         """
         # on-disk cache will expire in a new SDK version
         on_disk_cache_path = self._get_on_disk_cache_path(on_disk_hash)
-        if on_disk_cache_path.is_file() and time.time() - on_disk_cache_path.stat().st_ctime < EXPIRE_TIME_IN_SECONDS:
+        if (
+            on_disk_cache_path.is_file()
+            and time.time() - on_disk_cache_path.stat().st_ctime
+            < EXPIRE_TIME_IN_SECONDS
+        ):
             try:
-                return on_disk_cache_path.read_text(encoding=DefaultOpenEncoding.READ).strip()
+                return on_disk_cache_path.read_text(
+                    encoding=DefaultOpenEncoding.READ
+                ).strip()
             except (OSError, PermissionError) as e:
                 logger.warning(
                     "Failed to read on-disk cache for component due to %s. "
@@ -283,7 +307,9 @@ class CachedNodeResolver(object):
                 on_disk_cache_path.as_posix(),
             )
 
-    def _resolve_cache_contents(self, cache_contents_to_resolve: List[_CacheContent], resolver: _AssetResolver):
+    def _resolve_cache_contents(
+        self, cache_contents_to_resolve: List[_CacheContent], resolver: _AssetResolver
+    ):
         """Resolve all components to resolve and save the results in cache.
 
         :param cache_contents_to_resolve: The cache contents to resolve
@@ -293,9 +319,13 @@ class CachedNodeResolver(object):
         """
 
         def _map_func(_cache_content: _CacheContent):
-            _cache_content.arm_id = resolver(_cache_content.component_ref, azureml_type=AzureMLResourceType.COMPONENT)
+            _cache_content.arm_id = resolver(
+                _cache_content.component_ref, azureml_type=AzureMLResourceType.COMPONENT
+            )
             if is_on_disk_cache_enabled() and is_private_preview_enabled():
-                self._save_to_on_disk_cache(_cache_content.on_disk_hash, _cache_content.arm_id)
+                self._save_to_on_disk_cache(
+                    _cache_content.on_disk_hash, _cache_content.arm_id
+                )
 
         if (
             len(cache_contents_to_resolve) > 1
@@ -304,12 +334,16 @@ class CachedNodeResolver(object):
         ):
             # given deduplication has already been done, we can safely assume that there is no
             # conflict in concurrent local cache access
-            with ThreadPoolExecutor(max_workers=self._get_component_registration_max_workers()) as executor:
+            with ThreadPoolExecutor(
+                max_workers=self._get_component_registration_max_workers()
+            ) as executor:
                 list(executor.map(_map_func, cache_contents_to_resolve))
         else:
             list(map(_map_func, cache_contents_to_resolve))
 
-    def _prepare_items_to_resolve(self) -> Tuple[Dict[str, List[BaseNode]], List[_CacheContent]]:
+    def _prepare_items_to_resolve(
+        self,
+    ) -> Tuple[Dict[str, List[BaseNode]], List[_CacheContent]]:
         """Pop all nodes in self._nodes_to_resolve to prepare cache contents to resolve and nodes to resolve. Nodes in
         self._nodes_to_resolve will be grouped by component hash and saved to a dict of list. Distinct dependent
         components not in current cache will be saved to a list.
@@ -317,13 +351,19 @@ class CachedNodeResolver(object):
         :return: a tuple of (dict of nodes to resolve, list of cache contents to resolve)
         :rtype: Tuple[Dict[str, List[BaseNode]],  List[_CacheContent]]
         """
-        _components = list(map(lambda x: x._component, self._nodes_to_resolve))  # pylint: disable=protected-access
+        _components = list(
+            map(lambda x: x._component, self._nodes_to_resolve)
+        )  # pylint: disable=protected-access
         # we can do concurrent component in-memory hash calculation here
-        in_memory_component_hashes = map(self._get_in_memory_hash_for_component, _components)
+        in_memory_component_hashes = map(
+            self._get_in_memory_hash_for_component, _components
+        )
 
         dict_of_nodes_to_resolve = defaultdict(list)
         cache_contents_to_resolve: List[_CacheContent] = []
-        for node, component_hash in zip(self._nodes_to_resolve, in_memory_component_hashes):
+        for node, component_hash in zip(
+            self._nodes_to_resolve, in_memory_component_hashes
+        ):
             dict_of_nodes_to_resolve[component_hash].append(node)
             if component_hash not in self._cache:
                 cache_content = _CacheContent(
@@ -335,7 +375,9 @@ class CachedNodeResolver(object):
         self._nodes_to_resolve.clear()
         return dict_of_nodes_to_resolve, cache_contents_to_resolve
 
-    def _resolve_cache_contents_from_disk(self, cache_contents_to_resolve: List[_CacheContent]) -> List[_CacheContent]:
+    def _resolve_cache_contents_from_disk(
+        self, cache_contents_to_resolve: List[_CacheContent]
+    ) -> List[_CacheContent]:
         """Check on-disk cache to resolve cache contents in cache_contents_to_resolve and return unresolved cache
         contents.
 
@@ -356,21 +398,29 @@ class CachedNodeResolver(object):
             and is_concurrent_component_registration_enabled()
             and is_private_preview_enabled()
         ):
-            with ThreadPoolExecutor(max_workers=self._get_component_registration_max_workers()) as executor:
-                executor.map(_CacheContent.update_on_disk_hash, cache_contents_to_resolve)
+            with ThreadPoolExecutor(
+                max_workers=self._get_component_registration_max_workers()
+            ) as executor:
+                executor.map(
+                    _CacheContent.update_on_disk_hash, cache_contents_to_resolve
+                )
         else:
             list(map(_CacheContent.update_on_disk_hash, cache_contents_to_resolve))
 
         left_cache_contents_to_resolve = []
         # need to deduplicate disk hash first if concurrent resolution is enabled
         for cache_content in cache_contents_to_resolve:
-            cache_content.arm_id = self._load_from_on_disk_cache(cache_content.on_disk_hash)
+            cache_content.arm_id = self._load_from_on_disk_cache(
+                cache_content.on_disk_hash
+            )
             if not cache_content.arm_id:
                 left_cache_contents_to_resolve.append(cache_content)
 
         return left_cache_contents_to_resolve
 
-    def _fill_back_component_to_nodes(self, dict_of_nodes_to_resolve: Dict[str, List[BaseNode]]):
+    def _fill_back_component_to_nodes(
+        self, dict_of_nodes_to_resolve: Dict[str, List[BaseNode]]
+    ):
         """Fill back resolved component to nodes.
 
         :param dict_of_nodes_to_resolve: The nodes to resolve
@@ -379,17 +429,24 @@ class CachedNodeResolver(object):
         for component_hash, nodes in dict_of_nodes_to_resolve.items():
             cache_content = self._cache[component_hash]
             for node in nodes:
-                node._component = cache_content.arm_id  # pylint: disable=protected-access
+                node._component = (
+                    cache_content.arm_id
+                )  # pylint: disable=protected-access
 
     def _resolve_nodes(self):
         """Processing logic of self.resolve_nodes.
 
         Should not be called in subgraph creation.
         """
-        dict_of_nodes_to_resolve, cache_contents_to_resolve = self._prepare_items_to_resolve()
+        (
+            dict_of_nodes_to_resolve,
+            cache_contents_to_resolve,
+        ) = self._prepare_items_to_resolve()
 
         if is_on_disk_cache_enabled() and is_private_preview_enabled():
-            cache_contents_to_resolve = self._resolve_cache_contents_from_disk(cache_contents_to_resolve)
+            cache_contents_to_resolve = self._resolve_cache_contents_from_disk(
+                cache_contents_to_resolve
+            )
 
         self._resolve_cache_contents(cache_contents_to_resolve, resolver=self._resolver)
 

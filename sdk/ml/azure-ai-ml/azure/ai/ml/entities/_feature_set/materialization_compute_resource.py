@@ -11,7 +11,9 @@ from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 @experimental
 class MaterializationComputeResource(RestTranslatableMixin):
-    def __init__(self, *, instance_type: str, **kwargs):  # pylint: disable=unused-argument
+    def __init__(
+        self, *, instance_type: str, **kwargs
+    ):  # pylint: disable=unused-argument
         """
         :keyword instance_type: Specifies the instance type.
         :paramtype instance_type: str
@@ -22,7 +24,9 @@ class MaterializationComputeResource(RestTranslatableMixin):
         return RestMaterializationComputeResource(instance_type=self.instance_type)
 
     @classmethod
-    def _from_rest_object(cls, obj: RestMaterializationComputeResource) -> "MaterializationComputeResource":
+    def _from_rest_object(
+        cls, obj: RestMaterializationComputeResource
+    ) -> "MaterializationComputeResource":
         if not obj:
             return None
         return MaterializationComputeResource(instance_type=obj.instance_type)

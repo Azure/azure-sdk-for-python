@@ -59,7 +59,9 @@ class AzureMlImageContext(object):
         self._docker_azureml_app_path = LocalEndpointConstants.AZUREML_APP_PATH
 
         local_model_mount_path = str(model_directory_path)
-        docker_azureml_model_dir = f"{self.docker_azureml_app_path}azureml-models/{model_mount_path}"
+        docker_azureml_model_dir = (
+            f"{self.docker_azureml_app_path}azureml-models/{model_mount_path}"
+        )
         self._volumes = {
             f"{local_model_mount_path}:{docker_azureml_model_dir}:z": {
                 local_model_mount_path: {"bind": docker_azureml_model_dir}
@@ -73,7 +75,9 @@ class AzureMlImageContext(object):
         if yaml_code_directory_path:
             local_code_mount_path = str(yaml_code_directory_path)
             docker_code_folder_name = Path(yaml_code_directory_path).name
-            docker_code_mount_path = f"{self.docker_azureml_app_path}{docker_code_folder_name}/"
+            docker_code_mount_path = (
+                f"{self.docker_azureml_app_path}{docker_code_folder_name}/"
+            )
             self._volumes.update(
                 {
                     f"{local_code_mount_path}:{docker_code_mount_path}": {
@@ -83,10 +87,15 @@ class AzureMlImageContext(object):
             )
             # Set the directory containing scoring script as AML_APP_ROOT/working directory
             # ie. /var/azureml-app/onlinescoring
-            self._environment[LocalEndpointConstants.ENVVAR_KEY_AML_APP_ROOT] = os.path.join(
-                docker_code_mount_path, os.path.dirname(yaml_code_scoring_script_file_name)
+            self._environment[
+                LocalEndpointConstants.ENVVAR_KEY_AML_APP_ROOT
+            ] = os.path.join(
+                docker_code_mount_path,
+                os.path.dirname(yaml_code_scoring_script_file_name),
             )
-            self._environment[LocalEndpointConstants.ENVVAR_KEY_AZUREML_ENTRY_SCRIPT] = Path(
+            self._environment[
+                LocalEndpointConstants.ENVVAR_KEY_AZUREML_ENTRY_SCRIPT
+            ] = Path(
                 yaml_code_scoring_script_file_name
             ).name  # ie. score.py
 

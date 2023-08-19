@@ -34,7 +34,9 @@ class ControlFlowType(object):
     PARALLEL_FOR = "parallel_for"
 
 
-CONTROL_FLOW_TYPES = [getattr(ControlFlowType, k) for k in dir(ControlFlowType) if k.isupper()]
+CONTROL_FLOW_TYPES = [
+    getattr(ControlFlowType, k) for k in dir(ControlFlowType) if k.isupper()
+]
 
 
 class DataTransferTaskType(object):
@@ -54,9 +56,15 @@ class ExternalDataType(object):
 
 
 class DataTransferBuiltinComponentUri(object):
-    IMPORT_DATABASE = "azureml://registries/azureml/components/import_data_database/versions/0.0.1"
-    IMPORT_FILE_SYSTEM = "azureml://registries/azureml/components/import_data_file_system/versions/0.0.1"
-    EXPORT_DATABASE = "azureml://registries/azureml/components/export_data_database/versions/0.0.1"
+    IMPORT_DATABASE = (
+        "azureml://registries/azureml/components/import_data_database/versions/0.0.1"
+    )
+    IMPORT_FILE_SYSTEM = (
+        "azureml://registries/azureml/components/import_data_file_system/versions/0.0.1"
+    )
+    EXPORT_DATABASE = (
+        "azureml://registries/azureml/components/export_data_database/versions/0.0.1"
+    )
 
 
 class ComponentSource:
@@ -106,7 +114,9 @@ class IOConstants:
         ComponentParameterTypes.BOOLEAN: "Boolean",
     }
     PARAM_PARSERS = {
-        ComponentParameterTypes.INTEGER: lambda v: int(float(v)),  # parse case like 10.0 -> 10
+        ComponentParameterTypes.INTEGER: lambda v: int(
+            float(v)
+        ),  # parse case like 10.0 -> 10
         ComponentParameterTypes.BOOLEAN: lambda v: str(v).lower() == "true",
         ComponentParameterTypes.NUMBER: float,
     }

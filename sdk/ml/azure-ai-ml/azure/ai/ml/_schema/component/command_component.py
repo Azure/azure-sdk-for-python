@@ -32,7 +32,10 @@ from azure.ai.ml._schema.job.distribution import (
 )
 from azure.ai.ml._schema.job.parameterized_command import ParameterizedCommandSchema
 from azure.ai.ml._utils.utils import is_private_preview_enabled
-from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, AzureDevopsArtifactsType
+from azure.ai.ml.constants._common import (
+    BASE_PATH_CONTEXT_KEY,
+    AzureDevopsArtifactsType,
+)
 from azure.ai.ml.constants._component import ComponentSource, NodeType
 
 
@@ -48,7 +51,9 @@ class AzureDevopsArtifactsSchema(metaclass=PatchedSchemaMeta):
 
 class CommandComponentSchema(ComponentSchema, ParameterizedCommandSchema):
     class Meta:
-        exclude = ["environment_variables"]  # component doesn't have environment variables
+        exclude = [
+            "environment_variables"
+        ]  # component doesn't have environment variables
 
     type = StringTransformedEnum(allowed_values=[NodeType.COMMAND])
     resources = NestedField(ComponentResourceSchema, unknown=INCLUDE)
@@ -76,7 +81,9 @@ class CommandComponentSchema(ComponentSchema, ParameterizedCommandSchema):
     # Note: AzureDevopsArtifactsSchema only available when private preview flag opened before init of command component
     # schema class.
     if is_private_preview_enabled():
-        additional_includes = fields.List(UnionField([fields.Str(), NestedField(AzureDevopsArtifactsSchema)]))
+        additional_includes = fields.List(
+            UnionField([fields.Str(), NestedField(AzureDevopsArtifactsSchema)])
+        )
     else:
         additional_includes = fields.List(fields.Str())
 
@@ -130,9 +137,9 @@ class ComponentFileRefField(FileRefField):
         # Update base_path to parent path of component file.
         component_schema_context = deepcopy(self.context)
         component_schema_context[BASE_PATH_CONTEXT_KEY] = source_path.parent
-        component = AnonymousCommandComponentSchema(context=component_schema_context).load(
-            component_dict, unknown=INCLUDE
-        )
+        component = AnonymousCommandComponentSchema(
+            context=component_schema_context
+        ).load(component_dict, unknown=INCLUDE)
         component._source_path = source_path
         component._source = ComponentSource.YAML_COMPONENT
         return component

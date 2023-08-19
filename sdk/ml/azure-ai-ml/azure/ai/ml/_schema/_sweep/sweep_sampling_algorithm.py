@@ -8,7 +8,10 @@ import logging
 
 from marshmallow import ValidationError, fields, post_load, pre_dump
 
-from azure.ai.ml._restclient.v2023_02_01_preview.models import RandomSamplingAlgorithmRule, SamplingAlgorithmType
+from azure.ai.ml._restclient.v2023_02_01_preview.models import (
+    RandomSamplingAlgorithmRule,
+    SamplingAlgorithmType,
+)
 from azure.ai.ml._schema.core.fields import StringTransformedEnum, UnionField
 from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
 from azure.ai.ml._utils.utils import camel_to_snake
@@ -53,7 +56,9 @@ class RandomSamplingAlgorithmSchema(metaclass=PatchedSchemaMeta):
         from azure.ai.ml.sweep import RandomSamplingAlgorithm
 
         if not isinstance(data, RandomSamplingAlgorithm):
-            raise ValidationError("Cannot dump non-RandomSamplingAlgorithm object into RandomSamplingAlgorithm")
+            raise ValidationError(
+                "Cannot dump non-RandomSamplingAlgorithm object into RandomSamplingAlgorithm"
+            )
         return data
 
 
@@ -76,7 +81,9 @@ class GridSamplingAlgorithmSchema(metaclass=PatchedSchemaMeta):
         from azure.ai.ml.sweep import GridSamplingAlgorithm
 
         if not isinstance(data, GridSamplingAlgorithm):
-            raise ValidationError("Cannot dump non-GridSamplingAlgorithm object into GridSamplingAlgorithm")
+            raise ValidationError(
+                "Cannot dump non-GridSamplingAlgorithm object into GridSamplingAlgorithm"
+            )
         return data
 
 
@@ -99,5 +106,7 @@ class BayesianSamplingAlgorithmSchema(metaclass=PatchedSchemaMeta):
         from azure.ai.ml.sweep import BayesianSamplingAlgorithm
 
         if not isinstance(data, BayesianSamplingAlgorithm):
-            raise ValidationError("Cannot dump non-BayesianSamplingAlgorithm object into BayesianSamplingAlgorithm")
+            raise ValidationError(
+                "Cannot dump non-BayesianSamplingAlgorithm object into BayesianSamplingAlgorithm"
+            )
         return data

@@ -20,15 +20,21 @@ class CommandJobLimitsSchema(metaclass=PatchedSchemaMeta):
 
 
 class SweepJobLimitsSchema(metaclass=PatchedSchemaMeta):
-    max_concurrent_trials = fields.Int(metadata={"description": "Sweep Job max concurrent trials."})
+    max_concurrent_trials = fields.Int(
+        metadata={"description": "Sweep Job max concurrent trials."}
+    )
     max_total_trials = fields.Int(
         metadata={"description": "Sweep Job max total trials."},
         required=True,
     )
     timeout = fields.Int(
-        metadata={"description": "The max run duration in Seconds, after which the job will be cancelled."}
+        metadata={
+            "description": "The max run duration in Seconds, after which the job will be cancelled."
+        }
     )
-    trial_timeout = fields.Int(metadata={"description": "Sweep Job Trial timeout value."})
+    trial_timeout = fields.Int(
+        metadata={"description": "Sweep Job Trial timeout value."}
+    )
 
     @post_load
     def make(self, data, **kwargs):

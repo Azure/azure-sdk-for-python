@@ -6,15 +6,23 @@
 import os
 from typing import Callable, Dict, List, Optional, Tuple, Union
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import AmlToken, ManagedIdentity, UserIdentity
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    AmlToken,
+    ManagedIdentity,
+    UserIdentity,
+)
 from azure.ai.ml.constants._common import AssetTypes
 from azure.ai.ml.constants._component import ComponentSource
 from azure.ai.ml.entities import Environment
 from azure.ai.ml.entities._component.spark_component import SparkComponent
 from azure.ai.ml.entities._inputs_outputs import Input, Output
-from azure.ai.ml.entities._job.pipeline._component_translatable import ComponentTranslatableMixin
+from azure.ai.ml.entities._job.pipeline._component_translatable import (
+    ComponentTranslatableMixin,
+)
 from azure.ai.ml.entities._job.spark_job_entry import SparkJobEntry
-from azure.ai.ml.entities._job.spark_resource_configuration import SparkResourceConfiguration
+from azure.ai.ml.entities._job.spark_resource_configuration import (
+    SparkResourceConfiguration,
+)
 from azure.ai.ml.exceptions import ErrorTarget, ValidationException
 
 from .spark import Spark
@@ -38,11 +46,15 @@ def _parse_input(input_value):
         component_input = Input(**input_value)
     elif isinstance(input_value, (str, bool, int, float)):
         # Input bindings are not supported
-        component_input = ComponentTranslatableMixin._to_input_builder_function(input_value)
+        component_input = ComponentTranslatableMixin._to_input_builder_function(
+            input_value
+        )
         job_input = input_value
     else:
         msg = f"Unsupported input type: {type(input_value)}, only Input, dict, str, bool, int and float are supported."
-        raise ValidationException(message=msg, no_personal_data_message=msg, target=ErrorTarget.JOB)
+        raise ValidationException(
+            message=msg, no_personal_data_message=msg, target=ErrorTarget.JOB
+        )
     return component_input, job_input
 
 
@@ -59,11 +71,15 @@ def _parse_output(output_value):
     elif isinstance(output_value, dict):  # When output value is a non-empty dictionary
         job_output = Output(**output_value)
         component_output = Output(**output_value)
-    elif isinstance(output_value, str):  # When output is passed in from pipeline job yaml
+    elif isinstance(
+        output_value, str
+    ):  # When output is passed in from pipeline job yaml
         job_output = output_value
     else:
         msg = f"Unsupported output type: {type(output_value)}, only Output and dict are supported."
-        raise ValidationException(message=msg, no_personal_data_message=msg, target=ErrorTarget.JOB)
+        raise ValidationException(
+            message=msg, no_personal_data_message=msg, target=ErrorTarget.JOB
+        )
     return component_output, job_output
 
 
@@ -90,7 +106,9 @@ def spark(
     jars: Optional[List[str]] = None,
     files: Optional[List[str]] = None,
     archives: Optional[List[str]] = None,
-    identity: Optional[Union[Dict[str, str], ManagedIdentity, AmlToken, UserIdentity]] = None,
+    identity: Optional[
+        Union[Dict[str, str], ManagedIdentity, AmlToken, UserIdentity]
+    ] = None,
     driver_cores: Optional[int] = None,
     driver_memory: Optional[str] = None,
     executor_cores: Optional[int] = None,
@@ -212,10 +230,14 @@ def spark(
 
     inputs = inputs or {}
     outputs = outputs or {}
-    component_inputs, job_inputs = _parse_inputs_outputs(inputs, parse_func=_parse_input)
+    component_inputs, job_inputs = _parse_inputs_outputs(
+        inputs, parse_func=_parse_input
+    )
     # job inputs can not be None
     job_inputs = {k: v for k, v in job_inputs.items() if v is not None}
-    component_outputs, job_outputs = _parse_inputs_outputs(outputs, parse_func=_parse_output)
+    component_outputs, job_outputs = _parse_inputs_outputs(
+        outputs, parse_func=_parse_output
+    )
     component = kwargs.pop("component", None)
 
     if component is None:

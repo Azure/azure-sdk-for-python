@@ -11,7 +11,9 @@ from typing import Dict, Optional, Union
 import yaml
 
 from azure.ai.ml._exception_helper import log_and_raise_error
-from azure.ai.ml._restclient.v2023_04_01_preview.models import BuildContext as RestBuildContext
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    BuildContext as RestBuildContext,
+)
 from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     EnvironmentContainer,
     EnvironmentVersion,
@@ -21,13 +23,23 @@ from azure.ai.ml._schema import EnvironmentSchema
 from azure.ai.ml._utils._arm_id_utils import AMLVersionedArmId
 from azure.ai.ml._utils._asset_utils import get_ignore_file, get_object_hash
 from azure.ai.ml._utils.utils import dump_yaml, is_url, load_file, load_yaml
-from azure.ai.ml.constants._common import ANONYMOUS_ENV_NAME, BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, ArmConstants
+from azure.ai.ml.constants._common import (
+    ANONYMOUS_ENV_NAME,
+    BASE_PATH_CONTEXT_KEY,
+    PARAMS_OVERRIDE_KEY,
+    ArmConstants,
+)
 from azure.ai.ml.entities._assets.asset import Asset
 from azure.ai.ml.entities._assets.intellectual_property import IntellectualProperty
 from azure.ai.ml.entities._mixins import LocalizableMixin
 from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._util import get_md5_string, load_from_dict
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+from azure.ai.ml.exceptions import (
+    ErrorCategory,
+    ErrorTarget,
+    ValidationErrorType,
+    ValidationException,
+)
 
 
 class BuildContext:
@@ -49,7 +61,9 @@ class BuildContext:
         self.path = path
 
     def _to_rest_object(self) -> RestBuildContext:
-        return RestBuildContext(context_uri=self.path, dockerfile_path=self.dockerfile_path)
+        return RestBuildContext(
+            context_uri=self.path, dockerfile_path=self.dockerfile_path
+        )
 
     @classmethod
     def _from_rest_object(cls, rest_obj: RestBuildContext) -> None:
@@ -134,7 +148,9 @@ class Environment(Asset, LocalizableMixin):
 
         self._translated_conda_file = None
         if self.conda_file:
-            self._translated_conda_file = dump_yaml(self.conda_file, sort_keys=True)  # service needs str representation
+            self._translated_conda_file = dump_yaml(
+                self.conda_file, sort_keys=True
+            )  # service needs str representation
 
         if self.build and self.build.path and not is_url(self.build.path):
             path = Path(self.build.path)
@@ -149,7 +165,9 @@ class Environment(Asset, LocalizableMixin):
                 self._generate_anonymous_name_version(source="build")
             elif self.image:
                 self._generate_anonymous_name_version(
-                    source="image", conda_file=self._translated_conda_file, inference_config=self.inference_config
+                    source="image",
+                    conda_file=self._translated_conda_file,
+                    inference_config=self.inference_config,
                 )
 
     @property
@@ -211,7 +229,9 @@ class Environment(Asset, LocalizableMixin):
         if self.properties:
             environment_version.properties = self.properties
 
-        environment_version_resource = EnvironmentVersion(properties=environment_version)
+        environment_version_resource = EnvironmentVersion(
+            properties=environment_version
+        )
 
         return environment_version_resource
 
@@ -233,9 +253,13 @@ class Environment(Asset, LocalizableMixin):
             image=rest_env_version.image,
             os_type=rest_env_version.os_type,
             inference_config=rest_env_version.inference_config,
-            build=BuildContext._from_rest_object(rest_env_version.build) if rest_env_version.build else None,
+            build=BuildContext._from_rest_object(rest_env_version.build)
+            if rest_env_version.build
+            else None,
             properties=rest_env_version.properties,
-            intellectual_property=IntellectualProperty._from_rest_object(rest_env_version.intellectual_property)
+            intellectual_property=IntellectualProperty._from_rest_object(
+                rest_env_version.intellectual_property
+            )
             if rest_env_version.intellectual_property
             else None,
         )
@@ -248,12 +272,16 @@ class Environment(Asset, LocalizableMixin):
         return environment
 
     @classmethod
-    def _from_container_rest_object(cls, env_container_rest_object: EnvironmentContainer) -> "Environment":
+    def _from_container_rest_object(
+        cls, env_container_rest_object: EnvironmentContainer
+    ) -> "Environment":
         env = Environment(
             name=env_container_rest_object.name,
             version="1",
             id=env_container_rest_object.id,
-            creation_context=SystemData._from_rest_object(env_container_rest_object.system_data),
+            creation_context=SystemData._from_rest_object(
+                env_container_rest_object.system_data
+            ),
         )
         env.latest_version = env_container_rest_object.properties.latest_version
 
@@ -269,12 +297,16 @@ class Environment(Asset, LocalizableMixin):
             self._arm_type: {
                 ArmConstants.NAME: self.name,
                 ArmConstants.VERSION: self.version,
-                ArmConstants.PROPERTIES_PARAMETER_NAME: self._serialize.body(properties, "EnvironmentVersion"),
+                ArmConstants.PROPERTIES_PARAMETER_NAME: self._serialize.body(
+                    properties, "EnvironmentVersion"
+                ),
             }
         }
 
     def _to_dict(self) -> Dict:
-        return EnvironmentSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)  # pylint: disable=no-member
+        return EnvironmentSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(
+            self
+        )  # pylint: disable=no-member
 
     def validate(self):
         if self.name is None:
@@ -332,13 +364,18 @@ class Environment(Asset, LocalizableMixin):
         return not self.__eq__(other)
 
     def _generate_anonymous_name_version(
-        self, source: str, conda_file: Optional[str] = None, inference_config: Optional[Dict] = None
+        self,
+        source: str,
+        conda_file: Optional[str] = None,
+        inference_config: Optional[Dict] = None,
     ):
         hash_str = ""
         if source == "image":
             hash_str = hash_str.join(get_md5_string(self.image))
             if inference_config:
-                hash_str = hash_str.join(get_md5_string(yaml.dump(inference_config, sort_keys=True)))
+                hash_str = hash_str.join(
+                    get_md5_string(yaml.dump(inference_config, sort_keys=True))
+                )
             if conda_file:
                 hash_str = hash_str.join(get_md5_string(conda_file))
         if source == "build":
@@ -360,7 +397,11 @@ class Environment(Asset, LocalizableMixin):
         :type base_path: str
         """
         if not getattr(self, "id", None):
-            raise ValueError("Only remote asset can be localize but got a {} without id.".format(type(self)))
+            raise ValueError(
+                "Only remote asset can be localize but got a {} without id.".format(
+                    type(self)
+                )
+            )
         self._id = None
         self._creation_context = None
         self._base_path = base_path

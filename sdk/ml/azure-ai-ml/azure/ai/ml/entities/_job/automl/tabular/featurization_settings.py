@@ -8,13 +8,18 @@ import logging
 from typing import Dict, List, Optional, Union
 
 from azure.ai.ml._restclient.v2023_04_01_preview.models import BlockedTransformers
-from azure.ai.ml._restclient.v2023_04_01_preview.models import ColumnTransformer as RestColumnTransformer
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    ColumnTransformer as RestColumnTransformer,
+)
 from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     TableVerticalFeaturizationSettings as RestTabularFeaturizationSettings,
 )
 from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml.constants._job.automl import AutoMLTransformerParameterKeys
-from azure.ai.ml.entities._job.automl.featurization_settings import FeaturizationSettings, FeaturizationSettingsType
+from azure.ai.ml.entities._job.automl.featurization_settings import (
+    FeaturizationSettings,
+    FeaturizationSettingsType,
+)
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 module_logger = logging.getLogger(__name__)
@@ -42,7 +47,9 @@ class ColumnTransformer(RestTranslatableMixin):
         return RestColumnTransformer(fields=self.fields, parameters=self.parameters)
 
     @classmethod
-    def _from_rest_object(cls, obj: RestColumnTransformer) -> Optional["ColumnTransformer"]:
+    def _from_rest_object(
+        cls, obj: RestColumnTransformer
+    ) -> Optional["ColumnTransformer"]:
         if obj:
             fields = obj.fields
             parameters = obj.parameters
@@ -105,7 +112,10 @@ class TabularFeaturizationSettings(FeaturizationSettings):
         self._transformer_params = (
             None
             if not value
-            else {(AutoMLTransformerParameterKeys[camel_to_snake(k).upper()].value): v for k, v in value.items()}
+            else {
+                (AutoMLTransformerParameterKeys[camel_to_snake(k).upper()].value): v
+                for k, v in value.items()
+            }
         )
 
     @property
@@ -114,11 +124,16 @@ class TabularFeaturizationSettings(FeaturizationSettings):
         return self._blocked_transformers
 
     @blocked_transformers.setter
-    def blocked_transformers(self, blocked_transformers_list: List[Union[BlockedTransformers, str]]):
+    def blocked_transformers(
+        self, blocked_transformers_list: List[Union[BlockedTransformers, str]]
+    ):
         self._blocked_transformers = (
             None
             if blocked_transformers_list is None
-            else [BlockedTransformers[camel_to_snake(o)] for o in blocked_transformers_list]
+            else [
+                BlockedTransformers[camel_to_snake(o)]
+                for o in blocked_transformers_list
+            ]
         )
 
     def _to_rest_object(self) -> RestTabularFeaturizationSettings:
@@ -136,13 +151,17 @@ class TabularFeaturizationSettings(FeaturizationSettings):
         )
 
     @classmethod
-    def _from_rest_object(cls, obj: RestTabularFeaturizationSettings) -> "TabularFeaturizationSettings":
+    def _from_rest_object(
+        cls, obj: RestTabularFeaturizationSettings
+    ) -> "TabularFeaturizationSettings":
         rest_transformers_params = obj.transformer_params
         transformer_dict = None
         if rest_transformers_params:
             transformer_dict = {}
             for key, settings in rest_transformers_params.items():
-                transformer_dict[key] = [ColumnTransformer._from_rest_object(o) for o in settings]
+                transformer_dict[key] = [
+                    ColumnTransformer._from_rest_object(o) for o in settings
+                ]
         transformer_params = transformer_dict
 
         return TabularFeaturizationSettings(

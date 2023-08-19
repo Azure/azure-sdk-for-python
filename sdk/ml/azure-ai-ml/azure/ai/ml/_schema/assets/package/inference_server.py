@@ -7,7 +7,9 @@
 import logging
 
 from marshmallow import post_load
-from azure.ai.ml._schema._deployment.code_configuration_schema import CodeConfigurationSchema
+from azure.ai.ml._schema._deployment.code_configuration_schema import (
+    CodeConfigurationSchema,
+)
 from azure.ai.ml._schema.core.fields import StringTransformedEnum, NestedField
 from azure.ai.ml._schema.core.schema import PathAwareSchema
 from azure.ai.ml.constants._common import InferenceServerType
@@ -27,8 +29,12 @@ class InferenceServerSchema(PathAwareSchema):
         ],
         required=True,
     )
-    code_configuration = NestedField(CodeConfigurationSchema)  # required for batch and online
-    inference_configuration = NestedField(OnlineInferenceConfigurationSchema)  # required for custom and Triton
+    code_configuration = NestedField(
+        CodeConfigurationSchema
+    )  # required for batch and online
+    inference_configuration = NestedField(
+        OnlineInferenceConfigurationSchema
+    )  # required for custom and Triton
 
     @post_load
     def make(self, data, **kwargs):

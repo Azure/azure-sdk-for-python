@@ -24,12 +24,16 @@ module_logger = logging.getLogger(__name__)
 class PipelineDataTransferCopyJobSchema(DataTransferCopyJobSchema):
     outputs = fields.Dict(
         keys=fields.Str(),
-        values=UnionField([NestedField(OutputSchema), OutputBindingStr], allow_none=True),
+        values=UnionField(
+            [NestedField(OutputSchema), OutputBindingStr], allow_none=True
+        ),
     )
 
     @post_load
     def make(self, data: Any, **kwargs: Any):
-        from azure.ai.ml.entities._job.data_transfer.data_transfer_job import DataTransferCopyJob
+        from azure.ai.ml.entities._job.data_transfer.data_transfer_job import (
+            DataTransferCopyJob,
+        )
 
         return DataTransferCopyJob(**data)
 
@@ -37,12 +41,16 @@ class PipelineDataTransferCopyJobSchema(DataTransferCopyJobSchema):
 class PipelineDataTransferImportJobSchema(DataTransferImportJobSchema):
     outputs = fields.Dict(
         keys=fields.Str(),
-        values=UnionField([NestedField(OutputSchema), OutputBindingStr], allow_none=True),
+        values=UnionField(
+            [NestedField(OutputSchema), OutputBindingStr], allow_none=True
+        ),
     )
 
     @post_load
     def make(self, data: Any, **kwargs: Any):
-        from azure.ai.ml.entities._job.data_transfer.data_transfer_job import DataTransferImportJob
+        from azure.ai.ml.entities._job.data_transfer.data_transfer_job import (
+            DataTransferImportJob,
+        )
 
         return DataTransferImportJob(**data)
 
@@ -50,6 +58,8 @@ class PipelineDataTransferImportJobSchema(DataTransferImportJobSchema):
 class PipelineDataTransferExportJobSchema(DataTransferExportJobSchema):
     @post_load
     def make(self, data: Any, **kwargs: Any):
-        from azure.ai.ml.entities._job.data_transfer.data_transfer_job import DataTransferExportJob
+        from azure.ai.ml.entities._job.data_transfer.data_transfer_job import (
+            DataTransferExportJob,
+        )
 
         return DataTransferExportJob(**data)

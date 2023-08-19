@@ -6,7 +6,10 @@
 
 from typing import Dict, Optional
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import Feature as RestFeature, FeatureProperties
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    Feature as RestFeature,
+    FeatureProperties,
+)
 
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 from azure.ai.ml.entities._feature_store_entity.data_column_type import DataColumnType

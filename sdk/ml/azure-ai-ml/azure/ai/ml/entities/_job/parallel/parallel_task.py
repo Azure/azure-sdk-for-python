@@ -73,7 +73,9 @@ class ParallelTask(RestTranslatableMixin, DictMixin):
 
     def _to_dict(self) -> Dict:
         # pylint: disable=no-member
-        return ComponentParallelTaskSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        return ComponentParallelTaskSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(
+            self
+        )
 
     @classmethod
     def _load(
@@ -84,7 +86,9 @@ class ParallelTask(RestTranslatableMixin, DictMixin):
     ) -> "ParallelTask":
         params_override = params_override or []
         data = load_yaml(path)
-        return ParallelTask._load_from_dict(data=data, path=path, params_override=params_override)
+        return ParallelTask._load_from_dict(
+            data=data, path=path, params_override=params_override
+        )
 
     @classmethod
     def _load_from_dict(

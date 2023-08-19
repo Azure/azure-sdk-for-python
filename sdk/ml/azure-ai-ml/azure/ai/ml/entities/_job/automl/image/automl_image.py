@@ -5,12 +5,19 @@
 from abc import ABC
 from typing import Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import LogVerbosity, SamplingAlgorithmType
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    LogVerbosity,
+    SamplingAlgorithmType,
+)
 from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._job.automl.automl_vertical import AutoMLVertical
-from azure.ai.ml.entities._job.automl.image.image_limit_settings import ImageLimitSettings
-from azure.ai.ml.entities._job.automl.image.image_sweep_settings import ImageSweepSettings
+from azure.ai.ml.entities._job.automl.image.image_limit_settings import (
+    ImageLimitSettings,
+)
+from azure.ai.ml.entities._job.automl.image.image_sweep_settings import (
+    ImageSweepSettings,
+)
 from azure.ai.ml.entities._job.sweep.early_termination_policy import (
     BanditPolicy,
     MedianStoppingPolicy,
@@ -49,7 +56,9 @@ class AutoMLImage(AutoMLVertical, ABC):
 
     @log_verbosity.setter
     def log_verbosity(self, value: Union[str, LogVerbosity]):
-        self._log_verbosity = None if value is None else LogVerbosity[camel_to_snake(value).upper()]
+        self._log_verbosity = (
+            None if value is None else LogVerbosity[camel_to_snake(value).upper()]
+        )
 
     @property
     def limits(self) -> ImageLimitSettings:
@@ -97,10 +106,22 @@ class AutoMLImage(AutoMLVertical, ABC):
         validation_data: Optional[Input] = None,
         validation_data_size: Optional[float] = None,
     ) -> None:
-        self.target_column_name = self.target_column_name if target_column_name is None else target_column_name
-        self.training_data = self.training_data if training_data is None else training_data
-        self.validation_data = self.validation_data if validation_data is None else validation_data
-        self.validation_data_size = self.validation_data_size if validation_data_size is None else validation_data_size
+        self.target_column_name = (
+            self.target_column_name
+            if target_column_name is None
+            else target_column_name
+        )
+        self.training_data = (
+            self.training_data if training_data is None else training_data
+        )
+        self.validation_data = (
+            self.validation_data if validation_data is None else validation_data
+        )
+        self.validation_data_size = (
+            self.validation_data_size
+            if validation_data_size is None
+            else validation_data_size
+        )
 
     def set_limits(
         self,
@@ -116,18 +137,31 @@ class AutoMLImage(AutoMLVertical, ABC):
         """
         self._limits = self._limits or ImageLimitSettings()
         self._limits.max_concurrent_trials = (
-            max_concurrent_trials if max_concurrent_trials is not None else self._limits.max_concurrent_trials
+            max_concurrent_trials
+            if max_concurrent_trials is not None
+            else self._limits.max_concurrent_trials
         )
-        self._limits.max_trials = max_trials if max_trials is not None else self._limits.max_trials
-        self._limits.timeout_minutes = timeout_minutes if timeout_minutes is not None else self._limits.timeout_minutes
+        self._limits.max_trials = (
+            max_trials if max_trials is not None else self._limits.max_trials
+        )
+        self._limits.timeout_minutes = (
+            timeout_minutes
+            if timeout_minutes is not None
+            else self._limits.timeout_minutes
+        )
 
     def set_sweep(
         self,
         *,
         sampling_algorithm: Union[
-            str, SamplingAlgorithmType.RANDOM, SamplingAlgorithmType.GRID, SamplingAlgorithmType.BAYESIAN
+            str,
+            SamplingAlgorithmType.RANDOM,
+            SamplingAlgorithmType.GRID,
+            SamplingAlgorithmType.BAYESIAN,
         ],
-        early_termination: Optional[Union[BanditPolicy, MedianStoppingPolicy, TruncationSelectionPolicy]] = None,
+        early_termination: Optional[
+            Union[BanditPolicy, MedianStoppingPolicy, TruncationSelectionPolicy]
+        ] = None,
     ) -> None:
         """Sweep settings for all AutoML Image Verticals.
 
@@ -147,7 +181,9 @@ class AutoMLImage(AutoMLVertical, ABC):
         else:
             self._sweep = ImageSweepSettings(sampling_algorithm=sampling_algorithm)
 
-        self._sweep.early_termination = early_termination or self._sweep.early_termination
+        self._sweep.early_termination = (
+            early_termination or self._sweep.early_termination
+        )
 
     def __eq__(self, other) -> bool:
         if not isinstance(other, AutoMLImage):

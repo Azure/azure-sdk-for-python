@@ -9,8 +9,14 @@ from typing import Any
 
 from marshmallow import fields, post_load
 
-from azure.ai.ml._schema.core.fields import ComputeField, NestedField, StringTransformedEnum
-from azure.ai.ml._schema.job_resource_configuration import JobResourceConfigurationSchema
+from azure.ai.ml._schema.core.fields import (
+    ComputeField,
+    NestedField,
+    StringTransformedEnum,
+)
+from azure.ai.ml._schema.job_resource_configuration import (
+    JobResourceConfigurationSchema,
+)
 from azure.ai.ml._schema._deployment.deployment import DeploymentSchema
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 from azure.ai.ml.constants._deployment import BatchDeploymentType
@@ -34,7 +40,8 @@ class ModelBatchDeploymentSchema(DeploymentSchema):
     )
     resources = NestedField(JobResourceConfigurationSchema)
     type = StringTransformedEnum(
-        allowed_values=[BatchDeploymentType.PIPELINE, BatchDeploymentType.MODEL], required=False
+        allowed_values=[BatchDeploymentType.PIPELINE, BatchDeploymentType.MODEL],
+        required=False,
     )
 
     settings = ExperimentalField(NestedField(ModelBatchDeploymentSettingsSchema))
@@ -43,4 +50,6 @@ class ModelBatchDeploymentSchema(DeploymentSchema):
     def make(self, data: Any, **kwargs: Any) -> Any:
         from azure.ai.ml.entities import ModelBatchDeployment
 
-        return ModelBatchDeployment(base_path=self.context[BASE_PATH_CONTEXT_KEY], **data)
+        return ModelBatchDeployment(
+            base_path=self.context[BASE_PATH_CONTEXT_KEY], **data
+        )

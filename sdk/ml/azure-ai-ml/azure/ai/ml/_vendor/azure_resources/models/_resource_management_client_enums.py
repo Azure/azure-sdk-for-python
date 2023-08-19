@@ -14,9 +14,7 @@ class AliasPathAttributes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The attributes of the token that the alias path is referring to."""
 
     NONE = "None"  #: The token that the alias path is referring to has no attributes.
-    MODIFIABLE = (
-        "Modifiable"  #: The token that the alias path is referring to is modifiable by policies with 'modify' effect.
-    )
+    MODIFIABLE = "Modifiable"  #: The token that the alias path is referring to is modifiable by policies with 'modify' effect.
 
 
 class AliasPathTokenType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -42,7 +40,9 @@ class AliasPatternType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class AliasType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of the alias."""
 
-    NOT_SPECIFIED = "NotSpecified"  #: Alias type is unknown (same as not providing alias type).
+    NOT_SPECIFIED = (
+        "NotSpecified"  #: Alias type is unknown (same as not providing alias type).
+    )
     PLAIN_TEXT = "PlainText"  #: Alias value is not secret.
     MASK = "Mask"  #: Alias value is secret.
 
@@ -95,13 +95,13 @@ class ProvisioningOperation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CREATE = "Create"  #: The provisioning operation is create.
     DELETE = "Delete"  #: The provisioning operation is delete.
     WAITING = "Waiting"  #: The provisioning operation is waiting.
-    AZURE_ASYNC_OPERATION_WAITING = (
-        "AzureAsyncOperationWaiting"  #: The provisioning operation is waiting Azure async operation.
-    )
+    AZURE_ASYNC_OPERATION_WAITING = "AzureAsyncOperationWaiting"  #: The provisioning operation is waiting Azure async operation.
     RESOURCE_CACHE_WAITING = "ResourceCacheWaiting"  #: The provisioning operation is waiting for resource cache.
     ACTION = "Action"  #: The provisioning operation is action.
     READ = "Read"  #: The provisioning operation is read.
-    EVALUATE_DEPLOYMENT_OUTPUT = "EvaluateDeploymentOutput"  #: The provisioning operation is evaluate output.
+    EVALUATE_DEPLOYMENT_OUTPUT = (
+        "EvaluateDeploymentOutput"  #: The provisioning operation is evaluate output.
+    )
     DEPLOYMENT_CLEANUP = "DeploymentCleanup"  #: The provisioning operation is cleanup. This operation is part of the 'complete' mode deployment.
 
 

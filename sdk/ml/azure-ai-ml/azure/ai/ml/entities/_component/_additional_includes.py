@@ -14,11 +14,17 @@ from pathlib import Path
 from typing import Dict, Iterable, List, Optional, Tuple, Union
 
 from azure.ai.ml.constants._common import AzureDevopsArtifactsType
-from azure.ai.ml.entities._validation import MutableValidationResult, _ValidationResultBuilder
+from azure.ai.ml.entities._validation import (
+    MutableValidationResult,
+    _ValidationResultBuilder,
+)
 
 from ..._utils._artifact_utils import ArtifactCache
 from ..._utils._asset_utils import IgnoreFile, get_upload_files_from_folder
-from ..._utils.utils import is_concurrent_component_registration_enabled, is_private_preview_enabled
+from ..._utils.utils import (
+    is_concurrent_component_registration_enabled,
+    is_private_preview_enabled,
+)
 from ...entities._util import _general_copy
 from .._assets import Code
 from .code import ComponentCodeMixin, ComponentIgnoreFile
@@ -91,7 +97,9 @@ class AdditionalIncludes:
         return len(self.origin_configs) != 0
 
     @classmethod
-    def _get_artifacts_by_config(cls, artifact_config: Dict[str, str]) -> Optional[Path]:
+    def _get_artifacts_by_config(
+        cls, artifact_config: Dict[str, str]
+    ) -> Optional[Path]:
         # config key existence has been validated in _validate_additional_include_config
         return ArtifactCache().get(
             organization=artifact_config.get("organization", None),
@@ -107,7 +115,8 @@ class AdditionalIncludes:
         validation_result = _ValidationResultBuilder.success()
         if (
             isinstance(additional_include_config, dict)
-            and additional_include_config.get("type") == AzureDevopsArtifactsType.ARTIFACT
+            and additional_include_config.get("type")
+            == AzureDevopsArtifactsType.ARTIFACT
         ):
             # for artifact additional include, we validate the required fields in config but won't validate the
             # artifact content to avoid downloading it in validation stage
@@ -121,7 +130,11 @@ class AdditionalIncludes:
                         )
                     )
         elif isinstance(additional_include_config, str):
-            validation_result.merge_with(self._validate_local_additional_include_config(additional_include_config))
+            validation_result.merge_with(
+                self._validate_local_additional_include_config(
+                    additional_include_config
+                )
+            )
         else:
             validation_result.append_error(
                 message=f"Unexpected format in additional_includes, {additional_include_config}"
@@ -154,7 +167,9 @@ class AdditionalIncludes:
             result.append((os.path.join(artifact_path, item), config_info))
         return result
 
-    def _resolve_artifact_additional_include_configs(self, artifact_additional_includes_configs: List[Dict[str, str]]):
+    def _resolve_artifact_additional_include_configs(
+        self, artifact_additional_includes_configs: List[Dict[str, str]]
+    ):
         additional_include_info_tuples = []
         # Unlike component registration, artifact downloading is a pure download progress; so we can use
         # more threads to speed up the downloading process.
@@ -167,11 +182,15 @@ class AdditionalIncludes:
         ):
             with ThreadPoolExecutor(max_workers=num_threads) as executor:
                 all_artifact_pairs = executor.map(
-                    self._resolve_artifact_additional_include_config, artifact_additional_includes_configs
+                    self._resolve_artifact_additional_include_config,
+                    artifact_additional_includes_configs,
                 )
         else:
             all_artifact_pairs = list(
-                map(self._resolve_artifact_additional_include_config, artifact_additional_includes_configs)
+                map(
+                    self._resolve_artifact_additional_include_config,
+                    artifact_additional_includes_configs,
+                )
             )
         for artifact_pairs in all_artifact_pairs:
             additional_include_info_tuples.extend(artifact_pairs)
@@ -191,7 +210,9 @@ class AdditionalIncludes:
             # for same folder, the expected behavior is merging
             # ignore will be also applied during this process
             for name in src.glob("*"):
-                AdditionalIncludes._copy(name, dst / name.name, ignore_file=ignore_file.merge(name))
+                AdditionalIncludes._copy(
+                    name, dst / name.name, ignore_file=ignore_file.merge(name)
+                )
 
     @staticmethod
     def _is_folder_to_compress(path: Path) -> bool:
@@ -215,7 +236,9 @@ class AdditionalIncludes:
         stem_path = path.parent / path.stem
         return stem_path.is_dir()
 
-    def _resolve_folder_to_compress(self, include: str, dst_path: Path, ignore_file: IgnoreFile) -> None:
+    def _resolve_folder_to_compress(
+        self, include: str, dst_path: Path, ignore_file: IgnoreFile
+    ) -> None:
         """resolve the zip additional include, need to compress corresponding folder.
 
         :param include: The path, relative to :attr:`AdditionalIncludes.base_path`, to zip
@@ -229,8 +252,15 @@ class AdditionalIncludes:
         folder_to_zip = zip_additional_include.parent / zip_additional_include.stem
         zip_file = dst_path / zip_additional_include.name
         with zipfile.ZipFile(zip_file, "w") as zf:
-            zf.write(folder_to_zip, os.path.relpath(folder_to_zip, folder_to_zip.parent))  # write root in zip
-            paths = [path for path, _ in get_upload_files_from_folder(folder_to_zip, ignore_file=ignore_file)]
+            zf.write(
+                folder_to_zip, os.path.relpath(folder_to_zip, folder_to_zip.parent)
+            )  # write root in zip
+            paths = [
+                path
+                for path, _ in get_upload_files_from_folder(
+                    folder_to_zip, ignore_file=ignore_file
+                )
+            ]
             # sort the paths to make sure the zip file (namelist) is deterministic
             for path in sorted(paths):
                 zf.write(path, os.path.relpath(path, folder_to_zip.parent))
@@ -271,15 +301,19 @@ class AdditionalIncludes:
         for additional_include_config in self.origin_configs:
             if isinstance(additional_include_config, str):
                 # add local additional include configs directly
-                additional_include_configs_in_local_path.append(additional_include_config)
+                additional_include_configs_in_local_path.append(
+                    additional_include_config
+                )
             else:
                 # artifact additional include config will be downloaded and resolved to a local path later
                 # note that there is no more validation for artifact additional include config here, since it has
                 # already been validated in _validate_additional_include_config
                 artifact_additional_include_configs.append(additional_include_config)
 
-        artifact_additional_include_info_tuples = self._resolve_artifact_additional_include_configs(
-            artifact_additional_include_configs
+        artifact_additional_include_info_tuples = (
+            self._resolve_artifact_additional_include_configs(
+                artifact_additional_include_configs
+            )
         )
         additional_include_configs_in_local_path.extend(
             local_path for local_path, _ in artifact_additional_include_info_tuples
@@ -294,7 +328,9 @@ class AdditionalIncludes:
 
         conflict_files = {k: v for k, v in conflict_files.items() if len(v) > 1}
         if conflict_files:
-            raise RuntimeError(f"There are conflict files in additional include: {conflict_files}")
+            raise RuntimeError(
+                f"There are conflict files in additional include: {conflict_files}"
+            )
 
         return additional_include_configs_in_local_path
 
@@ -322,7 +358,9 @@ class AdditionalIncludes:
             # no need to include potential yaml file name in error message as it will be covered by
             # validation message construction.
             error_msg = (
-                f"Failed to resolve additional include " f"{config_info or local_path} " f"based on {self.base_path}."
+                f"Failed to resolve additional include "
+                f"{config_info or local_path} "
+                f"based on {self.base_path}."
             )
             validation_result.append_error(message=error_msg)
             return validation_result
@@ -337,7 +375,11 @@ class AdditionalIncludes:
             validation_result.append_error(message=error_msg)
             return validation_result
 
-        dst_path = Path(self.resolved_code_path) / src_path.name if self.resolved_code_path else None
+        dst_path = (
+            Path(self.resolved_code_path) / src_path.name
+            if self.resolved_code_path
+            else None
+        )
         if dst_path:
             if dst_path.is_symlink():
                 # if destination path is symbolic link, check if it points to the same file/folder as source path
@@ -358,7 +400,9 @@ class AdditionalIncludes:
         """
         validation_result = _ValidationResultBuilder.success()
         for additional_include_config in self.origin_configs:
-            validation_result.merge_with(self._validate_additional_include_config(additional_include_config))
+            validation_result.merge_with(
+                self._validate_additional_include_config(additional_include_config)
+            )
         return validation_result
 
     def _copy_origin_code(self, target_path: Path) -> ComponentIgnoreFile:
@@ -390,7 +434,9 @@ class AdditionalIncludes:
         else:
             # current implementation of ignore file is based on absolute path, so it cannot be shared
             root_ignore_file = ComponentIgnoreFile(self.resolved_code_path)
-            self._copy(self.resolved_code_path, target_path, ignore_file=root_ignore_file)
+            self._copy(
+                self.resolved_code_path, target_path, ignore_file=root_ignore_file
+            )
         return root_ignore_file
 
     @contextmanager
@@ -421,7 +467,9 @@ class AdditionalIncludes:
         # TODO: skip ignored files defined in code when copying additional includes
         # copy additional includes disregarding ignore files as current ignore file implementation
         # is based on absolute path, which is not suitable for additional includes
-        for additional_include_local_path in self._get_resolved_additional_include_configs():
+        for (
+            additional_include_local_path
+        ) in self._get_resolved_additional_include_configs():
             src_path = Path(additional_include_local_path)
             if not src_path.is_absolute():
                 src_path = (base_path / additional_include_local_path).resolve()
@@ -449,7 +497,9 @@ class AdditionalIncludes:
                     ignore_file=root_ignore_file.merge(src_path),
                 )
             else:
-                raise ValueError(f"Unable to find additional include {additional_include_local_path}.")
+                raise ValueError(
+                    f"Unable to find additional include {additional_include_local_path}."
+                )
 
         yield tmp_folder_path.absolute()
 
@@ -479,7 +529,8 @@ class AdditionalIncludesMixin(ComponentCodeMixin):
         )
         additional_includes_obj = self._generate_additional_includes_obj()
         base_validation_result.merge_with(
-            additional_includes_obj.validate(), field_name=self._get_additional_includes_field_name()
+            additional_includes_obj.validate(),
+            field_name=self._get_additional_includes_field_name(),
         )
         # if additional includes is specified, origin code will be merged with additional includes into a temp folder
         # before registered as a code asset, so origin code value is not reliable for local path validation

@@ -33,7 +33,9 @@ from ...operations._workspace_connections_operations import (
 )
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[
+    Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]
+]
 
 
 class WorkspaceConnectionsOperations:
@@ -83,14 +85,24 @@ class WorkspaceConnectionsOperations:
         :rtype: ~azure.mgmt.machinelearningservices.models.WorkspaceConnectionPropertiesV2BasicResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop("cls", None)  # type: ClsType["_models.WorkspaceConnectionPropertiesV2BasicResource"]
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop(
+            "cls", None
+        )  # type: ClsType["_models.WorkspaceConnectionPropertiesV2BasicResource"]
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+        }
         error_map.update(kwargs.pop("error_map", {}))
 
         api_version = kwargs.pop("api_version", "2023-02-01-preview")  # type: str
-        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
+        content_type = kwargs.pop(
+            "content_type", "application/json"
+        )  # type: Optional[str]
 
-        _json = self._serialize.body(parameters, "WorkspaceConnectionPropertiesV2BasicResource")
+        _json = self._serialize.body(
+            parameters, "WorkspaceConnectionPropertiesV2BasicResource"
+        )
 
         request = build_create_request(
             subscription_id=self._config.subscription_id,
@@ -105,17 +117,27 @@ class WorkspaceConnectionsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        pipeline_response = (
+            await self._client._pipeline.run(  # pylint: disable=protected-access
+                request, stream=False, **kwargs
+            )
         )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse, pipeline_response
+            )
+            raise HttpResponseError(
+                response=response, model=error, error_format=ARMErrorFormat
+            )
 
-        deserialized = self._deserialize("WorkspaceConnectionPropertiesV2BasicResource", pipeline_response)
+        deserialized = self._deserialize(
+            "WorkspaceConnectionPropertiesV2BasicResource", pipeline_response
+        )
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -126,7 +148,11 @@ class WorkspaceConnectionsOperations:
 
     @distributed_trace_async
     async def get(
-        self, resource_group_name: str, workspace_name: str, connection_name: str, **kwargs: Any
+        self,
+        resource_group_name: str,
+        workspace_name: str,
+        connection_name: str,
+        **kwargs: Any
     ) -> "_models.WorkspaceConnectionPropertiesV2BasicResource":
         """get.
 
@@ -141,8 +167,14 @@ class WorkspaceConnectionsOperations:
         :rtype: ~azure.mgmt.machinelearningservices.models.WorkspaceConnectionPropertiesV2BasicResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop("cls", None)  # type: ClsType["_models.WorkspaceConnectionPropertiesV2BasicResource"]
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop(
+            "cls", None
+        )  # type: ClsType["_models.WorkspaceConnectionPropertiesV2BasicResource"]
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+        }
         error_map.update(kwargs.pop("error_map", {}))
 
         api_version = kwargs.pop("api_version", "2023-02-01-preview")  # type: str
@@ -158,17 +190,27 @@ class WorkspaceConnectionsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        pipeline_response = (
+            await self._client._pipeline.run(  # pylint: disable=protected-access
+                request, stream=False, **kwargs
+            )
         )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse, pipeline_response
+            )
+            raise HttpResponseError(
+                response=response, model=error, error_format=ARMErrorFormat
+            )
 
-        deserialized = self._deserialize("WorkspaceConnectionPropertiesV2BasicResource", pipeline_response)
+        deserialized = self._deserialize(
+            "WorkspaceConnectionPropertiesV2BasicResource", pipeline_response
+        )
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -179,7 +221,11 @@ class WorkspaceConnectionsOperations:
 
     @distributed_trace_async
     async def delete(  # pylint: disable=inconsistent-return-statements
-        self, resource_group_name: str, workspace_name: str, connection_name: str, **kwargs: Any
+        self,
+        resource_group_name: str,
+        workspace_name: str,
+        connection_name: str,
+        **kwargs: Any
     ) -> None:
         """delete.
 
@@ -195,7 +241,11 @@ class WorkspaceConnectionsOperations:
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+        }
         error_map.update(kwargs.pop("error_map", {}))
 
         api_version = kwargs.pop("api_version", "2023-02-01-preview")  # type: str
@@ -211,15 +261,23 @@ class WorkspaceConnectionsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        pipeline_response = (
+            await self._client._pipeline.run(  # pylint: disable=protected-access
+                request, stream=False, **kwargs
+            )
         )
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse, pipeline_response
+            )
+            raise HttpResponseError(
+                response=response, model=error, error_format=ARMErrorFormat
+            )
 
         if cls:
             return cls(pipeline_response, None, {})
@@ -234,7 +292,9 @@ class WorkspaceConnectionsOperations:
         target: Optional[str] = None,
         category: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.WorkspaceConnectionPropertiesV2BasicResourceArmPaginatedResult"]:
+    ) -> AsyncIterable[
+        "_models.WorkspaceConnectionPropertiesV2BasicResourceArmPaginatedResult"
+    ]:
         """list.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -257,12 +317,15 @@ class WorkspaceConnectionsOperations:
         cls = kwargs.pop(
             "cls", None
         )  # type: ClsType["_models.WorkspaceConnectionPropertiesV2BasicResourceArmPaginatedResult"]
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+        }
         error_map.update(kwargs.pop("error_map", {}))
 
         def prepare_request(next_link=None):
             if not next_link:
-
                 request = build_list_request(
                     subscription_id=self._config.subscription_id,
                     resource_group_name=resource_group_name,
@@ -276,7 +339,6 @@ class WorkspaceConnectionsOperations:
                 request.url = self._client.format_url(request.url)
 
             else:
-
                 request = build_list_request(
                     subscription_id=self._config.subscription_id,
                     resource_group_name=resource_group_name,
@@ -293,7 +355,8 @@ class WorkspaceConnectionsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize(
-                "WorkspaceConnectionPropertiesV2BasicResourceArmPaginatedResult", pipeline_response
+                "WorkspaceConnectionPropertiesV2BasicResourceArmPaginatedResult",
+                pipeline_response,
             )
             list_of_elem = deserialized.value
             if cls:
@@ -303,15 +366,25 @@ class WorkspaceConnectionsOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+            pipeline_response = (
+                await self._client._pipeline.run(  # pylint: disable=protected-access
+                    request, stream=False, **kwargs
+                )
             )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+                map_error(
+                    status_code=response.status_code,
+                    response=response,
+                    error_map=error_map,
+                )
+                error = self._deserialize.failsafe_deserialize(
+                    _models.ErrorResponse, pipeline_response
+                )
+                raise HttpResponseError(
+                    response=response, model=error, error_format=ARMErrorFormat
+                )
 
             return pipeline_response
 

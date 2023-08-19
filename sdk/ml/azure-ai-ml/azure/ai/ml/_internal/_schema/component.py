@@ -8,8 +8,16 @@ from marshmallow import EXCLUDE, INCLUDE, fields, post_dump, pre_load
 
 from ..._schema import NestedField, StringTransformedEnum, UnionField
 from ..._schema.component.component import ComponentSchema
-from ..._schema.core.fields import ArmVersionedStr, CodeField, EnvironmentField, RegistryStr
-from ..._schema.job.parameterized_spark import SparkEntryClassSchema, SparkEntryFileSchema
+from ..._schema.core.fields import (
+    ArmVersionedStr,
+    CodeField,
+    EnvironmentField,
+    RegistryStr,
+)
+from ..._schema.job.parameterized_spark import (
+    SparkEntryClassSchema,
+    SparkEntryFileSchema,
+)
 from ..._utils._arm_id_utils import parse_name_label
 from ..._utils.utils import get_valid_dot_keys_with_wildcard
 from ...constants._common import (
@@ -141,7 +149,9 @@ class InternalComponentSchema(ComponentSchema):
                 parts.pop()
                 parts.append("type")
                 _input_type = pydash.get(_root, parts, None)
-                return isinstance(_input_type, str) and _input_type.lower() not in ["boolean"]
+                return isinstance(_input_type, str) and _input_type.lower() not in [
+                    "boolean"
+                ]
 
             # do override here
             with open(source_path, "r", encoding=DefaultOpenEncoding.READ) as f:
@@ -158,11 +168,15 @@ class InternalComponentSchema(ComponentSchema):
         return super().add_param_overrides(data, **kwargs)
 
     @post_dump(pass_original=True)
-    def simplify_input_output_port(self, data, original, **kwargs):  # pylint:disable=unused-argument
+    def simplify_input_output_port(
+        self, data, original, **kwargs
+    ):  # pylint:disable=unused-argument
         # remove None in input & output
         for io_ports in [data["inputs"], data["outputs"]]:
             for port_name, port_definition in io_ports.items():
-                io_ports[port_name] = dict(filter(lambda item: item[1] is not None, port_definition.items()))
+                io_ports[port_name] = dict(
+                    filter(lambda item: item[1] is not None, port_definition.items())
+                )
 
         # hack, to match current serialization match expectation
         for port_name, port_definition in data["inputs"].items():
@@ -172,7 +186,9 @@ class InternalComponentSchema(ComponentSchema):
         return data
 
     @post_dump(pass_original=True)
-    def add_back_type_label(self, data, original, **kwargs):  # pylint:disable=unused-argument
+    def add_back_type_label(
+        self, data, original, **kwargs
+    ):  # pylint:disable=unused-argument
         type_label = original._type_label  # pylint:disable=protected-access
         if type_label:
             data["type"] = LABELLED_RESOURCE_NAME.format(data["type"], type_label)

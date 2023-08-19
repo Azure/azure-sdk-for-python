@@ -12,15 +12,32 @@ from concurrent.futures import Future
 from pathlib import Path
 from typing import Any, Callable, Dict, Optional, Union
 
-from azure.ai.ml._utils._arm_id_utils import is_ARM_id_for_resource, is_registry_id_for_resource
+from azure.ai.ml._utils._arm_id_utils import (
+    is_ARM_id_for_resource,
+    is_registry_id_for_resource,
+)
 from azure.ai.ml._utils._logger_utils import initialize_logger_info
-from azure.ai.ml.constants._common import ARM_ID_PREFIX, AzureMLResourceType, DefaultOpenEncoding, LROConfigurations
+from azure.ai.ml.constants._common import (
+    ARM_ID_PREFIX,
+    AzureMLResourceType,
+    DefaultOpenEncoding,
+    LROConfigurations,
+)
 from azure.ai.ml.entities import BatchDeployment
 from azure.ai.ml.entities._assets._artifacts.code import Code
 from azure.ai.ml.entities._deployment.deployment import Deployment
 from azure.ai.ml.entities._deployment.model_batch_deployment import ModelBatchDeployment
-from azure.ai.ml._restclient.v2020_09_01_dataplanepreview.models import DataVersion, UriFileJobOutput
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, MlException, ValidationErrorType, ValidationException
+from azure.ai.ml._restclient.v2020_09_01_dataplanepreview.models import (
+    DataVersion,
+    UriFileJobOutput,
+)
+from azure.ai.ml.exceptions import (
+    ErrorCategory,
+    ErrorTarget,
+    MlException,
+    ValidationErrorType,
+    ValidationException,
+)
 from azure.ai.ml.operations._operation_orchestrator import OperationOrchestrator
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -125,11 +142,17 @@ def validate_response(response: HttpResponse) -> None:
             404: ResourceNotFoundError,
             409: ResourceExistsError,
         }
-        map_error(status_code=response.status_code, response=response, error_map=error_map)
-        raise HttpResponseError(response=response, message=failure_msg, error_format=ARMErrorFormat)
+        map_error(
+            status_code=response.status_code, response=response, error_map=error_map
+        )
+        raise HttpResponseError(
+            response=response, message=failure_msg, error_format=ARMErrorFormat
+        )
 
 
-def upload_dependencies(deployment: Deployment, orchestrators: OperationOrchestrator) -> None:
+def upload_dependencies(
+    deployment: Deployment, orchestrators: OperationOrchestrator
+) -> None:
     """Upload code, dependency, model dependencies. For BatchDeployment only register compute.
 
     :param Deployment deployment: Endpoint deployment object.
@@ -141,7 +164,9 @@ def upload_dependencies(deployment: Deployment, orchestrators: OperationOrchestr
     # Create a code asset if code is not already an ARM ID
     if (
         deployment.code_configuration
-        and not is_ARM_id_for_resource(deployment.code_configuration.code, AzureMLResourceType.CODE)
+        and not is_ARM_id_for_resource(
+            deployment.code_configuration.code, AzureMLResourceType.CODE
+        )
         and not is_registry_id_for_resource(deployment.code_configuration.code)
     ):
         if deployment.code_configuration.code.startswith(ARM_ID_PREFIX):
@@ -151,23 +176,33 @@ def upload_dependencies(deployment: Deployment, orchestrators: OperationOrchestr
             )
         else:
             deployment.code_configuration.code = orchestrators.get_asset_arm_id(
-                Code(base_path=deployment._base_path, path=deployment.code_configuration.code),
+                Code(
+                    base_path=deployment._base_path,
+                    path=deployment.code_configuration.code,
+                ),
                 azureml_type=AzureMLResourceType.CODE,
             )
 
     if not is_registry_id_for_resource(deployment.environment):
         deployment.environment = (
-            orchestrators.get_asset_arm_id(deployment.environment, azureml_type=AzureMLResourceType.ENVIRONMENT)
+            orchestrators.get_asset_arm_id(
+                deployment.environment, azureml_type=AzureMLResourceType.ENVIRONMENT
+            )
             if deployment.environment
             else None
         )
     if not is_registry_id_for_resource(deployment.model):
         deployment.model = (
-            orchestrators.get_asset_arm_id(deployment.model, azureml_type=AzureMLResourceType.MODEL)
+            orchestrators.get_asset_arm_id(
+                deployment.model, azureml_type=AzureMLResourceType.MODEL
+            )
             if deployment.model
             else None
         )
-    if isinstance(deployment, (BatchDeployment, ModelBatchDeployment)) and deployment.compute:
+    if (
+        isinstance(deployment, (BatchDeployment, ModelBatchDeployment))
+        and deployment.compute
+    ):
         deployment.compute = orchestrators.get_asset_arm_id(
             deployment.compute, azureml_type=AzureMLResourceType.COMPUTE
         )
@@ -212,7 +247,9 @@ def validate_scoring_script(deployment):
         ) from err
 
 
-def convert_v1_dataset_to_v2(output_data_set: DataVersion, file_name: str) -> Dict[str, Any]:
+def convert_v1_dataset_to_v2(
+    output_data_set: DataVersion, file_name: str
+) -> Dict[str, Any]:
     v2_dataset = UriFileJobOutput(
         uri=f"azureml://datastores/{output_data_set.datastore_id}/paths/{output_data_set.path}/{file_name}"
     ).serialize()

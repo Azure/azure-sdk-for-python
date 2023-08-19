@@ -9,14 +9,26 @@ from os import PathLike
 from pathlib import Path
 from typing import IO, Any, AnyStr, Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import Datastore as DatastoreData, DatastoreType
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    Datastore as DatastoreData,
+    DatastoreType,
+)
 from azure.ai.ml._utils.utils import camel_to_snake, dump_yaml_to_file
-from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, CommonYamlFields
+from azure.ai.ml.constants._common import (
+    BASE_PATH_CONTEXT_KEY,
+    PARAMS_OVERRIDE_KEY,
+    CommonYamlFields,
+)
 from azure.ai.ml.entities._credentials import NoneCredentialConfiguration
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 from azure.ai.ml.entities._resource import Resource
 from azure.ai.ml.entities._util import find_type_in_override
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+from azure.ai.ml.exceptions import (
+    ErrorCategory,
+    ErrorTarget,
+    ValidationErrorType,
+    ValidationException,
+)
 
 
 class Datastore(Resource, RestTranslatableMixin, ABC):
@@ -54,7 +66,9 @@ class Datastore(Resource, RestTranslatableMixin, ABC):
             **kwargs,
         )
 
-        self.credentials = NoneCredentialConfiguration() if credentials is None else credentials
+        self.credentials = (
+            NoneCredentialConfiguration() if credentials is None else credentials
+        )
 
     @property
     def type(self) -> str:
@@ -171,7 +185,9 @@ class Datastore(Resource, RestTranslatableMixin, ABC):
         # disable unless preview release
         # elif datastore_type == DatastoreTypePreview.HDFS:
         #     return HdfsDatastore._from_rest_object(datastore_resource)
-        msg = f"Unsupported datastore type {datastore_resource.properties.contents.type}"
+        msg = (
+            f"Unsupported datastore type {datastore_resource.properties.contents.type}"
+        )
         raise ValidationException(
             message=msg,
             error_type=ValidationErrorType.INVALID_VALUE,
@@ -182,11 +198,17 @@ class Datastore(Resource, RestTranslatableMixin, ABC):
 
     @classmethod
     @abstractmethod
-    def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs) -> "Datastore":
+    def _load_from_dict(
+        cls, data: Dict, context: Dict, additional_message: str, **kwargs
+    ) -> "Datastore":
         pass
 
     def __eq__(self, other) -> bool:
-        return self.name == other.name and self.type == other.type and self.credentials == other.credentials
+        return (
+            self.name == other.name
+            and self.type == other.type
+            and self.credentials == other.credentials
+        )
 
     def __ne__(self, other) -> bool:
         return not self.__eq__(other)

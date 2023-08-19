@@ -8,7 +8,9 @@ import logging
 from typing import Optional
 
 from azure.ai.ml._restclient.v2022_05_01.models import ContainerResourceRequirements
-from azure.ai.ml.entities._deployment.container_resource_settings import ResourceSettings
+from azure.ai.ml.entities._deployment.container_resource_settings import (
+    ResourceSettings,
+)
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 module_logger = logging.getLogger(__name__)
@@ -43,8 +45,12 @@ class ResourceRequirementsSettings(RestTranslatableMixin):
 
     def _to_rest_object(self) -> ContainerResourceRequirements:
         return ContainerResourceRequirements(
-            container_resource_requests=self.requests._to_rest_object() if self.requests else None,
-            container_resource_limits=self.limits._to_rest_object() if self.limits else None,
+            container_resource_requests=self.requests._to_rest_object()
+            if self.requests
+            else None,
+            container_resource_limits=self.limits._to_rest_object()
+            if self.limits
+            else None,
         )
 
     @classmethod

@@ -83,10 +83,14 @@ class MLTableMetadata:
         context = {
             BASE_PATH_CONTEXT_KEY: Path(yaml_path).parent if yaml_path else Path("./"),
         }
-        return load_from_dict(MLTableMetadataSchema, yaml_data, context, "", unknown=INCLUDE, **kwargs)
+        return load_from_dict(
+            MLTableMetadataSchema, yaml_data, context, "", unknown=INCLUDE, **kwargs
+        )
 
     def _to_dict(self) -> Dict:
-        return MLTableMetadataSchema(context={BASE_PATH_CONTEXT_KEY: "./"}, unknown=INCLUDE).dump(self)
+        return MLTableMetadataSchema(
+            context={BASE_PATH_CONTEXT_KEY: "./"}, unknown=INCLUDE
+        ).dump(self)
 
     def referenced_uris(self) -> List[str]:
         return [path.value for path in self.paths]

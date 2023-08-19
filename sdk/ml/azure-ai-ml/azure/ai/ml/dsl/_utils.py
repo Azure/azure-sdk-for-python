@@ -19,7 +19,9 @@ from azure.ai.ml.exceptions import ComponentException, ErrorCategory, ErrorTarge
 def _normalize_identifier_name(name):
     normalized_name = name.lower()
     normalized_name = re.sub(r"[\W_]", " ", normalized_name)  # No non-word characters
-    normalized_name = re.sub(" +", " ", normalized_name).strip()  # No double spaces, leading or trailing spaces
+    normalized_name = re.sub(
+        " +", " ", normalized_name
+    ).strip()  # No double spaces, leading or trailing spaces
     if re.match(r"\d", normalized_name):
         normalized_name = "n" + normalized_name  # No leading digits
     return normalized_name
@@ -48,7 +50,11 @@ def _resolve_source_directory() -> Optional[Union[str, Path]]:
     """
     source_file = _resolve_source_file()
     # Fall back to current working directory if not found
-    return os.getcwd() if not source_file else Path(os.path.dirname(source_file)).absolute()
+    return (
+        os.getcwd()
+        if not source_file
+        else Path(os.path.dirname(source_file)).absolute()
+    )
 
 
 def _resolve_source_file() -> Optional[Path]:
@@ -64,9 +70,9 @@ def _resolve_source_file() -> Optional[Path]:
         # by checking whether the package name of the frame belongs to azure.ai.ml.component.
         pattern = r"(^azure\.ai\.ml(?=\..*|$).*)"
         for frame, last_frame in zip(frame_list, frame_list[1:]):
-            if _assert_frame_package_name(pattern, frame.frame) and not _assert_frame_package_name(
-                pattern, last_frame.frame
-            ):
+            if _assert_frame_package_name(
+                pattern, frame.frame
+            ) and not _assert_frame_package_name(pattern, last_frame.frame):
                 module = inspect.getmodule(last_frame.frame)
                 return Path(module.__file__).absolute() if module else None
     except Exception:  # pylint: disable=broad-except
@@ -93,7 +99,9 @@ def _assert_frame_package_name(pattern: str, frame: types.FrameType) -> bool:
 
 
 def _relative_to(
-    path: Union[str, os.PathLike], basedir: Union[str, os.PathLike], raises_if_impossible: bool = False
+    path: Union[str, os.PathLike],
+    basedir: Union[str, os.PathLike],
+    raises_if_impossible: bool = False,
 ) -> Optional[Path]:
     """Compute the relative path under basedir.
 
@@ -144,7 +152,9 @@ def _force_reload_module(module):
 
 @contextlib.contextmanager
 # pylint: disable-next=docstring-missing-return,docstring-missing-rtype
-def _change_working_dir(path: Union[str, os.PathLike], mkdir: bool = True) -> Iterable[None]:
+def _change_working_dir(
+    path: Union[str, os.PathLike], mkdir: bool = True
+) -> Iterable[None]:
     """Context manager for changing the current working directory.
 
     :param path: The path to change to
@@ -163,7 +173,9 @@ def _change_working_dir(path: Union[str, os.PathLike], mkdir: bool = True) -> It
         os.chdir(saved_path)
 
 
-def _import_component_with_working_dir(module_name, working_dir=None, force_reload=False):
+def _import_component_with_working_dir(
+    module_name, working_dir=None, force_reload=False
+):
     if working_dir is None:
         working_dir = os.getcwd()
     working_dir = str(Path(working_dir).resolve().absolute())
@@ -198,7 +210,9 @@ def _import_component_with_working_dir(module_name, working_dir=None, force_relo
             raise RuntimeError(
                 "Could not import module: '{}' because module with the same name has been loaded.\n"
                 "Path of the module: {}\n"
-                "Working dir: {}".format(module_name, loaded_module_file, posix_working_dir)
+                "Working dir: {}".format(
+                    module_name, loaded_module_file, posix_working_dir
+                )
             )
         return py_module
 

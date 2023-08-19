@@ -8,7 +8,9 @@ from typing import Dict, List, Optional, Union
 
 from marshmallow import Schema
 
-from azure.ai.ml._restclient.v2022_02_01_preview.models import CommandJob as RestCommandJob
+from azure.ai.ml._restclient.v2022_02_01_preview.models import (
+    CommandJob as RestCommandJob,
+)
 from azure.ai.ml._restclient.v2022_02_01_preview.models import JobBaseData
 from azure.ai.ml._schema.job.import_job import ImportJobSchema
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
@@ -17,12 +19,19 @@ from azure.ai.ml.constants._compute import ComputeType
 from azure.ai.ml.entities._component.component import Component
 from azure.ai.ml.entities._component.import_component import ImportComponent
 from azure.ai.ml.entities._inputs_outputs import Output
-from azure.ai.ml.entities._job._input_output_helpers import from_rest_data_outputs, from_rest_inputs_to_dataset_literal
+from azure.ai.ml.entities._job._input_output_helpers import (
+    from_rest_data_outputs,
+    from_rest_inputs_to_dataset_literal,
+)
 from azure.ai.ml.entities._job.import_job import ImportJob, ImportSource
 from azure.ai.ml.exceptions import ErrorTarget, ValidationErrorType, ValidationException
 
 from ..._schema import PathAwareSchema
-from .._util import convert_ordered_dict_to_dict, load_from_dict, validate_attribute_type
+from .._util import (
+    convert_ordered_dict_to_dict,
+    load_from_dict,
+    validate_attribute_type,
+)
 from .base_node import BaseNode
 
 module_logger = logging.getLogger(__name__)
@@ -60,7 +69,9 @@ class Import(BaseNode):
         **kwargs,
     ) -> None:
         # validate init params are valid type
-        validate_attribute_type(attrs_to_check=locals(), attr_type_map=self._attr_type_map())
+        validate_attribute_type(
+            attrs_to_check=locals(), attr_type_map=self._attr_type_map()
+        )
 
         kwargs.pop("type", None)
         kwargs.pop("compute", None)
@@ -124,10 +135,14 @@ class Import(BaseNode):
         return rest_obj
 
     @classmethod
-    def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs) -> "Import":
+    def _load_from_dict(
+        cls, data: Dict, context: Dict, additional_message: str, **kwargs
+    ) -> "Import":
         from .import_func import import_job
 
-        loaded_data = load_from_dict(ImportJobSchema, data, context, additional_message, **kwargs)
+        loaded_data = load_from_dict(
+            ImportJobSchema, data, context, additional_message, **kwargs
+        )
 
         import_job = import_job(base_path=context[BASE_PATH_CONTEXT_KEY], **loaded_data)
 
@@ -152,7 +167,9 @@ class Import(BaseNode):
             output=outputs["output"] if "output" in outputs else None,
         )
         import_job._id = obj.id
-        import_job.component._source = ComponentSource.REMOTE_WORKSPACE_JOB  # This is used by pipeline job telemetries.
+        import_job.component._source = (
+            ComponentSource.REMOTE_WORKSPACE_JOB
+        )  # This is used by pipeline job telemetries.
 
         return import_job
 
@@ -188,7 +205,9 @@ class Import(BaseNode):
             node.compute = self.compute
             node.tags = self.tags
             # Pass through the display name only if the display name is not system generated.
-            node.display_name = self.display_name if self.display_name != self.name else None
+            node.display_name = (
+                self.display_name if self.display_name != self.name else None
+            )
             return node
         msg = "Import can be called as a function only when referenced component is {}, currently got {}."
         raise ValidationException(

@@ -4,7 +4,9 @@
 # pylint: disable=protected-access
 from typing import Any, Iterable
 
-from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient042023Preview
+from azure.ai.ml._restclient.v2023_04_01_preview import (
+    AzureMachineLearningWorkspaces as ServiceClient042023Preview,
+)
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationsContainer,
@@ -12,7 +14,11 @@ from azure.ai.ml._scope_dependent_operations import (
     _ScopeDependentOperations,
 )
 
-from azure.ai.ml._telemetry import ActivityType, monitor_with_activity, monitor_with_telemetry_mixin
+from azure.ai.ml._telemetry import (
+    ActivityType,
+    monitor_with_activity,
+    monitor_with_telemetry_mixin,
+)
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml.entities import Job, JobSchedule, Schedule
 from azure.ai.ml.entities._monitoring.schedule import MonitorSchedule
@@ -90,23 +96,30 @@ class ScheduleOperations(_ScopeDependentOperations):
         self._api_base_url = None
         self._container = "azureml"
         self._credential = credential
-        self._orchestrators = OperationOrchestrator(self._all_operations, self._operation_scope, self._operation_config)
+        self._orchestrators = OperationOrchestrator(
+            self._all_operations, self._operation_scope, self._operation_config
+        )
 
         self._kwargs = kwargs
 
     @property
     def _job_operations(self) -> JobOperations:
-        return self._all_operations.get_operation(AzureMLResourceType.JOB, lambda x: isinstance(x, JobOperations))
+        return self._all_operations.get_operation(
+            AzureMLResourceType.JOB, lambda x: isinstance(x, JobOperations)
+        )
 
     @property
     def _online_deployment_operations(self) -> OnlineDeploymentOperations:
         return self._all_operations.get_operation(
-            AzureMLResourceType.ONLINE_DEPLOYMENT, lambda x: isinstance(x, OnlineDeploymentOperations)
+            AzureMLResourceType.ONLINE_DEPLOYMENT,
+            lambda x: isinstance(x, OnlineDeploymentOperations),
         )
 
     @property
     def _data_operations(self) -> DataOperations:
-        return self._all_operations.get_operation(AzureMLResourceType.DATA, lambda x: isinstance(x, DataOperations))
+        return self._all_operations.get_operation(
+            AzureMLResourceType.DATA, lambda x: isinstance(x, DataOperations)
+        )
 
     @distributed_trace
     @monitor_with_activity(logger, "Schedule.List", ActivityType.PUBLICAPI)
@@ -209,7 +222,9 @@ class ScheduleOperations(_ScopeDependentOperations):
         )
 
     @distributed_trace
-    @monitor_with_telemetry_mixin(logger, "Schedule.CreateOrUpdate", ActivityType.PUBLICAPI)
+    @monitor_with_telemetry_mixin(
+        logger, "Schedule.CreateOrUpdate", ActivityType.PUBLICAPI
+    )
     def begin_create_or_update(
         self,
         schedule: Schedule,
@@ -228,7 +243,9 @@ class ScheduleOperations(_ScopeDependentOperations):
             schedule._validate(raise_error=True)
             if isinstance(schedule.create_job, Job):
                 # Create all dependent resources for job inside schedule
-                self._job_operations._resolve_arm_id_or_upload_dependencies(schedule.create_job)
+                self._job_operations._resolve_arm_id_or_upload_dependencies(
+                    schedule.create_job
+                )
         elif isinstance(schedule, MonitorSchedule):
             # resolve ARM id for target, compute, and input datasets for each signal
             self._resolve_monitor_schedule_arm_id(schedule)
@@ -292,25 +309,50 @@ class ScheduleOperations(_ScopeDependentOperations):
         mdc_input_enabled, mdc_output_enabled = False, False
         target = schedule.create_monitor.monitoring_target
         if target and target.endpoint_deployment_id:
-            endpoint_name, deployment_name = self._process_and_get_endpoint_deployment_names_from_id(target)
-            online_deployment = self._online_deployment_operations.get(deployment_name, endpoint_name)
+            (
+                endpoint_name,
+                deployment_name,
+            ) = self._process_and_get_endpoint_deployment_names_from_id(target)
+            online_deployment = self._online_deployment_operations.get(
+                deployment_name, endpoint_name
+            )
             deployment_data_collector = online_deployment.data_collector
             if deployment_data_collector:
-                in_reg = AMLVersionedArmId(deployment_data_collector.collections.get("model_inputs").data)
-                out_reg = AMLVersionedArmId(deployment_data_collector.collections.get("model_outputs").data)
+                in_reg = AMLVersionedArmId(
+                    deployment_data_collector.collections.get("model_inputs").data
+                )
+                out_reg = AMLVersionedArmId(
+                    deployment_data_collector.collections.get("model_outputs").data
+                )
                 model_inputs_name = in_reg.asset_name
                 model_inputs_version = in_reg.asset_version
                 model_outputs_name = out_reg.asset_name
                 model_outputs_version = out_reg.asset_version
-                mdc_input_enabled_str = deployment_data_collector.collections.get("model_inputs").enabled
-                mdc_output_enabled_str = deployment_data_collector.collections.get("model_outputs").enabled
+                mdc_input_enabled_str = deployment_data_collector.collections.get(
+                    "model_inputs"
+                ).enabled
+                mdc_output_enabled_str = deployment_data_collector.collections.get(
+                    "model_outputs"
+                ).enabled
             else:
-                model_inputs_name = online_deployment.tags.get(DEPLOYMENT_MODEL_INPUTS_NAME_KEY)
-                model_inputs_version = online_deployment.tags.get(DEPLOYMENT_MODEL_INPUTS_VERSION_KEY)
-                model_outputs_name = online_deployment.tags.get(DEPLOYMENT_MODEL_OUTPUTS_NAME_KEY)
-                model_outputs_version = online_deployment.tags.get(DEPLOYMENT_MODEL_OUTPUTS_VERSION_KEY)
-                mdc_input_enabled_str = online_deployment.tags.get(DEPLOYMENT_MODEL_INPUTS_COLLECTION_KEY)
-                mdc_output_enabled_str = online_deployment.tags.get(DEPLOYMENT_MODEL_OUTPUTS_COLLECTION_KEY)
+                model_inputs_name = online_deployment.tags.get(
+                    DEPLOYMENT_MODEL_INPUTS_NAME_KEY
+                )
+                model_inputs_version = online_deployment.tags.get(
+                    DEPLOYMENT_MODEL_INPUTS_VERSION_KEY
+                )
+                model_outputs_name = online_deployment.tags.get(
+                    DEPLOYMENT_MODEL_OUTPUTS_NAME_KEY
+                )
+                model_outputs_version = online_deployment.tags.get(
+                    DEPLOYMENT_MODEL_OUTPUTS_VERSION_KEY
+                )
+                mdc_input_enabled_str = online_deployment.tags.get(
+                    DEPLOYMENT_MODEL_INPUTS_COLLECTION_KEY
+                )
+                mdc_output_enabled_str = online_deployment.tags.get(
+                    DEPLOYMENT_MODEL_OUTPUTS_COLLECTION_KEY
+                )
             if mdc_input_enabled_str and mdc_input_enabled_str.lower() == "true":
                 mdc_input_enabled = True
             if mdc_output_enabled_str and mdc_output_enabled_str.lower() == "true":
@@ -340,32 +382,48 @@ class ScheduleOperations(_ScopeDependentOperations):
         for signal_name, signal in schedule.create_monitor.monitoring_signals.items():
             if signal.type == MonitorSignalType.CUSTOM:
                 for input_value in signal.input_datasets.values():
-                    self._job_operations._resolve_job_input(input_value.input_dataset, schedule._base_path)
-                    input_value.pre_processing_component = self._orchestrators.get_asset_arm_id(
-                        asset=input_value.pre_processing_component, azureml_type=AzureMLResourceType.COMPONENT
+                    self._job_operations._resolve_job_input(
+                        input_value.input_dataset, schedule._base_path
+                    )
+                    input_value.pre_processing_component = (
+                        self._orchestrators.get_asset_arm_id(
+                            asset=input_value.pre_processing_component,
+                            azureml_type=AzureMLResourceType.COMPONENT,
+                        )
                     )
                 continue
             error_messages = []
             if not signal.target_dataset or not signal.baseline_dataset:
                 # if there is no target dataset, we check the type of signal
-                if signal.type in {MonitorSignalType.DATA_DRIFT, MonitorSignalType.DATA_QUALITY}:
+                if signal.type in {
+                    MonitorSignalType.DATA_DRIFT,
+                    MonitorSignalType.DATA_QUALITY,
+                }:
                     if mdc_input_enabled:
                         default_dataset = MonitorInputData(
                             input_dataset=Input(
                                 path=f"{model_inputs_name}:{model_inputs_version}",
-                                type=self._data_operations.get(model_inputs_name, model_inputs_version).type,
+                                type=self._data_operations.get(
+                                    model_inputs_name, model_inputs_version
+                                ).type,
                             ),
                             dataset_context=MonitorDatasetContext.MODEL_INPUTS,
                         )
                         if not signal.target_dataset:
                             # if target dataset is absent and data collector for input is enabled,
                             # create a default target dataset with production model inputs as target
-                            signal.target_dataset = TargetDataset(dataset=default_dataset)
+                            signal.target_dataset = TargetDataset(
+                                dataset=default_dataset
+                            )
                         if not signal.baseline_dataset:
                             signal.baseline_dataset = default_dataset
                             # set tags for trailing dataset
-                            schedule._set_baseline_data_trailing_tags_for_signal(signal_name)
-                    elif not mdc_input_enabled and not (signal.target_dataset and signal.baseline_dataset):
+                            schedule._set_baseline_data_trailing_tags_for_signal(
+                                signal_name
+                            )
+                    elif not mdc_input_enabled and not (
+                        signal.target_dataset and signal.baseline_dataset
+                    ):
                         # if target or baseline dataset is absent and data collector for input is not enabled,
                         # collect exception message
                         msg = (
@@ -379,19 +437,27 @@ class ScheduleOperations(_ScopeDependentOperations):
                         default_dataset = MonitorInputData(
                             input_dataset=Input(
                                 path=f"{model_outputs_name}:{model_outputs_version}",
-                                type=self._data_operations.get(model_outputs_name, model_outputs_version).type,
+                                type=self._data_operations.get(
+                                    model_outputs_name, model_outputs_version
+                                ).type,
                             ),
                             dataset_context=MonitorDatasetContext.MODEL_OUTPUTS,
                         )
                         if not signal.target_dataset:
                             # if target dataset is absent and data collector for output is enabled,
                             # create a default target dataset with production model outputs as target
-                            signal.target_dataset = TargetDataset(dataset=default_dataset, data_window_size=7)
+                            signal.target_dataset = TargetDataset(
+                                dataset=default_dataset, data_window_size=7
+                            )
                         if not signal.baseline_dataset:
                             signal.baseline_dataset = default_dataset
                             # set tags for trailing window
-                            schedule._set_baseline_data_trailing_tags_for_signal(signal_name)
-                    elif not mdc_output_enabled and not (signal.target_dataset and signal.baseline_dataset):
+                            schedule._set_baseline_data_trailing_tags_for_signal(
+                                signal_name
+                            )
+                    elif not mdc_output_enabled and not (
+                        signal.target_dataset and signal.baseline_dataset
+                    ):
                         # if target dataset is absent and data collector for output is not enabled,
                         # collect exception message
                         msg = (
@@ -411,18 +477,28 @@ class ScheduleOperations(_ScopeDependentOperations):
                     ErrorCategory=ErrorCategory.USER_ERROR,
                 )
             self._job_operations._resolve_job_inputs(
-                [signal.target_dataset.dataset.input_dataset, signal.baseline_dataset.input_dataset],
+                [
+                    signal.target_dataset.dataset.input_dataset,
+                    signal.baseline_dataset.input_dataset,
+                ],
                 schedule._base_path,
             )
-            signal.target_dataset.dataset.pre_processing_component = self._orchestrators.get_asset_arm_id(
-                asset=signal.target_dataset.dataset.pre_processing_component,
-                azureml_type=AzureMLResourceType.COMPONENT,
+            signal.target_dataset.dataset.pre_processing_component = (
+                self._orchestrators.get_asset_arm_id(
+                    asset=signal.target_dataset.dataset.pre_processing_component,
+                    azureml_type=AzureMLResourceType.COMPONENT,
+                )
             )
-            signal.baseline_dataset.pre_processing_component = self._orchestrators.get_asset_arm_id(
-                asset=signal.baseline_dataset.pre_processing_component, azureml_type=AzureMLResourceType.COMPONENT
+            signal.baseline_dataset.pre_processing_component = (
+                self._orchestrators.get_asset_arm_id(
+                    asset=signal.baseline_dataset.pre_processing_component,
+                    azureml_type=AzureMLResourceType.COMPONENT,
+                )
             )
 
-    def _process_and_get_endpoint_deployment_names_from_id(self, target: MonitoringTarget):
+    def _process_and_get_endpoint_deployment_names_from_id(
+        self, target: MonitoringTarget
+    ):
         target.endpoint_deployment_id = (
             target.endpoint_deployment_id[len(ARM_ID_PREFIX) :]
             if target.endpoint_deployment_id.startswith(ARM_ID_PREFIX)

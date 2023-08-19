@@ -7,7 +7,11 @@
 from marshmallow import fields, EXCLUDE
 from marshmallow.decorators import post_load, pre_dump
 from azure.ai.ml._schema.core.schema_meta import PatchedSchemaMeta
-from azure.ai.ml._schema.core.fields import StringTransformedEnum, NestedField, UnionField
+from azure.ai.ml._schema.core.fields import (
+    StringTransformedEnum,
+    NestedField,
+    UnionField,
+)
 from azure.ai.ml.entities._workspace.networking import (
     ManagedNetwork,
     FqdnDestination,
@@ -49,7 +53,12 @@ class FqdnOutboundRuleSchema(metaclass=PatchedSchemaMeta):
         category = data.get("category", OutboundRuleCategory.USER_DEFINED)
         name = data.get("name")
         status = data.get("status", None)
-        return FqdnDestination(name=name, destination=dest, category=_snake_to_camel(category), status=status)
+        return FqdnDestination(
+            name=name,
+            destination=dest,
+            category=_snake_to_camel(category),
+            status=status,
+        )
 
 
 @experimental
@@ -78,7 +87,9 @@ class ServiceTagOutboundRuleSchema(metaclass=PatchedSchemaMeta):
 
     @pre_dump
     def predump(self, data, **kwargs):
-        data.destination = self.service_tag_dest2dict(data.service_tag, data.protocol, data.port_ranges)
+        data.destination = self.service_tag_dest2dict(
+            data.service_tag, data.protocol, data.port_ranges
+        )
         return data
 
     @post_load
@@ -130,7 +141,9 @@ class PrivateEndpointOutboundRuleSchema(metaclass=PatchedSchemaMeta):
 
     @pre_dump
     def predump(self, data, **kwargs):
-        data.destination = self.pe_dest2dict(data.service_resource_id, data.subresource_target, data.spark_enabled)
+        data.destination = self.pe_dest2dict(
+            data.service_resource_id, data.subresource_target, data.spark_enabled
+        )
         return data
 
     @post_load
@@ -170,8 +183,12 @@ class ManagedNetworkSchema(metaclass=PatchedSchemaMeta):
     outbound_rules = fields.List(
         UnionField(
             [
-                NestedField(PrivateEndpointOutboundRuleSchema, allow_none=False, unknown=EXCLUDE),
-                NestedField(ServiceTagOutboundRuleSchema, allow_none=False, unknown=EXCLUDE),
+                NestedField(
+                    PrivateEndpointOutboundRuleSchema, allow_none=False, unknown=EXCLUDE
+                ),
+                NestedField(
+                    ServiceTagOutboundRuleSchema, allow_none=False, unknown=EXCLUDE
+                ),
                 NestedField(
                     FqdnOutboundRuleSchema, allow_none=False, unknown=EXCLUDE
                 ),  # this needs to be last since otherwise union field with match destination as a string
@@ -188,6 +205,8 @@ class ManagedNetworkSchema(metaclass=PatchedSchemaMeta):
     def make(self, data, **kwargs):
         outbound_rules = data.get("outbound_rules", False)
         if outbound_rules:
-            return ManagedNetwork(_snake_to_camel(data["isolation_mode"]), outbound_rules)
+            return ManagedNetwork(
+                _snake_to_camel(data["isolation_mode"]), outbound_rules
+            )
         else:
             return ManagedNetwork(_snake_to_camel(data["isolation_mode"]))

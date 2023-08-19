@@ -23,5 +23,7 @@ class InputOutputEntry(DictMixin):
         # Data will be either a dataset id, inline dataset definition
         self.data = data
         self.mode = mode
-        if isinstance(self.data, collections.abc.Mapping) and not isinstance(self.data, Data):
+        if isinstance(self.data, collections.abc.Mapping) and not isinstance(
+            self.data, Data
+        ):
             self.data = Data(**self.data)

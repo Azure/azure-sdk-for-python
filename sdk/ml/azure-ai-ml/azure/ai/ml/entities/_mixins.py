@@ -69,7 +69,13 @@ class DictMixin(object):
 
     def __str__(self):
         # type: () -> str
-        return str({k: v for k, v in self.__dict__.items() if not k.startswith("_") and v is not None})
+        return str(
+            {
+                k: v
+                for k, v in self.__dict__.items()
+                if not k.startswith("_") and v is not None
+            }
+        )
 
     def has_key(self, k):
         # type: (Any) -> bool
@@ -142,11 +148,17 @@ class YamlTranslatableMixin:
 
         def _sort_dict_according_to_list(order_keys, dict_value):
             for nested_key in nested_keys:
-                if nested_key in dict_value and isinstance(dict_value[nested_key], dict):
-                    dict_value[nested_key] = _sort_dict_according_to_list(order_keys, dict_value[nested_key])
+                if nested_key in dict_value and isinstance(
+                    dict_value[nested_key], dict
+                ):
+                    dict_value[nested_key] = _sort_dict_according_to_list(
+                        order_keys, dict_value[nested_key]
+                    )
             if "jobs" in dict_value:
                 for node_name, node in dict_value["jobs"].items():
-                    dict_value["jobs"][node_name] = _sort_dict_according_to_list(order_keys, node)
+                    dict_value["jobs"][node_name] = _sort_dict_according_to_list(
+                        order_keys, node
+                    )
             difference = list(set(dict_value.keys()).difference(set(order_keys)))
             # keys not in order_keys will be put at the end of the list in the order of alphabetic
             order_keys.extend(sorted(difference))

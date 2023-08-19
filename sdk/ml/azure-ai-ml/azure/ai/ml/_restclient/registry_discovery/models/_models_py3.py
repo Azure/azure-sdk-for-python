@@ -30,12 +30,12 @@ class DebugInfoResponse(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'stack_trace': {'key': 'stackTrace', 'type': 'str'},
-        'inner_exception': {'key': 'innerException', 'type': 'DebugInfoResponse'},
-        'data': {'key': 'data', 'type': '{object}'},
-        'error_response': {'key': 'errorResponse', 'type': 'ErrorResponse'},
+        "type": {"key": "type", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "stack_trace": {"key": "stackTrace", "type": "str"},
+        "inner_exception": {"key": "innerException", "type": "DebugInfoResponse"},
+        "data": {"key": "data", "type": "{object}"},
+        "error_response": {"key": "errorResponse", "type": "ErrorResponse"},
     }
 
     def __init__(
@@ -82,16 +82,12 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'info': {'key': 'info', 'type': 'object'},
+        "type": {"key": "type", "type": "str"},
+        "info": {"key": "info", "type": "object"},
     }
 
     def __init__(
-        self,
-        *,
-        type: Optional[str] = None,
-        info: Optional[Any] = None,
-        **kwargs
+        self, *, type: Optional[str] = None, info: Optional[Any] = None, **kwargs
     ):
         """
         :keyword type:
@@ -125,13 +121,13 @@ class ErrorResponse(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'additional_properties': {'key': '', 'type': '{object}'},
-        'error': {'key': 'error', 'type': 'RootError'},
-        'correlation': {'key': 'correlation', 'type': '{str}'},
-        'environment': {'key': 'environment', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'time': {'key': 'time', 'type': 'iso-8601'},
-        'component_name': {'key': 'componentName', 'type': 'str'},
+        "additional_properties": {"key": "", "type": "{object}"},
+        "error": {"key": "error", "type": "RootError"},
+        "correlation": {"key": "correlation", "type": "{str}"},
+        "environment": {"key": "environment", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "time": {"key": "time", "type": "iso-8601"},
+        "component_name": {"key": "componentName", "type": "str"},
     }
 
     def __init__(
@@ -183,8 +179,8 @@ class InnerErrorResponse(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'inner_error': {'key': 'innerError', 'type': 'InnerErrorResponse'},
+        "code": {"key": "code", "type": "str"},
+        "inner_error": {"key": "innerError", "type": "InnerErrorResponse"},
     }
 
     def __init__(
@@ -227,14 +223,17 @@ class RegistryDiscoveryDto(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'registry_name': {'key': 'registryName', 'type': 'str'},
-        'tenant_id': {'key': 'tenantId', 'type': 'str'},
-        'primary_region': {'key': 'primaryRegion', 'type': 'str'},
-        'regions': {'key': 'regions', 'type': '[str]'},
-        'subscription_id': {'key': 'subscriptionId', 'type': 'str'},
-        'resource_group': {'key': 'resourceGroup', 'type': 'str'},
-        'workspace_name': {'key': 'workspaceName', 'type': 'str'},
-        'primary_region_resource_provider_uri': {'key': 'primaryRegionResourceProviderUri', 'type': 'str'},
+        "registry_name": {"key": "registryName", "type": "str"},
+        "tenant_id": {"key": "tenantId", "type": "str"},
+        "primary_region": {"key": "primaryRegion", "type": "str"},
+        "regions": {"key": "regions", "type": "[str]"},
+        "subscription_id": {"key": "subscriptionId", "type": "str"},
+        "resource_group": {"key": "resourceGroup", "type": "str"},
+        "workspace_name": {"key": "workspaceName", "type": "str"},
+        "primary_region_resource_provider_uri": {
+            "key": "primaryRegionResourceProviderUri",
+            "type": "str",
+        },
     }
 
     def __init__(
@@ -309,18 +308,18 @@ class RootError(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'severity': {'key': 'severity', 'type': 'int'},
-        'message': {'key': 'message', 'type': 'str'},
-        'message_format': {'key': 'messageFormat', 'type': 'str'},
-        'message_parameters': {'key': 'messageParameters', 'type': '{str}'},
-        'reference_code': {'key': 'referenceCode', 'type': 'str'},
-        'details_uri': {'key': 'detailsUri', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[RootError]'},
-        'inner_error': {'key': 'innerError', 'type': 'InnerErrorResponse'},
-        'debug_info': {'key': 'debugInfo', 'type': 'DebugInfoResponse'},
-        'additional_info': {'key': 'additionalInfo', 'type': '[ErrorAdditionalInfo]'},
+        "code": {"key": "code", "type": "str"},
+        "severity": {"key": "severity", "type": "int"},
+        "message": {"key": "message", "type": "str"},
+        "message_format": {"key": "messageFormat", "type": "str"},
+        "message_parameters": {"key": "messageParameters", "type": "{str}"},
+        "reference_code": {"key": "referenceCode", "type": "str"},
+        "details_uri": {"key": "detailsUri", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[RootError]"},
+        "inner_error": {"key": "innerError", "type": "InnerErrorResponse"},
+        "debug_info": {"key": "debugInfo", "type": "DebugInfoResponse"},
+        "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
     }
 
     def __init__(

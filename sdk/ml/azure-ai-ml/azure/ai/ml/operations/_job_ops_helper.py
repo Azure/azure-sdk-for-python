@@ -13,18 +13,30 @@ import sys
 import time
 from typing import Dict, Iterable, List, Optional, Union
 
-from azure.ai.ml._artifacts._artifact_utilities import get_datastore_info, list_logs_in_datastore
-from azure.ai.ml._restclient.runhistory.models import Run, RunDetails, TypedAssetReference
+from azure.ai.ml._artifacts._artifact_utilities import (
+    get_datastore_info,
+    list_logs_in_datastore,
+)
+from azure.ai.ml._restclient.runhistory.models import (
+    Run,
+    RunDetails,
+    TypedAssetReference,
+)
 from azure.ai.ml._restclient.v2022_10_01.models import JobBase
 from azure.ai.ml._restclient.v2022_02_01_preview.models import DataType
 from azure.ai.ml._restclient.v2022_02_01_preview.models import JobType as RestJobType
 from azure.ai.ml._restclient.v2022_02_01_preview.models import ModelType
 from azure.ai.ml._utils._http_utils import HttpPipeline
-from azure.ai.ml._utils.utils import create_requests_pipeline_with_retry, download_text_from_url
+from azure.ai.ml._utils.utils import (
+    create_requests_pipeline_with_retry,
+    download_text_from_url,
+)
 from azure.ai.ml.constants._common import GitProperties
 from azure.ai.ml.constants._job.job import JobLogPattern, JobType
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, JobException
-from azure.ai.ml.operations._dataset_dataplane_operations import DatasetDataplaneOperations
+from azure.ai.ml.operations._dataset_dataplane_operations import (
+    DatasetDataplaneOperations,
+)
 from azure.ai.ml.operations._datastore_operations import DatastoreOperations
 from azure.ai.ml.operations._model_dataplane_operations import ModelDataplaneOperations
 from azure.ai.ml.operations._run_history_constants import JobStatus, RunHistoryConstants
@@ -86,7 +98,9 @@ def _get_sorted_filtered_logs(
     return filtered_logs[previously_printed_index:]
 
 
-def _incremental_print(log: str, processed_logs: Dict[str, int], current_log_name: str, fileout) -> None:
+def _incremental_print(
+    log: str, processed_logs: Dict[str, int], current_log_name: str, fileout
+) -> None:
     """Incremental print.
 
     :param log:
@@ -228,9 +242,13 @@ def stream_logs_until_completion(
         # Get default output location
 
         default_output = (
-            job_resource.properties.outputs.get("default", None) if job_resource.properties.outputs else None
+            job_resource.properties.outputs.get("default", None)
+            if job_resource.properties.outputs
+            else None
         )
-        is_uri_folder = default_output and default_output.job_output_type == DataType.URI_FOLDER
+        is_uri_folder = (
+            default_output and default_output.job_output_type == DataType.URI_FOLDER
+        )
         if is_uri_folder:
             output_uri = default_output.uri
             # Parse the uri format
@@ -247,14 +265,18 @@ def stream_logs_until_completion(
         processed_logs = {}
 
         poll_start_time = time.time()
-        pipeline_with_retries = create_requests_pipeline_with_retry(requests_pipeline=requests_pipeline)
+        pipeline_with_retries = create_requests_pipeline_with_retry(
+            requests_pipeline=requests_pipeline
+        )
         while (
             _current_details.status in RunHistoryConstants.IN_PROGRESS_STATUSES
             or _current_details.status == JobStatus.FINALIZING
         ):
             file_handle.flush()
             time.sleep(_wait_before_polling(time.time() - poll_start_time))
-            _current_details: RunDetails = run_operations.get_run_details(job_name)  # TODO use FileWatcher
+            _current_details: RunDetails = run_operations.get_run_details(
+                job_name
+            )  # TODO use FileWatcher
             if job_type.lower() in JobType.PIPELINE:
                 legacy_folder_name = "/logs/azureml/"
             else:
@@ -269,7 +291,9 @@ def stream_logs_until_completion(
                 else _current_details.log_files
             )
             # Get the list of new logs available after filtering out the processed ones
-            available_logs = _get_sorted_filtered_logs(_current_logs_dict, job_type, processed_logs)
+            available_logs = _get_sorted_filtered_logs(
+                _current_logs_dict, job_type, processed_logs
+            )
             content = ""
             for current_log in available_logs:
                 content = download_text_from_url(
@@ -366,7 +390,9 @@ def get_git_properties() -> Dict[str, str]:
         """
         try:
             with open(os.devnull, "wb") as devnull:
-                return subprocess.check_output(["git"] + list(args), stderr=devnull).decode()
+                return subprocess.check_output(
+                    ["git"] + list(args), stderr=devnull
+                ).decode()
         except KeyboardInterrupt:
             raise
         except BaseException:  # pylint: disable=broad-except
@@ -481,12 +507,16 @@ def get_job_output_uris_from_dataplane(
         # Map the user-defined output name to the output uri
         # The service returns a mapping from internal asset id to output metadata, so we need the reverse map
         # defined above to get the user-defined output name from the internal asset id.
-        output_name_to_dataset_uri = {asset_id_to_output_name[k]: v.uri for k, v in dataset_uris.values.items()}
+        output_name_to_dataset_uri = {
+            asset_id_to_output_name[k]: v.uri for k, v in dataset_uris.values.items()
+        }
 
     # This is a repeat of the logic above for models.
     output_name_to_model_uri = {}
     if model_ids:
         model_uris = model_dataplane_operations.get_batch_model_uris(model_ids)
-        output_name_to_model_uri = {asset_id_to_output_name[k]: v.path for k, v in model_uris.values.items()}
+        output_name_to_model_uri = {
+            asset_id_to_output_name[k]: v.path for k, v in model_uris.values.items()
+        }
 
     return {**output_name_to_dataset_uri, **output_name_to_model_uri}

@@ -52,7 +52,9 @@ class OsImageMetadataSchema(PathAwareSchema):
 
 
 class ComputeInstanceSchema(ComputeSchema):
-    type = StringTransformedEnum(allowed_values=[ComputeType.COMPUTEINSTANCE], required=True)
+    type = StringTransformedEnum(
+        allowed_values=[ComputeType.COMPUTEINSTANCE], required=True
+    )
     size = fields.Str(metadata={"arm_type": ComputeSizeTier.COMPUTE_INSTANCE})
     network_settings = NestedField(NetworkSettingsSchema)
     create_on_behalf_of = NestedField(CreateOnBehalfOfSchema)
@@ -60,7 +62,9 @@ class ComputeInstanceSchema(ComputeSchema):
     ssh_public_access_enabled = fields.Bool(dump_default=None)
     state = fields.Str(dump_only=True)
     last_operation = fields.Dict(keys=fields.Str(), values=fields.Str(), dump_only=True)
-    services = fields.List(fields.Dict(keys=fields.Str(), values=fields.Str()), dump_only=True)
+    services = fields.List(
+        fields.Dict(keys=fields.Str(), values=fields.Str()), dump_only=True
+    )
     schedules = NestedField(ComputeSchedulesSchema)
     identity = ExperimentalField(NestedField(IdentitySchema))
     idle_time_before_shutdown = fields.Str()
@@ -69,5 +73,7 @@ class ComputeInstanceSchema(ComputeSchema):
     setup_scripts = NestedField(SetupScriptsSchema)
     os_image_metadata = NestedField(OsImageMetadataSchema, dump_only=True)
     enable_node_public_ip = fields.Bool(
-        metadata={"description": "Enable or disable node public IP address provisioning."}
+        metadata={
+            "description": "Enable or disable node public IP address provisioning."
+        }
     )

@@ -15,7 +15,17 @@ from multiprocessing import cpu_count
 from os import PathLike
 from pathlib import Path
 from platform import system
-from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Optional, Tuple, Union, cast
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Dict,
+    Iterable,
+    List,
+    Optional,
+    Tuple,
+    Union,
+    cast,
+)
 
 from colorama import Fore
 from tqdm import TqdmWarning, tqdm
@@ -56,7 +66,11 @@ from azure.ai.ml._restclient.v2022_05_01.models import (
 from azure.ai.ml._restclient.v2023_04_01.models import PendingUploadRequestDto
 from azure.ai.ml._utils._pathspec import GitWildMatchPattern, normalize_file
 from azure.ai.ml._utils.utils import convert_windows_path_to_unix, retry, snake_to_camel
-from azure.ai.ml.constants._common import MAX_AUTOINCREMENT_ATTEMPTS, DefaultOpenEncoding, OrderString
+from azure.ai.ml.constants._common import (
+    MAX_AUTOINCREMENT_ATTEMPTS,
+    DefaultOpenEncoding,
+    OrderString,
+)
 from azure.ai.ml.entities._assets.asset import Asset
 from azure.ai.ml.exceptions import (
     AssetPathException,
@@ -69,7 +83,12 @@ from azure.ai.ml.exceptions import (
 from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 
 if TYPE_CHECKING:
-    from azure.ai.ml.operations import ComponentOperations, DataOperations, EnvironmentOperations, ModelOperations
+    from azure.ai.ml.operations import (
+        ComponentOperations,
+        DataOperations,
+        EnvironmentOperations,
+        ModelOperations,
+    )
 
 hash_type = type(hashlib.md5())  # nosec
 
@@ -241,7 +260,9 @@ def _get_file_hash(filename: Union[str, os.PathLike], _hash: hash_type) -> hash_
     return _hash
 
 
-def _get_dir_hash(directory: Union[str, os.PathLike], _hash: hash_type, ignore_file: IgnoreFile) -> hash_type:
+def _get_dir_hash(
+    directory: Union[str, os.PathLike], _hash: hash_type, ignore_file: IgnoreFile
+) -> hash_type:
     dir_contents = Path(directory).iterdir()
     sorted_contents = sorted(dir_contents, key=lambda path: str(path).lower())
     for path in sorted_contents:
@@ -286,10 +307,14 @@ def _build_metadata_dict(name: str, version: str) -> Dict[str, str]:
     return metadata_dict
 
 
-def get_object_hash(path: Union[str, os.PathLike], ignore_file: IgnoreFile = IgnoreFile()) -> str:
+def get_object_hash(
+    path: Union[str, os.PathLike], ignore_file: IgnoreFile = IgnoreFile()
+) -> str:
     _hash = hashlib.md5(b"Initialize for october 2021 AML CLI version")  # nosec
     if Path(path).is_dir():
-        object_hash = _get_dir_hash(directory=path, _hash=_hash, ignore_file=ignore_file)
+        object_hash = _get_dir_hash(
+            directory=path, _hash=_hash, ignore_file=ignore_file
+        )
     else:
         if os.path.islink(path):  # ensure we're hashing the contents of the linked file
             path = _resolve_path(Path(path))
@@ -301,7 +326,9 @@ def get_content_hash_version():
     return 202208
 
 
-def get_content_hash(path: Union[str, os.PathLike], ignore_file: IgnoreFile = IgnoreFile()) -> Optional[str]:
+def get_content_hash(
+    path: Union[str, os.PathLike], ignore_file: IgnoreFile = IgnoreFile()
+) -> Optional[str]:
     """Generating sha256 hash for file/folder,
 
     e.g. Code snapshot fingerprints to prevent tampering.
@@ -336,14 +363,19 @@ def get_content_hash(path: Union[str, os.PathLike], ignore_file: IgnoreFile = Ig
     if os.path.islink(path):
         actual_path = _resolve_path(Path(path)).as_posix()
     if os.path.isdir(actual_path):
-        return _get_file_list_content_hash(get_upload_files_from_folder(actual_path, ignore_file=ignore_file))
+        return _get_file_list_content_hash(
+            get_upload_files_from_folder(actual_path, ignore_file=ignore_file)
+        )
     if os.path.isfile(actual_path):
         return _get_file_list_content_hash([(actual_path, Path(actual_path).name)])
     return None
 
 
 def get_upload_files_from_folder(
-    path: Union[str, os.PathLike], *, prefix: str = "", ignore_file: IgnoreFile = IgnoreFile()
+    path: Union[str, os.PathLike],
+    *,
+    prefix: str = "",
+    ignore_file: IgnoreFile = IgnoreFile(),
 ) -> List[str]:
     path = Path(path)
     upload_paths = []
@@ -426,7 +458,12 @@ def traverse_directory(  # pylint: disable=unused-argument
     result = []
     for origin_file_path in origin_file_paths:
         relative_path = origin_file_path.relative_to(root)
-        result.append((_resolve_path(origin_file_path).as_posix(), Path(prefix).joinpath(relative_path).as_posix()))
+        result.append(
+            (
+                _resolve_path(origin_file_path).as_posix(),
+                Path(prefix).joinpath(relative_path).as_posix(),
+            )
+        )
     return result
 
 
@@ -476,7 +513,11 @@ def get_directory_size(
                 # ensure we're counting the size of the linked file
                 # os.readlink returns a file path relative to dirpath, and must be
                 # re-joined to get a workable result
-                path_size = os.path.getsize(os.path.join(dirpath, os.readlink(convert_windows_path_to_unix(full_path))))
+                path_size = os.path.getsize(
+                    os.path.join(
+                        dirpath, os.readlink(convert_windows_path_to_unix(full_path))
+                    )
+                )
             size_list[full_path] = path_size
             total_size += path_size
     return total_size, size_list
@@ -529,16 +570,22 @@ def upload_file(
             for sub_folder in all_sub_folders:
                 if storage_client.temp_sub_directory_client:
                     storage_client.temp_sub_directory_client = (
-                        storage_client.temp_sub_directory_client.create_sub_directory(sub_folder)
+                        storage_client.temp_sub_directory_client.create_sub_directory(
+                            sub_folder
+                        )
                     )
                 else:
-                    storage_client.temp_sub_directory_client = storage_client.directory_client.create_sub_directory(
-                        sub_folder
+                    storage_client.temp_sub_directory_client = (
+                        storage_client.directory_client.create_sub_directory(sub_folder)
                     )
 
-            storage_client.file_client = storage_client.temp_sub_directory_client.create_file(file_name_tail)
+            storage_client.file_client = (
+                storage_client.temp_sub_directory_client.create_file(file_name_tail)
+            )
         else:
-            storage_client.file_client = storage_client.directory_client.create_file(source.split("/")[-1])
+            storage_client.file_client = storage_client.directory_client.create_file(
+                source.split("/")[-1]
+            )
 
     with open(source, "rb") as data:
         if show_progress and not in_directory:
@@ -609,8 +656,10 @@ def upload_directory(
     if (
         type(storage_client).__name__ == GEN2_STORAGE_CLIENT_NAME
     ):  # Only for Gen2StorageClient, Blob Storage doesn't have true directories
-        storage_client.sub_directory_client = storage_client.directory_client.create_sub_directory(
-            prefix.strip("/").split("/")[-1]
+        storage_client.sub_directory_client = (
+            storage_client.directory_client.create_sub_directory(
+                prefix.strip("/").split("/")[-1]
+            )
         )
 
     # Enumerate all files in the given directory and compose paths for them to be uploaded to in the remote storage
@@ -672,7 +721,9 @@ def upload_directory(
         if show_progress:
             warnings.simplefilter("ignore", category=TqdmWarning)
             msg += f" ({round(total_size/10**6, 2)} MBs)"
-            is_windows = system() == "Windows"  # Default unicode progress bar doesn't display well on Windows
+            is_windows = (
+                system() == "Windows"
+            )  # Default unicode progress bar doesn't display well on Windows
             with tqdm(total=total_size, desc=msg, ascii=is_windows) as pbar:
                 for future in as_completed(futures_dict):
                     future.result()  # access result to propagate any exceptions
@@ -802,7 +853,9 @@ def _get_latest(
     resource_group_name: str,
     workspace_name: Optional[str] = None,
     registry_name: Optional[str] = None,
-    order_by: Literal[OrderString.CREATED_AT, OrderString.CREATED_AT_DESC] = OrderString.CREATED_AT_DESC,
+    order_by: Literal[
+        OrderString.CREATED_AT, OrderString.CREATED_AT_DESC
+    ] = OrderString.CREATED_AT_DESC,
     **kwargs,
 ) -> Union[ModelVersionData, DataVersionBaseData]:
     """Retrieve the latest version of the asset with the given name.
@@ -1015,12 +1068,19 @@ def _check_or_modify_auto_delete_setting(
             condition = snake_to_camel(condition)
             setattr(autoDeleteSetting, "condition", condition)
         elif "condition" in autoDeleteSetting:
-            autoDeleteSetting["condition"] = snake_to_camel(autoDeleteSetting["condition"])
+            autoDeleteSetting["condition"] = snake_to_camel(
+                autoDeleteSetting["condition"]
+            )
 
 
-def _validate_workspace_managed_datastore(path: Optional[Union[str, PathLike]]) -> Optional[Union[str, PathLike]]:
+def _validate_workspace_managed_datastore(
+    path: Optional[Union[str, PathLike]]
+) -> Optional[Union[str, PathLike]]:
     # block cumtomer specified path on managed datastore
-    if path.startswith(WORKSPACE_MANAGED_DATASTORE_WITH_SLASH) or path == WORKSPACE_MANAGED_DATASTORE:
+    if (
+        path.startswith(WORKSPACE_MANAGED_DATASTORE_WITH_SLASH)
+        or path == WORKSPACE_MANAGED_DATASTORE
+    ):
         path = path.rstrip("/")
 
         if path != WORKSPACE_MANAGED_DATASTORE:
@@ -1051,7 +1111,9 @@ def _validate_auto_delete_setting_in_data_output(
 class FileUploadProgressBar(tqdm):
     def __init__(self, msg: Optional[str] = None):
         warnings.simplefilter("ignore", category=TqdmWarning)
-        is_windows = system() == "Windows"  # Default unicode progress bar doesn't display well on Windows
+        is_windows = (
+            system() == "Windows"
+        )  # Default unicode progress bar doesn't display well on Windows
         super().__init__(unit="B", unit_scale=True, desc=msg, ascii=is_windows)
 
     def update_to(self, response):

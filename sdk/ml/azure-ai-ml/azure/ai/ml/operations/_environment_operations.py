@@ -11,13 +11,20 @@ from marshmallow.exceptions import ValidationError as SchemaValidationError
 from azure.ai.ml._utils._registry_utils import get_registry_client
 
 from azure.ai.ml._utils._experimental import experimental
-from azure.ai.ml._artifacts._artifact_utilities import _check_and_upload_env_build_context
+from azure.ai.ml._artifacts._artifact_utilities import (
+    _check_and_upload_env_build_context,
+)
 from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
     AzureMachineLearningWorkspaces as ServiceClient102021Dataplane,
 )
-from azure.ai.ml._restclient.v2023_04_01_preview.models import EnvironmentVersion, ListViewType
-from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient042023Preview
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    EnvironmentVersion,
+    ListViewType,
+)
+from azure.ai.ml._restclient.v2023_04_01_preview import (
+    AzureMachineLearningWorkspaces as ServiceClient042023Preview,
+)
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationsContainer,
@@ -32,11 +39,23 @@ from azure.ai.ml._utils._asset_utils import (
     _resolve_label_to_asset,
 )
 from azure.ai.ml._utils._logger_utils import OpsLogger
-from azure.ai.ml._utils._registry_utils import get_asset_body_for_registry_storage, get_sas_uri_for_registry_asset
-from azure.ai.ml.constants._common import ARM_ID_PREFIX, AzureMLResourceType, ASSET_ID_FORMAT
+from azure.ai.ml._utils._registry_utils import (
+    get_asset_body_for_registry_storage,
+    get_sas_uri_for_registry_asset,
+)
+from azure.ai.ml.constants._common import (
+    ARM_ID_PREFIX,
+    AzureMLResourceType,
+    ASSET_ID_FORMAT,
+)
 from azure.ai.ml.entities._assets import Environment, WorkspaceAssetReference
 from azure.core.exceptions import ResourceNotFoundError
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+from azure.ai.ml.exceptions import (
+    ErrorCategory,
+    ErrorTarget,
+    ValidationErrorType,
+    ValidationException,
+)
 
 ops_logger = OpsLogger(__name__)
 logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
@@ -65,7 +84,9 @@ class EnvironmentOperations(_ScopeDependentOperations):
         self._version_operations = service_client.environment_versions
         self._service_client = service_client
         self._all_operations = all_operations
-        self._datastore_operation = all_operations.all_operations[AzureMLResourceType.DATASTORE]
+        self._datastore_operation = all_operations.all_operations[
+            AzureMLResourceType.DATASTORE
+        ]
 
         # Maps a label to a function which given an asset name,
         # returns the asset associated with the label
@@ -127,7 +148,9 @@ class EnvironmentOperations(_ScopeDependentOperations):
                     ).result()
 
                     if not result:
-                        env_rest_obj = self._get(name=environment.name, version=environment.version)
+                        env_rest_obj = self._get(
+                            name=environment.name, version=environment.version
+                        )
                         return Environment._from_rest_object(env_rest_obj)
 
                 sas_uri = get_sas_uri_for_registry_asset(
@@ -145,7 +168,10 @@ class EnvironmentOperations(_ScopeDependentOperations):
                 )
 
             environment = _check_and_upload_env_build_context(
-                environment=environment, operations=self, sas_uri=sas_uri, show_progress=self._show_progress
+                environment=environment,
+                operations=self,
+                sas_uri=sas_uri,
+                show_progress=self._show_progress,
             )
             env_version_resource = environment._to_rest_object()
             env_rest_obj = (
@@ -168,7 +194,9 @@ class EnvironmentOperations(_ScopeDependentOperations):
                 )
             )
             if not env_rest_obj and self._registry_name:
-                env_rest_obj = self._get(name=environment.name, version=environment.version)
+                env_rest_obj = self._get(
+                    name=environment.name, version=environment.version
+                )
             return Environment._from_rest_object(env_rest_obj)
         except Exception as ex:  # pylint: disable=broad-except
             if isinstance(ex, SchemaValidationError):
@@ -212,7 +240,9 @@ class EnvironmentOperations(_ScopeDependentOperations):
         )
 
     @monitor_with_activity(logger, "Environment.Get", ActivityType.PUBLICAPI)
-    def get(self, name: str, version: Optional[str] = None, label: Optional[str] = None) -> Environment:
+    def get(
+        self, name: str, version: Optional[str] = None, label: Optional[str] = None
+    ) -> Environment:
         """Returns the specified environment asset.
 
         :param name: Name of the environment.
@@ -275,7 +305,9 @@ class EnvironmentOperations(_ScopeDependentOperations):
                 self._version_operations.list(
                     name=name,
                     registry_name=self._registry_name,
-                    cls=lambda objs: [Environment._from_rest_object(obj) for obj in objs],
+                    cls=lambda objs: [
+                        Environment._from_rest_object(obj) for obj in objs
+                    ],
                     **self._scope_kwargs,
                     **self._kwargs,
                 )
@@ -283,7 +315,9 @@ class EnvironmentOperations(_ScopeDependentOperations):
                 else self._version_operations.list(
                     name=name,
                     workspace_name=self._workspace_name,
-                    cls=lambda objs: [Environment._from_rest_object(obj) for obj in objs],
+                    cls=lambda objs: [
+                        Environment._from_rest_object(obj) for obj in objs
+                    ],
                     list_view_type=list_view_type,
                     **self._scope_kwargs,
                     **self._kwargs,
@@ -292,14 +326,18 @@ class EnvironmentOperations(_ScopeDependentOperations):
         return (
             self._containers_operations.list(
                 registry_name=self._registry_name,
-                cls=lambda objs: [Environment._from_container_rest_object(obj) for obj in objs],
+                cls=lambda objs: [
+                    Environment._from_container_rest_object(obj) for obj in objs
+                ],
                 **self._scope_kwargs,
                 **self._kwargs,
             )
             if self._registry_name
             else self._containers_operations.list(
                 workspace_name=self._workspace_name,
-                cls=lambda objs: [Environment._from_container_rest_object(obj) for obj in objs],
+                cls=lambda objs: [
+                    Environment._from_container_rest_object(obj) for obj in objs
+                ],
                 list_view_type=list_view_type,
                 **self._scope_kwargs,
                 **self._kwargs,
@@ -385,7 +423,13 @@ class EnvironmentOperations(_ScopeDependentOperations):
     @monitor_with_activity(logger, "Environment.Share", ActivityType.PUBLICAPI)
     @experimental
     def share(
-        self, name: str, version: str, *, share_with_name: str, share_with_version: str, registry_name: str
+        self,
+        name: str,
+        version: str,
+        *,
+        share_with_name: str,
+        share_with_version: str,
+        registry_name: str,
     ) -> Environment:
         """Share a environment asset from workspace to registry.
 
@@ -405,7 +449,8 @@ class EnvironmentOperations(_ScopeDependentOperations):
 
         #  Get workspace info to get workspace GUID
         workspace = self._service_client.workspaces.get(
-            resource_group_name=self._resource_group_name, workspace_name=self._workspace_name
+            resource_group_name=self._resource_group_name,
+            workspace_name=self._workspace_name,
         )
         workspace_guid = workspace.workspace_id
         workspace_location = workspace.location
@@ -443,7 +488,9 @@ class EnvironmentOperations(_ScopeDependentOperations):
         environment_versions_operation_ = self._version_operations
 
         try:
-            _client, _rg, _sub = get_registry_client(self._service_client._config.credential, registry_name)
+            _client, _rg, _sub = get_registry_client(
+                self._service_client._config.credential, registry_name
+            )
             self._operation_scope.registry_name = registry_name
             self._operation_scope._resource_group_name = _rg
             self._operation_scope._subscription_id = _sub

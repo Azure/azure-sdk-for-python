@@ -551,7 +551,10 @@ class DeploymentProperties(msrest.serialization.Model):
         "parameters_link": {"key": "parametersLink", "type": "ParametersLink"},
         "mode": {"key": "mode", "type": "str"},
         "debug_setting": {"key": "debugSetting", "type": "DebugSetting"},
-        "on_error_deployment": {"key": "onErrorDeployment", "type": "OnErrorDeployment"},
+        "on_error_deployment": {
+            "key": "onErrorDeployment",
+            "type": "OnErrorDeployment",
+        },
     }
 
     def __init__(self, **kwargs):
@@ -646,10 +649,16 @@ class DeploymentPropertiesExtended(msrest.serialization.Model):
         "parameters_link": {"key": "parametersLink", "type": "ParametersLink"},
         "mode": {"key": "mode", "type": "str"},
         "debug_setting": {"key": "debugSetting", "type": "DebugSetting"},
-        "on_error_deployment": {"key": "onErrorDeployment", "type": "OnErrorDeploymentExtended"},
+        "on_error_deployment": {
+            "key": "onErrorDeployment",
+            "type": "OnErrorDeploymentExtended",
+        },
         "template_hash": {"key": "templateHash", "type": "str"},
         "output_resources": {"key": "outputResources", "type": "[ResourceReference]"},
-        "validated_resources": {"key": "validatedResources", "type": "[ResourceReference]"},
+        "validated_resources": {
+            "key": "validatedResources",
+            "type": "[ResourceReference]",
+        },
         "error": {"key": "error", "type": "ErrorResponse"},
     }
 
@@ -776,8 +785,14 @@ class DeploymentWhatIfProperties(DeploymentProperties):
         "parameters_link": {"key": "parametersLink", "type": "ParametersLink"},
         "mode": {"key": "mode", "type": "str"},
         "debug_setting": {"key": "debugSetting", "type": "DebugSetting"},
-        "on_error_deployment": {"key": "onErrorDeployment", "type": "OnErrorDeployment"},
-        "what_if_settings": {"key": "whatIfSettings", "type": "DeploymentWhatIfSettings"},
+        "on_error_deployment": {
+            "key": "onErrorDeployment",
+            "type": "OnErrorDeployment",
+        },
+        "what_if_settings": {
+            "key": "whatIfSettings",
+            "type": "DeploymentWhatIfSettings",
+        },
     }
 
     def __init__(self, **kwargs):
@@ -1136,7 +1151,10 @@ class Identity(msrest.serialization.Model):
         "principal_id": {"key": "principalId", "type": "str"},
         "tenant_id": {"key": "tenantId", "type": "str"},
         "type": {"key": "type", "type": "str"},
-        "user_assigned_identities": {"key": "userAssignedIdentities", "type": "{IdentityUserAssignedIdentitiesValue}"},
+        "user_assigned_identities": {
+            "key": "userAssignedIdentities",
+            "type": "{IdentityUserAssignedIdentitiesValue}",
+        },
     }
 
     def __init__(self, **kwargs):

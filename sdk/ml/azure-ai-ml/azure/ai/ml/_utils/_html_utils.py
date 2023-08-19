@@ -24,7 +24,9 @@ def convert_dict_to_table(object_to_convert):
     # Case 4: All collection values, lens unequal -> table of 1 row, each is nested collection?
 
     if not isinstance(object_to_convert, dict):
-        raise AssertionError("Expected a dict or subclass, got {0}".format(type(object_to_convert)))
+        raise AssertionError(
+            "Expected a dict or subclass, got {0}".format(type(object_to_convert))
+        )
 
     if len(object_to_convert) == 0:
         return ""
@@ -66,7 +68,9 @@ def convert_dict_to_table(object_to_convert):
 
 def convert_list_to_table(object_to_convert):
     if not isinstance(object_to_convert, list):
-        raise AssertionError("Expected a list or subclass, got {0}".format(type(object_to_convert)))
+        raise AssertionError(
+            "Expected a list or subclass, got {0}".format(type(object_to_convert))
+        )
 
     if len(object_to_convert) == 0:
         return ""
@@ -82,14 +86,18 @@ _type_to_converter = {list: convert_list_to_table, dict: convert_dict_to_table}
 
 
 def to_html(object_to_convert):
-    candidate_converters = [k for k in _type_to_converter if isinstance(object_to_convert, k)]
+    candidate_converters = [
+        k for k in _type_to_converter if isinstance(object_to_convert, k)
+    ]
 
     if len(candidate_converters) == 0:
         converter = convert_value
     elif len(candidate_converters) == 1:
         converter = _type_to_converter[candidate_converters[0]]
     else:
-        logging.warning("Multiple candidate converters found for type %s", type(object_to_convert))
+        logging.warning(
+            "Multiple candidate converters found for type %s", type(object_to_convert)
+        )
         converter = convert_value
 
     converted_value = converter(object_to_convert)

@@ -13,7 +13,11 @@ from azure.ai.ml._schema.assets.asset import AnonymousAssetSchema
 from azure.ai.ml._schema.component.component import ComponentSchema
 from azure.ai.ml._schema.component.input_output import InputPortSchema
 from azure.ai.ml._schema.core.schema_meta import PatchedSchemaMeta
-from azure.ai.ml._schema.core.fields import FileRefField, StringTransformedEnum, NestedField
+from azure.ai.ml._schema.core.fields import (
+    FileRefField,
+    StringTransformedEnum,
+    NestedField,
+)
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, AssetTypes
 from azure.ai.ml.constants._component import (
     ComponentSource,
@@ -29,9 +33,14 @@ class DataTransferComponentSchemaMixin(ComponentSchema):
 
 
 class DataTransferCopyComponentSchema(DataTransferComponentSchemaMixin):
-    task = StringTransformedEnum(allowed_values=[DataTransferTaskType.COPY_DATA], required=True)
+    task = StringTransformedEnum(
+        allowed_values=[DataTransferTaskType.COPY_DATA], required=True
+    )
     data_copy_mode = StringTransformedEnum(
-        allowed_values=[DataCopyMode.MERGE_WITH_OVERWRITE, DataCopyMode.FAIL_IF_CONFLICT]
+        allowed_values=[
+            DataCopyMode.MERGE_WITH_OVERWRITE,
+            DataCopyMode.FAIL_IF_CONFLICT,
+        ]
     )
     inputs = fields.Dict(
         keys=fields.Str(),
@@ -44,13 +53,15 @@ class DataTransferCopyComponentSchema(DataTransferComponentSchemaMixin):
         if outputs_count != 1:
             msg = "Only support single output in {}, but there're {} outputs."
             raise ValidationError(
-                message=msg.format(DataTransferTaskType.COPY_DATA, outputs_count), field_name="outputs"
+                message=msg.format(DataTransferTaskType.COPY_DATA, outputs_count),
+                field_name="outputs",
             )
 
 
 class SinkSourceSchema(metaclass=PatchedSchemaMeta):
     type = StringTransformedEnum(
-        allowed_values=[ExternalDataType.FILE_SYSTEM, ExternalDataType.DATABASE], required=True
+        allowed_values=[ExternalDataType.FILE_SYSTEM, ExternalDataType.DATABASE],
+        required=True,
     )
 
 
@@ -59,7 +70,9 @@ class SourceInputsSchema(metaclass=PatchedSchemaMeta):
     For export task in DataTransfer, inputs type only support uri_file for database and uri_folder for filesystem.
     """
 
-    type = StringTransformedEnum(allowed_values=[AssetTypes.URI_FOLDER, AssetTypes.URI_FILE], required=True)
+    type = StringTransformedEnum(
+        allowed_values=[AssetTypes.URI_FOLDER, AssetTypes.URI_FILE], required=True
+    )
 
 
 class SinkOutputsSchema(metaclass=PatchedSchemaMeta):
@@ -67,11 +80,15 @@ class SinkOutputsSchema(metaclass=PatchedSchemaMeta):
     For import task in DataTransfer, outputs type only support mltable for database and uri_folder for filesystem;
     """
 
-    type = StringTransformedEnum(allowed_values=[AssetTypes.MLTABLE, AssetTypes.URI_FOLDER], required=True)
+    type = StringTransformedEnum(
+        allowed_values=[AssetTypes.MLTABLE, AssetTypes.URI_FOLDER], required=True
+    )
 
 
 class DataTransferImportComponentSchema(DataTransferComponentSchemaMixin):
-    task = StringTransformedEnum(allowed_values=[DataTransferTaskType.IMPORT_DATA], required=True)
+    task = StringTransformedEnum(
+        allowed_values=[DataTransferTaskType.IMPORT_DATA], required=True
+    )
     source = NestedField(SinkSourceSchema, required=True)
     outputs = fields.Dict(
         keys=fields.Str(),
@@ -80,7 +97,10 @@ class DataTransferImportComponentSchema(DataTransferComponentSchemaMixin):
 
     @validates("inputs")
     def inputs_key(self, value):
-        raise ValidationError(f"inputs field is not a valid filed in task type " f"{DataTransferTaskType.IMPORT_DATA}.")
+        raise ValidationError(
+            f"inputs field is not a valid filed in task type "
+            f"{DataTransferTaskType.IMPORT_DATA}."
+        )
 
     @validates("outputs")
     def outputs_key(self, value):
@@ -92,7 +112,9 @@ class DataTransferImportComponentSchema(DataTransferComponentSchemaMixin):
 
 
 class DataTransferExportComponentSchema(DataTransferComponentSchemaMixin):
-    task = StringTransformedEnum(allowed_values=[DataTransferTaskType.EXPORT_DATA], required=True)
+    task = StringTransformedEnum(
+        allowed_values=[DataTransferTaskType.EXPORT_DATA], required=True
+    )
     inputs = fields.Dict(
         keys=fields.Str(),
         values=NestedField(SourceInputsSchema),
@@ -110,7 +132,8 @@ class DataTransferExportComponentSchema(DataTransferComponentSchemaMixin):
     @validates("outputs")
     def outputs_key(self, value):
         raise ValidationError(
-            f"outputs field is not a valid filed in task type " f"{DataTransferTaskType.EXPORT_DATA}."
+            f"outputs field is not a valid filed in task type "
+            f"{DataTransferTaskType.EXPORT_DATA}."
         )
 
 
@@ -135,7 +158,9 @@ class RestDataTransferExportComponentSchema(DataTransferExportComponentSchema):
     name = fields.Str(required=True)
 
 
-class AnonymousDataTransferCopyComponentSchema(AnonymousAssetSchema, DataTransferCopyComponentSchema):
+class AnonymousDataTransferCopyComponentSchema(
+    AnonymousAssetSchema, DataTransferCopyComponentSchema
+):
     """Anonymous data transfer copy component schema.
 
     Note inheritance follows order: AnonymousAssetSchema,
@@ -146,7 +171,9 @@ class AnonymousDataTransferCopyComponentSchema(AnonymousAssetSchema, DataTransfe
 
     @post_load
     def make(self, data, **kwargs):
-        from azure.ai.ml.entities._component.datatransfer_component import DataTransferCopyComponent
+        from azure.ai.ml.entities._component.datatransfer_component import (
+            DataTransferCopyComponent,
+        )
 
         # Inline component will have source=YAML.JOB
         # As we only regard full separate component file as YAML.COMPONENT
@@ -158,7 +185,9 @@ class AnonymousDataTransferCopyComponentSchema(AnonymousAssetSchema, DataTransfe
 
 
 # pylint: disable-next=name-too-long
-class AnonymousDataTransferImportComponentSchema(AnonymousAssetSchema, DataTransferImportComponentSchema):
+class AnonymousDataTransferImportComponentSchema(
+    AnonymousAssetSchema, DataTransferImportComponentSchema
+):
     """Anonymous data transfer import component schema.
 
     Note inheritance follows order: AnonymousAssetSchema,
@@ -169,7 +198,9 @@ class AnonymousDataTransferImportComponentSchema(AnonymousAssetSchema, DataTrans
 
     @post_load
     def make(self, data, **kwargs):
-        from azure.ai.ml.entities._component.datatransfer_component import DataTransferImportComponent
+        from azure.ai.ml.entities._component.datatransfer_component import (
+            DataTransferImportComponent,
+        )
 
         # Inline component will have source=YAML.JOB
         # As we only regard full separate component file as YAML.COMPONENT
@@ -181,7 +212,9 @@ class AnonymousDataTransferImportComponentSchema(AnonymousAssetSchema, DataTrans
 
 
 # pylint: disable-next=name-too-long
-class AnonymousDataTransferExportComponentSchema(AnonymousAssetSchema, DataTransferExportComponentSchema):
+class AnonymousDataTransferExportComponentSchema(
+    AnonymousAssetSchema, DataTransferExportComponentSchema
+):
     """Anonymous data transfer export component schema.
 
     Note inheritance follows order: AnonymousAssetSchema,
@@ -192,7 +225,9 @@ class AnonymousDataTransferExportComponentSchema(AnonymousAssetSchema, DataTrans
 
     @post_load
     def make(self, data, **kwargs):
-        from azure.ai.ml.entities._component.datatransfer_component import DataTransferExportComponent
+        from azure.ai.ml.entities._component.datatransfer_component import (
+            DataTransferExportComponent,
+        )
 
         # Inline component will have source=YAML.JOB
         # As we only regard full separate component file as YAML.COMPONENT
@@ -213,9 +248,9 @@ class DataTransferCopyComponentFileRefField(FileRefField):
         # Update base_path to parent path of component file.
         component_schema_context = deepcopy(self.context)
         component_schema_context[BASE_PATH_CONTEXT_KEY] = source_path.parent
-        component = AnonymousDataTransferCopyComponentSchema(context=component_schema_context).load(
-            component_dict, unknown=INCLUDE
-        )
+        component = AnonymousDataTransferCopyComponentSchema(
+            context=component_schema_context
+        ).load(component_dict, unknown=INCLUDE)
         component._source_path = source_path
         component._source = ComponentSource.YAML_COMPONENT
         return component
@@ -231,9 +266,9 @@ class DataTransferImportComponentFileRefField(FileRefField):
         # Update base_path to parent path of component file.
         component_schema_context = deepcopy(self.context)
         component_schema_context[BASE_PATH_CONTEXT_KEY] = source_path.parent
-        component = AnonymousDataTransferImportComponentSchema(context=component_schema_context).load(
-            component_dict, unknown=INCLUDE
-        )
+        component = AnonymousDataTransferImportComponentSchema(
+            context=component_schema_context
+        ).load(component_dict, unknown=INCLUDE)
         component._source_path = source_path
         component._source = ComponentSource.YAML_COMPONENT
         return component
@@ -249,9 +284,9 @@ class DataTransferExportComponentFileRefField(FileRefField):
         # Update base_path to parent path of component file.
         component_schema_context = deepcopy(self.context)
         component_schema_context[BASE_PATH_CONTEXT_KEY] = source_path.parent
-        component = AnonymousDataTransferExportComponentSchema(context=component_schema_context).load(
-            component_dict, unknown=INCLUDE
-        )
+        component = AnonymousDataTransferExportComponentSchema(
+            context=component_schema_context
+        ).load(component_dict, unknown=INCLUDE)
         component._source_path = source_path
         component._source = ComponentSource.YAML_COMPONENT
         return component

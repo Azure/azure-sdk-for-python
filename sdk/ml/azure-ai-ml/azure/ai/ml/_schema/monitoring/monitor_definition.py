@@ -16,9 +16,15 @@ from azure.ai.ml._schema.monitoring.signals import (
     CustomMonitoringSignalSchema,
 )
 from azure.ai.ml._schema.monitoring.alert_notification import AlertNotificationSchema
-from azure.ai.ml._schema.core.fields import NestedField, UnionField, StringTransformedEnum
+from azure.ai.ml._schema.core.fields import (
+    NestedField,
+    UnionField,
+    StringTransformedEnum,
+)
 from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
-from azure.ai.ml._schema.spark_resource_configuration import SparkResourceConfigurationSchema
+from azure.ai.ml._schema.spark_resource_configuration import (
+    SparkResourceConfigurationSchema,
+)
 
 
 class MonitorDefinitionSchema(metaclass=PatchedSchemaMeta):
@@ -37,7 +43,10 @@ class MonitorDefinitionSchema(metaclass=PatchedSchemaMeta):
         ),
     )
     alert_notification = UnionField(
-        union_fields=[StringTransformedEnum(allowed_values=AZMONITORING), NestedField(AlertNotificationSchema)]
+        union_fields=[
+            StringTransformedEnum(allowed_values=AZMONITORING),
+            NestedField(AlertNotificationSchema),
+        ]
     )
 
     @post_load

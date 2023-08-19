@@ -13,7 +13,12 @@ from azure.ai.ml._restclient.v2022_05_01.models import (
     OperatingSystemType,
     Route,
 )
-from azure.ai.ml._schema.core.fields import ExperimentalField, NestedField, UnionField, LocalPathField
+from azure.ai.ml._schema.core.fields import (
+    ExperimentalField,
+    NestedField,
+    UnionField,
+    LocalPathField,
+)
 from azure.ai.ml._schema.core.intellectual_property import IntellectualPropertySchema
 
 from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
@@ -76,7 +81,9 @@ class _BaseEnvironmentSchema(AssetSchema):
     )
     build = NestedField(
         BuildContextSchema,
-        metadata={"description": "Docker build context to create the environment. Mutually exclusive with image"},
+        metadata={
+            "description": "Docker build context to create the environment. Mutually exclusive with image"
+        },
     )
     image = fields.Str()
     conda_file = UnionField([fields.Raw(), fields.Str()])
@@ -92,7 +99,9 @@ class _BaseEnvironmentSchema(AssetSchema):
         },
         required=False,
     )
-    intellectual_property = ExperimentalField(NestedField(IntellectualPropertySchema), dump_only=True)
+    intellectual_property = ExperimentalField(
+        NestedField(IntellectualPropertySchema), dump_only=True
+    )
 
     @pre_load
     def pre_load(self, data, **kwargs):
@@ -101,7 +110,9 @@ class _BaseEnvironmentSchema(AssetSchema):
         # validates that "channels" and "dependencies" are not included in the data creation.
         # These properties should only be on environment conda files not in the environment creation file
         if "channels" in data or "dependencies" in data:
-            environmentMessage = CREATE_ENVIRONMENT_ERROR_MESSAGE.format(YAMLRefDocLinks.ENVIRONMENT)
+            environmentMessage = CREATE_ENVIRONMENT_ERROR_MESSAGE.format(
+                YAMLRefDocLinks.ENVIRONMENT
+            )
             raise ValidationError(environmentMessage)
         return data
 
@@ -111,7 +122,9 @@ class _BaseEnvironmentSchema(AssetSchema):
 
         if isinstance(data, Environment):
             if data._intellectual_property:  # pylint: disable=protected-access
-                ipp_field = data._intellectual_property  # pylint: disable=protected-access
+                ipp_field = (
+                    data._intellectual_property
+                )  # pylint: disable=protected-access
                 if ipp_field:
                     setattr(data, "intellectual_property", ipp_field)
             return data

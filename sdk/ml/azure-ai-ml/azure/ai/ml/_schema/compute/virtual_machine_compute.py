@@ -28,7 +28,9 @@ class VirtualMachineSshSettingsSchema(metaclass=PatchedSchemaMeta):
 
 
 class VirtualMachineComputeSchema(ComputeSchema):
-    type = StringTransformedEnum(allowed_values=[ComputeType.VIRTUALMACHINE], required=True)
+    type = StringTransformedEnum(
+        allowed_values=[ComputeType.VIRTUALMACHINE], required=True
+    )
     resource_id = fields.Str(required=True)
     compute_location = fields.Str(dump_only=True)
     ssh_settings = NestedField(VirtualMachineSshSettingsSchema)

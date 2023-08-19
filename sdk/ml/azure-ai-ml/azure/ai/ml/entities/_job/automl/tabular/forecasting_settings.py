@@ -17,7 +17,9 @@ from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     CustomTargetRollingWindowSize,
     ForecastHorizonMode,
 )
-from azure.ai.ml._restclient.v2023_04_01_preview.models import ForecastingSettings as RestForecastingSettings
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    ForecastingSettings as RestForecastingSettings,
+)
 from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     SeasonalityMode,
     TargetLagsMode,
@@ -110,14 +112,20 @@ class ForecastingSettings(RestTranslatableMixin):
         if isinstance(self.target_lags, str):
             target_lags = AutoTargetLags()
         elif self.target_lags:
-            lags = [self.target_lags] if not isinstance(self.target_lags, list) else self.target_lags
+            lags = (
+                [self.target_lags]
+                if not isinstance(self.target_lags, list)
+                else self.target_lags
+            )
             target_lags = CustomTargetLags(values=lags)
 
         target_rolling_window_size = None
         if isinstance(self.target_rolling_window_size, str):
             target_rolling_window_size = AutoTargetRollingWindowSize()
         elif self.target_rolling_window_size:
-            target_rolling_window_size = CustomTargetRollingWindowSize(value=self.target_rolling_window_size)
+            target_rolling_window_size = CustomTargetRollingWindowSize(
+                value=self.target_rolling_window_size
+            )
 
         seasonality = None
         if isinstance(self.seasonality, str):
@@ -126,11 +134,17 @@ class ForecastingSettings(RestTranslatableMixin):
             seasonality = CustomSeasonality(value=self.seasonality)
 
         time_series_id_column_names = self.time_series_id_column_names
-        if isinstance(self.time_series_id_column_names, str) and self.time_series_id_column_names:
+        if (
+            isinstance(self.time_series_id_column_names, str)
+            and self.time_series_id_column_names
+        ):
             time_series_id_column_names = [self.time_series_id_column_names]
 
         features_unknown_at_forecast_time = self.features_unknown_at_forecast_time
-        if isinstance(self.features_unknown_at_forecast_time, str) and self.features_unknown_at_forecast_time:
+        if (
+            isinstance(self.features_unknown_at_forecast_time, str)
+            and self.features_unknown_at_forecast_time
+        ):
             features_unknown_at_forecast_time = [self.features_unknown_at_forecast_time]
 
         return RestForecastingSettings(
@@ -153,7 +167,10 @@ class ForecastingSettings(RestTranslatableMixin):
     @classmethod
     def _from_rest_object(cls, obj: RestForecastingSettings) -> "ForecastingSettings":
         forecast_horizon = None
-        if obj.forecast_horizon and obj.forecast_horizon.mode == ForecastHorizonMode.AUTO:
+        if (
+            obj.forecast_horizon
+            and obj.forecast_horizon.mode == ForecastHorizonMode.AUTO
+        ):
             forecast_horizon = obj.forecast_horizon.mode.lower()
         elif obj.forecast_horizon:
             forecast_horizon = obj.forecast_horizon.value
@@ -166,7 +183,10 @@ class ForecastingSettings(RestTranslatableMixin):
             target_lags = rest_target_lags.values
 
         target_rolling_window_size = None
-        if obj.target_rolling_window_size and obj.target_rolling_window_size.mode == TargetRollingWindowSizeMode.AUTO:
+        if (
+            obj.target_rolling_window_size
+            and obj.target_rolling_window_size.mode == TargetRollingWindowSizeMode.AUTO
+        ):
             target_rolling_window_size = obj.target_rolling_window_size.mode.lower()
         elif obj.target_rolling_window_size:
             target_rolling_window_size = obj.target_rolling_window_size.value
@@ -211,7 +231,8 @@ class ForecastingSettings(RestTranslatableMixin):
             and self.target_aggregate_function == other.target_aggregate_function
             and self.time_column_name == other.time_column_name
             and self.time_series_id_column_names == other.time_series_id_column_names
-            and self.features_unknown_at_forecast_time == other.features_unknown_at_forecast_time
+            and self.features_unknown_at_forecast_time
+            == other.features_unknown_at_forecast_time
         )
 
     def __ne__(self, other: object) -> bool:

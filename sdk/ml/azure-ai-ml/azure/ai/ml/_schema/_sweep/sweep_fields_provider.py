@@ -25,7 +25,11 @@ from azure.ai.ml._schema._sweep.sweep_termination import (
     MedianStoppingPolicySchema,
     TruncationSelectionPolicySchema,
 )
-from azure.ai.ml._schema.core.fields import NestedField, StringTransformedEnum, UnionField
+from azure.ai.ml._schema.core.fields import (
+    NestedField,
+    StringTransformedEnum,
+    UnionField,
+)
 
 
 def SamplingAlgorithmField():
@@ -47,7 +51,9 @@ def SamplingAlgorithmTypeField():
             SamplingAlgorithmType.GRID,
             SamplingAlgorithmType.RANDOM,
         ],
-        metadata={"description": "The sampling algorithm to use for the hyperparameter sweep."},
+        metadata={
+            "description": "The sampling algorithm to use for the hyperparameter sweep."
+        },
     )
 
 
@@ -75,5 +81,7 @@ def EarlyTerminationField():
             NestedField(MedianStoppingPolicySchema()),
             NestedField(TruncationSelectionPolicySchema()),
         ],
-        metadata={"description": "The early termination policy to be applied to the Sweep runs."},
+        metadata={
+            "description": "The early termination policy to be applied to the Sweep runs."
+        },
     )

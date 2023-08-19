@@ -6,8 +6,14 @@
 
 from typing import Any, Dict, Iterable, Optional
 
-from azure.ai.ml._restclient.v2023_02_01_preview import AzureMachineLearningWorkspaces as ServiceClient022023Preview
-from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope, _ScopeDependentOperations
+from azure.ai.ml._restclient.v2023_02_01_preview import (
+    AzureMachineLearningWorkspaces as ServiceClient022023Preview,
+)
+from azure.ai.ml._scope_dependent_operations import (
+    OperationConfig,
+    OperationScope,
+    _ScopeDependentOperations,
+)
 
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._logger_utils import OpsLogger
@@ -60,7 +66,8 @@ class ComputeOperations(_ScopeDependentOperations):
             cls=lambda objs: [
                 Compute._from_rest_object(obj)
                 for obj in objs
-                if compute_type is None or Compute._from_rest_object(obj).type.lower() == compute_type.lower()
+                if compute_type is None
+                or Compute._from_rest_object(obj).type.lower() == compute_type.lower()
             ],
         )
 
@@ -96,11 +103,15 @@ class ComputeOperations(_ScopeDependentOperations):
             self._operation_scope.resource_group_name,
             self._workspace_name,
             name,
-            cls=lambda objs: [AmlComputeNodeInfo._from_rest_object(obj) for obj in objs],
+            cls=lambda objs: [
+                AmlComputeNodeInfo._from_rest_object(obj) for obj in objs
+            ],
         )
 
     @distributed_trace
-    @monitor_with_activity(logger, "Compute.BeginCreateOrUpdate", ActivityType.PUBLICAPI)
+    @monitor_with_activity(
+        logger, "Compute.BeginCreateOrUpdate", ActivityType.PUBLICAPI
+    )
     def begin_create_or_update(self, compute: Compute) -> LROPoller[Compute]:
         """Create a compute.
 
@@ -133,7 +144,9 @@ class ComputeOperations(_ScopeDependentOperations):
             compute_name=compute.name,
             parameters=compute_rest_obj,
             polling=True,
-            cls=lambda response, deserialized, headers: Compute._from_rest_object(deserialized),
+            cls=lambda response, deserialized, headers: Compute._from_rest_object(
+                deserialized
+            ),
         )
 
         return poller
@@ -171,7 +184,9 @@ class ComputeOperations(_ScopeDependentOperations):
             compute_name=compute.name,
             parameters=compute_rest_obj,
             polling=True,
-            cls=lambda response, deserialized, headers: Compute._from_rest_object(deserialized),
+            cls=lambda response, deserialized, headers: Compute._from_rest_object(
+                deserialized
+            ),
         )
 
         return poller
@@ -265,7 +280,9 @@ class ComputeOperations(_ScopeDependentOperations):
 
     @distributed_trace
     @monitor_with_activity(logger, "Compute.ListSizes", ActivityType.PUBLICAPI)
-    def list_sizes(self, *, location: Optional[str] = None, compute_type: Optional[str] = None) -> Iterable[VmSize]:
+    def list_sizes(
+        self, *, location: Optional[str] = None, compute_type: Optional[str] = None
+    ) -> Iterable[VmSize]:
         """Returns supported VM Sizes in a location.
 
         :keyword location: The location upon which virtual-machine-sizes is queried.
@@ -284,10 +301,16 @@ class ComputeOperations(_ScopeDependentOperations):
             return [
                 VmSize._from_rest_object(item)
                 for item in size_list.value
-                if compute_type.lower() in (supported_type.lower() for supported_type in item.supported_compute_types)
+                if compute_type.lower()
+                in (
+                    supported_type.lower()
+                    for supported_type in item.supported_compute_types
+                )
             ]
         return [VmSize._from_rest_object(item) for item in size_list.value]
 
     def _get_workspace_location(self) -> str:
-        workspace = self._workspace_operations.get(self._resource_group_name, self._workspace_name)
+        workspace = self._workspace_operations.get(
+            self._resource_group_name, self._workspace_name
+        )
         return workspace.location

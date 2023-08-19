@@ -21,7 +21,18 @@ from datetime import timedelta
 from functools import singledispatch, wraps
 from os import PathLike
 from pathlib import Path, PosixPath, PureWindowsPath
-from typing import IO, Any, AnyStr, Callable, Dict, Iterable, List, Optional, Tuple, Union
+from typing import (
+    IO,
+    Any,
+    AnyStr,
+    Callable,
+    Dict,
+    Iterable,
+    List,
+    Optional,
+    Tuple,
+    Union,
+)
 from urllib.parse import urlparse
 from uuid import UUID
 
@@ -30,7 +41,10 @@ import pydash
 import yaml
 from azure.core.pipeline.policies import RetryPolicy
 
-from azure.ai.ml._restclient.v2022_05_01.models import ListViewType, ManagedServiceIdentity
+from azure.ai.ml._restclient.v2022_05_01.models import (
+    ListViewType,
+    ManagedServiceIdentity,
+)
 from azure.ai.ml._scope_dependent_operations import OperationScope
 from azure.ai.ml._utils._http_utils import HttpPipeline
 from azure.ai.ml.constants._common import (
@@ -123,7 +137,9 @@ def float_to_str(f):
         return format(float_as_dec, "f")
 
 
-def create_requests_pipeline_with_retry(*, requests_pipeline: HttpPipeline, retries: int = 3) -> HttpPipeline:
+def create_requests_pipeline_with_retry(
+    *, requests_pipeline: HttpPipeline, retries: int = 3
+) -> HttpPipeline:
     """Creates an HttpPipeline that reuses the same configuration as the supplied pipeline (including the transport),
     but overwrites the retry policy.
 
@@ -134,7 +150,9 @@ def create_requests_pipeline_with_retry(*, requests_pipeline: HttpPipeline, retr
     :return: Pipeline identical to provided one, except with a new retry policy
     :rtype: HttpPipeline
     """
-    return requests_pipeline.with_policies(retry_policy=get_retry_policy(num_retry=retries))
+    return requests_pipeline.with_policies(
+        retry_policy=get_retry_policy(num_retry=retries)
+    )
 
 
 def get_retry_policy(num_retry: int = 3) -> RetryPolicy:
@@ -177,8 +195,13 @@ def download_text_from_url(
     if not timeout:
         timeout_params = {}
     else:
-        connect_timeout, read_timeout = timeout if isinstance(timeout, tuple) else (timeout, timeout)
-        timeout_params = {"read_timeout": read_timeout, "connection_timeout": connect_timeout}
+        connect_timeout, read_timeout = (
+            timeout if isinstance(timeout, tuple) else (timeout, timeout)
+        )
+        timeout_params = {
+            "read_timeout": read_timeout,
+            "connection_timeout": connect_timeout,
+        }
 
     response = requests_pipeline.get(source_uri, **timeout_params)
     # Match old behavior from execution service's status API.
@@ -198,7 +221,12 @@ def load_file(file_path: str) -> str:
     :return: A string representation of the local file's contents.
     :rtype: str
     """
-    from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+    from azure.ai.ml.exceptions import (
+        ErrorCategory,
+        ErrorTarget,
+        ValidationErrorType,
+        ValidationException,
+    )
 
     # These imports can't be placed in at top file level because it will cause a circular import in
     # exceptions.py via _get_mfe_url_override
@@ -227,7 +255,12 @@ def load_json(file_path: Optional[Union[str, os.PathLike]]) -> Dict:
     :return: A dictionary representation of the local file's contents.
     :rtype: Dict
     """
-    from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+    from azure.ai.ml.exceptions import (
+        ErrorCategory,
+        ErrorTarget,
+        ValidationErrorType,
+        ValidationException,
+    )
 
     # These imports can't be placed in at top file level because it will cause a circular import in
     # exceptions.py via _get_mfe_url_override
@@ -262,7 +295,12 @@ def load_yaml(source: Optional[Union[AnyStr, PathLike, IO]]) -> Dict:
     :return: A dictionary representation of the local file's contents.
     :rtype: Dict
     """
-    from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+    from azure.ai.ml.exceptions import (
+        ErrorCategory,
+        ErrorTarget,
+        ValidationErrorType,
+        ValidationException,
+    )
 
     # These imports can't be placed in at top file level because it will cause a circular import in
     # exceptions.py via _get_mfe_url_override
@@ -324,7 +362,9 @@ def dump_yaml(*args, **kwargs):
         """A modified yaml serializer that forces pyyaml to represent an OrderedDict as a mapping instead of a
         sequence."""
 
-    OrderedDumper.add_representer(OrderedDict, yaml.representer.SafeRepresenter.represent_dict)
+    OrderedDumper.add_representer(
+        OrderedDict, yaml.representer.SafeRepresenter.represent_dict
+    )
     return yaml.dump(*args, Dumper=OrderedDumper, **kwargs)
 
 
@@ -351,7 +391,12 @@ def dump_yaml_to_file(
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if object cannot be successfully dumped.
         Details will be provided in the error message.
     """
-    from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+    from azure.ai.ml.exceptions import (
+        ErrorCategory,
+        ErrorTarget,
+        ValidationErrorType,
+        ValidationException,
+    )
 
     # These imports can't be placed in at top file level because it will cause a circular import in
     # exceptions.py via _get_mfe_url_override
@@ -361,7 +406,8 @@ def dump_yaml_to_file(
         if path is not None:
             dest = path
             warnings.warn(
-                "the 'path' input for dump functions is deprecated. Please use 'dest' instead.", DeprecationWarning
+                "the 'path' input for dump functions is deprecated. Please use 'dest' instead.",
+                DeprecationWarning,
             )
         else:
             msg = "No dump destination provided."
@@ -431,7 +477,9 @@ def is_url(value: Union[PathLike, str]) -> bool:
 
 
 # Resolve an URL to long form if it is an azureml short from datastore URL, otherwise return the same value
-def resolve_short_datastore_url(value: Union[PathLike, str], workspace: OperationScope) -> str:
+def resolve_short_datastore_url(
+    value: Union[PathLike, str], workspace: OperationScope
+) -> str:
     from azure.ai.ml.exceptions import ValidationException
 
     # These imports can't be placed in at top file level because it will cause a circular import in
@@ -466,7 +514,11 @@ def is_mlflow_uri(value: Union[PathLike, str]) -> bool:
 
 
 def validate_ml_flow_folder(path: str, model_type: string) -> None:
-    from azure.ai.ml.exceptions import ErrorTarget, ValidationErrorType, ValidationException
+    from azure.ai.ml.exceptions import (
+        ErrorTarget,
+        ValidationErrorType,
+        ValidationException,
+    )
 
     # These imports can't be placed in at top file level because it will cause a circular import in
     # exceptions.py via _get_mfe_url_override
@@ -495,7 +547,9 @@ def is_valid_uuid(test_uuid: str) -> bool:
 
 
 @singledispatch
-def from_iso_duration_format(duration: Optional[Any] = None) -> int:  # pylint: disable=unused-argument
+def from_iso_duration_format(
+    duration: Optional[Any] = None,
+) -> int:  # pylint: disable=unused-argument
     return None
 
 
@@ -510,7 +564,11 @@ def _(duration: timedelta) -> int:
 
 
 def to_iso_duration_format_mins(time_in_mins: Optional[Union[int, float]]) -> str:
-    return isodate.duration_isoformat(timedelta(minutes=time_in_mins)) if time_in_mins else None
+    return (
+        isodate.duration_isoformat(timedelta(minutes=time_in_mins))
+        if time_in_mins
+        else None
+    )
 
 
 def from_iso_duration_format_mins(duration: Optional[str]) -> int:
@@ -518,11 +576,19 @@ def from_iso_duration_format_mins(duration: Optional[str]) -> int:
 
 
 def to_iso_duration_format(time_in_seconds: Optional[Union[int, float]]) -> str:
-    return isodate.duration_isoformat(timedelta(seconds=time_in_seconds)) if time_in_seconds else None
+    return (
+        isodate.duration_isoformat(timedelta(seconds=time_in_seconds))
+        if time_in_seconds
+        else None
+    )
 
 
 def to_iso_duration_format_ms(time_in_ms: Optional[Union[int, float]]) -> str:
-    return isodate.duration_isoformat(timedelta(milliseconds=time_in_ms)) if time_in_ms else None
+    return (
+        isodate.duration_isoformat(timedelta(milliseconds=time_in_ms))
+        if time_in_ms
+        else None
+    )
 
 
 def from_iso_duration_format_ms(duration: Optional[str]) -> int:
@@ -530,11 +596,17 @@ def from_iso_duration_format_ms(duration: Optional[str]) -> int:
 
 
 def to_iso_duration_format_days(time_in_days: Optional[int]) -> str:
-    return isodate.duration_isoformat(timedelta(days=time_in_days)) if time_in_days else None
+    return (
+        isodate.duration_isoformat(timedelta(days=time_in_days))
+        if time_in_days
+        else None
+    )
 
 
 @singledispatch
-def from_iso_duration_format_days(duration: Optional[Any] = None) -> int:  # pylint: disable=unused-argument
+def from_iso_duration_format_days(
+    duration: Optional[Any] = None,
+) -> int:  # pylint: disable=unused-argument
     return None
 
 
@@ -600,7 +672,9 @@ def from_iso_duration_format_min_sec(duration: Optional[str]) -> str:
     return duration.split(".")[0].replace("PT", "").replace("M", "m ") + "s"
 
 
-def hash_dict(items: Dict[str, Any], keys_to_omit: Optional[Iterable[str]] = None) -> str:
+def hash_dict(
+    items: Dict[str, Any], keys_to_omit: Optional[Iterable[str]] = None
+) -> str:
     """Return hash GUID of a dictionary except keys_to_omit.
 
     :param items: The dict to hash
@@ -628,10 +702,16 @@ def convert_identity_dict(
             identity = ManagedServiceIdentity(type="SystemAssigned")
         else:
             if identity.user_assigned_identities:
-                if isinstance(identity.user_assigned_identities, dict):  # if the identity is already in right format
+                if isinstance(
+                    identity.user_assigned_identities, dict
+                ):  # if the identity is already in right format
                     return identity
                 ids = {}
-                for id in identity.user_assigned_identities:  # pylint: disable=redefined-builtin
+                for (
+                    id
+                ) in (
+                    identity.user_assigned_identities
+                ):  # pylint: disable=redefined-builtin
                     ids[id["resource_id"]] = {}
                 identity.user_assigned_identities = ids
                 identity.type = snake_to_camel(identity.type)
@@ -649,25 +729,33 @@ def append_double_curly(io_binding_val: str) -> str:
 
 
 def map_single_brackets_and_warn(command: str):
-    def _check_for_parameter(param_prefix: str, command_string: str) -> Tuple[bool, str]:
+    def _check_for_parameter(
+        param_prefix: str, command_string: str
+    ) -> Tuple[bool, str]:
         template_prefix = r"(?<!\{)\{"
         template_suffix = r"\.([^}]*)\}(?!\})"
         template = template_prefix + param_prefix + template_suffix
         should_warn = False
         if bool(re.search(template, command_string)):
             should_warn = True
-            command_string = re.sub(template, r"${{" + param_prefix + r".\g<1>}}", command_string)
+            command_string = re.sub(
+                template, r"${{" + param_prefix + r".\g<1>}}", command_string
+            )
         return (should_warn, command_string)
 
     input_warn, command = _check_for_parameter("inputs", command)
     output_warn, command = _check_for_parameter("outputs", command)
     sweep_warn, command = _check_for_parameter("search_space", command)
     if input_warn or output_warn or sweep_warn:
-        module_logger.warning("Use of {} for parameters is deprecated, instead use ${{}}.")
+        module_logger.warning(
+            "Use of {} for parameters is deprecated, instead use ${{}}."
+        )
     return command
 
 
-def transform_dict_keys(data: Dict[str, Any], casing_transform: Callable[[str], str]) -> Dict[str, Any]:
+def transform_dict_keys(
+    data: Dict[str, Any], casing_transform: Callable[[str], str]
+) -> Dict[str, Any]:
     """Convert all keys of a nested dictionary according to the passed casing_transform function.
 
     :param data: The data to transform
@@ -678,7 +766,9 @@ def transform_dict_keys(data: Dict[str, Any], casing_transform: Callable[[str], 
     :rtype: dict
     """
     return {
-        casing_transform(key): transform_dict_keys(val, casing_transform) if isinstance(val, dict) else val
+        casing_transform(key): transform_dict_keys(val, casing_transform)
+        if isinstance(val, dict)
+        else val
         for key, val in data.items()
     }
 
@@ -786,11 +876,19 @@ def is_private_preview_enabled():
 
 
 def is_on_disk_cache_enabled():
-    return os.getenv(AZUREML_DISABLE_ON_DISK_CACHE_ENV_VAR) not in ["True", "true", True]
+    return os.getenv(AZUREML_DISABLE_ON_DISK_CACHE_ENV_VAR) not in [
+        "True",
+        "true",
+        True,
+    ]
 
 
 def is_concurrent_component_registration_enabled():  # pylint: disable=name-too-long
-    return os.getenv(AZUREML_DISABLE_CONCURRENT_COMPONENT_REGISTRATION) not in ["True", "true", True]
+    return os.getenv(AZUREML_DISABLE_CONCURRENT_COMPONENT_REGISTRATION) not in [
+        "True",
+        "true",
+        True,
+    ]
 
 
 def is_internal_components_enabled():
@@ -818,7 +916,11 @@ def is_valid_node_name(name: str) -> bool:
     :return: Return True if the string is a valid Python identifier in lower ASCII range, False otherwise.
     :rtype: bool
     """
-    return isinstance(name, str) and name.isidentifier() and re.fullmatch(r"^[a-z_][a-z\d_]*", name) is not None
+    return (
+        isinstance(name, str)
+        and name.isidentifier()
+        and re.fullmatch(r"^[a-z_][a-z\d_]*", name) is not None
+    )
 
 
 def parse_args_description_from_docstring(docstring: str) -> Dict[str, str]:
@@ -861,7 +963,9 @@ def parse_args_description_from_docstring(docstring: str) -> Dict[str, str]:
     for index, line in enumerate(lines):
         if line.lower() == "args:":
             args_region = lines[index + 1 :]
-            args_line_end = args_region.index("") if "" in args_region else len(args_region)
+            args_line_end = (
+                args_region.index("") if "" in args_region else len(args_region)
+            )
             args_region = args_region[0:args_line_end]
             while len(args_region) > 0 and ":" in args_region[0]:
                 arg_line = args_region[0]
@@ -915,7 +1019,9 @@ def _is_user_error_from_exception_type(e: Optional[Exception]) -> bool:
     """
     # Connection error happens on user's network failure, should be user error.
     # For OSError/IOError with error no 28: "No space left on device" should be sdk user error
-    return isinstance(e, (ConnectionError, KeyboardInterrupt)) or (isinstance(e, (IOError, OSError)) and e.errno == 28)
+    return isinstance(e, (ConnectionError, KeyboardInterrupt)) or (
+        isinstance(e, (IOError, OSError)) and e.errno == 28
+    )
 
 
 class DockerProxy:
@@ -964,7 +1070,12 @@ def write_to_shared_file(file_path: Union[str, PathLike], content: str):
 
 
 def _get_valid_dot_keys_with_wildcard_impl(
-    left_reversed_parts, root, *, validate_func=None, cur_node=None, processed_parts=None
+    left_reversed_parts,
+    root,
+    *,
+    validate_func=None,
+    cur_node=None,
+    processed_parts=None,
 ) -> List[str]:
     if len(left_reversed_parts) == 0:
         if validate_func is None or validate_func(root, processed_parts):
@@ -1033,7 +1144,9 @@ def get_valid_dot_keys_with_wildcard(
     :rtype: List[str]
     """
     left_reversed_parts = dot_key_wildcard.split(".")[::-1]
-    return _get_valid_dot_keys_with_wildcard_impl(left_reversed_parts, root, validate_func=validate_func)
+    return _get_valid_dot_keys_with_wildcard_impl(
+        left_reversed_parts, root, validate_func=validate_func
+    )
 
 
 def get_base_directory_for_cache() -> Path:
@@ -1056,9 +1169,17 @@ def extract_name_and_version(azureml_id: str) -> Dict[str, str]:
     :rtype: Dict[str, str]
     """
     if not isinstance(azureml_id, str):
-        raise ValueError("azureml_id should be a string but got {}: {}.".format(type(azureml_id), azureml_id))
+        raise ValueError(
+            "azureml_id should be a string but got {}: {}.".format(
+                type(azureml_id), azureml_id
+            )
+        )
     if azureml_id.count(":") != 1:
-        raise ValueError("azureml_id should be in the format of name:version but got {}.".format(azureml_id))
+        raise ValueError(
+            "azureml_id should be in the format of name:version but got {}.".format(
+                azureml_id
+            )
+        )
     name, version = azureml_id.split(":")
     return {
         "name": name,

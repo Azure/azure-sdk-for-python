@@ -18,7 +18,9 @@ from azure.ai.ml._azure_environments import (
 from azure.ai.ml._utils._arm_id_utils import get_arm_id_object_from_id
 from azure.ai.ml._utils._logger_utils import initialize_logger_info
 from azure.ai.ml._utils.utils import from_iso_duration_format_min_sec
-from azure.ai.ml._vendor.azure_resources._resource_management_client import ResourceManagementClient
+from azure.ai.ml._vendor.azure_resources._resource_management_client import (
+    ResourceManagementClient,
+)
 from azure.ai.ml._vendor.azure_resources.models import Deployment, DeploymentProperties
 from azure.ai.ml.constants._common import (
     ENDPOINT_DEPLOYMENT_START_MSG,
@@ -65,7 +67,9 @@ class ArmDeploymentExecutor(object):
         self._deployments_client = self._client.deployments
         self._deployment_tracking = []
         self._lock = None  # To allow only one deployment to print
-        self._printed_set = set()  # To prevent already printed deployment from re using the console
+        self._printed_set = (
+            set()
+        )  # To prevent already printed deployment from re using the console
         self._resources_being_deployed = {}
 
     def deploy_resource(
@@ -89,7 +93,8 @@ class ArmDeploymentExecutor(object):
         try:
             poller = self._get_poller(template=template, parameters=parameters)
             module_logger.info(
-                "The deployment request %s was accepted. ARM deployment URI for reference: \n", self._deployment_name
+                "The deployment request %s was accepted. ARM deployment URI for reference: \n",
+                self._deployment_name,
             )
             endpoint_deployment_start_message = ENDPOINT_DEPLOYMENT_START_MSG.format(
                 _get_azure_portal_id_from_metadata(),
@@ -129,12 +134,18 @@ class ArmDeploymentExecutor(object):
             module_logger.error(error_msg)
             raise error
         if len(resources_being_deployed) > 1 and total_duration:
-            module_logger.info("Total time : %s\n", from_iso_duration_format_min_sec(total_duration))
+            module_logger.info(
+                "Total time : %s\n", from_iso_duration_format_min_sec(total_duration)
+            )
         return None
 
-    def _get_poller(self, template: str, parameters: Optional[Dict] = None, wait: bool = True) -> None:
+    def _get_poller(
+        self, template: str, parameters: Optional[Dict] = None, wait: bool = True
+    ) -> None:
         # deploy the template
-        properties = DeploymentProperties(template=template, parameters=parameters, mode="incremental")
+        properties = DeploymentProperties(
+            template=template, parameters=parameters, mode="incremental"
+        )
         return self._deployments_client.begin_create_or_update(
             resource_group_name=self._resource_group_name,
             deployment_name=self._deployment_name,
@@ -166,16 +177,17 @@ class ArmDeploymentExecutor(object):
 
             arm_id_obj = get_arm_id_object_from_id(target_resource.id)
 
-            resource_name = (
-                f"{arm_id_obj.asset_name} {arm_id_obj.asset_version if hasattr(arm_id_obj,'asset_version') else ''}"
-            )
+            resource_name = f"{arm_id_obj.asset_name} {arm_id_obj.asset_version if hasattr(arm_id_obj,'asset_version') else ''}"
             # do swap on asset_type to avoid collision with workspaces asset_type in arm id
             arm_id_obj.asset_type = (
                 arm_id_obj.asset_type
-                if not arm_id_obj.provider_namespace_with_type == "OperationalInsightsworkspaces"
+                if not arm_id_obj.provider_namespace_with_type
+                == "OperationalInsightsworkspaces"
                 else "LogAnalytics"
             )
-            deployment_message = deployment_message_mapping[arm_id_obj.asset_type].format(f"{resource_name} ")
+            deployment_message = deployment_message_mapping[
+                arm_id_obj.asset_type
+            ].format(f"{resource_name} ")
             if target_resource.resource_name not in self._resources_being_deployed:
                 self._resources_being_deployed[target_resource.resource_name] = (
                     deployment_message,
@@ -187,14 +199,21 @@ class ArmDeploymentExecutor(object):
                 and (not self._lock or self._lock == target_resource.resource_name)
                 and target_resource.resource_name not in self._printed_set
             ):
-                status_in_resource_dict = self._resources_being_deployed[target_resource.resource_name][1]
+                status_in_resource_dict = self._resources_being_deployed[
+                    target_resource.resource_name
+                ][1]
                 module_logger.debug(
-                    ("\n LOCK STATUS :  %s,  Status in the resources dict : %s ,  Already in printed set: %s\n"),
+                    (
+                        "\n LOCK STATUS :  %s,  Status in the resources dict : %s ,  Already in printed set: %s\n"
+                    ),
                     self._lock,
                     status_in_resource_dict,
                     self._printed_set,
                 )
-                module_logger.debug("Locking with the deployment : %s\n\n", target_resource.resource_name)
+                module_logger.debug(
+                    "Locking with the deployment : %s\n\n",
+                    target_resource.resource_name,
+                )
                 self._lock = target_resource.resource_name
                 provisioning_state = properties.provisioning_state
                 request_id = properties.service_request_id
@@ -206,7 +225,9 @@ class ArmDeploymentExecutor(object):
                 if resource_name not in self._resources_being_deployed:
                     resource_type, previous_state = resource_name, None
                 else:
-                    resource_type, previous_state = self._resources_being_deployed[resource_name]
+                    resource_type, previous_state = self._resources_being_deployed[
+                        resource_name
+                    ]
 
                 duration = properties.duration
                 # duration comes in format: "PT1M56.3454108S"
@@ -220,7 +241,10 @@ class ArmDeploymentExecutor(object):
                     provisioning_state,
                 )
 
-                if provisioning_state == OperationStatus.FAILED and previous_state != OperationStatus.FAILED:
+                if (
+                    provisioning_state == OperationStatus.FAILED
+                    and previous_state != OperationStatus.FAILED
+                ):
                     status_code = properties.status_code
                     status_message = properties.status_message
                     module_logger.debug(
@@ -237,11 +261,16 @@ class ArmDeploymentExecutor(object):
                     )
                     module_logger.debug(
                         "More details: %s\n",
-                        status_message.error.details[0].message if status_message.error.details else None,
+                        status_message.error.details[0].message
+                        if status_message.error.details
+                        else None,
                     )
                     # self._lock = None
                 # First time we're seeing this so let the user know it's being deployed
-                elif properties.provisioning_state == OperationStatus.RUNNING and previous_state is None:
+                elif (
+                    properties.provisioning_state == OperationStatus.RUNNING
+                    and previous_state is None
+                ):
                     module_logger.info("%s ", resource_type)
                 elif (
                     properties.provisioning_state == OperationStatus.RUNNING
@@ -251,11 +280,19 @@ class ArmDeploymentExecutor(object):
                 # If the provisioning has already succeeded but we hadn't seen it Running before
                 # (really quick deployment - so probably never happening) let user know resource
                 # is being deployed and then let user know it has been deployed
-                elif properties.provisioning_state == OperationStatus.SUCCEEDED and previous_state is None:
-                    module_logger.info("%s  Done (%s)\n", resource_type, duration_in_min_sec)
+                elif (
+                    properties.provisioning_state == OperationStatus.SUCCEEDED
+                    and previous_state is None
+                ):
+                    module_logger.info(
+                        "%s  Done (%s)\n", resource_type, duration_in_min_sec
+                    )
                     self._lock = None
                     self._printed_set.add(resource_name)
-                    module_logger.debug("Releasing lock for deployment: %s\n\n", target_resource.resource_name)
+                    module_logger.debug(
+                        "Releasing lock for deployment: %s\n\n",
+                        target_resource.resource_name,
+                    )
                 # Finally, deployment has succeeded and was previously running, so mark it as finished
                 elif (
                     properties.provisioning_state == OperationStatus.SUCCEEDED
@@ -264,4 +301,7 @@ class ArmDeploymentExecutor(object):
                     module_logger.info("  Done (%s)\n", duration_in_min_sec)
                     self._lock = None
                     self._printed_set.add(resource_name)
-                    module_logger.debug("Releasing lock for deployment: %s\n\n", target_resource.resource_name)
+                    module_logger.debug(
+                        "Releasing lock for deployment: %s\n\n",
+                        target_resource.resource_name,
+                    )

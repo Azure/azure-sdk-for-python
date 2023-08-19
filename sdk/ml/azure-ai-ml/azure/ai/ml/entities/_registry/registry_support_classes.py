@@ -8,17 +8,34 @@ from functools import reduce
 from typing import List, Optional, Union
 
 from azure.ai.ml._exception_helper import log_and_raise_error
-from azure.ai.ml._restclient.v2022_10_01_preview.models import AcrDetails as RestAcrDetails
-from azure.ai.ml._restclient.v2022_10_01_preview.models import ArmResourceId as RestArmResourceId
-from azure.ai.ml._restclient.v2022_10_01_preview.models import RegistryRegionArmDetails as RestRegistryRegionArmDetails
-from azure.ai.ml._restclient.v2022_10_01_preview.models import StorageAccountDetails as RestStorageAccountDetails
-from azure.ai.ml._restclient.v2022_10_01_preview.models import SystemCreatedAcrAccount as RestSystemCreatedAcrAccount
+from azure.ai.ml._restclient.v2022_10_01_preview.models import (
+    AcrDetails as RestAcrDetails,
+)
+from azure.ai.ml._restclient.v2022_10_01_preview.models import (
+    ArmResourceId as RestArmResourceId,
+)
+from azure.ai.ml._restclient.v2022_10_01_preview.models import (
+    RegistryRegionArmDetails as RestRegistryRegionArmDetails,
+)
+from azure.ai.ml._restclient.v2022_10_01_preview.models import (
+    StorageAccountDetails as RestStorageAccountDetails,
+)
+from azure.ai.ml._restclient.v2022_10_01_preview.models import (
+    SystemCreatedAcrAccount as RestSystemCreatedAcrAccount,
+)
 from azure.ai.ml._restclient.v2022_10_01_preview.models import (
     SystemCreatedStorageAccount as RestSystemCreatedStorageAccount,
 )
-from azure.ai.ml._restclient.v2022_10_01_preview.models import UserCreatedAcrAccount as RestUserCreatedAcrAccount
+from azure.ai.ml._restclient.v2022_10_01_preview.models import (
+    UserCreatedAcrAccount as RestUserCreatedAcrAccount,
+)
 from azure.ai.ml.constants._registry import StorageAccountType
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+from azure.ai.ml.exceptions import (
+    ErrorCategory,
+    ErrorTarget,
+    ValidationErrorType,
+    ValidationException,
+)
 
 from .util import _make_rest_user_storage_from_id
 
@@ -65,22 +82,34 @@ class SystemCreatedAcrAccount:
             )
         else:
             return RestAcrDetails(
-                user_created_acr_account=RestUserCreatedAcrAccount(arm_resource_id=RestArmResourceId(resource_id=acr))
+                user_created_acr_account=RestUserCreatedAcrAccount(
+                    arm_resource_id=RestArmResourceId(resource_id=acr)
+                )
             )
 
     @classmethod
-    def _from_rest_object(cls, rest_obj: RestAcrDetails) -> "Union[str, SystemCreatedAcrAccount]":
+    def _from_rest_object(
+        cls, rest_obj: RestAcrDetails
+    ) -> "Union[str, SystemCreatedAcrAccount]":
         if not rest_obj:
             return None
-        if hasattr(rest_obj, "system_created_acr_account") and rest_obj.system_created_acr_account is not None:
+        if (
+            hasattr(rest_obj, "system_created_acr_account")
+            and rest_obj.system_created_acr_account is not None
+        ):
             resource_id = None
             if rest_obj.system_created_acr_account.arm_resource_id:
-                resource_id = rest_obj.system_created_acr_account.arm_resource_id.resource_id
+                resource_id = (
+                    rest_obj.system_created_acr_account.arm_resource_id.resource_id
+                )
             return SystemCreatedAcrAccount(
                 acr_account_sku=rest_obj.system_created_acr_account.acr_account_sku,
                 arm_resource_id=resource_id,
             )
-        elif hasattr(rest_obj, "user_created_acr_account") and rest_obj.user_created_acr_account is not None:
+        elif (
+            hasattr(rest_obj, "user_created_acr_account")
+            and rest_obj.user_created_acr_account is not None
+        ):
             return rest_obj.user_created_acr_account.arm_resource_id.resource_id
         else:
             return None
@@ -149,24 +178,35 @@ class RegistryRegionDetails:
         self.storage_config = storage_config
 
     @classmethod
-    def _from_rest_object(cls, rest_obj: RestRegistryRegionArmDetails) -> "RegistryRegionDetails":
+    def _from_rest_object(
+        cls, rest_obj: RestRegistryRegionArmDetails
+    ) -> "RegistryRegionDetails":
         if not rest_obj:
             return None
         converted_acr_details = []
         if rest_obj.acr_details:
-            converted_acr_details = [SystemCreatedAcrAccount._from_rest_object(acr) for acr in rest_obj.acr_details]
+            converted_acr_details = [
+                SystemCreatedAcrAccount._from_rest_object(acr)
+                for acr in rest_obj.acr_details
+            ]
         storages = []
         if rest_obj.storage_account_details:
-            storages = cls._storage_config_from_rest_object(rest_obj.storage_account_details)
+            storages = cls._storage_config_from_rest_object(
+                rest_obj.storage_account_details
+            )
 
         return RegistryRegionDetails(
-            acr_config=converted_acr_details, location=rest_obj.location, storage_config=storages
+            acr_config=converted_acr_details,
+            location=rest_obj.location,
+            storage_config=storages,
         )
 
     def _to_rest_object(self) -> RestRegistryRegionArmDetails:
         converted_acr_details = []
         if self.acr_config:
-            converted_acr_details = [SystemCreatedAcrAccount._to_rest_object(acr) for acr in self.acr_config]
+            converted_acr_details = [
+                SystemCreatedAcrAccount._to_rest_object(acr) for acr in self.acr_config
+            ]
         storages = []
         if self.storage_config:
             storages = self._storage_config_to_rest_object()
@@ -200,10 +240,14 @@ class RegistryRegionDetails:
             # duplicate this value based on the replication_count
             count = storage.replication_count
             if count < 1:
-                raise ValueError(f"Replication count cannot be less than 1. Value was: {count}.")
+                raise ValueError(
+                    f"Replication count cannot be less than 1. Value was: {count}."
+                )
             return [deepcopy(account) for _ in range(0, count)]
         elif storage is not None and len(storage) > 0:
-            return [_make_rest_user_storage_from_id(user_id=user_id) for user_id in storage]
+            return [
+                _make_rest_user_storage_from_id(user_id=user_id) for user_id in storage
+            ]
         else:
             return []
 
@@ -219,7 +263,8 @@ class RegistryRegionDetails:
         system_created_count = reduce(
             lambda x, y: int(x) + int(y),
             [
-                hasattr(config, "system_created_storage_account") and config.system_created_storage_account is not None
+                hasattr(config, "system_created_storage_account")
+                and config.system_created_storage_account is not None
                 for config in rest_configs
             ],
         )
@@ -239,11 +284,14 @@ class RegistryRegionDetails:
             replicated_ids = None
             if num_configs > 1:
                 replicated_ids = [
-                    config.system_created_storage_account.arm_resource_id.resource_id for config in rest_configs
+                    config.system_created_storage_account.arm_resource_id.resource_id
+                    for config in rest_configs
                 ]
             return SystemCreatedStorageAccount(
                 storage_account_hns=first_config.storage_account_hns_enabled,
-                storage_account_type=(StorageAccountType(first_config.storage_account_type.lower()))
+                storage_account_type=(
+                    StorageAccountType(first_config.storage_account_type.lower())
+                )
                 if first_config.storage_account_type
                 else None,
                 arm_resource_id=resource_id,
@@ -251,7 +299,10 @@ class RegistryRegionDetails:
                 replicated_ids=replicated_ids,
             )
         elif system_created_count == 0:
-            return [config.user_created_storage_account.arm_resource_id.resource_id for config in rest_configs]
+            return [
+                config.user_created_storage_account.arm_resource_id.resource_id
+                for config in rest_configs
+            ]
         else:
             msg = f"""tried reading in a registry whose storage accounts were not
                 mono-managed or user-created. {system_created_count} out of {num_configs} were managed."""

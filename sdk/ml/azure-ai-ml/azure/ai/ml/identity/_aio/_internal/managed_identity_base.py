@@ -48,10 +48,14 @@ class AsyncManagedIdentityBase(AsyncContextManager, GetTokenMixin):
             raise CredentialUnavailableError(message=self.get_unavailable_message())
         return await super().get_token(*scopes, **kwargs)
 
-    async def _acquire_token_silently(self, *scopes: str, **kwargs: "Any") -> "Optional[AccessToken]":
+    async def _acquire_token_silently(
+        self, *scopes: str, **kwargs: "Any"
+    ) -> "Optional[AccessToken]":
         # casting because mypy can't determine that these methods are called
         # only by get_token, which raises when self._client is None
         return cast(AsyncManagedIdentityClient, self._client).get_cached_token(*scopes)
 
     async def _request_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":
-        return await cast(AsyncManagedIdentityClient, self._client).request_token(*scopes, **kwargs)
+        return await cast(AsyncManagedIdentityClient, self._client).request_token(
+            *scopes, **kwargs
+        )

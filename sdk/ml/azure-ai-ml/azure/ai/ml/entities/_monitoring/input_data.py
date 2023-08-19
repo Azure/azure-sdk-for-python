@@ -2,7 +2,9 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import MonitoringInputData as RestMonitoringInputData
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    MonitoringInputData as RestMonitoringInputData,
+)
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils.utils import camel_to_snake, snake_to_camel
 from azure.ai.ml.constants._monitoring import MonitorDatasetContext
@@ -34,13 +36,20 @@ class MonitorInputData(RestTranslatableMixin):
         target_column_name: str = None,
         pre_processing_component: str = None,
     ) -> None:
-        self.input_dataset = input_dataset if isinstance(input_dataset, Input) else Input(**input_dataset)
+        self.input_dataset = (
+            input_dataset
+            if isinstance(input_dataset, Input)
+            else Input(**input_dataset)
+        )
         self.dataset_context = dataset_context
         self.target_column_name = target_column_name
         self.pre_processing_component = pre_processing_component
 
     def _to_rest_object(self) -> RestMonitoringInputData:
-        rest_asset = {"uri": self.input_dataset.path, "jobInputType": self.input_dataset.type}
+        rest_asset = {
+            "uri": self.input_dataset.path,
+            "jobInputType": self.input_dataset.type,
+        }
         return RestMonitoringInputData(
             data_context=snake_to_camel(self.dataset_context),
             asset=rest_asset,

@@ -6,7 +6,9 @@ import json
 import logging
 from typing import Any, Dict, List, Optional
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import JobResourceConfiguration as RestJobResourceConfiguration
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    JobResourceConfiguration as RestJobResourceConfiguration,
+)
 from azure.ai.ml.constants._job.job import JobComputePropertyFields
 from azure.ai.ml.entities._mixins import DictMixin, RestTranslatableMixin
 from azure.ai.ml.entities._util import convert_ordered_dict_to_dict
@@ -174,7 +176,9 @@ class JobResourceConfiguration(RestTranslatableMixin, DictMixin):
         )
 
     @classmethod
-    def _from_rest_object(cls, obj: Optional[RestJobResourceConfiguration]) -> Optional["JobResourceConfiguration"]:
+    def _from_rest_object(
+        cls, obj: Optional[RestJobResourceConfiguration]
+    ) -> Optional["JobResourceConfiguration"]:
         if obj is None:
             return None
         if isinstance(obj, dict):
@@ -183,7 +187,9 @@ class JobResourceConfiguration(RestTranslatableMixin, DictMixin):
             locations=obj.locations,
             instance_count=obj.instance_count,
             instance_type=obj.instance_type,
-            max_instance_count=obj.max_instance_count if hasattr(obj, "max_instance_count") else None,
+            max_instance_count=obj.max_instance_count
+            if hasattr(obj, "max_instance_count")
+            else None,
             properties=obj.properties,
             docker_args=obj.docker_args,
             shm_size=obj.shm_size,

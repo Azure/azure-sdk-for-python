@@ -133,5 +133,7 @@ class ComputeSizeTier:
     """
 
 
-DUPLICATE_APPLICATION_ERROR = "Value of {} must be unique across all custom applications."
+DUPLICATE_APPLICATION_ERROR = (
+    "Value of {} must be unique across all custom applications."
+)
 INVALID_VALUE_ERROR = "Value of {} must be between {} and {}."

@@ -9,7 +9,13 @@ import functools
 from typing import TYPE_CHECKING
 import warnings
 
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    map_error,
+)
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpResponse
 from azure.core.rest import HttpRequest
@@ -23,8 +29,11 @@ from .._vendor import _convert_request, _format_url_section
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Any, Callable, Dict, Generic, List, Optional, TypeVar, Union
-    T = TypeVar('T')
-    ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+
+    T = TypeVar("T")
+    ClsType = Optional[
+        Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]
+    ]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
@@ -222,6 +231,7 @@ def build_query_by_id_request(
         **kwargs
     )
 
+
 # fmt: on
 class AssetsOperations(object):
     """AssetsOperations operations.
@@ -270,26 +280,35 @@ class AssetsOperations(object):
         :rtype: ~azure.mgmt.machinelearningservices.models.Asset
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Asset"]
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.Asset"]
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop("error_map", {}))
 
-        content_type = kwargs.pop('content_type', "application/json-patch+json")  # type: Optional[str]
+        content_type = kwargs.pop(
+            "content_type", "application/json-patch+json"
+        )  # type: Optional[str]
 
         _json = None
         _content = None
-        if content_type.split(";")[0] in ['application/json', 'text/json']:
+        if content_type.split(";")[0] in ["application/json", "text/json"]:
             if body is not None:
-                _json = self._serialize.body(body, 'Asset')
-        elif content_type.split(";")[0] in ['application/json-patch+json', 'application/*+json']:
+                _json = self._serialize.body(body, "Asset")
+        elif content_type.split(";")[0] in [
+            "application/json-patch+json",
+            "application/*+json",
+        ]:
             if body is not None:
-                _json = self._serialize.body(body, 'Asset')
+                _json = self._serialize.body(body, "Asset")
         else:
             raise ValueError(
                 "The content_type '{}' is not one of the allowed values: "
-                "['application/json-patch+json', 'application/json', 'text/json', 'application/*+json']".format(content_type)
+                "['application/json-patch+json', 'application/json', 'text/json', 'application/*+json']".format(
+                    content_type
+                )
             )
 
         request = build_create_request(
@@ -299,7 +318,7 @@ class AssetsOperations(object):
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.create.metadata['url'],
+            template_url=self.create.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
@@ -308,18 +327,19 @@ class AssetsOperations(object):
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('Asset', pipeline_response)
+        deserialized = self._deserialize("Asset", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    create.metadata = {'url': '/modelregistry/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/assets'}  # type: ignore
-
+    create.metadata = {"url": "/modelregistry/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/assets"}  # type: ignore
 
     @distributed_trace
     def list(
@@ -373,13 +393,14 @@ class AssetsOperations(object):
         :rtype: ~azure.mgmt.machinelearningservices.models.AssetPaginatedResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AssetPaginatedResult"]
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.AssetPaginatedResult"]
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop("error_map", {}))
 
-        
         request = build_list_request(
             subscription_id=subscription_id,
             resource_group_name=resource_group_name,
@@ -394,7 +415,7 @@ class AssetsOperations(object):
             properties=properties,
             type=type,
             orderby=orderby,
-            template_url=self.list.metadata['url'],
+            template_url=self.list.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
@@ -403,18 +424,19 @@ class AssetsOperations(object):
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('AssetPaginatedResult', pipeline_response)
+        deserialized = self._deserialize("AssetPaginatedResult", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    list.metadata = {'url': '/modelregistry/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/assets'}  # type: ignore
-
+    list.metadata = {"url": "/modelregistry/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/assets"}  # type: ignore
 
     @distributed_trace
     def patch(
@@ -444,24 +466,33 @@ class AssetsOperations(object):
         :rtype: ~azure.mgmt.machinelearningservices.models.Asset
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Asset"]
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.Asset"]
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop("error_map", {}))
 
-        content_type = kwargs.pop('content_type', "application/json-patch+json")  # type: Optional[str]
+        content_type = kwargs.pop(
+            "content_type", "application/json-patch+json"
+        )  # type: Optional[str]
 
         _json = None
         _content = None
-        if content_type.split(";")[0] in ['application/json', 'text/json']:
-            _json = self._serialize.body(body, '[Operation]')
-        elif content_type.split(";")[0] in ['application/json-patch+json', 'application/*+json']:
-            _json = self._serialize.body(body, '[Operation]')
+        if content_type.split(";")[0] in ["application/json", "text/json"]:
+            _json = self._serialize.body(body, "[Operation]")
+        elif content_type.split(";")[0] in [
+            "application/json-patch+json",
+            "application/*+json",
+        ]:
+            _json = self._serialize.body(body, "[Operation]")
         else:
             raise ValueError(
                 "The content_type '{}' is not one of the allowed values: "
-                "['application/json-patch+json', 'application/json', 'text/json', 'application/*+json']".format(content_type)
+                "['application/json-patch+json', 'application/json', 'text/json', 'application/*+json']".format(
+                    content_type
+                )
             )
 
         request = build_patch_request(
@@ -472,7 +503,7 @@ class AssetsOperations(object):
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.patch.metadata['url'],
+            template_url=self.patch.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
@@ -481,18 +512,19 @@ class AssetsOperations(object):
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('Asset', pipeline_response)
+        deserialized = self._deserialize("Asset", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    patch.metadata = {'url': '/modelregistry/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/assets/{id}'}  # type: ignore
-
+    patch.metadata = {"url": "/modelregistry/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/assets/{id}"}  # type: ignore
 
     @distributed_trace
     def delete(
@@ -519,19 +551,20 @@ class AssetsOperations(object):
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop("error_map", {}))
 
-        
         request = build_delete_request(
             id=id,
             subscription_id=subscription_id,
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
-            template_url=self.delete.metadata['url'],
+            template_url=self.delete.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
@@ -540,14 +573,15 @@ class AssetsOperations(object):
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
             return cls(pipeline_response, None, {})
 
-    delete.metadata = {'url': '/modelregistry/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/assets/{id}'}  # type: ignore
-
+    delete.metadata = {"url": "/modelregistry/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/assets/{id}"}  # type: ignore
 
     @distributed_trace
     def query_by_id(
@@ -574,19 +608,20 @@ class AssetsOperations(object):
         :rtype: ~azure.mgmt.machinelearningservices.models.Asset
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Asset"]
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.Asset"]
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop("error_map", {}))
 
-        
         request = build_query_by_id_request(
             id=id,
             subscription_id=subscription_id,
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
-            template_url=self.query_by_id.metadata['url'],
+            template_url=self.query_by_id.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
@@ -595,15 +630,16 @@ class AssetsOperations(object):
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('Asset', pipeline_response)
+        deserialized = self._deserialize("Asset", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    query_by_id.metadata = {'url': '/modelregistry/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/assets/{id}'}  # type: ignore
-
+    query_by_id.metadata = {"url": "/modelregistry/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/assets/{id}"}  # type: ignore

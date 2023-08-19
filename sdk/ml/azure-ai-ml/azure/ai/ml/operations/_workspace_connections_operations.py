@@ -6,7 +6,9 @@
 
 from typing import Dict, Iterable, Optional
 
-from azure.ai.ml._restclient.v2023_06_01_preview import AzureMachineLearningWorkspaces as ServiceClient062023Preview
+from azure.ai.ml._restclient.v2023_06_01_preview import (
+    AzureMachineLearningWorkspaces as ServiceClient062023Preview,
+)
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationsContainer,
@@ -16,7 +18,9 @@ from azure.ai.ml._scope_dependent_operations import (
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils.utils import _snake_to_camel
-from azure.ai.ml.entities._workspace.connections.workspace_connection import WorkspaceConnection
+from azure.ai.ml.entities._workspace.connections.workspace_connection import (
+    WorkspaceConnection,
+)
 from azure.core.credentials import TokenCredential
 
 ops_logger = OpsLogger(__name__)
@@ -39,7 +43,9 @@ class WorkspaceConnectionsOperations(_ScopeDependentOperations):
         credentials: Optional[TokenCredential] = None,
         **kwargs: Dict,
     ):
-        super(WorkspaceConnectionsOperations, self).__init__(operation_scope, operation_config)
+        super(WorkspaceConnectionsOperations, self).__init__(
+            operation_scope, operation_config
+        )
         ops_logger.update_info(kwargs)
         self._all_operations = all_operations
         self._operation = service_client.workspace_connections
@@ -65,7 +71,9 @@ class WorkspaceConnectionsOperations(_ScopeDependentOperations):
 
         return WorkspaceConnection._from_rest_object(rest_obj=obj)
 
-    @monitor_with_activity(logger, "WorkspaceConnections.CreateOrUpdate", ActivityType.PUBLICAPI)
+    @monitor_with_activity(
+        logger, "WorkspaceConnections.CreateOrUpdate", ActivityType.PUBLICAPI
+    )
     def create_or_update(self, workspace_connection, **kwargs) -> WorkspaceConnection:
         """Create or update a workspace connection.
 
@@ -86,7 +94,9 @@ class WorkspaceConnectionsOperations(_ScopeDependentOperations):
 
         return WorkspaceConnection._from_rest_object(rest_obj=response)
 
-    @monitor_with_activity(logger, "WorkspaceConnections.Delete", ActivityType.PUBLICAPI)
+    @monitor_with_activity(
+        logger, "WorkspaceConnections.Delete", ActivityType.PUBLICAPI
+    )
     def delete(self, name) -> None:
         """Delete the workspace connection.
 
@@ -114,7 +124,11 @@ class WorkspaceConnectionsOperations(_ScopeDependentOperations):
         """
         return self._operation.list(
             workspace_name=self._workspace_name,
-            cls=lambda objs: [WorkspaceConnection._from_rest_object(obj) for obj in objs],
-            category=_snake_to_camel(connection_type) if connection_type else connection_type,
+            cls=lambda objs: [
+                WorkspaceConnection._from_rest_object(obj) for obj in objs
+            ],
+            category=_snake_to_camel(connection_type)
+            if connection_type
+            else connection_type,
             **self._scope_kwargs,
         )

@@ -25,23 +25,25 @@ class DatastoreCredentials(msrest.serialization.Model):
     """
 
     _validation = {
-        'credentials_type': {'required': True},
+        "credentials_type": {"required": True},
     }
 
     _attribute_map = {
-        'credentials_type': {'key': 'credentialsType', 'type': 'str'},
+        "credentials_type": {"key": "credentialsType", "type": "str"},
     }
 
     _subtype_map = {
-        'credentials_type': {'AccountKey': 'AccountKeyDatastoreCredentials', 'Certificate': 'CertificateDatastoreCredentials', 'None': 'NoneDatastoreCredentials', 'Sas': 'SasDatastoreCredentials', 'ServicePrincipal': 'ServicePrincipalDatastoreCredentials'}
+        "credentials_type": {
+            "AccountKey": "AccountKeyDatastoreCredentials",
+            "Certificate": "CertificateDatastoreCredentials",
+            "None": "NoneDatastoreCredentials",
+            "Sas": "SasDatastoreCredentials",
+            "ServicePrincipal": "ServicePrincipalDatastoreCredentials",
+        }
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs):
+        """ """
         super(DatastoreCredentials, self).__init__(**kwargs)
         self.credentials_type = None  # type: Optional[str]
 
@@ -60,26 +62,23 @@ class AccountKeyDatastoreCredentials(DatastoreCredentials):
     """
 
     _validation = {
-        'credentials_type': {'required': True},
-        'secrets': {'required': True},
+        "credentials_type": {"required": True},
+        "secrets": {"required": True},
     }
 
     _attribute_map = {
-        'credentials_type': {'key': 'credentialsType', 'type': 'str'},
-        'secrets': {'key': 'secrets', 'type': 'AccountKeyDatastoreSecrets'},
+        "credentials_type": {"key": "credentialsType", "type": "str"},
+        "secrets": {"key": "secrets", "type": "AccountKeyDatastoreSecrets"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword secrets: Required. [Required] Storage account secrets.
         :paramtype secrets: ~azure.mgmt.machinelearningservices.models.AccountKeyDatastoreSecrets
         """
         super(AccountKeyDatastoreCredentials, self).__init__(**kwargs)
-        self.credentials_type = 'AccountKey'  # type: str
-        self.secrets = kwargs['secrets']
+        self.credentials_type = "AccountKey"  # type: str
+        self.secrets = kwargs["secrets"]
 
 
 class DatastoreSecrets(msrest.serialization.Model):
@@ -97,23 +96,24 @@ class DatastoreSecrets(msrest.serialization.Model):
     """
 
     _validation = {
-        'secrets_type': {'required': True},
+        "secrets_type": {"required": True},
     }
 
     _attribute_map = {
-        'secrets_type': {'key': 'secretsType', 'type': 'str'},
+        "secrets_type": {"key": "secretsType", "type": "str"},
     }
 
     _subtype_map = {
-        'secrets_type': {'AccountKey': 'AccountKeyDatastoreSecrets', 'Certificate': 'CertificateDatastoreSecrets', 'Sas': 'SasDatastoreSecrets', 'ServicePrincipal': 'ServicePrincipalDatastoreSecrets'}
+        "secrets_type": {
+            "AccountKey": "AccountKeyDatastoreSecrets",
+            "Certificate": "CertificateDatastoreSecrets",
+            "Sas": "SasDatastoreSecrets",
+            "ServicePrincipal": "ServicePrincipalDatastoreSecrets",
+        }
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs):
+        """ """
         super(DatastoreSecrets, self).__init__(**kwargs)
         self.secrets_type = None  # type: Optional[str]
 
@@ -132,25 +132,22 @@ class AccountKeyDatastoreSecrets(DatastoreSecrets):
     """
 
     _validation = {
-        'secrets_type': {'required': True},
+        "secrets_type": {"required": True},
     }
 
     _attribute_map = {
-        'secrets_type': {'key': 'secretsType', 'type': 'str'},
-        'key': {'key': 'key', 'type': 'str'},
+        "secrets_type": {"key": "secretsType", "type": "str"},
+        "key": {"key": "key", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword key: Storage account key.
         :paramtype key: str
         """
         super(AccountKeyDatastoreSecrets, self).__init__(**kwargs)
-        self.secrets_type = 'AccountKey'  # type: str
-        self.key = kwargs.get('key', None)
+        self.secrets_type = "AccountKey"  # type: str
+        self.key = kwargs.get("key", None)
 
 
 class AKSSchema(msrest.serialization.Model):
@@ -161,19 +158,16 @@ class AKSSchema(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'properties': {'key': 'properties', 'type': 'AKSSchemaProperties'},
+        "properties": {"key": "properties", "type": "AKSSchemaProperties"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword properties: AKS properties.
         :paramtype properties: ~azure.mgmt.machinelearningservices.models.AKSSchemaProperties
         """
         super(AKSSchema, self).__init__(**kwargs)
-        self.properties = kwargs.get('properties', None)
+        self.properties = kwargs.get("properties", None)
 
 
 class Compute(msrest.serialization.Model):
@@ -216,36 +210,44 @@ class Compute(msrest.serialization.Model):
     """
 
     _validation = {
-        'compute_type': {'required': True},
-        'compute_location': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'created_on': {'readonly': True},
-        'modified_on': {'readonly': True},
-        'provisioning_errors': {'readonly': True},
-        'is_attached_compute': {'readonly': True},
+        "compute_type": {"required": True},
+        "compute_location": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "created_on": {"readonly": True},
+        "modified_on": {"readonly": True},
+        "provisioning_errors": {"readonly": True},
+        "is_attached_compute": {"readonly": True},
     }
 
     _attribute_map = {
-        'compute_type': {'key': 'computeType', 'type': 'str'},
-        'compute_location': {'key': 'computeLocation', 'type': 'str'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'created_on': {'key': 'createdOn', 'type': 'iso-8601'},
-        'modified_on': {'key': 'modifiedOn', 'type': 'iso-8601'},
-        'resource_id': {'key': 'resourceId', 'type': 'str'},
-        'provisioning_errors': {'key': 'provisioningErrors', 'type': '[ErrorResponse]'},
-        'is_attached_compute': {'key': 'isAttachedCompute', 'type': 'bool'},
-        'disable_local_auth': {'key': 'disableLocalAuth', 'type': 'bool'},
+        "compute_type": {"key": "computeType", "type": "str"},
+        "compute_location": {"key": "computeLocation", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "created_on": {"key": "createdOn", "type": "iso-8601"},
+        "modified_on": {"key": "modifiedOn", "type": "iso-8601"},
+        "resource_id": {"key": "resourceId", "type": "str"},
+        "provisioning_errors": {"key": "provisioningErrors", "type": "[ErrorResponse]"},
+        "is_attached_compute": {"key": "isAttachedCompute", "type": "bool"},
+        "disable_local_auth": {"key": "disableLocalAuth", "type": "bool"},
     }
 
     _subtype_map = {
-        'compute_type': {'AKS': 'AKS', 'AmlCompute': 'AmlCompute', 'ComputeInstance': 'ComputeInstance', 'DataFactory': 'DataFactory', 'DataLakeAnalytics': 'DataLakeAnalytics', 'Databricks': 'Databricks', 'HDInsight': 'HDInsight', 'Kubernetes': 'Kubernetes', 'SynapseSpark': 'SynapseSpark', 'VirtualMachine': 'VirtualMachine'}
+        "compute_type": {
+            "AKS": "AKS",
+            "AmlCompute": "AmlCompute",
+            "ComputeInstance": "ComputeInstance",
+            "DataFactory": "DataFactory",
+            "DataLakeAnalytics": "DataLakeAnalytics",
+            "Databricks": "Databricks",
+            "HDInsight": "HDInsight",
+            "Kubernetes": "Kubernetes",
+            "SynapseSpark": "SynapseSpark",
+            "VirtualMachine": "VirtualMachine",
+        }
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword description: The description of the Machine Learning compute.
         :paramtype description: str
@@ -259,13 +261,13 @@ class Compute(msrest.serialization.Model):
         self.compute_type = None  # type: Optional[str]
         self.compute_location = None
         self.provisioning_state = None
-        self.description = kwargs.get('description', None)
+        self.description = kwargs.get("description", None)
         self.created_on = None
         self.modified_on = None
-        self.resource_id = kwargs.get('resource_id', None)
+        self.resource_id = kwargs.get("resource_id", None)
         self.provisioning_errors = None
         self.is_attached_compute = None
-        self.disable_local_auth = kwargs.get('disable_local_auth', None)
+        self.disable_local_auth = kwargs.get("disable_local_auth", None)
 
 
 class AKS(Compute, AKSSchema):
@@ -307,33 +309,30 @@ class AKS(Compute, AKSSchema):
     """
 
     _validation = {
-        'compute_type': {'required': True},
-        'compute_location': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'created_on': {'readonly': True},
-        'modified_on': {'readonly': True},
-        'provisioning_errors': {'readonly': True},
-        'is_attached_compute': {'readonly': True},
+        "compute_type": {"required": True},
+        "compute_location": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "created_on": {"readonly": True},
+        "modified_on": {"readonly": True},
+        "provisioning_errors": {"readonly": True},
+        "is_attached_compute": {"readonly": True},
     }
 
     _attribute_map = {
-        'properties': {'key': 'properties', 'type': 'AKSSchemaProperties'},
-        'compute_type': {'key': 'computeType', 'type': 'str'},
-        'compute_location': {'key': 'computeLocation', 'type': 'str'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'created_on': {'key': 'createdOn', 'type': 'iso-8601'},
-        'modified_on': {'key': 'modifiedOn', 'type': 'iso-8601'},
-        'resource_id': {'key': 'resourceId', 'type': 'str'},
-        'provisioning_errors': {'key': 'provisioningErrors', 'type': '[ErrorResponse]'},
-        'is_attached_compute': {'key': 'isAttachedCompute', 'type': 'bool'},
-        'disable_local_auth': {'key': 'disableLocalAuth', 'type': 'bool'},
+        "properties": {"key": "properties", "type": "AKSSchemaProperties"},
+        "compute_type": {"key": "computeType", "type": "str"},
+        "compute_location": {"key": "computeLocation", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "created_on": {"key": "createdOn", "type": "iso-8601"},
+        "modified_on": {"key": "modifiedOn", "type": "iso-8601"},
+        "resource_id": {"key": "resourceId", "type": "str"},
+        "provisioning_errors": {"key": "provisioningErrors", "type": "[ErrorResponse]"},
+        "is_attached_compute": {"key": "isAttachedCompute", "type": "bool"},
+        "disable_local_auth": {"key": "disableLocalAuth", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword properties: AKS properties.
         :paramtype properties: ~azure.mgmt.machinelearningservices.models.AKSSchemaProperties
@@ -346,18 +345,18 @@ class AKS(Compute, AKSSchema):
         :paramtype disable_local_auth: bool
         """
         super(AKS, self).__init__(**kwargs)
-        self.properties = kwargs.get('properties', None)
-        self.compute_type = 'AKS'  # type: str
-        self.compute_type = 'AKS'  # type: str
+        self.properties = kwargs.get("properties", None)
+        self.compute_type = "AKS"  # type: str
+        self.compute_type = "AKS"  # type: str
         self.compute_location = None
         self.provisioning_state = None
-        self.description = kwargs.get('description', None)
+        self.description = kwargs.get("description", None)
         self.created_on = None
         self.modified_on = None
-        self.resource_id = kwargs.get('resource_id', None)
+        self.resource_id = kwargs.get("resource_id", None)
         self.provisioning_errors = None
         self.is_attached_compute = None
-        self.disable_local_auth = kwargs.get('disable_local_auth', None)
+        self.disable_local_auth = kwargs.get("disable_local_auth", None)
 
 
 class AksComputeSecretsProperties(msrest.serialization.Model):
@@ -374,15 +373,12 @@ class AksComputeSecretsProperties(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'user_kube_config': {'key': 'userKubeConfig', 'type': 'str'},
-        'admin_kube_config': {'key': 'adminKubeConfig', 'type': 'str'},
-        'image_pull_secret_name': {'key': 'imagePullSecretName', 'type': 'str'},
+        "user_kube_config": {"key": "userKubeConfig", "type": "str"},
+        "admin_kube_config": {"key": "adminKubeConfig", "type": "str"},
+        "image_pull_secret_name": {"key": "imagePullSecretName", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword user_kube_config: Content of kubeconfig file that can be used to connect to the
          Kubernetes cluster.
@@ -394,9 +390,9 @@ class AksComputeSecretsProperties(msrest.serialization.Model):
         :paramtype image_pull_secret_name: str
         """
         super(AksComputeSecretsProperties, self).__init__(**kwargs)
-        self.user_kube_config = kwargs.get('user_kube_config', None)
-        self.admin_kube_config = kwargs.get('admin_kube_config', None)
-        self.image_pull_secret_name = kwargs.get('image_pull_secret_name', None)
+        self.user_kube_config = kwargs.get("user_kube_config", None)
+        self.admin_kube_config = kwargs.get("admin_kube_config", None)
+        self.image_pull_secret_name = kwargs.get("image_pull_secret_name", None)
 
 
 class ComputeSecrets(msrest.serialization.Model):
@@ -414,23 +410,23 @@ class ComputeSecrets(msrest.serialization.Model):
     """
 
     _validation = {
-        'compute_type': {'required': True},
+        "compute_type": {"required": True},
     }
 
     _attribute_map = {
-        'compute_type': {'key': 'computeType', 'type': 'str'},
+        "compute_type": {"key": "computeType", "type": "str"},
     }
 
     _subtype_map = {
-        'compute_type': {'AKS': 'AksComputeSecrets', 'Databricks': 'DatabricksComputeSecrets', 'VirtualMachine': 'VirtualMachineSecrets'}
+        "compute_type": {
+            "AKS": "AksComputeSecrets",
+            "Databricks": "DatabricksComputeSecrets",
+            "VirtualMachine": "VirtualMachineSecrets",
+        }
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs):
+        """ """
         super(ComputeSecrets, self).__init__(**kwargs)
         self.compute_type = None  # type: Optional[str]
 
@@ -455,20 +451,17 @@ class AksComputeSecrets(ComputeSecrets, AksComputeSecretsProperties):
     """
 
     _validation = {
-        'compute_type': {'required': True},
+        "compute_type": {"required": True},
     }
 
     _attribute_map = {
-        'user_kube_config': {'key': 'userKubeConfig', 'type': 'str'},
-        'admin_kube_config': {'key': 'adminKubeConfig', 'type': 'str'},
-        'image_pull_secret_name': {'key': 'imagePullSecretName', 'type': 'str'},
-        'compute_type': {'key': 'computeType', 'type': 'str'},
+        "user_kube_config": {"key": "userKubeConfig", "type": "str"},
+        "admin_kube_config": {"key": "adminKubeConfig", "type": "str"},
+        "image_pull_secret_name": {"key": "imagePullSecretName", "type": "str"},
+        "compute_type": {"key": "computeType", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword user_kube_config: Content of kubeconfig file that can be used to connect to the
          Kubernetes cluster.
@@ -480,11 +473,11 @@ class AksComputeSecrets(ComputeSecrets, AksComputeSecretsProperties):
         :paramtype image_pull_secret_name: str
         """
         super(AksComputeSecrets, self).__init__(**kwargs)
-        self.user_kube_config = kwargs.get('user_kube_config', None)
-        self.admin_kube_config = kwargs.get('admin_kube_config', None)
-        self.image_pull_secret_name = kwargs.get('image_pull_secret_name', None)
-        self.compute_type = 'AKS'  # type: str
-        self.compute_type = 'AKS'  # type: str
+        self.user_kube_config = kwargs.get("user_kube_config", None)
+        self.admin_kube_config = kwargs.get("admin_kube_config", None)
+        self.image_pull_secret_name = kwargs.get("image_pull_secret_name", None)
+        self.compute_type = "AKS"  # type: str
+        self.compute_type = "AKS"  # type: str
 
 
 class AksNetworkingConfiguration(msrest.serialization.Model):
@@ -504,22 +497,25 @@ class AksNetworkingConfiguration(msrest.serialization.Model):
     """
 
     _validation = {
-        'service_cidr': {'pattern': r'^([0-9]{1,3}\.){3}[0-9]{1,3}(\/([0-9]|[1-2][0-9]|3[0-2]))?$'},
-        'dns_service_ip': {'pattern': r'^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$'},
-        'docker_bridge_cidr': {'pattern': r'^([0-9]{1,3}\.){3}[0-9]{1,3}(\/([0-9]|[1-2][0-9]|3[0-2]))?$'},
+        "service_cidr": {
+            "pattern": r"^([0-9]{1,3}\.){3}[0-9]{1,3}(\/([0-9]|[1-2][0-9]|3[0-2]))?$"
+        },
+        "dns_service_ip": {
+            "pattern": r"^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
+        },
+        "docker_bridge_cidr": {
+            "pattern": r"^([0-9]{1,3}\.){3}[0-9]{1,3}(\/([0-9]|[1-2][0-9]|3[0-2]))?$"
+        },
     }
 
     _attribute_map = {
-        'subnet_id': {'key': 'subnetId', 'type': 'str'},
-        'service_cidr': {'key': 'serviceCidr', 'type': 'str'},
-        'dns_service_ip': {'key': 'dnsServiceIP', 'type': 'str'},
-        'docker_bridge_cidr': {'key': 'dockerBridgeCidr', 'type': 'str'},
+        "subnet_id": {"key": "subnetId", "type": "str"},
+        "service_cidr": {"key": "serviceCidr", "type": "str"},
+        "dns_service_ip": {"key": "dnsServiceIP", "type": "str"},
+        "docker_bridge_cidr": {"key": "dockerBridgeCidr", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword subnet_id: Virtual network subnet resource ID the compute nodes belong to.
         :paramtype subnet_id: str
@@ -534,10 +530,10 @@ class AksNetworkingConfiguration(msrest.serialization.Model):
         :paramtype docker_bridge_cidr: str
         """
         super(AksNetworkingConfiguration, self).__init__(**kwargs)
-        self.subnet_id = kwargs.get('subnet_id', None)
-        self.service_cidr = kwargs.get('service_cidr', None)
-        self.dns_service_ip = kwargs.get('dns_service_ip', None)
-        self.docker_bridge_cidr = kwargs.get('docker_bridge_cidr', None)
+        self.subnet_id = kwargs.get("subnet_id", None)
+        self.service_cidr = kwargs.get("service_cidr", None)
+        self.dns_service_ip = kwargs.get("dns_service_ip", None)
+        self.docker_bridge_cidr = kwargs.get("docker_bridge_cidr", None)
 
 
 class AKSSchemaProperties(msrest.serialization.Model):
@@ -569,26 +565,26 @@ class AKSSchemaProperties(msrest.serialization.Model):
     """
 
     _validation = {
-        'system_services': {'readonly': True},
-        'agent_count': {'minimum': 0},
+        "system_services": {"readonly": True},
+        "agent_count": {"minimum": 0},
     }
 
     _attribute_map = {
-        'cluster_fqdn': {'key': 'clusterFqdn', 'type': 'str'},
-        'system_services': {'key': 'systemServices', 'type': '[SystemService]'},
-        'agent_count': {'key': 'agentCount', 'type': 'int'},
-        'agent_vm_size': {'key': 'agentVmSize', 'type': 'str'},
-        'cluster_purpose': {'key': 'clusterPurpose', 'type': 'str'},
-        'ssl_configuration': {'key': 'sslConfiguration', 'type': 'SslConfiguration'},
-        'aks_networking_configuration': {'key': 'aksNetworkingConfiguration', 'type': 'AksNetworkingConfiguration'},
-        'load_balancer_type': {'key': 'loadBalancerType', 'type': 'str'},
-        'load_balancer_subnet': {'key': 'loadBalancerSubnet', 'type': 'str'},
+        "cluster_fqdn": {"key": "clusterFqdn", "type": "str"},
+        "system_services": {"key": "systemServices", "type": "[SystemService]"},
+        "agent_count": {"key": "agentCount", "type": "int"},
+        "agent_vm_size": {"key": "agentVmSize", "type": "str"},
+        "cluster_purpose": {"key": "clusterPurpose", "type": "str"},
+        "ssl_configuration": {"key": "sslConfiguration", "type": "SslConfiguration"},
+        "aks_networking_configuration": {
+            "key": "aksNetworkingConfiguration",
+            "type": "AksNetworkingConfiguration",
+        },
+        "load_balancer_type": {"key": "loadBalancerType", "type": "str"},
+        "load_balancer_subnet": {"key": "loadBalancerSubnet", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword cluster_fqdn: Cluster full qualified domain name.
         :paramtype cluster_fqdn: str
@@ -612,15 +608,17 @@ class AKSSchemaProperties(msrest.serialization.Model):
         :paramtype load_balancer_subnet: str
         """
         super(AKSSchemaProperties, self).__init__(**kwargs)
-        self.cluster_fqdn = kwargs.get('cluster_fqdn', None)
+        self.cluster_fqdn = kwargs.get("cluster_fqdn", None)
         self.system_services = None
-        self.agent_count = kwargs.get('agent_count', None)
-        self.agent_vm_size = kwargs.get('agent_vm_size', None)
-        self.cluster_purpose = kwargs.get('cluster_purpose', "FastProd")
-        self.ssl_configuration = kwargs.get('ssl_configuration', None)
-        self.aks_networking_configuration = kwargs.get('aks_networking_configuration', None)
-        self.load_balancer_type = kwargs.get('load_balancer_type', "PublicIp")
-        self.load_balancer_subnet = kwargs.get('load_balancer_subnet', None)
+        self.agent_count = kwargs.get("agent_count", None)
+        self.agent_vm_size = kwargs.get("agent_vm_size", None)
+        self.cluster_purpose = kwargs.get("cluster_purpose", "FastProd")
+        self.ssl_configuration = kwargs.get("ssl_configuration", None)
+        self.aks_networking_configuration = kwargs.get(
+            "aks_networking_configuration", None
+        )
+        self.load_balancer_type = kwargs.get("load_balancer_type", "PublicIp")
+        self.load_balancer_subnet = kwargs.get("load_balancer_subnet", None)
 
 
 class AmlComputeSchema(msrest.serialization.Model):
@@ -631,19 +629,16 @@ class AmlComputeSchema(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'properties': {'key': 'properties', 'type': 'AmlComputeProperties'},
+        "properties": {"key": "properties", "type": "AmlComputeProperties"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword properties: Properties of AmlCompute.
         :paramtype properties: ~azure.mgmt.machinelearningservices.models.AmlComputeProperties
         """
         super(AmlComputeSchema, self).__init__(**kwargs)
-        self.properties = kwargs.get('properties', None)
+        self.properties = kwargs.get("properties", None)
 
 
 class AmlCompute(Compute, AmlComputeSchema):
@@ -685,33 +680,30 @@ class AmlCompute(Compute, AmlComputeSchema):
     """
 
     _validation = {
-        'compute_type': {'required': True},
-        'compute_location': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'created_on': {'readonly': True},
-        'modified_on': {'readonly': True},
-        'provisioning_errors': {'readonly': True},
-        'is_attached_compute': {'readonly': True},
+        "compute_type": {"required": True},
+        "compute_location": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "created_on": {"readonly": True},
+        "modified_on": {"readonly": True},
+        "provisioning_errors": {"readonly": True},
+        "is_attached_compute": {"readonly": True},
     }
 
     _attribute_map = {
-        'properties': {'key': 'properties', 'type': 'AmlComputeProperties'},
-        'compute_type': {'key': 'computeType', 'type': 'str'},
-        'compute_location': {'key': 'computeLocation', 'type': 'str'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'created_on': {'key': 'createdOn', 'type': 'iso-8601'},
-        'modified_on': {'key': 'modifiedOn', 'type': 'iso-8601'},
-        'resource_id': {'key': 'resourceId', 'type': 'str'},
-        'provisioning_errors': {'key': 'provisioningErrors', 'type': '[ErrorResponse]'},
-        'is_attached_compute': {'key': 'isAttachedCompute', 'type': 'bool'},
-        'disable_local_auth': {'key': 'disableLocalAuth', 'type': 'bool'},
+        "properties": {"key": "properties", "type": "AmlComputeProperties"},
+        "compute_type": {"key": "computeType", "type": "str"},
+        "compute_location": {"key": "computeLocation", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "created_on": {"key": "createdOn", "type": "iso-8601"},
+        "modified_on": {"key": "modifiedOn", "type": "iso-8601"},
+        "resource_id": {"key": "resourceId", "type": "str"},
+        "provisioning_errors": {"key": "provisioningErrors", "type": "[ErrorResponse]"},
+        "is_attached_compute": {"key": "isAttachedCompute", "type": "bool"},
+        "disable_local_auth": {"key": "disableLocalAuth", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword properties: Properties of AmlCompute.
         :paramtype properties: ~azure.mgmt.machinelearningservices.models.AmlComputeProperties
@@ -724,18 +716,18 @@ class AmlCompute(Compute, AmlComputeSchema):
         :paramtype disable_local_auth: bool
         """
         super(AmlCompute, self).__init__(**kwargs)
-        self.properties = kwargs.get('properties', None)
-        self.compute_type = 'AmlCompute'  # type: str
-        self.compute_type = 'AmlCompute'  # type: str
+        self.properties = kwargs.get("properties", None)
+        self.compute_type = "AmlCompute"  # type: str
+        self.compute_type = "AmlCompute"  # type: str
         self.compute_location = None
         self.provisioning_state = None
-        self.description = kwargs.get('description', None)
+        self.description = kwargs.get("description", None)
         self.created_on = None
         self.modified_on = None
-        self.resource_id = kwargs.get('resource_id', None)
+        self.resource_id = kwargs.get("resource_id", None)
         self.provisioning_errors = None
         self.is_attached_compute = None
-        self.disable_local_auth = kwargs.get('disable_local_auth', None)
+        self.disable_local_auth = kwargs.get("disable_local_auth", None)
 
 
 class AmlComputeNodeInformation(msrest.serialization.Model):
@@ -760,29 +752,25 @@ class AmlComputeNodeInformation(msrest.serialization.Model):
     """
 
     _validation = {
-        'node_id': {'readonly': True},
-        'private_ip_address': {'readonly': True},
-        'public_ip_address': {'readonly': True},
-        'port': {'readonly': True},
-        'node_state': {'readonly': True},
-        'run_id': {'readonly': True},
+        "node_id": {"readonly": True},
+        "private_ip_address": {"readonly": True},
+        "public_ip_address": {"readonly": True},
+        "port": {"readonly": True},
+        "node_state": {"readonly": True},
+        "run_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'node_id': {'key': 'nodeId', 'type': 'str'},
-        'private_ip_address': {'key': 'privateIpAddress', 'type': 'str'},
-        'public_ip_address': {'key': 'publicIpAddress', 'type': 'str'},
-        'port': {'key': 'port', 'type': 'int'},
-        'node_state': {'key': 'nodeState', 'type': 'str'},
-        'run_id': {'key': 'runId', 'type': 'str'},
+        "node_id": {"key": "nodeId", "type": "str"},
+        "private_ip_address": {"key": "privateIpAddress", "type": "str"},
+        "public_ip_address": {"key": "publicIpAddress", "type": "str"},
+        "port": {"key": "port", "type": "int"},
+        "node_state": {"key": "nodeState", "type": "str"},
+        "run_id": {"key": "runId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs):
+        """ """
         super(AmlComputeNodeInformation, self).__init__(**kwargs)
         self.node_id = None
         self.private_ip_address = None
@@ -804,21 +792,17 @@ class AmlComputeNodesInformation(msrest.serialization.Model):
     """
 
     _validation = {
-        'nodes': {'readonly': True},
-        'next_link': {'readonly': True},
+        "nodes": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'nodes': {'key': 'nodes', 'type': '[AmlComputeNodeInformation]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "nodes": {"key": "nodes", "type": "[AmlComputeNodeInformation]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs):
+        """ """
         super(AmlComputeNodesInformation, self).__init__(**kwargs)
         self.nodes = None
         self.next_link = None
@@ -889,38 +873,47 @@ class AmlComputeProperties(msrest.serialization.Model):
     """
 
     _validation = {
-        'allocation_state': {'readonly': True},
-        'allocation_state_transition_time': {'readonly': True},
-        'errors': {'readonly': True},
-        'current_node_count': {'readonly': True},
-        'target_node_count': {'readonly': True},
-        'node_state_counts': {'readonly': True},
+        "allocation_state": {"readonly": True},
+        "allocation_state_transition_time": {"readonly": True},
+        "errors": {"readonly": True},
+        "current_node_count": {"readonly": True},
+        "target_node_count": {"readonly": True},
+        "node_state_counts": {"readonly": True},
     }
 
     _attribute_map = {
-        'os_type': {'key': 'osType', 'type': 'str'},
-        'vm_size': {'key': 'vmSize', 'type': 'str'},
-        'vm_priority': {'key': 'vmPriority', 'type': 'str'},
-        'virtual_machine_image': {'key': 'virtualMachineImage', 'type': 'VirtualMachineImage'},
-        'isolated_network': {'key': 'isolatedNetwork', 'type': 'bool'},
-        'scale_settings': {'key': 'scaleSettings', 'type': 'ScaleSettings'},
-        'user_account_credentials': {'key': 'userAccountCredentials', 'type': 'UserAccountCredentials'},
-        'subnet': {'key': 'subnet', 'type': 'ResourceId'},
-        'remote_login_port_public_access': {'key': 'remoteLoginPortPublicAccess', 'type': 'str'},
-        'allocation_state': {'key': 'allocationState', 'type': 'str'},
-        'allocation_state_transition_time': {'key': 'allocationStateTransitionTime', 'type': 'iso-8601'},
-        'errors': {'key': 'errors', 'type': '[ErrorResponse]'},
-        'current_node_count': {'key': 'currentNodeCount', 'type': 'int'},
-        'target_node_count': {'key': 'targetNodeCount', 'type': 'int'},
-        'node_state_counts': {'key': 'nodeStateCounts', 'type': 'NodeStateCounts'},
-        'enable_node_public_ip': {'key': 'enableNodePublicIp', 'type': 'bool'},
-        'property_bag': {'key': 'propertyBag', 'type': 'object'},
+        "os_type": {"key": "osType", "type": "str"},
+        "vm_size": {"key": "vmSize", "type": "str"},
+        "vm_priority": {"key": "vmPriority", "type": "str"},
+        "virtual_machine_image": {
+            "key": "virtualMachineImage",
+            "type": "VirtualMachineImage",
+        },
+        "isolated_network": {"key": "isolatedNetwork", "type": "bool"},
+        "scale_settings": {"key": "scaleSettings", "type": "ScaleSettings"},
+        "user_account_credentials": {
+            "key": "userAccountCredentials",
+            "type": "UserAccountCredentials",
+        },
+        "subnet": {"key": "subnet", "type": "ResourceId"},
+        "remote_login_port_public_access": {
+            "key": "remoteLoginPortPublicAccess",
+            "type": "str",
+        },
+        "allocation_state": {"key": "allocationState", "type": "str"},
+        "allocation_state_transition_time": {
+            "key": "allocationStateTransitionTime",
+            "type": "iso-8601",
+        },
+        "errors": {"key": "errors", "type": "[ErrorResponse]"},
+        "current_node_count": {"key": "currentNodeCount", "type": "int"},
+        "target_node_count": {"key": "targetNodeCount", "type": "int"},
+        "node_state_counts": {"key": "nodeStateCounts", "type": "NodeStateCounts"},
+        "enable_node_public_ip": {"key": "enableNodePublicIp", "type": "bool"},
+        "property_bag": {"key": "propertyBag", "type": "object"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword os_type: Compute OS Type. Possible values include: "Linux", "Windows". Default value:
          "Linux".
@@ -961,23 +954,25 @@ class AmlComputeProperties(msrest.serialization.Model):
         :paramtype property_bag: any
         """
         super(AmlComputeProperties, self).__init__(**kwargs)
-        self.os_type = kwargs.get('os_type', "Linux")
-        self.vm_size = kwargs.get('vm_size', None)
-        self.vm_priority = kwargs.get('vm_priority', None)
-        self.virtual_machine_image = kwargs.get('virtual_machine_image', None)
-        self.isolated_network = kwargs.get('isolated_network', None)
-        self.scale_settings = kwargs.get('scale_settings', None)
-        self.user_account_credentials = kwargs.get('user_account_credentials', None)
-        self.subnet = kwargs.get('subnet', None)
-        self.remote_login_port_public_access = kwargs.get('remote_login_port_public_access', "NotSpecified")
+        self.os_type = kwargs.get("os_type", "Linux")
+        self.vm_size = kwargs.get("vm_size", None)
+        self.vm_priority = kwargs.get("vm_priority", None)
+        self.virtual_machine_image = kwargs.get("virtual_machine_image", None)
+        self.isolated_network = kwargs.get("isolated_network", None)
+        self.scale_settings = kwargs.get("scale_settings", None)
+        self.user_account_credentials = kwargs.get("user_account_credentials", None)
+        self.subnet = kwargs.get("subnet", None)
+        self.remote_login_port_public_access = kwargs.get(
+            "remote_login_port_public_access", "NotSpecified"
+        )
         self.allocation_state = None
         self.allocation_state_transition_time = None
         self.errors = None
         self.current_node_count = None
         self.target_node_count = None
         self.node_state_counts = None
-        self.enable_node_public_ip = kwargs.get('enable_node_public_ip', True)
-        self.property_bag = kwargs.get('property_bag', None)
+        self.enable_node_public_ip = kwargs.get("enable_node_public_ip", True)
+        self.property_bag = kwargs.get("property_bag", None)
 
 
 class AmlOperation(msrest.serialization.Model):
@@ -992,15 +987,12 @@ class AmlOperation(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'display': {'key': 'display', 'type': 'AmlOperationDisplay'},
-        'is_data_action': {'key': 'isDataAction', 'type': 'bool'},
+        "name": {"key": "name", "type": "str"},
+        "display": {"key": "display", "type": "AmlOperationDisplay"},
+        "is_data_action": {"key": "isDataAction", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword name: Operation name: {provider}/{resource}/{operation}.
         :paramtype name: str
@@ -1010,9 +1002,9 @@ class AmlOperation(msrest.serialization.Model):
         :paramtype is_data_action: bool
         """
         super(AmlOperation, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.display = kwargs.get('display', None)
-        self.is_data_action = kwargs.get('is_data_action', None)
+        self.name = kwargs.get("name", None)
+        self.display = kwargs.get("display", None)
+        self.is_data_action = kwargs.get("is_data_action", None)
 
 
 class AmlOperationDisplay(msrest.serialization.Model):
@@ -1029,16 +1021,13 @@ class AmlOperationDisplay(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'provider': {'key': 'provider', 'type': 'str'},
-        'resource': {'key': 'resource', 'type': 'str'},
-        'operation': {'key': 'operation', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
+        "provider": {"key": "provider", "type": "str"},
+        "resource": {"key": "resource", "type": "str"},
+        "operation": {"key": "operation", "type": "str"},
+        "description": {"key": "description", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword provider: The resource provider name: Microsoft.MachineLearningExperimentation.
         :paramtype provider: str
@@ -1050,10 +1039,10 @@ class AmlOperationDisplay(msrest.serialization.Model):
         :paramtype description: str
         """
         super(AmlOperationDisplay, self).__init__(**kwargs)
-        self.provider = kwargs.get('provider', None)
-        self.resource = kwargs.get('resource', None)
-        self.operation = kwargs.get('operation', None)
-        self.description = kwargs.get('description', None)
+        self.provider = kwargs.get("provider", None)
+        self.resource = kwargs.get("resource", None)
+        self.operation = kwargs.get("operation", None)
+        self.description = kwargs.get("description", None)
 
 
 class AmlOperationListResult(msrest.serialization.Model):
@@ -1064,20 +1053,17 @@ class AmlOperationListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[AmlOperation]'},
+        "value": {"key": "value", "type": "[AmlOperation]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword value: List of AML workspace operations supported by the AML workspace resource
          provider.
         :paramtype value: list[~azure.mgmt.machinelearningservices.models.AmlOperation]
         """
         super(AmlOperationListResult, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
+        self.value = kwargs.get("value", None)
 
 
 class IdentityConfiguration(msrest.serialization.Model):
@@ -1095,23 +1081,23 @@ class IdentityConfiguration(msrest.serialization.Model):
     """
 
     _validation = {
-        'identity_type': {'required': True},
+        "identity_type": {"required": True},
     }
 
     _attribute_map = {
-        'identity_type': {'key': 'identityType', 'type': 'str'},
+        "identity_type": {"key": "identityType", "type": "str"},
     }
 
     _subtype_map = {
-        'identity_type': {'AMLToken': 'AmlToken', 'Managed': 'ManagedIdentity', 'UserIdentity': 'UserIdentity'}
+        "identity_type": {
+            "AMLToken": "AmlToken",
+            "Managed": "ManagedIdentity",
+            "UserIdentity": "UserIdentity",
+        }
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs):
+        """ """
         super(IdentityConfiguration, self).__init__(**kwargs)
         self.identity_type = None  # type: Optional[str]
 
@@ -1128,21 +1114,17 @@ class AmlToken(IdentityConfiguration):
     """
 
     _validation = {
-        'identity_type': {'required': True},
+        "identity_type": {"required": True},
     }
 
     _attribute_map = {
-        'identity_type': {'key': 'identityType', 'type': 'str'},
+        "identity_type": {"key": "identityType", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs):
+        """ """
         super(AmlToken, self).__init__(**kwargs)
-        self.identity_type = 'AMLToken'  # type: str
+        self.identity_type = "AMLToken"  # type: str
 
 
 class AmlUserFeature(msrest.serialization.Model):
@@ -1157,15 +1139,12 @@ class AmlUserFeature(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
+        "description": {"key": "description", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword id: Specifies the feature ID.
         :paramtype id: str
@@ -1175,9 +1154,9 @@ class AmlUserFeature(msrest.serialization.Model):
         :paramtype description: str
         """
         super(AmlUserFeature, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
-        self.display_name = kwargs.get('display_name', None)
-        self.description = kwargs.get('description', None)
+        self.id = kwargs.get("id", None)
+        self.display_name = kwargs.get("display_name", None)
+        self.description = kwargs.get("description", None)
 
 
 class ResourceBase(msrest.serialization.Model):
@@ -1192,15 +1171,12 @@ class ResourceBase(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'description': {'key': 'description', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': '{str}'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "description": {"key": "description", "type": "str"},
+        "properties": {"key": "properties", "type": "{str}"},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword description: The asset description text.
         :paramtype description: str
@@ -1210,9 +1186,9 @@ class ResourceBase(msrest.serialization.Model):
         :paramtype tags: dict[str, str]
         """
         super(ResourceBase, self).__init__(**kwargs)
-        self.description = kwargs.get('description', None)
-        self.properties = kwargs.get('properties', None)
-        self.tags = kwargs.get('tags', None)
+        self.description = kwargs.get("description", None)
+        self.properties = kwargs.get("properties", None)
+        self.tags = kwargs.get("tags", None)
 
 
 class AssetBase(ResourceBase):
@@ -1231,17 +1207,14 @@ class AssetBase(ResourceBase):
     """
 
     _attribute_map = {
-        'description': {'key': 'description', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': '{str}'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'is_anonymous': {'key': 'isAnonymous', 'type': 'bool'},
-        'is_archived': {'key': 'isArchived', 'type': 'bool'},
+        "description": {"key": "description", "type": "str"},
+        "properties": {"key": "properties", "type": "{str}"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "is_anonymous": {"key": "isAnonymous", "type": "bool"},
+        "is_archived": {"key": "isArchived", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword description: The asset description text.
         :paramtype description: str
@@ -1255,8 +1228,8 @@ class AssetBase(ResourceBase):
         :paramtype is_archived: bool
         """
         super(AssetBase, self).__init__(**kwargs)
-        self.is_anonymous = kwargs.get('is_anonymous', False)
-        self.is_archived = kwargs.get('is_archived', False)
+        self.is_anonymous = kwargs.get("is_anonymous", False)
+        self.is_archived = kwargs.get("is_archived", False)
 
 
 class AssetContainer(ResourceBase):
@@ -1279,23 +1252,20 @@ class AssetContainer(ResourceBase):
     """
 
     _validation = {
-        'latest_version': {'readonly': True},
-        'next_version': {'readonly': True},
+        "latest_version": {"readonly": True},
+        "next_version": {"readonly": True},
     }
 
     _attribute_map = {
-        'description': {'key': 'description', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': '{str}'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'is_archived': {'key': 'isArchived', 'type': 'bool'},
-        'latest_version': {'key': 'latestVersion', 'type': 'str'},
-        'next_version': {'key': 'nextVersion', 'type': 'str'},
+        "description": {"key": "description", "type": "str"},
+        "properties": {"key": "properties", "type": "{str}"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "is_archived": {"key": "isArchived", "type": "bool"},
+        "latest_version": {"key": "latestVersion", "type": "str"},
+        "next_version": {"key": "nextVersion", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword description: The asset description text.
         :paramtype description: str
@@ -1307,7 +1277,7 @@ class AssetContainer(ResourceBase):
         :paramtype is_archived: bool
         """
         super(AssetContainer, self).__init__(**kwargs)
-        self.is_archived = kwargs.get('is_archived', False)
+        self.is_archived = kwargs.get("is_archived", False)
         self.latest_version = None
         self.next_version = None
 
@@ -1325,18 +1295,15 @@ class AssetJobInput(msrest.serialization.Model):
     """
 
     _validation = {
-        'uri': {'required': True, 'pattern': r'[a-zA-Z0-9_]'},
+        "uri": {"required": True, "pattern": r"[a-zA-Z0-9_]"},
     }
 
     _attribute_map = {
-        'mode': {'key': 'mode', 'type': 'str'},
-        'uri': {'key': 'uri', 'type': 'str'},
+        "mode": {"key": "mode", "type": "str"},
+        "uri": {"key": "uri", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword mode: Input Asset Delivery Mode. Possible values include: "ReadOnlyMount",
          "ReadWriteMount", "Download", "Direct", "EvalMount", "EvalDownload".
@@ -1345,8 +1312,8 @@ class AssetJobInput(msrest.serialization.Model):
         :paramtype uri: str
         """
         super(AssetJobInput, self).__init__(**kwargs)
-        self.mode = kwargs.get('mode', None)
-        self.uri = kwargs['uri']
+        self.mode = kwargs.get("mode", None)
+        self.uri = kwargs["uri"]
 
 
 class AssetJobOutput(msrest.serialization.Model):
@@ -1359,14 +1326,11 @@ class AssetJobOutput(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'mode': {'key': 'mode', 'type': 'str'},
-        'uri': {'key': 'uri', 'type': 'str'},
+        "mode": {"key": "mode", "type": "str"},
+        "uri": {"key": "uri", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword mode: Output Asset Delivery Mode. Possible values include: "ReadWriteMount", "Upload".
         :paramtype mode: str or ~azure.mgmt.machinelearningservices.models.OutputDeliveryMode
@@ -1374,8 +1338,8 @@ class AssetJobOutput(msrest.serialization.Model):
         :paramtype uri: str
         """
         super(AssetJobOutput, self).__init__(**kwargs)
-        self.mode = kwargs.get('mode', None)
-        self.uri = kwargs.get('uri', None)
+        self.mode = kwargs.get("mode", None)
+        self.uri = kwargs.get("uri", None)
 
 
 class AssetReferenceBase(msrest.serialization.Model):
@@ -1392,23 +1356,23 @@ class AssetReferenceBase(msrest.serialization.Model):
     """
 
     _validation = {
-        'reference_type': {'required': True},
+        "reference_type": {"required": True},
     }
 
     _attribute_map = {
-        'reference_type': {'key': 'referenceType', 'type': 'str'},
+        "reference_type": {"key": "referenceType", "type": "str"},
     }
 
     _subtype_map = {
-        'reference_type': {'DataPath': 'DataPathAssetReference', 'Id': 'IdAssetReference', 'OutputPath': 'OutputPathAssetReference'}
+        "reference_type": {
+            "DataPath": "DataPathAssetReference",
+            "Id": "IdAssetReference",
+            "OutputPath": "OutputPathAssetReference",
+        }
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs):
+        """ """
         super(AssetReferenceBase, self).__init__(**kwargs)
         self.reference_type = None  # type: Optional[str]
 
@@ -1425,19 +1389,16 @@ class AssignedUser(msrest.serialization.Model):
     """
 
     _validation = {
-        'object_id': {'required': True},
-        'tenant_id': {'required': True},
+        "object_id": {"required": True},
+        "tenant_id": {"required": True},
     }
 
     _attribute_map = {
-        'object_id': {'key': 'objectId', 'type': 'str'},
-        'tenant_id': {'key': 'tenantId', 'type': 'str'},
+        "object_id": {"key": "objectId", "type": "str"},
+        "tenant_id": {"key": "tenantId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword object_id: Required. User�s AAD Object Id.
         :paramtype object_id: str
@@ -1445,8 +1406,8 @@ class AssignedUser(msrest.serialization.Model):
         :paramtype tenant_id: str
         """
         super(AssignedUser, self).__init__(**kwargs)
-        self.object_id = kwargs['object_id']
-        self.tenant_id = kwargs['tenant_id']
+        self.object_id = kwargs["object_id"]
+        self.tenant_id = kwargs["tenant_id"]
 
 
 class AutoPauseProperties(msrest.serialization.Model):
@@ -1459,14 +1420,11 @@ class AutoPauseProperties(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'delay_in_minutes': {'key': 'delayInMinutes', 'type': 'int'},
-        'enabled': {'key': 'enabled', 'type': 'bool'},
+        "delay_in_minutes": {"key": "delayInMinutes", "type": "int"},
+        "enabled": {"key": "enabled", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword delay_in_minutes:
         :paramtype delay_in_minutes: int
@@ -1474,8 +1432,8 @@ class AutoPauseProperties(msrest.serialization.Model):
         :paramtype enabled: bool
         """
         super(AutoPauseProperties, self).__init__(**kwargs)
-        self.delay_in_minutes = kwargs.get('delay_in_minutes', None)
-        self.enabled = kwargs.get('enabled', None)
+        self.delay_in_minutes = kwargs.get("delay_in_minutes", None)
+        self.enabled = kwargs.get("enabled", None)
 
 
 class AutoScaleProperties(msrest.serialization.Model):
@@ -1490,15 +1448,12 @@ class AutoScaleProperties(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'min_node_count': {'key': 'minNodeCount', 'type': 'int'},
-        'enabled': {'key': 'enabled', 'type': 'bool'},
-        'max_node_count': {'key': 'maxNodeCount', 'type': 'int'},
+        "min_node_count": {"key": "minNodeCount", "type": "int"},
+        "enabled": {"key": "enabled", "type": "bool"},
+        "max_node_count": {"key": "maxNodeCount", "type": "int"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword min_node_count:
         :paramtype min_node_count: int
@@ -1508,9 +1463,9 @@ class AutoScaleProperties(msrest.serialization.Model):
         :paramtype max_node_count: int
         """
         super(AutoScaleProperties, self).__init__(**kwargs)
-        self.min_node_count = kwargs.get('min_node_count', None)
-        self.enabled = kwargs.get('enabled', None)
-        self.max_node_count = kwargs.get('max_node_count', None)
+        self.min_node_count = kwargs.get("min_node_count", None)
+        self.enabled = kwargs.get("enabled", None)
+        self.max_node_count = kwargs.get("max_node_count", None)
 
 
 class DatastoreDetails(ResourceBase):
@@ -1541,28 +1496,30 @@ class DatastoreDetails(ResourceBase):
     """
 
     _validation = {
-        'credentials': {'required': True},
-        'datastore_type': {'required': True},
-        'is_default': {'readonly': True},
+        "credentials": {"required": True},
+        "datastore_type": {"required": True},
+        "is_default": {"readonly": True},
     }
 
     _attribute_map = {
-        'description': {'key': 'description', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': '{str}'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'credentials': {'key': 'credentials', 'type': 'DatastoreCredentials'},
-        'datastore_type': {'key': 'datastoreType', 'type': 'str'},
-        'is_default': {'key': 'isDefault', 'type': 'bool'},
+        "description": {"key": "description", "type": "str"},
+        "properties": {"key": "properties", "type": "{str}"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "credentials": {"key": "credentials", "type": "DatastoreCredentials"},
+        "datastore_type": {"key": "datastoreType", "type": "str"},
+        "is_default": {"key": "isDefault", "type": "bool"},
     }
 
     _subtype_map = {
-        'datastore_type': {'AzureBlob': 'AzureBlobDatastore', 'AzureDataLakeGen1': 'AzureDataLakeGen1Datastore', 'AzureDataLakeGen2': 'AzureDataLakeGen2Datastore', 'AzureFile': 'AzureFileDatastore'}
+        "datastore_type": {
+            "AzureBlob": "AzureBlobDatastore",
+            "AzureDataLakeGen1": "AzureDataLakeGen1Datastore",
+            "AzureDataLakeGen2": "AzureDataLakeGen2Datastore",
+            "AzureFile": "AzureFileDatastore",
+        }
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword description: The asset description text.
         :paramtype description: str
@@ -1574,8 +1531,8 @@ class DatastoreDetails(ResourceBase):
         :paramtype credentials: ~azure.mgmt.machinelearningservices.models.DatastoreCredentials
         """
         super(DatastoreDetails, self).__init__(**kwargs)
-        self.credentials = kwargs['credentials']
-        self.datastore_type = 'DatastoreDetails'  # type: str
+        self.credentials = kwargs["credentials"]
+        self.datastore_type = "DatastoreDetails"  # type: str
         self.is_default = None
 
 
@@ -1617,29 +1574,29 @@ class AzureBlobDatastore(DatastoreDetails):
     """
 
     _validation = {
-        'credentials': {'required': True},
-        'datastore_type': {'required': True},
-        'is_default': {'readonly': True},
+        "credentials": {"required": True},
+        "datastore_type": {"required": True},
+        "is_default": {"readonly": True},
     }
 
     _attribute_map = {
-        'description': {'key': 'description', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': '{str}'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'credentials': {'key': 'credentials', 'type': 'DatastoreCredentials'},
-        'datastore_type': {'key': 'datastoreType', 'type': 'str'},
-        'is_default': {'key': 'isDefault', 'type': 'bool'},
-        'account_name': {'key': 'accountName', 'type': 'str'},
-        'container_name': {'key': 'containerName', 'type': 'str'},
-        'endpoint': {'key': 'endpoint', 'type': 'str'},
-        'protocol': {'key': 'protocol', 'type': 'str'},
-        'service_data_access_auth_identity': {'key': 'serviceDataAccessAuthIdentity', 'type': 'str'},
+        "description": {"key": "description", "type": "str"},
+        "properties": {"key": "properties", "type": "{str}"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "credentials": {"key": "credentials", "type": "DatastoreCredentials"},
+        "datastore_type": {"key": "datastoreType", "type": "str"},
+        "is_default": {"key": "isDefault", "type": "bool"},
+        "account_name": {"key": "accountName", "type": "str"},
+        "container_name": {"key": "containerName", "type": "str"},
+        "endpoint": {"key": "endpoint", "type": "str"},
+        "protocol": {"key": "protocol", "type": "str"},
+        "service_data_access_auth_identity": {
+            "key": "serviceDataAccessAuthIdentity",
+            "type": "str",
+        },
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword description: The asset description text.
         :paramtype description: str
@@ -1664,12 +1621,14 @@ class AzureBlobDatastore(DatastoreDetails):
          ~azure.mgmt.machinelearningservices.models.ServiceDataAccessAuthIdentity
         """
         super(AzureBlobDatastore, self).__init__(**kwargs)
-        self.datastore_type = 'AzureBlob'  # type: str
-        self.account_name = kwargs.get('account_name', None)
-        self.container_name = kwargs.get('container_name', None)
-        self.endpoint = kwargs.get('endpoint', None)
-        self.protocol = kwargs.get('protocol', None)
-        self.service_data_access_auth_identity = kwargs.get('service_data_access_auth_identity', None)
+        self.datastore_type = "AzureBlob"  # type: str
+        self.account_name = kwargs.get("account_name", None)
+        self.container_name = kwargs.get("container_name", None)
+        self.endpoint = kwargs.get("endpoint", None)
+        self.protocol = kwargs.get("protocol", None)
+        self.service_data_access_auth_identity = kwargs.get(
+            "service_data_access_auth_identity", None
+        )
 
 
 class AzureDataLakeGen1Datastore(DatastoreDetails):
@@ -1704,27 +1663,27 @@ class AzureDataLakeGen1Datastore(DatastoreDetails):
     """
 
     _validation = {
-        'credentials': {'required': True},
-        'datastore_type': {'required': True},
-        'is_default': {'readonly': True},
-        'store_name': {'required': True, 'pattern': r'[a-zA-Z0-9_]'},
+        "credentials": {"required": True},
+        "datastore_type": {"required": True},
+        "is_default": {"readonly": True},
+        "store_name": {"required": True, "pattern": r"[a-zA-Z0-9_]"},
     }
 
     _attribute_map = {
-        'description': {'key': 'description', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': '{str}'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'credentials': {'key': 'credentials', 'type': 'DatastoreCredentials'},
-        'datastore_type': {'key': 'datastoreType', 'type': 'str'},
-        'is_default': {'key': 'isDefault', 'type': 'bool'},
-        'service_data_access_auth_identity': {'key': 'serviceDataAccessAuthIdentity', 'type': 'str'},
-        'store_name': {'key': 'storeName', 'type': 'str'},
+        "description": {"key": "description", "type": "str"},
+        "properties": {"key": "properties", "type": "{str}"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "credentials": {"key": "credentials", "type": "DatastoreCredentials"},
+        "datastore_type": {"key": "datastoreType", "type": "str"},
+        "is_default": {"key": "isDefault", "type": "bool"},
+        "service_data_access_auth_identity": {
+            "key": "serviceDataAccessAuthIdentity",
+            "type": "str",
+        },
+        "store_name": {"key": "storeName", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword description: The asset description text.
         :paramtype description: str
@@ -1743,9 +1702,11 @@ class AzureDataLakeGen1Datastore(DatastoreDetails):
         :paramtype store_name: str
         """
         super(AzureDataLakeGen1Datastore, self).__init__(**kwargs)
-        self.datastore_type = 'AzureDataLakeGen1'  # type: str
-        self.service_data_access_auth_identity = kwargs.get('service_data_access_auth_identity', None)
-        self.store_name = kwargs['store_name']
+        self.datastore_type = "AzureDataLakeGen1"  # type: str
+        self.service_data_access_auth_identity = kwargs.get(
+            "service_data_access_auth_identity", None
+        )
+        self.store_name = kwargs["store_name"]
 
 
 class AzureDataLakeGen2Datastore(DatastoreDetails):
@@ -1786,31 +1747,31 @@ class AzureDataLakeGen2Datastore(DatastoreDetails):
     """
 
     _validation = {
-        'credentials': {'required': True},
-        'datastore_type': {'required': True},
-        'is_default': {'readonly': True},
-        'account_name': {'required': True, 'pattern': r'[a-zA-Z0-9_]'},
-        'filesystem': {'required': True, 'pattern': r'[a-zA-Z0-9_]'},
+        "credentials": {"required": True},
+        "datastore_type": {"required": True},
+        "is_default": {"readonly": True},
+        "account_name": {"required": True, "pattern": r"[a-zA-Z0-9_]"},
+        "filesystem": {"required": True, "pattern": r"[a-zA-Z0-9_]"},
     }
 
     _attribute_map = {
-        'description': {'key': 'description', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': '{str}'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'credentials': {'key': 'credentials', 'type': 'DatastoreCredentials'},
-        'datastore_type': {'key': 'datastoreType', 'type': 'str'},
-        'is_default': {'key': 'isDefault', 'type': 'bool'},
-        'account_name': {'key': 'accountName', 'type': 'str'},
-        'endpoint': {'key': 'endpoint', 'type': 'str'},
-        'filesystem': {'key': 'filesystem', 'type': 'str'},
-        'protocol': {'key': 'protocol', 'type': 'str'},
-        'service_data_access_auth_identity': {'key': 'serviceDataAccessAuthIdentity', 'type': 'str'},
+        "description": {"key": "description", "type": "str"},
+        "properties": {"key": "properties", "type": "{str}"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "credentials": {"key": "credentials", "type": "DatastoreCredentials"},
+        "datastore_type": {"key": "datastoreType", "type": "str"},
+        "is_default": {"key": "isDefault", "type": "bool"},
+        "account_name": {"key": "accountName", "type": "str"},
+        "endpoint": {"key": "endpoint", "type": "str"},
+        "filesystem": {"key": "filesystem", "type": "str"},
+        "protocol": {"key": "protocol", "type": "str"},
+        "service_data_access_auth_identity": {
+            "key": "serviceDataAccessAuthIdentity",
+            "type": "str",
+        },
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword description: The asset description text.
         :paramtype description: str
@@ -1835,12 +1796,14 @@ class AzureDataLakeGen2Datastore(DatastoreDetails):
          ~azure.mgmt.machinelearningservices.models.ServiceDataAccessAuthIdentity
         """
         super(AzureDataLakeGen2Datastore, self).__init__(**kwargs)
-        self.datastore_type = 'AzureDataLakeGen2'  # type: str
-        self.account_name = kwargs['account_name']
-        self.endpoint = kwargs.get('endpoint', None)
-        self.filesystem = kwargs['filesystem']
-        self.protocol = kwargs.get('protocol', None)
-        self.service_data_access_auth_identity = kwargs.get('service_data_access_auth_identity', None)
+        self.datastore_type = "AzureDataLakeGen2"  # type: str
+        self.account_name = kwargs["account_name"]
+        self.endpoint = kwargs.get("endpoint", None)
+        self.filesystem = kwargs["filesystem"]
+        self.protocol = kwargs.get("protocol", None)
+        self.service_data_access_auth_identity = kwargs.get(
+            "service_data_access_auth_identity", None
+        )
 
 
 class AzureFileDatastore(DatastoreDetails):
@@ -1881,31 +1844,31 @@ class AzureFileDatastore(DatastoreDetails):
     """
 
     _validation = {
-        'credentials': {'required': True},
-        'datastore_type': {'required': True},
-        'is_default': {'readonly': True},
-        'account_name': {'required': True, 'pattern': r'[a-zA-Z0-9_]'},
-        'file_share_name': {'required': True, 'pattern': r'[a-zA-Z0-9_]'},
+        "credentials": {"required": True},
+        "datastore_type": {"required": True},
+        "is_default": {"readonly": True},
+        "account_name": {"required": True, "pattern": r"[a-zA-Z0-9_]"},
+        "file_share_name": {"required": True, "pattern": r"[a-zA-Z0-9_]"},
     }
 
     _attribute_map = {
-        'description': {'key': 'description', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': '{str}'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'credentials': {'key': 'credentials', 'type': 'DatastoreCredentials'},
-        'datastore_type': {'key': 'datastoreType', 'type': 'str'},
-        'is_default': {'key': 'isDefault', 'type': 'bool'},
-        'account_name': {'key': 'accountName', 'type': 'str'},
-        'endpoint': {'key': 'endpoint', 'type': 'str'},
-        'file_share_name': {'key': 'fileShareName', 'type': 'str'},
-        'protocol': {'key': 'protocol', 'type': 'str'},
-        'service_data_access_auth_identity': {'key': 'serviceDataAccessAuthIdentity', 'type': 'str'},
+        "description": {"key": "description", "type": "str"},
+        "properties": {"key": "properties", "type": "{str}"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "credentials": {"key": "credentials", "type": "DatastoreCredentials"},
+        "datastore_type": {"key": "datastoreType", "type": "str"},
+        "is_default": {"key": "isDefault", "type": "bool"},
+        "account_name": {"key": "accountName", "type": "str"},
+        "endpoint": {"key": "endpoint", "type": "str"},
+        "file_share_name": {"key": "fileShareName", "type": "str"},
+        "protocol": {"key": "protocol", "type": "str"},
+        "service_data_access_auth_identity": {
+            "key": "serviceDataAccessAuthIdentity",
+            "type": "str",
+        },
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword description: The asset description text.
         :paramtype description: str
@@ -1930,12 +1893,14 @@ class AzureFileDatastore(DatastoreDetails):
          ~azure.mgmt.machinelearningservices.models.ServiceDataAccessAuthIdentity
         """
         super(AzureFileDatastore, self).__init__(**kwargs)
-        self.datastore_type = 'AzureFile'  # type: str
-        self.account_name = kwargs['account_name']
-        self.endpoint = kwargs.get('endpoint', None)
-        self.file_share_name = kwargs['file_share_name']
-        self.protocol = kwargs.get('protocol', None)
-        self.service_data_access_auth_identity = kwargs.get('service_data_access_auth_identity', None)
+        self.datastore_type = "AzureFile"  # type: str
+        self.account_name = kwargs["account_name"]
+        self.endpoint = kwargs.get("endpoint", None)
+        self.file_share_name = kwargs["file_share_name"]
+        self.protocol = kwargs.get("protocol", None)
+        self.service_data_access_auth_identity = kwargs.get(
+            "service_data_access_auth_identity", None
+        )
 
 
 class EarlyTerminationPolicy(msrest.serialization.Model):
@@ -1957,23 +1922,24 @@ class EarlyTerminationPolicy(msrest.serialization.Model):
     """
 
     _validation = {
-        'policy_type': {'required': True},
+        "policy_type": {"required": True},
     }
 
     _attribute_map = {
-        'delay_evaluation': {'key': 'delayEvaluation', 'type': 'int'},
-        'evaluation_interval': {'key': 'evaluationInterval', 'type': 'int'},
-        'policy_type': {'key': 'policyType', 'type': 'str'},
+        "delay_evaluation": {"key": "delayEvaluation", "type": "int"},
+        "evaluation_interval": {"key": "evaluationInterval", "type": "int"},
+        "policy_type": {"key": "policyType", "type": "str"},
     }
 
     _subtype_map = {
-        'policy_type': {'Bandit': 'BanditPolicy', 'MedianStopping': 'MedianStoppingPolicy', 'TruncationSelection': 'TruncationSelectionPolicy'}
+        "policy_type": {
+            "Bandit": "BanditPolicy",
+            "MedianStopping": "MedianStoppingPolicy",
+            "TruncationSelection": "TruncationSelectionPolicy",
+        }
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword delay_evaluation: Number of intervals by which to delay the first evaluation.
         :paramtype delay_evaluation: int
@@ -1981,8 +1947,8 @@ class EarlyTerminationPolicy(msrest.serialization.Model):
         :paramtype evaluation_interval: int
         """
         super(EarlyTerminationPolicy, self).__init__(**kwargs)
-        self.delay_evaluation = kwargs.get('delay_evaluation', 0)
-        self.evaluation_interval = kwargs.get('evaluation_interval', 0)
+        self.delay_evaluation = kwargs.get("delay_evaluation", 0)
+        self.evaluation_interval = kwargs.get("evaluation_interval", 0)
         self.policy_type = None  # type: Optional[str]
 
 
@@ -2006,21 +1972,18 @@ class BanditPolicy(EarlyTerminationPolicy):
     """
 
     _validation = {
-        'policy_type': {'required': True},
+        "policy_type": {"required": True},
     }
 
     _attribute_map = {
-        'delay_evaluation': {'key': 'delayEvaluation', 'type': 'int'},
-        'evaluation_interval': {'key': 'evaluationInterval', 'type': 'int'},
-        'policy_type': {'key': 'policyType', 'type': 'str'},
-        'slack_amount': {'key': 'slackAmount', 'type': 'float'},
-        'slack_factor': {'key': 'slackFactor', 'type': 'float'},
+        "delay_evaluation": {"key": "delayEvaluation", "type": "int"},
+        "evaluation_interval": {"key": "evaluationInterval", "type": "int"},
+        "policy_type": {"key": "policyType", "type": "str"},
+        "slack_amount": {"key": "slackAmount", "type": "float"},
+        "slack_factor": {"key": "slackFactor", "type": "float"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword delay_evaluation: Number of intervals by which to delay the first evaluation.
         :paramtype delay_evaluation: int
@@ -2032,9 +1995,9 @@ class BanditPolicy(EarlyTerminationPolicy):
         :paramtype slack_factor: float
         """
         super(BanditPolicy, self).__init__(**kwargs)
-        self.policy_type = 'Bandit'  # type: str
-        self.slack_amount = kwargs.get('slack_amount', 0)
-        self.slack_factor = kwargs.get('slack_factor', 0)
+        self.policy_type = "Bandit"  # type: str
+        self.slack_amount = kwargs.get("slack_amount", 0)
+        self.slack_factor = kwargs.get("slack_factor", 0)
 
 
 class Resource(msrest.serialization.Model):
@@ -2056,25 +2019,21 @@ class Resource(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs):
+        """ """
         super(Resource, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -2107,26 +2066,23 @@ class TrackedResource(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'location': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "location": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword tags: A set of tags. Resource tags.
         :paramtype tags: dict[str, str]
@@ -2134,8 +2090,8 @@ class TrackedResource(Resource):
         :paramtype location: str
         """
         super(TrackedResource, self).__init__(**kwargs)
-        self.tags = kwargs.get('tags', None)
-        self.location = kwargs['location']
+        self.tags = kwargs.get("tags", None)
+        self.location = kwargs["location"]
 
 
 class BatchDeploymentData(TrackedResource):
@@ -2172,31 +2128,28 @@ class BatchDeploymentData(TrackedResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'location': {'required': True},
-        'properties': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "location": {"required": True},
+        "properties": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
-        'identity': {'key': 'identity', 'type': 'ManagedServiceIdentity'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'BatchDeploymentDetails'},
-        'sku': {'key': 'sku', 'type': 'Sku'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+        "identity": {"key": "identity", "type": "ManagedServiceIdentity"},
+        "kind": {"key": "kind", "type": "str"},
+        "properties": {"key": "properties", "type": "BatchDeploymentDetails"},
+        "sku": {"key": "sku", "type": "Sku"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword tags: A set of tags. Resource tags.
         :paramtype tags: dict[str, str]
@@ -2213,10 +2166,10 @@ class BatchDeploymentData(TrackedResource):
         :paramtype sku: ~azure.mgmt.machinelearningservices.models.Sku
         """
         super(BatchDeploymentData, self).__init__(**kwargs)
-        self.identity = kwargs.get('identity', None)
-        self.kind = kwargs.get('kind', None)
-        self.properties = kwargs['properties']
-        self.sku = kwargs.get('sku', None)
+        self.identity = kwargs.get("identity", None)
+        self.kind = kwargs.get("kind", None)
+        self.properties = kwargs["properties"]
+        self.sku = kwargs.get("sku", None)
 
 
 class EndpointDeploymentPropertiesBase(msrest.serialization.Model):
@@ -2236,17 +2189,14 @@ class EndpointDeploymentPropertiesBase(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'code_configuration': {'key': 'codeConfiguration', 'type': 'CodeConfiguration'},
-        'description': {'key': 'description', 'type': 'str'},
-        'environment_id': {'key': 'environmentId', 'type': 'str'},
-        'environment_variables': {'key': 'environmentVariables', 'type': '{str}'},
-        'properties': {'key': 'properties', 'type': '{str}'},
+        "code_configuration": {"key": "codeConfiguration", "type": "CodeConfiguration"},
+        "description": {"key": "description", "type": "str"},
+        "environment_id": {"key": "environmentId", "type": "str"},
+        "environment_variables": {"key": "environmentVariables", "type": "{str}"},
+        "properties": {"key": "properties", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword code_configuration: Code configuration for the endpoint deployment.
         :paramtype code_configuration: ~azure.mgmt.machinelearningservices.models.CodeConfiguration
@@ -2261,11 +2211,11 @@ class EndpointDeploymentPropertiesBase(msrest.serialization.Model):
         :paramtype properties: dict[str, str]
         """
         super(EndpointDeploymentPropertiesBase, self).__init__(**kwargs)
-        self.code_configuration = kwargs.get('code_configuration', None)
-        self.description = kwargs.get('description', None)
-        self.environment_id = kwargs.get('environment_id', None)
-        self.environment_variables = kwargs.get('environment_variables', None)
-        self.properties = kwargs.get('properties', None)
+        self.code_configuration = kwargs.get("code_configuration", None)
+        self.description = kwargs.get("description", None)
+        self.environment_id = kwargs.get("environment_id", None)
+        self.environment_variables = kwargs.get("environment_variables", None)
+        self.properties = kwargs.get("properties", None)
 
 
 class BatchDeploymentDetails(EndpointDeploymentPropertiesBase):
@@ -2322,32 +2272,32 @@ class BatchDeploymentDetails(EndpointDeploymentPropertiesBase):
     """
 
     _validation = {
-        'provisioning_state': {'readonly': True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'code_configuration': {'key': 'codeConfiguration', 'type': 'CodeConfiguration'},
-        'description': {'key': 'description', 'type': 'str'},
-        'environment_id': {'key': 'environmentId', 'type': 'str'},
-        'environment_variables': {'key': 'environmentVariables', 'type': '{str}'},
-        'properties': {'key': 'properties', 'type': '{str}'},
-        'compute': {'key': 'compute', 'type': 'str'},
-        'error_threshold': {'key': 'errorThreshold', 'type': 'int'},
-        'logging_level': {'key': 'loggingLevel', 'type': 'str'},
-        'max_concurrency_per_instance': {'key': 'maxConcurrencyPerInstance', 'type': 'int'},
-        'mini_batch_size': {'key': 'miniBatchSize', 'type': 'long'},
-        'model': {'key': 'model', 'type': 'AssetReferenceBase'},
-        'output_action': {'key': 'outputAction', 'type': 'str'},
-        'output_file_name': {'key': 'outputFileName', 'type': 'str'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'resources': {'key': 'resources', 'type': 'ResourceConfiguration'},
-        'retry_settings': {'key': 'retrySettings', 'type': 'BatchRetrySettings'},
+        "code_configuration": {"key": "codeConfiguration", "type": "CodeConfiguration"},
+        "description": {"key": "description", "type": "str"},
+        "environment_id": {"key": "environmentId", "type": "str"},
+        "environment_variables": {"key": "environmentVariables", "type": "{str}"},
+        "properties": {"key": "properties", "type": "{str}"},
+        "compute": {"key": "compute", "type": "str"},
+        "error_threshold": {"key": "errorThreshold", "type": "int"},
+        "logging_level": {"key": "loggingLevel", "type": "str"},
+        "max_concurrency_per_instance": {
+            "key": "maxConcurrencyPerInstance",
+            "type": "int",
+        },
+        "mini_batch_size": {"key": "miniBatchSize", "type": "long"},
+        "model": {"key": "model", "type": "AssetReferenceBase"},
+        "output_action": {"key": "outputAction", "type": "str"},
+        "output_file_name": {"key": "outputFileName", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "resources": {"key": "resources", "type": "ResourceConfiguration"},
+        "retry_settings": {"key": "retrySettings", "type": "BatchRetrySettings"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword code_configuration: Code configuration for the endpoint deployment.
         :paramtype code_configuration: ~azure.mgmt.machinelearningservices.models.CodeConfiguration
@@ -2393,17 +2343,19 @@ class BatchDeploymentDetails(EndpointDeploymentPropertiesBase):
         :paramtype retry_settings: ~azure.mgmt.machinelearningservices.models.BatchRetrySettings
         """
         super(BatchDeploymentDetails, self).__init__(**kwargs)
-        self.compute = kwargs.get('compute', None)
-        self.error_threshold = kwargs.get('error_threshold', -1)
-        self.logging_level = kwargs.get('logging_level', None)
-        self.max_concurrency_per_instance = kwargs.get('max_concurrency_per_instance', 1)
-        self.mini_batch_size = kwargs.get('mini_batch_size', 10)
-        self.model = kwargs.get('model', None)
-        self.output_action = kwargs.get('output_action', None)
-        self.output_file_name = kwargs.get('output_file_name', "predictions.csv")
+        self.compute = kwargs.get("compute", None)
+        self.error_threshold = kwargs.get("error_threshold", -1)
+        self.logging_level = kwargs.get("logging_level", None)
+        self.max_concurrency_per_instance = kwargs.get(
+            "max_concurrency_per_instance", 1
+        )
+        self.mini_batch_size = kwargs.get("mini_batch_size", 10)
+        self.model = kwargs.get("model", None)
+        self.output_action = kwargs.get("output_action", None)
+        self.output_file_name = kwargs.get("output_file_name", "predictions.csv")
         self.provisioning_state = None
-        self.resources = kwargs.get('resources', None)
-        self.retry_settings = kwargs.get('retry_settings', None)
+        self.resources = kwargs.get("resources", None)
+        self.retry_settings = kwargs.get("retry_settings", None)
 
 
 class BatchDeploymentTrackedResourceArmPaginatedResult(msrest.serialization.Model):
@@ -2417,14 +2369,11 @@ class BatchDeploymentTrackedResourceArmPaginatedResult(msrest.serialization.Mode
     """
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'value': {'key': 'value', 'type': '[BatchDeploymentData]'},
+        "next_link": {"key": "nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[BatchDeploymentData]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword next_link: The link to the next page of BatchDeployment objects. If null, there are no
          additional pages.
@@ -2433,8 +2382,8 @@ class BatchDeploymentTrackedResourceArmPaginatedResult(msrest.serialization.Mode
         :paramtype value: list[~azure.mgmt.machinelearningservices.models.BatchDeploymentData]
         """
         super(BatchDeploymentTrackedResourceArmPaginatedResult, self).__init__(**kwargs)
-        self.next_link = kwargs.get('next_link', None)
-        self.value = kwargs.get('value', None)
+        self.next_link = kwargs.get("next_link", None)
+        self.value = kwargs.get("value", None)
 
 
 class BatchEndpointData(TrackedResource):
@@ -2471,31 +2420,28 @@ class BatchEndpointData(TrackedResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'location': {'required': True},
-        'properties': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "location": {"required": True},
+        "properties": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
-        'identity': {'key': 'identity', 'type': 'ManagedServiceIdentity'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'BatchEndpointDetails'},
-        'sku': {'key': 'sku', 'type': 'Sku'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+        "identity": {"key": "identity", "type": "ManagedServiceIdentity"},
+        "kind": {"key": "kind", "type": "str"},
+        "properties": {"key": "properties", "type": "BatchEndpointDetails"},
+        "sku": {"key": "sku", "type": "Sku"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword tags: A set of tags. Resource tags.
         :paramtype tags: dict[str, str]
@@ -2512,10 +2458,10 @@ class BatchEndpointData(TrackedResource):
         :paramtype sku: ~azure.mgmt.machinelearningservices.models.Sku
         """
         super(BatchEndpointData, self).__init__(**kwargs)
-        self.identity = kwargs.get('identity', None)
-        self.kind = kwargs.get('kind', None)
-        self.properties = kwargs['properties']
-        self.sku = kwargs.get('sku', None)
+        self.identity = kwargs.get("identity", None)
+        self.kind = kwargs.get("kind", None)
+        self.properties = kwargs["properties"]
+        self.sku = kwargs.get("sku", None)
 
 
 class BatchEndpointDefaults(msrest.serialization.Model):
@@ -2527,20 +2473,17 @@ class BatchEndpointDefaults(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'deployment_name': {'key': 'deploymentName', 'type': 'str'},
+        "deployment_name": {"key": "deploymentName", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword deployment_name: Name of the deployment that will be default for the endpoint.
          This deployment will end up getting 100% traffic when the endpoint scoring URL is invoked.
         :paramtype deployment_name: str
         """
         super(BatchEndpointDefaults, self).__init__(**kwargs)
-        self.deployment_name = kwargs.get('deployment_name', None)
+        self.deployment_name = kwargs.get("deployment_name", None)
 
 
 class EndpointPropertiesBase(msrest.serialization.Model):
@@ -2569,24 +2512,21 @@ class EndpointPropertiesBase(msrest.serialization.Model):
     """
 
     _validation = {
-        'auth_mode': {'required': True},
-        'scoring_uri': {'readonly': True},
-        'swagger_uri': {'readonly': True},
+        "auth_mode": {"required": True},
+        "scoring_uri": {"readonly": True},
+        "swagger_uri": {"readonly": True},
     }
 
     _attribute_map = {
-        'auth_mode': {'key': 'authMode', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'keys': {'key': 'keys', 'type': 'EndpointAuthKeys'},
-        'properties': {'key': 'properties', 'type': '{str}'},
-        'scoring_uri': {'key': 'scoringUri', 'type': 'str'},
-        'swagger_uri': {'key': 'swaggerUri', 'type': 'str'},
+        "auth_mode": {"key": "authMode", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "keys": {"key": "keys", "type": "EndpointAuthKeys"},
+        "properties": {"key": "properties", "type": "{str}"},
+        "scoring_uri": {"key": "scoringUri", "type": "str"},
+        "swagger_uri": {"key": "swaggerUri", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword auth_mode: Required. [Required] Use 'Key' for key based authentication and 'AMLToken'
          for Azure Machine Learning token-based authentication. 'Key' doesn't expire but 'AMLToken'
@@ -2602,10 +2542,10 @@ class EndpointPropertiesBase(msrest.serialization.Model):
         :paramtype properties: dict[str, str]
         """
         super(EndpointPropertiesBase, self).__init__(**kwargs)
-        self.auth_mode = kwargs['auth_mode']
-        self.description = kwargs.get('description', None)
-        self.keys = kwargs.get('keys', None)
-        self.properties = kwargs.get('properties', None)
+        self.auth_mode = kwargs["auth_mode"]
+        self.description = kwargs.get("description", None)
+        self.keys = kwargs.get("keys", None)
+        self.properties = kwargs.get("properties", None)
         self.scoring_uri = None
         self.swagger_uri = None
 
@@ -2642,27 +2582,24 @@ class BatchEndpointDetails(EndpointPropertiesBase):
     """
 
     _validation = {
-        'auth_mode': {'required': True},
-        'scoring_uri': {'readonly': True},
-        'swagger_uri': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "auth_mode": {"required": True},
+        "scoring_uri": {"readonly": True},
+        "swagger_uri": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'auth_mode': {'key': 'authMode', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'keys': {'key': 'keys', 'type': 'EndpointAuthKeys'},
-        'properties': {'key': 'properties', 'type': '{str}'},
-        'scoring_uri': {'key': 'scoringUri', 'type': 'str'},
-        'swagger_uri': {'key': 'swaggerUri', 'type': 'str'},
-        'defaults': {'key': 'defaults', 'type': 'BatchEndpointDefaults'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
+        "auth_mode": {"key": "authMode", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "keys": {"key": "keys", "type": "EndpointAuthKeys"},
+        "properties": {"key": "properties", "type": "{str}"},
+        "scoring_uri": {"key": "scoringUri", "type": "str"},
+        "swagger_uri": {"key": "swaggerUri", "type": "str"},
+        "defaults": {"key": "defaults", "type": "BatchEndpointDefaults"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword auth_mode: Required. [Required] Use 'Key' for key based authentication and 'AMLToken'
          for Azure Machine Learning token-based authentication. 'Key' doesn't expire but 'AMLToken'
@@ -2680,7 +2617,7 @@ class BatchEndpointDetails(EndpointPropertiesBase):
         :paramtype defaults: ~azure.mgmt.machinelearningservices.models.BatchEndpointDefaults
         """
         super(BatchEndpointDetails, self).__init__(**kwargs)
-        self.defaults = kwargs.get('defaults', None)
+        self.defaults = kwargs.get("defaults", None)
         self.provisioning_state = None
 
 
@@ -2695,14 +2632,11 @@ class BatchEndpointTrackedResourceArmPaginatedResult(msrest.serialization.Model)
     """
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'value': {'key': 'value', 'type': '[BatchEndpointData]'},
+        "next_link": {"key": "nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[BatchEndpointData]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword next_link: The link to the next page of BatchEndpoint objects. If null, there are no
          additional pages.
@@ -2711,8 +2645,8 @@ class BatchEndpointTrackedResourceArmPaginatedResult(msrest.serialization.Model)
         :paramtype value: list[~azure.mgmt.machinelearningservices.models.BatchEndpointData]
         """
         super(BatchEndpointTrackedResourceArmPaginatedResult, self).__init__(**kwargs)
-        self.next_link = kwargs.get('next_link', None)
-        self.value = kwargs.get('value', None)
+        self.next_link = kwargs.get("next_link", None)
+        self.value = kwargs.get("value", None)
 
 
 class BatchRetrySettings(msrest.serialization.Model):
@@ -2725,14 +2659,11 @@ class BatchRetrySettings(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'max_retries': {'key': 'maxRetries', 'type': 'int'},
-        'timeout': {'key': 'timeout', 'type': 'duration'},
+        "max_retries": {"key": "maxRetries", "type": "int"},
+        "timeout": {"key": "timeout", "type": "duration"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword max_retries: Maximum retry count for a mini-batch.
         :paramtype max_retries: int
@@ -2740,44 +2671,44 @@ class BatchRetrySettings(msrest.serialization.Model):
         :paramtype timeout: ~datetime.timedelta
         """
         super(BatchRetrySettings, self).__init__(**kwargs)
-        self.max_retries = kwargs.get('max_retries', 3)
-        self.timeout = kwargs.get('timeout', "PT30S")
+        self.max_retries = kwargs.get("max_retries", 3)
+        self.timeout = kwargs.get("timeout", "PT30S")
 
 
 class SamplingAlgorithm(msrest.serialization.Model):
     """The Sampling Algorithm used to generate hyperparameter values, along with properties to
-configure the algorithm.
+    configure the algorithm.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: BayesianSamplingAlgorithm, GridSamplingAlgorithm, RandomSamplingAlgorithm.
+        You probably want to use the sub-classes and not this class directly. Known
+        sub-classes are: BayesianSamplingAlgorithm, GridSamplingAlgorithm, RandomSamplingAlgorithm.
 
-    All required parameters must be populated in order to send to Azure.
+        All required parameters must be populated in order to send to Azure.
 
-    :ivar sampling_algorithm_type: Required. [Required] The algorithm used for generating
-     hyperparameter values, along with configuration properties.Constant filled by server. Possible
-     values include: "Grid", "Random", "Bayesian".
-    :vartype sampling_algorithm_type: str or
-     ~azure.mgmt.machinelearningservices.models.SamplingAlgorithmType
+        :ivar sampling_algorithm_type: Required. [Required] The algorithm used for generating
+         hyperparameter values, along with configuration properties.Constant filled by server. Possible
+         values include: "Grid", "Random", "Bayesian".
+        :vartype sampling_algorithm_type: str or
+         ~azure.mgmt.machinelearningservices.models.SamplingAlgorithmType
     """
 
     _validation = {
-        'sampling_algorithm_type': {'required': True},
+        "sampling_algorithm_type": {"required": True},
     }
 
     _attribute_map = {
-        'sampling_algorithm_type': {'key': 'samplingAlgorithmType', 'type': 'str'},
+        "sampling_algorithm_type": {"key": "samplingAlgorithmType", "type": "str"},
     }
 
     _subtype_map = {
-        'sampling_algorithm_type': {'Bayesian': 'BayesianSamplingAlgorithm', 'Grid': 'GridSamplingAlgorithm', 'Random': 'RandomSamplingAlgorithm'}
+        "sampling_algorithm_type": {
+            "Bayesian": "BayesianSamplingAlgorithm",
+            "Grid": "GridSamplingAlgorithm",
+            "Random": "RandomSamplingAlgorithm",
+        }
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs):
+        """ """
         super(SamplingAlgorithm, self).__init__(**kwargs)
         self.sampling_algorithm_type = None  # type: Optional[str]
 
@@ -2795,21 +2726,17 @@ class BayesianSamplingAlgorithm(SamplingAlgorithm):
     """
 
     _validation = {
-        'sampling_algorithm_type': {'required': True},
+        "sampling_algorithm_type": {"required": True},
     }
 
     _attribute_map = {
-        'sampling_algorithm_type': {'key': 'samplingAlgorithmType', 'type': 'str'},
+        "sampling_algorithm_type": {"key": "samplingAlgorithmType", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs):
+        """ """
         super(BayesianSamplingAlgorithm, self).__init__(**kwargs)
-        self.sampling_algorithm_type = 'Bayesian'  # type: str
+        self.sampling_algorithm_type = "Bayesian"  # type: str
 
 
 class BuildContext(msrest.serialization.Model):
@@ -2819,56 +2746,53 @@ class BuildContext(msrest.serialization.Model):
 
     :ivar context_uri: Required. [Required] URI of the Docker build context used to build the
      image. Supports blob URIs on environment creation and may return blob or Git URIs.
-    
-    
+
+
      .. raw:: html
-    
+
         <seealso
      href="https://docs.docker.com/engine/reference/commandline/build/#extended-description" />.
     :vartype context_uri: str
     :ivar dockerfile_path: Path to the Dockerfile in the build context.
-    
-    
+
+
      .. raw:: html
-    
+
         <seealso href="https://docs.docker.com/engine/reference/builder/" />.
     :vartype dockerfile_path: str
     """
 
     _validation = {
-        'context_uri': {'required': True, 'pattern': r'[a-zA-Z0-9_]'},
+        "context_uri": {"required": True, "pattern": r"[a-zA-Z0-9_]"},
     }
 
     _attribute_map = {
-        'context_uri': {'key': 'contextUri', 'type': 'str'},
-        'dockerfile_path': {'key': 'dockerfilePath', 'type': 'str'},
+        "context_uri": {"key": "contextUri", "type": "str"},
+        "dockerfile_path": {"key": "dockerfilePath", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword context_uri: Required. [Required] URI of the Docker build context used to build the
          image. Supports blob URIs on environment creation and may return blob or Git URIs.
-        
-        
+
+
          .. raw:: html
-        
+
             <seealso
          href="https://docs.docker.com/engine/reference/commandline/build/#extended-description" />.
         :paramtype context_uri: str
         :keyword dockerfile_path: Path to the Dockerfile in the build context.
-        
-        
+
+
          .. raw:: html
-        
+
             <seealso href="https://docs.docker.com/engine/reference/builder/" />.
         :paramtype dockerfile_path: str
         """
         super(BuildContext, self).__init__(**kwargs)
-        self.context_uri = kwargs['context_uri']
-        self.dockerfile_path = kwargs.get('dockerfile_path', "Dockerfile")
+        self.context_uri = kwargs["context_uri"]
+        self.dockerfile_path = kwargs.get("dockerfile_path", "Dockerfile")
 
 
 class CertificateDatastoreCredentials(DatastoreCredentials):
@@ -2895,27 +2819,24 @@ class CertificateDatastoreCredentials(DatastoreCredentials):
     """
 
     _validation = {
-        'credentials_type': {'required': True},
-        'client_id': {'required': True},
-        'secrets': {'required': True},
-        'tenant_id': {'required': True},
-        'thumbprint': {'required': True, 'pattern': r'[a-zA-Z0-9_]'},
+        "credentials_type": {"required": True},
+        "client_id": {"required": True},
+        "secrets": {"required": True},
+        "tenant_id": {"required": True},
+        "thumbprint": {"required": True, "pattern": r"[a-zA-Z0-9_]"},
     }
 
     _attribute_map = {
-        'credentials_type': {'key': 'credentialsType', 'type': 'str'},
-        'authority_url': {'key': 'authorityUrl', 'type': 'str'},
-        'client_id': {'key': 'clientId', 'type': 'str'},
-        'resource_url': {'key': 'resourceUrl', 'type': 'str'},
-        'secrets': {'key': 'secrets', 'type': 'CertificateDatastoreSecrets'},
-        'tenant_id': {'key': 'tenantId', 'type': 'str'},
-        'thumbprint': {'key': 'thumbprint', 'type': 'str'},
+        "credentials_type": {"key": "credentialsType", "type": "str"},
+        "authority_url": {"key": "authorityUrl", "type": "str"},
+        "client_id": {"key": "clientId", "type": "str"},
+        "resource_url": {"key": "resourceUrl", "type": "str"},
+        "secrets": {"key": "secrets", "type": "CertificateDatastoreSecrets"},
+        "tenant_id": {"key": "tenantId", "type": "str"},
+        "thumbprint": {"key": "thumbprint", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword authority_url: Authority URL used for authentication.
         :paramtype authority_url: str
@@ -2933,13 +2854,13 @@ class CertificateDatastoreCredentials(DatastoreCredentials):
         :paramtype thumbprint: str
         """
         super(CertificateDatastoreCredentials, self).__init__(**kwargs)
-        self.credentials_type = 'Certificate'  # type: str
-        self.authority_url = kwargs.get('authority_url', None)
-        self.client_id = kwargs['client_id']
-        self.resource_url = kwargs.get('resource_url', None)
-        self.secrets = kwargs['secrets']
-        self.tenant_id = kwargs['tenant_id']
-        self.thumbprint = kwargs['thumbprint']
+        self.credentials_type = "Certificate"  # type: str
+        self.authority_url = kwargs.get("authority_url", None)
+        self.client_id = kwargs["client_id"]
+        self.resource_url = kwargs.get("resource_url", None)
+        self.secrets = kwargs["secrets"]
+        self.tenant_id = kwargs["tenant_id"]
+        self.thumbprint = kwargs["thumbprint"]
 
 
 class CertificateDatastoreSecrets(DatastoreSecrets):
@@ -2956,25 +2877,22 @@ class CertificateDatastoreSecrets(DatastoreSecrets):
     """
 
     _validation = {
-        'secrets_type': {'required': True},
+        "secrets_type": {"required": True},
     }
 
     _attribute_map = {
-        'secrets_type': {'key': 'secretsType', 'type': 'str'},
-        'certificate': {'key': 'certificate', 'type': 'str'},
+        "secrets_type": {"key": "secretsType", "type": "str"},
+        "certificate": {"key": "certificate", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword certificate: Service principal certificate.
         :paramtype certificate: str
         """
         super(CertificateDatastoreSecrets, self).__init__(**kwargs)
-        self.secrets_type = 'Certificate'  # type: str
-        self.certificate = kwargs.get('certificate', None)
+        self.secrets_type = "Certificate"  # type: str
+        self.certificate = kwargs.get("certificate", None)
 
 
 class ClusterUpdateParameters(msrest.serialization.Model):
@@ -2985,19 +2903,19 @@ class ClusterUpdateParameters(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'properties': {'key': 'properties.properties', 'type': 'ScaleSettingsInformation'},
+        "properties": {
+            "key": "properties.properties",
+            "type": "ScaleSettingsInformation",
+        },
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword properties: Properties of ClusterUpdate.
         :paramtype properties: ~azure.mgmt.machinelearningservices.models.ScaleSettingsInformation
         """
         super(ClusterUpdateParameters, self).__init__(**kwargs)
-        self.properties = kwargs.get('properties', None)
+        self.properties = kwargs.get("properties", None)
 
 
 class CodeConfiguration(msrest.serialization.Model):
@@ -3012,18 +2930,19 @@ class CodeConfiguration(msrest.serialization.Model):
     """
 
     _validation = {
-        'scoring_script': {'required': True, 'min_length': 1, 'pattern': r'[a-zA-Z0-9_]'},
+        "scoring_script": {
+            "required": True,
+            "min_length": 1,
+            "pattern": r"[a-zA-Z0-9_]",
+        },
     }
 
     _attribute_map = {
-        'code_id': {'key': 'codeId', 'type': 'str'},
-        'scoring_script': {'key': 'scoringScript', 'type': 'str'},
+        "code_id": {"key": "codeId", "type": "str"},
+        "scoring_script": {"key": "scoringScript", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword code_id: ARM resource ID of the code asset.
         :paramtype code_id: str
@@ -3031,8 +2950,8 @@ class CodeConfiguration(msrest.serialization.Model):
         :paramtype scoring_script: str
         """
         super(CodeConfiguration, self).__init__(**kwargs)
-        self.code_id = kwargs.get('code_id', None)
-        self.scoring_script = kwargs['scoring_script']
+        self.code_id = kwargs.get("code_id", None)
+        self.scoring_script = kwargs["scoring_script"]
 
 
 class CodeContainerData(Resource):
@@ -3058,31 +2977,28 @@ class CodeContainerData(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'properties': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "properties": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'properties': {'key': 'properties', 'type': 'CodeContainerDetails'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "properties": {"key": "properties", "type": "CodeContainerDetails"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword properties: Required. [Required] Additional attributes of the entity.
         :paramtype properties: ~azure.mgmt.machinelearningservices.models.CodeContainerDetails
         """
         super(CodeContainerData, self).__init__(**kwargs)
-        self.properties = kwargs['properties']
+        self.properties = kwargs["properties"]
 
 
 class CodeContainerDetails(AssetContainer):
@@ -3105,23 +3021,20 @@ class CodeContainerDetails(AssetContainer):
     """
 
     _validation = {
-        'latest_version': {'readonly': True},
-        'next_version': {'readonly': True},
+        "latest_version": {"readonly": True},
+        "next_version": {"readonly": True},
     }
 
     _attribute_map = {
-        'description': {'key': 'description', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': '{str}'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'is_archived': {'key': 'isArchived', 'type': 'bool'},
-        'latest_version': {'key': 'latestVersion', 'type': 'str'},
-        'next_version': {'key': 'nextVersion', 'type': 'str'},
+        "description": {"key": "description", "type": "str"},
+        "properties": {"key": "properties", "type": "{str}"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "is_archived": {"key": "isArchived", "type": "bool"},
+        "latest_version": {"key": "latestVersion", "type": "str"},
+        "next_version": {"key": "nextVersion", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword description: The asset description text.
         :paramtype description: str
@@ -3146,14 +3059,11 @@ class CodeContainerResourceArmPaginatedResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'value': {'key': 'value', 'type': '[CodeContainerData]'},
+        "next_link": {"key": "nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[CodeContainerData]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword next_link: The link to the next page of CodeContainer objects. If null, there are no
          additional pages.
@@ -3162,8 +3072,8 @@ class CodeContainerResourceArmPaginatedResult(msrest.serialization.Model):
         :paramtype value: list[~azure.mgmt.machinelearningservices.models.CodeContainerData]
         """
         super(CodeContainerResourceArmPaginatedResult, self).__init__(**kwargs)
-        self.next_link = kwargs.get('next_link', None)
-        self.value = kwargs.get('value', None)
+        self.next_link = kwargs.get("next_link", None)
+        self.value = kwargs.get("value", None)
 
 
 class CodeVersionData(Resource):
@@ -3189,31 +3099,28 @@ class CodeVersionData(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'properties': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "properties": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'properties': {'key': 'properties', 'type': 'CodeVersionDetails'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "properties": {"key": "properties", "type": "CodeVersionDetails"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword properties: Required. [Required] Additional attributes of the entity.
         :paramtype properties: ~azure.mgmt.machinelearningservices.models.CodeVersionDetails
         """
         super(CodeVersionData, self).__init__(**kwargs)
-        self.properties = kwargs['properties']
+        self.properties = kwargs["properties"]
 
 
 class CodeVersionDetails(AssetBase):
@@ -3234,18 +3141,15 @@ class CodeVersionDetails(AssetBase):
     """
 
     _attribute_map = {
-        'description': {'key': 'description', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': '{str}'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'is_anonymous': {'key': 'isAnonymous', 'type': 'bool'},
-        'is_archived': {'key': 'isArchived', 'type': 'bool'},
-        'code_uri': {'key': 'codeUri', 'type': 'str'},
+        "description": {"key": "description", "type": "str"},
+        "properties": {"key": "properties", "type": "{str}"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "is_anonymous": {"key": "isAnonymous", "type": "bool"},
+        "is_archived": {"key": "isArchived", "type": "bool"},
+        "code_uri": {"key": "codeUri", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword description: The asset description text.
         :paramtype description: str
@@ -3261,7 +3165,7 @@ class CodeVersionDetails(AssetBase):
         :paramtype code_uri: str
         """
         super(CodeVersionDetails, self).__init__(**kwargs)
-        self.code_uri = kwargs.get('code_uri', None)
+        self.code_uri = kwargs.get("code_uri", None)
 
 
 class CodeVersionResourceArmPaginatedResult(msrest.serialization.Model):
@@ -3275,14 +3179,11 @@ class CodeVersionResourceArmPaginatedResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'value': {'key': 'value', 'type': '[CodeVersionData]'},
+        "next_link": {"key": "nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[CodeVersionData]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword next_link: The link to the next page of CodeVersion objects. If null, there are no
          additional pages.
@@ -3291,8 +3192,8 @@ class CodeVersionResourceArmPaginatedResult(msrest.serialization.Model):
         :paramtype value: list[~azure.mgmt.machinelearningservices.models.CodeVersionData]
         """
         super(CodeVersionResourceArmPaginatedResult, self).__init__(**kwargs)
-        self.next_link = kwargs.get('next_link', None)
-        self.value = kwargs.get('value', None)
+        self.next_link = kwargs.get("next_link", None)
+        self.value = kwargs.get("value", None)
 
 
 class JobBaseDetails(ResourceBase):
@@ -3337,32 +3238,33 @@ class JobBaseDetails(ResourceBase):
     """
 
     _validation = {
-        'job_type': {'required': True},
-        'status': {'readonly': True},
+        "job_type": {"required": True},
+        "status": {"readonly": True},
     }
 
     _attribute_map = {
-        'description': {'key': 'description', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': '{str}'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'compute_id': {'key': 'computeId', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'experiment_name': {'key': 'experimentName', 'type': 'str'},
-        'identity': {'key': 'identity', 'type': 'IdentityConfiguration'},
-        'is_archived': {'key': 'isArchived', 'type': 'bool'},
-        'job_type': {'key': 'jobType', 'type': 'str'},
-        'services': {'key': 'services', 'type': '{JobService}'},
-        'status': {'key': 'status', 'type': 'str'},
+        "description": {"key": "description", "type": "str"},
+        "properties": {"key": "properties", "type": "{str}"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "compute_id": {"key": "computeId", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
+        "experiment_name": {"key": "experimentName", "type": "str"},
+        "identity": {"key": "identity", "type": "IdentityConfiguration"},
+        "is_archived": {"key": "isArchived", "type": "bool"},
+        "job_type": {"key": "jobType", "type": "str"},
+        "services": {"key": "services", "type": "{JobService}"},
+        "status": {"key": "status", "type": "str"},
     }
 
     _subtype_map = {
-        'job_type': {'Command': 'CommandJob', 'Pipeline': 'PipelineJob', 'Sweep': 'SweepJob'}
+        "job_type": {
+            "Command": "CommandJob",
+            "Pipeline": "PipelineJob",
+            "Sweep": "SweepJob",
+        }
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword description: The asset description text.
         :paramtype description: str
@@ -3388,13 +3290,13 @@ class JobBaseDetails(ResourceBase):
         :paramtype services: dict[str, ~azure.mgmt.machinelearningservices.models.JobService]
         """
         super(JobBaseDetails, self).__init__(**kwargs)
-        self.compute_id = kwargs.get('compute_id', None)
-        self.display_name = kwargs.get('display_name', None)
-        self.experiment_name = kwargs.get('experiment_name', "Default")
-        self.identity = kwargs.get('identity', None)
-        self.is_archived = kwargs.get('is_archived', False)
-        self.job_type = 'JobBaseDetails'  # type: str
-        self.services = kwargs.get('services', None)
+        self.compute_id = kwargs.get("compute_id", None)
+        self.display_name = kwargs.get("display_name", None)
+        self.experiment_name = kwargs.get("experiment_name", "Default")
+        self.identity = kwargs.get("identity", None)
+        self.is_archived = kwargs.get("is_archived", False)
+        self.job_type = "JobBaseDetails"  # type: str
+        self.services = kwargs.get("services", None)
         self.status = None
 
 
@@ -3460,41 +3362,38 @@ class CommandJob(JobBaseDetails):
     """
 
     _validation = {
-        'job_type': {'required': True},
-        'status': {'readonly': True},
-        'command': {'required': True, 'min_length': 1, 'pattern': r'[a-zA-Z0-9_]'},
-        'environment_id': {'required': True, 'pattern': r'[a-zA-Z0-9_]'},
-        'parameters': {'readonly': True},
+        "job_type": {"required": True},
+        "status": {"readonly": True},
+        "command": {"required": True, "min_length": 1, "pattern": r"[a-zA-Z0-9_]"},
+        "environment_id": {"required": True, "pattern": r"[a-zA-Z0-9_]"},
+        "parameters": {"readonly": True},
     }
 
     _attribute_map = {
-        'description': {'key': 'description', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': '{str}'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'compute_id': {'key': 'computeId', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'experiment_name': {'key': 'experimentName', 'type': 'str'},
-        'identity': {'key': 'identity', 'type': 'IdentityConfiguration'},
-        'is_archived': {'key': 'isArchived', 'type': 'bool'},
-        'job_type': {'key': 'jobType', 'type': 'str'},
-        'services': {'key': 'services', 'type': '{JobService}'},
-        'status': {'key': 'status', 'type': 'str'},
-        'code_id': {'key': 'codeId', 'type': 'str'},
-        'command': {'key': 'command', 'type': 'str'},
-        'distribution': {'key': 'distribution', 'type': 'DistributionConfiguration'},
-        'environment_id': {'key': 'environmentId', 'type': 'str'},
-        'environment_variables': {'key': 'environmentVariables', 'type': '{str}'},
-        'inputs': {'key': 'inputs', 'type': '{JobInput}'},
-        'limits': {'key': 'limits', 'type': 'CommandJobLimits'},
-        'outputs': {'key': 'outputs', 'type': '{JobOutput}'},
-        'parameters': {'key': 'parameters', 'type': 'object'},
-        'resources': {'key': 'resources', 'type': 'ResourceConfiguration'},
+        "description": {"key": "description", "type": "str"},
+        "properties": {"key": "properties", "type": "{str}"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "compute_id": {"key": "computeId", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
+        "experiment_name": {"key": "experimentName", "type": "str"},
+        "identity": {"key": "identity", "type": "IdentityConfiguration"},
+        "is_archived": {"key": "isArchived", "type": "bool"},
+        "job_type": {"key": "jobType", "type": "str"},
+        "services": {"key": "services", "type": "{JobService}"},
+        "status": {"key": "status", "type": "str"},
+        "code_id": {"key": "codeId", "type": "str"},
+        "command": {"key": "command", "type": "str"},
+        "distribution": {"key": "distribution", "type": "DistributionConfiguration"},
+        "environment_id": {"key": "environmentId", "type": "str"},
+        "environment_variables": {"key": "environmentVariables", "type": "{str}"},
+        "inputs": {"key": "inputs", "type": "{JobInput}"},
+        "limits": {"key": "limits", "type": "CommandJobLimits"},
+        "outputs": {"key": "outputs", "type": "{JobOutput}"},
+        "parameters": {"key": "parameters", "type": "object"},
+        "resources": {"key": "resources", "type": "ResourceConfiguration"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword description: The asset description text.
         :paramtype description: str
@@ -3541,17 +3440,17 @@ class CommandJob(JobBaseDetails):
         :paramtype resources: ~azure.mgmt.machinelearningservices.models.ResourceConfiguration
         """
         super(CommandJob, self).__init__(**kwargs)
-        self.job_type = 'Command'  # type: str
-        self.code_id = kwargs.get('code_id', None)
-        self.command = kwargs['command']
-        self.distribution = kwargs.get('distribution', None)
-        self.environment_id = kwargs['environment_id']
-        self.environment_variables = kwargs.get('environment_variables', None)
-        self.inputs = kwargs.get('inputs', None)
-        self.limits = kwargs.get('limits', None)
-        self.outputs = kwargs.get('outputs', None)
+        self.job_type = "Command"  # type: str
+        self.code_id = kwargs.get("code_id", None)
+        self.command = kwargs["command"]
+        self.distribution = kwargs.get("distribution", None)
+        self.environment_id = kwargs["environment_id"]
+        self.environment_variables = kwargs.get("environment_variables", None)
+        self.inputs = kwargs.get("inputs", None)
+        self.limits = kwargs.get("limits", None)
+        self.outputs = kwargs.get("outputs", None)
         self.parameters = None
-        self.resources = kwargs.get('resources', None)
+        self.resources = kwargs.get("resources", None)
 
 
 class JobLimits(msrest.serialization.Model):
@@ -3571,22 +3470,19 @@ class JobLimits(msrest.serialization.Model):
     """
 
     _validation = {
-        'job_limits_type': {'required': True},
+        "job_limits_type": {"required": True},
     }
 
     _attribute_map = {
-        'job_limits_type': {'key': 'jobLimitsType', 'type': 'str'},
-        'timeout': {'key': 'timeout', 'type': 'duration'},
+        "job_limits_type": {"key": "jobLimitsType", "type": "str"},
+        "timeout": {"key": "timeout", "type": "duration"},
     }
 
     _subtype_map = {
-        'job_limits_type': {'Command': 'CommandJobLimits', 'Sweep': 'SweepJobLimits'}
+        "job_limits_type": {"Command": "CommandJobLimits", "Sweep": "SweepJobLimits"}
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword timeout: The max run duration in ISO 8601 format, after which the job will be
          cancelled. Only supports duration with precision as low as Seconds.
@@ -3594,7 +3490,7 @@ class JobLimits(msrest.serialization.Model):
         """
         super(JobLimits, self).__init__(**kwargs)
         self.job_limits_type = None  # type: Optional[str]
-        self.timeout = kwargs.get('timeout', None)
+        self.timeout = kwargs.get("timeout", None)
 
 
 class CommandJobLimits(JobLimits):
@@ -3611,25 +3507,22 @@ class CommandJobLimits(JobLimits):
     """
 
     _validation = {
-        'job_limits_type': {'required': True},
+        "job_limits_type": {"required": True},
     }
 
     _attribute_map = {
-        'job_limits_type': {'key': 'jobLimitsType', 'type': 'str'},
-        'timeout': {'key': 'timeout', 'type': 'duration'},
+        "job_limits_type": {"key": "jobLimitsType", "type": "str"},
+        "timeout": {"key": "timeout", "type": "duration"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword timeout: The max run duration in ISO 8601 format, after which the job will be
          cancelled. Only supports duration with precision as low as Seconds.
         :paramtype timeout: ~datetime.timedelta
         """
         super(CommandJobLimits, self).__init__(**kwargs)
-        self.job_limits_type = 'Command'  # type: str
+        self.job_limits_type = "Command"  # type: str
 
 
 class ComponentContainerData(Resource):
@@ -3655,75 +3548,69 @@ class ComponentContainerData(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'properties': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "properties": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'properties': {'key': 'properties', 'type': 'ComponentContainerDetails'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "properties": {"key": "properties", "type": "ComponentContainerDetails"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword properties: Required. [Required] Additional attributes of the entity.
         :paramtype properties: ~azure.mgmt.machinelearningservices.models.ComponentContainerDetails
         """
         super(ComponentContainerData, self).__init__(**kwargs)
-        self.properties = kwargs['properties']
+        self.properties = kwargs["properties"]
 
 
 class ComponentContainerDetails(AssetContainer):
     """Component container definition.
 
 
-.. raw:: html
+    .. raw:: html
 
-   <see href="https://docs.microsoft.com/en-us/azure/machine-learning/reference-yaml-component-command" />.
+       <see href="https://docs.microsoft.com/en-us/azure/machine-learning/reference-yaml-component-command" />.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
+        Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar description: The asset description text.
-    :vartype description: str
-    :ivar properties: The asset property dictionary.
-    :vartype properties: dict[str, str]
-    :ivar tags: A set of tags. Tag dictionary. Tags can be added, removed, and updated.
-    :vartype tags: dict[str, str]
-    :ivar is_archived: Is the asset archived?.
-    :vartype is_archived: bool
-    :ivar latest_version: The latest version inside this container.
-    :vartype latest_version: str
-    :ivar next_version: The next auto incremental version.
-    :vartype next_version: str
+        :ivar description: The asset description text.
+        :vartype description: str
+        :ivar properties: The asset property dictionary.
+        :vartype properties: dict[str, str]
+        :ivar tags: A set of tags. Tag dictionary. Tags can be added, removed, and updated.
+        :vartype tags: dict[str, str]
+        :ivar is_archived: Is the asset archived?.
+        :vartype is_archived: bool
+        :ivar latest_version: The latest version inside this container.
+        :vartype latest_version: str
+        :ivar next_version: The next auto incremental version.
+        :vartype next_version: str
     """
 
     _validation = {
-        'latest_version': {'readonly': True},
-        'next_version': {'readonly': True},
+        "latest_version": {"readonly": True},
+        "next_version": {"readonly": True},
     }
 
     _attribute_map = {
-        'description': {'key': 'description', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': '{str}'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'is_archived': {'key': 'isArchived', 'type': 'bool'},
-        'latest_version': {'key': 'latestVersion', 'type': 'str'},
-        'next_version': {'key': 'nextVersion', 'type': 'str'},
+        "description": {"key": "description", "type": "str"},
+        "properties": {"key": "properties", "type": "{str}"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "is_archived": {"key": "isArchived", "type": "bool"},
+        "latest_version": {"key": "latestVersion", "type": "str"},
+        "next_version": {"key": "nextVersion", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword description: The asset description text.
         :paramtype description: str
@@ -3748,14 +3635,11 @@ class ComponentContainerResourceArmPaginatedResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'value': {'key': 'value', 'type': '[ComponentContainerData]'},
+        "next_link": {"key": "nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[ComponentContainerData]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword next_link: The link to the next page of ComponentContainer objects. If null, there are
          no additional pages.
@@ -3764,8 +3648,8 @@ class ComponentContainerResourceArmPaginatedResult(msrest.serialization.Model):
         :paramtype value: list[~azure.mgmt.machinelearningservices.models.ComponentContainerData]
         """
         super(ComponentContainerResourceArmPaginatedResult, self).__init__(**kwargs)
-        self.next_link = kwargs.get('next_link', None)
-        self.value = kwargs.get('value', None)
+        self.next_link = kwargs.get("next_link", None)
+        self.value = kwargs.get("value", None)
 
 
 class ComponentVersionData(Resource):
@@ -3791,31 +3675,28 @@ class ComponentVersionData(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'properties': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "properties": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'properties': {'key': 'properties', 'type': 'ComponentVersionDetails'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "properties": {"key": "properties", "type": "ComponentVersionDetails"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword properties: Required. [Required] Additional attributes of the entity.
         :paramtype properties: ~azure.mgmt.machinelearningservices.models.ComponentVersionDetails
         """
         super(ComponentVersionData, self).__init__(**kwargs)
-        self.properties = kwargs['properties']
+        self.properties = kwargs["properties"]
 
 
 class ComponentVersionDetails(AssetBase):
@@ -3832,10 +3713,10 @@ class ComponentVersionDetails(AssetBase):
     :ivar is_archived: Is the asset archived?.
     :vartype is_archived: bool
     :ivar component_spec: Defines Component definition details.
-    
-    
+
+
      .. raw:: html
-    
+
         <see
      href="https://docs.microsoft.com/en-us/azure/machine-learning/reference-yaml-component-command"
      />.
@@ -3843,18 +3724,15 @@ class ComponentVersionDetails(AssetBase):
     """
 
     _attribute_map = {
-        'description': {'key': 'description', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': '{str}'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'is_anonymous': {'key': 'isAnonymous', 'type': 'bool'},
-        'is_archived': {'key': 'isArchived', 'type': 'bool'},
-        'component_spec': {'key': 'componentSpec', 'type': 'object'},
+        "description": {"key": "description", "type": "str"},
+        "properties": {"key": "properties", "type": "{str}"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "is_anonymous": {"key": "isAnonymous", "type": "bool"},
+        "is_archived": {"key": "isArchived", "type": "bool"},
+        "component_spec": {"key": "componentSpec", "type": "object"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword description: The asset description text.
         :paramtype description: str
@@ -3867,17 +3745,17 @@ class ComponentVersionDetails(AssetBase):
         :keyword is_archived: Is the asset archived?.
         :paramtype is_archived: bool
         :keyword component_spec: Defines Component definition details.
-        
-        
+
+
          .. raw:: html
-        
+
             <see
          href="https://docs.microsoft.com/en-us/azure/machine-learning/reference-yaml-component-command"
          />.
         :paramtype component_spec: any
         """
         super(ComponentVersionDetails, self).__init__(**kwargs)
-        self.component_spec = kwargs.get('component_spec', None)
+        self.component_spec = kwargs.get("component_spec", None)
 
 
 class ComponentVersionResourceArmPaginatedResult(msrest.serialization.Model):
@@ -3891,14 +3769,11 @@ class ComponentVersionResourceArmPaginatedResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'value': {'key': 'value', 'type': '[ComponentVersionData]'},
+        "next_link": {"key": "nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[ComponentVersionData]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword next_link: The link to the next page of ComponentVersion objects. If null, there are
          no additional pages.
@@ -3907,8 +3782,8 @@ class ComponentVersionResourceArmPaginatedResult(msrest.serialization.Model):
         :paramtype value: list[~azure.mgmt.machinelearningservices.models.ComponentVersionData]
         """
         super(ComponentVersionResourceArmPaginatedResult, self).__init__(**kwargs)
-        self.next_link = kwargs.get('next_link', None)
-        self.value = kwargs.get('value', None)
+        self.next_link = kwargs.get("next_link", None)
+        self.value = kwargs.get("value", None)
 
 
 class ComputeInstanceSchema(msrest.serialization.Model):
@@ -3919,19 +3794,16 @@ class ComputeInstanceSchema(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'properties': {'key': 'properties', 'type': 'ComputeInstanceProperties'},
+        "properties": {"key": "properties", "type": "ComputeInstanceProperties"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword properties: Properties of ComputeInstance.
         :paramtype properties: ~azure.mgmt.machinelearningservices.models.ComputeInstanceProperties
         """
         super(ComputeInstanceSchema, self).__init__(**kwargs)
-        self.properties = kwargs.get('properties', None)
+        self.properties = kwargs.get("properties", None)
 
 
 class ComputeInstance(Compute, ComputeInstanceSchema):
@@ -3973,33 +3845,30 @@ class ComputeInstance(Compute, ComputeInstanceSchema):
     """
 
     _validation = {
-        'compute_type': {'required': True},
-        'compute_location': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'created_on': {'readonly': True},
-        'modified_on': {'readonly': True},
-        'provisioning_errors': {'readonly': True},
-        'is_attached_compute': {'readonly': True},
+        "compute_type": {"required": True},
+        "compute_location": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "created_on": {"readonly": True},
+        "modified_on": {"readonly": True},
+        "provisioning_errors": {"readonly": True},
+        "is_attached_compute": {"readonly": True},
     }
 
     _attribute_map = {
-        'properties': {'key': 'properties', 'type': 'ComputeInstanceProperties'},
-        'compute_type': {'key': 'computeType', 'type': 'str'},
-        'compute_location': {'key': 'computeLocation', 'type': 'str'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'created_on': {'key': 'createdOn', 'type': 'iso-8601'},
-        'modified_on': {'key': 'modifiedOn', 'type': 'iso-8601'},
-        'resource_id': {'key': 'resourceId', 'type': 'str'},
-        'provisioning_errors': {'key': 'provisioningErrors', 'type': '[ErrorResponse]'},
-        'is_attached_compute': {'key': 'isAttachedCompute', 'type': 'bool'},
-        'disable_local_auth': {'key': 'disableLocalAuth', 'type': 'bool'},
+        "properties": {"key": "properties", "type": "ComputeInstanceProperties"},
+        "compute_type": {"key": "computeType", "type": "str"},
+        "compute_location": {"key": "computeLocation", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "created_on": {"key": "createdOn", "type": "iso-8601"},
+        "modified_on": {"key": "modifiedOn", "type": "iso-8601"},
+        "resource_id": {"key": "resourceId", "type": "str"},
+        "provisioning_errors": {"key": "provisioningErrors", "type": "[ErrorResponse]"},
+        "is_attached_compute": {"key": "isAttachedCompute", "type": "bool"},
+        "disable_local_auth": {"key": "disableLocalAuth", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword properties: Properties of ComputeInstance.
         :paramtype properties: ~azure.mgmt.machinelearningservices.models.ComputeInstanceProperties
@@ -4012,18 +3881,18 @@ class ComputeInstance(Compute, ComputeInstanceSchema):
         :paramtype disable_local_auth: bool
         """
         super(ComputeInstance, self).__init__(**kwargs)
-        self.properties = kwargs.get('properties', None)
-        self.compute_type = 'ComputeInstance'  # type: str
-        self.compute_type = 'ComputeInstance'  # type: str
+        self.properties = kwargs.get("properties", None)
+        self.compute_type = "ComputeInstance"  # type: str
+        self.compute_type = "ComputeInstance"  # type: str
         self.compute_location = None
         self.provisioning_state = None
-        self.description = kwargs.get('description', None)
+        self.description = kwargs.get("description", None)
         self.created_on = None
         self.modified_on = None
-        self.resource_id = kwargs.get('resource_id', None)
+        self.resource_id = kwargs.get("resource_id", None)
         self.provisioning_errors = None
         self.is_attached_compute = None
-        self.disable_local_auth = kwargs.get('disable_local_auth', None)
+        self.disable_local_auth = kwargs.get("disable_local_auth", None)
 
 
 class ComputeInstanceApplication(msrest.serialization.Model):
@@ -4036,14 +3905,11 @@ class ComputeInstanceApplication(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'endpoint_uri': {'key': 'endpointUri', 'type': 'str'},
+        "display_name": {"key": "displayName", "type": "str"},
+        "endpoint_uri": {"key": "endpointUri", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword display_name: Name of the ComputeInstance application.
         :paramtype display_name: str
@@ -4051,8 +3917,8 @@ class ComputeInstanceApplication(msrest.serialization.Model):
         :paramtype endpoint_uri: str
         """
         super(ComputeInstanceApplication, self).__init__(**kwargs)
-        self.display_name = kwargs.get('display_name', None)
-        self.endpoint_uri = kwargs.get('endpoint_uri', None)
+        self.display_name = kwargs.get("display_name", None)
+        self.endpoint_uri = kwargs.get("endpoint_uri", None)
 
 
 class ComputeInstanceConnectivityEndpoints(msrest.serialization.Model):
@@ -4068,21 +3934,17 @@ class ComputeInstanceConnectivityEndpoints(msrest.serialization.Model):
     """
 
     _validation = {
-        'public_ip_address': {'readonly': True},
-        'private_ip_address': {'readonly': True},
+        "public_ip_address": {"readonly": True},
+        "private_ip_address": {"readonly": True},
     }
 
     _attribute_map = {
-        'public_ip_address': {'key': 'publicIpAddress', 'type': 'str'},
-        'private_ip_address': {'key': 'privateIpAddress', 'type': 'str'},
+        "public_ip_address": {"key": "publicIpAddress", "type": "str"},
+        "private_ip_address": {"key": "privateIpAddress", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs):
+        """ """
         super(ComputeInstanceConnectivityEndpoints, self).__init__(**kwargs)
         self.public_ip_address = None
         self.private_ip_address = None
@@ -4108,22 +3970,19 @@ class ComputeInstanceContainer(msrest.serialization.Model):
     """
 
     _validation = {
-        'services': {'readonly': True},
+        "services": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'autosave': {'key': 'autosave', 'type': 'str'},
-        'gpu': {'key': 'gpu', 'type': 'str'},
-        'network': {'key': 'network', 'type': 'str'},
-        'environment': {'key': 'environment', 'type': 'ComputeInstanceEnvironmentInfo'},
-        'services': {'key': 'services', 'type': '[object]'},
+        "name": {"key": "name", "type": "str"},
+        "autosave": {"key": "autosave", "type": "str"},
+        "gpu": {"key": "gpu", "type": "str"},
+        "network": {"key": "network", "type": "str"},
+        "environment": {"key": "environment", "type": "ComputeInstanceEnvironmentInfo"},
+        "services": {"key": "services", "type": "[object]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword name: Name of the ComputeInstance container.
         :paramtype name: str
@@ -4138,11 +3997,11 @@ class ComputeInstanceContainer(msrest.serialization.Model):
          ~azure.mgmt.machinelearningservices.models.ComputeInstanceEnvironmentInfo
         """
         super(ComputeInstanceContainer, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.autosave = kwargs.get('autosave', None)
-        self.gpu = kwargs.get('gpu', None)
-        self.network = kwargs.get('network', None)
-        self.environment = kwargs.get('environment', None)
+        self.name = kwargs.get("name", None)
+        self.autosave = kwargs.get("autosave", None)
+        self.gpu = kwargs.get("gpu", None)
+        self.network = kwargs.get("network", None)
+        self.environment = kwargs.get("environment", None)
         self.services = None
 
 
@@ -4160,23 +4019,19 @@ class ComputeInstanceCreatedBy(msrest.serialization.Model):
     """
 
     _validation = {
-        'user_name': {'readonly': True},
-        'user_org_id': {'readonly': True},
-        'user_id': {'readonly': True},
+        "user_name": {"readonly": True},
+        "user_org_id": {"readonly": True},
+        "user_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'user_name': {'key': 'userName', 'type': 'str'},
-        'user_org_id': {'key': 'userOrgId', 'type': 'str'},
-        'user_id': {'key': 'userId', 'type': 'str'},
+        "user_name": {"key": "userName", "type": "str"},
+        "user_org_id": {"key": "userOrgId", "type": "str"},
+        "user_id": {"key": "userId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs):
+        """ """
         super(ComputeInstanceCreatedBy, self).__init__(**kwargs)
         self.user_name = None
         self.user_org_id = None
@@ -4201,16 +4056,13 @@ class ComputeInstanceDataDisk(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'caching': {'key': 'caching', 'type': 'str'},
-        'disk_size_gb': {'key': 'diskSizeGB', 'type': 'int'},
-        'lun': {'key': 'lun', 'type': 'int'},
-        'storage_account_type': {'key': 'storageAccountType', 'type': 'str'},
+        "caching": {"key": "caching", "type": "str"},
+        "disk_size_gb": {"key": "diskSizeGB", "type": "int"},
+        "lun": {"key": "lun", "type": "int"},
+        "storage_account_type": {"key": "storageAccountType", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword caching: Caching type of Data Disk. Possible values include: "None", "ReadOnly",
          "ReadWrite".
@@ -4226,10 +4078,10 @@ class ComputeInstanceDataDisk(msrest.serialization.Model):
          ~azure.mgmt.machinelearningservices.models.StorageAccountType
         """
         super(ComputeInstanceDataDisk, self).__init__(**kwargs)
-        self.caching = kwargs.get('caching', None)
-        self.disk_size_gb = kwargs.get('disk_size_gb', None)
-        self.lun = kwargs.get('lun', None)
-        self.storage_account_type = kwargs.get('storage_account_type', "Standard_LRS")
+        self.caching = kwargs.get("caching", None)
+        self.disk_size_gb = kwargs.get("disk_size_gb", None)
+        self.lun = kwargs.get("lun", None)
+        self.storage_account_type = kwargs.get("storage_account_type", "Standard_LRS")
 
 
 class ComputeInstanceDataMount(msrest.serialization.Model):
@@ -4257,21 +4109,18 @@ class ComputeInstanceDataMount(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'source': {'key': 'source', 'type': 'str'},
-        'source_type': {'key': 'sourceType', 'type': 'str'},
-        'mount_name': {'key': 'mountName', 'type': 'str'},
-        'mount_action': {'key': 'mountAction', 'type': 'str'},
-        'created_by': {'key': 'createdBy', 'type': 'str'},
-        'mount_path': {'key': 'mountPath', 'type': 'str'},
-        'mount_state': {'key': 'mountState', 'type': 'str'},
-        'mounted_on': {'key': 'mountedOn', 'type': 'iso-8601'},
-        'error': {'key': 'error', 'type': 'str'},
+        "source": {"key": "source", "type": "str"},
+        "source_type": {"key": "sourceType", "type": "str"},
+        "mount_name": {"key": "mountName", "type": "str"},
+        "mount_action": {"key": "mountAction", "type": "str"},
+        "created_by": {"key": "createdBy", "type": "str"},
+        "mount_path": {"key": "mountPath", "type": "str"},
+        "mount_state": {"key": "mountState", "type": "str"},
+        "mounted_on": {"key": "mountedOn", "type": "iso-8601"},
+        "error": {"key": "error", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword source: Source of the ComputeInstance data mount.
         :paramtype source: str
@@ -4294,15 +4143,15 @@ class ComputeInstanceDataMount(msrest.serialization.Model):
         :paramtype error: str
         """
         super(ComputeInstanceDataMount, self).__init__(**kwargs)
-        self.source = kwargs.get('source', None)
-        self.source_type = kwargs.get('source_type', None)
-        self.mount_name = kwargs.get('mount_name', None)
-        self.mount_action = kwargs.get('mount_action', None)
-        self.created_by = kwargs.get('created_by', None)
-        self.mount_path = kwargs.get('mount_path', None)
-        self.mount_state = kwargs.get('mount_state', None)
-        self.mounted_on = kwargs.get('mounted_on', None)
-        self.error = kwargs.get('error', None)
+        self.source = kwargs.get("source", None)
+        self.source_type = kwargs.get("source_type", None)
+        self.mount_name = kwargs.get("mount_name", None)
+        self.mount_action = kwargs.get("mount_action", None)
+        self.created_by = kwargs.get("created_by", None)
+        self.mount_path = kwargs.get("mount_path", None)
+        self.mount_state = kwargs.get("mount_state", None)
+        self.mounted_on = kwargs.get("mounted_on", None)
+        self.error = kwargs.get("error", None)
 
 
 class ComputeInstanceEnvironmentInfo(msrest.serialization.Model):
@@ -4315,14 +4164,11 @@ class ComputeInstanceEnvironmentInfo(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'version': {'key': 'version', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "version": {"key": "version", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword name: name of environment.
         :paramtype name: str
@@ -4330,8 +4176,8 @@ class ComputeInstanceEnvironmentInfo(msrest.serialization.Model):
         :paramtype version: str
         """
         super(ComputeInstanceEnvironmentInfo, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.version = kwargs.get('version', None)
+        self.name = kwargs.get("name", None)
+        self.version = kwargs.get("version", None)
 
 
 class ComputeInstanceLastOperation(msrest.serialization.Model):
@@ -4351,16 +4197,13 @@ class ComputeInstanceLastOperation(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'operation_name': {'key': 'operationName', 'type': 'str'},
-        'operation_time': {'key': 'operationTime', 'type': 'iso-8601'},
-        'operation_status': {'key': 'operationStatus', 'type': 'str'},
-        'operation_trigger': {'key': 'operationTrigger', 'type': 'str'},
+        "operation_name": {"key": "operationName", "type": "str"},
+        "operation_time": {"key": "operationTime", "type": "iso-8601"},
+        "operation_status": {"key": "operationStatus", "type": "str"},
+        "operation_trigger": {"key": "operationTrigger", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword operation_name: Name of the last operation. Possible values include: "Create",
          "Start", "Stop", "Restart", "Reimage", "Delete".
@@ -4377,10 +4220,10 @@ class ComputeInstanceLastOperation(msrest.serialization.Model):
          ~azure.mgmt.machinelearningservices.models.OperationTrigger
         """
         super(ComputeInstanceLastOperation, self).__init__(**kwargs)
-        self.operation_name = kwargs.get('operation_name', None)
-        self.operation_time = kwargs.get('operation_time', None)
-        self.operation_status = kwargs.get('operation_status', None)
-        self.operation_trigger = kwargs.get('operation_trigger', None)
+        self.operation_name = kwargs.get("operation_name", None)
+        self.operation_time = kwargs.get("operation_time", None)
+        self.operation_status = kwargs.get("operation_status", None)
+        self.operation_trigger = kwargs.get("operation_trigger", None)
 
 
 class ComputeInstanceProperties(msrest.serialization.Model):
@@ -4447,45 +4290,57 @@ class ComputeInstanceProperties(msrest.serialization.Model):
     """
 
     _validation = {
-        'connectivity_endpoints': {'readonly': True},
-        'applications': {'readonly': True},
-        'created_by': {'readonly': True},
-        'errors': {'readonly': True},
-        'state': {'readonly': True},
-        'last_operation': {'readonly': True},
-        'schedules': {'readonly': True},
-        'containers': {'readonly': True},
-        'data_disks': {'readonly': True},
-        'data_mounts': {'readonly': True},
-        'versions': {'readonly': True},
+        "connectivity_endpoints": {"readonly": True},
+        "applications": {"readonly": True},
+        "created_by": {"readonly": True},
+        "errors": {"readonly": True},
+        "state": {"readonly": True},
+        "last_operation": {"readonly": True},
+        "schedules": {"readonly": True},
+        "containers": {"readonly": True},
+        "data_disks": {"readonly": True},
+        "data_mounts": {"readonly": True},
+        "versions": {"readonly": True},
     }
 
     _attribute_map = {
-        'vm_size': {'key': 'vmSize', 'type': 'str'},
-        'subnet': {'key': 'subnet', 'type': 'ResourceId'},
-        'application_sharing_policy': {'key': 'applicationSharingPolicy', 'type': 'str'},
-        'ssh_settings': {'key': 'sshSettings', 'type': 'ComputeInstanceSshSettings'},
-        'connectivity_endpoints': {'key': 'connectivityEndpoints', 'type': 'ComputeInstanceConnectivityEndpoints'},
-        'applications': {'key': 'applications', 'type': '[ComputeInstanceApplication]'},
-        'created_by': {'key': 'createdBy', 'type': 'ComputeInstanceCreatedBy'},
-        'errors': {'key': 'errors', 'type': '[ErrorResponse]'},
-        'state': {'key': 'state', 'type': 'str'},
-        'compute_instance_authorization_type': {'key': 'computeInstanceAuthorizationType', 'type': 'str'},
-        'personal_compute_instance_settings': {'key': 'personalComputeInstanceSettings', 'type': 'PersonalComputeInstanceSettings'},
-        'setup_scripts': {'key': 'setupScripts', 'type': 'SetupScripts'},
-        'last_operation': {'key': 'lastOperation', 'type': 'ComputeInstanceLastOperation'},
-        'schedules': {'key': 'schedules', 'type': 'ComputeSchedules'},
-        'enable_node_public_ip': {'key': 'enableNodePublicIp', 'type': 'bool'},
-        'containers': {'key': 'containers', 'type': '[ComputeInstanceContainer]'},
-        'data_disks': {'key': 'dataDisks', 'type': '[ComputeInstanceDataDisk]'},
-        'data_mounts': {'key': 'dataMounts', 'type': '[ComputeInstanceDataMount]'},
-        'versions': {'key': 'versions', 'type': 'ComputeInstanceVersion'},
+        "vm_size": {"key": "vmSize", "type": "str"},
+        "subnet": {"key": "subnet", "type": "ResourceId"},
+        "application_sharing_policy": {
+            "key": "applicationSharingPolicy",
+            "type": "str",
+        },
+        "ssh_settings": {"key": "sshSettings", "type": "ComputeInstanceSshSettings"},
+        "connectivity_endpoints": {
+            "key": "connectivityEndpoints",
+            "type": "ComputeInstanceConnectivityEndpoints",
+        },
+        "applications": {"key": "applications", "type": "[ComputeInstanceApplication]"},
+        "created_by": {"key": "createdBy", "type": "ComputeInstanceCreatedBy"},
+        "errors": {"key": "errors", "type": "[ErrorResponse]"},
+        "state": {"key": "state", "type": "str"},
+        "compute_instance_authorization_type": {
+            "key": "computeInstanceAuthorizationType",
+            "type": "str",
+        },
+        "personal_compute_instance_settings": {
+            "key": "personalComputeInstanceSettings",
+            "type": "PersonalComputeInstanceSettings",
+        },
+        "setup_scripts": {"key": "setupScripts", "type": "SetupScripts"},
+        "last_operation": {
+            "key": "lastOperation",
+            "type": "ComputeInstanceLastOperation",
+        },
+        "schedules": {"key": "schedules", "type": "ComputeSchedules"},
+        "enable_node_public_ip": {"key": "enableNodePublicIp", "type": "bool"},
+        "containers": {"key": "containers", "type": "[ComputeInstanceContainer]"},
+        "data_disks": {"key": "dataDisks", "type": "[ComputeInstanceDataDisk]"},
+        "data_mounts": {"key": "dataMounts", "type": "[ComputeInstanceDataMount]"},
+        "versions": {"key": "versions", "type": "ComputeInstanceVersion"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword vm_size: Virtual Machine Size.
         :paramtype vm_size: str
@@ -4517,21 +4372,27 @@ class ComputeInstanceProperties(msrest.serialization.Model):
         :paramtype enable_node_public_ip: bool
         """
         super(ComputeInstanceProperties, self).__init__(**kwargs)
-        self.vm_size = kwargs.get('vm_size', None)
-        self.subnet = kwargs.get('subnet', None)
-        self.application_sharing_policy = kwargs.get('application_sharing_policy', "Shared")
-        self.ssh_settings = kwargs.get('ssh_settings', None)
+        self.vm_size = kwargs.get("vm_size", None)
+        self.subnet = kwargs.get("subnet", None)
+        self.application_sharing_policy = kwargs.get(
+            "application_sharing_policy", "Shared"
+        )
+        self.ssh_settings = kwargs.get("ssh_settings", None)
         self.connectivity_endpoints = None
         self.applications = None
         self.created_by = None
         self.errors = None
         self.state = None
-        self.compute_instance_authorization_type = kwargs.get('compute_instance_authorization_type', "personal")
-        self.personal_compute_instance_settings = kwargs.get('personal_compute_instance_settings', None)
-        self.setup_scripts = kwargs.get('setup_scripts', None)
+        self.compute_instance_authorization_type = kwargs.get(
+            "compute_instance_authorization_type", "personal"
+        )
+        self.personal_compute_instance_settings = kwargs.get(
+            "personal_compute_instance_settings", None
+        )
+        self.setup_scripts = kwargs.get("setup_scripts", None)
         self.last_operation = None
         self.schedules = None
-        self.enable_node_public_ip = kwargs.get('enable_node_public_ip', None)
+        self.enable_node_public_ip = kwargs.get("enable_node_public_ip", None)
         self.containers = None
         self.data_disks = None
         self.data_mounts = None
@@ -4558,21 +4419,18 @@ class ComputeInstanceSshSettings(msrest.serialization.Model):
     """
 
     _validation = {
-        'admin_user_name': {'readonly': True},
-        'ssh_port': {'readonly': True},
+        "admin_user_name": {"readonly": True},
+        "ssh_port": {"readonly": True},
     }
 
     _attribute_map = {
-        'ssh_public_access': {'key': 'sshPublicAccess', 'type': 'str'},
-        'admin_user_name': {'key': 'adminUserName', 'type': 'str'},
-        'ssh_port': {'key': 'sshPort', 'type': 'int'},
-        'admin_public_key': {'key': 'adminPublicKey', 'type': 'str'},
+        "ssh_public_access": {"key": "sshPublicAccess", "type": "str"},
+        "admin_user_name": {"key": "adminUserName", "type": "str"},
+        "ssh_port": {"key": "sshPort", "type": "int"},
+        "admin_public_key": {"key": "adminPublicKey", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword ssh_public_access: State of the public SSH port. Possible values are: Disabled -
          Indicates that the public ssh port is closed on this instance. Enabled - Indicates that the
@@ -4584,10 +4442,10 @@ class ComputeInstanceSshSettings(msrest.serialization.Model):
         :paramtype admin_public_key: str
         """
         super(ComputeInstanceSshSettings, self).__init__(**kwargs)
-        self.ssh_public_access = kwargs.get('ssh_public_access', "Disabled")
+        self.ssh_public_access = kwargs.get("ssh_public_access", "Disabled")
         self.admin_user_name = None
         self.ssh_port = None
-        self.admin_public_key = kwargs.get('admin_public_key', None)
+        self.admin_public_key = kwargs.get("admin_public_key", None)
 
 
 class ComputeInstanceVersion(msrest.serialization.Model):
@@ -4598,19 +4456,16 @@ class ComputeInstanceVersion(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'runtime': {'key': 'runtime', 'type': 'str'},
+        "runtime": {"key": "runtime", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword runtime: Runtime of compute instance.
         :paramtype runtime: str
         """
         super(ComputeInstanceVersion, self).__init__(**kwargs)
-        self.runtime = kwargs.get('runtime', None)
+        self.runtime = kwargs.get("runtime", None)
 
 
 class ComputeResourceSchema(msrest.serialization.Model):
@@ -4621,19 +4476,16 @@ class ComputeResourceSchema(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'properties': {'key': 'properties', 'type': 'Compute'},
+        "properties": {"key": "properties", "type": "Compute"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword properties: Compute properties.
         :paramtype properties: ~azure.mgmt.machinelearningservices.models.Compute
         """
         super(ComputeResourceSchema, self).__init__(**kwargs)
-        self.properties = kwargs.get('properties', None)
+        self.properties = kwargs.get("properties", None)
 
 
 class ComputeResource(Resource, ComputeResourceSchema):
@@ -4665,28 +4517,25 @@ class ComputeResource(Resource, ComputeResourceSchema):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
-        'properties': {'key': 'properties', 'type': 'Compute'},
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'identity': {'key': 'identity', 'type': 'ManagedServiceIdentity'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'sku': {'key': 'sku', 'type': 'Sku'},
+        "properties": {"key": "properties", "type": "Compute"},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "identity": {"key": "identity", "type": "ManagedServiceIdentity"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "sku": {"key": "sku", "type": "Sku"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword properties: Compute properties.
         :paramtype properties: ~azure.mgmt.machinelearningservices.models.Compute
@@ -4700,19 +4549,19 @@ class ComputeResource(Resource, ComputeResourceSchema):
         :paramtype sku: ~azure.mgmt.machinelearningservices.models.Sku
         """
         super(ComputeResource, self).__init__(**kwargs)
-        self.properties = kwargs.get('properties', None)
-        self.identity = kwargs.get('identity', None)
-        self.location = kwargs.get('location', None)
-        self.tags = kwargs.get('tags', None)
-        self.sku = kwargs.get('sku', None)
+        self.properties = kwargs.get("properties", None)
+        self.identity = kwargs.get("identity", None)
+        self.location = kwargs.get("location", None)
+        self.tags = kwargs.get("tags", None)
+        self.sku = kwargs.get("sku", None)
         self.id = None
         self.name = None
         self.type = None
         self.system_data = None
-        self.identity = kwargs.get('identity', None)
-        self.location = kwargs.get('location', None)
-        self.tags = kwargs.get('tags', None)
-        self.sku = kwargs.get('sku', None)
+        self.identity = kwargs.get("identity", None)
+        self.location = kwargs.get("location", None)
+        self.tags = kwargs.get("tags", None)
+        self.sku = kwargs.get("sku", None)
 
 
 class ComputeSchedules(msrest.serialization.Model):
@@ -4724,20 +4573,20 @@ class ComputeSchedules(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'compute_start_stop': {'key': 'computeStartStop', 'type': '[ComputeStartStopSchedule]'},
+        "compute_start_stop": {
+            "key": "computeStartStop",
+            "type": "[ComputeStartStopSchedule]",
+        },
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword compute_start_stop: The list of compute start stop schedules to be applied.
         :paramtype compute_start_stop:
          list[~azure.mgmt.machinelearningservices.models.ComputeStartStopSchedule]
         """
         super(ComputeSchedules, self).__init__(**kwargs)
-        self.compute_start_stop = kwargs.get('compute_start_stop', None)
+        self.compute_start_stop = kwargs.get("compute_start_stop", None)
 
 
 class ComputeStartStopSchedule(msrest.serialization.Model):
@@ -4758,21 +4607,18 @@ class ComputeStartStopSchedule(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'provisioning_status': {'readonly': True},
+        "id": {"readonly": True},
+        "provisioning_status": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'provisioning_status': {'key': 'provisioningStatus', 'type': 'str'},
-        'action': {'key': 'action', 'type': 'str'},
-        'schedule': {'key': 'schedule', 'type': 'ScheduleBase'},
+        "id": {"key": "id", "type": "str"},
+        "provisioning_status": {"key": "provisioningStatus", "type": "str"},
+        "action": {"key": "action", "type": "str"},
+        "schedule": {"key": "schedule", "type": "ScheduleBase"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword action: The compute power action. Possible values include: "Start", "Stop".
         :paramtype action: str or ~azure.mgmt.machinelearningservices.models.ComputePowerAction
@@ -4782,8 +4628,8 @@ class ComputeStartStopSchedule(msrest.serialization.Model):
         super(ComputeStartStopSchedule, self).__init__(**kwargs)
         self.id = None
         self.provisioning_status = None
-        self.action = kwargs.get('action', None)
-        self.schedule = kwargs.get('schedule', None)
+        self.action = kwargs.get("action", None)
+        self.schedule = kwargs.get("schedule", None)
 
 
 class ContainerResourceRequirements(msrest.serialization.Model):
@@ -4798,14 +4644,17 @@ class ContainerResourceRequirements(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'container_resource_limits': {'key': 'containerResourceLimits', 'type': 'ContainerResourceSettings'},
-        'container_resource_requests': {'key': 'containerResourceRequests', 'type': 'ContainerResourceSettings'},
+        "container_resource_limits": {
+            "key": "containerResourceLimits",
+            "type": "ContainerResourceSettings",
+        },
+        "container_resource_requests": {
+            "key": "containerResourceRequests",
+            "type": "ContainerResourceSettings",
+        },
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword container_resource_limits: Container resource limit info:.
         :paramtype container_resource_limits:
@@ -4815,8 +4664,10 @@ class ContainerResourceRequirements(msrest.serialization.Model):
          ~azure.mgmt.machinelearningservices.models.ContainerResourceSettings
         """
         super(ContainerResourceRequirements, self).__init__(**kwargs)
-        self.container_resource_limits = kwargs.get('container_resource_limits', None)
-        self.container_resource_requests = kwargs.get('container_resource_requests', None)
+        self.container_resource_limits = kwargs.get("container_resource_limits", None)
+        self.container_resource_requests = kwargs.get(
+            "container_resource_requests", None
+        )
 
 
 class ContainerResourceSettings(msrest.serialization.Model):
@@ -4834,15 +4685,12 @@ class ContainerResourceSettings(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'cpu': {'key': 'cpu', 'type': 'str'},
-        'gpu': {'key': 'gpu', 'type': 'str'},
-        'memory': {'key': 'memory', 'type': 'str'},
+        "cpu": {"key": "cpu", "type": "str"},
+        "gpu": {"key": "gpu", "type": "str"},
+        "memory": {"key": "memory", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword cpu: Number of vCPUs request/limit for container. More info:
          https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/.
@@ -4855,9 +4703,9 @@ class ContainerResourceSettings(msrest.serialization.Model):
         :paramtype memory: str
         """
         super(ContainerResourceSettings, self).__init__(**kwargs)
-        self.cpu = kwargs.get('cpu', None)
-        self.gpu = kwargs.get('gpu', None)
-        self.memory = kwargs.get('memory', None)
+        self.cpu = kwargs.get("cpu", None)
+        self.gpu = kwargs.get("gpu", None)
+        self.memory = kwargs.get("memory", None)
 
 
 class CosmosDbSettings(msrest.serialization.Model):
@@ -4868,19 +4716,16 @@ class CosmosDbSettings(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'collections_throughput': {'key': 'collectionsThroughput', 'type': 'int'},
+        "collections_throughput": {"key": "collectionsThroughput", "type": "int"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword collections_throughput: The throughput of the collections in cosmosdb database.
         :paramtype collections_throughput: int
         """
         super(CosmosDbSettings, self).__init__(**kwargs)
-        self.collections_throughput = kwargs.get('collections_throughput', None)
+        self.collections_throughput = kwargs.get("collections_throughput", None)
 
 
 class ScheduleBase(msrest.serialization.Model):
@@ -4908,25 +4753,22 @@ class ScheduleBase(msrest.serialization.Model):
     """
 
     _validation = {
-        'schedule_type': {'required': True},
+        "schedule_type": {"required": True},
     }
 
     _attribute_map = {
-        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
-        'schedule_status': {'key': 'scheduleStatus', 'type': 'str'},
-        'schedule_type': {'key': 'scheduleType', 'type': 'str'},
-        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
-        'time_zone': {'key': 'timeZone', 'type': 'str'},
+        "end_time": {"key": "endTime", "type": "iso-8601"},
+        "schedule_status": {"key": "scheduleStatus", "type": "str"},
+        "schedule_type": {"key": "scheduleType", "type": "str"},
+        "start_time": {"key": "startTime", "type": "iso-8601"},
+        "time_zone": {"key": "timeZone", "type": "str"},
     }
 
     _subtype_map = {
-        'schedule_type': {'Cron': 'CronSchedule', 'Recurrence': 'RecurrenceSchedule'}
+        "schedule_type": {"Cron": "CronSchedule", "Recurrence": "RecurrenceSchedule"}
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword end_time: Specifies end time of schedule in ISO 8601 format.
          If not present, the schedule will run indefinitely.
@@ -4941,11 +4783,11 @@ class ScheduleBase(msrest.serialization.Model):
         :paramtype time_zone: str
         """
         super(ScheduleBase, self).__init__(**kwargs)
-        self.end_time = kwargs.get('end_time', None)
-        self.schedule_status = kwargs.get('schedule_status', None)
+        self.end_time = kwargs.get("end_time", None)
+        self.schedule_status = kwargs.get("schedule_status", None)
         self.schedule_type = None  # type: Optional[str]
-        self.start_time = kwargs.get('start_time', None)
-        self.time_zone = kwargs.get('time_zone', "UTC")
+        self.start_time = kwargs.get("start_time", None)
+        self.time_zone = kwargs.get("time_zone", "UTC")
 
 
 class CronSchedule(ScheduleBase):
@@ -4973,23 +4815,20 @@ class CronSchedule(ScheduleBase):
     """
 
     _validation = {
-        'schedule_type': {'required': True},
-        'expression': {'required': True, 'pattern': r'[a-zA-Z0-9_]'},
+        "schedule_type": {"required": True},
+        "expression": {"required": True, "pattern": r"[a-zA-Z0-9_]"},
     }
 
     _attribute_map = {
-        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
-        'schedule_status': {'key': 'scheduleStatus', 'type': 'str'},
-        'schedule_type': {'key': 'scheduleType', 'type': 'str'},
-        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
-        'time_zone': {'key': 'timeZone', 'type': 'str'},
-        'expression': {'key': 'expression', 'type': 'str'},
+        "end_time": {"key": "endTime", "type": "iso-8601"},
+        "schedule_status": {"key": "scheduleStatus", "type": "str"},
+        "schedule_type": {"key": "scheduleType", "type": "str"},
+        "start_time": {"key": "startTime", "type": "iso-8601"},
+        "time_zone": {"key": "timeZone", "type": "str"},
+        "expression": {"key": "expression", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword end_time: Specifies end time of schedule in ISO 8601 format.
          If not present, the schedule will run indefinitely.
@@ -5007,8 +4846,8 @@ class CronSchedule(ScheduleBase):
         :paramtype expression: str
         """
         super(CronSchedule, self).__init__(**kwargs)
-        self.schedule_type = 'Cron'  # type: str
-        self.expression = kwargs['expression']
+        self.schedule_type = "Cron"  # type: str
+        self.expression = kwargs["expression"]
 
 
 class JobInput(msrest.serialization.Model):
@@ -5028,28 +4867,33 @@ class JobInput(msrest.serialization.Model):
     """
 
     _validation = {
-        'job_input_type': {'required': True},
+        "job_input_type": {"required": True},
     }
 
     _attribute_map = {
-        'description': {'key': 'description', 'type': 'str'},
-        'job_input_type': {'key': 'jobInputType', 'type': 'str'},
+        "description": {"key": "description", "type": "str"},
+        "job_input_type": {"key": "jobInputType", "type": "str"},
     }
 
     _subtype_map = {
-        'job_input_type': {'custom_model': 'CustomModelJobInput', 'literal': 'LiteralJobInput', 'mlflow_model': 'MLFlowModelJobInput', 'mltable': 'MLTableJobInput', 'triton_model': 'TritonModelJobInput', 'uri_file': 'UriFileJobInput', 'uri_folder': 'UriFolderJobInput'}
+        "job_input_type": {
+            "custom_model": "CustomModelJobInput",
+            "literal": "LiteralJobInput",
+            "mlflow_model": "MLFlowModelJobInput",
+            "mltable": "MLTableJobInput",
+            "triton_model": "TritonModelJobInput",
+            "uri_file": "UriFileJobInput",
+            "uri_folder": "UriFolderJobInput",
+        }
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword description: Description for the input.
         :paramtype description: str
         """
         super(JobInput, self).__init__(**kwargs)
-        self.description = kwargs.get('description', None)
+        self.description = kwargs.get("description", None)
         self.job_input_type = None  # type: Optional[str]
 
 
@@ -5072,21 +4916,18 @@ class CustomModelJobInput(JobInput, AssetJobInput):
     """
 
     _validation = {
-        'uri': {'required': True, 'pattern': r'[a-zA-Z0-9_]'},
-        'job_input_type': {'required': True},
+        "uri": {"required": True, "pattern": r"[a-zA-Z0-9_]"},
+        "job_input_type": {"required": True},
     }
 
     _attribute_map = {
-        'mode': {'key': 'mode', 'type': 'str'},
-        'uri': {'key': 'uri', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'job_input_type': {'key': 'jobInputType', 'type': 'str'},
+        "mode": {"key": "mode", "type": "str"},
+        "uri": {"key": "uri", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "job_input_type": {"key": "jobInputType", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword mode: Input Asset Delivery Mode. Possible values include: "ReadOnlyMount",
          "ReadWriteMount", "Download", "Direct", "EvalMount", "EvalDownload".
@@ -5097,11 +4938,11 @@ class CustomModelJobInput(JobInput, AssetJobInput):
         :paramtype description: str
         """
         super(CustomModelJobInput, self).__init__(**kwargs)
-        self.mode = kwargs.get('mode', None)
-        self.uri = kwargs['uri']
-        self.job_input_type = 'custom_model'  # type: str
-        self.description = kwargs.get('description', None)
-        self.job_input_type = 'custom_model'  # type: str
+        self.mode = kwargs.get("mode", None)
+        self.uri = kwargs["uri"]
+        self.job_input_type = "custom_model"  # type: str
+        self.description = kwargs.get("description", None)
+        self.job_input_type = "custom_model"  # type: str
 
 
 class JobOutput(msrest.serialization.Model):
@@ -5121,28 +4962,32 @@ class JobOutput(msrest.serialization.Model):
     """
 
     _validation = {
-        'job_output_type': {'required': True},
+        "job_output_type": {"required": True},
     }
 
     _attribute_map = {
-        'description': {'key': 'description', 'type': 'str'},
-        'job_output_type': {'key': 'jobOutputType', 'type': 'str'},
+        "description": {"key": "description", "type": "str"},
+        "job_output_type": {"key": "jobOutputType", "type": "str"},
     }
 
     _subtype_map = {
-        'job_output_type': {'custom_model': 'CustomModelJobOutput', 'mlflow_model': 'MLFlowModelJobOutput', 'mltable': 'MLTableJobOutput', 'triton_model': 'TritonModelJobOutput', 'uri_file': 'UriFileJobOutput', 'uri_folder': 'UriFolderJobOutput'}
+        "job_output_type": {
+            "custom_model": "CustomModelJobOutput",
+            "mlflow_model": "MLFlowModelJobOutput",
+            "mltable": "MLTableJobOutput",
+            "triton_model": "TritonModelJobOutput",
+            "uri_file": "UriFileJobOutput",
+            "uri_folder": "UriFolderJobOutput",
+        }
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword description: Description for the output.
         :paramtype description: str
         """
         super(JobOutput, self).__init__(**kwargs)
-        self.description = kwargs.get('description', None)
+        self.description = kwargs.get("description", None)
         self.job_output_type = None  # type: Optional[str]
 
 
@@ -5164,20 +5009,17 @@ class CustomModelJobOutput(JobOutput, AssetJobOutput):
     """
 
     _validation = {
-        'job_output_type': {'required': True},
+        "job_output_type": {"required": True},
     }
 
     _attribute_map = {
-        'mode': {'key': 'mode', 'type': 'str'},
-        'uri': {'key': 'uri', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'job_output_type': {'key': 'jobOutputType', 'type': 'str'},
+        "mode": {"key": "mode", "type": "str"},
+        "uri": {"key": "uri", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "job_output_type": {"key": "jobOutputType", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword mode: Output Asset Delivery Mode. Possible values include: "ReadWriteMount", "Upload".
         :paramtype mode: str or ~azure.mgmt.machinelearningservices.models.OutputDeliveryMode
@@ -5187,11 +5029,11 @@ class CustomModelJobOutput(JobOutput, AssetJobOutput):
         :paramtype description: str
         """
         super(CustomModelJobOutput, self).__init__(**kwargs)
-        self.mode = kwargs.get('mode', None)
-        self.uri = kwargs.get('uri', None)
-        self.job_output_type = 'custom_model'  # type: str
-        self.description = kwargs.get('description', None)
-        self.job_output_type = 'custom_model'  # type: str
+        self.mode = kwargs.get("mode", None)
+        self.uri = kwargs.get("uri", None)
+        self.job_output_type = "custom_model"  # type: str
+        self.description = kwargs.get("description", None)
+        self.job_output_type = "custom_model"  # type: str
 
 
 class DatabricksSchema(msrest.serialization.Model):
@@ -5202,19 +5044,16 @@ class DatabricksSchema(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'properties': {'key': 'properties', 'type': 'DatabricksProperties'},
+        "properties": {"key": "properties", "type": "DatabricksProperties"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword properties: Properties of Databricks.
         :paramtype properties: ~azure.mgmt.machinelearningservices.models.DatabricksProperties
         """
         super(DatabricksSchema, self).__init__(**kwargs)
-        self.properties = kwargs.get('properties', None)
+        self.properties = kwargs.get("properties", None)
 
 
 class Databricks(Compute, DatabricksSchema):
@@ -5256,33 +5095,30 @@ class Databricks(Compute, DatabricksSchema):
     """
 
     _validation = {
-        'compute_type': {'required': True},
-        'compute_location': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'created_on': {'readonly': True},
-        'modified_on': {'readonly': True},
-        'provisioning_errors': {'readonly': True},
-        'is_attached_compute': {'readonly': True},
+        "compute_type": {"required": True},
+        "compute_location": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "created_on": {"readonly": True},
+        "modified_on": {"readonly": True},
+        "provisioning_errors": {"readonly": True},
+        "is_attached_compute": {"readonly": True},
     }
 
     _attribute_map = {
-        'properties': {'key': 'properties', 'type': 'DatabricksProperties'},
-        'compute_type': {'key': 'computeType', 'type': 'str'},
-        'compute_location': {'key': 'computeLocation', 'type': 'str'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'created_on': {'key': 'createdOn', 'type': 'iso-8601'},
-        'modified_on': {'key': 'modifiedOn', 'type': 'iso-8601'},
-        'resource_id': {'key': 'resourceId', 'type': 'str'},
-        'provisioning_errors': {'key': 'provisioningErrors', 'type': '[ErrorResponse]'},
-        'is_attached_compute': {'key': 'isAttachedCompute', 'type': 'bool'},
-        'disable_local_auth': {'key': 'disableLocalAuth', 'type': 'bool'},
+        "properties": {"key": "properties", "type": "DatabricksProperties"},
+        "compute_type": {"key": "computeType", "type": "str"},
+        "compute_location": {"key": "computeLocation", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "created_on": {"key": "createdOn", "type": "iso-8601"},
+        "modified_on": {"key": "modifiedOn", "type": "iso-8601"},
+        "resource_id": {"key": "resourceId", "type": "str"},
+        "provisioning_errors": {"key": "provisioningErrors", "type": "[ErrorResponse]"},
+        "is_attached_compute": {"key": "isAttachedCompute", "type": "bool"},
+        "disable_local_auth": {"key": "disableLocalAuth", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword properties: Properties of Databricks.
         :paramtype properties: ~azure.mgmt.machinelearningservices.models.DatabricksProperties
@@ -5295,18 +5131,18 @@ class Databricks(Compute, DatabricksSchema):
         :paramtype disable_local_auth: bool
         """
         super(Databricks, self).__init__(**kwargs)
-        self.properties = kwargs.get('properties', None)
-        self.compute_type = 'Databricks'  # type: str
-        self.compute_type = 'Databricks'  # type: str
+        self.properties = kwargs.get("properties", None)
+        self.compute_type = "Databricks"  # type: str
+        self.compute_type = "Databricks"  # type: str
         self.compute_location = None
         self.provisioning_state = None
-        self.description = kwargs.get('description', None)
+        self.description = kwargs.get("description", None)
         self.created_on = None
         self.modified_on = None
-        self.resource_id = kwargs.get('resource_id', None)
+        self.resource_id = kwargs.get("resource_id", None)
         self.provisioning_errors = None
         self.is_attached_compute = None
-        self.disable_local_auth = kwargs.get('disable_local_auth', None)
+        self.disable_local_auth = kwargs.get("disable_local_auth", None)
 
 
 class DatabricksComputeSecretsProperties(msrest.serialization.Model):
@@ -5317,19 +5153,16 @@ class DatabricksComputeSecretsProperties(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'databricks_access_token': {'key': 'databricksAccessToken', 'type': 'str'},
+        "databricks_access_token": {"key": "databricksAccessToken", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword databricks_access_token: access token for databricks account.
         :paramtype databricks_access_token: str
         """
         super(DatabricksComputeSecretsProperties, self).__init__(**kwargs)
-        self.databricks_access_token = kwargs.get('databricks_access_token', None)
+        self.databricks_access_token = kwargs.get("databricks_access_token", None)
 
 
 class DatabricksComputeSecrets(ComputeSecrets, DatabricksComputeSecretsProperties):
@@ -5346,26 +5179,23 @@ class DatabricksComputeSecrets(ComputeSecrets, DatabricksComputeSecretsPropertie
     """
 
     _validation = {
-        'compute_type': {'required': True},
+        "compute_type": {"required": True},
     }
 
     _attribute_map = {
-        'databricks_access_token': {'key': 'databricksAccessToken', 'type': 'str'},
-        'compute_type': {'key': 'computeType', 'type': 'str'},
+        "databricks_access_token": {"key": "databricksAccessToken", "type": "str"},
+        "compute_type": {"key": "computeType", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword databricks_access_token: access token for databricks account.
         :paramtype databricks_access_token: str
         """
         super(DatabricksComputeSecrets, self).__init__(**kwargs)
-        self.databricks_access_token = kwargs.get('databricks_access_token', None)
-        self.compute_type = 'Databricks'  # type: str
-        self.compute_type = 'Databricks'  # type: str
+        self.databricks_access_token = kwargs.get("databricks_access_token", None)
+        self.compute_type = "Databricks"  # type: str
+        self.compute_type = "Databricks"  # type: str
 
 
 class DatabricksProperties(msrest.serialization.Model):
@@ -5378,14 +5208,11 @@ class DatabricksProperties(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'databricks_access_token': {'key': 'databricksAccessToken', 'type': 'str'},
-        'workspace_url': {'key': 'workspaceUrl', 'type': 'str'},
+        "databricks_access_token": {"key": "databricksAccessToken", "type": "str"},
+        "workspace_url": {"key": "workspaceUrl", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword databricks_access_token: Databricks access token.
         :paramtype databricks_access_token: str
@@ -5393,8 +5220,8 @@ class DatabricksProperties(msrest.serialization.Model):
         :paramtype workspace_url: str
         """
         super(DatabricksProperties, self).__init__(**kwargs)
-        self.databricks_access_token = kwargs.get('databricks_access_token', None)
-        self.workspace_url = kwargs.get('workspace_url', None)
+        self.databricks_access_token = kwargs.get("databricks_access_token", None)
+        self.workspace_url = kwargs.get("workspace_url", None)
 
 
 class DataContainerData(Resource):
@@ -5420,31 +5247,28 @@ class DataContainerData(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'properties': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "properties": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'properties': {'key': 'properties', 'type': 'DataContainerDetails'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "properties": {"key": "properties", "type": "DataContainerDetails"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword properties: Required. [Required] Additional attributes of the entity.
         :paramtype properties: ~azure.mgmt.machinelearningservices.models.DataContainerDetails
         """
         super(DataContainerData, self).__init__(**kwargs)
-        self.properties = kwargs['properties']
+        self.properties = kwargs["properties"]
 
 
 class DataContainerDetails(AssetContainer):
@@ -5472,25 +5296,22 @@ class DataContainerDetails(AssetContainer):
     """
 
     _validation = {
-        'latest_version': {'readonly': True},
-        'next_version': {'readonly': True},
-        'data_type': {'required': True},
+        "latest_version": {"readonly": True},
+        "next_version": {"readonly": True},
+        "data_type": {"required": True},
     }
 
     _attribute_map = {
-        'description': {'key': 'description', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': '{str}'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'is_archived': {'key': 'isArchived', 'type': 'bool'},
-        'latest_version': {'key': 'latestVersion', 'type': 'str'},
-        'next_version': {'key': 'nextVersion', 'type': 'str'},
-        'data_type': {'key': 'dataType', 'type': 'str'},
+        "description": {"key": "description", "type": "str"},
+        "properties": {"key": "properties", "type": "{str}"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "is_archived": {"key": "isArchived", "type": "bool"},
+        "latest_version": {"key": "latestVersion", "type": "str"},
+        "next_version": {"key": "nextVersion", "type": "str"},
+        "data_type": {"key": "dataType", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword description: The asset description text.
         :paramtype description: str
@@ -5505,7 +5326,7 @@ class DataContainerDetails(AssetContainer):
         :paramtype data_type: str or ~azure.mgmt.machinelearningservices.models.DataType
         """
         super(DataContainerDetails, self).__init__(**kwargs)
-        self.data_type = kwargs['data_type']
+        self.data_type = kwargs["data_type"]
 
 
 class DataContainerResourceArmPaginatedResult(msrest.serialization.Model):
@@ -5519,14 +5340,11 @@ class DataContainerResourceArmPaginatedResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'value': {'key': 'value', 'type': '[DataContainerData]'},
+        "next_link": {"key": "nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[DataContainerData]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword next_link: The link to the next page of DataContainer objects. If null, there are no
          additional pages.
@@ -5535,8 +5353,8 @@ class DataContainerResourceArmPaginatedResult(msrest.serialization.Model):
         :paramtype value: list[~azure.mgmt.machinelearningservices.models.DataContainerData]
         """
         super(DataContainerResourceArmPaginatedResult, self).__init__(**kwargs)
-        self.next_link = kwargs.get('next_link', None)
-        self.value = kwargs.get('value', None)
+        self.next_link = kwargs.get("next_link", None)
+        self.value = kwargs.get("value", None)
 
 
 class DataFactory(Compute):
@@ -5576,32 +5394,29 @@ class DataFactory(Compute):
     """
 
     _validation = {
-        'compute_type': {'required': True},
-        'compute_location': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'created_on': {'readonly': True},
-        'modified_on': {'readonly': True},
-        'provisioning_errors': {'readonly': True},
-        'is_attached_compute': {'readonly': True},
+        "compute_type": {"required": True},
+        "compute_location": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "created_on": {"readonly": True},
+        "modified_on": {"readonly": True},
+        "provisioning_errors": {"readonly": True},
+        "is_attached_compute": {"readonly": True},
     }
 
     _attribute_map = {
-        'compute_type': {'key': 'computeType', 'type': 'str'},
-        'compute_location': {'key': 'computeLocation', 'type': 'str'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'created_on': {'key': 'createdOn', 'type': 'iso-8601'},
-        'modified_on': {'key': 'modifiedOn', 'type': 'iso-8601'},
-        'resource_id': {'key': 'resourceId', 'type': 'str'},
-        'provisioning_errors': {'key': 'provisioningErrors', 'type': '[ErrorResponse]'},
-        'is_attached_compute': {'key': 'isAttachedCompute', 'type': 'bool'},
-        'disable_local_auth': {'key': 'disableLocalAuth', 'type': 'bool'},
+        "compute_type": {"key": "computeType", "type": "str"},
+        "compute_location": {"key": "computeLocation", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "created_on": {"key": "createdOn", "type": "iso-8601"},
+        "modified_on": {"key": "modifiedOn", "type": "iso-8601"},
+        "resource_id": {"key": "resourceId", "type": "str"},
+        "provisioning_errors": {"key": "provisioningErrors", "type": "[ErrorResponse]"},
+        "is_attached_compute": {"key": "isAttachedCompute", "type": "bool"},
+        "disable_local_auth": {"key": "disableLocalAuth", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword description: The description of the Machine Learning compute.
         :paramtype description: str
@@ -5612,7 +5427,7 @@ class DataFactory(Compute):
         :paramtype disable_local_auth: bool
         """
         super(DataFactory, self).__init__(**kwargs)
-        self.compute_type = 'DataFactory'  # type: str
+        self.compute_type = "DataFactory"  # type: str
 
 
 class DataLakeAnalyticsSchema(msrest.serialization.Model):
@@ -5624,20 +5439,20 @@ class DataLakeAnalyticsSchema(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'properties': {'key': 'properties', 'type': 'DataLakeAnalyticsSchemaProperties'},
+        "properties": {
+            "key": "properties",
+            "type": "DataLakeAnalyticsSchemaProperties",
+        },
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword properties:
         :paramtype properties:
          ~azure.mgmt.machinelearningservices.models.DataLakeAnalyticsSchemaProperties
         """
         super(DataLakeAnalyticsSchema, self).__init__(**kwargs)
-        self.properties = kwargs.get('properties', None)
+        self.properties = kwargs.get("properties", None)
 
 
 class DataLakeAnalytics(Compute, DataLakeAnalyticsSchema):
@@ -5680,33 +5495,33 @@ class DataLakeAnalytics(Compute, DataLakeAnalyticsSchema):
     """
 
     _validation = {
-        'compute_type': {'required': True},
-        'compute_location': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'created_on': {'readonly': True},
-        'modified_on': {'readonly': True},
-        'provisioning_errors': {'readonly': True},
-        'is_attached_compute': {'readonly': True},
+        "compute_type": {"required": True},
+        "compute_location": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "created_on": {"readonly": True},
+        "modified_on": {"readonly": True},
+        "provisioning_errors": {"readonly": True},
+        "is_attached_compute": {"readonly": True},
     }
 
     _attribute_map = {
-        'properties': {'key': 'properties', 'type': 'DataLakeAnalyticsSchemaProperties'},
-        'compute_type': {'key': 'computeType', 'type': 'str'},
-        'compute_location': {'key': 'computeLocation', 'type': 'str'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'created_on': {'key': 'createdOn', 'type': 'iso-8601'},
-        'modified_on': {'key': 'modifiedOn', 'type': 'iso-8601'},
-        'resource_id': {'key': 'resourceId', 'type': 'str'},
-        'provisioning_errors': {'key': 'provisioningErrors', 'type': '[ErrorResponse]'},
-        'is_attached_compute': {'key': 'isAttachedCompute', 'type': 'bool'},
-        'disable_local_auth': {'key': 'disableLocalAuth', 'type': 'bool'},
+        "properties": {
+            "key": "properties",
+            "type": "DataLakeAnalyticsSchemaProperties",
+        },
+        "compute_type": {"key": "computeType", "type": "str"},
+        "compute_location": {"key": "computeLocation", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "created_on": {"key": "createdOn", "type": "iso-8601"},
+        "modified_on": {"key": "modifiedOn", "type": "iso-8601"},
+        "resource_id": {"key": "resourceId", "type": "str"},
+        "provisioning_errors": {"key": "provisioningErrors", "type": "[ErrorResponse]"},
+        "is_attached_compute": {"key": "isAttachedCompute", "type": "bool"},
+        "disable_local_auth": {"key": "disableLocalAuth", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword properties:
         :paramtype properties:
@@ -5720,18 +5535,18 @@ class DataLakeAnalytics(Compute, DataLakeAnalyticsSchema):
         :paramtype disable_local_auth: bool
         """
         super(DataLakeAnalytics, self).__init__(**kwargs)
-        self.properties = kwargs.get('properties', None)
-        self.compute_type = 'DataLakeAnalytics'  # type: str
-        self.compute_type = 'DataLakeAnalytics'  # type: str
+        self.properties = kwargs.get("properties", None)
+        self.compute_type = "DataLakeAnalytics"  # type: str
+        self.compute_type = "DataLakeAnalytics"  # type: str
         self.compute_location = None
         self.provisioning_state = None
-        self.description = kwargs.get('description', None)
+        self.description = kwargs.get("description", None)
         self.created_on = None
         self.modified_on = None
-        self.resource_id = kwargs.get('resource_id', None)
+        self.resource_id = kwargs.get("resource_id", None)
         self.provisioning_errors = None
         self.is_attached_compute = None
-        self.disable_local_auth = kwargs.get('disable_local_auth', None)
+        self.disable_local_auth = kwargs.get("disable_local_auth", None)
 
 
 class DataLakeAnalyticsSchemaProperties(msrest.serialization.Model):
@@ -5742,19 +5557,21 @@ class DataLakeAnalyticsSchemaProperties(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'data_lake_store_account_name': {'key': 'dataLakeStoreAccountName', 'type': 'str'},
+        "data_lake_store_account_name": {
+            "key": "dataLakeStoreAccountName",
+            "type": "str",
+        },
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword data_lake_store_account_name: DataLake Store Account Name.
         :paramtype data_lake_store_account_name: str
         """
         super(DataLakeAnalyticsSchemaProperties, self).__init__(**kwargs)
-        self.data_lake_store_account_name = kwargs.get('data_lake_store_account_name', None)
+        self.data_lake_store_account_name = kwargs.get(
+            "data_lake_store_account_name", None
+        )
 
 
 class DataPathAssetReference(AssetReferenceBase):
@@ -5772,19 +5589,16 @@ class DataPathAssetReference(AssetReferenceBase):
     """
 
     _validation = {
-        'reference_type': {'required': True},
+        "reference_type": {"required": True},
     }
 
     _attribute_map = {
-        'reference_type': {'key': 'referenceType', 'type': 'str'},
-        'datastore_id': {'key': 'datastoreId', 'type': 'str'},
-        'path': {'key': 'path', 'type': 'str'},
+        "reference_type": {"key": "referenceType", "type": "str"},
+        "datastore_id": {"key": "datastoreId", "type": "str"},
+        "path": {"key": "path", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword datastore_id: ARM resource ID of the datastore where the asset is located.
         :paramtype datastore_id: str
@@ -5792,9 +5606,9 @@ class DataPathAssetReference(AssetReferenceBase):
         :paramtype path: str
         """
         super(DataPathAssetReference, self).__init__(**kwargs)
-        self.reference_type = 'DataPath'  # type: str
-        self.datastore_id = kwargs.get('datastore_id', None)
-        self.path = kwargs.get('path', None)
+        self.reference_type = "DataPath"  # type: str
+        self.datastore_id = kwargs.get("datastore_id", None)
+        self.path = kwargs.get("path", None)
 
 
 class DatastoreData(Resource):
@@ -5820,31 +5634,28 @@ class DatastoreData(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'properties': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "properties": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'properties': {'key': 'properties', 'type': 'DatastoreDetails'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "properties": {"key": "properties", "type": "DatastoreDetails"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword properties: Required. [Required] Additional attributes of the entity.
         :paramtype properties: ~azure.mgmt.machinelearningservices.models.DatastoreDetails
         """
         super(DatastoreData, self).__init__(**kwargs)
-        self.properties = kwargs['properties']
+        self.properties = kwargs["properties"]
 
 
 class DatastoreResourceArmPaginatedResult(msrest.serialization.Model):
@@ -5858,14 +5669,11 @@ class DatastoreResourceArmPaginatedResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'value': {'key': 'value', 'type': '[DatastoreData]'},
+        "next_link": {"key": "nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[DatastoreData]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword next_link: The link to the next page of Datastore objects. If null, there are no
          additional pages.
@@ -5874,8 +5682,8 @@ class DatastoreResourceArmPaginatedResult(msrest.serialization.Model):
         :paramtype value: list[~azure.mgmt.machinelearningservices.models.DatastoreData]
         """
         super(DatastoreResourceArmPaginatedResult, self).__init__(**kwargs)
-        self.next_link = kwargs.get('next_link', None)
-        self.value = kwargs.get('value', None)
+        self.next_link = kwargs.get("next_link", None)
+        self.value = kwargs.get("value", None)
 
 
 class DataVersionBaseData(Resource):
@@ -5901,31 +5709,28 @@ class DataVersionBaseData(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'properties': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "properties": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'properties': {'key': 'properties', 'type': 'DataVersionBaseDetails'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "properties": {"key": "properties", "type": "DataVersionBaseDetails"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword properties: Required. [Required] Additional attributes of the entity.
         :paramtype properties: ~azure.mgmt.machinelearningservices.models.DataVersionBaseDetails
         """
         super(DataVersionBaseData, self).__init__(**kwargs)
-        self.properties = kwargs['properties']
+        self.properties = kwargs["properties"]
 
 
 class DataVersionBaseDetails(AssetBase):
@@ -5955,28 +5760,29 @@ class DataVersionBaseDetails(AssetBase):
     """
 
     _validation = {
-        'data_type': {'required': True},
-        'data_uri': {'required': True, 'pattern': r'[a-zA-Z0-9_]'},
+        "data_type": {"required": True},
+        "data_uri": {"required": True, "pattern": r"[a-zA-Z0-9_]"},
     }
 
     _attribute_map = {
-        'description': {'key': 'description', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': '{str}'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'is_anonymous': {'key': 'isAnonymous', 'type': 'bool'},
-        'is_archived': {'key': 'isArchived', 'type': 'bool'},
-        'data_type': {'key': 'dataType', 'type': 'str'},
-        'data_uri': {'key': 'dataUri', 'type': 'str'},
+        "description": {"key": "description", "type": "str"},
+        "properties": {"key": "properties", "type": "{str}"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "is_anonymous": {"key": "isAnonymous", "type": "bool"},
+        "is_archived": {"key": "isArchived", "type": "bool"},
+        "data_type": {"key": "dataType", "type": "str"},
+        "data_uri": {"key": "dataUri", "type": "str"},
     }
 
     _subtype_map = {
-        'data_type': {'mltable': 'MLTableData', 'uri_file': 'UriFileDataVersion', 'uri_folder': 'UriFolderDataVersion'}
+        "data_type": {
+            "mltable": "MLTableData",
+            "uri_file": "UriFileDataVersion",
+            "uri_folder": "UriFolderDataVersion",
+        }
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword description: The asset description text.
         :paramtype description: str
@@ -5993,8 +5799,8 @@ class DataVersionBaseDetails(AssetBase):
         :paramtype data_uri: str
         """
         super(DataVersionBaseDetails, self).__init__(**kwargs)
-        self.data_type = 'DataVersionBaseDetails'  # type: str
-        self.data_uri = kwargs['data_uri']
+        self.data_type = "DataVersionBaseDetails"  # type: str
+        self.data_uri = kwargs["data_uri"]
 
 
 class DataVersionBaseResourceArmPaginatedResult(msrest.serialization.Model):
@@ -6008,14 +5814,11 @@ class DataVersionBaseResourceArmPaginatedResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'value': {'key': 'value', 'type': '[DataVersionBaseData]'},
+        "next_link": {"key": "nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[DataVersionBaseData]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword next_link: The link to the next page of DataVersionBase objects. If null, there are no
          additional pages.
@@ -6024,8 +5827,8 @@ class DataVersionBaseResourceArmPaginatedResult(msrest.serialization.Model):
         :paramtype value: list[~azure.mgmt.machinelearningservices.models.DataVersionBaseData]
         """
         super(DataVersionBaseResourceArmPaginatedResult, self).__init__(**kwargs)
-        self.next_link = kwargs.get('next_link', None)
-        self.value = kwargs.get('value', None)
+        self.next_link = kwargs.get("next_link", None)
+        self.value = kwargs.get("value", None)
 
 
 class OnlineScaleSettings(msrest.serialization.Model):
@@ -6042,23 +5845,22 @@ class OnlineScaleSettings(msrest.serialization.Model):
     """
 
     _validation = {
-        'scale_type': {'required': True},
+        "scale_type": {"required": True},
     }
 
     _attribute_map = {
-        'scale_type': {'key': 'scaleType', 'type': 'str'},
+        "scale_type": {"key": "scaleType", "type": "str"},
     }
 
     _subtype_map = {
-        'scale_type': {'Default': 'DefaultScaleSettings', 'TargetUtilization': 'TargetUtilizationScaleSettings'}
+        "scale_type": {
+            "Default": "DefaultScaleSettings",
+            "TargetUtilization": "TargetUtilizationScaleSettings",
+        }
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs):
+        """ """
         super(OnlineScaleSettings, self).__init__(**kwargs)
         self.scale_type = None  # type: Optional[str]
 
@@ -6074,21 +5876,17 @@ class DefaultScaleSettings(OnlineScaleSettings):
     """
 
     _validation = {
-        'scale_type': {'required': True},
+        "scale_type": {"required": True},
     }
 
     _attribute_map = {
-        'scale_type': {'key': 'scaleType', 'type': 'str'},
+        "scale_type": {"key": "scaleType", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs):
+        """ """
         super(DefaultScaleSettings, self).__init__(**kwargs)
-        self.scale_type = 'Default'  # type: str
+        self.scale_type = "Default"  # type: str
 
 
 class DeploymentLogs(msrest.serialization.Model):
@@ -6099,19 +5897,16 @@ class DeploymentLogs(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'content': {'key': 'content', 'type': 'str'},
+        "content": {"key": "content", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword content: The retrieved online deployment logs.
         :paramtype content: str
         """
         super(DeploymentLogs, self).__init__(**kwargs)
-        self.content = kwargs.get('content', None)
+        self.content = kwargs.get("content", None)
 
 
 class DeploymentLogsRequest(msrest.serialization.Model):
@@ -6125,14 +5920,11 @@ class DeploymentLogsRequest(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'container_type': {'key': 'containerType', 'type': 'str'},
-        'tail': {'key': 'tail', 'type': 'int'},
+        "container_type": {"key": "containerType", "type": "str"},
+        "tail": {"key": "tail", "type": "int"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword container_type: The type of container to retrieve logs from. Possible values include:
          "StorageInitializer", "InferenceServer".
@@ -6141,8 +5933,8 @@ class DeploymentLogsRequest(msrest.serialization.Model):
         :paramtype tail: int
         """
         super(DeploymentLogsRequest, self).__init__(**kwargs)
-        self.container_type = kwargs.get('container_type', None)
-        self.tail = kwargs.get('tail', None)
+        self.container_type = kwargs.get("container_type", None)
+        self.tail = kwargs.get("tail", None)
 
 
 class DiagnoseRequestProperties(msrest.serialization.Model):
@@ -6169,21 +5961,18 @@ class DiagnoseRequestProperties(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'udr': {'key': 'udr', 'type': '{object}'},
-        'nsg': {'key': 'nsg', 'type': '{object}'},
-        'resource_lock': {'key': 'resourceLock', 'type': '{object}'},
-        'dns_resolution': {'key': 'dnsResolution', 'type': '{object}'},
-        'storage_account': {'key': 'storageAccount', 'type': '{object}'},
-        'key_vault': {'key': 'keyVault', 'type': '{object}'},
-        'container_registry': {'key': 'containerRegistry', 'type': '{object}'},
-        'application_insights': {'key': 'applicationInsights', 'type': '{object}'},
-        'others': {'key': 'others', 'type': '{object}'},
+        "udr": {"key": "udr", "type": "{object}"},
+        "nsg": {"key": "nsg", "type": "{object}"},
+        "resource_lock": {"key": "resourceLock", "type": "{object}"},
+        "dns_resolution": {"key": "dnsResolution", "type": "{object}"},
+        "storage_account": {"key": "storageAccount", "type": "{object}"},
+        "key_vault": {"key": "keyVault", "type": "{object}"},
+        "container_registry": {"key": "containerRegistry", "type": "{object}"},
+        "application_insights": {"key": "applicationInsights", "type": "{object}"},
+        "others": {"key": "others", "type": "{object}"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword udr: Setting for diagnosing user defined routing.
         :paramtype udr: dict[str, any]
@@ -6205,15 +5994,15 @@ class DiagnoseRequestProperties(msrest.serialization.Model):
         :paramtype others: dict[str, any]
         """
         super(DiagnoseRequestProperties, self).__init__(**kwargs)
-        self.udr = kwargs.get('udr', None)
-        self.nsg = kwargs.get('nsg', None)
-        self.resource_lock = kwargs.get('resource_lock', None)
-        self.dns_resolution = kwargs.get('dns_resolution', None)
-        self.storage_account = kwargs.get('storage_account', None)
-        self.key_vault = kwargs.get('key_vault', None)
-        self.container_registry = kwargs.get('container_registry', None)
-        self.application_insights = kwargs.get('application_insights', None)
-        self.others = kwargs.get('others', None)
+        self.udr = kwargs.get("udr", None)
+        self.nsg = kwargs.get("nsg", None)
+        self.resource_lock = kwargs.get("resource_lock", None)
+        self.dns_resolution = kwargs.get("dns_resolution", None)
+        self.storage_account = kwargs.get("storage_account", None)
+        self.key_vault = kwargs.get("key_vault", None)
+        self.container_registry = kwargs.get("container_registry", None)
+        self.application_insights = kwargs.get("application_insights", None)
+        self.others = kwargs.get("others", None)
 
 
 class DiagnoseResponseResult(msrest.serialization.Model):
@@ -6224,19 +6013,16 @@ class DiagnoseResponseResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': 'DiagnoseResponseResultValue'},
+        "value": {"key": "value", "type": "DiagnoseResponseResultValue"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword value:
         :paramtype value: ~azure.mgmt.machinelearningservices.models.DiagnoseResponseResultValue
         """
         super(DiagnoseResponseResult, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
+        self.value = kwargs.get("value", None)
 
 
 class DiagnoseResponseResultValue(msrest.serialization.Model):
@@ -6269,21 +6055,39 @@ class DiagnoseResponseResultValue(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'user_defined_route_results': {'key': 'userDefinedRouteResults', 'type': '[DiagnoseResult]'},
-        'network_security_rule_results': {'key': 'networkSecurityRuleResults', 'type': '[DiagnoseResult]'},
-        'resource_lock_results': {'key': 'resourceLockResults', 'type': '[DiagnoseResult]'},
-        'dns_resolution_results': {'key': 'dnsResolutionResults', 'type': '[DiagnoseResult]'},
-        'storage_account_results': {'key': 'storageAccountResults', 'type': '[DiagnoseResult]'},
-        'key_vault_results': {'key': 'keyVaultResults', 'type': '[DiagnoseResult]'},
-        'container_registry_results': {'key': 'containerRegistryResults', 'type': '[DiagnoseResult]'},
-        'application_insights_results': {'key': 'applicationInsightsResults', 'type': '[DiagnoseResult]'},
-        'other_results': {'key': 'otherResults', 'type': '[DiagnoseResult]'},
+        "user_defined_route_results": {
+            "key": "userDefinedRouteResults",
+            "type": "[DiagnoseResult]",
+        },
+        "network_security_rule_results": {
+            "key": "networkSecurityRuleResults",
+            "type": "[DiagnoseResult]",
+        },
+        "resource_lock_results": {
+            "key": "resourceLockResults",
+            "type": "[DiagnoseResult]",
+        },
+        "dns_resolution_results": {
+            "key": "dnsResolutionResults",
+            "type": "[DiagnoseResult]",
+        },
+        "storage_account_results": {
+            "key": "storageAccountResults",
+            "type": "[DiagnoseResult]",
+        },
+        "key_vault_results": {"key": "keyVaultResults", "type": "[DiagnoseResult]"},
+        "container_registry_results": {
+            "key": "containerRegistryResults",
+            "type": "[DiagnoseResult]",
+        },
+        "application_insights_results": {
+            "key": "applicationInsightsResults",
+            "type": "[DiagnoseResult]",
+        },
+        "other_results": {"key": "otherResults", "type": "[DiagnoseResult]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword user_defined_route_results:
         :paramtype user_defined_route_results:
@@ -6312,15 +6116,19 @@ class DiagnoseResponseResultValue(msrest.serialization.Model):
         :paramtype other_results: list[~azure.mgmt.machinelearningservices.models.DiagnoseResult]
         """
         super(DiagnoseResponseResultValue, self).__init__(**kwargs)
-        self.user_defined_route_results = kwargs.get('user_defined_route_results', None)
-        self.network_security_rule_results = kwargs.get('network_security_rule_results', None)
-        self.resource_lock_results = kwargs.get('resource_lock_results', None)
-        self.dns_resolution_results = kwargs.get('dns_resolution_results', None)
-        self.storage_account_results = kwargs.get('storage_account_results', None)
-        self.key_vault_results = kwargs.get('key_vault_results', None)
-        self.container_registry_results = kwargs.get('container_registry_results', None)
-        self.application_insights_results = kwargs.get('application_insights_results', None)
-        self.other_results = kwargs.get('other_results', None)
+        self.user_defined_route_results = kwargs.get("user_defined_route_results", None)
+        self.network_security_rule_results = kwargs.get(
+            "network_security_rule_results", None
+        )
+        self.resource_lock_results = kwargs.get("resource_lock_results", None)
+        self.dns_resolution_results = kwargs.get("dns_resolution_results", None)
+        self.storage_account_results = kwargs.get("storage_account_results", None)
+        self.key_vault_results = kwargs.get("key_vault_results", None)
+        self.container_registry_results = kwargs.get("container_registry_results", None)
+        self.application_insights_results = kwargs.get(
+            "application_insights_results", None
+        )
+        self.other_results = kwargs.get("other_results", None)
 
 
 class DiagnoseResult(msrest.serialization.Model):
@@ -6338,23 +6146,19 @@ class DiagnoseResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'code': {'readonly': True},
-        'level': {'readonly': True},
-        'message': {'readonly': True},
+        "code": {"readonly": True},
+        "level": {"readonly": True},
+        "message": {"readonly": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'level': {'key': 'level', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        "code": {"key": "code", "type": "str"},
+        "level": {"key": "level", "type": "str"},
+        "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs):
+        """ """
         super(DiagnoseResult, self).__init__(**kwargs)
         self.code = None
         self.level = None
@@ -6369,19 +6173,16 @@ class DiagnoseWorkspaceParameters(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': 'DiagnoseRequestProperties'},
+        "value": {"key": "value", "type": "DiagnoseRequestProperties"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword value: Value of Parameters.
         :paramtype value: ~azure.mgmt.machinelearningservices.models.DiagnoseRequestProperties
         """
         super(DiagnoseWorkspaceParameters, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
+        self.value = kwargs.get("value", None)
 
 
 class DistributionConfiguration(msrest.serialization.Model):
@@ -6398,23 +6199,23 @@ class DistributionConfiguration(msrest.serialization.Model):
     """
 
     _validation = {
-        'distribution_type': {'required': True},
+        "distribution_type": {"required": True},
     }
 
     _attribute_map = {
-        'distribution_type': {'key': 'distributionType', 'type': 'str'},
+        "distribution_type": {"key": "distributionType", "type": "str"},
     }
 
     _subtype_map = {
-        'distribution_type': {'Mpi': 'Mpi', 'PyTorch': 'PyTorch', 'TensorFlow': 'TensorFlow'}
+        "distribution_type": {
+            "Mpi": "Mpi",
+            "PyTorch": "PyTorch",
+            "TensorFlow": "TensorFlow",
+        }
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs):
+        """ """
         super(DistributionConfiguration, self).__init__(**kwargs)
         self.distribution_type = None  # type: Optional[str]
 
@@ -6435,20 +6236,17 @@ class EncryptionKeyVaultProperties(msrest.serialization.Model):
     """
 
     _validation = {
-        'key_vault_arm_id': {'required': True},
-        'key_identifier': {'required': True},
+        "key_vault_arm_id": {"required": True},
+        "key_identifier": {"required": True},
     }
 
     _attribute_map = {
-        'key_vault_arm_id': {'key': 'keyVaultArmId', 'type': 'str'},
-        'key_identifier': {'key': 'keyIdentifier', 'type': 'str'},
-        'identity_client_id': {'key': 'identityClientId', 'type': 'str'},
+        "key_vault_arm_id": {"key": "keyVaultArmId", "type": "str"},
+        "key_identifier": {"key": "keyIdentifier", "type": "str"},
+        "identity_client_id": {"key": "identityClientId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword key_vault_arm_id: Required. The ArmId of the keyVault where the customer owned
          encryption key is present.
@@ -6460,9 +6258,9 @@ class EncryptionKeyVaultProperties(msrest.serialization.Model):
         :paramtype identity_client_id: str
         """
         super(EncryptionKeyVaultProperties, self).__init__(**kwargs)
-        self.key_vault_arm_id = kwargs['key_vault_arm_id']
-        self.key_identifier = kwargs['key_identifier']
-        self.identity_client_id = kwargs.get('identity_client_id', None)
+        self.key_vault_arm_id = kwargs["key_vault_arm_id"]
+        self.key_identifier = kwargs["key_identifier"]
+        self.identity_client_id = kwargs.get("identity_client_id", None)
 
 
 class EncryptionProperty(msrest.serialization.Model):
@@ -6481,20 +6279,20 @@ class EncryptionProperty(msrest.serialization.Model):
     """
 
     _validation = {
-        'status': {'required': True},
-        'key_vault_properties': {'required': True},
+        "status": {"required": True},
+        "key_vault_properties": {"required": True},
     }
 
     _attribute_map = {
-        'status': {'key': 'status', 'type': 'str'},
-        'identity': {'key': 'identity', 'type': 'IdentityForCmk'},
-        'key_vault_properties': {'key': 'keyVaultProperties', 'type': 'EncryptionKeyVaultProperties'},
+        "status": {"key": "status", "type": "str"},
+        "identity": {"key": "identity", "type": "IdentityForCmk"},
+        "key_vault_properties": {
+            "key": "keyVaultProperties",
+            "type": "EncryptionKeyVaultProperties",
+        },
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword status: Required. Indicates whether or not the encryption is enabled for the
          workspace. Possible values include: "Enabled", "Disabled".
@@ -6507,9 +6305,9 @@ class EncryptionProperty(msrest.serialization.Model):
          ~azure.mgmt.machinelearningservices.models.EncryptionKeyVaultProperties
         """
         super(EncryptionProperty, self).__init__(**kwargs)
-        self.status = kwargs['status']
-        self.identity = kwargs.get('identity', None)
-        self.key_vault_properties = kwargs['key_vault_properties']
+        self.status = kwargs["status"]
+        self.identity = kwargs.get("identity", None)
+        self.key_vault_properties = kwargs["key_vault_properties"]
 
 
 class EndpointAuthKeys(msrest.serialization.Model):
@@ -6522,14 +6320,11 @@ class EndpointAuthKeys(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'primary_key': {'key': 'primaryKey', 'type': 'str'},
-        'secondary_key': {'key': 'secondaryKey', 'type': 'str'},
+        "primary_key": {"key": "primaryKey", "type": "str"},
+        "secondary_key": {"key": "secondaryKey", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword primary_key: The primary key.
         :paramtype primary_key: str
@@ -6537,8 +6332,8 @@ class EndpointAuthKeys(msrest.serialization.Model):
         :paramtype secondary_key: str
         """
         super(EndpointAuthKeys, self).__init__(**kwargs)
-        self.primary_key = kwargs.get('primary_key', None)
-        self.secondary_key = kwargs.get('secondary_key', None)
+        self.primary_key = kwargs.get("primary_key", None)
+        self.secondary_key = kwargs.get("secondary_key", None)
 
 
 class EndpointAuthToken(msrest.serialization.Model):
@@ -6555,16 +6350,13 @@ class EndpointAuthToken(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'access_token': {'key': 'accessToken', 'type': 'str'},
-        'expiry_time_utc': {'key': 'expiryTimeUtc', 'type': 'long'},
-        'refresh_after_time_utc': {'key': 'refreshAfterTimeUtc', 'type': 'long'},
-        'token_type': {'key': 'tokenType', 'type': 'str'},
+        "access_token": {"key": "accessToken", "type": "str"},
+        "expiry_time_utc": {"key": "expiryTimeUtc", "type": "long"},
+        "refresh_after_time_utc": {"key": "refreshAfterTimeUtc", "type": "long"},
+        "token_type": {"key": "tokenType", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword access_token: Access token for endpoint authentication.
         :paramtype access_token: str
@@ -6576,10 +6368,10 @@ class EndpointAuthToken(msrest.serialization.Model):
         :paramtype token_type: str
         """
         super(EndpointAuthToken, self).__init__(**kwargs)
-        self.access_token = kwargs.get('access_token', None)
-        self.expiry_time_utc = kwargs.get('expiry_time_utc', 0)
-        self.refresh_after_time_utc = kwargs.get('refresh_after_time_utc', 0)
-        self.token_type = kwargs.get('token_type', None)
+        self.access_token = kwargs.get("access_token", None)
+        self.expiry_time_utc = kwargs.get("expiry_time_utc", 0)
+        self.refresh_after_time_utc = kwargs.get("refresh_after_time_utc", 0)
+        self.token_type = kwargs.get("token_type", None)
 
 
 class EnvironmentContainerData(Resource):
@@ -6605,31 +6397,28 @@ class EnvironmentContainerData(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'properties': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "properties": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'properties': {'key': 'properties', 'type': 'EnvironmentContainerDetails'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "properties": {"key": "properties", "type": "EnvironmentContainerDetails"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword properties: Required. [Required] Additional attributes of the entity.
         :paramtype properties: ~azure.mgmt.machinelearningservices.models.EnvironmentContainerDetails
         """
         super(EnvironmentContainerData, self).__init__(**kwargs)
-        self.properties = kwargs['properties']
+        self.properties = kwargs["properties"]
 
 
 class EnvironmentContainerDetails(AssetContainer):
@@ -6652,23 +6441,20 @@ class EnvironmentContainerDetails(AssetContainer):
     """
 
     _validation = {
-        'latest_version': {'readonly': True},
-        'next_version': {'readonly': True},
+        "latest_version": {"readonly": True},
+        "next_version": {"readonly": True},
     }
 
     _attribute_map = {
-        'description': {'key': 'description', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': '{str}'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'is_archived': {'key': 'isArchived', 'type': 'bool'},
-        'latest_version': {'key': 'latestVersion', 'type': 'str'},
-        'next_version': {'key': 'nextVersion', 'type': 'str'},
+        "description": {"key": "description", "type": "str"},
+        "properties": {"key": "properties", "type": "{str}"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "is_archived": {"key": "isArchived", "type": "bool"},
+        "latest_version": {"key": "latestVersion", "type": "str"},
+        "next_version": {"key": "nextVersion", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword description: The asset description text.
         :paramtype description: str
@@ -6693,14 +6479,11 @@ class EnvironmentContainerResourceArmPaginatedResult(msrest.serialization.Model)
     """
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'value': {'key': 'value', 'type': '[EnvironmentContainerData]'},
+        "next_link": {"key": "nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[EnvironmentContainerData]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword next_link: The link to the next page of EnvironmentContainer objects. If null, there
          are no additional pages.
@@ -6709,8 +6492,8 @@ class EnvironmentContainerResourceArmPaginatedResult(msrest.serialization.Model)
         :paramtype value: list[~azure.mgmt.machinelearningservices.models.EnvironmentContainerData]
         """
         super(EnvironmentContainerResourceArmPaginatedResult, self).__init__(**kwargs)
-        self.next_link = kwargs.get('next_link', None)
-        self.value = kwargs.get('value', None)
+        self.next_link = kwargs.get("next_link", None)
+        self.value = kwargs.get("value", None)
 
 
 class EnvironmentVersionData(Resource):
@@ -6736,31 +6519,28 @@ class EnvironmentVersionData(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'properties': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "properties": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'properties': {'key': 'properties', 'type': 'EnvironmentVersionDetails'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "properties": {"key": "properties", "type": "EnvironmentVersionDetails"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword properties: Required. [Required] Additional attributes of the entity.
         :paramtype properties: ~azure.mgmt.machinelearningservices.models.EnvironmentVersionDetails
         """
         super(EnvironmentVersionData, self).__init__(**kwargs)
-        self.properties = kwargs['properties']
+        self.properties = kwargs["properties"]
 
 
 class EnvironmentVersionDetails(AssetBase):
@@ -6782,29 +6562,29 @@ class EnvironmentVersionDetails(AssetBase):
     :vartype build: ~azure.mgmt.machinelearningservices.models.BuildContext
     :ivar conda_file: Standard configuration file used by Conda that lets you install any kind of
      package, including Python, R, and C/C++ packages.
-    
-    
+
+
      .. raw:: html
-    
+
         <see
      href="https://repo2docker.readthedocs.io/en/latest/config_files.html#environment-yml-install-a-conda-environment"
      />.
     :vartype conda_file: str
     :ivar environment_type: Environment type is either user managed or curated by the Azure ML
      service
-    
-    
+
+
      .. raw:: html
-    
+
         <see
      href="https://docs.microsoft.com/en-us/azure/machine-learning/resource-curated-environments"
      />. Possible values include: "Curated", "UserCreated".
     :vartype environment_type: str or ~azure.mgmt.machinelearningservices.models.EnvironmentType
     :ivar image: Name of the image that will be used for the environment.
-    
-    
+
+
      .. raw:: html
-    
+
         <seealso
      href="https://docs.microsoft.com/en-us/azure/machine-learning/how-to-deploy-custom-docker-image#use-a-custom-base-image"
      />.
@@ -6817,27 +6597,27 @@ class EnvironmentVersionDetails(AssetBase):
     """
 
     _validation = {
-        'environment_type': {'readonly': True},
+        "environment_type": {"readonly": True},
     }
 
     _attribute_map = {
-        'description': {'key': 'description', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': '{str}'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'is_anonymous': {'key': 'isAnonymous', 'type': 'bool'},
-        'is_archived': {'key': 'isArchived', 'type': 'bool'},
-        'build': {'key': 'build', 'type': 'BuildContext'},
-        'conda_file': {'key': 'condaFile', 'type': 'str'},
-        'environment_type': {'key': 'environmentType', 'type': 'str'},
-        'image': {'key': 'image', 'type': 'str'},
-        'inference_config': {'key': 'inferenceConfig', 'type': 'InferenceContainerProperties'},
-        'os_type': {'key': 'osType', 'type': 'str'},
+        "description": {"key": "description", "type": "str"},
+        "properties": {"key": "properties", "type": "{str}"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "is_anonymous": {"key": "isAnonymous", "type": "bool"},
+        "is_archived": {"key": "isArchived", "type": "bool"},
+        "build": {"key": "build", "type": "BuildContext"},
+        "conda_file": {"key": "condaFile", "type": "str"},
+        "environment_type": {"key": "environmentType", "type": "str"},
+        "image": {"key": "image", "type": "str"},
+        "inference_config": {
+            "key": "inferenceConfig",
+            "type": "InferenceContainerProperties",
+        },
+        "os_type": {"key": "osType", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword description: The asset description text.
         :paramtype description: str
@@ -6853,19 +6633,19 @@ class EnvironmentVersionDetails(AssetBase):
         :paramtype build: ~azure.mgmt.machinelearningservices.models.BuildContext
         :keyword conda_file: Standard configuration file used by Conda that lets you install any kind
          of package, including Python, R, and C/C++ packages.
-        
-        
+
+
          .. raw:: html
-        
+
             <see
          href="https://repo2docker.readthedocs.io/en/latest/config_files.html#environment-yml-install-a-conda-environment"
          />.
         :paramtype conda_file: str
         :keyword image: Name of the image that will be used for the environment.
-        
-        
+
+
          .. raw:: html
-        
+
             <seealso
          href="https://docs.microsoft.com/en-us/azure/machine-learning/how-to-deploy-custom-docker-image#use-a-custom-base-image"
          />.
@@ -6877,12 +6657,12 @@ class EnvironmentVersionDetails(AssetBase):
         :paramtype os_type: str or ~azure.mgmt.machinelearningservices.models.OperatingSystemType
         """
         super(EnvironmentVersionDetails, self).__init__(**kwargs)
-        self.build = kwargs.get('build', None)
-        self.conda_file = kwargs.get('conda_file', None)
+        self.build = kwargs.get("build", None)
+        self.conda_file = kwargs.get("conda_file", None)
         self.environment_type = None
-        self.image = kwargs.get('image', None)
-        self.inference_config = kwargs.get('inference_config', None)
-        self.os_type = kwargs.get('os_type', None)
+        self.image = kwargs.get("image", None)
+        self.inference_config = kwargs.get("inference_config", None)
+        self.os_type = kwargs.get("os_type", None)
 
 
 class EnvironmentVersionResourceArmPaginatedResult(msrest.serialization.Model):
@@ -6896,14 +6676,11 @@ class EnvironmentVersionResourceArmPaginatedResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'value': {'key': 'value', 'type': '[EnvironmentVersionData]'},
+        "next_link": {"key": "nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[EnvironmentVersionData]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword next_link: The link to the next page of EnvironmentVersion objects. If null, there are
          no additional pages.
@@ -6912,8 +6689,8 @@ class EnvironmentVersionResourceArmPaginatedResult(msrest.serialization.Model):
         :paramtype value: list[~azure.mgmt.machinelearningservices.models.EnvironmentVersionData]
         """
         super(EnvironmentVersionResourceArmPaginatedResult, self).__init__(**kwargs)
-        self.next_link = kwargs.get('next_link', None)
-        self.value = kwargs.get('value', None)
+        self.next_link = kwargs.get("next_link", None)
+        self.value = kwargs.get("value", None)
 
 
 class ErrorAdditionalInfo(msrest.serialization.Model):
@@ -6928,21 +6705,17 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
     """
 
     _validation = {
-        'type': {'readonly': True},
-        'info': {'readonly': True},
+        "type": {"readonly": True},
+        "info": {"readonly": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'info': {'key': 'info', 'type': 'object'},
+        "type": {"key": "type", "type": "str"},
+        "info": {"key": "info", "type": "object"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs):
+        """ """
         super(ErrorAdditionalInfo, self).__init__(**kwargs)
         self.type = None
         self.info = None
@@ -6966,27 +6739,23 @@ class ErrorDetail(msrest.serialization.Model):
     """
 
     _validation = {
-        'code': {'readonly': True},
-        'message': {'readonly': True},
-        'target': {'readonly': True},
-        'details': {'readonly': True},
-        'additional_info': {'readonly': True},
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[ErrorDetail]'},
-        'additional_info': {'key': 'additionalInfo', 'type': '[ErrorAdditionalInfo]'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[ErrorDetail]"},
+        "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs):
+        """ """
         super(ErrorDetail, self).__init__(**kwargs)
         self.code = None
         self.message = None
@@ -7003,19 +6772,16 @@ class ErrorResponse(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'error': {'key': 'error', 'type': 'ErrorDetail'},
+        "error": {"key": "error", "type": "ErrorDetail"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword error: The error object.
         :paramtype error: ~azure.mgmt.machinelearningservices.models.ErrorDetail
         """
         super(ErrorResponse, self).__init__(**kwargs)
-        self.error = kwargs.get('error', None)
+        self.error = kwargs.get("error", None)
 
 
 class EstimatedVMPrice(msrest.serialization.Model):
@@ -7034,21 +6800,18 @@ class EstimatedVMPrice(msrest.serialization.Model):
     """
 
     _validation = {
-        'retail_price': {'required': True},
-        'os_type': {'required': True},
-        'vm_tier': {'required': True},
+        "retail_price": {"required": True},
+        "os_type": {"required": True},
+        "vm_tier": {"required": True},
     }
 
     _attribute_map = {
-        'retail_price': {'key': 'retailPrice', 'type': 'float'},
-        'os_type': {'key': 'osType', 'type': 'str'},
-        'vm_tier': {'key': 'vmTier', 'type': 'str'},
+        "retail_price": {"key": "retailPrice", "type": "float"},
+        "os_type": {"key": "osType", "type": "str"},
+        "vm_tier": {"key": "vmTier", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword retail_price: Required. The price charged for using the VM.
         :paramtype retail_price: float
@@ -7060,9 +6823,9 @@ class EstimatedVMPrice(msrest.serialization.Model):
         :paramtype vm_tier: str or ~azure.mgmt.machinelearningservices.models.VMTier
         """
         super(EstimatedVMPrice, self).__init__(**kwargs)
-        self.retail_price = kwargs['retail_price']
-        self.os_type = kwargs['os_type']
-        self.vm_tier = kwargs['vm_tier']
+        self.retail_price = kwargs["retail_price"]
+        self.os_type = kwargs["os_type"]
+        self.vm_tier = kwargs["vm_tier"]
 
 
 class EstimatedVMPrices(msrest.serialization.Model):
@@ -7082,21 +6845,18 @@ class EstimatedVMPrices(msrest.serialization.Model):
     """
 
     _validation = {
-        'billing_currency': {'required': True},
-        'unit_of_measure': {'required': True},
-        'values': {'required': True},
+        "billing_currency": {"required": True},
+        "unit_of_measure": {"required": True},
+        "values": {"required": True},
     }
 
     _attribute_map = {
-        'billing_currency': {'key': 'billingCurrency', 'type': 'str'},
-        'unit_of_measure': {'key': 'unitOfMeasure', 'type': 'str'},
-        'values': {'key': 'values', 'type': '[EstimatedVMPrice]'},
+        "billing_currency": {"key": "billingCurrency", "type": "str"},
+        "unit_of_measure": {"key": "unitOfMeasure", "type": "str"},
+        "values": {"key": "values", "type": "[EstimatedVMPrice]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword billing_currency: Required. Three lettered code specifying the currency of the VM
          price. Example: USD. Possible values include: "USD".
@@ -7109,9 +6869,9 @@ class EstimatedVMPrices(msrest.serialization.Model):
         :paramtype values: list[~azure.mgmt.machinelearningservices.models.EstimatedVMPrice]
         """
         super(EstimatedVMPrices, self).__init__(**kwargs)
-        self.billing_currency = kwargs['billing_currency']
-        self.unit_of_measure = kwargs['unit_of_measure']
-        self.values = kwargs['values']
+        self.billing_currency = kwargs["billing_currency"]
+        self.unit_of_measure = kwargs["unit_of_measure"]
+        self.values = kwargs["values"]
 
 
 class ExternalFQDNResponse(msrest.serialization.Model):
@@ -7122,19 +6882,16 @@ class ExternalFQDNResponse(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[FQDNEndpoints]'},
+        "value": {"key": "value", "type": "[FQDNEndpoints]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword value:
         :paramtype value: list[~azure.mgmt.machinelearningservices.models.FQDNEndpoints]
         """
         super(ExternalFQDNResponse, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
+        self.value = kwargs.get("value", None)
 
 
 class FlavorData(msrest.serialization.Model):
@@ -7145,19 +6902,16 @@ class FlavorData(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'data': {'key': 'data', 'type': '{str}'},
+        "data": {"key": "data", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword data: Model flavor-specific data.
         :paramtype data: dict[str, str]
         """
         super(FlavorData, self).__init__(**kwargs)
-        self.data = kwargs.get('data', None)
+        self.data = kwargs.get("data", None)
 
 
 class FQDNEndpoint(msrest.serialization.Model):
@@ -7170,14 +6924,11 @@ class FQDNEndpoint(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'domain_name': {'key': 'domainName', 'type': 'str'},
-        'endpoint_details': {'key': 'endpointDetails', 'type': '[FQDNEndpointDetail]'},
+        "domain_name": {"key": "domainName", "type": "str"},
+        "endpoint_details": {"key": "endpointDetails", "type": "[FQDNEndpointDetail]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword domain_name:
         :paramtype domain_name: str
@@ -7186,8 +6937,8 @@ class FQDNEndpoint(msrest.serialization.Model):
          list[~azure.mgmt.machinelearningservices.models.FQDNEndpointDetail]
         """
         super(FQDNEndpoint, self).__init__(**kwargs)
-        self.domain_name = kwargs.get('domain_name', None)
-        self.endpoint_details = kwargs.get('endpoint_details', None)
+        self.domain_name = kwargs.get("domain_name", None)
+        self.endpoint_details = kwargs.get("endpoint_details", None)
 
 
 class FQDNEndpointDetail(msrest.serialization.Model):
@@ -7198,19 +6949,16 @@ class FQDNEndpointDetail(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'port': {'key': 'port', 'type': 'int'},
+        "port": {"key": "port", "type": "int"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword port:
         :paramtype port: int
         """
         super(FQDNEndpointDetail, self).__init__(**kwargs)
-        self.port = kwargs.get('port', None)
+        self.port = kwargs.get("port", None)
 
 
 class FQDNEndpoints(msrest.serialization.Model):
@@ -7221,19 +6969,16 @@ class FQDNEndpoints(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'properties': {'key': 'properties', 'type': 'FQDNEndpointsProperties'},
+        "properties": {"key": "properties", "type": "FQDNEndpointsProperties"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword properties:
         :paramtype properties: ~azure.mgmt.machinelearningservices.models.FQDNEndpointsProperties
         """
         super(FQDNEndpoints, self).__init__(**kwargs)
-        self.properties = kwargs.get('properties', None)
+        self.properties = kwargs.get("properties", None)
 
 
 class FQDNEndpointsProperties(msrest.serialization.Model):
@@ -7246,14 +6991,11 @@ class FQDNEndpointsProperties(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'category': {'key': 'category', 'type': 'str'},
-        'endpoints': {'key': 'endpoints', 'type': '[FQDNEndpoint]'},
+        "category": {"key": "category", "type": "str"},
+        "endpoints": {"key": "endpoints", "type": "[FQDNEndpoint]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword category:
         :paramtype category: str
@@ -7261,8 +7003,8 @@ class FQDNEndpointsProperties(msrest.serialization.Model):
         :paramtype endpoints: list[~azure.mgmt.machinelearningservices.models.FQDNEndpoint]
         """
         super(FQDNEndpointsProperties, self).__init__(**kwargs)
-        self.category = kwargs.get('category', None)
-        self.endpoints = kwargs.get('endpoints', None)
+        self.category = kwargs.get("category", None)
+        self.endpoints = kwargs.get("endpoints", None)
 
 
 class GridSamplingAlgorithm(SamplingAlgorithm):
@@ -7278,21 +7020,17 @@ class GridSamplingAlgorithm(SamplingAlgorithm):
     """
 
     _validation = {
-        'sampling_algorithm_type': {'required': True},
+        "sampling_algorithm_type": {"required": True},
     }
 
     _attribute_map = {
-        'sampling_algorithm_type': {'key': 'samplingAlgorithmType', 'type': 'str'},
+        "sampling_algorithm_type": {"key": "samplingAlgorithmType", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs):
+        """ """
         super(GridSamplingAlgorithm, self).__init__(**kwargs)
-        self.sampling_algorithm_type = 'Grid'  # type: str
+        self.sampling_algorithm_type = "Grid"  # type: str
 
 
 class HDInsightSchema(msrest.serialization.Model):
@@ -7303,19 +7041,16 @@ class HDInsightSchema(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'properties': {'key': 'properties', 'type': 'HDInsightProperties'},
+        "properties": {"key": "properties", "type": "HDInsightProperties"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword properties: HDInsight compute properties.
         :paramtype properties: ~azure.mgmt.machinelearningservices.models.HDInsightProperties
         """
         super(HDInsightSchema, self).__init__(**kwargs)
-        self.properties = kwargs.get('properties', None)
+        self.properties = kwargs.get("properties", None)
 
 
 class HDInsight(Compute, HDInsightSchema):
@@ -7357,33 +7092,30 @@ class HDInsight(Compute, HDInsightSchema):
     """
 
     _validation = {
-        'compute_type': {'required': True},
-        'compute_location': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'created_on': {'readonly': True},
-        'modified_on': {'readonly': True},
-        'provisioning_errors': {'readonly': True},
-        'is_attached_compute': {'readonly': True},
+        "compute_type": {"required": True},
+        "compute_location": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "created_on": {"readonly": True},
+        "modified_on": {"readonly": True},
+        "provisioning_errors": {"readonly": True},
+        "is_attached_compute": {"readonly": True},
     }
 
     _attribute_map = {
-        'properties': {'key': 'properties', 'type': 'HDInsightProperties'},
-        'compute_type': {'key': 'computeType', 'type': 'str'},
-        'compute_location': {'key': 'computeLocation', 'type': 'str'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'created_on': {'key': 'createdOn', 'type': 'iso-8601'},
-        'modified_on': {'key': 'modifiedOn', 'type': 'iso-8601'},
-        'resource_id': {'key': 'resourceId', 'type': 'str'},
-        'provisioning_errors': {'key': 'provisioningErrors', 'type': '[ErrorResponse]'},
-        'is_attached_compute': {'key': 'isAttachedCompute', 'type': 'bool'},
-        'disable_local_auth': {'key': 'disableLocalAuth', 'type': 'bool'},
+        "properties": {"key": "properties", "type": "HDInsightProperties"},
+        "compute_type": {"key": "computeType", "type": "str"},
+        "compute_location": {"key": "computeLocation", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "created_on": {"key": "createdOn", "type": "iso-8601"},
+        "modified_on": {"key": "modifiedOn", "type": "iso-8601"},
+        "resource_id": {"key": "resourceId", "type": "str"},
+        "provisioning_errors": {"key": "provisioningErrors", "type": "[ErrorResponse]"},
+        "is_attached_compute": {"key": "isAttachedCompute", "type": "bool"},
+        "disable_local_auth": {"key": "disableLocalAuth", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword properties: HDInsight compute properties.
         :paramtype properties: ~azure.mgmt.machinelearningservices.models.HDInsightProperties
@@ -7396,18 +7128,18 @@ class HDInsight(Compute, HDInsightSchema):
         :paramtype disable_local_auth: bool
         """
         super(HDInsight, self).__init__(**kwargs)
-        self.properties = kwargs.get('properties', None)
-        self.compute_type = 'HDInsight'  # type: str
-        self.compute_type = 'HDInsight'  # type: str
+        self.properties = kwargs.get("properties", None)
+        self.compute_type = "HDInsight"  # type: str
+        self.compute_type = "HDInsight"  # type: str
         self.compute_location = None
         self.provisioning_state = None
-        self.description = kwargs.get('description', None)
+        self.description = kwargs.get("description", None)
         self.created_on = None
         self.modified_on = None
-        self.resource_id = kwargs.get('resource_id', None)
+        self.resource_id = kwargs.get("resource_id", None)
         self.provisioning_errors = None
         self.is_attached_compute = None
-        self.disable_local_auth = kwargs.get('disable_local_auth', None)
+        self.disable_local_auth = kwargs.get("disable_local_auth", None)
 
 
 class HDInsightProperties(msrest.serialization.Model):
@@ -7423,15 +7155,15 @@ class HDInsightProperties(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'ssh_port': {'key': 'sshPort', 'type': 'int'},
-        'address': {'key': 'address', 'type': 'str'},
-        'administrator_account': {'key': 'administratorAccount', 'type': 'VirtualMachineSshCredentials'},
+        "ssh_port": {"key": "sshPort", "type": "int"},
+        "address": {"key": "address", "type": "str"},
+        "administrator_account": {
+            "key": "administratorAccount",
+            "type": "VirtualMachineSshCredentials",
+        },
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword ssh_port: Port open for ssh connections on the master node of the cluster.
         :paramtype ssh_port: int
@@ -7442,9 +7174,9 @@ class HDInsightProperties(msrest.serialization.Model):
          ~azure.mgmt.machinelearningservices.models.VirtualMachineSshCredentials
         """
         super(HDInsightProperties, self).__init__(**kwargs)
-        self.ssh_port = kwargs.get('ssh_port', None)
-        self.address = kwargs.get('address', None)
-        self.administrator_account = kwargs.get('administrator_account', None)
+        self.ssh_port = kwargs.get("ssh_port", None)
+        self.address = kwargs.get("address", None)
+        self.administrator_account = kwargs.get("administrator_account", None)
 
 
 class IdAssetReference(AssetReferenceBase):
@@ -7460,26 +7192,23 @@ class IdAssetReference(AssetReferenceBase):
     """
 
     _validation = {
-        'reference_type': {'required': True},
-        'asset_id': {'required': True, 'pattern': r'[a-zA-Z0-9_]'},
+        "reference_type": {"required": True},
+        "asset_id": {"required": True, "pattern": r"[a-zA-Z0-9_]"},
     }
 
     _attribute_map = {
-        'reference_type': {'key': 'referenceType', 'type': 'str'},
-        'asset_id': {'key': 'assetId', 'type': 'str'},
+        "reference_type": {"key": "referenceType", "type": "str"},
+        "asset_id": {"key": "assetId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword asset_id: Required. [Required] ARM resource ID of the asset.
         :paramtype asset_id: str
         """
         super(IdAssetReference, self).__init__(**kwargs)
-        self.reference_type = 'Id'  # type: str
-        self.asset_id = kwargs['asset_id']
+        self.reference_type = "Id"  # type: str
+        self.asset_id = kwargs["asset_id"]
 
 
 class IdentityForCmk(msrest.serialization.Model):
@@ -7491,20 +7220,17 @@ class IdentityForCmk(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'user_assigned_identity': {'key': 'userAssignedIdentity', 'type': 'str'},
+        "user_assigned_identity": {"key": "userAssignedIdentity", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword user_assigned_identity: The ArmId of the user assigned identity that will be used to
          access the customer managed key vault.
         :paramtype user_assigned_identity: str
         """
         super(IdentityForCmk, self).__init__(**kwargs)
-        self.user_assigned_identity = kwargs.get('user_assigned_identity', None)
+        self.user_assigned_identity = kwargs.get("user_assigned_identity", None)
 
 
 class InferenceContainerProperties(msrest.serialization.Model):
@@ -7520,15 +7246,12 @@ class InferenceContainerProperties(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'liveness_route': {'key': 'livenessRoute', 'type': 'Route'},
-        'readiness_route': {'key': 'readinessRoute', 'type': 'Route'},
-        'scoring_route': {'key': 'scoringRoute', 'type': 'Route'},
+        "liveness_route": {"key": "livenessRoute", "type": "Route"},
+        "readiness_route": {"key": "readinessRoute", "type": "Route"},
+        "scoring_route": {"key": "scoringRoute", "type": "Route"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword liveness_route: The route to check the liveness of the inference server container.
         :paramtype liveness_route: ~azure.mgmt.machinelearningservices.models.Route
@@ -7539,9 +7262,9 @@ class InferenceContainerProperties(msrest.serialization.Model):
         :paramtype scoring_route: ~azure.mgmt.machinelearningservices.models.Route
         """
         super(InferenceContainerProperties, self).__init__(**kwargs)
-        self.liveness_route = kwargs.get('liveness_route', None)
-        self.readiness_route = kwargs.get('readiness_route', None)
-        self.scoring_route = kwargs.get('scoring_route', None)
+        self.liveness_route = kwargs.get("liveness_route", None)
+        self.readiness_route = kwargs.get("readiness_route", None)
+        self.scoring_route = kwargs.get("scoring_route", None)
 
 
 class InstanceTypeSchema(msrest.serialization.Model):
@@ -7554,14 +7277,11 @@ class InstanceTypeSchema(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'node_selector': {'key': 'nodeSelector', 'type': '{str}'},
-        'resources': {'key': 'resources', 'type': 'InstanceTypeSchemaResources'},
+        "node_selector": {"key": "nodeSelector", "type": "{str}"},
+        "resources": {"key": "resources", "type": "InstanceTypeSchemaResources"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword node_selector: Node Selector.
         :paramtype node_selector: dict[str, str]
@@ -7569,8 +7289,8 @@ class InstanceTypeSchema(msrest.serialization.Model):
         :paramtype resources: ~azure.mgmt.machinelearningservices.models.InstanceTypeSchemaResources
         """
         super(InstanceTypeSchema, self).__init__(**kwargs)
-        self.node_selector = kwargs.get('node_selector', None)
-        self.resources = kwargs.get('resources', None)
+        self.node_selector = kwargs.get("node_selector", None)
+        self.resources = kwargs.get("resources", None)
 
 
 class InstanceTypeSchemaResources(msrest.serialization.Model):
@@ -7583,14 +7303,11 @@ class InstanceTypeSchemaResources(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'requests': {'key': 'requests', 'type': '{str}'},
-        'limits': {'key': 'limits', 'type': '{str}'},
+        "requests": {"key": "requests", "type": "{str}"},
+        "limits": {"key": "limits", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword requests: Resource requests for this instance type.
         :paramtype requests: dict[str, str]
@@ -7598,8 +7315,8 @@ class InstanceTypeSchemaResources(msrest.serialization.Model):
         :paramtype limits: dict[str, str]
         """
         super(InstanceTypeSchemaResources, self).__init__(**kwargs)
-        self.requests = kwargs.get('requests', None)
-        self.limits = kwargs.get('limits', None)
+        self.requests = kwargs.get("requests", None)
+        self.limits = kwargs.get("limits", None)
 
 
 class JobBaseData(Resource):
@@ -7625,31 +7342,28 @@ class JobBaseData(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'properties': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "properties": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'properties': {'key': 'properties', 'type': 'JobBaseDetails'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "properties": {"key": "properties", "type": "JobBaseDetails"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword properties: Required. [Required] Additional attributes of the entity.
         :paramtype properties: ~azure.mgmt.machinelearningservices.models.JobBaseDetails
         """
         super(JobBaseData, self).__init__(**kwargs)
-        self.properties = kwargs['properties']
+        self.properties = kwargs["properties"]
 
 
 class JobBaseResourceArmPaginatedResult(msrest.serialization.Model):
@@ -7663,14 +7377,11 @@ class JobBaseResourceArmPaginatedResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'value': {'key': 'value', 'type': '[JobBaseData]'},
+        "next_link": {"key": "nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[JobBaseData]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword next_link: The link to the next page of JobBase objects. If null, there are no
          additional pages.
@@ -7679,8 +7390,8 @@ class JobBaseResourceArmPaginatedResult(msrest.serialization.Model):
         :paramtype value: list[~azure.mgmt.machinelearningservices.models.JobBaseData]
         """
         super(JobBaseResourceArmPaginatedResult, self).__init__(**kwargs)
-        self.next_link = kwargs.get('next_link', None)
-        self.value = kwargs.get('value', None)
+        self.next_link = kwargs.get("next_link", None)
+        self.value = kwargs.get("value", None)
 
 
 class JobService(msrest.serialization.Model):
@@ -7703,23 +7414,20 @@ class JobService(msrest.serialization.Model):
     """
 
     _validation = {
-        'error_message': {'readonly': True},
-        'status': {'readonly': True},
+        "error_message": {"readonly": True},
+        "status": {"readonly": True},
     }
 
     _attribute_map = {
-        'endpoint': {'key': 'endpoint', 'type': 'str'},
-        'error_message': {'key': 'errorMessage', 'type': 'str'},
-        'job_service_type': {'key': 'jobServiceType', 'type': 'str'},
-        'port': {'key': 'port', 'type': 'int'},
-        'properties': {'key': 'properties', 'type': '{str}'},
-        'status': {'key': 'status', 'type': 'str'},
+        "endpoint": {"key": "endpoint", "type": "str"},
+        "error_message": {"key": "errorMessage", "type": "str"},
+        "job_service_type": {"key": "jobServiceType", "type": "str"},
+        "port": {"key": "port", "type": "int"},
+        "properties": {"key": "properties", "type": "{str}"},
+        "status": {"key": "status", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword endpoint: Url for endpoint.
         :paramtype endpoint: str
@@ -7731,11 +7439,11 @@ class JobService(msrest.serialization.Model):
         :paramtype properties: dict[str, str]
         """
         super(JobService, self).__init__(**kwargs)
-        self.endpoint = kwargs.get('endpoint', None)
+        self.endpoint = kwargs.get("endpoint", None)
         self.error_message = None
-        self.job_service_type = kwargs.get('job_service_type', None)
-        self.port = kwargs.get('port', None)
-        self.properties = kwargs.get('properties', None)
+        self.job_service_type = kwargs.get("job_service_type", None)
+        self.port = kwargs.get("port", None)
+        self.properties = kwargs.get("properties", None)
         self.status = None
 
 
@@ -7747,19 +7455,16 @@ class KubernetesSchema(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'properties': {'key': 'properties', 'type': 'KubernetesProperties'},
+        "properties": {"key": "properties", "type": "KubernetesProperties"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword properties: Properties of Kubernetes.
         :paramtype properties: ~azure.mgmt.machinelearningservices.models.KubernetesProperties
         """
         super(KubernetesSchema, self).__init__(**kwargs)
-        self.properties = kwargs.get('properties', None)
+        self.properties = kwargs.get("properties", None)
 
 
 class Kubernetes(Compute, KubernetesSchema):
@@ -7801,33 +7506,30 @@ class Kubernetes(Compute, KubernetesSchema):
     """
 
     _validation = {
-        'compute_type': {'required': True},
-        'compute_location': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'created_on': {'readonly': True},
-        'modified_on': {'readonly': True},
-        'provisioning_errors': {'readonly': True},
-        'is_attached_compute': {'readonly': True},
+        "compute_type": {"required": True},
+        "compute_location": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "created_on": {"readonly": True},
+        "modified_on": {"readonly": True},
+        "provisioning_errors": {"readonly": True},
+        "is_attached_compute": {"readonly": True},
     }
 
     _attribute_map = {
-        'properties': {'key': 'properties', 'type': 'KubernetesProperties'},
-        'compute_type': {'key': 'computeType', 'type': 'str'},
-        'compute_location': {'key': 'computeLocation', 'type': 'str'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'created_on': {'key': 'createdOn', 'type': 'iso-8601'},
-        'modified_on': {'key': 'modifiedOn', 'type': 'iso-8601'},
-        'resource_id': {'key': 'resourceId', 'type': 'str'},
-        'provisioning_errors': {'key': 'provisioningErrors', 'type': '[ErrorResponse]'},
-        'is_attached_compute': {'key': 'isAttachedCompute', 'type': 'bool'},
-        'disable_local_auth': {'key': 'disableLocalAuth', 'type': 'bool'},
+        "properties": {"key": "properties", "type": "KubernetesProperties"},
+        "compute_type": {"key": "computeType", "type": "str"},
+        "compute_location": {"key": "computeLocation", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "created_on": {"key": "createdOn", "type": "iso-8601"},
+        "modified_on": {"key": "modifiedOn", "type": "iso-8601"},
+        "resource_id": {"key": "resourceId", "type": "str"},
+        "provisioning_errors": {"key": "provisioningErrors", "type": "[ErrorResponse]"},
+        "is_attached_compute": {"key": "isAttachedCompute", "type": "bool"},
+        "disable_local_auth": {"key": "disableLocalAuth", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword properties: Properties of Kubernetes.
         :paramtype properties: ~azure.mgmt.machinelearningservices.models.KubernetesProperties
@@ -7840,18 +7542,18 @@ class Kubernetes(Compute, KubernetesSchema):
         :paramtype disable_local_auth: bool
         """
         super(Kubernetes, self).__init__(**kwargs)
-        self.properties = kwargs.get('properties', None)
-        self.compute_type = 'Kubernetes'  # type: str
-        self.compute_type = 'Kubernetes'  # type: str
+        self.properties = kwargs.get("properties", None)
+        self.compute_type = "Kubernetes"  # type: str
+        self.compute_type = "Kubernetes"  # type: str
         self.compute_location = None
         self.provisioning_state = None
-        self.description = kwargs.get('description', None)
+        self.description = kwargs.get("description", None)
         self.created_on = None
         self.modified_on = None
-        self.resource_id = kwargs.get('resource_id', None)
+        self.resource_id = kwargs.get("resource_id", None)
         self.provisioning_errors = None
         self.is_attached_compute = None
-        self.disable_local_auth = kwargs.get('disable_local_auth', None)
+        self.disable_local_auth = kwargs.get("disable_local_auth", None)
 
 
 class OnlineDeploymentDetails(EndpointDeploymentPropertiesBase):
@@ -7906,36 +7608,36 @@ class OnlineDeploymentDetails(EndpointDeploymentPropertiesBase):
     """
 
     _validation = {
-        'endpoint_compute_type': {'required': True},
-        'provisioning_state': {'readonly': True},
+        "endpoint_compute_type": {"required": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'code_configuration': {'key': 'codeConfiguration', 'type': 'CodeConfiguration'},
-        'description': {'key': 'description', 'type': 'str'},
-        'environment_id': {'key': 'environmentId', 'type': 'str'},
-        'environment_variables': {'key': 'environmentVariables', 'type': '{str}'},
-        'properties': {'key': 'properties', 'type': '{str}'},
-        'app_insights_enabled': {'key': 'appInsightsEnabled', 'type': 'bool'},
-        'endpoint_compute_type': {'key': 'endpointComputeType', 'type': 'str'},
-        'instance_type': {'key': 'instanceType', 'type': 'str'},
-        'liveness_probe': {'key': 'livenessProbe', 'type': 'ProbeSettings'},
-        'model': {'key': 'model', 'type': 'str'},
-        'model_mount_path': {'key': 'modelMountPath', 'type': 'str'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'readiness_probe': {'key': 'readinessProbe', 'type': 'ProbeSettings'},
-        'request_settings': {'key': 'requestSettings', 'type': 'OnlineRequestSettings'},
-        'scale_settings': {'key': 'scaleSettings', 'type': 'OnlineScaleSettings'},
+        "code_configuration": {"key": "codeConfiguration", "type": "CodeConfiguration"},
+        "description": {"key": "description", "type": "str"},
+        "environment_id": {"key": "environmentId", "type": "str"},
+        "environment_variables": {"key": "environmentVariables", "type": "{str}"},
+        "properties": {"key": "properties", "type": "{str}"},
+        "app_insights_enabled": {"key": "appInsightsEnabled", "type": "bool"},
+        "endpoint_compute_type": {"key": "endpointComputeType", "type": "str"},
+        "instance_type": {"key": "instanceType", "type": "str"},
+        "liveness_probe": {"key": "livenessProbe", "type": "ProbeSettings"},
+        "model": {"key": "model", "type": "str"},
+        "model_mount_path": {"key": "modelMountPath", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "readiness_probe": {"key": "readinessProbe", "type": "ProbeSettings"},
+        "request_settings": {"key": "requestSettings", "type": "OnlineRequestSettings"},
+        "scale_settings": {"key": "scaleSettings", "type": "OnlineScaleSettings"},
     }
 
     _subtype_map = {
-        'endpoint_compute_type': {'Kubernetes': 'KubernetesOnlineDeployment', 'Managed': 'ManagedOnlineDeployment'}
+        "endpoint_compute_type": {
+            "Kubernetes": "KubernetesOnlineDeployment",
+            "Managed": "ManagedOnlineDeployment",
+        }
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword code_configuration: Code configuration for the endpoint deployment.
         :paramtype code_configuration: ~azure.mgmt.machinelearningservices.models.CodeConfiguration
@@ -7970,16 +7672,16 @@ class OnlineDeploymentDetails(EndpointDeploymentPropertiesBase):
         :paramtype scale_settings: ~azure.mgmt.machinelearningservices.models.OnlineScaleSettings
         """
         super(OnlineDeploymentDetails, self).__init__(**kwargs)
-        self.app_insights_enabled = kwargs.get('app_insights_enabled', False)
-        self.endpoint_compute_type = 'OnlineDeploymentDetails'  # type: str
-        self.instance_type = kwargs.get('instance_type', None)
-        self.liveness_probe = kwargs.get('liveness_probe', None)
-        self.model = kwargs.get('model', None)
-        self.model_mount_path = kwargs.get('model_mount_path', None)
+        self.app_insights_enabled = kwargs.get("app_insights_enabled", False)
+        self.endpoint_compute_type = "OnlineDeploymentDetails"  # type: str
+        self.instance_type = kwargs.get("instance_type", None)
+        self.liveness_probe = kwargs.get("liveness_probe", None)
+        self.model = kwargs.get("model", None)
+        self.model_mount_path = kwargs.get("model_mount_path", None)
         self.provisioning_state = None
-        self.readiness_probe = kwargs.get('readiness_probe', None)
-        self.request_settings = kwargs.get('request_settings', None)
-        self.scale_settings = kwargs.get('scale_settings', None)
+        self.readiness_probe = kwargs.get("readiness_probe", None)
+        self.request_settings = kwargs.get("request_settings", None)
+        self.scale_settings = kwargs.get("scale_settings", None)
 
 
 class KubernetesOnlineDeployment(OnlineDeploymentDetails):
@@ -8035,33 +7737,33 @@ class KubernetesOnlineDeployment(OnlineDeploymentDetails):
     """
 
     _validation = {
-        'endpoint_compute_type': {'required': True},
-        'provisioning_state': {'readonly': True},
+        "endpoint_compute_type": {"required": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'code_configuration': {'key': 'codeConfiguration', 'type': 'CodeConfiguration'},
-        'description': {'key': 'description', 'type': 'str'},
-        'environment_id': {'key': 'environmentId', 'type': 'str'},
-        'environment_variables': {'key': 'environmentVariables', 'type': '{str}'},
-        'properties': {'key': 'properties', 'type': '{str}'},
-        'app_insights_enabled': {'key': 'appInsightsEnabled', 'type': 'bool'},
-        'endpoint_compute_type': {'key': 'endpointComputeType', 'type': 'str'},
-        'instance_type': {'key': 'instanceType', 'type': 'str'},
-        'liveness_probe': {'key': 'livenessProbe', 'type': 'ProbeSettings'},
-        'model': {'key': 'model', 'type': 'str'},
-        'model_mount_path': {'key': 'modelMountPath', 'type': 'str'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'readiness_probe': {'key': 'readinessProbe', 'type': 'ProbeSettings'},
-        'request_settings': {'key': 'requestSettings', 'type': 'OnlineRequestSettings'},
-        'scale_settings': {'key': 'scaleSettings', 'type': 'OnlineScaleSettings'},
-        'container_resource_requirements': {'key': 'containerResourceRequirements', 'type': 'ContainerResourceRequirements'},
+        "code_configuration": {"key": "codeConfiguration", "type": "CodeConfiguration"},
+        "description": {"key": "description", "type": "str"},
+        "environment_id": {"key": "environmentId", "type": "str"},
+        "environment_variables": {"key": "environmentVariables", "type": "{str}"},
+        "properties": {"key": "properties", "type": "{str}"},
+        "app_insights_enabled": {"key": "appInsightsEnabled", "type": "bool"},
+        "endpoint_compute_type": {"key": "endpointComputeType", "type": "str"},
+        "instance_type": {"key": "instanceType", "type": "str"},
+        "liveness_probe": {"key": "livenessProbe", "type": "ProbeSettings"},
+        "model": {"key": "model", "type": "str"},
+        "model_mount_path": {"key": "modelMountPath", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "readiness_probe": {"key": "readinessProbe", "type": "ProbeSettings"},
+        "request_settings": {"key": "requestSettings", "type": "OnlineRequestSettings"},
+        "scale_settings": {"key": "scaleSettings", "type": "OnlineScaleSettings"},
+        "container_resource_requirements": {
+            "key": "containerResourceRequirements",
+            "type": "ContainerResourceRequirements",
+        },
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword code_configuration: Code configuration for the endpoint deployment.
         :paramtype code_configuration: ~azure.mgmt.machinelearningservices.models.CodeConfiguration
@@ -8100,8 +7802,10 @@ class KubernetesOnlineDeployment(OnlineDeploymentDetails):
          ~azure.mgmt.machinelearningservices.models.ContainerResourceRequirements
         """
         super(KubernetesOnlineDeployment, self).__init__(**kwargs)
-        self.endpoint_compute_type = 'Kubernetes'  # type: str
-        self.container_resource_requirements = kwargs.get('container_resource_requirements', None)
+        self.endpoint_compute_type = "Kubernetes"  # type: str
+        self.container_resource_requirements = kwargs.get(
+            "container_resource_requirements", None
+        )
 
 
 class KubernetesProperties(msrest.serialization.Model):
@@ -8127,20 +7831,23 @@ class KubernetesProperties(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'relay_connection_string': {'key': 'relayConnectionString', 'type': 'str'},
-        'service_bus_connection_string': {'key': 'serviceBusConnectionString', 'type': 'str'},
-        'extension_principal_id': {'key': 'extensionPrincipalId', 'type': 'str'},
-        'extension_instance_release_train': {'key': 'extensionInstanceReleaseTrain', 'type': 'str'},
-        'vc_name': {'key': 'vcName', 'type': 'str'},
-        'namespace': {'key': 'namespace', 'type': 'str'},
-        'default_instance_type': {'key': 'defaultInstanceType', 'type': 'str'},
-        'instance_types': {'key': 'instanceTypes', 'type': '{InstanceTypeSchema}'},
+        "relay_connection_string": {"key": "relayConnectionString", "type": "str"},
+        "service_bus_connection_string": {
+            "key": "serviceBusConnectionString",
+            "type": "str",
+        },
+        "extension_principal_id": {"key": "extensionPrincipalId", "type": "str"},
+        "extension_instance_release_train": {
+            "key": "extensionInstanceReleaseTrain",
+            "type": "str",
+        },
+        "vc_name": {"key": "vcName", "type": "str"},
+        "namespace": {"key": "namespace", "type": "str"},
+        "default_instance_type": {"key": "defaultInstanceType", "type": "str"},
+        "instance_types": {"key": "instanceTypes", "type": "{InstanceTypeSchema}"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword relay_connection_string: Relay connection string.
         :paramtype relay_connection_string: str
@@ -8161,14 +7868,18 @@ class KubernetesProperties(msrest.serialization.Model):
          ~azure.mgmt.machinelearningservices.models.InstanceTypeSchema]
         """
         super(KubernetesProperties, self).__init__(**kwargs)
-        self.relay_connection_string = kwargs.get('relay_connection_string', None)
-        self.service_bus_connection_string = kwargs.get('service_bus_connection_string', None)
-        self.extension_principal_id = kwargs.get('extension_principal_id', None)
-        self.extension_instance_release_train = kwargs.get('extension_instance_release_train', None)
-        self.vc_name = kwargs.get('vc_name', None)
-        self.namespace = kwargs.get('namespace', "default")
-        self.default_instance_type = kwargs.get('default_instance_type', None)
-        self.instance_types = kwargs.get('instance_types', None)
+        self.relay_connection_string = kwargs.get("relay_connection_string", None)
+        self.service_bus_connection_string = kwargs.get(
+            "service_bus_connection_string", None
+        )
+        self.extension_principal_id = kwargs.get("extension_principal_id", None)
+        self.extension_instance_release_train = kwargs.get(
+            "extension_instance_release_train", None
+        )
+        self.vc_name = kwargs.get("vc_name", None)
+        self.namespace = kwargs.get("namespace", "default")
+        self.default_instance_type = kwargs.get("default_instance_type", None)
+        self.instance_types = kwargs.get("instance_types", None)
 
 
 class ListAmlUserFeatureResult(msrest.serialization.Model):
@@ -8184,21 +7895,17 @@ class ListAmlUserFeatureResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[AmlUserFeature]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[AmlUserFeature]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs):
+        """ """
         super(ListAmlUserFeatureResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -8216,21 +7923,17 @@ class ListNotebookKeysResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'primary_access_key': {'readonly': True},
-        'secondary_access_key': {'readonly': True},
+        "primary_access_key": {"readonly": True},
+        "secondary_access_key": {"readonly": True},
     }
 
     _attribute_map = {
-        'primary_access_key': {'key': 'primaryAccessKey', 'type': 'str'},
-        'secondary_access_key': {'key': 'secondaryAccessKey', 'type': 'str'},
+        "primary_access_key": {"key": "primaryAccessKey", "type": "str"},
+        "secondary_access_key": {"key": "secondaryAccessKey", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs):
+        """ """
         super(ListNotebookKeysResult, self).__init__(**kwargs)
         self.primary_access_key = None
         self.secondary_access_key = None
@@ -8246,19 +7949,15 @@ class ListStorageAccountKeysResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'user_storage_key': {'readonly': True},
+        "user_storage_key": {"readonly": True},
     }
 
     _attribute_map = {
-        'user_storage_key': {'key': 'userStorageKey', 'type': 'str'},
+        "user_storage_key": {"key": "userStorageKey", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs):
+        """ """
         super(ListStorageAccountKeysResult, self).__init__(**kwargs)
         self.user_storage_key = None
 
@@ -8276,21 +7975,17 @@ class ListUsagesResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Usage]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Usage]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs):
+        """ """
         super(ListUsagesResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -8316,27 +8011,32 @@ class ListWorkspaceKeysResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'user_storage_key': {'readonly': True},
-        'user_storage_resource_id': {'readonly': True},
-        'app_insights_instrumentation_key': {'readonly': True},
-        'container_registry_credentials': {'readonly': True},
-        'notebook_access_keys': {'readonly': True},
+        "user_storage_key": {"readonly": True},
+        "user_storage_resource_id": {"readonly": True},
+        "app_insights_instrumentation_key": {"readonly": True},
+        "container_registry_credentials": {"readonly": True},
+        "notebook_access_keys": {"readonly": True},
     }
 
     _attribute_map = {
-        'user_storage_key': {'key': 'userStorageKey', 'type': 'str'},
-        'user_storage_resource_id': {'key': 'userStorageResourceId', 'type': 'str'},
-        'app_insights_instrumentation_key': {'key': 'appInsightsInstrumentationKey', 'type': 'str'},
-        'container_registry_credentials': {'key': 'containerRegistryCredentials', 'type': 'RegistryListCredentialsResult'},
-        'notebook_access_keys': {'key': 'notebookAccessKeys', 'type': 'ListNotebookKeysResult'},
+        "user_storage_key": {"key": "userStorageKey", "type": "str"},
+        "user_storage_resource_id": {"key": "userStorageResourceId", "type": "str"},
+        "app_insights_instrumentation_key": {
+            "key": "appInsightsInstrumentationKey",
+            "type": "str",
+        },
+        "container_registry_credentials": {
+            "key": "containerRegistryCredentials",
+            "type": "RegistryListCredentialsResult",
+        },
+        "notebook_access_keys": {
+            "key": "notebookAccessKeys",
+            "type": "ListNotebookKeysResult",
+        },
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs):
+        """ """
         super(ListWorkspaceKeysResult, self).__init__(**kwargs)
         self.user_storage_key = None
         self.user_storage_resource_id = None
@@ -8358,21 +8058,17 @@ class ListWorkspaceQuotas(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ResourceQuota]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ResourceQuota]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs):
+        """ """
         super(ListWorkspaceQuotas, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -8394,20 +8090,17 @@ class LiteralJobInput(JobInput):
     """
 
     _validation = {
-        'job_input_type': {'required': True},
-        'value': {'required': True, 'pattern': r'[a-zA-Z0-9_]'},
+        "job_input_type": {"required": True},
+        "value": {"required": True, "pattern": r"[a-zA-Z0-9_]"},
     }
 
     _attribute_map = {
-        'description': {'key': 'description', 'type': 'str'},
-        'job_input_type': {'key': 'jobInputType', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
+        "description": {"key": "description", "type": "str"},
+        "job_input_type": {"key": "jobInputType", "type": "str"},
+        "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword description: Description for the input.
         :paramtype description: str
@@ -8415,8 +8108,8 @@ class LiteralJobInput(JobInput):
         :paramtype value: str
         """
         super(LiteralJobInput, self).__init__(**kwargs)
-        self.job_input_type = 'literal'  # type: str
-        self.value = kwargs['value']
+        self.job_input_type = "literal"  # type: str
+        self.value = kwargs["value"]
 
 
 class ManagedIdentity(IdentityConfiguration):
@@ -8440,20 +8133,17 @@ class ManagedIdentity(IdentityConfiguration):
     """
 
     _validation = {
-        'identity_type': {'required': True},
+        "identity_type": {"required": True},
     }
 
     _attribute_map = {
-        'identity_type': {'key': 'identityType', 'type': 'str'},
-        'client_id': {'key': 'clientId', 'type': 'str'},
-        'object_id': {'key': 'objectId', 'type': 'str'},
-        'resource_id': {'key': 'resourceId', 'type': 'str'},
+        "identity_type": {"key": "identityType", "type": "str"},
+        "client_id": {"key": "clientId", "type": "str"},
+        "object_id": {"key": "objectId", "type": "str"},
+        "resource_id": {"key": "resourceId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword client_id: Specifies a user-assigned identity by client ID. For system-assigned, do
          not set this field.
@@ -8466,10 +8156,10 @@ class ManagedIdentity(IdentityConfiguration):
         :paramtype resource_id: str
         """
         super(ManagedIdentity, self).__init__(**kwargs)
-        self.identity_type = 'Managed'  # type: str
-        self.client_id = kwargs.get('client_id', None)
-        self.object_id = kwargs.get('object_id', None)
-        self.resource_id = kwargs.get('resource_id', None)
+        self.identity_type = "Managed"  # type: str
+        self.client_id = kwargs.get("client_id", None)
+        self.object_id = kwargs.get("object_id", None)
+        self.resource_id = kwargs.get("resource_id", None)
 
 
 class WorkspaceConnectionPropertiesV2(msrest.serialization.Model):
@@ -8495,25 +8185,28 @@ class WorkspaceConnectionPropertiesV2(msrest.serialization.Model):
     """
 
     _validation = {
-        'auth_type': {'required': True},
+        "auth_type": {"required": True},
     }
 
     _attribute_map = {
-        'auth_type': {'key': 'authType', 'type': 'str'},
-        'category': {'key': 'category', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
-        'value_format': {'key': 'valueFormat', 'type': 'str'},
+        "auth_type": {"key": "authType", "type": "str"},
+        "category": {"key": "category", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "value": {"key": "value", "type": "str"},
+        "value_format": {"key": "valueFormat", "type": "str"},
     }
 
     _subtype_map = {
-        'auth_type': {'ManagedIdentity': 'ManagedIdentityAuthTypeWorkspaceConnectionProperties', 'None': 'NoneAuthTypeWorkspaceConnectionProperties', 'PAT': 'PATAuthTypeWorkspaceConnectionProperties', 'SAS': 'SASAuthTypeWorkspaceConnectionProperties', 'UsernamePassword': 'UsernamePasswordAuthTypeWorkspaceConnectionProperties'}
+        "auth_type": {
+            "ManagedIdentity": "ManagedIdentityAuthTypeWorkspaceConnectionProperties",
+            "None": "NoneAuthTypeWorkspaceConnectionProperties",
+            "PAT": "PATAuthTypeWorkspaceConnectionProperties",
+            "SAS": "SASAuthTypeWorkspaceConnectionProperties",
+            "UsernamePassword": "UsernamePasswordAuthTypeWorkspaceConnectionProperties",
+        }
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword category: Category of the connection. Possible values include: "PythonFeed",
          "ContainerRegistry", "Git".
@@ -8528,13 +8221,15 @@ class WorkspaceConnectionPropertiesV2(msrest.serialization.Model):
         """
         super(WorkspaceConnectionPropertiesV2, self).__init__(**kwargs)
         self.auth_type = None  # type: Optional[str]
-        self.category = kwargs.get('category', None)
-        self.target = kwargs.get('target', None)
-        self.value = kwargs.get('value', None)
-        self.value_format = kwargs.get('value_format', None)
+        self.category = kwargs.get("category", None)
+        self.target = kwargs.get("target", None)
+        self.value = kwargs.get("value", None)
+        self.value_format = kwargs.get("value_format", None)
 
 
-class ManagedIdentityAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2):
+class ManagedIdentityAuthTypeWorkspaceConnectionProperties(
+    WorkspaceConnectionPropertiesV2
+):
     """ManagedIdentityAuthTypeWorkspaceConnectionProperties.
 
     All required parameters must be populated in order to send to Azure.
@@ -8557,22 +8252,22 @@ class ManagedIdentityAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPr
     """
 
     _validation = {
-        'auth_type': {'required': True},
+        "auth_type": {"required": True},
     }
 
     _attribute_map = {
-        'auth_type': {'key': 'authType', 'type': 'str'},
-        'category': {'key': 'category', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
-        'value_format': {'key': 'valueFormat', 'type': 'str'},
-        'credentials': {'key': 'credentials', 'type': 'WorkspaceConnectionManagedIdentity'},
+        "auth_type": {"key": "authType", "type": "str"},
+        "category": {"key": "category", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "value": {"key": "value", "type": "str"},
+        "value_format": {"key": "valueFormat", "type": "str"},
+        "credentials": {
+            "key": "credentials",
+            "type": "WorkspaceConnectionManagedIdentity",
+        },
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword category: Category of the connection. Possible values include: "PythonFeed",
          "ContainerRegistry", "Git".
@@ -8588,9 +8283,11 @@ class ManagedIdentityAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPr
         :paramtype credentials:
          ~azure.mgmt.machinelearningservices.models.WorkspaceConnectionManagedIdentity
         """
-        super(ManagedIdentityAuthTypeWorkspaceConnectionProperties, self).__init__(**kwargs)
-        self.auth_type = 'ManagedIdentity'  # type: str
-        self.credentials = kwargs.get('credentials', None)
+        super(ManagedIdentityAuthTypeWorkspaceConnectionProperties, self).__init__(
+            **kwargs
+        )
+        self.auth_type = "ManagedIdentity"  # type: str
+        self.credentials = kwargs.get("credentials", None)
 
 
 class ManagedOnlineDeployment(OnlineDeploymentDetails):
@@ -8642,32 +8339,29 @@ class ManagedOnlineDeployment(OnlineDeploymentDetails):
     """
 
     _validation = {
-        'endpoint_compute_type': {'required': True},
-        'provisioning_state': {'readonly': True},
+        "endpoint_compute_type": {"required": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'code_configuration': {'key': 'codeConfiguration', 'type': 'CodeConfiguration'},
-        'description': {'key': 'description', 'type': 'str'},
-        'environment_id': {'key': 'environmentId', 'type': 'str'},
-        'environment_variables': {'key': 'environmentVariables', 'type': '{str}'},
-        'properties': {'key': 'properties', 'type': '{str}'},
-        'app_insights_enabled': {'key': 'appInsightsEnabled', 'type': 'bool'},
-        'endpoint_compute_type': {'key': 'endpointComputeType', 'type': 'str'},
-        'instance_type': {'key': 'instanceType', 'type': 'str'},
-        'liveness_probe': {'key': 'livenessProbe', 'type': 'ProbeSettings'},
-        'model': {'key': 'model', 'type': 'str'},
-        'model_mount_path': {'key': 'modelMountPath', 'type': 'str'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'readiness_probe': {'key': 'readinessProbe', 'type': 'ProbeSettings'},
-        'request_settings': {'key': 'requestSettings', 'type': 'OnlineRequestSettings'},
-        'scale_settings': {'key': 'scaleSettings', 'type': 'OnlineScaleSettings'},
+        "code_configuration": {"key": "codeConfiguration", "type": "CodeConfiguration"},
+        "description": {"key": "description", "type": "str"},
+        "environment_id": {"key": "environmentId", "type": "str"},
+        "environment_variables": {"key": "environmentVariables", "type": "{str}"},
+        "properties": {"key": "properties", "type": "{str}"},
+        "app_insights_enabled": {"key": "appInsightsEnabled", "type": "bool"},
+        "endpoint_compute_type": {"key": "endpointComputeType", "type": "str"},
+        "instance_type": {"key": "instanceType", "type": "str"},
+        "liveness_probe": {"key": "livenessProbe", "type": "ProbeSettings"},
+        "model": {"key": "model", "type": "str"},
+        "model_mount_path": {"key": "modelMountPath", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "readiness_probe": {"key": "readinessProbe", "type": "ProbeSettings"},
+        "request_settings": {"key": "requestSettings", "type": "OnlineRequestSettings"},
+        "scale_settings": {"key": "scaleSettings", "type": "OnlineScaleSettings"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword code_configuration: Code configuration for the endpoint deployment.
         :paramtype code_configuration: ~azure.mgmt.machinelearningservices.models.CodeConfiguration
@@ -8702,7 +8396,7 @@ class ManagedOnlineDeployment(OnlineDeploymentDetails):
         :paramtype scale_settings: ~azure.mgmt.machinelearningservices.models.OnlineScaleSettings
         """
         super(ManagedOnlineDeployment, self).__init__(**kwargs)
-        self.endpoint_compute_type = 'Managed'  # type: str
+        self.endpoint_compute_type = "Managed"  # type: str
 
 
 class ManagedServiceIdentity(msrest.serialization.Model):
@@ -8731,22 +8425,22 @@ class ManagedServiceIdentity(msrest.serialization.Model):
     """
 
     _validation = {
-        'principal_id': {'readonly': True},
-        'tenant_id': {'readonly': True},
-        'type': {'required': True},
+        "principal_id": {"readonly": True},
+        "tenant_id": {"readonly": True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'principal_id': {'key': 'principalId', 'type': 'str'},
-        'tenant_id': {'key': 'tenantId', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'user_assigned_identities': {'key': 'userAssignedIdentities', 'type': '{UserAssignedIdentity}'},
+        "principal_id": {"key": "principalId", "type": "str"},
+        "tenant_id": {"key": "tenantId", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "user_assigned_identities": {
+            "key": "userAssignedIdentities",
+            "type": "{UserAssignedIdentity}",
+        },
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword type: Required. Type of managed service identity (where both SystemAssigned and
          UserAssigned types are allowed). Possible values include: "None", "SystemAssigned",
@@ -8762,8 +8456,8 @@ class ManagedServiceIdentity(msrest.serialization.Model):
         super(ManagedServiceIdentity, self).__init__(**kwargs)
         self.principal_id = None
         self.tenant_id = None
-        self.type = kwargs['type']
-        self.user_assigned_identities = kwargs.get('user_assigned_identities', None)
+        self.type = kwargs["type"]
+        self.user_assigned_identities = kwargs.get("user_assigned_identities", None)
 
 
 class MedianStoppingPolicy(EarlyTerminationPolicy):
@@ -8782,19 +8476,16 @@ class MedianStoppingPolicy(EarlyTerminationPolicy):
     """
 
     _validation = {
-        'policy_type': {'required': True},
+        "policy_type": {"required": True},
     }
 
     _attribute_map = {
-        'delay_evaluation': {'key': 'delayEvaluation', 'type': 'int'},
-        'evaluation_interval': {'key': 'evaluationInterval', 'type': 'int'},
-        'policy_type': {'key': 'policyType', 'type': 'str'},
+        "delay_evaluation": {"key": "delayEvaluation", "type": "int"},
+        "evaluation_interval": {"key": "evaluationInterval", "type": "int"},
+        "policy_type": {"key": "policyType", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword delay_evaluation: Number of intervals by which to delay the first evaluation.
         :paramtype delay_evaluation: int
@@ -8802,7 +8493,7 @@ class MedianStoppingPolicy(EarlyTerminationPolicy):
         :paramtype evaluation_interval: int
         """
         super(MedianStoppingPolicy, self).__init__(**kwargs)
-        self.policy_type = 'MedianStopping'  # type: str
+        self.policy_type = "MedianStopping"  # type: str
 
 
 class MLFlowModelJobInput(JobInput, AssetJobInput):
@@ -8824,21 +8515,18 @@ class MLFlowModelJobInput(JobInput, AssetJobInput):
     """
 
     _validation = {
-        'uri': {'required': True, 'pattern': r'[a-zA-Z0-9_]'},
-        'job_input_type': {'required': True},
+        "uri": {"required": True, "pattern": r"[a-zA-Z0-9_]"},
+        "job_input_type": {"required": True},
     }
 
     _attribute_map = {
-        'mode': {'key': 'mode', 'type': 'str'},
-        'uri': {'key': 'uri', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'job_input_type': {'key': 'jobInputType', 'type': 'str'},
+        "mode": {"key": "mode", "type": "str"},
+        "uri": {"key": "uri", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "job_input_type": {"key": "jobInputType", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword mode: Input Asset Delivery Mode. Possible values include: "ReadOnlyMount",
          "ReadWriteMount", "Download", "Direct", "EvalMount", "EvalDownload".
@@ -8849,11 +8537,11 @@ class MLFlowModelJobInput(JobInput, AssetJobInput):
         :paramtype description: str
         """
         super(MLFlowModelJobInput, self).__init__(**kwargs)
-        self.mode = kwargs.get('mode', None)
-        self.uri = kwargs['uri']
-        self.job_input_type = 'mlflow_model'  # type: str
-        self.description = kwargs.get('description', None)
-        self.job_input_type = 'mlflow_model'  # type: str
+        self.mode = kwargs.get("mode", None)
+        self.uri = kwargs["uri"]
+        self.job_input_type = "mlflow_model"  # type: str
+        self.description = kwargs.get("description", None)
+        self.job_input_type = "mlflow_model"  # type: str
 
 
 class MLFlowModelJobOutput(JobOutput, AssetJobOutput):
@@ -8874,20 +8562,17 @@ class MLFlowModelJobOutput(JobOutput, AssetJobOutput):
     """
 
     _validation = {
-        'job_output_type': {'required': True},
+        "job_output_type": {"required": True},
     }
 
     _attribute_map = {
-        'mode': {'key': 'mode', 'type': 'str'},
-        'uri': {'key': 'uri', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'job_output_type': {'key': 'jobOutputType', 'type': 'str'},
+        "mode": {"key": "mode", "type": "str"},
+        "uri": {"key": "uri", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "job_output_type": {"key": "jobOutputType", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword mode: Output Asset Delivery Mode. Possible values include: "ReadWriteMount", "Upload".
         :paramtype mode: str or ~azure.mgmt.machinelearningservices.models.OutputDeliveryMode
@@ -8897,11 +8582,11 @@ class MLFlowModelJobOutput(JobOutput, AssetJobOutput):
         :paramtype description: str
         """
         super(MLFlowModelJobOutput, self).__init__(**kwargs)
-        self.mode = kwargs.get('mode', None)
-        self.uri = kwargs.get('uri', None)
-        self.job_output_type = 'mlflow_model'  # type: str
-        self.description = kwargs.get('description', None)
-        self.job_output_type = 'mlflow_model'  # type: str
+        self.mode = kwargs.get("mode", None)
+        self.uri = kwargs.get("uri", None)
+        self.job_output_type = "mlflow_model"  # type: str
+        self.description = kwargs.get("description", None)
+        self.job_output_type = "mlflow_model"  # type: str
 
 
 class MLTableData(DataVersionBaseDetails):
@@ -8930,25 +8615,22 @@ class MLTableData(DataVersionBaseDetails):
     """
 
     _validation = {
-        'data_type': {'required': True},
-        'data_uri': {'required': True, 'pattern': r'[a-zA-Z0-9_]'},
+        "data_type": {"required": True},
+        "data_uri": {"required": True, "pattern": r"[a-zA-Z0-9_]"},
     }
 
     _attribute_map = {
-        'description': {'key': 'description', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': '{str}'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'is_anonymous': {'key': 'isAnonymous', 'type': 'bool'},
-        'is_archived': {'key': 'isArchived', 'type': 'bool'},
-        'data_type': {'key': 'dataType', 'type': 'str'},
-        'data_uri': {'key': 'dataUri', 'type': 'str'},
-        'referenced_uris': {'key': 'referencedUris', 'type': '[str]'},
+        "description": {"key": "description", "type": "str"},
+        "properties": {"key": "properties", "type": "{str}"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "is_anonymous": {"key": "isAnonymous", "type": "bool"},
+        "is_archived": {"key": "isArchived", "type": "bool"},
+        "data_type": {"key": "dataType", "type": "str"},
+        "data_uri": {"key": "dataUri", "type": "str"},
+        "referenced_uris": {"key": "referencedUris", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword description: The asset description text.
         :paramtype description: str
@@ -8967,8 +8649,8 @@ class MLTableData(DataVersionBaseDetails):
         :paramtype referenced_uris: list[str]
         """
         super(MLTableData, self).__init__(**kwargs)
-        self.data_type = 'mltable'  # type: str
-        self.referenced_uris = kwargs.get('referenced_uris', None)
+        self.data_type = "mltable"  # type: str
+        self.referenced_uris = kwargs.get("referenced_uris", None)
 
 
 class MLTableJobInput(JobInput, AssetJobInput):
@@ -8990,21 +8672,18 @@ class MLTableJobInput(JobInput, AssetJobInput):
     """
 
     _validation = {
-        'uri': {'required': True, 'pattern': r'[a-zA-Z0-9_]'},
-        'job_input_type': {'required': True},
+        "uri": {"required": True, "pattern": r"[a-zA-Z0-9_]"},
+        "job_input_type": {"required": True},
     }
 
     _attribute_map = {
-        'mode': {'key': 'mode', 'type': 'str'},
-        'uri': {'key': 'uri', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'job_input_type': {'key': 'jobInputType', 'type': 'str'},
+        "mode": {"key": "mode", "type": "str"},
+        "uri": {"key": "uri", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "job_input_type": {"key": "jobInputType", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword mode: Input Asset Delivery Mode. Possible values include: "ReadOnlyMount",
          "ReadWriteMount", "Download", "Direct", "EvalMount", "EvalDownload".
@@ -9015,11 +8694,11 @@ class MLTableJobInput(JobInput, AssetJobInput):
         :paramtype description: str
         """
         super(MLTableJobInput, self).__init__(**kwargs)
-        self.mode = kwargs.get('mode', None)
-        self.uri = kwargs['uri']
-        self.job_input_type = 'mltable'  # type: str
-        self.description = kwargs.get('description', None)
-        self.job_input_type = 'mltable'  # type: str
+        self.mode = kwargs.get("mode", None)
+        self.uri = kwargs["uri"]
+        self.job_input_type = "mltable"  # type: str
+        self.description = kwargs.get("description", None)
+        self.job_input_type = "mltable"  # type: str
 
 
 class MLTableJobOutput(JobOutput, AssetJobOutput):
@@ -9040,20 +8719,17 @@ class MLTableJobOutput(JobOutput, AssetJobOutput):
     """
 
     _validation = {
-        'job_output_type': {'required': True},
+        "job_output_type": {"required": True},
     }
 
     _attribute_map = {
-        'mode': {'key': 'mode', 'type': 'str'},
-        'uri': {'key': 'uri', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'job_output_type': {'key': 'jobOutputType', 'type': 'str'},
+        "mode": {"key": "mode", "type": "str"},
+        "uri": {"key": "uri", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "job_output_type": {"key": "jobOutputType", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword mode: Output Asset Delivery Mode. Possible values include: "ReadWriteMount", "Upload".
         :paramtype mode: str or ~azure.mgmt.machinelearningservices.models.OutputDeliveryMode
@@ -9063,11 +8739,11 @@ class MLTableJobOutput(JobOutput, AssetJobOutput):
         :paramtype description: str
         """
         super(MLTableJobOutput, self).__init__(**kwargs)
-        self.mode = kwargs.get('mode', None)
-        self.uri = kwargs.get('uri', None)
-        self.job_output_type = 'mltable'  # type: str
-        self.description = kwargs.get('description', None)
-        self.job_output_type = 'mltable'  # type: str
+        self.mode = kwargs.get("mode", None)
+        self.uri = kwargs.get("uri", None)
+        self.job_output_type = "mltable"  # type: str
+        self.description = kwargs.get("description", None)
+        self.job_output_type = "mltable"  # type: str
 
 
 class ModelContainerData(Resource):
@@ -9093,31 +8769,28 @@ class ModelContainerData(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'properties': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "properties": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'properties': {'key': 'properties', 'type': 'ModelContainerDetails'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "properties": {"key": "properties", "type": "ModelContainerDetails"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword properties: Required. [Required] Additional attributes of the entity.
         :paramtype properties: ~azure.mgmt.machinelearningservices.models.ModelContainerDetails
         """
         super(ModelContainerData, self).__init__(**kwargs)
-        self.properties = kwargs['properties']
+        self.properties = kwargs["properties"]
 
 
 class ModelContainerDetails(AssetContainer):
@@ -9140,23 +8813,20 @@ class ModelContainerDetails(AssetContainer):
     """
 
     _validation = {
-        'latest_version': {'readonly': True},
-        'next_version': {'readonly': True},
+        "latest_version": {"readonly": True},
+        "next_version": {"readonly": True},
     }
 
     _attribute_map = {
-        'description': {'key': 'description', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': '{str}'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'is_archived': {'key': 'isArchived', 'type': 'bool'},
-        'latest_version': {'key': 'latestVersion', 'type': 'str'},
-        'next_version': {'key': 'nextVersion', 'type': 'str'},
+        "description": {"key": "description", "type": "str"},
+        "properties": {"key": "properties", "type": "{str}"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "is_archived": {"key": "isArchived", "type": "bool"},
+        "latest_version": {"key": "latestVersion", "type": "str"},
+        "next_version": {"key": "nextVersion", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword description: The asset description text.
         :paramtype description: str
@@ -9181,14 +8851,11 @@ class ModelContainerResourceArmPaginatedResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'value': {'key': 'value', 'type': '[ModelContainerData]'},
+        "next_link": {"key": "nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[ModelContainerData]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword next_link: The link to the next page of ModelContainer objects. If null, there are no
          additional pages.
@@ -9197,8 +8864,8 @@ class ModelContainerResourceArmPaginatedResult(msrest.serialization.Model):
         :paramtype value: list[~azure.mgmt.machinelearningservices.models.ModelContainerData]
         """
         super(ModelContainerResourceArmPaginatedResult, self).__init__(**kwargs)
-        self.next_link = kwargs.get('next_link', None)
-        self.value = kwargs.get('value', None)
+        self.next_link = kwargs.get("next_link", None)
+        self.value = kwargs.get("value", None)
 
 
 class ModelVersionData(Resource):
@@ -9224,31 +8891,28 @@ class ModelVersionData(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'properties': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "properties": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'properties': {'key': 'properties', 'type': 'ModelVersionDetails'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "properties": {"key": "properties", "type": "ModelVersionDetails"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword properties: Required. [Required] Additional attributes of the entity.
         :paramtype properties: ~azure.mgmt.machinelearningservices.models.ModelVersionDetails
         """
         super(ModelVersionData, self).__init__(**kwargs)
-        self.properties = kwargs['properties']
+        self.properties = kwargs["properties"]
 
 
 class ModelVersionDetails(AssetBase):
@@ -9275,21 +8939,18 @@ class ModelVersionDetails(AssetBase):
     """
 
     _attribute_map = {
-        'description': {'key': 'description', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': '{str}'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'is_anonymous': {'key': 'isAnonymous', 'type': 'bool'},
-        'is_archived': {'key': 'isArchived', 'type': 'bool'},
-        'flavors': {'key': 'flavors', 'type': '{FlavorData}'},
-        'job_name': {'key': 'jobName', 'type': 'str'},
-        'model_type': {'key': 'modelType', 'type': 'str'},
-        'model_uri': {'key': 'modelUri', 'type': 'str'},
+        "description": {"key": "description", "type": "str"},
+        "properties": {"key": "properties", "type": "{str}"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "is_anonymous": {"key": "isAnonymous", "type": "bool"},
+        "is_archived": {"key": "isArchived", "type": "bool"},
+        "flavors": {"key": "flavors", "type": "{FlavorData}"},
+        "job_name": {"key": "jobName", "type": "str"},
+        "model_type": {"key": "modelType", "type": "str"},
+        "model_uri": {"key": "modelUri", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword description: The asset description text.
         :paramtype description: str
@@ -9311,10 +8972,10 @@ class ModelVersionDetails(AssetBase):
         :paramtype model_uri: str
         """
         super(ModelVersionDetails, self).__init__(**kwargs)
-        self.flavors = kwargs.get('flavors', None)
-        self.job_name = kwargs.get('job_name', None)
-        self.model_type = kwargs.get('model_type', None)
-        self.model_uri = kwargs.get('model_uri', None)
+        self.flavors = kwargs.get("flavors", None)
+        self.job_name = kwargs.get("job_name", None)
+        self.model_type = kwargs.get("model_type", None)
+        self.model_uri = kwargs.get("model_uri", None)
 
 
 class ModelVersionResourceArmPaginatedResult(msrest.serialization.Model):
@@ -9328,14 +8989,11 @@ class ModelVersionResourceArmPaginatedResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'value': {'key': 'value', 'type': '[ModelVersionData]'},
+        "next_link": {"key": "nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[ModelVersionData]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword next_link: The link to the next page of ModelVersion objects. If null, there are no
          additional pages.
@@ -9344,8 +9002,8 @@ class ModelVersionResourceArmPaginatedResult(msrest.serialization.Model):
         :paramtype value: list[~azure.mgmt.machinelearningservices.models.ModelVersionData]
         """
         super(ModelVersionResourceArmPaginatedResult, self).__init__(**kwargs)
-        self.next_link = kwargs.get('next_link', None)
-        self.value = kwargs.get('value', None)
+        self.next_link = kwargs.get("next_link", None)
+        self.value = kwargs.get("value", None)
 
 
 class Mpi(DistributionConfiguration):
@@ -9361,25 +9019,22 @@ class Mpi(DistributionConfiguration):
     """
 
     _validation = {
-        'distribution_type': {'required': True},
+        "distribution_type": {"required": True},
     }
 
     _attribute_map = {
-        'distribution_type': {'key': 'distributionType', 'type': 'str'},
-        'process_count_per_instance': {'key': 'processCountPerInstance', 'type': 'int'},
+        "distribution_type": {"key": "distributionType", "type": "str"},
+        "process_count_per_instance": {"key": "processCountPerInstance", "type": "int"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword process_count_per_instance: Number of processes per MPI node.
         :paramtype process_count_per_instance: int
         """
         super(Mpi, self).__init__(**kwargs)
-        self.distribution_type = 'Mpi'  # type: str
-        self.process_count_per_instance = kwargs.get('process_count_per_instance', None)
+        self.distribution_type = "Mpi"  # type: str
+        self.process_count_per_instance = kwargs.get("process_count_per_instance", None)
 
 
 class NodeStateCounts(msrest.serialization.Model):
@@ -9402,29 +9057,25 @@ class NodeStateCounts(msrest.serialization.Model):
     """
 
     _validation = {
-        'idle_node_count': {'readonly': True},
-        'running_node_count': {'readonly': True},
-        'preparing_node_count': {'readonly': True},
-        'unusable_node_count': {'readonly': True},
-        'leaving_node_count': {'readonly': True},
-        'preempted_node_count': {'readonly': True},
+        "idle_node_count": {"readonly": True},
+        "running_node_count": {"readonly": True},
+        "preparing_node_count": {"readonly": True},
+        "unusable_node_count": {"readonly": True},
+        "leaving_node_count": {"readonly": True},
+        "preempted_node_count": {"readonly": True},
     }
 
     _attribute_map = {
-        'idle_node_count': {'key': 'idleNodeCount', 'type': 'int'},
-        'running_node_count': {'key': 'runningNodeCount', 'type': 'int'},
-        'preparing_node_count': {'key': 'preparingNodeCount', 'type': 'int'},
-        'unusable_node_count': {'key': 'unusableNodeCount', 'type': 'int'},
-        'leaving_node_count': {'key': 'leavingNodeCount', 'type': 'int'},
-        'preempted_node_count': {'key': 'preemptedNodeCount', 'type': 'int'},
+        "idle_node_count": {"key": "idleNodeCount", "type": "int"},
+        "running_node_count": {"key": "runningNodeCount", "type": "int"},
+        "preparing_node_count": {"key": "preparingNodeCount", "type": "int"},
+        "unusable_node_count": {"key": "unusableNodeCount", "type": "int"},
+        "leaving_node_count": {"key": "leavingNodeCount", "type": "int"},
+        "preempted_node_count": {"key": "preemptedNodeCount", "type": "int"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs):
+        """ """
         super(NodeStateCounts, self).__init__(**kwargs)
         self.idle_node_count = None
         self.running_node_count = None
@@ -9454,21 +9105,18 @@ class NoneAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2)
     """
 
     _validation = {
-        'auth_type': {'required': True},
+        "auth_type": {"required": True},
     }
 
     _attribute_map = {
-        'auth_type': {'key': 'authType', 'type': 'str'},
-        'category': {'key': 'category', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
-        'value_format': {'key': 'valueFormat', 'type': 'str'},
+        "auth_type": {"key": "authType", "type": "str"},
+        "category": {"key": "category", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "value": {"key": "value", "type": "str"},
+        "value_format": {"key": "valueFormat", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword category: Category of the connection. Possible values include: "PythonFeed",
          "ContainerRegistry", "Git".
@@ -9482,7 +9130,7 @@ class NoneAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2)
         :paramtype value_format: str or ~azure.mgmt.machinelearningservices.models.ValueFormat
         """
         super(NoneAuthTypeWorkspaceConnectionProperties, self).__init__(**kwargs)
-        self.auth_type = 'None'  # type: str
+        self.auth_type = "None"  # type: str
 
 
 class NoneDatastoreCredentials(DatastoreCredentials):
@@ -9497,21 +9145,17 @@ class NoneDatastoreCredentials(DatastoreCredentials):
     """
 
     _validation = {
-        'credentials_type': {'required': True},
+        "credentials_type": {"required": True},
     }
 
     _attribute_map = {
-        'credentials_type': {'key': 'credentialsType', 'type': 'str'},
+        "credentials_type": {"key": "credentialsType", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs):
+        """ """
         super(NoneDatastoreCredentials, self).__init__(**kwargs)
-        self.credentials_type = 'None'  # type: str
+        self.credentials_type = "None"  # type: str
 
 
 class NotebookAccessTokenResult(msrest.serialization.Model):
@@ -9538,33 +9182,29 @@ class NotebookAccessTokenResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'notebook_resource_id': {'readonly': True},
-        'host_name': {'readonly': True},
-        'public_dns': {'readonly': True},
-        'access_token': {'readonly': True},
-        'token_type': {'readonly': True},
-        'expires_in': {'readonly': True},
-        'refresh_token': {'readonly': True},
-        'scope': {'readonly': True},
+        "notebook_resource_id": {"readonly": True},
+        "host_name": {"readonly": True},
+        "public_dns": {"readonly": True},
+        "access_token": {"readonly": True},
+        "token_type": {"readonly": True},
+        "expires_in": {"readonly": True},
+        "refresh_token": {"readonly": True},
+        "scope": {"readonly": True},
     }
 
     _attribute_map = {
-        'notebook_resource_id': {'key': 'notebookResourceId', 'type': 'str'},
-        'host_name': {'key': 'hostName', 'type': 'str'},
-        'public_dns': {'key': 'publicDns', 'type': 'str'},
-        'access_token': {'key': 'accessToken', 'type': 'str'},
-        'token_type': {'key': 'tokenType', 'type': 'str'},
-        'expires_in': {'key': 'expiresIn', 'type': 'int'},
-        'refresh_token': {'key': 'refreshToken', 'type': 'str'},
-        'scope': {'key': 'scope', 'type': 'str'},
+        "notebook_resource_id": {"key": "notebookResourceId", "type": "str"},
+        "host_name": {"key": "hostName", "type": "str"},
+        "public_dns": {"key": "publicDns", "type": "str"},
+        "access_token": {"key": "accessToken", "type": "str"},
+        "token_type": {"key": "tokenType", "type": "str"},
+        "expires_in": {"key": "expiresIn", "type": "int"},
+        "refresh_token": {"key": "refreshToken", "type": "str"},
+        "scope": {"key": "scope", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs):
+        """ """
         super(NotebookAccessTokenResult, self).__init__(**kwargs)
         self.notebook_resource_id = None
         self.host_name = None
@@ -9586,14 +9226,11 @@ class NotebookPreparationError(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'error_message': {'key': 'errorMessage', 'type': 'str'},
-        'status_code': {'key': 'statusCode', 'type': 'int'},
+        "error_message": {"key": "errorMessage", "type": "str"},
+        "status_code": {"key": "statusCode", "type": "int"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword error_message:
         :paramtype error_message: str
@@ -9601,8 +9238,8 @@ class NotebookPreparationError(msrest.serialization.Model):
         :paramtype status_code: int
         """
         super(NotebookPreparationError, self).__init__(**kwargs)
-        self.error_message = kwargs.get('error_message', None)
-        self.status_code = kwargs.get('status_code', None)
+        self.error_message = kwargs.get("error_message", None)
+        self.status_code = kwargs.get("status_code", None)
 
 
 class NotebookResourceInfo(msrest.serialization.Model):
@@ -9618,15 +9255,15 @@ class NotebookResourceInfo(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'fqdn': {'key': 'fqdn', 'type': 'str'},
-        'resource_id': {'key': 'resourceId', 'type': 'str'},
-        'notebook_preparation_error': {'key': 'notebookPreparationError', 'type': 'NotebookPreparationError'},
+        "fqdn": {"key": "fqdn", "type": "str"},
+        "resource_id": {"key": "resourceId", "type": "str"},
+        "notebook_preparation_error": {
+            "key": "notebookPreparationError",
+            "type": "NotebookPreparationError",
+        },
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword fqdn:
         :paramtype fqdn: str
@@ -9637,9 +9274,9 @@ class NotebookResourceInfo(msrest.serialization.Model):
          ~azure.mgmt.machinelearningservices.models.NotebookPreparationError
         """
         super(NotebookResourceInfo, self).__init__(**kwargs)
-        self.fqdn = kwargs.get('fqdn', None)
-        self.resource_id = kwargs.get('resource_id', None)
-        self.notebook_preparation_error = kwargs.get('notebook_preparation_error', None)
+        self.fqdn = kwargs.get("fqdn", None)
+        self.resource_id = kwargs.get("resource_id", None)
+        self.notebook_preparation_error = kwargs.get("notebook_preparation_error", None)
 
 
 class Objective(msrest.serialization.Model):
@@ -9655,19 +9292,16 @@ class Objective(msrest.serialization.Model):
     """
 
     _validation = {
-        'goal': {'required': True},
-        'primary_metric': {'required': True, 'pattern': r'[a-zA-Z0-9_]'},
+        "goal": {"required": True},
+        "primary_metric": {"required": True, "pattern": r"[a-zA-Z0-9_]"},
     }
 
     _attribute_map = {
-        'goal': {'key': 'goal', 'type': 'str'},
-        'primary_metric': {'key': 'primaryMetric', 'type': 'str'},
+        "goal": {"key": "goal", "type": "str"},
+        "primary_metric": {"key": "primaryMetric", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword goal: Required. [Required] Defines supported metric goals for hyperparameter tuning.
          Possible values include: "Minimize", "Maximize".
@@ -9676,8 +9310,8 @@ class Objective(msrest.serialization.Model):
         :paramtype primary_metric: str
         """
         super(Objective, self).__init__(**kwargs)
-        self.goal = kwargs['goal']
-        self.primary_metric = kwargs['primary_metric']
+        self.goal = kwargs["goal"]
+        self.primary_metric = kwargs["primary_metric"]
 
 
 class OnlineDeploymentData(TrackedResource):
@@ -9714,31 +9348,28 @@ class OnlineDeploymentData(TrackedResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'location': {'required': True},
-        'properties': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "location": {"required": True},
+        "properties": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
-        'identity': {'key': 'identity', 'type': 'ManagedServiceIdentity'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'OnlineDeploymentDetails'},
-        'sku': {'key': 'sku', 'type': 'Sku'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+        "identity": {"key": "identity", "type": "ManagedServiceIdentity"},
+        "kind": {"key": "kind", "type": "str"},
+        "properties": {"key": "properties", "type": "OnlineDeploymentDetails"},
+        "sku": {"key": "sku", "type": "Sku"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword tags: A set of tags. Resource tags.
         :paramtype tags: dict[str, str]
@@ -9755,10 +9386,10 @@ class OnlineDeploymentData(TrackedResource):
         :paramtype sku: ~azure.mgmt.machinelearningservices.models.Sku
         """
         super(OnlineDeploymentData, self).__init__(**kwargs)
-        self.identity = kwargs.get('identity', None)
-        self.kind = kwargs.get('kind', None)
-        self.properties = kwargs['properties']
-        self.sku = kwargs.get('sku', None)
+        self.identity = kwargs.get("identity", None)
+        self.kind = kwargs.get("kind", None)
+        self.properties = kwargs["properties"]
+        self.sku = kwargs.get("sku", None)
 
 
 class OnlineDeploymentTrackedResourceArmPaginatedResult(msrest.serialization.Model):
@@ -9772,14 +9403,11 @@ class OnlineDeploymentTrackedResourceArmPaginatedResult(msrest.serialization.Mod
     """
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'value': {'key': 'value', 'type': '[OnlineDeploymentData]'},
+        "next_link": {"key": "nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[OnlineDeploymentData]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword next_link: The link to the next page of OnlineDeployment objects. If null, there are
          no additional pages.
@@ -9787,9 +9415,11 @@ class OnlineDeploymentTrackedResourceArmPaginatedResult(msrest.serialization.Mod
         :keyword value: An array of objects of type OnlineDeployment.
         :paramtype value: list[~azure.mgmt.machinelearningservices.models.OnlineDeploymentData]
         """
-        super(OnlineDeploymentTrackedResourceArmPaginatedResult, self).__init__(**kwargs)
-        self.next_link = kwargs.get('next_link', None)
-        self.value = kwargs.get('value', None)
+        super(OnlineDeploymentTrackedResourceArmPaginatedResult, self).__init__(
+            **kwargs
+        )
+        self.next_link = kwargs.get("next_link", None)
+        self.value = kwargs.get("value", None)
 
 
 class OnlineEndpointData(TrackedResource):
@@ -9826,31 +9456,28 @@ class OnlineEndpointData(TrackedResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'location': {'required': True},
-        'properties': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "location": {"required": True},
+        "properties": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
-        'identity': {'key': 'identity', 'type': 'ManagedServiceIdentity'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'OnlineEndpointDetails'},
-        'sku': {'key': 'sku', 'type': 'Sku'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+        "identity": {"key": "identity", "type": "ManagedServiceIdentity"},
+        "kind": {"key": "kind", "type": "str"},
+        "properties": {"key": "properties", "type": "OnlineEndpointDetails"},
+        "sku": {"key": "sku", "type": "Sku"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword tags: A set of tags. Resource tags.
         :paramtype tags: dict[str, str]
@@ -9867,10 +9494,10 @@ class OnlineEndpointData(TrackedResource):
         :paramtype sku: ~azure.mgmt.machinelearningservices.models.Sku
         """
         super(OnlineEndpointData, self).__init__(**kwargs)
-        self.identity = kwargs.get('identity', None)
-        self.kind = kwargs.get('kind', None)
-        self.properties = kwargs['properties']
-        self.sku = kwargs.get('sku', None)
+        self.identity = kwargs.get("identity", None)
+        self.kind = kwargs.get("kind", None)
+        self.properties = kwargs["properties"]
+        self.sku = kwargs.get("sku", None)
 
 
 class OnlineEndpointDetails(EndpointPropertiesBase):
@@ -9909,28 +9536,25 @@ class OnlineEndpointDetails(EndpointPropertiesBase):
     """
 
     _validation = {
-        'auth_mode': {'required': True},
-        'scoring_uri': {'readonly': True},
-        'swagger_uri': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "auth_mode": {"required": True},
+        "scoring_uri": {"readonly": True},
+        "swagger_uri": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'auth_mode': {'key': 'authMode', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'keys': {'key': 'keys', 'type': 'EndpointAuthKeys'},
-        'properties': {'key': 'properties', 'type': '{str}'},
-        'scoring_uri': {'key': 'scoringUri', 'type': 'str'},
-        'swagger_uri': {'key': 'swaggerUri', 'type': 'str'},
-        'compute': {'key': 'compute', 'type': 'str'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'traffic': {'key': 'traffic', 'type': '{int}'},
+        "auth_mode": {"key": "authMode", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "keys": {"key": "keys", "type": "EndpointAuthKeys"},
+        "properties": {"key": "properties", "type": "{str}"},
+        "scoring_uri": {"key": "scoringUri", "type": "str"},
+        "swagger_uri": {"key": "swaggerUri", "type": "str"},
+        "compute": {"key": "compute", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "traffic": {"key": "traffic", "type": "{int}"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword auth_mode: Required. [Required] Use 'Key' for key based authentication and 'AMLToken'
          for Azure Machine Learning token-based authentication. 'Key' doesn't expire but 'AMLToken'
@@ -9952,9 +9576,9 @@ class OnlineEndpointDetails(EndpointPropertiesBase):
         :paramtype traffic: dict[str, int]
         """
         super(OnlineEndpointDetails, self).__init__(**kwargs)
-        self.compute = kwargs.get('compute', None)
+        self.compute = kwargs.get("compute", None)
         self.provisioning_state = None
-        self.traffic = kwargs.get('traffic', None)
+        self.traffic = kwargs.get("traffic", None)
 
 
 class OnlineEndpointTrackedResourceArmPaginatedResult(msrest.serialization.Model):
@@ -9968,14 +9592,11 @@ class OnlineEndpointTrackedResourceArmPaginatedResult(msrest.serialization.Model
     """
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'value': {'key': 'value', 'type': '[OnlineEndpointData]'},
+        "next_link": {"key": "nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[OnlineEndpointData]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword next_link: The link to the next page of OnlineEndpoint objects. If null, there are no
          additional pages.
@@ -9984,8 +9605,8 @@ class OnlineEndpointTrackedResourceArmPaginatedResult(msrest.serialization.Model
         :paramtype value: list[~azure.mgmt.machinelearningservices.models.OnlineEndpointData]
         """
         super(OnlineEndpointTrackedResourceArmPaginatedResult, self).__init__(**kwargs)
-        self.next_link = kwargs.get('next_link', None)
-        self.value = kwargs.get('value', None)
+        self.next_link = kwargs.get("next_link", None)
+        self.value = kwargs.get("value", None)
 
 
 class OnlineRequestSettings(msrest.serialization.Model):
@@ -10004,15 +9625,15 @@ class OnlineRequestSettings(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'max_concurrent_requests_per_instance': {'key': 'maxConcurrentRequestsPerInstance', 'type': 'int'},
-        'max_queue_wait': {'key': 'maxQueueWait', 'type': 'duration'},
-        'request_timeout': {'key': 'requestTimeout', 'type': 'duration'},
+        "max_concurrent_requests_per_instance": {
+            "key": "maxConcurrentRequestsPerInstance",
+            "type": "int",
+        },
+        "max_queue_wait": {"key": "maxQueueWait", "type": "duration"},
+        "request_timeout": {"key": "requestTimeout", "type": "duration"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword max_concurrent_requests_per_instance: The number of maximum concurrent requests per
          node allowed per deployment. Defaults to 1.
@@ -10026,9 +9647,11 @@ class OnlineRequestSettings(msrest.serialization.Model):
         :paramtype request_timeout: ~datetime.timedelta
         """
         super(OnlineRequestSettings, self).__init__(**kwargs)
-        self.max_concurrent_requests_per_instance = kwargs.get('max_concurrent_requests_per_instance', 1)
-        self.max_queue_wait = kwargs.get('max_queue_wait', "PT0.5S")
-        self.request_timeout = kwargs.get('request_timeout', "PT5S")
+        self.max_concurrent_requests_per_instance = kwargs.get(
+            "max_concurrent_requests_per_instance", 1
+        )
+        self.max_queue_wait = kwargs.get("max_queue_wait", "PT0.5S")
+        self.request_timeout = kwargs.get("request_timeout", "PT5S")
 
 
 class OutputPathAssetReference(AssetReferenceBase):
@@ -10046,19 +9669,16 @@ class OutputPathAssetReference(AssetReferenceBase):
     """
 
     _validation = {
-        'reference_type': {'required': True},
+        "reference_type": {"required": True},
     }
 
     _attribute_map = {
-        'reference_type': {'key': 'referenceType', 'type': 'str'},
-        'job_id': {'key': 'jobId', 'type': 'str'},
-        'path': {'key': 'path', 'type': 'str'},
+        "reference_type": {"key": "referenceType", "type": "str"},
+        "job_id": {"key": "jobId", "type": "str"},
+        "path": {"key": "path", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword job_id: ARM resource ID of the job.
         :paramtype job_id: str
@@ -10066,9 +9686,9 @@ class OutputPathAssetReference(AssetReferenceBase):
         :paramtype path: str
         """
         super(OutputPathAssetReference, self).__init__(**kwargs)
-        self.reference_type = 'OutputPath'  # type: str
-        self.job_id = kwargs.get('job_id', None)
-        self.path = kwargs.get('path', None)
+        self.reference_type = "OutputPath"  # type: str
+        self.job_id = kwargs.get("job_id", None)
+        self.path = kwargs.get("path", None)
 
 
 class PaginatedComputeResourcesList(msrest.serialization.Model):
@@ -10081,14 +9701,11 @@ class PaginatedComputeResourcesList(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ComputeResource]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ComputeResource]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword value: An array of Machine Learning compute objects wrapped in ARM resource envelope.
         :paramtype value: list[~azure.mgmt.machinelearningservices.models.ComputeResource]
@@ -10096,8 +9713,8 @@ class PaginatedComputeResourcesList(msrest.serialization.Model):
         :paramtype next_link: str
         """
         super(PaginatedComputeResourcesList, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
-        self.next_link = kwargs.get('next_link', None)
+        self.value = kwargs.get("value", None)
+        self.next_link = kwargs.get("next_link", None)
 
 
 class PartialAssetReferenceBase(msrest.serialization.Model):
@@ -10114,23 +9731,23 @@ class PartialAssetReferenceBase(msrest.serialization.Model):
     """
 
     _validation = {
-        'reference_type': {'required': True},
+        "reference_type": {"required": True},
     }
 
     _attribute_map = {
-        'reference_type': {'key': 'referenceType', 'type': 'str'},
+        "reference_type": {"key": "referenceType", "type": "str"},
     }
 
     _subtype_map = {
-        'reference_type': {'DataPath': 'PartialDataPathAssetReference', 'Id': 'PartialIdAssetReference', 'OutputPath': 'PartialOutputPathAssetReference'}
+        "reference_type": {
+            "DataPath": "PartialDataPathAssetReference",
+            "Id": "PartialIdAssetReference",
+            "OutputPath": "PartialOutputPathAssetReference",
+        }
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs):
+        """ """
         super(PartialAssetReferenceBase, self).__init__(**kwargs)
         self.reference_type = None  # type: Optional[str]
 
@@ -10180,26 +9797,29 @@ class PartialBatchDeployment(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'code_configuration': {'key': 'codeConfiguration', 'type': 'PartialCodeConfiguration'},
-        'compute': {'key': 'compute', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'environment_id': {'key': 'environmentId', 'type': 'str'},
-        'environment_variables': {'key': 'environmentVariables', 'type': '{str}'},
-        'error_threshold': {'key': 'errorThreshold', 'type': 'int'},
-        'logging_level': {'key': 'loggingLevel', 'type': 'str'},
-        'max_concurrency_per_instance': {'key': 'maxConcurrencyPerInstance', 'type': 'int'},
-        'mini_batch_size': {'key': 'miniBatchSize', 'type': 'long'},
-        'model': {'key': 'model', 'type': 'PartialAssetReferenceBase'},
-        'output_action': {'key': 'outputAction', 'type': 'str'},
-        'output_file_name': {'key': 'outputFileName', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': '{str}'},
-        'retry_settings': {'key': 'retrySettings', 'type': 'PartialBatchRetrySettings'},
+        "code_configuration": {
+            "key": "codeConfiguration",
+            "type": "PartialCodeConfiguration",
+        },
+        "compute": {"key": "compute", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "environment_id": {"key": "environmentId", "type": "str"},
+        "environment_variables": {"key": "environmentVariables", "type": "{str}"},
+        "error_threshold": {"key": "errorThreshold", "type": "int"},
+        "logging_level": {"key": "loggingLevel", "type": "str"},
+        "max_concurrency_per_instance": {
+            "key": "maxConcurrencyPerInstance",
+            "type": "int",
+        },
+        "mini_batch_size": {"key": "miniBatchSize", "type": "long"},
+        "model": {"key": "model", "type": "PartialAssetReferenceBase"},
+        "output_action": {"key": "outputAction", "type": "str"},
+        "output_file_name": {"key": "outputFileName", "type": "str"},
+        "properties": {"key": "properties", "type": "{str}"},
+        "retry_settings": {"key": "retrySettings", "type": "PartialBatchRetrySettings"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword code_configuration: Code configuration for the endpoint deployment.
         :paramtype code_configuration:
@@ -10242,20 +9862,22 @@ class PartialBatchDeployment(msrest.serialization.Model):
         :paramtype retry_settings: ~azure.mgmt.machinelearningservices.models.PartialBatchRetrySettings
         """
         super(PartialBatchDeployment, self).__init__(**kwargs)
-        self.code_configuration = kwargs.get('code_configuration', None)
-        self.compute = kwargs.get('compute', None)
-        self.description = kwargs.get('description', None)
-        self.environment_id = kwargs.get('environment_id', None)
-        self.environment_variables = kwargs.get('environment_variables', None)
-        self.error_threshold = kwargs.get('error_threshold', None)
-        self.logging_level = kwargs.get('logging_level', None)
-        self.max_concurrency_per_instance = kwargs.get('max_concurrency_per_instance', None)
-        self.mini_batch_size = kwargs.get('mini_batch_size', None)
-        self.model = kwargs.get('model', None)
-        self.output_action = kwargs.get('output_action', None)
-        self.output_file_name = kwargs.get('output_file_name', None)
-        self.properties = kwargs.get('properties', None)
-        self.retry_settings = kwargs.get('retry_settings', None)
+        self.code_configuration = kwargs.get("code_configuration", None)
+        self.compute = kwargs.get("compute", None)
+        self.description = kwargs.get("description", None)
+        self.environment_id = kwargs.get("environment_id", None)
+        self.environment_variables = kwargs.get("environment_variables", None)
+        self.error_threshold = kwargs.get("error_threshold", None)
+        self.logging_level = kwargs.get("logging_level", None)
+        self.max_concurrency_per_instance = kwargs.get(
+            "max_concurrency_per_instance", None
+        )
+        self.mini_batch_size = kwargs.get("mini_batch_size", None)
+        self.model = kwargs.get("model", None)
+        self.output_action = kwargs.get("output_action", None)
+        self.output_file_name = kwargs.get("output_file_name", None)
+        self.properties = kwargs.get("properties", None)
+        self.retry_settings = kwargs.get("retry_settings", None)
 
 
 class PartialBatchDeploymentPartialTrackedResource(msrest.serialization.Model):
@@ -10277,18 +9899,15 @@ class PartialBatchDeploymentPartialTrackedResource(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'identity': {'key': 'identity', 'type': 'PartialManagedServiceIdentity'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'PartialBatchDeployment'},
-        'sku': {'key': 'sku', 'type': 'PartialSku'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "identity": {"key": "identity", "type": "PartialManagedServiceIdentity"},
+        "kind": {"key": "kind", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "properties": {"key": "properties", "type": "PartialBatchDeployment"},
+        "sku": {"key": "sku", "type": "PartialSku"},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword identity: Managed service identity (system assigned and/or user assigned identities).
         :paramtype identity: ~azure.mgmt.machinelearningservices.models.PartialManagedServiceIdentity
@@ -10305,12 +9924,12 @@ class PartialBatchDeploymentPartialTrackedResource(msrest.serialization.Model):
         :paramtype tags: dict[str, str]
         """
         super(PartialBatchDeploymentPartialTrackedResource, self).__init__(**kwargs)
-        self.identity = kwargs.get('identity', None)
-        self.kind = kwargs.get('kind', None)
-        self.location = kwargs.get('location', None)
-        self.properties = kwargs.get('properties', None)
-        self.sku = kwargs.get('sku', None)
-        self.tags = kwargs.get('tags', None)
+        self.identity = kwargs.get("identity", None)
+        self.kind = kwargs.get("kind", None)
+        self.location = kwargs.get("location", None)
+        self.properties = kwargs.get("properties", None)
+        self.sku = kwargs.get("sku", None)
+        self.tags = kwargs.get("tags", None)
 
 
 class PartialBatchEndpoint(msrest.serialization.Model):
@@ -10321,19 +9940,16 @@ class PartialBatchEndpoint(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'defaults': {'key': 'defaults', 'type': 'BatchEndpointDefaults'},
+        "defaults": {"key": "defaults", "type": "BatchEndpointDefaults"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword defaults: Default values for Batch Endpoint.
         :paramtype defaults: ~azure.mgmt.machinelearningservices.models.BatchEndpointDefaults
         """
         super(PartialBatchEndpoint, self).__init__(**kwargs)
-        self.defaults = kwargs.get('defaults', None)
+        self.defaults = kwargs.get("defaults", None)
 
 
 class PartialBatchEndpointPartialTrackedResource(msrest.serialization.Model):
@@ -10355,18 +9971,15 @@ class PartialBatchEndpointPartialTrackedResource(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'identity': {'key': 'identity', 'type': 'PartialManagedServiceIdentity'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'PartialBatchEndpoint'},
-        'sku': {'key': 'sku', 'type': 'PartialSku'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "identity": {"key": "identity", "type": "PartialManagedServiceIdentity"},
+        "kind": {"key": "kind", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "properties": {"key": "properties", "type": "PartialBatchEndpoint"},
+        "sku": {"key": "sku", "type": "PartialSku"},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword identity: Managed service identity (system assigned and/or user assigned identities).
         :paramtype identity: ~azure.mgmt.machinelearningservices.models.PartialManagedServiceIdentity
@@ -10383,12 +9996,12 @@ class PartialBatchEndpointPartialTrackedResource(msrest.serialization.Model):
         :paramtype tags: dict[str, str]
         """
         super(PartialBatchEndpointPartialTrackedResource, self).__init__(**kwargs)
-        self.identity = kwargs.get('identity', None)
-        self.kind = kwargs.get('kind', None)
-        self.location = kwargs.get('location', None)
-        self.properties = kwargs.get('properties', None)
-        self.sku = kwargs.get('sku', None)
-        self.tags = kwargs.get('tags', None)
+        self.identity = kwargs.get("identity", None)
+        self.kind = kwargs.get("kind", None)
+        self.location = kwargs.get("location", None)
+        self.properties = kwargs.get("properties", None)
+        self.sku = kwargs.get("sku", None)
+        self.tags = kwargs.get("tags", None)
 
 
 class PartialBatchRetrySettings(msrest.serialization.Model):
@@ -10401,14 +10014,11 @@ class PartialBatchRetrySettings(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'max_retries': {'key': 'maxRetries', 'type': 'int'},
-        'timeout': {'key': 'timeout', 'type': 'duration'},
+        "max_retries": {"key": "maxRetries", "type": "int"},
+        "timeout": {"key": "timeout", "type": "duration"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword max_retries: Maximum retry count for a mini-batch.
         :paramtype max_retries: int
@@ -10416,8 +10026,8 @@ class PartialBatchRetrySettings(msrest.serialization.Model):
         :paramtype timeout: ~datetime.timedelta
         """
         super(PartialBatchRetrySettings, self).__init__(**kwargs)
-        self.max_retries = kwargs.get('max_retries', None)
-        self.timeout = kwargs.get('timeout', None)
+        self.max_retries = kwargs.get("max_retries", None)
+        self.timeout = kwargs.get("timeout", None)
 
 
 class PartialCodeConfiguration(msrest.serialization.Model):
@@ -10430,18 +10040,15 @@ class PartialCodeConfiguration(msrest.serialization.Model):
     """
 
     _validation = {
-        'scoring_script': {'min_length': 1},
+        "scoring_script": {"min_length": 1},
     }
 
     _attribute_map = {
-        'code_id': {'key': 'codeId', 'type': 'str'},
-        'scoring_script': {'key': 'scoringScript', 'type': 'str'},
+        "code_id": {"key": "codeId", "type": "str"},
+        "scoring_script": {"key": "scoringScript", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword code_id: ARM resource ID of the code asset.
         :paramtype code_id: str
@@ -10449,8 +10056,8 @@ class PartialCodeConfiguration(msrest.serialization.Model):
         :paramtype scoring_script: str
         """
         super(PartialCodeConfiguration, self).__init__(**kwargs)
-        self.code_id = kwargs.get('code_id', None)
-        self.scoring_script = kwargs.get('scoring_script', None)
+        self.code_id = kwargs.get("code_id", None)
+        self.scoring_script = kwargs.get("scoring_script", None)
 
 
 class PartialDataPathAssetReference(PartialAssetReferenceBase):
@@ -10468,19 +10075,16 @@ class PartialDataPathAssetReference(PartialAssetReferenceBase):
     """
 
     _validation = {
-        'reference_type': {'required': True},
+        "reference_type": {"required": True},
     }
 
     _attribute_map = {
-        'reference_type': {'key': 'referenceType', 'type': 'str'},
-        'datastore_id': {'key': 'datastoreId', 'type': 'str'},
-        'path': {'key': 'path', 'type': 'str'},
+        "reference_type": {"key": "referenceType", "type": "str"},
+        "datastore_id": {"key": "datastoreId", "type": "str"},
+        "path": {"key": "path", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword datastore_id: ARM resource ID of the datastore where the asset is located.
         :paramtype datastore_id: str
@@ -10488,9 +10092,9 @@ class PartialDataPathAssetReference(PartialAssetReferenceBase):
         :paramtype path: str
         """
         super(PartialDataPathAssetReference, self).__init__(**kwargs)
-        self.reference_type = 'DataPath'  # type: str
-        self.datastore_id = kwargs.get('datastore_id', None)
-        self.path = kwargs.get('path', None)
+        self.reference_type = "DataPath"  # type: str
+        self.datastore_id = kwargs.get("datastore_id", None)
+        self.path = kwargs.get("path", None)
 
 
 class PartialIdAssetReference(PartialAssetReferenceBase):
@@ -10506,25 +10110,22 @@ class PartialIdAssetReference(PartialAssetReferenceBase):
     """
 
     _validation = {
-        'reference_type': {'required': True},
+        "reference_type": {"required": True},
     }
 
     _attribute_map = {
-        'reference_type': {'key': 'referenceType', 'type': 'str'},
-        'asset_id': {'key': 'assetId', 'type': 'str'},
+        "reference_type": {"key": "referenceType", "type": "str"},
+        "asset_id": {"key": "assetId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword asset_id: ARM resource ID of the asset.
         :paramtype asset_id: str
         """
         super(PartialIdAssetReference, self).__init__(**kwargs)
-        self.reference_type = 'Id'  # type: str
-        self.asset_id = kwargs.get('asset_id', None)
+        self.reference_type = "Id"  # type: str
+        self.asset_id = kwargs.get("asset_id", None)
 
 
 class PartialOnlineDeployment(msrest.serialization.Model):
@@ -10542,23 +10143,22 @@ class PartialOnlineDeployment(msrest.serialization.Model):
     """
 
     _validation = {
-        'endpoint_compute_type': {'required': True},
+        "endpoint_compute_type": {"required": True},
     }
 
     _attribute_map = {
-        'endpoint_compute_type': {'key': 'endpointComputeType', 'type': 'str'},
+        "endpoint_compute_type": {"key": "endpointComputeType", "type": "str"},
     }
 
     _subtype_map = {
-        'endpoint_compute_type': {'Kubernetes': 'PartialKubernetesOnlineDeployment', 'Managed': 'PartialManagedOnlineDeployment'}
+        "endpoint_compute_type": {
+            "Kubernetes": "PartialKubernetesOnlineDeployment",
+            "Managed": "PartialManagedOnlineDeployment",
+        }
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs):
+        """ """
         super(PartialOnlineDeployment, self).__init__(**kwargs)
         self.endpoint_compute_type = None  # type: Optional[str]
 
@@ -10575,21 +10175,17 @@ class PartialKubernetesOnlineDeployment(PartialOnlineDeployment):
     """
 
     _validation = {
-        'endpoint_compute_type': {'required': True},
+        "endpoint_compute_type": {"required": True},
     }
 
     _attribute_map = {
-        'endpoint_compute_type': {'key': 'endpointComputeType', 'type': 'str'},
+        "endpoint_compute_type": {"key": "endpointComputeType", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs):
+        """ """
         super(PartialKubernetesOnlineDeployment, self).__init__(**kwargs)
-        self.endpoint_compute_type = 'Kubernetes'  # type: str
+        self.endpoint_compute_type = "Kubernetes"  # type: str
 
 
 class PartialManagedOnlineDeployment(PartialOnlineDeployment):
@@ -10604,21 +10200,17 @@ class PartialManagedOnlineDeployment(PartialOnlineDeployment):
     """
 
     _validation = {
-        'endpoint_compute_type': {'required': True},
+        "endpoint_compute_type": {"required": True},
     }
 
     _attribute_map = {
-        'endpoint_compute_type': {'key': 'endpointComputeType', 'type': 'str'},
+        "endpoint_compute_type": {"key": "endpointComputeType", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs):
+        """ """
         super(PartialManagedOnlineDeployment, self).__init__(**kwargs)
-        self.endpoint_compute_type = 'Managed'  # type: str
+        self.endpoint_compute_type = "Managed"  # type: str
 
 
 class PartialManagedServiceIdentity(msrest.serialization.Model):
@@ -10636,14 +10228,14 @@ class PartialManagedServiceIdentity(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'user_assigned_identities': {'key': 'userAssignedIdentities', 'type': '{object}'},
+        "type": {"key": "type", "type": "str"},
+        "user_assigned_identities": {
+            "key": "userAssignedIdentities",
+            "type": "{object}",
+        },
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword type: Managed service identity (system assigned and/or user assigned identities).
          Possible values include: "None", "SystemAssigned", "UserAssigned",
@@ -10656,8 +10248,8 @@ class PartialManagedServiceIdentity(msrest.serialization.Model):
         :paramtype user_assigned_identities: dict[str, any]
         """
         super(PartialManagedServiceIdentity, self).__init__(**kwargs)
-        self.type = kwargs.get('type', None)
-        self.user_assigned_identities = kwargs.get('user_assigned_identities', None)
+        self.type = kwargs.get("type", None)
+        self.user_assigned_identities = kwargs.get("user_assigned_identities", None)
 
 
 class PartialOnlineDeploymentPartialTrackedResource(msrest.serialization.Model):
@@ -10679,18 +10271,15 @@ class PartialOnlineDeploymentPartialTrackedResource(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'identity': {'key': 'identity', 'type': 'PartialManagedServiceIdentity'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'PartialOnlineDeployment'},
-        'sku': {'key': 'sku', 'type': 'PartialSku'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "identity": {"key": "identity", "type": "PartialManagedServiceIdentity"},
+        "kind": {"key": "kind", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "properties": {"key": "properties", "type": "PartialOnlineDeployment"},
+        "sku": {"key": "sku", "type": "PartialSku"},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword identity: Managed service identity (system assigned and/or user assigned identities).
         :paramtype identity: ~azure.mgmt.machinelearningservices.models.PartialManagedServiceIdentity
@@ -10707,12 +10296,12 @@ class PartialOnlineDeploymentPartialTrackedResource(msrest.serialization.Model):
         :paramtype tags: dict[str, str]
         """
         super(PartialOnlineDeploymentPartialTrackedResource, self).__init__(**kwargs)
-        self.identity = kwargs.get('identity', None)
-        self.kind = kwargs.get('kind', None)
-        self.location = kwargs.get('location', None)
-        self.properties = kwargs.get('properties', None)
-        self.sku = kwargs.get('sku', None)
-        self.tags = kwargs.get('tags', None)
+        self.identity = kwargs.get("identity", None)
+        self.kind = kwargs.get("kind", None)
+        self.location = kwargs.get("location", None)
+        self.properties = kwargs.get("properties", None)
+        self.sku = kwargs.get("sku", None)
+        self.tags = kwargs.get("tags", None)
 
 
 class PartialOnlineEndpointPartialTrackedResource(msrest.serialization.Model):
@@ -10734,18 +10323,15 @@ class PartialOnlineEndpointPartialTrackedResource(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'identity': {'key': 'identity', 'type': 'PartialManagedServiceIdentity'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'object'},
-        'sku': {'key': 'sku', 'type': 'PartialSku'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "identity": {"key": "identity", "type": "PartialManagedServiceIdentity"},
+        "kind": {"key": "kind", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "properties": {"key": "properties", "type": "object"},
+        "sku": {"key": "sku", "type": "PartialSku"},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword identity: Managed service identity (system assigned and/or user assigned identities).
         :paramtype identity: ~azure.mgmt.machinelearningservices.models.PartialManagedServiceIdentity
@@ -10762,12 +10348,12 @@ class PartialOnlineEndpointPartialTrackedResource(msrest.serialization.Model):
         :paramtype tags: dict[str, str]
         """
         super(PartialOnlineEndpointPartialTrackedResource, self).__init__(**kwargs)
-        self.identity = kwargs.get('identity', None)
-        self.kind = kwargs.get('kind', None)
-        self.location = kwargs.get('location', None)
-        self.properties = kwargs.get('properties', None)
-        self.sku = kwargs.get('sku', None)
-        self.tags = kwargs.get('tags', None)
+        self.identity = kwargs.get("identity", None)
+        self.kind = kwargs.get("kind", None)
+        self.location = kwargs.get("location", None)
+        self.properties = kwargs.get("properties", None)
+        self.sku = kwargs.get("sku", None)
+        self.tags = kwargs.get("tags", None)
 
 
 class PartialOutputPathAssetReference(PartialAssetReferenceBase):
@@ -10785,19 +10371,16 @@ class PartialOutputPathAssetReference(PartialAssetReferenceBase):
     """
 
     _validation = {
-        'reference_type': {'required': True},
+        "reference_type": {"required": True},
     }
 
     _attribute_map = {
-        'reference_type': {'key': 'referenceType', 'type': 'str'},
-        'job_id': {'key': 'jobId', 'type': 'str'},
-        'path': {'key': 'path', 'type': 'str'},
+        "reference_type": {"key": "referenceType", "type": "str"},
+        "job_id": {"key": "jobId", "type": "str"},
+        "path": {"key": "path", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword job_id: ARM resource ID of the job.
         :paramtype job_id: str
@@ -10805,9 +10388,9 @@ class PartialOutputPathAssetReference(PartialAssetReferenceBase):
         :paramtype path: str
         """
         super(PartialOutputPathAssetReference, self).__init__(**kwargs)
-        self.reference_type = 'OutputPath'  # type: str
-        self.job_id = kwargs.get('job_id', None)
-        self.path = kwargs.get('path', None)
+        self.reference_type = "OutputPath"  # type: str
+        self.job_id = kwargs.get("job_id", None)
+        self.path = kwargs.get("path", None)
 
 
 class PartialSku(msrest.serialization.Model):
@@ -10831,17 +10414,14 @@ class PartialSku(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'capacity': {'key': 'capacity', 'type': 'int'},
-        'family': {'key': 'family', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'size': {'key': 'size', 'type': 'str'},
-        'tier': {'key': 'tier', 'type': 'str'},
+        "capacity": {"key": "capacity", "type": "int"},
+        "family": {"key": "family", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "size": {"key": "size", "type": "str"},
+        "tier": {"key": "tier", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword capacity: If the SKU supports scale out/in then the capacity integer should be
          included. If scale out/in is not possible for the resource this may be omitted.
@@ -10860,11 +10440,11 @@ class PartialSku(msrest.serialization.Model):
         :paramtype tier: str or ~azure.mgmt.machinelearningservices.models.SkuTier
         """
         super(PartialSku, self).__init__(**kwargs)
-        self.capacity = kwargs.get('capacity', None)
-        self.family = kwargs.get('family', None)
-        self.name = kwargs.get('name', None)
-        self.size = kwargs.get('size', None)
-        self.tier = kwargs.get('tier', None)
+        self.capacity = kwargs.get("capacity", None)
+        self.family = kwargs.get("family", None)
+        self.name = kwargs.get("name", None)
+        self.size = kwargs.get("size", None)
+        self.tier = kwargs.get("tier", None)
 
 
 class Password(msrest.serialization.Model):
@@ -10879,21 +10459,17 @@ class Password(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'value': {'readonly': True},
+        "name": {"readonly": True},
+        "value": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs):
+        """ """
         super(Password, self).__init__(**kwargs)
         self.name = None
         self.value = None
@@ -10922,22 +10498,22 @@ class PATAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2):
     """
 
     _validation = {
-        'auth_type': {'required': True},
+        "auth_type": {"required": True},
     }
 
     _attribute_map = {
-        'auth_type': {'key': 'authType', 'type': 'str'},
-        'category': {'key': 'category', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
-        'value_format': {'key': 'valueFormat', 'type': 'str'},
-        'credentials': {'key': 'credentials', 'type': 'WorkspaceConnectionPersonalAccessToken'},
+        "auth_type": {"key": "authType", "type": "str"},
+        "category": {"key": "category", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "value": {"key": "value", "type": "str"},
+        "value_format": {"key": "valueFormat", "type": "str"},
+        "credentials": {
+            "key": "credentials",
+            "type": "WorkspaceConnectionPersonalAccessToken",
+        },
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword category: Category of the connection. Possible values include: "PythonFeed",
          "ContainerRegistry", "Git".
@@ -10954,8 +10530,8 @@ class PATAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2):
          ~azure.mgmt.machinelearningservices.models.WorkspaceConnectionPersonalAccessToken
         """
         super(PATAuthTypeWorkspaceConnectionProperties, self).__init__(**kwargs)
-        self.auth_type = 'PAT'  # type: str
-        self.credentials = kwargs.get('credentials', None)
+        self.auth_type = "PAT"  # type: str
+        self.credentials = kwargs.get("credentials", None)
 
 
 class PersonalComputeInstanceSettings(msrest.serialization.Model):
@@ -10966,19 +10542,16 @@ class PersonalComputeInstanceSettings(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'assigned_user': {'key': 'assignedUser', 'type': 'AssignedUser'},
+        "assigned_user": {"key": "assignedUser", "type": "AssignedUser"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword assigned_user: A user explicitly assigned to a personal compute instance.
         :paramtype assigned_user: ~azure.mgmt.machinelearningservices.models.AssignedUser
         """
         super(PersonalComputeInstanceSettings, self).__init__(**kwargs)
-        self.assigned_user = kwargs.get('assigned_user', None)
+        self.assigned_user = kwargs.get("assigned_user", None)
 
 
 class PipelineJob(JobBaseDetails):
@@ -11028,32 +10601,29 @@ class PipelineJob(JobBaseDetails):
     """
 
     _validation = {
-        'job_type': {'required': True},
-        'status': {'readonly': True},
+        "job_type": {"required": True},
+        "status": {"readonly": True},
     }
 
     _attribute_map = {
-        'description': {'key': 'description', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': '{str}'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'compute_id': {'key': 'computeId', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'experiment_name': {'key': 'experimentName', 'type': 'str'},
-        'identity': {'key': 'identity', 'type': 'IdentityConfiguration'},
-        'is_archived': {'key': 'isArchived', 'type': 'bool'},
-        'job_type': {'key': 'jobType', 'type': 'str'},
-        'services': {'key': 'services', 'type': '{JobService}'},
-        'status': {'key': 'status', 'type': 'str'},
-        'inputs': {'key': 'inputs', 'type': '{JobInput}'},
-        'jobs': {'key': 'jobs', 'type': '{object}'},
-        'outputs': {'key': 'outputs', 'type': '{JobOutput}'},
-        'settings': {'key': 'settings', 'type': 'object'},
+        "description": {"key": "description", "type": "str"},
+        "properties": {"key": "properties", "type": "{str}"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "compute_id": {"key": "computeId", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
+        "experiment_name": {"key": "experimentName", "type": "str"},
+        "identity": {"key": "identity", "type": "IdentityConfiguration"},
+        "is_archived": {"key": "isArchived", "type": "bool"},
+        "job_type": {"key": "jobType", "type": "str"},
+        "services": {"key": "services", "type": "{JobService}"},
+        "status": {"key": "status", "type": "str"},
+        "inputs": {"key": "inputs", "type": "{JobInput}"},
+        "jobs": {"key": "jobs", "type": "{object}"},
+        "outputs": {"key": "outputs", "type": "{JobOutput}"},
+        "settings": {"key": "settings", "type": "object"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword description: The asset description text.
         :paramtype description: str
@@ -11087,11 +10657,11 @@ class PipelineJob(JobBaseDetails):
         :paramtype settings: any
         """
         super(PipelineJob, self).__init__(**kwargs)
-        self.job_type = 'Pipeline'  # type: str
-        self.inputs = kwargs.get('inputs', None)
-        self.jobs = kwargs.get('jobs', None)
-        self.outputs = kwargs.get('outputs', None)
-        self.settings = kwargs.get('settings', None)
+        self.job_type = "Pipeline"  # type: str
+        self.inputs = kwargs.get("inputs", None)
+        self.jobs = kwargs.get("jobs", None)
+        self.outputs = kwargs.get("outputs", None)
+        self.settings = kwargs.get("settings", None)
 
 
 class PrivateEndpoint(msrest.serialization.Model):
@@ -11106,21 +10676,17 @@ class PrivateEndpoint(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'subnet_arm_id': {'readonly': True},
+        "id": {"readonly": True},
+        "subnet_arm_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'subnet_arm_id': {'key': 'subnetArmId', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "subnet_arm_id": {"key": "subnetArmId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs):
+        """ """
         super(PrivateEndpoint, self).__init__(**kwargs)
         self.id = None
         self.subnet_arm_id = None
@@ -11163,31 +10729,34 @@ class PrivateEndpointConnection(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'identity': {'key': 'identity', 'type': 'ManagedServiceIdentity'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'sku': {'key': 'sku', 'type': 'Sku'},
-        'private_endpoint': {'key': 'properties.privateEndpoint', 'type': 'PrivateEndpoint'},
-        'private_link_service_connection_state': {'key': 'properties.privateLinkServiceConnectionState', 'type': 'PrivateLinkServiceConnectionState'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "identity": {"key": "identity", "type": "ManagedServiceIdentity"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "sku": {"key": "sku", "type": "Sku"},
+        "private_endpoint": {
+            "key": "properties.privateEndpoint",
+            "type": "PrivateEndpoint",
+        },
+        "private_link_service_connection_state": {
+            "key": "properties.privateLinkServiceConnectionState",
+            "type": "PrivateLinkServiceConnectionState",
+        },
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword identity: The identity of the resource.
         :paramtype identity: ~azure.mgmt.machinelearningservices.models.ManagedServiceIdentity
@@ -11205,12 +10774,14 @@ class PrivateEndpointConnection(Resource):
          ~azure.mgmt.machinelearningservices.models.PrivateLinkServiceConnectionState
         """
         super(PrivateEndpointConnection, self).__init__(**kwargs)
-        self.identity = kwargs.get('identity', None)
-        self.location = kwargs.get('location', None)
-        self.tags = kwargs.get('tags', None)
-        self.sku = kwargs.get('sku', None)
-        self.private_endpoint = kwargs.get('private_endpoint', None)
-        self.private_link_service_connection_state = kwargs.get('private_link_service_connection_state', None)
+        self.identity = kwargs.get("identity", None)
+        self.location = kwargs.get("location", None)
+        self.tags = kwargs.get("tags", None)
+        self.sku = kwargs.get("sku", None)
+        self.private_endpoint = kwargs.get("private_endpoint", None)
+        self.private_link_service_connection_state = kwargs.get(
+            "private_link_service_connection_state", None
+        )
         self.provisioning_state = None
 
 
@@ -11222,19 +10793,16 @@ class PrivateEndpointConnectionListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[PrivateEndpointConnection]'},
+        "value": {"key": "value", "type": "[PrivateEndpointConnection]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword value: Array of private endpoint connections.
         :paramtype value: list[~azure.mgmt.machinelearningservices.models.PrivateEndpointConnection]
         """
         super(PrivateEndpointConnectionListResult, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
+        self.value = kwargs.get("value", None)
 
 
 class PrivateLinkResource(Resource):
@@ -11270,32 +10838,29 @@ class PrivateLinkResource(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'group_id': {'readonly': True},
-        'required_members': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "group_id": {"readonly": True},
+        "required_members": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'identity': {'key': 'identity', 'type': 'ManagedServiceIdentity'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'sku': {'key': 'sku', 'type': 'Sku'},
-        'group_id': {'key': 'properties.groupId', 'type': 'str'},
-        'required_members': {'key': 'properties.requiredMembers', 'type': '[str]'},
-        'required_zone_names': {'key': 'properties.requiredZoneNames', 'type': '[str]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "identity": {"key": "identity", "type": "ManagedServiceIdentity"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "sku": {"key": "sku", "type": "Sku"},
+        "group_id": {"key": "properties.groupId", "type": "str"},
+        "required_members": {"key": "properties.requiredMembers", "type": "[str]"},
+        "required_zone_names": {"key": "properties.requiredZoneNames", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword identity: The identity of the resource.
         :paramtype identity: ~azure.mgmt.machinelearningservices.models.ManagedServiceIdentity
@@ -11309,13 +10874,13 @@ class PrivateLinkResource(Resource):
         :paramtype required_zone_names: list[str]
         """
         super(PrivateLinkResource, self).__init__(**kwargs)
-        self.identity = kwargs.get('identity', None)
-        self.location = kwargs.get('location', None)
-        self.tags = kwargs.get('tags', None)
-        self.sku = kwargs.get('sku', None)
+        self.identity = kwargs.get("identity", None)
+        self.location = kwargs.get("location", None)
+        self.tags = kwargs.get("tags", None)
+        self.sku = kwargs.get("sku", None)
         self.group_id = None
         self.required_members = None
-        self.required_zone_names = kwargs.get('required_zone_names', None)
+        self.required_zone_names = kwargs.get("required_zone_names", None)
 
 
 class PrivateLinkResourceListResult(msrest.serialization.Model):
@@ -11326,19 +10891,16 @@ class PrivateLinkResourceListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[PrivateLinkResource]'},
+        "value": {"key": "value", "type": "[PrivateLinkResource]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword value: Array of private link resources.
         :paramtype value: list[~azure.mgmt.machinelearningservices.models.PrivateLinkResource]
         """
         super(PrivateLinkResourceListResult, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
+        self.value = kwargs.get("value", None)
 
 
 class PrivateLinkServiceConnectionState(msrest.serialization.Model):
@@ -11357,15 +10919,12 @@ class PrivateLinkServiceConnectionState(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'status': {'key': 'status', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'actions_required': {'key': 'actionsRequired', 'type': 'str'},
+        "status": {"key": "status", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "actions_required": {"key": "actionsRequired", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword status: Indicates whether the connection has been Approved/Rejected/Removed by the
          owner of the service. Possible values include: "Pending", "Approved", "Rejected",
@@ -11379,9 +10938,9 @@ class PrivateLinkServiceConnectionState(msrest.serialization.Model):
         :paramtype actions_required: str
         """
         super(PrivateLinkServiceConnectionState, self).__init__(**kwargs)
-        self.status = kwargs.get('status', None)
-        self.description = kwargs.get('description', None)
-        self.actions_required = kwargs.get('actions_required', None)
+        self.status = kwargs.get("status", None)
+        self.description = kwargs.get("description", None)
+        self.actions_required = kwargs.get("actions_required", None)
 
 
 class ProbeSettings(msrest.serialization.Model):
@@ -11400,17 +10959,14 @@ class ProbeSettings(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'failure_threshold': {'key': 'failureThreshold', 'type': 'int'},
-        'initial_delay': {'key': 'initialDelay', 'type': 'duration'},
-        'period': {'key': 'period', 'type': 'duration'},
-        'success_threshold': {'key': 'successThreshold', 'type': 'int'},
-        'timeout': {'key': 'timeout', 'type': 'duration'},
+        "failure_threshold": {"key": "failureThreshold", "type": "int"},
+        "initial_delay": {"key": "initialDelay", "type": "duration"},
+        "period": {"key": "period", "type": "duration"},
+        "success_threshold": {"key": "successThreshold", "type": "int"},
+        "timeout": {"key": "timeout", "type": "duration"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword failure_threshold: The number of failures to allow before returning an unhealthy
          status.
@@ -11425,11 +10981,11 @@ class ProbeSettings(msrest.serialization.Model):
         :paramtype timeout: ~datetime.timedelta
         """
         super(ProbeSettings, self).__init__(**kwargs)
-        self.failure_threshold = kwargs.get('failure_threshold', 30)
-        self.initial_delay = kwargs.get('initial_delay', None)
-        self.period = kwargs.get('period', "PT10S")
-        self.success_threshold = kwargs.get('success_threshold', 1)
-        self.timeout = kwargs.get('timeout', "PT2S")
+        self.failure_threshold = kwargs.get("failure_threshold", 30)
+        self.initial_delay = kwargs.get("initial_delay", None)
+        self.period = kwargs.get("period", "PT10S")
+        self.success_threshold = kwargs.get("success_threshold", 1)
+        self.timeout = kwargs.get("timeout", "PT2S")
 
 
 class PyTorch(DistributionConfiguration):
@@ -11445,25 +11001,22 @@ class PyTorch(DistributionConfiguration):
     """
 
     _validation = {
-        'distribution_type': {'required': True},
+        "distribution_type": {"required": True},
     }
 
     _attribute_map = {
-        'distribution_type': {'key': 'distributionType', 'type': 'str'},
-        'process_count_per_instance': {'key': 'processCountPerInstance', 'type': 'int'},
+        "distribution_type": {"key": "distributionType", "type": "str"},
+        "process_count_per_instance": {"key": "processCountPerInstance", "type": "int"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword process_count_per_instance: Number of processes per node.
         :paramtype process_count_per_instance: int
         """
         super(PyTorch, self).__init__(**kwargs)
-        self.distribution_type = 'PyTorch'  # type: str
-        self.process_count_per_instance = kwargs.get('process_count_per_instance', None)
+        self.distribution_type = "PyTorch"  # type: str
+        self.process_count_per_instance = kwargs.get("process_count_per_instance", None)
 
 
 class QuotaBaseProperties(msrest.serialization.Model):
@@ -11480,16 +11033,13 @@ class QuotaBaseProperties(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'limit': {'key': 'limit', 'type': 'long'},
-        'unit': {'key': 'unit', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "limit": {"key": "limit", "type": "long"},
+        "unit": {"key": "unit", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword id: Specifies the resource ID.
         :paramtype id: str
@@ -11502,10 +11052,10 @@ class QuotaBaseProperties(msrest.serialization.Model):
         :paramtype unit: str or ~azure.mgmt.machinelearningservices.models.QuotaUnit
         """
         super(QuotaBaseProperties, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
-        self.type = kwargs.get('type', None)
-        self.limit = kwargs.get('limit', None)
-        self.unit = kwargs.get('unit', None)
+        self.id = kwargs.get("id", None)
+        self.type = kwargs.get("type", None)
+        self.limit = kwargs.get("limit", None)
+        self.unit = kwargs.get("unit", None)
 
 
 class QuotaUpdateParameters(msrest.serialization.Model):
@@ -11518,14 +11068,11 @@ class QuotaUpdateParameters(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[QuotaBaseProperties]'},
-        'location': {'key': 'location', 'type': 'str'},
+        "value": {"key": "value", "type": "[QuotaBaseProperties]"},
+        "location": {"key": "location", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword value: The list for update quota.
         :paramtype value: list[~azure.mgmt.machinelearningservices.models.QuotaBaseProperties]
@@ -11533,8 +11080,8 @@ class QuotaUpdateParameters(msrest.serialization.Model):
         :paramtype location: str
         """
         super(QuotaUpdateParameters, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
-        self.location = kwargs.get('location', None)
+        self.value = kwargs.get("value", None)
+        self.location = kwargs.get("location", None)
 
 
 class RandomSamplingAlgorithm(SamplingAlgorithm):
@@ -11554,19 +11101,16 @@ class RandomSamplingAlgorithm(SamplingAlgorithm):
     """
 
     _validation = {
-        'sampling_algorithm_type': {'required': True},
+        "sampling_algorithm_type": {"required": True},
     }
 
     _attribute_map = {
-        'sampling_algorithm_type': {'key': 'samplingAlgorithmType', 'type': 'str'},
-        'rule': {'key': 'rule', 'type': 'str'},
-        'seed': {'key': 'seed', 'type': 'int'},
+        "sampling_algorithm_type": {"key": "samplingAlgorithmType", "type": "str"},
+        "rule": {"key": "rule", "type": "str"},
+        "seed": {"key": "seed", "type": "int"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword rule: The specific type of random algorithm. Possible values include: "Random",
          "Sobol".
@@ -11575,9 +11119,9 @@ class RandomSamplingAlgorithm(SamplingAlgorithm):
         :paramtype seed: int
         """
         super(RandomSamplingAlgorithm, self).__init__(**kwargs)
-        self.sampling_algorithm_type = 'Random'  # type: str
-        self.rule = kwargs.get('rule', None)
-        self.seed = kwargs.get('seed', None)
+        self.sampling_algorithm_type = "Random"  # type: str
+        self.rule = kwargs.get("rule", None)
+        self.seed = kwargs.get("seed", None)
 
 
 class RecurrencePattern(msrest.serialization.Model):
@@ -11594,20 +11138,17 @@ class RecurrencePattern(msrest.serialization.Model):
     """
 
     _validation = {
-        'hours': {'required': True},
-        'minutes': {'required': True},
+        "hours": {"required": True},
+        "minutes": {"required": True},
     }
 
     _attribute_map = {
-        'hours': {'key': 'hours', 'type': '[int]'},
-        'minutes': {'key': 'minutes', 'type': '[int]'},
-        'weekdays': {'key': 'weekdays', 'type': '[str]'},
+        "hours": {"key": "hours", "type": "[int]"},
+        "minutes": {"key": "minutes", "type": "[int]"},
+        "weekdays": {"key": "weekdays", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword hours: Required. [Required] List of hours for recurrence schedule pattern.
         :paramtype hours: list[int]
@@ -11617,9 +11158,9 @@ class RecurrencePattern(msrest.serialization.Model):
         :paramtype weekdays: list[str or ~azure.mgmt.machinelearningservices.models.Weekday]
         """
         super(RecurrencePattern, self).__init__(**kwargs)
-        self.hours = kwargs['hours']
-        self.minutes = kwargs['minutes']
-        self.weekdays = kwargs.get('weekdays', None)
+        self.hours = kwargs["hours"]
+        self.minutes = kwargs["minutes"]
+        self.weekdays = kwargs.get("weekdays", None)
 
 
 class RecurrenceSchedule(ScheduleBase):
@@ -11651,26 +11192,23 @@ class RecurrenceSchedule(ScheduleBase):
     """
 
     _validation = {
-        'schedule_type': {'required': True},
-        'frequency': {'required': True},
-        'interval': {'required': True},
+        "schedule_type": {"required": True},
+        "frequency": {"required": True},
+        "interval": {"required": True},
     }
 
     _attribute_map = {
-        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
-        'schedule_status': {'key': 'scheduleStatus', 'type': 'str'},
-        'schedule_type': {'key': 'scheduleType', 'type': 'str'},
-        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
-        'time_zone': {'key': 'timeZone', 'type': 'str'},
-        'frequency': {'key': 'frequency', 'type': 'str'},
-        'interval': {'key': 'interval', 'type': 'int'},
-        'pattern': {'key': 'pattern', 'type': 'RecurrencePattern'},
+        "end_time": {"key": "endTime", "type": "iso-8601"},
+        "schedule_status": {"key": "scheduleStatus", "type": "str"},
+        "schedule_type": {"key": "scheduleType", "type": "str"},
+        "start_time": {"key": "startTime", "type": "iso-8601"},
+        "time_zone": {"key": "timeZone", "type": "str"},
+        "frequency": {"key": "frequency", "type": "str"},
+        "interval": {"key": "interval", "type": "int"},
+        "pattern": {"key": "pattern", "type": "RecurrencePattern"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword end_time: Specifies end time of schedule in ISO 8601 format.
          If not present, the schedule will run indefinitely.
@@ -11693,10 +11231,10 @@ class RecurrenceSchedule(ScheduleBase):
         :paramtype pattern: ~azure.mgmt.machinelearningservices.models.RecurrencePattern
         """
         super(RecurrenceSchedule, self).__init__(**kwargs)
-        self.schedule_type = 'Recurrence'  # type: str
-        self.frequency = kwargs['frequency']
-        self.interval = kwargs['interval']
-        self.pattern = kwargs.get('pattern', None)
+        self.schedule_type = "Recurrence"  # type: str
+        self.frequency = kwargs["frequency"]
+        self.interval = kwargs["interval"]
+        self.pattern = kwargs.get("pattern", None)
 
 
 class RegenerateEndpointKeysRequest(msrest.serialization.Model):
@@ -11712,18 +11250,15 @@ class RegenerateEndpointKeysRequest(msrest.serialization.Model):
     """
 
     _validation = {
-        'key_type': {'required': True},
+        "key_type": {"required": True},
     }
 
     _attribute_map = {
-        'key_type': {'key': 'keyType', 'type': 'str'},
-        'key_value': {'key': 'keyValue', 'type': 'str'},
+        "key_type": {"key": "keyType", "type": "str"},
+        "key_value": {"key": "keyValue", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword key_type: Required. [Required] Specification for which type of key to generate.
          Primary or Secondary. Possible values include: "Primary", "Secondary".
@@ -11732,8 +11267,8 @@ class RegenerateEndpointKeysRequest(msrest.serialization.Model):
         :paramtype key_value: str
         """
         super(RegenerateEndpointKeysRequest, self).__init__(**kwargs)
-        self.key_type = kwargs['key_type']
-        self.key_value = kwargs.get('key_value', None)
+        self.key_type = kwargs["key_type"]
+        self.key_value = kwargs.get("key_value", None)
 
 
 class RegistryListCredentialsResult(msrest.serialization.Model):
@@ -11750,20 +11285,17 @@ class RegistryListCredentialsResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'location': {'readonly': True},
-        'username': {'readonly': True},
+        "location": {"readonly": True},
+        "username": {"readonly": True},
     }
 
     _attribute_map = {
-        'location': {'key': 'location', 'type': 'str'},
-        'username': {'key': 'username', 'type': 'str'},
-        'passwords': {'key': 'passwords', 'type': '[Password]'},
+        "location": {"key": "location", "type": "str"},
+        "username": {"key": "username", "type": "str"},
+        "passwords": {"key": "passwords", "type": "[Password]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword passwords:
         :paramtype passwords: list[~azure.mgmt.machinelearningservices.models.Password]
@@ -11771,7 +11303,7 @@ class RegistryListCredentialsResult(msrest.serialization.Model):
         super(RegistryListCredentialsResult, self).__init__(**kwargs)
         self.location = None
         self.username = None
-        self.passwords = kwargs.get('passwords', None)
+        self.passwords = kwargs.get("passwords", None)
 
 
 class ResourceConfiguration(msrest.serialization.Model):
@@ -11786,15 +11318,12 @@ class ResourceConfiguration(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'instance_count': {'key': 'instanceCount', 'type': 'int'},
-        'instance_type': {'key': 'instanceType', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': '{object}'},
+        "instance_count": {"key": "instanceCount", "type": "int"},
+        "instance_type": {"key": "instanceType", "type": "str"},
+        "properties": {"key": "properties", "type": "{object}"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword instance_count: Optional number of instances or nodes used by the compute target.
         :paramtype instance_count: int
@@ -11804,9 +11333,9 @@ class ResourceConfiguration(msrest.serialization.Model):
         :paramtype properties: dict[str, any]
         """
         super(ResourceConfiguration, self).__init__(**kwargs)
-        self.instance_count = kwargs.get('instance_count', 1)
-        self.instance_type = kwargs.get('instance_type', None)
-        self.properties = kwargs.get('properties', None)
+        self.instance_count = kwargs.get("instance_count", 1)
+        self.instance_type = kwargs.get("instance_type", None)
+        self.properties = kwargs.get("properties", None)
 
 
 class ResourceId(msrest.serialization.Model):
@@ -11819,23 +11348,20 @@ class ResourceId(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'required': True},
+        "id": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword id: Required. The ID of the resource.
         :paramtype id: str
         """
         super(ResourceId, self).__init__(**kwargs)
-        self.id = kwargs['id']
+        self.id = kwargs["id"]
 
 
 class ResourceName(msrest.serialization.Model):
@@ -11850,21 +11376,17 @@ class ResourceName(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'localized_value': {'readonly': True},
+        "value": {"readonly": True},
+        "localized_value": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': 'str'},
-        'localized_value': {'key': 'localizedValue', 'type': 'str'},
+        "value": {"key": "value", "type": "str"},
+        "localized_value": {"key": "localizedValue", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs):
+        """ """
         super(ResourceName, self).__init__(**kwargs)
         self.value = None
         self.localized_value = None
@@ -11890,29 +11412,25 @@ class ResourceQuota(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'aml_workspace_location': {'readonly': True},
-        'type': {'readonly': True},
-        'name': {'readonly': True},
-        'limit': {'readonly': True},
-        'unit': {'readonly': True},
+        "id": {"readonly": True},
+        "aml_workspace_location": {"readonly": True},
+        "type": {"readonly": True},
+        "name": {"readonly": True},
+        "limit": {"readonly": True},
+        "unit": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'aml_workspace_location': {'key': 'amlWorkspaceLocation', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'ResourceName'},
-        'limit': {'key': 'limit', 'type': 'long'},
-        'unit': {'key': 'unit', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "aml_workspace_location": {"key": "amlWorkspaceLocation", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "name": {"key": "name", "type": "ResourceName"},
+        "limit": {"key": "limit", "type": "long"},
+        "unit": {"key": "unit", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs):
+        """ """
         super(ResourceQuota, self).__init__(**kwargs)
         self.id = None
         self.aml_workspace_location = None
@@ -11934,19 +11452,16 @@ class Route(msrest.serialization.Model):
     """
 
     _validation = {
-        'path': {'required': True, 'pattern': r'[a-zA-Z0-9_]'},
-        'port': {'required': True},
+        "path": {"required": True, "pattern": r"[a-zA-Z0-9_]"},
+        "port": {"required": True},
     }
 
     _attribute_map = {
-        'path': {'key': 'path', 'type': 'str'},
-        'port': {'key': 'port', 'type': 'int'},
+        "path": {"key": "path", "type": "str"},
+        "port": {"key": "port", "type": "int"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword path: Required. [Required] The path for the route.
         :paramtype path: str
@@ -11954,8 +11469,8 @@ class Route(msrest.serialization.Model):
         :paramtype port: int
         """
         super(Route, self).__init__(**kwargs)
-        self.path = kwargs['path']
-        self.port = kwargs['port']
+        self.path = kwargs["path"]
+        self.port = kwargs["port"]
 
 
 class SASAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2):
@@ -11981,22 +11496,22 @@ class SASAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2):
     """
 
     _validation = {
-        'auth_type': {'required': True},
+        "auth_type": {"required": True},
     }
 
     _attribute_map = {
-        'auth_type': {'key': 'authType', 'type': 'str'},
-        'category': {'key': 'category', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
-        'value_format': {'key': 'valueFormat', 'type': 'str'},
-        'credentials': {'key': 'credentials', 'type': 'WorkspaceConnectionSharedAccessSignature'},
+        "auth_type": {"key": "authType", "type": "str"},
+        "category": {"key": "category", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "value": {"key": "value", "type": "str"},
+        "value_format": {"key": "valueFormat", "type": "str"},
+        "credentials": {
+            "key": "credentials",
+            "type": "WorkspaceConnectionSharedAccessSignature",
+        },
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword category: Category of the connection. Possible values include: "PythonFeed",
          "ContainerRegistry", "Git".
@@ -12013,8 +11528,8 @@ class SASAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2):
          ~azure.mgmt.machinelearningservices.models.WorkspaceConnectionSharedAccessSignature
         """
         super(SASAuthTypeWorkspaceConnectionProperties, self).__init__(**kwargs)
-        self.auth_type = 'SAS'  # type: str
-        self.credentials = kwargs.get('credentials', None)
+        self.auth_type = "SAS"  # type: str
+        self.credentials = kwargs.get("credentials", None)
 
 
 class SasDatastoreCredentials(DatastoreCredentials):
@@ -12031,26 +11546,23 @@ class SasDatastoreCredentials(DatastoreCredentials):
     """
 
     _validation = {
-        'credentials_type': {'required': True},
-        'secrets': {'required': True},
+        "credentials_type": {"required": True},
+        "secrets": {"required": True},
     }
 
     _attribute_map = {
-        'credentials_type': {'key': 'credentialsType', 'type': 'str'},
-        'secrets': {'key': 'secrets', 'type': 'SasDatastoreSecrets'},
+        "credentials_type": {"key": "credentialsType", "type": "str"},
+        "secrets": {"key": "secrets", "type": "SasDatastoreSecrets"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword secrets: Required. [Required] Storage container secrets.
         :paramtype secrets: ~azure.mgmt.machinelearningservices.models.SasDatastoreSecrets
         """
         super(SasDatastoreCredentials, self).__init__(**kwargs)
-        self.credentials_type = 'Sas'  # type: str
-        self.secrets = kwargs['secrets']
+        self.credentials_type = "Sas"  # type: str
+        self.secrets = kwargs["secrets"]
 
 
 class SasDatastoreSecrets(DatastoreSecrets):
@@ -12067,25 +11579,22 @@ class SasDatastoreSecrets(DatastoreSecrets):
     """
 
     _validation = {
-        'secrets_type': {'required': True},
+        "secrets_type": {"required": True},
     }
 
     _attribute_map = {
-        'secrets_type': {'key': 'secretsType', 'type': 'str'},
-        'sas_token': {'key': 'sasToken', 'type': 'str'},
+        "secrets_type": {"key": "secretsType", "type": "str"},
+        "sas_token": {"key": "sasToken", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword sas_token: Storage container SAS token.
         :paramtype sas_token: str
         """
         super(SasDatastoreSecrets, self).__init__(**kwargs)
-        self.secrets_type = 'Sas'  # type: str
-        self.sas_token = kwargs.get('sas_token', None)
+        self.secrets_type = "Sas"  # type: str
+        self.sas_token = kwargs.get("sas_token", None)
 
 
 class ScaleSettings(msrest.serialization.Model):
@@ -12103,19 +11612,19 @@ class ScaleSettings(msrest.serialization.Model):
     """
 
     _validation = {
-        'max_node_count': {'required': True},
+        "max_node_count": {"required": True},
     }
 
     _attribute_map = {
-        'max_node_count': {'key': 'maxNodeCount', 'type': 'int'},
-        'min_node_count': {'key': 'minNodeCount', 'type': 'int'},
-        'node_idle_time_before_scale_down': {'key': 'nodeIdleTimeBeforeScaleDown', 'type': 'duration'},
+        "max_node_count": {"key": "maxNodeCount", "type": "int"},
+        "min_node_count": {"key": "minNodeCount", "type": "int"},
+        "node_idle_time_before_scale_down": {
+            "key": "nodeIdleTimeBeforeScaleDown",
+            "type": "duration",
+        },
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword max_node_count: Required. Max number of nodes to use.
         :paramtype max_node_count: int
@@ -12126,9 +11635,11 @@ class ScaleSettings(msrest.serialization.Model):
         :paramtype node_idle_time_before_scale_down: ~datetime.timedelta
         """
         super(ScaleSettings, self).__init__(**kwargs)
-        self.max_node_count = kwargs['max_node_count']
-        self.min_node_count = kwargs.get('min_node_count', 0)
-        self.node_idle_time_before_scale_down = kwargs.get('node_idle_time_before_scale_down', None)
+        self.max_node_count = kwargs["max_node_count"]
+        self.min_node_count = kwargs.get("min_node_count", 0)
+        self.node_idle_time_before_scale_down = kwargs.get(
+            "node_idle_time_before_scale_down", None
+        )
 
 
 class ScaleSettingsInformation(msrest.serialization.Model):
@@ -12139,19 +11650,16 @@ class ScaleSettingsInformation(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'scale_settings': {'key': 'scaleSettings', 'type': 'ScaleSettings'},
+        "scale_settings": {"key": "scaleSettings", "type": "ScaleSettings"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword scale_settings: scale settings for AML Compute.
         :paramtype scale_settings: ~azure.mgmt.machinelearningservices.models.ScaleSettings
         """
         super(ScaleSettingsInformation, self).__init__(**kwargs)
-        self.scale_settings = kwargs.get('scale_settings', None)
+        self.scale_settings = kwargs.get("scale_settings", None)
 
 
 class ScriptReference(msrest.serialization.Model):
@@ -12168,16 +11676,13 @@ class ScriptReference(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'script_source': {'key': 'scriptSource', 'type': 'str'},
-        'script_data': {'key': 'scriptData', 'type': 'str'},
-        'script_arguments': {'key': 'scriptArguments', 'type': 'str'},
-        'timeout': {'key': 'timeout', 'type': 'str'},
+        "script_source": {"key": "scriptSource", "type": "str"},
+        "script_data": {"key": "scriptData", "type": "str"},
+        "script_arguments": {"key": "scriptArguments", "type": "str"},
+        "timeout": {"key": "timeout", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword script_source: The storage source of the script: inline, workspace.
         :paramtype script_source: str
@@ -12189,10 +11694,10 @@ class ScriptReference(msrest.serialization.Model):
         :paramtype timeout: str
         """
         super(ScriptReference, self).__init__(**kwargs)
-        self.script_source = kwargs.get('script_source', None)
-        self.script_data = kwargs.get('script_data', None)
-        self.script_arguments = kwargs.get('script_arguments', None)
-        self.timeout = kwargs.get('timeout', None)
+        self.script_source = kwargs.get("script_source", None)
+        self.script_data = kwargs.get("script_data", None)
+        self.script_arguments = kwargs.get("script_arguments", None)
+        self.timeout = kwargs.get("timeout", None)
 
 
 class ScriptsToExecute(msrest.serialization.Model):
@@ -12205,14 +11710,11 @@ class ScriptsToExecute(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'startup_script': {'key': 'startupScript', 'type': 'ScriptReference'},
-        'creation_script': {'key': 'creationScript', 'type': 'ScriptReference'},
+        "startup_script": {"key": "startupScript", "type": "ScriptReference"},
+        "creation_script": {"key": "creationScript", "type": "ScriptReference"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword startup_script: Script that's run every time the machine starts.
         :paramtype startup_script: ~azure.mgmt.machinelearningservices.models.ScriptReference
@@ -12220,8 +11722,8 @@ class ScriptsToExecute(msrest.serialization.Model):
         :paramtype creation_script: ~azure.mgmt.machinelearningservices.models.ScriptReference
         """
         super(ScriptsToExecute, self).__init__(**kwargs)
-        self.startup_script = kwargs.get('startup_script', None)
-        self.creation_script = kwargs.get('creation_script', None)
+        self.startup_script = kwargs.get("startup_script", None)
+        self.creation_script = kwargs.get("creation_script", None)
 
 
 class ServiceManagedResourcesSettings(msrest.serialization.Model):
@@ -12232,19 +11734,16 @@ class ServiceManagedResourcesSettings(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'cosmos_db': {'key': 'cosmosDb', 'type': 'CosmosDbSettings'},
+        "cosmos_db": {"key": "cosmosDb", "type": "CosmosDbSettings"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword cosmos_db: The settings for the service managed cosmosdb account.
         :paramtype cosmos_db: ~azure.mgmt.machinelearningservices.models.CosmosDbSettings
         """
         super(ServiceManagedResourcesSettings, self).__init__(**kwargs)
-        self.cosmos_db = kwargs.get('cosmos_db', None)
+        self.cosmos_db = kwargs.get("cosmos_db", None)
 
 
 class ServicePrincipalDatastoreCredentials(DatastoreCredentials):
@@ -12269,25 +11768,22 @@ class ServicePrincipalDatastoreCredentials(DatastoreCredentials):
     """
 
     _validation = {
-        'credentials_type': {'required': True},
-        'client_id': {'required': True},
-        'secrets': {'required': True},
-        'tenant_id': {'required': True},
+        "credentials_type": {"required": True},
+        "client_id": {"required": True},
+        "secrets": {"required": True},
+        "tenant_id": {"required": True},
     }
 
     _attribute_map = {
-        'credentials_type': {'key': 'credentialsType', 'type': 'str'},
-        'authority_url': {'key': 'authorityUrl', 'type': 'str'},
-        'client_id': {'key': 'clientId', 'type': 'str'},
-        'resource_url': {'key': 'resourceUrl', 'type': 'str'},
-        'secrets': {'key': 'secrets', 'type': 'ServicePrincipalDatastoreSecrets'},
-        'tenant_id': {'key': 'tenantId', 'type': 'str'},
+        "credentials_type": {"key": "credentialsType", "type": "str"},
+        "authority_url": {"key": "authorityUrl", "type": "str"},
+        "client_id": {"key": "clientId", "type": "str"},
+        "resource_url": {"key": "resourceUrl", "type": "str"},
+        "secrets": {"key": "secrets", "type": "ServicePrincipalDatastoreSecrets"},
+        "tenant_id": {"key": "tenantId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword authority_url: Authority URL used for authentication.
         :paramtype authority_url: str
@@ -12302,12 +11798,12 @@ class ServicePrincipalDatastoreCredentials(DatastoreCredentials):
         :paramtype tenant_id: str
         """
         super(ServicePrincipalDatastoreCredentials, self).__init__(**kwargs)
-        self.credentials_type = 'ServicePrincipal'  # type: str
-        self.authority_url = kwargs.get('authority_url', None)
-        self.client_id = kwargs['client_id']
-        self.resource_url = kwargs.get('resource_url', None)
-        self.secrets = kwargs['secrets']
-        self.tenant_id = kwargs['tenant_id']
+        self.credentials_type = "ServicePrincipal"  # type: str
+        self.authority_url = kwargs.get("authority_url", None)
+        self.client_id = kwargs["client_id"]
+        self.resource_url = kwargs.get("resource_url", None)
+        self.secrets = kwargs["secrets"]
+        self.tenant_id = kwargs["tenant_id"]
 
 
 class ServicePrincipalDatastoreSecrets(DatastoreSecrets):
@@ -12324,25 +11820,22 @@ class ServicePrincipalDatastoreSecrets(DatastoreSecrets):
     """
 
     _validation = {
-        'secrets_type': {'required': True},
+        "secrets_type": {"required": True},
     }
 
     _attribute_map = {
-        'secrets_type': {'key': 'secretsType', 'type': 'str'},
-        'client_secret': {'key': 'clientSecret', 'type': 'str'},
+        "secrets_type": {"key": "secretsType", "type": "str"},
+        "client_secret": {"key": "clientSecret", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword client_secret: Service principal secret.
         :paramtype client_secret: str
         """
         super(ServicePrincipalDatastoreSecrets, self).__init__(**kwargs)
-        self.secrets_type = 'ServicePrincipal'  # type: str
-        self.client_secret = kwargs.get('client_secret', None)
+        self.secrets_type = "ServicePrincipal"  # type: str
+        self.client_secret = kwargs.get("client_secret", None)
 
 
 class SetupScripts(msrest.serialization.Model):
@@ -12353,19 +11846,16 @@ class SetupScripts(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'scripts': {'key': 'scripts', 'type': 'ScriptsToExecute'},
+        "scripts": {"key": "scripts", "type": "ScriptsToExecute"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword scripts: Customized setup scripts.
         :paramtype scripts: ~azure.mgmt.machinelearningservices.models.ScriptsToExecute
         """
         super(SetupScripts, self).__init__(**kwargs)
-        self.scripts = kwargs.get('scripts', None)
+        self.scripts = kwargs.get("scripts", None)
 
 
 class SharedPrivateLinkResource(msrest.serialization.Model):
@@ -12387,17 +11877,17 @@ class SharedPrivateLinkResource(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'private_link_resource_id': {'key': 'properties.privateLinkResourceId', 'type': 'str'},
-        'group_id': {'key': 'properties.groupId', 'type': 'str'},
-        'request_message': {'key': 'properties.requestMessage', 'type': 'str'},
-        'status': {'key': 'properties.status', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "private_link_resource_id": {
+            "key": "properties.privateLinkResourceId",
+            "type": "str",
+        },
+        "group_id": {"key": "properties.groupId", "type": "str"},
+        "request_message": {"key": "properties.requestMessage", "type": "str"},
+        "status": {"key": "properties.status", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword name: Unique name of the private link.
         :paramtype name: str
@@ -12414,11 +11904,11 @@ class SharedPrivateLinkResource(msrest.serialization.Model):
          ~azure.mgmt.machinelearningservices.models.PrivateEndpointServiceConnectionStatus
         """
         super(SharedPrivateLinkResource, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.private_link_resource_id = kwargs.get('private_link_resource_id', None)
-        self.group_id = kwargs.get('group_id', None)
-        self.request_message = kwargs.get('request_message', None)
-        self.status = kwargs.get('status', None)
+        self.name = kwargs.get("name", None)
+        self.private_link_resource_id = kwargs.get("private_link_resource_id", None)
+        self.group_id = kwargs.get("group_id", None)
+        self.request_message = kwargs.get("request_message", None)
+        self.status = kwargs.get("status", None)
 
 
 class Sku(msrest.serialization.Model):
@@ -12444,21 +11934,18 @@ class Sku(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'required': True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'tier': {'key': 'tier', 'type': 'str'},
-        'size': {'key': 'size', 'type': 'str'},
-        'family': {'key': 'family', 'type': 'str'},
-        'capacity': {'key': 'capacity', 'type': 'int'},
+        "name": {"key": "name", "type": "str"},
+        "tier": {"key": "tier", "type": "str"},
+        "size": {"key": "size", "type": "str"},
+        "family": {"key": "family", "type": "str"},
+        "capacity": {"key": "capacity", "type": "int"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword name: Required. The name of the SKU. Ex - P3. It is typically a letter+number code.
         :paramtype name: str
@@ -12477,11 +11964,11 @@ class Sku(msrest.serialization.Model):
         :paramtype capacity: int
         """
         super(Sku, self).__init__(**kwargs)
-        self.name = kwargs['name']
-        self.tier = kwargs.get('tier', None)
-        self.size = kwargs.get('size', None)
-        self.family = kwargs.get('family', None)
-        self.capacity = kwargs.get('capacity', None)
+        self.name = kwargs["name"]
+        self.tier = kwargs.get("tier", None)
+        self.size = kwargs.get("size", None)
+        self.family = kwargs.get("family", None)
+        self.capacity = kwargs.get("capacity", None)
 
 
 class SkuCapacity(msrest.serialization.Model):
@@ -12499,16 +11986,13 @@ class SkuCapacity(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'default': {'key': 'default', 'type': 'int'},
-        'maximum': {'key': 'maximum', 'type': 'int'},
-        'minimum': {'key': 'minimum', 'type': 'int'},
-        'scale_type': {'key': 'scaleType', 'type': 'str'},
+        "default": {"key": "default", "type": "int"},
+        "maximum": {"key": "maximum", "type": "int"},
+        "minimum": {"key": "minimum", "type": "int"},
+        "scale_type": {"key": "scaleType", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword default: Gets or sets the default capacity.
         :paramtype default: int
@@ -12521,10 +12005,10 @@ class SkuCapacity(msrest.serialization.Model):
         :paramtype scale_type: str or ~azure.mgmt.machinelearningservices.models.SkuScaleType
         """
         super(SkuCapacity, self).__init__(**kwargs)
-        self.default = kwargs.get('default', 0)
-        self.maximum = kwargs.get('maximum', 0)
-        self.minimum = kwargs.get('minimum', 0)
-        self.scale_type = kwargs.get('scale_type', None)
+        self.default = kwargs.get("default", 0)
+        self.maximum = kwargs.get("maximum", 0)
+        self.minimum = kwargs.get("minimum", 0)
+        self.scale_type = kwargs.get("scale_type", None)
 
 
 class SkuResource(msrest.serialization.Model):
@@ -12541,19 +12025,16 @@ class SkuResource(msrest.serialization.Model):
     """
 
     _validation = {
-        'resource_type': {'readonly': True},
+        "resource_type": {"readonly": True},
     }
 
     _attribute_map = {
-        'capacity': {'key': 'capacity', 'type': 'SkuCapacity'},
-        'resource_type': {'key': 'resourceType', 'type': 'str'},
-        'sku': {'key': 'sku', 'type': 'SkuSetting'},
+        "capacity": {"key": "capacity", "type": "SkuCapacity"},
+        "resource_type": {"key": "resourceType", "type": "str"},
+        "sku": {"key": "sku", "type": "SkuSetting"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword capacity: Gets or sets the Sku Capacity.
         :paramtype capacity: ~azure.mgmt.machinelearningservices.models.SkuCapacity
@@ -12561,9 +12042,9 @@ class SkuResource(msrest.serialization.Model):
         :paramtype sku: ~azure.mgmt.machinelearningservices.models.SkuSetting
         """
         super(SkuResource, self).__init__(**kwargs)
-        self.capacity = kwargs.get('capacity', None)
+        self.capacity = kwargs.get("capacity", None)
         self.resource_type = None
-        self.sku = kwargs.get('sku', None)
+        self.sku = kwargs.get("sku", None)
 
 
 class SkuResourceArmPaginatedResult(msrest.serialization.Model):
@@ -12577,14 +12058,11 @@ class SkuResourceArmPaginatedResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'value': {'key': 'value', 'type': '[SkuResource]'},
+        "next_link": {"key": "nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[SkuResource]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword next_link: The link to the next page of SkuResource objects. If null, there are no
          additional pages.
@@ -12593,8 +12071,8 @@ class SkuResourceArmPaginatedResult(msrest.serialization.Model):
         :paramtype value: list[~azure.mgmt.machinelearningservices.models.SkuResource]
         """
         super(SkuResourceArmPaginatedResult, self).__init__(**kwargs)
-        self.next_link = kwargs.get('next_link', None)
-        self.value = kwargs.get('value', None)
+        self.next_link = kwargs.get("next_link", None)
+        self.value = kwargs.get("value", None)
 
 
 class SkuSetting(msrest.serialization.Model):
@@ -12612,18 +12090,15 @@ class SkuSetting(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'required': True, 'pattern': r'[a-zA-Z0-9_]'},
+        "name": {"required": True, "pattern": r"[a-zA-Z0-9_]"},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'tier': {'key': 'tier', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "tier": {"key": "tier", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword name: Required. [Required] The name of the SKU. Ex - P3. It is typically a
          letter+number code.
@@ -12634,8 +12109,8 @@ class SkuSetting(msrest.serialization.Model):
         :paramtype tier: str or ~azure.mgmt.machinelearningservices.models.SkuTier
         """
         super(SkuSetting, self).__init__(**kwargs)
-        self.name = kwargs['name']
-        self.tier = kwargs.get('tier', None)
+        self.name = kwargs["name"]
+        self.tier = kwargs.get("tier", None)
 
 
 class SslConfiguration(msrest.serialization.Model):
@@ -12657,18 +12132,15 @@ class SslConfiguration(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'status': {'key': 'status', 'type': 'str'},
-        'cert': {'key': 'cert', 'type': 'str'},
-        'key': {'key': 'key', 'type': 'str'},
-        'cname': {'key': 'cname', 'type': 'str'},
-        'leaf_domain_label': {'key': 'leafDomainLabel', 'type': 'str'},
-        'overwrite_existing_domain': {'key': 'overwriteExistingDomain', 'type': 'bool'},
+        "status": {"key": "status", "type": "str"},
+        "cert": {"key": "cert", "type": "str"},
+        "key": {"key": "key", "type": "str"},
+        "cname": {"key": "cname", "type": "str"},
+        "leaf_domain_label": {"key": "leafDomainLabel", "type": "str"},
+        "overwrite_existing_domain": {"key": "overwriteExistingDomain", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword status: Enable or disable ssl for scoring. Possible values include: "Disabled",
          "Enabled", "Auto".
@@ -12685,12 +12157,12 @@ class SslConfiguration(msrest.serialization.Model):
         :paramtype overwrite_existing_domain: bool
         """
         super(SslConfiguration, self).__init__(**kwargs)
-        self.status = kwargs.get('status', None)
-        self.cert = kwargs.get('cert', None)
-        self.key = kwargs.get('key', None)
-        self.cname = kwargs.get('cname', None)
-        self.leaf_domain_label = kwargs.get('leaf_domain_label', None)
-        self.overwrite_existing_domain = kwargs.get('overwrite_existing_domain', None)
+        self.status = kwargs.get("status", None)
+        self.cert = kwargs.get("cert", None)
+        self.key = kwargs.get("key", None)
+        self.cname = kwargs.get("cname", None)
+        self.leaf_domain_label = kwargs.get("leaf_domain_label", None)
+        self.overwrite_existing_domain = kwargs.get("overwrite_existing_domain", None)
 
 
 class SweepJob(JobBaseDetails):
@@ -12750,40 +12222,40 @@ class SweepJob(JobBaseDetails):
     """
 
     _validation = {
-        'job_type': {'required': True},
-        'status': {'readonly': True},
-        'objective': {'required': True},
-        'sampling_algorithm': {'required': True},
-        'search_space': {'required': True},
-        'trial': {'required': True},
+        "job_type": {"required": True},
+        "status": {"readonly": True},
+        "objective": {"required": True},
+        "sampling_algorithm": {"required": True},
+        "search_space": {"required": True},
+        "trial": {"required": True},
     }
 
     _attribute_map = {
-        'description': {'key': 'description', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': '{str}'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'compute_id': {'key': 'computeId', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'experiment_name': {'key': 'experimentName', 'type': 'str'},
-        'identity': {'key': 'identity', 'type': 'IdentityConfiguration'},
-        'is_archived': {'key': 'isArchived', 'type': 'bool'},
-        'job_type': {'key': 'jobType', 'type': 'str'},
-        'services': {'key': 'services', 'type': '{JobService}'},
-        'status': {'key': 'status', 'type': 'str'},
-        'early_termination': {'key': 'earlyTermination', 'type': 'EarlyTerminationPolicy'},
-        'inputs': {'key': 'inputs', 'type': '{JobInput}'},
-        'limits': {'key': 'limits', 'type': 'SweepJobLimits'},
-        'objective': {'key': 'objective', 'type': 'Objective'},
-        'outputs': {'key': 'outputs', 'type': '{JobOutput}'},
-        'sampling_algorithm': {'key': 'samplingAlgorithm', 'type': 'SamplingAlgorithm'},
-        'search_space': {'key': 'searchSpace', 'type': 'object'},
-        'trial': {'key': 'trial', 'type': 'TrialComponent'},
+        "description": {"key": "description", "type": "str"},
+        "properties": {"key": "properties", "type": "{str}"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "compute_id": {"key": "computeId", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
+        "experiment_name": {"key": "experimentName", "type": "str"},
+        "identity": {"key": "identity", "type": "IdentityConfiguration"},
+        "is_archived": {"key": "isArchived", "type": "bool"},
+        "job_type": {"key": "jobType", "type": "str"},
+        "services": {"key": "services", "type": "{JobService}"},
+        "status": {"key": "status", "type": "str"},
+        "early_termination": {
+            "key": "earlyTermination",
+            "type": "EarlyTerminationPolicy",
+        },
+        "inputs": {"key": "inputs", "type": "{JobInput}"},
+        "limits": {"key": "limits", "type": "SweepJobLimits"},
+        "objective": {"key": "objective", "type": "Objective"},
+        "outputs": {"key": "outputs", "type": "{JobOutput}"},
+        "sampling_algorithm": {"key": "samplingAlgorithm", "type": "SamplingAlgorithm"},
+        "search_space": {"key": "searchSpace", "type": "object"},
+        "trial": {"key": "trial", "type": "TrialComponent"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword description: The asset description text.
         :paramtype description: str
@@ -12827,15 +12299,15 @@ class SweepJob(JobBaseDetails):
         :paramtype trial: ~azure.mgmt.machinelearningservices.models.TrialComponent
         """
         super(SweepJob, self).__init__(**kwargs)
-        self.job_type = 'Sweep'  # type: str
-        self.early_termination = kwargs.get('early_termination', None)
-        self.inputs = kwargs.get('inputs', None)
-        self.limits = kwargs.get('limits', None)
-        self.objective = kwargs['objective']
-        self.outputs = kwargs.get('outputs', None)
-        self.sampling_algorithm = kwargs['sampling_algorithm']
-        self.search_space = kwargs['search_space']
-        self.trial = kwargs['trial']
+        self.job_type = "Sweep"  # type: str
+        self.early_termination = kwargs.get("early_termination", None)
+        self.inputs = kwargs.get("inputs", None)
+        self.limits = kwargs.get("limits", None)
+        self.objective = kwargs["objective"]
+        self.outputs = kwargs.get("outputs", None)
+        self.sampling_algorithm = kwargs["sampling_algorithm"]
+        self.search_space = kwargs["search_space"]
+        self.trial = kwargs["trial"]
 
 
 class SweepJobLimits(JobLimits):
@@ -12858,21 +12330,18 @@ class SweepJobLimits(JobLimits):
     """
 
     _validation = {
-        'job_limits_type': {'required': True},
+        "job_limits_type": {"required": True},
     }
 
     _attribute_map = {
-        'job_limits_type': {'key': 'jobLimitsType', 'type': 'str'},
-        'timeout': {'key': 'timeout', 'type': 'duration'},
-        'max_concurrent_trials': {'key': 'maxConcurrentTrials', 'type': 'int'},
-        'max_total_trials': {'key': 'maxTotalTrials', 'type': 'int'},
-        'trial_timeout': {'key': 'trialTimeout', 'type': 'duration'},
+        "job_limits_type": {"key": "jobLimitsType", "type": "str"},
+        "timeout": {"key": "timeout", "type": "duration"},
+        "max_concurrent_trials": {"key": "maxConcurrentTrials", "type": "int"},
+        "max_total_trials": {"key": "maxTotalTrials", "type": "int"},
+        "trial_timeout": {"key": "trialTimeout", "type": "duration"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword timeout: The max run duration in ISO 8601 format, after which the job will be
          cancelled. Only supports duration with precision as low as Seconds.
@@ -12885,10 +12354,10 @@ class SweepJobLimits(JobLimits):
         :paramtype trial_timeout: ~datetime.timedelta
         """
         super(SweepJobLimits, self).__init__(**kwargs)
-        self.job_limits_type = 'Sweep'  # type: str
-        self.max_concurrent_trials = kwargs.get('max_concurrent_trials', None)
-        self.max_total_trials = kwargs.get('max_total_trials', None)
-        self.trial_timeout = kwargs.get('trial_timeout', None)
+        self.job_limits_type = "Sweep"  # type: str
+        self.max_concurrent_trials = kwargs.get("max_concurrent_trials", None)
+        self.max_total_trials = kwargs.get("max_total_trials", None)
+        self.trial_timeout = kwargs.get("trial_timeout", None)
 
 
 class SynapseSpark(Compute):
@@ -12930,33 +12399,30 @@ class SynapseSpark(Compute):
     """
 
     _validation = {
-        'compute_type': {'required': True},
-        'compute_location': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'created_on': {'readonly': True},
-        'modified_on': {'readonly': True},
-        'provisioning_errors': {'readonly': True},
-        'is_attached_compute': {'readonly': True},
+        "compute_type": {"required": True},
+        "compute_location": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "created_on": {"readonly": True},
+        "modified_on": {"readonly": True},
+        "provisioning_errors": {"readonly": True},
+        "is_attached_compute": {"readonly": True},
     }
 
     _attribute_map = {
-        'compute_type': {'key': 'computeType', 'type': 'str'},
-        'compute_location': {'key': 'computeLocation', 'type': 'str'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'created_on': {'key': 'createdOn', 'type': 'iso-8601'},
-        'modified_on': {'key': 'modifiedOn', 'type': 'iso-8601'},
-        'resource_id': {'key': 'resourceId', 'type': 'str'},
-        'provisioning_errors': {'key': 'provisioningErrors', 'type': '[ErrorResponse]'},
-        'is_attached_compute': {'key': 'isAttachedCompute', 'type': 'bool'},
-        'disable_local_auth': {'key': 'disableLocalAuth', 'type': 'bool'},
-        'properties': {'key': 'properties', 'type': 'SynapseSparkProperties'},
+        "compute_type": {"key": "computeType", "type": "str"},
+        "compute_location": {"key": "computeLocation", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "created_on": {"key": "createdOn", "type": "iso-8601"},
+        "modified_on": {"key": "modifiedOn", "type": "iso-8601"},
+        "resource_id": {"key": "resourceId", "type": "str"},
+        "provisioning_errors": {"key": "provisioningErrors", "type": "[ErrorResponse]"},
+        "is_attached_compute": {"key": "isAttachedCompute", "type": "bool"},
+        "disable_local_auth": {"key": "disableLocalAuth", "type": "bool"},
+        "properties": {"key": "properties", "type": "SynapseSparkProperties"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword description: The description of the Machine Learning compute.
         :paramtype description: str
@@ -12969,8 +12435,8 @@ class SynapseSpark(Compute):
         :paramtype properties: ~azure.mgmt.machinelearningservices.models.SynapseSparkProperties
         """
         super(SynapseSpark, self).__init__(**kwargs)
-        self.compute_type = 'SynapseSpark'  # type: str
-        self.properties = kwargs.get('properties', None)
+        self.compute_type = "SynapseSpark"  # type: str
+        self.properties = kwargs.get("properties", None)
 
 
 class SynapseSparkProperties(msrest.serialization.Model):
@@ -12999,22 +12465,25 @@ class SynapseSparkProperties(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'auto_scale_properties': {'key': 'autoScaleProperties', 'type': 'AutoScaleProperties'},
-        'auto_pause_properties': {'key': 'autoPauseProperties', 'type': 'AutoPauseProperties'},
-        'spark_version': {'key': 'sparkVersion', 'type': 'str'},
-        'node_count': {'key': 'nodeCount', 'type': 'int'},
-        'node_size': {'key': 'nodeSize', 'type': 'str'},
-        'node_size_family': {'key': 'nodeSizeFamily', 'type': 'str'},
-        'subscription_id': {'key': 'subscriptionId', 'type': 'str'},
-        'resource_group': {'key': 'resourceGroup', 'type': 'str'},
-        'workspace_name': {'key': 'workspaceName', 'type': 'str'},
-        'pool_name': {'key': 'poolName', 'type': 'str'},
+        "auto_scale_properties": {
+            "key": "autoScaleProperties",
+            "type": "AutoScaleProperties",
+        },
+        "auto_pause_properties": {
+            "key": "autoPauseProperties",
+            "type": "AutoPauseProperties",
+        },
+        "spark_version": {"key": "sparkVersion", "type": "str"},
+        "node_count": {"key": "nodeCount", "type": "int"},
+        "node_size": {"key": "nodeSize", "type": "str"},
+        "node_size_family": {"key": "nodeSizeFamily", "type": "str"},
+        "subscription_id": {"key": "subscriptionId", "type": "str"},
+        "resource_group": {"key": "resourceGroup", "type": "str"},
+        "workspace_name": {"key": "workspaceName", "type": "str"},
+        "pool_name": {"key": "poolName", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword auto_scale_properties: Auto scale properties.
         :paramtype auto_scale_properties:
@@ -13040,16 +12509,16 @@ class SynapseSparkProperties(msrest.serialization.Model):
         :paramtype pool_name: str
         """
         super(SynapseSparkProperties, self).__init__(**kwargs)
-        self.auto_scale_properties = kwargs.get('auto_scale_properties', None)
-        self.auto_pause_properties = kwargs.get('auto_pause_properties', None)
-        self.spark_version = kwargs.get('spark_version', None)
-        self.node_count = kwargs.get('node_count', None)
-        self.node_size = kwargs.get('node_size', None)
-        self.node_size_family = kwargs.get('node_size_family', None)
-        self.subscription_id = kwargs.get('subscription_id', None)
-        self.resource_group = kwargs.get('resource_group', None)
-        self.workspace_name = kwargs.get('workspace_name', None)
-        self.pool_name = kwargs.get('pool_name', None)
+        self.auto_scale_properties = kwargs.get("auto_scale_properties", None)
+        self.auto_pause_properties = kwargs.get("auto_pause_properties", None)
+        self.spark_version = kwargs.get("spark_version", None)
+        self.node_count = kwargs.get("node_count", None)
+        self.node_size = kwargs.get("node_size", None)
+        self.node_size_family = kwargs.get("node_size_family", None)
+        self.subscription_id = kwargs.get("subscription_id", None)
+        self.resource_group = kwargs.get("resource_group", None)
+        self.workspace_name = kwargs.get("workspace_name", None)
+        self.pool_name = kwargs.get("pool_name", None)
 
 
 class SystemData(msrest.serialization.Model):
@@ -13072,18 +12541,15 @@ class SystemData(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'created_by': {'key': 'createdBy', 'type': 'str'},
-        'created_by_type': {'key': 'createdByType', 'type': 'str'},
-        'created_at': {'key': 'createdAt', 'type': 'iso-8601'},
-        'last_modified_by': {'key': 'lastModifiedBy', 'type': 'str'},
-        'last_modified_by_type': {'key': 'lastModifiedByType', 'type': 'str'},
-        'last_modified_at': {'key': 'lastModifiedAt', 'type': 'iso-8601'},
+        "created_by": {"key": "createdBy", "type": "str"},
+        "created_by_type": {"key": "createdByType", "type": "str"},
+        "created_at": {"key": "createdAt", "type": "iso-8601"},
+        "last_modified_by": {"key": "lastModifiedBy", "type": "str"},
+        "last_modified_by_type": {"key": "lastModifiedByType", "type": "str"},
+        "last_modified_at": {"key": "lastModifiedAt", "type": "iso-8601"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword created_by: The identity that created the resource.
         :paramtype created_by: str
@@ -13102,12 +12568,12 @@ class SystemData(msrest.serialization.Model):
         :paramtype last_modified_at: ~datetime.datetime
         """
         super(SystemData, self).__init__(**kwargs)
-        self.created_by = kwargs.get('created_by', None)
-        self.created_by_type = kwargs.get('created_by_type', None)
-        self.created_at = kwargs.get('created_at', None)
-        self.last_modified_by = kwargs.get('last_modified_by', None)
-        self.last_modified_by_type = kwargs.get('last_modified_by_type', None)
-        self.last_modified_at = kwargs.get('last_modified_at', None)
+        self.created_by = kwargs.get("created_by", None)
+        self.created_by_type = kwargs.get("created_by_type", None)
+        self.created_at = kwargs.get("created_at", None)
+        self.last_modified_by = kwargs.get("last_modified_by", None)
+        self.last_modified_by_type = kwargs.get("last_modified_by_type", None)
+        self.last_modified_at = kwargs.get("last_modified_at", None)
 
 
 class SystemService(msrest.serialization.Model):
@@ -13124,23 +12590,19 @@ class SystemService(msrest.serialization.Model):
     """
 
     _validation = {
-        'system_service_type': {'readonly': True},
-        'public_ip_address': {'readonly': True},
-        'version': {'readonly': True},
+        "system_service_type": {"readonly": True},
+        "public_ip_address": {"readonly": True},
+        "version": {"readonly": True},
     }
 
     _attribute_map = {
-        'system_service_type': {'key': 'systemServiceType', 'type': 'str'},
-        'public_ip_address': {'key': 'publicIpAddress', 'type': 'str'},
-        'version': {'key': 'version', 'type': 'str'},
+        "system_service_type": {"key": "systemServiceType", "type": "str"},
+        "public_ip_address": {"key": "publicIpAddress", "type": "str"},
+        "version": {"key": "version", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs):
+        """ """
         super(SystemService, self).__init__(**kwargs)
         self.system_service_type = None
         self.public_ip_address = None
@@ -13168,21 +12630,21 @@ class TargetUtilizationScaleSettings(OnlineScaleSettings):
     """
 
     _validation = {
-        'scale_type': {'required': True},
+        "scale_type": {"required": True},
     }
 
     _attribute_map = {
-        'scale_type': {'key': 'scaleType', 'type': 'str'},
-        'max_instances': {'key': 'maxInstances', 'type': 'int'},
-        'min_instances': {'key': 'minInstances', 'type': 'int'},
-        'polling_interval': {'key': 'pollingInterval', 'type': 'duration'},
-        'target_utilization_percentage': {'key': 'targetUtilizationPercentage', 'type': 'int'},
+        "scale_type": {"key": "scaleType", "type": "str"},
+        "max_instances": {"key": "maxInstances", "type": "int"},
+        "min_instances": {"key": "minInstances", "type": "int"},
+        "polling_interval": {"key": "pollingInterval", "type": "duration"},
+        "target_utilization_percentage": {
+            "key": "targetUtilizationPercentage",
+            "type": "int",
+        },
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword max_instances: The maximum number of instances that the deployment can scale to. The
          quota will be reserved for max_instances.
@@ -13196,11 +12658,13 @@ class TargetUtilizationScaleSettings(OnlineScaleSettings):
         :paramtype target_utilization_percentage: int
         """
         super(TargetUtilizationScaleSettings, self).__init__(**kwargs)
-        self.scale_type = 'TargetUtilization'  # type: str
-        self.max_instances = kwargs.get('max_instances', 1)
-        self.min_instances = kwargs.get('min_instances', 1)
-        self.polling_interval = kwargs.get('polling_interval', "PT1S")
-        self.target_utilization_percentage = kwargs.get('target_utilization_percentage', 70)
+        self.scale_type = "TargetUtilization"  # type: str
+        self.max_instances = kwargs.get("max_instances", 1)
+        self.min_instances = kwargs.get("min_instances", 1)
+        self.polling_interval = kwargs.get("polling_interval", "PT1S")
+        self.target_utilization_percentage = kwargs.get(
+            "target_utilization_percentage", 70
+        )
 
 
 class TensorFlow(DistributionConfiguration):
@@ -13218,19 +12682,16 @@ class TensorFlow(DistributionConfiguration):
     """
 
     _validation = {
-        'distribution_type': {'required': True},
+        "distribution_type": {"required": True},
     }
 
     _attribute_map = {
-        'distribution_type': {'key': 'distributionType', 'type': 'str'},
-        'parameter_server_count': {'key': 'parameterServerCount', 'type': 'int'},
-        'worker_count': {'key': 'workerCount', 'type': 'int'},
+        "distribution_type": {"key": "distributionType", "type": "str"},
+        "parameter_server_count": {"key": "parameterServerCount", "type": "int"},
+        "worker_count": {"key": "workerCount", "type": "int"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword parameter_server_count: Number of parameter server tasks.
         :paramtype parameter_server_count: int
@@ -13238,9 +12699,9 @@ class TensorFlow(DistributionConfiguration):
         :paramtype worker_count: int
         """
         super(TensorFlow, self).__init__(**kwargs)
-        self.distribution_type = 'TensorFlow'  # type: str
-        self.parameter_server_count = kwargs.get('parameter_server_count', 0)
-        self.worker_count = kwargs.get('worker_count', None)
+        self.distribution_type = "TensorFlow"  # type: str
+        self.parameter_server_count = kwargs.get("parameter_server_count", 0)
+        self.worker_count = kwargs.get("worker_count", None)
 
 
 class TrialComponent(msrest.serialization.Model):
@@ -13266,23 +12727,20 @@ class TrialComponent(msrest.serialization.Model):
     """
 
     _validation = {
-        'command': {'required': True, 'min_length': 1, 'pattern': r'[a-zA-Z0-9_]'},
-        'environment_id': {'required': True, 'pattern': r'[a-zA-Z0-9_]'},
+        "command": {"required": True, "min_length": 1, "pattern": r"[a-zA-Z0-9_]"},
+        "environment_id": {"required": True, "pattern": r"[a-zA-Z0-9_]"},
     }
 
     _attribute_map = {
-        'code_id': {'key': 'codeId', 'type': 'str'},
-        'command': {'key': 'command', 'type': 'str'},
-        'distribution': {'key': 'distribution', 'type': 'DistributionConfiguration'},
-        'environment_id': {'key': 'environmentId', 'type': 'str'},
-        'environment_variables': {'key': 'environmentVariables', 'type': '{str}'},
-        'resources': {'key': 'resources', 'type': 'ResourceConfiguration'},
+        "code_id": {"key": "codeId", "type": "str"},
+        "command": {"key": "command", "type": "str"},
+        "distribution": {"key": "distribution", "type": "DistributionConfiguration"},
+        "environment_id": {"key": "environmentId", "type": "str"},
+        "environment_variables": {"key": "environmentVariables", "type": "{str}"},
+        "resources": {"key": "resources", "type": "ResourceConfiguration"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword code_id: ARM resource ID of the code asset.
         :paramtype code_id: str
@@ -13301,12 +12759,12 @@ class TrialComponent(msrest.serialization.Model):
         :paramtype resources: ~azure.mgmt.machinelearningservices.models.ResourceConfiguration
         """
         super(TrialComponent, self).__init__(**kwargs)
-        self.code_id = kwargs.get('code_id', None)
-        self.command = kwargs['command']
-        self.distribution = kwargs.get('distribution', None)
-        self.environment_id = kwargs['environment_id']
-        self.environment_variables = kwargs.get('environment_variables', None)
-        self.resources = kwargs.get('resources', None)
+        self.code_id = kwargs.get("code_id", None)
+        self.command = kwargs["command"]
+        self.distribution = kwargs.get("distribution", None)
+        self.environment_id = kwargs["environment_id"]
+        self.environment_variables = kwargs.get("environment_variables", None)
+        self.resources = kwargs.get("resources", None)
 
 
 class TritonModelJobInput(JobInput, AssetJobInput):
@@ -13328,21 +12786,18 @@ class TritonModelJobInput(JobInput, AssetJobInput):
     """
 
     _validation = {
-        'uri': {'required': True, 'pattern': r'[a-zA-Z0-9_]'},
-        'job_input_type': {'required': True},
+        "uri": {"required": True, "pattern": r"[a-zA-Z0-9_]"},
+        "job_input_type": {"required": True},
     }
 
     _attribute_map = {
-        'mode': {'key': 'mode', 'type': 'str'},
-        'uri': {'key': 'uri', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'job_input_type': {'key': 'jobInputType', 'type': 'str'},
+        "mode": {"key": "mode", "type": "str"},
+        "uri": {"key": "uri", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "job_input_type": {"key": "jobInputType", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword mode: Input Asset Delivery Mode. Possible values include: "ReadOnlyMount",
          "ReadWriteMount", "Download", "Direct", "EvalMount", "EvalDownload".
@@ -13353,11 +12808,11 @@ class TritonModelJobInput(JobInput, AssetJobInput):
         :paramtype description: str
         """
         super(TritonModelJobInput, self).__init__(**kwargs)
-        self.mode = kwargs.get('mode', None)
-        self.uri = kwargs['uri']
-        self.job_input_type = 'triton_model'  # type: str
-        self.description = kwargs.get('description', None)
-        self.job_input_type = 'triton_model'  # type: str
+        self.mode = kwargs.get("mode", None)
+        self.uri = kwargs["uri"]
+        self.job_input_type = "triton_model"  # type: str
+        self.description = kwargs.get("description", None)
+        self.job_input_type = "triton_model"  # type: str
 
 
 class TritonModelJobOutput(JobOutput, AssetJobOutput):
@@ -13378,20 +12833,17 @@ class TritonModelJobOutput(JobOutput, AssetJobOutput):
     """
 
     _validation = {
-        'job_output_type': {'required': True},
+        "job_output_type": {"required": True},
     }
 
     _attribute_map = {
-        'mode': {'key': 'mode', 'type': 'str'},
-        'uri': {'key': 'uri', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'job_output_type': {'key': 'jobOutputType', 'type': 'str'},
+        "mode": {"key": "mode", "type": "str"},
+        "uri": {"key": "uri", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "job_output_type": {"key": "jobOutputType", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword mode: Output Asset Delivery Mode. Possible values include: "ReadWriteMount", "Upload".
         :paramtype mode: str or ~azure.mgmt.machinelearningservices.models.OutputDeliveryMode
@@ -13401,11 +12853,11 @@ class TritonModelJobOutput(JobOutput, AssetJobOutput):
         :paramtype description: str
         """
         super(TritonModelJobOutput, self).__init__(**kwargs)
-        self.mode = kwargs.get('mode', None)
-        self.uri = kwargs.get('uri', None)
-        self.job_output_type = 'triton_model'  # type: str
-        self.description = kwargs.get('description', None)
-        self.job_output_type = 'triton_model'  # type: str
+        self.mode = kwargs.get("mode", None)
+        self.uri = kwargs.get("uri", None)
+        self.job_output_type = "triton_model"  # type: str
+        self.description = kwargs.get("description", None)
+        self.job_output_type = "triton_model"  # type: str
 
 
 class TruncationSelectionPolicy(EarlyTerminationPolicy):
@@ -13426,20 +12878,17 @@ class TruncationSelectionPolicy(EarlyTerminationPolicy):
     """
 
     _validation = {
-        'policy_type': {'required': True},
+        "policy_type": {"required": True},
     }
 
     _attribute_map = {
-        'delay_evaluation': {'key': 'delayEvaluation', 'type': 'int'},
-        'evaluation_interval': {'key': 'evaluationInterval', 'type': 'int'},
-        'policy_type': {'key': 'policyType', 'type': 'str'},
-        'truncation_percentage': {'key': 'truncationPercentage', 'type': 'int'},
+        "delay_evaluation": {"key": "delayEvaluation", "type": "int"},
+        "evaluation_interval": {"key": "evaluationInterval", "type": "int"},
+        "policy_type": {"key": "policyType", "type": "str"},
+        "truncation_percentage": {"key": "truncationPercentage", "type": "int"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword delay_evaluation: Number of intervals by which to delay the first evaluation.
         :paramtype delay_evaluation: int
@@ -13449,8 +12898,8 @@ class TruncationSelectionPolicy(EarlyTerminationPolicy):
         :paramtype truncation_percentage: int
         """
         super(TruncationSelectionPolicy, self).__init__(**kwargs)
-        self.policy_type = 'TruncationSelection'  # type: str
-        self.truncation_percentage = kwargs.get('truncation_percentage', 0)
+        self.policy_type = "TruncationSelection"  # type: str
+        self.truncation_percentage = kwargs.get("truncation_percentage", 0)
 
 
 class UpdateWorkspaceQuotas(msrest.serialization.Model):
@@ -13474,23 +12923,20 @@ class UpdateWorkspaceQuotas(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'type': {'readonly': True},
-        'unit': {'readonly': True},
+        "id": {"readonly": True},
+        "type": {"readonly": True},
+        "unit": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'limit': {'key': 'limit', 'type': 'long'},
-        'unit': {'key': 'unit', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "limit": {"key": "limit", "type": "long"},
+        "unit": {"key": "unit", "type": "str"},
+        "status": {"key": "status", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword limit: The maximum permitted quota of the resource.
         :paramtype limit: long
@@ -13503,9 +12949,9 @@ class UpdateWorkspaceQuotas(msrest.serialization.Model):
         super(UpdateWorkspaceQuotas, self).__init__(**kwargs)
         self.id = None
         self.type = None
-        self.limit = kwargs.get('limit', None)
+        self.limit = kwargs.get("limit", None)
         self.unit = None
-        self.status = kwargs.get('status', None)
+        self.status = kwargs.get("status", None)
 
 
 class UpdateWorkspaceQuotasResult(msrest.serialization.Model):
@@ -13521,21 +12967,17 @@ class UpdateWorkspaceQuotasResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[UpdateWorkspaceQuotas]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[UpdateWorkspaceQuotas]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs):
+        """ """
         super(UpdateWorkspaceQuotasResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -13565,24 +13007,21 @@ class UriFileDataVersion(DataVersionBaseDetails):
     """
 
     _validation = {
-        'data_type': {'required': True},
-        'data_uri': {'required': True, 'pattern': r'[a-zA-Z0-9_]'},
+        "data_type": {"required": True},
+        "data_uri": {"required": True, "pattern": r"[a-zA-Z0-9_]"},
     }
 
     _attribute_map = {
-        'description': {'key': 'description', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': '{str}'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'is_anonymous': {'key': 'isAnonymous', 'type': 'bool'},
-        'is_archived': {'key': 'isArchived', 'type': 'bool'},
-        'data_type': {'key': 'dataType', 'type': 'str'},
-        'data_uri': {'key': 'dataUri', 'type': 'str'},
+        "description": {"key": "description", "type": "str"},
+        "properties": {"key": "properties", "type": "{str}"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "is_anonymous": {"key": "isAnonymous", "type": "bool"},
+        "is_archived": {"key": "isArchived", "type": "bool"},
+        "data_type": {"key": "dataType", "type": "str"},
+        "data_uri": {"key": "dataUri", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword description: The asset description text.
         :paramtype description: str
@@ -13599,7 +13038,7 @@ class UriFileDataVersion(DataVersionBaseDetails):
         :paramtype data_uri: str
         """
         super(UriFileDataVersion, self).__init__(**kwargs)
-        self.data_type = 'uri_file'  # type: str
+        self.data_type = "uri_file"  # type: str
 
 
 class UriFileJobInput(JobInput, AssetJobInput):
@@ -13621,21 +13060,18 @@ class UriFileJobInput(JobInput, AssetJobInput):
     """
 
     _validation = {
-        'uri': {'required': True, 'pattern': r'[a-zA-Z0-9_]'},
-        'job_input_type': {'required': True},
+        "uri": {"required": True, "pattern": r"[a-zA-Z0-9_]"},
+        "job_input_type": {"required": True},
     }
 
     _attribute_map = {
-        'mode': {'key': 'mode', 'type': 'str'},
-        'uri': {'key': 'uri', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'job_input_type': {'key': 'jobInputType', 'type': 'str'},
+        "mode": {"key": "mode", "type": "str"},
+        "uri": {"key": "uri", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "job_input_type": {"key": "jobInputType", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword mode: Input Asset Delivery Mode. Possible values include: "ReadOnlyMount",
          "ReadWriteMount", "Download", "Direct", "EvalMount", "EvalDownload".
@@ -13646,11 +13082,11 @@ class UriFileJobInput(JobInput, AssetJobInput):
         :paramtype description: str
         """
         super(UriFileJobInput, self).__init__(**kwargs)
-        self.mode = kwargs.get('mode', None)
-        self.uri = kwargs['uri']
-        self.job_input_type = 'uri_file'  # type: str
-        self.description = kwargs.get('description', None)
-        self.job_input_type = 'uri_file'  # type: str
+        self.mode = kwargs.get("mode", None)
+        self.uri = kwargs["uri"]
+        self.job_input_type = "uri_file"  # type: str
+        self.description = kwargs.get("description", None)
+        self.job_input_type = "uri_file"  # type: str
 
 
 class UriFileJobOutput(JobOutput, AssetJobOutput):
@@ -13671,20 +13107,17 @@ class UriFileJobOutput(JobOutput, AssetJobOutput):
     """
 
     _validation = {
-        'job_output_type': {'required': True},
+        "job_output_type": {"required": True},
     }
 
     _attribute_map = {
-        'mode': {'key': 'mode', 'type': 'str'},
-        'uri': {'key': 'uri', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'job_output_type': {'key': 'jobOutputType', 'type': 'str'},
+        "mode": {"key": "mode", "type": "str"},
+        "uri": {"key": "uri", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "job_output_type": {"key": "jobOutputType", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword mode: Output Asset Delivery Mode. Possible values include: "ReadWriteMount", "Upload".
         :paramtype mode: str or ~azure.mgmt.machinelearningservices.models.OutputDeliveryMode
@@ -13694,11 +13127,11 @@ class UriFileJobOutput(JobOutput, AssetJobOutput):
         :paramtype description: str
         """
         super(UriFileJobOutput, self).__init__(**kwargs)
-        self.mode = kwargs.get('mode', None)
-        self.uri = kwargs.get('uri', None)
-        self.job_output_type = 'uri_file'  # type: str
-        self.description = kwargs.get('description', None)
-        self.job_output_type = 'uri_file'  # type: str
+        self.mode = kwargs.get("mode", None)
+        self.uri = kwargs.get("uri", None)
+        self.job_output_type = "uri_file"  # type: str
+        self.description = kwargs.get("description", None)
+        self.job_output_type = "uri_file"  # type: str
 
 
 class UriFolderDataVersion(DataVersionBaseDetails):
@@ -13725,24 +13158,21 @@ class UriFolderDataVersion(DataVersionBaseDetails):
     """
 
     _validation = {
-        'data_type': {'required': True},
-        'data_uri': {'required': True, 'pattern': r'[a-zA-Z0-9_]'},
+        "data_type": {"required": True},
+        "data_uri": {"required": True, "pattern": r"[a-zA-Z0-9_]"},
     }
 
     _attribute_map = {
-        'description': {'key': 'description', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': '{str}'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'is_anonymous': {'key': 'isAnonymous', 'type': 'bool'},
-        'is_archived': {'key': 'isArchived', 'type': 'bool'},
-        'data_type': {'key': 'dataType', 'type': 'str'},
-        'data_uri': {'key': 'dataUri', 'type': 'str'},
+        "description": {"key": "description", "type": "str"},
+        "properties": {"key": "properties", "type": "{str}"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "is_anonymous": {"key": "isAnonymous", "type": "bool"},
+        "is_archived": {"key": "isArchived", "type": "bool"},
+        "data_type": {"key": "dataType", "type": "str"},
+        "data_uri": {"key": "dataUri", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword description: The asset description text.
         :paramtype description: str
@@ -13759,7 +13189,7 @@ class UriFolderDataVersion(DataVersionBaseDetails):
         :paramtype data_uri: str
         """
         super(UriFolderDataVersion, self).__init__(**kwargs)
-        self.data_type = 'uri_folder'  # type: str
+        self.data_type = "uri_folder"  # type: str
 
 
 class UriFolderJobInput(JobInput, AssetJobInput):
@@ -13781,21 +13211,18 @@ class UriFolderJobInput(JobInput, AssetJobInput):
     """
 
     _validation = {
-        'uri': {'required': True, 'pattern': r'[a-zA-Z0-9_]'},
-        'job_input_type': {'required': True},
+        "uri": {"required": True, "pattern": r"[a-zA-Z0-9_]"},
+        "job_input_type": {"required": True},
     }
 
     _attribute_map = {
-        'mode': {'key': 'mode', 'type': 'str'},
-        'uri': {'key': 'uri', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'job_input_type': {'key': 'jobInputType', 'type': 'str'},
+        "mode": {"key": "mode", "type": "str"},
+        "uri": {"key": "uri", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "job_input_type": {"key": "jobInputType", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword mode: Input Asset Delivery Mode. Possible values include: "ReadOnlyMount",
          "ReadWriteMount", "Download", "Direct", "EvalMount", "EvalDownload".
@@ -13806,11 +13233,11 @@ class UriFolderJobInput(JobInput, AssetJobInput):
         :paramtype description: str
         """
         super(UriFolderJobInput, self).__init__(**kwargs)
-        self.mode = kwargs.get('mode', None)
-        self.uri = kwargs['uri']
-        self.job_input_type = 'uri_folder'  # type: str
-        self.description = kwargs.get('description', None)
-        self.job_input_type = 'uri_folder'  # type: str
+        self.mode = kwargs.get("mode", None)
+        self.uri = kwargs["uri"]
+        self.job_input_type = "uri_folder"  # type: str
+        self.description = kwargs.get("description", None)
+        self.job_input_type = "uri_folder"  # type: str
 
 
 class UriFolderJobOutput(JobOutput, AssetJobOutput):
@@ -13831,20 +13258,17 @@ class UriFolderJobOutput(JobOutput, AssetJobOutput):
     """
 
     _validation = {
-        'job_output_type': {'required': True},
+        "job_output_type": {"required": True},
     }
 
     _attribute_map = {
-        'mode': {'key': 'mode', 'type': 'str'},
-        'uri': {'key': 'uri', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'job_output_type': {'key': 'jobOutputType', 'type': 'str'},
+        "mode": {"key": "mode", "type": "str"},
+        "uri": {"key": "uri", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "job_output_type": {"key": "jobOutputType", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword mode: Output Asset Delivery Mode. Possible values include: "ReadWriteMount", "Upload".
         :paramtype mode: str or ~azure.mgmt.machinelearningservices.models.OutputDeliveryMode
@@ -13854,11 +13278,11 @@ class UriFolderJobOutput(JobOutput, AssetJobOutput):
         :paramtype description: str
         """
         super(UriFolderJobOutput, self).__init__(**kwargs)
-        self.mode = kwargs.get('mode', None)
-        self.uri = kwargs.get('uri', None)
-        self.job_output_type = 'uri_folder'  # type: str
-        self.description = kwargs.get('description', None)
-        self.job_output_type = 'uri_folder'  # type: str
+        self.mode = kwargs.get("mode", None)
+        self.uri = kwargs.get("uri", None)
+        self.job_output_type = "uri_folder"  # type: str
+        self.description = kwargs.get("description", None)
+        self.job_output_type = "uri_folder"  # type: str
 
 
 class Usage(msrest.serialization.Model):
@@ -13883,31 +13307,27 @@ class Usage(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'aml_workspace_location': {'readonly': True},
-        'type': {'readonly': True},
-        'unit': {'readonly': True},
-        'current_value': {'readonly': True},
-        'limit': {'readonly': True},
-        'name': {'readonly': True},
+        "id": {"readonly": True},
+        "aml_workspace_location": {"readonly": True},
+        "type": {"readonly": True},
+        "unit": {"readonly": True},
+        "current_value": {"readonly": True},
+        "limit": {"readonly": True},
+        "name": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'aml_workspace_location': {'key': 'amlWorkspaceLocation', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'unit': {'key': 'unit', 'type': 'str'},
-        'current_value': {'key': 'currentValue', 'type': 'long'},
-        'limit': {'key': 'limit', 'type': 'long'},
-        'name': {'key': 'name', 'type': 'UsageName'},
+        "id": {"key": "id", "type": "str"},
+        "aml_workspace_location": {"key": "amlWorkspaceLocation", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "unit": {"key": "unit", "type": "str"},
+        "current_value": {"key": "currentValue", "type": "long"},
+        "limit": {"key": "limit", "type": "long"},
+        "name": {"key": "name", "type": "UsageName"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs):
+        """ """
         super(Usage, self).__init__(**kwargs)
         self.id = None
         self.aml_workspace_location = None
@@ -13930,21 +13350,17 @@ class UsageName(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'localized_value': {'readonly': True},
+        "value": {"readonly": True},
+        "localized_value": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': 'str'},
-        'localized_value': {'key': 'localizedValue', 'type': 'str'},
+        "value": {"key": "value", "type": "str"},
+        "localized_value": {"key": "localizedValue", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs):
+        """ """
         super(UsageName, self).__init__(**kwargs)
         self.value = None
         self.localized_value = None
@@ -13965,19 +13381,16 @@ class UserAccountCredentials(msrest.serialization.Model):
     """
 
     _validation = {
-        'admin_user_name': {'required': True},
+        "admin_user_name": {"required": True},
     }
 
     _attribute_map = {
-        'admin_user_name': {'key': 'adminUserName', 'type': 'str'},
-        'admin_user_ssh_public_key': {'key': 'adminUserSshPublicKey', 'type': 'str'},
-        'admin_user_password': {'key': 'adminUserPassword', 'type': 'str'},
+        "admin_user_name": {"key": "adminUserName", "type": "str"},
+        "admin_user_ssh_public_key": {"key": "adminUserSshPublicKey", "type": "str"},
+        "admin_user_password": {"key": "adminUserPassword", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword admin_user_name: Required. Name of the administrator user account which can be used to
          SSH to nodes.
@@ -13988,9 +13401,9 @@ class UserAccountCredentials(msrest.serialization.Model):
         :paramtype admin_user_password: str
         """
         super(UserAccountCredentials, self).__init__(**kwargs)
-        self.admin_user_name = kwargs['admin_user_name']
-        self.admin_user_ssh_public_key = kwargs.get('admin_user_ssh_public_key', None)
-        self.admin_user_password = kwargs.get('admin_user_password', None)
+        self.admin_user_name = kwargs["admin_user_name"]
+        self.admin_user_ssh_public_key = kwargs.get("admin_user_ssh_public_key", None)
+        self.admin_user_password = kwargs.get("admin_user_password", None)
 
 
 class UserAssignedIdentity(msrest.serialization.Model):
@@ -14005,21 +13418,17 @@ class UserAssignedIdentity(msrest.serialization.Model):
     """
 
     _validation = {
-        'principal_id': {'readonly': True},
-        'client_id': {'readonly': True},
+        "principal_id": {"readonly": True},
+        "client_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'principal_id': {'key': 'principalId', 'type': 'str'},
-        'client_id': {'key': 'clientId', 'type': 'str'},
+        "principal_id": {"key": "principalId", "type": "str"},
+        "client_id": {"key": "clientId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs):
+        """ """
         super(UserAssignedIdentity, self).__init__(**kwargs)
         self.principal_id = None
         self.client_id = None
@@ -14037,24 +13446,22 @@ class UserIdentity(IdentityConfiguration):
     """
 
     _validation = {
-        'identity_type': {'required': True},
+        "identity_type": {"required": True},
     }
 
     _attribute_map = {
-        'identity_type': {'key': 'identityType', 'type': 'str'},
+        "identity_type": {"key": "identityType", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs):
+        """ """
         super(UserIdentity, self).__init__(**kwargs)
-        self.identity_type = 'UserIdentity'  # type: str
+        self.identity_type = "UserIdentity"  # type: str
 
 
-class UsernamePasswordAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2):
+class UsernamePasswordAuthTypeWorkspaceConnectionProperties(
+    WorkspaceConnectionPropertiesV2
+):
     """UsernamePasswordAuthTypeWorkspaceConnectionProperties.
 
     All required parameters must be populated in order to send to Azure.
@@ -14077,22 +13484,22 @@ class UsernamePasswordAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionP
     """
 
     _validation = {
-        'auth_type': {'required': True},
+        "auth_type": {"required": True},
     }
 
     _attribute_map = {
-        'auth_type': {'key': 'authType', 'type': 'str'},
-        'category': {'key': 'category', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
-        'value_format': {'key': 'valueFormat', 'type': 'str'},
-        'credentials': {'key': 'credentials', 'type': 'WorkspaceConnectionUsernamePassword'},
+        "auth_type": {"key": "authType", "type": "str"},
+        "category": {"key": "category", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "value": {"key": "value", "type": "str"},
+        "value_format": {"key": "valueFormat", "type": "str"},
+        "credentials": {
+            "key": "credentials",
+            "type": "WorkspaceConnectionUsernamePassword",
+        },
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword category: Category of the connection. Possible values include: "PythonFeed",
          "ContainerRegistry", "Git".
@@ -14108,9 +13515,11 @@ class UsernamePasswordAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionP
         :paramtype credentials:
          ~azure.mgmt.machinelearningservices.models.WorkspaceConnectionUsernamePassword
         """
-        super(UsernamePasswordAuthTypeWorkspaceConnectionProperties, self).__init__(**kwargs)
-        self.auth_type = 'UsernamePassword'  # type: str
-        self.credentials = kwargs.get('credentials', None)
+        super(UsernamePasswordAuthTypeWorkspaceConnectionProperties, self).__init__(
+            **kwargs
+        )
+        self.auth_type = "UsernamePassword"  # type: str
+        self.credentials = kwargs.get("credentials", None)
 
 
 class VirtualMachineSchema(msrest.serialization.Model):
@@ -14121,20 +13530,17 @@ class VirtualMachineSchema(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'properties': {'key': 'properties', 'type': 'VirtualMachineSchemaProperties'},
+        "properties": {"key": "properties", "type": "VirtualMachineSchemaProperties"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword properties:
         :paramtype properties:
          ~azure.mgmt.machinelearningservices.models.VirtualMachineSchemaProperties
         """
         super(VirtualMachineSchema, self).__init__(**kwargs)
-        self.properties = kwargs.get('properties', None)
+        self.properties = kwargs.get("properties", None)
 
 
 class VirtualMachine(Compute, VirtualMachineSchema):
@@ -14176,33 +13582,30 @@ class VirtualMachine(Compute, VirtualMachineSchema):
     """
 
     _validation = {
-        'compute_type': {'required': True},
-        'compute_location': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'created_on': {'readonly': True},
-        'modified_on': {'readonly': True},
-        'provisioning_errors': {'readonly': True},
-        'is_attached_compute': {'readonly': True},
+        "compute_type": {"required": True},
+        "compute_location": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "created_on": {"readonly": True},
+        "modified_on": {"readonly": True},
+        "provisioning_errors": {"readonly": True},
+        "is_attached_compute": {"readonly": True},
     }
 
     _attribute_map = {
-        'properties': {'key': 'properties', 'type': 'VirtualMachineSchemaProperties'},
-        'compute_type': {'key': 'computeType', 'type': 'str'},
-        'compute_location': {'key': 'computeLocation', 'type': 'str'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'created_on': {'key': 'createdOn', 'type': 'iso-8601'},
-        'modified_on': {'key': 'modifiedOn', 'type': 'iso-8601'},
-        'resource_id': {'key': 'resourceId', 'type': 'str'},
-        'provisioning_errors': {'key': 'provisioningErrors', 'type': '[ErrorResponse]'},
-        'is_attached_compute': {'key': 'isAttachedCompute', 'type': 'bool'},
-        'disable_local_auth': {'key': 'disableLocalAuth', 'type': 'bool'},
+        "properties": {"key": "properties", "type": "VirtualMachineSchemaProperties"},
+        "compute_type": {"key": "computeType", "type": "str"},
+        "compute_location": {"key": "computeLocation", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "created_on": {"key": "createdOn", "type": "iso-8601"},
+        "modified_on": {"key": "modifiedOn", "type": "iso-8601"},
+        "resource_id": {"key": "resourceId", "type": "str"},
+        "provisioning_errors": {"key": "provisioningErrors", "type": "[ErrorResponse]"},
+        "is_attached_compute": {"key": "isAttachedCompute", "type": "bool"},
+        "disable_local_auth": {"key": "disableLocalAuth", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword properties:
         :paramtype properties:
@@ -14216,18 +13619,18 @@ class VirtualMachine(Compute, VirtualMachineSchema):
         :paramtype disable_local_auth: bool
         """
         super(VirtualMachine, self).__init__(**kwargs)
-        self.properties = kwargs.get('properties', None)
-        self.compute_type = 'VirtualMachine'  # type: str
-        self.compute_type = 'VirtualMachine'  # type: str
+        self.properties = kwargs.get("properties", None)
+        self.compute_type = "VirtualMachine"  # type: str
+        self.compute_type = "VirtualMachine"  # type: str
         self.compute_location = None
         self.provisioning_state = None
-        self.description = kwargs.get('description', None)
+        self.description = kwargs.get("description", None)
         self.created_on = None
         self.modified_on = None
-        self.resource_id = kwargs.get('resource_id', None)
+        self.resource_id = kwargs.get("resource_id", None)
         self.provisioning_errors = None
         self.is_attached_compute = None
-        self.disable_local_auth = kwargs.get('disable_local_auth', None)
+        self.disable_local_auth = kwargs.get("disable_local_auth", None)
 
 
 class VirtualMachineImage(msrest.serialization.Model):
@@ -14240,23 +13643,20 @@ class VirtualMachineImage(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'required': True},
+        "id": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword id: Required. Virtual Machine image path.
         :paramtype id: str
         """
         super(VirtualMachineImage, self).__init__(**kwargs)
-        self.id = kwargs['id']
+        self.id = kwargs["id"]
 
 
 class VirtualMachineSchemaProperties(msrest.serialization.Model):
@@ -14279,18 +13679,21 @@ class VirtualMachineSchemaProperties(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'virtual_machine_size': {'key': 'virtualMachineSize', 'type': 'str'},
-        'ssh_port': {'key': 'sshPort', 'type': 'int'},
-        'notebook_server_port': {'key': 'notebookServerPort', 'type': 'int'},
-        'address': {'key': 'address', 'type': 'str'},
-        'administrator_account': {'key': 'administratorAccount', 'type': 'VirtualMachineSshCredentials'},
-        'is_notebook_instance_compute': {'key': 'isNotebookInstanceCompute', 'type': 'bool'},
+        "virtual_machine_size": {"key": "virtualMachineSize", "type": "str"},
+        "ssh_port": {"key": "sshPort", "type": "int"},
+        "notebook_server_port": {"key": "notebookServerPort", "type": "int"},
+        "address": {"key": "address", "type": "str"},
+        "administrator_account": {
+            "key": "administratorAccount",
+            "type": "VirtualMachineSshCredentials",
+        },
+        "is_notebook_instance_compute": {
+            "key": "isNotebookInstanceCompute",
+            "type": "bool",
+        },
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword virtual_machine_size: Virtual Machine size.
         :paramtype virtual_machine_size: str
@@ -14308,12 +13711,14 @@ class VirtualMachineSchemaProperties(msrest.serialization.Model):
         :paramtype is_notebook_instance_compute: bool
         """
         super(VirtualMachineSchemaProperties, self).__init__(**kwargs)
-        self.virtual_machine_size = kwargs.get('virtual_machine_size', None)
-        self.ssh_port = kwargs.get('ssh_port', None)
-        self.notebook_server_port = kwargs.get('notebook_server_port', None)
-        self.address = kwargs.get('address', None)
-        self.administrator_account = kwargs.get('administrator_account', None)
-        self.is_notebook_instance_compute = kwargs.get('is_notebook_instance_compute', None)
+        self.virtual_machine_size = kwargs.get("virtual_machine_size", None)
+        self.ssh_port = kwargs.get("ssh_port", None)
+        self.notebook_server_port = kwargs.get("notebook_server_port", None)
+        self.address = kwargs.get("address", None)
+        self.administrator_account = kwargs.get("administrator_account", None)
+        self.is_notebook_instance_compute = kwargs.get(
+            "is_notebook_instance_compute", None
+        )
 
 
 class VirtualMachineSecretsSchema(msrest.serialization.Model):
@@ -14325,20 +13730,20 @@ class VirtualMachineSecretsSchema(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'administrator_account': {'key': 'administratorAccount', 'type': 'VirtualMachineSshCredentials'},
+        "administrator_account": {
+            "key": "administratorAccount",
+            "type": "VirtualMachineSshCredentials",
+        },
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword administrator_account: Admin credentials for virtual machine.
         :paramtype administrator_account:
          ~azure.mgmt.machinelearningservices.models.VirtualMachineSshCredentials
         """
         super(VirtualMachineSecretsSchema, self).__init__(**kwargs)
-        self.administrator_account = kwargs.get('administrator_account', None)
+        self.administrator_account = kwargs.get("administrator_account", None)
 
 
 class VirtualMachineSecrets(ComputeSecrets, VirtualMachineSecretsSchema):
@@ -14356,27 +13761,27 @@ class VirtualMachineSecrets(ComputeSecrets, VirtualMachineSecretsSchema):
     """
 
     _validation = {
-        'compute_type': {'required': True},
+        "compute_type": {"required": True},
     }
 
     _attribute_map = {
-        'administrator_account': {'key': 'administratorAccount', 'type': 'VirtualMachineSshCredentials'},
-        'compute_type': {'key': 'computeType', 'type': 'str'},
+        "administrator_account": {
+            "key": "administratorAccount",
+            "type": "VirtualMachineSshCredentials",
+        },
+        "compute_type": {"key": "computeType", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword administrator_account: Admin credentials for virtual machine.
         :paramtype administrator_account:
          ~azure.mgmt.machinelearningservices.models.VirtualMachineSshCredentials
         """
         super(VirtualMachineSecrets, self).__init__(**kwargs)
-        self.administrator_account = kwargs.get('administrator_account', None)
-        self.compute_type = 'VirtualMachine'  # type: str
-        self.compute_type = 'VirtualMachine'  # type: str
+        self.administrator_account = kwargs.get("administrator_account", None)
+        self.compute_type = "VirtualMachine"  # type: str
+        self.compute_type = "VirtualMachine"  # type: str
 
 
 class VirtualMachineSize(msrest.serialization.Model):
@@ -14411,35 +13816,35 @@ class VirtualMachineSize(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'family': {'readonly': True},
-        'v_cp_us': {'readonly': True},
-        'gpus': {'readonly': True},
-        'os_vhd_size_mb': {'readonly': True},
-        'max_resource_volume_mb': {'readonly': True},
-        'memory_gb': {'readonly': True},
-        'low_priority_capable': {'readonly': True},
-        'premium_io': {'readonly': True},
+        "name": {"readonly": True},
+        "family": {"readonly": True},
+        "v_cp_us": {"readonly": True},
+        "gpus": {"readonly": True},
+        "os_vhd_size_mb": {"readonly": True},
+        "max_resource_volume_mb": {"readonly": True},
+        "memory_gb": {"readonly": True},
+        "low_priority_capable": {"readonly": True},
+        "premium_io": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'family': {'key': 'family', 'type': 'str'},
-        'v_cp_us': {'key': 'vCPUs', 'type': 'int'},
-        'gpus': {'key': 'gpus', 'type': 'int'},
-        'os_vhd_size_mb': {'key': 'osVhdSizeMB', 'type': 'int'},
-        'max_resource_volume_mb': {'key': 'maxResourceVolumeMB', 'type': 'int'},
-        'memory_gb': {'key': 'memoryGB', 'type': 'float'},
-        'low_priority_capable': {'key': 'lowPriorityCapable', 'type': 'bool'},
-        'premium_io': {'key': 'premiumIO', 'type': 'bool'},
-        'estimated_vm_prices': {'key': 'estimatedVMPrices', 'type': 'EstimatedVMPrices'},
-        'supported_compute_types': {'key': 'supportedComputeTypes', 'type': '[str]'},
+        "name": {"key": "name", "type": "str"},
+        "family": {"key": "family", "type": "str"},
+        "v_cp_us": {"key": "vCPUs", "type": "int"},
+        "gpus": {"key": "gpus", "type": "int"},
+        "os_vhd_size_mb": {"key": "osVhdSizeMB", "type": "int"},
+        "max_resource_volume_mb": {"key": "maxResourceVolumeMB", "type": "int"},
+        "memory_gb": {"key": "memoryGB", "type": "float"},
+        "low_priority_capable": {"key": "lowPriorityCapable", "type": "bool"},
+        "premium_io": {"key": "premiumIO", "type": "bool"},
+        "estimated_vm_prices": {
+            "key": "estimatedVMPrices",
+            "type": "EstimatedVMPrices",
+        },
+        "supported_compute_types": {"key": "supportedComputeTypes", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword estimated_vm_prices: The estimated price information for using a VM.
         :paramtype estimated_vm_prices: ~azure.mgmt.machinelearningservices.models.EstimatedVMPrices
@@ -14457,8 +13862,8 @@ class VirtualMachineSize(msrest.serialization.Model):
         self.memory_gb = None
         self.low_priority_capable = None
         self.premium_io = None
-        self.estimated_vm_prices = kwargs.get('estimated_vm_prices', None)
-        self.supported_compute_types = kwargs.get('supported_compute_types', None)
+        self.estimated_vm_prices = kwargs.get("estimated_vm_prices", None)
+        self.supported_compute_types = kwargs.get("supported_compute_types", None)
 
 
 class VirtualMachineSizeListResult(msrest.serialization.Model):
@@ -14469,19 +13874,16 @@ class VirtualMachineSizeListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[VirtualMachineSize]'},
+        "value": {"key": "value", "type": "[VirtualMachineSize]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword value: The list of virtual machine sizes supported by AmlCompute.
         :paramtype value: list[~azure.mgmt.machinelearningservices.models.VirtualMachineSize]
         """
         super(VirtualMachineSizeListResult, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
+        self.value = kwargs.get("value", None)
 
 
 class VirtualMachineSshCredentials(msrest.serialization.Model):
@@ -14498,16 +13900,13 @@ class VirtualMachineSshCredentials(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'username': {'key': 'username', 'type': 'str'},
-        'password': {'key': 'password', 'type': 'str'},
-        'public_key_data': {'key': 'publicKeyData', 'type': 'str'},
-        'private_key_data': {'key': 'privateKeyData', 'type': 'str'},
+        "username": {"key": "username", "type": "str"},
+        "password": {"key": "password", "type": "str"},
+        "public_key_data": {"key": "publicKeyData", "type": "str"},
+        "private_key_data": {"key": "privateKeyData", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword username: Username of admin account.
         :paramtype username: str
@@ -14519,10 +13918,10 @@ class VirtualMachineSshCredentials(msrest.serialization.Model):
         :paramtype private_key_data: str
         """
         super(VirtualMachineSshCredentials, self).__init__(**kwargs)
-        self.username = kwargs.get('username', None)
-        self.password = kwargs.get('password', None)
-        self.public_key_data = kwargs.get('public_key_data', None)
-        self.private_key_data = kwargs.get('private_key_data', None)
+        self.username = kwargs.get("username", None)
+        self.password = kwargs.get("password", None)
+        self.public_key_data = kwargs.get("public_key_data", None)
+        self.private_key_data = kwargs.get("private_key_data", None)
 
 
 class Workspace(Resource):
@@ -14618,60 +14017,84 @@ class Workspace(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'workspace_id': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'service_provisioned_resource_group': {'readonly': True},
-        'private_link_count': {'readonly': True},
-        'private_endpoint_connections': {'readonly': True},
-        'notebook_info': {'readonly': True},
-        'tenant_id': {'readonly': True},
-        'storage_hns_enabled': {'readonly': True},
-        'ml_flow_tracking_uri': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "workspace_id": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "service_provisioned_resource_group": {"readonly": True},
+        "private_link_count": {"readonly": True},
+        "private_endpoint_connections": {"readonly": True},
+        "notebook_info": {"readonly": True},
+        "tenant_id": {"readonly": True},
+        "storage_hns_enabled": {"readonly": True},
+        "ml_flow_tracking_uri": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'identity': {'key': 'identity', 'type': 'ManagedServiceIdentity'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'sku': {'key': 'sku', 'type': 'Sku'},
-        'workspace_id': {'key': 'properties.workspaceId', 'type': 'str'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'friendly_name': {'key': 'properties.friendlyName', 'type': 'str'},
-        'key_vault': {'key': 'properties.keyVault', 'type': 'str'},
-        'application_insights': {'key': 'properties.applicationInsights', 'type': 'str'},
-        'container_registry': {'key': 'properties.containerRegistry', 'type': 'str'},
-        'storage_account': {'key': 'properties.storageAccount', 'type': 'str'},
-        'discovery_url': {'key': 'properties.discoveryUrl', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'encryption': {'key': 'properties.encryption', 'type': 'EncryptionProperty'},
-        'hbi_workspace': {'key': 'properties.hbiWorkspace', 'type': 'bool'},
-        'service_provisioned_resource_group': {'key': 'properties.serviceProvisionedResourceGroup', 'type': 'str'},
-        'private_link_count': {'key': 'properties.privateLinkCount', 'type': 'int'},
-        'image_build_compute': {'key': 'properties.imageBuildCompute', 'type': 'str'},
-        'allow_public_access_when_behind_vnet': {'key': 'properties.allowPublicAccessWhenBehindVnet', 'type': 'bool'},
-        'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
-        'private_endpoint_connections': {'key': 'properties.privateEndpointConnections', 'type': '[PrivateEndpointConnection]'},
-        'shared_private_link_resources': {'key': 'properties.sharedPrivateLinkResources', 'type': '[SharedPrivateLinkResource]'},
-        'notebook_info': {'key': 'properties.notebookInfo', 'type': 'NotebookResourceInfo'},
-        'service_managed_resources_settings': {'key': 'properties.serviceManagedResourcesSettings', 'type': 'ServiceManagedResourcesSettings'},
-        'primary_user_assigned_identity': {'key': 'properties.primaryUserAssignedIdentity', 'type': 'str'},
-        'tenant_id': {'key': 'properties.tenantId', 'type': 'str'},
-        'storage_hns_enabled': {'key': 'properties.storageHnsEnabled', 'type': 'bool'},
-        'ml_flow_tracking_uri': {'key': 'properties.mlFlowTrackingUri', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "identity": {"key": "identity", "type": "ManagedServiceIdentity"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "sku": {"key": "sku", "type": "Sku"},
+        "workspace_id": {"key": "properties.workspaceId", "type": "str"},
+        "description": {"key": "properties.description", "type": "str"},
+        "friendly_name": {"key": "properties.friendlyName", "type": "str"},
+        "key_vault": {"key": "properties.keyVault", "type": "str"},
+        "application_insights": {
+            "key": "properties.applicationInsights",
+            "type": "str",
+        },
+        "container_registry": {"key": "properties.containerRegistry", "type": "str"},
+        "storage_account": {"key": "properties.storageAccount", "type": "str"},
+        "discovery_url": {"key": "properties.discoveryUrl", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "encryption": {"key": "properties.encryption", "type": "EncryptionProperty"},
+        "hbi_workspace": {"key": "properties.hbiWorkspace", "type": "bool"},
+        "service_provisioned_resource_group": {
+            "key": "properties.serviceProvisionedResourceGroup",
+            "type": "str",
+        },
+        "private_link_count": {"key": "properties.privateLinkCount", "type": "int"},
+        "image_build_compute": {"key": "properties.imageBuildCompute", "type": "str"},
+        "allow_public_access_when_behind_vnet": {
+            "key": "properties.allowPublicAccessWhenBehindVnet",
+            "type": "bool",
+        },
+        "public_network_access": {
+            "key": "properties.publicNetworkAccess",
+            "type": "str",
+        },
+        "private_endpoint_connections": {
+            "key": "properties.privateEndpointConnections",
+            "type": "[PrivateEndpointConnection]",
+        },
+        "shared_private_link_resources": {
+            "key": "properties.sharedPrivateLinkResources",
+            "type": "[SharedPrivateLinkResource]",
+        },
+        "notebook_info": {
+            "key": "properties.notebookInfo",
+            "type": "NotebookResourceInfo",
+        },
+        "service_managed_resources_settings": {
+            "key": "properties.serviceManagedResourcesSettings",
+            "type": "ServiceManagedResourcesSettings",
+        },
+        "primary_user_assigned_identity": {
+            "key": "properties.primaryUserAssignedIdentity",
+            "type": "str",
+        },
+        "tenant_id": {"key": "properties.tenantId", "type": "str"},
+        "storage_hns_enabled": {"key": "properties.storageHnsEnabled", "type": "bool"},
+        "ml_flow_tracking_uri": {"key": "properties.mlFlowTrackingUri", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword identity: The identity of the resource.
         :paramtype identity: ~azure.mgmt.machinelearningservices.models.ManagedServiceIdentity
@@ -14725,31 +14148,39 @@ class Workspace(Resource):
         :paramtype primary_user_assigned_identity: str
         """
         super(Workspace, self).__init__(**kwargs)
-        self.identity = kwargs.get('identity', None)
-        self.location = kwargs.get('location', None)
-        self.tags = kwargs.get('tags', None)
-        self.sku = kwargs.get('sku', None)
+        self.identity = kwargs.get("identity", None)
+        self.location = kwargs.get("location", None)
+        self.tags = kwargs.get("tags", None)
+        self.sku = kwargs.get("sku", None)
         self.workspace_id = None
-        self.description = kwargs.get('description', None)
-        self.friendly_name = kwargs.get('friendly_name', None)
-        self.key_vault = kwargs.get('key_vault', None)
-        self.application_insights = kwargs.get('application_insights', None)
-        self.container_registry = kwargs.get('container_registry', None)
-        self.storage_account = kwargs.get('storage_account', None)
-        self.discovery_url = kwargs.get('discovery_url', None)
+        self.description = kwargs.get("description", None)
+        self.friendly_name = kwargs.get("friendly_name", None)
+        self.key_vault = kwargs.get("key_vault", None)
+        self.application_insights = kwargs.get("application_insights", None)
+        self.container_registry = kwargs.get("container_registry", None)
+        self.storage_account = kwargs.get("storage_account", None)
+        self.discovery_url = kwargs.get("discovery_url", None)
         self.provisioning_state = None
-        self.encryption = kwargs.get('encryption', None)
-        self.hbi_workspace = kwargs.get('hbi_workspace', False)
+        self.encryption = kwargs.get("encryption", None)
+        self.hbi_workspace = kwargs.get("hbi_workspace", False)
         self.service_provisioned_resource_group = None
         self.private_link_count = None
-        self.image_build_compute = kwargs.get('image_build_compute', None)
-        self.allow_public_access_when_behind_vnet = kwargs.get('allow_public_access_when_behind_vnet', False)
-        self.public_network_access = kwargs.get('public_network_access', None)
+        self.image_build_compute = kwargs.get("image_build_compute", None)
+        self.allow_public_access_when_behind_vnet = kwargs.get(
+            "allow_public_access_when_behind_vnet", False
+        )
+        self.public_network_access = kwargs.get("public_network_access", None)
         self.private_endpoint_connections = None
-        self.shared_private_link_resources = kwargs.get('shared_private_link_resources', None)
+        self.shared_private_link_resources = kwargs.get(
+            "shared_private_link_resources", None
+        )
         self.notebook_info = None
-        self.service_managed_resources_settings = kwargs.get('service_managed_resources_settings', None)
-        self.primary_user_assigned_identity = kwargs.get('primary_user_assigned_identity', None)
+        self.service_managed_resources_settings = kwargs.get(
+            "service_managed_resources_settings", None
+        )
+        self.primary_user_assigned_identity = kwargs.get(
+            "primary_user_assigned_identity", None
+        )
         self.tenant_id = None
         self.storage_hns_enabled = None
         self.ml_flow_tracking_uri = None
@@ -14765,14 +14196,11 @@ class WorkspaceConnectionManagedIdentity(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'resource_id': {'key': 'resourceId', 'type': 'str'},
-        'client_id': {'key': 'clientId', 'type': 'str'},
+        "resource_id": {"key": "resourceId", "type": "str"},
+        "client_id": {"key": "clientId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword resource_id:
         :paramtype resource_id: str
@@ -14780,8 +14208,8 @@ class WorkspaceConnectionManagedIdentity(msrest.serialization.Model):
         :paramtype client_id: str
         """
         super(WorkspaceConnectionManagedIdentity, self).__init__(**kwargs)
-        self.resource_id = kwargs.get('resource_id', None)
-        self.client_id = kwargs.get('client_id', None)
+        self.resource_id = kwargs.get("resource_id", None)
+        self.client_id = kwargs.get("client_id", None)
 
 
 class WorkspaceConnectionPersonalAccessToken(msrest.serialization.Model):
@@ -14792,19 +14220,16 @@ class WorkspaceConnectionPersonalAccessToken(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'pat': {'key': 'pat', 'type': 'str'},
+        "pat": {"key": "pat", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword pat:
         :paramtype pat: str
         """
         super(WorkspaceConnectionPersonalAccessToken, self).__init__(**kwargs)
-        self.pat = kwargs.get('pat', None)
+        self.pat = kwargs.get("pat", None)
 
 
 class WorkspaceConnectionPropertiesV2BasicResource(Resource):
@@ -14830,35 +14255,34 @@ class WorkspaceConnectionPropertiesV2BasicResource(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'properties': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "properties": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'properties': {'key': 'properties', 'type': 'WorkspaceConnectionPropertiesV2'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "properties": {"key": "properties", "type": "WorkspaceConnectionPropertiesV2"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword properties: Required.
         :paramtype properties:
          ~azure.mgmt.machinelearningservices.models.WorkspaceConnectionPropertiesV2
         """
         super(WorkspaceConnectionPropertiesV2BasicResource, self).__init__(**kwargs)
-        self.properties = kwargs['properties']
+        self.properties = kwargs["properties"]
 
 
-class WorkspaceConnectionPropertiesV2BasicResourceArmPaginatedResult(msrest.serialization.Model):
+class WorkspaceConnectionPropertiesV2BasicResourceArmPaginatedResult(
+    msrest.serialization.Model
+):
     """WorkspaceConnectionPropertiesV2BasicResourceArmPaginatedResult.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -14871,25 +14295,27 @@ class WorkspaceConnectionPropertiesV2BasicResourceArmPaginatedResult(msrest.seri
     """
 
     _validation = {
-        'next_link': {'readonly': True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[WorkspaceConnectionPropertiesV2BasicResource]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {
+            "key": "value",
+            "type": "[WorkspaceConnectionPropertiesV2BasicResource]",
+        },
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword value:
         :paramtype value:
          list[~azure.mgmt.machinelearningservices.models.WorkspaceConnectionPropertiesV2BasicResource]
         """
-        super(WorkspaceConnectionPropertiesV2BasicResourceArmPaginatedResult, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
+        super(
+            WorkspaceConnectionPropertiesV2BasicResourceArmPaginatedResult, self
+        ).__init__(**kwargs)
+        self.value = kwargs.get("value", None)
         self.next_link = None
 
 
@@ -14901,19 +14327,16 @@ class WorkspaceConnectionSharedAccessSignature(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'sas': {'key': 'sas', 'type': 'str'},
+        "sas": {"key": "sas", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword sas:
         :paramtype sas: str
         """
         super(WorkspaceConnectionSharedAccessSignature, self).__init__(**kwargs)
-        self.sas = kwargs.get('sas', None)
+        self.sas = kwargs.get("sas", None)
 
 
 class WorkspaceConnectionUsernamePassword(msrest.serialization.Model):
@@ -14926,14 +14349,11 @@ class WorkspaceConnectionUsernamePassword(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'username': {'key': 'username', 'type': 'str'},
-        'password': {'key': 'password', 'type': 'str'},
+        "username": {"key": "username", "type": "str"},
+        "password": {"key": "password", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword username:
         :paramtype username: str
@@ -14941,8 +14361,8 @@ class WorkspaceConnectionUsernamePassword(msrest.serialization.Model):
         :paramtype password: str
         """
         super(WorkspaceConnectionUsernamePassword, self).__init__(**kwargs)
-        self.username = kwargs.get('username', None)
-        self.password = kwargs.get('password', None)
+        self.username = kwargs.get("username", None)
+        self.password = kwargs.get("password", None)
 
 
 class WorkspaceListResult(msrest.serialization.Model):
@@ -14957,14 +14377,11 @@ class WorkspaceListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Workspace]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Workspace]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword value: The list of machine learning workspaces. Since this list may be incomplete, the
          nextLink field should be used to request the next list of machine learning workspaces.
@@ -14974,8 +14391,8 @@ class WorkspaceListResult(msrest.serialization.Model):
         :paramtype next_link: str
         """
         super(WorkspaceListResult, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
-        self.next_link = kwargs.get('next_link', None)
+        self.value = kwargs.get("value", None)
+        self.next_link = kwargs.get("next_link", None)
 
 
 class WorkspaceUpdateParameters(msrest.serialization.Model):
@@ -15010,23 +14427,32 @@ class WorkspaceUpdateParameters(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'sku': {'key': 'sku', 'type': 'Sku'},
-        'identity': {'key': 'identity', 'type': 'ManagedServiceIdentity'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'friendly_name': {'key': 'properties.friendlyName', 'type': 'str'},
-        'image_build_compute': {'key': 'properties.imageBuildCompute', 'type': 'str'},
-        'service_managed_resources_settings': {'key': 'properties.serviceManagedResourcesSettings', 'type': 'ServiceManagedResourcesSettings'},
-        'primary_user_assigned_identity': {'key': 'properties.primaryUserAssignedIdentity', 'type': 'str'},
-        'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
-        'application_insights': {'key': 'properties.applicationInsights', 'type': 'str'},
-        'container_registry': {'key': 'properties.containerRegistry', 'type': 'str'},
+        "tags": {"key": "tags", "type": "{str}"},
+        "sku": {"key": "sku", "type": "Sku"},
+        "identity": {"key": "identity", "type": "ManagedServiceIdentity"},
+        "description": {"key": "properties.description", "type": "str"},
+        "friendly_name": {"key": "properties.friendlyName", "type": "str"},
+        "image_build_compute": {"key": "properties.imageBuildCompute", "type": "str"},
+        "service_managed_resources_settings": {
+            "key": "properties.serviceManagedResourcesSettings",
+            "type": "ServiceManagedResourcesSettings",
+        },
+        "primary_user_assigned_identity": {
+            "key": "properties.primaryUserAssignedIdentity",
+            "type": "str",
+        },
+        "public_network_access": {
+            "key": "properties.publicNetworkAccess",
+            "type": "str",
+        },
+        "application_insights": {
+            "key": "properties.applicationInsights",
+            "type": "str",
+        },
+        "container_registry": {"key": "properties.containerRegistry", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword tags: A set of tags. The resource tags for the machine learning workspace.
         :paramtype tags: dict[str, str]
@@ -15057,14 +14483,18 @@ class WorkspaceUpdateParameters(msrest.serialization.Model):
         :paramtype container_registry: str
         """
         super(WorkspaceUpdateParameters, self).__init__(**kwargs)
-        self.tags = kwargs.get('tags', None)
-        self.sku = kwargs.get('sku', None)
-        self.identity = kwargs.get('identity', None)
-        self.description = kwargs.get('description', None)
-        self.friendly_name = kwargs.get('friendly_name', None)
-        self.image_build_compute = kwargs.get('image_build_compute', None)
-        self.service_managed_resources_settings = kwargs.get('service_managed_resources_settings', None)
-        self.primary_user_assigned_identity = kwargs.get('primary_user_assigned_identity', None)
-        self.public_network_access = kwargs.get('public_network_access', None)
-        self.application_insights = kwargs.get('application_insights', None)
-        self.container_registry = kwargs.get('container_registry', None)
+        self.tags = kwargs.get("tags", None)
+        self.sku = kwargs.get("sku", None)
+        self.identity = kwargs.get("identity", None)
+        self.description = kwargs.get("description", None)
+        self.friendly_name = kwargs.get("friendly_name", None)
+        self.image_build_compute = kwargs.get("image_build_compute", None)
+        self.service_managed_resources_settings = kwargs.get(
+            "service_managed_resources_settings", None
+        )
+        self.primary_user_assigned_identity = kwargs.get(
+            "primary_user_assigned_identity", None
+        )
+        self.public_network_access = kwargs.get("public_network_access", None)
+        self.application_insights = kwargs.get("application_insights", None)
+        self.container_registry = kwargs.get("container_registry", None)

@@ -151,7 +151,9 @@ def classification(
         test_data=test_data,
         test_data_size=test_data_size,
     )
-    classification_job.set_training(enable_model_explainability=enable_model_explainability)
+    classification_job.set_training(
+        enable_model_explainability=enable_model_explainability
+    )
 
     return classification_job
 

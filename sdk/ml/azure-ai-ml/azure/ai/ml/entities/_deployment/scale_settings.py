@@ -8,13 +8,21 @@ import logging
 from abc import abstractmethod
 from typing import Optional
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import DefaultScaleSettings as RestDefaultScaleSettings
-from azure.ai.ml._restclient.v2023_04_01_preview.models import OnlineScaleSettings as RestOnlineScaleSettings
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    DefaultScaleSettings as RestDefaultScaleSettings,
+)
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    OnlineScaleSettings as RestOnlineScaleSettings,
+)
 from azure.ai.ml._restclient.v2023_04_01_preview.models import ScaleType
 from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     TargetUtilizationScaleSettings as RestTargetUtilizationScaleSettings,
 )
-from azure.ai.ml._utils.utils import camel_to_snake, from_iso_duration_format, to_iso_duration_format
+from azure.ai.ml._utils.utils import (
+    camel_to_snake,
+    from_iso_duration_format,
+    to_iso_duration_format,
+)
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 from azure.ai.ml.exceptions import DeploymentException, ErrorCategory, ErrorTarget
 
@@ -77,7 +85,9 @@ class DefaultScaleSettings(OnlineScaleSettings):
         return RestDefaultScaleSettings()
 
     @classmethod
-    def _from_rest_object(cls, settings: RestDefaultScaleSettings) -> "DefaultScaleSettings":
+    def _from_rest_object(
+        cls, settings: RestDefaultScaleSettings
+    ) -> "DefaultScaleSettings":
         return DefaultScaleSettings()
 
     def __eq__(self, other: object) -> bool:
@@ -140,11 +150,14 @@ class TargetUtilizationScaleSettings(OnlineScaleSettings):
             self.max_instances = other.max_instances or self.max_instances
             self.polling_interval = other.polling_interval or self.polling_interval
             self.target_utilization_percentage = (
-                other.target_utilization_percentage or self.target_utilization_percentage
+                other.target_utilization_percentage
+                or self.target_utilization_percentage
             )
 
     @classmethod
-    def _from_rest_object(cls, settings: RestTargetUtilizationScaleSettings) -> "TargetUtilizationScaleSettings":
+    def _from_rest_object(
+        cls, settings: RestTargetUtilizationScaleSettings
+    ) -> "TargetUtilizationScaleSettings":
         return cls(
             min_instances=settings.min_instances,
             max_instances=settings.max_instances,
@@ -163,7 +176,8 @@ class TargetUtilizationScaleSettings(OnlineScaleSettings):
             and self.min_instances == other.min_instances
             and self.max_instances == other.max_instances
             and self.polling_interval == other.polling_interval
-            and self.target_utilization_percentage == other.target_utilization_percentage
+            and self.target_utilization_percentage
+            == other.target_utilization_percentage
         )
 
     def __ne__(self, other: object) -> bool:

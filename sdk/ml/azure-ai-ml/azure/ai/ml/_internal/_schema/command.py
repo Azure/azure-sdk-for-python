@@ -12,7 +12,10 @@ from .._schema.node import InternalBaseNodeSchema, NodeType
 
 class CommandSchema(InternalBaseNodeSchema, ParameterizedCommandSchema):
     class Meta:
-        exclude = ["code", "distribution"]  # internal command doesn't have code & distribution
+        exclude = [
+            "code",
+            "distribution",
+        ]  # internal command doesn't have code & distribution
 
     environment = EnvironmentField()
     type = DumpableEnumField(allowed_values=[NodeType.COMMAND])

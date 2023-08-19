@@ -9,7 +9,13 @@ module_logger = logging.getLogger(__name__)
 
 
 class InputPort:
-    def __init__(self, *, type_string: str, default: Optional[str] = None, optional: Optional[bool] = False):
+    def __init__(
+        self,
+        *,
+        type_string: str,
+        default: Optional[str] = None,
+        optional: Optional[bool] = False
+    ):
         self.type_string = type_string
         self.optional = optional
         if self.type_string == "number" and default is not None:

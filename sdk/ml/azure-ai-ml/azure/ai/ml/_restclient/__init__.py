@@ -7,10 +7,12 @@
 # --------------------------------------------------------------------------
 
 from ._azure_machine_learning_workspaces import AzureMachineLearningWorkspaces
-__all__ = ['AzureMachineLearningWorkspaces']
+
+__all__ = ["AzureMachineLearningWorkspaces"]
 
 try:
     from ._patch import patch_sdk  # type: ignore
+
     patch_sdk()
 except ImportError:
     pass

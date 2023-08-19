@@ -59,7 +59,11 @@ def get_model_artifacts(
 
 
 def _local_model_is_valid(deployment: OnlineDeployment):
-    return deployment.model and isinstance(deployment.model, Model) and deployment.model.path
+    return (
+        deployment.model
+        and isinstance(deployment.model, Model)
+        and deployment.model.path
+    )
 
 
 def _model_contains_cloud_artifacts(deployment: OnlineDeployment):
@@ -67,7 +71,9 @@ def _model_contains_cloud_artifacts(deployment: OnlineDeployment):
     return isinstance(deployment.model, str) or deployment.model.id is not None
 
 
-def _get_cloud_model_artifacts(model_operations: ModelOperations, model: str, download_path: str) -> str:
+def _get_cloud_model_artifacts(
+    model_operations: ModelOperations, model: str, download_path: str
+) -> str:
     if isinstance(model, Model):
         name = model.name
         version = model._version

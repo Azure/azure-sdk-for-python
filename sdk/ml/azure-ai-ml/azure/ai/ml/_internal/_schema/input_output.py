@@ -36,7 +36,9 @@ class InternalInputPortSchema(InputPortSchema):
     datastore_mode = fields.Str()
 
     @post_dump(pass_original=True)
-    def resolve_list_type(self, data, original_data, **kwargs):  # pylint: disable=unused-argument
+    def resolve_list_type(
+        self, data, original_data, **kwargs
+    ):  # pylint: disable=unused-argument
         if isinstance(original_data.type, list):
             data["type"] = original_data.type
         return data

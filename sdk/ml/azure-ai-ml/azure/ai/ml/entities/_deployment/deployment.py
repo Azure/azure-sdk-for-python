@@ -126,10 +126,14 @@ class Deployment(Resource, RestTranslatableMixin):
         self.model = model
         self.code_configuration = code_configuration
         if not self.code_configuration and (code_path or scoring_script):
-            self.code_configuration = CodeConfiguration(code=code_path, scoring_script=scoring_script)
+            self.code_configuration = CodeConfiguration(
+                code=code_path, scoring_script=scoring_script
+            )
 
         self.environment = environment
-        self.environment_variables = dict(environment_variables) if environment_variables else {}
+        self.environment_variables = (
+            dict(environment_variables) if environment_variables else {}
+        )
 
     @property
     def type(self) -> str:
@@ -137,7 +141,11 @@ class Deployment(Resource, RestTranslatableMixin):
 
     @property
     def code_path(self) -> Union[str, PathLike]:
-        return self.code_configuration.code if self.code_configuration and self.code_configuration.code else None
+        return (
+            self.code_configuration.code
+            if self.code_configuration and self.code_configuration.code
+            else None
+        )
 
     @code_path.setter
     def code_path(self, value: Union[str, PathLike]) -> None:
@@ -148,7 +156,9 @@ class Deployment(Resource, RestTranslatableMixin):
 
     @property
     def scoring_script(self) -> Union[str, PathLike]:
-        return self.code_configuration.scoring_script if self.code_configuration else None
+        return (
+            self.code_configuration.scoring_script if self.code_configuration else None
+        )
 
     @scoring_script.setter
     def scoring_script(self, value: Union[str, PathLike]) -> None:
@@ -170,14 +180,18 @@ class Deployment(Resource, RestTranslatableMixin):
         """
         path = kwargs.pop("path", None)
         yaml_serialized = self._to_dict()
-        dump_yaml_to_file(dest, yaml_serialized, default_flow_style=False, path=path, **kwargs)
+        dump_yaml_to_file(
+            dest, yaml_serialized, default_flow_style=False, path=path, **kwargs
+        )
 
     @abstractmethod
     def _to_dict(self) -> Dict:
         pass
 
     @classmethod
-    def _from_rest_object(cls, deployment_rest_object: Union[OnlineDeploymentData, BatchDeploymentData]):
+    def _from_rest_object(
+        cls, deployment_rest_object: Union[OnlineDeploymentData, BatchDeploymentData]
+    ):
         from azure.ai.ml.entities._deployment.batch_deployment import BatchDeployment
         from azure.ai.ml.entities._deployment.online_deployment import OnlineDeployment
 
@@ -217,7 +231,9 @@ class Deployment(Resource, RestTranslatableMixin):
                     **self.environment_variables,
                     **other.environment_variables,
                 }
-            self.code_configuration = other.code_configuration or self.code_configuration
+            self.code_configuration = (
+                other.code_configuration or self.code_configuration
+            )
             self.model = other.model or self.model
             self.environment = other.environment or self.environment
             self.endpoint_name = other.endpoint_name or self.endpoint_name

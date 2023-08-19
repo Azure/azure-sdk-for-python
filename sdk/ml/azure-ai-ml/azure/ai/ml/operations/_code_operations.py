@@ -23,9 +23,17 @@ from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
     AzureMachineLearningWorkspaces as ServiceClient102021Dataplane,
 )
-from azure.ai.ml._restclient.v2022_10_01_preview import AzureMachineLearningWorkspaces as ServiceClient102022
-from azure.ai.ml._restclient.v2023_04_01 import AzureMachineLearningWorkspaces as ServiceClient042023
-from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope, _ScopeDependentOperations
+from azure.ai.ml._restclient.v2022_10_01_preview import (
+    AzureMachineLearningWorkspaces as ServiceClient102022,
+)
+from azure.ai.ml._restclient.v2023_04_01 import (
+    AzureMachineLearningWorkspaces as ServiceClient042023,
+)
+from azure.ai.ml._scope_dependent_operations import (
+    OperationConfig,
+    OperationScope,
+    _ScopeDependentOperations,
+)
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._asset_utils import (
     _get_existing_asset_name_and_version,
@@ -33,7 +41,10 @@ from azure.ai.ml._utils._asset_utils import (
     get_storage_info_for_non_registry_asset,
 )
 from azure.ai.ml._utils._logger_utils import OpsLogger
-from azure.ai.ml._utils._registry_utils import get_asset_body_for_registry_storage, get_sas_uri_for_registry_asset
+from azure.ai.ml._utils._registry_utils import (
+    get_asset_body_for_registry_storage,
+    get_sas_uri_for_registry_asset,
+)
 from azure.ai.ml._utils._storage_utils import get_storage_client
 from azure.ai.ml.entities._assets import Code
 from azure.ai.ml.exceptions import (
@@ -64,7 +75,9 @@ class CodeOperations(_ScopeDependentOperations):
         self,
         operation_scope: OperationScope,
         operation_config: OperationConfig,
-        service_client: Union[ServiceClient102022, ServiceClient102021Dataplane, ServiceClient042023],
+        service_client: Union[
+            ServiceClient102022, ServiceClient102021Dataplane, ServiceClient042023
+        ],
         datastore_operations: DatastoreOperations,
         **kwargs: Dict,
     ):
@@ -105,7 +118,9 @@ class CodeOperations(_ScopeDependentOperations):
                     version=version,
                     resource_group=self._resource_group_name,
                     registry=self._registry_name,
-                    body=get_asset_body_for_registry_storage(self._registry_name, "codes", name, version),
+                    body=get_asset_body_for_registry_storage(
+                        self._registry_name, "codes", name, version
+                    ),
                 )
             else:
                 snapshot_path_info = _get_snapshot_path_info(code)
@@ -123,7 +138,9 @@ class CodeOperations(_ScopeDependentOperations):
 
                     if len(existing_assets) > 0:
                         existing_asset = existing_assets[0]
-                        name, version = _get_existing_asset_name_and_version(existing_asset)
+                        name, version = _get_existing_asset_name_and_version(
+                            existing_asset
+                        )
                         return self.get(name=name, version=version)
                     sas_info = get_storage_info_for_non_registry_asset(
                         service_client=self._service_client,
@@ -206,7 +223,9 @@ class CodeOperations(_ScopeDependentOperations):
 
     # this is a public API but CodeOperations is hidden, so it may only monitor internal calls
     @monitor_with_activity(logger, "Code.Download", ActivityType.PUBLICAPI)
-    def download(self, name: str, version: str, download_path: Union[PathLike, str]) -> None:
+    def download(
+        self, name: str, version: str, download_path: Union[PathLike, str]
+    ) -> None:
         """Download content of a code.
 
         :param str name: Name of the code.

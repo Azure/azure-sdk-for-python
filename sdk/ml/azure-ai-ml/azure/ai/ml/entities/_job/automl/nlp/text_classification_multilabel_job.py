@@ -6,8 +6,14 @@
 
 from typing import Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import AutoMLJob as RestAutoMLJob
-from azure.ai.ml._restclient.v2023_04_01_preview.models import ClassificationMultilabelPrimaryMetrics, JobBase, TaskType
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    AutoMLJob as RestAutoMLJob,
+)
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    ClassificationMultilabelPrimaryMetrics,
+    JobBase,
+    TaskType,
+)
 from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     TextClassificationMultilabel as RestTextClassificationMultilabel,
 )
@@ -16,9 +22,14 @@ from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 from azure.ai.ml.constants._job.automl import AutoMLConstants
 from azure.ai.ml.entities._credentials import _BaseJobIdentityConfiguration
 from azure.ai.ml.entities._inputs_outputs import Input
-from azure.ai.ml.entities._job._input_output_helpers import from_rest_data_outputs, to_rest_data_outputs
+from azure.ai.ml.entities._job._input_output_helpers import (
+    from_rest_data_outputs,
+    to_rest_data_outputs,
+)
 from azure.ai.ml.entities._job.automl.nlp.automl_nlp_job import AutoMLNLPJob
-from azure.ai.ml.entities._job.automl.nlp.nlp_featurization_settings import NlpFeaturizationSettings
+from azure.ai.ml.entities._job.automl.nlp.nlp_featurization_settings import (
+    NlpFeaturizationSettings,
+)
 from azure.ai.ml.entities._job.automl.nlp.nlp_fixed_parameters import NlpFixedParameters
 from azure.ai.ml.entities._job.automl.nlp.nlp_limit_settings import NlpLimitSettings
 from azure.ai.ml.entities._job.automl.nlp.nlp_sweep_settings import NlpSweepSettings
@@ -52,7 +63,8 @@ class TextClassificationMultilabelJob(AutoMLNLPJob):
         """
         super().__init__(
             task_type=TaskType.TEXT_CLASSIFICATION_MULTILABEL,
-            primary_metric=primary_metric or TextClassificationMultilabelJob._DEFAULT_PRIMARY_METRIC,
+            primary_metric=primary_metric
+            or TextClassificationMultilabelJob._DEFAULT_PRIMARY_METRIC,
             target_column_name=target_column_name,
             training_data=training_data,
             validation_data=validation_data,
@@ -79,13 +91,21 @@ class TextClassificationMultilabelJob(AutoMLNLPJob):
             validation_data=self.validation_data,
             limit_settings=self._limits._to_rest_object() if self._limits else None,
             sweep_settings=self._sweep._to_rest_object() if self._sweep else None,
-            fixed_parameters=self._training_parameters._to_rest_object() if self._training_parameters else None,
+            fixed_parameters=self._training_parameters._to_rest_object()
+            if self._training_parameters
+            else None,
             search_space=(
-                [entry._to_rest_object() for entry in self._search_space if entry is not None]
+                [
+                    entry._to_rest_object()
+                    for entry in self._search_space
+                    if entry is not None
+                ]
                 if self._search_space is not None
                 else None
             ),
-            featurization_settings=self._featurization._to_rest_object() if self._featurization else None,
+            featurization_settings=self._featurization._to_rest_object()
+            if self._featurization
+            else None,
             primary_metric=self.primary_metric,
             log_verbosity=self.log_verbosity,
         )
@@ -119,14 +139,22 @@ class TextClassificationMultilabelJob(AutoMLNLPJob):
         task_details: RestTextClassificationMultilabel = properties.task_details
         assert isinstance(task_details, RestTextClassificationMultilabel)
         limits = (
-            NlpLimitSettings._from_rest_object(task_details.limit_settings) if task_details.limit_settings else None
+            NlpLimitSettings._from_rest_object(task_details.limit_settings)
+            if task_details.limit_settings
+            else None
         )
         featurization = (
-            NlpFeaturizationSettings._from_rest_object(task_details.featurization_settings)
+            NlpFeaturizationSettings._from_rest_object(
+                task_details.featurization_settings
+            )
             if task_details.featurization_settings
             else None
         )
-        sweep = NlpSweepSettings._from_rest_object(task_details.sweep_settings) if task_details.sweep_settings else None
+        sweep = (
+            NlpSweepSettings._from_rest_object(task_details.sweep_settings)
+            if task_details.sweep_settings
+            else None
+        )
         training_parameters = (
             NlpFixedParameters._from_rest_object(task_details.fixed_parameters)
             if task_details.fixed_parameters
@@ -143,7 +171,9 @@ class TextClassificationMultilabelJob(AutoMLNLPJob):
             experiment_name=properties.experiment_name,
             services=properties.services,
             status=properties.status,
-            creation_context=SystemData._from_rest_object(obj.system_data) if obj.system_data else None,
+            creation_context=SystemData._from_rest_object(obj.system_data)
+            if obj.system_data
+            else None,
             display_name=properties.display_name,
             compute=properties.compute_id,
             outputs=from_rest_data_outputs(properties.outputs),
@@ -159,7 +189,9 @@ class TextClassificationMultilabelJob(AutoMLNLPJob):
             training_parameters=training_parameters,
             search_space=cls._get_search_space_from_str(task_details.search_space),
             featurization=featurization,
-            identity=_BaseJobIdentityConfiguration._from_rest_object(properties.identity)
+            identity=_BaseJobIdentityConfiguration._from_rest_object(
+                properties.identity
+            )
             if properties.identity
             else None,
             queue_settings=properties.queue_settings,
@@ -181,7 +213,9 @@ class TextClassificationMultilabelJob(AutoMLNLPJob):
         )
 
         if kwargs.pop("inside_pipeline", False):
-            from azure.ai.ml._schema.pipeline.automl_node import AutoMLTextClassificationMultilabelNode
+            from azure.ai.ml._schema.pipeline.automl_node import (
+                AutoMLTextClassificationMultilabelNode,
+            )
 
             loaded_data = load_from_dict(
                 AutoMLTextClassificationMultilabelNode,
@@ -202,20 +236,30 @@ class TextClassificationMultilabelJob(AutoMLNLPJob):
         return job_instance
 
     @classmethod
-    def _create_instance_from_schema_dict(cls, loaded_data: Dict) -> "TextClassificationMultilabelJob":
+    def _create_instance_from_schema_dict(
+        cls, loaded_data: Dict
+    ) -> "TextClassificationMultilabelJob":
         loaded_data.pop(AutoMLConstants.TASK_TYPE_YAML, None)
         return TextClassificationMultilabelJob(**loaded_data)
 
-    def _to_dict(self, inside_pipeline=False) -> Dict:  # pylint: disable=arguments-differ
+    def _to_dict(
+        self, inside_pipeline=False
+    ) -> Dict:  # pylint: disable=arguments-differ
         from azure.ai.ml._schema.automl.nlp_vertical.text_classification_multilabel import (
             TextClassificationMultilabelSchema,
         )
-        from azure.ai.ml._schema.pipeline.automl_node import AutoMLTextClassificationMultilabelNode
+        from azure.ai.ml._schema.pipeline.automl_node import (
+            AutoMLTextClassificationMultilabelNode,
+        )
 
         if inside_pipeline:
-            return AutoMLTextClassificationMultilabelNode(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+            return AutoMLTextClassificationMultilabelNode(
+                context={BASE_PATH_CONTEXT_KEY: "./"}
+            ).dump(self)
 
-        return TextClassificationMultilabelSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        return TextClassificationMultilabelSchema(
+            context={BASE_PATH_CONTEXT_KEY: "./"}
+        ).dump(self)
 
     def __eq__(self, other):
         if not isinstance(other, TextClassificationMultilabelJob):

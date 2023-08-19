@@ -43,7 +43,9 @@ def _enable_internal_components():
         )
     component_factory.register_type(
         _type=NodeType.SPARK,
-        create_instance_func=lambda: InternalSparkComponent.__new__(InternalSparkComponent),
+        create_instance_func=lambda: InternalSparkComponent.__new__(
+            InternalSparkComponent
+        ),
         create_schema_func=InternalSparkComponent._create_schema_for_validation,
     )
 
