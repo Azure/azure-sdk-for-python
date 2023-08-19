@@ -5,14 +5,14 @@
 """Entrypoints for creating AutoML tasks."""
 from typing import List, Optional, Union
 
-from azure.ai.ml.entities._builders.base_node import pipeline_node_decorator
-from azure.ai.ml.entities._inputs_outputs import Input
-from azure.ai.ml.entities._job.automl.tabular import (
+from azure.ai.ml.automl import (
     ClassificationJob,
     ForecastingJob,
     ForecastingSettings,
     RegressionJob,
 )
+from azure.ai.ml.entities._builders.base_node import pipeline_node_decorator
+from azure.ai.ml.entities._inputs_outputs import Input
 
 
 @pipeline_node_decorator
