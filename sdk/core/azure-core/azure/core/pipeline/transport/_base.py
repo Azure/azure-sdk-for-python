@@ -24,13 +24,12 @@
 #
 # --------------------------------------------------------------------------
 import abc
-from contextlib import AbstractContextManager
 from email.message import Message
 import json
 import logging
 import time
 import copy
-from urllib.parse import urlparse, quote
+from urllib.parse import urlparse
 import xml.etree.ElementTree as ET
 
 from typing import (
@@ -48,6 +47,7 @@ from typing import (
     List,
     Sequence,
     MutableMapping,
+    ContextManager,
 )
 
 from http.client import HTTPResponse as _HTTPResponse
@@ -129,7 +129,7 @@ def _urljoin(base_url: str, stub_url: str) -> str:
     return parsed_base_url.geturl()
 
 
-class HttpTransport(AbstractContextManager, abc.ABC, Generic[HTTPRequestType, HTTPResponseType]):
+class HttpTransport(ContextManager["HttpTransport"], abc.ABC, Generic[HTTPRequestType, HTTPResponseType]):
     """An http sender ABC."""
 
     @abc.abstractmethod
@@ -410,7 +410,11 @@ class _HttpResponseBase:
     ) -> None:
         self.request: HttpRequest = request
         self.internal_response = internal_response
-        self.status_code: Optional[int] = None
+        # This is actually never None, and set by all implementations after the call to
+        # __init__ of this class. This class is also a legacy impl, so it's risky to change it
+        # for low benefits The new "rest" implementation does define correctly status_code
+        # as non-optional.
+        self.status_code: int = None  # type: ignore
         self.headers: MutableMapping[str, str] = {}
         self.reason: Optional[str] = None
         self.content_type: Optional[str] = None
@@ -591,8 +595,7 @@ class PipelineClientBase:
         :return: An HttpRequest object
         :rtype: ~azure.core.pipeline.transport.HttpRequest
         """
-        encoded_url = url.replace("{", quote("{")).replace("}", quote("}"))
-        request = HttpRequest(method, self.format_url(encoded_url))
+        request = HttpRequest(method, self.format_url(url))
 
         if params:
             request.format_parameters(params)

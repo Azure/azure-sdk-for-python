@@ -1,7 +1,6 @@
 from unittest.mock import DEFAULT, Mock, patch
 
 import pytest
-from azure.core.polling import LROPoller
 from pytest_mock import MockFixture
 
 from azure.ai.ml._restclient.v2023_06_01_preview.models import (
@@ -11,8 +10,15 @@ from azure.ai.ml._restclient.v2023_06_01_preview.models import (
 from azure.ai.ml._scope_dependent_operations import OperationScope
 from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml.constants import ManagedServiceIdentityType
-from azure.ai.ml.entities import CustomerManagedKey, IdentityConfiguration, ManagedIdentityConfiguration, Workspace
+from azure.ai.ml.entities import (
+    CustomerManagedKey,
+    FeatureStore,
+    IdentityConfiguration,
+    ManagedIdentityConfiguration,
+    Workspace,
+)
 from azure.ai.ml.operations._workspace_operations_base import WorkspaceOperationsBase
+from azure.core.polling import LROPoller
 
 
 @pytest.fixture
@@ -240,6 +246,38 @@ class TestWorkspaceOperation:
         ws.param = {"tagValues": {"value": {}}}
         mock_workspace_operation_base._populate_arm_paramaters(workspace=ws)
 
+    def test_populate_arm_paramaters_feature_store(
+        self, mock_workspace_operation_base: WorkspaceOperationsBase, mocker: MockFixture
+    ) -> None:
+        mocker.patch(
+            "azure.ai.ml.operations._workspace_operations_base.get_resource_group_location", return_value="random_name"
+        )
+        mocker.patch(
+            "azure.ai.ml.operations._workspace_operations_base.get_log_analytics_arm_id",
+            return_value=("random_id", True),
+        )
+
+        feature_store = FeatureStore(name="name", resource_group="rg")
+        template, param, _ = mock_workspace_operation_base._populate_arm_paramaters(
+            workspace=feature_store, grant_materialization_identity_permissions=True
+        )
+
+        assert param["set_up_feature_store"] == {"value": "true"}
+        assert param["grant_materialization_identity_permissions"] == {"value": "true"}
+        assert param["materialization_identity_name"] == {"value": "materialization-uai-rg-name"}
+        assert param["materialization_identity_resource_id"] == {"value": ""}
+
+        template, param, _ = mock_workspace_operation_base._populate_arm_paramaters(
+            workspace=feature_store,
+            materialization_identity=ManagedIdentityConfiguration(client_id="client_id", resource_id="resource_id"),
+            grant_materialization_identity_permissions=False,
+        )
+
+        assert param["set_up_feature_store"] == {"value": "true"}
+        assert param["grant_materialization_identity_permissions"] == {"value": "false"}
+        assert param["materialization_identity_name"] == {"value": "empty"}
+        assert param["materialization_identity_resource_id"] == {"value": "resource_id"}
+
     def test_populate_feature_store_role_assignments_paramaters(
         self, mock_workspace_operation_base: WorkspaceOperationsBase, mocker: MockFixture
     ) -> None:
@@ -251,7 +289,7 @@ class TestWorkspaceOperation:
             return_value=("random_id", True),
         )
         template, param, _ = mock_workspace_operation_base._populate_feature_store_role_assignment_parameters(
-            workspace=Workspace(name="name"),
+            workspace=FeatureStore(name="name"),
             materialization_identity_id="mat_id",
             offline_store_target="offline_target",
             online_store_target="online_target",

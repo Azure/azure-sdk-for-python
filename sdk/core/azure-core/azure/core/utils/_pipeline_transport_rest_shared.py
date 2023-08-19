@@ -165,10 +165,15 @@ def _prepare_multipart_body_helper(http_request: "HTTPRequestType", content_inde
         main_message.attach(part_message)
 
     full_message = main_message.as_bytes(policy=HTTP)
+    # From "as_bytes" doc:
+    #  Flattening the message may trigger changes to the EmailMessage if defaults need to be filled in to complete
+    #  the transformation to a string (for example, MIME boundaries may be generated or modified).
+    # After this call, we know `get_boundary` will return a valid boundary and not None. Mypy doesn't know that.
+    final_boundary: str = cast(str, main_message.get_boundary())
     eol = b"\r\n"
     _, _, body = full_message.split(eol, 2)
     http_request.set_bytes_body(body)
-    http_request.headers["Content-Type"] = "multipart/mixed; boundary=" + main_message.get_boundary()
+    http_request.headers["Content-Type"] = "multipart/mixed; boundary=" + final_boundary
     return content_index
 
 
@@ -266,7 +271,7 @@ def _decode_parts_helper(
     return responses
 
 
-def _get_raw_parts_helper(response, http_response_type):
+def _get_raw_parts_helper(response, http_response_type: Type):
     """Helper for _get_raw_parts
 
     Assuming this body is multipart, return the iterator or parts.

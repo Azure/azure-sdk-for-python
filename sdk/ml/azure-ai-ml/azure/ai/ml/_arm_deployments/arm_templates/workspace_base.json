@@ -842,7 +842,7 @@
                                         "target": "[parameters('online_store_connection_target')]",
                                         "authType": "ManagedIdentity",
                                         "credentials": {
-                                            "clientid": "[if(empty(variables('materialization_identity_resource_id')), '', reference(variables('materialization_identity_resource_id'), '2018-11-30').principalId)]",
+                                            "clientid": "[if(empty(variables('materialization_identity_resource_id')), '', reference(variables('materialization_identity_resource_id'), '2018-11-30').clientId)]",
                                             "resourceid": "[variables('materialization_identity_resource_id')]"
                                         }
                                     }
@@ -864,7 +864,7 @@
                                         "target": "[variables('offlineStoreConnectionTarget')]",
                                         "authType": "ManagedIdentity",
                                         "credentials": {
-                                            "clientid": "[if(empty(variables('materialization_identity_resource_id')), '', reference(variables('materialization_identity_resource_id'), '2018-11-30').principalId)]",
+                                            "clientid": "[if(empty(variables('materialization_identity_resource_id')), '', reference(variables('materialization_identity_resource_id'), '2018-11-30').clientId)]",
                                             "resourceid": "[variables('materialization_identity_resource_id')]"
                                         }
                                     }
