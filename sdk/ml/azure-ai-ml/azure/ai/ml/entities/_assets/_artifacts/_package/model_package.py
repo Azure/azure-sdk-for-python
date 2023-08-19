@@ -21,10 +21,6 @@ from azure.ai.ml._restclient.v2023_02_01_preview.models import (
 from azure.ai.ml._restclient.v2021_10_01_dataplanepreview.models import (
     PackageRequest as DataPlanePackageRequest,
 )
-from azure.ai.ml._restclient.v2023_02_01_preview.models import (
-    PackageRequest,
-    PackageResponse,
-)
 from azure.ai.ml.entities._resource import Resource
 from azure.ai.ml._schema.assets.package.model_package import ModelPackageSchema
 from azure.ai.ml._utils._experimental import experimental
