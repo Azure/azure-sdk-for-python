@@ -51,7 +51,7 @@ class ForecastingJob(AutoMLTabular):
     :type primary_metric: Optional[str]
     :param forecasting_settings: The settings for the forecasting task.
     :type forecasting_settings:
-        Optional[~azure.ai.ml.entities._job.automl.tabular.forecasting_settings.ForecastingSettings]
+        Optional[~azure.ai.ml.automl.ForecastingSettings]
     :param kwargs: Job-specific arguments
     :type kwargs: Dict[str, Any]
     """
@@ -115,7 +115,7 @@ class ForecastingJob(AutoMLTabular):
         Return the forecast training settings.
 
         :return: training settings.
-        :rtype: ~azure.ai.ml.entities._job.automl.training_settings.ForecastingTrainingSettings
+        :rtype: ForecastingTrainingSettings
         """
         return self._training or ForecastingTrainingSettings()
 
@@ -125,7 +125,7 @@ class ForecastingJob(AutoMLTabular):
         Return the forecast settings.
 
         :return: forecast settings.
-        :rtype: ~azure.ai.ml.entities._job.automl.tabular.forecasting_settings.ForecastingSettings
+        :rtype: ~azure.ai.ml.automl.ForecastingSettings
         """
         return self._forecasting_settings
 
