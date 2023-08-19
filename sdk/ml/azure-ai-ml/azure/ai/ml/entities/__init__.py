@@ -406,7 +406,6 @@ __all__ = [
     "PredictionDriftSignal",
     "FeatureAttributionDriftSignal",
     "CustomMonitoringSignal",
-    "TargetDataset",
     "MonitorFeatureFilter",
     "DataSegment",
     "MonitoringTarget",
