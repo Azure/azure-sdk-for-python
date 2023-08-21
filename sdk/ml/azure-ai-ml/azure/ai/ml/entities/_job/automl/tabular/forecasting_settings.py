@@ -189,7 +189,7 @@ class ForecastingSettings(RestTranslatableMixin):
 
             +----------------+-------------------------------+--------------------------------------+
             |     | freq     | | target_aggregation_function | | Data regularity                    |
-            |                |                               | fixing mechanism                     |
+            |                |                               | | fixing mechanism                   |
             +================+===============================+======================================+
             | None (Default) | None (Default)                | | The aggregation is not             |
             |                |                               | | applied. If the valid              |
