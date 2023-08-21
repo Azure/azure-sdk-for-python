@@ -2,7 +2,10 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+from typing import Optional, Union
 from azure.ai.ml._utils._experimental import experimental
+from azure.ai.ml._restclient.v2023_06_01_preview.models import MonitoringTarget as RestMonitoringTarget
+from azure.ai.ml.constants._monitoring import MonitorTargetTasks
 
 
 @experimental
@@ -28,8 +31,25 @@ class MonitoringTarget:
     def __init__(
         self,
         *,
-        endpoint_deployment_id: str = None,
-        model_id: str = None,
-    ) -> None:
+        ml_task: Union[str, MonitorTargetTasks],
+        endpoint_deployment_id: Optional[str] = None,
+        model_id: Optional[str] = None,
+    ):
         self.endpoint_deployment_id = endpoint_deployment_id
         self.model_id = model_id
+        self.ml_task = ml_task
+
+    def _to_rest_object(self) -> RestMonitoringTarget:
+        return RestMonitoringTarget(
+            task_type=self.ml_task,
+            deployment_id=self.endpoint_deployment_id,
+            model_id=self.model_id,
+        )
+
+    @classmethod
+    def _from_rest_object(cls, obj: RestMonitoringTarget) -> "MonitoringTarget":
+        return cls(
+            ml_task=obj.task_type,
+            endpoint_deployment_id=obj.endpoint_deployment_id,
+            model_id=obj.model_id,
+        )
