@@ -7,6 +7,12 @@ from logging import getLogger
 from typing import Dict, cast
 
 from opentelemetry._logs import get_logger_provider, set_logger_provider
+from opentelemetry.instrumentation.dependencies import (
+    get_dependency_conflicts,
+)
+from opentelemetry.instrumentation.instrumentor import (
+    BaseInstrumentor,
+)
 from opentelemetry.metrics import set_meter_provider
 from opentelemetry.sdk._logs import LoggerProvider, LoggingHandler
 from opentelemetry.sdk._logs.export import BatchLogRecordProcessor
@@ -28,12 +34,6 @@ from azure.monitor.opentelemetry._constants import (
     SAMPLING_RATIO_ARG,
 )
 from azure.monitor.opentelemetry._types import ConfigurationValue
-from azure.monitor.opentelemetry._vendor.v0_39b0.opentelemetry.instrumentation.dependencies import (
-    get_dependency_conflicts,
-)
-from azure.monitor.opentelemetry._vendor.v0_39b0.opentelemetry.instrumentation.instrumentor import (
-    BaseInstrumentor,
-)
 from azure.monitor.opentelemetry.exporter import (  # pylint: disable=import-error
     ApplicationInsightsSampler,
     AzureMonitorLogExporter,
