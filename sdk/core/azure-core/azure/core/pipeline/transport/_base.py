@@ -101,9 +101,6 @@ def _format_url_section(template, **kwargs):
             if last_template == template:
                 return template
             last_template = template
-        except ValueError:
-            # if there is a single "{" or "}" in the template, format will fail with a ValueError
-            return template
 
     # No URL sections left - returning None
 
