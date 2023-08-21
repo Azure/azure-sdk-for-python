@@ -2,6 +2,7 @@ import argparse
 import logging
 from pathlib import Path
 from subprocess import run
+import sys
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -17,17 +18,29 @@ def generate_autorest(folder: Path) -> None:
 
 
 def generate_typespec(folder: Path) -> None:
-    # FIXME, for now call the PowerScript
-    raise NotImplementedError("Not implemented yet")
 
+    if sys.platform.startswith("win"):
+        ps_cmd = "powershell.exe"
+    else:
+        ps_cmd = "pwsh"
+
+    completed_process = run([ps_cmd, "../../../eng/common/scripts/TypeSpec-Project-Sync.ps1", folder], cwd=folder)
+    if completed_process.returncode != 0:
+        raise ValueError("Something happened with TypeSpec Synx step: " + str(completed_process))
+
+    completed_process = run([ps_cmd, "../../../eng/common/scripts/TypeSpec-Project-Generate.ps1", folder], cwd=folder)
+    if completed_process.returncode != 0:
+        raise ValueError("Something happened with TypeSpec Generate step: " + str(completed_process))
+
+    _LOGGER.info("TypeSpec done")
 
 def generate(folder: Path = Path(".")) -> None:
     if (folder / "swagger" / "README.md").exists():
         generate_autorest(folder)
-    elif (folder / "tsp_location.yaml").exists():
+    elif (folder / "tsp-location.yaml").exists():
         generate_typespec(folder)
     else:
-        raise ValueError("Didn't find swagger/readme.md nor tsp_location.yaml")
+        raise ValueError("Didn't find swagger/README.md nor tsp_location.yaml")
 
 
 def generate_main() -> None:
