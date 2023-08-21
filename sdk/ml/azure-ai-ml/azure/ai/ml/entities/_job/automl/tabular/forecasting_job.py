@@ -265,23 +265,23 @@ class ForecastingJob(AutoMLTabular):
             +------------+--------------------------+----------------------+-----------------------------+
             | | handling | | handling_configuration | | resulting handling | | resulting handling        |
             |            |                          |                      | | configuration             |
-            +===========+========================+====================+==================================+
-            | True      | auto                   | True               | auto                             |
-            +-----------+------------------------+--------------------+----------------------------------+
-            | True      | pad                    | True               | auto                             |
-            +-----------+------------------------+--------------------+----------------------------------+
-            | True      | drop                   | True               | auto                             |
-            +-----------+------------------------+--------------------+----------------------------------+
-            | True      | None                   | False              | None                             |
-            +-----------+------------------------+--------------------+----------------------------------+
-            | False     | auto                   | False              | None                             |
-            +-----------+------------------------+--------------------+----------------------------------+
-            | False     | pad                    | False              | None                             |
-            +-----------+------------------------+--------------------+----------------------------------+
-            | False     | drop                   | False              | None                             |
-            +-----------+------------------------+--------------------+----------------------------------+
-            | False     | None                   | False              | None                             |
-            +-----------+------------------------+--------------------+----------------------------------+
+            +============+==========================+======================+=============================+
+            | True       | auto                     | True                 | auto                        |
+            +------------+--------------------------+----------------------+-----------------------------+
+            | True       | pad                      | True                 | auto                        |
+            +------------+--------------------------+----------------------+-----------------------------+
+            | True       | drop                     | True                 | auto                        |
+            +------------+--------------------------+----------------------+-----------------------------+
+            | True       | None                     | False                | None                        |
+            +------------+--------------------------+----------------------+-----------------------------+
+            | False      | auto                     | False                | None                        |
+            +------------+--------------------------+----------------------+-----------------------------+
+            | False      | pad                      | False                | None                        |
+            +------------+--------------------------+----------------------+-----------------------------+
+            | False      | drop                     | False                | None                        |
+            +------------+--------------------------+----------------------+-----------------------------+
+            | False      | None                     | False                | None                        |
+            +------------+--------------------------+----------------------+-----------------------------+
 
         :type short_series_handling_config: Optional[str]
         :keyword frequency: Forecast frequency.
@@ -309,31 +309,31 @@ class ForecastingJob(AutoMLTabular):
                   the most prominent category in the window.
                 * Date predictor columns are aggregated by minimum value, maximum value and mode.
 
-                +----------------+-----------------------------+-----------------------------------------------+
-                |      freq      | target_aggregation_function | | Data regularity                             |
-                |                |                             | | fixing mechanism                            |
-                +================+=============================+===============================================+
-                | None (Default) | None (Default)              | | The aggregation is not                      |
-                |                |                             | | applied. If the valid                       |
-                |                |                             | | frequency can not be                        |
-                |                |                             | | determined the error will                   |
-                |                |                             | | be raised.                                  |
-                +----------------+-----------------------------+-----------------------------------------------+
-                | Some Value     | None (Default)              | | The aggregation is not                      |
-                |                |                             | | applied. If the number                      |
-                |                |                             | | of data points compliant                    |
-                |                |                             | | to given frequency grid                     |
-                |                |                             | | is less then 90% these points               |
-                |                |                             | | will be removed, otherwise                  |
-                |                |                             | | the error will be raised.                   |
-                +----------------+-----------------------------+-----------------------------------------------+
-                | None (Default) | Aggregation function        | | The error about missing                     |
-                |                |                             | | frequency parameter                         |
-                |                |                             | | is raised.                                  |
-                +----------------+-----------------------------+-----------------------------------------------+
-                | Some Value     | Aggregation function        | | Aggregate to frequency using                |
-                |                |                             | | provided aggregation function.              |
-                +----------------+-----------------------------+-----------------------------------------------+
+                +----------------+-------------------------------+--------------------------------------+
+                |     | freq     | | target_aggregation_function | | Data regularity                    |
+                |                |                               | fixing mechanism                     |
+                +================+===============================+======================================+
+                | None (Default) | None (Default)                | | The aggregation is not             |
+                |                |                               | | applied. If the valid              |
+                |                |                               | | frequency can not be               |
+                |                |                               | | determined the error will          |
+                |                |                               | | be raised.                         |
+                +----------------+-------------------------------+--------------------------------------+
+                | Some Value     | None (Default)                | | The aggregation is not             |
+                |                |                               | | applied. If the number             |
+                |                |                               | | of data points compliant           |
+                |                |                               | | to given frequency grid            |
+                |                |                               | | is less then 90% these points      |
+                |                |                               | | will be removed, otherwise         |
+                |                |                               | | the error will be raised.          |
+                +----------------+-------------------------------+--------------------------------------+
+                | None (Default) | Aggregation function          | | The error about missing            |
+                |                |                               | | frequency parameter                |
+                |                |                               | | is raised.                         |
+                +----------------+-------------------------------+--------------------------------------+
+                | Some Value     | Aggregation function          | | Aggregate to frequency using       |
+                |                |                               | | provided aggregation function.     |
+                +----------------+-------------------------------+--------------------------------------+
 
         :type target_aggregate_function: Optional[str]
         :keyword cv_step_size:
