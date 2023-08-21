@@ -789,6 +789,7 @@ def test_multipart_receive_with_one_changeset(http_request, mock_response):
     res0 = parts[0]
     assert res0.status_code == 202
 
+
 @pytest.mark.parametrize("http_request,mock_response", request_and_responses_product(MOCK_RESPONSES))
 def test_multipart_receive_with_empty_changeset(http_request, mock_response):
 
@@ -882,6 +883,7 @@ def test_multipart_receive_with_empty_changeset(http_request, mock_response):
     assert "DataServiceVersion" in res0.headers
     assert res0.request.method == "POST"
     assert res0.request.url == "http://account.blob.core.windows.net/?comp=batch"
+
 
 @pytest.mark.parametrize("http_request,mock_response", request_and_responses_product(MOCK_RESPONSES))
 def test_multipart_receive_with_multiple_changesets(http_request, mock_response):
