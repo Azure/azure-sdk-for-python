@@ -19,10 +19,8 @@ def generate_autorest(folder: Path) -> None:
 
 def generate_typespec(folder: Path) -> None:
 
-    if sys.platform.startswith("win"):
-        ps_cmd = "powershell.exe"
-    else:
-        ps_cmd = "pwsh"
+    # Turns out, "pwsh" is the name for PowerShell 7 on Windows, that is required for those scripts
+    ps_cmd = "pwsh"
 
     completed_process = run([ps_cmd, "../../../eng/common/scripts/TypeSpec-Project-Sync.ps1", folder], cwd=folder)
     if completed_process.returncode != 0:
