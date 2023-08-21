@@ -347,6 +347,283 @@ class MiscConfigurationOptions(object):
         )
         # [END ssh_job_service_configuration]
 
+        # [START build_context_entity_create]
+        from azure.ai.ml.entities._assets.environment import BuildContext
+
+        build_context = BuildContext(dockerfile_path="docker-file-path", path="docker-build-context-path")
+        # [END build_context_entity_create]
+
+        # [START base_env_entity_create]
+        from azure.ai.ml.entities._assets._artifacts._package.base_environment_source import BaseEnvironment
+
+        base_environment = BaseEnvironment(type="base-env-type", resource_id="base-env-resource-id")
+        # [END base_env_entity_create]
+
+        # [START env_entity_create]
+        from azure.ai.ml.entities._assets.environment import Environment
+
+        environment = Environment(
+            name="env-name",
+            version="2.0",
+            description="env-description",
+            image="env-image",
+            conda_file="conda-file-path",
+            tags={"tag1": "value1", "tag2": "value2"},
+            properties={"prop1": "value1", "prop2": "value2"},
+            datastore="datastore",
+        )
+        # [END env_entity_create]
+
+        # [START env_operations_create_or_update]
+        from azure.ai.ml.entities import BuildContext, Environment
+
+        env_docker_context = Environment(
+            build=BuildContext(path="azureml-environment"),
+            name="create-environment",
+            description="Environment created from a Docker context.",
+        )
+        ml_client.environments.create_or_update(env_docker_context)
+        # [END env_operations_create_or_update]
+
+        # [START env_entities_validate]
+        from azure.ai.ml.entities import BuildContext, Environment
+
+        env_docker_context = Environment(
+            build=BuildContext(path="azureml-environment"),
+            name="create-environment",
+            description="Environment created from a Docker context.",
+        )
+
+        env_docker_context.validate()
+        # [END env_entities_validate]
+
+        # [START env_operations_archive]
+        ml_client.environments.archive("archive-example", "1.0", None)
+        # [END env_operations_archive]
+
+        # [START env_operations_restore]
+        ml_client.environments.restore("restore-example", "2.0", "label1")
+        # [END env_operations_restore]
+
+        # [START env_operations_list]
+        ml_client.environments.list("list-example")
+        # [END env_operations_list]
+
+        # [START env_operations_get]
+        ml_client.environments.get("get-example", "1.0", None)
+        # [END env_operations_get]
+
+        # [START batch_deployment_operations_begin_create_or_update]
+        from azure.ai.ml.entities._deployment.batch_deployment import BatchDeployment
+
+        deployment_example = BatchDeployment("new-deployment")
+        ml_client.batch_deployments.begin_create_or_update(deployment_example, True)
+        # [END batch_deployment_operations_begin_create_or_update]
+
+        # [START batch_deployment_operations_get]
+        ml_client.batch_deployments.get("get-example", "endpoint-example")
+        # [END batch_deployment_operations_get]
+
+        # [START batch_deployment_operations_delete]
+        ml_client.batch_deployments.begin_delete("delete-example", "endpoint-example")
+        # [END batch_deployment_operations_delete]
+
+        # [START batch_deployment_operations_list]
+        ml_client.batch_deployments.list("endpoint-example")
+        # [END batch_deployment_operations_list]
+
+        # [START batch_deployment_operations_list_jobs]
+        ml_client.batch_deployments.list_jobs("endpoint-example", "name-example")
+        # [END batch_deployment_operations_list_jobs]
+
+        # [START batch_endpoint_operations_list]
+        ml_client.batch_endpoints.list()
+        # [END batch_endpoint_operations_list]
+
+        # [START batch_endpoint_operations_get]
+        ml_client.batch_endpoints.get("endpoint-example")
+        # [END batch_endpoint_operations_get]
+
+        # [START batch_endpoint_operations_delete]
+        ml_client.batch_endpoints.begin_delete("endpoint-example")
+        # [END batch_endpoint_operations_delete]
+
+        # [START batch_endpoint_operations_create_or_update]
+        from azure.ai.ml.entities._endpoint.batch_endpoint import BatchEndpoint
+
+        endpoint_example = BatchEndpoint("new-endpoint")
+        ml_client.batch_endpoints.begin_create_or_update(endpoint_example)
+        # [END batch_endpoint_operations_create_or_update]
+
+        # [START batch_endpoint_operations_invoke]
+        ml_client.batch_endpoints.invoke("endpoint-example")
+        # [END batch_endpoint_operations_invoke]
+
+        # [START batch_endpoint_operations_list_jobs]
+        ml_client.batch_endpoints.list_jobs("endpoint-example")
+        # [END batch_endpoint_operations_list_jobs]
+
+        # [START code_operations_create_or_update]
+        from azure.ai.ml.entities._assets._artifacts.code import Code
+
+        code_example = Code("resource-name")
+        ml_client._code.create_or_update(code_example)
+        # [END code_operations_create_or_update]
+
+        # [START code_operations_get]
+        ml_client._code.get("code-example")
+        # [END code_operations_get]
+
+        # [START component_operations_list]
+        ml_client.components.list("component-name")
+        # [END component_operations_list]
+
+        # [START component_operations_get]
+        ml_client.components.get("component-name", "2.0")
+        # [END component_operations_get]
+
+        # [START component_operations_validate]
+        from azure.ai.ml.entities._component.component import Component
+
+        component_example = Component("new-component")
+        ml_client.components.validate(component_example)
+        # [END component_operations_validate]
+
+        # [START component_operations_create_or_update]
+        from azure.ai.ml.entities._component.component import Component
+
+        component_example = Component("new-component")
+        ml_client.components.create_or_update(component_example)
+        # [END component_operations_create_or_update]
+
+        # [START component_operations_archive]
+        ml_client.components.archive("component-name")
+        # [END component_operations_archive]
+
+        # [START component_operations_restore]
+        ml_client.components.restore("component-name")
+        # [END component_operations_restore]
+
+        # [START compute_operations_list]
+        ml_client.compute.list()
+        # [END compute_operations_list]
+
+        # [START compute_operations_get]
+        ml_client.compute.get("compute-resource-name")
+        # [END compute_operations_get]
+
+        # [START compute_operations_list_nodes]
+        ml_client.compute.list_nodes("compute-resource-name")
+        # [END compute_operations_list_nodes]
+
+        # [START compute_operations_create_or_update]
+        from azure.ai.ml.entities._compute.compute import Compute
+
+        compute_example = Compute("new-compute")
+        ml_client.compute.begin_create_or_update(compute_example)
+        # [END compute_operations_create_or_update]
+
+        # [START compute_operations_attach]
+        from azure.ai.ml.entities._compute.compute import Compute
+
+        compute_example = Compute("new-compute")
+        ml_client.compute.begin_attach(compute_example)
+        # [END compute_operations_attach]
+
+        # [START compute_operations_update]
+        from azure.ai.ml.entities._compute.compute import Compute
+
+        compute_example = Compute("existed-compute")
+        ml_client.compute.begin_update(compute_example)
+        # [END compute_operations_update]
+
+        # [START compute_operations_delete]
+        ml_client.compute.begin_delete("compute-name")
+        # [END compute_operations_delete]
+
+        # [START compute_operations_start]
+        ml_client.compute.begin_start("new-compute-name")
+        # [END compute_operations_start]
+
+        # [START compute_operations_stop]
+        ml_client.compute.begin_stop("compute-name")
+        # [END compute_operations_stop]
+
+        # [START compute_operations_restart]
+        ml_client.compute.begin_restart("compute-name")
+        # [END compute_operations_restart]
+
+        # [START compute_operations_list_usage]
+        ml_client.compute.list_usage("US-West")
+        # [END compute_operations_list_usage]
+
+        # [START compute_operations_list_sizes]
+        ml_client.compute.list_sizes("US-West")
+        # [END compute_operations_list_sizes]
+
+        # [START data_operations_list]
+        ml_client.data.list("data-asset-name")
+        # [END data_operations_list]
+
+        # [START data_operations_get]
+        ml_client.data.get("data-asset-name", "2.0")
+        # [END data_operations_get]
+
+        # [START data_operations_create_or_update]
+        from azure.ai.ml.entities._assets._artifacts.data import Data
+
+        data_example = Data("new-data")
+        ml_client.data.create_or_update(data_example)
+        # [END data_operations_create_or_update]
+
+        # [START data_operations_import_data]
+        from azure.ai.ml.entities._data_import.data_import import DataImport
+        from azure.ai.ml.entities._inputs_outputs.external_data import Database
+
+        database_example = Database("SELECT ID FROM DataTable")
+        data_import_example = DataImport("data-asset-name", "/path/to/data-asset", database_example)
+        ml_client.data.import_data(data_import_example)
+        # [END data_operations_import_data]
+
+        # [START data_operations_list_materialization_status]
+        ml_client.data.list_materialization_status("data-asset-name")
+        # [END data_operations_list_materialization_status]
+
+        # [START data_operations_archive]
+        ml_client.data.archive("data-asset-name")
+        # [END data_operations_archive]
+
+        # [START data_operations_restore]
+        ml_client.data.restore("data-asset-name")
+        # [END data_operations_restore]
+
+        # [START data_operations_share]
+        ml_client.data.share("data-asset-name", "2.0")
+        # [END data_operations_share]
+
+        # [START datastore_operations_list]
+        ml_client.datastores.list()
+        # [END datastore_operations_list]
+
+        # [START datastore_operations_delete]
+        ml_client.datastores.delete("datastore-name")
+        # [END datastore_operations_delete]
+
+        # [START datastore_operations_get]
+        ml_client.datastores.get("datastore-name")
+        # [END datastore_operations_get]
+
+        # [START datastore_operations_get_default]
+        ml_client.datastores.get_default()
+        # [END datastore_operations_get_default]
+
+        # [START datastore_operations_create_or_update]
+        from azure.ai.ml.entities._datastore.datastore import Datastore
+
+        datastore_example = Datastore("credentials-example")
+        ml_client.datastores.create_or_update(datastore_example)
+        # [END datastore_operations_create_or_update]
+
         # [START validation_result]
         """For example, if repr(self) is:
         ```python
