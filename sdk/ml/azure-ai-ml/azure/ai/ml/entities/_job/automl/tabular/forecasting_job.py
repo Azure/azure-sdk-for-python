@@ -263,7 +263,8 @@ class ForecastingJob(AutoMLTabular):
             respectively).
 
             +------------+--------------------------+----------------------+-----------------------------+
-            | | handling | | handling_configuration | | resulting handling | | resulting handling        |
+            | | handling | | handling_configuration | | resulting handling | | resulting                 |
+            |            |                          |                      | | handling                  |
             |            |                          |                      | | configuration             |
             +============+==========================+======================+=============================+
             | True       | auto                     | True                 | auto                        |
@@ -327,9 +328,11 @@ class ForecastingJob(AutoMLTabular):
                 |                |                               | | of data points                     |
                 |                |                               | | compliant to given                 |
                 |                |                               | | frequency grid is                  |
-                |                |                               | | less then 90% these                |
-                |                |                               | | points will be                     |
-                |                |                               | | removed, otherwise                 |
+                |                |                               | | less then 90%                      |
+                |                |                               | | these points                       |
+                |                |                               | | will be                            |
+                |                |                               | | removed,                           |
+                |                |                               | | otherwise                          |
                 |                |                               | | the error will                     |
                 |                |                               | | be raised.                         |
                 +----------------+-------------------------------+--------------------------------------+
@@ -340,7 +343,8 @@ class ForecastingJob(AutoMLTabular):
                 +----------------+-------------------------------+--------------------------------------+
                 | Some Value     | Aggregation function          | | Aggregate to                       |
                 |                |                               | | frequency using                    | 
-                |                |                               | | provided aggregation               |
+                |                |                               | | provided                           |
+                |                |                               | | aggregation                        |
                 |                |                               | | function.                          |
                 +----------------+-------------------------------+--------------------------------------+
 
