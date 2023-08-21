@@ -8,7 +8,7 @@ from typing import Dict, cast
 
 from opentelemetry._logs import get_logger_provider, set_logger_provider
 from opentelemetry.instrumentation.dependencies import (
-    get_dependency_conflicts,
+    get_dist_dependency_conflicts,
 )
 from opentelemetry.instrumentation.instrumentor import (
     BaseInstrumentor,
@@ -44,16 +44,15 @@ from azure.monitor.opentelemetry.util._configurations import _get_configurations
 
 _logger = getLogger(__name__)
 
-
-_SUPPORTED_INSTRUMENTED_LIBRARIES_DEPENDENCIES_MAP = {
-    "django": ("django >= 1.10",),
-    "fastapi": ("fastapi ~= 0.58",),
-    "flask": ("flask >= 1.0, < 3.0",),
-    "psycopg2": ("psycopg2 >= 2.7.3.1",),
-    "requests": ("requests ~= 2.0",),
-    "urllib": tuple(),
-    "urllib3": ("urllib3 >= 1.0.0, < 2.0.0",),
-}
+_SUPPORTED_INSTRUMENTED_LIBRARIES = (
+    "django",
+    "fastapi",
+    "flask",
+    "psycopg2",
+    "requests",
+    "urllib",
+    "urllib3",
+)
 
 
 def configure_azure_monitor(**kwargs) -> None:
@@ -138,10 +137,11 @@ def _setup_instrumentations(configurations: Dict[str, ConfigurationValue]):
 
     # use pkg_resources for now until https://github.com/open-telemetry/opentelemetry-python/pull/3168 is merged
     for entry_point in iter_entry_points(
-        "azure_monitor_opentelemetry_instrumentor"
+        "opentelemetry_instrumentor"
     ):
         lib_name = entry_point.name
-        if lib_name not in _SUPPORTED_INSTRUMENTED_LIBRARIES_DEPENDENCIES_MAP:
+        print("lib_name: %s" % lib_name)
+        if lib_name not in _SUPPORTED_INSTRUMENTED_LIBRARIES:
             continue
         if entry_point.name in disabled_instrumentations:
             _logger.debug(
@@ -150,10 +150,7 @@ def _setup_instrumentations(configurations: Dict[str, ConfigurationValue]):
             continue
         try:
             # Check if dependent libraries/version are installed
-            instruments = _SUPPORTED_INSTRUMENTED_LIBRARIES_DEPENDENCIES_MAP[
-                lib_name
-            ]
-            conflict = get_dependency_conflicts(instruments)
+            conflict = get_dist_dependency_conflicts(entry_point.dist)
             if conflict:
                 _logger.debug(
                     "Skipping instrumentation %s: %s",
@@ -165,6 +162,7 @@ def _setup_instrumentations(configurations: Dict[str, ConfigurationValue]):
             instrumentor: BaseInstrumentor = entry_point.load()
             # tell instrumentation to not run dep checks again as we already did it above
             instrumentor().instrument(skip_dep_check=True)
+            print("instrumented: %s" % lib_name)
         except Exception as ex:  # pylint: disable=broad-except
             _logger.warning(
                 "Exception occurred when instrumenting: %s.",
