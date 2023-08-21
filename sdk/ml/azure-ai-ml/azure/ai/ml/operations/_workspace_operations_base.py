@@ -15,7 +15,6 @@ from azure.ai.ml._restclient.v2023_06_01_preview.models import (
     EncryptionUpdateProperties,
     WorkspaceUpdateParameters,
 )
-from azure.ai.ml.entities._workspace.networking import ManagedNetwork
 from azure.ai.ml.constants._workspace import IsolationMode, OutboundRuleCategory
 from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope
 from azure.ai.ml._utils._appinsights_utils import get_log_analytics_arm_id
