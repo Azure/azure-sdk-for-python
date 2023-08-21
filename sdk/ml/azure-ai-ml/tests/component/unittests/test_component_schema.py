@@ -385,31 +385,66 @@ class TestSparkComponent:
 @pytest.mark.timeout(_COMPONENT_TIMEOUT_SECOND)
 @pytest.mark.unittest
 class TestFlowComponent:
-    @pytest.mark.skip(reason="TODO: enable after load from flow is supported")
-    @pytest.mark.parametrize(
-        "target_path",
-        [
-            pytest.param("./tests/test_configs/flows/basic/flow.dag.yaml", id="flow"),
-            # TODO: enable this after load from flow run is supported
-            # pytest.param("./tests/test_configs/flows/runs/basic_run.yaml", id="flow_run"),
-        ],
-    )
-    def test_component_load(self, target_path: str):
+    def test_component_load_from_dag(self):
+        target_path = "./tests/test_configs/flows/basic/flow.dag.yaml"
+
         component = load_component(target_path)
         assert component.type == "flow_parallel"
 
-        with pytest.raises(Exception, match="Ports of flow component is not editable."):
+        with pytest.raises(RuntimeError, match="Ports of flow component are not editable."):
             component.inputs["groundtruth"] = None
 
-        with pytest.raises(Exception, match="Flow component ports are not readable before creation."):
+        with pytest.raises(RuntimeError, match="Ports of flow component are not readable before creation."):
             component.inputs.keys()
 
-        with pytest.raises(Exception, match="Flow component ports are not readable before creation."):
+        with pytest.raises(RuntimeError, match="Ports of flow component are not readable before creation."):
+            list(component.inputs)
+
+        with pytest.raises(RuntimeError, match="Ports of flow component are not readable before creation."):
             component.inputs["groundtruth"]
 
         component.name = "test_basic_flow"
         component.version = "1"
         component.description = "test load component from flow"
+
+        expected_rest_dict = {
+            "name": "azureml_anonymous",
+            "properties": {
+                "component_spec": {
+                    "_source": "YAML.COMPONENT",
+                    "description": "test load component from flow",
+                    "name": "test_basic_flow",
+                    "type": "flow_parallel",
+                    "version": "1",
+                    "is_deterministic": True,
+                },
+                "description": "test load component from flow",
+                # TODO: check if this is expected: this is only impacted by component.name & version on loading
+                "is_anonymous": True,
+                "is_archived": False,
+                "properties": {},
+                "tags": {},
+            },
+        }
+
+        assert component._to_rest_object().as_dict() == expected_rest_dict
+
+        named_component = load_component(
+            target_path,
+            params_override=[
+                {
+                    "name": "test_basic_flow",
+                    "version": "1",
+                    "description": "test load component from flow",
+                }
+            ],
+        )
+
+        expected_rest_dict["name"] = "test_basic_flow"
+        expected_rest_dict["properties"]["is_anonymous"] = False
+        expected_rest_dict["properties"]["properties"]["client_component_hash"] = "b69e653c-cbd5-cf36-fbe3-09c5529b9074"
+
+        assert named_component._to_rest_object().as_dict() == expected_rest_dict
 
     @pytest.mark.skip(reason="TODO: enable after load from flow is supported")
     def test_component_load_fail(self):

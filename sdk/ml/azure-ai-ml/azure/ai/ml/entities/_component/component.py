@@ -5,9 +5,10 @@ import re
 import uuid
 from os import PathLike
 from pathlib import Path
-from typing import AnyStr, Dict, Callable, IO, Iterable, Optional, TYPE_CHECKING, Tuple, Union
-from typing_extensions import Literal
+from typing import IO, TYPE_CHECKING, AnyStr, Callable, Dict, Iterable, Optional, Tuple, Union
+
 from marshmallow import INCLUDE
+from typing_extensions import Literal
 
 from ..._restclient.v2022_10_01.models import (
     ComponentContainer,
@@ -25,6 +26,7 @@ from ...constants._common import (
     REGISTRY_URI_FORMAT,
     SOURCE_PATH_CONTEXT_KEY,
     CommonYamlFields,
+    SchemaUrl,
 )
 from ...constants._component import ComponentSource, IOConstants, NodeType
 from ...entities._assets.asset import Asset
@@ -335,6 +337,14 @@ class Component(
         return ErrorTarget.COMPONENT
 
     @classmethod
+    def _is_flow(cls, data) -> bool:
+        _schema = data.get(CommonYamlFields.SCHEMA, None)
+
+        if _schema and _schema.startswith(SchemaUrl.PROMPTFLOW_PREFIX):
+            return True
+        return False
+
+    @classmethod
     def _load(
         cls,
         data: Optional[Dict] = None,
@@ -350,7 +360,11 @@ class Component(
 
         # type_in_override > type_in_yaml > default (command)
         if type_in_override is None:
-            type_in_override = data.get(CommonYamlFields.TYPE, NodeType.COMMAND)
+            type_in_override = data.get(CommonYamlFields.TYPE, None)
+        if type_in_override is None and cls._is_flow(data):
+            type_in_override = NodeType.FLOW_PARALLEL
+        if type_in_override is None:
+            type_in_override = NodeType.COMMAND
         data[CommonYamlFields.TYPE] = type_in_override
 
         from azure.ai.ml.entities._component.component_factory import component_factory
@@ -526,8 +540,8 @@ class Component(
 
         # TODO: Remove in PuP with native import job/component type support in MFE/Designer
         # Convert import component to command component private preview
-        if component["type"] == NodeType.IMPORT:
-            component["type"] = NodeType.COMMAND
+        if component.get(CommonYamlFields.TYPE, None) == NodeType.IMPORT:
+            component[CommonYamlFields.TYPE] = NodeType.COMMAND
             component["inputs"] = component.pop("source")
             component["outputs"] = dict({"output": component.pop("output")})
             # method _to_dict() will remove empty keys
