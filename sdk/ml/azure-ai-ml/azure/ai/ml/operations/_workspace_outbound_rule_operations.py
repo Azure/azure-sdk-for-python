@@ -79,9 +79,9 @@ class WorkspaceOutboundRuleOperations:
 
         # pylint: disable=unused-argument
         def callback(_, deserialized, args):
-            return OutboundRule._from_rest_object(
-                deserialized.properties, name=deserialized.name
-            )  # pylint: disable=protected-access
+            properties = deserialized.properties
+            name = deserialized.name
+            return OutboundRule._from_rest_object(properties, name=name)  # pylint: disable=protected-access
 
         poller = self._rule_operation.begin_create_or_update(
             resource_group, workspace_name, rule.name, rule_params, polling=True, cls=callback
@@ -106,11 +106,10 @@ class WorkspaceOutboundRuleOperations:
 
         rule_params = OutboundRuleBasicResource(properties=rule._to_rest_object())  # pylint: disable=protected-access
 
-        # pylint: disable=unused-argument
         def callback(_, deserialized, args):
-            return OutboundRule._from_rest_object(
-                deserialized.properties, name=deserialized.name
-            )  # pylint: disable=protected-access
+            properties = deserialized.properties
+            name = deserialized.name
+            return OutboundRule._from_rest_object(properties, name=name)  # pylint: disable=protected-access
 
         poller = self._rule_operation.begin_create_or_update(
             resource_group, workspace_name, rule.name, rule_params, polling=True, cls=callback

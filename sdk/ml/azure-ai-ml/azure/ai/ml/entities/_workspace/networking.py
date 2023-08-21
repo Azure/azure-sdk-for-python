@@ -78,7 +78,8 @@ class FqdnDestination(OutboundRule):
 
     :param name: Name of the outbound rule.
     :type name: str
-    :param destination: Fully qualified domain name to which outbound connections are allowed, for example: “*.contoso.com”.
+    :param destination: Fully qualified domain name to which outbound connections are allowed.
+        For example: “*.contoso.com”.
     :type destination: str
     """
 
@@ -158,11 +159,12 @@ class ServiceTagDestination(OutboundRule):
 
     :param name: Name of the outbound rule.
     :type name: str
-    :param service_tag: Service Tag of an Azure service that maps to predefined IP addresses for its service endpoints.
+    :param service_tag: Service Tag of an Azure service, maps to predefined IP addresses for its service endpoints.
     :type service_tag: str
     :param protocol: Allowed transport protocol, can be "TCP", "UDP", "ICMP" or "*" for all supported protocols.
     :type protocol: str
-    :param port_ranges: A comma-separated list of single ports and/or range of ports, such as "80,1024-65535" that traffics are allowed.
+    :param port_ranges: A comma-separated list of single ports and/or range of ports, such as "80,1024-65535".
+        Traffics should be allowed to these port ranges.
     :type port_ranges: str
     """
 
