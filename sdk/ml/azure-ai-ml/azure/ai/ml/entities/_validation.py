@@ -440,7 +440,7 @@ class SchemaValidatableMixin:
         :return: Converted dictionary
         :rtype: Dict
         """
-        return Dict(convert_ordered_dict_to_dict(self._schema_for_validation.dump(self)))
+        return dict(convert_ordered_dict_to_dict(self._schema_for_validation.dump(self)))
 
     def _validate(self, raise_error: bool = False) -> MutableValidationResult:
         """Validate the resource. If raise_error is True, raise ValidationError if validation fails and log warnings if
