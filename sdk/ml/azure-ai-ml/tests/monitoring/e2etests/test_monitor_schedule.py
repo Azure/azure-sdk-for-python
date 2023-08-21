@@ -37,7 +37,7 @@ from azure.ai.ml._utils.utils import snake_to_camel
 
 @pytest.mark.timeout(600)
 @pytest.mark.usefixtures("recorded_test")
-@pytest.mark.core_sdk_test
+@pytest.mark.production_experiences_test
 class TestMonitorSchedule(AzureRecordedTestCase):
 
     def test_data_drift_schedule_create(
