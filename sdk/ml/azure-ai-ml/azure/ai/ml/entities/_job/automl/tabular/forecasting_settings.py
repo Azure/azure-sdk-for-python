@@ -150,9 +150,9 @@ class ForecastingSettings(RestTranslatableMixin):
         short_series_handling for brevity are marked as handling_configuration and handling
         respectively).
 
-        +-----------+------------------------+--------------------+----------------------------------+
-        |  handling | handling_configuration | resulting handling | | resulting handling             |
-        |           |                        |                    | | configuration                  |
+        +------------+--------------------------+----------------------+-----------------------------+
+        | | handling | | handling_configuration | | resulting handling | | resulting handling        |
+        |            |                          |                      | | configuration             |
         +===========+========================+====================+==================================+
         | True      | auto                   | True               | auto                             |
         +-----------+------------------------+--------------------+----------------------------------+
@@ -189,7 +189,7 @@ class ForecastingSettings(RestTranslatableMixin):
 
             +----------------+-----------------------------+-----------------------------------------------+
             |      freq      | target_aggregation_function | | Data regularity                             |
-            |                |                             | | fixing mechanism
+            |                |                             | | fixing mechanism                            |
             +================+=============================+===============================================+
             | None (Default) | None (Default)              | | The aggregation is not                      |
             |                |                             | | applied. If the valid                       |
