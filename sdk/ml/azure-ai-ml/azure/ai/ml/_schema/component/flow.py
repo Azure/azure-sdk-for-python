@@ -21,6 +21,11 @@ from azure.ai.ml.constants._common import AzureMLResourceType
 from azure.ai.ml.constants._component import NodeType
 
 
+class ConnectionSchema(metaclass=PatchedSchemaMeta):
+    connection = fields.Str()
+    deployment_name = fields.Str()
+
+
 class ComponentMetadataSchema(metaclass=PatchedSchemaMeta):
     name = ComponentNameStr()
     version = fields.Str()
@@ -30,27 +35,31 @@ class ComponentMetadataSchema(metaclass=PatchedSchemaMeta):
     is_deterministic = fields.Bool()
 
 
-class ConnectionSchema(metaclass=PatchedSchemaMeta):
-    connection: fields.Str()
-    deployment_name: fields.Str()
+class FlowComponentArgumentSchema(metaclass=PatchedSchemaMeta):
+    variant = fields.Str()
+    column_mappings = fields.Dict(
+        fields.Str(),
+        fields.Str(),
+    )
+    connections = fields.Dict(
+        keys=fields.Str(),
+        values=NestedField(ConnectionSchema),
+    )
+    environment_variables = fields.Dict(
+        fields.Str(),
+        fields.Str(),
+    )
 
 
 class FlowSchema(YamlFileSchema, ComponentMetadataSchema):
     additional_includes = fields.List(LocalPathField())
 
 
-class RunSchema(YamlFileSchema, ComponentMetadataSchema):
-    # TODO: seems that name is not in run.yaml?
-    flow = LocalPathField()
-    data = LocalPathField()
-    column_mappings = fields.Dict(
-        fields.Str(),
-        fields.Str(),
-    )
-    variant = fields.Str()
+class RunSchema(YamlFileSchema, ComponentMetadataSchema, FlowComponentArgumentSchema):
+    flow = LocalPathField(required=True)
 
 
-class FlowComponentSchema(ComponentSchema):
+class FlowComponentSchema(ComponentSchema, FlowComponentArgumentSchema):
     """
     FlowSchema and FlowRunSchema are used to load flow while FlowComponentSchema is used to dump flow.
     """
@@ -62,19 +71,6 @@ class FlowComponentSchema(ComponentSchema):
 
     # name, version, tags, display_name and is_deterministic are inherited from ComponentSchema
     properties = fields.Dict(
-        fields.Str(),
-        fields.Str(),
-    )
-    variant = fields.Str()
-    column_mappings = fields.Dict(
-        fields.Str(),
-        fields.Str(),
-    )
-    connections = fields.Dict(
-        fields.Str(),
-        NestedField(ConnectionSchema),
-    )
-    environment_variables = fields.Dict(
         fields.Str(),
         fields.Str(),
     )

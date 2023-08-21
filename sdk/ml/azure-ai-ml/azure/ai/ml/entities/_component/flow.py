@@ -1,26 +1,31 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+import contextlib
 import json
+import os
 from pathlib import Path
-from typing import Dict, List, Optional, Union
+from typing import Dict, Iterable, List, Optional, Tuple, Union
 
+import yaml
 from marshmallow import EXCLUDE, Schema, ValidationError
 
-from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, COMPONENT_TYPE, SchemaUrl
+from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, COMPONENT_TYPE, SOURCE_PATH_CONTEXT_KEY, SchemaUrl
 from azure.ai.ml.constants._component import NodeType
 
 from ..._restclient.v2022_10_01.models import ComponentVersion
 from ..._schema import PathAwareSchema
 from ..._schema.component.flow import FlowComponentSchema, FlowSchema, RunSchema
 from ...exceptions import ErrorCategory, ValidationException
+from .._assets import Code
+from .._validation import MutableValidationResult, SchemaValidatableMixin
 from ._additional_includes import AdditionalIncludesMixin
 from .component import Component
 
 # pylint: disable=protected-access
 
 
-class FlowComponentPort(dict):
+class FlowComponentPortDict(dict):
     def __iter__(self):
         raise RuntimeError("Ports of flow component are not readable before creation.")
 
@@ -47,8 +52,17 @@ class FlowComponent(Component, AdditionalIncludesMixin):
     :type tags: Optional[dict]
     :keyword display_name: The display name of the component.
     :type display_name: Optional[str]
-    :keyword command: The command to be executed.
-    :type command: Optional[str]
+    :keyword flow: The path to the flow directory or flow definition file. Defaults to None and base path of this
+        component will be used as flow directory.
+    :type flow: Optional[Union[str, Path]]
+    :keyword column_mappings: The column mappings for the flow. Defaults to None.
+    :type column_mappings: Optional[dict[str, str]]
+    :keyword variant: The variant of the flow. Defaults to None.
+    :type variant: Optional[str]
+    :keyword connections: The connections for the flow. Defaults to None.
+    :type connections: Optional[dict[str, dict[str, str]]]
+    :keyword environment_variables: The environment variables for the flow. Defaults to None.
+    :type environment_variables: Optional[dict[str, str]]
     :keyword is_deterministic: Specifies whether the Command will return the same output given the same input.
         Defaults to True. When True, if a Command (component) is deterministic and has been run before in the
         current workspace with the same input and settings, it will reuse results from a previous submitted job
@@ -60,16 +74,6 @@ class FlowComponent(Component, AdditionalIncludesMixin):
     :type properties: Optional[dict[str, str]]
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if CommandComponent cannot be successfully validated.
         Details will be provided in the error message.
-
-    .. admonition:: Example:
-
-
-        .. literalinclude:: ../../../../../samples/ml_samples_command_configurations.py
-            :start-after: [START command_component_definition]
-            :end-before: [END command_component_definition]
-            :language: python
-            :dedent: 8
-            :caption: Creating a CommandComponent.
     """
 
     def __init__(
@@ -80,6 +84,11 @@ class FlowComponent(Component, AdditionalIncludesMixin):
         description: Optional[str] = None,
         tags: Optional[Dict] = None,
         display_name: Optional[str] = None,
+        flow: Optional[Union[str, Path]] = None,
+        column_mappings: Optional[Dict[str, str]] = None,
+        variant: Optional[str] = None,
+        connections: Optional[Dict[str, Dict[str, str]]] = None,
+        environment_variables: Optional[Dict[str, str]] = None,
         is_deterministic: bool = True,
         additional_includes: Optional[List] = None,
         properties: Optional[Dict] = None,
@@ -88,9 +97,15 @@ class FlowComponent(Component, AdditionalIncludesMixin):
         # validate init params are valid type
         kwargs[COMPONENT_TYPE] = NodeType.FLOW_PARALLEL
 
+        flow_dir, flow_file_name = self._get_flow_definition(
+            flow,
+            kwargs.get(BASE_PATH_CONTEXT_KEY, Path.cwd()),
+            kwargs.get(SOURCE_PATH_CONTEXT_KEY, None),
+        )
+
         super().__init__(
-            name=name,
-            version=version,
+            name=name or flow_dir.name,
+            version=version or "1",
             description=description,
             tags=tags,
             display_name=display_name,
@@ -101,13 +116,113 @@ class FlowComponent(Component, AdditionalIncludesMixin):
             **kwargs,
         )
 
-        self._inputs, self._outputs = FlowComponentPort(), FlowComponentPort()
+        self._inputs, self._outputs = FlowComponentPortDict(), FlowComponentPortDict()
 
-        self.additional_includes = additional_includes or []
+        self._flow = flow
+        self._column_mappings = column_mappings or {}
+        self._variant = variant
+        self._connections = connections or {}
+        self._environment_variables = environment_variables or {}
+
+        if flow:
+            # file existence has been checked in _get_flow_definition
+            with open(Path(flow_dir, flow_file_name), "r", encoding="utf-8") as f:
+                flow_content = f.read()
+                additional_includes = yaml.safe_load(flow_content).get("additional_includes", None)
+        self._additional_includes = additional_includes or []
+
+        # unlike other Component, code is a private property in FlowComponent
+        self._code, self._flow_file_name = None, None
+
+    # region attributes
+    @property
+    def flow(self) -> Optional[Union[str, Path]]:
+        """The path to the flow directory or flow definition file. Defaults to None and base path of this
+        component will be used as flow directory.
+
+        :rtype: Optional[Union[str, Path]]
+        """
+        return self._flow
+
+    @flow.setter
+    def flow(self, value: Optional[Union[str, Path]]) -> None:
+        if self._flow != value:
+            # reset code and flow file name when flow is changed
+            self._code = None
+            self._flow_file_name = None
+        self._flow = value
+
+    @property
+    def column_mappings(self) -> Dict[str, str]:
+        """The column mappings for the flow. Defaults to None.
+
+        :rtype: Dict[str, str]
+        """
+        return self._column_mappings
+
+    @column_mappings.setter
+    def column_mappings(self, value: Optional[Dict[str, str]]) -> None:
+        self._column_mappings = value or {}
+
+    @property
+    def variant(self) -> Optional[str]:
+        """The variant of the flow. Defaults to None.
+
+        :rtype: Optional[str]
+        """
+        return self._variant
+
+    @variant.setter
+    def variant(self, value: Optional[str]) -> None:
+        self._variant = value
+
+    @property
+    def connections(self) -> Dict[str, Dict[str, str]]:
+        """The connections for the flow. Defaults to None.
+
+        :rtype: Dict[str, Dict[str, str]]
+        """
+        return self._connections
+
+    @connections.setter
+    def connections(self, value: Optional[Dict[str, Dict[str, str]]]) -> None:
+        self._connections = value or {}
+
+    @property
+    def environment_variables(self) -> Dict[str, str]:
+        """The environment variables for the flow. Defaults to None.
+
+        :rtype: Dict[str, str]
+        """
+        return self._environment_variables
+
+    @environment_variables.setter
+    def environment_variables(self, value: Optional[Dict[str, str]]) -> None:
+        self._environment_variables = value or {}
+
+    @property
+    def additional_includes(self) -> List:
+        """A list of shared additional files to be included in the component. Defaults to None.
+
+        :rtype: List
+        """
+        return self._additional_includes
+
+    @additional_includes.setter
+    def additional_includes(self, value: Optional[List]) -> None:
+        self._additional_includes = value or []
+
+    # endregion
 
     @classmethod
     def _from_rest_object_to_init_params(cls, obj: ComponentVersion) -> Dict:
         raise RuntimeError("FlowComponent does not support loading from REST object.")
+
+    def _to_rest_object(self) -> ComponentVersion:
+        rest_obj = super()._to_rest_object()
+        rest_obj.properties.component_spec["code"] = self._code
+        rest_obj.properties.component_spec["flow_file_name"] = self._flow_file_name
+        return rest_obj
 
     # region SchemaValidatableMixin
     @classmethod
@@ -149,5 +264,64 @@ class FlowComponent(Component, AdditionalIncludesMixin):
     @classmethod
     def _create_schema_for_validation(cls, context) -> Union[PathAwareSchema, Schema]:
         return FlowComponentSchema(context=context)
+
+    def _customized_validate(self) -> MutableValidationResult:
+        # skip io port validation
+        return SchemaValidatableMixin._customized_validate(self)
+
+    # endregion
+
+    @classmethod
+    def _get_flow_definition(cls, flow, base_path, source_path) -> Tuple[Path, str]:
+        flow_file_name = "flow.dag.yaml"
+
+        if flow is None:
+            # Flow component must be created with a local yaml file, so no need to check if source_path exists
+            flow_file_name = os.path.basename(source_path)
+            return Path(base_path), flow_file_name
+
+        flow_path = Path(flow)
+        if not flow_path.is_absolute():
+            # if flow_path points to a symlink, we still use the parent of the symlink as origin code
+            flow_path = Path(base_path, flow)
+
+        if flow_path.is_dir() and (flow_path / flow_file_name).is_file():
+            return flow_path, flow_file_name
+
+        if flow_path.is_file():
+            return flow_path.parent, flow_path.name
+
+        raise ValidationException(
+            message="Flow path must be a directory containing flow.dag.yaml or a file, but got %s" % flow_path,
+            no_personal_data_message="Flow path must be a directory or a file",
+            target=cls._get_validation_error_target(),
+            error_category=ErrorCategory.USER_ERROR,
+        )
+
+    # region AdditionalIncludesMixin
+    def _get_origin_code_value(self) -> Union[str, os.PathLike, None]:
+        if self._code:
+            return self._code
+        return self._get_flow_definition(self.flow, self.base_path, self._source_path)[0]
+
+    def _fill_back_code_value(self, value: str) -> None:
+        if not self._flow_file_name:
+            _, self._flow_file_name = self._get_flow_definition(self.flow, self.base_path, self._source_path)
+        self._code = value
+
+    @contextlib.contextmanager
+    def _try_build_local_code(self) -> Iterable[Optional[Code]]:
+        with super()._try_build_local_code() as code:
+            if code and code.path:
+                if not (Path(code.path) / ".promptflow" / "flow.tools.json").is_file():
+                    raise ValidationException(
+                        message="Flow component must be created with a ./promptflow/flow.tools.json, "
+                        "please run `pf flow build` to generate it or skip it in your ignore file.",
+                        no_personal_data_message="Flow component must be created with a ./promptflow/flow.tools.json, "
+                        "please run `pf flow build` to generate it or skip it in your ignore file.",
+                        target=self._get_validation_error_target(),
+                        error_category=ErrorCategory.USER_ERROR,
+                    )
+            yield code
 
     # endregion

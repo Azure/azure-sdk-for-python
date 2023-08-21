@@ -9,8 +9,6 @@ from typing import Callable
 
 import pydash
 import pytest
-from azure.core.exceptions import HttpResponseError
-from azure.core.paging import ItemPaged
 from devtools_testutils import AzureRecordedTestCase, is_live
 from test_utilities.utils import assert_job_cancel, omit_with_wildcard, sleep_if_live
 
@@ -27,6 +25,8 @@ from azure.ai.ml.constants._common import (
 from azure.ai.ml.dsl._utils import _sanitize_python_variable_name
 from azure.ai.ml.entities import CommandComponent, Component, PipelineComponent
 from azure.ai.ml.entities._load_functions import load_code, load_job
+from azure.core.exceptions import HttpResponseError
+from azure.core.paging import ItemPaged
 
 from .._util import _COMPONENT_TIMEOUT_SECOND
 from ..unittests.test_component_schema import load_component_entity_from_rest_json
@@ -1170,20 +1170,21 @@ class TestComponent(AzureRecordedTestCase):
                 created_component._to_dict(), *omit_fields
             )
 
-    @pytest.mark.skip(reason="TODO: enable after load from flow is supported")
-    def test_load_component_from_flow(self, client: MLClient, randstr, target_path: str):
-        component = load_component(target_path, param_override=[{name}])
-        assert component.type == "flow_parallel"
+    @pytest.mark.skip(reason="TODO: flow component creation is not supported on service side yet")
+    def test_load_component_from_flow(self, client: MLClient, randstr):
+        target_path: str = "./tests/test_configs/flows/basic/flow.dag.yaml"
+        component = load_component(
+            target_path,
+            params_override=[
+                {
+                    "name": randstr("component_name"),
+                    "version": "1",
+                    "description": "test load component from flow",
+                }
+            ],
+        )
 
-        with pytest.raises(Exception, match="Ports of flow component is not editable."):
-            component.inputs.groundtruth.default_value = "${{data.answer}}"
-
-        component.name = randstr("component_name")
-        component.version = "1"
-        component.description = "test load component from flow"
-
-        # TODO: service-side need to skip parallel component schema validation
-        created_component = client.components.create_or_update(component, version="1")
+        created_component = client.components.create_or_update(component, version="2")
 
         assert created_component.name == component.name
-        assert created_component.version == component.version
+        assert created_component.version == "2"

@@ -133,8 +133,8 @@ class Component(
             properties=properties,
             creation_context=creation_context,
             is_anonymous=is_anonymous,
-            base_path=kwargs.pop("base_path", None),
-            source_path=kwargs.pop("source_path", None),
+            base_path=kwargs.pop(BASE_PATH_CONTEXT_KEY, None),
+            source_path=kwargs.pop(SOURCE_PATH_CONTEXT_KEY, None),
         )
         # store kwargs to self._other_parameter instead of pop to super class to allow component have extra
         # fields not defined in current schema.
@@ -392,15 +392,15 @@ class Component(
                 **kwargs,
             )
         )
-        new_instance.__init__(
-            **init_kwargs,
-        )
         # Set base path separately to avoid doing this in post load, as return types of post load are not unified,
         # could be object or dict.
         # base_path in context can be changed in loading, so we use original base_path here.
-        new_instance._base_path = base_path
+        init_kwargs[BASE_PATH_CONTEXT_KEY] = base_path.absolute()
         if yaml_path:
-            new_instance._source_path = yaml_path
+            init_kwargs[SOURCE_PATH_CONTEXT_KEY] = Path(yaml_path).absolute().as_posix()
+        new_instance.__init__(
+            **init_kwargs,
+        )
         return new_instance
 
     @classmethod
@@ -574,7 +574,7 @@ class Component(
     def _to_dict(self) -> Dict:
         # Replace the name of $schema to schema.
         component_schema_dict = self._dump_for_validation()
-        component_schema_dict.pop("base_path", None)
+        component_schema_dict.pop(BASE_PATH_CONTEXT_KEY, None)
 
         # TODO: handle other_parameters and remove override from subclass
         return component_schema_dict

@@ -11,8 +11,6 @@ from os import PathLike
 from pathlib import Path
 from typing import Any, Callable, Dict, Iterable, List, Optional, Union
 
-from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
-
 from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
     AzureMachineLearningWorkspaces as ServiceClient102021Dataplane,
 )
@@ -39,12 +37,13 @@ from azure.ai.ml._vendor.azure_resources.operations import DeploymentsOperations
 from azure.ai.ml.constants._common import (
     DEFAULT_COMPONENT_VERSION,
     DEFAULT_LABEL_NAME,
-    DefaultOpenEncoding,
     AzureMLResourceType,
+    DefaultOpenEncoding,
     LROConfigurations,
 )
 from azure.ai.ml.entities import Component, Environment, ValidationResult
 from azure.ai.ml.exceptions import ComponentException, ErrorCategory, ErrorTarget, ValidationException
+from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 
 from .._utils._cache_utils import CachedNodeResolver
 from .._utils._experimental import experimental
@@ -58,7 +57,7 @@ from ..entities._component.pipeline_component import PipelineComponent
 from ..entities._job.pipeline._attr_dict import has_attr_safe
 from ._code_operations import CodeOperations
 from ._environment_operations import EnvironmentOperations
-from ._operation_orchestrator import _AssetResolver, OperationOrchestrator
+from ._operation_orchestrator import OperationOrchestrator, _AssetResolver
 from ._workspace_operations import WorkspaceOperations
 
 ops_logger = OpsLogger(__name__)
@@ -423,6 +422,15 @@ class ComponentOperations(_ScopeDependentOperations):
             raise_error=raise_on_failure,
         )
 
+    def _update_flow_rest_object(self, rest_component_resource):
+        from azure.ai.ml._utils._arm_id_utils import AMLVersionedArmId
+
+        component_spec = rest_component_resource.properties.component_spec
+        code, flow_file_name = AMLVersionedArmId(component_spec.pop("code")), component_spec.pop("flow_file_name")
+        created_code = self._code_operations.get(name=code.asset_name, version=code.asset_version)
+        # TODO: check if we need to remove the :443 in code path
+        component_spec["flow_definition_uri"] = created_code.path + "/" + flow_file_name
+
     @monitor_with_telemetry_mixin(
         logger,
         "Component.CreateOrUpdate",
@@ -496,6 +504,12 @@ class ComponentOperations(_ScopeDependentOperations):
 
         name, version = component._get_rest_name_version()
         rest_component_resource = component._to_rest_object()
+        # TODO: remove this after server side support directly using client created code
+        from azure.ai.ml.entities._component.flow import FlowComponent
+
+        if isinstance(component, FlowComponent):
+            self._update_flow_rest_object(rest_component_resource)
+
         result = None
         try:
             if not component._is_anonymous and kwargs.get("skip_if_no_change"):
@@ -1147,4 +1161,4 @@ def _try_resolve_code_for_component(component: Component, resolver: _AssetResolv
                 code = component._get_origin_code_value()
             if code is None:
                 return
-            component.code = resolver(code, azureml_type=AzureMLResourceType.CODE)
+            component._fill_back_code_value(resolver(code, azureml_type=AzureMLResourceType.CODE))

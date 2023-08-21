@@ -389,40 +389,31 @@ class TestFlowComponent:
         target_path = "./tests/test_configs/flows/basic/flow.dag.yaml"
 
         component = load_component(target_path)
-        assert component.type == "flow_parallel"
+        component._fill_back_code_value("/subscriptions/xxx/resourceGroups/xxx/workspaces/xxx/codes/xxx/versions/1")
 
-        with pytest.raises(RuntimeError, match="Ports of flow component are not editable."):
-            component.inputs["groundtruth"] = None
-
-        with pytest.raises(RuntimeError, match="Ports of flow component are not readable before creation."):
-            component.inputs.keys()
-
-        with pytest.raises(RuntimeError, match="Ports of flow component are not readable before creation."):
-            list(component.inputs)
-
-        with pytest.raises(RuntimeError, match="Ports of flow component are not readable before creation."):
-            component.inputs["groundtruth"]
-
-        component.name = "test_basic_flow"
-        component.version = "1"
+        component.version = "2"
         component.description = "test load component from flow"
 
         expected_rest_dict = {
-            "name": "azureml_anonymous",
+            "name": "basic",
             "properties": {
                 "component_spec": {
                     "_source": "YAML.COMPONENT",
                     "description": "test load component from flow",
-                    "name": "test_basic_flow",
+                    # name of the component will be the flow directory name by default
+                    "name": "basic",
                     "type": "flow_parallel",
-                    "version": "1",
+                    "version": "2",
                     "is_deterministic": True,
+                    "code": "/subscriptions/xxx/resourceGroups/xxx/workspaces/xxx/codes/xxx/versions/1",
+                    "flow_file_name": "flow.dag.yaml",
                 },
                 "description": "test load component from flow",
-                # TODO: check if this is expected: this is only impacted by component.name & version on loading
-                "is_anonymous": True,
+                "is_anonymous": False,
                 "is_archived": False,
-                "properties": {},
+                "properties": {
+                    "client_component_hash": "f2da0699-906e-04bf-1e73-2920480afb6a",
+                },
                 "tags": {},
             },
         }
@@ -433,18 +424,57 @@ class TestFlowComponent:
             target_path,
             params_override=[
                 {
-                    "name": "test_basic_flow",
-                    "version": "1",
+                    "version": "2",
                     "description": "test load component from flow",
                 }
             ],
         )
-
-        expected_rest_dict["name"] = "test_basic_flow"
-        expected_rest_dict["properties"]["is_anonymous"] = False
-        expected_rest_dict["properties"]["properties"]["client_component_hash"] = "b69e653c-cbd5-cf36-fbe3-09c5529b9074"
+        named_component._fill_back_code_value(
+            "/subscriptions/xxx/resourceGroups/xxx/workspaces/xxx/codes/xxx/versions/1"
+        )
 
         assert named_component._to_rest_object().as_dict() == expected_rest_dict
+
+    def test_component_load_from_run(self):
+        target_path = "./tests/test_configs/flows/runs/basic_run.yml"
+
+        component = load_component(target_path)
+
+        expected_rest_dict = {
+            "name": "basic",
+            "properties": {
+                "component_spec": {
+                    "_source": "YAML.COMPONENT",
+                    "connections": {
+                        "llm": {"connection": "azure_open_ai_connection", "deployment_name": "text-davinci-003"}
+                    },
+                    "description": "A run of the basic flow",
+                    "display_name": "Basic Run",
+                    "environment_variables": {
+                        "AZURE_OPENAI_API_BASE": "${azure_open_ai_connection.api_base}",
+                        "AZURE_OPENAI_API_KEY": "${azure_open_ai_connection.api_key}",
+                        "AZURE_OPENAI_API_TYPE": "azure",
+                        "AZURE_OPENAI_API_VERSION": "2023-03-15-preview",
+                    },
+                    "is_deterministic": True,
+                    # TODO: should we use default run name (the dir name of the run yaml) as component name?
+                    "name": "basic",
+                    "type": "flow_parallel",
+                    "version": "1",
+                    "code": "/subscriptions/xxx/resourceGroups/xxx/workspaces/xxx/codes/xxx/versions/1",
+                    "flow_file_name": "flow.dag.yaml",
+                },
+                "description": "A run of the basic flow",
+                "is_anonymous": False,
+                "is_archived": False,
+                "properties": {"client_component_hash": "c94fac96-a244-d013-10e7-1dfa7b461831"},
+                "tags": {},
+            },
+        }
+
+        component._fill_back_code_value("/subscriptions/xxx/resourceGroups/xxx/workspaces/xxx/codes/xxx/versions/1")
+
+        assert component._to_rest_object().as_dict() == expected_rest_dict
 
     @pytest.mark.skip(reason="TODO: enable after load from flow is supported")
     def test_component_load_fail(self):
@@ -452,3 +482,32 @@ class TestFlowComponent:
         Path(target_path).parent.joinpath(".promptflow", "flow.tools.json").unlink(missing_ok=True)
         with pytest.raises(Exception, match="Ports of flow component is not editable."):
             load_component(target_path)
+
+    def test_component_entity(self):
+        from azure.ai.ml.entities._component.flow import FlowComponent, FlowComponentPortDict
+
+        target_path = "./tests/test_configs/flows/basic/flow.dag.yaml"
+
+        component: FlowComponent = load_component(target_path)
+
+        assert component.type == "flow_parallel"
+
+        input_port_dict: FlowComponentPortDict = component.inputs
+        with pytest.raises(RuntimeError, match="Ports of flow component are not editable."):
+            input_port_dict["groundtruth"] = None
+
+        with pytest.raises(RuntimeError, match="Ports of flow component are not readable before creation."):
+            input_port_dict.keys()
+
+        with pytest.raises(RuntimeError, match="Ports of flow component are not readable before creation."):
+            list(input_port_dict)
+
+        with pytest.raises(RuntimeError, match="Ports of flow component are not readable before creation."):
+            _ = input_port_dict["groundtruth"]
+
+        component.flow = None
+        component.column_mappings = None
+        component.variant = None
+        component.connections = None
+        component.additional_includes = None
+        component.environment_variables = None
