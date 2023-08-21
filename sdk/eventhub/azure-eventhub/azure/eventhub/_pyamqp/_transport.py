@@ -510,7 +510,6 @@ class SSLTransport(_AbstractTransport):
     def _setup_transport(self):
         """Wrap the socket in an SSL object."""
         self.sock = self._wrap_socket(self.sock, **self.sslopts)
-        self.sock.do_handshake()
         self._quick_recv = self.sock.recv
 
     def _wrap_socket(self, sock, context=None, **sslopts):
@@ -535,7 +534,7 @@ class SSLTransport(_AbstractTransport):
         server_side=False,
         cert_reqs=ssl.CERT_REQUIRED,
         ca_certs=None,
-        do_handshake_on_connect=False,
+        do_handshake_on_connect=True,
         suppress_ragged_eofs=True,
         server_hostname=None,
         ciphers=None,
