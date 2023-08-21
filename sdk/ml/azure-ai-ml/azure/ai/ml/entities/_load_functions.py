@@ -49,7 +49,7 @@ _DEFAULT_RELATIVE_ORIGIN = "./"
 def load_common(
     cls: Type[Resource],
     source: Union[str, PathLike, IO[AnyStr]],
-    relative_origin: Optional[str],
+    relative_origin: str,
     params_override: Optional[list] = None,
     **kwargs,
 ) -> Resource:
