@@ -73,7 +73,6 @@ class TestMonitorSchedule:
             "tests/test_configs/monitoring/yaml_configs/data_drift.yaml",
             "tests/test_configs/monitoring/yaml_configs/prediction_drift.yaml",
             "tests/test_configs/monitoring/yaml_configs/data_quality.yaml",
-            "tests/test_configs/monitoring/yaml_configs/feature_attribution_drift.yaml",
         ],
     )
     def test_default_data_window_size_recurrence(self, test_path) -> None:

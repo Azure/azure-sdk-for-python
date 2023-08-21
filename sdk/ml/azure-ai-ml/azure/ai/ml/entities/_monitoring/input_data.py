@@ -51,7 +51,7 @@ class MonitorInputData(RestTranslatableMixin):
 
 @experimental
 class FixedInputData(MonitorInputData):
-    def __init(
+    def __init__(
         self,
         *,
         data_context: MonitorDatasetContext = None,

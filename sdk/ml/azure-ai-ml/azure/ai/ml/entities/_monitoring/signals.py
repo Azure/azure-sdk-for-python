@@ -743,7 +743,7 @@ class FeatureAttributionDriftSignal(RestTranslatableMixin):
         self.properties = properties
         self.type = MonitorSignalType.FEATURE_ATTRIBUTION_DRIFT
 
-    def _to_rest_object(self, **kwargs) -> RestFeatureAttributionDriftMonitoringSignal:
+    def _to_rest_object(self, **kwargs) -> RestFeatureAttributionDriftMonitoringSignal: # pylint: disable=unused-argument
         return RestFeatureAttributionDriftMonitoringSignal(
             production_data=[data._to_rest_object() for data in self.production_data],
             reference_data=self.reference_data._to_rest_object(),
@@ -806,8 +806,8 @@ class ModelPerformanceSignal(ModelSignal):
 
     def _to_rest_object(self, **kwargs) -> RestModelPerformanceSignal:
         default_data_window_size = kwargs.get("default_data_window_size")
-        if self.data_window_size is None:
-            self.data_window_size = default_data_window_size
+        if self.production_data.data_window_size is None:
+            self.production_data.data_window_size = default_data_window_size
         return RestModelPerformanceSignal(
             production_data=self.production_data._to_rest_object(),
             reference_data=self.reference_data._to_rest_object(),

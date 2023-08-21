@@ -76,15 +76,15 @@ class NumericalDriftMetrics(RestTranslatableMixin):
         return metric_name, threshold
 
     @classmethod
-    def _from_rest_object(cls, metric_name, threshold) -> "NumericalDriftMetrics":
+    def _from_rest_object(cls, metric_name, threshold) -> "NumericalDriftMetrics": # pylint: disable=arguments-differ
         metric_name = camel_to_snake(metric_name)
         if metric_name == MonitorMetricName.JENSEN_SHANNON_DISTANCE:
             return cls(jensen_shannon_distance=threshold)
-        elif metric_name == MonitorMetricName.NORMALIZED_WASSERSTEIN_DISTANCE:
+        if metric_name == MonitorMetricName.NORMALIZED_WASSERSTEIN_DISTANCE:
             return cls(normalized_wasserstein_distance=threshold)
-        elif metric_name == MonitorMetricName.POPULATION_STABILITY_INDEX:
+        if metric_name == MonitorMetricName.POPULATION_STABILITY_INDEX:
             return cls(population_stability_index=threshold)
-        elif metric_name == MonitorMetricName.TWO_SAMPLE_KOLMOGOROV_SMIRNOV_TEST:
+        if metric_name == MonitorMetricName.TWO_SAMPLE_KOLMOGOROV_SMIRNOV_TEST:
             return cls(two_sample_kolmogorov_smirnov_test=threshold)
 
     @classmethod
@@ -93,6 +93,8 @@ class NumericalDriftMetrics(RestTranslatableMixin):
             normalized_wasserstein_distance=0.1,
         )
 
+    def defaults(self) -> "NumericalDriftMetrics":
+        return self._get_default_thresholds()
 
 @experimental
 class CategoricalDriftMetrics(RestTranslatableMixin):
@@ -113,17 +115,17 @@ class CategoricalDriftMetrics(RestTranslatableMixin):
         if self.jensen_shannon_distance:
             metric_name = MonitorMetricName.JENSEN_SHANNON_DISTANCE
             threshold = MonitoringThreshold(value=self.jensen_shannon_distance)
-        elif self.population_stability_index and threshold is None:
+        if self.population_stability_index and threshold is None:
             metric_name = MonitorMetricName.POPULATION_STABILITY_INDEX
             threshold = MonitoringThreshold(value=self.population_stability_index)
-        elif self.pearsons_chi_squared_test and threshold is None:
+        if self.pearsons_chi_squared_test and threshold is None:
             metric_name = MonitorMetricName.PEARSONS_CHI_SQUARED_TEST
             threshold = MonitoringThreshold(value=self.pearsons_chi_squared_test)
 
         return metric_name, threshold
 
     @classmethod
-    def _from_rest_object(cls, metric_name, threshold) -> "CategoricalDriftMetrics":
+    def _from_rest_object(cls, metric_name, threshold) -> "CategoricalDriftMetrics": # pylint: disable=arguments-differ
         metric_name = camel_to_snake(metric_name)
         if metric_name == MonitorMetricName.JENSEN_SHANNON_DISTANCE:
             return cls(jensen_shannon_distance=threshold)
@@ -137,6 +139,9 @@ class CategoricalDriftMetrics(RestTranslatableMixin):
         return cls(
             jensen_shannon_distance=0.1,
         )
+    
+    def defaults(self) -> "CategoricalDriftMetrics":
+        return self._get_default_thresholds()
 
 
 @experimental
@@ -164,11 +169,13 @@ class DataDriftMetricThreshold(MetricThreshold):
         *,
         data_type: Literal[MonitorFeatureType.CATEGORICAL, MonitorFeatureType.NUMERICAL] = None,
         threshold: float = None,
+        metric: Optional[str] = None,
         numerical: NumericalDriftMetrics = None,
         categorical: CategoricalDriftMetrics = None,
     ):
         super().__init__(threshold=threshold)
         self.data_type = data_type
+        self.metric = metric
         self.numerical = numerical
         self.categorical = categorical
 
@@ -215,8 +222,8 @@ class DataDriftMetricThreshold(MetricThreshold):
     @classmethod
     def _get_default_thresholds(cls) -> "DataDriftMetricThreshold":
         return cls(
-            numerical=NumericalDriftMetrics._get_default_thresholds(),
-            categorical=CategoricalDriftMetrics._get_default_thresholds(),
+            numerical=NumericalDriftMetrics.defaults(),
+            categorical=CategoricalDriftMetrics.defaults(),
         )
 
     def __eq__(self, other: Any):
@@ -301,15 +308,15 @@ class PredictionDriftMetricThreshold(MetricThreshold):
     @classmethod
     def _get_default_thresholds(cls) -> "PredictionDriftMetricThreshold":
         return cls(
-            numerical=NumericalDriftMetrics._get_default_thresholds(),
-            categorical=CategoricalDriftMetrics._get_default_thresholds(),
+            numerical=NumericalDriftMetrics.defaults(),
+            categorical=CategoricalDriftMetrics.defaults(),
         )
 
     def __eq__(self, other: Any):
         if not isinstance(other, PredictionDriftMetricThreshold):
             return NotImplemented
         return (
-            self.applicable_feature_type == other.applicable_feature_type
+            self.data_type == other.data_type
             and self.metric_name == other.metric_name
             and self.threshold == other.threshold
         )
