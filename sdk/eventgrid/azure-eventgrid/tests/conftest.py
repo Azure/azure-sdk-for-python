@@ -44,21 +44,22 @@ def add_sanitizers(test_proxy):
         value="fakeresource",
         regex="(?<=\\/\\/)[a-z-]+(?=\\.eastus-1\\.eventgrid\\.azure\\.net/api/events)",
     )
-    add_body_regex_sanitizer(
-        value="faketopic",
-        regex="^[a-z]+\.EASTUS-1+\.EVENTGRID+\.AZURE+\.NET)+$",
-    )
+
+    add_oauth_response_sanitizer()
     add_header_regex_sanitizer(key="Set-Cookie", value="[set-cookie;]")
     add_header_regex_sanitizer(key="Cookie", value="cookie;")
+
+    # Remove tokens
+    # add_body_key_sanitizer(json_path="$.*lockToken", value="token")
+    # add_body_key_sanitizer(json_path="$.*lockTokens", value="[tokens]")
+    # add_body_key_sanitizer(json_path="$.*succeededLockTokens", value="[succeeded_tokens]")
+    # add_body_key_sanitizer(json_path="$.*failedLockTokens", value="[failed_tokens]")
+
+    add_body_key_sanitizer(json_path="$..id", value="id")
+    # add_general_regex_sanitizer(value="scope", regex="(?<=&scope=)[^&]+(?=&)")
+    # add_general_regex_sanitizer(value="claims", regex="(?<=&claims=)[^&]+(?=)")
     # add_body_key_sanitizer(json_path="$..access_token", value="access_token")
-    # # add_body_key_sanitizer(json_path="$..lockToken", value="token")
-    # # add_body_key_sanitizer(json_path="$..lockTokens", value="tokens")
-    # # add_body_key_sanitizer(json_path="$..succeededLockTokens", value="succeeded_tokens")
-    # # add_body_key_sanitizer(json_path="$..failedLockTokens", value="failed_tokens")
-    # add_body_key_sanitizer(json_path="$..id", value="id")
-    # # add_general_regex_sanitizer(value="scope", regex="(?<=&scope=)[^&]+(?=&)")
-    # # add_general_regex_sanitizer(value="claims", regex="(?<=&claims=)[^&]+(?=)")
-    add_oauth_response_sanitizer()
+
 
     client_id = os.getenv("AZURE_CLIENT_ID", "sanitized")
     client_secret = os.getenv("AZURE_CLIENT_SECRET", "sanitized")
@@ -66,11 +67,16 @@ def add_sanitizers(test_proxy):
     eventgrid_client_secret = os.getenv("EVENTGRID_CLIENT_SECRET", "sanitized")
     tenant_id = os.getenv("AZURE_TENANT_ID", "sanitized")
     eventgrid_topic_key = os.getenv("EVENTGRID_TOPIC_KEY", "sanitized")
+    eventgrid_topic_endpoint = os.getenv("EVENTGRID_TOPIC_ENDPOINT", "sanitized")
     eventgrid_key = os.getenv("EVENTGRID_KEY", "sanitized")
     topic_name = os.getenv("TOPIC_NAME", "sanitized")
     event_subscription_name = os.getenv("EVENT_SUBSCRIPTION_NAME", "sanitized")
     add_general_string_sanitizer(target=eventgrid_key, value="sanitized")
     add_general_string_sanitizer(target=eventgrid_topic_key, value="sanitized")
+    add_general_string_sanitizer(target=eventgrid_topic_endpoint, value="sanitized")
+    # Need to santize namespace for eventgrid_topic:
+    eventgrid_hostname = (eventgrid_topic_endpoint.split("https://")[1]).split("/api")[0]
+    add_general_string_sanitizer(target=eventgrid_hostname.upper(), value="sanitized.eastus-1.eventgrid.azure.net")
     add_general_string_sanitizer(target=client_id, value="sanitized")
     add_general_string_sanitizer(target=client_secret, value="sanitized")
     add_general_string_sanitizer(target=eventgrid_client_id, value="sanitized")
