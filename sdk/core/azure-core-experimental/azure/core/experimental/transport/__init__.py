@@ -24,6 +24,7 @@
 #
 # --------------------------------------------------------------------------
 import sys
+from typing import List
 
 # pylint: disable=undefined-all-variable
 
@@ -34,10 +35,10 @@ if sys.version_info >= (3, 7):
         "AsyncHttpXTransport",
     ]
 
-    def __dir__():
+    def __dir__() -> List[str]:
         return __all__
 
-    def __getattr__(name):
+    def __getattr__(name: str):
         if name == "PyodideTransport":
             try:
                 from ._pyodide import PyodideTransport

@@ -43,7 +43,7 @@ class SASLAnonymousCredential(object):
 
     mechanism = b"ANONYMOUS"
 
-    def start(self):  # pylint: disable=no-self-use
+    def start(self):
         return b""
 
 
@@ -56,7 +56,7 @@ class SASLExternalCredential(object):
 
     mechanism = b"EXTERNAL"
 
-    def start(self):  # pylint: disable=no-self-use
+    def start(self):
         return b""
 
 

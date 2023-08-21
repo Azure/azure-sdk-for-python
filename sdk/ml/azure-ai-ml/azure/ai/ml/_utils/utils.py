@@ -21,7 +21,7 @@ from datetime import timedelta
 from functools import singledispatch, wraps
 from os import PathLike
 from pathlib import Path, PosixPath, PureWindowsPath
-from typing import IO, Any, AnyStr, Callable, Dict, List, Optional, Tuple, Union
+from typing import IO, Any, AnyStr, Callable, Dict, Iterable, List, Optional, Tuple, Union
 from urllib.parse import urlparse
 from uuid import UUID
 
@@ -97,7 +97,15 @@ def camel_to_snake(text: str) -> Optional[str]:
 # This is snake to camel back which is different from snake to camel
 # https://stackoverflow.com/questions/19053707
 def snake_to_camel(text: Optional[str]) -> Optional[str]:
-    """convert snake name to camel."""
+    """Convert snake name to camel.
+
+    :param text: String to convert
+    :type text: Optional[str]
+    :return:
+       * None if text is None
+       * Converted text from snake_case to camelCase
+    :rtype: Optional[str]
+    """
     if text:
         return re.sub("_([a-zA-Z0-9])", lambda m: m.group(1).upper(), text)
     return None
@@ -106,11 +114,6 @@ def snake_to_camel(text: Optional[str]) -> Optional[str]:
 # This is real snake to camel
 def _snake_to_camel(name):
     return re.sub(r"(?:^|_)([a-z])", lambda x: x.group(1).upper(), name)
-
-
-def camel_case_transformer(key, value):
-    """transfer string to camel case."""
-    return (snake_to_camel(key), value)
 
 
 def float_to_str(f):
@@ -124,19 +127,21 @@ def create_requests_pipeline_with_retry(*, requests_pipeline: HttpPipeline, retr
     """Creates an HttpPipeline that reuses the same configuration as the supplied pipeline (including the transport),
     but overwrites the retry policy.
 
-    Args:
-        requests_pipeline (HttpPipeline): Pipeline to base new one off of.
-        retry (int, optional): Number of retries. Defaults to 3.
-
-    Returns:
-        HttpPipeline: Pipeline identical to provided one, except with a new
-                     retry policy.
+    :keyword requests_pipeline: Pipeline to base new one off of.
+    :paramtype requests_pipeline: HttpPipeline
+    :keyword retry: Number of retries. Defaults to 3
+    :paramtype retry: int
+    :return: Pipeline identical to provided one, except with a new retry policy
+    :rtype: HttpPipeline
     """
     return requests_pipeline.with_policies(retry_policy=get_retry_policy(num_retry=retries))
 
 
-def get_retry_policy(num_retry=3) -> RetryPolicy:
-    """
+def get_retry_policy(num_retry: int = 3) -> RetryPolicy:
+    """Retrieves a retry policy to use in an azure.core.pipeline.Pipeline
+
+    :param num_retry: The number of retries
+    :type num_retry: int
     :return: Returns the msrest or requests REST client retry policy.
     :rtype: RetryPolicy
     """
@@ -158,14 +163,16 @@ def download_text_from_url(
 ) -> str:
     """Downloads the content from an URL.
 
-    Args:
-        source_uri (str): URI to download
-        requests_pipeline (HttpPipeline):  Used to send the request
-        timeout (Union[float, Tuple[float, float]], optional): One of
-            * float that specifies the connect and read time outs
-            * a 2-tuple that specifies the connect and read time out in that order
-    Returns:
-        str: the Response text
+    :param source_uri: URI to download
+    :type source_uri: str
+    :param requests_pipeline:  Used to send the request
+    :type requests_pipeline: HttpPipeline
+    :param timeout: One of
+      * float that specifies the connect and read time outs
+      * a 2-tuple that specifies the connect and read time out in that order
+    :type timeout: Union[float, Tuple[float, float]]
+    :return: The Response text
+    :rtype: str
     """
     if not timeout:
         timeout_params = {}
@@ -303,10 +310,14 @@ def load_yaml(source: Optional[Union[AnyStr, PathLike, IO]]) -> Dict:
             ) from e
 
 
+# pylint: disable-next=docstring-missing-param
 def dump_yaml(*args, **kwargs):
     """A thin wrapper over yaml.dump which forces `OrderedDict`s to be serialized as mappings.
 
     Otherwise behaves identically to yaml.dump
+
+    :return: The yaml object
+    :rtype: Any
     """
 
     class OrderedDumper(yaml.Dumper):
@@ -589,8 +600,16 @@ def from_iso_duration_format_min_sec(duration: Optional[str]) -> str:
     return duration.split(".")[0].replace("PT", "").replace("M", "m ") + "s"
 
 
-def hash_dict(items: dict, keys_to_omit=None):
-    """Return hash GUID of a dictionary except keys_to_omit."""
+def hash_dict(items: Dict[str, Any], keys_to_omit: Optional[Iterable[str]] = None) -> str:
+    """Return hash GUID of a dictionary except keys_to_omit.
+
+    :param items: The dict to hash
+    :type items: Dict[str, Any]
+    :param keys_to_omit: Keys to omit before hashing
+    :type keys_to_omit: Optional[Iterable[str]]
+    :return: The hash GUID of the dictionary
+    :rtype: str
+    """
     if keys_to_omit is None:
         keys_to_omit = []
     items = pydash.omit(items, keys_to_omit)
@@ -648,17 +667,20 @@ def map_single_brackets_and_warn(command: str):
     return command
 
 
-def transform_dict_keys(data: Dict, casing_transform: Callable[[str], str], exclude_keys=None) -> Dict:
-    """Convert all keys of a nested dictionary according to the passed casing_transform function."""
-    transformed_dict = {}
-    for key in data.keys():
-        # Modify the environment_variables separately: don't transform values in environment_variables.
-        # Todo: Pass in json to the overrides field
-        if (exclude_keys and key in exclude_keys) or (not isinstance(data[key], dict)):
-            transformed_dict[casing_transform(key)] = data[key]
-        else:
-            transformed_dict[casing_transform(key)] = transform_dict_keys(data[key], casing_transform)
-    return transformed_dict
+def transform_dict_keys(data: Dict[str, Any], casing_transform: Callable[[str], str]) -> Dict[str, Any]:
+    """Convert all keys of a nested dictionary according to the passed casing_transform function.
+
+    :param data: The data to transform
+    :type data: Dict[str, Any]
+    :param casing_transform: A callable applied to all keys in data
+    :type casing_transform: Callable[[str], str]
+    :return: A dictionary with transformed keys
+    :rtype: dict
+    """
+    return {
+        casing_transform(key): transform_dict_keys(val, casing_transform) if isinstance(val, dict) else val
+        for key, val in data.items()
+    }
 
 
 def merge_dict(origin, delta, dep=0):
@@ -723,9 +745,13 @@ def is_data_binding_expression(
     "${{parent.jobs.xxx}}_extra" and "${{parent.jobs.xxx}}_{{parent.jobs.xxx}}".
 
     :param value: Value to check.
+    :type value: str
     :param binding_prefix: Prefix to check for.
+    :type binding_prefix: Union[str, List[str]]
     :param is_singular: should the value be a singular data-binding expression, like "${{parent.jobs.xxx}}".
+    :type is_singular: bool
     :return: True if the value is a data-binding expression, False otherwise.
+    :rtype: bool
     """
     return len(get_all_data_binding_expressions(value, binding_prefix, is_singular)) > 0
 
@@ -737,9 +763,13 @@ def get_all_data_binding_expressions(
     return an empty list if the value is not a str.
 
     :param value: Value to extract.
+    :type value: str
     :param binding_prefix: Prefix to filter.
+    :type binding_prefix: Union[str, List[str]]
     :param is_singular: should the value be a singular data-binding expression, like "${{parent.jobs.xxx}}".
+    :type is_singular: bool
     :return: list of data-binding expressions.
+    :rtype: List[str]
     """
     if isinstance(binding_prefix, str):
         binding_prefix = [binding_prefix]
@@ -772,7 +802,7 @@ def try_enable_internal_components(*, force=False):
     references _internal.
 
     :keyword force: Force enable internal components even if enabled before.
-    :type force: bool
+    :paramtype force: bool
     """
     if is_internal_components_enabled():
         from azure.ai.ml._internal import enable_internal_components_in_pipeline
@@ -780,15 +810,18 @@ def try_enable_internal_components(*, force=False):
         enable_internal_components_in_pipeline(force=force)
 
 
-def is_valid_node_name(name):
-    """Return True if the string is a valid Python identifier in lower ASCII range, False otherwise.
+def is_valid_node_name(name: str) -> bool:
+    """Check if `name` is a valid node name
 
-    The regular expression match pattern is r"^[a-z_][a-z0-9_]*".
+    :param name: A node name
+    :type name: str
+    :return: Return True if the string is a valid Python identifier in lower ASCII range, False otherwise.
+    :rtype: bool
     """
     return isinstance(name, str) and name.isidentifier() and re.fullmatch(r"^[a-z_][a-z\d_]*", name) is not None
 
 
-def parse_args_description_from_docstring(docstring):
+def parse_args_description_from_docstring(docstring: str) -> Dict[str, str]:
     """Return arg descriptions in docstring with google style.
 
     e.g.
@@ -815,6 +848,11 @@ def parse_args_description_from_docstring(docstring):
                 'job_in_number': 'a number parameter with multi-line description',
                 'job_in_int': 'a int parameter'
             }
+
+    :param docstring: A Google-style docstring
+    :type docstring: str
+    :return: A map of parameter names to parameter descriptions
+    :rtype: Dict[str, str]
     """
     args = {}
     if not isinstance(docstring, str):
@@ -852,10 +890,15 @@ def _is_user_error_from_status_code(http_status_code):
     return 400 <= http_status_code < 500
 
 
-def _str_to_bool(s):
-    """Returns True if literal 'true' is passed, otherwise returns False.
+def _str_to_bool(s: str) -> bool:
+    """Converts a string to a boolean
 
     Can be used as a type for argument in argparse, return argument's boolean value according to it's literal value.
+
+    :param s: The string to convert
+    :type s: str
+    :return: True if s is "true" (case-insensitive), otherwise returns False.
+    :rtype: bool
     """
     if not isinstance(s, str):
         return False
@@ -863,7 +906,13 @@ def _str_to_bool(s):
 
 
 def _is_user_error_from_exception_type(e: Optional[Exception]) -> bool:
-    """Determine whether if an exception is user error from it's exception type."""
+    """Determine whether if an exception is user error from it's exception type.
+
+    :param e: An exception
+    :type e: Optional[Exception]
+    :return: True if exception is a user error
+    :rtype: bool
+    """
     # Connection error happens on user's network failure, should be user error.
     # For OSError/IOError with error no 28: "No space left on device" should be sdk user error
     return isinstance(e, (ConnectionError, KeyboardInterrupt)) or (isinstance(e, (IOError, OSError)) and e.errno == 28)
@@ -881,8 +930,14 @@ class DockerProxy:
             ) from e
 
 
-def get_all_enum_values_iter(enum_type):
-    """Get all values of an enum type."""
+def get_all_enum_values_iter(enum_type: type) -> Iterable[Any]:
+    """Get all values of an enum type.
+
+    :param enum_type: An "enum" (not necessary enum.Enum)
+    :type enum_type: Type
+    :return: An iterable of all of the attributes of `enum_type`
+    :rtype: Iterable[Any]
+    """
     for key in dir(enum_type):
         if not key.startswith("_"):
             yield getattr(enum_type, key)
@@ -892,7 +947,9 @@ def write_to_shared_file(file_path: Union[str, PathLike], content: str):
     """Open file with specific mode and return the file object.
 
     :param file_path: Path to the file.
+    :type file_path: Union[str, os.PathLike]
     :param content: Content to write to the file.
+    :type content: str
     """
     with open(file_path, "w", encoding=DefaultOpenEncoding.WRITE) as f:
         f.write(content)
@@ -908,7 +965,7 @@ def write_to_shared_file(file_path: Union[str, PathLike], content: str):
 
 def _get_valid_dot_keys_with_wildcard_impl(
     left_reversed_parts, root, *, validate_func=None, cur_node=None, processed_parts=None
-):
+) -> List[str]:
     if len(left_reversed_parts) == 0:
         if validate_func is None or validate_func(root, processed_parts):
             return [".".join(processed_parts)]
@@ -958,7 +1015,7 @@ def get_valid_dot_keys_with_wildcard(
     dot_key_wildcard: str,
     *,
     validate_func: Optional[Callable[[List[str], Dict[str, Any]], bool]] = None,
-):
+) -> List[str]:
     """Get all valid dot keys with wildcard. Only "x.*.x" and "x.*" is supported for now.
 
     A valid dot key should satisfy the following conditions:
@@ -971,8 +1028,9 @@ def get_valid_dot_keys_with_wildcard(
     :type dot_key_wildcard: str
     :keyword validate_func: Validation function. It takes two parameters: the root node and the dot key parts.
     If None, no validation will be performed.
-    :type validate_func: Optional[Callable[[List[str], Dict[str, Any]], bool]]
+    :paramtype validate_func: Optional[Callable[[List[str], Dict[str, Any]], bool]]
     :return: List of valid dot keys.
+    :rtype: List[str]
     """
     left_reversed_parts = dot_key_wildcard.split(".")[::-1]
     return _get_valid_dot_keys_with_wildcard_impl(left_reversed_parts, root, validate_func=validate_func)
@@ -987,3 +1045,22 @@ def get_versioned_base_directory_for_cache() -> Path:
     from azure.ai.ml._version import VERSION
 
     return get_base_directory_for_cache().joinpath(VERSION)
+
+
+def extract_name_and_version(azureml_id: str) -> Dict[str, str]:
+    """Extract name and version from azureml id.
+
+    :param azureml_id: AzureML id.
+    :type azureml_id: str
+    :return: A dict of name and version.
+    :rtype: Dict[str, str]
+    """
+    if not isinstance(azureml_id, str):
+        raise ValueError("azureml_id should be a string but got {}: {}.".format(type(azureml_id), azureml_id))
+    if azureml_id.count(":") != 1:
+        raise ValueError("azureml_id should be in the format of name:version but got {}.".format(azureml_id))
+    name, version = azureml_id.split(":")
+    return {
+        "name": name,
+        "version": version,
+    }

@@ -29,9 +29,14 @@ class MdcConfigResolver(object):
         self._construct(data_collector)
 
     def _construct(self, data_collector: DataCollector) -> None:
-        """Internal use only.
+        """Constructs the mdc configuration based on entity.
 
-        Constructs the mdc configuration based on entity.
+        :param data_collector: The data collector
+        :type data_collector: DataCollector
+
+        .. note::
+
+            Internal use only.
         """
         if not data_collector.collections:
             return

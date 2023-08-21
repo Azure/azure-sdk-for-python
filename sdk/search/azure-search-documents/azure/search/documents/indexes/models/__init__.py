@@ -171,7 +171,7 @@ from .._generated.models import (
     WebApiSkill,
     VisualFeature,
     VectorSearch,
-    VectorSearchAlgorithmConfiguration,
+    HnswVectorSearchAlgorithmConfiguration,
     WordDelimiterTokenFilter,
 )
 from ._models import (
@@ -363,7 +363,7 @@ __all__ = (
     "UniqueTokenFilter",
     "VisualFeature",
     "VectorSearch",
-    "VectorSearchAlgorithmConfiguration",
+    "HnswVectorSearchAlgorithmConfiguration",
     "WebApiSkill",
     "WordDelimiterTokenFilter",
     "SearchFieldDataType",

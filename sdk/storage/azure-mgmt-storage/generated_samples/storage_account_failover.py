@@ -29,13 +29,12 @@ def main():
         subscription_id="{subscription-id}",
     )
 
-    response = client.storage_accounts.begin_failover(
+    client.storage_accounts.begin_failover(
         resource_group_name="res4228",
         account_name="sto2434",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/storage/resource-manager/Microsoft.Storage/stable/2022-09-01/examples/StorageAccountFailover.json
+# x-ms-original-file: specification/storage/resource-manager/Microsoft.Storage/stable/2023-01-01/examples/StorageAccountFailover.json
 if __name__ == "__main__":
     main()
