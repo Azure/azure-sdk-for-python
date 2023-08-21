@@ -17,11 +17,6 @@ from azure.ai.ml.constants._monitoring import (
 )
 from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
 from azure.ai.ml._schema.core.fields import ArmVersionedStr, NestedField, UnionField, StringTransformedEnum
-from azure.ai.ml._schema.monitoring.input_data import (
-    FixedInputDataSchema,
-    StaticInputDataSchema,
-    TrailingInputDataSchema,
-)
 from azure.ai.ml._schema.monitoring.thresholds import (
     DataDriftMetricThresholdSchema,
     DataQualityMetricThresholdSchema,

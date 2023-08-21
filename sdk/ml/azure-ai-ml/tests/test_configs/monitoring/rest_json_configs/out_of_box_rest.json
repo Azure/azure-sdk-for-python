@@ -2,16 +2,6 @@
     "properties": {
         "description": "Loan approval model monitoring setup with minimal configurations",
         "properties": {},
-        "tags": {
-            "data-drift-signal.baselinedata.datarange.type": "Trailing",
-            "data-drift-signal.baselinedata.datarange.window_size": "P7D",
-            "prediction-drift-signal.baselinedata.datarange.type": "Trailing",
-            "prediction-drift-signal.baselinedata.datarange.window_size": "P7D",
-            "data-quality-signal.baselinedata.datarange.type": "Trailing",
-            "data-quality-signal.baselinedata.datarange.window_size": "P7D",
-            "compute.spark.resources.instance_type": "standard_e8s_v3",
-            "compute.spark.resources.runtime_version": "3.2",
-        },
         "action": {
             "actionType": "CreateMonitor",
             "monitorDefinition": {

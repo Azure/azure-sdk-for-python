@@ -105,4 +105,3 @@ class NumericalMetricThresholds(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     NORMALIZED_WASSERSTEIN_DISTANCE = "normalized_wasserstein_distance"
     POPULATION_STABILITY_INDEX = "population_stability_index"
     TWO_SAMPLE_KOLMOGOROV_SMIRNOV_TEST = "two_sample_kolmogorov_smirnov_test"
-

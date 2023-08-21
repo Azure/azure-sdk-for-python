@@ -18,7 +18,6 @@ from azure.ai.ml.entities import Job, JobSchedule, Schedule
 from azure.ai.ml.entities._monitoring.schedule import MonitorSchedule
 from azure.ai.ml.entities._monitoring.target import MonitoringTarget
 from azure.ai.ml.entities._monitoring.signals import ProductionData, ReferenceData, BaselineDataRange
-from azure.ai.ml.entities._monitoring.input_data import FixedInputData
 from azure.ai.ml.entities._inputs_outputs.input import Input
 from azure.ai.ml.exceptions import ScheduleException, ErrorCategory, ErrorTarget
 from azure.core.credentials import TokenCredential
@@ -429,8 +428,7 @@ class ScheduleOperations(_ScopeDependentOperations):
                 azureml_type=AzureMLResourceType.COMPONENT,
             )
             signal.reference_data.pre_processing_component = self._orchestrators.get_asset_arm_id(
-                asset=signal.reference_data.pre_processing_component, 
-                azureml_type=AzureMLResourceType.COMPONENT
+                asset=signal.reference_data.pre_processing_component, azureml_type=AzureMLResourceType.COMPONENT
             )
 
     def _process_and_get_endpoint_deployment_names_from_id(self, target: MonitoringTarget):

@@ -6,7 +6,7 @@
 
 from marshmallow import fields, post_load
 
-from azure.ai.ml.constants._monitoring import MonitorFeatureType, MonitorMetricName, NumericalMetricThresholds
+from azure.ai.ml.constants._monitoring import MonitorFeatureType, MonitorMetricName
 from azure.ai.ml._schema.core.fields import StringTransformedEnum, NestedField
 from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
 

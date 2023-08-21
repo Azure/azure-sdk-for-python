@@ -16,10 +16,7 @@ from azure.ai.ml.constants._monitoring import (
     DEFAULT_DATA_DRIFT_SIGNAL_NAME,
     DEFAULT_DATA_QUALITY_SIGNAL_NAME,
     DEFAULT_PREDICTION_DRIFT_SIGNAL_NAME,
-    SPARK_INSTANCE_TYPE_KEY,
-    SPARK_RUNTIME_VERSION,
 )
-from azure.ai.ml.entities._job.spark_resource_configuration import SparkResourceConfiguration
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 from azure.ai.ml.entities._monitoring.alert_notification import AlertNotification
 from azure.ai.ml.entities._monitoring.signals import (

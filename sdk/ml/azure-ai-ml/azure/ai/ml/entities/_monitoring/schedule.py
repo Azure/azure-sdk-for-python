@@ -16,14 +16,12 @@ from azure.ai.ml._schema.monitoring.schedule import MonitorScheduleSchema
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils.utils import dump_yaml_to_file
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, ScheduleType
-from azure.ai.ml.constants._monitoring import SPARK_INSTANCE_TYPE_KEY, SPARK_RUNTIME_VERSION
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 from azure.ai.ml.entities._monitoring.definition import MonitorDefinition
 from azure.ai.ml.entities._schedule.schedule import Schedule
 from azure.ai.ml.entities._schedule.trigger import CronTrigger, RecurrenceTrigger, TriggerBase
 from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._util import load_from_dict
-from azure.ai.ml._restclient.v2023_06_01_preview.models import CreateMonitorAction
 from azure.ai.ml._restclient.v2023_06_01_preview.models import Schedule as RestSchedule
 from azure.ai.ml._restclient.v2023_06_01_preview.models import ScheduleProperties, RecurrenceFrequency
 from azure.ai.ml._schema.monitoring.schedule import MonitorScheduleSchema

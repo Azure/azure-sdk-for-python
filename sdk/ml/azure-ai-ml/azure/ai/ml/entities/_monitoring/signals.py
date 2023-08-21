@@ -4,13 +4,16 @@
 
 # pylint: disable=protected-access
 
-import datetime, isodate
 from typing import Dict, List, Optional, Union
+import datetime, isodate
 
 from typing_extensions import Literal
 
 from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
+from azure.ai.ml._restclient.v2023_06_01_preview.models import (
+    MonitoringInputDataBase as RestMonitoringInputData,
+)
 from azure.ai.ml._restclient.v2023_06_01_preview.models import (
     MonitoringSignalBase as RestMonitoringSignalBase,
     DataDriftMonitoringSignal as RestMonitoringDataDriftSignal,
@@ -26,7 +29,6 @@ from azure.ai.ml._restclient.v2023_06_01_preview.models import (
     MonitoringFeatureFilterBase as RestMonitoringFeatureFilterBase,
 )
 from azure.ai.ml._restclient.v2023_06_01_preview.models import MonitoringNotificationMode
-from azure.ai.ml._restclient.v2023_06_01_preview.models import MonitoringSignalBase as RestMonitoringSignalBase
 from azure.ai.ml._restclient.v2023_06_01_preview.models import MonitoringSignalType
 from azure.ai.ml._restclient.v2023_06_01_preview.models import (
     PredictionDriftMonitoringSignal as RestPredictionDriftMonitoringSignal,
@@ -35,33 +37,22 @@ from azure.ai.ml._restclient.v2023_06_01_preview.models import (
     TopNFeaturesByAttribution as RestTopNFeaturesByAttribution,
     AllFeatures as RestAllFeatures,
     FeatureSubset as RestFeatureSubset,
-    MonitoringNotificationMode,
-    MonitoringSignalType,
     MonitoringWorkspaceConnection as RestMonitoringWorkspaceConnection,
-    MonitoringInputDataBase,
 )
 from azure.ai.ml._utils._experimental import experimental
-from azure.ai.ml._utils.utils import to_iso_duration_format_days, from_iso_duration_format_days
 from azure.ai.ml.constants._monitoring import (
     MonitorSignalType,
     ALL_FEATURES,
     MonitorModelType,
     MonitorDatasetContext,
-    MonitorTargetTasks,
     MonitorFeatureDataType,
 )
 from azure.ai.ml.entities._monitoring.input_data import (
-    RestMonitoringInputData,
-    MonitorInputData,
     FixedInputData,
     TrailingInputData,
     StaticInputData,
-    RestFixedInputData,
-    RestStaticInputData,
-    RestTrailingInputData,
 )
 from azure.ai.ml.entities._monitoring.thresholds import (
-    CustomMonitoringMetricThreshold,
     DataDriftMetricThreshold,
     DataQualityMetricThreshold,
     PredictionDriftMetricThreshold,
@@ -230,6 +221,7 @@ class ReferenceData(RestTranslatableMixin):
         self.data_window = data_window
 
     def _to_rest_object(self, **kwargs) -> RestMonitoringInputData:
+        default_data_window_size = kwargs.get("default_data_window_size")
         if self.data_window is not None:
             if self.data_window.trailing_window_size is not None:
                 return TrailingInputData(
@@ -245,7 +237,7 @@ class ReferenceData(RestTranslatableMixin):
                     if self.data_window.trailing_window_offset is not None
                     else self.data_window.trailing_window_size,
                 )._to_rest_object()
-            elif self.data_window.window_start is not None and self.data_window.window_end is not None:
+            if self.data_window.window_start is not None and self.data_window.window_end is not None:
                 return StaticInputData(
                     data_context=self.data_context,
                     target_columns={"target_column": self.target_column_name}
@@ -257,15 +249,13 @@ class ReferenceData(RestTranslatableMixin):
                     window_start=self.data_window.window_start,
                     window_end=self.data_window.window_end,
                 )._to_rest_object()
-        else:
-            return FixedInputData(
-                data_context=self.data_context,
-                target_columns={"target_column": self.target_column_name}
-                if self.target_column_name is not None
-                else None,
-                job_type=self.input_data.type,
-                uri=self.input_data.path,
-            )._to_rest_object()
+
+        return FixedInputData(
+            data_context=self.data_context,
+            target_columns={"target_column": self.target_column_name} if self.target_column_name is not None else None,
+            job_type=self.input_data.type,
+            uri=self.input_data.path,
+        )._to_rest_object()
 
     @classmethod
     def _from_rest_object(cls, obj: RestMonitoringInputData) -> "ReferenceData":
@@ -289,7 +279,7 @@ class ReferenceData(RestTranslatableMixin):
             data_context=obj.data_context,
             pre_processing_component=obj.preprocessing_component_id if obj.input_data_type != "Fixed" else None,
             data_window=data_window,
-            target_column_name=obj.columns["targetColumn"] if obj.columns is not None else None,
+            target_column_name=obj.columns["target_column"] if obj.columns is not None else None,
         )
 
 
@@ -753,7 +743,7 @@ class FeatureAttributionDriftSignal(RestTranslatableMixin):
         self.properties = properties
         self.type = MonitorSignalType.FEATURE_ATTRIBUTION_DRIFT
 
-    def _to_rest_object(self, **kwargs) -> RestFeatureAttributionDriftMonitoringSignal:
+    def _to_rest_object(self) -> RestFeatureAttributionDriftMonitoringSignal:
         return RestFeatureAttributionDriftMonitoringSignal(
             production_data=[data._to_rest_object() for data in self.production_data],
             reference_data=self.reference_data._to_rest_object(),
@@ -815,7 +805,6 @@ class ModelPerformanceSignal(ModelSignal):
         self.data_segment = data_segment
 
     def _to_rest_object(self, **kwargs) -> RestModelPerformanceSignal:
-        default_data_window_size = kwargs.get("default_data_window_size")
         return RestModelPerformanceSignal(
             production_data=self.production_data._to_rest_object(),
             reference_data=self.reference_data._to_rest_object(),
@@ -890,7 +879,7 @@ class CustomMonitoringSignal(RestTranslatableMixin):
         metric_thresholds: List[CustomMonitoringMetricThreshold],
         component_id: str,
         workspace_connection: Optional[WorkspaceConnection] = None,
-        input_datasets: Optional[Dict[str, ProductionData]],
+        input_datasets: Optional[Dict[str, ProductionData]] = None,
         alert_enabled: bool = True,
         properties: Optional[Dict[str, str]] = None,
     ):
@@ -909,7 +898,9 @@ class CustomMonitoringSignal(RestTranslatableMixin):
         return RestCustomMonitoringSignal(
             component_id=self.component_id,
             metric_thresholds=[threshold._to_rest_object() for threshold in self.metric_thresholds],
-            inputs={input_name: input_value for input_name, input_value in self.input_literals.items()}
+            inputs={
+                input_name: input_value._to_rest_object() for input_name, input_value in self.input_literals.items()
+            }
             if self.input_literals
             else None,
             input_assets={
@@ -917,7 +908,7 @@ class CustomMonitoringSignal(RestTranslatableMixin):
             }
             if self.input_datasets
             else None,
-            workspace_connection=self.workspace_connection._to_rest_object() if self.workspace_connection else None,
+            workspace_connection=self.workspace_connection._to_rest_object(),
             mode=MonitoringNotificationMode.ENABLED if self.alert_enabled else MonitoringNotificationMode.DISABLED,
             properties=self.properties,
         )

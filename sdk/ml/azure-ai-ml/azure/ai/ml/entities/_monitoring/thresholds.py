@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from typing import Any, Dict, List, Optional
+from typing import Any, List, Optional
 
 from typing_extensions import Literal
 
@@ -14,8 +14,6 @@ from azure.ai.ml._restclient.v2023_06_01_preview.models import (
     NumericalDataDriftMetricThreshold,
     CategoricalDataDriftMetricThreshold,
     DataQualityMetricThresholdBase,
-    NumericalDataQualityMetric,
-    CategoricalDataQualityMetric,
     NumericalDataQualityMetricThreshold,
     CategoricalDataQualityMetricThreshold,
     PredictionDriftMetricThresholdBase,
