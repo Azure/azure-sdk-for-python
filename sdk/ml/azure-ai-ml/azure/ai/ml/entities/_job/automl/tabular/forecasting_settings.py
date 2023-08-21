@@ -188,23 +188,29 @@ class ForecastingSettings(RestTranslatableMixin):
             * Date predictor columns are aggregated by minimum value, maximum value and mode.
 
             +----------------+-----------------------------+-----------------------------------------------+
-            |      freq      | target_aggregation_function |      Data regularity fixing mechanism         |
+            |      freq      | target_aggregation_function | | Data regularity                             |
+            |                |                             | | fixing mechanism
             +================+=============================+===============================================+
-            | None (Default) | None (Default)              | | The aggregation is not applied.             |
-            |                |                             | | If the valid frequency can not be           |
-            |                |                             | | determined the error will be raised.        |
+            | None (Default) | None (Default)              | | The aggregation is not                      |
+            |                |                             | | applied. If the valid                       |
+            |                |                             | | frequency can not be                        |
+            |                |                             | | determined the error will                   |
+            |                |                             | | be raised.                                  |
             +----------------+-----------------------------+-----------------------------------------------+
-            | Some Value     | None (Default)              | | The aggregation is not applied.             |
-            |                |                             | | If the number of data points compliant      |
-            |                |                             | | to given frequency grid is less then 90%    |
-            |                |                             | | these points will be removed, otherwise     |
+            | Some Value     | None (Default)              | | The aggregation is not                      |
+            |                |                             | | applied. If the number                      |
+            |                |                             | | of data points compliant                    |
+            |                |                             | | to given frequency grid                     |
+            |                |                             | | is less then 90% these points               |
+            |                |                             | | will be removed, otherwise                  |
             |                |                             | | the error will be raised.                   |
             +----------------+-----------------------------+-----------------------------------------------+
-            | None (Default) | Aggregation function        | | The error about missing frequency parameter |
+            | None (Default) | Aggregation function        | | The error about missing                     |
+            |                |                             | | frequency parameter                         |
             |                |                             | | is raised.                                  |
             +----------------+-----------------------------+-----------------------------------------------+
-            | Some Value     | Aggregation function        | | Aggregate to frequency using provided       |
-            |                |                             | | aggregation function.                       |
+            | Some Value     | Aggregation function        | | Aggregate to frequency using                |
+            |                |                             | | provided aggregation function.              |
             +----------------+-----------------------------+-----------------------------------------------+
     :type target_aggregate_function: str
     :param time_column_name:
