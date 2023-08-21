@@ -240,7 +240,7 @@ class DataDriftMetricThreshold(MetricThreshold):
     def __eq__(self, other: Any):
         if not isinstance(other, DataDriftMetricThreshold):
             return NotImplemented
-        return self.data_type == other.data_type and self.metric == other.metric and self.threshold == other.threshold
+        return self.numerical == other.numerical and self.categorical == other.categorical
 
 
 @experimental

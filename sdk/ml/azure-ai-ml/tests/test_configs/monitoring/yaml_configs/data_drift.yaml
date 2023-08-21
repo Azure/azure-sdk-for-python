@@ -47,12 +47,6 @@ create_monitor:
           jensen_shannon_distance: 0.5
         categorical:
           pearsons_chi_squared_test: 0.2
-      data_segment:
-        feature_name: foo
-        feature_values:
-          - a
-          - b
-          - c
 properties:
   prop1: value
 tags:

@@ -12,7 +12,6 @@ from azure.ai.ml.entities._load_functions import load_schedule
 @pytest.mark.e2etest
 @pytest.mark.usefixtures("recorded_test", "mock_code_hash", "mock_asset_name", "mock_component_hash")
 @pytest.mark.pipeline_test
-@pytest.mark.skip()
 class TestSchedule(AzureRecordedTestCase):
     @pytest.mark.parametrize(
         "source_type",

@@ -2,34 +2,11 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from typing import Optional
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._restclient.v2023_06_01_preview.models import (
     MonitorServerlessSparkCompute,
-    MonitorComputeIdentityBase,
     AmlTokenComputeIdentity,
 )
-
-
-@experimental
-class ComputeIdentity:
-    def __init__(
-        self,
-        *,
-        identity_type: str,
-    ):
-        self.identity_type = identity_type
-
-    def _to_rest_object(self) -> MonitorComputeIdentityBase:
-        return AmlTokenComputeIdentity(
-            compute_identity_type=self.identity_type,
-        )
-
-    @classmethod
-    def _from_rest_object(cls) -> "ComputeIdentity":
-        return cls(
-            identity_type="AmlToken",
-        )
 
 
 @experimental

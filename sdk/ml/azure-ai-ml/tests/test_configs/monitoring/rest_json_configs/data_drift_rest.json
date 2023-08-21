@@ -50,15 +50,7 @@
                     "value": 0.2
                   }
                 }
-              ],
-              "dataSegment": {
-                "feature": "foo",
-                "values": [
-                  "a",
-                  "b",
-                  "c"
-                ]
-              }
+              ]
             }
           }
         }
