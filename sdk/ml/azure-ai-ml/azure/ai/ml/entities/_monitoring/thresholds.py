@@ -76,7 +76,9 @@ class NumericalDriftMetrics(RestTranslatableMixin):
         return metric_name, threshold
 
     @classmethod
-    def _from_rest_object(cls, metric_name, threshold) -> "NumericalDriftMetrics": # pylint: disable=arguments-differ, inconsistent-return-statements
+    def _from_rest_object(
+        cls, metric_name, threshold
+    ) -> "NumericalDriftMetrics":  # pylint: disable=arguments-differ, inconsistent-return-statements
         metric_name = camel_to_snake(metric_name)
         if metric_name == MonitorMetricName.JENSEN_SHANNON_DISTANCE:
             return cls(jensen_shannon_distance=threshold)
@@ -95,9 +97,10 @@ class NumericalDriftMetrics(RestTranslatableMixin):
 
     def defaults(self) -> "NumericalDriftMetrics":
         return self._get_default_thresholds()
-    
+
     def get_name_and_threshold(self):
         return self._find_name_and_threshold()
+
 
 @experimental
 class CategoricalDriftMetrics(RestTranslatableMixin):
@@ -128,7 +131,9 @@ class CategoricalDriftMetrics(RestTranslatableMixin):
         return metric_name, threshold
 
     @classmethod
-    def _from_rest_object(cls, metric_name, threshold) -> "CategoricalDriftMetrics": # pylint: disable=arguments-differ, inconsistent-return-statements
+    def _from_rest_object(
+        cls, metric_name, threshold
+    ) -> "CategoricalDriftMetrics":  # pylint: disable=arguments-differ, inconsistent-return-statements
         metric_name = camel_to_snake(metric_name)
         if metric_name == MonitorMetricName.JENSEN_SHANNON_DISTANCE:
             return cls(jensen_shannon_distance=threshold)
@@ -145,7 +150,7 @@ class CategoricalDriftMetrics(RestTranslatableMixin):
 
     def defaults(self) -> "CategoricalDriftMetrics":
         return self._get_default_thresholds()
-    
+
     def get_name_and_threshold(self):
         return self._find_name_and_threshold()
 
@@ -212,11 +217,11 @@ class DataDriftMetricThreshold(MetricThreshold):
         cat = None
         for threshold in obj:
             if threshold.data_type == "Numerical":
-                num = NumericalDriftMetrics()._from_rest_object(
+                num = NumericalDriftMetrics()._from_rest_object(  # pylint: disable=protected-access
                     threshold.metric, threshold.threshold.value if threshold.threshold else None
                 )
             elif threshold.data_type == "Categorical":
-                cat = CategoricalDriftMetrics()._from_rest_object(
+                cat = CategoricalDriftMetrics()._from_rest_object(  # pylint: disable=protected-access
                     threshold.metric, threshold.threshold.value if threshold.threshold else None
                 )
 
@@ -298,11 +303,11 @@ class PredictionDriftMetricThreshold(MetricThreshold):
         cat = None
         for threshold in obj:
             if threshold.data_type == "Numerical":
-                num = NumericalDriftMetrics()._from_rest_object(
+                num = NumericalDriftMetrics()._from_rest_object(  # pylint: disable=protected-access
                     threshold.metric, threshold.threshold.value if threshold.threshold else None
                 )
             elif threshold.data_type == "Categorical":
-                cat = CategoricalDriftMetrics()._from_rest_object(
+                cat = CategoricalDriftMetrics()._from_rest_object(  # pylint: disable=protected-access
                     threshold.metric, threshold.threshold.value if threshold.threshold else None
                 )
 
@@ -385,7 +390,7 @@ class DataQualityMetricsNumerical(RestTranslatableMixin):
             data_type_error_rate=0.0,
             out_of_bounds_rate=0.0,
         )
-    
+
     def defaults(self) -> "DataQualityMetricsNumerical":
         return self._get_default_thresholds()
 
@@ -447,7 +452,7 @@ class DataQualityMetricsCategorical(RestTranslatableMixin):
             data_type_error_rate=0.0,
             out_of_bounds_rate=0.0,
         )
-    
+
     def defaults(self) -> "DataQualityMetricsCategorical":
         return self._get_default_thresholds()
 
@@ -490,7 +495,7 @@ class DataQualityMetricThreshold(MetricThreshold):
         thresholds = []
         if self.numerical:
             thresholds = thresholds + (
-                DataQualityMetricsNumerical(
+                DataQualityMetricsNumerical(  # pylint: disable=protected-access
                     null_value_rate=self.numerical.null_value_rate,
                     data_type_error_rate=self.numerical.data_type_error_rate,
                     out_of_bounds_rate=self.numerical.out_of_bounds_rate,
@@ -498,7 +503,7 @@ class DataQualityMetricThreshold(MetricThreshold):
             )
         if self.categorical:
             thresholds = thresholds + (
-                DataQualityMetricsCategorical(
+                DataQualityMetricsCategorical(  # pylint: disable=protected-access
                     null_value_rate=self.numerical.null_value_rate,
                     data_type_error_rate=self.numerical.data_type_error_rate,
                     out_of_bounds_rate=self.numerical.out_of_bounds_rate,
@@ -516,8 +521,8 @@ class DataQualityMetricThreshold(MetricThreshold):
             elif threshold.data_type == "Categorical":
                 cat.append(threshold)
 
-        num_from_rest = DataQualityMetricsNumerical()._from_rest_object(num)
-        cat_from_rest = DataQualityMetricsCategorical()._from_rest_object(cat)
+        num_from_rest = DataQualityMetricsNumerical()._from_rest_object(num)  # pylint: disable=protected-access
+        cat_from_rest = DataQualityMetricsCategorical()._from_rest_object(cat)  # pylint: disable=protected-access
         return cls(
             numerical=num_from_rest,
             categorical=cat_from_rest,
@@ -526,8 +531,8 @@ class DataQualityMetricThreshold(MetricThreshold):
     @classmethod
     def _get_default_thresholds(cls) -> "DataQualityMetricThreshold":
         return cls(
-            numerical=DataQualityMetricsNumerical()._get_default_thresholds(),
-            categorical=DataQualityMetricsCategorical()._get_default_thresholds(),
+            numerical=DataQualityMetricsNumerical()._get_default_thresholds(),  # pylint: disable=protected-access
+            categorical=DataQualityMetricsCategorical()._get_default_thresholds(),  # pylint: disable=protected-access
         )
 
     def __eq__(self, other: Any):

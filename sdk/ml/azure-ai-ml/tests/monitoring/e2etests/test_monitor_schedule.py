@@ -43,14 +43,14 @@ class TestMonitorSchedule(AzureRecordedTestCase):
     ):
         test_path = "tests/test_configs/monitoring/yaml_configs/data_drift.yaml"
         created_schedule = create_and_assert_basic_schedule_fields(client, test_path, randstr, data_with_2_versions)
-    
+
     @pytest.mark.skip()
     def test_prediction_drift_schedule_create(
         self, client: MLClient, data_with_2_versions: str, randstr: Callable[[str], str]
     ):
         test_path = "tests/test_configs/monitoring/yaml_configs/prediction_drift.yaml"
         created_schedule = create_and_assert_basic_schedule_fields(client, test_path, randstr, data_with_2_versions)
-    
+
     @pytest.mark.skip()
     def test_data_quality_schedule_create(
         self, client: MLClient, data_with_2_versions: str, randstr: Callable[[str], str]

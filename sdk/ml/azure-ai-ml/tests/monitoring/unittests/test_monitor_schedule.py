@@ -93,7 +93,6 @@ class TestMonitorSchedule:
 def override_frequency_interval_and_check_window_size(
     schedule: MonitorSchedule, frequency: str, interval: int, expected_days: int
 ):
-    
     schedule.trigger.frequency = frequency
     schedule.trigger.interval = interval
     for signal in schedule.create_monitor.monitoring_signals.values():

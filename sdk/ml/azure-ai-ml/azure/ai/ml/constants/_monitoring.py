@@ -86,19 +86,23 @@ class MonitorDatasetContext(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     VALIDATION = "validation"
     GROUND_TRUTH_DATA = "ground_truth"
 
+
 class MonitorTargetTasks(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CLASSIFICATION = "Classification"
     REGRESSION = "Regression"
     QUESTION_ANSWERING = "QuestionAnswering"
+
 
 class FADColumnNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     PREDICTION = "prediction"
     PREDICTION_PROBABILITY = "prediction_probability"
     CORRELATION_ID = "correlation_id"
 
+
 class MonitorFeatureDataType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     NUMERICAL = "numerical"
     CATEGORICAL = "categorical"
+
 
 class NumericalMetricThresholds(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     JENSEN_SHANNON_DISTANCE = "jensen_shannon_distance"

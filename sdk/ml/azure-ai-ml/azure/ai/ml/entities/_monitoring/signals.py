@@ -743,7 +743,9 @@ class FeatureAttributionDriftSignal(RestTranslatableMixin):
         self.properties = properties
         self.type = MonitorSignalType.FEATURE_ATTRIBUTION_DRIFT
 
-    def _to_rest_object(self, **kwargs) -> RestFeatureAttributionDriftMonitoringSignal: # pylint: disable=unused-argument
+    def _to_rest_object(
+        self, **kwargs
+    ) -> RestFeatureAttributionDriftMonitoringSignal:  # pylint: disable=unused-argument
         return RestFeatureAttributionDriftMonitoringSignal(
             production_data=[data._to_rest_object() for data in self.production_data],
             reference_data=self.reference_data._to_rest_object(),
