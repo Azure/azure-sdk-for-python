@@ -15,7 +15,6 @@ from azure.ai.ml._restclient.v2023_06_01_preview.models import (
     EncryptionUpdateProperties,
     WorkspaceUpdateParameters,
 )
-from azure.ai.ml.constants._workspace import IsolationMode, OutboundRuleCategory
 from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope
 from azure.ai.ml._utils._appinsights_utils import get_log_analytics_arm_id
 
@@ -32,7 +31,7 @@ from azure.ai.ml._utils.utils import camel_to_snake, from_iso_duration_format_mi
 from azure.ai.ml._version import VERSION
 from azure.ai.ml.constants import ManagedServiceIdentityType
 from azure.ai.ml.constants._common import ArmConstants, LROConfigurations, WorkspaceResourceConstants
-from azure.ai.ml.constants._workspace import IsolationMode
+from azure.ai.ml.constants._workspace import IsolationMode, OutboundRuleCategory
 from azure.ai.ml.entities import Workspace
 from azure.ai.ml.entities._credentials import IdentityConfiguration
 from azure.ai.ml.entities._workspace.networking import ManagedNetwork
