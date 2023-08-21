@@ -37,6 +37,15 @@ class BuildContext:
     :type path: Union[str, os.PathLike]
     :param dockerfile_path: The path to the dockerfile relative to root of docker build context directory.
     :type dockerfile_path: str
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../../../../../samples/ml_samples_misc.py
+            :start-after: [START build_context_entity_create]
+            :end-before: [END build_context_entity_create]
+            :language: python
+            :dedent: 8
+            :caption: Create a Build Context object.
     """
 
     def __init__(
@@ -77,9 +86,9 @@ class Environment(Asset, LocalizableMixin):
     :param image: URI of a custom base image.
     :type image: str
     :param build: Docker build context to create the environment. Mutually exclusive with "image"
-    :type build: BuildContext
+    :type build: ~azure.ai.ml.entities._assets.environment.BuildContext
     :param conda_file: Path to configuration file listing conda packages to install.
-    :type conda_file: Optional[str, os.Pathlike]
+    :type conda_file: typing.Union[str, os.PathLike]
     :param tags: Tag dictionary. Tags can be added, removed, and updated.
     :type tags: dict[str, str]
     :param properties: The asset property dictionary.
@@ -88,6 +97,15 @@ class Environment(Asset, LocalizableMixin):
     :type datastore: str
     :param kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../../../../../samples/ml_samples_misc.py
+            :start-after: [START env_entity_create]
+            :end-before: [END env_entity_create]
+            :language: python
+            :dedent: 8
+            :caption: Create a Environment object.
     """
 
     def __init__(
@@ -277,6 +295,18 @@ class Environment(Asset, LocalizableMixin):
         return EnvironmentSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)  # pylint: disable=no-member
 
     def validate(self):
+        """Validate the environment by checking its name, image and build
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../../../../../samples/ml_samples_misc.py
+                :start-after: [START env_entities_validate]
+                :end-before: [END env_entities_validate]
+                :language: python
+                :dedent: 8
+                :caption: Validate environment example.
+        """
+
         if self.name is None:
             msg = "Environment name is required"
             err = ValidationException(
