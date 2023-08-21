@@ -214,7 +214,7 @@ class AsyncTransportMixin:
 
             server_hostname = sslopts.get("server_hostname")
             cert_reqs = sslopts.get("cert_reqs", ssl.CERT_REQUIRED)
-            
+
             if cert_reqs == ssl.CERT_NONE and server_hostname is None:
                 context.check_hostname = False
                 context.verify_mode = cert_reqs
@@ -245,7 +245,7 @@ class AsyncTransport(
         host,
         *,
         port=AMQP_PORT,
-        ssl_opts=False,
+        ssl_opts=None,
         socket_settings=None,
         raise_on_initial_eintr=True,
         **kwargs,  # pylint: disable=unused-argument
@@ -259,8 +259,8 @@ class AsyncTransport(
         self.host, self.port = to_host_port(host, port)
         self.socket_settings = socket_settings
         self.socket_lock = asyncio.Lock()
-        self.sslopts = ssl_opts
-        self.sslopts['server_hostname'] = self.host
+        self.sslopts = ssl_opts if isinstance(ssl_opts, dict) else {}
+        self.sslopts['server_hostname'] = host
         self.network_trace_params = kwargs.get('network_trace_params')
 
     async def connect(self):
