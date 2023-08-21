@@ -56,7 +56,7 @@ class MonitorFeatureFilterSchema(metaclass=PatchedSchemaMeta):
         return MonitorFeatureFilter(**data)
 
 
-class BaselineDataRange(metaclass=PatchedSchemaMeta):
+class BaselineDataRangeSchema(metaclass=PatchedSchemaMeta):
     window_start = fields.Str()
     window_end = fields.Str()
     trailing_window_size = fields.Str()
@@ -87,7 +87,7 @@ class ReferenceDataSchema(metaclass=PatchedSchemaMeta):
     data_context = StringTransformedEnum(allowed_values=[o.value for o in MonitorDatasetContext])
     pre_processing_component = fields.Str()
     target_column_name = fields.Str()
-    data_window = NestedField(BaselineDataRange)
+    data_window = NestedField(BaselineDataRangeSchema)
 
     @post_load
     def make(self, data, **kwargs):

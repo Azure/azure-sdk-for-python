@@ -76,7 +76,7 @@ class NumericalDriftMetrics(RestTranslatableMixin):
         return metric_name, threshold
 
     @classmethod
-    def _from_rest_object(cls, metric_name, threshold) -> "NumericalDriftMetrics": # pylint: disable=arguments-differ
+    def _from_rest_object(cls, metric_name, threshold) -> "NumericalDriftMetrics": # pylint: disable=arguments-differ, inconsistent-return-statements
         metric_name = camel_to_snake(metric_name)
         if metric_name == MonitorMetricName.JENSEN_SHANNON_DISTANCE:
             return cls(jensen_shannon_distance=threshold)
@@ -95,6 +95,9 @@ class NumericalDriftMetrics(RestTranslatableMixin):
 
     def defaults(self) -> "NumericalDriftMetrics":
         return self._get_default_thresholds()
+    
+    def get_name_and_threshold(self):
+        return self._find_name_and_threshold()
 
 @experimental
 class CategoricalDriftMetrics(RestTranslatableMixin):
@@ -125,13 +128,13 @@ class CategoricalDriftMetrics(RestTranslatableMixin):
         return metric_name, threshold
 
     @classmethod
-    def _from_rest_object(cls, metric_name, threshold) -> "CategoricalDriftMetrics": # pylint: disable=arguments-differ
+    def _from_rest_object(cls, metric_name, threshold) -> "CategoricalDriftMetrics": # pylint: disable=arguments-differ, inconsistent-return-statements
         metric_name = camel_to_snake(metric_name)
         if metric_name == MonitorMetricName.JENSEN_SHANNON_DISTANCE:
             return cls(jensen_shannon_distance=threshold)
-        elif metric_name == MonitorMetricName.POPULATION_STABILITY_INDEX:
+        if metric_name == MonitorMetricName.POPULATION_STABILITY_INDEX:
             return cls(population_stability_index=threshold)
-        elif metric_name == MonitorMetricName.PEARSONS_CHI_SQUARED_TEST:
+        if metric_name == MonitorMetricName.PEARSONS_CHI_SQUARED_TEST:
             return cls(pearsons_chi_squared_test=threshold)
 
     @classmethod
@@ -139,9 +142,12 @@ class CategoricalDriftMetrics(RestTranslatableMixin):
         return cls(
             jensen_shannon_distance=0.1,
         )
-    
+
     def defaults(self) -> "CategoricalDriftMetrics":
         return self._get_default_thresholds()
+    
+    def get_name_and_threshold(self):
+        return self._find_name_and_threshold()
 
 
 @experimental
@@ -182,7 +188,7 @@ class DataDriftMetricThreshold(MetricThreshold):
     def _to_rest_object(self) -> DataDriftMetricThresholdBase:
         thresholds = []
         if self.numerical:
-            num_metric_name, num_threshold = self.numerical._find_name_and_threshold()
+            num_metric_name, num_threshold = self.numerical.get_name_and_threshold()
             thresholds.append(
                 NumericalDataDriftMetricThreshold(
                     metric=snake_to_camel(num_metric_name),
@@ -190,7 +196,7 @@ class DataDriftMetricThreshold(MetricThreshold):
                 )
             )
         if self.categorical:
-            cat_metric_name, cat_threshold = self.categorical._find_name_and_threshold()
+            cat_metric_name, cat_threshold = self.categorical.get_name_and_threshold()
             thresholds.append(
                 CategoricalDataDriftMetricThreshold(
                     metric=snake_to_camel(cat_metric_name),
@@ -206,11 +212,11 @@ class DataDriftMetricThreshold(MetricThreshold):
         cat = None
         for threshold in obj:
             if threshold.data_type == "Numerical":
-                num = NumericalDriftMetrics._from_rest_object(
+                num = NumericalDriftMetrics()._from_rest_object(
                     threshold.metric, threshold.threshold.value if threshold.threshold else None
                 )
             elif threshold.data_type == "Categorical":
-                cat = CategoricalDriftMetrics._from_rest_object(
+                cat = CategoricalDriftMetrics()._from_rest_object(
                     threshold.metric, threshold.threshold.value if threshold.threshold else None
                 )
 
@@ -222,8 +228,8 @@ class DataDriftMetricThreshold(MetricThreshold):
     @classmethod
     def _get_default_thresholds(cls) -> "DataDriftMetricThreshold":
         return cls(
-            numerical=NumericalDriftMetrics.defaults(),
-            categorical=CategoricalDriftMetrics.defaults(),
+            numerical=NumericalDriftMetrics().defaults(),
+            categorical=CategoricalDriftMetrics().defaults(),
         )
 
     def __eq__(self, other: Any):
@@ -268,7 +274,7 @@ class PredictionDriftMetricThreshold(MetricThreshold):
     def _to_rest_object(self) -> PredictionDriftMetricThresholdBase:
         thresholds = []
         if self.numerical:
-            num_metric_name, num_threshold = self.numerical._find_name_and_threshold()
+            num_metric_name, num_threshold = self.numerical.get_name_and_threshold()
             thresholds.append(
                 NumericalPredictionDriftMetricThreshold(
                     metric=snake_to_camel(num_metric_name),
@@ -276,7 +282,7 @@ class PredictionDriftMetricThreshold(MetricThreshold):
                 )
             )
         if self.categorical:
-            cat_metric_name, cat_threshold = self.categorical._find_name_and_threshold()
+            cat_metric_name, cat_threshold = self.categorical.get_name_and_threshold()
             thresholds.append(
                 CategoricalPredictionDriftMetricThreshold(
                     metric=snake_to_camel(cat_metric_name),
@@ -292,11 +298,11 @@ class PredictionDriftMetricThreshold(MetricThreshold):
         cat = None
         for threshold in obj:
             if threshold.data_type == "Numerical":
-                num = NumericalDriftMetrics._from_rest_object(
+                num = NumericalDriftMetrics()._from_rest_object(
                     threshold.metric, threshold.threshold.value if threshold.threshold else None
                 )
             elif threshold.data_type == "Categorical":
-                cat = CategoricalDriftMetrics._from_rest_object(
+                cat = CategoricalDriftMetrics()._from_rest_object(
                     threshold.metric, threshold.threshold.value if threshold.threshold else None
                 )
 
@@ -308,8 +314,8 @@ class PredictionDriftMetricThreshold(MetricThreshold):
     @classmethod
     def _get_default_thresholds(cls) -> "PredictionDriftMetricThreshold":
         return cls(
-            numerical=NumericalDriftMetrics.defaults(),
-            categorical=CategoricalDriftMetrics.defaults(),
+            numerical=NumericalDriftMetrics().defaults(),
+            categorical=CategoricalDriftMetrics().defaults(),
         )
 
     def __eq__(self, other: Any):
@@ -379,6 +385,9 @@ class DataQualityMetricsNumerical(RestTranslatableMixin):
             data_type_error_rate=0.0,
             out_of_bounds_rate=0.0,
         )
+    
+    def defaults(self) -> "DataQualityMetricsNumerical":
+        return self._get_default_thresholds()
 
 
 @experimental
@@ -438,6 +447,9 @@ class DataQualityMetricsCategorical(RestTranslatableMixin):
             data_type_error_rate=0.0,
             out_of_bounds_rate=0.0,
         )
+    
+    def defaults(self) -> "DataQualityMetricsCategorical":
+        return self._get_default_thresholds()
 
 
 @experimental
@@ -504,8 +516,8 @@ class DataQualityMetricThreshold(MetricThreshold):
             elif threshold.data_type == "Categorical":
                 cat.append(threshold)
 
-        num_from_rest = DataQualityMetricsNumerical._from_rest_object(num)
-        cat_from_rest = DataQualityMetricsCategorical._from_rest_object(cat)
+        num_from_rest = DataQualityMetricsNumerical()._from_rest_object(num)
+        cat_from_rest = DataQualityMetricsCategorical()._from_rest_object(cat)
         return cls(
             numerical=num_from_rest,
             categorical=cat_from_rest,
@@ -514,8 +526,8 @@ class DataQualityMetricThreshold(MetricThreshold):
     @classmethod
     def _get_default_thresholds(cls) -> "DataQualityMetricThreshold":
         return cls(
-            numerical=DataQualityMetricsNumerical._get_default_thresholds(),
-            categorical=DataQualityMetricsCategorical._get_default_thresholds(),
+            numerical=DataQualityMetricsNumerical()._get_default_thresholds(),
+            categorical=DataQualityMetricsCategorical()._get_default_thresholds(),
         )
 
     def __eq__(self, other: Any):
