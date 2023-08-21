@@ -39,7 +39,7 @@ class TestEventGridPublisherClient(AzureRecordedTestCase):
     @EventGridPreparer()
     @recorded_by_proxy_async
     @pytest.mark.asyncio
-    async def test_send_event_grid_event_data_dict(
+    async def test_send_event_grid_event_data_dict_async(
         self, eventgrid_topic_endpoint
     ):
         client = self.create_eg_publisher_client(eventgrid_topic_endpoint)
@@ -54,7 +54,7 @@ class TestEventGridPublisherClient(AzureRecordedTestCase):
     @EventGridPreparer()
     @recorded_by_proxy_async
     @pytest.mark.asyncio
-    async def test_send_event_grid_event_data_as_list(
+    async def test_send_event_grid_event_data_as_list_async(
         self, eventgrid_topic_endpoint
     ):
         client = self.create_eg_publisher_client(eventgrid_topic_endpoint)
@@ -75,7 +75,7 @@ class TestEventGridPublisherClient(AzureRecordedTestCase):
     @EventGridPreparer()
     @recorded_by_proxy_async
     @pytest.mark.asyncio
-    async def test_send_event_grid_event_fails_without_full_url(
+    async def test_send_event_grid_event_fails_without_full_url_async(
         self, eventgrid_topic_key, eventgrid_topic_endpoint
     ):
         akc_credential = AzureKeyCredential(eventgrid_topic_key)
@@ -93,7 +93,7 @@ class TestEventGridPublisherClient(AzureRecordedTestCase):
     @EventGridPreparer()
     @recorded_by_proxy_async
     @pytest.mark.asyncio
-    async def test_send_event_grid_event_data_str(
+    async def test_send_event_grid_event_data_str_async(
         self, eventgrid_topic_endpoint
     ):
         client = self.create_eg_publisher_client(eventgrid_topic_endpoint)
@@ -108,7 +108,7 @@ class TestEventGridPublisherClient(AzureRecordedTestCase):
     @EventGridPreparer()
     @recorded_by_proxy_async
     @pytest.mark.asyncio
-    async def test_send_event_grid_event_data_bytes(
+    async def test_send_event_grid_event_data_bytes_async(
         self, eventgrid_topic_endpoint
     ):
         client = self.create_eg_publisher_client(eventgrid_topic_endpoint)
@@ -124,7 +124,7 @@ class TestEventGridPublisherClient(AzureRecordedTestCase):
     @EventGridPreparer()
     @recorded_by_proxy_async
     @pytest.mark.asyncio
-    async def test_send_event_grid_event_dict_data_bytes(
+    async def test_send_event_grid_event_dict_data_bytes_async(
         self, eventgrid_topic_endpoint
     ):
         client = self.create_eg_publisher_client(eventgrid_topic_endpoint)
@@ -142,7 +142,7 @@ class TestEventGridPublisherClient(AzureRecordedTestCase):
     @EventGridPreparer()
     @recorded_by_proxy_async
     @pytest.mark.asyncio
-    async def test_send_cloud_event_data_dict(
+    async def test_send_cloud_event_data_dict_async(
         self, eventgrid_cloud_event_topic_endpoint
     ):
         client = self.create_eg_publisher_client(eventgrid_cloud_event_topic_endpoint)
@@ -156,7 +156,7 @@ class TestEventGridPublisherClient(AzureRecordedTestCase):
     @EventGridPreparer()
     @recorded_by_proxy_async
     @pytest.mark.asyncio
-    async def test_send_cloud_event_data_str(
+    async def test_send_cloud_event_data_str_async(
         self, eventgrid_cloud_event_topic_endpoint
     ):
         client = self.create_eg_publisher_client(eventgrid_cloud_event_topic_endpoint)
@@ -170,7 +170,7 @@ class TestEventGridPublisherClient(AzureRecordedTestCase):
     @EventGridPreparer()
     @recorded_by_proxy_async
     @pytest.mark.asyncio
-    async def test_send_cloud_event_data_bytes(
+    async def test_send_cloud_event_data_bytes_async(
         self, eventgrid_cloud_event_topic_endpoint
     ):
         client = self.create_eg_publisher_client(eventgrid_cloud_event_topic_endpoint)
@@ -184,7 +184,7 @@ class TestEventGridPublisherClient(AzureRecordedTestCase):
     @EventGridPreparer()
     @recorded_by_proxy_async
     @pytest.mark.asyncio
-    async def test_send_cloud_event_data_as_list(
+    async def test_send_cloud_event_data_as_list_async(
         self, eventgrid_cloud_event_topic_endpoint
     ):
         client = self.create_eg_publisher_client(eventgrid_cloud_event_topic_endpoint)
@@ -198,7 +198,7 @@ class TestEventGridPublisherClient(AzureRecordedTestCase):
     @EventGridPreparer()
     @recorded_by_proxy_async
     @pytest.mark.asyncio
-    async def test_send_cloud_event_data_with_extensions(
+    async def test_send_cloud_event_data_with_extensions_async(
         self, eventgrid_cloud_event_topic_endpoint
     ):
         client = self.create_eg_publisher_client(eventgrid_cloud_event_topic_endpoint)
@@ -217,7 +217,7 @@ class TestEventGridPublisherClient(AzureRecordedTestCase):
     @EventGridPreparer()
     @recorded_by_proxy_async
     @pytest.mark.asyncio
-    async def test_send_cloud_event_dict(
+    async def test_send_cloud_event_dict_async(
         self, eventgrid_cloud_event_topic_endpoint
     ):
         client = self.create_eg_publisher_client(eventgrid_cloud_event_topic_endpoint)
@@ -233,7 +233,7 @@ class TestEventGridPublisherClient(AzureRecordedTestCase):
     @EventGridPreparer()
     @recorded_by_proxy_async
     @pytest.mark.asyncio
-    async def test_send_cloud_event_data_none(
+    async def test_send_cloud_event_data_none_async(
         self, eventgrid_cloud_event_topic_endpoint
     ):
         client = self.create_eg_publisher_client(eventgrid_cloud_event_topic_endpoint)
@@ -246,7 +246,7 @@ class TestEventGridPublisherClient(AzureRecordedTestCase):
     @EventGridPreparer()
     @recorded_by_proxy_async
     @pytest.mark.asyncio
-    async def test_send_cloud_event_data_NULL(
+    async def test_send_cloud_event_data_NULL_async(
         self, eventgrid_cloud_event_topic_endpoint
     ):
         client = self.create_eg_publisher_client(eventgrid_cloud_event_topic_endpoint)
@@ -263,7 +263,7 @@ class TestEventGridPublisherClient(AzureRecordedTestCase):
     @EventGridPreparer()
     @recorded_by_proxy_async
     @pytest.mark.asyncio
-    async def test_send_signature_credential(
+    async def test_send_signature_credential_async(
         self, eventgrid_topic_key, eventgrid_topic_endpoint
     ):
         expiration_date_utc = dt.datetime.now(UTC()) + timedelta(hours=1)
@@ -283,7 +283,7 @@ class TestEventGridPublisherClient(AzureRecordedTestCase):
     @EventGridPreparer()
     @recorded_by_proxy_async
     @pytest.mark.asyncio
-    async def test_send_custom_schema_event(
+    async def test_send_custom_schema_event_async(
         self, eventgrid_custom_event_topic_endpoint
     ):
         client = self.create_eg_publisher_client(eventgrid_custom_event_topic_endpoint)
@@ -300,7 +300,7 @@ class TestEventGridPublisherClient(AzureRecordedTestCase):
     @EventGridPreparer()
     @recorded_by_proxy_async
     @pytest.mark.asyncio
-    async def test_send_custom_schema_event_as_list(
+    async def test_send_custom_schema_event_as_list_async(
         self, eventgrid_custom_event_topic_endpoint
     ):
         client = self.create_eg_publisher_client(eventgrid_custom_event_topic_endpoint)
@@ -325,7 +325,7 @@ class TestEventGridPublisherClient(AzureRecordedTestCase):
     @EventGridPreparer()
     @recorded_by_proxy_async
     @pytest.mark.asyncio
-    async def test_send_and_close_async_session(
+    async def test_send_and_close_async_session_async(
         self, eventgrid_cloud_event_topic_endpoint
     ):
         client = self.create_eg_publisher_client(eventgrid_cloud_event_topic_endpoint)
@@ -350,7 +350,7 @@ class TestEventGridPublisherClient(AzureRecordedTestCase):
     @EventGridPreparer()
     @recorded_by_proxy_async
     @pytest.mark.asyncio
-    async def test_send_token_credential(self, eventgrid_topic_endpoint):
+    async def test_send_token_credential_async(self, eventgrid_topic_endpoint):
         credential = self.get_credential(EventGridPublisherClient)
         client = EventGridPublisherClient(eventgrid_topic_endpoint, credential)
         eg_event = EventGridEvent(
@@ -364,7 +364,7 @@ class TestEventGridPublisherClient(AzureRecordedTestCase):
     @pytest.mark.live_test_only
     @EventGridPreparer()
     @recorded_by_proxy_async
-    async def test_send_partner_namespace(self):
+    async def test_send_partner_namespace_async(self):
         eventgrid_partner_namespace_endpoint = os.environ[
             "EVENTGRID_PARTNER_NAMESPACE_TOPIC_ENDPOINT"
         ]

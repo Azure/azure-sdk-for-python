@@ -23,7 +23,7 @@ class TestEventGridPublisherClientCncf(AzureRecordedTestCase):
     @EventGridPreparer()
     @recorded_by_proxy_async
     @pytest.mark.asyncio
-    async def test_send_cloud_event_data_dict(
+    async def test_send_cncf_data_dict_async(
         self, eventgrid_cloud_event_topic_endpoint
     ):
         client = self.create_eg_publisher_client(eventgrid_cloud_event_topic_endpoint)
@@ -46,7 +46,7 @@ class TestEventGridPublisherClientCncf(AzureRecordedTestCase):
     @EventGridPreparer()
     @recorded_by_proxy_async
     @pytest.mark.asyncio
-    async def test_send_cloud_event_data_base64_using_data(
+    async def test_send_cncf_data_base64_using_data_async(
         self, eventgrid_cloud_event_topic_endpoint
     ):
         client = self.create_eg_publisher_client(eventgrid_cloud_event_topic_endpoint)
@@ -67,7 +67,7 @@ class TestEventGridPublisherClientCncf(AzureRecordedTestCase):
     @EventGridPreparer()
     @recorded_by_proxy_async
     @pytest.mark.asyncio
-    async def test_send_cloud_event_data_none(
+    async def test_send_cncf_data_none_async(
         self, eventgrid_cloud_event_topic_endpoint
     ):
         client = self.create_eg_publisher_client(eventgrid_cloud_event_topic_endpoint)
@@ -82,7 +82,7 @@ class TestEventGridPublisherClientCncf(AzureRecordedTestCase):
     @EventGridPreparer()
     @recorded_by_proxy_async
     @pytest.mark.asyncio
-    async def test_send_cloud_event_data_str(
+    async def test_send_cncf_data_str_async(
         self, eventgrid_cloud_event_topic_endpoint
     ):
         client = self.create_eg_publisher_client(eventgrid_cloud_event_topic_endpoint)
@@ -103,7 +103,7 @@ class TestEventGridPublisherClientCncf(AzureRecordedTestCase):
     @EventGridPreparer()
     @recorded_by_proxy_async
     @pytest.mark.asyncio
-    async def test_send_cloud_event_data_as_list(
+    async def test_send_cncf_data_as_list_async(
         self, eventgrid_cloud_event_topic_endpoint
     ):
         client = self.create_eg_publisher_client(eventgrid_cloud_event_topic_endpoint)
@@ -118,7 +118,7 @@ class TestEventGridPublisherClientCncf(AzureRecordedTestCase):
     @EventGridPreparer()
     @recorded_by_proxy_async
     @pytest.mark.asyncio
-    async def test_send_cloud_event_data_with_extensions(
+    async def test_send_cncf_data_with_extensions_async(
         self, eventgrid_cloud_event_topic_endpoint
     ):
         client = self.create_eg_publisher_client(eventgrid_cloud_event_topic_endpoint)
