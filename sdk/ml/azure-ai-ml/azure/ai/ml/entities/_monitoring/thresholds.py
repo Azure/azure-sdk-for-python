@@ -76,7 +76,7 @@ class NumericalDriftMetrics(RestTranslatableMixin):
         return metric_name, threshold
 
     @classmethod
-    def _from_rest_object( # pylint: disable=arguments-differ, inconsistent-return-statements
+    def _from_rest_object(  # pylint: disable=arguments-differ, inconsistent-return-statements
         cls, metric_name, threshold
     ) -> "NumericalDriftMetrics":
         metric_name = camel_to_snake(metric_name)
