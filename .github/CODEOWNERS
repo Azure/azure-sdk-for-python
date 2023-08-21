@@ -137,10 +137,10 @@
 /sdk/containerservice/                                               @zqingqing1
 
 # PRLabel: %Cosmos
-/sdk/cosmos/                                                         @kushagraThapar @simorenoh @simplynaveen20 @xinlian12 @annatisch @bambriz
+/sdk/cosmos/                                                         @kushagraThapar @simorenoh @xinlian12 @annatisch @bambriz
 
 # ServiceLabel: %Cosmos %Service Attention
-#/<NotInRepo>/                                                       @pjohari-ms @simorenoh @gahl-levy @bambriz
+#/<NotInRepo>/                                                       @pjohari-ms @simorenoh @AbhinavTrips @bambriz
 
 # PRLabel: %Data Factory
 /sdk/datafactory/                                                    @hvermis
@@ -425,7 +425,7 @@
 # ServiceLabel: %Bot Service %Service Attention
 #/<NotInRepo>/          @sgellock
 
-# ServiceLabel: %Cosmos %Service Attention
+# ServiceLabel: %Cosmos %Client
 #/<NotInRepo>/          @simorenoh @gahl-levy @bambriz
 
 # ServiceLabel: %Cloud Shell %Service Attention
