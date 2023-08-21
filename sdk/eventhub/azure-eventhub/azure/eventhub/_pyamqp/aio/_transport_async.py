@@ -186,30 +186,40 @@ class AsyncTransportMixin:
             ssl_version = sslopts.get("ssl_version")
             if ssl_version is None:
                 ssl_version = ssl.PROTOCOL_TLS_CLIENT
+            
+            context = ssl.SSLContext(ssl_version)
 
-            # Set SNI headers if supported
-            server_hostname = sslopts.get("server_hostname")
-            if (
-                (server_hostname is not None)
-                and (hasattr(ssl, "HAS_SNI") and ssl.HAS_SNI)
-                and (hasattr(ssl, "SSLContext"))
-            ):
-                context = ssl.SSLContext(ssl_version)
-                cert_reqs = sslopts.get("cert_reqs", ssl.CERT_REQUIRED)
-                certfile = sslopts.get("certfile")
-                keyfile = sslopts.get("keyfile")
-                context.verify_mode = cert_reqs
-                if cert_reqs != ssl.CERT_NONE:
-                    context.check_hostname = True
-                if (certfile is not None) and (keyfile is not None):
-                    context.load_cert_chain(certfile, keyfile)
-                return context
+            purpose = ssl.Purpose.SERVER_AUTH
+
             ca_certs = sslopts.get("ca_certs")
-            if ca_certs:
-                context = ssl.SSLContext(ssl_version)
-                context.load_verify_locations(ca_certs)
-                return context
-            return True
+
+            if ca_certs is not None:
+                try:
+                    context.load_verify_locations(ca_certs)
+                except FileNotFoundError as exc:
+                    # FileNotFoundError does not have missing filename info, so adding it below.
+                    # since this is the only file path that users can pass in
+                    # (`connection_verify` in the EH/SB clients) through opts above.
+                    exc.filename = {"ca_certs": ca_certs}
+                    raise exc from None
+            elif context.verify_mode != ssl.CERT_NONE:
+                # load the default system root CA certs. 
+                context.load_default_certs(purpose=purpose)
+
+            certfile = sslopts.get("certfile")
+            keyfile = sslopts.get("keyfile")
+            if certfile is not None:
+                context.load_cert_chain(certfile, keyfile)
+
+
+            server_hostname = sslopts.get("server_hostname")
+            cert_reqs = sslopts.get("cert_reqs", ssl.CERT_REQUIRED)
+            
+            if cert_reqs == ssl.CERT_NONE and server_hostname is None:
+                context.check_hostname = False
+                context.verify_mode = cert_reqs
+
+            return context
         except TypeError:
             raise TypeError(
                 "SSL configuration must be a dictionary, or the value True."
@@ -250,6 +260,7 @@ class AsyncTransport(
         self.socket_settings = socket_settings
         self.socket_lock = asyncio.Lock()
         self.sslopts = ssl_opts
+        self.sslopts['server_hostname'] = self.host
         self.network_trace_params = kwargs.get('network_trace_params')
 
     async def connect(self):

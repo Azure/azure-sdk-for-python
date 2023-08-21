@@ -501,6 +501,7 @@ class SSLTransport(_AbstractTransport):
         self, host, *, port=AMQPS_PORT, socket_timeout=None, ssl_opts=None, **kwargs
     ):
         self.sslopts = ssl_opts if isinstance(ssl_opts, dict) else {}
+        self.sslopts['server_hostname'] = host
         self._read_buffer = BytesIO()
         super(SSLTransport, self).__init__(
             host, port=port, socket_timeout=socket_timeout, **kwargs
@@ -563,6 +564,7 @@ class SSLTransport(_AbstractTransport):
         # ssl implementations
         if ssl_version is None:
             ssl_version = ssl.PROTOCOL_TLS_SERVER if server_side else ssl.PROTOCOL_TLS_CLIENT
+        purpose = ssl.Purpose.CLIENT_AUTH if server_side else ssl.Purpose.SERVER_AUTH
 
         opts = {
             "sock": sock,
@@ -574,9 +576,6 @@ class SSLTransport(_AbstractTransport):
 
         context = ssl.SSLContext(ssl_version)
 
-        if certfile is not None:
-            context.load_cert_chain(certfile, keyfile)
-
         if ca_certs is not None:
             try:
                 context.load_verify_locations(ca_certs)
@@ -586,28 +585,19 @@ class SSLTransport(_AbstractTransport):
                 # (`connection_verify` in the EH/SB clients) through opts above.
                 exc.filename = {"ca_certs": ca_certs}
                 raise exc from None
+        elif context.verify_mode != ssl.CERT_NONE:
+            # load the default system root CA certs. 
+            context.load_default_certs(purpose=purpose)
+
+        if certfile is not None:
+            context.load_cert_chain(certfile, keyfile)
 
         if ciphers is not None:
             context.set_ciphers(ciphers)
 
-        # Set SNI headers if supported
-        # This order is maintained here because ssl.PROTOCOL_TLS_CLIENT sets check_hostname to True
-        # and verify_mode to CERT_REQUIRED. If verify_mode needs to be CERT_NONE, then check_hostname
-        # needs to be disabled first. https://docs.python.org/3/library/ssl.html#ssl.SSLContext.check_hostname
-        try:
-            context.check_hostname = ssl.HAS_SNI and server_hostname is not None
-        except AttributeError:
-            pass
-
-        if cert_reqs is not None:
+        if cert_reqs == ssl.CERT_NONE and server_hostname is None:
+            context.check_hostname = False
             context.verify_mode = cert_reqs
-
-        if ca_certs is None and context.verify_mode != ssl.CERT_NONE:
-            # attempt to load the system wide CA certs
-            # we want to load certs for server authentication on the client side. 
-            # https://docs.python.org/3/library/ssl.html#ssl.SSLContext.load_default_certs
-            purpose = ssl.Purpose.CLIENT_AUTH if server_side else ssl.Purpose.SERVER_AUTH
-            context.load_default_certs(purpose=purpose)
 
         sock = context.wrap_socket(**opts)
         return sock
