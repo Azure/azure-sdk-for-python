@@ -472,7 +472,7 @@ class MLClient:
         self._schedules = ScheduleOperations(
             self._operation_scope,
             self._operation_config,
-            self._service_client_04_2023_preview,
+            self._service_client_06_2023_preview,
             self._operation_container,
             self._credential,
             _service_client_kwargs=kwargs,
