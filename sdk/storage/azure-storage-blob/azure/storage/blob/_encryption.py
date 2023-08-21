@@ -285,11 +285,13 @@ def modify_user_agent_for_encryption(
     :param str encryption_version: The version of encryption being used.
     :param Dict[str, Any] request_options: The reuqest options to add the user agent override to.
     """
-    index = user_agent.find(f"azsdk-python-{moniker}")
-    user_agent = f"{user_agent[:index]}azstorage-clientsideencryption/{encryption_version} {user_agent[index:]}"
+    feature_flag = f"azstorage-clientsideencryption/{encryption_version}"
+    if feature_flag not in user_agent:
+        index = user_agent.find(f"azsdk-python-{moniker}")
+        user_agent = f"{user_agent[:index]}{feature_flag} {user_agent[index:]}"
 
-    request_options['user_agent'] = user_agent
-    request_options['user_agent_overwrite'] = True
+        request_options['user_agent'] = user_agent
+        request_options['user_agent_overwrite'] = True
 
 
 def get_adjusted_upload_size(length: int, encryption_version: str) -> int:
