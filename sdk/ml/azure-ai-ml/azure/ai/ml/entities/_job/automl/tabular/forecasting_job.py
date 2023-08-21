@@ -313,26 +313,35 @@ class ForecastingJob(AutoMLTabular):
                 |     | freq     | | target_aggregation_function | | Data regularity                    |
                 |                |                               | | fixing mechanism                   |
                 +================+===============================+======================================+
-                | None (Default) | None (Default)                | | The aggregation is not             |
-                |                |                               | | applied. If the valid              |
-                |                |                               | | frequency can not be               |
-                |                |                               | | determined the error will          |
+                | None (Default) | None (Default)                | | The aggregation                    |
+                |                |                               | | is not applied.                    |
+                |                |                               | | If the valid                       |
+                |                |                               | | frequency can                      |
+                |                |                               | | not be determined                  |
+                |                |                               | | the error                          |
+                |                |                               | | will be raised.                    |
+                +----------------+-------------------------------+--------------------------------------+
+                | Some Value     | None (Default)                | | The aggregation                    |
+                |                |                               | | is not applied.                    |
+                |                |                               | | If the number                      |
+                |                |                               | | of data points                     |
+                |                |                               | | compliant to given                 |
+                |                |                               | | frequency grid is                  |
+                |                |                               | | less then 90% these                |
+                |                |                               | | points will be                     |
+                |                |                               | | removed, otherwise                 |
+                |                |                               | | the error will                     |
                 |                |                               | | be raised.                         |
                 +----------------+-------------------------------+--------------------------------------+
-                | Some Value     | None (Default)                | | The aggregation is not             |
-                |                |                               | | applied. If the number             |
-                |                |                               | | of data points compliant           |
-                |                |                               | | to given frequency grid            |
-                |                |                               | | is less then 90% these points      |
-                |                |                               | | will be removed, otherwise         |
-                |                |                               | | the error will be raised.          |
+                | None (Default) | Aggregation function          | | The error about                    |
+                |                |                               | | missing frequency                  |
+                |                |                               | | parameter is                       |
+                |                |                               | | raised.                            |
                 +----------------+-------------------------------+--------------------------------------+
-                | None (Default) | Aggregation function          | | The error about missing            |
-                |                |                               | | frequency parameter                |
-                |                |                               | | is raised.                         |
-                +----------------+-------------------------------+--------------------------------------+
-                | Some Value     | Aggregation function          | | Aggregate to frequency using       |
-                |                |                               | | provided aggregation function.     |
+                | Some Value     | Aggregation function          | | Aggregate to                       |
+                |                |                               | | frequency using                    | 
+                |                |                               | | provided aggregation               |
+                |                |                               | | function.                          |
                 +----------------+-------------------------------+--------------------------------------+
 
         :type target_aggregate_function: Optional[str]
