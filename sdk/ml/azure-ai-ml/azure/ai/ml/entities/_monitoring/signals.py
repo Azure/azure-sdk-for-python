@@ -140,7 +140,7 @@ class ProductionData(RestTranslatableMixin):
     :param input_data: The data for which drift will be calculated
     :type Input: ~azure.ai.ml.entities._input_outputs
     :param data_context: The data to calculate drift against
-    :type MointorDatasetContext: ~azure.ai.ml.constants._monitoring
+    :type MonitorDatasetContext: ~azure.ai.ml.constants._monitoring
     :param pre_processing_component :
     :type pre_processing_component: string
     :param data_window_size:
@@ -171,7 +171,7 @@ class ProductionData(RestTranslatableMixin):
             target_columns=None,
             job_type=job_type,
             uri=uri,
-            preocessing_component_id=self.pre_processing_component,
+            pre_processing_component_id=self.pre_processing_component,
             window_size=self.data_window_size,
             window_offset=self.data_window_size,
         )
@@ -196,7 +196,7 @@ class ReferenceData(RestTranslatableMixin):
     :param input_data: The data for which drift will be calculated
     :type Input: ~azure.ai.ml.entities._input_outputs
     :param data_context: The data to calculate drift against
-    :type MointorDatasetContext: ~azure.ai.ml.constants._monitoring
+    :type MonitorDatasetContext: ~azure.ai.ml.constants._monitoring
     :param pre_processing_component :
     :type pre_processing_component: string
     :param target_column_name:
@@ -231,7 +231,7 @@ class ReferenceData(RestTranslatableMixin):
                     else None,
                     job_type=self.input_data.type,
                     uri=self.input_data.path,
-                    preocessing_component_id=self.pre_processing_component,
+                    pre_processing_component_id=self.pre_processing_component,
                     window_size=self.data_window.trailing_window_size,
                     window_offset=self.data_window.trailing_window_offset
                     if self.data_window.trailing_window_offset is not None
@@ -245,7 +245,7 @@ class ReferenceData(RestTranslatableMixin):
                     else None,
                     job_type=self.input_data.type,
                     uri=self.input_data.path,
-                    preocessing_component_id=self.pre_processing_component,
+                    pre_processing_component_id=self.pre_processing_component,
                     window_start=self.data_window.window_start,
                     window_end=self.data_window.window_end,
                 )._to_rest_object()
@@ -588,7 +588,7 @@ class DataQualitySignal(DataSignal):
         if self.production_data.data_window_size is None:
             self.production_data.data_window_size = default_data_window_size
         rest_features = _to_rest_features(self.features) if self.features else None
-        rest_mertrics = _to_rest_data_quality_metrics(
+        rest_metrics = _to_rest_data_quality_metrics(
             self.metric_thresholds.numerical, self.metric_thresholds.categorical
         )
         return RestMonitoringDataQualitySignal(
@@ -596,7 +596,7 @@ class DataQualitySignal(DataSignal):
             reference_data=self.reference_data._to_rest_object(),
             features=rest_features,
             feature_data_type_override=self.feature_type_override,
-            metric_thresholds=rest_mertrics,
+            metric_thresholds=rest_metrics,
             mode=MonitoringNotificationMode.ENABLED if self.alert_enabled else MonitoringNotificationMode.DISABLED,
             properties=self.properties,
         )
@@ -690,7 +690,7 @@ class FADProductionData(RestTranslatableMixin):
             target_columns=self.data_column_names,
             job_type=job_type,
             uri=uri,
-            preocessing_component_id=self.pre_processing_component,
+            pre_processing_component_id=self.pre_processing_component,
             window_size=self.data_window_size,
             window_offset=self.data_window_size,
         )
@@ -743,7 +743,7 @@ class FeatureAttributionDriftSignal(RestTranslatableMixin):
         self.properties = properties
         self.type = MonitorSignalType.FEATURE_ATTRIBUTION_DRIFT
 
-    def _to_rest_object(self) -> RestFeatureAttributionDriftMonitoringSignal:
+    def _to_rest_object(self, **kwargs) -> RestFeatureAttributionDriftMonitoringSignal:
         return RestFeatureAttributionDriftMonitoringSignal(
             production_data=[data._to_rest_object() for data in self.production_data],
             reference_data=self.reference_data._to_rest_object(),

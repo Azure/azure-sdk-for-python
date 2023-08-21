@@ -96,7 +96,7 @@ class TrailingInputData(MonitorInputData):
         uri: str = None,
         window_size: str = None,
         window_offset: datetime.timedelta = None,
-        preocessing_component_id: str = None,
+        pre_processing_component_id: str = None,
     ):
         super().__init__(
             input_type="Trailing",
@@ -107,7 +107,7 @@ class TrailingInputData(MonitorInputData):
         )
         self.window_size = window_size
         self.window_offset = window_offset
-        self.preocessing_component_id = preocessing_component_id
+        self.pre_processing_component_id = pre_processing_component_id
 
     def _to_rest_object(self) -> RestTrailingInputData:
         return RestTrailingInputData(
@@ -117,7 +117,7 @@ class TrailingInputData(MonitorInputData):
             uri=self.uri,
             window_size=self.window_size,
             window_offset=self.window_offset,
-            preprocessing_component_id=self.preocessing_component_id,
+            preprocessing_component_id=self.pre_processing_component_id,
         )
 
     @classmethod
@@ -129,7 +129,7 @@ class TrailingInputData(MonitorInputData):
             uri=obj.uri,
             window_size=obj.window_size,
             window_offset=obj.window_offset,
-            preocessing_component_id=obj.preprocessing_component_id,
+            pre_processing_component_id=obj.preprocessing_component_id,
         )
 
 
@@ -142,7 +142,7 @@ class StaticInputData(MonitorInputData):
         target_columns: Dict = None,
         job_type: str = None,
         uri: str = None,
-        preocessing_component_id: str = None,
+        pre_processing_component_id: str = None,
         window_start: str = None,
         window_end: str = None,
     ):
@@ -153,7 +153,7 @@ class StaticInputData(MonitorInputData):
             job_type=job_type,
             uri=uri,
         )
-        self.preocessing_component_id = preocessing_component_id
+        self.pre_processing_component_id = pre_processing_component_id
         self.window_start = window_start
         self.window_end = window_end
 
@@ -163,7 +163,7 @@ class StaticInputData(MonitorInputData):
             columns=self.target_columns,
             job_input_type=self.job_type,
             uri=self.uri,
-            preprocessing_component_id=self.preocessing_component_id,
+            preprocessing_component_id=self.pre_processing_component_id,
             window_start=datetime.datetime.strptime(self.window_start, "%Y-%m-%d"),
             window_end=datetime.datetime.strptime(self.window_end, "%Y-%m-%d"),
         )
@@ -175,7 +175,7 @@ class StaticInputData(MonitorInputData):
             target_columns=obj.columns,
             job_type=obj.job_input_type,
             uri=obj.uri,
-            preocessing_component_id=obj.preprocessing_component_id,
+            pre_processing_component_id=obj.preprocessing_component_id,
             window_start=datetime.datetime.strftime(obj.window_start, "%Y-%m-%d"),
             window_end=datetime.datetime.strftime(obj.window_end, "%Y-%m-%d"),
         )
