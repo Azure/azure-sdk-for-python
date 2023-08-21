@@ -24,7 +24,7 @@ class SchemaRegistryClient(SchemaRegistryClientOperationsMixin):  # pylint: disa
     """SchemaRegistryClient.
 
     :param endpoint: The Schema Registry service endpoint, for example
-     https://my-namespace.servicebus.windows.net. Required.
+     'my-namespace.servicebus.windows.net'. Required.
     :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
@@ -39,7 +39,6 @@ class SchemaRegistryClient(SchemaRegistryClientOperationsMixin):  # pylint: disa
         credential: "AsyncTokenCredential",
         **kwargs: Any
     ) -> None:
-        super().__init__()
         _endpoint = '{endpoint}'
         self._config = SchemaRegistryClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
         self._client: AsyncPipelineClient = AsyncPipelineClient(base_url=_endpoint, config=self._config, **kwargs)

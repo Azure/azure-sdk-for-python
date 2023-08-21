@@ -25,7 +25,7 @@ class SchemaRegistryClientConfiguration(Configuration):  # pylint: disable=too-m
     attributes.
 
     :param endpoint: The Schema Registry service endpoint, for example
-     https://my-namespace.servicebus.windows.net. Required.
+     'my-namespace.servicebus.windows.net'. Required.
     :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
