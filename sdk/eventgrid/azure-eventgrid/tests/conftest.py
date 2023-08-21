@@ -25,7 +25,7 @@
 # --------------------------------------------------------------------------
 import os
 import pytest
-from devtools_testutils import add_general_string_sanitizer, test_proxy, add_body_key_sanitizer, add_header_regex_sanitizer, add_oauth_response_sanitizer
+from devtools_testutils import add_general_string_sanitizer, test_proxy, add_body_key_sanitizer, add_header_regex_sanitizer, add_oauth_response_sanitizer, add_body_regex_sanitizer
 from devtools_testutils.sanitizers import (
     add_remove_header_sanitizer,
     add_general_regex_sanitizer,
@@ -44,16 +44,20 @@ def add_sanitizers(test_proxy):
         value="fakeresource",
         regex="(?<=\\/\\/)[a-z-]+(?=\\.eastus-1\\.eventgrid\\.azure\\.net/api/events)",
     )
+    add_body_regex_sanitizer(
+        value="faketopic",
+        regex="^[a-z]+\.EASTUS-1+\.EVENTGRID+\.AZURE+\.NET)+$",
+    )
     add_header_regex_sanitizer(key="Set-Cookie", value="[set-cookie;]")
     add_header_regex_sanitizer(key="Cookie", value="cookie;")
-    add_body_key_sanitizer(json_path="$..access_token", value="access_token")
-    # add_body_key_sanitizer(json_path="$..lockToken", value="token")
-    # add_body_key_sanitizer(json_path="$..lockTokens", value="tokens")
-    # add_body_key_sanitizer(json_path="$..succeededLockTokens", value="succeeded_tokens")
-    # add_body_key_sanitizer(json_path="$..failedLockTokens", value="failed_tokens")
-    add_body_key_sanitizer(json_path="$..id", value="id")
-    # add_general_regex_sanitizer(value="scope", regex="(?<=&scope=)[^&]+(?=&)")
-    # add_general_regex_sanitizer(value="claims", regex="(?<=&claims=)[^&]+(?=)")
+    # add_body_key_sanitizer(json_path="$..access_token", value="access_token")
+    # # add_body_key_sanitizer(json_path="$..lockToken", value="token")
+    # # add_body_key_sanitizer(json_path="$..lockTokens", value="tokens")
+    # # add_body_key_sanitizer(json_path="$..succeededLockTokens", value="succeeded_tokens")
+    # # add_body_key_sanitizer(json_path="$..failedLockTokens", value="failed_tokens")
+    # add_body_key_sanitizer(json_path="$..id", value="id")
+    # # add_general_regex_sanitizer(value="scope", regex="(?<=&scope=)[^&]+(?=&)")
+    # # add_general_regex_sanitizer(value="claims", regex="(?<=&claims=)[^&]+(?=)")
     add_oauth_response_sanitizer()
 
     client_id = os.getenv("AZURE_CLIENT_ID", "sanitized")
