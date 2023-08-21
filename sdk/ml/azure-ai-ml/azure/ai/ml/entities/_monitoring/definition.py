@@ -117,9 +117,10 @@ class MonitorDefinition(RestTranslatableMixin):
         return cls(
             compute=ServerlessSparkCompute._from_rest_object(obj.compute_configuration),
             monitoring_target=MonitoringTarget(
-                endpoint_deployment_id=obj.monitoring_target.deployment_id,
-                ml_task=obj.monitoring_target.task_type
-            ) if obj.monitoring_target else None,
+                endpoint_deployment_id=obj.monitoring_target.deployment_id, ml_task=obj.monitoring_target.task_type
+            )
+            if obj.monitoring_target
+            else None,
             monitoring_signals={
                 signal_name: MonitoringSignal._from_rest_object(signal) for signal_name, signal in obj.signals.items()
             },
