@@ -591,6 +591,9 @@ class SSLTransport(_AbstractTransport):
             context.set_ciphers(ciphers)
 
         # Set SNI headers if supported
+        # This order is maintained here because ssl.PROTOCOL_TLS_CLIENT sets check_hostname to True
+        # and verify_mode to CERT_REQUIRED. If verify_mode needs to be CERT_NONE, then check_hostname
+        # needs to be disabled first. https://docs.python.org/3/library/ssl.html#ssl.SSLContext.check_hostname
         try:
             context.check_hostname = ssl.HAS_SNI and server_hostname is not None
         except AttributeError:
