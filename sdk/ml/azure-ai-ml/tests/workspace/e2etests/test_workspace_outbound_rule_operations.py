@@ -142,15 +142,21 @@ class TestWorkspaceOutboundRules(AzureRecordedTestCase):
         assert rule.destination == "adifffqdn.com"
 
         # test remove outbound rule
-        rule_poller = client.workspace_outbound_rules.begin_remove(workspace_name=wps_name, outbound_rule_name="pytorch")
+        rule_poller = client.workspace_outbound_rules.begin_remove(
+            workspace_name=wps_name, outbound_rule_name="pytorch"
+        )
         assert isinstance(rule_poller, LROPoller)
         rule_poller.result()
 
-        rule_poller = client.workspace_outbound_rules.begin_remove(workspace_name=wps_name, outbound_rule_name="my-service")
+        rule_poller = client.workspace_outbound_rules.begin_remove(
+            workspace_name=wps_name, outbound_rule_name="my-service"
+        )
         assert isinstance(rule_poller, LROPoller)
         rule_poller.result()
 
-        rule_poller = client.workspace_outbound_rules.begin_remove(workspace_name=wps_name, outbound_rule_name="my-storage")
+        rule_poller = client.workspace_outbound_rules.begin_remove(
+            workspace_name=wps_name, outbound_rule_name="my-storage"
+        )
         assert isinstance(rule_poller, LROPoller)
         rule_poller.result()
 

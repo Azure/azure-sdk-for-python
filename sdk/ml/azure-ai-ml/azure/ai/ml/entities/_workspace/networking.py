@@ -4,6 +4,7 @@
 
 from typing import Any, Dict, Optional, List
 
+from abc import ABC
 from azure.ai.ml._restclient.v2023_06_01_preview.models import (
     ManagedNetworkSettings as RestManagedNetwork,
     FqdnOutboundRule as RestFqdnOutboundRule,
@@ -16,8 +17,6 @@ from azure.ai.ml._restclient.v2023_06_01_preview.models import (
 from azure.ai.ml.constants._workspace import IsolationMode, OutboundRuleCategory, OutboundRuleType
 
 from azure.ai.ml._utils._experimental import experimental
-
-from abc import ABC
 
 
 class OutboundRule(ABC):

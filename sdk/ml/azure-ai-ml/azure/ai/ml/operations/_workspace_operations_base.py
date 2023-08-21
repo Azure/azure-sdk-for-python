@@ -264,12 +264,12 @@ class WorkspaceOperationsBase:
                 )
             )
 
-        if workspace.managed_network.outbound_rules is not None:
+        if workspace.managed_network is not None and workspace.managed_network.outbound_rules is not None:
             # drop recommended and required rules from the update request since it would result in bad request
             workspace.managed_network.outbound_rules = [
                 rule
                 for rule in workspace.managed_network.outbound_rules
-                if rule.category != OutboundRuleCategory.REQUIRED and rule.category != OutboundRuleCategory.RECOMMENDED
+                if rule.category not in (OutboundRuleCategory.REQUIRED, OutboundRuleCategory.RECOMMENDED)
             ]
 
         update_role_assignment = (

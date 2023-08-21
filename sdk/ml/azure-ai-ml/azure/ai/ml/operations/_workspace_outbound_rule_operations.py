@@ -4,9 +4,7 @@
 
 from typing import Dict, Iterable
 from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient042023Preview
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
-    OutboundRuleBasicResource
-)
+from azure.ai.ml._restclient.v2023_04_01_preview.models import OutboundRuleBasicResource
 from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope
 
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
@@ -61,43 +59,43 @@ class WorkspaceOutboundRuleOperations:
 
         obj = self._rule_operation.get(resource_group, workspace_name, outbound_rule_name)
         return OutboundRule._from_rest_object(obj.properties, name=obj.name)  # pylint: disable=protected-access
-    
+
     @monitor_with_activity(logger, "WorkspaceOutboundRule.BeginCreate", ActivityType.PUBLICAPI)
     def begin_create(self, workspace_name: str, rule: OutboundRule, **kwargs) -> LROPoller[OutboundRule]:
         """Create a Workspace OutboundRule.
 
         :param workspace_name: Name of the workspace.
         :type workspace_name: str
-        :param rule: OutboundRule definition.
+        :param rule: OutboundRule definition (FqdnDestination, PrivateEndpointDestination, or ServiceTagDestination).
         :type rule: OutboundRule
         :return: An instance of LROPoller that returns an OutboundRule.
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.OutboundRule]
         """
-        
+
         workspace_name = self._check_workspace_name(workspace_name)
         resource_group = kwargs.get("resource_group") or self._resource_group_name
 
-        rule_params = OutboundRuleBasicResource(
-            properties=rule._to_rest_object()
-        )
+        rule_params = OutboundRuleBasicResource(properties=rule._to_rest_object())  # pylint: disable=protected-access
 
         # pylint: disable=unused-argument
         def callback(_, deserialized, args):
-            return (
-                OutboundRule._from_rest_object(deserialized.properties, name=deserialized.name)
-            )
+            return OutboundRule._from_rest_object(
+                deserialized.properties, name=deserialized.name
+            )  # pylint: disable=protected-access
 
-        poller = self._rule_operation.begin_create_or_update(resource_group, workspace_name, rule.name, rule_params, polling=True, cls=callback)
+        poller = self._rule_operation.begin_create_or_update(
+            resource_group, workspace_name, rule.name, rule_params, polling=True, cls=callback
+        )
         module_logger.info("Create request initiated for outbound rule with name: %s\n", rule.name)
         return poller
-    
+
     @monitor_with_activity(logger, "WorkspaceOutboundRule.BeginUpdate", ActivityType.PUBLICAPI)
     def begin_update(self, workspace_name: str, rule: OutboundRule, **kwargs) -> LROPoller[OutboundRule]:
         """Update a Workspace OutboundRule.
 
         :param workspace_name: Name of the workspace.
         :type workspace_name: str
-        :param rule: OutboundRule definition.
+        :param rule: OutboundRule definition (FqdnDestination, PrivateEndpointDestination, or ServiceTagDestination).
         :type rule: OutboundRule
         :return: An instance of LROPoller that returns an OutboundRule.
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.OutboundRule]
@@ -106,17 +104,17 @@ class WorkspaceOutboundRuleOperations:
         workspace_name = self._check_workspace_name(workspace_name)
         resource_group = kwargs.get("resource_group") or self._resource_group_name
 
-        rule_params = OutboundRuleBasicResource(
-            properties=rule._to_rest_object()
-        )
+        rule_params = OutboundRuleBasicResource(properties=rule._to_rest_object())  # pylint: disable=protected-access
 
         # pylint: disable=unused-argument
         def callback(_, deserialized, args):
-            return (
-                OutboundRule._from_rest_object(deserialized.properties, name=deserialized.name)
-            )
+            return OutboundRule._from_rest_object(
+                deserialized.properties, name=deserialized.name
+            )  # pylint: disable=protected-access
 
-        poller = self._rule_operation.begin_create_or_update(resource_group, workspace_name, rule.name, rule_params, polling=True, cls=callback)
+        poller = self._rule_operation.begin_create_or_update(
+            resource_group, workspace_name, rule.name, rule_params, polling=True, cls=callback
+        )
         module_logger.info("Update request initiated for outbound rule with name: %s\n", rule.name)
         return poller
 
@@ -147,6 +145,8 @@ class WorkspaceOutboundRuleOperations:
 
         :param workspace_name: Name of the workspace.
         :type workspace_name: str
+        :param outbound_rule_name: Name of the outbound rule to remove.
+        :type outbound_rule_name: str
         :return: An Iterable of OutboundRule.
         :rtype: Iterable[OutboundRule]
         """
