@@ -263,7 +263,7 @@ class ForecastingJob(AutoMLTabular):
             respectively).
 
             +-----------+------------------------+--------------------+----------------------------------+
-            |  handling | handling_configuration | resulting handling | resulting handling_configuration |
+            |  handling | handling_configuration | resulting handling | resulting handling configuration |
             +===========+========================+====================+==================================+
             | True      | auto                   | True               | auto                             |
             +-----------+------------------------+--------------------+----------------------------------+

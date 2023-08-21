@@ -151,7 +151,7 @@ class ForecastingSettings(RestTranslatableMixin):
         respectively).
 
         +-----------+------------------------+--------------------+----------------------------------+
-        |  handling | handling_configuration | resulting handling | resulting handling_configuration |
+        |  handling | handling_configuration | resulting handling | resulting handling configuration |
         +===========+========================+====================+==================================+
         | True      | auto                   | True               | auto                             |
         +-----------+------------------------+--------------------+----------------------------------+
@@ -193,10 +193,10 @@ class ForecastingSettings(RestTranslatableMixin):
             |                |                             | If the valid frequency can not be           |
             |                |                             | determined the error will be raised.        |
             +----------------+-----------------------------+---------------------------------------------+
-            | Some Value     | None (Default)              | The aggregation is not applied.             |
-            |                |                             | If the number of data points compliant      |
-            |                |                             | to given frequency grid is less then 90%    |
-            |                |                             | these points will be removed, otherwise     |
+            | Some Value     | None (Default)              | The aggregation is not applied.\n           |
+            |                |                             | If the number of data points compliant\n    |
+            |                |                             | to given frequency grid is less then 90%\n  |
+            |                |                             | these points will be removed, otherwise\n   |
             |                |                             | the error will be raised.                   |
             +----------------+-----------------------------+---------------------------------------------+
             | None (Default) | Aggregation function        | The error about missing frequency parameter |
