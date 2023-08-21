@@ -457,11 +457,13 @@ class DataQualityMetricThreshold(MetricThreshold):
         *,
         data_type: Literal[MonitorFeatureType.CATEGORICAL, MonitorFeatureType.NUMERICAL] = None,
         threshold: float = None,
+        metric_name: Optional[str] = None,
         numerical: Optional[DataQualityMetricsNumerical] = None,
         categorical: Optional[DataQualityMetricsCategorical] = None,
     ):
         super().__init__(threshold=threshold)
         self.data_type = data_type
+        self.metric_name = metric_name
         self.numerical = numerical
         self.categorical = categorical
 
@@ -512,7 +514,11 @@ class DataQualityMetricThreshold(MetricThreshold):
     def __eq__(self, other: Any):
         if not isinstance(other, DataQualityMetricThreshold):
             return NotImplemented
-        return self.data_type == other.data_type and self.metric == other.metric and self.threshold == other.threshold
+        return (
+            self.data_type == other.data_type
+            and self.metric_name == other.metric_name
+            and self.threshold == other.threshold
+        )
 
 
 @experimental

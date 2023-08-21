@@ -49,7 +49,7 @@ class MonitoringTarget:
     @classmethod
     def _from_rest_object(cls, obj: RestMonitoringTarget) -> "MonitoringTarget":
         return cls(
-            task_type=obj.task_type,
+            ml_task=obj.task_type,
             endpoint_deployment_id=obj.endpoint_deployment_id,
             model_id=obj.model_id,
         )

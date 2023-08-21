@@ -26,7 +26,7 @@ class ComputeIdentity:
         )
 
     @classmethod
-    def _from_rest_object(cls, obj: MonitorComputeIdentityBase) -> "ComputeIdentity":
+    def _from_rest_object(cls) -> "ComputeIdentity":
         return cls(
             identity_type="AmlToken",
         )

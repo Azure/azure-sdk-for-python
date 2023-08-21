@@ -22,11 +22,6 @@ from azure.ai.ml.entities._schedule.schedule import Schedule
 from azure.ai.ml.entities._schedule.trigger import CronTrigger, RecurrenceTrigger, TriggerBase
 from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._util import load_from_dict
-from azure.ai.ml._restclient.v2023_06_01_preview.models import Schedule as RestSchedule
-from azure.ai.ml._restclient.v2023_06_01_preview.models import ScheduleProperties, RecurrenceFrequency
-from azure.ai.ml._schema.monitoring.schedule import MonitorScheduleSchema
-from azure.ai.ml._utils._experimental import experimental
-from azure.ai.ml._utils.utils import dump_yaml_to_file
 
 module_logger = logging.getLogger(__name__)
 

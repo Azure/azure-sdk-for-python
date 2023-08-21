@@ -5,7 +5,8 @@
 # pylint: disable=protected-access
 
 from typing import Dict, List, Optional, Union
-import datetime, isodate
+import datetime
+import isodate
 
 from typing_extensions import Literal
 
@@ -220,8 +221,7 @@ class ReferenceData(RestTranslatableMixin):
         self.target_column_name = target_column_name
         self.data_window = data_window
 
-    def _to_rest_object(self, **kwargs) -> RestMonitoringInputData:
-        default_data_window_size = kwargs.get("default_data_window_size")
+    def _to_rest_object(self) -> RestMonitoringInputData:
         if self.data_window is not None:
             if self.data_window.trailing_window_size is not None:
                 return TrailingInputData(
@@ -805,6 +805,9 @@ class ModelPerformanceSignal(ModelSignal):
         self.data_segment = data_segment
 
     def _to_rest_object(self, **kwargs) -> RestModelPerformanceSignal:
+        default_data_window_size = kwargs.get("default_data_window_size")
+        if self.data_window_size is None:
+            self.data_window_size = default_data_window_size
         return RestModelPerformanceSignal(
             production_data=self.production_data._to_rest_object(),
             reference_data=self.reference_data._to_rest_object(),
