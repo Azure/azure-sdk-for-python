@@ -29,7 +29,7 @@ def main():
         subscription_id="6b052e15-03d3-4f17-b2e1-be7f07588291",
     )
 
-    response = client.capabilities.delete(
+    client.capabilities.delete(
         resource_group_name="exampleRG",
         parent_provider_namespace="Microsoft.Compute",
         parent_resource_type="virtualMachines",
@@ -37,9 +37,8 @@ def main():
         target_name="Microsoft-VirtualMachine",
         capability_name="Shutdown-1.0",
     )
-    print(response)
 
 
-# x-ms-original-file: specification/chaos/resource-manager/Microsoft.Chaos/preview/2022-10-01-preview/examples/DeleteACapability.json
+# x-ms-original-file: specification/chaos/resource-manager/Microsoft.Chaos/preview/2023-04-15-preview/examples/DeleteACapability.json
 if __name__ == "__main__":
     main()

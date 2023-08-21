@@ -39,6 +39,7 @@ class TokenCredential(Protocol):
         :rtype: AccessToken
         :return: An AccessToken instance containing the token string and its expiration time in Unix time.
         """
+        ...
 
 
 AzureNamedKey = namedtuple("AzureNamedKey", ["name", "key"])

@@ -5,8 +5,7 @@
 # license information.
 # --------------------------------------------------------------------------
 import asyncio
-from collections.abc import AsyncIterator
-from typing import TYPE_CHECKING, Any, List
+from typing import TYPE_CHECKING, List, Generic, TypeVar, Type, Optional, AsyncIterator, Iterator
 from ..pipeline import PipelineContext, PipelineRequest, PipelineResponse
 from ..pipeline._tools_async import await_result as _await_result
 
@@ -14,7 +13,10 @@ if TYPE_CHECKING:
     from ..pipeline.policies import SansIOHTTPPolicy
 
 
-class _PartGenerator(AsyncIterator):
+HttpResponseType = TypeVar("HttpResponseType")
+
+
+class _PartGenerator(AsyncIterator[HttpResponseType], Generic[HttpResponseType]):
     """Until parts is a real async iterator, wrap the sync call.
 
     :param response: The response to parse
@@ -23,12 +25,12 @@ class _PartGenerator(AsyncIterator):
     :type default_http_response_type: any
     """
 
-    def __init__(self, response, default_http_response_type: Any) -> None:
+    def __init__(self, response, default_http_response_type: Type[HttpResponseType]) -> None:
         self._response = response
-        self._parts = None
+        self._parts: Optional[Iterator[HttpResponseType]] = None
         self._default_http_response_type = default_http_response_type
 
-    async def _parse_response(self):
+    async def _parse_response(self) -> Iterator[HttpResponseType]:
         responses = self._response._get_raw_parts(  # pylint: disable=protected-access
             http_response_type=self._default_http_response_type
         )
@@ -50,7 +52,7 @@ class _PartGenerator(AsyncIterator):
 
         return responses
 
-    async def __anext__(self):
+    async def __anext__(self) -> HttpResponseType:
         if not self._parts:
             self._parts = iter(await self._parse_response())
 
