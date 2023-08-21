@@ -75,8 +75,11 @@ def add_sanitizers(test_proxy):
     add_general_string_sanitizer(target=eventgrid_topic_key, value="sanitized")
     add_general_string_sanitizer(target=eventgrid_topic_endpoint, value="sanitized")
     # Need to santize namespace for eventgrid_topic:
-    eventgrid_hostname = (eventgrid_topic_endpoint.split("https://")[1]).split("/api")[0]
-    add_general_string_sanitizer(target=eventgrid_hostname.upper(), value="sanitized.eastus-1.eventgrid.azure.net")
+    try:
+        eventgrid_hostname = (eventgrid_topic_endpoint.split("https://")[1]).split("/api")[0]
+        add_general_string_sanitizer(target=eventgrid_hostname.upper(), value="sanitized.eastus-1.eventgrid.azure.net")
+    except:
+        pass
     add_general_string_sanitizer(target=client_id, value="sanitized")
     add_general_string_sanitizer(target=client_secret, value="sanitized")
     add_general_string_sanitizer(target=eventgrid_client_id, value="sanitized")
