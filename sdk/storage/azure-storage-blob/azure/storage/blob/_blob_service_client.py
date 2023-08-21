@@ -116,13 +116,10 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
     """
 
     def __init__(
-        self,
-        account_url: str,
-        credential: Optional[
-            Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]
-        ] = None,  # pylint: disable=line-too-long
-        **kwargs: Any,
-    ) -> None:
+            self, account_url: str,
+            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+            **kwargs: Any
+        ) -> None:
         try:
             if not account_url.lower().startswith("http"):
                 account_url = "https://" + account_url
@@ -152,13 +149,10 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
 
     @classmethod
     def from_connection_string(
-        cls,
-        conn_str: str,
-        credential: Optional[
-            Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]
-        ] = None,  # pylint: disable=line-too-long
-        **kwargs: Any,
-    ) -> Self:
+            cls, conn_str: str,
+            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+            **kwargs: Any
+        ) -> Self:
         """Create BlobServiceClient from a Connection String.
 
         :param str conn_str:
@@ -389,18 +383,9 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
                 :dedent: 8
                 :caption: Setting service properties for the blob service.
         """
-        if all(
-            parameter is None
-            for parameter in [
-                analytics_logging,
-                hour_metrics,
-                minute_metrics,
-                cors,
-                target_version,
-                delete_retention_policy,
-                static_website,
-            ]
-        ):
+        if all(parameter is None for parameter in [
+                    analytics_logging, hour_metrics, minute_metrics, cors,
+                    target_version, delete_retention_policy, static_website]):
             raise ValueError("set_service_properties should be called with at least one parameter")
 
         props = StorageServiceProperties(
