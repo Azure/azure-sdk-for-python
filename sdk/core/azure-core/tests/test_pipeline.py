@@ -210,6 +210,12 @@ def test_format_url_braces_with_dot():
     assert url
 
 
+def test_format_url_single_brace():
+    base_url = "https://bing.com/{aaa.bbb"
+    with pytest.raises(ValueError):
+        url = _format_url_section(base_url)
+
+
 def test_format_incorrect_endpoint():
     # https://github.com/Azure/azure-sdk-for-python/pull/12106
     client = PipelineClientBase("{Endpoint}/text/analytics/v3.0")
