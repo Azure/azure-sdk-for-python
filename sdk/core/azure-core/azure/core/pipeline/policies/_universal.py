@@ -35,46 +35,25 @@ import xml.etree.ElementTree as ET
 import types
 import re
 import uuid
-from typing import IO, cast, Union, Optional, AnyStr, Dict, MutableMapping, Any, Set, Mapping
+from typing import IO, cast, Union, Optional, AnyStr, Dict, Any, Set, Mapping
 import urllib.parse
-from typing_extensions import Protocol
 
 from azure.core import __version__ as azcore_version
-from azure.core.exceptions import DecodeError, raise_with_traceback
+from azure.core.exceptions import DecodeError
 
 from azure.core.pipeline import PipelineRequest, PipelineResponse
 from ._base import SansIOHTTPPolicy
 
+from ..transport import HttpRequest as LegacyHttpRequest
+from ..transport._base import _HttpResponseBase as LegacySansIOHttpResponse
+from ...rest import HttpRequest
+from ...rest._rest_py3 import _HttpResponseBase as SansIOHttpResponse
 
 _LOGGER = logging.getLogger(__name__)
 
-
-class HTTPRequestType(Protocol):
-    """Protocol compatible with new rest request and legacy transport request"""
-
-    headers: MutableMapping[str, str]
-    url: str
-    method: str
-    body: bytes
-
-
-class HTTPResponseType(Protocol):
-    """Protocol compatible with new rest response and legacy transport response"""
-
-    @property
-    def headers(self) -> MutableMapping[str, str]:
-        ...
-
-    @property
-    def status_code(self) -> int:
-        ...
-
-    @property
-    def content_type(self) -> Optional[str]:
-        ...
-
-    def text(self, encoding: Optional[str] = None) -> str:
-        ...
+HTTPRequestType = Union[LegacyHttpRequest, HttpRequest]
+HTTPResponseType = Union[LegacySansIOHttpResponse, SansIOHttpResponse]
+PipelineResponseType = PipelineResponse[HTTPRequestType, HTTPResponseType]
 
 
 class HeadersPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]):
@@ -104,7 +83,11 @@ class HeadersPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]):
 
     @property
     def headers(self) -> Dict[str, str]:
-        """The current headers collection."""
+        """The current headers collection.
+
+        :rtype: dict[str, str]
+        :return: The current headers collection.
+        """
         return self._headers
 
     def add_header(self, key: str, value: str) -> None:
@@ -242,7 +225,11 @@ class UserAgentPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]):
 
     @property
     def user_agent(self) -> str:
-        """The current user agent value."""
+        """The current user agent value.
+
+        :return: The current user agent value.
+        :rtype: str
+        """
         if self.use_env:
             add_user_agent_header = os.environ.get(self._ENV_ADDITIONAL_USER_AGENT, None)
             if add_user_agent_header is not None:
@@ -396,7 +383,7 @@ class _HiddenClassProperties(type):
         return cls.DEFAULT_HEADERS_ALLOWLIST
 
     @DEFAULT_HEADERS_WHITELIST.setter
-    def DEFAULT_HEADERS_WHITELIST(cls, value: Set[str]):
+    def DEFAULT_HEADERS_WHITELIST(cls, value: Set[str]) -> None:
         cls.DEFAULT_HEADERS_ALLOWLIST = value
 
 
@@ -404,7 +391,11 @@ class HttpLoggingPolicy(
     SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType],
     metaclass=_HiddenClassProperties,
 ):
-    """The Pipeline policy that handles logging of HTTP requests and responses."""
+    """The Pipeline policy that handles logging of HTTP requests and responses.
+
+    :param logger: The logger to use for logging. Default to azure.core.pipeline.policies.http_logging_policy.
+    :type logger: logging.Logger
+    """
 
     DEFAULT_HEADERS_ALLOWLIST: Set[str] = set(
         [
@@ -582,7 +573,7 @@ class ContentDecodePolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]):
     @classmethod
     def deserialize_from_text(
         cls,
-        data: Optional[Union[AnyStr, IO]],
+        data: Optional[Union[AnyStr, IO[AnyStr]]],
         mime_type: Optional[str] = None,
         response: Optional[HTTPResponseType] = None,
     ) -> Any:
@@ -591,12 +582,16 @@ class ContentDecodePolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]):
         Accept a stream of data as well, but will be load at once in memory for now.
         If no content-type, will return the string version (not bytes, not stream)
 
+        :param data: The data to deserialize.
+        :type data: str or bytes or file-like object
         :param response: The HTTP response.
         :type response: ~azure.core.pipeline.transport.HttpResponse
         :param str mime_type: The mime type. As mime type, charset is not expected.
         :param response: If passed, exception will be annotated with that response
+        :type response: any
         :raises ~azure.core.exceptions.DecodeError: If deserialization fails
         :returns: A dict (JSON), XML tree or str, depending of the mime_type
+        :rtype: dict[str, Any] or xml.etree.ElementTree.Element or str
         """
         if not data:
             return None
@@ -622,11 +617,11 @@ class ContentDecodePolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]):
                     message="JSON is invalid: {}".format(err),
                     response=response,
                     error=err,
-                )
+                ) from err
         elif "xml" in (mime_type or []):
             try:
                 return ET.fromstring(data_as_str)  # nosec
-            except ET.ParseError:
+            except ET.ParseError as err:
                 # It might be because the server has an issue, and returned JSON with
                 # content-type XML....
                 # So let's try a JSON load, and if it's still broken
@@ -645,7 +640,7 @@ class ContentDecodePolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]):
                 # The function hack is because Py2.7 messes up with exception
                 # context otherwise.
                 _LOGGER.critical("Wasn't XML not JSON, failing")
-                raise_with_traceback(DecodeError, message="XML is invalid", response=response)
+                raise DecodeError("XML is invalid", response=response) from err
         elif mime_type.startswith("text/"):
             return data_as_str
         raise DecodeError("Cannot deserialize content-type: {}".format(mime_type))
@@ -661,9 +656,11 @@ class ContentDecodePolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]):
         Headers will tested for "content-type"
 
         :param response: The HTTP response
-        :param encoding: The encoding to use if known for this service (will disable auto-detection)
+        :type response: any
+        :param str encoding: The encoding to use if known for this service (will disable auto-detection)
         :raises ~azure.core.exceptions.DecodeError: If deserialization fails
         :returns: A dict (JSON), XML tree or str, depending of the mime_type
+        :rtype: dict[str, Any] or xml.etree.ElementTree.Element or str
         """
         # Try to use content-type from headers if available
         if response.content_type:
@@ -688,7 +685,7 @@ class ContentDecodePolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]):
                 response.read()  # type: ignore
         return cls.deserialize_from_text(response.text(encoding), mime_type, response=response)
 
-    def on_request(self, request: PipelineRequest) -> None:
+    def on_request(self, request: PipelineRequest[HTTPRequestType]) -> None:
         options = request.context.options
         response_encoding = options.pop("response_encoding", self._response_encoding)
         if response_encoding:
@@ -708,8 +705,6 @@ class ContentDecodePolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]):
         :type request: ~azure.core.pipeline.PipelineRequest
         :param response: The PipelineResponse object.
         :type response: ~azure.core.pipeline.PipelineResponse
-        :param raw_data: Data to be processed.
-        :param content_type: How to parse if raw_data is a string/bytes.
         :raises JSONDecodeError: If JSON is requested and parsing is impossible.
         :raises UnicodeDecodeError: If bytes is not UTF8
         :raises xml.etree.ElementTree.ParseError: If bytes is not valid XML

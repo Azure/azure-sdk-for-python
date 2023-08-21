@@ -7,7 +7,7 @@
 import copy
 import re
 from abc import ABC, abstractmethod
-from typing import List, Optional, Union
+from typing import List, Optional, TypeVar, Union, overload
 
 from azure.ai.ml._utils.utils import is_data_binding_expression
 from azure.ai.ml.constants import AssetTypes
@@ -20,8 +20,17 @@ from azure.ai.ml.entities._util import resolve_pipeline_parameter
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, UserErrorException, ValidationException
 
 
-def _build_data_binding(data: Union["PipelineInput", "Output"]) -> str:
-    """Build input builders to data bindings."""
+T = TypeVar("T")
+
+
+def _build_data_binding(data: Union[str, "PipelineInput", "Output"]) -> str:
+    """Build input builders to data bindings.
+
+    :param data: The data to build a data binding from
+    :type data: Union[str, PipelineInput, Output]
+    :return: A data binding string if data isn't a str, otherwise data
+    :rtype: str
+    """
     if isinstance(data, (InputOutputBase)):
         # Build data binding when data is PipelineInput, Output
         result = data._data_binding()
@@ -31,8 +40,19 @@ def _build_data_binding(data: Union["PipelineInput", "Output"]) -> str:
     return result
 
 
-def _resolve_builders_2_data_bindings(data: Union[list, dict]) -> Union[list, dict, str]:
-    """Traverse data and build input builders inside it to data bindings."""
+def _resolve_builders_2_data_bindings(
+    data: Union[list, dict, str, "PipelineInput", "Output"]
+) -> Union[list, dict, str]:
+    """Traverse data and build input builders inside it to data bindings.
+
+    :param data: The bindings to resolve
+    :type data: Union[list, dict, str, "PipelineInput", "Output"]
+    :return:
+       * A dict if data was a dict
+       * A list if data was a list
+       * A str otherwise
+    :rtype: Union[list, dict, str]
+    """
     if isinstance(data, dict):
         for key, val in data.items():
             if isinstance(val, (dict, list)):
@@ -48,8 +68,14 @@ def _resolve_builders_2_data_bindings(data: Union[list, dict]) -> Union[list, di
     return _build_data_binding(data)
 
 
-def _data_to_input(data):
-    """Convert a Data object to an Input object."""
+def _data_to_input(data: Data) -> Input:
+    """Convert a Data object to an Input object.
+
+    :param data: The data to convert
+    :type data: Data
+    :return: The Input object
+    :rtype: Input
+    """
     if data.id:
         return Input(type=data.type, path=data.id)
     return Input(type=data.type, path=f"{data.name}:{data.version}")
@@ -65,11 +91,11 @@ class InputOutputBase(ABC):
         :param meta: Metadata of this input/output, eg: type, min, max, etc.
         :type meta: Union[Input, Output]
         :param data: Actual value of input/output, None means un-configured data.
-        :type data: Union[None, int, bool, float, str
+        :type data: Union[None, int, bool, float, str,
                           azure.ai.ml.Input,
                           azure.ai.ml.Output]
         :param default_data: default value of input/output, None means un-configured data.
-        :type default_data: Union[None, int, bool, float, str
+        :type default_data: Union[None, int, bool, float, str,
                           azure.ai.ml.Input,
                           azure.ai.ml.Output]
         """
@@ -89,8 +115,14 @@ class InputOutputBase(ABC):
         super(InputOutputBase, self).__init__(**kwargs)
 
     @abstractmethod
-    def _build_data(self, data, key=None):  # pylint: disable=unused-argument, no-self-use
-        """Validate if data matches type and translate it to Input/Output acceptable type."""
+    def _build_data(self, data: T) -> Union[T, str, Input, "InputOutputBase"]:
+        """Validate if data matches type and translate it to Input/Output acceptable type.
+
+        :param data: The data
+        :type data: T
+        :return: The built data
+        :rtype: Union[T, str, Input, InputOutputBase]
+        """
 
     @abstractmethod
     def _build_default_data(self):
@@ -98,7 +130,11 @@ class InputOutputBase(ABC):
 
     @property
     def type(self) -> str:
-        """Type of input/output."""
+        """Type of input/output.
+
+        :return: The type
+        :rtype: str
+        """
         return self._type
 
     @type.setter
@@ -168,7 +204,11 @@ class InputOutputBase(ABC):
             )
 
     def _data_binding(self) -> str:
-        """Return data binding string representation for this input/output."""
+        """Return data binding string representation for this input/output.
+
+        :return: The data binding string
+        :rtype: str
+        """
         raise NotImplementedError()
 
     # Why did we have this function? It prevents the DictMixin from being applied.
@@ -188,7 +228,7 @@ class InputOutputBase(ABC):
         return id(self)
 
     @classmethod
-    def _get_mode(cls, original_data, data, kwargs):
+    def _get_mode(cls, original_data, data, kwargs: dict) -> Optional[str]:
         """Get mode of this input/output builder.
 
         :param original_data: Original value of input/output.
@@ -200,11 +240,19 @@ class InputOutputBase(ABC):
         :type data: Union[None, int, bool, float, str
                           azure.ai.ml.Input,
                           azure.ai.ml.Output]
+        :param kwargs: The kwargs
+        :type kwargs: Dict
+        :return: The mode
+        :rtype: Optional[str]
         """
         # pipeline level inputs won't pass mode to bound node level inputs
         if isinstance(original_data, PipelineInput):
             return None
         return data.mode if data is not None and hasattr(data, "mode") else kwargs.pop("mode", None)
+
+    @property
+    def _is_primitive_type(self):
+        return self.type in IOConstants.PRIMITIVE_STR_2_TYPE
 
 
 class NodeInput(InputOutputBase):
@@ -250,11 +298,20 @@ class NodeInput(InputOutputBase):
         if self._data is None:
             self._data = Input()
 
-    def _build_data(self, data, key=None):  # pylint: disable=unused-argument
-        """Build input data according to assigned input, eg: node.inputs.key = data"""
-        data = resolve_pipeline_parameter(data)
+    def _build_data(self, data: T) -> Union[T, str, Input, InputOutputBase]:
+        """Build input data according to assigned input
+
+        eg: node.inputs.key = data
+
+        :param data: The data
+        :type data: T
+        :return: The built data
+        :rtype: Union[T, str, Input, "PipelineInput", "NodeOutput"]
+        """
+        data: Union[T, str, NodeOutput] = resolve_pipeline_parameter(data)
         if data is None:
             return data
+        # Unidiomatic typecheck: Checks that data is _exactly_ this type, and not potentially a subtype
         if type(data) is NodeInput:  # pylint: disable=unidiomatic-typecheck
             msg = "Can not bind input to another component's input."
             raise ValidationException(
@@ -291,7 +348,7 @@ class NodeInput(InputOutputBase):
             )
         return data
 
-    def _to_job_input(self):
+    def _to_job_input(self) -> Optional[Input]:
         """convert the input to Input, this logic will change if backend contract changes."""
         if self._data is None:
             # None data means this input is not configured.
@@ -338,7 +395,8 @@ class NodeInput(InputOutputBase):
         )
 
     def _get_data_owner(self) -> Optional["BaseNode"]:
-        """Return the node if Input is from another node's output. Returns None if for literal value.
+        """Gets the data owner of the node
+
         Note: This only works for @pipeline, not for YAML pipeline.
 
         Note: Inner step will be returned as the owner when node's input is from sub pipeline's output.
@@ -353,6 +411,9 @@ class NodeInput(InputOutputBase):
                 node = copy_files_component_func(input_dir=pipeline_node.outputs.output_dir)
                 owner = node.inputs.input_dir._get_data_owner()
                 assert owner == pipeline_node.nodes[0]
+
+        :return: The node if Input is from another node's output. Returns None for literal value.
+        :rtype: Optional[BaseNode]
         """
         from azure.ai.ml.entities import Pipeline
         from azure.ai.ml.entities._builders import BaseNode
@@ -426,27 +487,34 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
 
         self._assert_name_and_version()
 
-        self._is_control = meta.is_control if meta is not None else None
         # store original node output to be able to trace back to inner node from a pipeline output builder.
         self._binding_output = binding_output
 
     @property
-    def is_control(self) -> str:
-        return self._is_control
-
-    @property
     def port_name(self) -> str:
-        """The output port name, eg: node.outputs.port_name."""
+        """The output port name, eg: node.outputs.port_name.
+
+        :return: The port name
+        :rtype: str
+        """
         return self._port_name
 
     @property
-    def name(self):
-        """Used in registering output data."""
+    def name(self) -> str:
+        """Used in registering output data.
+
+        :return: The output name
+        :rtype: str
+        """
         return self._name
 
     @name.setter
-    def name(self, name):
-        """Receive input name, assign the name to NodeOutput/PipelineOutput and build data according to the name."""
+    def name(self, name: str):
+        """Assigns the name to NodeOutput/PipelineOutput and builds data according to the name.
+
+        :param name: The new name
+        :type name: str
+        """
         self._build_default_data()
         self._name = name
         if isinstance(self._data, (Input, Output)):
@@ -461,13 +529,20 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
 
     @property
     def version(self) -> str:
-        """Used in registering output data."""
+        """Used in registering output data.
+
+        :return: The output data
+        :rtype: str
+        """
         return self._version
 
     @version.setter
-    def version(self, version):
-        """Receive input version, assign the version to NodeOutput/PipelineOutput and build data according to the
-        version."""
+    def version(self, version: str):
+        """Assigns the version to NodeOutput/PipelineOutput and builds data according to the version.
+
+        :param version: The new version
+        :type version: str
+        """
         self._build_default_data()
         self._version = version
         if isinstance(self._data, (Input, Output)):
@@ -519,8 +594,14 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
             # so we just leave the type inference work to backend
             self._data = Output(type=None)
 
-    def _build_data(self, data, key=None):
-        """Build output data according to assigned input, eg: node.outputs.key = data"""
+    def _build_data(self, data: T) -> T:
+        """Build output data according to assigned input, eg: node.outputs.key = data
+
+        :param data: The data
+        :type data: T
+        :return: `data`
+        :rtype: T
+        """
         if data is None:
             return data
         if not isinstance(data, (Output, str)):
@@ -533,7 +614,7 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
             )
         return data
 
-    def _to_job_output(self):
+    def _to_job_output(self) -> Output:
         """Convert the output to Output, this logic will change if backend contract changes."""
         if self._data is None:
             # None data means this output is not configured.
@@ -543,11 +624,9 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
         elif isinstance(self._data, Output):
             result = self._data
         elif isinstance(self._data, PipelineOutput):
-            is_control = self._meta.is_control if self._meta is not None else None
             result = Output(
                 path=self._data._data_binding(),
                 mode=self.mode,
-                is_control=is_control,
                 name=self._data.name,
                 version=self._data.version,
                 description=self.description,
@@ -599,13 +678,21 @@ class PipelineInput(NodeInput, PipelineExpressionMixin):
         self._group_names = group_names if group_names else []
 
     def result(self):
-        """Return original value of pipeline input."""
-        # example:
-        #
-        # @pipeline
-        # def pipeline_func(param1):
-        #   node1 = component_func(param1=param1.result())
-        #   # node1's param1 will get actual value of param1 instead of a input binding.
+        """Return original value of pipeline input.
+
+        :return: The original value of pipeline input
+        :rtype: Any
+
+        Example:
+
+        .. code-block:: python
+
+           @pipeline
+           def pipeline_func(param1):
+             # node1's param1 will get actual value of param1 instead of a input binding.
+             node1 = component_func(param1=param1.result())
+        """
+
         # use this to break self loop
         original_data_cache = set()
         original_data = self._original_data
@@ -617,10 +704,27 @@ class PipelineInput(NodeInput, PipelineExpressionMixin):
     def __str__(self) -> str:
         return self._data_binding()
 
-    def _build_data(self, data, key=None):  # pylint: disable=unused-argument
-        """Build data according to input type."""
+    @overload
+    def _build_data(self, data: Union[Model, Data]) -> Input:
+        ...
+
+    @overload
+    def _build_data(self, data: T) -> T:
+        ...
+
+    def _build_data(self, data: Union[Model, Data, T]) -> Union[Input, T]:
+        """Build data according to input type.
+
+        :param data: The data
+        :type data: Union[Model, Data, T]
+        :return:
+            * Input if data is a Model or Data
+            * data otherwise
+        :rtype: Union[Input, T]
+        """
         if data is None:
             return data
+        # Unidiomatic typecheck: Checks that data is _exactly_ this type, and not potentially a subtype
         if type(data) is NodeInput:  # pylint: disable=unidiomatic-typecheck
             msg = "Can not bind input to another component's input."
             raise ValidationException(message=msg, no_personal_data_message=msg, target=ErrorTarget.PIPELINE)
@@ -641,12 +745,16 @@ class PipelineInput(NodeInput, PipelineExpressionMixin):
             return _data_to_input(data)
         return data
 
-    def _data_binding(self):
+    def _data_binding(self) -> str:
         full_name = "%s.%s" % (".".join(self._group_names), self._port_name) if self._group_names else self._port_name
         return f"${{{{parent.inputs.{full_name}}}}}"
 
     def _to_input(self) -> Input:
-        """Convert pipeline input to component input for pipeline component."""
+        """Convert pipeline input to component input for pipeline component.
+
+        :return: The component input
+        :rtype: Input
+        """
         if self._data is None:
             # None data means this input is not configured.
             return self._meta

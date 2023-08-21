@@ -9,7 +9,6 @@ from zipfile import ZipFile
 
 import pydash
 import pytest
-from conftest import normalized_arm_id_in_object
 from test_utilities.utils import (
     build_temp_folder,
     mock_artifact_download_to_temp_directory,
@@ -25,6 +24,7 @@ from azure.ai.ml.entities._builders import Command, Sweep
 from azure.ai.ml.entities._job.pipeline._io import PipelineInput
 from azure.ai.ml.exceptions import UnexpectedKeywordError, ValidationException
 from azure.ai.ml.sweep import Choice
+from conftest import normalized_arm_id_in_object
 
 from .._util import _COMPONENT_TIMEOUT_SECOND
 
@@ -493,14 +493,13 @@ class TestCommandComponentEntity:
             "is_deterministic": True,
             "name": "sample_command_component_basic",
             "outputs": {
-                "component_out_boolean": {"description": "A boolean", "type": "boolean", "is_control": True},
-                "component_out_integer": {"description": "A integer", "type": "integer", "is_control": True},
+                "component_out_boolean": {"description": "A boolean", "type": "boolean"},
+                "component_out_integer": {"description": "A integer", "type": "integer"},
                 "component_out_number": {"description": "A ranged number", "type": "number"},
                 "component_out_string": {"description": "A string", "type": "string"},
                 "component_out_early_available_string": {
                     "description": "A early available string",
                     "type": "string",
-                    "is_control": True,
                     "early_available": True,
                 },
             },
@@ -549,9 +548,6 @@ class TestCommandComponentEntity:
     def test_invalid_component_outputs(self) -> None:
         yaml_path = "./tests/test_configs/components/invalid/helloworld_component_invalid_early_available_output.yml"
         component = load_component(yaml_path)
-        with pytest.raises(ValidationException) as e:
-            component._validate(raise_error=True)
-        assert "Early available output 'component_out_string' requires is_control as True, got None." in str(e.value)
         params_override = [
             {
                 "outputs": {

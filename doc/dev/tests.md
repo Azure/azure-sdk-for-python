@@ -15,7 +15,6 @@ testing infrastructure, and demonstrates how to write and run tests for a servic
     - [Tox](#tox)
     - [The `devtools_testutils` package](#the-devtools_testutils-package)
     - [Write or run tests](#write-or-run-tests)
-        - [Perform one-time test proxy setup](#perform-one-time-test-proxy-setup)
         - [Set up test resources](#set-up-test-resources)
         - [Configure credentials](#configure-credentials)
         - [Start the test proxy server](#start-the-test-proxy-server)
@@ -23,7 +22,7 @@ testing infrastructure, and demonstrates how to write and run tests for a servic
         - [Write your tests](#write-your-tests)
         - [Configure live or playback testing mode](#configure-live-or-playback-testing-mode)
         - [Run and record tests](#run-and-record-tests)
-        - [Run tests with out-of-repo recordings](#run-tests-with-out-of-repo-recordings)
+        - [Update test recordings](#update-test-recordings)
         - [Sanitize secrets](#sanitize-secrets)
             - [Special case: SAS tokens](#special-case-sas-tokens)
     - [Functional vs. unit tests](#functional-vs-unit-tests)
@@ -138,7 +137,7 @@ To run a tox command from your directory use the following commands:
 (env) azure-sdk-for-python\sdk\my-service\my-package> tox run -e samples -c ../../../eng/tox/tox.ini --root . 
 (env) azure-sdk-for-python\sdk\my-service\my-package> tox run -e apistub -c ../../../eng/tox/tox.ini --root . 
 ```
-A quick description of the five commands above:
+A quick description of the nine commands above:
 * sphinx: documentation generation using the inline comments written in our code
 * lint: runs pylint to make sure our code adheres to the style guidance
 * mypy: runs the mypy static type checker for Python to make sure that our types are valid.
@@ -166,10 +165,6 @@ the
 Newer SDK tests utilize the [Azure SDK Tools Test Proxy][proxy_general_docs] to record and playback HTTP interactions.
 To migrate an existing test suite to use the test proxy, or to learn more about using the test proxy, refer to the
 [test proxy migration guide][proxy_migration_guide].
-
-### Perform one-time test proxy setup
-
-The test proxy uses a self-signed certificate to communicate with HTTPS. Follow the general setup instructions [here][proxy_cert_docs] to trust this certificate locally.
 
 ### Set up test resources
 
@@ -274,6 +269,11 @@ A method that's decorated by the ServicePreparer from the example would be calle
 `testservice_secret` as keyword arguments. These arguments use the real values from your `.env` file as the variable
 values in live mode, and the fake values specified in the decorator in playback mode.
 
+**Be sure to match the formatting of live values in playback values.** For example, if the actual service endpoint in
+your `.env` file doesn't end with a trailing slash (`/`), adding a trailing slash to your playback endpoint value will
+result in playback errors. The exact value of your live variables will be replaced with the exact value of your playback
+variables in recordings.
+
 > **Note:** The EnvironmentVariableLoader expects environment variables for service tests to be prefixed with the
 > service name (e.g. `KEYVAULT_` for Key Vault tests). You'll need to set environment variables for
 > `{SERVICE}_TENANT_ID`, `{SERVICE}_CLIENT_ID`, and `{SERVICE}_CLIENT_SECRET` for a service principal when using this
@@ -371,10 +371,13 @@ folder will be a `.json` file that captures the HTTP traffic that was generated 
 file's name.
 
 The final step in setting up recordings is to move these files out of the `azure-sdk-for-python` and into the
-`azure-sdk-assets` repository. The [recording migration guide][recording_move] describes how to do so -- this step only
-needs to be completed once, and future test sessions will automatically pull recordings from the assets repo. Your
-library will have an `assets.json` file at its root, which stores the `azure-sdk-assets` tag that contains the current
-set of recordings.
+`azure-sdk-assets` repository. The [recording migration guide][recording_move] describes how to do so. This step only
+needs to be completed once. Your library will have an `assets.json` file at its root, which stores the `azure-sdk-assets`
+tag that contains the current set of recordings.
+
+From this point on, recordings will automatically be fetched when tests are run in playback mode -- either from
+a local cache (described in [Update test recordings](#update-test-recordings)), or from `azure-sdk-assets` if they're
+not locally available.
 
 #### Update test recordings
 
@@ -387,32 +390,39 @@ set of recordings.
 - Membership in the `azure-sdk-write` GitHub group.
 
 Test recordings will be updated if tests are run while `AZURE_TEST_RUN_LIVE` is set to "true" and
-`AZURE_SKIP_LIVE_RECORDING` is unset or "false". Since the recordings themselves are no longer in the
-`azure-sdk-for-python` repo, though, these updates will be reflected in a git-excluded `.assets` folder at the root of
-the repo.
+`AZURE_SKIP_LIVE_RECORDING` is unset or "false". These recording updates will be reflected in a git-excluded `.assets`
+folder at the root of the repo.
 
 The `.assets` folder contains one or more directories with random names, which each are a git directory containing
-recordings. If you `cd` into the folder containing your package's recordings, you can use `git status` to view the
-recording updates you've made. You can also use other `git` commands; for example, `git diff {file name}` to see
-specific file changes, or `git restore {file name}` to undo changes you don't want to keep.
+recordings. To find the directory containing your package's recordings, you can use the [`manage_recordings.py`][manage_recordings]
+script from `azure-sdk-for-python/scripts`. This script accepts a verb and a **relative** path to your package's
+`assets.json` file (this path is optional, and is simply `assets.json` by default).
 
-To find the directory containing your package's recordings, open the `.breadcrumb` file in the `.assets` folder. This
-file lists a package name on each line, followed by the recording directory name; for example:
+For example, to view the location of `azure-keyvault-keys`'s recordings, from a current working directory at the root
+of the repo, run the following command:
 ```
-sdk/{service}/{package}/assets.json;2Km2Z8755;python/{service}/{package}_<10-character-commit-SHA>
+python scripts/manage_recordings.py locate -p sdk/keyvault/azure-keyvault-keys
 ```
-The recording directory in this case is `2Km2Z8755`, the string between the two semicolons.
 
-After verifying that your recording updates look correct, you can use the [`manage_recordings.py`][manage_recordings]
-script from `azure-sdk-for-python/scripts` to push these recordings to the `azure-sdk-assets` repo. This script accepts
-a verb and a **relative** path to your package's `assets.json` file (this path is optional, and is simply `assets.json`
-by default). For example, from the root of the `azure-sdk-for-python` repo:
+The output will include an absolute path to the recordings directory; in this case:
+```
+C:/azure-sdk-for-python/.assets/Y0iKQSfTwa/python
+```
+
+If you `cd` into the folder containing your package's recordings, you can use `git status` to view the recording
+updates you've made. You can also use other `git` commands; for example, `git diff {file name}` to see specific file
+changes, or `git restore {file name}` to undo changes you don't want to keep.
+
+After verifying that your recording updates look correct, you can use [`manage_recordings.py`][manage_recordings] to
+push your recordings to the `azure-sdk-assets` repo:
 ```
 python scripts/manage_recordings.py push -p sdk/{service}/{package}/assets.json
 ```
 
-The verbs that can be provided to this script are "push", "restore", and "reset":
+The verbs that can be provided to this script are "locate", "push", "show", "restore", and "reset":
+- **locate**: prints the location of the library's locally cached recordings.
 - **push**: pushes recording updates to a new assets repo tag and updates the tag pointer in `assets.json`.
+- **show**: prints the contents of the provided `assets.json` file.
 - **restore**: fetches recordings from the assets repo, based on the tag pointer in `assets.json`.
 - **reset**: discards any pending changes to recordings, based on the tag pointer in `assets.json`.
 

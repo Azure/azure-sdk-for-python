@@ -212,7 +212,7 @@ class EventHubProducer(
                 if not event_data:
                     return event_data
                 # If AmqpTransports are not the same, create batch with correct BatchMessage.
-                if self._amqp_transport.TIMEOUT_FACTOR != event_data._amqp_transport.TIMEOUT_FACTOR: # pylint: disable=protected-access
+                if self._amqp_transport.KIND != event_data._amqp_transport.KIND: # pylint: disable=protected-access
                     # pylint: disable=protected-access
                     event_data = EventDataBatch._from_batch(
                         event_data._internal_events,

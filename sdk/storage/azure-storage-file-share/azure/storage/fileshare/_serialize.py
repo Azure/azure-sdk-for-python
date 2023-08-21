@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-# pylint: disable=no-self-use
+
 from typing import Any, Dict, TypeVar, TYPE_CHECKING
 
 from azure.core import MatchConditions
@@ -36,7 +36,9 @@ _SUPPORTED_API_VERSIONS = [
     '2021-08-06',
     '2021-12-02',
     '2022-11-02',
-    '2023-01-03'
+    '2023-01-03',
+    '2023-05-03',
+    '2023-08-03',
 ]
 
 

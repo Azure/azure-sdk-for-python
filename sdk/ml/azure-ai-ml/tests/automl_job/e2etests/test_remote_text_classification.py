@@ -25,21 +25,19 @@ class TestTextClassification(AzureRecordedTestCase):
     ) -> None:
         training_data, validation_data, target_column_name = newsgroup
 
-        properties = get_automl_job_properties()
-        if components:
-            properties["_aml_internal_automl_subgraph_orchestration"] = "true"
-            properties["_pipeline_id_override"] = (
-                "azureml://registries/azmlft-dev-registry01/" "components/nlp_textclassification_multiclass"
-            )
-
         job = text_classification(
             training_data=training_data,
             validation_data=validation_data,
             target_column_name=target_column_name,
             compute="gpu-cluster",
             experiment_name="DPv2-text-classification",
-            properties=properties,
+            properties=get_automl_job_properties(),
         )
+
+        # use component specific model name so that the test fails if components are not run
+        if components:
+            job.set_training_parameters(model_name="microsoft/deberta-base")
+
         job.set_limits(timeout_minutes=60, max_concurrent_trials=1)
         job.set_featurization(dataset_language="eng")
 

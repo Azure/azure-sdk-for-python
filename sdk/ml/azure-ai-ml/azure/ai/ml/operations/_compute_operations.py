@@ -8,7 +8,6 @@ from typing import Any, Dict, Iterable, Optional
 
 from azure.ai.ml._restclient.v2023_02_01_preview import AzureMachineLearningWorkspaces as ServiceClient022023Preview
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope, _ScopeDependentOperations
-
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml.constants._common import COMPUTE_UPDATE_ERROR
@@ -26,6 +25,14 @@ class ComputeOperations(_ScopeDependentOperations):
 
     You should not instantiate this class directly. Instead, you should create an MLClient instance that instantiates it
     for you and attaches it as an attribute.
+
+    :param operation_scope: Scope variables for the operations classes of an MLClient object.
+    :type operation_scope: ~azure.ai.ml._scope_dependent_operations.OperationScope
+    :param operation_config: Common configuration for operations classes of an MLClient object.
+    :type operation_config: ~azure.ai.ml._scope_dependent_operations.OperationConfig
+    :param service_client: Service client to allow end users to operate on Azure Machine Learning Workspace resources.
+    :type service_client: ~azure.ai.ml._restclient.v2023_02_01_preview._azure_machine_learning_workspaces.
+        AzureMachineLearningWorkspaces
     """
 
     def __init__(
@@ -48,10 +55,19 @@ class ComputeOperations(_ScopeDependentOperations):
     def list(self, *, compute_type: Optional[str] = None) -> Iterable[Compute]:
         """List computes of the workspace.
 
-        :param compute_type: the type of the compute to be listed, defaults to amlcompute
-        :type compute_type: str
+        :keyword compute_type: the type of the compute to be listed, defaults to amlcompute
+        :paramtype compute_type: str
         :return: An iterator like instance of Compute objects
         :rtype: ~azure.core.paging.ItemPaged[Compute]
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+                :start-after: [START compute_operations_list]
+                :end-before: [END compute_operations_list]
+                :language: python
+                :dedent: 8
+                :caption: List compute example.
         """
 
         return self._operation.list(
@@ -73,6 +89,15 @@ class ComputeOperations(_ScopeDependentOperations):
         :type name: str
         :return: Compute object
         :rtype: Compute
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+                :start-after: [START compute_operations_get]
+                :end-before: [END compute_operations_get]
+                :language: python
+                :dedent: 8
+                :caption: Get compute resource example.
         """
 
         rest_obj = self._operation.get(
@@ -91,6 +116,15 @@ class ComputeOperations(_ScopeDependentOperations):
         :type name: str
         :return: An iterator over aml compute node information objects
         :rtype: ~azure.core.paging.ItemPaged[AmlComputeNodeInfo]
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+                :start-after: [START compute_operations_list_nodes]
+                :end-before: [END compute_operations_list_nodes]
+                :language: python
+                :dedent: 8
+                :caption: Get compute resource nodes example.
         """
         return self._operation.list_nodes(
             self._operation_scope.resource_group_name,
@@ -108,6 +142,15 @@ class ComputeOperations(_ScopeDependentOperations):
         :type compute: Compute
         :return: An instance of LROPoller that returns a Compute.
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.Compute]
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+                :start-after: [START compute_operations_create_or_update]
+                :end-before: [END compute_operations_create_or_update]
+                :language: python
+                :dedent: 8
+                :caption: Create compute example.
         """
         if compute.type != ComputeType.AMLCOMPUTE:
             if compute.location:
@@ -147,6 +190,15 @@ class ComputeOperations(_ScopeDependentOperations):
         :type compute: Compute
         :return: An instance of LROPoller that returns Compute.
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.Compute]
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+                :start-after: [START compute_operations_attach]
+                :end-before: [END compute_operations_attach]
+                :language: python
+                :dedent: 8
+                :caption: Attach compute example.
         """
         return self.begin_create_or_update(compute=compute, **kwargs)
 
@@ -159,6 +211,15 @@ class ComputeOperations(_ScopeDependentOperations):
         :type compute: Compute
         :return: An instance of LROPoller that returns Compute.
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.Compute]
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+                :start-after: [START compute_operations_update]
+                :end-before: [END compute_operations_update]
+                :language: python
+                :dedent: 8
+                :caption: Update compute example.
         """
         if not compute.type == ComputeType.AMLCOMPUTE:
             COMPUTE_UPDATE_ERROR.format(compute.name, compute.type)
@@ -183,10 +244,19 @@ class ComputeOperations(_ScopeDependentOperations):
 
         :param name: The name of the compute.
         :type name: str
-        :param action: Action to perform. Possible values: ["Delete", "Detach"]. Defaults to "Delete".
+        :keyword action: Action to perform. Possible values: ["Delete", "Detach"]. Defaults to "Delete".
         :type action: Optional[str]
         :return: A poller to track the operation status.
         :rtype: ~azure.core.polling.LROPoller[None]
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+                :start-after: [START compute_operations_delete]
+                :end-before: [END compute_operations_delete]
+                :language: python
+                :dedent: 8
+                :caption: Delete compute example.
         """
         return self._operation.begin_delete(
             resource_group_name=self._operation_scope.resource_group_name,
@@ -205,6 +275,15 @@ class ComputeOperations(_ScopeDependentOperations):
         :type name: str
         :return: A poller to track the operation status.
         :rtype: azure.core.polling.LROPoller[None]
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+                :start-after: [START compute_operations_start]
+                :end-before: [END compute_operations_start]
+                :language: python
+                :dedent: 8
+                :caption: Start compute example.
         """
 
         return self._operation.begin_start(
@@ -222,6 +301,15 @@ class ComputeOperations(_ScopeDependentOperations):
         :type name: str
         :return: A poller to track the operation status.
         :rtype: azure.core.polling.LROPoller[None]
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+                :start-after: [START compute_operations_stop]
+                :end-before: [END compute_operations_stop]
+                :language: python
+                :dedent: 8
+                :caption: Stop compute example.
         """
         return self._operation.begin_stop(
             self._operation_scope.resource_group_name,
@@ -238,6 +326,15 @@ class ComputeOperations(_ScopeDependentOperations):
         :type name: str
         :return: A poller to track the operation status.
         :rtype: azure.core.polling.LROPoller[None]
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+                :start-after: [START compute_operations_restart]
+                :end-before: [END compute_operations_restart]
+                :language: python
+                :dedent: 8
+                :caption: Restart compute example.
         """
         return self._operation.begin_restart(
             self._operation_scope.resource_group_name,
@@ -250,11 +347,20 @@ class ComputeOperations(_ScopeDependentOperations):
     def list_usage(self, *, location: Optional[str] = None) -> Iterable[Usage]:
         """Gets the current usage information as well as limits for AML resources for given subscription and location.
 
-        :param location: The location for which resource usage is queried.
+        :keyword location: The location for which resource usage is queried.
             If location not provided , defaults to workspace location
-        :type location: str
+        :paramtype location: str
         :return: An iterator over current usage info
         :rtype: ~azure.core.paging.ItemPaged[Usage]
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+                :start-after: [START compute_operations_list_usage]
+                :end-before: [END compute_operations_list_usage]
+                :language: python
+                :dedent: 8
+                :caption: List current compute usage example.
         """
         if not location:
             location = self._get_workspace_location()
@@ -268,12 +374,21 @@ class ComputeOperations(_ScopeDependentOperations):
     def list_sizes(self, *, location: Optional[str] = None, compute_type: Optional[str] = None) -> Iterable[VmSize]:
         """Returns supported VM Sizes in a location.
 
-        :param location: The location upon which virtual-machine-sizes is queried.
+        :keyword location: The location upon which virtual-machine-sizes is queried.
             If location not provided, defaults to workspace location.
-        :type location: str
+        :paramtype location: str
 
         :return: An iterator over virtual machine sizes.
         :rtype: Iterable[VmSize]
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+                :start-after: [START compute_operations_list_sizes]
+                :end-before: [END compute_operations_list_sizes]
+                :language: python
+                :dedent: 8
+                :caption: List VM size example.
         """
         if not location:
             location = self._get_workspace_location()

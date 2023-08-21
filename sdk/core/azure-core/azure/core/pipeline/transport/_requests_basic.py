@@ -25,12 +25,13 @@
 # --------------------------------------------------------------------------
 import logging
 from typing import Iterator, Optional, Union, TypeVar, overload, TYPE_CHECKING
-import urllib3
 from urllib3.util.retry import Retry
 from urllib3.exceptions import (
     DecodeError as CoreDecodeError,
     ReadTimeoutError,
     ProtocolError,
+    NewConnectionError,
+    ConnectTimeoutError,
 )
 import requests
 
@@ -73,11 +74,11 @@ def _read_raw_stream(response, chunk_size=1):
             for chunk in response.raw.stream(chunk_size, decode_content=False):
                 yield chunk
         except ProtocolError as e:
-            raise ServiceResponseError(e, error=e)
+            raise ServiceResponseError(e, error=e) from e
         except CoreDecodeError as e:
-            raise DecodeError(e, error=e)
+            raise DecodeError(e, error=e) from e
         except ReadTimeoutError as e:
-            raise ServiceRequestError(e, error=e)
+            raise ServiceRequestError(e, error=e) from e
     else:
         # Standard file-like object.
         while True:
@@ -96,6 +97,7 @@ class _RequestsTransportResponseBase(_HttpResponseBase):
 
     :param HttpRequest request: The request.
     :param requests_response: The object returned from the HTTP library.
+    :type requests_response: requests.Response
     :param int block_size: Size in bytes.
     """
 
@@ -109,14 +111,15 @@ class _RequestsTransportResponseBase(_HttpResponseBase):
     def body(self):
         return self.internal_response.content
 
-    def text(self, encoding=None):
-        # type: (Optional[str]) -> str
+    def text(self, encoding: Optional[str] = None) -> str:
         """Return the whole body as a string.
 
         If encoding is not provided, mostly rely on requests auto-detection, except
         for BOM, that requests ignores. If we see a UTF8 BOM, we assumes UTF8 unlike requests.
 
         :param str encoding: The encoding to apply.
+        :rtype: str
+        :return: The body as text.
         """
         if not encoding:
             # There is a few situation where "requests" magic doesn't fit us:
@@ -141,7 +144,9 @@ class StreamDownloadGenerator:
     """Generator for streaming response data.
 
     :param pipeline: The pipeline object
+    :type pipeline: ~azure.core.pipeline.Pipeline
     :param response: The response object.
+    :type response: ~azure.core.pipeline.transport.HttpResponse
     :keyword bool decompress: If True which is default, will attempt to decode the body based
         on the *content-encoding* header.
     """
@@ -176,20 +181,20 @@ class StreamDownloadGenerator:
             return chunk
         except StopIteration:
             internal_response.close()
-            raise StopIteration()
+            raise StopIteration()  # pylint: disable=raise-missing-from
         except requests.exceptions.StreamConsumedError:
             raise
         except requests.exceptions.ContentDecodingError as err:
-            raise DecodeError(err, error=err)
+            raise DecodeError(err, error=err) from err
         except requests.exceptions.ChunkedEncodingError as err:
             msg = err.__str__()
             if "IncompleteRead" in msg:
                 _LOGGER.warning("Incomplete download: %s", err)
                 internal_response.close()
-                raise IncompleteReadError(err, error=err)
+                raise IncompleteReadError(err, error=err) from err
             _LOGGER.warning("Unable to stream download: %s", err)
             internal_response.close()
-            raise HttpResponseError(err, error=err)
+            raise HttpResponseError(err, error=err) from err
         except Exception as err:
             _LOGGER.warning("Unable to stream download: %s", err)
             internal_response.close()
@@ -202,7 +207,13 @@ class RequestsTransportResponse(HttpResponse, _RequestsTransportResponseBase):
     """Streaming of data from the response."""
 
     def stream_download(self, pipeline: PipelineType, **kwargs) -> Iterator[bytes]:
-        """Generator for streaming request body data."""
+        """Generator for streaming request body data.
+
+        :param pipeline: The pipeline object
+        :type pipeline: ~azure.core.pipeline.Pipeline
+        :rtype: iterator[bytes]
+        :return: The stream of data
+        """
         return StreamDownloadGenerator(pipeline, self, **kwargs)
 
 
@@ -250,6 +261,8 @@ class RequestsTransport(HttpTransport):
         """Init session level configuration of requests.
 
         This is initialization I want to do once only on a session.
+
+        :param requests.Session session: The session object.
         """
         session.trust_env = self._use_env_settings
         disable_retries = Retry(total=False, redirect=False, raise_on_status=False)
@@ -296,7 +309,7 @@ class RequestsTransport(HttpTransport):
         :keyword dict proxies: will define the proxy to use. Proxy is a dict (protocol, url)
         """
 
-    def send(self, request, **kwargs):
+    def send(self, request: Union[HttpRequest, "RestHttpRequest"], **kwargs) -> Union[HttpResponse, "RestHttpResponse"]:
         """Send request object according to configuration.
 
         :param request: The request object to be sent.
@@ -338,14 +351,14 @@ class RequestsTransport(HttpTransport):
             response.raw.enforce_content_length = True
 
         except (
-            urllib3.exceptions.NewConnectionError,
-            urllib3.exceptions.ConnectTimeoutError,
+            NewConnectionError,
+            ConnectTimeoutError,
         ) as err:
             error = ServiceRequestError(err, error=err)
         except requests.exceptions.ReadTimeout as err:
             error = ServiceResponseError(err, error=err)
         except requests.exceptions.ConnectionError as err:
-            if err.args and isinstance(err.args[0], urllib3.exceptions.ProtocolError):
+            if err.args and isinstance(err.args[0], ProtocolError):
                 error = ServiceResponseError(err, error=err)
             else:
                 error = ServiceRequestError(err, error=err)
@@ -365,7 +378,7 @@ class RequestsTransport(HttpTransport):
         if _is_rest(request):
             from azure.core.rest._requests_basic import RestRequestsTransportResponse
 
-            retval = RestRequestsTransportResponse(
+            retval: RestHttpResponse = RestRequestsTransportResponse(
                 request=request,
                 internal_response=response,
                 block_size=self.connection_config.data_block_size,

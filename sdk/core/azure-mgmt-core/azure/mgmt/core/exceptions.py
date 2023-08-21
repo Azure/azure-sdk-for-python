@@ -23,7 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-
+from typing import Mapping, Any, Sequence
 import json
 import logging
 
@@ -40,12 +40,16 @@ class TypedErrorInfo:
     https://github.com/Azure/azure-resource-manager-rpc/blob/master/v1.0/common-api-details.md#error-response-content
     """
 
-    def __init__(self, type, info):  # pylint: disable=redefined-builtin
+    def __init__(self, type: str, info: Mapping[str, Any]) -> None:  # pylint: disable=redefined-builtin
         self.type = type
         self.info = info
 
-    def __str__(self):
-        """Cloud error message."""
+    def __str__(self) -> str:
+        """Cloud error message.
+
+        :return: The cloud error message.
+        :rtype: str
+        """
         error_str = "Type: {}".format(self.type)
         error_str += "\nInfo: {}".format(json.dumps(self.info, indent=4))
         return error_str
@@ -58,19 +62,19 @@ class ARMErrorFormat(ODataV4Format):
     https://github.com/Azure/azure-resource-manager-rpc/blob/master/v1.0/common-api-details.md#error-response-content
     """
 
-    def __init__(self, json_object):
+    def __init__(self, json_object: Mapping[str, Any]) -> None:
         # Parse the ODatav4 part
         super(ARMErrorFormat, self).__init__(json_object)
         if "error" in json_object:
             json_object = json_object["error"]
 
         # ARM specific annotations
-        self.additional_info = [
+        self.additional_info: Sequence[TypedErrorInfo] = [
             TypedErrorInfo(additional_info["type"], additional_info["info"])
             for additional_info in json_object.get("additionalInfo", [])
         ]
 
-    def __str__(self):
+    def __str__(self) -> str:
         error_str = super(ARMErrorFormat, self).__str__()
 
         if self.additional_info:

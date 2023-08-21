@@ -40,7 +40,7 @@ class AzureDataLakeStorageRESTAPI:  # pylint: disable=client-accepts-api-version
      is "filesystem". Note that overriding this default value may result in unsupported behavior.
     :paramtype resource: str
     :keyword version: Specifies the version of the operation to use for this request. Default value
-     is "2021-06-08". Note that overriding this default value may result in unsupported behavior.
+     is "2023-05-03". Note that overriding this default value may result in unsupported behavior.
     :paramtype version: str
     """
 
@@ -50,7 +50,7 @@ class AzureDataLakeStorageRESTAPI:  # pylint: disable=client-accepts-api-version
         self._config = AzureDataLakeStorageRESTAPIConfiguration(
             url=url, x_ms_lease_duration=x_ms_lease_duration, **kwargs
         )
-        self._client = AsyncPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        self._client: AsyncPipelineClient = AsyncPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)

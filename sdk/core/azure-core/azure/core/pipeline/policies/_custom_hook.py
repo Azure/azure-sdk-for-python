@@ -23,11 +23,17 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+from typing import TypeVar, Any
 from azure.core.pipeline import PipelineRequest, PipelineResponse
+from azure.core.pipeline.transport import HttpResponse as LegacyHttpResponse, HttpRequest as LegacyHttpRequest
+from azure.core.rest import HttpResponse, HttpRequest
 from ._base import SansIOHTTPPolicy
 
+HTTPResponseType = TypeVar("HTTPResponseType", HttpResponse, LegacyHttpResponse)
+HTTPRequestType = TypeVar("HTTPRequestType", HttpRequest, LegacyHttpRequest)
 
-class CustomHookPolicy(SansIOHTTPPolicy):
+
+class CustomHookPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]):
     """A simple policy that enable the given callback
     with the response.
 
@@ -35,11 +41,11 @@ class CustomHookPolicy(SansIOHTTPPolicy):
     :keyword callback raw_response_hook: Callback function. Will be invoked on response.
     """
 
-    def __init__(self, **kwargs):  # pylint: disable=unused-argument,super-init-not-called
+    def __init__(self, **kwargs: Any):  # pylint: disable=unused-argument,super-init-not-called
         self._request_callback = kwargs.get("raw_request_hook")
         self._response_callback = kwargs.get("raw_response_hook")
 
-    def on_request(self, request: PipelineRequest) -> None:  # pylint: disable=arguments-differ
+    def on_request(self, request: PipelineRequest[HTTPRequestType]) -> None:
         """This is executed before sending the request to the next policy.
 
         :param request: The PipelineRequest object.
@@ -57,8 +63,8 @@ class CustomHookPolicy(SansIOHTTPPolicy):
             request.context["raw_response_hook"] = response_callback
 
     def on_response(
-        self, request: PipelineRequest, response: PipelineResponse
-    ) -> None:  # pylint: disable=arguments-differ
+        self, request: PipelineRequest[HTTPRequestType], response: PipelineResponse[HTTPRequestType, HTTPResponseType]
+    ) -> None:
         """This is executed after the request comes back from the policy.
 
         :param request: The PipelineRequest object.

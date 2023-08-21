@@ -26,7 +26,7 @@ from azure.core.utils import case_insensitive_dict
 
 from .. import models as _models
 from .._serialization import Serializer
-from .._vendor import _convert_request, _format_url_section
+from .._vendor import _convert_request
 
 if sys.version_info >= (3, 8):
     from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
@@ -53,7 +53,7 @@ def build_list_file_systems_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     resource: Literal["account"] = kwargs.pop("resource", _params.pop("resource", "account"))
-    version: Literal["2021-06-08"] = kwargs.pop("version", _headers.pop("x-ms-version", "2021-06-08"))
+    version: Literal["2023-05-03"] = kwargs.pop("version", _headers.pop("x-ms-version", "2023-05-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -62,7 +62,7 @@ def build_list_file_systems_request(
         "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["resource"] = _SERIALIZER.query("resource", resource, "str")
@@ -197,8 +197,9 @@ class ServiceOperations:
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 

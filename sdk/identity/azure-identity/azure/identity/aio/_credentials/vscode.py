@@ -5,12 +5,14 @@
 from typing import cast, Optional, Any
 
 from azure.core.credentials import AccessToken
+from azure.core.exceptions import ClientAuthenticationError
 from ..._exceptions import CredentialUnavailableError
 from .._internal import AsyncContextManager
 from .._internal.aad_client import AadClient
 from .._internal.get_token_mixin import GetTokenMixin
 from .._internal.decorators import log_get_token_async
 from ..._credentials.vscode import _VSCodeCredentialBase
+from ..._internal import within_dac
 
 
 class VisualStudioCodeCredential(_VSCodeCredentialBase, AsyncContextManager, GetTokenMixin):
@@ -45,7 +47,9 @@ class VisualStudioCodeCredential(_VSCodeCredentialBase, AsyncContextManager, Get
             await self._client.__aexit__()
 
     @log_get_token_async
-    async def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
+    async def get_token(
+        self, *scopes: str, claims: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs: Any
+    ) -> AccessToken:
         """Request an access token for `scopes` as the user currently signed in to Visual Studio Code.
 
         This method is called automatically by Azure SDK clients.
@@ -53,25 +57,33 @@ class VisualStudioCodeCredential(_VSCodeCredentialBase, AsyncContextManager, Get
         :param str scopes: desired scopes for the access token. This method requires at least one scope.
             For more information about scopes, see
             https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
+        :keyword str claims: additional claims required in the token, such as those returned in a resource provider's
+            claims challenge following an authorization failure.
         :keyword str tenant_id: optional tenant to include in the token request.
-        :rtype: :class:`azure.core.credentials.AccessToken`
+
+        :return: An access token with the desired scopes.
+        :rtype: ~azure.core.credentials.AccessToken
         :raises ~azure.identity.CredentialUnavailableError: the credential cannot retrieve user details from Visual
             Studio Code
         """
         if self._unavailable_reason:
-            error_message = self._unavailable_reason \
-                            + '\n' \
-                              "Visit https://aka.ms/azsdk/python/identity/vscodecredential/troubleshoot" \
-                              " to troubleshoot this issue."
+            error_message = (
+                self._unavailable_reason + "\n"
+                "Visit https://aka.ms/azsdk/python/identity/vscodecredential/troubleshoot"
+                " to troubleshoot this issue."
+            )
             raise CredentialUnavailableError(message=error_message)
         if not self._client:
             raise CredentialUnavailableError("Initialization failed")
+        if within_dac.get():
+            try:
+                token = await super().get_token(*scopes, claims=claims, tenant_id=tenant_id, **kwargs)
+                return token
+            except ClientAuthenticationError as ex:
+                raise CredentialUnavailableError(message=ex.message) from ex
+        return await super().get_token(*scopes, claims=claims, tenant_id=tenant_id, **kwargs)
 
-        return await super().get_token(*scopes, **kwargs)
-
-    async def _acquire_token_silently(
-        self, *scopes: str, **kwargs: Any
-    ) -> Optional[AccessToken]:
+    async def _acquire_token_silently(self, *scopes: str, **kwargs: Any) -> Optional[AccessToken]:
         self._client = cast(AadClient, self._client)
         return self._client.get_cached_access_token(scopes, **kwargs)
 

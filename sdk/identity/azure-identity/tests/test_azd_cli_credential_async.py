@@ -210,6 +210,7 @@ async def test_multitenant_authentication():
             token = await credential.get_token("scope")
             assert token.token == first_token
 
+
 async def test_multitenant_authentication_not_allowed():
     expected_tenant = "expected-tenant"
     expected_token = "***"

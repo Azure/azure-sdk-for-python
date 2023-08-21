@@ -27,6 +27,7 @@ from ._registry_operations import RegistryOperations
 from ._schedule_operations import ScheduleOperations
 from ._workspace_connections_operations import WorkspaceConnectionsOperations
 from ._workspace_operations import WorkspaceOperations
+from ._workspace_hub_operation import WorkspaceHubOperations
 
 __all__ = [
     "ComputeOperations",
@@ -45,6 +46,7 @@ __all__ = [
     "WorkspaceConnectionsOperations",
     "RegistryOperations",
     "ScheduleOperations",
+    "WorkspaceHubOperations",
     "FeatureSetOperations",
     "FeatureStoreEntityOperations",
     "FeatureStoreOperations",

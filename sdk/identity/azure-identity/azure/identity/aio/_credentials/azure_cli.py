@@ -6,7 +6,7 @@ import asyncio
 import os
 import shutil
 import sys
-from typing import List, Any, Optional
+from typing import Any, List, Optional
 
 from azure.core.exceptions import ClientAuthenticationError
 from azure.core.credentials import AccessToken
@@ -23,7 +23,7 @@ from ..._credentials.azure_cli import (
     parse_token,
     sanitize_output,
 )
-from ..._internal import _scopes_to_resource, resolve_tenant
+from ..._internal import _scopes_to_resource, resolve_tenant, within_dac
 
 
 class AzureCliCredential(AsyncContextManager):
@@ -46,12 +46,13 @@ class AzureCliCredential(AsyncContextManager):
             :dedent: 4
             :caption: Create an AzureCliCredential.
     """
+
     def __init__(
         self,
         *,
         tenant_id: str = "",
         additionally_allowed_tenants: Optional[List[str]] = None,
-        process_timeout: int = 10
+        process_timeout: int = 10,
     ) -> None:
 
         self.tenant_id = tenant_id
@@ -59,7 +60,13 @@ class AzureCliCredential(AsyncContextManager):
         self._process_timeout = process_timeout
 
     @log_get_token_async
-    async def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
+    async def get_token(
+        self,
+        *scopes: str,
+        claims: Optional[str] = None,  # pylint:disable=unused-argument
+        tenant_id: Optional[str] = None,
+        **kwargs: Any,
+    ) -> AccessToken:
         """Request an access token for `scopes`.
 
         This method is called automatically by Azure SDK clients. Applications calling this method directly must
@@ -68,22 +75,26 @@ class AzureCliCredential(AsyncContextManager):
         :param str scopes: desired scope for the access token. This credential allows only one scope per request.
             For more information about scopes, see
             https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
+        :keyword str claims: not used by this credential; any value provided will be ignored.
         :keyword str tenant_id: optional tenant to include in the token request.
-        :rtype: :class:`azure.core.credentials.AccessToken`
+
+        :return: An access token with the desired scopes.
+        :rtype: ~azure.core.credentials.AccessToken
         :raises ~azure.identity.CredentialUnavailableError: the credential was unable to invoke the Azure CLI.
         :raises ~azure.core.exceptions.ClientAuthenticationError: the credential invoked the Azure CLI but didn't
           receive an access token.
         """
         # only ProactorEventLoop supports subprocesses on Windows (and it isn't the default loop on Python < 3.8)
         if sys.platform.startswith("win") and not isinstance(asyncio.get_event_loop(), asyncio.ProactorEventLoop):
-            return _SyncAzureCliCredential().get_token(*scopes, **kwargs)
+            return _SyncAzureCliCredential().get_token(*scopes, tenant_id=tenant_id, **kwargs)
 
         resource = _scopes_to_resource(*scopes)
         command = COMMAND_LINE.format(resource)
         tenant = resolve_tenant(
             default_tenant=self.tenant_id,
+            tenant_id=tenant_id,
             additionally_allowed_tenants=self._additionally_allowed_tenants,
-            **kwargs
+            **kwargs,
         )
 
         if tenant:
@@ -93,10 +104,14 @@ class AzureCliCredential(AsyncContextManager):
         token = parse_token(output)
         if not token:
             sanitized_output = sanitize_output(output)
-            raise ClientAuthenticationError(
-                message="Unexpected output from Azure CLI: '{}'. \n"
-                        "To mitigate this issue, please refer to the troubleshooting guidelines here at "
-                        "https://aka.ms/azsdk/python/identity/azclicredential/troubleshoot.".format(sanitized_output))
+            message = (
+                f"Unexpected output from Azure CLI: '{sanitized_output}'. \n"
+                f"To mitigate this issue, please refer to the troubleshooting guidelines here at "
+                f"https://aka.ms/azsdk/python/identity/azclicredential/troubleshoot."
+            )
+            if within_dac.get():
+                raise CredentialUnavailableError(message=message)
+            raise ClientAuthenticationError(message=message)
 
         return token
 
@@ -122,7 +137,7 @@ async def _run_command(command: str, timeout: int) -> str:
             stdout=asyncio.subprocess.PIPE,
             stderr=asyncio.subprocess.PIPE,
             cwd=working_directory,
-            env=dict(os.environ, AZURE_CORE_NO_COLOR="true")
+            env=dict(os.environ, AZURE_CORE_NO_COLOR="true"),
         )
         stdout_b, stderr_b = await asyncio.wait_for(proc.communicate(), timeout)
         output = stdout_b.decode()
@@ -146,4 +161,6 @@ async def _run_command(command: str, timeout: int) -> str:
         raise CredentialUnavailableError(message=NOT_LOGGED_IN)
 
     message = sanitize_output(stderr) if stderr else "Failed to invoke Azure CLI"
+    if within_dac.get():
+        raise CredentialUnavailableError(message=message)
     raise ClientAuthenticationError(message=message)
