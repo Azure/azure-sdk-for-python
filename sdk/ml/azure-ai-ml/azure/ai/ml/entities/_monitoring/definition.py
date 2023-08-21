@@ -104,8 +104,10 @@ class MonitorDefinition(RestTranslatableMixin):
 
     @classmethod
     def _from_rest_object(
-        cls, obj: RestMonitorDefinition, **kwargs
-    ) -> "MonitorDefinition":  # pylint: disable=unused-argument
+        cls,
+        obj: RestMonitorDefinition, 
+        **kwargs,  # pylint: disable=unused-argument
+    ) -> "MonitorDefinition":
         from_rest_alert_notification = None
         if obj.alert_notification_setting:
             if isinstance(obj.alert_notification_setting, AzMonMonitoringAlertNotificationSettings):

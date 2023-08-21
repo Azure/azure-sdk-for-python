@@ -76,9 +76,9 @@ class NumericalDriftMetrics(RestTranslatableMixin):
         return metric_name, threshold
 
     @classmethod
-    def _from_rest_object(
+    def _from_rest_object( # pylint: disable=arguments-differ, inconsistent-return-statements
         cls, metric_name, threshold
-    ) -> "NumericalDriftMetrics":  # pylint: disable=arguments-differ, inconsistent-return-statements
+    ) -> "NumericalDriftMetrics":
         metric_name = camel_to_snake(metric_name)
         if metric_name == MonitorMetricName.JENSEN_SHANNON_DISTANCE:
             return cls(jensen_shannon_distance=threshold)
@@ -131,9 +131,9 @@ class CategoricalDriftMetrics(RestTranslatableMixin):
         return metric_name, threshold
 
     @classmethod
-    def _from_rest_object(
+    def _from_rest_object(  # pylint: disable=arguments-differ, inconsistent-return-statements
         cls, metric_name, threshold
-    ) -> "CategoricalDriftMetrics":  # pylint: disable=arguments-differ, inconsistent-return-statements
+    ) -> "CategoricalDriftMetrics":
         metric_name = camel_to_snake(metric_name)
         if metric_name == MonitorMetricName.JENSEN_SHANNON_DISTANCE:
             return cls(jensen_shannon_distance=threshold)
