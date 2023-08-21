@@ -1,0 +1,29 @@
+$schema: http://azureml/sdk-2-0/DataIndex.json
+type: uri_folder
+name: azure_docs_ml_aoai
+description: AzureML documentation embedded with text-embedding-ada-002 and indexed in Azure Cognitive Search.
+
+source:
+    input_data:
+      type: uri_folder
+      #path: https://github.com/MicrosoftDocs/azure-docs.git
+      path: ./../test_data
+    #input_glob: 'articles/machine-learning/**/*'
+    chunk_size: 1024
+    chunk_overlap: 0
+    citation_url: 'https://learn.microsoft.com/en-us/azure'
+    citation_url_replacement_regex:
+      match_pattern: "(.*)/articles/(.*)(\\.[^.]+)$"
+      replacement_pattern: "\\1/\\2"
+
+embedding:
+    model: azure_open_ai://deployment/text-embedding-ada-002/model/text-embedding-ada-002
+    connection: azureml:azureml-rag-aoai-v2
+    cache_path: azureml://datastores/workspaceblobstore/paths/embeddings_cache/azure_docs_ml_aoai
+
+index:
+    type: acs
+    connection: azureml:azureml-rag-acs-v2
+    name: azure_docs_ml_aoai
+
+path: azureml://datastores/workspaceblobstore/paths/{name}

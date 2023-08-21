@@ -1,5 +1,9 @@
 # Release History
 
+## 1.11.0 (Unreleased)
+
+### Features Added
+- Added DataIndex operation which produces an MLIndex Data Asset
 
 ## 1.10.0 (Unreleased)
 

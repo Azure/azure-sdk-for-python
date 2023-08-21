@@ -133,6 +133,7 @@ def pipeline(
         Callable[P, PipelineJob]
       ]
     """
+    get_component = kwargs.get("get_component", False)
 
     def pipeline_decorator(func: Callable[P, T]) -> Callable[P, PipelineJob]:
         if not isinstance(func, Callable):  # pylint: disable=isinstance-second-argument-not-valid-type
@@ -222,7 +223,7 @@ def pipeline(
                 "inputs": pipeline_parameters,
                 "tags": tags,
             }
-            if _is_inside_dsl_pipeline_func():
+            if _is_inside_dsl_pipeline_func() or get_component:
                 # on_init/on_finalize is not supported for pipeline component
                 if job_settings.get("on_init") is not None or job_settings.get("on_finalize") is not None:
                     raise UserErrorException("On_init/on_finalize is not supported for pipeline component.")

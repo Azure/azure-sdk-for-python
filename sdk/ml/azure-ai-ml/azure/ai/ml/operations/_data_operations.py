@@ -60,11 +60,14 @@ from azure.ai.ml.constants._common import (
     AssetTypes,
     AzureMLResourceType,
 )
+from azure.ai.ml.data_index import index_data as index_data_func
 from azure.ai.ml.data_transfer import import_data as import_data_func
 from azure.ai.ml.entities import PipelineJob, PipelineJobSettings
 from azure.ai.ml.entities._assets import Data, WorkspaceAssetReference
+from azure.ai.ml.entities._credentials import ManagedIdentityConfiguration, UserIdentityConfiguration
 from azure.ai.ml.entities._data.mltable_metadata import MLTableMetadata
 from azure.ai.ml.entities._data_import.data_import import DataImport
+from azure.ai.ml.entities._data_index.data_index import DataIndex
 from azure.ai.ml.entities._inputs_outputs import Output
 from azure.ai.ml.entities._inputs_outputs.external_data import Database
 from azure.ai.ml.exceptions import (
@@ -475,6 +478,69 @@ class DataOperations(_ScopeDependentOperations):
         import_pipeline.properties["azureml.materializationAssetName"] = data_import.name
         return self._all_operations.all_operations[AzureMLResourceType.JOB].create_or_update(
             job=import_pipeline, skip_validation=True, **kwargs
+        )
+
+    @monitor_with_activity(logger, "Data.IndexData", ActivityType.PUBLICAPI)
+    @experimental
+    def index_data(
+        self,
+        data_index: DataIndex,
+        identity: Optional[Union[ManagedIdentityConfiguration, UserIdentityConfiguration]] = None,
+        **kwargs,
+    ) -> PipelineJob:
+        """Returns the data import job that is creating the data asset.
+
+        :param data_index: DataIndex object.
+        :type data_index: azure.ai.ml.entities.DataIndex
+        :return: data import job object.
+        :rtype: ~azure.ai.ml.entities.PipelineJob
+        """
+        from azure.ai.ml import MLClient
+
+        experiment_name = "data_index_" + data_index.name
+        data_index.type = AssetTypes.URI_FOLDER
+
+        # avoid specifying auto_delete_setting in job output now
+        _validate_auto_delete_setting_in_data_output(data_index.auto_delete_setting)
+
+        # block cumtomer specified path on managed datastore
+        data_index.path = _validate_workspace_managed_datastore(data_index.path)
+
+        # with self._set_registry_client(index_component_registry_name):
+        # TODO: This is import_data behavior, not sure if it should be default for index_data, or just be documented?
+        if "${{name}}" not in data_index.path and "{name}" not in data_index.path:
+            data_index.path = data_index.path.rstrip("/") + "/${{name}}"
+
+        index_job = index_data_func(
+            description=data_index.description or experiment_name,
+            display_name=experiment_name,
+            experiment_name=experiment_name,
+            compute="serverless",
+            # TODO: Or have source, embedding, index, and path?
+            data_index=data_index,
+            ml_client=MLClient(
+                subscription_id=self._subscription_id,
+                resource_group_name=self._resource_group_name,
+                workspace_name=self._workspace_name,
+                credential=self._service_client._config.credential,
+            ),
+            identity=identity,
+        )
+        index_pipeline = PipelineJob(
+            description=index_job.description or experiment_name,
+            tags=index_job.tags,
+            display_name=experiment_name,
+            experiment_name=experiment_name,
+            properties=index_job.properties or {},
+            settings=PipelineJobSettings(force_rerun=True, default_compute="serverless"),
+            jobs={experiment_name: index_job},
+        )
+        index_pipeline.properties["azureml.mlIndexAssetName"] = data_index.name
+        index_pipeline.properties["azureml.mlIndexAssetKind"] = data_index.index.type
+        index_pipeline.properties["azureml.mlIndexAssetSource"] = "Data Asset"
+
+        return self._all_operations.all_operations[AzureMLResourceType.JOB].create_or_update(
+            job=index_pipeline, skip_validation=True, **kwargs
         )
 
     @monitor_with_activity(logger, "Data.ListMaterializationStatus", ActivityType.PUBLICAPI)

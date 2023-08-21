@@ -10,19 +10,14 @@ from marshmallow import ValidationError, fields, post_load, pre_dump
 
 from azure.ai.ml._schema.core.fields import (
     ArmVersionedStr,
-    StringTransformedEnum,
-    UnionField,
     LocalPathField,
     NestedField,
+    StringTransformedEnum,
+    UnionField,
     VersionField,
 )
-
 from azure.ai.ml._schema.core.schema import PatchedSchemaMeta, PathAwareSchema
-from azure.ai.ml.constants._common import (
-    AssetTypes,
-    AzureMLResourceType,
-    InputOutputModes,
-)
+from azure.ai.ml.constants._common import AssetTypes, AzureMLResourceType, InputOutputModes
 from azure.ai.ml.constants._component import ExternalDataType
 
 module_logger = logging.getLogger(__name__)
@@ -44,7 +39,7 @@ class InputSchema(metaclass=PatchedSchemaMeta):
         raise ValidationError("InputSchema needs type Input to dump")
 
 
-def generate_path_property(azureml_type):
+def generate_path_property(azureml_type, **kwargs):
     return UnionField(
         [
             ArmVersionedStr(azureml_type=azureml_type),
@@ -56,6 +51,7 @@ def generate_path_property(azureml_type):
             ),
         ],
         is_strict=True,
+        **kwargs,
     )
 
 

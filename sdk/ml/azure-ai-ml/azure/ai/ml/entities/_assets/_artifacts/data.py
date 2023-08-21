@@ -213,6 +213,10 @@ class Data(Artifact):
     @classmethod
     def _resolve_cls_and_type(cls, data, params_override):
         from azure.ai.ml.entities._data_import.data_import import DataImport
+        from azure.ai.ml.entities._data_index.data_index import DataIndex
+
+        if "index" in data:
+            return DataIndex, None
 
         if "source" in data:
             return DataImport, None
