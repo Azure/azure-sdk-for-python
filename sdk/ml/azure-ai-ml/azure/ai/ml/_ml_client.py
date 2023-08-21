@@ -495,7 +495,7 @@ class MLClient:
 
         self._featurestores = FeatureStoreOperations(
             self._operation_scope,
-            self._service_client_04_2023_preview,
+            self._service_client_06_2023_preview,
             self._operation_container,
             self._credential,
             **app_insights_handler_kwargs,
@@ -510,7 +510,7 @@ class MLClient:
         )
 
         self._featurestoreentities = FeatureStoreEntityOperations(
-            self._operation_scope, self._operation_config, self._service_client_04_2023_preview, **ops_kwargs
+            self._operation_scope, self._operation_config, self._service_client_06_2023_preview, **ops_kwargs
         )
 
         self._workspace_hubs = WorkspaceHubOperations(
