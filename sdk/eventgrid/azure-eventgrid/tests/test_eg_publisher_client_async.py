@@ -364,17 +364,10 @@ class TestEventGridPublisherClient(AzureRecordedTestCase):
     @pytest.mark.live_test_only
     @EventGridPreparer()
     @recorded_by_proxy_async
-    async def test_send_partner_namespace_async(self):
-        eventgrid_partner_namespace_endpoint = os.environ[
-            "EVENTGRID_PARTNER_NAMESPACE_TOPIC_ENDPOINT"
-        ]
-        eventgrid_partner_namespace_key = os.environ[
-            "EVENTGRID_PARTNER_NAMESPACE_TOPIC_KEY"
-        ]
-        channel_name = os.environ["EVENTGRID_PARTNER_CHANNEL_NAME"]
-        credential = AzureKeyCredential(eventgrid_partner_namespace_key)
+    async def test_send_partner_namespace_async(self, eventgrid_partner_namespace_topic_endpoint, eventgrid_partner_namespace_topic_key, eventgrid_partner_channel_name):
+        credential = AzureKeyCredential(eventgrid_partner_namespace_topic_key)
         client = EventGridPublisherClient(
-            eventgrid_partner_namespace_endpoint, credential
+            eventgrid_partner_namespace_topic_endpoint, credential
         )
         cloud_event = CloudEvent(
             source="http://samplesource.dev",
@@ -384,8 +377,8 @@ class TestEventGridPublisherClient(AzureRecordedTestCase):
 
         def callback(request):
             req = request.http_request.headers
-            assert req.get("aeg-channel-name") == channel_name
+            assert req.get("aeg-channel-name") == eventgrid_partner_channel_name
 
         await client.send(
-            cloud_event, channel_name=channel_name, raw_request_hook=callback
+            cloud_event, channel_name=eventgrid_partner_channel_name, raw_request_hook=callback
         )

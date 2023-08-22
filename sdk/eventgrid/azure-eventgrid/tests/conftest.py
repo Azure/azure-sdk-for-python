@@ -39,10 +39,10 @@ def add_sanitizers(test_proxy):
         compare_bodies=False,
         excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id",
     )
-    add_remove_header_sanitizer(headers="aeg-sas-key, aeg-sas-token")
+    add_remove_header_sanitizer(headers="aeg-sas-key, aeg-sas-token, aeg-channel-name")
     add_general_regex_sanitizer(
         value="fakeresource",
-        regex="(?<=\\/\\/)[a-z-]+(?=\\.eastus-1\\.eventgrid\\.azure\\.net/api/events)",
+        regex="(?<=\\/\\/)[.*]+(?=\\.eastus-1\\.eventgrid\\.azure\\.net/api/events)",
     )
 
     add_oauth_response_sanitizer()
@@ -60,31 +60,30 @@ def add_sanitizers(test_proxy):
     # add_general_regex_sanitizer(value="claims", regex="(?<=&claims=)[^&]+(?=)")
     # add_body_key_sanitizer(json_path="$..access_token", value="access_token")
 
-
     client_id = os.getenv("AZURE_CLIENT_ID", "sanitized")
     client_secret = os.getenv("AZURE_CLIENT_SECRET", "sanitized")
     eventgrid_client_id = os.getenv("EVENTGRID_CLIENT_ID", "sanitized")
     eventgrid_client_secret = os.getenv("EVENTGRID_CLIENT_SECRET", "sanitized")
     tenant_id = os.getenv("AZURE_TENANT_ID", "sanitized")
-    eventgrid_topic_key = os.getenv("EVENTGRID_TOPIC_KEY", "sanitized")
+    # eventgrid_topic_key = os.getenv("EVENTGRID_TOPIC_KEY", "sanitized")
     eventgrid_topic_endpoint = os.getenv("EVENTGRID_TOPIC_ENDPOINT", "sanitized")
-    eventgrid_key = os.getenv("EVENTGRID_KEY", "sanitized")
-    topic_name = os.getenv("TOPIC_NAME", "sanitized")
-    event_subscription_name = os.getenv("EVENT_SUBSCRIPTION_NAME", "sanitized")
-    add_general_string_sanitizer(target=eventgrid_key, value="sanitized")
-    add_general_string_sanitizer(target=eventgrid_topic_key, value="sanitized")
-    add_general_string_sanitizer(target=eventgrid_topic_endpoint, value="sanitized")
+    # eventgrid_key = os.getenv("EVENTGRID_KEY", "sanitized")
+    # topic_name = os.getenv("TOPIC_NAME", "sanitized")
+    # event_subscription_name = os.getenv("EVENT_SUBSCRIPTION_NAME", "sanitized")
+    # add_general_string_sanitizer(target=eventgrid_key, value="sanitized")
+    # add_general_string_sanitizer(target=eventgrid_topic_key, value="sanitized")
+    # add_general_string_sanitizer(target=eventgrid_topic_endpoint, value="sanitized")
     # Need to santize namespace for eventgrid_topic:
     try:
         eventgrid_hostname = (eventgrid_topic_endpoint.split("https://")[1]).split("/api")[0]
         add_general_string_sanitizer(target=eventgrid_hostname.upper(), value="sanitized.eastus-1.eventgrid.azure.net")
     except:
         pass
-    add_general_string_sanitizer(target=client_id, value="sanitized")
+    add_general_string_sanitizer(target=client_id, value="00000000-0000-0000-0000-000000000000")
     add_general_string_sanitizer(target=client_secret, value="sanitized")
-    add_general_string_sanitizer(target=eventgrid_client_id, value="sanitized")
+    add_general_string_sanitizer(target=eventgrid_client_id, value="00000000-0000-0000-0000-000000000000")
     add_general_string_sanitizer(target=eventgrid_client_secret, value="sanitized")
-    add_general_string_sanitizer(target=tenant_id, value="sanitized")
-    add_general_string_sanitizer(target=topic_name, value="sanitized")
-    add_general_string_sanitizer(target=event_subscription_name, value="sanitized")
+    add_general_string_sanitizer(target=tenant_id, value="00000000-0000-0000-0000-000000000000")
+    # add_general_string_sanitizer(target=topic_name, value="sanitized")
+    # add_general_string_sanitizer(target=event_subscription_name, value="sanitized")
 
