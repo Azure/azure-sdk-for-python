@@ -14,8 +14,7 @@ class TestDictMixin:
         key = "testkey"
         value = "testval"
         model.__setitem__(key, value)
-        #assert model.__contains__(key)
-        assert key in model
+        assert key in model  # calls __contains__
         assert model.has_key(key)
 
     def test_getitem_get(self):
