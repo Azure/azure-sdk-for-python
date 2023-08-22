@@ -42,7 +42,7 @@ class TestEventGridPublisherClient(AzureRecordedTestCase):
 
     @EventGridPreparer()
     @recorded_by_proxy
-    def test_send_event_grid_event_data_dict(self, eventgrid_topic_endpoint):
+    def test_send_event_grid_event_data_dict(self, variables, eventgrid_topic_endpoint):
         client = self.create_eg_publisher_client(eventgrid_topic_endpoint)
         eg_event = EventGridEvent(
             subject="sample",
@@ -72,7 +72,7 @@ class TestEventGridPublisherClient(AzureRecordedTestCase):
     @EventGridPreparer()
     @recorded_by_proxy
     def test_send_event_grid_event_data_as_list(
-        self, eventgrid_topic_endpoint
+        self, variables, eventgrid_topic_endpoint
     ):
         client = self.create_eg_publisher_client(eventgrid_topic_endpoint)
         eg_event1 = EventGridEvent(
@@ -91,7 +91,7 @@ class TestEventGridPublisherClient(AzureRecordedTestCase):
 
     @EventGridPreparer()
     @recorded_by_proxy
-    def test_send_event_grid_event_data_str(self, eventgrid_topic_endpoint):
+    def test_send_event_grid_event_data_str(self, variables, eventgrid_topic_endpoint):
         client = self.create_eg_publisher_client(eventgrid_topic_endpoint)
         eg_event = EventGridEvent(
             subject="sample",
@@ -136,7 +136,7 @@ class TestEventGridPublisherClient(AzureRecordedTestCase):
     @EventGridPreparer()
     @recorded_by_proxy
     def test_send_event_grid_event_dict_data_dict(
-        self, eventgrid_topic_endpoint
+        self, variables, eventgrid_topic_endpoint
     ):
         client = self.create_eg_publisher_client(eventgrid_topic_endpoint)
         eg_event = {
@@ -297,7 +297,7 @@ class TestEventGridPublisherClient(AzureRecordedTestCase):
     @EventGridPreparer()
     @recorded_by_proxy
     def test_send_signature_credential(
-        self, eventgrid_topic_key, eventgrid_topic_endpoint
+        self, variables, eventgrid_topic_key, eventgrid_topic_endpoint
     ):
         expiration_date_utc = dt.datetime.now(UTC()) + timedelta(hours=1)
         signature = generate_sas(

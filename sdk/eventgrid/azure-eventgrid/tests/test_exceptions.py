@@ -45,7 +45,7 @@ class TestEventGridPublisherClientExceptions(AzureMgmtRecordedTestCase):
 
     @EventGridPreparer()
     @recorded_by_proxy
-    def test_raise_on_auth_error(self, eventgrid_topic_endpoint):
+    def test_raise_on_auth_error(self, variables, eventgrid_topic_endpoint):
         akc_credential = AzureKeyCredential("bad credential")
         client = EventGridPublisherClient(eventgrid_topic_endpoint, akc_credential)
         eg_event = EventGridEvent(
@@ -80,7 +80,7 @@ class TestEventGridPublisherClientExceptions(AzureMgmtRecordedTestCase):
 
     @EventGridPreparer()
     @recorded_by_proxy
-    def test_raise_on_large_payload(self, eventgrid_topic_endpoint):
+    def test_raise_on_large_payload(self, variables, eventgrid_topic_endpoint):
         client = self.create_eg_publisher_client(eventgrid_topic_endpoint)
 
         path = os.path.abspath(

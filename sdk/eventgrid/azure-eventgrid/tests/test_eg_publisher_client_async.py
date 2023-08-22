@@ -40,7 +40,7 @@ class TestEventGridPublisherClient(AzureRecordedTestCase):
     @recorded_by_proxy_async
     @pytest.mark.asyncio
     async def test_send_event_grid_event_data_dict_async(
-        self, eventgrid_topic_endpoint
+        self, variables, eventgrid_topic_endpoint
     ):
         client = self.create_eg_publisher_client(eventgrid_topic_endpoint)
         eg_event = EventGridEvent(
@@ -55,7 +55,7 @@ class TestEventGridPublisherClient(AzureRecordedTestCase):
     @recorded_by_proxy_async
     @pytest.mark.asyncio
     async def test_send_event_grid_event_data_as_list_async(
-        self, eventgrid_topic_endpoint
+        self, variables, eventgrid_topic_endpoint
     ):
         client = self.create_eg_publisher_client(eventgrid_topic_endpoint)
         eg_event1 = EventGridEvent(
@@ -94,7 +94,7 @@ class TestEventGridPublisherClient(AzureRecordedTestCase):
     @recorded_by_proxy_async
     @pytest.mark.asyncio
     async def test_send_event_grid_event_data_str_async(
-        self, eventgrid_topic_endpoint
+        self, variables, eventgrid_topic_endpoint
     ):
         client = self.create_eg_publisher_client(eventgrid_topic_endpoint)
         eg_event = EventGridEvent(
@@ -264,7 +264,7 @@ class TestEventGridPublisherClient(AzureRecordedTestCase):
     @recorded_by_proxy_async
     @pytest.mark.asyncio
     async def test_send_signature_credential_async(
-        self, eventgrid_topic_key, eventgrid_topic_endpoint
+        self, variables, eventgrid_topic_key, eventgrid_topic_endpoint
     ):
         expiration_date_utc = dt.datetime.now(UTC()) + timedelta(hours=1)
         signature = generate_sas(
