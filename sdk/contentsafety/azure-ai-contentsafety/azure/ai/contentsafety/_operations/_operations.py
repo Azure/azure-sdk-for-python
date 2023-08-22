@@ -22,15 +22,14 @@ from azure.core.exceptions import (
 )
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpResponse
-from azure.core.rest import HttpRequest
+from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
 from .. import models as _models
 from .._model_base import AzureJSONEncoder, _deserialize
 from .._serialization import Serializer
-from .._vendor import ContentSafetyClientMixinABC, _format_url_section
+from .._vendor import ContentSafetyClientMixinABC
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
@@ -88,7 +87,9 @@ def build_content_safety_analyze_image_request(**kwargs: Any) -> HttpRequest:  #
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_content_safety_get_text_blocklist_request(blocklist_name: str, **kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
+def build_content_safety_get_text_blocklist_request(  # pylint: disable=name-too-long
+    blocklist_name: str, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -101,7 +102,7 @@ def build_content_safety_get_text_blocklist_request(blocklist_name: str, **kwarg
         "blocklistName": _SERIALIZER.url("blocklist_name", blocklist_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -112,7 +113,9 @@ def build_content_safety_get_text_blocklist_request(blocklist_name: str, **kwarg
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_content_safety_create_or_update_text_blocklist_request(blocklist_name: str, **kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
+def build_content_safety_create_or_update_text_blocklist_request(  # pylint: disable=name-too-long
+    blocklist_name: str, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -126,7 +129,7 @@ def build_content_safety_create_or_update_text_blocklist_request(blocklist_name:
         "blocklistName": _SERIALIZER.url("blocklist_name", blocklist_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -139,7 +142,9 @@ def build_content_safety_create_or_update_text_blocklist_request(blocklist_name:
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_content_safety_delete_text_blocklist_request(blocklist_name: str, **kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
+def build_content_safety_delete_text_blocklist_request(  # pylint: disable=name-too-long
+    blocklist_name: str, **kwargs: Any
+) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-30-preview"))
@@ -149,7 +154,7 @@ def build_content_safety_delete_text_blocklist_request(blocklist_name: str, **kw
         "blocklistName": _SERIALIZER.url("blocklist_name", blocklist_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -176,7 +181,9 @@ def build_content_safety_list_text_blocklists_request(**kwargs: Any) -> HttpRequ
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_content_safety_add_block_items_request(blocklist_name: str, **kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
+def build_content_safety_add_block_items_request(  # pylint: disable=name-too-long
+    blocklist_name: str, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -190,7 +197,7 @@ def build_content_safety_add_block_items_request(blocklist_name: str, **kwargs: 
         "blocklistName": _SERIALIZER.url("blocklist_name", blocklist_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -203,7 +210,9 @@ def build_content_safety_add_block_items_request(blocklist_name: str, **kwargs: 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_content_safety_remove_block_items_request(blocklist_name: str, **kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
+def build_content_safety_remove_block_items_request(  # pylint: disable=name-too-long
+    blocklist_name: str, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -215,7 +224,7 @@ def build_content_safety_remove_block_items_request(blocklist_name: str, **kwarg
         "blocklistName": _SERIALIZER.url("blocklist_name", blocklist_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -243,7 +252,7 @@ def build_content_safety_get_text_blocklist_item_request(  # pylint: disable=nam
         "blockItemId": _SERIALIZER.url("block_item_id", block_item_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -269,7 +278,7 @@ def build_content_safety_list_text_blocklist_items_request(  # pylint: disable=n
         "blocklistName": _SERIALIZER.url("blocklist_name", blocklist_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -304,6 +313,67 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
         :return: AnalyzeTextResult. The AnalyzeTextResult is compatible with MutableMapping
         :rtype: ~azure.ai.contentsafety.models.AnalyzeTextResult
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                body = {
+                    "text": "str",  # The text needs to be scanned. We support at most 1000
+                      characters (unicode code points) in text of one request. Required.
+                    "blocklistNames": [
+                        "str"  # Optional. The names of blocklists.
+                    ],
+                    "breakByBlocklists": bool,  # Optional. When set to true, further analyses of
+                      harmful content will not be performed in cases where blocklists are hit. When set
+                      to false, all analyses of harmful content will be performed, whether or not
+                      blocklists are hit.
+                    "categories": [
+                        "str"  # Optional. The categories will be analyzed. If not assigned,
+                          a default set of the categories' analysis results will be returned.
+                    ]
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "blocklistsMatchResults": [
+                        {
+                            "blockItemId": "str",  # The id of matched item. Required.
+                            "blockItemText": "str",  # The content of matched item.
+                              Required.
+                            "blocklistName": "str",  # The name of matched blocklist.
+                              Required.
+                            "length": 0,  # The length of matched text in original input.
+                              Required.
+                            "offset": 0  # The character offset of matched text in
+                              original input. Required.
+                        }
+                    ],
+                    "hateResult": {
+                        "category": "str",  # The text category. Required. Known values are:
+                          "Hate", "SelfHarm", "Sexual", and "Violence".
+                        "severity": 0  # The higher the severity of input content, the larger
+                          this value is. The values could be: 0,2,4,6. Required.
+                    },
+                    "selfHarmResult": {
+                        "category": "str",  # The text category. Required. Known values are:
+                          "Hate", "SelfHarm", "Sexual", and "Violence".
+                        "severity": 0  # The higher the severity of input content, the larger
+                          this value is. The values could be: 0,2,4,6. Required.
+                    },
+                    "sexualResult": {
+                        "category": "str",  # The text category. Required. Known values are:
+                          "Hate", "SelfHarm", "Sexual", and "Violence".
+                        "severity": 0  # The higher the severity of input content, the larger
+                          this value is. The values could be: 0,2,4,6. Required.
+                    },
+                    "violenceResult": {
+                        "category": "str",  # The text category. Required. Known values are:
+                          "Hate", "SelfHarm", "Sexual", and "Violence".
+                        "severity": 0  # The higher the severity of input content, the larger
+                          this value is. The values could be: 0,2,4,6. Required.
+                    }
+                }
         """
 
     @overload
@@ -325,6 +395,50 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
         :return: AnalyzeTextResult. The AnalyzeTextResult is compatible with MutableMapping
         :rtype: ~azure.ai.contentsafety.models.AnalyzeTextResult
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "blocklistsMatchResults": [
+                        {
+                            "blockItemId": "str",  # The id of matched item. Required.
+                            "blockItemText": "str",  # The content of matched item.
+                              Required.
+                            "blocklistName": "str",  # The name of matched blocklist.
+                              Required.
+                            "length": 0,  # The length of matched text in original input.
+                              Required.
+                            "offset": 0  # The character offset of matched text in
+                              original input. Required.
+                        }
+                    ],
+                    "hateResult": {
+                        "category": "str",  # The text category. Required. Known values are:
+                          "Hate", "SelfHarm", "Sexual", and "Violence".
+                        "severity": 0  # The higher the severity of input content, the larger
+                          this value is. The values could be: 0,2,4,6. Required.
+                    },
+                    "selfHarmResult": {
+                        "category": "str",  # The text category. Required. Known values are:
+                          "Hate", "SelfHarm", "Sexual", and "Violence".
+                        "severity": 0  # The higher the severity of input content, the larger
+                          this value is. The values could be: 0,2,4,6. Required.
+                    },
+                    "sexualResult": {
+                        "category": "str",  # The text category. Required. Known values are:
+                          "Hate", "SelfHarm", "Sexual", and "Violence".
+                        "severity": 0  # The higher the severity of input content, the larger
+                          this value is. The values could be: 0,2,4,6. Required.
+                    },
+                    "violenceResult": {
+                        "category": "str",  # The text category. Required. Known values are:
+                          "Hate", "SelfHarm", "Sexual", and "Violence".
+                        "severity": 0  # The higher the severity of input content, the larger
+                          this value is. The values could be: 0,2,4,6. Required.
+                    }
+                }
         """
 
     @overload
@@ -346,6 +460,50 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
         :return: AnalyzeTextResult. The AnalyzeTextResult is compatible with MutableMapping
         :rtype: ~azure.ai.contentsafety.models.AnalyzeTextResult
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "blocklistsMatchResults": [
+                        {
+                            "blockItemId": "str",  # The id of matched item. Required.
+                            "blockItemText": "str",  # The content of matched item.
+                              Required.
+                            "blocklistName": "str",  # The name of matched blocklist.
+                              Required.
+                            "length": 0,  # The length of matched text in original input.
+                              Required.
+                            "offset": 0  # The character offset of matched text in
+                              original input. Required.
+                        }
+                    ],
+                    "hateResult": {
+                        "category": "str",  # The text category. Required. Known values are:
+                          "Hate", "SelfHarm", "Sexual", and "Violence".
+                        "severity": 0  # The higher the severity of input content, the larger
+                          this value is. The values could be: 0,2,4,6. Required.
+                    },
+                    "selfHarmResult": {
+                        "category": "str",  # The text category. Required. Known values are:
+                          "Hate", "SelfHarm", "Sexual", and "Violence".
+                        "severity": 0  # The higher the severity of input content, the larger
+                          this value is. The values could be: 0,2,4,6. Required.
+                    },
+                    "sexualResult": {
+                        "category": "str",  # The text category. Required. Known values are:
+                          "Hate", "SelfHarm", "Sexual", and "Violence".
+                        "severity": 0  # The higher the severity of input content, the larger
+                          this value is. The values could be: 0,2,4,6. Required.
+                    },
+                    "violenceResult": {
+                        "category": "str",  # The text category. Required. Known values are:
+                          "Hate", "SelfHarm", "Sexual", and "Violence".
+                        "severity": 0  # The higher the severity of input content, the larger
+                          this value is. The values could be: 0,2,4,6. Required.
+                    }
+                }
         """
 
     @distributed_trace
@@ -368,6 +526,67 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
         :return: AnalyzeTextResult. The AnalyzeTextResult is compatible with MutableMapping
         :rtype: ~azure.ai.contentsafety.models.AnalyzeTextResult
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                body = {
+                    "text": "str",  # The text needs to be scanned. We support at most 1000
+                      characters (unicode code points) in text of one request. Required.
+                    "blocklistNames": [
+                        "str"  # Optional. The names of blocklists.
+                    ],
+                    "breakByBlocklists": bool,  # Optional. When set to true, further analyses of
+                      harmful content will not be performed in cases where blocklists are hit. When set
+                      to false, all analyses of harmful content will be performed, whether or not
+                      blocklists are hit.
+                    "categories": [
+                        "str"  # Optional. The categories will be analyzed. If not assigned,
+                          a default set of the categories' analysis results will be returned.
+                    ]
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "blocklistsMatchResults": [
+                        {
+                            "blockItemId": "str",  # The id of matched item. Required.
+                            "blockItemText": "str",  # The content of matched item.
+                              Required.
+                            "blocklistName": "str",  # The name of matched blocklist.
+                              Required.
+                            "length": 0,  # The length of matched text in original input.
+                              Required.
+                            "offset": 0  # The character offset of matched text in
+                              original input. Required.
+                        }
+                    ],
+                    "hateResult": {
+                        "category": "str",  # The text category. Required. Known values are:
+                          "Hate", "SelfHarm", "Sexual", and "Violence".
+                        "severity": 0  # The higher the severity of input content, the larger
+                          this value is. The values could be: 0,2,4,6. Required.
+                    },
+                    "selfHarmResult": {
+                        "category": "str",  # The text category. Required. Known values are:
+                          "Hate", "SelfHarm", "Sexual", and "Violence".
+                        "severity": 0  # The higher the severity of input content, the larger
+                          this value is. The values could be: 0,2,4,6. Required.
+                    },
+                    "sexualResult": {
+                        "category": "str",  # The text category. Required. Known values are:
+                          "Hate", "SelfHarm", "Sexual", and "Violence".
+                        "severity": 0  # The higher the severity of input content, the larger
+                          this value is. The values could be: 0,2,4,6. Required.
+                    },
+                    "violenceResult": {
+                        "category": "str",  # The text category. Required. Known values are:
+                          "Hate", "SelfHarm", "Sexual", and "Violence".
+                        "severity": 0  # The higher the severity of input content, the larger
+                          this value is. The values could be: 0,2,4,6. Required.
+                    }
+                }
         """
         error_map = {
             401: ClientAuthenticationError,
@@ -410,6 +629,8 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
+            if _stream:
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -442,6 +663,50 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
         :return: AnalyzeImageResult. The AnalyzeImageResult is compatible with MutableMapping
         :rtype: ~azure.ai.contentsafety.models.AnalyzeImageResult
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                body = {
+                    "image": {
+                        "blobUrl": "str",  # Optional. The blob url of image.
+                        "content": bytes("bytes", encoding="utf-8")  # Optional. Base64
+                          encoding of image.
+                    },
+                    "categories": [
+                        "str"  # Optional. The categories will be analyzed. If not assigned,
+                          a default set of the categories' analysis results will be returned.
+                    ]
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "hateResult": {
+                        "category": "str",  # The image category. Required. Known values are:
+                          "Hate", "SelfHarm", "Sexual", and "Violence".
+                        "severity": 0  # The higher the severity of input content, the larger
+                          this value, currently its value could be: 0,2,4,6. Required.
+                    },
+                    "selfHarmResult": {
+                        "category": "str",  # The image category. Required. Known values are:
+                          "Hate", "SelfHarm", "Sexual", and "Violence".
+                        "severity": 0  # The higher the severity of input content, the larger
+                          this value, currently its value could be: 0,2,4,6. Required.
+                    },
+                    "sexualResult": {
+                        "category": "str",  # The image category. Required. Known values are:
+                          "Hate", "SelfHarm", "Sexual", and "Violence".
+                        "severity": 0  # The higher the severity of input content, the larger
+                          this value, currently its value could be: 0,2,4,6. Required.
+                    },
+                    "violenceResult": {
+                        "category": "str",  # The image category. Required. Known values are:
+                          "Hate", "SelfHarm", "Sexual", and "Violence".
+                        "severity": 0  # The higher the severity of input content, the larger
+                          this value, currently its value could be: 0,2,4,6. Required.
+                    }
+                }
         """
 
     @overload
@@ -463,6 +728,37 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
         :return: AnalyzeImageResult. The AnalyzeImageResult is compatible with MutableMapping
         :rtype: ~azure.ai.contentsafety.models.AnalyzeImageResult
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "hateResult": {
+                        "category": "str",  # The image category. Required. Known values are:
+                          "Hate", "SelfHarm", "Sexual", and "Violence".
+                        "severity": 0  # The higher the severity of input content, the larger
+                          this value, currently its value could be: 0,2,4,6. Required.
+                    },
+                    "selfHarmResult": {
+                        "category": "str",  # The image category. Required. Known values are:
+                          "Hate", "SelfHarm", "Sexual", and "Violence".
+                        "severity": 0  # The higher the severity of input content, the larger
+                          this value, currently its value could be: 0,2,4,6. Required.
+                    },
+                    "sexualResult": {
+                        "category": "str",  # The image category. Required. Known values are:
+                          "Hate", "SelfHarm", "Sexual", and "Violence".
+                        "severity": 0  # The higher the severity of input content, the larger
+                          this value, currently its value could be: 0,2,4,6. Required.
+                    },
+                    "violenceResult": {
+                        "category": "str",  # The image category. Required. Known values are:
+                          "Hate", "SelfHarm", "Sexual", and "Violence".
+                        "severity": 0  # The higher the severity of input content, the larger
+                          this value, currently its value could be: 0,2,4,6. Required.
+                    }
+                }
         """
 
     @overload
@@ -484,6 +780,37 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
         :return: AnalyzeImageResult. The AnalyzeImageResult is compatible with MutableMapping
         :rtype: ~azure.ai.contentsafety.models.AnalyzeImageResult
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "hateResult": {
+                        "category": "str",  # The image category. Required. Known values are:
+                          "Hate", "SelfHarm", "Sexual", and "Violence".
+                        "severity": 0  # The higher the severity of input content, the larger
+                          this value, currently its value could be: 0,2,4,6. Required.
+                    },
+                    "selfHarmResult": {
+                        "category": "str",  # The image category. Required. Known values are:
+                          "Hate", "SelfHarm", "Sexual", and "Violence".
+                        "severity": 0  # The higher the severity of input content, the larger
+                          this value, currently its value could be: 0,2,4,6. Required.
+                    },
+                    "sexualResult": {
+                        "category": "str",  # The image category. Required. Known values are:
+                          "Hate", "SelfHarm", "Sexual", and "Violence".
+                        "severity": 0  # The higher the severity of input content, the larger
+                          this value, currently its value could be: 0,2,4,6. Required.
+                    },
+                    "violenceResult": {
+                        "category": "str",  # The image category. Required. Known values are:
+                          "Hate", "SelfHarm", "Sexual", and "Violence".
+                        "severity": 0  # The higher the severity of input content, the larger
+                          this value, currently its value could be: 0,2,4,6. Required.
+                    }
+                }
         """
 
     @distributed_trace
@@ -506,6 +833,50 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
         :return: AnalyzeImageResult. The AnalyzeImageResult is compatible with MutableMapping
         :rtype: ~azure.ai.contentsafety.models.AnalyzeImageResult
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                body = {
+                    "image": {
+                        "blobUrl": "str",  # Optional. The blob url of image.
+                        "content": bytes("bytes", encoding="utf-8")  # Optional. Base64
+                          encoding of image.
+                    },
+                    "categories": [
+                        "str"  # Optional. The categories will be analyzed. If not assigned,
+                          a default set of the categories' analysis results will be returned.
+                    ]
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "hateResult": {
+                        "category": "str",  # The image category. Required. Known values are:
+                          "Hate", "SelfHarm", "Sexual", and "Violence".
+                        "severity": 0  # The higher the severity of input content, the larger
+                          this value, currently its value could be: 0,2,4,6. Required.
+                    },
+                    "selfHarmResult": {
+                        "category": "str",  # The image category. Required. Known values are:
+                          "Hate", "SelfHarm", "Sexual", and "Violence".
+                        "severity": 0  # The higher the severity of input content, the larger
+                          this value, currently its value could be: 0,2,4,6. Required.
+                    },
+                    "sexualResult": {
+                        "category": "str",  # The image category. Required. Known values are:
+                          "Hate", "SelfHarm", "Sexual", and "Violence".
+                        "severity": 0  # The higher the severity of input content, the larger
+                          this value, currently its value could be: 0,2,4,6. Required.
+                    },
+                    "violenceResult": {
+                        "category": "str",  # The image category. Required. Known values are:
+                          "Hate", "SelfHarm", "Sexual", and "Violence".
+                        "severity": 0  # The higher the severity of input content, the larger
+                          this value, currently its value could be: 0,2,4,6. Required.
+                    }
+                }
         """
         error_map = {
             401: ClientAuthenticationError,
@@ -548,6 +919,8 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
+            if _stream:
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -574,6 +947,15 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
         :return: TextBlocklist. The TextBlocklist is compatible with MutableMapping
         :rtype: ~azure.ai.contentsafety.models.TextBlocklist
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "blocklistName": "str",  # Text blocklist name. Required.
+                    "description": "str"  # Optional. Text blocklist description.
+                }
         """
         error_map = {
             401: ClientAuthenticationError,
@@ -607,6 +989,8 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
+            if _stream:
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -645,6 +1029,21 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
         :return: TextBlocklist. The TextBlocklist is compatible with MutableMapping
         :rtype: ~azure.ai.contentsafety.models.TextBlocklist
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                resource = {
+                    "blocklistName": "str",  # Text blocklist name. Required.
+                    "description": "str"  # Optional. Text blocklist description.
+                }
+
+                # response body for status code(s): 200, 201
+                response == {
+                    "blocklistName": "str",  # Text blocklist name. Required.
+                    "description": "str"  # Optional. Text blocklist description.
+                }
         """
 
     @overload
@@ -667,6 +1066,15 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
         :return: TextBlocklist. The TextBlocklist is compatible with MutableMapping
         :rtype: ~azure.ai.contentsafety.models.TextBlocklist
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200, 201
+                response == {
+                    "blocklistName": "str",  # Text blocklist name. Required.
+                    "description": "str"  # Optional. Text blocklist description.
+                }
         """
 
     @overload
@@ -689,6 +1097,15 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
         :return: TextBlocklist. The TextBlocklist is compatible with MutableMapping
         :rtype: ~azure.ai.contentsafety.models.TextBlocklist
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200, 201
+                response == {
+                    "blocklistName": "str",  # Text blocklist name. Required.
+                    "description": "str"  # Optional. Text blocklist description.
+                }
         """
 
     @distributed_trace
@@ -711,6 +1128,21 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
         :return: TextBlocklist. The TextBlocklist is compatible with MutableMapping
         :rtype: ~azure.ai.contentsafety.models.TextBlocklist
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                resource = {
+                    "blocklistName": "str",  # Text blocklist name. Required.
+                    "description": "str"  # Optional. Text blocklist description.
+                }
+
+                # response body for status code(s): 200, 201
+                response == {
+                    "blocklistName": "str",  # Text blocklist name. Required.
+                    "description": "str"  # Optional. Text blocklist description.
+                }
         """
         error_map = {
             401: ClientAuthenticationError,
@@ -754,6 +1186,8 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 201]:
+            if _stream:
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -822,6 +1256,8 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
+            if _stream:
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -837,6 +1273,15 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
         :return: An iterator like instance of TextBlocklist
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.contentsafety.models.TextBlocklist]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "blocklistName": "str",  # Text blocklist name. Required.
+                    "description": "str"  # Optional. Text blocklist description.
+                }
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
@@ -905,6 +1350,8 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
+                if _stream:
+                    response.read()  # Load the body in memory and close the socket
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response)
 
@@ -937,6 +1384,31 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
         :return: AddBlockItemsResult. The AddBlockItemsResult is compatible with MutableMapping
         :rtype: ~azure.ai.contentsafety.models.AddBlockItemsResult
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                body = {
+                    "blockItems": [
+                        {
+                            "text": "str",  # Block item content. Required.
+                            "description": "str"  # Optional. Block item description.
+                        }
+                    ]
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "value": [
+                        {
+                            "blockItemId": "str",  # Block Item Id. It will be uuid.
+                              Required.
+                            "text": "str",  # Block item content. Required.
+                            "description": "str"  # Optional. Block item description.
+                        }
+                    ]
+                }
         """
 
     @overload
@@ -959,6 +1431,21 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
         :return: AddBlockItemsResult. The AddBlockItemsResult is compatible with MutableMapping
         :rtype: ~azure.ai.contentsafety.models.AddBlockItemsResult
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "value": [
+                        {
+                            "blockItemId": "str",  # Block Item Id. It will be uuid.
+                              Required.
+                            "text": "str",  # Block item content. Required.
+                            "description": "str"  # Optional. Block item description.
+                        }
+                    ]
+                }
         """
 
     @overload
@@ -981,6 +1468,21 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
         :return: AddBlockItemsResult. The AddBlockItemsResult is compatible with MutableMapping
         :rtype: ~azure.ai.contentsafety.models.AddBlockItemsResult
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "value": [
+                        {
+                            "blockItemId": "str",  # Block Item Id. It will be uuid.
+                              Required.
+                            "text": "str",  # Block item content. Required.
+                            "description": "str"  # Optional. Block item description.
+                        }
+                    ]
+                }
         """
 
     @distributed_trace
@@ -1003,6 +1505,31 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
         :return: AddBlockItemsResult. The AddBlockItemsResult is compatible with MutableMapping
         :rtype: ~azure.ai.contentsafety.models.AddBlockItemsResult
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                body = {
+                    "blockItems": [
+                        {
+                            "text": "str",  # Block item content. Required.
+                            "description": "str"  # Optional. Block item description.
+                        }
+                    ]
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "value": [
+                        {
+                            "blockItemId": "str",  # Block Item Id. It will be uuid.
+                              Required.
+                            "text": "str",  # Block item content. Required.
+                            "description": "str"  # Optional. Block item description.
+                        }
+                    ]
+                }
         """
         error_map = {
             401: ClientAuthenticationError,
@@ -1046,6 +1573,8 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
+            if _stream:
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -1084,6 +1613,16 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                body = {
+                    "blockItemIds": [
+                        "str"  # Array of blockItemIds to remove. Required.
+                    ]
+                }
         """
 
     @overload
@@ -1150,6 +1689,16 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                body = {
+                    "blockItemIds": [
+                        "str"  # Array of blockItemIds to remove. Required.
+                    ]
+                }
         """
         error_map = {
             401: ClientAuthenticationError,
@@ -1193,6 +1742,8 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
+            if _stream:
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -1214,6 +1765,16 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
         :return: TextBlockItem. The TextBlockItem is compatible with MutableMapping
         :rtype: ~azure.ai.contentsafety.models.TextBlockItem
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "blockItemId": "str",  # Block Item Id. It will be uuid. Required.
+                    "text": "str",  # Block item content. Required.
+                    "description": "str"  # Optional. Block item description.
+                }
         """
         error_map = {
             401: ClientAuthenticationError,
@@ -1248,6 +1809,8 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
+            if _stream:
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -1278,6 +1841,16 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
         :return: An iterator like instance of TextBlockItem
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.contentsafety.models.TextBlockItem]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "blockItemId": "str",  # Block Item Id. It will be uuid. Required.
+                    "text": "str",  # Block item content. Required.
+                    "description": "str"  # Optional. Block item description.
+                }
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
@@ -1349,6 +1922,8 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
+                if _stream:
+                    response.read()  # Load the body in memory and close the socket
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response)
 
