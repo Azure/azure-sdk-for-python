@@ -174,7 +174,6 @@ from ._monitoring.signals import (
     PredictionDriftSignal,
     FeatureAttributionDriftSignal,
     CustomMonitoringSignal,
-    TargetDataset,
     MonitorFeatureFilter,
     DataSegment,
 )
@@ -407,7 +406,6 @@ __all__ = [
     "PredictionDriftSignal",
     "FeatureAttributionDriftSignal",
     "CustomMonitoringSignal",
-    "TargetDataset",
     "MonitorFeatureFilter",
     "DataSegment",
     "MonitoringTarget",
