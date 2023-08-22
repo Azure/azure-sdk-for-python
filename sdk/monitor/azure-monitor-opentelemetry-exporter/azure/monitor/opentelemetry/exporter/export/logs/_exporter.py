@@ -9,6 +9,10 @@ from opentelemetry.sdk._logs import LogData
 from opentelemetry.sdk._logs.export import LogExporter, LogExportResult
 
 from azure.monitor.opentelemetry.exporter import _utils
+from azure.monitor.opentelemetry.exporter._constants import (
+    _EXCEPTION_ENVELOPE_NAME,
+    _MESSAGE_ENVELOPE_NAME,
+)
 from azure.monitor.opentelemetry.exporter._generated.models import (
     MessageData,
     MonitorBase,
@@ -35,9 +39,11 @@ class AzureMonitorLogExporter(BaseExporter, LogExporter):
     def export(
         self, batch: Sequence[LogData], **kwargs: Any  # pylint: disable=unused-argument
     ) -> LogExportResult:
-        """Export log data
-        :param batch: Open Telemetry LogData(s) to export.
-        :type batch: Sequence[~opentelemetry._logs.LogData]
+        """Export log data.
+
+        :param batch: OpenTelemetry LogData(s) to export.
+        :type batch: ~typing.Sequence[~opentelemetry._logs.LogData]
+        :return: The result of the export.
         :rtype: ~opentelemetry.sdk._logs.export.LogData
         """
         envelopes = [self._log_to_envelope(log) for log in batch]
@@ -77,6 +83,7 @@ class AzureMonitorLogExporter(BaseExporter, LogExporter):
         :param str conn_str: The connection string to be used for authentication.
         :keyword str api_version: The service API version used. Defaults to latest.
         :returns an instance of ~AzureMonitorLogExporter
+        :rtype ~azure.monitor.opentelemetry.exporter.AzureMonitorLogExporter
         """
         return cls(connection_string=conn_str, **kwargs)
 
@@ -84,7 +91,8 @@ class AzureMonitorLogExporter(BaseExporter, LogExporter):
 # pylint: disable=protected-access
 def _convert_log_to_envelope(log_data: LogData) -> TelemetryItem:
     log_record = log_data.log_record
-    envelope = _utils._create_telemetry_item(log_record.timestamp)
+    time_stamp = log_record.timestamp if log_record.timestamp is not None else log_record.observed_timestamp
+    envelope = _utils._create_telemetry_item(time_stamp)
     envelope.tags.update(_utils._populate_part_a_fields(log_record.resource))
     envelope.tags["ai.operation.id"] = "{:032x}".format(
         log_record.trace_id or _DEFAULT_TRACE_ID
@@ -104,7 +112,7 @@ def _convert_log_to_envelope(log_data: LogData) -> TelemetryItem:
 
     # Exception telemetry
     if exc_type is not None or exc_message is not None:
-        envelope.name = "Microsoft.ApplicationInsights.Exception"
+        envelope.name = _EXCEPTION_ENVELOPE_NAME
         has_full_stack = stack_trace is not None
         if not exc_message:
             exc_message = "Exception"
@@ -122,7 +130,7 @@ def _convert_log_to_envelope(log_data: LogData) -> TelemetryItem:
         # pylint: disable=line-too-long
         envelope.data = MonitorBase(base_data=data, base_type="ExceptionData")
     else:  # Message telemetry
-        envelope.name = "Microsoft.ApplicationInsights.Message"
+        envelope.name = _MESSAGE_ENVELOPE_NAME
         # pylint: disable=line-too-long
         # Severity number: https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/logs/data-model.md#field-severitynumber
         data = MessageData(

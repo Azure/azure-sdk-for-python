@@ -116,6 +116,8 @@ class AddParticipantRequest(_serialization.Model):
     :vartype operation_context: str
     :ivar custom_context: Used by customer to send custom context to targets.
     :vartype custom_context: ~azure.communication.callautomation.models.CustomContext
+    :ivar callback_uri: The callback URI to override the main callback URI.
+    :vartype callback_uri: str
     """
 
     _validation = {
@@ -130,6 +132,7 @@ class AddParticipantRequest(_serialization.Model):
         "invitation_timeout_in_seconds": {"key": "invitationTimeoutInSeconds", "type": "int"},
         "operation_context": {"key": "operationContext", "type": "str"},
         "custom_context": {"key": "customContext", "type": "CustomContext"},
+        "callback_uri": {"key": "callbackUri", "type": "str"},
     }
 
     def __init__(
@@ -141,6 +144,7 @@ class AddParticipantRequest(_serialization.Model):
         invitation_timeout_in_seconds: Optional[int] = None,
         operation_context: Optional[str] = None,
         custom_context: Optional["_models.CustomContext"] = None,
+        callback_uri: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -166,6 +170,8 @@ class AddParticipantRequest(_serialization.Model):
         :paramtype operation_context: str
         :keyword custom_context: Used by customer to send custom context to targets.
         :paramtype custom_context: ~azure.communication.callautomation.models.CustomContext
+        :keyword callback_uri: The callback URI to override the main callback URI.
+        :paramtype callback_uri: str
         """
         super().__init__(**kwargs)
         self.source_caller_id_number = source_caller_id_number
@@ -174,6 +180,7 @@ class AddParticipantRequest(_serialization.Model):
         self.invitation_timeout_in_seconds = invitation_timeout_in_seconds
         self.operation_context = operation_context
         self.custom_context = custom_context
+        self.callback_uri = callback_uri
 
 
 class AddParticipantResponse(_serialization.Model):
@@ -665,6 +672,8 @@ class CallParticipant(_serialization.Model):
 class CallTransferAccepted(_serialization.Model):
     """The call transfer accepted event.
 
+    Variables are only populated by the server, and will be ignored when sending a request.
+
     :ivar call_connection_id: Call connection ID.
     :vartype call_connection_id: str
     :ivar server_call_id: Server call ID.
@@ -678,7 +687,17 @@ class CallTransferAccepted(_serialization.Model):
     :ivar result_information: Contains the resulting SIP code/sub-code and message from NGC
      services.
     :vartype result_information: ~azure.communication.callautomation.models.ResultInformation
+    :ivar transfer_target: Traffer target: the user that transferee will be transferred to.
+    :vartype transfer_target:
+     ~azure.communication.callautomation.models.CommunicationIdentifierModel
+    :ivar transferee: Transferee: the participant being transferred away.
+    :vartype transferee: ~azure.communication.callautomation.models.CommunicationIdentifierModel
     """
+
+    _validation = {
+        "transfer_target": {"readonly": True},
+        "transferee": {"readonly": True},
+    }
 
     _attribute_map = {
         "call_connection_id": {"key": "callConnectionId", "type": "str"},
@@ -686,6 +705,8 @@ class CallTransferAccepted(_serialization.Model):
         "correlation_id": {"key": "correlationId", "type": "str"},
         "operation_context": {"key": "operationContext", "type": "str"},
         "result_information": {"key": "resultInformation", "type": "ResultInformation"},
+        "transfer_target": {"key": "transferTarget", "type": "CommunicationIdentifierModel"},
+        "transferee": {"key": "transferee", "type": "CommunicationIdentifierModel"},
     }
 
     def __init__(
@@ -719,6 +740,8 @@ class CallTransferAccepted(_serialization.Model):
         self.correlation_id = correlation_id
         self.operation_context = operation_context
         self.result_information = result_information
+        self.transfer_target = None
+        self.transferee = None
 
 
 class CallTransferFailed(_serialization.Model):
@@ -1093,6 +1116,8 @@ class ContinuousDtmfRecognitionRequest(_serialization.Model):
      ~azure.communication.callautomation.models.CommunicationIdentifierModel
     :ivar operation_context: The value to identify context of the operation.
     :vartype operation_context: str
+    :ivar callback_uri: The callback URI to override the main callback URI.
+    :vartype callback_uri: str
     """
 
     _validation = {
@@ -1102,6 +1127,7 @@ class ContinuousDtmfRecognitionRequest(_serialization.Model):
     _attribute_map = {
         "target_participant": {"key": "targetParticipant", "type": "CommunicationIdentifierModel"},
         "operation_context": {"key": "operationContext", "type": "str"},
+        "callback_uri": {"key": "callbackUri", "type": "str"},
     }
 
     def __init__(
@@ -1109,6 +1135,7 @@ class ContinuousDtmfRecognitionRequest(_serialization.Model):
         *,
         target_participant: "_models.CommunicationIdentifierModel",
         operation_context: Optional[str] = None,
+        callback_uri: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1117,10 +1144,13 @@ class ContinuousDtmfRecognitionRequest(_serialization.Model):
          ~azure.communication.callautomation.models.CommunicationIdentifierModel
         :keyword operation_context: The value to identify context of the operation.
         :paramtype operation_context: str
+        :keyword callback_uri: The callback URI to override the main callback URI.
+        :paramtype callback_uri: str
         """
         super().__init__(**kwargs)
         self.target_participant = target_participant
         self.operation_context = operation_context
+        self.callback_uri = callback_uri
 
 
 class ContinuousDtmfRecognitionStopped(_serialization.Model):
@@ -1845,8 +1875,8 @@ class DialogSensitivityUpdate(_serialization.Model):
     :vartype dialog_input_type: str or ~azure.communication.callautomation.models.DialogInputType
     :ivar dialog_id: Dialog ID.
     :vartype dialog_id: str
-    :ivar sensitive_flag: SensitiveFlag data from the Conversation Conductor.
-    :vartype sensitive_flag: ~azure.communication.callautomation.models.SensitiveFlag
+    :ivar sensitive_mask: SensitiveMask.
+    :vartype sensitive_mask: bool
     """
 
     _validation = {
@@ -1854,7 +1884,7 @@ class DialogSensitivityUpdate(_serialization.Model):
         "operation_context": {"readonly": True},
         "result_information": {"readonly": True},
         "dialog_id": {"readonly": True},
-        "sensitive_flag": {"readonly": True},
+        "sensitive_mask": {"readonly": True},
     }
 
     _attribute_map = {
@@ -1865,7 +1895,7 @@ class DialogSensitivityUpdate(_serialization.Model):
         "result_information": {"key": "resultInformation", "type": "ResultInformation"},
         "dialog_input_type": {"key": "dialogInputType", "type": "str"},
         "dialog_id": {"key": "dialogId", "type": "str"},
-        "sensitive_flag": {"key": "sensitiveFlag", "type": "SensitiveFlag"},
+        "sensitive_mask": {"key": "sensitiveMask", "type": "bool"},
     }
 
     def __init__(
@@ -1893,7 +1923,7 @@ class DialogSensitivityUpdate(_serialization.Model):
         self.result_information = None
         self.dialog_input_type = dialog_input_type
         self.dialog_id = None
-        self.sensitive_flag = None
+        self.sensitive_mask = None
 
 
 class DialogStarted(_serialization.Model):
@@ -2717,6 +2747,8 @@ class PlayRequest(_serialization.Model):
     :vartype play_options: ~azure.communication.callautomation.models.PlayOptions
     :ivar operation_context: The value to identify context of the operation.
     :vartype operation_context: str
+    :ivar callback_uri: The callback URI to override the main callback URI.
+    :vartype callback_uri: str
     """
 
     _validation = {
@@ -2728,6 +2760,7 @@ class PlayRequest(_serialization.Model):
         "play_to": {"key": "playTo", "type": "[CommunicationIdentifierModel]"},
         "play_options": {"key": "playOptions", "type": "PlayOptions"},
         "operation_context": {"key": "operationContext", "type": "str"},
+        "callback_uri": {"key": "callbackUri", "type": "str"},
     }
 
     def __init__(
@@ -2737,6 +2770,7 @@ class PlayRequest(_serialization.Model):
         play_to: Optional[List["_models.CommunicationIdentifierModel"]] = None,
         play_options: Optional["_models.PlayOptions"] = None,
         operation_context: Optional[str] = None,
+        callback_uri: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -2750,12 +2784,15 @@ class PlayRequest(_serialization.Model):
         :paramtype play_options: ~azure.communication.callautomation.models.PlayOptions
         :keyword operation_context: The value to identify context of the operation.
         :paramtype operation_context: str
+        :keyword callback_uri: The callback URI to override the main callback URI.
+        :paramtype callback_uri: str
         """
         super().__init__(**kwargs)
         self.play_source_info = play_source_info
         self.play_to = play_to
         self.play_options = play_options
         self.operation_context = operation_context
+        self.callback_uri = callback_uri
 
 
 class PlaySource(_serialization.Model):
@@ -3125,6 +3162,8 @@ class RecognizeRequest(_serialization.Model):
     :vartype recognize_options: ~azure.communication.callautomation.models.RecognizeOptions
     :ivar operation_context: The value to identify context of the operation.
     :vartype operation_context: str
+    :ivar callback_uri: The callback URI to override the main callback URI.
+    :vartype callback_uri: str
     """
 
     _validation = {
@@ -3138,6 +3177,7 @@ class RecognizeRequest(_serialization.Model):
         "interrupt_call_media_operation": {"key": "interruptCallMediaOperation", "type": "bool"},
         "recognize_options": {"key": "recognizeOptions", "type": "RecognizeOptions"},
         "operation_context": {"key": "operationContext", "type": "str"},
+        "callback_uri": {"key": "callbackUri", "type": "str"},
     }
 
     def __init__(
@@ -3148,6 +3188,7 @@ class RecognizeRequest(_serialization.Model):
         play_prompt: Optional["_models.PlaySource"] = None,
         interrupt_call_media_operation: Optional[bool] = None,
         operation_context: Optional[str] = None,
+        callback_uri: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -3164,6 +3205,8 @@ class RecognizeRequest(_serialization.Model):
         :paramtype recognize_options: ~azure.communication.callautomation.models.RecognizeOptions
         :keyword operation_context: The value to identify context of the operation.
         :paramtype operation_context: str
+        :keyword callback_uri: The callback URI to override the main callback URI.
+        :paramtype callback_uri: str
         """
         super().__init__(**kwargs)
         self.recognize_input_type = recognize_input_type
@@ -3171,6 +3214,7 @@ class RecognizeRequest(_serialization.Model):
         self.interrupt_call_media_operation = interrupt_call_media_operation
         self.recognize_options = recognize_options
         self.operation_context = operation_context
+        self.callback_uri = callback_uri
 
 
 class RecordingStateChanged(_serialization.Model):
@@ -3430,6 +3474,8 @@ class RemoveParticipantRequest(_serialization.Model):
     :ivar operation_context: Used by customers when calling mid-call actions to correlate the
      request to the response event.
     :vartype operation_context: str
+    :ivar callback_uri: The callback URI to override the main callback URI.
+    :vartype callback_uri: str
     """
 
     _validation = {
@@ -3439,6 +3485,7 @@ class RemoveParticipantRequest(_serialization.Model):
     _attribute_map = {
         "participant_to_remove": {"key": "participantToRemove", "type": "CommunicationIdentifierModel"},
         "operation_context": {"key": "operationContext", "type": "str"},
+        "callback_uri": {"key": "callbackUri", "type": "str"},
     }
 
     def __init__(
@@ -3446,6 +3493,7 @@ class RemoveParticipantRequest(_serialization.Model):
         *,
         participant_to_remove: "_models.CommunicationIdentifierModel",
         operation_context: Optional[str] = None,
+        callback_uri: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -3455,10 +3503,13 @@ class RemoveParticipantRequest(_serialization.Model):
         :keyword operation_context: Used by customers when calling mid-call actions to correlate the
          request to the response event.
         :paramtype operation_context: str
+        :keyword callback_uri: The callback URI to override the main callback URI.
+        :paramtype callback_uri: str
         """
         super().__init__(**kwargs)
         self.participant_to_remove = participant_to_remove
         self.operation_context = operation_context
+        self.callback_uri = callback_uri
 
 
 class RemoveParticipantResponse(_serialization.Model):
@@ -3712,6 +3763,8 @@ class SendDtmfRequest(_serialization.Model):
      ~azure.communication.callautomation.models.CommunicationIdentifierModel
     :ivar operation_context: The value to identify context of the operation.
     :vartype operation_context: str
+    :ivar callback_uri: The callback URI to override the main callback URI.
+    :vartype callback_uri: str
     """
 
     _validation = {
@@ -3723,6 +3776,7 @@ class SendDtmfRequest(_serialization.Model):
         "tones": {"key": "tones", "type": "[str]"},
         "target_participant": {"key": "targetParticipant", "type": "CommunicationIdentifierModel"},
         "operation_context": {"key": "operationContext", "type": "str"},
+        "callback_uri": {"key": "callbackUri", "type": "str"},
     }
 
     def __init__(
@@ -3731,6 +3785,7 @@ class SendDtmfRequest(_serialization.Model):
         tones: List[Union[str, "_models.DtmfTone"]],
         target_participant: "_models.CommunicationIdentifierModel",
         operation_context: Optional[str] = None,
+        callback_uri: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -3741,31 +3796,14 @@ class SendDtmfRequest(_serialization.Model):
          ~azure.communication.callautomation.models.CommunicationIdentifierModel
         :keyword operation_context: The value to identify context of the operation.
         :paramtype operation_context: str
+        :keyword callback_uri: The callback URI to override the main callback URI.
+        :paramtype callback_uri: str
         """
         super().__init__(**kwargs)
         self.tones = tones
         self.target_participant = target_participant
         self.operation_context = operation_context
-
-
-class SensitiveFlag(_serialization.Model):
-    """SensitiveFlag.
-
-    :ivar recording:
-    :vartype recording: int
-    """
-
-    _attribute_map = {
-        "recording": {"key": "recording", "type": "int"},
-    }
-
-    def __init__(self, *, recording: Optional[int] = None, **kwargs: Any) -> None:
-        """
-        :keyword recording:
-        :paramtype recording: int
-        """
-        super().__init__(**kwargs)
-        self.recording = recording
+        self.callback_uri = callback_uri
 
 
 class SpeechOptions(_serialization.Model):
@@ -4150,6 +4188,10 @@ class TransferToParticipantRequest(_serialization.Model):
     :ivar operation_context: Used by customers when calling mid-call actions to correlate the
      request to the response event.
     :vartype operation_context: str
+    :ivar transferee: Transferee is the participant who is transferring the call.
+    :vartype transferee: ~azure.communication.callautomation.models.CommunicationIdentifierModel
+    :ivar callback_uri: The callback URI to override the main callback URI.
+    :vartype callback_uri: str
     """
 
     _validation = {
@@ -4160,6 +4202,8 @@ class TransferToParticipantRequest(_serialization.Model):
         "target_participant": {"key": "targetParticipant", "type": "CommunicationIdentifierModel"},
         "custom_context": {"key": "customContext", "type": "CustomContext"},
         "operation_context": {"key": "operationContext", "type": "str"},
+        "transferee": {"key": "transferee", "type": "CommunicationIdentifierModel"},
+        "callback_uri": {"key": "callbackUri", "type": "str"},
     }
 
     def __init__(
@@ -4168,6 +4212,8 @@ class TransferToParticipantRequest(_serialization.Model):
         target_participant: "_models.CommunicationIdentifierModel",
         custom_context: Optional["_models.CustomContext"] = None,
         operation_context: Optional[str] = None,
+        transferee: Optional["_models.CommunicationIdentifierModel"] = None,
+        callback_uri: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -4180,11 +4226,17 @@ class TransferToParticipantRequest(_serialization.Model):
         :keyword operation_context: Used by customers when calling mid-call actions to correlate the
          request to the response event.
         :paramtype operation_context: str
+        :keyword transferee: Transferee is the participant who is transferring the call.
+        :paramtype transferee: ~azure.communication.callautomation.models.CommunicationIdentifierModel
+        :keyword callback_uri: The callback URI to override the main callback URI.
+        :paramtype callback_uri: str
         """
         super().__init__(**kwargs)
         self.target_participant = target_participant
         self.custom_context = custom_context
         self.operation_context = operation_context
+        self.transferee = transferee
+        self.callback_uri = callback_uri
 
 
 class UnmuteParticipantsRequest(_serialization.Model):

@@ -1,17 +1,13 @@
 from unittest.mock import DEFAULT, Mock
 
 import pytest
+from azure.core.polling import LROPoller
 from pytest_mock import MockFixture
 
 from azure.ai.ml import load_workspace
 from azure.ai.ml._scope_dependent_operations import OperationScope
-from azure.ai.ml.entities import (
-    IdentityConfiguration,
-    ManagedIdentityConfiguration,
-    Workspace,
-)
+from azure.ai.ml.entities import IdentityConfiguration, ManagedIdentityConfiguration, Workspace
 from azure.ai.ml.operations import WorkspaceOperations
-from azure.core.polling import LROPoller
 
 
 @pytest.fixture
@@ -22,13 +18,13 @@ def mock_credential() -> Mock:
 @pytest.fixture
 def mock_workspace_operation(
     mock_workspace_scope: OperationScope,
-    mock_aml_services_2023_04_01_preview: Mock,
+    mock_aml_services_2023_06_01_preview: Mock,
     mock_machinelearning_client: Mock,
     mock_credential: Mock,
 ) -> WorkspaceOperations:
     yield WorkspaceOperations(
         operation_scope=mock_workspace_scope,
-        service_client=mock_aml_services_2023_04_01_preview,
+        service_client=mock_aml_services_2023_06_01_preview,
         all_operations=mock_machinelearning_client._operation_container,
         credentials=mock_credential,
     )
@@ -90,6 +86,36 @@ class TestWorkspaceOperation:
         mock_workspace_operation.begin_update(ws, update_dependent_resources=True)
         mock_workspace_operation._operation.begin_update.assert_called()
 
+    def test_update_with_role_assignemnt(
+        self, mock_workspace_operation: WorkspaceOperations, mocker: MockFixture
+    ) -> None:
+        mocker.patch(
+            "azure.ai.ml.operations.WorkspaceOperations._populate_feature_store_role_assignment_parameters",
+            return_value=({}, {}, {}),
+        )
+        mocker.patch("azure.ai.ml._arm_deployments.ArmDeploymentExecutor.deploy_resource", return_value=LROPoller)
+
+        ws = Workspace(name="name", description="description", kind="featurestore")
+
+        def outgoing_call(rg, name, params, polling, cls):
+            assert rg == "test_resource_group"
+            assert name == "name"
+            assert params.description == "description"
+            assert polling is True
+            assert callable(cls)
+            return DEFAULT
+
+        mock_workspace_operation._operation.begin_update.side_effect = outgoing_call
+        mock_workspace_operation.begin_update(
+            ws,
+            update_dependent_resources=True,
+            grant_materialization_identity_permission=True,
+            update_workspace_role_assignment=True,
+            update_offline_store_role_assignment=True,
+            update_online_store_role_assignment=True,
+        )
+        mock_workspace_operation._operation.begin_update.assert_called()
+
     def test_delete(self, mock_workspace_operation: WorkspaceOperations, mocker: MockFixture) -> None:
         mocker.patch("azure.ai.ml.operations._workspace_operations_base.delete_resource_by_arm_id", return_value=None)
         mock_workspace_operation.begin_delete("randstr", delete_dependent_resources=True)
@@ -116,3 +142,8 @@ class TestWorkspaceOperation:
         assert isinstance(wps.identity, IdentityConfiguration)
         assert isinstance(wps.identity.user_assigned_identities, list)
         assert isinstance(wps.identity.user_assigned_identities[0], ManagedIdentityConfiguration)
+
+    def test_load_workspace_with_workspacehub_yaml(self, mock_workspace_operation: WorkspaceOperations):
+        params_override = []
+        wps = load_workspace("./tests/test_configs/workspace/workspace_with_hub.yaml", params_override=params_override)
+        assert isinstance(wps.workspace_hub, str)

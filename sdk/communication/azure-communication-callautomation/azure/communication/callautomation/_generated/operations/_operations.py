@@ -22,14 +22,13 @@ from azure.core.exceptions import (
 )
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpResponse
-from azure.core.rest import HttpRequest
+from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
 from .. import models as _models
 from .._serialization import Serializer
-from .._vendor import AzureCommunicationCallAutomationServiceMixinABC, _format_url_section
+from .._vendor import AzureCommunicationCallAutomationServiceMixinABC
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
@@ -155,7 +154,7 @@ def build_call_connection_get_call_request(call_connection_id: str, **kwargs: An
         "callConnectionId": _SERIALIZER.url("call_connection_id", call_connection_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -179,7 +178,7 @@ def build_call_connection_hangup_call_request(call_connection_id: str, **kwargs:
         "callConnectionId": _SERIALIZER.url("call_connection_id", call_connection_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -203,7 +202,7 @@ def build_call_connection_terminate_call_request(call_connection_id: str, **kwar
         "callConnectionId": _SERIALIZER.url("call_connection_id", call_connection_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -232,7 +231,7 @@ def build_call_connection_transfer_to_participant_request(call_connection_id: st
         "callConnectionId": _SERIALIZER.url("call_connection_id", call_connection_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -262,7 +261,7 @@ def build_call_connection_get_participants_request(call_connection_id: str, **kw
         "callConnectionId": _SERIALIZER.url("call_connection_id", call_connection_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -287,7 +286,7 @@ def build_call_connection_add_participant_request(call_connection_id: str, **kwa
         "callConnectionId": _SERIALIZER.url("call_connection_id", call_connection_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -318,7 +317,7 @@ def build_call_connection_remove_participant_request(call_connection_id: str, **
         "callConnectionId": _SERIALIZER.url("call_connection_id", call_connection_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -349,7 +348,7 @@ def build_call_connection_mute_request(call_connection_id: str, **kwargs: Any) -
         "callConnectionId": _SERIALIZER.url("call_connection_id", call_connection_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -380,7 +379,7 @@ def build_call_connection_unmute_request(call_connection_id: str, **kwargs: Any)
         "callConnectionId": _SERIALIZER.url("call_connection_id", call_connection_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -413,7 +412,7 @@ def build_call_connection_get_participant_request(
         "participantRawId": _SERIALIZER.url("participant_raw_id", participant_raw_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -438,7 +437,7 @@ def build_call_media_play_request(call_connection_id: str, **kwargs: Any) -> Htt
         "callConnectionId": _SERIALIZER.url("call_connection_id", call_connection_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -464,7 +463,7 @@ def build_call_media_cancel_all_media_operations_request(call_connection_id: str
         "callConnectionId": _SERIALIZER.url("call_connection_id", call_connection_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -489,7 +488,7 @@ def build_call_media_recognize_request(call_connection_id: str, **kwargs: Any) -
         "callConnectionId": _SERIALIZER.url("call_connection_id", call_connection_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -516,7 +515,7 @@ def build_call_media_start_continuous_dtmf_recognition_request(call_connection_i
         "callConnectionId": _SERIALIZER.url("call_connection_id", call_connection_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -543,7 +542,7 @@ def build_call_media_stop_continuous_dtmf_recognition_request(call_connection_id
         "callConnectionId": _SERIALIZER.url("call_connection_id", call_connection_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -570,7 +569,7 @@ def build_call_media_send_dtmf_request(call_connection_id: str, **kwargs: Any) -
         "callConnectionId": _SERIALIZER.url("call_connection_id", call_connection_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -598,7 +597,7 @@ def build_call_dialog_start_dialog_request(call_connection_id: str, dialog_id: s
         "dialogId": _SERIALIZER.url("dialog_id", dialog_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -625,7 +624,7 @@ def build_call_dialog_stop_dialog_request(call_connection_id: str, dialog_id: st
         "dialogId": _SERIALIZER.url("dialog_id", dialog_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -675,7 +674,7 @@ def build_call_recording_get_recording_properties_request(recording_id: str, **k
         "recordingId": _SERIALIZER.url("recording_id", recording_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -699,7 +698,7 @@ def build_call_recording_stop_recording_request(recording_id: str, **kwargs: Any
         "recordingId": _SERIALIZER.url("recording_id", recording_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -723,7 +722,7 @@ def build_call_recording_pause_recording_request(recording_id: str, **kwargs: An
         "recordingId": _SERIALIZER.url("recording_id", recording_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -747,7 +746,7 @@ def build_call_recording_resume_recording_request(recording_id: str, **kwargs: A
         "recordingId": _SERIALIZER.url("recording_id", recording_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -856,6 +855,8 @@ class AzureCommunicationCallAutomationServiceOperationsMixin(AzureCommunicationC
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
+            if _stream:
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
@@ -964,6 +965,8 @@ class AzureCommunicationCallAutomationServiceOperationsMixin(AzureCommunicationC
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
+            if _stream:
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
@@ -1077,6 +1080,8 @@ class AzureCommunicationCallAutomationServiceOperationsMixin(AzureCommunicationC
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
+            if _stream:
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
@@ -1181,6 +1186,8 @@ class AzureCommunicationCallAutomationServiceOperationsMixin(AzureCommunicationC
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
+            if _stream:
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
@@ -1252,6 +1259,8 @@ class CallConnectionOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
+            if _stream:
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
@@ -1309,6 +1318,8 @@ class CallConnectionOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
+            if _stream:
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
@@ -1362,6 +1373,8 @@ class CallConnectionOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
+            if _stream:
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
@@ -1488,6 +1501,8 @@ class CallConnectionOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
+            if _stream:
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
@@ -1584,6 +1599,8 @@ class CallConnectionOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
+                if _stream:
+                    response.read()  # Load the body in memory and close the socket
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
                 raise HttpResponseError(response=response, model=error)
@@ -1706,6 +1723,8 @@ class CallConnectionOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
+            if _stream:
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
@@ -1836,6 +1855,8 @@ class CallConnectionOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
+            if _stream:
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
@@ -1966,6 +1987,8 @@ class CallConnectionOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
+            if _stream:
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
@@ -2096,6 +2119,8 @@ class CallConnectionOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
+            if _stream:
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
@@ -2156,6 +2181,8 @@ class CallConnectionOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
+            if _stream:
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
@@ -2295,6 +2322,8 @@ class CallMediaOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
+            if _stream:
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
@@ -2348,6 +2377,8 @@ class CallMediaOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
+            if _stream:
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
@@ -2464,6 +2495,8 @@ class CallMediaOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
+            if _stream:
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
@@ -2590,6 +2623,8 @@ class CallMediaOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
+            if _stream:
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
@@ -2716,6 +2751,8 @@ class CallMediaOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
+            if _stream:
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
@@ -2832,6 +2869,8 @@ class CallMediaOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
+            if _stream:
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
@@ -2986,6 +3025,8 @@ class CallDialogOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
+            if _stream:
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
@@ -3046,6 +3087,8 @@ class CallDialogOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
+            if _stream:
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
@@ -3176,6 +3219,8 @@ class CallRecordingOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
+            if _stream:
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
@@ -3231,6 +3276,8 @@ class CallRecordingOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
+            if _stream:
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
@@ -3288,6 +3335,8 @@ class CallRecordingOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
+            if _stream:
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
@@ -3341,6 +3390,8 @@ class CallRecordingOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
+            if _stream:
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
@@ -3394,6 +3445,8 @@ class CallRecordingOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
+            if _stream:
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)

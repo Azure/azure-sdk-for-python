@@ -10,8 +10,9 @@ import sys
 import time
 import uuid
 from pathlib import Path, PurePosixPath
-from typing import TYPE_CHECKING, Dict, List, Optional
+from typing import TYPE_CHECKING, Dict, List, Optional, Union
 
+from typing_extensions import Literal
 from colorama import Fore
 
 from azure.ai.ml._artifacts._constants import (
@@ -70,8 +71,24 @@ class BlobStorageClient:
         ignore_file: IgnoreFile = IgnoreFile(None),
         asset_hash: Optional[str] = None,
         show_progress: bool = True,
-    ) -> Dict[str, str]:
-        """Upload a file or directory to a path inside the container."""
+    ) -> Dict[Literal["remote path", "name", "version", "indicator file"], str]:
+        """Upload a file or directory to a path inside the container.
+
+        :param source: The path to either a file or directory to upload
+        :type source: str
+        :param name: The asset name
+        :type name: str
+        :param version: The asset version
+        :type version: str
+        :param ignore_file: The IgnoreFile that specifies which files, if any, to ignore when uploading files
+        :type ignore_file: IgnoreFile
+        :param asset_hash: The asset hash
+        :type asset_hash: Optional[str]
+        :param show_progress: Whether to show progress on the console. Defaults to True.
+        :type show_progress: bool
+        :return: A dictionary containing info of the uploaded artifact
+        :rtype: Dict[Literal["remote path", "name", "version", "indicator file"], str]
+        """
         if name and version is None:
             version = str(uuid.uuid4())  # placeholder for auto-increment artifacts
 
@@ -203,14 +220,17 @@ class BlobStorageClient:
     def download(
         self,
         starts_with: str,
-        destination: str = Path.home(),
+        destination: Union[str, os.PathLike] = Path.home(),
         max_concurrency: int = MAX_CONCURRENCY,
     ) -> None:
         """Downloads all blobs inside a specified container to the destination folder.
 
         :param starts_with: Indicates the blob name starts with to search.
+        :type starts_with: str
         :param destination: Indicates path to download in local
+        :type destination: Union[str, os.PathLike[str]]
         :param max_concurrency: Indicates concurrent connections to download a blob.
+        :type max_concurrency: int
         """
         try:
             my_list = list(self.container_client.list_blobs(name_starts_with=starts_with, include="metadata"))
@@ -254,12 +274,14 @@ class BlobStorageClient:
         """Lists all blob names in the specified container.
 
         :param starts_with: Indicates the blob name starts with to search.
+        :type starts_with: str
         :return: the list of blob paths in container
+        :rtype: List[str]
         """
         blobs = self.container_client.list_blobs(name_starts_with=starts_with)
         return [blob.name for blob in blobs]
 
-    def exists(self, blobpath: str, delimeter: str = "/") -> bool:
+    def exists(self, blobpath: str, delimiter: str = "/") -> bool:
         """Returns whether there exists a blob named `blobpath`, or if there exists a virtual directory given path
         delimeter `delimeter`
 
@@ -276,16 +298,17 @@ class BlobStorageClient:
 
         :param str blobpath: prefix matched against blob names
         :param str delimiter: The path delimeter (defaults to /)
-        :return bool: True if file or virtual directory exists, False otherwise
+        :return: True if file or virtual directory exists, False otherwise
+        :rtype: bool
         """
         if self.container_client.get_blob_client(blobpath).exists():
             return True
 
-        ensure_delimeter = delimeter if not blobpath.endswith(delimeter) else ""
+        ensure_delimeter = delimiter if not blobpath.endswith(delimiter) else ""
 
         # Virtual directory only exists if there is atleast one blob with it
         result = next(
-            self.container_client.walk_blobs(name_starts_with=blobpath + ensure_delimeter, delimiter=delimeter),
+            self.container_client.walk_blobs(name_starts_with=blobpath + ensure_delimeter, delimiter=delimiter),
             None,
         )
         return result is not None
@@ -299,7 +322,8 @@ def _blob_is_hdi_folder(blob: "BlobProperties") -> bool:
     specifying that it is actually a folder.
 
     :param BlobProperties blob: Blob to check
-    :return bool: True if blob represents a folder, False otherwise
+    :return: True if blob represents a folder, False otherwise
+    :rtype: bool
     """
 
     # Metadata isn't always a populated field, and may need to be explicitly

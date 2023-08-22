@@ -36,7 +36,7 @@ class InternalInputPortSchema(InputPortSchema):
     datastore_mode = fields.Str()
 
     @post_dump(pass_original=True)
-    def resolve_list_type(self, data, original_data, **kwargs):  # pylint: disable=unused-argument, no-self-use
+    def resolve_list_type(self, data, original_data, **kwargs):  # pylint: disable=unused-argument
         if isinstance(original_data.type, list):
             data["type"] = original_data.type
         return data
@@ -59,7 +59,6 @@ class InternalPrimitiveOutputSchema(metaclass=PatchedSchemaMeta):
         required=True,
     )
     description = fields.Str()
-    is_control = fields.Bool()
 
 
 class InternalParameterSchema(ParameterSchema):
@@ -84,7 +83,7 @@ class InternalEnumParameterSchema(ParameterSchema):
 
     @post_dump
     @post_load
-    def enum_value_to_string(self, data, **kwargs):  # pylint: disable=unused-argument, disable=no-self-use
+    def enum_value_to_string(self, data, **kwargs):  # pylint: disable=unused-argument
         if "enum" in data:
             data["enum"] = list(map(str, data["enum"]))
         if "default" in data and data["default"] is not None:

@@ -4,11 +4,11 @@
 # ------------------------------------
 import logging
 import os
-from typing import List, TYPE_CHECKING, Any, cast
+from typing import List, Optional, TYPE_CHECKING, Any, cast
 
 from azure.core.credentials import AccessToken
 from ..._constants import EnvironmentVariables
-from ..._internal import get_default_authority, normalize_authority
+from ..._internal import get_default_authority, normalize_authority, within_dac
 from .azure_cli import AzureCliCredential
 from .azd_cli import AzureDeveloperCliCredential
 from .azure_powershell import AzurePowerShellCredential
@@ -114,9 +114,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
         managed_identity_client_id = kwargs.pop(
             "managed_identity_client_id", os.environ.get(EnvironmentVariables.AZURE_CLIENT_ID)
         )
-        workload_identity_client_id = kwargs.pop(
-            "workload_identity_client_id", managed_identity_client_id
-        )
+        workload_identity_client_id = kwargs.pop("workload_identity_client_id", managed_identity_client_id)
         workload_identity_tenant_id = kwargs.pop(
             "workload_identity_tenant_id", os.environ.get(EnvironmentVariables.AZURE_TENANT_ID)
         )
@@ -142,11 +140,14 @@ class DefaultAzureCredential(ChainedTokenCredential):
         if not exclude_workload_identity_credential:
             if all(os.environ.get(var) for var in EnvironmentVariables.WORKLOAD_IDENTITY_VARS):
                 client_id = workload_identity_client_id
-                credentials.append(WorkloadIdentityCredential(
-                    client_id=cast(str, client_id),
-                    tenant_id=workload_identity_tenant_id,
-                    file=os.environ[EnvironmentVariables.AZURE_FEDERATED_TOKEN_FILE],
-                    **kwargs))
+                credentials.append(
+                    WorkloadIdentityCredential(
+                        client_id=cast(str, client_id),
+                        tenant_id=workload_identity_tenant_id,
+                        file=os.environ[EnvironmentVariables.AZURE_FEDERATED_TOKEN_FILE],
+                        **kwargs
+                    )
+                )
         if not exclude_managed_identity_credential:
             credentials.append(
                 ManagedIdentityCredential(
@@ -175,7 +176,9 @@ class DefaultAzureCredential(ChainedTokenCredential):
 
         super().__init__(*credentials)
 
-    async def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
+    async def get_token(
+        self, *scopes: str, claims: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs: Any
+    ) -> AccessToken:
         """Asynchronously request an access token for `scopes`.
 
         This method is called automatically by Azure SDK clients.
@@ -183,6 +186,8 @@ class DefaultAzureCredential(ChainedTokenCredential):
         :param str scopes: desired scopes for the access token. This method requires at least one scope.
             For more information about scopes, see
             https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
+        :keyword str claims: additional claims required in the token, such as those returned in a resource provider's
+            claims challenge following an authorization failure.
         :keyword str tenant_id: optional tenant to include in the token request.
 
         :return: An access token with the desired scopes.
@@ -191,6 +196,8 @@ class DefaultAzureCredential(ChainedTokenCredential):
           `message` attribute listing each authentication attempt and its error message.
         """
         if self._successful_credential:
-            return await self._successful_credential.get_token(*scopes, **kwargs)
-
-        return await super().get_token(*scopes, **kwargs)
+            return await self._successful_credential.get_token(*scopes, claims=claims, tenant_id=tenant_id, **kwargs)
+        within_dac.set(True)
+        token = await super().get_token(*scopes, claims=claims, tenant_id=tenant_id, **kwargs)
+        within_dac.set(False)
+        return token

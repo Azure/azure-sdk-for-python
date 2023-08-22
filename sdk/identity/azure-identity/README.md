@@ -75,6 +75,12 @@ The Azure Identity library focuses on OAuth authentication with Azure AD. It off
 1. **Azure Developer CLI** - If the developer has authenticated via the Azure Developer CLI `azd auth login` command, the `DefaultAzureCredential` will authenticate with that account.
 1. **Interactive browser** - If enabled, `DefaultAzureCredential` will interactively authenticate a user via the default browser. This credential type is disabled by default.
 
+#### Continuation policy
+
+As of version 1.14.0, `DefaultAzureCredential` will attempt to authenticate with all developer credentials until one succeeds, regardless of any errors previous developer credentials experienced. For example, a developer credential may attempt to get a token and fail, so `DefaultAzureCredential` will continue to the next credential in the flow. Deployed service credentials will stop the flow with a thrown exception if they're able to attempt token retrieval, but don't receive one. Prior to version 1.14.0, developer credentials would similarly stop the authentication flow if token retrieval failed, but this is no longer the case.
+
+This allows for trying all of the developer credentials on your machine while having predictable deployed behavior.
+
 #### Note about `VisualStudioCodeCredential`
 
 Due to a [known issue](https://github.com/Azure/azure-sdk-for-python/issues/23249), `VisualStudioCodeCredential` has been removed from the `DefaultAzureCredential` token chain. When the issue is resolved in a future release, this change will be reverted.
@@ -214,6 +220,18 @@ from azure.identity import AzureAuthorityHosts
 DefaultAzureCredential(authority=AzureAuthorityHosts.AZURE_GOVERNMENT)
 ```
 
+If the authority for your cloud isn't listed in `AzureAuthorityHosts`, you can explicitly specify its URL:
+
+```python
+DefaultAzureCredential(authority="https://login.partner.microsoftonline.cn")
+```
+
+As an alternative to specifying the `authority` argument, you can also set the `AZURE_AUTHORITY_HOST` environment variable to the URL of your cloud's authority. This approach is useful when configuring multiple credentials to authenticate to the same cloud:
+
+```sh
+AZURE_AUTHORITY_HOST=https://login.partner.microsoftonline.cn
+```
+
 Not all credentials require this configuration. Credentials that authenticate through a development tool, such as `AzureCliCredential`, use that tool's configuration. Similarly, `VisualStudioCodeCredential` accepts an `authority` argument but defaults to the authority matching VS Code's "Azure: Cloud" setting.
 
 ## Credential classes
@@ -287,6 +305,10 @@ variables:
 
 Configuration is attempted in the above order. For example, if values for a client secret and certificate are both present, the client secret will be used.
 
+## Continuous Access Evaluation
+
+As of version 1.14.0, accessing resources protected by [Continuous Access Evaluation (CAE)][cae] is possible on a per-request basis. This behavior can be enabled by setting the `enable_cae` keyword argument to `True` in the credential's `get_token` method. CAE isn't supported for developer and managed identity credentials.
+
 ## Token caching
 
 Token caching is a feature provided by the Azure Identity library that allows apps to:
@@ -355,6 +377,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct](https://ope
 [azure_keyvault_secrets]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/keyvault/azure-keyvault-secrets
 [azure_storage_blob]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/storage/azure-storage-blob
 [b2c]: https://learn.microsoft.com/azure/active-directory-b2c/overview
+[cae]: https://learn.microsoft.com/azure/active-directory/conditional-access/concept-continuous-access-evaluation
 [cert_cred_ref]: https://aka.ms/azsdk/python/identity/certificatecredential
 [chain_cred_ref]: https://aka.ms/azsdk/python/identity/chainedtokencredential
 [cli_cred_ref]: https://aka.ms/azsdk/python/identity/azclicredential

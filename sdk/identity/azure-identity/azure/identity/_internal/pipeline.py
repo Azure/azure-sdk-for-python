@@ -26,7 +26,7 @@ def _get_config(**kwargs) -> Configuration:
     :return: A configuration object.
     :rtype: ~azure.core.configuration.Configuration
     """
-    config = Configuration(**kwargs)
+    config: Configuration = Configuration(**kwargs)
     config.custom_hook_policy = CustomHookPolicy(**kwargs)
     config.headers_policy = HeadersPolicy(**kwargs)
     config.http_logging_policy = HttpLoggingPolicy(**kwargs)
@@ -66,7 +66,10 @@ def build_pipeline(transport=None, policies=None, **kwargs):
         config.retry_policy = RetryPolicy(**kwargs)
         policies = _get_policies(config, **kwargs)
     if not transport:
-        from azure.core.pipeline.transport import RequestsTransport  # pylint: disable=no-name-in-module,non-abstract-transport-import
+        from azure.core.pipeline.transport import (  # pylint: disable=non-abstract-transport-import, no-name-in-module
+            RequestsTransport,
+        )
+
         transport = RequestsTransport(**kwargs)
 
     return Pipeline(transport, policies=policies)
@@ -82,7 +85,9 @@ def build_async_pipeline(transport=None, policies=None, **kwargs):
         config.retry_policy = AsyncRetryPolicy(**kwargs)
         policies = _get_policies(config, **kwargs)
     if not transport:
-        from azure.core.pipeline.transport import AioHttpTransport  # pylint: disable=no-name-in-module,non-abstract-transport-import
+        from azure.core.pipeline.transport import (  # pylint: disable=non-abstract-transport-import, no-name-in-module
+            AioHttpTransport,
+        )
 
         transport = AioHttpTransport(**kwargs)
 

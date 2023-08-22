@@ -22,7 +22,7 @@ from azure.ai.formrecognizer import (
     DocumentAnalysisApiVersion,
     AnalysisFeature,
     ClassifierDocumentTypeDetails,
-    AzureBlobContentSource
+    BlobSource
 )
 
 FormRecognizerClientPreparer = functools.partial(_GlobalClientPreparer, FormRecognizerClient)
@@ -86,16 +86,16 @@ class TestMultiapi(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     def test_document_api_version_form_recognizer_client(self):
         with pytest.raises(ValueError) as excinfo:
-            client = FormRecognizerClient("url", "key", api_version="2023-02-28-preview")
-        assert "Unsupported API version '2023-02-28-preview'. Please select from: {}\nAPI version '2023-02-28-preview' is " \
+            client = FormRecognizerClient("url", "key", api_version="2023-07-31")
+        assert "Unsupported API version '2023-07-31'. Please select from: {}\nAPI version '2023-07-31' is " \
                "only available for DocumentAnalysisClient and DocumentModelAdministrationClient.".format(
             ", ".join(v.value for v in FormRecognizerApiVersion)) == str(excinfo.value)
 
     @FormRecognizerPreparer()
     def test_document_api_version_form_training_client(self):
         with pytest.raises(ValueError) as excinfo:
-            client = FormTrainingClient("url", "key", api_version="2023-02-28-preview")
-        assert "Unsupported API version '2023-02-28-preview'. Please select from: {}\nAPI version '2023-02-28-preview' is " \
+            client = FormTrainingClient("url", "key", api_version="2023-07-31")
+        assert "Unsupported API version '2023-07-31'. Please select from: {}\nAPI version '2023-07-31' is " \
                "only available for DocumentAnalysisClient and DocumentModelAdministrationClient.".format(
             ", ".join(v.value for v in FormRecognizerApiVersion)) == str(excinfo.value)
 
@@ -103,7 +103,7 @@ class TestMultiapi(AsyncFormRecognizerTest):
     @DocumentAnalysisClientPreparer()
     def test_default_api_version_document_analysis_client(self, **kwargs):
         client = kwargs.pop("client")
-        assert "2023-02-28-preview" == client._api_version
+        assert "2023-07-31" == client._api_version
 
     @FormRecognizerPreparer()
     def test_bad_api_version_document_analysis_client(self):
@@ -124,7 +124,7 @@ class TestMultiapi(AsyncFormRecognizerTest):
     @DocumentAnalysisClientPreparer()
     def test_default_api_version_document_model_admin_client(self, **kwargs):
         client = kwargs.pop("client")
-        assert "2023-02-28-preview" == client._api_version
+        assert "2023-07-31" == client._api_version
 
     @FormRecognizerPreparer()
     def test_bad_api_version_document_model_admin_client(self):
@@ -203,29 +203,25 @@ class TestMultiapi(AsyncFormRecognizerTest):
             assert layout.tables[2].row_count == 24
             assert layout.tables[2].column_count == 5
 
-            # test that the addition of new attributes in v2023-02-28-preview does not break v2022-08-31
+            # test that the addition of new attributes in v2023-07-31 does not break v2022-08-31
 
             with pytest.raises(ValueError) as excinfo:
-                await client.begin_analyze_document("prebuilt-layout", my_file, features=[AnalysisFeature.OCR_FONT])
-            assert "Keyword argument 'features' is only available for API version V2023_02_28_PREVIEW and later." == str(excinfo.value)
+                await client.begin_analyze_document("prebuilt-layout", my_file, features=[AnalysisFeature.STYLE_FONT])
+            assert "Keyword argument 'features' is only available for API version V2023_07_31 and later." == str(excinfo.value)
 
-            with pytest.raises(ValueError) as excinfo:
-                await client.begin_analyze_document("prebuilt-layout", my_file, query_fields=["Charges"])
-            assert "Keyword argument 'query_fields' is only available for API version V2023_02_28_PREVIEW and later." == str(excinfo.value)
-
-            # test that the addition of new methods in v2023-02-28-preview does not break v2022-08-31
+            # test that the addition of new methods in v2023-07-31 does not break v2022-08-31
             with pytest.raises(ValueError) as excinfo:
                 await client.begin_classify_document("foo", my_file)
             assert (
                     "Method 'begin_classify_document()' is only available for API version "
-                    "V2023_02_28_PREVIEW and later"
+                    "V2023_07_31 and later"
                 ) == str(excinfo.value)
 
             with pytest.raises(ValueError) as excinfo:
                 await client.begin_classify_document_from_url("foo", self.form_url_jpg)
                 assert (
                     "Method 'begin_classify_document_from_url()' is only available for API version "
-                    "V2023_02_28_PREVIEW and later"
+                    "V2023_07_31 and later"
                 ) == str(excinfo.value)
 
     @FormRecognizerPreparer()
@@ -247,43 +243,43 @@ class TestMultiapi(AsyncFormRecognizerTest):
                     assert field["type"]
                     assert doc_type.field_confidence[key] is not None
 
-            # test that the addition of new attributes in v2023-02-28-preview does not break v2022-08-31
+            # test that the addition of new attributes in v2023-07-31 does not break v2022-08-31
 
             with pytest.raises(ValueError) as excinfo:
                 await client.list_document_classifiers()
             assert (
                 "Method 'list_document_classifiers()' is only available for API version "
-                "V2023_02_28_PREVIEW and later") == str(excinfo.value)
+                "V2023_07_31 and later") == str(excinfo.value)
 
             with pytest.raises(ValueError) as excinfo:
                 await client.begin_build_document_classifier(
                             doc_types={
                                 "IRS-1040-A": ClassifierDocumentTypeDetails(
-                                    azure_blob_source=AzureBlobContentSource(
+                                    source=BlobSource(
                                         container_url=formrecognizer_training_data_classifier,
                                         prefix="IRS-1040-A/train"
                                     )
                                 ),
                                 "IRS-1040-B": ClassifierDocumentTypeDetails(
-                                    azure_blob_source=AzureBlobContentSource(
+                                    source=BlobSource(
                                         container_url=formrecognizer_training_data_classifier,
                                         prefix="IRS-1040-B/train"
                                     )
                                 ),
                                 "IRS-1040-C": ClassifierDocumentTypeDetails(
-                                    azure_blob_source=AzureBlobContentSource(
+                                    source=BlobSource(
                                         container_url=formrecognizer_training_data_classifier,
                                         prefix="IRS-1040-C/train"
                                     )
                                 ),
                                 "IRS-1040-D": ClassifierDocumentTypeDetails(
-                                    azure_blob_source=AzureBlobContentSource(
+                                    source=BlobSource(
                                         container_url=formrecognizer_training_data_classifier,
                                         prefix="IRS-1040-D/train"
                                     )
                                 ),
                                 "IRS-1040-E": ClassifierDocumentTypeDetails(
-                                    azure_blob_source=AzureBlobContentSource(
+                                    source=BlobSource(
                                         container_url=formrecognizer_training_data_classifier,
                                         prefix="IRS-1040-E/train"
                                     )
@@ -293,19 +289,19 @@ class TestMultiapi(AsyncFormRecognizerTest):
                         )
             assert (
                 "Method 'begin_build_document_classifier()' is only available for API version "
-                "V2023_02_28_PREVIEW and later") == str(excinfo.value)
+                "V2023_07_31 and later") == str(excinfo.value)
 
-            # test that the addition of new methods in v2023-02-28-preview does not break v2022-08-31
+            # test that the addition of new methods in v2023-07-31 does not break v2022-08-31
             with pytest.raises(ValueError) as excinfo:
                 await client.get_document_classifier("foo")
             assert (
                     "Method 'get_document_classifier()' is only available for API version "
-                    "V2023_02_28_PREVIEW and later"
+                    "V2023_07_31 and later"
                 ) == str(excinfo.value)
 
             with pytest.raises(ValueError) as excinfo:
                 await client.delete_document_classifier("foo")
                 assert (
                     "Method 'delete_document_classifier()' is only available for API version "
-                    "V2023_02_28_PREVIEW and later"
+                    "V2023_07_31 and later"
                 ) == str(excinfo.value)

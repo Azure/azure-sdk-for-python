@@ -10,13 +10,14 @@ repos:
   hooks:
   - id: interrogate
     types_or: [python]
-    exclude: ^(sdk/ml/azure-ai-ml/tests/|sdk/ml/azure-ai-ml/scripts/|sdk/ml/azure-ai-ml/azure/ai/ml/_restclient|sdk/ml/azure-ai-ml/setup.py)
+    args: [--ignore-init-method, --ignore-private, --ignore-semiprivate, --ignore-magic]
+    exclude: ^(sdk/ml/azure-ai-ml/tests/|sdk/ml/azure-ai-ml/samples/|sdk/ml/azure-ai-ml/scripts/|sdk/ml/azure-ai-ml/azure/ai/ml/_restclient|sdk/ml/azure-ai-ml/setup.py)
     # exclude defined here because exclude in pyproject.toml is not being respected
 - repo: https://github.com/streetsidesoftware/cspell-cli
   rev: v6.31.0
   hooks:
   - id: cspell
-    args: ['--config', '.vscode/cspell.json']
+    args: ['--config', '.vscode/cspell.json', "--no-must-find-files"]
 - repo: https://github.com/pre-commit/mirrors-isort
   rev: v5.8.0
   hooks:
@@ -42,13 +43,13 @@ repos:
         dependencies = [
             (
                 "azure-pylint-guidelines-checker",
-                "0.0.5",
+                "0.0.9",
                 [
                     "--index-url",
                     "https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/",
                 ],
             ),
-            ("pylint", "2.9.3", []),
+            ("pylint", "2.15.8", []),
         ]
 
         # Make sure that correct versions are installed

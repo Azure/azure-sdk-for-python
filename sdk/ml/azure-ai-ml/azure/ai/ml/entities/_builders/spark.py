@@ -585,14 +585,19 @@ class Spark(BaseNode, SparkJobEntryMixin):
                 validation_result.append_error(message=str(e), yaml_path="args")
         return validation_result
 
+    # pylint: disable-next=docstring-missing-param
     def __call__(self, *args, **kwargs) -> "Spark":
-        """Call Spark as a function will return a new instance each time."""
+        """Call Spark as a function will return a new instance each time.
+
+        :return: A Spark object
+        :rtype: Spark
+        """
         if isinstance(self._component, Component):
             # call this to validate inputs
             node = self._component(*args, **kwargs)
             # merge inputs
             for name, original_input in self.inputs.items():
-                if name not in kwargs.keys():
+                if name not in kwargs:
                     # use setattr here to make sure owner of input won't change
                     setattr(node.inputs, name, original_input._data)
                     node._job_inputs[name] = original_input._data

@@ -7,11 +7,10 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
-from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class ContextTagKeys(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ContextTagKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The context tag keys.
     """
 
@@ -44,14 +43,14 @@ class ContextTagKeys(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     AI_INTERNAL_AGENT_VERSION = "ai.internal.agentVersion"
     AI_INTERNAL_NODE_NAME = "ai.internal.nodeName"
 
-class DataPointType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class DataPointType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of the metric data measurement.
     """
 
     MEASUREMENT = "Measurement"
     AGGREGATION = "Aggregation"
 
-class SeverityLevel(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class SeverityLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Defines the level of severity for the event.
     """
 

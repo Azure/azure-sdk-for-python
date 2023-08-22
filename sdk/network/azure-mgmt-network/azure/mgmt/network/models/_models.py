@@ -245,6 +245,12 @@ class ApplicationGateway(Resource):  # pylint: disable=too-many-instance-attribu
     :ivar global_configuration: Global Configuration.
     :vartype global_configuration:
      ~azure.mgmt.network.models.ApplicationGatewayGlobalConfiguration
+    :ivar default_predefined_ssl_policy: The default predefined SSL Policy applied on the
+     application gateway resource. Known values are: "AppGwSslPolicy20150501",
+     "AppGwSslPolicy20170401", "AppGwSslPolicy20170401S", "AppGwSslPolicy20220101", and
+     "AppGwSslPolicy20220101S".
+    :vartype default_predefined_ssl_policy: str or
+     ~azure.mgmt.network.models.ApplicationGatewaySslPolicyName
     """
 
     _validation = {
@@ -255,6 +261,7 @@ class ApplicationGateway(Resource):  # pylint: disable=too-many-instance-attribu
         "private_endpoint_connections": {"readonly": True},
         "resource_guid": {"readonly": True},
         "provisioning_state": {"readonly": True},
+        "default_predefined_ssl_policy": {"readonly": True},
     }
 
     _attribute_map = {
@@ -352,6 +359,7 @@ class ApplicationGateway(Resource):  # pylint: disable=too-many-instance-attribu
             "key": "properties.globalConfiguration",
             "type": "ApplicationGatewayGlobalConfiguration",
         },
+        "default_predefined_ssl_policy": {"key": "properties.defaultPredefinedSslPolicy", "type": "str"},
     }
 
     def __init__(  # pylint: disable=too-many-locals
@@ -566,6 +574,7 @@ class ApplicationGateway(Resource):  # pylint: disable=too-many-instance-attribu
         self.force_firewall_policy_association = force_firewall_policy_association
         self.load_distribution_policies = load_distribution_policies
         self.global_configuration = global_configuration
+        self.default_predefined_ssl_policy = None
 
 class ApplicationGatewayBackendAddress(_serialization.Model):
     """Backend address of an application gateway.
@@ -1366,7 +1375,7 @@ class ApplicationGatewayProbe(SubResource):  # pylint: disable=too-many-instance
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar port: Custom port which will be used for probing the backend servers. The valid value
      ranges from 1 to 65535. In case not set, port from http settings will be used. This property is
-     valid for Standard_v2 and WAF_v2 only.
+     valid for Basic, Standard_v2 and WAF_v2 only.
     :vartype port: int
     """
 
@@ -1454,7 +1463,7 @@ class ApplicationGatewayProbe(SubResource):  # pylint: disable=too-many-instance
          ~azure.mgmt.network.models.ApplicationGatewayProbeHealthResponseMatch
         :keyword port: Custom port which will be used for probing the backend servers. The valid value
          ranges from 1 to 65535. In case not set, port from http settings will be used. This property is
-         valid for Standard_v2 and WAF_v2 only.
+         valid for Basic, Standard_v2 and WAF_v2 only.
         :paramtype port: int
         """
         super().__init__(id=id, **kwargs)
@@ -1596,10 +1605,11 @@ class ApplicationGatewaySku(_serialization.Model):
     """SKU of an application gateway.
 
     :ivar name: Name of an application gateway SKU. Known values are: "Standard_Small",
-     "Standard_Medium", "Standard_Large", "WAF_Medium", "WAF_Large", "Standard_v2", and "WAF_v2".
+     "Standard_Medium", "Standard_Large", "WAF_Medium", "WAF_Large", "Standard_v2", "WAF_v2", and
+     "Basic".
     :vartype name: str or ~azure.mgmt.network.models.ApplicationGatewaySkuName
     :ivar tier: Tier of an application gateway. Known values are: "Standard", "WAF", "Standard_v2",
-     and "WAF_v2".
+     "WAF_v2", and "Basic".
     :vartype tier: str or ~azure.mgmt.network.models.ApplicationGatewayTier
     :ivar capacity: Capacity (instance count) of an application gateway.
     :vartype capacity: int
@@ -1621,10 +1631,11 @@ class ApplicationGatewaySku(_serialization.Model):
     ) -> None:
         """
         :keyword name: Name of an application gateway SKU. Known values are: "Standard_Small",
-         "Standard_Medium", "Standard_Large", "WAF_Medium", "WAF_Large", "Standard_v2", and "WAF_v2".
+         "Standard_Medium", "Standard_Large", "WAF_Medium", "WAF_Large", "Standard_v2", "WAF_v2", and
+         "Basic".
         :paramtype name: str or ~azure.mgmt.network.models.ApplicationGatewaySkuName
         :keyword tier: Tier of an application gateway. Known values are: "Standard", "WAF",
-         "Standard_v2", and "WAF_v2".
+         "Standard_v2", "WAF_v2", and "Basic".
         :paramtype tier: str or ~azure.mgmt.network.models.ApplicationGatewayTier
         :keyword capacity: Capacity (instance count) of an application gateway.
         :paramtype capacity: int
@@ -1925,6 +1936,9 @@ class BackendAddressPool(SubResource):  # pylint: disable=too-many-instance-attr
     :vartype drain_period_in_seconds: int
     :ivar virtual_network: A reference to a virtual network.
     :vartype virtual_network: ~azure.mgmt.network.models.SubResource
+    :ivar sync_mode: Backend address synchronous mode for the backend pool. Known values are:
+     "Automatic" and "Manual".
+    :vartype sync_mode: str or ~azure.mgmt.network.models.SyncMode
     """
 
     _validation = {
@@ -1960,6 +1974,7 @@ class BackendAddressPool(SubResource):  # pylint: disable=too-many-instance-attr
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
         "drain_period_in_seconds": {"key": "properties.drainPeriodInSeconds", "type": "int"},
         "virtual_network": {"key": "properties.virtualNetwork", "type": "SubResource"},
+        "sync_mode": {"key": "properties.syncMode", "type": "str"},
     }
 
     def __init__(
@@ -1972,6 +1987,7 @@ class BackendAddressPool(SubResource):  # pylint: disable=too-many-instance-attr
         load_balancer_backend_addresses: Optional[List["_models.LoadBalancerBackendAddress"]] = None,
         drain_period_in_seconds: Optional[int] = None,
         virtual_network: Optional["_models.SubResource"] = None,
+        sync_mode: Optional[Union[str, "_models.SyncMode"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1993,6 +2009,9 @@ class BackendAddressPool(SubResource):  # pylint: disable=too-many-instance-attr
         :paramtype drain_period_in_seconds: int
         :keyword virtual_network: A reference to a virtual network.
         :paramtype virtual_network: ~azure.mgmt.network.models.SubResource
+        :keyword sync_mode: Backend address synchronous mode for the backend pool. Known values are:
+         "Automatic" and "Manual".
+        :paramtype sync_mode: str or ~azure.mgmt.network.models.SyncMode
         """
         super().__init__(id=id, **kwargs)
         self.name = name
@@ -2009,6 +2028,7 @@ class BackendAddressPool(SubResource):  # pylint: disable=too-many-instance-attr
         self.provisioning_state = None
         self.drain_period_in_seconds = drain_period_in_seconds
         self.virtual_network = virtual_network
+        self.sync_mode = sync_mode
 
 class BgpSettings(_serialization.Model):
     """BGP settings details.
@@ -6430,6 +6450,9 @@ class VirtualNetworkGateway(Resource):  # pylint: disable=too-many-instance-attr
     :ivar allow_remote_vnet_traffic: Configure this gateway to accept traffic from other Azure
      Virtual Networks. This configuration does not support connectivity to Azure Virtual WAN.
     :vartype allow_remote_vnet_traffic: bool
+    :ivar admin_state: Property to indicate if the Express Route Gateway serves traffic when there
+     are multiple Express Route Gateways in the vnet. Known values are: "Enabled" and "Disabled".
+    :vartype admin_state: str or ~azure.mgmt.network.models.AdminState
     """
 
     _validation = {
@@ -6475,6 +6498,7 @@ class VirtualNetworkGateway(Resource):  # pylint: disable=too-many-instance-attr
         "enable_bgp_route_translation_for_nat": {"key": "properties.enableBgpRouteTranslationForNat", "type": "bool"},
         "allow_virtual_wan_traffic": {"key": "properties.allowVirtualWanTraffic", "type": "bool"},
         "allow_remote_vnet_traffic": {"key": "properties.allowRemoteVnetTraffic", "type": "bool"},
+        "admin_state": {"key": "properties.adminState", "type": "str"},
     }
 
     def __init__(  # pylint: disable=too-many-locals
@@ -6504,6 +6528,7 @@ class VirtualNetworkGateway(Resource):  # pylint: disable=too-many-instance-attr
         enable_bgp_route_translation_for_nat: Optional[bool] = None,
         allow_virtual_wan_traffic: Optional[bool] = None,
         allow_remote_vnet_traffic: Optional[bool] = None,
+        admin_state: Optional[Union[str, "_models.AdminState"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -6574,6 +6599,10 @@ class VirtualNetworkGateway(Resource):  # pylint: disable=too-many-instance-attr
         :keyword allow_remote_vnet_traffic: Configure this gateway to accept traffic from other Azure
          Virtual Networks. This configuration does not support connectivity to Azure Virtual WAN.
         :paramtype allow_remote_vnet_traffic: bool
+        :keyword admin_state: Property to indicate if the Express Route Gateway serves traffic when
+         there are multiple Express Route Gateways in the vnet. Known values are: "Enabled" and
+         "Disabled".
+        :paramtype admin_state: str or ~azure.mgmt.network.models.AdminState
         """
         super().__init__(id=id, location=location, tags=tags, **kwargs)
         self.extended_location = extended_location
@@ -6601,6 +6630,7 @@ class VirtualNetworkGateway(Resource):  # pylint: disable=too-many-instance-attr
         self.enable_bgp_route_translation_for_nat = enable_bgp_route_translation_for_nat
         self.allow_virtual_wan_traffic = allow_virtual_wan_traffic
         self.allow_remote_vnet_traffic = allow_remote_vnet_traffic
+        self.admin_state = admin_state
 
 class VirtualNetworkGatewayConnection(Resource):  # pylint: disable=too-many-instance-attributes
     """A common class for general resource information.
@@ -17094,7 +17124,7 @@ class ApplicationGatewayCustomError(_serialization.Model):
 
     :ivar status_code: Status code of the application gateway custom error. Known values are:
      "HttpStatus400", "HttpStatus403", "HttpStatus404", "HttpStatus405", "HttpStatus408",
-     "HttpStatus499", "HttpStatus500", "HttpStatus502", "HttpStatus503", and "HttpStatus504".
+     "HttpStatus500", "HttpStatus502", "HttpStatus503", and "HttpStatus504".
     :vartype status_code: str or
      ~azure.mgmt.network.models.ApplicationGatewayCustomErrorStatusCode
     :ivar custom_error_page_url: Error page URL of the application gateway custom error.
@@ -17116,7 +17146,7 @@ class ApplicationGatewayCustomError(_serialization.Model):
         """
         :keyword status_code: Status code of the application gateway custom error. Known values are:
          "HttpStatus400", "HttpStatus403", "HttpStatus404", "HttpStatus405", "HttpStatus408",
-         "HttpStatus499", "HttpStatus500", "HttpStatus502", "HttpStatus503", and "HttpStatus504".
+         "HttpStatus500", "HttpStatus502", "HttpStatus503", and "HttpStatus504".
         :paramtype status_code: str or
          ~azure.mgmt.network.models.ApplicationGatewayCustomErrorStatusCode
         :keyword custom_error_page_url: Error page URL of the application gateway custom error.
@@ -33418,10 +33448,13 @@ class EffectiveConnectivityConfiguration(_serialization.Model):
      are: "False" and "True".
     :vartype delete_existing_peering: str or
      ~azure.mgmt.network.models.DeleteExistingPeering
+    :ivar resource_guid: Unique identifier for this resource.
+    :vartype resource_guid: str
     """
 
     _validation = {
         "provisioning_state": {"readonly": True},
+        "resource_guid": {"readonly": True},
     }
 
     _attribute_map = {
@@ -33434,6 +33467,7 @@ class EffectiveConnectivityConfiguration(_serialization.Model):
         "applies_to_groups": {"key": "properties.appliesToGroups", "type": "[ConnectivityGroupItem]"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
         "delete_existing_peering": {"key": "properties.deleteExistingPeering", "type": "str"},
+        "resource_guid": {"key": "properties.resourceGuid", "type": "str"},
     }
 
     def __init__(
@@ -33483,6 +33517,7 @@ class EffectiveConnectivityConfiguration(_serialization.Model):
         self.applies_to_groups = applies_to_groups
         self.provisioning_state = None
         self.delete_existing_peering = delete_existing_peering
+        self.resource_guid = None
 
 class ActiveConnectivityConfiguration(
     EffectiveConnectivityConfiguration
@@ -33514,6 +33549,8 @@ class ActiveConnectivityConfiguration(
      are: "False" and "True".
     :vartype delete_existing_peering: str or
      ~azure.mgmt.network.models.DeleteExistingPeering
+    :ivar resource_guid: Unique identifier for this resource.
+    :vartype resource_guid: str
     :ivar commit_time: Deployment time string.
     :vartype commit_time: ~datetime.datetime
     :ivar region: Deployment region.
@@ -33522,6 +33559,7 @@ class ActiveConnectivityConfiguration(
 
     _validation = {
         "provisioning_state": {"readonly": True},
+        "resource_guid": {"readonly": True},
     }
 
     _attribute_map = {
@@ -33534,6 +33572,7 @@ class ActiveConnectivityConfiguration(
         "applies_to_groups": {"key": "properties.appliesToGroups", "type": "[ConnectivityGroupItem]"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
         "delete_existing_peering": {"key": "properties.deleteExistingPeering", "type": "str"},
+        "resource_guid": {"key": "properties.resourceGuid", "type": "str"},
         "commit_time": {"key": "commitTime", "type": "iso-8601"},
         "region": {"key": "region", "type": "str"},
     }
@@ -33684,6 +33723,8 @@ class ActiveDefaultSecurityAdminRule(ActiveBaseSecurityAdminRule):  # pylint: di
     :ivar provisioning_state: The provisioning state of the resource. Known values are:
      "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
+    :ivar resource_guid: Unique identifier for this resource.
+    :vartype resource_guid: str
     """
 
     _validation = {
@@ -33698,6 +33739,7 @@ class ActiveDefaultSecurityAdminRule(ActiveBaseSecurityAdminRule):  # pylint: di
         "priority": {"readonly": True},
         "direction": {"readonly": True},
         "provisioning_state": {"readonly": True},
+        "resource_guid": {"readonly": True},
     }
 
     _attribute_map = {
@@ -33723,6 +33765,7 @@ class ActiveDefaultSecurityAdminRule(ActiveBaseSecurityAdminRule):  # pylint: di
         "priority": {"key": "properties.priority", "type": "int"},
         "direction": {"key": "properties.direction", "type": "str"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "resource_guid": {"key": "properties.resourceGuid", "type": "str"},
     }
 
     def __init__(
@@ -33779,6 +33822,7 @@ class ActiveDefaultSecurityAdminRule(ActiveBaseSecurityAdminRule):  # pylint: di
         self.priority = None
         self.direction = None
         self.provisioning_state = None
+        self.resource_guid = None
 
 class ActiveDefaultSecurityUserRule(ActiveBaseSecurityUserRule):  # pylint: disable=too-many-instance-attributes
     """Network security default user rule.
@@ -33991,12 +34035,15 @@ class ActiveSecurityAdminRule(ActiveBaseSecurityAdminRule):  # pylint: disable=t
     :ivar provisioning_state: The provisioning state of the resource. Known values are:
      "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
+    :ivar resource_guid: Unique identifier for this resource.
+    :vartype resource_guid: str
     """
 
     _validation = {
         "kind": {"required": True},
         "priority": {"maximum": 4096, "minimum": 1},
         "provisioning_state": {"readonly": True},
+        "resource_guid": {"readonly": True},
     }
 
     _attribute_map = {
@@ -34021,6 +34068,7 @@ class ActiveSecurityAdminRule(ActiveBaseSecurityAdminRule):  # pylint: disable=t
         "priority": {"key": "properties.priority", "type": "int"},
         "direction": {"key": "properties.direction", "type": "str"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "resource_guid": {"key": "properties.resourceGuid", "type": "str"},
     }
 
     def __init__(
@@ -34108,6 +34156,7 @@ class ActiveSecurityAdminRule(ActiveBaseSecurityAdminRule):  # pylint: disable=t
         self.priority = priority
         self.direction = direction
         self.provisioning_state = None
+        self.resource_guid = None
 
 class ActiveSecurityAdminRulesListResult(_serialization.Model):
     """Result of the request to list active security admin rules. It contains a list of active
@@ -34517,6 +34566,8 @@ class AdminRule(BaseAdminRule):  # pylint: disable=too-many-instance-attributes
     :ivar provisioning_state: The provisioning state of the resource. Known values are:
      "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
+    :ivar resource_guid: Unique identifier for this resource.
+    :vartype resource_guid: str
     """
 
     _validation = {
@@ -34528,6 +34579,7 @@ class AdminRule(BaseAdminRule):  # pylint: disable=too-many-instance-attributes
         "system_data": {"readonly": True},
         "priority": {"maximum": 4096, "minimum": 1},
         "provisioning_state": {"readonly": True},
+        "resource_guid": {"readonly": True},
     }
 
     _attribute_map = {
@@ -34547,6 +34599,7 @@ class AdminRule(BaseAdminRule):  # pylint: disable=too-many-instance-attributes
         "priority": {"key": "properties.priority", "type": "int"},
         "direction": {"key": "properties.direction", "type": "str"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "resource_guid": {"key": "properties.resourceGuid", "type": "str"},
     }
 
     def __init__(
@@ -34603,6 +34656,7 @@ class AdminRule(BaseAdminRule):  # pylint: disable=too-many-instance-attributes
         self.priority = priority
         self.direction = direction
         self.provisioning_state = None
+        self.resource_guid = None
 
 class AdminRuleListResult(_serialization.Model):
     """security configuration admin rule list result.
@@ -34694,16 +34748,20 @@ class ConfigurationGroup(_serialization.Model):
     :ivar provisioning_state: The provisioning state of the scope assignment resource. Known values
      are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
+    :ivar resource_guid: Unique identifier for this resource.
+    :vartype resource_guid: str
     """
 
     _validation = {
         "provisioning_state": {"readonly": True},
+        "resource_guid": {"readonly": True},
     }
 
     _attribute_map = {
         "id": {"key": "id", "type": "str"},
         "description": {"key": "properties.description", "type": "str"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "resource_guid": {"key": "properties.resourceGuid", "type": "str"},
     }
 
     def __init__(
@@ -34723,6 +34781,7 @@ class ConfigurationGroup(_serialization.Model):
         self.id = id
         self.description = description
         self.provisioning_state = None
+        self.resource_guid = None
 
 class ConnectivityConfiguration(ChildResource):  # pylint: disable=too-many-instance-attributes
     """The network manager connectivity configuration resource.
@@ -34758,6 +34817,8 @@ class ConnectivityConfiguration(ChildResource):  # pylint: disable=too-many-inst
      are: "False" and "True".
     :vartype delete_existing_peering: str or
      ~azure.mgmt.network.models.DeleteExistingPeering
+    :ivar resource_guid: Unique identifier for this resource.
+    :vartype resource_guid: str
     """
 
     _validation = {
@@ -34767,6 +34828,7 @@ class ConnectivityConfiguration(ChildResource):  # pylint: disable=too-many-inst
         "etag": {"readonly": True},
         "system_data": {"readonly": True},
         "provisioning_state": {"readonly": True},
+        "resource_guid": {"readonly": True},
     }
 
     _attribute_map = {
@@ -34782,6 +34844,7 @@ class ConnectivityConfiguration(ChildResource):  # pylint: disable=too-many-inst
         "applies_to_groups": {"key": "properties.appliesToGroups", "type": "[ConnectivityGroupItem]"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
         "delete_existing_peering": {"key": "properties.deleteExistingPeering", "type": "str"},
+        "resource_guid": {"key": "properties.resourceGuid", "type": "str"},
     }
 
     def __init__(
@@ -34823,6 +34886,7 @@ class ConnectivityConfiguration(ChildResource):  # pylint: disable=too-many-inst
         self.applies_to_groups = applies_to_groups
         self.provisioning_state = None
         self.delete_existing_peering = delete_existing_peering
+        self.resource_guid = None
 
 class ConnectivityConfigurationListResult(_serialization.Model):
     """Result of the request to list network manager connectivity configurations. It contains a list
@@ -34961,6 +35025,8 @@ class DefaultAdminRule(BaseAdminRule):  # pylint: disable=too-many-instance-attr
     :ivar provisioning_state: The provisioning state of the resource. Known values are:
      "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
+    :ivar resource_guid: Unique identifier for this resource.
+    :vartype resource_guid: str
     """
 
     _validation = {
@@ -34980,6 +35046,7 @@ class DefaultAdminRule(BaseAdminRule):  # pylint: disable=too-many-instance-attr
         "priority": {"readonly": True},
         "direction": {"readonly": True},
         "provisioning_state": {"readonly": True},
+        "resource_guid": {"readonly": True},
     }
 
     _attribute_map = {
@@ -35000,6 +35067,7 @@ class DefaultAdminRule(BaseAdminRule):  # pylint: disable=too-many-instance-attr
         "priority": {"key": "properties.priority", "type": "int"},
         "direction": {"key": "properties.direction", "type": "str"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "resource_guid": {"key": "properties.resourceGuid", "type": "str"},
     }
 
     def __init__(self, *, flag: Optional[str] = None, **kwargs: Any) -> None:
@@ -35020,6 +35088,7 @@ class DefaultAdminRule(BaseAdminRule):  # pylint: disable=too-many-instance-attr
         self.priority = None
         self.direction = None
         self.provisioning_state = None
+        self.resource_guid = None
 
 class DefaultUserRule(BaseUserRule):  # pylint: disable=too-many-instance-attributes
     """Network security default user rule.
@@ -35248,6 +35317,8 @@ class EffectiveDefaultSecurityAdminRule(EffectiveBaseSecurityAdminRule):  # pyli
     :ivar provisioning_state: The provisioning state of the resource. Known values are:
      "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
+    :ivar resource_guid: Unique identifier for this resource.
+    :vartype resource_guid: str
     """
 
     _validation = {
@@ -35262,6 +35333,7 @@ class EffectiveDefaultSecurityAdminRule(EffectiveBaseSecurityAdminRule):  # pyli
         "priority": {"readonly": True},
         "direction": {"readonly": True},
         "provisioning_state": {"readonly": True},
+        "resource_guid": {"readonly": True},
     }
 
     _attribute_map = {
@@ -35285,6 +35357,7 @@ class EffectiveDefaultSecurityAdminRule(EffectiveBaseSecurityAdminRule):  # pyli
         "priority": {"key": "properties.priority", "type": "int"},
         "direction": {"key": "properties.direction", "type": "str"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "resource_guid": {"key": "properties.resourceGuid", "type": "str"},
     }
 
     def __init__(
@@ -35333,6 +35406,7 @@ class EffectiveDefaultSecurityAdminRule(EffectiveBaseSecurityAdminRule):  # pyli
         self.priority = None
         self.direction = None
         self.provisioning_state = None
+        self.resource_guid = None
 
 class EffectiveSecurityAdminRule(EffectiveBaseSecurityAdminRule):  # pylint: disable=too-many-instance-attributes
     """Network admin rule.
@@ -35383,12 +35457,15 @@ class EffectiveSecurityAdminRule(EffectiveBaseSecurityAdminRule):  # pylint: dis
     :ivar provisioning_state: The provisioning state of the resource. Known values are:
      "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
+    :ivar resource_guid: Unique identifier for this resource.
+    :vartype resource_guid: str
     """
 
     _validation = {
         "kind": {"required": True},
         "priority": {"maximum": 4096, "minimum": 1},
         "provisioning_state": {"readonly": True},
+        "resource_guid": {"readonly": True},
     }
 
     _attribute_map = {
@@ -35411,6 +35488,7 @@ class EffectiveSecurityAdminRule(EffectiveBaseSecurityAdminRule):  # pylint: dis
         "priority": {"key": "properties.priority", "type": "int"},
         "direction": {"key": "properties.direction", "type": "str"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "resource_guid": {"key": "properties.resourceGuid", "type": "str"},
     }
 
     def __init__(
@@ -35490,6 +35568,7 @@ class EffectiveSecurityAdminRule(EffectiveBaseSecurityAdminRule):  # pylint: dis
         self.priority = priority
         self.direction = direction
         self.provisioning_state = None
+        self.resource_guid = None
 
 class EffectiveVirtualNetwork(_serialization.Model):
     """Effective Virtual Network.
@@ -35659,6 +35738,8 @@ class NetworkGroup(ChildResource):
     :ivar provisioning_state: The provisioning state of the scope assignment resource. Known values
      are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
+    :ivar resource_guid: Unique identifier for this resource.
+    :vartype resource_guid: str
     """
 
     _validation = {
@@ -35668,6 +35749,7 @@ class NetworkGroup(ChildResource):
         "etag": {"readonly": True},
         "system_data": {"readonly": True},
         "provisioning_state": {"readonly": True},
+        "resource_guid": {"readonly": True},
     }
 
     _attribute_map = {
@@ -35678,6 +35760,7 @@ class NetworkGroup(ChildResource):
         "system_data": {"key": "systemData", "type": "SystemData"},
         "description": {"key": "properties.description", "type": "str"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "resource_guid": {"key": "properties.resourceGuid", "type": "str"},
     }
 
     def __init__(self, *, description: Optional[str] = None, **kwargs: Any) -> None:
@@ -35689,6 +35772,7 @@ class NetworkGroup(ChildResource):
         self.system_data = None
         self.description = description
         self.provisioning_state = None
+        self.resource_guid = None
 
 class NetworkGroupListResult(_serialization.Model):
     """Result of the request to list NetworkGroup. It contains a list of groups and a URL link to get
@@ -35748,6 +35832,8 @@ class NetworkManager(Resource):  # pylint: disable=too-many-instance-attributes
     :ivar provisioning_state: The provisioning state of the network manager resource. Known values
      are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
+    :ivar resource_guid: Unique identifier for this resource.
+    :vartype resource_guid: str
     """
 
     _validation = {
@@ -35756,6 +35842,7 @@ class NetworkManager(Resource):  # pylint: disable=too-many-instance-attributes
         "etag": {"readonly": True},
         "system_data": {"readonly": True},
         "provisioning_state": {"readonly": True},
+        "resource_guid": {"readonly": True},
     }
 
     _attribute_map = {
@@ -35773,6 +35860,7 @@ class NetworkManager(Resource):  # pylint: disable=too-many-instance-attributes
         },
         "network_manager_scope_accesses": {"key": "properties.networkManagerScopeAccesses", "type": "[str]"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "resource_guid": {"key": "properties.resourceGuid", "type": "str"},
     }
 
     def __init__(
@@ -35809,6 +35897,7 @@ class NetworkManager(Resource):  # pylint: disable=too-many-instance-attributes
         self.network_manager_scopes = network_manager_scopes
         self.network_manager_scope_accesses = network_manager_scope_accesses
         self.provisioning_state = None
+        self.resource_guid = None
 
 class NetworkManagerCommit(_serialization.Model):
     """Network Manager Commit.
@@ -36280,7 +36369,7 @@ class NspAccessRule(Resource):  # pylint: disable=too-many-instance-attributes
     :vartype fully_qualified_domain_names: list[str]
     :ivar subscriptions: List of subscription ids.
     :vartype subscriptions: list[~azure.mgmt.network.models.SubscriptionId]
-    :ivar network_security_perimeters: Inbound rule specified by the perimeter id.
+    :ivar network_security_perimeters: Rule specified by the perimeter id.
     :vartype network_security_perimeters:
      list[~azure.mgmt.network.models.PerimeterBasedAccessRule]
     :ivar email_addresses: Outbound rules email address format.
@@ -36293,6 +36382,7 @@ class NspAccessRule(Resource):  # pylint: disable=too-many-instance-attributes
         "name": {"readonly": True},
         "type": {"readonly": True},
         "provisioning_state": {"readonly": True},
+        "network_security_perimeters": {"readonly": True},
     }
 
     _attribute_map = {
@@ -36324,7 +36414,6 @@ class NspAccessRule(Resource):  # pylint: disable=too-many-instance-attributes
         address_prefixes: Optional[List[str]] = None,
         fully_qualified_domain_names: Optional[List[str]] = None,
         subscriptions: Optional[List["_models.SubscriptionId"]] = None,
-        network_security_perimeters: Optional[List["_models.PerimeterBasedAccessRule"]] = None,
         email_addresses: Optional[List[str]] = None,
         phone_numbers: Optional[List[str]] = None,
         **kwargs: Any
@@ -36345,9 +36434,6 @@ class NspAccessRule(Resource):  # pylint: disable=too-many-instance-attributes
         :paramtype fully_qualified_domain_names: list[str]
         :keyword subscriptions: List of subscription ids.
         :paramtype subscriptions: list[~azure.mgmt.network.models.SubscriptionId]
-        :keyword network_security_perimeters: Inbound rule specified by the perimeter id.
-        :paramtype network_security_perimeters:
-         list[~azure.mgmt.network.models.PerimeterBasedAccessRule]
         :keyword email_addresses: Outbound rules email address format.
         :paramtype email_addresses: list[str]
         :keyword phone_numbers: Outbound rules phone number format.
@@ -36359,7 +36445,7 @@ class NspAccessRule(Resource):  # pylint: disable=too-many-instance-attributes
         self.address_prefixes = address_prefixes
         self.fully_qualified_domain_names = fully_qualified_domain_names
         self.subscriptions = subscriptions
-        self.network_security_perimeters = network_security_perimeters
+        self.network_security_perimeters = None
         self.email_addresses = email_addresses
         self.phone_numbers = phone_numbers
 
@@ -36995,6 +37081,7 @@ class PerimeterBasedAccessRule(_serialization.Model):
     """
 
     _validation = {
+        "id": {"readonly": True},
         "perimeter_guid": {"readonly": True},
         "location": {"readonly": True},
     }
@@ -37005,13 +37092,10 @@ class PerimeterBasedAccessRule(_serialization.Model):
         "location": {"key": "location", "type": "str"},
     }
 
-    def __init__(self, *, id: Optional[str] = None, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
-        """
-        :keyword id: NSP id in the ARM id format.
-        :paramtype id: str
-        """
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
         super().__init__(**kwargs)
-        self.id = id
+        self.id = None
         self.perimeter_guid = None
         self.location = None
 
@@ -37539,6 +37623,8 @@ class AdminRuleCollection(ChildResource):
     :ivar provisioning_state: The provisioning state of the resource. Known values are:
      "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
+    :ivar resource_guid: Unique identifier for this resource.
+    :vartype resource_guid: str
     """
 
     _validation = {
@@ -37548,6 +37634,7 @@ class AdminRuleCollection(ChildResource):
         "etag": {"readonly": True},
         "system_data": {"readonly": True},
         "provisioning_state": {"readonly": True},
+        "resource_guid": {"readonly": True},
     }
 
     _attribute_map = {
@@ -37559,6 +37646,7 @@ class AdminRuleCollection(ChildResource):
         "description": {"key": "properties.description", "type": "str"},
         "applies_to_groups": {"key": "properties.appliesToGroups", "type": "[NetworkManagerSecurityGroupItem]"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "resource_guid": {"key": "properties.resourceGuid", "type": "str"},
     }
 
     def __init__(
@@ -37580,6 +37668,7 @@ class AdminRuleCollection(ChildResource):
         self.description = description
         self.applies_to_groups = applies_to_groups
         self.provisioning_state = None
+        self.resource_guid = None
 
 class AdminRuleCollectionListResult(_serialization.Model):
     """Security admin configuration rule collection list result.
@@ -40532,6 +40621,8 @@ class SecurityAdminConfiguration(ChildResource):
     :ivar provisioning_state: The provisioning state of the resource. Known values are:
      "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
+    :ivar resource_guid: Unique identifier for this resource.
+    :vartype resource_guid: str
     """
 
     _validation = {
@@ -40541,6 +40632,7 @@ class SecurityAdminConfiguration(ChildResource):
         "etag": {"readonly": True},
         "system_data": {"readonly": True},
         "provisioning_state": {"readonly": True},
+        "resource_guid": {"readonly": True},
     }
 
     _attribute_map = {
@@ -40555,6 +40647,7 @@ class SecurityAdminConfiguration(ChildResource):
             "type": "[str]",
         },
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "resource_guid": {"key": "properties.resourceGuid", "type": "str"},
     }
 
     def __init__(
@@ -40579,6 +40672,7 @@ class SecurityAdminConfiguration(ChildResource):
         self.description = description
         self.apply_on_network_intent_policy_based_services = apply_on_network_intent_policy_based_services
         self.provisioning_state = None
+        self.resource_guid = None
 
 class SecurityAdminConfigurationListResult(_serialization.Model):
     """A list of network manager security admin configurations.
@@ -41081,9 +41175,9 @@ class SwapResourceProperties(_serialization.Model):
 class VirtualApplianceAdditionalNicProperties(_serialization.Model):
     """Network Virtual Appliance Additional NIC properties.
 
-    :ivar name: Customer Name for additional nic.
+    :ivar name: Name of additional nic.
     :vartype name: str
-    :ivar has_public_ip: Customer Intent for Public Ip on additional nic.
+    :ivar has_public_ip: Flag (true or false) for Intent for Public Ip on additional nic.
     :vartype has_public_ip: bool
     """
 
@@ -41094,9 +41188,9 @@ class VirtualApplianceAdditionalNicProperties(_serialization.Model):
 
     def __init__(self, *, name: Optional[str] = None, has_public_ip: Optional[bool] = None, **kwargs: Any) -> None:
         """
-        :keyword name: Customer Name for additional nic.
+        :keyword name: Name of additional nic.
         :paramtype name: str
-        :keyword has_public_ip: Customer Intent for Public Ip on additional nic.
+        :keyword has_public_ip: Flag (true or false) for Intent for Public Ip on additional nic.
         :paramtype has_public_ip: bool
         """
         super().__init__(**kwargs)
@@ -41589,4 +41683,42 @@ class WebApplicationFirewallScrubbingRules(_serialization.Model):
         self.selector_match_operator = selector_match_operator
         self.selector = selector
         self.state = state
+
+class MigrateLoadBalancerToIpBasedRequest(_serialization.Model):
+    """The request for a migrateToIpBased API.
+
+    :ivar pools: A list of pool names that should be migrated from Nic based to IP based pool.
+    :vartype pools: list[str]
+    """
+
+    _attribute_map = {
+        "pools": {"key": "pools", "type": "[str]"},
+    }
+
+    def __init__(self, *, pools: Optional[List[str]] = None, **kwargs: Any) -> None:
+        """
+        :keyword pools: A list of pool names that should be migrated from Nic based to IP based pool.
+        :paramtype pools: list[str]
+        """
+        super().__init__(**kwargs)
+        self.pools = pools
+
+class MigratedPools(_serialization.Model):
+    """The response for a migrateToIpBased API.
+
+    :ivar migrated_pools: A list of pools migrated from Nic based to IP based pool.
+    :vartype migrated_pools: list[str]
+    """
+
+    _attribute_map = {
+        "migrated_pools": {"key": "migratedPools", "type": "[str]"},
+    }
+
+    def __init__(self, *, migrated_pools: Optional[List[str]] = None, **kwargs: Any) -> None:
+        """
+        :keyword migrated_pools: A list of pools migrated from Nic based to IP based pool.
+        :paramtype migrated_pools: list[str]
+        """
+        super().__init__(**kwargs)
+        self.migrated_pools = migrated_pools
 

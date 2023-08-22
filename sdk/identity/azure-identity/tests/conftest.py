@@ -103,7 +103,8 @@ def live_pem_certificate(live_service_principal):
 
     if content and password_protected_content and password:
         parameters = get_certificate_parameters(
-            content.encode("utf-8"), password_protected_content.encode("utf-8"), password, "pem")
+            content.encode("utf-8"), password_protected_content.encode("utf-8"), password, "pem"
+        )
         return dict(live_service_principal, **parameters)
 
     pytest.skip("Missing PEM certificate configuration")
@@ -118,6 +119,7 @@ def live_pfx_certificate(live_service_principal):
 
     if encoded_content and encoded_password_protected_content and password:
         import base64
+
         content = base64.b64decode(encoded_content.encode("utf-8"))
         password_protected_content = base64.b64decode(encoded_password_protected_content.encode("utf-8"))
 
@@ -161,6 +163,7 @@ def event_loop():
     yield loop
     loop.close()
 
+
 @pytest.fixture(scope="session", autouse=True)
 def add_sanitizers(test_proxy):
     if EnvironmentVariables.MSI_ENDPOINT in os.environ:
@@ -174,6 +177,7 @@ def add_sanitizers(test_proxy):
     if "CAE_ARM_URL" in os.environ and "CAE_TENANT_ID" in os.environ and "CAE_USERNAME" in os.environ:
         try:
             from urllib.parse import urlparse
+
             arm_url = os.environ["CAE_ARM_URL"]
             real = urlparse(arm_url)
             add_general_regex_sanitizer(regex=real.netloc, value="management.azure.com")

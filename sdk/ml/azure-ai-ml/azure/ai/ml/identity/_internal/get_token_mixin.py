@@ -32,11 +32,13 @@ class GetTokenMixin(ABC):
         super(GetTokenMixin, self).__init__(*args, **kwargs)  # type: ignore
 
     @abc.abstractmethod
+    # pylint: disable-next=docstring-missing-param
     def _acquire_token_silently(self, *scopes, **kwargs):
         # type: (*str, **Any) -> Optional[AccessToken]
         """Attempt to acquire an access token from a cache or by redeeming a refresh token."""
 
     @abc.abstractmethod
+    # pylint: disable-next=docstring-missing-param
     def _request_token(self, *scopes, **kwargs):
         # type: (*str, **Any) -> AccessToken
         """Request an access token from the STS."""
@@ -50,6 +52,7 @@ class GetTokenMixin(ABC):
             return False
         return True
 
+    # pylint: disable-next=docstring-missing-return
     def get_token(self, *scopes, **kwargs):
         # type: (*str, **Any) -> AccessToken
         """Request an access token for `scopes`.

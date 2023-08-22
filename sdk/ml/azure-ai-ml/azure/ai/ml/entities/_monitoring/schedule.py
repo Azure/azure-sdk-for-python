@@ -7,45 +7,43 @@
 import logging
 from os import PathLike
 from pathlib import Path
-from typing import AnyStr, Dict, IO, Optional, Union
+from typing import IO, AnyStr, Dict, Optional, Union
 
-from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, ScheduleType
-from azure.ai.ml.constants._monitoring import SPARK_INSTANCE_TYPE_KEY, SPARK_RUNTIME_VERSION
-from azure.ai.ml.entities._mixins import RestTranslatableMixin
-from azure.ai.ml.entities._monitoring.definition import MonitorDefinition
-from azure.ai.ml.entities._system_data import SystemData
-from azure.ai.ml.entities._schedule.schedule import Schedule
-from azure.ai.ml.entities._schedule.trigger import CronTrigger, RecurrenceTrigger, TriggerBase
-from azure.ai.ml.entities._util import load_from_dict
-from azure.ai.ml._restclient.v2023_04_01_preview.models import CreateMonitorAction
-from azure.ai.ml._restclient.v2023_04_01_preview.models import Schedule as RestSchedule
-from azure.ai.ml._restclient.v2023_04_01_preview.models import ScheduleProperties, RecurrenceFrequency
+from azure.ai.ml._restclient.v2023_06_01_preview.models import CreateMonitorAction, RecurrenceFrequency
+from azure.ai.ml._restclient.v2023_06_01_preview.models import Schedule as RestSchedule
+from azure.ai.ml._restclient.v2023_06_01_preview.models import ScheduleProperties
 from azure.ai.ml._schema.monitoring.schedule import MonitorScheduleSchema
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils.utils import dump_yaml_to_file
+from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, ScheduleType
+from azure.ai.ml.entities._mixins import RestTranslatableMixin
+from azure.ai.ml.entities._monitoring.definition import MonitorDefinition
+from azure.ai.ml.entities._schedule.schedule import Schedule
+from azure.ai.ml.entities._schedule.trigger import CronTrigger, RecurrenceTrigger, TriggerBase
+from azure.ai.ml.entities._system_data import SystemData
+from azure.ai.ml.entities._util import load_from_dict
 
 module_logger = logging.getLogger(__name__)
 
 
 @experimental
 class MonitorSchedule(Schedule, RestTranslatableMixin):
-    """Monitor schedule
+    """Monitor schedule.
 
-    :param name: Name of the schedule.
-    :type name: str
-    :param trigger: Trigger of the schedule.
-    :type trigger: Union[~azure.ai.ml.entities.CronTrigger
-        , ~azure.ai.ml.entities.RecurrenceTrigger]
-    :param create_monitor: The schedule action monitor definition
-    :type create_monitor: ~azure.ai.ml.entities.MonitorDefinition
-    :param display_name: Display name of the schedule.
-    :type display_name: str
-    :param description: Description of the schedule, defaults to None
-    :type description: str
-    :param tags: Tag dictionary. Tags can be added, removed, and updated.
-    :type tags: dict[str, str]
-    :param properties: The job property dictionary.
-    :type properties: dict[str, str]
+    :keyword name: The schedule name.
+    :paramtype name: str
+    :keyword trigger: The schedule trigger.
+    :paramtype trigger: Union[~azure.ai.ml.entities.CronTrigger, ~azure.ai.ml.entities.RecurrenceTrigger]
+    :keyword create_monitor: The schedule action monitor definition.
+    :paramtype create_monitor: ~azure.ai.ml.entities.MonitorDefinition
+    :keyword display_name: The display name of the schedule.
+    :paramtype display_name: Optional[str]
+    :keyword description: A description of the schedule.
+    :paramtype description: Optional[str]
+    :keyword tags: Tag dictionary. Tags can be added, removed, and updated.
+    :paramtype tags: Optional[dict[str, str]]
+    :keyword properties: The job property dictionary.
+    :paramtype properties: Optional[dict[str, str]]
     """
 
     def __init__(
@@ -58,8 +56,8 @@ class MonitorSchedule(Schedule, RestTranslatableMixin):
         description: Optional[str] = None,
         tags: Optional[Dict] = None,
         properties: Optional[Dict] = None,
-        **kwargs,
-    ):
+        **kwargs: Dict,
+    ) -> None:
         super().__init__(
             name=name,
             trigger=trigger,
@@ -94,10 +92,6 @@ class MonitorSchedule(Schedule, RestTranslatableMixin):
     def _to_rest_object(self) -> RestSchedule:
         tags = {
             **self.tags,
-            **{
-                SPARK_INSTANCE_TYPE_KEY: self.create_monitor.compute.instance_type,
-                SPARK_RUNTIME_VERSION: self.create_monitor.compute.runtime_version,
-            },
         }
         # default data window size is calculated based on the trigger frequency
         # by default 7 days if user provides incorrect recurrence frequency
@@ -131,15 +125,16 @@ class MonitorSchedule(Schedule, RestTranslatableMixin):
         )
 
     def dump(self, dest: Union[str, PathLike, IO[AnyStr]], **kwargs) -> None:
-        """Dump the schedule content into a file in yaml format.
+        """Dump the asset content into a file in YAML format.
 
-        :param dest: The destination to receive this schedule's content.
-            Must be either a path to a local file, or an already-open file stream.
-            If dest is a file path, a new file will be created,
-            and an exception is raised if the file exists.
-            If dest is an open file, the file will be written to directly,
-            and an exception will be raised if the file is not writable.
-        :type dest: Union[str, PathLike, IO[AnyStr]]
+        :param dest: The local path or file stream to write the YAML content to.
+            If dest is a file path, a new file will be created.
+            If dest is an open file, the file will be written to directly.
+        :type dest: Union[PathLike, str, IO[AnyStr]]
+        :keyword kwargs: Additional arguments to pass to the YAML serializer.
+        :paramtype kwargs: dict
+        :raises FileExistsError: Raised if dest is a file path and the file already exists.
+        :raises IOError: Raised if dest is an open file and the file is not writable.
         """
         path = kwargs.pop("path", None)
         yaml_serialized = self._to_dict()

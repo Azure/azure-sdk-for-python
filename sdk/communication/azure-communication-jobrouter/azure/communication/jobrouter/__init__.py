@@ -3,10 +3,8 @@ from ._router_client import JobRouterClient
 from ._router_administration_client import JobRouterAdministrationClient
 from ._enums import (
     ScoringRuleParameterSelector,
-    RouterWorkerStateSelector,
     RouterWorkerState,
     RouterWorkerSelectorStatus,
-    RouterJobStatusSelector,
     RouterJobStatus,
     LabelOperator,
     JobMatchModeType,
@@ -55,7 +53,6 @@ from ._models import (
     ChannelConfiguration,
     RouterJobAssignment,
     AcceptJobOfferResult,
-    DeclineJobOfferRequest,
     UnassignJobResult,
     RouterJobPositionDetails,
     RouterWorkerAssignment,
@@ -67,6 +64,11 @@ from ._models import (
     RouterJobItem,
     JobMatchingMode,
     ScheduleAndSuspendMode,
+    QueueSelectorAttachment,
+    WorkerSelectorAttachment,
+    RouterRule,
+    ExceptionAction,
+    ExceptionTrigger,
 )
 
 
@@ -79,14 +81,15 @@ __all__ = [
     'ClassificationPolicyItem',
     'ConditionalQueueSelectorAttachment',
     'ConditionalWorkerSelectorAttachment',
-    'DeclineJobOfferRequest',
     'DirectMapRouterRule',
     'DistributionMode',
     'DistributionPolicy',
     'DistributionPolicyItem',
+    'ExceptionAction',
     'ExceptionPolicy',
     'ExceptionPolicyItem',
     'ExceptionRule',
+    'ExceptionTrigger',
     'ExpressionRouterRule',
     'ExpressionRouterRuleLanguage',
     'FunctionRouterRule',
@@ -102,6 +105,7 @@ __all__ = [
     'PassThroughWorkerSelectorAttachment',
     'QueueLengthExceptionTrigger',
     'QueueWeightedAllocation',
+    'QueueSelectorAttachment',
     'ReclassifyExceptionAction',
     'RoundRobinMode',
     'RouterJob',
@@ -110,18 +114,17 @@ __all__ = [
     'RouterJobOffer',
     'RouterJobPositionDetails',
     'RouterJobStatus',
-    'RouterJobStatusSelector',
     'RouterQueue',
     'RouterQueueItem',
     'RouterQueueSelector',
     'RouterQueueStatistics',
+    'RouterRule',
     'RouterWorker',
     'RouterWorkerAssignment',
     'RouterWorkerItem',
     'RouterWorkerSelector',
     'RouterWorkerSelectorStatus',
     'RouterWorkerState',
-    'RouterWorkerStateSelector',
     'RuleEngineQueueSelectorAttachment',
     'RuleEngineWorkerSelectorAttachment',
     'ScheduleAndSuspendMode',
@@ -134,7 +137,8 @@ __all__ = [
     'WaitTimeExceptionTrigger',
     'WeightedAllocationQueueSelectorAttachment',
     'WeightedAllocationWorkerSelectorAttachment',
-    'WorkerWeightedAllocation'
+    'WorkerWeightedAllocation',
+    'WorkerSelectorAttachment'
 ]
 
 __version__ = VERSION

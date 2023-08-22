@@ -38,31 +38,31 @@ OLD_INPUT_BINDING_PREFIX = "AZURE_ML_INPUT"
 
 
 class ParameterizedCommand:
-    """This class should not be instantiated directly. Instead, use the child class
-    ~azure.ai.ml.entities.CommandComponent.
-
-    Command component version that contains the command and supporting parameters for a Command component
+    """Command component version that contains the command and supporting parameters for a Command component
     or job.
 
-    :param command: The command to be executed.
+    This class should not be instantiated directly. Instead, use the child class
+    ~azure.ai.ml.entities.CommandComponent.
+
+    :param command: The command to be executed. Defaults to "".
     :type command: str
     :param resources: The compute resource configuration for the command.
-    :type resources: Union[dict, ~azure.ai.ml.entities.JobResourceConfiguration]
+    :type resources: Optional[Union[dict, ~azure.ai.ml.entities.JobResourceConfiguration]]
     :param code: The source code to run the job. Can be a local path or "http:", "https:", or "azureml:" url pointing
         to a remote location.
-    :type code: str
+    :type code: Optional[str]
     :param environment_variables: A dictionary of environment variable names and values.
         These environment variables are set on the process where user script is being executed.
-    :type environment_variables: dict[str, str]
+    :type environment_variables: Optional[dict[str, str]]
     :param distribution: The distribution configuration for distributed jobs.
-    :type distribution: Union[dict, ~azure.ai.ml.PyTorchDistribution, ~azure.ai.ml.MpiDistribution,
-        ~azure.ai.ml.TensorFlowDistribution, ~azure.ai.ml.RayDistribution]
+    :type distribution: Optional[Union[dict, ~azure.ai.ml.PyTorchDistribution, ~azure.ai.ml.MpiDistribution,
+        ~azure.ai.ml.TensorFlowDistribution, ~azure.ai.ml.RayDistribution]]
     :param environment: The environment that the job will run in.
-    :type environment: Union[str, ~azure.ai.ml.entities.Environment]
+    :type environment: Optional[Union[str, ~azure.ai.ml.entities.Environment]]
     :param queue_settings: The queue settings for the job.
-    :type queue_settings: ~azure.ai.ml.entities.QueueSettings
-    :param kwargs: A dictionary of additional configuration parameters.
-    :type kwargs: dict
+    :type queue_settings: Optional[~azure.ai.ml.entities.QueueSettings]
+    :keyword kwargs: A dictionary of additional configuration parameters.
+    :paramtype kwargs: dict
     """
 
     def __init__(
@@ -104,8 +104,9 @@ class ParameterizedCommand:
     ) -> Union[MpiDistribution, TensorFlowDistribution, PyTorchDistribution, RayDistribution]:
         """The configuration for the distributed command component or job.
 
+        :return: The distribution configuration.
         :rtype: Union[~azure.ai.ml.PyTorchDistribution, ~azure.ai.ml.MpiDistribution,
-        ~azure.ai.ml.TensorFlowDistribution, ~azure.ai.ml.RayDistribution]
+            ~azure.ai.ml.TensorFlowDistribution, ~azure.ai.ml.RayDistribution]
         """
         return self._distribution
 
@@ -115,7 +116,7 @@ class ParameterizedCommand:
 
         :param value: The distribution configuration for distributed jobs.
         :type value: Union[dict, ~azure.ai.ml.PyTorchDistribution, ~azure.ai.ml.MpiDistribution,
-        ~azure.ai.ml.TensorFlowDistribution, ~azure.ai.ml.RayDistribution]
+            ~azure.ai.ml.TensorFlowDistribution, ~azure.ai.ml.RayDistribution]
         """
         if isinstance(value, dict):
             dist_schema = UnionField(
@@ -133,6 +134,7 @@ class ParameterizedCommand:
     def resources(self) -> JobResourceConfiguration:
         """The compute resource configuration for the command component or job.
 
+        :return: The compute resource configuration for the command component or job.
         :rtype: ~azure.ai.ml.entities.JobResourceConfiguration
         """
         return self._resources
