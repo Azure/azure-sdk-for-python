@@ -18,7 +18,7 @@ from azure.core import MatchConditions
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import Pipeline
-from azure.core.pipeline.transport import HttpRequest
+from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator import distributed_trace
 from ._shared.base_client import StorageAccountHostsMixin, TransportWrapper, parse_connection_str, parse_query
 from ._shared.request_handlers import add_metadata_headers, serialize_iso
@@ -51,7 +51,7 @@ from ._serialize import get_modify_conditions, get_container_cpk_scope_info, get
 
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
-    from azure.core.pipeline.transport import HttpResponse  # pylint: disable=C4756
+    from azure.core.rest import HttpResponse
     from datetime import datetime
     from ._models import (  # pylint: disable=unused-import
         PublicAccess,
@@ -1491,7 +1491,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`_.
         :return: An iterator of responses, one for each blob in order
-        :rtype: Iterator[~azure.core.pipeline.transport.HttpResponse]
+        :rtype: Iterator[~azure.core.rest.HttpResponse]
 
         .. admonition:: Example:
 
@@ -1664,7 +1664,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             This is a boolean param which defaults to True. When this is set, an exception
             is raised even if there is a single operation failure.
         :return: An iterator of responses, one for each blob in order
-        :rtype: Iterator[~azure.core.pipeline.transport.HttpResponse]
+        :rtype: Iterator[~azure.core.rest.HttpResponse]
         """
         reqs, options = self._generate_set_tiers_options(standard_blob_tier, *blobs, **kwargs)
 
@@ -1717,7 +1717,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             This is a boolean param which defaults to True. When this is set, an exception
             is raised even if there is a single operation failure.
         :return: An iterator of responses, one for each blob in order
-        :rtype: iterator[~azure.core.pipeline.transport.HttpResponse]
+        :rtype: iterator[~azure.core.rest.HttpResponse]
         """
         reqs, options = self._generate_set_tiers_options(premium_page_blob_tier, *blobs, **kwargs)
 

@@ -42,7 +42,7 @@ from ._models import FilteredBlobPaged
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
     from azure.core.credentials_async import AsyncTokenCredential
-    from azure.core.pipeline.transport import AsyncHttpResponse  # pylint: disable=C4756
+    from azure.core.rest import AsyncHttpResponse
     from datetime import datetime
     from .._models import ( # pylint: disable=unused-import
         AccessPolicy,
@@ -1236,7 +1236,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase, Storag
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`_.
         :return: An async iterator of responses, one for each blob in order
-        :rtype: asynciterator[~azure.core.pipeline.transport.AsyncHttpResponse]
+        :rtype: asynciterator[~azure.core.rest.AsyncHttpResponse]
 
         .. admonition:: Example:
 
@@ -1319,7 +1319,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase, Storag
             is raised even if there is a single operation failure. For optimal performance,
             this should be set to False.
         :return: An async iterator of responses, one for each blob in order
-        :rtype: asynciterator[~azure.core.pipeline.transport.AsyncHttpResponse]
+        :rtype: asynciterator[~azure.core.rest.AsyncHttpResponse]
         """
         reqs, options = self._generate_set_tiers_options(standard_blob_tier, *blobs, **kwargs)
 
@@ -1372,7 +1372,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase, Storag
             is raised even if there is a single operation failure. For optimal performance,
             this should be set to False.
         :return: An async iterator of responses, one for each blob in order
-        :rtype: asynciterator[~azure.core.pipeline.transport.AsyncHttpResponse]
+        :rtype: asynciterator[~azure.core.rest.AsyncHttpResponse]
         """
         reqs, options = self._generate_set_tiers_options(premium_page_blob_tier, *blobs, **kwargs)
 
