@@ -18,9 +18,7 @@ from azure.ai.ml.entities._credentials import ManagedIdentityConfiguration, User
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job.pipeline._component_translatable import ComponentTranslatableMixin
 from azure.ai.ml.entities._job.pipeline._io import NodeOutput, PipelineInput
-from azure.ai.ml.exceptions import ErrorTarget, ValidationErrorType, ValidationException
-
-from .data_index import _build_data_index
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
 SUPPORTED_INPUTS = [
     LegacyAssetTypes.PATH,
@@ -104,6 +102,27 @@ def _parse_inputs_outputs(io_dict: Dict, parse_func: Callable) -> Tuple[Dict, Di
             component_io_dict[key] = component_io
             job_io_dict[key] = job_io
     return component_io_dict, job_io_dict
+
+
+def _build_data_index(io_dict: Union[Dict, DataIndex]):
+    if io_dict is None:
+        return io_dict
+    if isinstance(io_dict, DataIndex):
+        component_io = io_dict
+    else:
+        if isinstance(io_dict, dict):
+            component_io = DataIndex(**io_dict)
+        else:
+            msg = "data_index only support dict and DataIndex"
+            raise ValidationException(
+                message=msg,
+                no_personal_data_message=msg,
+                target=ErrorTarget.DATA,
+                error_category=ErrorCategory.USER_ERROR,
+                error_type=ValidationErrorType.INVALID_VALUE,
+            )
+
+    return component_io
 
 
 @experimental
