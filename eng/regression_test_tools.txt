@@ -15,7 +15,6 @@ cmarkgfm<0.7.0
 typing-extensions<=4.6.3
 
 # locking packages defined as deps from azure-sdk-tools or azure-devtools
-pytoml==0.1.21
 readme-renderer[md]==25.0
 pyOpenSSL==21.0.0
 json-delta==2.0

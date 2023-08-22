@@ -2,7 +2,7 @@ import logging
 from pathlib import Path
 from typing import Dict, Any
 
-import pytoml as toml
+import tomli as toml
 
 _LOGGER = logging.getLogger(__name__)
 
