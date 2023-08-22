@@ -43,7 +43,7 @@ class MurmurHash3Test(unittest.TestCase):
         self.assertEqual(self.float_high_value, ret.get_high().value)
 
     def test_string_hash(self):
-        s = "afdgdd"
+        s = "afdgdd"  # cspell:disable-line
         ba = bytearray()
         ba.extend(s.encode('utf-8'))
         ret = murmurhash3_128(ba, self.test_seed)
