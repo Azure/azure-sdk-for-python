@@ -240,7 +240,7 @@ class MLClient:
             workspace_name,
         )
             workspace_reference = kwargs.pop("workspace_reference", None)
-            if workspace_reference:
+            if workspace_reference or registry_reference:
                 ws_ops = WorkspaceOperations(
                     OperationScope(
                         subscription_id, resource_group_name, workspace_reference
@@ -252,7 +252,7 @@ class MLClient:
                     ),
                     self._credential,
                 )
-                workspace_details = ws_ops.get(workspace_reference)
+                workspace_details = ws_ops.get(workspace_reference if workspace_reference else workspace_name)
                 workspace_location, workspace_id = (
                     workspace_details.location,
                     workspace_details._workspace_id,

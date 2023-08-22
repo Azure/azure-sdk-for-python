@@ -110,8 +110,9 @@ class ModelOperations(_ScopeDependentOperations):
         self._datastore_operation = datastore_operations
         self._all_operations = all_operations
         self._control_plane_client = kwargs.get("control_plane_client", None)
-        self._workspace_rg = kwargs.get("workspace_rg", None)
-        self._workspace_sub = kwargs.get("workspace_sub", None)
+        self._workspace_rg = kwargs.pop("workspace_rg", None)
+        self._workspace_sub = kwargs.pop("workspace_sub", None)
+        self._registry_reference = kwargs.pop("registry_reference", None)
 
         # Maps a label to a function which given an asset name,
         # returns the asset associated with the label
@@ -624,9 +625,7 @@ class ModelOperations(_ScopeDependentOperations):
         :rtype: ~azure.ai.ml.entities.Environment
 
         """
-        is_deployment_flow = kwargs.get("skip_to_rest", False)
-        if is_deployment_flow:
-            self._registry_reference = kwargs.get("registry_reference", None)
+        is_deployment_flow = kwargs.pop("skip_to_rest", False)
         if not is_deployment_flow:
             orchestrators = OperationOrchestrator(
                 operation_container=self._all_operations,
@@ -696,6 +695,8 @@ class ModelOperations(_ScopeDependentOperations):
 
             package_request = package_request._to_rest_object()
 
+        if self._registry_reference:
+            package_request.target_environment_id = f"azureml://locations/{self._operation_scope._workspace_location}/workspaces/{self._operation_scope._workspace_id}/environments/{package_request.target_environment_id}"
         package_out = (
             self._model_versions_operation.begin_package(
                 name=name,
