@@ -14,7 +14,7 @@ from azure.mgmt.devspaces import DevSpacesManagementClient
     pip install azure-identity
     pip install azure-mgmt-devspaces
 # USAGE
-    python controllers_list.py
+    python controllers_list_by_resource_group_example.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,11 +29,13 @@ def main():
         subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
-    response = client.controllers.list()
+    response = client.controllers.list_by_resource_group(
+        resource_group_name="myResourceGroup",
+    )
     for item in response:
         print(item)
 
 
-# x-ms-original-file: specification/devspaces/resource-manager/Microsoft.DevSpaces/stable/2019-04-01/examples/ControllersList_example.json
+# x-ms-original-file: specification/devspaces/resource-manager/Microsoft.DevSpaces/stable/2019-04-01/examples/ControllersListByResourceGroup_example.json
 if __name__ == "__main__":
     main()
