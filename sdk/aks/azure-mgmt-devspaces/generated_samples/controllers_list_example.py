@@ -14,7 +14,7 @@ from azure.mgmt.devspaces import DevSpacesManagementClient
     pip install azure-identity
     pip install azure-mgmt-devspaces
 # USAGE
-    python container_host_mappings_get_container_host_mapping.py
+    python controllers_list_example.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,16 +29,11 @@ def main():
         subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
-    response = client.container_host_mappings.get_container_host_mapping(
-        resource_group_name="myResourceGroup",
-        location="eastus",
-        container_host_mapping={
-            "containerHostResourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myResourceGroup/providers/Microsoft.ContainerService/managedClusters/myCluster"
-        },
-    )
-    print(response)
+    response = client.controllers.list()
+    for item in response:
+        print(item)
 
 
-# x-ms-original-file: specification/devspaces/resource-manager/Microsoft.DevSpaces/stable/2019-04-01/examples/ContainerHostMappingsGetContainerHostMapping_example.json
+# x-ms-original-file: specification/devspaces/resource-manager/Microsoft.DevSpaces/stable/2019-04-01/examples/ControllersList_example.json
 if __name__ == "__main__":
     main()
