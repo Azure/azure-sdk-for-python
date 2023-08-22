@@ -6,6 +6,8 @@
 
 - Unpin OTel SDK/API version
     ([#310](https://github.com/microsoft/ApplicationInsights-Python/pull/310))
+- Replace explicit log processor exporter interval env var with OT SDK env var
+    ([#31740](https://github.com/Azure/azure-sdk-for-python/pull/31740))
 
 ### Breaking Changes
 

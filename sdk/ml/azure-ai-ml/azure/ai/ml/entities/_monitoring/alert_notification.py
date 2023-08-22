@@ -4,13 +4,13 @@
 
 from typing import List
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+from azure.ai.ml.entities._mixins import RestTranslatableMixin
+from azure.ai.ml._utils._experimental import experimental
+from azure.ai.ml._restclient.v2023_06_01_preview.models import (
+    NotificationSetting,
     EmailMonitoringAlertNotificationSettings,
     EmailNotificationEnableType,
-    NotificationSetting,
 )
-from azure.ai.ml._utils._experimental import experimental
-from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 
 @experimental

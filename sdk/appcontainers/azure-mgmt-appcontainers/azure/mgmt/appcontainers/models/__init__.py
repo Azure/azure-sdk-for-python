@@ -109,6 +109,7 @@ from ._models_py3 import InitContainer
 from ._models_py3 import IpSecurityRestrictionRule
 from ._models_py3 import Job
 from ._models_py3 import JobConfiguration
+from ._models_py3 import JobConfigurationEventTriggerConfig
 from ._models_py3 import JobConfigurationManualTriggerConfig
 from ._models_py3 import JobConfigurationScheduleTriggerConfig
 from ._models_py3 import JobExecution
@@ -118,6 +119,8 @@ from ._models_py3 import JobExecutionNamesCollection
 from ._models_py3 import JobExecutionTemplate
 from ._models_py3 import JobPatchProperties
 from ._models_py3 import JobPatchPropertiesProperties
+from ._models_py3 import JobScale
+from ._models_py3 import JobScaleRule
 from ._models_py3 import JobSecretsCollection
 from ._models_py3 import JobTemplate
 from ._models_py3 import JobsCollection
@@ -132,11 +135,13 @@ from ._models_py3 import ManagedCertificateCollection
 from ._models_py3 import ManagedCertificatePatch
 from ._models_py3 import ManagedCertificateProperties
 from ._models_py3 import ManagedEnvironment
+from ._models_py3 import ManagedEnvironmentPropertiesPeerAuthentication
 from ._models_py3 import ManagedEnvironmentStorage
 from ._models_py3 import ManagedEnvironmentStorageProperties
 from ._models_py3 import ManagedEnvironmentStoragesCollection
 from ._models_py3 import ManagedEnvironmentsCollection
 from ._models_py3 import ManagedServiceIdentity
+from ._models_py3 import Mtls
 from ._models_py3 import Nonce
 from ._models_py3 import OpenIdConnectClientCredential
 from ._models_py3 import OpenIdConnectConfig
@@ -160,6 +165,8 @@ from ._models_py3 import ScaleRuleAuth
 from ._models_py3 import Secret
 from ._models_py3 import SecretVolumeItem
 from ._models_py3 import SecretsCollection
+from ._models_py3 import Service
+from ._models_py3 import ServiceBind
 from ._models_py3 import SourceControl
 from ._models_py3 import SourceControlCollection
 from ._models_py3 import SystemData
@@ -188,7 +195,9 @@ from ._container_apps_api_client_enums import BindingType
 from ._container_apps_api_client_enums import CertificateProvisioningState
 from ._container_apps_api_client_enums import CheckNameAvailabilityReason
 from ._container_apps_api_client_enums import ConnectedEnvironmentProvisioningState
+from ._container_apps_api_client_enums import ContainerAppContainerRunningState
 from ._container_apps_api_client_enums import ContainerAppProvisioningState
+from ._container_apps_api_client_enums import ContainerAppReplicaRunningState
 from ._container_apps_api_client_enums import CookieExpirationConvention
 from ._container_apps_api_client_enums import CreatedByType
 from ._container_apps_api_client_enums import DnsVerificationTestResult
@@ -204,6 +213,7 @@ from ._container_apps_api_client_enums import ManagedCertificateDomainControlVal
 from ._container_apps_api_client_enums import ManagedServiceIdentityType
 from ._container_apps_api_client_enums import RevisionHealthState
 from ._container_apps_api_client_enums import RevisionProvisioningState
+from ._container_apps_api_client_enums import RevisionRunningState
 from ._container_apps_api_client_enums import Scheme
 from ._container_apps_api_client_enums import SourceControlOperationState
 from ._container_apps_api_client_enums import StorageType
@@ -318,6 +328,7 @@ __all__ = [
     "IpSecurityRestrictionRule",
     "Job",
     "JobConfiguration",
+    "JobConfigurationEventTriggerConfig",
     "JobConfigurationManualTriggerConfig",
     "JobConfigurationScheduleTriggerConfig",
     "JobExecution",
@@ -327,6 +338,8 @@ __all__ = [
     "JobExecutionTemplate",
     "JobPatchProperties",
     "JobPatchPropertiesProperties",
+    "JobScale",
+    "JobScaleRule",
     "JobSecretsCollection",
     "JobTemplate",
     "JobsCollection",
@@ -341,11 +354,13 @@ __all__ = [
     "ManagedCertificatePatch",
     "ManagedCertificateProperties",
     "ManagedEnvironment",
+    "ManagedEnvironmentPropertiesPeerAuthentication",
     "ManagedEnvironmentStorage",
     "ManagedEnvironmentStorageProperties",
     "ManagedEnvironmentStoragesCollection",
     "ManagedEnvironmentsCollection",
     "ManagedServiceIdentity",
+    "Mtls",
     "Nonce",
     "OpenIdConnectClientCredential",
     "OpenIdConnectConfig",
@@ -369,6 +384,8 @@ __all__ = [
     "Secret",
     "SecretVolumeItem",
     "SecretsCollection",
+    "Service",
+    "ServiceBind",
     "SourceControl",
     "SourceControlCollection",
     "SystemData",
@@ -396,7 +413,9 @@ __all__ = [
     "CertificateProvisioningState",
     "CheckNameAvailabilityReason",
     "ConnectedEnvironmentProvisioningState",
+    "ContainerAppContainerRunningState",
     "ContainerAppProvisioningState",
+    "ContainerAppReplicaRunningState",
     "CookieExpirationConvention",
     "CreatedByType",
     "DnsVerificationTestResult",
@@ -412,6 +431,7 @@ __all__ = [
     "ManagedServiceIdentityType",
     "RevisionHealthState",
     "RevisionProvisioningState",
+    "RevisionRunningState",
     "Scheme",
     "SourceControlOperationState",
     "StorageType",

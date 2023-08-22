@@ -6,7 +6,7 @@
 
 - Fixed issue where IndexError was raised if multipart responses did not match the number of requests. #31471
 
-## 1.29.3 (2023-08-18)
+## 1.29.3 (2023-08-22)
 
 ### Bugs Fixed
 

@@ -71,8 +71,8 @@ MediaSources = Union['FileSource', 'TextSource', 'SsmlSource']
 
 
 class CallConnectionClient:
-    """A client to interact with ongoing call. This client can be used to do mid-call actions,
-    such as Transfer and Play Media. Call must be estbalished to perform these actions.
+    """A client to interact with an ongoing call. This client can be used to do mid-call actions,
+    such as Transfer and Play Media. Call must be established to perform these actions.
 
     :param endpoint: The endpoint of the Azure Communication resource.
     :type endpoint: str
