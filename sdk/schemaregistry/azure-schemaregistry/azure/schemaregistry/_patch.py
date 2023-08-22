@@ -27,7 +27,7 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 from azure.core.tracing.decorator import distributed_trace
 
-from ._client import SchemaRegistryClient as GeneratedClient
+from ._client import SchemaRegistryClient as ServiceClientGenerated
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
@@ -40,10 +40,10 @@ def _parse_schema_properties_dict(
     response_headers: Mapping[str, Union[str, int]]
 ) -> Dict[str, Union[str, int]]:
     return {
-        "id": response_headers["schema-id"],
-        "group_name": response_headers["schema-group-name"],
-        "name": response_headers["schema-name"],
-        "version": int(response_headers["schema-version"]),
+        "id": response_headers["Schema-Id"],
+        "group_name": response_headers["Schema-Group-Name"],
+        "name": response_headers["Schema-Name"],
+        "version": int(response_headers["Schema-Version"]),
     }
 
 def _get_format(content_type: str) -> SchemaFormat:
@@ -76,6 +76,7 @@ def prepare_schema_result(  # pylint:disable=unused-argument
     response_headers: Mapping[str, Union[str, int]],
 ) -> Tuple[Union["HttpResponse", "AsyncHttpResponse"], Dict[str, Union[int, str]]]:
     properties_dict = _parse_schema_properties_dict(response_headers)
+    # TODO: content type is not being added to the response headers b/c of 
     properties_dict["format"] = _get_format(
         cast(str, response_headers.get("Content-Type"))
     )
@@ -109,8 +110,10 @@ def get_case_insensitive_format(
 
 ###### Wrapper Class ######
 
-# TODO: inherit from AzureSchemaRegistry and overload
-class SchemaRegistryClient(GeneratedClient):
+# TODO: temporary override of generated client get_schema_by_id and get_schema_by_version
+# methods
+
+class SchemaRegistryClient(object):
     """
     SchemaRegistryClient is a client for registering and retrieving schemas from the Azure Schema Registry service.
 
@@ -135,10 +138,12 @@ class SchemaRegistryClient(GeneratedClient):
     def __init__(
         self, fully_qualified_namespace: str, credential: TokenCredential, **kwargs: Any
     ) -> None:
+        # using composition (not inheriting from generated client) to allow
+        # calling different operations conditionally within one method
         if "https://" not in fully_qualified_namespace:
             fully_qualified_namespace = f"https://{fully_qualified_namespace}"
         api_version = kwargs.pop("api_version", DEFAULT_VERSION)
-        super().__init__(
+        self._generated_client = GeneratedClient(
             endpoint=fully_qualified_namespace,
             credential=credential,
             api_version=api_version,
@@ -182,7 +187,7 @@ class SchemaRegistryClient(GeneratedClient):
         format = get_case_insensitive_format(format)
         http_request_kwargs = get_http_request_kwargs(kwargs)
         # ignoring return type because the generated client operations are not annotated w/ cls return type
-        schema_properties: Dict[str, Union[int, str]] = super().register_schema(
+        schema_properties: Dict[str, Union[int, str]] = self._generated_client.register_schema(
             group_name=group_name,
             name=name,
             content=cast(IO[Any], definition),
@@ -191,6 +196,19 @@ class SchemaRegistryClient(GeneratedClient):
             **http_request_kwargs,
         )
         return SchemaProperties(**schema_properties)
+
+    def __enter__(self) -> "SchemaRegistryClient":
+        self._generated_client.__enter__()
+        return self
+
+    def __exit__(self, *exc_details: Any) -> None:
+        self._generated_client.__exit__(*exc_details)
+
+    def close(self) -> None:
+        """This method is to close the sockets opened by the client.
+        It need not be used when using with a context manager.
+        """
+        self._generated_client.close()
 
     @overload
     def get_schema(self, schema_id: str, **kwargs: Any) -> Schema:
@@ -251,8 +269,8 @@ class SchemaRegistryClient(GeneratedClient):
                 schema_id = kwargs.pop("schema_id")
             schema_id = cast(str, schema_id)
             # ignoring return type because the generated client operations are not annotated w/ cls return type
-            http_response, schema_properties = super().get_schema_by_id(  # type: ignore
-                id=schema_id, cls=prepare_schema_result, **http_request_kwargs
+            http_response, schema_properties = self._generated_client.get_schema_by_id(  # type: ignore
+                id=schema_id, cls=prepare_schema_result, **http_request_kwargs, stream=True
             )
         except KeyError:
             # If group_name, name, and version aren't passed in as kwargs, raise error.
@@ -266,7 +284,7 @@ class SchemaRegistryClient(GeneratedClient):
                     """or `group_name`, `name`, `version."""
                 )
             # ignoring return type because the generated client operations are not annotated w/ cls return type
-            http_response, schema_properties = super().get_schema_by_version(  # type: ignore
+            http_response, schema_properties = self._generated_client.get_schema_by_version(  # type: ignore
                 group_name=group_name,
                 name=name,
                 schema_version=version,
@@ -315,7 +333,7 @@ class SchemaRegistryClient(GeneratedClient):
         http_request_kwargs = get_http_request_kwargs(kwargs)
         # ignoring return type because the generated client operations are not annotated w/ cls return type
         schema_properties: Dict[str, Union[int, str]] = (
-            super().get_schema_id_by_content(  # type: ignore
+            self._generated_client.get_schema_id_by_content(  # type: ignore
                 group_name=group_name,
                 schema_name=name,
                 schema_content=cast(IO[Any], definition),
