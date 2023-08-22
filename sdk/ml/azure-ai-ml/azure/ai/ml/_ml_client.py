@@ -231,12 +231,15 @@ class MLClient:
         # whatever is received from the registry discovery service.
         workspace_location = None
         workspace_id = None
-        workspace_rg = resource_group_name
-        workspace_sub = subscription_id
-        if registry_name:
+        registry_reference  = kwargs.pop("registry_reference", None)
+        if registry_name or registry_reference:
             # get the workspace location here if workspace_reference is provided
+            self._ws_operation_scope = OperationScope(
+            subscription_id,
+            resource_group_name,
+            workspace_name,
+        )
             workspace_reference = kwargs.pop("workspace_reference", None)
-
             if workspace_reference:
                 ws_ops = WorkspaceOperations(
                     OperationScope(
@@ -260,7 +263,7 @@ class MLClient:
                 resource_group_name,
                 subscription_id,
             ) = get_registry_client(
-                self._credential, registry_name, workspace_location, **kwargs
+                self._credential, registry_name if registry_name else registry_reference, workspace_location, **kwargs
             )
             if not workspace_name:
                 workspace_name = workspace_reference
@@ -350,7 +353,7 @@ class MLClient:
 
         self._service_client_10_2022_preview = ServiceClient102022Preview(
             credential=self._credential,
-            subscription_id=self._operation_scope._subscription_id,
+            subscription_id=self._ws_operation_scope._subscription_id if registry_reference else self._operation_scope._subscription_id,
             base_url=base_url,
             **kwargs,
         )
@@ -371,20 +374,20 @@ class MLClient:
 
         self._service_client_04_2023_preview = ServiceClient042023Preview(
             credential=self._credential,
-            subscription_id=self._operation_scope._subscription_id,
+            subscription_id=self._ws_operation_scope._subscription_id if registry_reference else self._operation_scope._subscription_id,
             base_url=base_url,
             **kwargs,
         )
 
         self._service_client_06_2023_preview = ServiceClient062023Preview(
             credential=self._credential,
-            subscription_id=self._operation_scope._subscription_id,
+            subscription_id=self._ws_operation_scope._subscription_id if registry_reference else self._operation_scope._subscription_id,
             base_url=base_url,
             **kwargs,
         )
 
         self._workspaces = WorkspaceOperations(
-            self._operation_scope,
+            self._ws_operation_scope if registry_reference else self._operation_scope,
             self._service_client_06_2023_preview,
             self._operation_container,
             self._credential,
@@ -441,14 +444,13 @@ class MLClient:
             self._operation_scope,
             self._operation_config,
             self._service_client_10_2021_dataplanepreview
-            if registry_name
+            if registry_name or registry_reference
             else self._service_client_04_2023_preview,
             self._datastores,
             self._operation_container,
             requests_pipeline=self._requests_pipeline,
             control_plane_client=self._service_client_04_2023_preview,
-            workspace_rg=workspace_rg,
-            workspace_sub=workspace_sub,
+            registry_reference=registry_reference,
             **app_insights_handler_kwargs,
         )
         self._operation_container.add(AzureMLResourceType.MODEL, self._models)
@@ -507,7 +509,7 @@ class MLClient:
             AzureMLResourceType.ONLINE_ENDPOINT, self._online_endpoints
         )
         self._online_deployments = OnlineDeploymentOperations(
-            self._operation_scope,
+            self._ws_operation_scope if registry_reference else self._operation_scope,
             self._operation_config,
             self._service_client_04_2023_preview,
             self._operation_container,

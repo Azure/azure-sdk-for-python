@@ -624,8 +624,10 @@ class ModelOperations(_ScopeDependentOperations):
         :rtype: ~azure.ai.ml.entities.Environment
 
         """
-
-        if not kwargs.get("skip_to_rest", False):
+        is_deployment_flow = kwargs.get("skip_to_rest", False)
+        if is_deployment_flow:
+            self._registry_reference = kwargs.get("registry_reference", None)
+        if not is_deployment_flow:
             orchestrators = OperationOrchestrator(
                 operation_container=self._all_operations,
                 operation_scope=self._operation_scope,
@@ -698,11 +700,11 @@ class ModelOperations(_ScopeDependentOperations):
             self._model_versions_operation.begin_package(
                 name=name,
                 version=version,
-                registry_name=self._registry_name,
+                registry_name=self._registry_name if self._registry_name else self._registry_reference,
                 body=package_request,
                 **self._scope_kwargs,
             ).result()
-            if self._registry_name
+            if self._registry_name or self._registry_reference
             else self._model_versions_operation.begin_package(
                 name=name,
                 version=version,
@@ -711,6 +713,8 @@ class ModelOperations(_ScopeDependentOperations):
                 **self._scope_kwargs,
             ).result()
         )
+        if is_deployment_flow: # No need to go through the schema, as this is for deployment notification only
+            return package_out
         if hasattr(package_out, "target_environment_name"):
             environment_name = package_out.target_environment_name
         else:
