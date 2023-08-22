@@ -140,7 +140,6 @@ def _setup_instrumentations(configurations: Dict[str, ConfigurationValue]):
         "opentelemetry_instrumentor"
     ):
         lib_name = entry_point.name
-        print("lib_name: %s" % lib_name)
         if lib_name not in _SUPPORTED_INSTRUMENTED_LIBRARIES:
             continue
         if entry_point.name in disabled_instrumentations:
@@ -162,7 +161,6 @@ def _setup_instrumentations(configurations: Dict[str, ConfigurationValue]):
             instrumentor: BaseInstrumentor = entry_point.load()
             # tell instrumentation to not run dep checks again as we already did it above
             instrumentor().instrument(skip_dep_check=True)
-            print("instrumented: %s" % lib_name)
         except Exception as ex:  # pylint: disable=broad-except
             _logger.warning(
                 "Exception occurred when instrumenting: %s.",
