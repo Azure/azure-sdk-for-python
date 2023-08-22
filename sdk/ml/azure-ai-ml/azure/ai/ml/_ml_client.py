@@ -335,7 +335,7 @@ class MLClient:
 
         self._service_client_04_2023 = ServiceClient042023(
             credential=self._credential,
-            subscription_id=self._operation_scope._subscription_id,
+            subscription_id=self._ws_operation_scope._subscription_id if registry_reference else self._operation_scope._subscription_id,
             base_url=base_url,
             **kwargs,
         )
@@ -455,7 +455,7 @@ class MLClient:
         )
         self._operation_container.add(AzureMLResourceType.MODEL, self._models)
         self._code = CodeOperations(
-            self._operation_scope,
+            self._ws_operation_scope if registry_reference else self._operation_scope,
             self._operation_config,
             self._service_client_10_2021_dataplanepreview
             if registry_name
@@ -465,7 +465,7 @@ class MLClient:
         )
         self._operation_container.add(AzureMLResourceType.CODE, self._code)
         self._environments = EnvironmentOperations(
-            self._operation_scope,
+            self._ws_operation_scope if registry_reference else self._operation_scope,
             self._operation_config,
             self._service_client_10_2021_dataplanepreview
             if registry_name

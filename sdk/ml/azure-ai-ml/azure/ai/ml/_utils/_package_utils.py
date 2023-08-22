@@ -80,7 +80,10 @@ def package_deployment(deployment: Deployment, model_ops) -> Deployment:
         packaged_env = model_ops.package(
             model_name, model_version, package_request=package_request, skip_to_rest=True,
         )
-        deployment.environment = packaged_env.id
+        if not model_str.startswith(REGISTRY_URI_FORMAT):
+            deployment.environment = packaged_env.id
+        else:
+            deployment.environment = packaged_env.target_environment_id
         deployment.model = None
         deployment.code_configuration = None
     except Exception:
