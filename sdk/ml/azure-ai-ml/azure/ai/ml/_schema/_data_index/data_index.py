@@ -30,7 +30,7 @@ class CitationRegexSchema(metaclass=PatchedSchemaMeta):
     )
     replacement_pattern = fields.Str(
         required=True,
-        metadata={"description": "Replacement string for citation. e.g. '(.*)/articles/(.*)'"},
+        metadata={"description": "Replacement string for citation. e.g. '(.*)/articles/(.*)(\.[^.]+)$'"},
     )
 
     @post_load
@@ -54,11 +54,13 @@ class IndexSourceSchema(metaclass=PatchedSchemaMeta):
         },
     )
     chunk_size = fields.Int(
-        load_default=768,
+        required=False,
+        allow_none=False,
         metadata={"description": "Maximum number of tokens to put in each chunk."},
     )
     chunk_overlap = fields.Int(
-        load_default=0,
+        required=False,
+        allow_none=False,
         metadata={"description": "Number of tokens to overlap between chunks."},
     )
     citation_url = fields.Str(

@@ -20,7 +20,7 @@ from azure.ai.ml.entities._util import load_from_dict
 @experimental
 class CitationRegex(DictMixin):
     """
-    :keyword match_pattern: Regex to match citation in the citation_url + input file path. e.g. '(.*)/articles/(.*)'.
+    :keyword match_pattern: Regex to match citation in the citation_url + input file path. e.g. '(.*)/articles/(.*)(\.[^.]+)$'.
     :type match_pattern: str
     :keyword replacement_pattern: Replacement string for citation. e.g. '\\1/\\2'.
     :type replacement_pattern: str
