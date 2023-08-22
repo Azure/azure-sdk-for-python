@@ -106,7 +106,7 @@ def _format_url_section(template, **kwargs):
     if a key is missing, we remove the section of the template
     e.g. "/{foo}" if foo is missing, we remove entire "/{foo}" from the template
     """
-    return ret.replace('/\t', '')
+    return ret.replace("/\t", "")
 
 
 def _urljoin(base_url: str, stub_url: str) -> str:
