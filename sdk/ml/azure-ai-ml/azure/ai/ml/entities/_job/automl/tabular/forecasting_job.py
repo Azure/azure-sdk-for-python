@@ -327,8 +327,9 @@ class ForecastingJob(AutoMLTabular):
                 |                |                               | | is not applied.                    |
                 |                |                               | | If the number                      |
                 |                |                               | | of data points                     |
-                |                |                               | | compliant to given                 |
-                |                |                               | | frequency grid is                  |
+                |                |                               | | compliant to                       |
+                |                |                               | | given frequency                    |
+                |                |                               | | grid is                            |
                 |                |                               | | less then 90%                      |
                 |                |                               | | these points                       |
                 |                |                               | | will be                            |
@@ -338,7 +339,8 @@ class ForecastingJob(AutoMLTabular):
                 |                |                               | | be raised.                         |
                 +----------------+-------------------------------+--------------------------------------+
                 | None (Default) | Aggregation function          | | The error about                    |
-                |                |                               | | missing frequency                  |
+                |                |                               | | missing                            |
+                |                |                               | | frequency                          |
                 |                |                               | | parameter is                       |
                 |                |                               | | raised.                            |
                 +----------------+-------------------------------+--------------------------------------+

@@ -151,7 +151,7 @@ class ForecastingSettings(RestTranslatableMixin):
         respectively).
 
         +------------+--------------------------+----------------------+-----------------------------+
-        | | handling | | handling_configuration | | resulting handling | | resulting handling        |
+        | | handling | | handling configuration | | resulting handling | | resulting handling        |
         |            |                          |                      | | configuration             |
         +============+==========================+======================+=============================+
         | True       | auto                     | True                 | auto                        |
