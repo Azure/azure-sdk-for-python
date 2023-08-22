@@ -64,46 +64,46 @@ class Output(_InputOutputBase):
     def __init__(self, type: Literal["uri_folder"] = "uri_folder", path=None, mode=None, description=None) -> None:
         """Define a URI folder output.
 
-        :param type: The type of the data output. Can only be set to "uri_folder".
-        :type type: str
-        :param path: The remote path where the output should be stored.
-        :type path: str
-        :param mode: The access mode of the data output. Accepted values are
+        :keyword type: The type of the data output. Can only be set to "uri_folder".
+        :paramtype type: str
+        :keyword path: The remote path where the output should be stored.
+        :paramtype path: str
+        :keyword mode: The access mode of the data output. Accepted values are
             * 'rw_mount': Read-write mount the data
             * 'upload': Upload the data from the compute target
             * 'direct': Pass in the URI as a string
-        :type mode: str
-        :param description: The description of the output.
-        :type description: str
-        :param name: The name to be used to register the output as a Data or Model asset. A name can be set without
+        :paramtype mode: str
+        :keyword description: The description of the output.
+        :paramtype description: str
+        :keyword name: The name to be used to register the output as a Data or Model asset. A name can be set without
             setting a version.
-        :type name: str
-        :param version: The version used to register the output as a Data or Model asset. A version can be set only
+        :paramtype name: str
+        :keyword version: The version used to register the output as a Data or Model asset. A version can be set only
             when name is set.
-        :type version: str
+        :paramtype version: str
         """
 
     @overload
     def __init__(self, type: Literal["uri_file"] = "uri_file", path=None, mode=None, description=None):
         """Define a URI file outputs.
 
-        :param type: The type of the data output. Can only be set to 'uri_file'.
-        :type type: str
-        :param path: The remote path where the output should be stored.
-        :type path: str
-        :param mode: The access mode of the data output. Accepted values are
+        :keyword type: The type of the data output. Can only be set to 'uri_file'.
+        :paramtype type: str
+        :keyword path: The remote path where the output should be stored.
+        :paramtype path: str
+        :keyword mode: The access mode of the data output. Accepted values are
             * 'rw_mount': Read-write mount the data,
             * 'upload': Upload the data from the compute target,
             * 'direct': Pass in the URI as a string
-        :type mode: str
-        :param description: The description of the output.
-        :type description: str
-        :param name: The name to be used to register the output as a Data or Model asset. A name can be set without
+        :paramtype mode: str
+        :keyword description: The description of the output.
+        :paramtype description: str
+        :keyword name: The name to be used to register the output as a Data or Model asset. A name can be set without
             setting a version.
-        :type name: str
-        :param version: The version used to register the output as a Data or Model asset. A version can be set only
+        :paramtype name: str
+        :keyword version: The version used to register the output as a Data or Model asset. A version can be set only
             when name is set.
-        :type version: str
+        :paramtype version: str
         """
 
     def __init__(self, *, type=AssetTypes.URI_FOLDER, path=None, mode=None, description=None, **kwargs) -> None:

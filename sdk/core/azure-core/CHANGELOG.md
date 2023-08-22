@@ -1,6 +1,6 @@
 # Release History
 
-## 1.29.3 (Unreleased)
+## 1.29.4 (Unreleased)
 
 ### Features Added
 
@@ -8,9 +8,13 @@
 
 ### Bugs Fixed
 
-- Encoded URL before formatting it. #31346
-
 ### Other Changes
+
+## 1.29.3 (2023-08-22)
+
+### Bugs Fixed
+
+- Typing fix: `message` cannot be `None` in `AzureError`. #31564
 
 ## 1.29.2 (2023-08-14)
 

@@ -357,16 +357,7 @@ def load_component(
     :keyword params_override: Fields to overwrite on top of the yaml file.
         Format is [{"field1": "value1"}, {"field2": "value2"}]
     :paramtype params_override: List[Dict]
-    :keyword client: An MLClient instance.
-    :paramtype client: MLClient
-    :keyword name: Name of the component.
-    :paramtype name: str
-    :keyword version: Version of the component.
-    :paramtype version: str
-    :keyword kwargs: A dictionary of additional configuration parameters.
-    :paramtype kwargs: dict
-
-    :return: A function that can be called with parameters to get a `azure.ai.ml.entities.Component`
+    :return: A Component object
     :rtype: Union[CommandComponent, ParallelComponent, PipelineComponent]
 
     .. admonition:: Example:
@@ -376,7 +367,8 @@ def load_component(
             :end-before: [END configure_load_component]
             :language: python
             :dedent: 8
-            :caption: Loading a Component object from a YAML file.
+            :caption: Loading a Component object from a YAML file, overriding its version to "1.0.2", and
+            registering it remotely.
     """
 
     client = kwargs.pop("client", None)

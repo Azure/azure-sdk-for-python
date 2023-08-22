@@ -58,6 +58,19 @@ class CodeOperations(_ScopeDependentOperations):
 
     You should not instantiate this class directly. Instead, you should create MLClient and use this client via the
     property MLClient.code
+
+    :param operation_scope: Scope variables for the operations classes of an MLClient object.
+    :type operation_scope: ~azure.ai.ml._scope_dependent_operations.OperationScope
+    :param operation_config: Common configuration for operations classes of an MLClient object.
+    :type operation_config: ~azure.ai.ml._scope_dependent_operations.OperationConfig
+    :param service_client: Service client to allow end users to operate on Azure Machine Learning Workspace resources.
+    :type service_client: typing.Union[
+        ~azure.ai.ml._restclient.v2022_10_01_preview._azure_machine_learning_workspaces.AzureMachineLearningWorkspaces,
+        ~azure.ai.ml._restclient.v2021_10_01_dataplanepreview._azure_machine_learning_workspaces.
+        AzureMachineLearningWorkspaces,
+        ~azure.ai.ml._restclient.v2023_04_01._azure_machine_learning_workspaces.AzureMachineLearningWorkspaces]
+    :param datastore_operations: Represents a client for performing operations on Datastores.
+    :type datastore_operations: ~azure.ai.ml.operations._datastore_operations.DatastoreOperations
     """
 
     def __init__(
@@ -91,6 +104,15 @@ class CodeOperations(_ScopeDependentOperations):
         :raises ~azure.ai.ml.exceptions.EmptyDirectoryError: Raised if local path provided points to an empty directory.
         :return: Code asset object.
         :rtype: ~azure.ai.ml.entities.Code
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+                :start-after: [START code_operations_create_or_update]
+                :end-before: [END code_operations_create_or_update]
+                :language: python
+                :dedent: 8
+                :caption: Create code asset example.
         """
         try:
             name = code.name
@@ -201,6 +223,15 @@ class CodeOperations(_ScopeDependentOperations):
             Details will be provided in the error message.
         :return: Code asset object.
         :rtype: ~azure.ai.ml.entities.Code
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+                :start-after: [START code_operations_get]
+                :end-before: [END code_operations_get]
+                :language: python
+                :dedent: 8
+                :caption: Get code asset example.
         """
         return self._get(name=name, version=version)
 
