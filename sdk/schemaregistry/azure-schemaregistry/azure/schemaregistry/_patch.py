@@ -22,11 +22,12 @@ from typing import (
     IO
 )
 from functools import partial
+from enum import Enum
 
+from azure.core import CaseInsensitiveEnumMeta
 from azure.core.tracing.decorator import distributed_trace
 
-from ._client import SchemaRegistryClient as AzureSchemaRegistry
-from .models import SchemaProperties, Schema, SchemaFormat, DEFAULT_VERSION
+from ._client import SchemaRegistryClient as GeneratedClient
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
@@ -39,10 +40,10 @@ def _parse_schema_properties_dict(
     response_headers: Mapping[str, Union[str, int]]
 ) -> Dict[str, Union[str, int]]:
     return {
-        "id": response_headers["Schema-Id"],
-        "group_name": response_headers["Schema-Group-Name"],
-        "name": response_headers["Schema-Name"],
-        "version": int(response_headers["Schema-Version"]),
+        "id": response_headers["schema-id"],
+        "group_name": response_headers["schema-group-name"],
+        "name": response_headers["schema-name"],
+        "version": int(response_headers["schema-version"]),
     }
 
 def _get_format(content_type: str) -> SchemaFormat:
@@ -82,7 +83,7 @@ def prepare_schema_result(  # pylint:disable=unused-argument
     return pipeline_response.http_response, properties_dict
 
 
-###### Helper Functions ######
+###### Request Helper Functions ######
 def get_http_request_kwargs(kwargs):
     http_request_keywords = ["params", "headers", "json", "data", "files"]
     http_request_kwargs = {
@@ -109,9 +110,7 @@ def get_case_insensitive_format(
 ###### Wrapper Class ######
 
 # TODO: inherit from AzureSchemaRegistry and overload
-# TODO: register_schema + get_schema_id_by_content will be auto generated once multiple content type bug is fixed in python generator.
-# they are currently not being generated when multiple content types are included in the request.
-class SchemaRegistryClient(object):
+class SchemaRegistryClient(GeneratedClient):
     """
     SchemaRegistryClient is a client for registering and retrieving schemas from the Azure Schema Registry service.
 
@@ -136,29 +135,18 @@ class SchemaRegistryClient(object):
     def __init__(
         self, fully_qualified_namespace: str, credential: TokenCredential, **kwargs: Any
     ) -> None:
+        if "https://" not in fully_qualified_namespace:
+            fully_qualified_namespace = f"https://{fully_qualified_namespace}"
         api_version = kwargs.pop("api_version", DEFAULT_VERSION)
-        self._generated_client = AzureSchemaRegistry(
-            credential=credential,
+        super().__init__(
             endpoint=fully_qualified_namespace,
+            credential=credential,
             api_version=api_version,
             **kwargs,
         )
 
-    def __enter__(self) -> SchemaRegistryClient:
-        self._generated_client.__enter__()
-        return self
-
-    def __exit__(self, *exc_details: Any) -> None:
-        self._generated_client.__exit__(*exc_details)
-
-    def close(self) -> None:
-        """This method is to close the sockets opened by the client.
-        It need not be used when using with a context manager.
-        """
-        self._generated_client.close()
-
     @distributed_trace
-    def register_schema(
+    def register_schema(    # pylint:disable=arguments-differ
         self,
         group_name: str,
         name: str,
@@ -194,10 +182,10 @@ class SchemaRegistryClient(object):
         format = get_case_insensitive_format(format)
         http_request_kwargs = get_http_request_kwargs(kwargs)
         # ignoring return type because the generated client operations are not annotated w/ cls return type
-        schema_properties: Dict[str, Union[int, str]] = self._generated_client.register_schema(  # type: ignore
+        schema_properties: Dict[str, Union[int, str]] = super().register_schema(
             group_name=group_name,
-            schema_name=name,
-            schema_content=cast(IO[Any], definition),
+            name=name,
+            content=cast(IO[Any], definition),
             content_type=kwargs.pop("content_type", get_content_type(format)),
             cls=partial(prepare_schema_properties_result, format),
             **http_request_kwargs,
@@ -263,7 +251,7 @@ class SchemaRegistryClient(object):
                 schema_id = kwargs.pop("schema_id")
             schema_id = cast(str, schema_id)
             # ignoring return type because the generated client operations are not annotated w/ cls return type
-            http_response, schema_properties = self._generated_client.get_schema_by_id(  # type: ignore
+            http_response, schema_properties = super().get_schema_by_id(  # type: ignore
                 id=schema_id, cls=prepare_schema_result, **http_request_kwargs
             )
         except KeyError:
@@ -278,7 +266,7 @@ class SchemaRegistryClient(object):
                     """or `group_name`, `name`, `version."""
                 )
             # ignoring return type because the generated client operations are not annotated w/ cls return type
-            http_response, schema_properties = self._generated_client.get_schema_by_version(  # type: ignore
+            http_response, schema_properties = super().get_schema_by_version(  # type: ignore
                 group_name=group_name,
                 name=name,
                 schema_version=version,
@@ -327,7 +315,7 @@ class SchemaRegistryClient(object):
         http_request_kwargs = get_http_request_kwargs(kwargs)
         # ignoring return type because the generated client operations are not annotated w/ cls return type
         schema_properties: Dict[str, Union[int, str]] = (
-            self._generated_client.get_schema_id_by_content(  # type: ignore
+            super().get_schema_id_by_content(  # type: ignore
                 group_name=group_name,
                 schema_name=name,
                 schema_content=cast(IO[Any], definition),
@@ -338,6 +326,79 @@ class SchemaRegistryClient(object):
         )
         return SchemaProperties(**schema_properties)
 
+class SchemaProperties(object):
+    """
+    Meta properties of a schema.
+
+    :ivar id: References specific schema in registry namespace.
+    :vartype id: str
+    :ivar format: Format for the schema being stored.
+    :vartype format: ~azure.schemaregistry.SchemaFormat
+    :ivar group_name: Schema group under which schema is stored.
+    :vartype group_name: str
+    :ivar name: Name of schema.
+    :vartype name: str
+    :ivar version: Version of schema.
+    :vartype version: int
+    """
+
+    def __init__(self, **kwargs: Any) -> None:
+        self.id = kwargs.pop("id")
+        self.format = kwargs.pop("format")
+        self.group_name = kwargs.pop("group_name")
+        self.name = kwargs.pop("name")
+        self.version = kwargs.pop("version")
+
+    def __repr__(self):
+        return (
+            f"SchemaProperties(id={self.id}, format={self.format}, "
+            f"group_name={self.group_name}, name={self.name}, version={self.version})"[
+                :1024
+            ]
+        )
+
+class Schema(object):
+    """
+    The schema content of a schema, along with id and meta properties.
+
+    :ivar definition: The content of the schema.
+    :vartype definition: str
+    :ivar properties: The properties of the schema.
+    :vartype properties: SchemaProperties
+    """
+
+    def __init__(self, **kwargs: Any) -> None:
+        self.definition = kwargs.pop("definition")
+        self.properties = kwargs.pop("properties")
+
+    def __repr__(self):
+        return f"Schema(definition={self.definition}, properties={self.properties})"[:1024]
+
+class SchemaFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """
+    Represents the format of the schema to be stored by the Schema Registry service.
+    """
+
+    AVRO = "Avro"
+    """Represents the Apache Avro schema format."""
+
+    JSON = "Json"
+    """Represents the JSON schema format."""
+
+    CUSTOM = "Custom"
+    """Represents a custom schema format."""
+
+class ApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """
+    Represents the Schema Registry API version to use for requests.
+    """
+
+    V2021_10 = "2021-10"
+    V2022_10 = "2022-10"
+    """This is the default version."""
+
+DEFAULT_VERSION = ApiVersion.V2022_10
+
 def patch_sdk():
     """Do not remove from this file.
 
@@ -347,8 +408,10 @@ def patch_sdk():
     """
 
 __all__: List[str] = [
-    "ApiVersion",
-    "SchemaFormat",
-    "Schema",
+    "SchemaRegistryClient",
     "SchemaProperties",
+    "Schema",
+    "SchemaFormat",
+    "ApiVersion",
+    "DEFAULT_VERSION",
 ]  # Add all objects you want publicly available to users at this package level

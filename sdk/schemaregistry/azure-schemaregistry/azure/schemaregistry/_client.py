@@ -24,7 +24,7 @@ class SchemaRegistryClient(SchemaRegistryClientOperationsMixin):  # pylint: disa
     """SchemaRegistryClient.
 
     :param endpoint: The Schema Registry service endpoint, for example
-     'my-namespace.servicebus.windows.net'. Required.
+     https://my-namespace.servicebus.windows.net. Required.
     :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential

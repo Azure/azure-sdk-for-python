@@ -25,7 +25,7 @@ class SchemaRegistryClientConfiguration(Configuration):  # pylint: disable=too-m
     attributes.
 
     :param endpoint: The Schema Registry service endpoint, for example
-     'my-namespace.servicebus.windows.net'. Required.
+     https://my-namespace.servicebus.windows.net. Required.
     :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
@@ -51,7 +51,7 @@ class SchemaRegistryClientConfiguration(Configuration):  # pylint: disable=too-m
         self.endpoint = endpoint
         self.credential = credential
         self.api_version = api_version
-        self.credential_scopes = kwargs.pop('credential_scopes', ['user_impersonation'])
+        self.credential_scopes = kwargs.pop('credential_scopes', ["https://eventhubs.azure.net/.default"])
         kwargs.setdefault('sdk_moniker', 'schemaregistry/{}'.format(VERSION))
         self._configure(**kwargs)
 
