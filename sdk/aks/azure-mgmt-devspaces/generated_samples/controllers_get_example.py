@@ -14,7 +14,7 @@ from azure.mgmt.devspaces import DevSpacesManagementClient
     pip install azure-identity
     pip install azure-mgmt-devspaces
 # USAGE
-    python controllers_update.py
+    python controllers_get_example.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,17 +29,13 @@ def main():
         subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
-    response = client.controllers.update(
+    response = client.controllers.get(
         resource_group_name="myResourceGroup",
         name="myControllerResource",
-        controller_update_parameters={
-            "properties": {"targetContainerHostCredentialsBase64": "QmFzZTY0IEVuY29kZWQgVmFsdWUK"},
-            "tags": {"key": "value"},
-        },
     )
     print(response)
 
 
-# x-ms-original-file: specification/devspaces/resource-manager/Microsoft.DevSpaces/stable/2019-04-01/examples/ControllersUpdate_example.json
+# x-ms-original-file: specification/devspaces/resource-manager/Microsoft.DevSpaces/stable/2019-04-01/examples/ControllersGet_example.json
 if __name__ == "__main__":
     main()
