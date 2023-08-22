@@ -345,7 +345,7 @@ class ForecastingJob(AutoMLTabular):
                 |                |                               | | raised.                            |
                 +----------------+-------------------------------+--------------------------------------+
                 | Some Value     | Aggregation function          | | Aggregate to                       |
-                |                |                               | | frequency using                    | 
+                |                |                               | | frequency using                    |
                 |                |                               | | provided                           |
                 |                |                               | | aggregation                        |
                 |                |                               | | function.                          |
