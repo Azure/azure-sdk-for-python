@@ -411,7 +411,7 @@ class JobSchedule(RestTranslatableMixin, Schedule, TelemetryMixin):
         :return: Rest schedule.
         :rtype: RestSchedule
         """
-        from .. import CommandJob, SparkJob
+        from azure.ai.ml.entities import CommandJob, SparkJob
 
         if isinstance(self.create_job, BaseNode):
             self.create_job = self.create_job._to_job()

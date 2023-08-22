@@ -511,7 +511,6 @@ class DataOperations(_ScopeDependentOperations):
         # block cumtomer specified path on managed datastore
         data_index.path = _validate_workspace_managed_datastore(data_index.path)
 
-        # with self._set_registry_client(index_component_registry_name):
         # TODO: This is import_data behavior, not sure if it should be default for index_data, or just be documented?
         if "${{name}}" not in data_index.path and "{name}" not in data_index.path:
             data_index.path = data_index.path.rstrip("/") + "/${{name}}"
@@ -521,7 +520,6 @@ class DataOperations(_ScopeDependentOperations):
             display_name=experiment_name,
             experiment_name=experiment_name,
             compute="serverless",
-            # TODO: Or have source, embedding, index, and path?
             data_index=data_index,
             ml_client=MLClient(
                 subscription_id=self._subscription_id,
