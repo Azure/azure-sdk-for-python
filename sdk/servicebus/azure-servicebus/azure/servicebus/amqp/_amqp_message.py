@@ -43,6 +43,9 @@ class DictMixin(object):
     def __str__(self) -> str:
         return str({k: v for k, v in self.__dict__.items() if not k.startswith("_")})
 
+    def __contains__(self, key: str) -> bool:
+        return key in self.__dict__
+
     def has_key(self, k: str) -> bool:
         return k in self.__dict__
 
