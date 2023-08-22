@@ -60,7 +60,7 @@ class RemoteRenderingClient(object):
     """
 
     def __init__(self, endpoint, account_id, account_domain, credential, **kwargs):
-        # type: (str, str, str, Union[TokenCredential, AccessToken], Any) -> None
+        # type: (str, str, str, Union[AzureKeyCredential, TokenCredential, AccessToken], Any) -> None
         self._api_version = kwargs.pop(
             "api_version", RemoteRenderingApiVersion.V2021_01_01
         )
@@ -78,20 +78,18 @@ class RemoteRenderingClient(object):
         if not credential:
             raise ValueError("credential cannot be None")
 
-        if isinstance(credential, AccessToken):
-            cred = StaticAccessTokenCredential(credential)  # type: TokenCredential
-        elif isinstance(credential, AzureKeyCredential):
-            cred = MixedRealityAccountKeyCredential(
-                account_id=account_id, account_key=credential)
-        else:
-            cred = credential
-
         self.polling_interval = kwargs.pop("polling_interval", 5)
-        endpoint_url = kwargs.pop(
-            'authentication_endpoint_url', construct_endpoint_url(account_domain))
-        # otherwise assume it is a TokenCredential and simply pass it through
-        pipeline_credential = get_mixedreality_credential(
-            account_id=account_id, account_domain=account_domain, credential=cred, endpoint_url=endpoint_url)
+        endpoint_url = kwargs.pop('authentication_endpoint_url', construct_endpoint_url(account_domain))
+        
+        def build_credentials(input_credentials:Any) -> Any:
+            return get_mixedreality_credential(account_id=account_id, account_domain=account_domain, credential=input_credentials, endpoint_url=endpoint_url)
+
+        if isinstance(credential, AccessToken):
+            pipeline_credential = build_credentials(StaticAccessTokenCredential(credential))  # type: TokenCredential
+        elif isinstance(credential, AzureKeyCredential):
+            pipeline_credential = build_credentials(MixedRealityAccountKeyCredential(account_id=account_id, account_key=credential))
+        else:
+            pipeline_credential = build_credentials(credential)
 
         if pipeline_credential is None:
             raise ValueError("credential is not of type TokenCredential, AzureKeyCredential or AccessToken")
@@ -136,9 +134,12 @@ class RemoteRenderingClient(object):
             **kwargs)
 
         polling_method = ConversionPolling(account_id=self._account_id, polling_interval=polling_interval)
+        def deserialization_method(input:Any) -> AssetConversion:
+            raise Exception("Not implemented")
+
         return LROPoller(client=self._client,
                          initial_response=initial_state,
-                         deserialization_callback=lambda: None,
+                         deserialization_callback=deserialization_method,
                          polling_method=polling_method)
 
     @distributed_trace
@@ -194,10 +195,13 @@ class RemoteRenderingClient(object):
                 account_id=self._account_id,
                 conversion_id=conversion_id,
                 **kwargs)
+            
+        def deserialization_method(input:Any) -> AssetConversion:
+            raise Exception("Not implemented")
 
         return LROPoller(client=self._client,
                          initial_response=initial_state,
-                         deserialization_callback=lambda: None,
+                         deserialization_callback=deserialization_method,
                          polling_method=polling_method)
 
     @distributed_trace
@@ -234,9 +238,11 @@ class RemoteRenderingClient(object):
             **kwargs)
         polling_interval = kwargs.pop("polling_interval", self.polling_interval)
         polling_method = SessionPolling(account_id=self._account_id, polling_interval=polling_interval)
+        def deserialization_method(input:Any) -> RenderingSession:
+            raise Exception("Not implemented")
         return LROPoller(client=self._client,
                          initial_response=initial_state,
-                         deserialization_callback=lambda: None,
+                         deserialization_callback=deserialization_method,
                          polling_method=polling_method)
 
     @distributed_trace
@@ -292,9 +298,11 @@ class RemoteRenderingClient(object):
                 **kwargs)
 
         polling_method = SessionPolling(account_id=self._account_id, polling_interval=polling_interval)
+        def deserialization_method(input:Any) -> RenderingSession:
+            raise Exception("Not implemented")
         return LROPoller(client=self._client,
                          initial_response=initial_state,
-                         deserialization_callback=lambda: None,
+                         deserialization_callback=deserialization_method,
                          polling_method=polling_method)
 
     @distributed_trace

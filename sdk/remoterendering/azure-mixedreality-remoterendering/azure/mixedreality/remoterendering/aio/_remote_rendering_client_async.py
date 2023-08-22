@@ -93,16 +93,15 @@ class RemoteRenderingClient(object):
         endpoint_url = kwargs.pop(
             'authentication_endpoint_url', construct_endpoint_url(account_domain))  # type: str
 
+        def build_credentials(input_credentials:Any) -> Any:
+            return get_mixedreality_credential(account_id=account_id, account_domain=account_domain, credential=input_credentials, endpoint_url=endpoint_url)
+        
         if isinstance(credential, AccessToken):
-            cred = StaticAccessTokenCredential(credential)   # type: AsyncTokenCredential
+            pipeline_credential = build_credentials(StaticAccessTokenCredential(credential))
         elif isinstance(credential, AzureKeyCredential):
-            cred = MixedRealityAccountKeyCredential(
-                account_id=account_id, account_key=credential)
+            pipeline_credential = build_credentials(MixedRealityAccountKeyCredential(account_id=account_id, account_key=credential))
         else:
-            cred = credential
-            # otherwise assume it is a TokenCredential and simply pass it through
-        pipeline_credential = get_mixedreality_credential(
-            account_id=account_id, account_domain=account_domain, credential=cred, endpoint_url=endpoint_url)
+            pipeline_credential = build_credentials(credential)
 
         self.polling_interval = kwargs.pop("polling_interval", 5)
 
@@ -145,9 +144,12 @@ class RemoteRenderingClient(object):
                                                                               body=CreateAssetConversionSettings(
                                                                                   settings=settings),
                                                                               **kwargs)
+        def deserialization_method(input:Any) -> AssetConversion:
+            raise Exception("Not implemented")
+        
         return AsyncLROPoller(client=self._client,
                               initial_response=initial_state,
-                              deserialization_callback=lambda: None,
+                              deserialization_callback=deserialization_method,
                               polling_method=polling_method)
 
     @distributed_trace_async
@@ -200,10 +202,13 @@ class RemoteRenderingClient(object):
                 account_id=self._account_id,
                 conversion_id=conversion_id,
                 **kwargs)
+            
+        def deserialization_method(input:Any) -> AssetConversion:
+            raise Exception("Not implemented")
 
         return AsyncLROPoller(client=self._client,
                               initial_response=initial_state,
-                              deserialization_callback=lambda: None,
+                              deserialization_callback=deserialization_method,
                               polling_method=polling_method)
 
     @distributed_trace_async
@@ -243,9 +248,13 @@ class RemoteRenderingClient(object):
                                                                            session_id=session_id,
                                                                            body=settings,
                                                                            **kwargs)
+        
+        def deserialization_method(input:Any) -> RenderingSession:
+            raise Exception("Not implemented")
+        
         return AsyncLROPoller(client=self._client,
                               initial_response=initial_state,
-                              deserialization_callback=lambda: None,
+                              deserialization_callback=deserialization_method,
                               polling_method=polling_method)
 
     @distributed_trace_async
@@ -294,10 +303,13 @@ class RemoteRenderingClient(object):
                 account_id=self._account_id,
                 session_id=session_id,
                 **kwargs)
+            
+        def deserialization_method(input:Any) -> RenderingSession:
+            raise Exception("Not implemented")
 
         return AsyncLROPoller(client=self._client,
                               initial_response=initial_state,
-                              deserialization_callback=lambda: None,
+                              deserialization_callback=deserialization_method,
                               polling_method=polling_method)
 
     @distributed_trace_async
