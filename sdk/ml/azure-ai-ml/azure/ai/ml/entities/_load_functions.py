@@ -5,7 +5,7 @@
 import logging
 import warnings
 from os import PathLike
-from typing import IO, AnyStr, Optional, Type, Union
+from typing import IO, AnyStr, Dict, List, Optional, Type, Union
 
 from marshmallow import ValidationError
 
@@ -308,6 +308,7 @@ def load_compute(
     source: Union[str, PathLike, IO[AnyStr]],
     *,
     relative_origin: Optional[str] = None,
+    params_override: Optional[List[Dict[str, str]]] = None,
     **kwargs,
 ) -> Compute:
     """Construct a compute object from a yaml file.
@@ -323,15 +324,23 @@ def load_compute(
         the relative locations of files referenced in the parsed yaml.
         Defaults to the inputted source's directory if it is a file or file path input.
         Defaults to "./" if the source is a stream input with no name value.
-    :paramtype relative_origin: str
+    :paramtype relative_origin: Optional[str]
     :keyword params_override: Fields to overwrite on top of the yaml file.
         Format is [{"field1": "value1"}, {"field2": "value2"}]
-    :paramtype params_override: List[Dict]
-
+    :paramtype params_override: Optional[List[Dict]]
     :return: Loaded compute object.
-    :rtype: Compute
+    :rtype: ~azure.ai.ml.entities.Compute
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../../../../samples/ml_samples_compute.py
+            :start-after: [START load_compute]
+            :end-before: [END load_compute]
+            :language: python
+            :dedent: 8
+            :caption: Loading a Compute object from a YAML file and overriding its description.
     """
-    return load_common(Compute, source, relative_origin, **kwargs)
+    return load_common(Compute, source, relative_origin, params_override=params_override, **kwargs)
 
 
 def load_component(
@@ -357,16 +366,7 @@ def load_component(
     :keyword params_override: Fields to overwrite on top of the yaml file.
         Format is [{"field1": "value1"}, {"field2": "value2"}]
     :paramtype params_override: List[Dict]
-    :keyword client: An MLClient instance.
-    :paramtype client: MLClient
-    :keyword name: Name of the component.
-    :paramtype name: str
-    :keyword version: Version of the component.
-    :paramtype version: str
-    :keyword kwargs: A dictionary of additional configuration parameters.
-    :paramtype kwargs: dict
-
-    :return: A function that can be called with parameters to get a `azure.ai.ml.entities.Component`
+    :return: A Component object
     :rtype: Union[CommandComponent, ParallelComponent, PipelineComponent]
 
     .. admonition:: Example:
@@ -376,7 +376,8 @@ def load_component(
             :end-before: [END configure_load_component]
             :language: python
             :dedent: 8
-            :caption: Loading a Component object from a YAML file.
+            :caption: Loading a Component object from a YAML file, overriding its version to "1.0.2", and
+            registering it remotely.
     """
 
     client = kwargs.pop("client", None)
