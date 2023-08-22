@@ -13,6 +13,7 @@ from azure.identity import CredentialUnavailableError
 from azure.identity._constants import EnvironmentVariables
 from azure.identity._credentials.imds import IMDS_TOKEN_PATH, ImdsCredential, IMDS_AUTHORITY, PIPELINE_SETTINGS
 from azure.identity._internal.user_agent import USER_AGENT
+from azure.identity._internal.utils import within_credential_chain
 import pytest
 
 from helpers import mock, mock_response, Request, validating_transport
@@ -21,32 +22,22 @@ from recorded_test_case import RecordedTestCase
 
 def test_no_scopes():
     """The credential should raise ValueError when get_token is called with no scopes"""
-
-    successful_probe = mock_response(status_code=400, json_payload={})
-    transport = mock.Mock(send=mock.Mock(return_value=successful_probe))
-    credential = ImdsCredential(transport=transport)
-
+    credential = ImdsCredential()
     with pytest.raises(ValueError):
         credential.get_token()
 
 
 def test_multiple_scopes():
     """The credential should raise ValueError when get_token is called with more than one scope"""
-
-    successful_probe = mock_response(status_code=400, json_payload={})
-    transport = mock.Mock(send=mock.Mock(return_value=successful_probe))
-    credential = ImdsCredential(transport=transport)
-
+    credential = ImdsCredential()
     with pytest.raises(ValueError):
         credential.get_token("one scope", "and another")
 
 
 def test_identity_not_available():
     """The credential should raise CredentialUnavailableError when the endpoint responds 400 to a token request"""
-
-    # first request is a probe, second a token request
     transport = validating_transport(
-        requests=[Request()] * 2, responses=[mock_response(status_code=400, json_payload={})] * 2
+        requests=[Request()], responses=[mock_response(status_code=400, json_payload={})]
     )
 
     credential = ImdsCredential(transport=transport)
@@ -66,9 +57,6 @@ def test_unexpected_error():
             # ensure the `claims` and `tenant_id` kwargs from credential's `get_token` method don't make it to transport
             assert "claims" not in kwargs
             assert "tenant_id" not in kwargs
-            if "resource" not in request.query:
-                # availability probe
-                return mock_response(status_code=400, json_payload={})
             return mock_response(status_code=code, json_payload={"error": error_message})
 
         credential = ImdsCredential(transport=mock.Mock(send=send))
@@ -89,6 +77,7 @@ def test_retries():
 
     total_retries = PIPELINE_SETTINGS["retry_total"]
 
+    assert within_credential_chain.get() == False
     for status_code in (404, 429, 500):
         mock_send.reset_mock()
         mock_response.status_code = status_code
@@ -96,9 +85,8 @@ def test_retries():
             ImdsCredential(transport=mock.Mock(send=mock_send)).get_token("scope")
         except ClientAuthenticationError:
             pass
-        # first call was availability probe, second the original request;
         # credential should have then exhausted retries for each of these status codes
-        assert mock_send.call_count == 2 + total_retries
+        assert mock_send.call_count == 1 + total_retries
 
 
 def test_cache():
@@ -126,7 +114,7 @@ def test_cache():
     credential = ImdsCredential(transport=mock.Mock(send=mock_send))
     token = credential.get_token(scope)
     assert token.token == expired
-    assert mock_send.call_count == 2  # first request was probing for endpoint availability
+    assert mock_send.call_count == 1
 
     # calling get_token again should provoke another HTTP request
     good_for_an_hour = "this token's good for an hour"
@@ -135,12 +123,12 @@ def test_cache():
     token_payload["access_token"] = good_for_an_hour
     token = credential.get_token(scope)
     assert token.token == good_for_an_hour
-    assert mock_send.call_count == 3
+    assert mock_send.call_count == 2
 
     # get_token should return the cached token now
     token = credential.get_token(scope)
     assert token.token == good_for_an_hour
-    assert mock_send.call_count == 3
+    assert mock_send.call_count == 2
 
 
 def test_identity_config():
@@ -151,7 +139,6 @@ def test_identity_config():
     scope = "scope"
     transport = validating_transport(
         requests=[
-            Request(base_url=IMDS_AUTHORITY + IMDS_TOKEN_PATH),
             Request(
                 base_url=IMDS_AUTHORITY + IMDS_TOKEN_PATH,
                 method="GET",
@@ -160,7 +147,6 @@ def test_identity_config():
             ),
         ],
         responses=[
-            mock_response(status_code=400, json_payload={"error": "this is an error message"}),
             mock_response(
                 json_payload={
                     "access_token": access_token,

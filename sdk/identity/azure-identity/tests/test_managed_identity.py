@@ -103,19 +103,11 @@ def test_custom_hooks(environ):
         )
     credential.get_token(scope)
 
-    if environ:
-        # some environment variables are set, so we're not mocking IMDS and should expect 1 request
-        assert request_hook.call_count == 1
-        assert response_hook.call_count == 1
-        args, kwargs = response_hook.call_args
-        pipeline_response = args[0]
-        assert pipeline_response.http_response == expected_response
-    else:
-        # we're mocking IMDS and should expect 2 requests
-        assert request_hook.call_count == 2
-        assert response_hook.call_count == 2
-        responses = [args[0].http_response for args, _ in response_hook.call_args_list]
-        assert responses == [expected_response] * 2
+    assert request_hook.call_count == 1
+    assert response_hook.call_count == 1
+    args, kwargs = response_hook.call_args
+    pipeline_response = args[0]
+    assert pipeline_response.http_response == expected_response
 
 
 @pytest.mark.parametrize("environ", ALL_ENVIRONMENTS)
@@ -144,19 +136,12 @@ def test_tenant_id(environ):
         )
     credential.get_token(scope)
 
-    if environ:
-        # some environment variables are set, so we're not mocking IMDS and should expect 1 request
-        assert request_hook.call_count == 1
-        assert response_hook.call_count == 1
-        args, kwargs = response_hook.call_args
-        pipeline_response = args[0]
-        assert pipeline_response.http_response == expected_response
-    else:
-        # we're mocking IMDS and should expect 2 requests
-        assert request_hook.call_count == 2
-        assert response_hook.call_count == 2
-        responses = [args[0].http_response for args, _ in response_hook.call_args_list]
-        assert responses == [expected_response] * 2
+    assert request_hook.call_count == 1
+    assert response_hook.call_count == 1
+    args, kwargs = response_hook.call_args
+    pipeline_response = args[0]
+    assert pipeline_response.http_response == expected_response
+
 
 
 def test_cloud_shell():
@@ -638,7 +623,6 @@ def test_imds():
     scope = "scope"
     transport = validating_transport(
         requests=[
-            Request(base_url=IMDS_AUTHORITY + IMDS_TOKEN_PATH),
             Request(
                 base_url=IMDS_AUTHORITY + IMDS_TOKEN_PATH,
                 method="GET",
@@ -647,8 +631,6 @@ def test_imds():
             ),
         ],
         responses=[
-            # probe receives error response
-            mock_response(status_code=400, json_payload={"error": "this is an error message"}),
             mock_response(
                 json_payload={
                     "access_token": access_token,
@@ -676,7 +658,6 @@ def test_imds_tenant_id():
     scope = "scope"
     transport = validating_transport(
         requests=[
-            Request(base_url=IMDS_AUTHORITY + IMDS_TOKEN_PATH),
             Request(
                 base_url=IMDS_AUTHORITY + IMDS_TOKEN_PATH,
                 method="GET",
@@ -685,8 +666,6 @@ def test_imds_tenant_id():
             ),
         ],
         responses=[
-            # probe receives error response
-            mock_response(status_code=400, json_payload={"error": "this is an error message"}),
             mock_response(
                 json_payload={
                     "access_token": access_token,
@@ -747,7 +726,6 @@ def test_imds_user_assigned_identity():
     client_id = "some-guid"
     transport = validating_transport(
         requests=[
-            Request(base_url=endpoint),  # first request should be availability probe => match only the URL
             Request(
                 base_url=endpoint,
                 method="GET",
@@ -756,8 +734,6 @@ def test_imds_user_assigned_identity():
             ),
         ],
         responses=[
-            # probe receives error response
-            mock_response(status_code=400, json_payload={"error": "this is an error message"}),
             mock_response(
                 json_payload={
                     "access_token": access_token,
