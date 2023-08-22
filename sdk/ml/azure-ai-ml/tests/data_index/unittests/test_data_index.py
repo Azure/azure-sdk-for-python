@@ -20,13 +20,13 @@ class TestDataIndex:
     def test_data_index_uri_to_acs_aoai(self):
         data_index1 = load_data(source=str(unittests_folder / "../../test_configs/data_index/data_index_aoai_acs.yaml"))
         data_index2 = DataIndex(
-            name="azure_docs_ml_aoai",
+            name="docs_ml_aoai",
             type="uri_folder",
             path="azureml://datastores/workspaceblobstore/paths/{name}",
             source=IndexSource(
                 input_data=Data(
                     type="uri_folder",
-                    path=str(unittests_folder / "../test_data")
+                    path=str(unittests_folder.parent / "test_data")
                     # path = "https://github.com/MicrosoftDocs/azure-docs.git"
                 ),
                 # input_glob = "articles/machine-learning/**/*",
@@ -40,12 +40,12 @@ class TestDataIndex:
             embedding=Embedding(
                 model="azure_open_ai://deployment/text-embedding-ada-002/model/text-embedding-ada-002",
                 connection="azureml:azureml-rag-aoai-v2",
-                cache_path="azureml://datastores/workspaceblobstore/paths/embeddings_cache/azure_docs_ml_aoai",
+                cache_path="azureml://datastores/workspaceblobstore/paths/embeddings_cache/docs_ml_aoai",
             ),
             index=IndexStore(
                 type="acs",
                 connection="azureml:azureml-rag-acs-v2",
-                name="azure_docs_ml_aoai",
+                name="docs_ml_aoai",
             ),
         )
 
@@ -94,7 +94,7 @@ class TestDataIndex:
                 source=IndexSource(
                     input_data=Data(
                         type="uri_folder",
-                        path=str(unittests_folder / "../test_data")
+                        path=str(unittests_folder.parent / "test_data")
                         # path = "https://github.com/MicrosoftDocs/azure-docs.git"
                     ),
                     # input_glob = "articles/machine-learning/**/*",
@@ -108,14 +108,14 @@ class TestDataIndex:
                 embedding=Embedding(
                     model="azure_open_ai://deployment/text-embedding-ada-002/model/text-embedding-ada-002",
                     connection="azureml:azureml-rag-aoai-v2",
-                    cache_path="azureml://datastores/workspaceblobstore/paths/embeddings_cache/azure_docs_ml_aoai",
+                    cache_path="azureml://datastores/workspaceblobstore/paths/embeddings_cache/docs_ml_aoai",
                 ),
                 index=IndexStore(
                     type="acs",
                     connection="azureml:azureml-rag-acs-v2",
-                    name="azure_docs_ml_aoai",
+                    name="docs_ml_aoai",
                 ),
-                name="azure_docs_ml_aoai",
+                name="docs_ml_aoai",
                 path="azureml://datastores/workspaceblobstore/paths/{name}",
             ),
             ml_client=MLClient.from_config(

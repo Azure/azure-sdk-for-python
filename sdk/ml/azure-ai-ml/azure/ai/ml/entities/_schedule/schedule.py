@@ -7,6 +7,7 @@ import typing
 from os import PathLike
 from pathlib import Path
 from typing import IO, AnyStr, Dict, Optional, Union
+
 from typing_extensions import Literal
 
 from azure.ai.ml._restclient.v2023_06_01_preview.models import JobBase as RestJobBase
@@ -28,7 +29,6 @@ from azure.ai.ml.entities._util import load_from_dict
 from azure.ai.ml.entities._validation import MutableValidationResult, SchemaValidatableMixin
 
 from ...exceptions import ErrorCategory, ErrorTarget, ScheduleException, ValidationException
-from .. import CommandJob, SparkJob
 from .._builders import BaseNode
 from .trigger import CronTrigger, RecurrenceTrigger, TriggerBase
 
@@ -99,12 +99,15 @@ class Schedule(YamlTranslatableMixin, SchemaValidatableMixin, Resource):
     @classmethod
     def _resolve_cls_and_type(cls, data, params_override):  # pylint: disable=unused-argument
         from azure.ai.ml.entities._data_import.schedule import ImportDataSchedule
+        from azure.ai.ml.entities._data_index.schedule import IndexDataSchedule
         from azure.ai.ml.entities._monitoring.schedule import MonitorSchedule
 
         if "create_monitor" in data:
             return MonitorSchedule, None
         if "import_data" in data:
             return ImportDataSchedule, None
+        if "index_data" in data:
+            return IndexDataSchedule, None
         return JobSchedule, None
 
     @property
@@ -408,6 +411,8 @@ class JobSchedule(RestTranslatableMixin, Schedule, TelemetryMixin):
         :return: Rest schedule.
         :rtype: RestSchedule
         """
+        from .. import CommandJob, SparkJob
+
         if isinstance(self.create_job, BaseNode):
             self.create_job = self.create_job._to_job()
         private_enabled = is_private_preview_enabled()

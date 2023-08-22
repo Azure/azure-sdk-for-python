@@ -7,14 +7,13 @@ __path__ = __import__("pkgutil").extend_path(__path__, __name__)  # type: ignore
 import logging
 
 # from .entities._builders.parallel_func import parallel
-from azure.ai.ml.entities._inputs_outputs import Input, Output
-
 from ._ml_client import MLClient
 from ._utils._logger_utils import initialize_logger_info
 from ._version import VERSION
 from .entities._builders.command_func import command
 from .entities._builders.spark_func import spark
 from .entities._credentials import AmlTokenConfiguration, ManagedIdentityConfiguration, UserIdentityConfiguration
+from .entities._inputs_outputs import Input, Output
 from .entities._job.distribution import MpiDistribution, PyTorchDistribution, RayDistribution, TensorFlowDistribution
 from .entities._load_functions import (
     load_batch_deployment,

@@ -8,7 +8,7 @@ from os import PathLike
 from pathlib import Path
 from typing import Dict, Optional, Union
 
-from azure.ai.ml._schema import DataIndexSchema, DataIndexTypes
+from azure.ai.ml._schema import DataIndexTypes
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, AssetTypes
 from azure.ai.ml.entities._assets import Data
@@ -252,6 +252,8 @@ class DataIndex(Data):
         params_override: Optional[list] = None,
         **kwargs,
     ) -> "DataIndex":
+        from azure.ai.ml._schema import DataIndexSchema
+
         data = data or {}
         params_override = params_override or []
         context = {

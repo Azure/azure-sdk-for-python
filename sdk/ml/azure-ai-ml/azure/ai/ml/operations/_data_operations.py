@@ -486,12 +486,17 @@ class DataOperations(_ScopeDependentOperations):
         self,
         data_index: DataIndex,
         identity: Optional[Union[ManagedIdentityConfiguration, UserIdentityConfiguration]] = None,
+        submit_job: bool = True,
         **kwargs,
     ) -> PipelineJob:
         """Returns the data import job that is creating the data asset.
 
         :param data_index: DataIndex object.
         :type data_index: azure.ai.ml.entities.DataIndex
+        :param identity: Identity configuration for the job.
+        :type identity: Optional[Union[ManagedIdentityConfiguration, UserIdentityConfiguration]]
+        :param submit_job: Whether to submit the job to the service. Default: True.
+        :type submit_job: bool
         :return: data import job object.
         :rtype: ~azure.ai.ml.entities.PipelineJob
         """
@@ -539,9 +544,12 @@ class DataOperations(_ScopeDependentOperations):
         index_pipeline.properties["azureml.mlIndexAssetKind"] = data_index.index.type
         index_pipeline.properties["azureml.mlIndexAssetSource"] = "Data Asset"
 
-        return self._all_operations.all_operations[AzureMLResourceType.JOB].create_or_update(
-            job=index_pipeline, skip_validation=True, **kwargs
-        )
+        if submit_job:
+            return self._all_operations.all_operations[AzureMLResourceType.JOB].create_or_update(
+                job=index_pipeline, skip_validation=True, **kwargs
+            )
+        else:
+            return index_pipeline
 
     @monitor_with_activity(logger, "Data.ListMaterializationStatus", ActivityType.PUBLICAPI)
     @experimental

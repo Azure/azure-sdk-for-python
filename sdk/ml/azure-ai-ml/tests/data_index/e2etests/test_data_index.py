@@ -29,7 +29,7 @@ class TestDataIndex(AzureRecordedTestCase):
             source=IndexSource(
                 input_data=Data(
                     type="uri_folder",
-                    path=str(e2etests_folder / "../test_data")
+                    path=str(e2etests_folder.parent / "test_data")
                     # path = "https://github.com/MicrosoftDocs/azure-docs.git"
                 ),
                 # input_glob = "articles/machine-learning/**/*",

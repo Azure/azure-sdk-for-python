@@ -4,8 +4,16 @@
 
 __path__ = __import__("pkgutil").extend_path(__path__, __name__)
 
-from ._sweep import SweepJobSchema
 from ._data_import import DataImportSchema
+from ._data_index import (
+    CitationRegexSchema,
+    DataIndexSchema,
+    DataIndexTypes,
+    EmbeddingSchema,
+    IndexSourceSchema,
+    IndexStoreSchema,
+)
+from ._sweep import SweepJobSchema
 from .assets.code_asset import AnonymousCodeAssetSchema, CodeAssetSchema
 from .assets.data import DataSchema
 from .assets.environment import AnonymousEnvironmentSchema, EnvironmentSchema
@@ -55,4 +63,10 @@ __all__ = [
     "RegistryStr",
     "WorkspaceAssetReferenceSchema",
     "DataImportSchema",
+    "DataIndexSchema",
+    "IndexSourceSchema",
+    "CitationRegexSchema",
+    "EmbeddingSchema",
+    "IndexStoreSchema",
+    "DataIndexTypes",
 ]

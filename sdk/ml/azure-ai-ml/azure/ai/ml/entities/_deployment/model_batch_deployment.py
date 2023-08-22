@@ -14,7 +14,8 @@ from azure.ai.ml._restclient.v2022_05_01.models import IdAssetReference
 from azure.ai.ml._restclient.v2022_05_01.models import BatchOutputAction
 from azure.ai.ml.constants._deployment import BatchDeploymentOutputAction
 from azure.ai.ml.entities._assets import Environment, Model
-from azure.ai.ml.entities import BatchDeployment, Deployment
+from azure.ai.ml.entities._deployment.batch_deployment import BatchDeployment
+from azure.ai.ml.entities._deployment.online_deployment import Deployment
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
 from azure.ai.ml.entities._util import load_from_dict

@@ -1,13 +1,13 @@
 $schema: http://azureml/sdk-2-0/DataIndex.json
 type: uri_folder
-name: docs_ml_aoai
-description: Docs embedded with text-embedding-ada-002 and indexed in Azure Cognitive Search.
+name: docs_ml_mpnet
+description: Docs embedded with sentence-transformers/all-mpnet-base-v2 and indexed in Faiss.
 
 source:
     input_data:
       type: uri_folder
       #path: https://github.com/MicrosoftDocs/azure-docs.git
-      path: tests/data_index/test_data
+      path: ./../test_data
     #input_glob: 'articles/machine-learning/**/*'
     chunk_size: 1024
     chunk_overlap: 0
@@ -17,13 +17,10 @@ source:
       replacement_pattern: "\\1/\\2"
 
 embedding:
-    model: azure_open_ai://deployment/text-embedding-ada-002/model/text-embedding-ada-002
-    connection: azureml:azureml-rag-aoai-v2
-    cache_path: azureml://datastores/workspaceblobstore/paths/embeddings_cache/docs_ml_aoai
+    model: hugging_face://model/sentence-transformers/all-mpnet-base-v2
+    cache_path: azureml://datastores/workspaceblobstore/paths/embeddings_cache/docs_ml_mpnet
 
 index:
-    type: acs
-    connection: azureml:azureml-rag-acs-v2
-    name: docs_ml_aoai
+    type: faiss
 
 path: azureml://datastores/workspaceblobstore/paths/{name}
