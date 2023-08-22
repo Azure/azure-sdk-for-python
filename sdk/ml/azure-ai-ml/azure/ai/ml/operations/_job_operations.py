@@ -7,7 +7,7 @@ import json
 import os.path
 from os import PathLike
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Callable, Dict, Iterable, Optional, Union
+from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Optional, Union
 
 import jwt
 from azure.core.credentials import TokenCredential
@@ -29,6 +29,7 @@ from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml._restclient.dataset_dataplane import AzureMachineLearningWorkspaces as ServiceClientDatasetDataplane
 from azure.ai.ml._restclient.model_dataplane import AzureMachineLearningWorkspaces as ServiceClientModelDataplane
 from azure.ai.ml._restclient.runhistory import AzureMachineLearningWorkspaces as ServiceClientRunHistory
+from azure.ai.ml._restclient.runhistory.models import Run
 from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient022023Preview
 from azure.ai.ml._restclient.v2023_04_01_preview.models import JobBase
 from azure.ai.ml._restclient.v2023_04_01_preview.models import JobType as RestJobType
@@ -105,6 +106,7 @@ from ._job_ops_helper import get_git_properties, get_job_output_uris_from_datapl
 from ._local_job_invoker import is_local_run, start_run_if_local
 from ._model_dataplane_operations import ModelDataplaneOperations
 from ._operation_orchestrator import (
+    _AssetResolver,
     OperationOrchestrator,
     is_ARM_id_for_resource,
     is_registry_id_for_resource,
@@ -255,10 +257,10 @@ class JobOperations(_ScopeDependentOperations):
 
         :keyword parent_job_name: When provided, only returns jobs that are children of the named job. Defaults to None,
             listing all jobs in the workspace.
-        :type parent_job_name: Optional[str]
+        :paramtype parent_job_name: Optional[str]
         :keyword list_view_type: The view type for including/excluding archived jobs. Defaults to
             ~azure.mgt.machinelearningservices.models.ListViewType.ACTIVE_ONLY, excluding archived jobs.
-        :type list_view_type: ~azure.mgmt.machinelearningservices.models.ListViewType
+        :paramtype list_view_type: ~azure.mgmt.machinelearningservices.models.ListViewType
         :return: An iterator-like instance of Job objects.
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.ml.entities.Job]
 
@@ -291,8 +293,14 @@ class JobOperations(_ScopeDependentOperations):
             **kwargs,
         )
 
-    def _handle_rest_errors(self, job_object):
-        """Handle errors while resolving azureml_id's during list operation."""
+    def _handle_rest_errors(self, job_object: Union[JobBase, Run]) -> Optional[Job]:
+        """Handle errors while resolving azureml_id's during list operation.
+
+        :param job_object: The REST object to turn into a Job
+        :type job_object: Union[JobBase, Run]
+        :return: The resolved job
+        :rtype: Optional[Job]
+        """
         try:
             return self._resolve_azureml_id(Job._from_rest_object(job_object))
         except JobParsingError:
@@ -468,7 +476,7 @@ class JobOperations(_ScopeDependentOperations):
         :param job: The job object to be validated.
         :type job: ~azure.ai.ml.entities.Job
         :keyword raise_on_failure: Specifies if an error should be raised if validation fails. Defaults to False.
-        :type raise_on_failure: bool
+        :paramtype raise_on_failure: bool
         :return: A ValidationResult object containing all found errors.
         :rtype: ~azure.ai.ml.entities.ValidationResult
 
@@ -492,6 +500,13 @@ class JobOperations(_ScopeDependentOperations):
         Add this function to avoid calling validate() directly in
         create_or_update(), which will impact telemetry statistics &
         bring experimental warning in create_or_update().
+
+        :param job: The job to validate
+        :type job: Job
+        :keyword raise_on_failure: Whether to raise on validation failure
+        :paramtype raise_on_failure: bool
+        :return: The validation result
+        :rtype: ValidationResult
         """
         git_code_validation_result = SchemaValidatableMixin._create_empty_validation_result()
         # TODO: move this check to Job._validate after validation is supported for all job types
@@ -553,18 +568,18 @@ class JobOperations(_ScopeDependentOperations):
         :param job: The job object.
         :type job: ~azure.ai.ml.entities.Job
         :keyword description: The job description.
-        :type description: Optional[str]
+        :paramtype description: Optional[str]
         :keyword compute: The compute target for the job.
-        :type compute: Optional[str]
+        :paramtype compute: Optional[str]
         :keyword tags: The tags for the job.
-        :type tags: Optional[dict]
+        :paramtype tags: Optional[dict]
         :keyword experiment_name: The name of the experiment the job will be created under. If None is provided,
             job will be created under experiment 'Default'.
-        :type experiment_name: Optional[str]
+        :paramtype experiment_name: Optional[str]
         :keyword skip_validation: Specifies whether or not to skip validation before creating or updating the job. Note
             that validation for dependent resources such as an anonymous component will not be skipped. Defaults to
             False.
-        :type skip_validation: bool
+        :paramtype skip_validation: bool
         :raises Union[~azure.ai.ml.exceptions.UserErrorException, ~azure.ai.ml.exceptions.ValidationException]: Raised
             if Job cannot be successfully validated. Details will be provided in the error message.
         :raises ~azure.ai.ml.exceptions.AssetException: Raised if Job assets
@@ -780,11 +795,11 @@ class JobOperations(_ScopeDependentOperations):
         :param name: The name of a job.
         :type name: str
         :keyword download_path: The local path to be used as the download destination. Defaults to ".".
-        :type download_path: Union[PathLike, str]
+        :paramtype download_path: Union[PathLike, str]
         :keyword output_name: The name of the output to download. Defaults to None.
-        :type output_name: Optional[str]
+        :paramtype output_name: Optional[str]
         :keyword all: Specifies if all logs and named outputs should be downloaded. Defaults to False.
-        :type all: bool
+        :paramtype all: bool
         :raises ~azure.ai.ml.exceptions.JobException: Raised if Job is not yet in a terminal state.
             Details will be provided in the error message.
         :raises ~azure.ai.ml.exceptions.MlException: Raised if logs and outputs cannot be successfully downloaded.
@@ -898,12 +913,13 @@ class JobOperations(_ScopeDependentOperations):
     ) -> Dict[str, str]:
         """Gets the URIs to the specified named outputs of job.
 
-        :param str job_name: Run ID of the job
-        :param Optional[Union[Iterable[str], str]] output_names: Either an
-               output name, or an iterable of output names. If omitted, all
-               outputs are returned.
-        :return Dict[str, str]: Map of output_names to URIs. Note that
-            URIs that could not be found will not be present in the map.
+        :param job_name: Run ID of the job
+        :type job_name: str
+        :param output_names: Either an output name, or an iterable of output names. If omitted, all outputs are
+            returned.
+        :type output_names: Optional[Union[Iterable[str], str]]
+        :return: Map of output_names to URIs. Note that URIs that could not be found will not be present in the map.
+        :rtype: Dict[str, str]
         """
 
         if isinstance(output_names, str):
@@ -1051,7 +1067,7 @@ class JobOperations(_ScopeDependentOperations):
         self._resolve_job_inputs_arm_id(job)
         return self._resolve_arm_id_or_azureml_id(job, self._orchestrators.resolve_azureml_id)
 
-    def _resolve_compute_id(self, resolver: Callable, target: Any) -> Any:
+    def _resolve_compute_id(self, resolver: _AssetResolver, target: Any) -> Any:
         # special case for local runs
         if target is not None and target.lower() == LOCAL_COMPUTE_TARGET:
             return LOCAL_COMPUTE_TARGET
@@ -1078,14 +1094,28 @@ class JobOperations(_ScopeDependentOperations):
             return resolver(target, azureml_type=AzureMLResourceType.COMPUTE)
 
     def _resolve_job_inputs(self, entries: Iterable[Union[Input, str, bool, int, float]], base_path: str):
-        """resolve job inputs as ARM id or remote url."""
+        """resolve job inputs as ARM id or remote url.
+
+        :param entries: An iterable of job inputs
+        :type entries: Iterable[Union[Input, str, bool, int, float]]
+        :param base_path: The base path
+        :type base_path: str
+        """
         for entry in entries:
             self._resolve_job_input(entry, base_path)
 
     # TODO: move it to somewhere else?
     @classmethod
-    def _flatten_group_inputs(cls, inputs):
-        """Get flatten values from an InputDict."""
+    def _flatten_group_inputs(
+        cls, inputs: Dict[str, Union[Input, str, bool, int, float]]
+    ) -> List[Union[Input, str, bool, int, float]]:
+        """Get flatten values from an InputDict.
+
+        :param inputs: The input dict
+        :type inputs: Dict[str, Union[Input, str, bool, int, float]]
+        :return: A list of values from the Input Dict
+        :rtype: List[Union[Input, str, bool, int, float]]
+        """
         input_values = []
         # Flatten inputs for pipeline job
         for key, item in inputs.items():
@@ -1099,7 +1129,13 @@ class JobOperations(_ScopeDependentOperations):
         return input_values
 
     def _resolve_job_input(self, entry: Union[Input, str, bool, int, float], base_path: str) -> None:
-        """resolve job input as ARM id or remote url."""
+        """resolve job input as ARM id or remote url.
+
+        :param entry: The job input
+        :type entry: Union[Input, str, bool, int, float]
+        :param base_path: The base path
+        :type base_path: str
+        """
 
         # path can be empty if the job was created from builder functions
         if isinstance(entry, Input) and not entry.path:
@@ -1206,8 +1242,17 @@ class JobOperations(_ScopeDependentOperations):
             # If the job object doesn't have "inputs" attribute, we don't need to resolve. E.g. AutoML jobs
             pass
 
-    def _resolve_arm_id_or_azureml_id(self, job: Job, resolver: Callable) -> Job:
-        """Resolve arm_id for a given job."""
+    def _resolve_arm_id_or_azureml_id(self, job: Job, resolver: _AssetResolver) -> Job:
+        """Resolve arm_id for a given job.
+
+
+        :param job: The job
+        :type job: Job
+        :param resolver: The asset resolver function
+        :type resolver: _AssetResolver
+        :return: The provided job, with fields resolved to full ARM IDs
+        :rtype: Job
+        """
         # TODO: this will need to be parallelized when multiple tasks
         # are required. Also consider the implications for dependencies.
 
@@ -1238,8 +1283,17 @@ class JobOperations(_ScopeDependentOperations):
             )
         return job
 
-    def _resolve_arm_id_for_command_job(self, job: Command, resolver: Callable) -> Job:
-        """Resolve arm_id for CommandJob."""
+    def _resolve_arm_id_for_command_job(self, job: Command, resolver: _AssetResolver) -> Command:
+        """Resolve arm_id for CommandJob.
+
+
+        :param job: The Command job
+        :type job: Command
+        :param resolver: The asset resolver function
+        :type resolver: _AssetResolver
+        :return: The provided Command job, with resolved fields
+        :rtype: Command
+        """
         if job.code is not None and is_registry_id_for_resource(job.code):
             msg = "Format not supported for code asset: {}"
             raise ValidationException(
@@ -1259,8 +1313,16 @@ class JobOperations(_ScopeDependentOperations):
         job.compute = self._resolve_compute_id(resolver, job.compute)
         return job
 
-    def _resolve_arm_id_for_spark_job(self, job: Spark, resolver: Callable) -> Job:
-        """Resolve arm_id for SparkJob."""
+    def _resolve_arm_id_for_spark_job(self, job: Spark, resolver: _AssetResolver) -> Spark:
+        """Resolve arm_id for SparkJob.
+
+        :param job: The Spark job
+        :type job: Spark
+        :param resolver: The asset resolver function
+        :type resolver: _AssetResolver
+        :return: The provided SparkJob, with resolved fields
+        :rtype: Spark
+        """
         if job.code is not None and is_registry_id_for_resource(job.code):
             msg = "Format not supported for code asset: {}"
             raise JobException(
@@ -1279,8 +1341,16 @@ class JobOperations(_ScopeDependentOperations):
         job.compute = self._resolve_compute_id(resolver, job.compute)
         return job
 
-    def _resolve_arm_id_for_import_job(self, job: Job, resolver: Callable) -> Job:
-        """Resolve arm_id for ImportJob."""
+    def _resolve_arm_id_for_import_job(self, job: ImportJob, resolver: _AssetResolver) -> ImportJob:
+        """Resolve arm_id for ImportJob.
+
+        :param job: The Import job
+        :type job: ImportJob
+        :param resolver: The asset resolver function
+        :type resolver: _AssetResolver
+        :return: The provided ImportJob, with resolved fields
+        :rtype: ImportJob
+        """
         # compute property will be no longer applicable once import job type is ready on MFE in PuP
         # for PrP, we use command job type instead for import job where compute property is required
         # However, MFE only validates compute resource url format. Execution service owns the real
@@ -1289,8 +1359,16 @@ class JobOperations(_ScopeDependentOperations):
         job.compute = self._resolve_compute_id(resolver, ComputeType.ADF)
         return job
 
-    def _resolve_arm_id_for_parallel_job(self, job: Job, resolver: Callable) -> Job:
-        """Resolve arm_id for ParallelJob."""
+    def _resolve_arm_id_for_parallel_job(self, job: ParallelJob, resolver: _AssetResolver) -> ParallelJob:
+        """Resolve arm_id for ParallelJob.
+
+        :param job: The Parallel job
+        :type job: ParallelJob
+        :param resolver: The asset resolver function
+        :type resolver: _AssetResolver
+        :return: The provided ParallelJob, with resolved fields
+        :rtype: ParallelJob
+        """
         if job.code is not None and not is_ARM_id_for_resource(job.code, AzureMLResourceType.CODE):
             job.code = resolver(
                 Code(base_path=job._base_path, path=job.code),
@@ -1300,8 +1378,16 @@ class JobOperations(_ScopeDependentOperations):
         job.compute = self._resolve_compute_id(resolver, job.compute)
         return job
 
-    def _resolve_arm_id_for_sweep_job(self, job: Job, resolver: Callable) -> Job:
-        """Resolve arm_id for SweepJob."""
+    def _resolve_arm_id_for_sweep_job(self, job: SweepJob, resolver: _AssetResolver) -> SweepJob:
+        """Resolve arm_id for SweepJob.
+
+        :param job: The Sweep job
+        :type job: SweepJob
+        :param resolver: The asset resolver function
+        :type resolver: _AssetResolver
+        :return: The provided SweepJob, with resolved fields
+        :rtype: SweepJob
+        """
         if job.trial.code is not None and not is_ARM_id_for_resource(job.trial.code, AzureMLResourceType.CODE):
             job.trial.code = resolver(
                 Code(base_path=job._base_path, path=job.trial.code),
@@ -1311,8 +1397,20 @@ class JobOperations(_ScopeDependentOperations):
         job.compute = self._resolve_compute_id(resolver, job.compute)
         return job
 
-    def _resolve_arm_id_for_automl_job(self, job: Job, resolver: Callable, inside_pipeline: bool) -> Job:
-        """Resolve arm_id for AutoMLJob."""
+    def _resolve_arm_id_for_automl_job(
+        self, job: AutoMLJob, resolver: _AssetResolver, inside_pipeline: bool
+    ) -> AutoMLJob:
+        """Resolve arm_id for AutoMLJob.
+
+        :param job: The AutoML job
+        :type job: AutoMLJob
+        :param resolver: The asset resolver function
+        :type resolver: _AssetResolver
+        :param inside_pipeline: Whether the job is within a pipeline
+        :type inside_pipeline: bool
+        :return: The provided AutoMLJob, with resolved fields
+        :rtype: AutoMLJob
+        """
         # AutoML does not have dependency uploads. Only need to resolve reference to arm id.
 
         # automl node in pipeline has optional compute
@@ -1321,8 +1419,16 @@ class JobOperations(_ScopeDependentOperations):
         job.compute = resolver(job.compute, azureml_type=AzureMLResourceType.COMPUTE)
         return job
 
-    def _resolve_arm_id_for_pipeline_job(self, pipeline_job: "PipelineJob", resolver: Callable) -> Job:
-        """Resolve arm_id for pipeline_job."""
+    def _resolve_arm_id_for_pipeline_job(self, pipeline_job: PipelineJob, resolver: _AssetResolver) -> PipelineJob:
+        """Resolve arm_id for pipeline_job.
+
+        :param pipeline_job: The pipeline job
+        :type pipeline_job: PipelineJob
+        :param resolver: The asset resolver function
+        :type resolver: _AssetResolver
+        :return: The provided PipelineJob, with resolved fields
+        :rtype: PipelineJob
+        """
         # Get top-level job compute
         _get_job_compute_id(pipeline_job, resolver)
 
@@ -1363,8 +1469,13 @@ class JobOperations(_ScopeDependentOperations):
         return pipeline_job
 
     def _append_tid_to_studio_url(self, job: Job) -> None:
-        """Appends the user's tenant ID to the end of the studio URL so the UI
-        knows against which tenant to authenticate."""
+        """Appends the user's tenant ID to the end of the studio URL.
+
+        Allows the UI to authenticate against the correct tenant.
+
+        :param job: The job
+        :type job: Job
+        """
         try:
             studio_endpoint = job.services.get("Studio", None)
             studio_url = studio_endpoint.endpoint
@@ -1409,5 +1520,5 @@ class JobOperations(_ScopeDependentOperations):
         kwargs["headers"] = headers
 
 
-def _get_job_compute_id(job: Union[Job, Command], resolver: Callable) -> None:
+def _get_job_compute_id(job: Union[Job, Command], resolver: _AssetResolver) -> None:
     job.compute = resolver(job.compute, azureml_type=AzureMLResourceType.COMPUTE)

@@ -130,10 +130,12 @@
     "adls",
     "aenter",
     "aiohttp",
+    "alru",
     "amqp",
     "amqps",
     "apim",
     "Asal",
+    "asgi",
     "astimezone",
     "AsyncIterable",
     "asyncio",
@@ -354,6 +356,7 @@
     "ukwest",
     "unpad",
     "unpadder",
+    "unpartial",
     "unredacted",
     "unseekable",
     "unsubscriptable",
@@ -453,6 +456,13 @@
         "isfork",
         "ISFORK",
         "thead"
+      ]
+    },
+    {
+      "filename": "tools/azure-sdk-tools/gh_tools/**",
+      "words": [
+        "JOBID",
+        "vnext"
       ]
     },
     {
@@ -809,20 +819,59 @@
       ]
     },
     {
-      "filename": "sdk/monitor/azure-monitor-opentelemetry-exporter/**/*.py",
+      "filename": "sdk/monitor/azure-monitor-opentelemetry*/**/*",
       "words": [
-        "ikey",
-        "semconv"
-      ]
-    },
-    {
-      "filename": "sdk/monitor/azure-monitor-opentelemetry-exporter/**/*",
-      "words": [
+        "blrp",
+        "configurators",
+        "dbapi",
+        "grpc",
+        "opentelemetry",
         "otel",
         "OTELRESOURCE",
         "OTLP",
         "otlp",
-        "grpc"
+        "speced",
+        "pkgutils",
+        "psycopg",
+        "uninstrument",
+        "uninstrumented"
+      ]
+    },
+    {
+      "filename": "sdk/monitor/azure-monitor-opentelemetry*/**/*.py",
+      "words": [
+        "asgi",
+        "ikey",
+        "msecs",
+        "mycontainer",
+        "semconv",
+        "updown"
+      ]
+    },
+    {
+      "filename": "sdk/monitor/azure-monitor-opentelemetry/azure/monitor/opentelemetry/_vendor/**/*.py",
+      "words": [
+        "aiopg",
+        "asgiref",
+        "asyncpg",
+        "boto",
+        "botocore",
+        "Cbar",
+        "funcs",
+        "grpcio",
+        "islast",
+        "libpq",
+        "owais",
+        "psutil",
+        "pydantic",
+        "pymongo",
+        "pymysql",
+        "remoulade",
+        "setifnotnone",
+        "sklearn",
+        "starlette",
+        "tortoiseorm",
+        "trysetip"
       ]
     },
     {
@@ -835,9 +884,7 @@
     {
       "filename": "sdk/schemaregistry/azure-schemaregistry-avroencoder/**/*.py",
       "words": [
-        "currsize",
-        "unpartial",
-        "alru"
+        "currsize"
       ]
     },
     {

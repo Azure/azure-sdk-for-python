@@ -1,5 +1,19 @@
 # Release History
 
+## 1.0.0b7 (2023-08-18)
+
+### Features Added
+
+  - Added operation ExperimentsOperations.update
+  - Model CapabilityType has a new parameter azure_rbac_actions
+  - Model CapabilityType has a new parameter azure_rbac_data_actions
+  - Model ResourceIdentity has a new parameter user_assigned_identities
+  - Model Selector has a new parameter additional_properties
+
+### Breaking Changes
+
+  - Model Selector no longer has parameter targets
+
 ## 1.0.0b6 (2022-12-14)
 
 ### Features Added

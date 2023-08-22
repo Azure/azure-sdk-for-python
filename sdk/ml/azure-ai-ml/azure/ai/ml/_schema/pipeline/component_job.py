@@ -78,6 +78,7 @@ class BaseNodeSchema(PathAwareSchema):
         support_data_binding_expression_for_fields(self, ["type", "component", "trial", "inputs"])
 
     @post_dump(pass_original=True)
+    # pylint: disable-next=docstring-missing-param,docstring-missing-return,docstring-missing-rtype
     def add_user_setting_attr_dict(self, data, original_data, **kwargs):  # pylint: disable=unused-argument
         """Support serializing unknown fields for pipeline node."""
         if isinstance(original_data, _AttrDict):

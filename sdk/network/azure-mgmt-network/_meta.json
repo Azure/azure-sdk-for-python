@@ -1,5 +1,5 @@
 {
-  "commit": "b5f54222a4a925eb0239cd6653ab8b27185195f4",
+  "commit": "0baf811c3c76c87b3c127d098519bd97141222dd",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "autorest": "3.9.7",
   "use": [
@@ -30,5 +30,6 @@
   "package-2018-11": "2020-05-09 06:55:46 +0200 42d96397744ec1e6e837a06879d6e43a13f8bc33 Microsoft.Network/stable/2018-11-01/publicIpPrefix.json",
   "package-2018-04": "2019-06-13 02:23:37 +0300 e19543a6a361096e5ca11a42424a39025fd008fa Microsoft.Network/stable/2018-04-01/applicationGateway.json",
   "package-2017-10": "2019-06-13 02:23:37 +0300 e19543a6a361096e5ca11a42424a39025fd008fa Microsoft.Network/stable/2017-10-01/applicationGateway.json",
-  "package-2015-06split": "2019-06-13 02:17:06 +0300 f0f79bfa8191ac30cfb0f87665411769bd2063a6 Microsoft.Network/stable/2015-06-15/virtualNetworkGateway.json"
+  "package-2015-06split": "2019-06-13 02:17:06 +0300 f0f79bfa8191ac30cfb0f87665411769bd2063a6 Microsoft.Network/stable/2015-06-15/virtualNetworkGateway.json",
+  "package-2023-04": "2023-07-28 12:53:34 -0400 2a4fc9da93229e16716dc34ec5275ed94a918ac4 Microsoft.Network/stable/2023-04-01/applicationGateway.json"
 }
