@@ -102,10 +102,8 @@ def _format_url_section(template, **kwargs):
     :returns: Template completed
     """
     ret = CustomFormatter().format(template, **kwargs)
-    """
-    if a key is missing, we remove the section of the template
-    e.g. "/{foo}" if foo is missing, we remove entire "/{foo}" from the template
-    """
+    # if a key is missing, we remove the section of the template
+    # e.g. "/{foo}" if foo is missing, we remove entire "/{foo}" from the template
     return ret.replace("/\t", "")
 
 
@@ -631,7 +629,7 @@ class PipelineClientBase:
 
         return request
 
-    def format_url(self, url_template: str, **kwargs: Any) -> str:
+    def format_url(self, url_template: str, **kwargs) -> str:
         """Format request URL with the client base URL, unless the
         supplied URL is already absolute.
 
@@ -825,7 +823,7 @@ class PipelineClientBase:
         return request
 
     def options(
-        self, url: str, params: Optional[Dict[str, str]] = None, headers: Optional[Dict[str, str]] = None, **kwargs: Any
+        self, url: str, params: Optional[Dict[str, str]] = None, headers: Optional[Dict[str, str]] = None, **kwargs
     ) -> HttpRequest:
         """Create a OPTIONS request object.
 
