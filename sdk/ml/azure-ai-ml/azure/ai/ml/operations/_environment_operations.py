@@ -37,13 +37,11 @@ from azure.ai.ml._utils._asset_utils import (
     _get_next_version_from_container,
     _resolve_label_to_asset,
 )
-from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils._registry_utils import (
     get_asset_body_for_registry_storage,
     get_sas_uri_for_registry_asset,
     get_registry_client,
-    get_sas_uri_for_registry_asset,
 )
 
 from azure.ai.ml.constants._common import (
