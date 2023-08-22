@@ -17,6 +17,7 @@ from ..._schema import PathAwareSchema
 from ...constants._common import ARM_ID_PREFIX
 from ...constants._component import NodeType
 from .._component.component import Component
+from .._component.flow import FlowComponent
 from .._component.parallel_component import ParallelComponent
 from .._inputs_outputs import Input, Output
 from .._job.job_resource_configuration import JobResourceConfiguration
@@ -309,7 +310,7 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):
     @classmethod
     def _attr_type_map(cls) -> dict:
         return {
-            "component": (str, ParallelComponent),
+            "component": (str, ParallelComponent, FlowComponent),
             "retry_settings": (dict, RetrySettings),
             "resources": (dict, JobResourceConfiguration),
             "task": (dict, ParallelTask),

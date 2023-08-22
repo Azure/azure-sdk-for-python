@@ -11,7 +11,8 @@ inputs:
     path: "../test_data/flow_input_data.jsonl"
 
 outputs:
-  anonymous_command_output: ${{parent.jobs.anonymous_command_flow.outputs.output_data}}
+  output_data:
+    mode: mount
 
 jobs:
   anonymous_parallel_flow:
@@ -19,6 +20,20 @@ jobs:
     # type of the component will be determined by node type
     # if there is default value in flow.dag.yaml, it will be used as component input default value
     component: ../flows/basic/flow.dag.yaml
+    inputs:
+      data: ${{parent.inputs.job_data}}
+      groundtruth: "5"
+      prediction: "${run.outputs.category}"
+      connections.node_name.connection: another_connection
+      connections.node_name.deployment_name: deployment_name
+    outputs:
+      flow_outputs: ${{parent.outputs.output_data}}
+
+  anonymous_parallel_flow_from_run:
+    type: parallel
+    # type of the component will be determined by node type
+    # if there is default value in flow.dag.yaml, it will be used as component input default value
+    component: ../flows/runs/basic_run.yml
     inputs:
       data: ${{parent.inputs.job_data}}
       groundtruth: "5"

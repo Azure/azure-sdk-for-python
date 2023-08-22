@@ -15,6 +15,7 @@ from ..._schema.component import (
     AnonymousParallelComponentSchema,
     AnonymousSparkComponentSchema,
     ComponentFileRefField,
+    ComponentYamlRefField,
     DataTransferCopyComponentFileRefField,
     ImportComponentFileRefField,
     ParallelComponentFileRefField,
@@ -258,6 +259,7 @@ class ParallelSchema(BaseNodeSchema, ParameterizedParallelSchema):
             RegistryStr(),
             # existing component
             ArmVersionedStr(azureml_type=AzureMLResourceType.COMPONENT, allow_default_version=True),
+            ComponentYamlRefField(),
         ],
         required=True,
     )

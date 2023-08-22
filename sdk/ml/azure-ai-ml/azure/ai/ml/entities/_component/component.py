@@ -340,7 +340,7 @@ class Component(
     def _is_flow(cls, data) -> bool:
         _schema = data.get(CommonYamlFields.SCHEMA, None)
 
-        if _schema and _schema.startswith(SchemaUrl.PROMPTFLOW_PREFIX):
+        if _schema and _schema in [SchemaUrl.PROMPTFLOW_FLOW, SchemaUrl.PROMPTFLOW_RUN]:
             return True
         return False
 
