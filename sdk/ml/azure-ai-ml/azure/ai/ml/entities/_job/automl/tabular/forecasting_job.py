@@ -263,8 +263,8 @@ class ForecastingJob(AutoMLTabular):
             respectively).
 
             +------------+--------------------------+----------------------+-----------------------------+
-            | | handling | | handling_configuration | | resulting handling | | resulting                 |
-            |            |                          |                      | | handling                  |
+            | | handling | | handling               | | resulting          | | resulting                 |
+            |            | | configuration          | | handling           | | handling                  |
             |            |                          |                      | | configuration             |
             +============+==========================+======================+=============================+
             | True       | auto                     | True                 | auto                        |
@@ -318,7 +318,8 @@ class ForecastingJob(AutoMLTabular):
                 |                |                               | | is not applied.                    |
                 |                |                               | | If the valid                       |
                 |                |                               | | frequency can                      |
-                |                |                               | | not be determined                  |
+                |                |                               | | not be                             |
+                |                |                               | | determined                         |
                 |                |                               | | the error                          |
                 |                |                               | | will be raised.                    |
                 +----------------+-------------------------------+--------------------------------------+
