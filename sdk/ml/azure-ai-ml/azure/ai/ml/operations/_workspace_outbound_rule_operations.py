@@ -106,6 +106,7 @@ class WorkspaceOutboundRuleOperations:
 
         rule_params = OutboundRuleBasicResource(properties=rule._to_rest_object())  # pylint: disable=protected-access
 
+        # pylint: disable=unused-argument
         def callback(_, deserialized, args):
             properties = deserialized.properties
             name = deserialized.name
