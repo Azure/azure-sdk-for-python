@@ -33,7 +33,9 @@ class TestContentSafetyCase(TestContentSafety):
         client = self.create_client(content_safety_endpoint, content_safety_key)
         assert client is not None
 
-        text_path = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", "./samples/sample_data/text.txt"))
+        text_path = os.path.abspath(
+            os.path.join(os.path.abspath(__file__), "..", "..", "./samples/sample_data/text.txt")
+        )
         with open(text_path) as f:
             request = AnalyzeTextOptions(text=f.readline(), categories=[])
         response = client.analyze_text(request)
@@ -51,7 +53,9 @@ class TestContentSafetyCase(TestContentSafety):
         client = self.create_client(content_safety_endpoint, content_safety_key)
         assert client is not None
 
-        image_path = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", "./samples/sample_data/image.jpg"))
+        image_path = os.path.abspath(
+            os.path.join(os.path.abspath(__file__), "..", "..", "./samples/sample_data/image.jpg")
+        )
         with open(image_path, "rb") as file:
             request = AnalyzeImageOptions(image=ImageData(content=file.read()))
         response = client.analyze_image(request)
