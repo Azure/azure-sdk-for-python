@@ -151,6 +151,15 @@ class ComponentOperations(_ScopeDependentOperations):
         :type list_view_type: Optional[ListViewType]
         :return: An iterator like instance of component objects
         :rtype: ~azure.core.paging.ItemPaged[Component]
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+                :start-after: [START component_operations_list]
+                :end-before: [END component_operations_list]
+                :language: python
+                :dedent: 8
+                :caption: List component example.
         """
 
         if name:
@@ -233,6 +242,15 @@ class ComponentOperations(_ScopeDependentOperations):
             identified and retrieved. Details will be provided in the error message.
         :return: The specified component object.
         :rtype: ~azure.ai.ml.entities.Component
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+                :start-after: [START component_operations_get]
+                :end-before: [END component_operations_get]
+                :language: python
+                :dedent: 8
+                :caption: Get component example.
         """
         return self._get(name=name, version=version, label=label)
 
@@ -436,6 +454,15 @@ class ComponentOperations(_ScopeDependentOperations):
         :raises ~azure.ai.ml.exceptions.EmptyDirectoryError: Raised if local path provided points to an empty directory.
         :return: The specified component object.
         :rtype: ~azure.ai.ml.entities.Component
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+                :start-after: [START component_operations_create_or_update]
+                :end-before: [END component_operations_create_or_update]
+                :language: python
+                :dedent: 8
+                :caption: Create component example.
         """
         # Update component when the input is a component function
         if isinstance(component, types.FunctionType):
@@ -564,6 +591,15 @@ class ComponentOperations(_ScopeDependentOperations):
         :type version: str
         :param label: Label of the component. (mutually exclusive with version).
         :type label: str
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+                :start-after: [START component_operations_archive]
+                :end-before: [END component_operations_archive]
+                :language: python
+                :dedent: 8
+                :caption: Archive component example.
         """
         _archive_or_restore(
             asset_operations=self,
@@ -591,6 +627,15 @@ class ComponentOperations(_ScopeDependentOperations):
         :type version: str
         :param label: Label of the component. (mutually exclusive with version).
         :type label: str
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+                :start-after: [START component_operations_restore]
+                :end-before: [END component_operations_restore]
+                :language: python
+                :dedent: 8
+                :caption: Restore component example.
         """
         _archive_or_restore(
             asset_operations=self,

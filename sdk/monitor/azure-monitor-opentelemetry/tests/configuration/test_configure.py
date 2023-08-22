@@ -270,7 +270,6 @@ class TestConfigure(unittest.TestCase):
 
         configurations = {
             "connection_string": "test_cs",
-            "logging_export_interval_ms": 10000,
         }
         _setup_logging(configurations)
 
@@ -279,7 +278,7 @@ class TestConfigure(unittest.TestCase):
         get_logger_provider_mock.assert_called()
         log_exporter_mock.assert_called_once_with(**configurations)
         blrp_mock.assert_called_once_with(
-            log_exp_init_mock, schedule_delay_millis=10000
+            log_exp_init_mock,
         )
         lp_init_mock.add_log_record_processor.assert_called_once_with(
             blrp_init_mock

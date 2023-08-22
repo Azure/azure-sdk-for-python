@@ -21,7 +21,6 @@ from azure.monitor.opentelemetry._constants import (
     DISABLE_METRICS_ARG,
     DISABLE_TRACING_ARG,
     DISABLED_INSTRUMENTATIONS_ARG,
-    LOGGING_EXPORT_INTERVAL_MS_ARG,
     SAMPLING_RATIO_ARG,
 )
 from azure.monitor.opentelemetry._types import ConfigurationValue
@@ -34,8 +33,6 @@ _INVALID_FLOAT_MESSAGE = "Value of %s must be a float. Defaulting to %s: %s"
 _INVALID_INT_MESSAGE = "Value of %s must be a integer. Defaulting to %s: %s"
 
 
-# Speced out but unused by OTel SDK as of 1.17.0
-LOGGING_EXPORT_INTERVAL_MS_ENV_VAR = "OTEL_BLRP_SCHEDULE_DELAY"
 # TODO: remove when sampler uses env var instead
 SAMPLING_RATIO_ENV_VAR = OTEL_TRACES_SAMPLER_ARG
 
@@ -53,15 +50,8 @@ def _get_configurations(**kwargs) -> Dict[str, ConfigurationValue]:
     _default_disable_metrics(configurations)
     _default_disable_tracing(configurations)
     _default_disabled_instrumentations(configurations)
-    _default_logging_export_interval_ms(configurations)
     _default_sampling_ratio(configurations)
     _default_disable_azure_core_tracing(configurations)
-
-    # TODO: remove when validation added to BLRP
-    if configurations[LOGGING_EXPORT_INTERVAL_MS_ARG] <= 0:
-        raise ValueError(
-            "%s must be positive." % LOGGING_EXPORT_INTERVAL_MS_ARG
-        )
 
     return configurations
 
@@ -101,21 +91,6 @@ def _default_disabled_instrumentations(configurations):
             x.strip() for x in disabled_instrumentation
         ]
     configurations[DISABLED_INSTRUMENTATIONS_ARG] = disabled_instrumentation
-
-
-def _default_logging_export_interval_ms(configurations):
-    default = 5000
-    if LOGGING_EXPORT_INTERVAL_MS_ENV_VAR in environ:
-        try:
-            default = int(environ[LOGGING_EXPORT_INTERVAL_MS_ENV_VAR])
-        except ValueError as e:
-            _logger.error(
-                _INVALID_INT_MESSAGE,
-                LOGGING_EXPORT_INTERVAL_MS_ENV_VAR,
-                default,
-                e,
-            )
-    configurations[LOGGING_EXPORT_INTERVAL_MS_ARG] = default
 
 
 # TODO: remove when sampler uses env var instead

@@ -1,10 +1,21 @@
 # Release History
 
-## 1.29.3 (2023-08-22)
+## 1.29.4 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
 
 ### Bugs Fixed
 
 - Fixed the issue that some urls trigger an infinite loop. #31346
+
+### Other Changes
+
+## 1.29.3 (2023-08-22)
+
+### Bugs Fixed
+
 - Typing fix: `message` cannot be `None` in `AzureError`. #31564
 
 ## 1.29.2 (2023-08-14)

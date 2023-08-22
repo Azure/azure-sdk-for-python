@@ -25,7 +25,6 @@ from azure.monitor.opentelemetry._constants import (
     DISABLE_METRICS_ARG,
     DISABLE_TRACING_ARG,
     DISABLED_INSTRUMENTATIONS_ARG,
-    LOGGING_EXPORT_INTERVAL_MS_ARG,
     SAMPLING_RATIO_ARG,
 )
 from azure.monitor.opentelemetry._types import ConfigurationValue
@@ -114,14 +113,11 @@ def _setup_tracing(configurations: Dict[str, ConfigurationValue]):
 
 
 def _setup_logging(configurations: Dict[str, ConfigurationValue]):
-    # TODO: Remove after upgrading to OTel SDK 1.18
-    logging_export_interval_ms = configurations[LOGGING_EXPORT_INTERVAL_MS_ARG]
     logger_provider = LoggerProvider()
     set_logger_provider(logger_provider)
     log_exporter = AzureMonitorLogExporter(**configurations)
     log_record_processor = BatchLogRecordProcessor(
         log_exporter,
-        schedule_delay_millis=cast(int, logging_export_interval_ms),
     )
     get_logger_provider().add_log_record_processor(log_record_processor)
     handler = LoggingHandler(logger_provider=get_logger_provider())

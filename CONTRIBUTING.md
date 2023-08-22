@@ -71,7 +71,7 @@ breaking         -> Runs the breaking changes checker against a package
 
 Basic usage of `tox` within this monorepo is:
 
-1. `pip install tox<5`
+1. `pip install "tox<5"`
 2. Run `tox run -e ENV_NAME -c path/to/tox.ini --root path/to/python_package`
   * **Note**: You can use environment variables to provide defaults for tox config values
     * With `TOX_CONFIG_FILE` set to the absolute path of `tox.ini`, you can avoid needing `-c path/to/tox.ini` in your tox invocations
