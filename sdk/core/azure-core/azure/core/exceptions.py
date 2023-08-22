@@ -113,18 +113,18 @@ class _HttpResponseCommonAPI(Protocol):
 
     @property
     def reason(self) -> Optional[str]:
-        pass
+        ...
 
     @property
     def status_code(self) -> Optional[int]:
-        pass
+        ...
 
     def text(self) -> str:
-        pass
+        ...
 
     @property
     def request(self) -> object:  # object as type, since all we need is str() on it
-        pass
+        ...
 
 
 class ErrorMap(Generic[KeyType, ValueType]):
