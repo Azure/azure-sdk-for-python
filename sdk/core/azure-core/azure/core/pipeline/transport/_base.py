@@ -102,7 +102,7 @@ def _format_url_section(template, **kwargs):
     :returns: Template completed
     """
     ret = CustomFormatter().format(template, **kwargs)
-    # if a key is missing, we remove the section of the template
+    # if a key is missing, we remove the section from the template
     # e.g. "/{foo}" if foo is missing, we remove entire "/{foo}" from the template
     return ret.replace("/\t", "")
 
