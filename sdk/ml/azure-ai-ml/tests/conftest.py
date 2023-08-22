@@ -950,6 +950,7 @@ def pytest_configure(config):
         ("training_experiences_test", "marks tests as training experience tests"),
         ("data_experiences_test", "marks tests as data experience tests"),
         ("data_import_test", "marks tests as data import tests"),
+        ("data_index_test", "marks tests as data index tests"),
         ("local_endpoint_local_assets", "marks tests as local_endpoint_local_assets"),
         ("local_endpoint_byoc", "marks tests as local_endpoint_byoc"),
         ("virtual_cluster_test", "marks tests as virtual cluster tests"),

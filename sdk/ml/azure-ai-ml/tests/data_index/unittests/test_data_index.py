@@ -4,7 +4,6 @@ from pathlib import Path
 import pytest
 
 from azure.ai.ml import load_data
-from azure.ai.ml.data_index import index_data
 from azure.ai.ml.entities import CitationRegex, Data, DataIndex, Embedding, IndexSource, IndexStore
 
 # Stops noisy warning logs from urllib3 before test-proxy starts serving
