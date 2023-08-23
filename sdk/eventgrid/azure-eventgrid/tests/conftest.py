@@ -25,6 +25,7 @@
 # --------------------------------------------------------------------------
 import os
 import pytest
+import urlparse
 from devtools_testutils import add_general_string_sanitizer, test_proxy, add_body_key_sanitizer, add_header_regex_sanitizer, add_oauth_response_sanitizer, add_body_regex_sanitizer
 from devtools_testutils.sanitizers import (
     add_remove_header_sanitizer,
@@ -59,7 +60,7 @@ def add_sanitizers(test_proxy):
     eventgrid_topic_endpoint = os.getenv("EVENTGRID_TOPIC_ENDPOINT", "sanitized")
     # Need to santize namespace for eventgrid_topic:
     try:
-        eventgrid_hostname = (eventgrid_topic_endpoint.split("https://")[1]).split("/api")[0]
+        eventgrid_hostname = urlparse(eventgrid_topic_endpoint).hostname
         add_general_string_sanitizer(target=eventgrid_hostname.upper(), value="sanitized.eastus-1.eventgrid.azure.net")
     except:
         pass

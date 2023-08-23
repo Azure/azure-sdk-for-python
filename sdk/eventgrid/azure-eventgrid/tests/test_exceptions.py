@@ -96,4 +96,4 @@ class TestEventGridPublisherClientExceptions(AzureMgmtRecordedTestCase):
         )
         with pytest.raises(HttpResponseError) as err:
             client.send(eg_event)
-            assert "The maximum size (1536000) has been exceeded." in err.value.message
+        assert "The maximum size (1536000) has been exceeded." in err.value.message

@@ -303,7 +303,6 @@ class TestEventGridPublisherClient(AzureRecordedTestCase):
         signature = generate_sas(
             eventgrid_topic_endpoint, eventgrid_topic_key, expiration_date_utc
         )
-        print(signature)
         credential = AzureSasCredential(signature)
         client = EventGridPublisherClient(eventgrid_topic_endpoint, credential)
         eg_event = EventGridEvent(

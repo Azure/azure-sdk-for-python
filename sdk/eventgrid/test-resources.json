@@ -310,6 +310,10 @@
       "AZURE_SUBSCRIPTION_ID": {
         "type": "string",
         "value": "[subscription().subscriptionId]"
+      },
+      "RESOURCE_GROUP_LOCATION": {
+        "type": "string",
+        "value": "[parameters('location')]"
       }
     }
   }

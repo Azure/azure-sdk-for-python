@@ -73,7 +73,7 @@ class TestEventGridPublisherClientExceptionsAsync(AzureRecordedTestCase):
     async def test_raise_on_bad_resource(self):
         credential = self.get_credential(EventGridPublisherClient, is_async=True)
         client = EventGridPublisherClient(
-            "https://bad-resource.westus-1.eventgrid.azure.net/api/events",
+            "https://bad-resource.eastus-1.eventgrid.azure.net/api/events",
             credential,
         )
         eg_event = EventGridEvent(
@@ -104,4 +104,4 @@ class TestEventGridPublisherClientExceptionsAsync(AzureRecordedTestCase):
         )
         with pytest.raises(HttpResponseError) as err:
             await client.send(eg_event)
-            assert "The maximum size (1536000) has been exceeded." in err.value.message
+        assert "The maximum size (1536000) has been exceeded." in err.value.message
