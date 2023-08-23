@@ -25,7 +25,7 @@
 # --------------------------------------------------------------------------
 import os
 import pytest
-import urlparse
+from urllib.parse import urlparse
 from devtools_testutils import add_general_string_sanitizer, test_proxy, add_body_key_sanitizer, add_header_regex_sanitizer, add_oauth_response_sanitizer, add_body_regex_sanitizer
 from devtools_testutils.sanitizers import (
     add_remove_header_sanitizer,
