@@ -31,7 +31,7 @@ if TYPE_CHECKING:
 
 
 class HDInsightContainersMgmtClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
-    """HDInsight On Aks Management Client.
+    """HDInsight Containers Management Client.
 
     :ivar cluster_pools: ClusterPoolsOperations operations
     :vartype cluster_pools: azure.mgmt.hdinsightcontainers.operations.ClusterPoolsOperations
