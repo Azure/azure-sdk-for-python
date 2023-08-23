@@ -26,7 +26,25 @@ from .compute import Compute, NetworkSettings
 
 
 class AmlComputeSshSettings:
-    """SSH settings to access a AML compute target."""
+    """SSH settings to access a AML compute target.
+
+    :param admin_username: SSH user name.
+    :type admin_username: str
+    :param admin_password: SSH user password. Defaults to None.
+    :type admin_password: str
+    :param ssh_key_value: The SSH RSA private key. Use "ssh-keygen -t
+        rsa -b 2048" to generate your SSH key pairs. Defaults to None.
+    :type ssh_key_value: Optional[str]
+
+    .. admonition:: Example:
+
+    .. literalinclude:: ../../../../../samples/ml_samples_compute.py
+        :start-after: [START aml_compute_ssh_settings]
+        :end-before: [END aml_compute_ssh_settings]
+        :language: python
+        :dedent: 8
+        :caption: Configuring an AmlComputeSshSettings object.
+    """
 
     def __init__(
         self,
@@ -34,17 +52,7 @@ class AmlComputeSshSettings:
         admin_username: str,
         admin_password: Optional[str] = None,
         ssh_key_value: Optional[str] = None,
-    ):
-        """[summary]
-
-        :param admin_username: SSH user name
-        :type admin_username: str
-        :param admin_password: SSH user password, defaults to None
-        :type admin_password: str
-        :param ssh_key_value:  Specifies the SSH rsa private key as a string. Use "ssh-keygen -t
-            rsa -b 2048" to generate your SSH key pairs. Defaults to None
-        :type ssh_key_value: Optional[str]
-        """
+    ) -> None:
         self.admin_username = admin_username
         self.admin_password = admin_password
         self.ssh_key_value = ssh_key_value
@@ -80,9 +88,9 @@ class AmlCompute(Compute):
     :type ssh_settings: Optional[~azure.ai.ml.entities.AmlComputeSshSettings]
     :param network_settings: Virtual network settings for the AzureML compute cluster.
     :type network_settings: Optional[~azure.ai.ml.entities.NetworkSettings]
-    :param idle_time_before_scale_down: Node Idle Time before scaling down amlCompute. Defaults to None.
+    :param idle_time_before_scale_down: Node idle time before scaling down. Defaults to None.
     :type idle_time_before_scale_down: Optional[int]
-    :param identity:  The identities that are associated with the compute cluster.
+    :param identity: The identities that are associated with the compute cluster.
     :type identity: Optional[~azure.ai.ml.entities.IdentityConfiguration]
     :param tier: Virtual Machine tier. Accepted values include: "Dedicated", "LowPriority". Defaults to None.
     :type tier: Optional[str]
@@ -103,6 +111,15 @@ class AmlCompute(Compute):
         * False - Indicates that the compute nodes will have a private endpoint and no public IPs.
         Defaults to True.
     :type enable_node_public_ip: bool
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../../../../../samples/ml_samples_compute.py
+            :start-after: [START amlcompute]
+            :end-before: [END amlcompute]
+            :language: python
+            :dedent: 8
+            :caption: Creating an AmlCompute object.
     """
 
     def __init__(

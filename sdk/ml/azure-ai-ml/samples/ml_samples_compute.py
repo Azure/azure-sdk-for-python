@@ -118,6 +118,35 @@ class ComputeConfigurationOptions(object):
         print(ml_client.compute.list_sizes())
         # [END compute_operations_list_sizes]
 
+        # [START amlcompute]
+        from azure.ai.ml.entities import AmlCompute, IdentityConfiguration, ManagedIdentityConfiguration
+
+        aml_compute = AmlCompute(
+            name="my-compute",
+            min_instances=0,
+            max_instances=10,
+            idle_time_before_scale_down=100,
+            identity=IdentityConfiguration(
+                type="UserAssigned",
+                user_assigned_identities=[
+                    ManagedIdentityConfiguration(
+                        resource_id="/subscriptions/1234567-abcd-ef12-1234-12345/resourcegroups/our_rg_eastus/providers/Microsoft.ManagedIdentity/userAssignedIdentities/our-agent-aks"
+                    )
+                ],
+            ),
+        )
+        # [END amlcompute]
+
+        # [START aml_compute_ssh_settings]
+        from azure.ai.ml.entities import AmlComputeSshSettings
+
+        ssh_settings = AmlComputeSshSettings(
+            admin_username="azureuser",
+            ssh_key_value="ssh-rsa ABCDEFGHIJKLMNOPQRSTUVWXYZ administrator@MININT-2023",
+            admin_password="password123",
+        )
+        # [END aml_compute_ssh_settings]
+
 
 if __name__ == "__main__":
     sample = ComputeConfigurationOptions()
