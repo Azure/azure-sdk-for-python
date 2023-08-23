@@ -95,7 +95,7 @@ To interact with these resources, one should be familiar with the following SDK 
 
 ### Thread safety
 
-We do not guarantee that client instance methods are thread-safe. We do not recommend reusing client instances across threads.
+We do not guarantee that the clients are thread-safe. We do not recommend reusing client instances across threads.
 
 The data model types, such as `EventData` and `EventDataBatch` are not thread-safe. They should not be shared across threads nor used concurrently with client methods.
 
