@@ -26,11 +26,10 @@ class ComputeConfigurationOptions(object):
         subscription_id = os.environ["AZURE_SUBSCRIPTION_ID"]
         resource_group = os.environ["RESOURCE_GROUP_NAME"]
         credential = DefaultAzureCredential()
-        #        ml_client = MLClient(credential, subscription_id, resource_group, workspace_name="test-ws1")
-        ml_client = MLClient(credential, subscription_id, resource_group, workspace_name="r-bug-bash")
+        ml_client = MLClient(credential, subscription_id, resource_group, workspace_name="test-ws1")
 
         # [START compute_operations_get]
-        #        cpu_cluster = ml_client.compute.get("cpucluster")
+        cpu_cluster = ml_client.compute.get("cpucluster")
         # [END compute_operations_get]
 
         # [START load_compute]
