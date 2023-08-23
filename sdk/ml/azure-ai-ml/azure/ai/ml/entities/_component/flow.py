@@ -5,20 +5,27 @@ import contextlib
 import json
 import os
 from pathlib import Path
-from typing import Dict, Iterable, List, Optional, Tuple, Union
+from typing import Any, Dict, Iterable, List, Optional, Tuple, Union
 
 import yaml
 from marshmallow import EXCLUDE, Schema, ValidationError
 
-from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, COMPONENT_TYPE, SOURCE_PATH_CONTEXT_KEY, SchemaUrl
-from azure.ai.ml.constants._component import NodeType
+from azure.ai.ml.constants._common import (
+    BASE_PATH_CONTEXT_KEY,
+    COMPONENT_TYPE,
+    SOURCE_PATH_CONTEXT_KEY,
+    AssetTypes,
+    SchemaUrl,
+)
+from azure.ai.ml.constants._component import ComponentParameterTypes, NodeType
 
 from ..._restclient.v2022_10_01.models import ComponentVersion
 from ..._schema import PathAwareSchema
 from ..._schema.component.flow import FlowComponentSchema, FlowSchema, RunSchema
 from ...exceptions import ErrorCategory, ValidationException
 from .._assets import Code
-from .._validation import MutableValidationResult, SchemaValidatableMixin
+from .._inputs_outputs import GroupInput, Input, Output
+from .._job.pipeline._io import _GroupAttrDict
 from ._additional_includes import AdditionalIncludesMixin
 from .component import Component
 
@@ -26,12 +33,6 @@ from .component import Component
 
 
 class FlowComponentPortDict(dict):
-    def __iter__(self):
-        raise RuntimeError("Ports of flow component are not readable before creation.")
-
-    def keys(self):
-        raise RuntimeError("Ports of flow component are not readable before creation.")
-
     def __setitem__(self, key, value):
         raise RuntimeError("Ports of flow component are not editable.")
 
@@ -115,9 +116,6 @@ class FlowComponent(Component, AdditionalIncludesMixin):
             properties=properties,
             **kwargs,
         )
-
-        self._inputs, self._outputs = FlowComponentPortDict(), FlowComponentPortDict()
-
         self._flow = flow
         self._column_mappings = column_mappings or {}
         self._variant = variant
@@ -134,7 +132,7 @@ class FlowComponent(Component, AdditionalIncludesMixin):
         # unlike other Component, code is a private property in FlowComponent
         self._code, self._flow_file_name = None, None
 
-    # region attributes
+    # region valid properties
     @property
     def flow(self) -> Optional[Union[str, Path]]:
         """The path to the flow directory or flow definition file. Defaults to None and base path of this
@@ -214,6 +212,16 @@ class FlowComponent(Component, AdditionalIncludesMixin):
 
     # endregion
 
+    # region Component
+
+    @property
+    def inputs(self) -> Dict:
+        return self._inputs or FlowComponentPortDict()
+
+    @property
+    def outputs(self) -> Dict:
+        return self._outputs or FlowComponentPortDict()
+
     @classmethod
     def _from_rest_object_to_init_params(cls, obj: ComponentVersion) -> Dict:
         raise RuntimeError("FlowComponent does not support loading from REST object.")
@@ -223,6 +231,132 @@ class FlowComponent(Component, AdditionalIncludesMixin):
         rest_obj.properties.component_spec["code"] = self._code
         rest_obj.properties.component_spec["flow_file_name"] = self._flow_file_name
         return rest_obj
+
+    @contextlib.contextmanager
+    def _use_actual_input_output_ports(self, input_values: Dict[str, Any]):
+        if self._inputs:
+            yield
+            return
+
+        self._outputs = {
+            "flow_outputs": Output(
+                type=AssetTypes.URI_FOLDER,
+            ),
+            "debug_info": Output(
+                type=AssetTypes.URI_FOLDER,
+            ),
+        }
+
+        self._inputs = {
+            "data": Input(
+                type=AssetTypes.URI_FOLDER,
+                optional=False,
+            ),
+            "run_outputs": Input(
+                type=AssetTypes.URI_FOLDER,
+            ),
+        }
+
+        connection_parameters_root = "connections"
+        involved_connection_paths = set()
+
+        def _get_paths(cur_node, cur_paths, target_depth):
+            if target_depth == 0:
+                return [".".join(cur_paths)]
+            paths = []
+            if isinstance(cur_node, dict):
+                for key, value in cur_node.items():
+                    cur_paths.append(key)
+                    paths.extend(_get_paths(value, cur_paths, target_depth - 1))
+                    cur_paths.pop()
+            elif isinstance(cur_node, _GroupAttrDict):
+                # TODO: is it necessary to support this?
+                raise ValidationException(
+                    message="Connection parameters must be a dict for now, but got %s" % cur_node,
+                    no_personal_data_message="Connection parameters must be a dict for now",
+                    target=self._get_validation_error_target(),
+                    error_category=ErrorCategory.USER_ERROR,
+                )
+            return paths
+
+        for input_port_name, input_value in input_values.items():
+            if input_port_name in self._inputs:
+                continue
+            if input_port_name == connection_parameters_root:
+                involved_connection_paths.update(_get_paths(input_value, [connection_parameters_root], 2))
+            elif input_port_name.startswith(connection_parameters_root + "."):
+                involved_connection_paths.add(input_port_name)
+            else:
+                self._inputs[input_port_name] = Input(
+                    type=ComponentParameterTypes.STRING,
+                )
+
+        node_names, param_names = set(), set()
+        for connection_path in involved_connection_paths:
+            if connection_path.count(".") != 2:
+                raise ValidationException(
+                    message="Connection path must be in the format of connections.<node_name>.<connection_name>, but "
+                    "detected %s" % connection_path,
+                    no_personal_data_message="Invalid connection path",
+                    target=self._get_validation_error_target(),
+                    error_category=ErrorCategory.USER_ERROR,
+                )
+            _, node_name, parameter_name = connection_path.split(".")
+            node_names.add(node_name)
+            param_names.add(parameter_name)
+
+        self._inputs[connection_parameters_root] = GroupInput(
+            values={
+                node_name: GroupInput(
+                    values={
+                        parameter_name: Input(
+                            type=ComponentParameterTypes.STRING,
+                        )
+                        for parameter_name in param_names
+                    },
+                    _group_class=None,
+                )
+                for node_name in node_names
+            },
+            _group_class=None,
+        )
+
+        yield
+        self._inputs, self._outputs = {}, {}
+        return
+
+    def _func(self, **kwargs) -> "Parallel":  # pylint: disable=invalid-overridden-method
+        with self._use_actual_input_output_ports(kwargs):
+            return super()._func(**kwargs)  # pylint: disable=not-callable
+
+    @classmethod
+    def _get_flow_definition(cls, flow, base_path, source_path) -> Tuple[Path, str]:
+        flow_file_name = "flow.dag.yaml"
+
+        if flow is None:
+            # Flow component must be created with a local yaml file, so no need to check if source_path exists
+            flow_file_name = os.path.basename(source_path)
+            return Path(base_path), flow_file_name
+
+        flow_path = Path(flow)
+        if not flow_path.is_absolute():
+            # if flow_path points to a symlink, we still use the parent of the symlink as origin code
+            flow_path = Path(base_path, flow)
+
+        if flow_path.is_dir() and (flow_path / flow_file_name).is_file():
+            return flow_path, flow_file_name
+
+        if flow_path.is_file():
+            return flow_path.parent, flow_path.name
+
+        raise ValidationException(
+            message="Flow path must be a directory containing flow.dag.yaml or a file, but got %s" % flow_path,
+            no_personal_data_message="Flow path must be a directory or a file",
+            target=cls._get_validation_error_target(),
+            error_category=ErrorCategory.USER_ERROR,
+        )
+
+    # endregion
 
     # region SchemaValidatableMixin
     @classmethod
@@ -265,38 +399,7 @@ class FlowComponent(Component, AdditionalIncludesMixin):
     def _create_schema_for_validation(cls, context) -> Union[PathAwareSchema, Schema]:
         return FlowComponentSchema(context=context)
 
-    def _customized_validate(self) -> MutableValidationResult:
-        # skip io port validation
-        return SchemaValidatableMixin._customized_validate(self)
-
     # endregion
-
-    @classmethod
-    def _get_flow_definition(cls, flow, base_path, source_path) -> Tuple[Path, str]:
-        flow_file_name = "flow.dag.yaml"
-
-        if flow is None:
-            # Flow component must be created with a local yaml file, so no need to check if source_path exists
-            flow_file_name = os.path.basename(source_path)
-            return Path(base_path), flow_file_name
-
-        flow_path = Path(flow)
-        if not flow_path.is_absolute():
-            # if flow_path points to a symlink, we still use the parent of the symlink as origin code
-            flow_path = Path(base_path, flow)
-
-        if flow_path.is_dir() and (flow_path / flow_file_name).is_file():
-            return flow_path, flow_file_name
-
-        if flow_path.is_file():
-            return flow_path.parent, flow_path.name
-
-        raise ValidationException(
-            message="Flow path must be a directory containing flow.dag.yaml or a file, but got %s" % flow_path,
-            no_personal_data_message="Flow path must be a directory or a file",
-            target=cls._get_validation_error_target(),
-            error_category=ErrorCategory.USER_ERROR,
-        )
 
     # region AdditionalIncludesMixin
     def _get_origin_code_value(self) -> Union[str, os.PathLike, None]:

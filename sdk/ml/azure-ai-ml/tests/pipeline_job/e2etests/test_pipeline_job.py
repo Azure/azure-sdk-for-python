@@ -4,7 +4,6 @@ from typing import Any, Callable, Dict
 
 import pydash
 import pytest
-from azure.core.exceptions import HttpResponseError
 from devtools_testutils import AzureRecordedTestCase, is_live
 from test_utilities.utils import _PYTEST_TIMEOUT_METHOD, assert_job_cancel, sleep_if_live, wait_until_done
 
@@ -18,6 +17,7 @@ from azure.ai.ml.entities._builders import Command, Pipeline
 from azure.ai.ml.entities._builders.parallel import Parallel
 from azure.ai.ml.entities._builders.spark import Spark
 from azure.ai.ml.exceptions import JobException
+from azure.core.exceptions import HttpResponseError
 
 from .._util import (
     _PIPELINE_JOB_LONG_RUNNING_TIMEOUT_SECOND,
@@ -2059,3 +2059,13 @@ class TestPipelineJobLongRunning:
         assert next(artifact_dir.iterdir(), None), "No artifacts were downloaded"
         assert output_dir.exists()
         assert next(output_dir.iterdir(), None), "No outputs were downloaded"
+
+    def test_pipeline_job_with_flow(
+        self,
+        client: MLClient,
+    ) -> None:
+        test_path = "./tests/test_configs/pipeline_jobs/pipeline_job_with_flow.yml"
+        pipeline_job: PipelineJob = load_job(source=test_path)
+        assert client.jobs.validate(pipeline_job).passed
+
+        # TODO: enable create test after server-side is ready

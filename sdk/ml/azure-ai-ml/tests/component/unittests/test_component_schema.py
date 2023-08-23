@@ -8,11 +8,11 @@ import pydash
 import pytest
 import yaml
 
-from azure.ai.ml import MLClient, load_component
+from azure.ai.ml import Input, MLClient, load_component
 from azure.ai.ml._restclient.v2022_05_01.models import ComponentVersionData
 from azure.ai.ml._utils._arm_id_utils import PROVIDER_RESOURCE_ID_WITH_VERSION
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, AssetTypes, LegacyAssetTypes
-from azure.ai.ml.constants._component import ComponentSource
+from azure.ai.ml.constants._component import ComponentSource, NodeType
 from azure.ai.ml.entities import CommandComponent, Component, PipelineComponent
 from azure.ai.ml.entities._assets import Code
 from azure.ai.ml.entities._component.component import COMPONENT_PLACEHOLDER
@@ -402,7 +402,7 @@ class TestFlowComponent:
                     "description": "test load component from flow",
                     # name of the component will be the flow directory name by default
                     "name": "basic",
-                    "type": "flow_parallel",
+                    "type": "promptflow_parallel",
                     "version": "2",
                     "is_deterministic": True,
                     "code": "/subscriptions/xxx/resourceGroups/xxx/workspaces/xxx/codes/xxx/versions/1",
@@ -412,7 +412,7 @@ class TestFlowComponent:
                 "is_anonymous": False,
                 "is_archived": False,
                 "properties": {
-                    "client_component_hash": "f2da0699-906e-04bf-1e73-2920480afb6a",
+                    "client_component_hash": "b503491e-be3a-de50-0413-30c8c8abb43a",
                 },
                 "tags": {},
             },
@@ -459,7 +459,7 @@ class TestFlowComponent:
                     "is_deterministic": True,
                     # TODO: should we use default run name (the dir name of the run yaml) as component name?
                     "name": "basic",
-                    "type": "flow_parallel",
+                    "type": "promptflow_parallel",
                     "version": "1",
                     "code": "/subscriptions/xxx/resourceGroups/xxx/workspaces/xxx/codes/xxx/versions/1",
                     "flow_file_name": "flow.dag.yaml",
@@ -467,7 +467,7 @@ class TestFlowComponent:
                 "description": "A run of the basic flow",
                 "is_anonymous": False,
                 "is_archived": False,
-                "properties": {"client_component_hash": "c94fac96-a244-d013-10e7-1dfa7b461831"},
+                "properties": {"client_component_hash": "bc6d5b98-1aef-0d5a-96ff-5803f1a906c8"},
                 "tags": {},
             },
         }
@@ -484,23 +484,13 @@ class TestFlowComponent:
             load_component(target_path)
 
     def test_component_entity(self):
-        from azure.ai.ml.entities._component.flow import FlowComponent, FlowComponentPortDict
+        component = load_component("./tests/test_configs/flows/basic/flow.dag.yaml")
 
-        target_path = "./tests/test_configs/flows/basic/flow.dag.yaml"
+        assert component.type == NodeType.FLOW_PARALLEL
 
-        component: FlowComponent = load_component(target_path)
-
-        assert component.type == "flow_parallel"
-
-        input_port_dict: FlowComponentPortDict = component.inputs
+        input_port_dict = component.inputs
         with pytest.raises(RuntimeError, match="Ports of flow component are not editable."):
             input_port_dict["groundtruth"] = None
-
-        with pytest.raises(RuntimeError, match="Ports of flow component are not readable before creation."):
-            input_port_dict.keys()
-
-        with pytest.raises(RuntimeError, match="Ports of flow component are not readable before creation."):
-            list(input_port_dict)
 
         with pytest.raises(RuntimeError, match="Ports of flow component are not readable before creation."):
             _ = input_port_dict["groundtruth"]
@@ -511,3 +501,88 @@ class TestFlowComponent:
         component.connections = None
         component.additional_includes = None
         component.environment_variables = None
+
+        flow_node = component(
+            data=Input(path="./tests/test_configs/flows/data/basic.jsonl", type=AssetTypes.URI_FILE),
+            text="${data.text}",
+        )
+
+        assert flow_node.type == "parallel"
+        flow_node._component = "/subscriptions/xxx/resourceGroups/xxx/workspaces/xxx/components/xxx/versions/1"
+        assert flow_node._to_rest_object() == {
+            "_source": "YAML.COMPONENT",
+            "componentId": "/subscriptions/xxx/resourceGroups/xxx/workspaces/xxx/components/xxx/versions/1",
+            "inputs": {
+                "data": {"job_input_type": "uri_file", "uri": "./tests/test_configs/flows/data/basic.jsonl"},
+                "text": {"job_input_type": "literal", "value": "${data.text}"},
+            },
+            "type": "parallel",
+        }
+
+    @pytest.mark.parametrize(
+        "input_values, expected_rest_objects",
+        [
+            pytest.param(
+                {"connections": {"llm": {"connection": "azure_open_ai_connection"}}},
+                {
+                    "connections.llm.connection": {"job_input_type": "literal", "value": "azure_open_ai_connection"},
+                },
+                id="dict-1",
+            ),
+            pytest.param(
+                {
+                    "connections": {
+                        "llm": {
+                            "connection": "azure_open_ai_connection",
+                            "deployment_name": "text-davinci-003",
+                            "custom_connection": "azure_open_ai_connection",
+                        }
+                    }
+                },
+                {
+                    "connections.llm.connection": {"job_input_type": "literal", "value": "azure_open_ai_connection"},
+                    "connections.llm.deployment_name": {"job_input_type": "literal", "value": "text-davinci-003"},
+                    "connections.llm.custom_connection": {
+                        "job_input_type": "literal",
+                        "value": "azure_open_ai_connection",
+                    },
+                },
+                id="dict-2",
+            ),
+            pytest.param(
+                {"connections.llm.connection": "azure_open_ai_connection"},
+                {
+                    "connections.llm.connection": {"job_input_type": "literal", "value": "azure_open_ai_connection"},
+                },
+                id="dot-key-1",
+            ),
+            pytest.param(
+                {
+                    "connections.llm.connection": "azure_open_ai_connection",
+                    "connections.llm.custom_connection": "azure_open_ai_connection",
+                    "connections": {"llm": {"deployment_name": "text-davinci-003"}},
+                },
+                {
+                    "connections.llm.connection": {"job_input_type": "literal", "value": "azure_open_ai_connection"},
+                    "connections.llm.custom_connection": {
+                        "job_input_type": "literal",
+                        "value": "azure_open_ai_connection",
+                    },
+                    "connections.llm.deployment_name": {"job_input_type": "literal", "value": "text-davinci-003"},
+                },
+                id="dot-key-plus-dict",
+            ),
+        ],
+    )
+    def test_component_connection_inputs(self, input_values: dict, expected_rest_objects: dict):
+        component = load_component("./tests/test_configs/flows/basic/flow.dag.yaml")
+        data_input = Input(path="./tests/test_configs/flows/data/basic.jsonl", type=AssetTypes.URI_FILE)
+
+        # validation_result = component()._validate()
+        # assert validation_result.passed is False
+        node = component(data=data_input, **input_values)
+        node._component = "/subscriptions/xxx/resourceGroups/xxx/workspaces/xxx/components/xxx/versions/1"
+        assert node._to_rest_object()["inputs"] == {
+            "data": {"job_input_type": "uri_file", "uri": "./tests/test_configs/flows/data/basic.jsonl"},
+            **expected_rest_objects,
+        }

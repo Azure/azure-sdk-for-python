@@ -3285,7 +3285,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
         job_res = client.jobs.create_or_update(job=pipeline_job, experiment_name="test_unknown_field")
         assert job_res.jobs["node"].unknown_field == "${{parent.inputs.input}}"
 
-    @pytest.mark.skip(reason="enable this after load component from flow is supported")
+    @pytest.mark.skip(reason="enable this after server-side is ready")
     def test_flow_in_pipeline(self, client):
         """
         benefits: no need to download component.code to re-create it in another workspace; naturally support
@@ -3302,25 +3302,36 @@ class TestDSLPipeline(AzureRecordedTestCase):
 
         data_input = Input(path="./tests/test_configs/flows/data/basic.jsonl", type=AssetTypes.URI_FILE)
 
-        @dsl.pipeline
-        def pipeline_func_with_flow_fail(data):
-            flow_node = component_func(non_existed_input=data)
-            flow_node.compute = "cpu-cluster"
-
-        invalid_pipeline = pipeline_func_with_flow_fail(data=data_input)
-        with pytest.raises(Exception, match="can't find input non_existed_input."):
-            # TODO: need dev efforts to do client-side validation here
-            client.jobs.create_or_update(invalid_pipeline)
+        # TODO: need dev efforts to do client-side validation on inputs
+        # @dsl.pipeline
+        # def pipeline_func_with_flow_fail(data):
+        #     flow_node = component_func(non_existed_input=data)
+        #     flow_node.compute = "cpu-cluster"
+        #
+        # invalid_pipeline = pipeline_func_with_flow_fail(data=data_input)
+        # with pytest.raises(Exception, match="can't find input non_existed_input."):
+        #     client.jobs.create_or_update(invalid_pipeline)
 
         @dsl.pipeline
         def pipeline_func_with_flow(data):
             flow_node = component_func(
                 data=data,
                 text="${{data.text}}",
+                connections={
+                    "llm": {
+                        "connection": "azure_open_ai_connection",
+                        "deployment_name": "text-davinci-003",
+                        "custom_connection": "azure_open_ai_connection",
+                    }
+                },
             )
             flow_node.compute = "cpu-cluster"
 
         pipeline_with_flow = pipeline_func_with_flow(data=data_input)
+
+        validation_result = client.jobs.validate(pipeline_with_flow)
+
+        assert validation_result.passed
 
         _ = client.jobs.create_or_update(
             pipeline_with_flow,

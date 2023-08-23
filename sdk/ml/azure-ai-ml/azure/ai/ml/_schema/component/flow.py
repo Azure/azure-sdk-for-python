@@ -67,6 +67,9 @@ class FlowComponentSchema(ComponentSchema, FlowComponentArgumentSchema):
     class Meta:
         exclude = ["inputs", "outputs"]  # component doesn't have inputs & outputs
 
+    # TODO: name should be required?
+    name = ComponentNameStr()
+
     type = StringTransformedEnum(allowed_values=[NodeType.FLOW_PARALLEL], required=True)
 
     # name, version, tags, display_name and is_deterministic are inherited from ComponentSchema

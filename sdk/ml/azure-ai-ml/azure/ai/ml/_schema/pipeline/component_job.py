@@ -29,6 +29,7 @@ from ...entities._job.pipeline._attr_dict import _AttrDict
 from ...exceptions import ValidationException
 from .._sweep.parameterized_sweep import ParameterizedSweepSchema
 from .._utils.data_binding_expression import support_data_binding_expression_for_fields
+from ..component.flow import FlowComponentSchema
 from ..core.fields import (
     ArmVersionedStr,
     ComputeField,
@@ -253,13 +254,16 @@ class ParallelSchema(BaseNodeSchema, ParameterizedParallelSchema):
                 # component file reference
                 ParallelComponentFileRefField(),
             ],
+            NodeType.FLOW_PARALLEL: [
+                NestedField(FlowComponentSchema, unknown=INCLUDE, dump_only=True),
+                ComponentYamlRefField(),
+            ],
         },
         plain_union_fields=[
             # for registry type assets
             RegistryStr(),
             # existing component
             ArmVersionedStr(azureml_type=AzureMLResourceType.COMPONENT, allow_default_version=True),
-            ComponentYamlRefField(),
         ],
         required=True,
     )

@@ -276,7 +276,7 @@ class PipelineComponent(Component):
                 # not check optional/required for pipeline input used in pipeline expression
                 if name in optional_binding_in_expression_dict.get(pipeline_input_name, []):
                     continue
-                if component_definition_inputs[name].optional is not True:
+                if name in component_definition_inputs and component_definition_inputs[name].optional is not True:
                     required_bindings.append(f"{node.name}.inputs.{name}")
             if pipeline_input.optional is None and not required_bindings:
                 # Set input as optional if all binding is optional and optional not set.
