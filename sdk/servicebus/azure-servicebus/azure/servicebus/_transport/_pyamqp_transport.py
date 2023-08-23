@@ -700,7 +700,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
     ) -> None:
         # pylint: disable=protected-access
         if not handler:
-            raise RuntimeError("handler is None")
+            raise RuntimeError("handler is not open")
         
         try:
             if settle_operation == MESSAGE_COMPLETE:
