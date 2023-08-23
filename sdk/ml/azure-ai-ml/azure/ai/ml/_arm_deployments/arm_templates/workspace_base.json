@@ -661,6 +661,7 @@
                     "family": "A"
                 },
                 "accessPolicies": [],
+                "enableRbacAuthorization": true,
                 "networkAcls": "[if(equals(parameters('keyVaultBehindVNet'), 'true'), variables('networkRuleSetBehindVNet'), json('null'))]"
             }
         },
