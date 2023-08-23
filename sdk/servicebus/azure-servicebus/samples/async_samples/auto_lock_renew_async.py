@@ -9,6 +9,8 @@
 Example to show usage of AutoLockRenewer asynchronously:
     1. Automatically renew locks on messages received from non-sessionful entity
     2. Automatically renew locks on the session of sessionful entity
+
+We do not guarantee that this SDK is thread-safe. We do not recommend reusing client instances or data models across threads.
 """
 
 import os

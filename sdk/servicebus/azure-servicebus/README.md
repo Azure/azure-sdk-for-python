@@ -22,10 +22,6 @@ Use the Service Bus client library for Python to communicate between application
 **NOTE**: If you are using version 0.50 or lower and want to migrate to the latest version
 of this package please look at our [migration guide to move from Service Bus V0.50 to Service Bus V7][migration_guide].
 
-## _Disclaimer_
-
-_Azure SDK Python packages support for Python 2.7 ended 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
-
 ## Getting started
 
 ### Install the package
@@ -96,6 +92,12 @@ To interact with these resources, one should be familiar with the following SDK 
 * [ServiceBusReceiver][receiver_reference]: To receive messages from a Queue or Subscription, one would use the corresponding `get_queue_receiver` or `get_subscription_receiver` method off of a `ServiceBusClient` instance as seen [here](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/servicebus/azure-servicebus/samples/sync_samples/receive_queue.py).
 
 * [ServiceBusMessage][message_reference]: When sending, this is the type you will construct to contain your payload.  When receiving, this is where you will access the payload.
+
+### Thread safety
+
+We do not guarantee that client instance methods are thread-safe. We do not recommend reusing client instances across threads.
+
+The data model types, such as `EventData` and `EventDataBatch` are not thread-safe. They should not be shared across threads nor used concurrently with client methods.
 
 ## Examples
 
