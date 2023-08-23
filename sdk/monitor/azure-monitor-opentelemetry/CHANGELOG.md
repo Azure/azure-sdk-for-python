@@ -10,6 +10,8 @@
     ([#31740](https://github.com/Azure/azure-sdk-for-python/pull/31740))
 - Un-vendoring instrumentations
     ([#31744](https://github.com/Azure/azure-sdk-for-python/pull/31740))
+- Add preview warning for Autoinstrumentation entry points
+    ([#31767](https://github.com/Azure/azure-sdk-for-python/pull/31767))
 
 ### Breaking Changes
 
