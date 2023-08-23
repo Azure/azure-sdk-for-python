@@ -78,7 +78,8 @@ class _LocalEndpointHelper(object):
         :type data: dict
         :param deployment_name: Name of specific deployment to invoke.
         :type deployment_name: (str, optional)
-        :return: str
+        :return: The text response
+        :rtype: str
         """
         # get_scoring_uri will throw user error if there are multiple deployments and no deployment_name is specified
         scoring_uri = self._docker_client.get_scoring_uri(endpoint_name=endpoint_name, deployment_name=deployment_name)
@@ -110,7 +111,11 @@ class _LocalEndpointHelper(object):
         raise LocalEndpointNotFoundError(endpoint_name=endpoint_name)
 
     def list(self) -> Iterable[OnlineEndpoint]:
-        """List all local endpoints."""
+        """List all local endpoints.
+
+        :return: An iterable of local endpoints
+        :rtype: Iterable[OnlineEndpoint]
+        """
         endpoints = []
         containers = self._docker_client.list_containers()
         endpoint_stubs = self._endpoint_stub.list()
@@ -162,7 +167,10 @@ def _convert_container_to_endpoint(
 
     :param container: Container for a local deployment.
     :type container: docker.models.containers.Container
-    :returns OnlineEndpoint entity:
+    :param endpoint_json: The endpoint json
+    :type endpoint_json: Optional[dict]
+    :return: The OnlineEndpoint entity
+    :rtype: OnlineEndpoint
     """
     if endpoint_json is None:
         endpoint_json = get_endpoint_json_from_container(container=container)
@@ -187,7 +195,8 @@ def _convert_json_to_endpoint(endpoint_json: dict, **kwargs) -> OnlineEndpoint:
 
     :param endpoint_json: dictionary representation of OnlineEndpoint entity.
     :type endpoint_json: dict
-    :returns OnlineEndpoint entity:
+    :return: The OnlineEndpoint entity
+    :rtype: OnlineEndpoint
     """
     params_override = []
     for k, v in kwargs.items():

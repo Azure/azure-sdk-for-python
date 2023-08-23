@@ -112,7 +112,7 @@ class AutoMLImage(AutoMLVertical, ABC):
         """Limit settings for all AutoML Image Verticals.
 
         :keyword timeout_minutes: AutoML job timeout.
-        :type timeout_minutes: ~datetime.timedelta
+        :paramtype timeout_minutes: ~datetime.timedelta
         """
         self._limits = self._limits or ImageLimitSettings()
         self._limits.max_concurrent_trials = (
@@ -137,7 +137,7 @@ class AutoMLImage(AutoMLVertical, ABC):
         ~azure.mgmt.machinelearningservices.models.SamplingAlgorithmType.GRID,
         ~azure.mgmt.machinelearningservices.models.SamplingAlgorithmType.BAYESIAN]
         :keyword early_termination: Type of early termination policy.
-        :type early_termination: Union[
+        :paramtype early_termination: Union[
         ~azure.mgmt.machinelearningservices.models.BanditPolicy,
         ~azure.mgmt.machinelearningservices.models.MedianStoppingPolicy,
         ~azure.mgmt.machinelearningservices.models.TruncationSelectionPolicy]

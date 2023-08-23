@@ -33,7 +33,7 @@ T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 
-class ConfidentialLedgerCertificateClientOperationsMixin(MixinABC):
+class ConfidentialLedgerCertificateClientOperationsMixin(MixinABC):  # pylint: disable=name-too-long
     @distributed_trace_async
     async def get_ledger_identity(self, ledger_id: str, **kwargs: Any) -> JSON:
         """Gets identity information for a Confidential Ledger instance.

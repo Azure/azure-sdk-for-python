@@ -1,5 +1,51 @@
 # Release History
 
+## 3.0.0 (2023-08-18)
+
+### Features Added
+
+  - Added operation ContainerAppsOperations.begin_start
+  - Added operation ContainerAppsOperations.begin_stop
+  - Added operation group ContainerAppsAPIClientOperationsMixin
+  - Added operation group JobsExecutionsOperations
+  - Added operation group JobsOperations
+  - Added operation group ManagedCertificatesOperations
+  - Model AvailableWorkloadProfileProperties has a new parameter category
+  - Model AzureCredentials has a new parameter kind
+  - Model Configuration has a new parameter service
+  - Model ContainerApp has a new parameter managed_by
+  - Model ContainerApp has a new parameter workload_profile_name
+  - Model ContainerAppSecret has a new parameter identity
+  - Model ContainerAppSecret has a new parameter key_vault_url
+  - Model GithubActionConfiguration has a new parameter github_personal_access_token
+  - Model Ingress has a new parameter sticky_sessions
+  - Model ManagedEnvironment has a new parameter dapr_configuration
+  - Model ManagedEnvironment has a new parameter infrastructure_resource_group
+  - Model ManagedEnvironment has a new parameter keda_configuration
+  - Model ManagedEnvironment has a new parameter peer_authentication
+  - Model Replica has a new parameter init_containers
+  - Model Replica has a new parameter running_state
+  - Model Replica has a new parameter running_state_details
+  - Model ReplicaContainer has a new parameter running_state
+  - Model ReplicaContainer has a new parameter running_state_details
+  - Model Revision has a new parameter running_state
+  - Model Secret has a new parameter identity
+  - Model Secret has a new parameter key_vault_url
+  - Model Template has a new parameter service_binds
+  - Model Template has a new parameter termination_grace_period_seconds
+  - Model Volume has a new parameter mount_options
+  - Model Volume has a new parameter secrets
+  - Model VolumeMount has a new parameter sub_path
+
+### Breaking Changes
+
+  - Model AvailableWorkloadProfileProperties no longer has parameter billing_meter_category
+  - Model ContainerApp no longer has parameter workload_profile_type
+  - Model ManagedEnvironment no longer has parameter sku
+  - Model VnetConfiguration no longer has parameter outbound_settings
+  - Model VnetConfiguration no longer has parameter runtime_subnet_id
+  - Model WorkloadProfile has a new required parameter name
+
 ## 3.0.0b1 (2023-05-20)
 
 ### Features Added

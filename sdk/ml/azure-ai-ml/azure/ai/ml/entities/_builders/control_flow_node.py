@@ -58,7 +58,11 @@ class ControlFlowNode(YamlTranslatableMixin, SchemaValidatableMixin, ABC):
         return self._dump_for_validation()
 
     def _to_rest_object(self, **kwargs) -> dict:  # pylint: disable=unused-argument
-        """Convert self to a rest object for remote call."""
+        """Convert self to a rest object for remote call.
+
+        :return: The rest object
+        :rtype: dict
+        """
         rest_obj = self._to_dict()
         rest_obj["_source"] = self._source
         return convert_ordered_dict_to_dict(rest_obj)
@@ -74,6 +78,9 @@ class ControlFlowNode(YamlTranslatableMixin, SchemaValidatableMixin, ABC):
         """Return the error target of this resource.
 
         Should be overridden by subclass. Value should be in ErrorTarget enum.
+
+        :return: The error target
+        :rtype: ErrorTarget
         """
         return ErrorTarget.PIPELINE
 
@@ -120,7 +127,7 @@ class LoopNode(ControlFlowNode, ABC):
         }
 
     @classmethod
-    def _get_body_from_pipeline_jobs(cls, pipeline_jobs: dict, body_name: str):
+    def _get_body_from_pipeline_jobs(cls, pipeline_jobs: Dict[str, BaseNode], body_name: str) -> BaseNode:
         # Get body object from pipeline job list.
         if body_name not in pipeline_jobs:
             raise ValidationError(
@@ -144,7 +151,7 @@ class LoopNode(ControlFlowNode, ABC):
         return "${{parent.jobs.%s}}" % self.body.name
 
     @staticmethod
-    def _get_data_binding_expression_value(expression, regex):
+    def _get_data_binding_expression_value(expression: str, regex: str) -> str:
         try:
             if is_data_binding_expression(expression):
                 return re.findall(regex, expression)[0]

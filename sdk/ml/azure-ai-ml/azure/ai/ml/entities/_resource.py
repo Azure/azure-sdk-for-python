@@ -37,7 +37,7 @@ class Resource(abc.ABC):
     :keyword print_as_yaml: Specifies if the the resource should print out as a YAML-formatted object. If False,
         the resource will print out in a more-compact style. By default, the YAML output is only used in Jupyter
         notebooks. Be aware that some bookkeeping values are shown only in the non-YAML output.
-    :type print_as_yaml: bool
+    :paramtype print_as_yaml: bool
     """
 
     def __init__(
@@ -149,7 +149,7 @@ class Resource(abc.ABC):
         :param params_override: Parameters to override, defaults to None
         :type params_override: typing.Optional[list]
         :keyword kwargs: A dictionary of additional configuration parameters.
-        :type kwargs: dict
+        :paramtype kwargs: dict
         :return: Resource
         :rtype: Resource
         """
@@ -162,7 +162,7 @@ class Resource(abc.ABC):
         """Get arm resource.
 
         :keyword kwargs: A dictionary of additional configuration parameters.
-        :type kwargs: dict
+        :paramtype kwargs: dict
 
         :return: Resource
         :rtype: dict
@@ -179,7 +179,7 @@ class Resource(abc.ABC):
         """Get arm resource and parameters.
 
         :keyword kwargs: A dictionary of additional configuration parameters.
-        :type kwargs: dict
+        :paramtype kwargs: dict
 
         :return: Resource and parameters
         :rtype: dict

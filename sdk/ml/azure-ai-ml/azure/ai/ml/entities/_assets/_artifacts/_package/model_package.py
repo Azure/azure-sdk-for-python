@@ -245,8 +245,6 @@ class ModelPackage(Resource, PackageRequest):
             If dest is a file path, a new file will be created.
             If dest is an open file, the file will be written to directly.
         :type dest: Union[PathLike, str, IO[AnyStr]]
-        :param kwargs: Additional arguments to pass to the YAML serializer.
-        :type kwargs: Optional[dict]
         :raises FileExistsError: Raised if dest is a file path and the file already exists.
         :raises IOError: Raised if dest is an open file and the file is not writable.
         """
