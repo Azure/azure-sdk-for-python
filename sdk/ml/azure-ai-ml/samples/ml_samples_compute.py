@@ -241,6 +241,20 @@ class ComputeConfigurationOptions(object):
         )
         # [END image_metadata]
 
+        # [START kubernetes_compute]
+        from azure.ai.ml.entities import KubernetesCompute
+
+        k8s_compute = KubernetesCompute(
+            identity=IdentityConfiguration(
+                type="UserAssigned",
+                user_assigned_identities=[
+                    ManagedIdentityConfiguration(
+                        resource_id="/subscriptions/1234567-abcd-ef12-1234-12345/resourcegroups/our_rg_eastus/providers/Microsoft.ManagedIdentity/userAssignedIdentities/our-agent-aks"
+                    )
+                ],
+            ),
+        )
+
 
 if __name__ == "__main__":
     sample = ComputeConfigurationOptions()
