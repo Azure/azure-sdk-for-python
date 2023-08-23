@@ -32,8 +32,8 @@ class AmlComputeNodeInfo:
     def current_job_name(self, value: str) -> None:
         """Set the current job run ID.
 
-        :param: The job run ID.
-        :type: str
+        :param value: The job run ID.
+        :type value: str
         """
         self.run_id = value
 
