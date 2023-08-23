@@ -152,6 +152,19 @@ class SchemaRegistryClient(object):
             **kwargs,
         )
 
+    def __enter__(self) -> "SchemaRegistryClient":
+        self._generated_client.__enter__()
+        return self
+
+    def __exit__(self, *exc_details: Any) -> None:
+        self._generated_client.__exit__(*exc_details)
+
+    def close(self) -> None:
+        """This method is to close the sockets opened by the client.
+        It need not be used when using with a context manager.
+        """
+        self._generated_client.close()
+
     @distributed_trace
     def register_schema(    # pylint:disable=arguments-differ
         self,
@@ -201,19 +214,6 @@ class SchemaRegistryClient(object):
             **http_request_kwargs,
         )
         return SchemaProperties(**schema_properties)
-
-    def __enter__(self) -> "SchemaRegistryClient":
-        self._generated_client.__enter__()
-        return self
-
-    def __exit__(self, *exc_details: Any) -> None:
-        self._generated_client.__exit__(*exc_details)
-
-    def close(self) -> None:
-        """This method is to close the sockets opened by the client.
-        It need not be used when using with a context manager.
-        """
-        self._generated_client.close()
 
     @overload
     def get_schema(self, schema_id: str, **kwargs: Any) -> Schema:

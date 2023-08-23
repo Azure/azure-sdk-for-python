@@ -29,7 +29,7 @@ import logging
 from typing import (
     TYPE_CHECKING, Any, Dict, Mapping, Optional, overload, Type, Union, cast
 )
-from ...._common._constants import SchemaFormat
+from ...._patch import SchemaFormat
 
 from .._utils import (
     create_message_content,
@@ -43,8 +43,8 @@ from .._constants import JsonSchemaDraftIdentifier
 from ._async_lru import alru_cache  # pylint: disable=import-error
 
 if TYPE_CHECKING:
-    from ....aio._schema_registry_client_async import SchemaRegistryClient
-    from ...._encoder_protocols import MessageContent, SchemaContentValidate
+    from ....aio._patch import SchemaRegistryClient
+    from ...._patch import MessageContent, SchemaContentValidate
 
 _LOGGER = logging.getLogger(__name__)
 

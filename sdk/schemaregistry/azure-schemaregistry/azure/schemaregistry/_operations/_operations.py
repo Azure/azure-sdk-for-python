@@ -18,7 +18,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
 from .. import models as _models
-from .._model_base import AzureJSONEncoder, _deserialize
+from .._model_base import _deserialize
 from .._serialization import Serializer
 from .._vendor import SchemaRegistryClientMixinABC
 T = TypeVar('T')
@@ -617,7 +617,7 @@ class SchemaRegistryClientOperationsMixin(
             'cls', None
         )
 
-        _content = json.dumps(schema_content, cls=AzureJSONEncoder)  # type: ignore
+        _content = schema_content
 
         request = build_schema_registry_get_schema_id_by_content_request(
             group_name=group_name,
@@ -704,7 +704,7 @@ class SchemaRegistryClientOperationsMixin(
             'cls', None
         )
 
-        _content = json.dumps(content, cls=AzureJSONEncoder)  # type: ignore
+        _content = content
 
         request = build_schema_registry_register_schema_request(
             group_name=group_name,

@@ -415,7 +415,7 @@ class SchemaRegistryClientOperationsMixin(
             'cls', None
         )
 
-        _content = json.dumps(schema_content, cls=AzureJSONEncoder)  # type: ignore
+        _content = schema_content
 
         request = build_schema_registry_get_schema_id_by_content_request(
             group_name=group_name,
@@ -502,7 +502,7 @@ class SchemaRegistryClientOperationsMixin(
             'cls', None
         )
 
-        _content = json.dumps(content, cls=AzureJSONEncoder)  # type: ignore
+        _content = content
 
         request = build_schema_registry_register_schema_request(
             group_name=group_name,
