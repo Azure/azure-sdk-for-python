@@ -94,12 +94,17 @@ class RemoteRenderingClient(object):
             'authentication_endpoint_url', construct_endpoint_url(account_domain))  # type: str
 
         def build_credentials(input_credentials:Any) -> Any:
-            return get_mixedreality_credential(account_id=account_id, account_domain=account_domain, credential=input_credentials, endpoint_url=endpoint_url)
-        
+            return get_mixedreality_credential(account_id=account_id,
+                account_domain=account_domain,
+                credential=input_credentials,
+                endpoint_url=endpoint_url)
+
         if isinstance(credential, AccessToken):
-            pipeline_credential = build_credentials(StaticAccessTokenCredential(credential))
+            pipeline_credential = build_credentials(
+                StaticAccessTokenCredential(credential))
         elif isinstance(credential, AzureKeyCredential):
-            pipeline_credential = build_credentials(MixedRealityAccountKeyCredential(account_id=account_id, account_key=credential))
+            pipeline_credential = build_credentials(
+                MixedRealityAccountKeyCredential(account_id=account_id, account_key=credential))
         else:
             pipeline_credential = build_credentials(credential)
 
@@ -146,7 +151,7 @@ class RemoteRenderingClient(object):
                                                                               **kwargs)
         def deserialization_method(input:Any) -> AssetConversion:
             raise Exception("Not implemented")
-        
+
         return AsyncLROPoller(client=self._client,
                               initial_response=initial_state,
                               deserialization_callback=deserialization_method,
@@ -165,6 +170,7 @@ class RemoteRenderingClient(object):
                                                                   conversion_id=conversion_id,
                                                                   **kwargs)
 
+    @distributed_trace_async
     async def get_asset_conversion_poller(self, **kwargs):
         # type: (Any) -> AsyncLROPoller[AssetConversion]
         """
@@ -202,7 +208,7 @@ class RemoteRenderingClient(object):
                 account_id=self._account_id,
                 conversion_id=conversion_id,
                 **kwargs)
-            
+
         def deserialization_method(input:Any) -> AssetConversion:
             raise Exception("Not implemented")
 
@@ -215,7 +221,7 @@ class RemoteRenderingClient(object):
     async def list_asset_conversions(self, **kwargs):
         # type: (...) -> AsyncItemPaged[AssetConversion]
         """
-        Gets conversions for the remote rendering account.
+        Returns list of conversions for the remote rendering account.
         :rtype: AsyncItemPaged[AssetConversion]
         """
         return self._client.remote_rendering.list_conversions(account_id=self._account_id, **kwargs)  # type: ignore
@@ -248,10 +254,10 @@ class RemoteRenderingClient(object):
                                                                            session_id=session_id,
                                                                            body=settings,
                                                                            **kwargs)
-        
+
         def deserialization_method(input:Any) -> RenderingSession:
             raise Exception("Not implemented")
-        
+
         return AsyncLROPoller(client=self._client,
                               initial_response=initial_state,
                               deserialization_callback=deserialization_method,
@@ -267,6 +273,7 @@ class RemoteRenderingClient(object):
         '''
         return await self._client.remote_rendering.get_session(self._account_id, session_id=session_id, **kwargs)
 
+    @distributed_trace_async
     async def get_rendering_session_poller(self, **kwargs):
         # type: (Any) -> AsyncLROPoller[RenderingSession]
         """
@@ -303,7 +310,7 @@ class RemoteRenderingClient(object):
                 account_id=self._account_id,
                 session_id=session_id,
                 **kwargs)
-            
+
         def deserialization_method(input:Any) -> RenderingSession:
             raise Exception("Not implemented")
 
@@ -353,8 +360,8 @@ class RemoteRenderingClient(object):
             **kwargs):
         # type: (...) -> AsyncItemPaged[RenderingSession]
         """
-        List rendering sessions in the 'Ready' or 'Starting' state. Does not return stopped or failed rendering
-            sessions.
+        Returns list of rendering sessions in the 'Ready' or 'Starting' state.
+        Does not return stopped or failed rendering sessions.
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mixedreality.remoterendering.RenderingSession]
         """
         return self._client.remote_rendering.list_sessions(account_id=self._account_id, **kwargs)  # type: ignore

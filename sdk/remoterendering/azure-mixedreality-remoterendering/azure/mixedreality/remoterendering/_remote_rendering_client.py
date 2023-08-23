@@ -81,13 +81,19 @@ class RemoteRenderingClient(object):
         self.polling_interval = kwargs.pop("polling_interval", 5)
         endpoint_url = kwargs.pop('authentication_endpoint_url', construct_endpoint_url(account_domain))
         
-        def build_credentials(input_credentials:Any) -> Any:
-            return get_mixedreality_credential(account_id=account_id, account_domain=account_domain, credential=input_credentials, endpoint_url=endpoint_url)
+        def build_credentials(input_credentials: Any) -> Any:
+            return get_mixedreality_credential(
+                account_id=account_id,
+                account_domain=account_domain,
+                credential=input_credentials,
+                endpoint_url=endpoint_url)
 
         if isinstance(credential, AccessToken):
-            pipeline_credential = build_credentials(StaticAccessTokenCredential(credential))  # type: TokenCredential
+            pipeline_credential = build_credentials(
+                StaticAccessTokenCredential(credential))  # type: TokenCredential
         elif isinstance(credential, AzureKeyCredential):
-            pipeline_credential = build_credentials(MixedRealityAccountKeyCredential(account_id=account_id, account_key=credential))
+            pipeline_credential = build_credentials(
+                MixedRealityAccountKeyCredential(account_id=account_id, account_key=credential))
         else:
             pipeline_credential = build_credentials(credential)
 
@@ -207,7 +213,7 @@ class RemoteRenderingClient(object):
     @distributed_trace
     def list_asset_conversions(self, **kwargs):
         # type: (...) -> ItemPaged[AssetConversion]
-        """ Gets conversions for the remote rendering account.
+        """ Returns list of conversions for the remote rendering account.
         :rtype: ItemPaged[AssetConversion]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
@@ -260,6 +266,7 @@ class RemoteRenderingClient(object):
             session_id=session_id,
             **kwargs)
 
+    @distributed_trace
     def get_rendering_session_poller(self, **kwargs):
         # type: (Any) -> LROPoller[RenderingSession]
         """
@@ -348,8 +355,8 @@ class RemoteRenderingClient(object):
     def list_rendering_sessions(self, **kwargs):
         # type: (...) -> ItemPaged[RenderingSession]
         """
-        List rendering sessions in the 'Ready' or 'Starting' state. Does not return stopped or failed rendering
-            sessions.
+        Returns list of rendering sessions in the 'Ready' or 'Starting' state.
+        Does not return stopped or failed rendering sessions.
         :rtype: ItemPaged[RenderingSession]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
