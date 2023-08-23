@@ -190,6 +190,9 @@ class SchemaRegistryClient(object):
             content=cast(IO[Any], definition),
             content_type=kwargs.pop("content_type", get_content_type(format)),
             cls=partial(prepare_schema_properties_result, format),
+            headers={   # TODO: fix - currently `Accept: "*/*""`
+                "Accept": "application/json"
+            },
             **http_request_kwargs,
         )
         return SchemaProperties(**schema_properties)
@@ -267,7 +270,13 @@ class SchemaRegistryClient(object):
             schema_id = cast(str, schema_id)
             # ignoring return type because the generated client operations are not annotated w/ cls return type
             http_response, schema_properties = self._generated_client.get_schema_by_id(  # type: ignore
-                id=schema_id, cls=prepare_schema_result, **http_request_kwargs, stream=True
+                id=schema_id,
+                cls=prepare_schema_result,
+                headers={   # TODO: remove when multiple content types are supported
+                    "Accept": "application/json; serialization=Avro, application/json; serialization=json, text/plain; charset=utf-8"
+                },
+                stream=True,
+                **http_request_kwargs,
             )
         except KeyError:
             # If group_name, name, and version aren't passed in as kwargs, raise error.
@@ -286,6 +295,9 @@ class SchemaRegistryClient(object):
                 name=name,
                 schema_version=version,
                 cls=prepare_schema_result,
+                headers={   # TODO: remove when multiple content types are supported
+                    "Accept": "application/json; serialization=Avro, application/json; serialization=json, text/plain; charset=utf-8"
+                },
                 stream=True,
                 **http_request_kwargs,
             )
