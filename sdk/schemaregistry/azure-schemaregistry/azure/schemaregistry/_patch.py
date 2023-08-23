@@ -23,7 +23,7 @@ from typing import (
     overload,
     IO,
     Type,
-    Optional
+    Optional,
 )
 from typing_extensions import Protocol, TypedDict
 
@@ -40,6 +40,7 @@ if TYPE_CHECKING:
 
 ###### Response Handlers ######
 
+
 def _parse_schema_properties_dict(
     response_headers: Mapping[str, Union[str, int]]
 ) -> Dict[str, Union[str, int]]:
@@ -49,6 +50,7 @@ def _parse_schema_properties_dict(
         "name": response_headers["Schema-Name"],
         "version": int(response_headers["Schema-Version"]),
     }
+
 
 def _get_format(content_type: str) -> SchemaFormat:
     # pylint:disable=redefined-builtin
@@ -61,6 +63,7 @@ def _get_format(content_type: str) -> SchemaFormat:
     except IndexError:
         format = SchemaFormat.CUSTOM
     return format
+
 
 def prepare_schema_properties_result(  # pylint:disable=unused-argument,redefined-builtin
     format: str,
@@ -80,7 +83,7 @@ def prepare_schema_result(  # pylint:disable=unused-argument
     response_headers: Mapping[str, Union[str, int]],
 ) -> Tuple[Union["HttpResponse", "AsyncHttpResponse"], Dict[str, Union[int, str]]]:
     properties_dict = _parse_schema_properties_dict(response_headers)
-    # TODO: content type is not being added to the response headers b/c of 
+    # TODO: content type is not being added to the response headers b/c of
     properties_dict["format"] = _get_format(
         cast(str, response_headers.get("Content-Type"))
     )
@@ -90,6 +93,7 @@ def prepare_schema_result(  # pylint:disable=unused-argument
 
 ###### Request Helper Functions ######
 
+
 def get_http_request_kwargs(kwargs):
     http_request_keywords = ["params", "headers", "json", "data", "files"]
     http_request_kwargs = {
@@ -97,10 +101,12 @@ def get_http_request_kwargs(kwargs):
     }
     return http_request_kwargs
 
+
 def get_content_type(format: str):  # pylint:disable=redefined-builtin
     if format.lower() == SchemaFormat.CUSTOM.value.lower():
         return "text/plain; charset=utf-8"
     return f"application/json; serialization={format}"
+
 
 def get_case_insensitive_format(
     format: Union[str, SchemaFormat]  # pylint:disable=redefined-builtin
@@ -114,6 +120,7 @@ def get_case_insensitive_format(
 
 
 ###### Wrapper Class ######
+
 
 class SchemaRegistryClient(object):
     """
@@ -166,7 +173,7 @@ class SchemaRegistryClient(object):
         self._generated_client.close()
 
     @distributed_trace
-    def register_schema(    # pylint:disable=arguments-differ
+    def register_schema(  # pylint:disable=arguments-differ
         self,
         group_name: str,
         name: str,
@@ -202,13 +209,15 @@ class SchemaRegistryClient(object):
         format = get_case_insensitive_format(format)
         http_request_kwargs = get_http_request_kwargs(kwargs)
         # ignoring return type because the generated client operations are not annotated w/ cls return type
-        schema_properties: Dict[str, Union[int, str]] = self._generated_client.register_schema(
+        schema_properties: Dict[
+            str, Union[int, str]
+        ] = self._generated_client.register_schema(
             group_name=group_name,
             name=name,
             content=cast(IO[Any], definition),
             content_type=kwargs.pop("content_type", get_content_type(format)),
             cls=partial(prepare_schema_properties_result, format),
-            headers={   # TODO: fix - currently `Accept: "*/*""`
+            headers={  # TODO: fix - currently `Accept: "*/*""`
                 "Accept": "application/json"
             },
             **http_request_kwargs,
@@ -277,8 +286,9 @@ class SchemaRegistryClient(object):
             http_response, schema_properties = self._generated_client.get_schema_by_id(  # type: ignore
                 id=schema_id,
                 cls=prepare_schema_result,
-                headers={   # TODO: remove when multiple content types are supported
-                    "Accept": "application/json; serialization=Avro, application/json; serialization=json, text/plain; charset=utf-8"
+                headers={  # TODO: remove when multiple content types are supported
+                    "Accept": """application/json; serialization=Avro, application/json; \
+                        serialization=json, text/plain; charset=utf-8"""
                 },
                 stream=True,
                 **http_request_kwargs,
@@ -300,8 +310,9 @@ class SchemaRegistryClient(object):
                 name=name,
                 schema_version=version,
                 cls=prepare_schema_result,
-                headers={   # TODO: remove when multiple content types are supported
-                    "Accept": "application/json; serialization=Avro, application/json; serialization=json, text/plain; charset=utf-8"
+                headers={  # TODO: remove when multiple content types are supported
+                    "Accept": """application/json; serialization=Avro, application/json; \
+                        serialization=json, text/plain; charset=utf-8"""
                 },
                 stream=True,
                 **http_request_kwargs,
@@ -347,20 +358,21 @@ class SchemaRegistryClient(object):
         format = get_case_insensitive_format(format)
         http_request_kwargs = get_http_request_kwargs(kwargs)
         # ignoring return type because the generated client operations are not annotated w/ cls return type
-        schema_properties: Dict[str, Union[int, str]] = (
-            self._generated_client.get_schema_id_by_content(  # type: ignore
-                group_name=group_name,
-                name=name,
-                schema_content=cast(IO[Any], definition),
-                content_type=kwargs.pop("content_type", get_content_type(format)),
-                cls=partial(prepare_schema_properties_result, format),
-                headers={   # TODO: fix - currently `Accept: "*/*""`
-                    "Accept": "application/json"
-                },
-                **http_request_kwargs,
-            )
+        schema_properties: Dict[
+            str, Union[int, str]
+        ] = self._generated_client.get_schema_id_by_content(  # type: ignore
+            group_name=group_name,
+            name=name,
+            schema_content=cast(IO[Any], definition),
+            content_type=kwargs.pop("content_type", get_content_type(format)),
+            cls=partial(prepare_schema_properties_result, format),
+            headers={  # TODO: fix - currently `Accept: "*/*""`
+                "Accept": "application/json"
+            },
+            **http_request_kwargs,
         )
         return SchemaProperties(**schema_properties)
+
 
 class SchemaProperties(object):
     """
@@ -393,6 +405,7 @@ class SchemaProperties(object):
             ]
         )
 
+
 class Schema(object):
     """
     The schema content of a schema, along with id and meta properties.
@@ -408,7 +421,10 @@ class Schema(object):
         self.properties = kwargs.pop("properties")
 
     def __repr__(self):
-        return f"Schema(definition={self.definition}, properties={self.properties})"[:1024]
+        return f"Schema(definition={self.definition}, properties={self.properties})"[
+            :1024
+        ]
+
 
 class SchemaFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """
@@ -424,6 +440,7 @@ class SchemaFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CUSTOM = "Custom"
     """Represents a custom schema format."""
 
+
 class ApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """
     Represents the Schema Registry API version to use for requests.
@@ -433,10 +450,12 @@ class ApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     V2022_10 = "2022-10"
     """This is the default version."""
 
+
 DEFAULT_VERSION = ApiVersion.V2022_10
 
 
 ###### Encoder Protocols ######
+
 
 class SchemaContentValidate(Protocol):
     # TODO: make __call__ a public API so that docs show, until then, keep below docstring
@@ -452,6 +471,7 @@ class SchemaContentValidate(Protocol):
     :returns: None if valid.
     :raises: Exception if content is invalid against provided schema.
     """
+
     def __call__(self, schema: Mapping[str, Any], content: Mapping[str, Any]) -> None:
         """
         Validates content against provided schema. If invalid, raises Exception.
@@ -633,7 +653,6 @@ class SchemaEncoder(Protocol):
         :rtype: MessageContent
         """
 
-
     def encode(
         self,
         content: Mapping[str, Any],
@@ -690,6 +709,7 @@ class SchemaEncoder(Protocol):
         :rtype: dict[str, any]
         """
 
+
 def patch_sdk():
     """Do not remove from this file.
 
@@ -697,6 +717,7 @@ def patch_sdk():
     you can't accomplish using the techniques described in
     https://aka.ms/azsdk/python/dpcodegen/python/customize
     """
+
 
 __all__: List[str] = [
     "SchemaRegistryClient",

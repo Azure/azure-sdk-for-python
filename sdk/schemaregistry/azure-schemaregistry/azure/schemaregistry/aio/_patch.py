@@ -7,7 +7,19 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 from __future__ import annotations
-from typing import List, Any, TYPE_CHECKING, Union, overload, cast, IO, Dict, Mapping, Optional, Type
+from typing import (
+    List,
+    Any,
+    TYPE_CHECKING,
+    Union,
+    overload,
+    cast,
+    IO,
+    Dict,
+    Mapping,
+    Optional,
+    Type,
+)
 from functools import partial
 from typing_extensions import Protocol  # type: ignore
 
@@ -34,6 +46,7 @@ if TYPE_CHECKING:
 
 
 ###### Wrapper Class ######
+
 
 class SchemaRegistryClient(object):
     """
@@ -125,13 +138,15 @@ class SchemaRegistryClient(object):
         format = get_case_insensitive_format(format)
         http_request_kwargs = get_http_request_kwargs(kwargs)
         # ignoring return type because the generated client operations are not annotated w/ cls return type
-        schema_properties: Dict[str, Union[int, str]] = await self._generated_client.register_schema(
+        schema_properties: Dict[
+            str, Union[int, str]
+        ] = await self._generated_client.register_schema(
             group_name=group_name,
             name=name,
             content=cast(IO[Any], definition),
             content_type=kwargs.pop("content_type", get_content_type(format)),
             cls=partial(prepare_schema_properties_result, format),
-            headers={   # TODO: fix - currently `Accept: "*/*""`
+            headers={  # TODO: fix - currently `Accept: "*/*""`
                 "Accept": "application/json"
             },
             **http_request_kwargs,
@@ -201,8 +216,9 @@ class SchemaRegistryClient(object):
             http_response, schema_properties = await self._generated_client.get_schema_by_id(  # type: ignore
                 id=schema_id,
                 cls=prepare_schema_result,
-                headers={   # TODO: remove when multiple content types are supported
-                    "Accept": "application/json; serialization=Avro, application/json; serialization=json, text/plain; charset=utf-8"
+                headers={  # TODO: remove when multiple content types are supported
+                    "Accept": """application/json; serialization=Avro, application/json; \
+                        serialization=json, text/plain; charset=utf-8"""
                 },
                 stream=True,
                 **http_request_kwargs,
@@ -225,8 +241,9 @@ class SchemaRegistryClient(object):
                 name=name,
                 schema_version=version,
                 cls=prepare_schema_result,
-                headers={   # TODO: remove when multiple content types are supported
-                    "Accept": "application/json; serialization=Avro, application/json; serialization=json, text/plain; charset=utf-8"
+                headers={  # TODO: remove when multiple content types are supported
+                    "Accept": """application/json; serialization=Avro, application/json; \
+                        serialization=json, text/plain; charset=utf-8"""
                 },
                 stream=True,
                 **http_request_kwargs,
@@ -273,22 +290,24 @@ class SchemaRegistryClient(object):
         format = get_case_insensitive_format(format)
         http_request_kwargs = get_http_request_kwargs(kwargs)
         # ignoring return type because the generated client operations are not annotated w/ cls return type
-        schema_properties: Dict[str, Union[int, str]] = (
-            await self._generated_client.get_schema_id_by_content(  # type: ignore
-                group_name=group_name,
-                name=name,
-                schema_content=cast(IO[Any], definition),
-                content_type=kwargs.pop("content_type", get_content_type(format)),
-                cls=partial(prepare_schema_properties_result, format),
-                headers={   # TODO: fix - currently `Accept: "*/*""`
-                    "Accept": "application/json"
-                },
-                **http_request_kwargs,
-            )
+        schema_properties: Dict[
+            str, Union[int, str]
+        ] = await self._generated_client.get_schema_id_by_content(  # type: ignore
+            group_name=group_name,
+            name=name,
+            schema_content=cast(IO[Any], definition),
+            content_type=kwargs.pop("content_type", get_content_type(format)),
+            cls=partial(prepare_schema_properties_result, format),
+            headers={  # TODO: fix - currently `Accept: "*/*""`
+                "Accept": "application/json"
+            },
+            **http_request_kwargs,
         )
         return SchemaProperties(**schema_properties)
 
+
 ###### Encoder Protocols ######
+
 
 class SchemaEncoder(Protocol):
     """
@@ -422,7 +441,6 @@ class SchemaEncoder(Protocol):
         :rtype: MessageContent
         """
 
-
     async def encode(
         self,
         content: Mapping[str, Any],
@@ -488,7 +506,8 @@ def patch_sdk():
     https://aka.ms/azsdk/python/dpcodegen/python/customize
     """
 
+
 __all__: List[str] = [
     "SchemaRegistryClient",
-    "SchemaEncoder"
+    "SchemaEncoder",
 ]  # Add all objects you want publicly available to users at this package level
