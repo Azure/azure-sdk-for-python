@@ -33,6 +33,7 @@ steps:
 
   - script: |
       python -m pip install disutils
+      python -m pip freeze
       python -m pip install pip==20.3.3
       python -m pip install wheel==0.37.0
       python -m pip install setuptools==58.3.0
