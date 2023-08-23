@@ -37,7 +37,7 @@ _IS_DIAGNOSTICS_ENABLED = _IS_ON_APP_SERVICE
 #     "AZURE_MONITOR_OPENTELEMETRY_DISTRO_ENABLE_EXPORTER_DIAGNOSTICS"
 # )
 _CUSTOMER_IKEY_ENV_VAR = None
-_PREVIEW_ENTRY_POINT_WARNING = "Autoinstrumentation for the Azure Monitor OpenTeleemtry Distro is in preview."
+_PREVIEW_ENTRY_POINT_WARNING = "Autoinstrumentation for the Azure Monitor OpenTelemetry Distro is in preview."
 logger = logging.getLogger(__name__)
 
 
