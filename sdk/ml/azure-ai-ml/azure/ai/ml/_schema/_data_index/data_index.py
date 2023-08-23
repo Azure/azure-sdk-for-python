@@ -30,7 +30,7 @@ class CitationRegexSchema(metaclass=PatchedSchemaMeta):
     )
     replacement_pattern = fields.Str(
         required=True,
-        metadata={"description": "Replacement string for citation. e.g. '(.*)/articles/(.*)(\.[^.]+)$'"},
+        metadata={"description": r"Replacement string for citation. e.g. '(.*)/articles/(.*)(\.[^.]+)$'"},
     )
 
     @post_load

@@ -2,6 +2,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 # pylint: disable=protected-access
+# pylint: disable=no-member
+# pylint: disable=unused-argument
 
 import json
 import re
@@ -142,14 +144,6 @@ def index_data(
 ) -> PipelineJob:
     """Create a DataTransferImport object which can be used inside dsl.pipeline.
 
-    # :keyword name: The name of the index asset.
-    # :type name: str
-    # :param source: The source data to be indexed.
-    # :type source: IndexSource
-    # :param embedding: The embedding model to use when processing source data chunks.
-    # :type embedding: Embedding
-    # :param index: The destination index to write processed data to.
-    # :type index: IndexStore
     :keywork data_index: The data index configuration.
     :type data_index: DataIndex
     :keyword description: Description of the job.
@@ -162,15 +156,39 @@ def index_data(
     :type experiment_name: str
     :keyword compute: The compute resource the job runs on.
     :type compute: str
+    :keyword serverless_instance_type: The instance type to use for serverless compute.
+    :type serverless_instance_type: str
+    :keyword ml_client: The ml client to use for the job.
+    :type ml_client: Any
     :return: A DataTransferImport object.
     :rtype: ~azure.ai.ml.entities._job.pipeline._component_translatable.DataTransferImport
     """
     data_index = _build_data_index(data_index)
 
     if data_index.index.type == DataIndexTypes.FAISS:
-        configured_component = data_index_faiss(ml_client, data_index, compute, serverless_instance_type, identity)
+        configured_component = data_index_faiss(
+            ml_client,
+            data_index,
+            description,
+            tags,
+            display_name,
+            experiment_name,
+            compute,
+            serverless_instance_type,
+            identity,
+        )
     elif data_index.index.type == DataIndexTypes.ACS:
-        configured_component = data_index_acs(ml_client, data_index, compute, serverless_instance_type, identity)
+        configured_component = data_index_acs(
+            ml_client,
+            data_index,
+            description,
+            tags,
+            display_name,
+            experiment_name,
+            compute,
+            serverless_instance_type,
+            identity,
+        )
     else:
         raise ValueError(f"Unsupported index type: {data_index.index.type}")
 
@@ -180,6 +198,10 @@ def index_data(
 def data_index_faiss(
     ml_client: Any,
     data_index: DataIndex,
+    description: Optional[str] = None,
+    tags: Optional[Dict] = None,
+    display_name: Optional[str] = None,
+    experiment_name: Optional[str] = None,
     compute: Optional[str] = None,
     serverless_instance_type: str = "Standard_E8s_v3",
     identity: Optional[Union[ManagedIdentityConfiguration, UserIdentityConfiguration]] = None,
@@ -191,8 +213,16 @@ def data_index_faiss(
     create_faiss_index_component = get_component_obj(ml_client, LLMRAGComponentUri.LLM_RAG_CREATE_FAISS_INDEX)
     register_mlindex_asset_component = get_component_obj(ml_client, LLMRAGComponentUri.LLM_RAG_REGISTER_MLINDEX_ASSET)
 
-    @pipeline(name="data_index_faiss", display_name="LLM - Data to Faiss", get_component=True)
-    def data_index_faiss(
+    @pipeline(
+        name="data_index_faiss",
+        description=description,
+        tags=tags,
+        display_name=display_name if display_name else "LLM - Data to Faiss",
+        experiment_name=experiment_name,
+        compute=compute,
+        get_component=True,
+    )
+    def data_index_faiss_pipeline(
         input_data: Input,
         embeddings_model: str,
         chunk_size: int = 1024,
@@ -202,7 +232,27 @@ def data_index_faiss(
         aoai_connection_id: str = None,
         embeddings_container: Input = None,
     ):
-        """Pipeline to generate embeddings for a `input_data` source and push them into an Azure Cognitive Search index."""
+        """Generate embeddings for a `input_data` source and create a Faiss index from them.
+
+        :param input_data: The input data to be indexed.
+        :type input_data: Input
+        :param embeddings_model: The embedding model to use when processing source data chunks.
+        :type embeddings_model: str
+        :param chunk_size: The size of the chunks to break the input data into.
+        :type chunk_size: int
+        :param data_source_glob: The glob pattern to use when searching for input data.
+        :type data_source_glob: str
+        :param data_source_url: The URL to use when generating citations for the input data.
+        :type data_source_url: str
+        :param document_path_replacement_regex: The regex to use when generating citations for the input data.
+        :type document_path_replacement_regex: str
+        :param aoai_connection_id: The connection ID for the Azure Open AI service.
+        :type aoai_connection_id: str
+        :param embeddings_container: The container to use when caching embeddings.
+        :type embeddings_container: Input
+        :return: The URI of the generated Faiss index.
+        :rtype: str
+        """
 
         crack_and_chunk = crack_and_chunk_component(
             input_data=input_data,
@@ -251,7 +301,7 @@ def data_index_faiss(
             "mlindex_asset_id": register_mlindex_asset.outputs.asset_id,
         }
 
-    component = data_index_faiss(
+    component = data_index_faiss_pipeline(
         input_data=Input(type=data_index.source.input_data.type, path=data_index.source.input_data.path),
         embeddings_model=build_model_protocol(data_index.embedding.model),
         chunk_size=data_index.source.chunk_size,
@@ -263,6 +313,12 @@ def data_index_faiss(
         aoai_connection_id=resolve_connection_id(ml_client, data_index.embedding.connection),
         embeddings_container=Input(type=AssetTypes.URI_FOLDER, path=data_index.embedding.cache_path),
     )
+    # Hack until full Component classes are implemented that can annotate the optional parameters properly
+    component.inputs["data_source_glob"]._meta.optional = True
+    component.inputs["data_source_url"]._meta.optional = True
+    component.inputs["document_path_replacement_regex"]._meta.optional = True
+    component.inputs["aoai_connection_id"]._meta.optional = True
+    component.inputs["embeddings_container"]._meta.optional = True
     if data_index.path:
         component.outputs.mlindex_asset_uri = Output(type=AssetTypes.URI_FOLDER, path=data_index.path)
 
@@ -273,6 +329,10 @@ def data_index_faiss(
 def data_index_acs(
     ml_client: Any,
     data_index: DataIndex,
+    description: Optional[str] = None,
+    tags: Optional[Dict] = None,
+    display_name: Optional[str] = None,
+    experiment_name: Optional[str] = None,
     compute: Optional[str] = None,
     serverless_instance_type: str = "Standard_E8s_v3",
     identity: Optional[Union[ManagedIdentityConfiguration, UserIdentityConfiguration]] = None,
@@ -284,8 +344,16 @@ def data_index_acs(
     update_acs_index_component = get_component_obj(ml_client, LLMRAGComponentUri.LLM_RAG_UPDATE_ACS_INDEX)
     register_mlindex_asset_component = get_component_obj(ml_client, LLMRAGComponentUri.LLM_RAG_REGISTER_MLINDEX_ASSET)
 
-    @pipeline(name="data_index_acs", display_name="LLM - Data to ACS", get_component=True)
-    def data_index_acs(
+    @pipeline(
+        name="data_index_acs",
+        description=description,
+        tags=tags,
+        display_name=display_name if display_name else "LLM - Data to ACS",
+        experiment_name=experiment_name,
+        compute=compute,
+        get_component=True,
+    )
+    def data_index_acs_pipeline(
         input_data: Input,
         embeddings_model: str,
         acs_config: str,
@@ -297,7 +365,31 @@ def data_index_acs(
         aoai_connection_id: str = None,
         embeddings_container: Input = None,
     ):
-        """Pipeline to generate embeddings for a `input_data` source and push them into an Azure Cognitive Search index."""
+        """Generate embeddings for a `input_data` source and push them into an Azure Cognitive Search index.
+
+        :param input_data: The input data to be indexed.
+        :type input_data: Input
+        :param embeddings_model: The embedding model to use when processing source data chunks.
+        :type embeddings_model: str
+        :param acs_config: The configuration for the Azure Cognitive Search index.
+        :type acs_config: str
+        :param acs_connection_id: The connection ID for the Azure Cognitive Search index.
+        :type acs_connection_id: str
+        :param chunk_size: The size of the chunks to break the input data into.
+        :type chunk_size: int
+        :param data_source_glob: The glob pattern to use when searching for input data.
+        :type data_source_glob: str
+        :param data_source_url: The URL to use when generating citations for the input data.
+        :type data_source_url: str
+        :param document_path_replacement_regex: The regex to use when generating citations for the input data.
+        :type document_path_replacement_regex: str
+        :param aoai_connection_id: The connection ID for the Azure Open AI service.
+        :type aoai_connection_id: str
+        :param embeddings_container: The container to use when caching embeddings.
+        :type embeddings_container: Input
+        :return: The URI of the generated Azure Cognitive Search index.
+        :rtype: str
+        """
 
         crack_and_chunk = crack_and_chunk_component(
             input_data=input_data,
@@ -349,7 +441,7 @@ def data_index_acs(
             "mlindex_asset_id": register_mlindex_asset.outputs.asset_id,
         }
 
-    component = data_index_acs(
+    component = data_index_acs_pipeline(
         input_data=Input(type=data_index.source.input_data.type, path=data_index.source.input_data.path),
         embeddings_model=build_model_protocol(data_index.embedding.model),
         acs_config=json.dumps(
@@ -365,6 +457,13 @@ def data_index_acs(
         aoai_connection_id=resolve_connection_id(ml_client, data_index.embedding.connection),
         embeddings_container=Input(type=AssetTypes.URI_FOLDER, path=data_index.embedding.cache_path),
     )
+    # Hack until full Component classes are implemented that can annotate the optional parameters properly
+    component.inputs["data_source_glob"]._meta.optional = True
+    component.inputs["data_source_url"]._meta.optional = True
+    component.inputs["document_path_replacement_regex"]._meta.optional = True
+    component.inputs["aoai_connection_id"]._meta.optional = True
+    component.inputs["embeddings_container"]._meta.optional = True
+
     if data_index.path:
         component.outputs.mlindex_asset_uri = Output(type=AssetTypes.URI_FOLDER, path=data_index.path)
 
@@ -373,7 +472,13 @@ def data_index_acs(
 
 
 def optional_pipeline_input_provided(input: Optional[PipelineInput]):
-    """Checks if optional pipeline inputs are provided."""
+    """Checks if optional pipeline inputs are provided.
+
+    :param input: The pipeline input to check.
+    :type input: Optional[PipelineInput]
+    :return: True if the input is not None and has a value, False otherwise.
+    :rtype: bool
+    """
     return input is not None and input._data is not None
 
 
@@ -381,6 +486,15 @@ def use_automatic_compute(component, instance_count=1, instance_type="Standard_E
     """Configure input `component` to use automatic compute with `instance_count` and `instance_type`.
 
     This avoids the need to provision a compute cluster to run the component.
+
+    :param component: The component to configure.
+    :type component: Any
+    :param instance_count: The number of instances to use.
+    :type instance_count: int
+    :param instance_type: The type of instance to use.
+    :type instance_type: str
+    :return: The configured component.
+    :rtype: Any
     """
     component.set_resources(
         instance_count=instance_count,
@@ -394,7 +508,8 @@ def get_component_obj(ml_client, component_uri):
     from azure.ai.ml import MLClient
 
     matches = re.match(
-        r"azureml://registries/(?P<registry_name>.*)/components/(?P<component_name>.*)/(?P<identifier_type>.*)/(?P<identifier_name>.*)",
+        r"azureml://registries/(?P<registry_name>.*)/components/(?P<component_name>.*)"
+        r"/(?P<identifier_type>.*)/(?P<identifier_name>.*)",
         component_uri,
     )
     registry_name = matches.group("registry_name")

@@ -10,7 +10,7 @@ from typing import Dict, Optional, Union
 
 from azure.ai.ml._schema import DataIndexTypes
 from azure.ai.ml._utils._experimental import experimental
-from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, AssetTypes
+from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
 from azure.ai.ml.entities._assets import Data
 from azure.ai.ml.entities._inputs_outputs.utils import _remove_empty_values
 from azure.ai.ml.entities._mixins import DictMixin
@@ -20,7 +20,8 @@ from azure.ai.ml.entities._util import load_from_dict
 @experimental
 class CitationRegex(DictMixin):
     """
-    :keyword match_pattern: Regex to match citation in the citation_url + input file path. e.g. '(.*)/articles/(.*)(\.[^.]+)$'.
+    :keyword match_pattern: Regex to match citation in the citation_url + input file path.
+        e.g. '(.*)/articles/(.*)(\\.[^.]+)$'.
     :type match_pattern: str
     :keyword replacement_pattern: Replacement string for citation. e.g. '\\1/\\2'.
     :type replacement_pattern: str
@@ -67,7 +68,7 @@ class IndexSource(DictMixin):
     :keyword citation_url_replacement_regex: Regex match and replacement patterns for citation url. Useful if the paths
         in `input_data` don't match the desired citation format.
     :type citation_url_replacement_regex: CitationRegex, optional
-    :raises ~azure.ai.ml.exceptions.ValidationException: Raised if the IndexSource object cannot be successfully validated.
+    :raises ~azure.ai.ml.exceptions.ValidationException: Raised if the IndexSource object cannot be validated.
         Details will be provided in the error message.
     """
 
@@ -120,7 +121,7 @@ class Embedding(DictMixin):
         Should be parent folder of the 'embeddings' output path used for for this component.
         Will compare input data to existing embeddings and only embed changed/new data, reusing existing chunks.
     :type cache_path: str, optional
-    :raises ~azure.ai.ml.exceptions.ValidationException: Raised if the Embedding object cannot be successfully validated.
+    :raises ~azure.ai.ml.exceptions.ValidationException: Raised if the Embedding object cannot be validated.
         Details will be provided in the error message.
     """
 
@@ -161,7 +162,7 @@ class IndexStore(DictMixin):
     :keyword connection: Connection reference to use for index information,
         only needed for hosted indexes (such as Azure Cognitive Search).
     :type connection: str, optional
-    :raises ~azure.ai.ml.exceptions.ValidationException: Raised if the IndexStore object cannot be successfully validated.
+    :raises ~azure.ai.ml.exceptions.ValidationException: Raised if the IndexStore object cannot be validated.
         Details will be provided in the error message.
     """
 

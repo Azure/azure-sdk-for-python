@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=protected-access,no-value-for-parameter
+# pylint: disable=protected-access,no-value-for-parameter,no-member
 
 import os
 from contextlib import contextmanager
@@ -546,8 +546,8 @@ class DataOperations(_ScopeDependentOperations):
             return self._all_operations.all_operations[AzureMLResourceType.JOB].create_or_update(
                 job=index_pipeline, skip_validation=True, **kwargs
             )
-        else:
-            return index_pipeline
+
+        return index_pipeline
 
     @monitor_with_activity(logger, "Data.ListMaterializationStatus", ActivityType.PUBLICAPI)
     @experimental

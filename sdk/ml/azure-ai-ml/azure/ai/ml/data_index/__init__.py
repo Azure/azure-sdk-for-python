@@ -13,6 +13,5 @@ __all__ = [
     "Embedding",
     "IndexStore",
     "index_data",
-    "DataIngestionNode",
     "build_model_protocol",
 ]
