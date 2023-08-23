@@ -22,6 +22,9 @@ class PartitionResolver:
     async def get_next_partition_id(self):
         """
         round-robin partition assignment
+
+        :return: The next partition id.
+        :rtype: str
         """
         async with self._lock:
             self._idx += 1

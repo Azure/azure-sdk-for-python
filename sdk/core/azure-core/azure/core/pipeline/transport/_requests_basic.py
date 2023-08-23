@@ -25,12 +25,13 @@
 # --------------------------------------------------------------------------
 import logging
 from typing import Iterator, Optional, Union, TypeVar, overload, TYPE_CHECKING
-import urllib3
 from urllib3.util.retry import Retry
 from urllib3.exceptions import (
     DecodeError as CoreDecodeError,
     ReadTimeoutError,
     ProtocolError,
+    NewConnectionError,
+    ConnectTimeoutError,
 )
 import requests
 
@@ -308,7 +309,7 @@ class RequestsTransport(HttpTransport):
         :keyword dict proxies: will define the proxy to use. Proxy is a dict (protocol, url)
         """
 
-    def send(self, request, **kwargs):
+    def send(self, request: Union[HttpRequest, "RestHttpRequest"], **kwargs) -> Union[HttpResponse, "RestHttpResponse"]:
         """Send request object according to configuration.
 
         :param request: The request object to be sent.
@@ -350,14 +351,14 @@ class RequestsTransport(HttpTransport):
             response.raw.enforce_content_length = True
 
         except (
-            urllib3.exceptions.NewConnectionError,
-            urllib3.exceptions.ConnectTimeoutError,
+            NewConnectionError,
+            ConnectTimeoutError,
         ) as err:
             error = ServiceRequestError(err, error=err)
         except requests.exceptions.ReadTimeout as err:
             error = ServiceResponseError(err, error=err)
         except requests.exceptions.ConnectionError as err:
-            if err.args and isinstance(err.args[0], urllib3.exceptions.ProtocolError):
+            if err.args and isinstance(err.args[0], ProtocolError):
                 error = ServiceResponseError(err, error=err)
             else:
                 error = ServiceRequestError(err, error=err)
@@ -377,7 +378,7 @@ class RequestsTransport(HttpTransport):
         if _is_rest(request):
             from azure.core.rest._requests_basic import RestRequestsTransportResponse
 
-            retval = RestRequestsTransportResponse(
+            retval: RestHttpResponse = RestRequestsTransportResponse(
                 request=request,
                 internal_response=response,
                 block_size=self.connection_config.data_block_size,

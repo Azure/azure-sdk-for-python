@@ -253,12 +253,12 @@ class ComputeOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_compute.py
+            .. literalinclude:: ../../../../samples/ml_samples_misc.py
                 :start-after: [START compute_operations_delete]
                 :end-before: [END compute_operations_delete]
                 :language: python
                 :dedent: 8
-                :caption: Detaching and deleting compute resources.
+                :caption: Delete compute example.
         """
         return self._operation.begin_delete(
             resource_group_name=self._operation_scope.resource_group_name,
