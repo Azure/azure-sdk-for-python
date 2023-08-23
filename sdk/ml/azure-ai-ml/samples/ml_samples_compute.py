@@ -231,6 +231,16 @@ class ComputeConfigurationOptions(object):
 
         # [END compute_start_stop_schedule]
 
+        # [START image_metadata]
+        from azure.ai.ml.entities import ImageMetadata
+
+        os_image_metadata = ImageMetadata(
+            current_image_version="22.08.19",
+            latest_image_version="22.08.20",
+            is_latest_os_image_version=False,
+        )
+        # [END image_metadata]
+
 
 if __name__ == "__main__":
     sample = ComputeConfigurationOptions()
