@@ -192,6 +192,23 @@ class ComputeConfigurationOptions(object):
         )
         # [END vm_compute]
 
+        # [START network_settings]
+        from azure.ai.ml.entities import (
+            AmlCompute,
+            IdentityConfiguration,
+            ManagedIdentityConfiguration,
+            NetworkSettings,
+        )
+
+        aml_compute = AmlCompute(
+            name="my-compute",
+            min_instances=0,
+            max_instances=10,
+            idle_time_before_scale_down=100,
+            network_settings=NetworkSettings(vnet_name="my-vnet", subnet="default"),
+        )
+        # [END network_settings]
+
 
 if __name__ == "__main__":
     sample = ComputeConfigurationOptions()
