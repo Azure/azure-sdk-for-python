@@ -28,7 +28,7 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_schema_registry_list_schema_groups_request(
+def build_schema_registry_list_schema_groups_request(  # pylint: disable=name-too-long
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -55,7 +55,7 @@ def build_schema_registry_list_schema_groups_request(
     )
 
 
-def build_schema_registry_get_schema_by_id_request(
+def build_schema_registry_get_schema_by_id_request(  # pylint: disable=name-too-long
     id: str,
     **kwargs: Any
 ) -> HttpRequest:
@@ -88,7 +88,7 @@ def build_schema_registry_get_schema_by_id_request(
     )
 
 
-def build_schema_registry_list_schema_versions_request(
+def build_schema_registry_list_schema_versions_request(  # pylint: disable=name-too-long
     group_name: str,
     name: str,
     **kwargs: Any
@@ -123,7 +123,7 @@ def build_schema_registry_list_schema_versions_request(
     )
 
 
-def build_schema_registry_get_schema_by_version_request(
+def build_schema_registry_get_schema_by_version_request(  # pylint: disable=name-too-long
     group_name: str,
     name: str,
     schema_version: int,
@@ -160,7 +160,7 @@ def build_schema_registry_get_schema_by_version_request(
     )
 
 
-def build_schema_registry_get_schema_id_by_content_request(
+def build_schema_registry_get_schema_id_by_content_request(  # pylint: disable=name-too-long
     group_name: str,
     name: str,
     **kwargs: Any
@@ -183,7 +183,7 @@ def build_schema_registry_get_schema_id_by_content_request(
     _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
     # Construct headers
-    _headers['content-type'] = _SERIALIZER.header("content_type", content_type, 'str')
+    _headers['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
 
     return HttpRequest(
         method="POST",
@@ -194,7 +194,7 @@ def build_schema_registry_get_schema_id_by_content_request(
     )
 
 
-def build_schema_registry_register_schema_request(
+def build_schema_registry_register_schema_request(  # pylint: disable=name-too-long
     group_name: str,
     name: str,
     **kwargs: Any
@@ -217,7 +217,7 @@ def build_schema_registry_register_schema_request(
     _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
     # Construct headers
-    _headers['content-type'] = _SERIALIZER.header("content_type", content_type, 'str')
+    _headers['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
 
     return HttpRequest(
         method="PUT",
@@ -227,7 +227,9 @@ def build_schema_registry_register_schema_request(
         **kwargs
     )
 
-class SchemaRegistryClientOperationsMixin(SchemaRegistryClientMixinABC):
+class SchemaRegistryClientOperationsMixin( 
+    SchemaRegistryClientMixinABC
+):
 
     @distributed_trace
     def list_schema_groups(
@@ -371,12 +373,13 @@ class SchemaRegistryClientOperationsMixin(SchemaRegistryClientMixinABC):
             raise HttpResponseError(response=response)
 
         response_headers = {}
-        response_headers['location']=self._deserialize('str', response.headers.get('location'))
-        response_headers['schema-id']=self._deserialize('str', response.headers.get('schema-id'))
-        response_headers['schema-id-location']=self._deserialize('str', response.headers.get('schema-id-location'))
-        response_headers['schema-group-name']=self._deserialize('str', response.headers.get('schema-group-name'))
-        response_headers['schema-name']=self._deserialize('str', response.headers.get('schema-name'))
-        response_headers['schema-version']=self._deserialize('int', response.headers.get('schema-version'))
+        response_headers['Location']=self._deserialize('str', response.headers.get('Location'))
+        response_headers['Schema-Id']=self._deserialize('str', response.headers.get('Schema-Id'))
+        response_headers['Schema-Id-Location']=self._deserialize('str', response.headers.get('Schema-Id-Location'))
+        response_headers['Schema-Group-Name']=self._deserialize('str', response.headers.get('Schema-Group-Name'))
+        response_headers['Schema-Name']=self._deserialize('str', response.headers.get('Schema-Name'))
+        response_headers['Schema-Version']=self._deserialize('int', response.headers.get('Schema-Version'))
+        response_headers['Content-Type']=self._deserialize('str', response.headers.get('Content-Type'))
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -550,12 +553,13 @@ class SchemaRegistryClientOperationsMixin(SchemaRegistryClientMixinABC):
             raise HttpResponseError(response=response)
 
         response_headers = {}
-        response_headers['location']=self._deserialize('str', response.headers.get('location'))
-        response_headers['schema-id']=self._deserialize('str', response.headers.get('schema-id'))
-        response_headers['schema-id-location']=self._deserialize('str', response.headers.get('schema-id-location'))
-        response_headers['schema-group-name']=self._deserialize('str', response.headers.get('schema-group-name'))
-        response_headers['schema-name']=self._deserialize('str', response.headers.get('schema-name'))
-        response_headers['schema-version']=self._deserialize('int', response.headers.get('schema-version'))
+        response_headers['Location']=self._deserialize('str', response.headers.get('Location'))
+        response_headers['Schema-Id']=self._deserialize('str', response.headers.get('Schema-Id'))
+        response_headers['Schema-Id-Location']=self._deserialize('str', response.headers.get('Schema-Id-Location'))
+        response_headers['Schema-Group-Name']=self._deserialize('str', response.headers.get('Schema-Group-Name'))
+        response_headers['Schema-Name']=self._deserialize('str', response.headers.get('Schema-Name'))
+        response_headers['Schema-Version']=self._deserialize('int', response.headers.get('Schema-Version'))
+        response_headers['Content-Type']=self._deserialize('str', response.headers.get('Content-Type'))
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -591,8 +595,8 @@ class SchemaRegistryClientOperationsMixin(SchemaRegistryClientMixinABC):
         :type name: str
         :param schema_content: String representation (UTF-8) of the registered schema. Required.
         :type schema_content: bytes
-        :keyword content_type: The content type for given schema. Default value is "application/json;
-         serialization=Avro".
+        :keyword content_type: The content type for given schema. Default value is "text/plain;
+         charset=utf-8".
         :paramtype content_type: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
@@ -608,7 +612,7 @@ class SchemaRegistryClientOperationsMixin(SchemaRegistryClientMixinABC):
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: str = kwargs.pop('content_type', _headers.pop('content-type', "application/json; serialization=Avro"))
+        content_type: str = kwargs.pop('content_type', _headers.pop('Content-Type', "text/plain; charset=utf-8"))
         cls: ClsType[None] = kwargs.pop(
             'cls', None
         )
@@ -645,12 +649,12 @@ class SchemaRegistryClientOperationsMixin(SchemaRegistryClientMixinABC):
             raise HttpResponseError(response=response)
 
         response_headers = {}
-        response_headers['location']=self._deserialize('str', response.headers.get('location'))
-        response_headers['schema-id']=self._deserialize('str', response.headers.get('schema-id'))
-        response_headers['schema-id-location']=self._deserialize('str', response.headers.get('schema-id-location'))
-        response_headers['schema-group-name']=self._deserialize('str', response.headers.get('schema-group-name'))
-        response_headers['schema-name']=self._deserialize('str', response.headers.get('schema-name'))
-        response_headers['schema-version']=self._deserialize('int', response.headers.get('schema-version'))
+        response_headers['Location']=self._deserialize('str', response.headers.get('Location'))
+        response_headers['Schema-Id']=self._deserialize('str', response.headers.get('Schema-Id'))
+        response_headers['Schema-Id-Location']=self._deserialize('str', response.headers.get('Schema-Id-Location'))
+        response_headers['Schema-Group-Name']=self._deserialize('str', response.headers.get('Schema-Group-Name'))
+        response_headers['Schema-Name']=self._deserialize('str', response.headers.get('Schema-Name'))
+        response_headers['Schema-Version']=self._deserialize('int', response.headers.get('Schema-Version'))
 
 
         if cls:
@@ -678,8 +682,8 @@ class SchemaRegistryClientOperationsMixin(SchemaRegistryClientMixinABC):
         :type name: str
         :param content: String representation (UTF-8) of the schema. Required.
         :type content: bytes
-        :keyword content_type: The content type for given schema. Default value is "application/json;
-         serialization=Avro".
+        :keyword content_type: The content type for given schema. Default value is "text/plain;
+         charset=utf-8".
         :paramtype content_type: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
@@ -695,7 +699,7 @@ class SchemaRegistryClientOperationsMixin(SchemaRegistryClientMixinABC):
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: str = kwargs.pop('content_type', _headers.pop('content-type', "application/json; serialization=Avro"))
+        content_type: str = kwargs.pop('content_type', _headers.pop('Content-Type', "text/plain; charset=utf-8"))
         cls: ClsType[None] = kwargs.pop(
             'cls', None
         )
@@ -732,12 +736,12 @@ class SchemaRegistryClientOperationsMixin(SchemaRegistryClientMixinABC):
             raise HttpResponseError(response=response)
 
         response_headers = {}
-        response_headers['location']=self._deserialize('str', response.headers.get('location'))
-        response_headers['schema-id']=self._deserialize('str', response.headers.get('schema-id'))
-        response_headers['schema-id-location']=self._deserialize('str', response.headers.get('schema-id-location'))
-        response_headers['schema-group-name']=self._deserialize('str', response.headers.get('schema-group-name'))
-        response_headers['schema-name']=self._deserialize('str', response.headers.get('schema-name'))
-        response_headers['schema-version']=self._deserialize('int', response.headers.get('schema-version'))
+        response_headers['Location']=self._deserialize('str', response.headers.get('Location'))
+        response_headers['Schema-Id']=self._deserialize('str', response.headers.get('Schema-Id'))
+        response_headers['Schema-Id-Location']=self._deserialize('str', response.headers.get('Schema-Id-Location'))
+        response_headers['Schema-Group-Name']=self._deserialize('str', response.headers.get('Schema-Group-Name'))
+        response_headers['Schema-Name']=self._deserialize('str', response.headers.get('Schema-Name'))
+        response_headers['Schema-Version']=self._deserialize('int', response.headers.get('Schema-Version'))
 
 
         if cls:

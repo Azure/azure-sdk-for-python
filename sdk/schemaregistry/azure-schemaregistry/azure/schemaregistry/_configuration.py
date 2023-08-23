@@ -18,14 +18,16 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class SchemaRegistryClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
+class SchemaRegistryClientConfiguration(    # pylint: disable=too-many-instance-attributes,name-too-long
+    Configuration
+):
     """Configuration for SchemaRegistryClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
     :param endpoint: The Schema Registry service endpoint, for example
-     https://my-namespace.servicebus.windows.net. Required.
+     'my-namespace.servicebus.windows.net'. Required.
     :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
@@ -51,7 +53,7 @@ class SchemaRegistryClientConfiguration(Configuration):  # pylint: disable=too-m
         self.endpoint = endpoint
         self.credential = credential
         self.api_version = api_version
-        self.credential_scopes = kwargs.pop('credential_scopes', ["https://eventhubs.azure.net/.default"])
+        self.credential_scopes = kwargs.pop('credential_scopes', ['https://eventhubs.azure.net/.default'])
         kwargs.setdefault('sdk_moniker', 'schemaregistry/{}'.format(VERSION))
         self._configure(**kwargs)
 

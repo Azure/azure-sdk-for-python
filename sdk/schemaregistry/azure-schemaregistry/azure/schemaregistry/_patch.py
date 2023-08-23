@@ -110,9 +110,6 @@ def get_case_insensitive_format(
 
 ###### Wrapper Class ######
 
-# TODO: temporary override of generated client get_schema_by_id and get_schema_by_version
-# methods
-
 class SchemaRegistryClient(object):
     """
     SchemaRegistryClient is a client for registering and retrieving schemas from the Azure Schema Registry service.
@@ -143,7 +140,7 @@ class SchemaRegistryClient(object):
         if "https://" not in fully_qualified_namespace:
             fully_qualified_namespace = f"https://{fully_qualified_namespace}"
         api_version = kwargs.pop("api_version", DEFAULT_VERSION)
-        self._generated_client = GeneratedClient(
+        self._generated_client = ServiceClientGenerated(
             endpoint=fully_qualified_namespace,
             credential=credential,
             api_version=api_version,
@@ -289,6 +286,7 @@ class SchemaRegistryClient(object):
                 name=name,
                 schema_version=version,
                 cls=prepare_schema_result,
+                stream=True,
                 **http_request_kwargs,
             )
         http_response.read()
@@ -335,7 +333,7 @@ class SchemaRegistryClient(object):
         schema_properties: Dict[str, Union[int, str]] = (
             self._generated_client.get_schema_id_by_content(  # type: ignore
                 group_name=group_name,
-                schema_name=name,
+                name=name,
                 schema_content=cast(IO[Any], definition),
                 content_type=kwargs.pop("content_type", get_content_type(format)),
                 cls=partial(prepare_schema_properties_result, format),
