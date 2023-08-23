@@ -97,6 +97,5 @@ class TestDataIndex(AzureRecordedTestCase):
         )
 
         assert isinstance(data_index, DataIndex)
-        print(f'{vars(index_job.outputs["mlindex_asset_uri"])}')
         assert data_index.path == index_job.outputs["mlindex_asset_uri"].path
         assert data_index.name == index_job.outputs["mlindex_asset_uri"].name
