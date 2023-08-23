@@ -254,6 +254,13 @@ class ComputeConfigurationOptions(object):
                 ],
             ),
         )
+        # [END kubernetes_compute]
+
+        # [START materialization_compute_resource]
+        from azure.ai.ml.entities import MaterializationComputeResource
+
+        materialization_compute = MaterializationComputeResource(instance_type="standard_e4s_v3")
+        # [END materialization_compute_resource]
 
 
 if __name__ == "__main__":
