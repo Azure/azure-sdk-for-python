@@ -147,6 +147,32 @@ class ComputeConfigurationOptions(object):
         )
         # [END aml_compute_ssh_settings]
 
+        # [START compute_instance_ssh_settings]
+        from azure.ai.ml.entities import ComputeInstanceSshSettings
+
+        ssh_settings = ComputeInstanceSshSettings(
+            ssh_key_value="ssh-rsa ABCDEFGHIJKLMNOPQRSTUVWXYZ administrator@MININT-2023"
+        )
+        # [END compute_instance_ssh_settings]
+
+        # [START assigned_user_configuration]
+        from azure.ai.ml.entities import AssignedUserConfiguration
+
+        on_behalf_of_config = AssignedUserConfiguration(user_tenant_id="12345", user_object_id="abcdef")
+        # [END assigned_user_configuration]
+
+        # [START compute_instance]
+        from azure.ai.ml.entities import ComputeInstance
+
+        ci = ComputeInstance(
+            name="my-ci-resource",
+            location="eastus",
+            size="Standard_DS2_v2",
+            ssh_public_access_enabled=False,
+            ssh_key_value="ssh-rsa ABCDEFGHIJKLMNOPQRSTUVWXYZ administrator@MININT-2023",
+        )
+        # [END compute_instance]
+
 
 if __name__ == "__main__":
     sample = ComputeConfigurationOptions()
