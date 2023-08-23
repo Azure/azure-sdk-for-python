@@ -25,7 +25,7 @@ except ImportError:
 from functools import partial
 
 
-from ... import (  # pylint: disable=import-error
+from ..._patch import (  # pylint: disable=import-error
     MessageContent,
     MessageType as MessageTypeProtocol,
 )
@@ -40,7 +40,7 @@ if TYPE_CHECKING:
     except ImportError:
         pass
     from ._constants import JsonSchemaDraftIdentifier
-    from ... import SchemaContentValidate
+    from ..._patch import SchemaContentValidate
 
 # TypeVar ties the return type to the exact MessageType class, rather than the "MessageType" Protocol
 # Otherwise, mypy will complain that the return type is not compatible with the type annotation when

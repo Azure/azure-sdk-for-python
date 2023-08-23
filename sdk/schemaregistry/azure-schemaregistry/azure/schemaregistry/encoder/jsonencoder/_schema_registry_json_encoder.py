@@ -38,7 +38,7 @@ from typing import (
     overload,
     Union,
 )
-from ..._common._constants import SchemaFormat
+from ..._patch import SchemaFormat
 
 from ._constants import JsonSchemaDraftIdentifier
 from ._utils import (  # pylint: disable=import-error
@@ -51,8 +51,7 @@ from ._utils import (  # pylint: disable=import-error
 )
 
 if TYPE_CHECKING:
-    from ..._schema_registry_client import SchemaRegistryClient
-    from ..._encoder_protocols import MessageContent, SchemaContentValidate
+    from ..._patch import SchemaRegistryClient, MessageContent, SchemaContentValidate
 
 _LOGGER = logging.getLogger(__name__)
 
