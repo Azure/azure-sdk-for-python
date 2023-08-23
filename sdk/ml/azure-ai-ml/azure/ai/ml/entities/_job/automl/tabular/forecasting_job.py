@@ -98,7 +98,7 @@ class ForecastingJob(AutoMLTabular):
         Set the primary metric to use for model selection.
 
         :param value: The primary metric for model selection.
-        :type: Union[str, ForecastingPrimaryMetrics]
+        :type: Union[str, ~azure.ai.ml.automl.ForecastingPrimaryMetrics]
         """
         if is_data_binding_expression(str(value), ["parent"]):
             self._primary_metric = value
@@ -115,7 +115,7 @@ class ForecastingJob(AutoMLTabular):
         Return the forecast training settings.
 
         :return: training settings.
-        :rtype: ForecastingTrainingSettings
+        :rtype: ~azure.ai.ml.automl.ForecastingTrainingSettings
         """
         return self._training or ForecastingTrainingSettings()
 
