@@ -30,7 +30,7 @@ class ComputeConfigurationOptions(object):
         ml_client = MLClient(credential, subscription_id, resource_group, workspace_name="r-bug-bash")
 
         # [START compute_operations_get]
-        #        cpu_cluster = ml_client.compute.get("cpu-cluster")
+        #        cpu_cluster = ml_client.compute.get("cpucluster")
         # [END compute_operations_get]
 
         # [START load_compute]
@@ -43,11 +43,11 @@ class ComputeConfigurationOptions(object):
         # [END load_compute]
 
         # [START compute_operations_list]
-        compute_list = ml_client.compute.list(compute_type="AMLK8s")
+        compute_list = ml_client.compute.list(compute_type="AMLK8s")  # cspell:disable-line
         # [END compute_operations_list]
 
         # [START compute_operations_list_nodes]
-        node_list = ml_client.compute.list_nodes(name="cpu-cluster")
+        node_list = ml_client.compute.list_nodes(name="cpucluster")
         # [END compute_operations_list_nodes]
 
         # [START compute_operations_create_update]
@@ -61,8 +61,6 @@ class ComputeConfigurationOptions(object):
             idle_time_before_scale_down=100,
         )
         registered_compute = ml_client.compute.begin_create_or_update(compute_obj)
-        compute_obj.max_instances = 20
-        updated_compute = ml_client.compute.begin_create_or_update(compute_obj)
         # [END compute_operations_create_update]
 
         # [START compute_operations_attach]
@@ -77,18 +75,18 @@ class ComputeConfigurationOptions(object):
         # [END compute_operations_attach]
 
         # [START compute_operations_update]
-        compute_obj = ml_client.compute.get("cpu-cluster")
+        compute_obj = ml_client.compute.get("cpucluster")
         compute_obj.idle_time_before_scale_down = 200
         updated_compute = ml_client.compute.begin_update(compute_obj)
         # [END compute_operations_update]
 
         # [START compute_operations_delete]
-        ml_client.compute.delete("example-compute", action="Detach")
+        ml_client.compute.begin_delete("example-compute", action="Detach")
 
-        ml_client.compute.delete("example-compute-2")
+        ml_client.compute.begin_delete("example-compute-2")
         # [END compute_operations_delete]
 
-        compute_obj = AmlCompute(
+        compute_obj = ComputeInstance(
             name="example-compute",
             tags={"key1": "value1", "key2": "value2"},
             min_instances=0,
@@ -172,6 +170,27 @@ class ComputeConfigurationOptions(object):
             ssh_key_value="ssh-rsa ABCDEFGHIJKLMNOPQRSTUVWXYZ administrator@MININT-2023",
         )
         # [END compute_instance]
+
+        # [START vm_ssh_settings]
+        from azure.ai.ml.entities import VirtualMachineSshSettings
+
+        ssh_settings = VirtualMachineSshSettings(
+            admin_username="azureuser",
+            admin_password="azureuserpassword",
+            ssh_port=8888,
+            ssh_private_key_file="../tests/test_configs/compute/ssh_fake_key.txt",
+        )
+        # [END vm_ssh_settings]
+
+        # [START vm_compute]
+        from azure.ai.ml.entities import VirtualMachineCompute
+
+        vm_compute = VirtualMachineCompute(
+            name="vm-compute",
+            resource_id="/subscriptions/123456-1234-1234-1234-123456789/resourceGroups/my-rg/providers/Microsoft.Compute/virtualMachines/my-vm",
+            ssh_settings=ssh_settings,
+        )
+        # [END vm_compute]
 
 
 if __name__ == "__main__":
