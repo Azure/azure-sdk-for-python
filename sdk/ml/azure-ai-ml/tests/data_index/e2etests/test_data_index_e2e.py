@@ -62,9 +62,6 @@ class TestDataIndex(AzureRecordedTestCase):
         assert data_index.name == job.outputs["mlindex_asset_uri"].name
         assert data_index.path == job.outputs["mlindex_asset_uri"].path
 
-        print("pipeline_job")
-        print(pipeline_job)
-
     def test_data_index_uri_to_acs_aoai_pipeline(self, client: MLClient):
         data_index = load_data(source=str(e2etests_folder / "../../test_configs/data_index/data_index_aoai_acs.yaml"))
         index_job = index_data(

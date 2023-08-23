@@ -99,15 +99,12 @@ class Schedule(YamlTranslatableMixin, SchemaValidatableMixin, Resource):
     @classmethod
     def _resolve_cls_and_type(cls, data, params_override):  # pylint: disable=unused-argument
         from azure.ai.ml.entities._data_import.schedule import ImportDataSchedule
-        from azure.ai.ml.entities._data_index.schedule import IndexDataSchedule
         from azure.ai.ml.entities._monitoring.schedule import MonitorSchedule
 
         if "create_monitor" in data:
             return MonitorSchedule, None
         if "import_data" in data:
             return ImportDataSchedule, None
-        if "index_data" in data:
-            return IndexDataSchedule, None
         return JobSchedule, None
 
     @property

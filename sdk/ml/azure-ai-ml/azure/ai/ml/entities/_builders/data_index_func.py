@@ -12,7 +12,7 @@ from typing import Any, Callable, Dict, Optional, Tuple, Union
 from azure.ai.ml._schema import DataIndexTypes
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._common import AssetTypes, LegacyAssetTypes
-from azure.ai.ml.constants._component import ComponentSource, DataIndexComponentUri, LLMRAGComponentUri
+from azure.ai.ml.constants._component import LLMRAGComponentUri
 from azure.ai.ml.data_index import build_model_protocol
 from azure.ai.ml.entities import DataIndex, PipelineJob
 from azure.ai.ml.entities._builders.base_node import pipeline_node_decorator
