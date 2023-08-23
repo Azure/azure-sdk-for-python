@@ -8,6 +8,7 @@ $GithubUri = "https://github.com/Azure/azure-sdk-for-python"
 $PackageRepositoryUri = "https://pypi.org/project"
 
 ."$PSScriptRoot/docs/Docs-ToC.ps1"
+."$PSScriptRoot/docs/Docs-Onboarding.ps1"
 
 function Get-AllPackageInfoFromRepo ($serviceDirectory)
 {
@@ -487,8 +488,7 @@ function UpdateDocsMsPackages($DocConfigFile, $Mode, $DocsMetadata, $PackageSour
         };
         exclude_path = @("test*","example*","sample*","doc*");
       }
-    }
-    else {
+    } else {
       $package = [ordered]@{
           package_info = [ordered]@{
             name = $packageName;
@@ -612,10 +612,15 @@ function Validate-Python-DocMsPackages ($PackageInfo, $PackageInfos, $PackageSou
   }
 
   $allSucceeded = $true
-  foreach ($package in $PackageInfos) {
+  foreach ($item in $PackageInfos) {
+    # Some packages 
+    if ($item.Version -eq 'IGNORE') { 
+      continue
+    }
+
     $result = ValidatePackage `
-      -packageName $package.Name `
-      -packageVersion $package.Version `
+      -packageName $item.Name `
+      -packageVersion "==$($item.Version)" `
       -PackageSourceOverride $PackageSourceOverride `
       -DocValidationImageId $DocValidationImageId
 
