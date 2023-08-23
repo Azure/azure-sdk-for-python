@@ -147,7 +147,7 @@ class _EncryptionData:
         The content encryption initialization vector.
         Required for AES-CBC (V1).
     :param Optional[_EncryptedRegionInfo] encrypted_region_info:
-        The info about the autenticated block sizes.
+        The info about the authenticated block sizes.
         Required for AES-GCM (V2).
     :param _EncryptionAgent encryption_agent:
         The encryption agent.
@@ -254,8 +254,8 @@ class GCMBlobEncryptionStream:
         aesgcm = AESGCM(self.content_encryption_key)
 
         # Returns ciphertext + tag
-        cipertext_with_tag = aesgcm.encrypt(nonce, data, None)
-        return nonce + cipertext_with_tag
+        ciphertext_with_tag = aesgcm.encrypt(nonce, data, None)
+        return nonce + ciphertext_with_tag
 
 
 def is_encryption_v2(encryption_data: Optional[_EncryptionData]) -> bool:
@@ -883,7 +883,7 @@ def encrypt_queue_message(message, key_encryption_key, version):
     Returns a json-formatted string containing the encrypted message and the encryption metadata.
 
     :param object message:
-        The plain text messge to be encrypted.
+        The plain text message to be encrypted.
     :param object key_encryption_key:
         The user-provided key-encryption-key. Must implement the following methods:
         wrap_key(key)--wraps the specified key using an algorithm of the user's choice.
@@ -927,8 +927,8 @@ def encrypt_queue_message(message, key_encryption_key, version):
         aesgcm = AESGCM(content_encryption_key)
 
         # Returns ciphertext + tag
-        cipertext_with_tag = aesgcm.encrypt(nonce, message, None)
-        encrypted_data = nonce + cipertext_with_tag
+        ciphertext_with_tag = aesgcm.encrypt(nonce, message, None)
+        encrypted_data = nonce + ciphertext_with_tag
 
     else:
         raise ValueError("Invalid encryption version specified.")

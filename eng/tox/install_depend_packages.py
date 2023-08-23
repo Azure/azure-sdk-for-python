@@ -53,7 +53,6 @@ MINIMUM_VERSION_SPECIFIC_OVERRIDES = {
 }
 
 MAXIMUM_VERSION_GENERIC_OVERRIDES = {
-    "cryptography": "4.0.0",
     "typing-extensions": "4.6.3"
 }
 
