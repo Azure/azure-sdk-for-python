@@ -149,7 +149,8 @@ class RemoteRenderingClient(object):
                                                                               body=CreateAssetConversionSettings(
                                                                                   settings=settings),
                                                                               **kwargs)
-        def deserialization_method(input:Any) -> AssetConversion:
+        def deserialization_method(input):
+            # type: (Any) -> AssetConversion
             raise Exception("Not implemented")
 
         return AsyncLROPoller(client=self._client,
@@ -209,7 +210,8 @@ class RemoteRenderingClient(object):
                 conversion_id=conversion_id,
                 **kwargs)
 
-        def deserialization_method(input:Any) -> AssetConversion:
+        def deserialization_method(input):
+            # type: (Any) -> AssetConversion
             raise Exception("Not implemented")
 
         return AsyncLROPoller(client=self._client,
@@ -223,6 +225,7 @@ class RemoteRenderingClient(object):
         """
         Returns list of conversions for the remote rendering account.
         :rtype: AsyncItemPaged[AssetConversion]
+        :return: List of conversions for the remote rendering account.
         """
         return self._client.remote_rendering.list_conversions(account_id=self._account_id, **kwargs)  # type: ignore
 
@@ -255,7 +258,8 @@ class RemoteRenderingClient(object):
                                                                            body=settings,
                                                                            **kwargs)
 
-        def deserialization_method(input:Any) -> RenderingSession:
+        def deserialization_method(input):
+            # type: (Any) -> RenderingSession
             raise Exception("Not implemented")
 
         return AsyncLROPoller(client=self._client,
@@ -311,7 +315,8 @@ class RemoteRenderingClient(object):
                 session_id=session_id,
                 **kwargs)
 
-        def deserialization_method(input:Any) -> RenderingSession:
+        def deserialization_method(input):
+            # type: (Any) -> RenderingSession
             raise Exception("Not implemented")
 
         return AsyncLROPoller(client=self._client,
@@ -363,6 +368,7 @@ class RemoteRenderingClient(object):
         Returns list of rendering sessions in the 'Ready' or 'Starting' state.
         Does not return stopped or failed rendering sessions.
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mixedreality.remoterendering.RenderingSession]
+        :return: List of rendering sessions in the 'Ready' or 'Starting' state.
         """
         return self._client.remote_rendering.list_sessions(account_id=self._account_id, **kwargs)  # type: ignore
 

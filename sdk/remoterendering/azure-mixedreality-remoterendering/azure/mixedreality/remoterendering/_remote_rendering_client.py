@@ -80,8 +80,9 @@ class RemoteRenderingClient(object):
 
         self.polling_interval = kwargs.pop("polling_interval", 5)
         endpoint_url = kwargs.pop('authentication_endpoint_url', construct_endpoint_url(account_domain))
-        
-        def build_credentials(input_credentials: Any) -> Any:
+
+        def build_credentials(input_credentials):
+            # type: (Any) -> Any
             return get_mixedreality_credential(
                 account_id=account_id,
                 account_domain=account_domain,
@@ -140,7 +141,8 @@ class RemoteRenderingClient(object):
             **kwargs)
 
         polling_method = ConversionPolling(account_id=self._account_id, polling_interval=polling_interval)
-        def deserialization_method(input:Any) -> AssetConversion:
+        def deserialization_method(input):
+            # type: (Any) -> AssetConversion
             raise Exception("Not implemented")
 
         return LROPoller(client=self._client,
@@ -201,8 +203,9 @@ class RemoteRenderingClient(object):
                 account_id=self._account_id,
                 conversion_id=conversion_id,
                 **kwargs)
-            
-        def deserialization_method(input:Any) -> AssetConversion:
+
+        def deserialization_method(input):
+            # type: (Any) -> AssetConversion
             raise Exception("Not implemented")
 
         return LROPoller(client=self._client,
@@ -216,6 +219,7 @@ class RemoteRenderingClient(object):
         """ Returns list of conversions for the remote rendering account.
         :rtype: ItemPaged[AssetConversion]
         :raises ~azure.core.exceptions.HttpResponseError:
+        :return: List of conversion for the remote rendering account.
         """
         return self._client.remote_rendering.list_conversions(account_id=self._account_id, **kwargs)  # type: ignore
 
@@ -244,7 +248,8 @@ class RemoteRenderingClient(object):
             **kwargs)
         polling_interval = kwargs.pop("polling_interval", self.polling_interval)
         polling_method = SessionPolling(account_id=self._account_id, polling_interval=polling_interval)
-        def deserialization_method(input:Any) -> RenderingSession:
+        def deserialization_method(input):
+            # type: (Any) -> RenderingSession
             raise Exception("Not implemented")
         return LROPoller(client=self._client,
                          initial_response=initial_state,
@@ -305,7 +310,8 @@ class RemoteRenderingClient(object):
                 **kwargs)
 
         polling_method = SessionPolling(account_id=self._account_id, polling_interval=polling_interval)
-        def deserialization_method(input:Any) -> RenderingSession:
+        def deserialization_method(input):
+            # type: (Any) -> RenderingSession
             raise Exception("Not implemented")
         return LROPoller(client=self._client,
                          initial_response=initial_state,
@@ -359,6 +365,7 @@ class RemoteRenderingClient(object):
         Does not return stopped or failed rendering sessions.
         :rtype: ItemPaged[RenderingSession]
         :raises ~azure.core.exceptions.HttpResponseError:
+        :return: List of rendering sessions in the 'Ready' or 'Starting' state.
         """
         return self._client.remote_rendering.list_sessions(account_id=self._account_id, **kwargs)  # type: ignore
 

@@ -19,7 +19,8 @@ def validate_api_version(api_version):
     # type: (str) -> None
     """Raise ValueError if api_version is invalid
 
-    :api_version: The api version
+    :param api_version: The api version
+    :type api_version: str
 
     """
     if not api_version:
