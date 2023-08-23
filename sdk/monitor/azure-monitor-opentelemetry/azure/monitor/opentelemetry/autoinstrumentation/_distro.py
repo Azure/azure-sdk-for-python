@@ -21,7 +21,7 @@ from opentelemetry.sdk.environment_variables import (
 
 from azure.core.settings import settings
 from azure.core.tracing.ext.opentelemetry_span import OpenTelemetrySpan
-from azure.monitor.opentelemetry.autoinstrumentation import (
+from azure.monitor.opentelemetry._constants import (
     _is_attach_enabled,
     _PREVIEW_ENTRY_POINT_WARNING,
 )

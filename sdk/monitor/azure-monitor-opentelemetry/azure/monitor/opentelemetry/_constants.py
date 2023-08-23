@@ -7,6 +7,7 @@
 import logging
 import platform
 from os import environ
+from os.path import isdir
 from pathlib import Path
 
 from azure.monitor.opentelemetry.exporter._connection_string_parser import ( # pylint: disable=import-error
@@ -36,6 +37,7 @@ _IS_DIAGNOSTICS_ENABLED = _IS_ON_APP_SERVICE
 #     "AZURE_MONITOR_OPENTELEMETRY_DISTRO_ENABLE_EXPORTER_DIAGNOSTICS"
 # )
 _CUSTOMER_IKEY_ENV_VAR = None
+_PREVIEW_ENTRY_POINT_WARNING = "OpenTelemetry Autoinstrumentation is in preview."
 logger = logging.getLogger(__name__)
 
 
@@ -85,3 +87,7 @@ _EXTENSION_VERSION = _env_var_or_default(
 )
 # TODO: Enabled when duplicate logging issue is solved
 # _EXPORTER_DIAGNOSTICS_ENABLED = _is_exporter_diagnostics_enabled()
+
+
+def _is_attach_enabled():
+    return isdir("/agents/python/")
