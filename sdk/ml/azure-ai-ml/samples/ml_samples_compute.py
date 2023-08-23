@@ -29,8 +29,9 @@ class ComputeConfigurationOptions(object):
         #        ml_client = MLClient(credential, subscription_id, resource_group, workspace_name="test-ws1")
         ml_client = MLClient(credential, subscription_id, resource_group, workspace_name="r-bug-bash")
 
+        # [START compute_operations_get]
         #        cpu_cluster = ml_client.compute.get("cpu-cluster")
-        cpu_cluster = ml_client.compute.get("cpucluster")
+        # [END compute_operations_get]
 
         # [START load_compute]
         from azure.ai.ml import load_compute
@@ -39,8 +40,83 @@ class ComputeConfigurationOptions(object):
             "../tests/test_configs/compute/compute-vm.yaml",
             params_override=[{"description": "loaded from compute-vm.yaml"}],
         )
-
         # [END load_compute]
+
+        # [START compute_operations_list]
+        compute_list = ml_client.compute.list(compute_type="AMLK8s")
+        # [END compute_operations_list]
+
+        # [START compute_operations_list_nodes]
+        node_list = ml_client.compute.list_nodes(name="cpu-cluster")
+        # [END compute_operations_list_nodes]
+
+        # [START compute_operations_create_update]
+        from azure.ai.ml.entities import AmlCompute
+
+        compute_obj = AmlCompute(
+            name="example-compute",
+            tags={"key1": "value1", "key2": "value2"},
+            min_instances=0,
+            max_instances=10,
+            idle_time_before_scale_down=100,
+        )
+        registered_compute = ml_client.compute.begin_create_or_update(compute_obj)
+        compute_obj.max_instances = 20
+        updated_compute = ml_client.compute.begin_create_or_update(compute_obj)
+        # [END compute_operations_create_update]
+
+        # [START compute_operations_attach]
+        compute_obj = AmlCompute(
+            name="example-compute-2",
+            tags={"key1": "value1", "key2": "value2"},
+            min_instances=0,
+            max_instances=10,
+            idle_time_before_scale_down=100,
+        )
+        attached_compute = ml_client.compute.begin_attach(compute_obj)
+        # [END compute_operations_attach]
+
+        # [START compute_operations_update]
+        compute_obj = ml_client.compute.get("cpu-cluster")
+        compute_obj.idle_time_before_scale_down = 200
+        updated_compute = ml_client.compute.begin_update(compute_obj)
+        # [END compute_operations_update]
+
+        # [START compute_operations_delete]
+        ml_client.compute.delete("example-compute", action="Detach")
+
+        ml_client.compute.delete("example-compute-2")
+        # [END compute_operations_delete]
+
+        compute_obj = AmlCompute(
+            name="example-compute",
+            tags={"key1": "value1", "key2": "value2"},
+            min_instances=0,
+            max_instances=10,
+            idle_time_before_scale_down=100,
+        )
+        registered_compute = ml_client.compute.begin_create_or_update(compute_obj)
+
+        # [START compute_operations_start]
+        ml_client.compute.begin_start("example-compute")
+        # [END compute_operations_start]
+
+        # [START compute_operations_stop]
+        ml_client.compute.begin_stop("example-compute")
+        # [END compute_operations_stop]
+
+        # [START compute_operations_restart]
+        ml_client.compute.begin_stop("example-compute")
+        ml_client.compute.begin_restart("example-compute")
+        # [END compute_operations_restart]
+
+        # [START compute_operations_list_usage]
+        print(ml_client.compute.list_usage())
+        # [END compute_operations_list_usage]
+
+        # [START compute_operations_list_sizes]
+        print(ml_client.compute.list_sizes())
+        # [END compute_operations_list_sizes]
 
 
 if __name__ == "__main__":
