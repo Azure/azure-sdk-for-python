@@ -67,6 +67,8 @@ if __name__ == "__main__":
         sys.executable,
         "-m",
         "pyright",
+        "--pythonpath",
+        os.path.join(args.target_package, ".tox", "pyright"),
     ]
     commands.extend(paths)
     try:
