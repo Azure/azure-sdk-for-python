@@ -11,15 +11,15 @@ from opentelemetry.environment_variables import (
     OTEL_METRICS_EXPORTER,
     OTEL_TRACES_EXPORTER,
 )
+from opentelemetry.instrumentation.distro import (
+    BaseDistro,
+)
 from opentelemetry.sdk.environment_variables import (
     _OTEL_PYTHON_LOGGING_AUTO_INSTRUMENTATION_ENABLED,
 )
 
 from azure.core.settings import settings
 from azure.core.tracing.ext.opentelemetry_span import OpenTelemetrySpan
-from azure.monitor.opentelemetry._vendor.v0_39b0.opentelemetry.instrumentation.distro import (
-    BaseDistro,
-)
 from azure.monitor.opentelemetry.diagnostics._diagnostic_logging import (
     AzureDiagnosticLogging,
 )
