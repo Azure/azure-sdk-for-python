@@ -63,12 +63,13 @@ if __name__ == "__main__":
             )
             paths = paths[:-1]
 
+    pyright_env = "pyright" if not args.next else "next-pyright"
     commands = [
         sys.executable,
         "-m",
         "pyright",
         "--pythonpath",
-        os.path.join(args.target_package, ".tox", "pyright"),
+        os.path.join(args.target_package, ".tox", pyright_env),
     ]
     commands.extend(paths)
     try:
