@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 import logging
 from os import environ
+from warnings import warn
 
 from opentelemetry.environment_variables import (
     OTEL_LOGS_EXPORTER,
@@ -20,6 +21,10 @@ from opentelemetry.sdk.environment_variables import (
 
 from azure.core.settings import settings
 from azure.core.tracing.ext.opentelemetry_span import OpenTelemetrySpan
+from azure.monitor.opentelemetry._constants import (
+    _is_attach_enabled,
+    _PREVIEW_ENTRY_POINT_WARNING,
+)
 from azure.monitor.opentelemetry.diagnostics._diagnostic_logging import (
     AzureDiagnosticLogging,
 )
@@ -37,6 +42,8 @@ _opentelemetry_logger = logging.getLogger("opentelemetry")
 
 class AzureMonitorDistro(BaseDistro):
     def _configure(self, **kwargs) -> None:
+        if not _is_attach_enabled():
+            warn(_PREVIEW_ENTRY_POINT_WARNING)
         try:
             _configure_auto_instrumentation()
         except Exception as ex:
