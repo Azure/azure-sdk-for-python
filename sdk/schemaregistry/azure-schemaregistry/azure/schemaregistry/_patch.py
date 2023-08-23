@@ -349,6 +349,9 @@ class SchemaRegistryClient(object):
                 schema_content=cast(IO[Any], definition),
                 content_type=kwargs.pop("content_type", get_content_type(format)),
                 cls=partial(prepare_schema_properties_result, format),
+                headers={   # TODO: fix - currently `Accept: "*/*""`
+                    "Accept": "application/json"
+                },
                 **http_request_kwargs,
             )
         )
