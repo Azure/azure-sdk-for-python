@@ -209,6 +209,28 @@ class ComputeConfigurationOptions(object):
         )
         # [END network_settings]
 
+        # [START compute_runtime]
+        from azure.ai.ml.entities import ComputeRuntime
+
+        compute_runtime = ComputeRuntime(spark_runtime_version="3.2.0")
+        # [END compute_runtime]
+
+        # [START compute_start_stop_schedule]
+        from azure.ai.ml.constants import TimeZone
+        from azure.ai.ml.entities import ComputeSchedules, ComputeStartStopSchedule, CronTrigger
+
+        start_stop = ComputeStartStopSchedule(
+            trigger=CronTrigger(
+                expression="15 10 * * 1",
+                start_time="2022-03-10 10:15:00",
+                end_time="2022-06-10 10:15:00",
+                time_zone=TimeZone.PACIFIC_STANDARD_TIME,
+            )
+        )
+        compute_schedules = ComputeSchedules(compute_start_stop=[start_stop])
+
+        # [END compute_start_stop_schedule]
+
 
 if __name__ == "__main__":
     sample = ComputeConfigurationOptions()
