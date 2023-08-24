@@ -114,7 +114,7 @@ class Asset(Resource):
         yaml_serialized = self._to_dict()
         dump_yaml_to_file(dest, yaml_serialized, default_flow_style=False, path=path, **kwargs)
 
-    def __eq__(self, other: Resource) -> bool:
+    def __eq__(self, other: Any) -> bool:  # type: ignore
         return bool(
             self.name == other.name
             and self.id == other.id
@@ -128,7 +128,7 @@ class Asset(Resource):
             and self.auto_delete_setting == other.auto_delete_setting
         )
 
-    def __ne__(self, other: Resource) -> bool:
+    def __ne__(self, other: Any) -> bool:  # type: ignore
         return not self.__eq__(other)
 
 
