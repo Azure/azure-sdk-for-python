@@ -210,7 +210,7 @@ class AsyncTransportMixin:
                 context.load_verify_locations(ca_certs)
                 return context
             return True
-        except TypeError as exc:
+        except TypeError:
             raise TypeError(
                 "SSL configuration must be a dictionary, or the value True."
             ) from None
@@ -341,7 +341,7 @@ class AsyncTransport(
                         toread
                     )
                     nbytes = toread
-                except AttributeError as exc:
+                except AttributeError:
                     # This means that close() was called concurrently
                     # self.reader has been set to None.
                     raise IOError("Connection has already been closed") from None
@@ -458,7 +458,7 @@ class WebSocketTransportAsync(
         try:
             from aiohttp import ClientSession, ClientConnectorError # pylint: disable=networking-import-outside-azure-core-transport
             from urllib.parse import urlsplit
-        except ImportError as exc:
+        except ImportError:
             raise ImportError(
                 "Please install aiohttp library to use async websocket transport."
             ) from None
