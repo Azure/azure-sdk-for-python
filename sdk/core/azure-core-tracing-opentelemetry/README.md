@@ -21,16 +21,16 @@ with azure-core tracing. This includes (not exhaustive list), azure-storage-blob
 * There are two ways to enable the tracing plugin in code:
 
   ```python
-    from azure.core.settings import settings
-    from azure.core.tracing.ext.opentelemetry_span import OpenTelemetrySpan
-    settings.tracing_implementation = OpenTelemetrySpan
+  from azure.core.settings import settings
+  from azure.core.tracing.ext.opentelemetry_span import OpenTelemetrySpan
+  settings.tracing_implementation = OpenTelemetrySpan
   ```
 
   or
 
   ```python
-    from azure.core.settings import settings
-    settings.tracing_implementation = "opentelemetry"
+  from azure.core.settings import settings
+  settings.tracing_implementation = "opentelemetry"
   ```
 
 * Alternatively, if you have the latest version of `azure-core` installed, you can also set the following environment variable to enable tracing with OpenTelemetry:
