@@ -531,7 +531,6 @@ class SSLTransport(_AbstractTransport):
         sock,
         keyfile=None,
         certfile=None,
-        server_side=False,
         cert_reqs=ssl.CERT_REQUIRED,
         ca_certs=None,
         do_handshake_on_connect=True,
@@ -562,12 +561,11 @@ class SSLTransport(_AbstractTransport):
         # Setup the right SSL version; default to optimal versions across
         # ssl implementations
         if ssl_version is None:
-            ssl_version = ssl.PROTOCOL_TLS_SERVER if server_side else ssl.PROTOCOL_TLS_CLIENT
-        purpose = ssl.Purpose.CLIENT_AUTH if server_side else ssl.Purpose.SERVER_AUTH
+            ssl_version = ssl.PROTOCOL_TLS_CLIENT
+        purpose = ssl.Purpose.SERVER_AUTH
 
         opts = {
             "sock": sock,
-            "server_side": server_side,
             "do_handshake_on_connect": do_handshake_on_connect,
             "suppress_ragged_eofs": suppress_ragged_eofs,
             "server_hostname": server_hostname,
