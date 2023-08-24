@@ -22,6 +22,7 @@ from azure.core.tracing.decorator import distributed_trace
 from ._base_client import parse_connection_str, TablesBaseClient
 from ._entity import TableEntity
 from ._error import (
+    TableTransactionError,
     _decode_error,
     _process_table_error,
     _reprocess_error,
@@ -658,4 +659,14 @@ class TableClient(TablesBaseClient):
                 "The value of 'operations' must be an iterator "
                 "of Tuples. Please check documentation for correct Tuple format."
             ) from exc
-        return self._batch_send(self.table_name, *batched_requests.requests, **kwargs)  # type: ignore
+        
+        try:
+            return self._batch_send(self.table_name, *batched_requests.requests, **kwargs)  # type: ignore
+        except TableTransactionError as ex:
+            if not self._cosmos_endpoint and "An error occurred while processing this request." in ex.message and ex.error_code == "InvalidInput":
+                return []
+            raise ex
+        except HttpResponseError as ex:
+            if self._cosmos_endpoint and "The batch request body is malformed." in ex.message and ex.error_code == "InvalidInput":
+                return []
+            raise ex
