@@ -659,14 +659,22 @@ class TableClient(TablesBaseClient):
                 "The value of 'operations' must be an iterator "
                 "of Tuples. Please check documentation for correct Tuple format."
             ) from exc
-        
+
         try:
             return self._batch_send(self.table_name, *batched_requests.requests, **kwargs)  # type: ignore
         except TableTransactionError as ex:
-            if not self._cosmos_endpoint and "An error occurred while processing this request." in ex.message and ex.error_code == "InvalidInput":
+            if (
+                not self._cosmos_endpoint
+                and "An error occurred while processing this request." in ex.message
+                and ex.error_code == "InvalidInput"
+            ):
                 return []
             raise ex
         except HttpResponseError as ex:
-            if self._cosmos_endpoint and "The batch request body is malformed." in ex.message and ex.error_code == "InvalidInput":
+            if (
+                self._cosmos_endpoint
+                and "The batch request body is malformed." in ex.message
+                and ex.error_code == "InvalidInput"
+            ):
                 return []
             raise ex
