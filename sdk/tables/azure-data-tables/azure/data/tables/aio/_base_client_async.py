@@ -153,11 +153,8 @@ class AsyncTablesBaseClient(AccountHostsMixin):
 
         parts_iter = response.parts()
         parts = []
-        try:
-            async for p in parts_iter:
-                parts.append(p)
-        except IndexError:
-            return []
+        async for p in parts_iter:
+            parts.append(p)
         error_parts = [p for p in parts if not 200 <= p.status_code < 300]
         if any(error_parts):
             if error_parts[0].status_code == 413:
