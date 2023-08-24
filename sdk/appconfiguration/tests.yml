@@ -4,6 +4,7 @@ parameters:
   - name: Services
     type: object
     default:
+      - azure-appconfiguration
       - azure-appconfiguration-provider
 
 stages:
