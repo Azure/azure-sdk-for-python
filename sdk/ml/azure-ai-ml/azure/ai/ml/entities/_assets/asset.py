@@ -78,7 +78,7 @@ class Asset(Resource):
         """Dump the artifact content into a pure dict object."""
 
     @property
-    def version(self) -> str:
+    def version(self) -> Optional[str]:
         """The asset version.
 
         :return: The asset version.
