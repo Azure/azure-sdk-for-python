@@ -49,7 +49,7 @@ class Asset(Resource):
 
         if not name and version is None:
             name = _get_random_name()
-            version = "1"
+            self.version = "1"
             self._is_anonymous = True
         elif version is not None and not name:
             self.version = version
@@ -115,7 +115,7 @@ class Asset(Resource):
         dump_yaml_to_file(dest, yaml_serialized, default_flow_style=False, path=path, **kwargs)
 
     def __eq__(self, other: Any) -> bool:  # type: ignore
-        return bool(
+        return (
             self.name == other.name
             and self.id == other.id
             and self.version == other.version
