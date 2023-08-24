@@ -262,7 +262,7 @@ class ServiceBusMessage(
         This is deprecated and will be removed in a later release.
 
         :param value: The uamqp.Message to use as the underlying message.
-        :type value: uamqp.Message
+        :type value: ~uamqp.Message
         """
         warnings.warn(
             "The `message` property is deprecated and will be removed in future versions.",
@@ -273,7 +273,6 @@ class ServiceBusMessage(
     @property
     def raw_amqp_message(self) -> AmqpAnnotatedMessage:
         """Advanced usage only. The internal AMQP message payload that is sent or received.
-        :returns: The raw AMQP message.
         :rtype: ~azure.servicebus.amqp.AmqpAnnotatedMessage
         """
         return self._raw_amqp_message
@@ -288,7 +287,7 @@ class ServiceBusMessage(
 
         See Message Sessions in `https://docs.microsoft.com/azure/service-bus-messaging/message-sessions`.
 
-        :rtype: str
+        :rtype: str or None
         """
         if not self._raw_amqp_message.properties:
             return None
@@ -315,7 +314,7 @@ class ServiceBusMessage(
     def application_properties(self) -> Optional[Dict[Union[str, bytes], PrimitiveTypes]]:
         """The user defined properties on the message.
 
-        :rtype: dict
+        :rtype: dict[str or bytes, PrimitiveTypes] or None
         """
         return self._raw_amqp_message.application_properties
 
@@ -334,7 +333,7 @@ class ServiceBusMessage(
         See Partitioned queues and topics in
         `https://docs.microsoft.com/azure/service-bus-messaging/service-bus-partitioning`.
 
-        :rtype: str
+        :rtype: str or None
         """
         try:
             opt_p_key = self._raw_amqp_message.annotations.get(_X_OPT_PARTITION_KEY)  # type: ignore
@@ -461,7 +460,7 @@ class ServiceBusMessage(
         Optionally describes the payload of the message, with a descriptor following the format of RFC2045, Section 5,
         for example "application/json".
 
-        :rtype: str
+        :rtype: str or None
         """
         if not self._raw_amqp_message.properties:
             return None
@@ -487,7 +486,7 @@ class ServiceBusMessage(
         See Message Routing and Correlation in
         `https://docs.microsoft.com/azure/service-bus-messaging/service-bus-messages-payloads?#message-routing-and-correlation`.
 
-        :rtype: str
+        :rtype: str or None
         """
         if not self._raw_amqp_message.properties:
             return None
@@ -534,7 +533,7 @@ class ServiceBusMessage(
         `https://docs.microsoft.com/azure/service-bus-messaging/duplicate-detection`)
         feature identifies and removes second and further submissions of messages with the same message id.
 
-        :rtype: str
+        :rtype: str or None
         """
         if not self._raw_amqp_message.properties:
             return None
@@ -567,7 +566,7 @@ class ServiceBusMessage(
         See Message Routing and Correlation in
         `https://docs.microsoft.com/azure/service-bus-messaging/service-bus-messages-payloads?#message-routing-and-correlation`.
 
-        :rtype: str
+        :rtype: str or None
         """
         if not self._raw_amqp_message.properties:
             return None
@@ -593,7 +592,7 @@ class ServiceBusMessage(
         See Message Routing and Correlation in
         `https://docs.microsoft.com/azure/service-bus-messaging/service-bus-messages-payloads?#message-routing-and-correlation`.
 
-        :rtype: str
+        :rtype: str or None
         """
         if not self._raw_amqp_message.properties:
             return None
@@ -625,7 +624,7 @@ class ServiceBusMessage(
 
         See https://docs.microsoft.com/azure/service-bus-messaging/service-bus-auto-forwarding for more details.
 
-        :rtype: str
+        :rtype: str or None
         """
         if not self._raw_amqp_message.properties:
             return None
@@ -726,7 +725,7 @@ class ServiceBusMessageBatch(object):
         """DEPRECATED: Get the underlying uamqp.BatchMessage or LegacyBatchMessage.
          This is deprecated and will be removed in a later release.
 
-        :rtype: uamqp.BatchMessage or LegacyBatchMessage
+        :rtype: ~uamqp.BatchMessage or LegacyBatchMessage
         """
         warnings.warn(
             "The `message` property is deprecated and will be removed in future versions.",
@@ -782,7 +781,6 @@ class ServiceBusMessageBatch(object):
 
         :param message: The Message to be added to the batch.
         :type message: Union[~azure.servicebus.ServiceBusMessage, ~azure.servicebus.amqp.AmqpAnnotatedMessage]
-        :rtype: None
         :raises: :class: ~azure.servicebus.exceptions.MessageSizeExceededError, when exceeding the size limit.
         """
 
@@ -830,12 +828,12 @@ class ServiceBusReceivedMessage(ServiceBusMessage): # pylint: disable=too-many-i
             self._receiver: Union["ServiceBusReceiver", "AsyncServiceBusReceiver"] = kwargs.pop(
                 "receiver"
             )
-        except KeyError as exc:
+        except KeyError:
             raise TypeError(
                 "ServiceBusReceivedMessage requires a receiver to be initialized. "
                 + "This class should never be initialized by a user; "
                 + "for outgoing messages, the ServiceBusMessage class should be utilized instead."
-            ) from exc
+            ) from None
         self._expiry: Optional[datetime.datetime] = None
 
     def __getstate__(self):
