@@ -262,3 +262,9 @@ class DataIndex(Data):
             PARAMS_OVERRIDE_KEY: params_override,
         }
         return load_from_dict(DataIndexSchema, data, context, **kwargs)
+
+    def _to_dict(self) -> Dict:
+        # pylint: disable=no-member
+        from azure.ai.ml._schema import DataIndexSchema
+
+        return DataIndexSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)

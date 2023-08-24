@@ -9,9 +9,9 @@ from marshmallow import fields, post_load
 from azure.ai.ml._schema.assets.data import DataSchema
 from azure.ai.ml._schema.core.fields import NestedField, StringTransformedEnum, UnionField
 from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
-from azure.ai.ml._schema.job.input_output_entry import DataInputSchema, MLTableInputSchema, generate_path_property
+from azure.ai.ml._schema.job.input_output_entry import generate_datastore_property, generate_path_property
 from azure.ai.ml._utils._experimental import experimental
-from azure.ai.ml.constants._common import AzureMLResourceType
+from azure.ai.ml.constants._common import AssetTypes, AzureMLResourceType, InputOutputModes
 
 
 class DataIndexTypes:
@@ -40,9 +40,53 @@ class CitationRegexSchema(metaclass=PatchedSchemaMeta):
         return CitationRegex(**data)
 
 
+class InputDataSchema(metaclass=PatchedSchemaMeta):
+    mode = StringTransformedEnum(
+        allowed_values=[
+            InputOutputModes.RO_MOUNT,
+            InputOutputModes.RW_MOUNT,
+            InputOutputModes.DOWNLOAD,
+        ],
+        required=False,
+    )
+    type = StringTransformedEnum(
+        allowed_values=[
+            AssetTypes.URI_FILE,
+            AssetTypes.URI_FOLDER,
+        ]
+    )
+    path = generate_path_property(azureml_type=AzureMLResourceType.DATA)
+    datastore = generate_datastore_property()
+
+    @post_load
+    def make(self, data, **kwargs):
+        from azure.ai.ml.entities import Data
+
+        return Data(**data)
+
+
+class InputMLTableSchema(metaclass=PatchedSchemaMeta):
+    mode = StringTransformedEnum(
+        allowed_values=[
+            InputOutputModes.EVAL_MOUNT,
+            InputOutputModes.EVAL_DOWNLOAD,
+        ],
+        required=False,
+    )
+    type = StringTransformedEnum(allowed_values=[AssetTypes.MLTABLE])
+    path = generate_path_property(azureml_type=AzureMLResourceType.DATA)
+    datastore = generate_datastore_property()
+
+    @post_load
+    def make(self, data, **kwargs):
+        from azure.ai.ml.entities import Data
+
+        return Data(**data)
+
+
 class IndexSourceSchema(metaclass=PatchedSchemaMeta):
     input_data = UnionField(
-        [NestedField(DataInputSchema), NestedField(MLTableInputSchema)],
+        [NestedField(InputDataSchema), NestedField(InputMLTableSchema)],
         required=True,
         allow_none=False,
         metadata={"description": "Input Data to index files from. MLTable type inputs will use `mode: eval_mount`."},
@@ -78,17 +122,9 @@ class IndexSourceSchema(metaclass=PatchedSchemaMeta):
 
     @post_load
     def make(self, data, **kwargs):
-        from azure.ai.ml.entities import Data
         from azure.ai.ml.entities._data_index.data_index import IndexSource
 
-        data_input_schema = data.pop("input_data")
-        input_data = Data(
-            type=data_input_schema.type,
-            path=data_input_schema.path,
-            datastore=data_input_schema.datastore,
-        )
-
-        return IndexSource(**data, input_data=input_data)
+        return IndexSource(**data)
 
 
 class EmbeddingSchema(metaclass=PatchedSchemaMeta):

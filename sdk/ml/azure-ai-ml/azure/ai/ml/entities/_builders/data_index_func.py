@@ -140,9 +140,10 @@ def index_data(
     serverless_instance_type: Optional[str] = None,
     ml_client: Optional[Any] = None,
     identity: Optional[Union[ManagedIdentityConfiguration, UserIdentityConfiguration]] = None,
+    input_data_override: Optional[Input] = None,
     **kwargs,
 ) -> PipelineJob:
-    """Create a DataTransferImport object which can be used inside dsl.pipeline.
+    """Create a PipelineJob object which can be used inside dsl.pipeline.
 
     :keywork data_index: The data index configuration.
     :type data_index: DataIndex
@@ -160,8 +161,13 @@ def index_data(
     :type serverless_instance_type: str
     :keyword ml_client: The ml client to use for the job.
     :type ml_client: Any
-    :return: A DataTransferImport object.
-    :rtype: ~azure.ai.ml.entities._job.pipeline._component_translatable.DataTransferImport
+    :keyword identity: Identity configuration for the job.
+    :type identity: Optional[Union[ManagedIdentityConfiguration, UserIdentityConfiguration]]
+    :keyword input_data_override: Input data override for the job.
+        Used to pipe output of step into DataIndex Job in a pipeline.
+    :type input_data_override: Optional[Input]
+    :return: A PipelineJob object.
+    :rtype: ~azure.ai.ml.entities.PipelineJob
     """
     data_index = _build_data_index(data_index)
 
@@ -176,6 +182,7 @@ def index_data(
             compute,
             serverless_instance_type,
             identity,
+            input_data_override,
         )
     elif data_index.index.type == DataIndexTypes.ACS:
         configured_component = data_index_acs(
@@ -188,6 +195,7 @@ def index_data(
             compute,
             serverless_instance_type,
             identity,
+            input_data_override,
         )
     else:
         raise ValueError(f"Unsupported index type: {data_index.index.type}")
@@ -205,6 +213,7 @@ def data_index_faiss(
     compute: Optional[str] = None,
     serverless_instance_type: str = "Standard_E8s_v3",
     identity: Optional[Union[ManagedIdentityConfiguration, UserIdentityConfiguration]] = None,
+    input_data_override: Optional[Input] = None,
 ):
     from azure.ai.ml.dsl import pipeline
 
@@ -301,8 +310,13 @@ def data_index_faiss(
             "mlindex_asset_id": register_mlindex_asset.outputs.asset_id,
         }
 
+    if input_data_override is not None:
+        input_data = input_data_override
+    else:
+        input_data = Input(type=data_index.source.input_data.type, path=data_index.source.input_data.path)
+
     component = data_index_faiss_pipeline(
-        input_data=Input(type=data_index.source.input_data.type, path=data_index.source.input_data.path),
+        input_data=input_data,
         embeddings_model=build_model_protocol(data_index.embedding.model),
         chunk_size=data_index.source.chunk_size,
         data_source_glob=data_index.source.input_glob,
@@ -322,7 +336,6 @@ def data_index_faiss(
     if data_index.path:
         component.outputs.mlindex_asset_uri = Output(type=AssetTypes.URI_FOLDER, path=data_index.path)
 
-    component.outputs.mlindex_asset_uri.name = data_index.name
     return component
 
 
@@ -336,6 +349,7 @@ def data_index_acs(
     compute: Optional[str] = None,
     serverless_instance_type: str = "Standard_E8s_v3",
     identity: Optional[Union[ManagedIdentityConfiguration, UserIdentityConfiguration]] = None,
+    input_data_override: Optional[Input] = None,
 ):
     from azure.ai.ml.dsl import pipeline
 
@@ -441,8 +455,13 @@ def data_index_acs(
             "mlindex_asset_id": register_mlindex_asset.outputs.asset_id,
         }
 
+    if input_data_override is not None:
+        input_data = input_data_override
+    else:
+        input_data = Input(type=data_index.source.input_data.type, path=data_index.source.input_data.path)
+
     component = data_index_acs_pipeline(
-        input_data=Input(type=data_index.source.input_data.type, path=data_index.source.input_data.path),
+        input_data=input_data,
         embeddings_model=build_model_protocol(data_index.embedding.model),
         acs_config=json.dumps(
             {"index_name": data_index.index.name if data_index.index.name is not None else data_index.name}
@@ -467,7 +486,6 @@ def data_index_acs(
     if data_index.path:
         component.outputs.mlindex_asset_uri = Output(type=AssetTypes.URI_FOLDER, path=data_index.path)
 
-    component.outputs.mlindex_asset_uri.name = data_index.name
     return component
 
 

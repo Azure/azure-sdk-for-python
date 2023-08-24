@@ -68,7 +68,7 @@ from azure.ai.ml.entities._credentials import ManagedIdentityConfiguration, User
 from azure.ai.ml.entities._data.mltable_metadata import MLTableMetadata
 from azure.ai.ml.entities._data_import.data_import import DataImport
 from azure.ai.ml.entities._data_index.data_index import DataIndex
-from azure.ai.ml.entities._inputs_outputs import Output
+from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._inputs_outputs.external_data import Database
 from azure.ai.ml.exceptions import (
     AssetPathException,
@@ -486,6 +486,7 @@ class DataOperations(_ScopeDependentOperations):
         self,
         data_index: DataIndex,
         identity: Optional[Union[ManagedIdentityConfiguration, UserIdentityConfiguration]] = None,
+        input_data_override: Optional[Input] = None,
         submit_job: bool = True,
         **kwargs,
     ) -> PipelineJob:
@@ -495,6 +496,9 @@ class DataOperations(_ScopeDependentOperations):
         :type data_index: azure.ai.ml.entities.DataIndex
         :param identity: Identity configuration for the job.
         :type identity: Optional[Union[ManagedIdentityConfiguration, UserIdentityConfiguration]]
+        :param input_data_override: Input data override for the job.
+            Used to pipe output of step into DataIndex Job in a pipeline.
+        :type input_data_override: Optional[Input]
         :param submit_job: Whether to submit the job to the service. Default: True.
         :type submit_job: bool
         :return: data import job object.
@@ -528,6 +532,7 @@ class DataOperations(_ScopeDependentOperations):
                 credential=self._service_client._config.credential,
             ),
             identity=identity,
+            input_data_override=input_data_override,
         )
         index_pipeline = PipelineJob(
             description=index_job.description or experiment_name,
