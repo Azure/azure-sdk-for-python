@@ -70,7 +70,7 @@ class VirtualClusterOperations:
 
         :keyword scope: scope of the listing, "subscription" or None, defaults to None.
             If None, list virtual clusters across all subscriptions a customer has access to.
-        :type scope: str, optional
+        :paramtype scope: str
         :return: An iterator like instance of dictionaries.
         :rtype: ~azure.core.paging.ItemPaged[Dict]
         """

@@ -174,13 +174,13 @@ class _PipelineNodeFactory:
         :param _type: The type of the node.
         :type _type: str
         :keyword create_instance_func: A function to create a new instance of the node
-        :type create_instance_func: typing.Optional[typing.Callable[..., typing.Union[BaseNode, AutoMLJob]]]
+        :paramtype create_instance_func: typing.Optional[typing.Callable[..., typing.Union[BaseNode, AutoMLJob]]]
         :keyword load_from_rest_object_func: A function to load a node from a rest object
-        :type load_from_rest_object_func: typing.Optional[typing.Callable[[Any], typing.Union[BaseNode, AutoMLJob\
+        :paramtype load_from_rest_object_func: typing.Optional[typing.Callable[[Any], typing.Union[BaseNode, AutoMLJob\
             , ControlFlowNode]]]
         :keyword nested_schema: schema/schemas of corresponding nested field, will be used in \
             PipelineJobSchema.jobs.value
-        :type nested_schema: typing.Optional[typing.Union[NestedField, List[NestedField]]]
+        :paramtype nested_schema: typing.Optional[typing.Union[NestedField, List[NestedField]]]
         """
         # pylint: disable=no-member
         if create_instance_func is not None:
@@ -206,9 +206,9 @@ class _PipelineNodeFactory:
         """Load a node from a dict.
 
         :keyword data: A dict containing the node's data.
-        :type data: dict
+        :paramtype data: dict
         :keyword _type: The type of the node. If not specified, it will be inferred from the data.
-        :type _type: str
+        :paramtype _type: str
         :return: The node
         :rtype: Union[BaseNode, AutoMLJob]
         """
@@ -240,9 +240,9 @@ class _PipelineNodeFactory:
         """Load a node from a rest object.
 
         :keyword obj: A rest object containing the node's data.
-        :type obj: dict
+        :paramtype obj: dict
         :keyword _type: The type of the node. If not specified, it will be inferred from the data.
-        :type _type: str
+        :paramtype _type: str
         :return: The node
         :rtype: Union[BaseNode, AutoMLJob, ControlFlowNode]
         """

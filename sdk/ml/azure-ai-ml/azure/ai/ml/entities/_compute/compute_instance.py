@@ -98,25 +98,25 @@ class ComputeInstance(Compute):
     :param name: Name of the compute
     :type name: str
     :param location: The resource location, defaults to None
-    :type location: Optional[str], optional
+    :type location: Optional[str]
     :param description: Description of the resource.
-    :type description: Optional[str], optional
+    :type description: Optional[str]
     :param size: Compute Size, defaults to None
-    :type size: Optional[str], optional
+    :type size: Optional[str]
     :param tags: A set of tags. Contains resource tags defined as key/value pairs.
     :type tags: Optional[dict[str, str]]
     :param create_on_behalf_of: defaults to None
-    :type create_on_behalf_of: Optional[AssignedUserConfiguration], optional
+    :type create_on_behalf_of: Optional[AssignedUserConfiguration]
     :ivar state: defaults to None
-    :type state: Optional[str], optional
+    :type state: Optional[str]
     :ivar last_operation: defaults to None
-    :type last_operation: Optional[Dict[str, str]], optional
+    :type last_operation: Optional[Dict[str, str]]
     :ivar applications: defaults to None
-    :type applications: Optional[List[Dict[str, str]]], optional
+    :type applications: Optional[List[Dict[str, str]]]
     :param network_settings: defaults to None
-    :type network_settings: Optional[NetworkSettings], optional
+    :type network_settings: Optional[NetworkSettings]
     :param ssh_settings: defaults to None
-    :type ssh_settings: Optional[ComputeInstanceSshSettings], optional
+    :type ssh_settings: Optional[ComputeInstanceSshSettings]
     :param ssh_public_access_enabled: State of the public SSH port. Possible values are: ["False", "True", "None"]
         False - Indicates that the public ssh port is closed on all nodes of the cluster.
         True - Indicates that the public ssh port is open on all nodes of the cluster.
@@ -125,28 +125,28 @@ class ComputeInstance(Compute):
         creation it will be either True or False. Possible values include: True, False, None.
         Default value: None.
 
-    :type ssh_public_access_enabled: Optional[bool], optional
+    :type ssh_public_access_enabled: Optional[bool]
     :param schedules: Compute instance schedules, defaults to None
-    :type schedules: Optional[ComputeSchedules], optional
+    :type schedules: Optional[ComputeSchedules]
     :param identity:  The identity configuration, identities that are associated with the compute cluster.
-    :type identity: IdentityConfiguration, optional
+    :type identity: IdentityConfiguration
     :param idle_time_before_shutdown: Deprecated. Use the `idle_time_before_shutdown_minutes` parameter instead.
         Stops compute instance after user defined period of inactivity.
         Time is defined in ISO8601 format. Minimum is 15 minutes, maximum is 3 days.
-    :type idle_time_before_shutdown: Optional[str], optional
+    :type idle_time_before_shutdown: Optional[str]
     :param idle_time_before_shutdown_minutes: Stops compute instance after a user defined period of
         inactivity in minutes. Minimum is 15 minutes, maximum is 3 days.
-    :type idle_time_before_shutdown_minutes: Optional[int], optional
+    :type idle_time_before_shutdown_minutes: Optional[int]
     :param enable_node_public_ip: Enable or disable node public IP address provisioning. Possible values are:
         True - Indicates that the compute nodes will have public IPs provisioned.
         False - Indicates that the compute nodes will have a private endpoint and no public IPs.
         Default Value: True.
-    :type enable_node_public_ip: Optional[bool], optional
+    :type enable_node_public_ip: Optional[bool]
     :param setup_scripts: Details of customized scripts to execute for setting up the cluster.
-    :type setup_scripts: Optional[SetupScripts], optional
+    :type setup_scripts: Optional[SetupScripts]
     :param custom_applications: List of custom applications and their endpoints
         for the compute instance.
-    :type custom_applications: Optional[List[CustomApplications]], optional
+    :type custom_applications: Optional[List[CustomApplications]]
     """
 
     def __init__(

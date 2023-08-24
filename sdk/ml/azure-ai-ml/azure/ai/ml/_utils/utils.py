@@ -128,9 +128,9 @@ def create_requests_pipeline_with_retry(*, requests_pipeline: HttpPipeline, retr
     but overwrites the retry policy.
 
     :keyword requests_pipeline: Pipeline to base new one off of.
-    :type requests_pipeline: HttpPipeline
+    :paramtype requests_pipeline: HttpPipeline
     :keyword retry: Number of retries. Defaults to 3
-    :type retry: int, optional
+    :paramtype retry: int
     :return: Pipeline identical to provided one, except with a new retry policy
     :rtype: HttpPipeline
     """
@@ -170,7 +170,7 @@ def download_text_from_url(
     :param timeout: One of
       * float that specifies the connect and read time outs
       * a 2-tuple that specifies the connect and read time out in that order
-    :type timeout: Union[float, Tuple[float, float]], optional
+    :type timeout: Union[float, Tuple[float, float]]
     :return: The Response text
     :rtype: str
     """
@@ -802,7 +802,7 @@ def try_enable_internal_components(*, force=False):
     references _internal.
 
     :keyword force: Force enable internal components even if enabled before.
-    :type force: bool
+    :paramtype force: bool
     """
     if is_internal_components_enabled():
         from azure.ai.ml._internal import enable_internal_components_in_pipeline
@@ -1028,7 +1028,7 @@ def get_valid_dot_keys_with_wildcard(
     :type dot_key_wildcard: str
     :keyword validate_func: Validation function. It takes two parameters: the root node and the dot key parts.
     If None, no validation will be performed.
-    :type validate_func: Optional[Callable[[List[str], Dict[str, Any]], bool]]
+    :paramtype validate_func: Optional[Callable[[List[str], Dict[str, Any]], bool]]
     :return: List of valid dot keys.
     :rtype: List[str]
     """

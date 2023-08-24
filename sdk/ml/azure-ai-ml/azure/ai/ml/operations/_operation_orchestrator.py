@@ -447,7 +447,7 @@ class OperationOrchestrator(object):
         TODO: It is debatable whether this method should be in operation_orchestrator.
 
         :param arm_id: entity's ARM id, defaults to None
-        :type arm_id: str, optional
+        :type arm_id: str
         :return: AzureML id
         :rtype: str
         """

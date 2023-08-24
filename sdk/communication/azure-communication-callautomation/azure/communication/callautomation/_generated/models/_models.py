@@ -1116,6 +1116,8 @@ class ContinuousDtmfRecognitionRequest(_serialization.Model):
      ~azure.communication.callautomation.models.CommunicationIdentifierModel
     :ivar operation_context: The value to identify context of the operation.
     :vartype operation_context: str
+    :ivar callback_uri: The callback URI to override the main callback URI.
+    :vartype callback_uri: str
     """
 
     _validation = {
@@ -1125,6 +1127,7 @@ class ContinuousDtmfRecognitionRequest(_serialization.Model):
     _attribute_map = {
         "target_participant": {"key": "targetParticipant", "type": "CommunicationIdentifierModel"},
         "operation_context": {"key": "operationContext", "type": "str"},
+        "callback_uri": {"key": "callbackUri", "type": "str"},
     }
 
     def __init__(
@@ -1132,6 +1135,7 @@ class ContinuousDtmfRecognitionRequest(_serialization.Model):
         *,
         target_participant: "_models.CommunicationIdentifierModel",
         operation_context: Optional[str] = None,
+        callback_uri: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1140,10 +1144,13 @@ class ContinuousDtmfRecognitionRequest(_serialization.Model):
          ~azure.communication.callautomation.models.CommunicationIdentifierModel
         :keyword operation_context: The value to identify context of the operation.
         :paramtype operation_context: str
+        :keyword callback_uri: The callback URI to override the main callback URI.
+        :paramtype callback_uri: str
         """
         super().__init__(**kwargs)
         self.target_participant = target_participant
         self.operation_context = operation_context
+        self.callback_uri = callback_uri
 
 
 class ContinuousDtmfRecognitionStopped(_serialization.Model):
@@ -2740,6 +2747,8 @@ class PlayRequest(_serialization.Model):
     :vartype play_options: ~azure.communication.callautomation.models.PlayOptions
     :ivar operation_context: The value to identify context of the operation.
     :vartype operation_context: str
+    :ivar callback_uri: The callback URI to override the main callback URI.
+    :vartype callback_uri: str
     """
 
     _validation = {
@@ -2751,6 +2760,7 @@ class PlayRequest(_serialization.Model):
         "play_to": {"key": "playTo", "type": "[CommunicationIdentifierModel]"},
         "play_options": {"key": "playOptions", "type": "PlayOptions"},
         "operation_context": {"key": "operationContext", "type": "str"},
+        "callback_uri": {"key": "callbackUri", "type": "str"},
     }
 
     def __init__(
@@ -2760,6 +2770,7 @@ class PlayRequest(_serialization.Model):
         play_to: Optional[List["_models.CommunicationIdentifierModel"]] = None,
         play_options: Optional["_models.PlayOptions"] = None,
         operation_context: Optional[str] = None,
+        callback_uri: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -2773,12 +2784,15 @@ class PlayRequest(_serialization.Model):
         :paramtype play_options: ~azure.communication.callautomation.models.PlayOptions
         :keyword operation_context: The value to identify context of the operation.
         :paramtype operation_context: str
+        :keyword callback_uri: The callback URI to override the main callback URI.
+        :paramtype callback_uri: str
         """
         super().__init__(**kwargs)
         self.play_source_info = play_source_info
         self.play_to = play_to
         self.play_options = play_options
         self.operation_context = operation_context
+        self.callback_uri = callback_uri
 
 
 class PlaySource(_serialization.Model):
@@ -3148,6 +3162,8 @@ class RecognizeRequest(_serialization.Model):
     :vartype recognize_options: ~azure.communication.callautomation.models.RecognizeOptions
     :ivar operation_context: The value to identify context of the operation.
     :vartype operation_context: str
+    :ivar callback_uri: The callback URI to override the main callback URI.
+    :vartype callback_uri: str
     """
 
     _validation = {
@@ -3161,6 +3177,7 @@ class RecognizeRequest(_serialization.Model):
         "interrupt_call_media_operation": {"key": "interruptCallMediaOperation", "type": "bool"},
         "recognize_options": {"key": "recognizeOptions", "type": "RecognizeOptions"},
         "operation_context": {"key": "operationContext", "type": "str"},
+        "callback_uri": {"key": "callbackUri", "type": "str"},
     }
 
     def __init__(
@@ -3171,6 +3188,7 @@ class RecognizeRequest(_serialization.Model):
         play_prompt: Optional["_models.PlaySource"] = None,
         interrupt_call_media_operation: Optional[bool] = None,
         operation_context: Optional[str] = None,
+        callback_uri: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -3187,6 +3205,8 @@ class RecognizeRequest(_serialization.Model):
         :paramtype recognize_options: ~azure.communication.callautomation.models.RecognizeOptions
         :keyword operation_context: The value to identify context of the operation.
         :paramtype operation_context: str
+        :keyword callback_uri: The callback URI to override the main callback URI.
+        :paramtype callback_uri: str
         """
         super().__init__(**kwargs)
         self.recognize_input_type = recognize_input_type
@@ -3194,6 +3214,7 @@ class RecognizeRequest(_serialization.Model):
         self.interrupt_call_media_operation = interrupt_call_media_operation
         self.recognize_options = recognize_options
         self.operation_context = operation_context
+        self.callback_uri = callback_uri
 
 
 class RecordingStateChanged(_serialization.Model):
@@ -3742,6 +3763,8 @@ class SendDtmfRequest(_serialization.Model):
      ~azure.communication.callautomation.models.CommunicationIdentifierModel
     :ivar operation_context: The value to identify context of the operation.
     :vartype operation_context: str
+    :ivar callback_uri: The callback URI to override the main callback URI.
+    :vartype callback_uri: str
     """
 
     _validation = {
@@ -3753,6 +3776,7 @@ class SendDtmfRequest(_serialization.Model):
         "tones": {"key": "tones", "type": "[str]"},
         "target_participant": {"key": "targetParticipant", "type": "CommunicationIdentifierModel"},
         "operation_context": {"key": "operationContext", "type": "str"},
+        "callback_uri": {"key": "callbackUri", "type": "str"},
     }
 
     def __init__(
@@ -3761,6 +3785,7 @@ class SendDtmfRequest(_serialization.Model):
         tones: List[Union[str, "_models.DtmfTone"]],
         target_participant: "_models.CommunicationIdentifierModel",
         operation_context: Optional[str] = None,
+        callback_uri: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -3771,11 +3796,14 @@ class SendDtmfRequest(_serialization.Model):
          ~azure.communication.callautomation.models.CommunicationIdentifierModel
         :keyword operation_context: The value to identify context of the operation.
         :paramtype operation_context: str
+        :keyword callback_uri: The callback URI to override the main callback URI.
+        :paramtype callback_uri: str
         """
         super().__init__(**kwargs)
         self.tones = tones
         self.target_participant = target_participant
         self.operation_context = operation_context
+        self.callback_uri = callback_uri
 
 
 class SpeechOptions(_serialization.Model):

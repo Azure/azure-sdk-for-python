@@ -78,7 +78,7 @@ async def test_get_token(stderr):
     assert mock_exec.call_count == 1
     args, kwargs = mock_exec.call_args
     command = args[-1]
-    assert command.startswith("pwsh -NonInteractive -EncodedCommand ")
+    assert command.startswith("pwsh -NoProfile -NonInteractive -EncodedCommand ")
 
     encoded_script = command.split()[-1]
     decoded_script = base64.b64decode(encoded_script).decode("utf-16-le")
@@ -265,7 +265,7 @@ async def test_multitenant_authentication():
 
     async def fake_exec(*args, **_):
         command = args[2]
-        assert command.startswith("pwsh -NonInteractive -EncodedCommand ")
+        assert command.startswith("pwsh -NoProfile -NonInteractive -EncodedCommand ")
         encoded_script = command.split()[-1]
         decoded_script = base64.b64decode(encoded_script).decode("utf-16-le")
         match = re.search(r"Get-AzAccessToken -ResourceUrl '(\S+)'(?: -TenantId (\S+))?", decoded_script)
@@ -296,7 +296,7 @@ async def test_multitenant_authentication_not_allowed():
 
     async def fake_exec(*args, **_):
         command = args[2]
-        assert command.startswith("pwsh -NonInteractive -EncodedCommand ")
+        assert command.startswith("pwsh -NoProfile -NonInteractive -EncodedCommand ")
         encoded_script = command.split()[-1]
         decoded_script = base64.b64decode(encoded_script).decode("utf-16-le")
         match = re.search(r"Get-AzAccessToken -ResourceUrl '(\S+)'(?: -TenantId (\S+))?", decoded_script)

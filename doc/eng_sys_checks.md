@@ -224,12 +224,10 @@ extends:
 
 #### Running locally
 
-To run locally first install `black` from pip if you do not have it already (the pipeline uses version 22.3.0). Currently, we use the `-l 120` option to allow lines up to 120 characters (consistent with our `pylint` check).
+1. Go to package root directory.
+2. Execute command: `tox run -e black -c ../../../eng/tox/tox.ini -- .`
 
-```bash
-python -m pip install black==22.3.0
-python -m black -l 120 <path/to/service_directory>
-```
+**Tip**: You can provide any arguments that `black` accepts after the `--`. Example: `tox run -e black -c ../../../eng/tox/tox.ini -- path/to/file.py`
 
 ### Change log verification
 

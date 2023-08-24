@@ -29,14 +29,13 @@ def main():
         subscription_id="{subscription-id}",
     )
 
-    response = client.blob_containers.begin_object_level_worm(
+    client.blob_containers.begin_object_level_worm(
         resource_group_name="res1782",
         account_name="sto7069",
         container_name="container6397",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/storage/resource-manager/Microsoft.Storage/stable/2022-09-01/examples/ObjectLevelWormContainerMigration.json
+# x-ms-original-file: specification/storage/resource-manager/Microsoft.Storage/stable/2023-01-01/examples/ObjectLevelWormContainerMigration.json
 if __name__ == "__main__":
     main()

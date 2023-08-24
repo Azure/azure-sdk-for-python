@@ -58,7 +58,7 @@ class WorkspaceHubOperations(WorkspaceOperationsBase):
         resource group or subscription.
 
         :keyword scope: scope of the listing, "resource_group" or "subscription", defaults to "resource_group"
-        :type scope: str, optional
+        :paramtype scope: str
         :return: An iterator like instance of WorkspaceHub objects
         :rtype: ~azure.core.paging.ItemPaged[WorkspaceHub]
         """
@@ -175,10 +175,10 @@ class WorkspaceHubOperations(WorkspaceOperationsBase):
         :keyword delete_dependent_resources: Whether to delete resources associated with the WorkspaceHub,
             i.e., container registry, storage account, key vault.
             The default is False. Set to True to delete these resources.
-        :type delete_dependent_resources: bool
+        :paramtype delete_dependent_resources: bool
         :keyword permanently_delete: Workspaces are soft-deleted by default to allow recovery of workspace data.
             Set this flag to true to override the soft-delete behavior and permanently delete your workspace.
-        :type permanently_delete: bool
+        :paramtype permanently_delete: bool
         :return: A poller to track the operation status.
         :rtype: ~azure.core.polling.LROPoller[None]
         """
