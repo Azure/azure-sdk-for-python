@@ -53,6 +53,7 @@ stages:
           - package: msal-extensions
             download_uri: https://files.pythonhosted.org/packages/33/5e/2e23593c67df0b21ffb141c485ca0ae955569203d7ff5064040af968cb81/msal-extensions-1.0.0.tar.gz
 
+  - stage: Build_Universal_Dependencies
     displayName: Build Universal Conda Packages
     dependsOn: Build_Dependencies
     jobs:
