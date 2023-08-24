@@ -24,7 +24,7 @@ jobs:
       inputs:
         versionSpec: $(PythonVersion)
 
-    - script: |
+    - pwsh: |
         pip install tools/azure-sdk-tools[build]
         pip install disutils
         Invoke-WebRequest "$(VS_INSTALLER_URL)" -OutFile "$(VS_INSTALLER_PATH)"
