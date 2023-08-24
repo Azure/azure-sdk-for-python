@@ -577,9 +577,6 @@ class SSLTransport(_AbstractTransport):
             try:
                 context.load_verify_locations(ca_certs)
             except FileNotFoundError as exc:
-                # FileNotFoundError does not have missing filename info, so adding it below.
-                # since this is the only file path that users can pass in
-                # (`connection_verify` in the EH/SB clients) through opts above.
                 exc.filename = {"ca_certs": ca_certs}
                 raise exc from None
         elif context.verify_mode != ssl.CERT_NONE:
