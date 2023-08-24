@@ -5,7 +5,7 @@
 import uuid
 from abc import abstractmethod
 from os import PathLike
-from typing import IO, AnyStr, Dict, Optional, Union
+from typing import IO, Any, AnyStr, Dict, Optional, Union
 
 from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml._utils.utils import dump_yaml_to_file
@@ -52,6 +52,7 @@ class Asset(Resource):
             version = "1"
             self._is_anonymous = True
         elif version is not None and not name:
+            self.version = version
             msg = "If version is specified, name must be specified also."
             err = ValidationException(
                 message=msg,
@@ -70,7 +71,6 @@ class Asset(Resource):
             **kwargs,
         )
 
-        self.version = version
         self.latest_version = None
 
     @abstractmethod
@@ -94,17 +94,6 @@ class Asset(Resource):
         :type value: str
         :raises ValidationException: Raised if value is not a string.
         """
-        if value:
-            if not isinstance(value, str):
-                msg = f"Asset version must be a string, not type {type(value)}."
-                err = ValidationException(
-                    message=msg,
-                    target=ErrorTarget.ASSET,
-                    no_personal_data_message=msg,
-                    error_category=ErrorCategory.USER_ERROR,
-                    error_type=ValidationErrorType.INVALID_VALUE,
-                )
-                log_and_raise_error(err)
 
         self._version = value
         self._auto_increment_version = self.name and not self._version
@@ -125,8 +114,8 @@ class Asset(Resource):
         yaml_serialized = self._to_dict()
         dump_yaml_to_file(dest, yaml_serialized, default_flow_style=False, path=path, **kwargs)
 
-    def __eq__(self, other) -> bool:
-        return (
+    def __eq__(self, other: Resource) -> bool:
+        return bool(
             self.name == other.name
             and self.id == other.id
             and self.version == other.version
@@ -139,7 +128,7 @@ class Asset(Resource):
             and self.auto_delete_setting == other.auto_delete_setting
         )
 
-    def __ne__(self, other) -> bool:
+    def __ne__(self, other: Resource) -> bool:
         return not self.__eq__(other)
 
 
