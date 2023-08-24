@@ -28,7 +28,22 @@ jobs:
         pip install tools/azure-sdk-tools[build]
         pip install disutils
         Invoke-WebRequest "$(VS_INSTALLER_URL)" -OutFile "$(VS_INSTALLER_PATH)"
-        $(VS_INSTALLER_PATH) --installPath $(VS_ENTERPRISE_PATH) --add Microsoft.VisualStudio.Workload.NativeDesktop --add Microsoft.VisualStudio.Component.VC.Tools.x86.x64 --quiet
+        $(VS_INSTALLER_PATH) --installPath $(VS_ENTERPRISE_PATH) `
+          # C# and Visual Basic Roslyn Compilers
+          --add Microsoft.VisualStudio.Component.Roslyn.Compiler `
+          # C++ 2022 Redistributable Update
+          --add Microsoft.VisualStudio.Component.VC.Redist.14.Latest `
+          # C++ Build Insights
+          # missing
+          # C++ CMake tools for Windows
+          --add Microsoft.VisualStudio.Component.VC.CMake.Project `
+          # MSBuild
+          --add Microsoft.Component.MSBuild `
+          # MSVC v143 - VS 2022 C++ x64/x86 build tools (Latest)
+          --add Microsoft.VisualStudio.Component.VC.Tools.x86.x64 `
+          # native desktop workload
+          --add Microsoft.VisualStudio.Workload.NativeDesktop `
+          --quiet
       displayName: Install build script requirements
 
     - pwsh: |
@@ -41,7 +56,7 @@ jobs:
       displayName: "Convert YAML to JSON-like string"
 
     - script: |
-        call "$(VS_ENTERPRISE_PATH)\Common7\Tools\VsDevCmd.bat"
+        call "$(VS_ENTERPRISE_PATH)\VC\Auxiliary\Build\vcvars64.bat"
         sdk_build_conda -c %arguments%
       displayName: Assemble Conda Packages
 
