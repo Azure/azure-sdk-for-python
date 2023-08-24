@@ -151,3 +151,21 @@ class TestConstants(TestCase):
         self.assertEqual(
             _constants._env_var_or_default("key", default_val="value"), "value"
         )
+
+    @patch(
+        "azure.monitor.opentelemetry._constants.isdir",
+        return_value=True,
+    )
+    def test_attach_enabled(self, mock_isdir):
+        self.assertEqual(
+            _constants._is_attach_enabled(), True
+        )
+
+    @patch(
+        "azure.monitor.opentelemetry._constants.isdir",
+        return_value=False,
+    )
+    def test_attach_disabled(self, mock_isdir):
+        self.assertEqual(
+            _constants._is_attach_enabled(), False
+        )

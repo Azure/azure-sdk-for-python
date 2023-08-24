@@ -9,6 +9,7 @@
 ### Bugs Fixed
 
 - Fixed the issue that some urls trigger an infinite loop. #31346
+- Fixed issue where IndexError was raised if multipart responses did not match the number of requests. #31471
 
 ### Other Changes
 
