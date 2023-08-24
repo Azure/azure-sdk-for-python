@@ -14,7 +14,7 @@ variables:
 
 stages:
   - stage: Build_Dependencies
-    displayName: Build Binary Conda Packages
+    displayName: Build Platform-Specific Binary Conda Packages
     jobs:
     - template: ../jobs/build-conda-dependencies.yml
       parameters:
@@ -53,8 +53,7 @@ stages:
           - package: msal-extensions
             download_uri: https://files.pythonhosted.org/packages/33/5e/2e23593c67df0b21ffb141c485ca0ae955569203d7ff5064040af968cb81/msal-extensions-1.0.0.tar.gz
 
-  # - stage: Build
-    displayName: Build Universal Conda Artifacts
+    displayName: Build Universal Conda Packages
     dependsOn: Build_Dependencies
     jobs:
     - job: 'Build'
@@ -65,7 +64,6 @@ stages:
         vmImage: MMSUbuntu20.04
 
       steps:
-        # restore platform-specific dependencies and re-index
         - download: current
           artifact: windows_conda
           timeoutInMinutes: 5
