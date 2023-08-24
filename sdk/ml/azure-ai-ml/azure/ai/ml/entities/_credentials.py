@@ -379,7 +379,7 @@ class _BaseJobIdentityConfiguration(ABC, RestTranslatableMixin, DictMixin, YamlT
         identity_class = mapping.get(obj.identity_type, None)
         if identity_class:
             # pylint: disable=protected-access
-            return identity_class._from_job_rest_object(obj)
+            return identity_class._from_job_rest_object(obj)  # type: ignore
         msg = f"Unknown identity type: {obj.identity_type}"
         raise JobException(
             message=msg,
