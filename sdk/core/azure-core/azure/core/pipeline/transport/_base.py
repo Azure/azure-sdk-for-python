@@ -29,7 +29,6 @@ import json
 import logging
 import time
 import copy
-import string
 from urllib.parse import urlparse
 import xml.etree.ElementTree as ET
 
