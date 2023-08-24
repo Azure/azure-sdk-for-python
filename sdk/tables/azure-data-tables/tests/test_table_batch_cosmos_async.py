@@ -806,9 +806,8 @@ class TestTableBatchCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
         table_name = self.get_resource_name("mytable")
         async with TableClient(url, table_name, credential=tables_primary_cosmos_account_key) as client:
             await client.create_table()
-            with pytest.raises(HttpResponseError) as ex:
-                await client.submit_transaction([])
-            assert "The batch request body is malformed." in str(ex.value)
+            result = await client.submit_transaction([])
+            assert result == []
             await client.delete_table()
 
 
