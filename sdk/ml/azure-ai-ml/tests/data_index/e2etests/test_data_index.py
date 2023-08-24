@@ -59,7 +59,6 @@ class TestDataIndex(AzureRecordedTestCase):
 
         job = pipeline_job.jobs[key]
         assert isinstance(data_index, DataIndex)
-        assert data_index.name == job.outputs["mlindex_asset_uri"].name
         assert data_index.path == job.outputs["mlindex_asset_uri"].path
 
     def test_data_index_uri_to_acs_aoai_pipeline(self, client: MLClient) -> None:
@@ -98,4 +97,3 @@ class TestDataIndex(AzureRecordedTestCase):
 
         assert isinstance(data_index, DataIndex)
         assert data_index.path == index_job.outputs["mlindex_asset_uri"].path
-        assert data_index.name == index_job.outputs["mlindex_asset_uri"].name

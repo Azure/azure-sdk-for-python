@@ -486,6 +486,8 @@ class DataOperations(_ScopeDependentOperations):
         self,
         data_index: DataIndex,
         identity: Optional[Union[ManagedIdentityConfiguration, UserIdentityConfiguration]] = None,
+        compute: str = "serverless",
+        serverless_instance_type: Optional[str] = None,
         input_data_override: Optional[Input] = None,
         submit_job: bool = True,
         **kwargs,
@@ -496,6 +498,10 @@ class DataOperations(_ScopeDependentOperations):
         :type data_index: azure.ai.ml.entities.DataIndex
         :param identity: Identity configuration for the job.
         :type identity: Optional[Union[ManagedIdentityConfiguration, UserIdentityConfiguration]]
+        :param compute: The compute target to use for the job. Default: "serverless".
+        :type compute: str
+        :param serverless_instance_type: The instance type to use for serverless compute.
+        :type serverless_instance_type: Optional[str]
         :param input_data_override: Input data override for the job.
             Used to pipe output of step into DataIndex Job in a pipeline.
         :type input_data_override: Optional[Input]
@@ -523,7 +529,8 @@ class DataOperations(_ScopeDependentOperations):
             description=data_index.description or experiment_name,
             display_name=experiment_name,
             experiment_name=experiment_name,
-            compute="serverless",
+            compute=compute,
+            serverless_instance_type=serverless_instance_type,
             data_index=data_index,
             ml_client=MLClient(
                 subscription_id=self._subscription_id,
@@ -540,7 +547,7 @@ class DataOperations(_ScopeDependentOperations):
             display_name=experiment_name,
             experiment_name=experiment_name,
             properties=index_job.properties or {},
-            settings=PipelineJobSettings(force_rerun=True, default_compute="serverless"),
+            settings=PipelineJobSettings(force_rerun=True, default_compute=compute),
             jobs={experiment_name: index_job},
         )
         index_pipeline.properties["azureml.mlIndexAssetName"] = data_index.name

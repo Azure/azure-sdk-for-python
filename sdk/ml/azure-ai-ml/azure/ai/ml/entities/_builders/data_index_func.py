@@ -158,7 +158,7 @@ def index_data(
     :keyword compute: The compute resource the job runs on.
     :type compute: str
     :keyword serverless_instance_type: The instance type to use for serverless compute.
-    :type serverless_instance_type: str
+    :type serverless_instance_type: Optional[str]
     :keyword ml_client: The ml client to use for the job.
     :type ml_client: Any
     :keyword identity: Identity configuration for the job.
@@ -200,6 +200,10 @@ def index_data(
     else:
         raise ValueError(f"Unsupported index type: {data_index.index.type}")
 
+    configured_component.properties["azureml.mlIndexAssetName"] = data_index.name
+    configured_component.properties["azureml.mlIndexAssetKind"] = data_index.index.type
+    configured_component.properties["azureml.mlIndexAssetSource"] = "Data Asset"
+
     return configured_component
 
 
@@ -211,7 +215,7 @@ def data_index_faiss(
     display_name: Optional[str] = None,
     experiment_name: Optional[str] = None,
     compute: Optional[str] = None,
-    serverless_instance_type: str = "Standard_E8s_v3",
+    serverless_instance_type: Optional[str] = None,
     identity: Optional[Union[ManagedIdentityConfiguration, UserIdentityConfiguration]] = None,
     input_data_override: Optional[Input] = None,
 ):
@@ -347,7 +351,7 @@ def data_index_acs(
     display_name: Optional[str] = None,
     experiment_name: Optional[str] = None,
     compute: Optional[str] = None,
-    serverless_instance_type: str = "Standard_E8s_v3",
+    serverless_instance_type: Optional[str] = None,
     identity: Optional[Union[ManagedIdentityConfiguration, UserIdentityConfiguration]] = None,
     input_data_override: Optional[Input] = None,
 ):
