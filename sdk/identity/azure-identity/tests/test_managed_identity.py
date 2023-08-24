@@ -143,7 +143,6 @@ def test_tenant_id(environ):
     assert pipeline_response.http_response == expected_response
 
 
-
 def test_cloud_shell():
     """Cloud Shell environment: only MSI_ENDPOINT set"""
 

@@ -149,7 +149,7 @@ async def test_managed_identity_imds_probe():
     with patch.dict("os.environ", clear=True):
         credentials = [
             Mock(get_token=Mock(side_effect=CredentialUnavailableError(message=""))),
-            ManagedIdentityCredential(transport=transport)
+            ManagedIdentityCredential(transport=transport),
         ]
         token = await ChainedTokenCredential(*credentials).get_token(scope)
     assert token == expected_token
@@ -167,7 +167,7 @@ async def test_managed_identity_failed_probe():
     credentials = [
         Mock(get_token=Mock(wraps=credential_unavailable)),
         ManagedIdentityCredential(transport=transport),
-        Mock(get_token=Mock(wraps=wrap_in_future(lambda _, **__: expected_token)))
+        Mock(get_token=Mock(wraps=wrap_in_future(lambda _, **__: expected_token))),
     ]
 
     with patch.dict("os.environ", clear=True):

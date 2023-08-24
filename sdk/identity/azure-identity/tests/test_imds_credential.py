@@ -36,9 +36,7 @@ def test_multiple_scopes():
 
 def test_identity_not_available():
     """The credential should raise CredentialUnavailableError when the endpoint responds 400 to a token request"""
-    transport = validating_transport(
-        requests=[Request()], responses=[mock_response(status_code=400, json_payload={})]
-    )
+    transport = validating_transport(requests=[Request()], responses=[mock_response(status_code=400, json_payload={})])
 
     credential = ImdsCredential(transport=transport)
 
