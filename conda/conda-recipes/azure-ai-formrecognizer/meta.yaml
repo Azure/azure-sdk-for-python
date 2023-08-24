@@ -1,13 +1,11 @@
 {% set name = "azure-ai-formrecognizer" %}
-{% set version = "2023.06.01" %}
 
 package:
   name: "{{ name|lower }}"
-  version: "{{ version }}"
+  version: {{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
 
 source:
-  url: "https://files.pythonhosted.org/packages/55/f6/4ab4c197d6eb9c83814a7f169c4b26cb1ae360a5f10dac81cccb6b7a00c3/azure-ai-formrecognizer-3.2.1.zip"
-  sha256: 5768765f9720ce87038f56afe0c0b5259192cfb29c840a39595b1e26e4ddfa32
+  url: {{ environ.get('FORMRECOGNIZER_SOURCE_DISTRIBUTION', '') }}
 
 build:
   noarch: python
@@ -16,9 +14,9 @@ build:
 
 requirements:
   host:
-    - azure-core >=2023.06.01
-    - azure-identity >=2023.06.01
-    - msrest >=2023.06.01
+    - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - azure-identity >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - msrest >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - pip
     - python
     - six
@@ -26,9 +24,9 @@ requirements:
     - aiohttp
     - isodate
   run:
-    - azure-core >=2023.06.01
-    - azure-identity >=2023.06.01
-    - msrest >=2023.06.01
+    - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - azure-identity >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - msrest >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - python
     - six
     - requests-oauthlib >=0.5.0
@@ -49,7 +47,7 @@ about:
   description: |
     Azure Cognitive Services Form Recognizer is a cloud service that uses machine learning 
     to recognize text and table data from form documents. 
-    Please see https://aka.ms/azsdk/conda/releases/formrecognizer for version details.
+    Please see https://aka.ms/azsdk/conda/releases/formrecognizer for version details.{{ environ.get('STORAGE_SUMMARY', '') }}
   doc_url: 
   dev_url: 
 
