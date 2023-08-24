@@ -52,13 +52,13 @@ class BanditPolicy(EarlyTerminationPolicy):
     """Defines an early termination policy based on slack criteria and a frequency and delay interval for evaluation.
 
     :keyword delay_evaluation: Number of intervals by which to delay the first evaluation. Defaults to 0.
-    :type delay_evaluation: int
+    :paramtype delay_evaluation: int
     :keyword evaluation_interval: Interval (number of runs) between policy evaluations. Defaults to 0.
-    :type evaluation_interval: int
+    :paramtype evaluation_interval: int
     :keyword slack_amount: Absolute distance allowed from the best performing run. Defaults to 0.
-    :type slack_amount: float
+    :paramtype slack_amount: float
     :keyword slack_factor: Ratio of the allowed distance from the best performing run. Defaults to 0.
-    :type slack_factor: float
+    :paramtype slack_factor: float
 
     .. admonition:: Example:
 
@@ -106,9 +106,9 @@ class MedianStoppingPolicy(EarlyTerminationPolicy):
     """Defines an early termination policy based on a running average of the primary metric of all runs.
 
     :keyword delay_evaluation: Number of intervals by which to delay the first evaluation. Defaults to 0.
-    :type delay_evaluation: int
+    :paramtype delay_evaluation: int
     :keyword evaluation_interval: Interval (number of runs) between policy evaluations. Defaults to 1.
-    :type evaluation_interval: int
+    :paramtype evaluation_interval: int
 
     .. admonition:: Example:
 
@@ -147,11 +147,11 @@ class TruncationSelectionPolicy(EarlyTerminationPolicy):
     """Defines an early termination policy that cancels a given percentage of runs at each evaluation interval.
 
     :keyword delay_evaluation: Number of intervals by which to delay the first evaluation. Defaults to 0.
-    :type delay_evaluation: int
+    :paramtype delay_evaluation: int
     :keyword evaluation_interval: Interval (number of runs) between policy evaluations. Defaults to 0.
-    :type evaluation_interval: int
+    :paramtype evaluation_interval: int
     :keyword truncation_percentage: The percentage of runs to cancel at each evaluation interval. Defaults to 0.
-    :type truncation_percentage: int
+    :paramtype truncation_percentage: int
 
     .. admonition:: Example:
 

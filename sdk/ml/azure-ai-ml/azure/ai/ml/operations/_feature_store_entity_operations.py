@@ -66,7 +66,7 @@ class FeatureStoreEntityOperations(_ScopeDependentOperations):
         :type name: Optional[str]
         :keyword list_view_type: View type for including/excluding (for example) archived FeatureStoreEntity assets.
         Default: ACTIVE_ONLY.
-        :type list_view_type: Optional[ListViewType]
+        :paramtype list_view_type: Optional[ListViewType]
         :return: An iterator like instance of FeatureStoreEntity objects
         :rtype: ~azure.core.paging.ItemPaged[FeatureStoreEntity]
         """

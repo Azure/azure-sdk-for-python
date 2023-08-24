@@ -56,7 +56,7 @@ def get_hotel_index(name: str):
         SimpleField,
         SearchableField,
         VectorSearch,
-        VectorSearchAlgorithmConfiguration,
+        HnswVectorSearchAlgorithmConfiguration,
     )
 
     fields = [
@@ -75,7 +75,7 @@ def get_hotel_index(name: str):
         ),
     ]
     vector_search = VectorSearch(
-        algorithm_configurations=[VectorSearchAlgorithmConfiguration(name="my-vector-config", kind="hnsw")]
+        algorithm_configurations=[HnswVectorSearchAlgorithmConfiguration(name="my-vector-config", kind="hnsw")]
     )
     return SearchIndex(name=name, fields=fields, vector_search=vector_search)
 

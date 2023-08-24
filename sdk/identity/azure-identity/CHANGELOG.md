@@ -1,6 +1,18 @@
 # Release History
 
-## 1.14.0b3 (Unreleased)
+## 1.14.1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+- Ensure `AzurePowershellCredential` calls PowerShell with the `-NoProfile` flag to avoid loading user profiles for more consistent behavior.  ([#31682](https://github.com/Azure/azure-sdk-for-python/pull/31682))
+
+### Other Changes
+
+## 1.14.0 (2023-08-08)
 
 ### Features Added
 
@@ -14,10 +26,7 @@
 
 ### Bugs Fixed
 
-- Credential types correctly implement `azure-core`'s `TokenCredential` protocol.
-  ([#25175](https://github.com/Azure/azure-sdk-for-python/issues/25175))
-
-### Other Changes
+- Credential types correctly implement `azure-core`'s `TokenCredential` protocol.  ([#25175](https://github.com/Azure/azure-sdk-for-python/issues/25175))
 
 ## 1.14.0b2 (2023-07-11)
 

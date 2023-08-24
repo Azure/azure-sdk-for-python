@@ -70,14 +70,14 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../samples/v3.2/sample_authentication.py
+        .. literalinclude:: ../samples/v3.2_and_later/sample_authentication.py
             :start-after: [START create_dt_client_with_key]
             :end-before: [END create_dt_client_with_key]
             :language: python
             :dedent: 4
             :caption: Creating the DocumentModelAdministrationClient with an endpoint and API key.
 
-        .. literalinclude:: ../samples/v3.2/sample_authentication.py
+        .. literalinclude:: ../samples/v3.2_and_later/sample_authentication.py
             :start-after: [START create_dt_client_with_aad]
             :end-before: [END create_dt_client_with_aad]
             :language: python
@@ -214,7 +214,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/v3.2/sample_build_model.py
+            .. literalinclude:: ../samples/v3.2_and_later/sample_build_model.py
                 :start-after: [START build_model]
                 :end-before: [END build_model]
                 :language: python
@@ -306,7 +306,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/v3.2/sample_compose_model.py
+            .. literalinclude:: ../samples/v3.2_and_later/sample_compose_model.py
                 :start-after: [START composed_model]
                 :end-before: [END composed_model]
                 :language: python
@@ -411,7 +411,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/v3.2/sample_copy_model_to.py
+            .. literalinclude:: ../samples/v3.2_and_later/sample_copy_model_to.py
                 :start-after: [START begin_copy_document_model_to]
                 :end-before: [END begin_copy_document_model_to]
                 :language: python
@@ -466,7 +466,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/v3.2/sample_manage_models.py
+            .. literalinclude:: ../samples/v3.2_and_later/sample_manage_models.py
                 :start-after: [START delete_document_model]
                 :end-before: [END delete_document_model]
                 :language: python
@@ -494,7 +494,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/v3.2/sample_manage_models.py
+            .. literalinclude:: ../samples/v3.2_and_later/sample_manage_models.py
                 :start-after: [START list_document_models]
                 :end-before: [END list_document_models]
                 :language: python
@@ -524,7 +524,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/v3.2/sample_manage_models.py
+            .. literalinclude:: ../samples/v3.2_and_later/sample_manage_models.py
                 :start-after: [START get_resource_details]
                 :end-before: [END get_resource_details]
                 :language: python
@@ -550,7 +550,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/v3.2/sample_manage_models.py
+            .. literalinclude:: ../samples/v3.2_and_later/sample_manage_models.py
                 :start-after: [START get_document_model]
                 :end-before: [END get_document_model]
                 :language: python
@@ -582,7 +582,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/v3.2/sample_get_operations.py
+            .. literalinclude:: ../samples/v3.2_and_later/sample_get_operations.py
                 :start-after: [START list_operations]
                 :end-before: [END list_operations]
                 :language: python
@@ -617,7 +617,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/v3.2/sample_get_operations.py
+            .. literalinclude:: ../samples/v3.2_and_later/sample_get_operations.py
                 :start-after: [START get_operation]
                 :end-before: [END get_operation]
                 :language: python
@@ -664,7 +664,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/v3.2/sample_build_classifier.py
+            .. literalinclude:: ../samples/v3.2_and_later/sample_build_classifier.py
                 :start-after: [START build_classifier]
                 :end-before: [END build_classifier]
                 :language: python
@@ -716,7 +716,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/v3.2/sample_manage_classifiers.py
+            .. literalinclude:: ../samples/v3.2_and_later/sample_manage_classifiers.py
                 :start-after: [START get_document_classifier]
                 :end-before: [END get_document_classifier]
                 :language: python
@@ -747,7 +747,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/v3.2/sample_manage_classifiers.py
+            .. literalinclude:: ../samples/v3.2_and_later/sample_manage_classifiers.py
                 :start-after: [START list_document_classifiers]
                 :end-before: [END list_document_classifiers]
                 :language: python
@@ -780,7 +780,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/v3.2/sample_manage_classifiers.py
+            .. literalinclude:: ../samples/v3.2_and_later/sample_manage_classifiers.py
                 :start-after: [START delete_document_classifier]
                 :end-before: [END delete_document_classifier]
                 :language: python

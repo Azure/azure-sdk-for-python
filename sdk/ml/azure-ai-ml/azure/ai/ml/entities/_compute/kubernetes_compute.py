@@ -21,23 +21,23 @@ class KubernetesCompute(Compute):
     :param name: Name of the compute
     :type name: str
     :param location: The resource location, defaults to None
-    :type location: Optional[str], optional
+    :type location: Optional[str]
     :param description: Description of the resource.
-    :type description: Optional[str], optional
+    :type description: Optional[str]
     :param tags: A set of tags. Contains resource tags defined as key/value pairs.
     :type tags: Optional[dict[str, str]]
     :param resource_id: ARM resource id of the underlying compute, defaults to None
-    :type resource_id: Optional[str], optional
+    :type resource_id: Optional[str]
     :param created_on: defaults to None
-    :type created_on: Optional[~datetime.datetime], optional
+    :type created_on: Optional[~datetime.datetime]
     :param provisioning_state: defaults to None
-    :type provisioning_state: Optional[str], optional
+    :type provisioning_state: Optional[str]
     :param namespace: Namespace of the KubernetesCompute
-    :type namespace: Optional[str], optional
+    :type namespace: Optional[str]
     :param properties: KubernetesProperties, defaults to None
-    :type properties: Optional[Dict], optional
+    :type properties: Optional[Dict]
     :param identity:  The identity configuration, identities that are associated with the compute cluster.
-    :type identity: IdentityConfiguration, optional
+    :type identity: IdentityConfiguration
     """
 
     def __init__(

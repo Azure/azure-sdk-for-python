@@ -11,7 +11,7 @@ PackageVersions:
   azure-eventhub: source
 
 Tests:
-- Test: send-event-batch
+- Test: send-events-batch
   Class: SendEventBatchTest
   Arguments:
   - --event-size 1024 --batch-size 100 --parallel 64

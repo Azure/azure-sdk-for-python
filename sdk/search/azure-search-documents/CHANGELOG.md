@@ -1,6 +1,28 @@
 # Release History
 
-## 11.4.0b7 (Unreleased)
+## 11.4.0b9 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 11.4.0b8 (2023-08-08)
+
+### Features Added
+
+- Exposed `HnswVectorSearchAlgorithmConfiguration`
+
+### Breaking Changes
+
+> These changes do not impact the API of stable versions such as 11.3.0.
+> Only code written against a beta version such as 11.4.0b6 may be affected.
+- Instead of using `VectorSearchAlgorithmConfiguration`, now you need to use concrete types like `HnswVectorSearchAlgorithmConfiguration`.
+
+## 11.4.0b7 (2023-08-08)
 
 ### Features Added
 
@@ -8,9 +30,9 @@
 
 ### Breaking Changes
 
-### Bugs Fixed
-
-### Other Changes
+> These changes do not impact the API of stable versions such as 11.3.0.
+> Only code written against a beta version such as 11.4.0b6 may be affected.
+- Stopped supporting `vector`, `top_k` and `vector_fields` in `SearchClient.search` method.
 
 ## 11.4.0b6 (2023-07-11)
 

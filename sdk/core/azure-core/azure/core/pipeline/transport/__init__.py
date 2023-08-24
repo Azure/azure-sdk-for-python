@@ -23,7 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-
+from typing import List, Optional, Any
 from ._base import HttpTransport, HttpRequest, HttpResponse
 from ._base_async import AsyncHttpTransport, AsyncHttpResponse
 
@@ -48,12 +48,15 @@ __all__ = [
 # pylint: disable=unused-import, redefined-outer-name, no-member, too-many-statements, too-many-branches
 
 
-def __dir__():
+def __dir__() -> List[str]:
     return __all__
 
 
-def __getattr__(name):
-    transport = None
+# To do nice overloads, need https://github.com/python/mypy/issues/8203
+
+
+def __getattr__(name: str):
+    transport: Optional[Any] = None
     if name == "AsyncioRequestsTransport":
         try:
             from ._requests_asyncio import AsyncioRequestsTransport
