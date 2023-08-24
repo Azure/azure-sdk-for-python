@@ -10,6 +10,10 @@ jobs:
   pool:
     name: azsdk-pool-mms-win-2022-general
     vmImage: MMS2022
+  variables:
+    VS_INSTALLER_URL: "https://aka.ms/vs/17/release/vs_enterprise.exe"
+    VS_INSTALLER_PATH: "$(Build.BinariesDirectory)/vs_enterprise.exe"
+    VS_ENTERPRISE_PATH: "C:\Program Files\Microsoft Visual Studio\2022\Enterprise"
   steps:
     - bash: |
         echo "##vso[task.prependpath]$(CONDA)/Scripts"
@@ -23,8 +27,8 @@ jobs:
     - script: |
         pip install tools/azure-sdk-tools[build]
         pip install disutils
-        choco install cmake.install
-        choco install visualstudio2019-workload-vctools
+        Invoke-WebRequest "$(VS_INSTALLER_URL)" -OutFile "$(VS_INSTALLER_PATH)"
+        $(VS_INSTALLER_PATH) --installPath $(VS_ENTERPRISE_PATH) --add Microsoft.VisualStudio.Workload.NativeDesktop --add Microsoft.VisualStudio.Component.VC.Tools.x86.x64 --quiet
       displayName: Install build script requirements
 
     - pwsh: |
@@ -37,7 +41,7 @@ jobs:
       displayName: "Convert YAML to JSON-like string"
 
     - script: |
-        call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\Tools\VsDevCmd.bat"
+        call "$(VS_ENTERPRISE_PATH)\Common7\Tools\VsDevCmd.bat"
         sdk_build_conda -c %arguments%
       displayName: Assemble Conda Packages
 
