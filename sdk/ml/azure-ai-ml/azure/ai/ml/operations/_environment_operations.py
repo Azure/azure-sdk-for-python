@@ -99,9 +99,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
         self._version_operations = service_client.environment_versions
         self._service_client = service_client
         self._all_operations = all_operations
-        self._datastore_operation = all_operations.all_operations[
-            AzureMLResourceType.DATASTORE
-        ]
+        self._datastore_operation = all_operations.all_operations[AzureMLResourceType.DATASTORE]
 
         # Maps a label to a function which given an asset name,
         # returns the asset associated with the label
@@ -172,9 +170,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
                     ).result()
 
                     if not result:
-                        env_rest_obj = self._get(
-                            name=environment.name, version=environment.version
-                        )
+                        env_rest_obj = self._get(name=environment.name, version=environment.version)
                         return Environment._from_rest_object(env_rest_obj)
 
                 sas_uri = get_sas_uri_for_registry_asset(
@@ -218,9 +214,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
                 )
             )
             if not env_rest_obj and self._registry_name:
-                env_rest_obj = self._get(
-                    name=environment.name, version=environment.version
-                )
+                env_rest_obj = self._get(name=environment.name, version=environment.version)
             return Environment._from_rest_object(env_rest_obj)
         except Exception as ex:  # pylint: disable=broad-except
             if isinstance(ex, SchemaValidationError):
@@ -264,9 +258,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
         )
 
     @monitor_with_activity(logger, "Environment.Get", ActivityType.PUBLICAPI)
-    def get(
-        self, name: str, version: Optional[str] = None, label: Optional[str] = None
-    ) -> Environment:
+    def get(self, name: str, version: Optional[str] = None, label: Optional[str] = None) -> Environment:
         """Returns the specified environment asset.
 
         :param name: Name of the environment.
@@ -347,9 +339,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
                 self._version_operations.list(
                     name=name,
                     registry_name=self._registry_name,
-                    cls=lambda objs: [
-                        Environment._from_rest_object(obj) for obj in objs
-                    ],
+                    cls=lambda objs: [Environment._from_rest_object(obj) for obj in objs],
                     **self._scope_kwargs,
                     **self._kwargs,
                 )
@@ -357,9 +347,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
                 else self._version_operations.list(
                     name=name,
                     workspace_name=self._workspace_name,
-                    cls=lambda objs: [
-                        Environment._from_rest_object(obj) for obj in objs
-                    ],
+                    cls=lambda objs: [Environment._from_rest_object(obj) for obj in objs],
                     list_view_type=list_view_type,
                     **self._scope_kwargs,
                     **self._kwargs,
@@ -368,18 +356,14 @@ class EnvironmentOperations(_ScopeDependentOperations):
         return (
             self._containers_operations.list(
                 registry_name=self._registry_name,
-                cls=lambda objs: [
-                    Environment._from_container_rest_object(obj) for obj in objs
-                ],
+                cls=lambda objs: [Environment._from_container_rest_object(obj) for obj in objs],
                 **self._scope_kwargs,
                 **self._kwargs,
             )
             if self._registry_name
             else self._containers_operations.list(
                 workspace_name=self._workspace_name,
-                cls=lambda objs: [
-                    Environment._from_container_rest_object(obj) for obj in objs
-                ],
+                cls=lambda objs: [Environment._from_container_rest_object(obj) for obj in objs],
                 list_view_type=list_view_type,
                 **self._scope_kwargs,
                 **self._kwargs,
@@ -548,9 +532,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
         environment_versions_operation_ = self._version_operations
 
         try:
-            _client, _rg, _sub = get_registry_client(
-                self._service_client._config.credential, registry_name
-            )
+            _client, _rg, _sub = get_registry_client(self._service_client._config.credential, registry_name)
             self._operation_scope.registry_name = registry_name
             self._operation_scope._resource_group_name = _rg
             self._operation_scope._subscription_id = _sub

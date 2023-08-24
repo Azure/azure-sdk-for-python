@@ -91,9 +91,7 @@ class OperationScope(object):
 
 
 class _ScopeDependentOperations(object):
-    def __init__(
-        self, operation_scope: OperationScope, operation_config: OperationConfig
-    ):
+    def __init__(self, operation_scope: OperationScope, operation_config: OperationConfig):
         self._operation_scope = operation_scope
         self._operation_config = operation_config
         self._scope_kwargs = {

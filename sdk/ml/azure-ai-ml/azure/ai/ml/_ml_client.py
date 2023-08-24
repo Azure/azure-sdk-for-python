@@ -193,9 +193,7 @@ class MLClient:
 
         show_progress = kwargs.pop("show_progress", True)
         enable_telemetry = kwargs.pop("enable_telemetry", True)
-        self._operation_config = OperationConfig(
-            show_progress=show_progress, enable_telemetry=enable_telemetry
-        )
+        self._operation_config = OperationConfig(show_progress=show_progress, enable_telemetry=enable_telemetry)
 
         if "cloud" in kwargs:
             cloud_name = kwargs["cloud"]
@@ -207,9 +205,7 @@ class MLClient:
                 except LookupError as e:
                     module_logger.debug("Missing keyword: %s", e)
             else:
-                module_logger.debug(
-                    "%s key not found in kwargs", CloudArgumentKeys.CLOUD_METADATA
-                )
+                module_logger.debug("%s key not found in kwargs", CloudArgumentKeys.CLOUD_METADATA)
         else:
             module_logger.debug("cloud key not found in kwargs")
             cloud_name = _get_default_cloud_name()
@@ -231,20 +227,18 @@ class MLClient:
         # whatever is received from the registry discovery service.
         workspace_location = None
         workspace_id = None
-        registry_reference  = kwargs.pop("registry_reference", None)
+        registry_reference = kwargs.pop("registry_reference", None)
         if registry_name or registry_reference:
             # get the workspace location here if workspace_reference is provided
             self._ws_operation_scope = OperationScope(
-            subscription_id,
-            resource_group_name,
-            workspace_name,
-        )
+                subscription_id,
+                resource_group_name,
+                workspace_name,
+            )
             workspace_reference = kwargs.pop("workspace_reference", None)
             if workspace_reference or registry_reference:
                 ws_ops = WorkspaceOperations(
-                    OperationScope(
-                        subscription_id, resource_group_name, workspace_reference
-                    ),
+                    OperationScope(subscription_id, resource_group_name, workspace_reference),
                     ServiceClient042023Preview(
                         credential=self._credential,
                         subscription_id=subscription_id,
@@ -310,13 +304,11 @@ class MLClient:
         if base_url:
             ops_kwargs["enforce_https"] = _is_https_url(base_url)
 
-        self._service_client_09_2020_dataplanepreview = (
-            ServiceClient092020DataplanePreview(
-                subscription_id=self._operation_scope._subscription_id,
-                credential=self._credential,
-                base_url=base_url,
-                **kwargs,
-            )
+        self._service_client_09_2020_dataplanepreview = ServiceClient092020DataplanePreview(
+            subscription_id=self._operation_scope._subscription_id,
+            credential=self._credential,
+            base_url=base_url,
+            **kwargs,
         )
 
         self._service_client_02_2022_preview = ServiceClient022022Preview(
@@ -335,7 +327,9 @@ class MLClient:
 
         self._service_client_04_2023 = ServiceClient042023(
             credential=self._credential,
-            subscription_id=self._ws_operation_scope._subscription_id if registry_reference else self._operation_scope._subscription_id,
+            subscription_id=self._ws_operation_scope._subscription_id
+            if registry_reference
+            else self._operation_scope._subscription_id,
             base_url=base_url,
             **kwargs,
         )
@@ -353,7 +347,9 @@ class MLClient:
 
         self._service_client_10_2022_preview = ServiceClient102022Preview(
             credential=self._credential,
-            subscription_id=self._ws_operation_scope._subscription_id if registry_reference else self._operation_scope._subscription_id,
+            subscription_id=self._ws_operation_scope._subscription_id
+            if registry_reference
+            else self._operation_scope._subscription_id,
             base_url=base_url,
             **kwargs,
         )
@@ -374,14 +370,18 @@ class MLClient:
 
         self._service_client_04_2023_preview = ServiceClient042023Preview(
             credential=self._credential,
-            subscription_id=self._ws_operation_scope._subscription_id if registry_reference else self._operation_scope._subscription_id,
+            subscription_id=self._ws_operation_scope._subscription_id
+            if registry_reference
+            else self._operation_scope._subscription_id,
             base_url=base_url,
             **kwargs,
         )
 
         self._service_client_06_2023_preview = ServiceClient062023Preview(
             credential=self._credential,
-            subscription_id=self._ws_operation_scope._subscription_id if registry_reference else self._operation_scope._subscription_id,
+            subscription_id=self._ws_operation_scope._subscription_id
+            if registry_reference
+            else self._operation_scope._subscription_id,
             base_url=base_url,
             **kwargs,
         )
@@ -457,9 +457,7 @@ class MLClient:
         self._code = CodeOperations(
             self._ws_operation_scope if registry_reference else self._operation_scope,
             self._operation_config,
-            self._service_client_10_2021_dataplanepreview
-            if registry_name
-            else self._service_client_04_2023,
+            self._service_client_10_2021_dataplanepreview if registry_name else self._service_client_04_2023,
             self._datastores,
             **ops_kwargs,
         )
@@ -467,21 +465,13 @@ class MLClient:
         self._environments = EnvironmentOperations(
             self._ws_operation_scope if registry_reference else self._operation_scope,
             self._operation_config,
-            self._service_client_10_2021_dataplanepreview
-            if registry_name
-            else self._service_client_04_2023_preview,
+            self._service_client_10_2021_dataplanepreview if registry_name else self._service_client_04_2023_preview,
             self._operation_container,
             **ops_kwargs,
         )
-        self._operation_container.add(
-            AzureMLResourceType.ENVIRONMENT, self._environments
-        )
-        self._local_endpoint_helper = _LocalEndpointHelper(
-            requests_pipeline=self._requests_pipeline
-        )
-        self._local_deployment_helper = _LocalDeploymentHelper(
-            self._operation_container
-        )
+        self._operation_container.add(AzureMLResourceType.ENVIRONMENT, self._environments)
+        self._local_endpoint_helper = _LocalEndpointHelper(requests_pipeline=self._requests_pipeline)
+        self._local_deployment_helper = _LocalDeploymentHelper(self._operation_container)
         self._online_endpoints = OnlineEndpointOperations(
             self._operation_scope,
             self._operation_config,
@@ -502,12 +492,8 @@ class MLClient:
             service_client_09_2020_dataplanepreview=self._service_client_09_2020_dataplanepreview,
             **ops_kwargs,
         )
-        self._operation_container.add(
-            AzureMLResourceType.BATCH_ENDPOINT, self._batch_endpoints
-        )
-        self._operation_container.add(
-            AzureMLResourceType.ONLINE_ENDPOINT, self._online_endpoints
-        )
+        self._operation_container.add(AzureMLResourceType.BATCH_ENDPOINT, self._batch_endpoints)
+        self._operation_container.add(AzureMLResourceType.ONLINE_ENDPOINT, self._online_endpoints)
         self._online_deployments = OnlineDeploymentOperations(
             self._ws_operation_scope if registry_reference else self._operation_scope,
             self._operation_config,
@@ -528,18 +514,12 @@ class MLClient:
             service_client_02_2023_preview=self._service_client_02_2023_preview,
             **ops_kwargs,
         )
-        self._operation_container.add(
-            AzureMLResourceType.ONLINE_DEPLOYMENT, self._online_deployments
-        )
-        self._operation_container.add(
-            AzureMLResourceType.BATCH_DEPLOYMENT, self._batch_deployments
-        )
+        self._operation_container.add(AzureMLResourceType.ONLINE_DEPLOYMENT, self._online_deployments)
+        self._operation_container.add(AzureMLResourceType.BATCH_DEPLOYMENT, self._batch_deployments)
         self._data = DataOperations(
             self._operation_scope,
             self._operation_config,
-            self._service_client_10_2021_dataplanepreview
-            if registry_name
-            else self._service_client_04_2023_preview,
+            self._service_client_10_2021_dataplanepreview if registry_name else self._service_client_04_2023_preview,
             self._datastores,
             requests_pipeline=self._requests_pipeline,
             all_operations=self._operation_container,
@@ -549,9 +529,7 @@ class MLClient:
         self._components = ComponentOperations(
             self._operation_scope,
             self._operation_config,
-            self._service_client_10_2021_dataplanepreview
-            if registry_name
-            else self._service_client_10_2022,
+            self._service_client_10_2021_dataplanepreview if registry_name else self._service_client_10_2022,
             self._operation_container,
             self._preflight,
             **ops_kwargs,
@@ -590,13 +568,9 @@ class MLClient:
                 _service_client_kwargs=kwargs,
                 **ops_kwargs,
             )
-            self._operation_container.add(
-                AzureMLResourceType.VIRTUALCLUSTER, self._virtual_clusters
-            )
+            self._operation_container.add(AzureMLResourceType.VIRTUALCLUSTER, self._virtual_clusters)
         except Exception as ex:  # pylint: disable=broad-except
-            module_logger.debug(
-                "Virtual Cluster operations could not be initialized due to %s ", ex
-            )
+            module_logger.debug("Virtual Cluster operations could not be initialized due to %s ", ex)
 
         self._featurestores = FeatureStoreOperations(
             self._operation_scope,
@@ -628,19 +602,11 @@ class MLClient:
             self._credential,
             **app_insights_handler_kwargs,
         )
-        self._operation_container.add(
-            AzureMLResourceType.WORKSPACE_HUB, self._workspace_hubs
-        )
+        self._operation_container.add(AzureMLResourceType.WORKSPACE_HUB, self._workspace_hubs)
 
-        self._operation_container.add(
-            AzureMLResourceType.FEATURE_STORE, self._featurestores
-        )
-        self._operation_container.add(
-            AzureMLResourceType.FEATURE_SET, self._featuresets
-        )
-        self._operation_container.add(
-            AzureMLResourceType.FEATURE_STORE_ENTITY, self._featurestoreentities
-        )
+        self._operation_container.add(AzureMLResourceType.FEATURE_STORE, self._featurestores)
+        self._operation_container.add(AzureMLResourceType.FEATURE_SET, self._featuresets)
+        self._operation_container.add(AzureMLResourceType.FEATURE_STORE_ENTITY, self._featurestoreentities)
 
     @classmethod
     def from_config(
@@ -743,9 +709,7 @@ class MLClient:
                     error_category=ErrorCategory.USER_ERROR,
                 )
 
-        subscription_id, resource_group, workspace_name = MLClient._get_workspace_info(
-            found_path
-        )
+        subscription_id, resource_group, workspace_name = MLClient._get_workspace_info(found_path)
 
         module_logger.info("Found the config file in: %s", found_path)
         return MLClient(
@@ -757,9 +721,7 @@ class MLClient:
         )
 
     @classmethod
-    def _ml_client_cli(
-        cls, credentials: TokenCredential, subscription_id: Optional[str], **kwargs
-    ) -> "MLClient":
+    def _ml_client_cli(cls, credentials: TokenCredential, subscription_id: Optional[str], **kwargs) -> "MLClient":
         """This method provides a way to create MLClient object for cli to leverage cli context for authentication.
 
         With this we do not have to use AzureCliCredentials from azure-identity package (not meant for heavy usage). The
@@ -773,9 +735,7 @@ class MLClient:
         :rtype: ~azure.ai.ml.MLClient
         """
 
-        ml_client = cls(
-            credential=credentials, subscription_id=subscription_id, **kwargs
-        )
+        ml_client = cls(credential=credentials, subscription_id=subscription_id, **kwargs)
         return ml_client
 
     @property
@@ -1006,10 +966,7 @@ class MLClient:
         # Checking the keys in the config.json file to check for required parameters.
         scope = config.get("Scope")
         if not scope:
-            if not all(
-                k in config.keys()
-                for k in ("subscription_id", "resource_group", "workspace_name")
-            ):
+            if not all(k in config.keys() for k in ("subscription_id", "resource_group", "workspace_name")):
                 msg = (
                     "The config file found in: {} does not seem to contain the required "
                     "parameters. Please make sure it contains your subscription_id, "
@@ -1076,9 +1033,7 @@ class MLClient:
                 :caption: Creating a resource asynchronously via MLClient.
         """
 
-        return _create_or_update(
-            entity, self._operation_container.all_operations, **kwargs
-        )
+        return _create_or_update(entity, self._operation_container.all_operations, **kwargs)
 
     # R = valid inputs/outputs for begin_create_or_update
     # Each entry here requires a registered _begin_create_or_update function below
@@ -1123,9 +1078,7 @@ class MLClient:
                 :caption: Creating a resource asynchronously via MLClient.
         """
 
-        return _begin_create_or_update(
-            entity, self._operation_container.all_operations, **kwargs
-        )
+        return _begin_create_or_update(entity, self._operation_container.all_operations, **kwargs)
 
     def __repr__(self) -> str:
         return f"""MLClient(credential={self._credential},
@@ -1189,9 +1142,7 @@ def _(entity: Datastore, operations):
 
 @singledispatch
 def _begin_create_or_update(entity, operations, **kwargs):
-    raise TypeError(
-        "Please refer to begin_create_or_update docstring for valid input types."
-    )
+    raise TypeError("Please refer to begin_create_or_update docstring for valid input types.")
 
 
 @_begin_create_or_update.register(Workspace)
@@ -1203,70 +1154,52 @@ def _(entity: Workspace, operations, *args, **kwargs):
 @_begin_create_or_update.register(Registry)
 def _(entity: Registry, operations, *args, **kwargs):
     module_logger.debug("Creating or updating registries")
-    return operations[AzureMLResourceType.REGISTRY].begin_create_or_update(
-        entity, **kwargs
-    )
+    return operations[AzureMLResourceType.REGISTRY].begin_create_or_update(entity, **kwargs)
 
 
 @_begin_create_or_update.register(Compute)
 def _(entity: Compute, operations, *args, **kwargs):
     module_logger.debug("Creating or updating compute")
-    return operations[AzureMLResourceType.COMPUTE].begin_create_or_update(
-        entity, **kwargs
-    )
+    return operations[AzureMLResourceType.COMPUTE].begin_create_or_update(entity, **kwargs)
 
 
 @_begin_create_or_update.register(OnlineEndpoint)
 def _(entity: OnlineEndpoint, operations, *args, **kwargs):
     module_logger.debug("Creating or updating online_endpoints")
-    return operations[AzureMLResourceType.ONLINE_ENDPOINT].begin_create_or_update(
-        entity, **kwargs
-    )
+    return operations[AzureMLResourceType.ONLINE_ENDPOINT].begin_create_or_update(entity, **kwargs)
 
 
 @_begin_create_or_update.register(BatchEndpoint)
 def _(entity: BatchEndpoint, operations, *args, **kwargs):
     module_logger.debug("Creating or updating batch_endpoints")
-    return operations[AzureMLResourceType.BATCH_ENDPOINT].begin_create_or_update(
-        entity, **kwargs
-    )
+    return operations[AzureMLResourceType.BATCH_ENDPOINT].begin_create_or_update(entity, **kwargs)
 
 
 @_begin_create_or_update.register(OnlineDeployment)
 def _(entity: OnlineDeployment, operations, *args, **kwargs):
     module_logger.debug("Creating or updating online_deployments")
-    return operations[AzureMLResourceType.ONLINE_DEPLOYMENT].begin_create_or_update(
-        entity, **kwargs
-    )
+    return operations[AzureMLResourceType.ONLINE_DEPLOYMENT].begin_create_or_update(entity, **kwargs)
 
 
 @_begin_create_or_update.register(BatchDeployment)
 def _(entity: BatchDeployment, operations, *args, **kwargs):
     module_logger.debug("Creating or updating batch_deployments")
-    return operations[AzureMLResourceType.BATCH_DEPLOYMENT].begin_create_or_update(
-        entity, **kwargs
-    )
+    return operations[AzureMLResourceType.BATCH_DEPLOYMENT].begin_create_or_update(entity, **kwargs)
 
 
 @_begin_create_or_update.register(ModelBatchDeployment)
 def _(entity: ModelBatchDeployment, operations, *args, **kwargs):
     module_logger.debug("Creating or updating batch_deployments")
-    return operations[AzureMLResourceType.BATCH_DEPLOYMENT].begin_create_or_update(
-        entity, **kwargs
-    )
+    return operations[AzureMLResourceType.BATCH_DEPLOYMENT].begin_create_or_update(entity, **kwargs)
 
 
 @_begin_create_or_update.register(PipelineComponentBatchDeployment)
 def _(entity: PipelineComponentBatchDeployment, operations, *args, **kwargs):
     module_logger.debug("Creating or updating batch_deployments")
-    return operations[AzureMLResourceType.BATCH_DEPLOYMENT].begin_create_or_update(
-        entity, **kwargs
-    )
+    return operations[AzureMLResourceType.BATCH_DEPLOYMENT].begin_create_or_update(entity, **kwargs)
 
 
 @_begin_create_or_update.register(Schedule)
 def _(entity: Schedule, operations, *args, **kwargs):
     module_logger.debug("Creating or updating schedules")
-    return operations[AzureMLResourceType.SCHEDULE].begin_create_or_update(
-        entity, **kwargs
-    )
+    return operations[AzureMLResourceType.SCHEDULE].begin_create_or_update(entity, **kwargs)

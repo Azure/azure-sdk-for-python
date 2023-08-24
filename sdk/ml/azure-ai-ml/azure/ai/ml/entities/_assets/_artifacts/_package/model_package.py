@@ -63,9 +63,7 @@ class PackageInputPathId:
         )
 
     @classmethod
-    def _from_rest_object(
-        cls, package_input_path_id_rest_object: RestPackageInputPathId
-    ) -> "PackageInputPathId":
+    def _from_rest_object(cls, package_input_path_id_rest_object: RestPackageInputPathId) -> "PackageInputPathId":
         return PackageInputPathId(
             input_path_type=package_input_path_id_rest_object.input_path_type,
             resource_id=package_input_path_id_rest_object.resource_id,
@@ -124,9 +122,7 @@ class PackageInputPathUrl:
     :type url: Optional[str]
     """
 
-    def __init__(
-        self, *, input_path_type: Optional[str] = None, url: Optional[str] = None
-    ) -> None:
+    def __init__(self, *, input_path_type: Optional[str] = None, url: Optional[str] = None) -> None:
         self.input_path_type = input_path_type
         self.url = url
 
@@ -137,9 +133,7 @@ class PackageInputPathUrl:
         )
 
     @classmethod
-    def _from_rest_object(
-        cls, package_input_path_url_rest_object: RestPackageInputPathUrl
-    ) -> "PackageInputPathUrl":
+    def _from_rest_object(cls, package_input_path_url_rest_object: RestPackageInputPathUrl) -> "PackageInputPathUrl":
         return PackageInputPathUrl(
             input_path_type=package_input_path_url_rest_object.input_path_type,
             url=package_input_path_url_rest_object.url,
@@ -165,9 +159,7 @@ class ModelPackageInput:
         self,
         *,
         type: Optional[str] = None,
-        path: Optional[
-            Union[PackageInputPathId, PackageInputPathUrl, PackageInputPathVersion]
-        ] = None,
+        path: Optional[Union[PackageInputPathId, PackageInputPathUrl, PackageInputPathVersion]] = None,
         mode: Optional[str] = None,
         mount_path: Optional[str] = None,
     ) -> None:
@@ -185,9 +177,7 @@ class ModelPackageInput:
         )
 
     @classmethod
-    def _from_rest_object(
-        cls, model_package_input_rest_object: RestModelPackageInput
-    ) -> "ModelPackageInput":
+    def _from_rest_object(cls, model_package_input_rest_object: RestModelPackageInput) -> "ModelPackageInput":
         return ModelPackageInput(
             type=model_package_input_rest_object.input_type,
             path=model_package_input_rest_object.path._from_rest_object(),
@@ -224,9 +214,7 @@ class ModelPackage(Resource, PackageRequest):
         *,
         target_environment_name: str = None,
         target_environment_id: str = None,
-        inferencing_server: Union[
-            AzureMLOnlineInferencingServer, AzureMLBatchInferencingServer
-        ],
+        inferencing_server: Union[AzureMLOnlineInferencingServer, AzureMLBatchInferencingServer],
         base_environment_source: BaseEnvironment = None,
         target_environment_version: Optional[str] = None,
         environment_variables: Optional[Dict[str, str]] = None,
@@ -283,14 +271,10 @@ class ModelPackage(Resource, PackageRequest):
         dump_yaml_to_file(dest, yaml_serialized, default_flow_style=False)
 
     def _to_dict(self) -> Dict:
-        return ModelPackageSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(
-            self
-        )  # pylint: disable=no-member
+        return ModelPackageSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)  # pylint: disable=no-member
 
     @classmethod
-    def _from_rest_object(
-        cls, model_package_rest_object: PackageResponse
-    ) -> "ModelPackageResponse":
+    def _from_rest_object(cls, model_package_rest_object: PackageResponse) -> "ModelPackageResponse":
         target_environment_id = model_package_rest_object.target_environment_id
         return target_environment_id
 
@@ -320,15 +304,9 @@ class ModelPackage(Resource, PackageRequest):
                 base_environment_source=self.base_environment_source._to_rest_object()
                 if self.base_environment_source
                 else None,
-                inferencing_server=self.inferencing_server._to_rest_object()
-                if self.inferencing_server
-                else None,
-                model_configuration=self.model_configuration._to_rest_object()
-                if self.model_configuration
-                else None,
-                inputs=[input._to_rest_object() for input in self.inputs]
-                if self.inputs
-                else None,
+                inferencing_server=self.inferencing_server._to_rest_object() if self.inferencing_server else None,
+                model_configuration=self.model_configuration._to_rest_object() if self.model_configuration else None,
+                inputs=[input._to_rest_object() for input in self.inputs] if self.inputs else None,
                 tags=self.tags,
                 environment_variables=self.environment_variables,
             )
@@ -338,15 +316,9 @@ class ModelPackage(Resource, PackageRequest):
                 base_environment_source=self.base_environment_source._to_rest_object()
                 if self.base_environment_source
                 else None,
-                inferencing_server=self.inferencing_server._to_rest_object()
-                if self.inferencing_server
-                else None,
-                model_configuration=self.model_configuration._to_rest_object()
-                if self.model_configuration
-                else None,
-                inputs=[input._to_rest_object() for input in self.inputs]
-                if self.inputs
-                else None,
+                inferencing_server=self.inferencing_server._to_rest_object() if self.inferencing_server else None,
+                model_configuration=self.model_configuration._to_rest_object() if self.model_configuration else None,
+                inputs=[input._to_rest_object() for input in self.inputs] if self.inputs else None,
                 tags=self.tags,
                 environment_variables=self.environment_variables,
             )

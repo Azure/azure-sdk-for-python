@@ -107,9 +107,7 @@ class DataOperations(_ScopeDependentOperations):
         self,
         operation_scope: OperationScope,
         operation_config: OperationConfig,
-        service_client: Union[
-            ServiceClient042023_preview, ServiceClient102021Dataplane
-        ],
+        service_client: Union[ServiceClient042023_preview, ServiceClient102021Dataplane],
         datastore_operations: DatastoreOperations,
         **kwargs: Dict,
     ):
@@ -173,18 +171,14 @@ class DataOperations(_ScopeDependentOperations):
         return (
             self._container_operation.list(
                 registry_name=self._registry_name,
-                cls=lambda objs: [
-                    Data._from_container_rest_object(obj) for obj in objs
-                ],
+                cls=lambda objs: [Data._from_container_rest_object(obj) for obj in objs],
                 list_view_type=list_view_type,
                 **self._scope_kwargs,
             )
             if self._registry_name
             else self._container_operation.list(
                 workspace_name=self._workspace_name,
-                cls=lambda objs: [
-                    Data._from_container_rest_object(obj) for obj in objs
-                ],
+                cls=lambda objs: [Data._from_container_rest_object(obj) for obj in objs],
                 list_view_type=list_view_type,
                 **self._scope_kwargs,
             )
@@ -226,9 +220,7 @@ class DataOperations(_ScopeDependentOperations):
         )
 
     @monitor_with_activity(logger, "Data.Get", ActivityType.PUBLICAPI)
-    def get(
-        self, name: str, version: Optional[str] = None, label: Optional[str] = None
-    ) -> Data:
+    def get(self, name: str, version: Optional[str] = None, label: Optional[str] = None) -> Data:
         """Get the specified data asset.
 
         :param name: Name of data asset.
@@ -358,9 +350,7 @@ class DataOperations(_ScopeDependentOperations):
                     version=version,
                     resource_group=self._resource_group_name,
                     registry=self._registry_name,
-                    body=get_asset_body_for_registry_storage(
-                        self._registry_name, "data", name, version
-                    ),
+                    body=get_asset_body_for_registry_storage(self._registry_name, "data", name, version),
                 )
 
             referenced_uris = self._validate(data)
@@ -448,11 +438,7 @@ class DataOperations(_ScopeDependentOperations):
         """
 
         experiment_name = "data_import_" + data_import.name
-        data_import.type = (
-            AssetTypes.MLTABLE
-            if isinstance(data_import.source, Database)
-            else AssetTypes.URI_FOLDER
-        )
+        data_import.type = AssetTypes.MLTABLE if isinstance(data_import.source, Database) else AssetTypes.URI_FOLDER
 
         # avoid specifying auto_delete_setting in job output now
         _validate_auto_delete_setting_in_data_output(data_import.auto_delete_setting)
@@ -486,16 +472,12 @@ class DataOperations(_ScopeDependentOperations):
             settings=PipelineJobSettings(force_rerun=True),
             jobs={experiment_name: import_job},
         )
-        import_pipeline.properties[
-            "azureml.materializationAssetName"
-        ] = data_import.name
-        return self._all_operations.all_operations[
-            AzureMLResourceType.JOB
-        ].create_or_update(job=import_pipeline, skip_validation=True, **kwargs)
+        import_pipeline.properties["azureml.materializationAssetName"] = data_import.name
+        return self._all_operations.all_operations[AzureMLResourceType.JOB].create_or_update(
+            job=import_pipeline, skip_validation=True, **kwargs
+        )
 
-    @monitor_with_activity(
-        logger, "Data.ListMaterializationStatus", ActivityType.PUBLICAPI
-    )
+    @monitor_with_activity(logger, "Data.ListMaterializationStatus", ActivityType.PUBLICAPI)
     @experimental
     def list_materialization_status(
         self,
@@ -557,19 +539,13 @@ class DataOperations(_ScopeDependentOperations):
                     metadata_yaml_path = None
                 except Exception:  # pylint: disable=broad-except
                     # skip validation for remote MLTable when the contents cannot be read
-                    module_logger.info(
-                        "Unable to access MLTable metadata at path %s", asset_path
-                    )
+                    module_logger.info("Unable to access MLTable metadata at path %s", asset_path)
                     return None
             else:
-                metadata_contents = read_local_mltable_metadata_contents(
-                    path=asset_path
-                )
+                metadata_contents = read_local_mltable_metadata_contents(path=asset_path)
                 metadata_yaml_path = Path(asset_path, "MLTable")
             metadata = MLTableMetadata._load(metadata_contents, metadata_yaml_path)
-            mltable_metadata_schema = self._try_get_mltable_metadata_jsonschema(
-                data._mltable_schema_url
-            )
+            mltable_metadata_schema = self._try_get_mltable_metadata_jsonschema(data._mltable_schema_url)
             if mltable_metadata_schema and not data._skip_validation:
                 validate_mltable_metadata(
                     mltable_metadata_dict=metadata_contents,
@@ -588,15 +564,11 @@ class DataOperations(_ScopeDependentOperations):
 
         return None
 
-    def _try_get_mltable_metadata_jsonschema(
-        self, mltable_schema_url: str
-    ) -> Union[Dict, None]:
+    def _try_get_mltable_metadata_jsonschema(self, mltable_schema_url: str) -> Union[Dict, None]:
         if mltable_schema_url is None:
             mltable_schema_url = MLTABLE_METADATA_SCHEMA_URL_FALLBACK
         try:
-            return download_mltable_metadata_schema(
-                mltable_schema_url, self._requests_pipeline
-            )
+            return download_mltable_metadata_schema(mltable_schema_url, self._requests_pipeline)
         except Exception:  # pylint: disable=broad-except
             module_logger.info(
                 'Failed to download MLTable metadata jsonschema from "%s", skipping validation',
@@ -777,9 +749,7 @@ class DataOperations(_ScopeDependentOperations):
         data_versions_operation_ = self._operation
 
         try:
-            _client, _rg, _sub = get_registry_client(
-                self._service_client._config.credential, registry_name
-            )
+            _client, _rg, _sub = get_registry_client(self._service_client._config.credential, registry_name)
             self._operation_scope.registry_name = registry_name
             self._operation_scope._resource_group_name = _rg
             self._operation_scope._subscription_id = _sub
@@ -801,24 +771,16 @@ def _assert_local_path_matches_asset_type(
     # assert file system type matches asset type
     if asset_type == AssetTypes.URI_FOLDER and not os.path.isdir(local_path):
         raise ValidationException(
-            message="File path does not match asset type {}: {}".format(
-                asset_type, local_path
-            ),
-            no_personal_data_message="File path does not match asset type {}".format(
-                asset_type
-            ),
+            message="File path does not match asset type {}: {}".format(asset_type, local_path),
+            no_personal_data_message="File path does not match asset type {}".format(asset_type),
             target=ErrorTarget.DATA,
             error_category=ErrorCategory.USER_ERROR,
             error_type=ValidationErrorType.FILE_OR_FOLDER_NOT_FOUND,
         )
     if asset_type == AssetTypes.URI_FILE and not os.path.isfile(local_path):
         raise ValidationException(
-            message="File path does not match asset type {}: {}".format(
-                asset_type, local_path
-            ),
-            no_personal_data_message="File path does not match asset type {}".format(
-                asset_type
-            ),
+            message="File path does not match asset type {}: {}".format(asset_type, local_path),
+            no_personal_data_message="File path does not match asset type {}".format(asset_type),
             target=ErrorTarget.DATA,
             error_category=ErrorCategory.USER_ERROR,
             error_type=ValidationErrorType.FILE_OR_FOLDER_NOT_FOUND,

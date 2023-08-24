@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=protected-access,try-except-raise
+# pylint: disable=protected-access,try-except-raise,line-too-long
 
 import logging
 
@@ -54,14 +54,18 @@ def package_deployment(deployment: Deployment, model_ops) -> Deployment:
     else:
         base_environment_source = None
 
-    package_request = (PackageRequest(
-        target_environment_name=target_environment_name,
-        base_environment_source=base_environment_source,
-        inferencing_server=inferencing_server,
-    ) if not model_str.startswith(REGISTRY_URI_FORMAT)
-    else DataPlanePackageRequest(inferencing_server=inferencing_server, target_environment_id=target_environment_name,
-                                 base_environment_source=base_environment_source)
-
+    package_request = (
+        PackageRequest(
+            target_environment_name=target_environment_name,
+            base_environment_source=base_environment_source,
+            inferencing_server=inferencing_server,
+        )
+        if not model_str.startswith(REGISTRY_URI_FORMAT)
+        else DataPlanePackageRequest(
+            inferencing_server=inferencing_server,
+            target_environment_id=target_environment_name,
+            base_environment_source=base_environment_source,
+        )
     )
 
     if deployment.environment:
@@ -71,14 +75,18 @@ def package_deployment(deployment: Deployment, model_ops) -> Deployment:
             package_request.base_environment_source.resource_id = deployment.environment
     if deployment.code_configuration:
         if not deployment.code_configuration.code.startswith(REGISTRY_URI_FORMAT):
-            package_request.inferencing_server.code_configuration.code_id = "azureml:/" + deployment.code_configuration.code
+            package_request.inferencing_server.code_configuration.code_id = (
+                "azureml:/" + deployment.code_configuration.code
+            )
         else:
             package_request.inferencing_server.code_configuration.code_id = deployment.code_configuration.code
 
-
     try:
         packaged_env = model_ops.package(
-            model_name, model_version, package_request=package_request, skip_to_rest=True,
+            model_name,
+            model_version,
+            package_request=package_request,
+            skip_to_rest=True,
         )
         if not model_str.startswith(REGISTRY_URI_FORMAT):
             deployment.environment = packaged_env.id

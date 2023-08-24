@@ -252,7 +252,7 @@ class Workspace(Resource):
             feature_store_settings=feature_store_settings,
             enable_data_isolation=rest_obj.enable_data_isolation,
             workspace_hub=rest_obj.hub_resource_id,
-            workspace_id=rest_obj.workspace_id
+            workspace_id=rest_obj.workspace_id,
         )
 
     @classmethod

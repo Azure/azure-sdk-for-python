@@ -27,9 +27,7 @@ class ModelPackageSchema(PathAwareSchema):
     inputs = fields.List(NestedField(ModelPackageInputSchema))
     tags = fields.Dict()
     environment_variables = fields.Dict(
-        metadata={
-            "description": "Environment variables configuration for the model package."
-        }
+        metadata={"description": "Environment variables configuration for the model package."}
     )
 
     @post_load
