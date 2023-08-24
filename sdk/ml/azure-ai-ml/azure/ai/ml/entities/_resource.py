@@ -75,7 +75,7 @@ class Resource(abc.ABC):
         return self.__source_path
 
     @_source_path.setter
-    def _source_path(self, value: Union[str, PathLike]):
+    def _source_path(self, value: Union[str, PathLike]) -> None:
         self.__source_path = Path(value).as_posix()
 
     @property
@@ -85,7 +85,9 @@ class Resource(abc.ABC):
         :return: The global ID of the resource, an Azure Resource Manager (ARM) ID.
         :rtype: Optional[str]
         """
-        return self._id
+        if self._id is None:
+            return None
+        return str(self._id)
 
     @property
     def creation_context(self) -> Optional[SystemData]:
@@ -197,5 +199,5 @@ class Resource(abc.ABC):
         if hasattr(self, "print_as_yaml") and self.print_as_yaml:
             # pylint: disable=no-member
             yaml_serialized = self._to_dict()
-            return dump_yaml(yaml_serialized, default_flow_style=False)
+            return str(dump_yaml(yaml_serialized, default_flow_style=False))
         return self.__repr__()
