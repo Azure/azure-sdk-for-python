@@ -1,13 +1,11 @@
 {% set name = "azure-confidentialledger" %}
-{% set version = "2023.06.01" %}
 
 package:
   name: "{{ name|lower }}"
-  version: "{{ version }}"
+  version: {{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
 
 source:
-  url: "https://files.pythonhosted.org/packages/a1/57/853726be83f065e5f7d21f9a0ebfca8bc2dd4132a5fece47b7d9df0e033a/azure-confidentialledger-1.1.0.zip"
-  sha256: 0e1fbf7d8cf216ef91a8c85e9007e5dcba1b89d07a49641fef79410a41ce3805
+  url: {{ environ.get('CONFIDENTIALLEDGER_SOURCE_DISTRIBUTION', '') }}
 
 build:
   noarch: python
@@ -16,9 +14,9 @@ build:
 
 requirements:
   host:
-    - azure-core >=2022.06.01
-    - azure-identity >=2022.06.01
-    - msrest >=2022.06.01
+    - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - azure-identity >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - msrest >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - pip
     - python
     - six
@@ -26,9 +24,9 @@ requirements:
     - aiohttp
     - isodate
   run:
-    - azure-core >=2022.06.01
-    - azure-identity >=2022.06.01
-    - msrest >=2022.06.01
+    - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - azure-identity >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - msrest >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - python
     - six
     - requests-oauthlib >=0.5.0

@@ -1,13 +1,11 @@
 {% set name = "azure-appconfiguration" %}
-{% set version = "2023.06.01" %}
 
 package:
   name: "{{ name|lower }}"
-  version: "{{ version }}"
+  version: {{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
 
 source:
-  url: "https://files.pythonhosted.org/packages/77/18/3d95b3ca4aec25070c4f0baaf355d5a537eaaa4e93f0fbc3ab0dbad0e1ce/azure-appconfiguration-1.4.0.zip"
-  sha256: 7f36724fa8f72bdd050a525ac1fde8d05d9348c4aee6956a66f3fcc89c137417
+  url: {{ environ.get('APPCONFIGURATION_SOURCE_DISTRIBUTION', '') }}
 
 build:
   noarch: python
@@ -16,18 +14,18 @@ build:
 
 requirements:
   host:
-    - azure-core >=2023.06.01
-    - azure-identity >=2023.06.01
-    - msrest >=2023.06.01
+    - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - azure-identity >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - msrest >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - pip
     - python
     - requests-oauthlib >=0.5.0
     - aiohttp
     - isodate
   run:
-    - azure-core >=2023.06.01
-    - azure-identity >=2023.06.01
-    - msrest >=2023.06.01
+    - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - azure-identity >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - msrest >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - python
     - requests-oauthlib >=0.5.0
     - aiohttp

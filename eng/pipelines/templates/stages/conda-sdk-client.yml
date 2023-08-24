@@ -144,9 +144,59 @@ stages:
                 checkout:
                 - package: azure-ai-ml
                   download_uri: https://files.pythonhosted.org/packages/61/61/c50f2244e09000c101f29a23a585c96e7342693dc9a28064bd70eab82aa3/azure-ai-ml-1.7.2.zip
-              
-
-
+              - name: azure-ai-textanalytics
+                service: textanalytics
+                checkout:
+                - package: azure-ai-textanalytics
+                  download_uri: https://files.pythonhosted.org/packages/3a/7b/ea7ae656769d6b8f11731532c46cb65372c5fe5c18a31eef26c88c7b2f5e/azure-ai-textanalytics-5.2.1.zip
+              - name: azure-ai-translation-document
+                service: translation
+                checkout:
+                - package: azure-ai-translation-document
+                  download_uri: https://files.pythonhosted.org/packages/3a/09/b12960e87cd52fe3893dc395154b42469a4103345bcf8ef28538f6d64ce9/azure-ai-translation-document-1.0.0.zip 
+              - name: azure-appconfiguration
+                service: appconfiguration
+                checkout:
+                - package: azure-appconfiguration
+                  download_uri: https://files.pythonhosted.org/packages/77/18/3d95b3ca4aec25070c4f0baaf355d5a537eaaa4e93f0fbc3ab0dbad0e1ce/azure-appconfiguration-1.4.0.zip
+              - name: azure-communication
+                service: communication
+                checkout:
+                - package: azure-communication-chat
+                  download_uri: https://files.pythonhosted.org/packages/b5/5b/3c38c0f07f50f1a7877f088a63b27733fa36ca835609459bcf0aefec2571/azure-communication-chat-1.1.0.zip
+                - package: azure-communication-email
+                  download_uri: https://files.pythonhosted.org/packages/4c/fc/45a122a7d6b2cc4652aa9c5ce3a151161433447361af98f15e82cae63727/azure-communication-email-1.0.0.zip
+                - package: azure-communication-identity
+                  download_uri: https://files.pythonhosted.org/packages/f0/b2/21ab355a1db459aabc2c0f7ab431f6577c0c3b6b88d9992548f367b567e0/azure-communication-identity-1.3.1.zip
+                - package: azure-communication-phonenumbers
+                  download_uri: https://files.pythonhosted.org/packages/19/6b/7e8f06bc56c385866c69b736bfcef7748af748783c8434ec38d643339a4b/azure-communication-phonenumbers-1.1.0.zip
+                - package: azure-communication-sms-1.0.1
+                  download_uri: https://files.pythonhosted.org/packages/a2/20/81b03d82c1240b2ee4784e413fb49393b871f78b4e935d7746875a10f8d7/azure-communication-sms-1.0.1.zip
+              - name: azure-confidentialledger
+                service: confidentialledger
+                checkout:
+                - package: azure-confidentialledger
+                  download_uri: https://files.pythonhosted.org/packages/a1/57/853726be83f065e5f7d21f9a0ebfca8bc2dd4132a5fece47b7d9df0e033a/azure-confidentialledger-1.1.0.zip
+              - name: azure-containerregistry
+                service: containerregistry
+                checkout: 
+                - package: azure-containerregistry
+                  download_uri: "https://files.pythonhosted.org/packages/ce/d7/c5892390196d05c5ce4f4f78bd39b5d7af9b984ae08776e9f6abf91637ff/azure-containerregistry-1.1.0.zip" 
+              - name: azure-cosmos
+                service: cosmos
+                checkout:
+                - package: azure-cosmos
+                  download_uri: https://files.pythonhosted.org/packages/90/dc/d962600643262152e5b8ab166a5327881a9ac91d6b7e1049ccbec7a2b5d7/azure-cosmos-4.3.1.zip
+              - name: azure-data-tables
+                service: tables
+                checkout:
+                - package: azure-data-tables
+                  download_uri: https://files.pythonhosted.org/packages/91/03/606dc3a49f054e3055b7eaf581ea988b76376b66874a2a59ccf1e988c5ee/azure-data-tables-12.4.2.zip
+              - name: azure-developer-loadtesting
+                service: loadtesting
+                checkout:
+                - package: azure-developer-loadtesting
+                  download_uri: https://files.pythonhosted.org/packages/15/8e/610c3e58f373f305636d322480c49d0f340025770df2bd4b3610d28d3a8a/azure-developer-loadtesting-1.0.0.zip
   # # - ${{if and(ne(variables['Build.Reason'], 'PullRequest'), eq(variables['System.TeamProject'], 'internal'))}}:
   # #   - template: archetype-conda-release.yml
   # #     parameters:

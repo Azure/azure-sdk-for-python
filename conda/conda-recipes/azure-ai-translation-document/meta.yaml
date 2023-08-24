@@ -1,13 +1,11 @@
 {% set name = "azure-ai-translation-document" %}
-{% set version = "2023.06.01" %}
 
 package:
   name: "{{ name|lower }}"
-  version: "{{ version }}"
+  version: {{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
 
 source:
-  url: "https://files.pythonhosted.org/packages/3a/09/b12960e87cd52fe3893dc395154b42469a4103345bcf8ef28538f6d64ce9/azure-ai-translation-document-1.0.0.zip"
-  sha256: 331445a1da714c2da040d8e2db1d8a802e49586d3fcdede01c982d783ddcdc73
+  url: {{ environ.get('TRANSLATION_SOURCE_DISTRIBUTION', '') }}
 
 build:
   noarch: python
@@ -16,9 +14,9 @@ build:
 
 requirements:
   host:
-    - azure-core >=2022.06.01
-    - azure-identity >=2022.06.01
-    - msrest >=2022.06.01
+    - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - azure-identity >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - msrest >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - pip
     - python
     - six
@@ -26,9 +24,9 @@ requirements:
     - aiohttp
     - isodate
   run:
-    - azure-core >=2022.06.01
-    - azure-identity >=2022.06.01
-    - msrest >=2022.06.01
+    - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - azure-identity >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - msrest >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - python
     - six
     - requests-oauthlib >=0.5.0

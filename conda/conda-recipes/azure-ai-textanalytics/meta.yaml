@@ -1,13 +1,11 @@
 {% set name = "azure-ai-textanalytics" %}
-{% set version = "2023.06.01" %}
 
 package:
   name: "{{ name|lower }}"
-  version: "{{ version }}"
+  version: {{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
 
 source:
-  url: "https://files.pythonhosted.org/packages/3a/7b/ea7ae656769d6b8f11731532c46cb65372c5fe5c18a31eef26c88c7b2f5e/azure-ai-textanalytics-5.2.1.zip"
-  sha256: fd48265333ad1076d642c5da426af9e77fd4b7efc7ef1529ae98958bfe14d3e4
+  url: {{ environ.get('TEXTANALYTICS_SOURCE_DISTRIBUTION', '') }}
 
 build:
   noarch: python
@@ -16,9 +14,9 @@ build:
 
 requirements:
   host:
-    - azure-core >=2023.06.01
-    - azure-identity >=2023.06.01
-    - msrest >=2023.06.01
+    - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - azure-identity >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - msrest >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - pip
     - python
     - six
@@ -26,9 +24,9 @@ requirements:
     - aiohttp
     - isodate
   run:
-    - azure-core >=2023.06.01
-    - azure-identity >=2023.06.01
-    - msrest >=2023.06.01
+    - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - azure-identity >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - msrest >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - python
     - six
     - requests-oauthlib >=0.5.0

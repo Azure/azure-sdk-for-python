@@ -1,14 +1,12 @@
 {% set name = "azure-developer-loadtesting" %}
-{% set version = "2023.06.01" %}
 
 package:
   name: "{{ name|lower }}"
-  version: "{{ version }}"
+  version: {{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
 
 source:
-  url: "https://files.pythonhosted.org/packages/15/8e/610c3e58f373f305636d322480c49d0f340025770df2bd4b3610d28d3a8a/azure-developer-loadtesting-1.0.0.zip"
-  sha256: 178d4ef0762a8b95185cda5d9bc18d39a379555929d2f8c0248aa5d201dbe4dd
-
+  url: {{ environ.get('LOADTESTING_SOURCE_DISTRIBUTION', '') }}
+  
 build:
   noarch: python
   number: 0
@@ -16,15 +14,15 @@ build:
 
 requirements:
   host:
-    - azure-core >=2023.06.01
-    - azure-identity >=2023.06.01
+    - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - azure-identity >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - isodate <1.0.0,>=0.6.1
     - pip
     - python
     - typing-extensions
   run:
-    - azure-core >=2023.06.01
-    - azure-identity >=2023.06.01
+    - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - azure-identity >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - isodate <1.0.0,>=0.6.1
     - python
     - typing-extensions
