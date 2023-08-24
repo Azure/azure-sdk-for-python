@@ -70,7 +70,7 @@ class Asset(Resource):
             **kwargs,
         )
 
-        self.version = str(version)
+        self.version = version
         self.latest_version = None
 
     @abstractmethod
