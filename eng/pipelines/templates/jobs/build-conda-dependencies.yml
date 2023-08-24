@@ -24,7 +24,7 @@ jobs:
         pip install tools/azure-sdk-tools[build]
         pip install disutils
         choco install cmake.install
-        choco install visualstudio2019buildtools
+        choco install visualstudio2019-workload-vctools
       displayName: Install build script requirements
 
     - pwsh: |
@@ -37,7 +37,7 @@ jobs:
       displayName: "Convert YAML to JSON-like string"
 
     - script: |
-        call "C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\Common7\tools\VsDevCmd.bat"
+        call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\Tools\VsDevCmd.bat"
         sdk_build_conda -c %arguments%
       displayName: Assemble Conda Packages
 
