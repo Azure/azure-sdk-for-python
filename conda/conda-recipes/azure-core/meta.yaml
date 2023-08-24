@@ -45,7 +45,7 @@ about:
   license: MIT
   license_family: MIT
   license_file: 
-  summary: "Microsoft Azure Core Library for Python{{ environ.get('CORE_SUMMARY', '') }}"
+  summary: "Microsoft Azure Core Library for Python"
   description: |
     Azure core provides shared exceptions and modules for Python SDK client libraries.
     Please see https://aka.ms/azsdk/conda/releases/core for version details.

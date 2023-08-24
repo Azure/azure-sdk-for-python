@@ -47,7 +47,7 @@ about:
   description: |
     Azure Cognitive Services Form Recognizer is a cloud service that uses machine learning 
     to recognize text and table data from form documents. 
-    Please see https://aka.ms/azsdk/conda/releases/formrecognizer for version details.{{ environ.get('STORAGE_SUMMARY', '') }}
+    Please see https://aka.ms/azsdk/conda/releases/formrecognizer for version details.
   doc_url: 
   dev_url: 
 

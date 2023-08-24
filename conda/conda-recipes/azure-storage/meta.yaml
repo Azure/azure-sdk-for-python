@@ -40,7 +40,7 @@ about:
   license: MIT
   license_family: MIT
   license_file:
-  summary: Microsoft Azure Storage Client Library for Python{{ environ.get('STORAGE_SUMMARY', '') }}
+  summary: Microsoft Azure Storage Client Library for Python.
   doc_url:
   dev_url:
 

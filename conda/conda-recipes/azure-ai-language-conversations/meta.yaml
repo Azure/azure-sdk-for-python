@@ -1,13 +1,11 @@
 {% set name = "azure-ai-language-conversations" %}
-{% set version = "2023.06.01" %}
 
 package:
   name: "{{ name|lower }}"
-  version: "{{ version }}"
+  version: {{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
 
 source:
-  url: "https://files.pythonhosted.org/packages/46/fb/0d1a4186717655ab190c0b0108e1c26fc11e62b13bf105cd1316aa0489ce/azure-ai-language-conversations-1.0.0.zip"
-  sha256: 2b01444d088ee5ac0124fca586dead9f92e54612c1892b628a46b2665f698c70
+  url: {{ environ.get('COGNITIVELANGUAGE_SOURCE_DISTRIBUTION', '') }}
 
 build:
   noarch: python
@@ -16,9 +14,9 @@ build:
 
 requirements:
   host:
-    - azure-core >=2022.06.01
-    - azure-identity >=2022.06.01
-    - msrest >=2022.06.01
+    - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - azure-identity >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - msrest >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - pip
     - python
     - six
@@ -26,9 +24,9 @@ requirements:
     - aiohttp
     - isodate
   run:
-    - azure-core >=2022.06.01
-    - azure-identity >=2022.06.01
-    - msrest >=2022.06.01
+    - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - azure-identity >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - msrest >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - python
     - six
     - requests-oauthlib >=0.5.0

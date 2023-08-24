@@ -1,13 +1,11 @@
 {% set name = "azure-ai-ml" %}
-{% set version = "2023.06.01" %}
 
 package:
   name: "{{ name|lower }}"
   version: "{{ version }}"
 
 source:
-  url: "https://files.pythonhosted.org/packages/61/61/c50f2244e09000c101f29a23a585c96e7342693dc9a28064bd70eab82aa3/azure-ai-ml-1.7.2.zip"
-  sha256: dcac4c10179ab14cc3013c3cc9c7bc1b63085a43e7b07eb132a8baacf00b7ea9
+  url: {{ environ.get('ML_SOURCE_DISTRIBUTION', '') }}
 
 build:
   noarch: python
@@ -16,11 +14,11 @@ build:
 
 requirements:
   host:
-    - azure-core >=2023.06.01
-    - azure-identity >=2023.06.01
-    - msrest >=2023.06.01
+    - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - azure-identity >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - msrest >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - aiohttp
-    - azure-storage >=2023.06.01
+    - azure-storage >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - colorama <=0.4.4
     - isodate
     - jsonschema <5.0.0,>=4.0.0
@@ -37,11 +35,11 @@ requirements:
     - opencensus-context
     - opencensus-ext-azure
   run:
-    - azure-core >=2023.06.01
-    - azure-identity >=2023.06.01
-    - msrest >=2023.06.01
+    - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - azure-identity >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - msrest >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - aiohttp
-    - azure-storage >=2023.06.01
+    - azure-storage >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - colorama <=0.4.4
     - isodate
     - jsonschema <5.0.0,>=4.0.0

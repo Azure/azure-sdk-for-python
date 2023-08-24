@@ -123,6 +123,27 @@ stages:
                 checkout:
                 - package: azure-ai-formrecognizer
                   download_uri: https://files.pythonhosted.org/packages/55/f6/4ab4c197d6eb9c83814a7f169c4b26cb1ae360a5f10dac81cccb6b7a00c3/azure-ai-formrecognizer-3.2.1.zip
+              - name: azure-ai-language-conversations
+                common_root: azure
+                service: cognitivelanguage
+                checkout:
+                - package: azure-ai-language-conversations
+                  download_uri: https://files.pythonhosted.org/packages/46/fb/0d1a4186717655ab190c0b0108e1c26fc11e62b13bf105cd1316aa0489ce/azure-ai-language-conversations-1.0.0.zip
+              - name: azure-ai-language-questionanswering
+                service: cognitivelanguage
+                checkout:
+                - package: azure-ai-language-questionanswering
+                  download_uri: https://files.pythonhosted.org/packages/88/b5/abd1acfaba2b60cb437ba3c9c888c6f98e2eb99b8e9c8376a882120e2945/azure-ai-language-questionanswering-1.1.0.zip
+              - name: azure-ai-metricsadvisor
+                service: cognitivelanguage
+                checkout:
+                - package: azure-ai-metricsadvisor
+                  download_uri: https://files.pythonhosted.org/packages/f0/03/16532aaeede7abc3a36f6693c1b8b9462dab82d470cffef8d90746615fd7/azure-ai-metricsadvisor-1.0.0.zip
+              - name: azure-ai-ml
+                service: ml
+                checkout:
+                - package: azure-ai-ml
+                  download_uri: https://files.pythonhosted.org/packages/61/61/c50f2244e09000c101f29a23a585c96e7342693dc9a28064bd70eab82aa3/azure-ai-ml-1.7.2.zip
               
 
 
