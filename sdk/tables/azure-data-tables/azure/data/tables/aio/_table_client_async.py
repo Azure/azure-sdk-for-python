@@ -689,7 +689,7 @@ class TableClient(AsyncTablesBaseClient):
             if (
                 not self._cosmos_endpoint
                 and "An error occurred while processing this request." in ex.message
-                and ex.error_code == "InvalidInput"
+                and "ErrorCode:InvalidInput" in ex.message
             ):
                 return []
             raise ex
@@ -697,7 +697,7 @@ class TableClient(AsyncTablesBaseClient):
             if (
                 self._cosmos_endpoint
                 and "The batch request body is malformed." in ex.message
-                and ex.error_code == "InvalidInput"
+                and "ErrorCode:InvalidInput" in ex.message
             ):
                 return []
             raise ex
