@@ -28,12 +28,14 @@ jobs:
         pip install tools/azure-sdk-tools[build]
         pip install disutils
         Invoke-WebRequest "$(VS_INSTALLER_URL)" -OutFile "$(VS_INSTALLER_PATH)"
-        # C# and Visual Basic Roslyn Compilers
-        # C++ 2022 Redistributable Update
-        # C++ CMake tools for Windows
-        # MSBuild
-        # MSVC v143 - VS 2022 C++ x64/x86 build tools (Latest)
-        # native desktop workload
+        # In order of component appearance in the install command below, these are the names of the components
+        # as they in the VS Installer UI. (What you would do locally.)
+        #   C# and Visual Basic Roslyn Compilers (components pane)
+        #   C++ 2022 Redistributable Update (components pane)
+        #   C++ CMake tools for Windows (components pane)
+        #   MSBuild (components pane)
+        #   MSVC v143 - VS 2022 C++ x64/x86 build tools (Latest) (components pane)
+        #   Native Desktop Workload (workloads pane)
         $(VS_INSTALLER_PATH) --installPath $(VS_ENTERPRISE_PATH) `
           --add Microsoft.VisualStudio.Component.Roslyn.Compiler `
           --add Microsoft.VisualStudio.Component.VC.Redist.14.Latest `
