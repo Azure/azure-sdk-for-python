@@ -244,7 +244,7 @@ class AsyncTransport(
         host,
         *,
         port=AMQP_PORT,
-        ssl_opts=None,
+        ssl_opts=False,
         socket_settings=None,
         raise_on_initial_eintr=True,
         **kwargs,  # pylint: disable=unused-argument
@@ -258,8 +258,7 @@ class AsyncTransport(
         self.host, self.port = to_host_port(host, port)
         self.socket_settings = socket_settings
         self.socket_lock = asyncio.Lock()
-        self.sslopts = ssl_opts if isinstance(ssl_opts, dict) else {}
-        self.sslopts['server_hostname'] = host
+        self.sslopts = ssl_opts
         self.network_trace_params = kwargs.get('network_trace_params')
 
     async def connect(self):
