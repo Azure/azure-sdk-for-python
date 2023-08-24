@@ -40,7 +40,6 @@ if TYPE_CHECKING:
 
 ###### Response Handlers ######
 
-
 def _parse_schema_properties_dict(
     response_headers: Mapping[str, Union[str, int]]
 ) -> Dict[str, Union[str, int]]:
