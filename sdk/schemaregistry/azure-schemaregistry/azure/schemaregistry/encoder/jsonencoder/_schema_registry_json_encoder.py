@@ -39,7 +39,6 @@ from typing import (
     Union,
 )
 from ..._patch import SchemaFormat
-
 from ._constants import JsonSchemaDraftIdentifier
 from ._utils import (  # pylint: disable=import-error
     create_message_content,
