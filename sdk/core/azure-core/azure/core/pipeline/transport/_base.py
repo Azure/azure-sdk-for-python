@@ -77,17 +77,6 @@ _LOGGER = logging.getLogger(__name__)
 binary_type = str
 
 
-class CustomFormatter(string.Formatter):
-    def get_field(self, field_name, args, kwargs):
-        if "." in field_name:
-            # Handle dot notation (or just return the original field_name in this case)
-            return "{" + field_name + "}", field_name
-        try:
-            return super().get_field(field_name, args, kwargs)
-        except KeyError:
-            return "\t", ""
-
-
 def _format_url_section(template, **kwargs):
     """String format the template with the kwargs, auto-skip sections of the template that are NOT in the kwargs.
 
@@ -101,10 +90,18 @@ def _format_url_section(template, **kwargs):
     :rtype: str
     :returns: Template completed
     """
-    ret = CustomFormatter().format(template, **kwargs)
-    # if a key is missing, we remove the section from the template
-    # e.g. "/{foo}" if foo is missing, we remove entire "/{foo}" from the template
-    return ret.replace("/\t", "")
+    last_template = template
+    components = template.split("/")
+    while components:
+        try:
+            return template.format(**kwargs)
+        except KeyError as key:
+            formatted_components = template.split("/")
+            components = [c for c in formatted_components if "{{{}}}".format(key.args[0]) not in c]
+            template = "/".join(components)
+            if last_template == template:
+                raise ValueError("The value provided for the url part {} was incorrect, and resulted in an invalid url")
+            last_template = template
 
 
 def _urljoin(base_url: str, stub_url: str) -> str:
