@@ -112,9 +112,9 @@ def send_trace_context_manager(
     :param links: A list of links to include in the tracing span.
     :type links: list[Link] or None
     :return: A context manager that will yield when the message is sent.
-    :rtype: ~azure.core.tracing.AbstractSpan or None
+    :rtype: iterator
     """
-    span_impl_type: Type[AbstractSpan] = settings.tracing_implementation()
+    span_impl_type: Optional[Type[AbstractSpan]] = settings.tracing_implementation()
 
     if span_impl_type is not None:
         links = links or []
@@ -142,9 +142,9 @@ def receive_trace_context_manager(
     :param start_time: The time that the receive operation started.
     :type start_time: int or None
     :return: An iterator that yields the tracing span.
-    :rtype: iterator[None]
+    :rtype: iterator
     """
-    span_impl_type: Type[AbstractSpan] = settings.tracing_implementation()
+    span_impl_type: Optional[Type[AbstractSpan]] = settings.tracing_implementation()
     if span_impl_type is not None:
         links = links or []
         with span_impl_type(name=span_name, kind=SpanKind.CLIENT, links=links, start_time=start_time) as span:
@@ -195,7 +195,7 @@ def trace_message(
     :param additional_attributes: Additional attributes to add to the message span.
     :type additional_attributes: dict[str, str or int] or None
     :return: The message with tracing information added.
-    :rtype: uamqp_Message or pyamqp_Message
+    :rtype: ~uamqp.Message or ~pyamqp.message.Message
     """
     try:
         span_impl_type: Optional[Type[AbstractSpan]] = settings.tracing_implementation()

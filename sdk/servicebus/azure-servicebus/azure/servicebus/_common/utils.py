@@ -125,11 +125,11 @@ def get_renewable_start_time(renewable):
         pass
     try:
         return renewable._session_start  # pylint: disable=protected-access
-    except AttributeError as exc:
+    except AttributeError as ex:
         raise TypeError(
             "Registered object is not renewable, renewable must be"
             + "a ServiceBusReceivedMessage or a ServiceBusSession from a sessionful ServiceBusReceiver."
-        ) from exc
+        ) from None
 
 
 def get_renewable_lock_duration(
@@ -140,11 +140,11 @@ def get_renewable_lock_duration(
         return max(
             renewable.locked_until_utc - utc_now(), datetime.timedelta(seconds=0)
         )
-    except AttributeError as exc:
+    except AttributeError:
         raise TypeError(
             "Registered object is not renewable, renewable must be"
             + "a ServiceBusReceivedMessage or a ServiceBusSession from a sessionful ServiceBusReceiver."
-        ) from exc
+        ) from None
 
 
 def create_authentication(client) -> Union["uamqp_JWTTokenAuth", "pyamqp_JWTTokenAuth"]:
@@ -213,11 +213,11 @@ def _convert_to_single_service_bus_message(
         message = message_type(**cast(Mapping[str, Any], message))
         message._message = to_outgoing_amqp_message(message.raw_amqp_message)
         return message
-    except TypeError as exc:
+    except TypeError:
         raise TypeError(
             f"Only AmqpAnnotatedMessage, ServiceBusMessage instances or Mappings representing messages are supported. "
             f"Received instead: {message.__class__.__name__}"
-        ) from exc
+        ) from None
 
 
 def transform_outbound_messages(
@@ -237,7 +237,7 @@ def transform_outbound_messages(
     :param Type[ServiceBusMessage] message_type: The class type to return the messages as.
     :param callable to_outgoing_amqp_message: A function that converts the input message to an AMQP message.
     :return: A list of ServiceBusMessage or a single ServiceBusMessage transformed.
-    :rtype: Union[ServiceBusMessage, List[ServiceBusMessage]]
+    :rtype: ~azure.servicebus.ServiceBusMessage or list[~azure.servicebus.ServiceBusMessage]
     """
     if isinstance(messages, list):
         return [

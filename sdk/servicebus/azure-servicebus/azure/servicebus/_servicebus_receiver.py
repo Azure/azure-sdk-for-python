@@ -697,7 +697,7 @@ class ServiceBusReceiver(
         :keyword Optional[float] timeout: The total operation timeout in seconds including all the retries.
          The value must be greater than 0 if specified. The default value is None, meaning no timeout.
         :returns: A list of the requested ~azure.servicebus.ServiceBusReceivedMessage instances.
-        :rtype: List[~azure.servicebus.ServiceBusReceivedMessage]
+        :rtype: list[~azure.servicebus.ServiceBusReceivedMessage]
 
         .. admonition:: Example:
 
@@ -779,7 +779,7 @@ class ServiceBusReceiver(
         :keyword Optional[float] timeout: The total operation timeout in seconds including all the retries.
          The value must be greater than 0 if specified. The default value is None, meaning no timeout.
         :returns: A list of ~azure.servicebus.ServiceBusReceivedMessage.
-        :rtype: List[~azure.servicebus.ServiceBusReceivedMessage]
+        :rtype: list[~azure.servicebus.ServiceBusReceivedMessage]
 
         .. admonition:: Example:
 
