@@ -1,0 +1,63 @@
+{% set name = "azure-ai-language-questionanswering" %}
+{% set version = "2023.06.01" %}
+
+package:
+  name: "{{ name|lower }}"
+  version: "{{ version }}"
+
+source:
+  url: "https://files.pythonhosted.org/packages/88/b5/abd1acfaba2b60cb437ba3c9c888c6f98e2eb99b8e9c8376a882120e2945/azure-ai-language-questionanswering-1.1.0.zip"
+  sha256: 3d53c9d2d76c6ddf251a7527602888d41b82ee80edfd2062f4277f885ae9fb48
+
+build:
+  noarch: python
+  number: 0
+  script: "{{ PYTHON }} -m pip install . -vv"
+
+requirements:
+  host:
+    - azure-core >=2023.06.01
+    - azure-identity >=2023.06.01
+    - msrest >=2023.06.01
+    - pip
+    - python
+    - six
+    - requests-oauthlib >=0.5.0
+    - aiohttp
+    - isodate
+  run:
+    - azure-core >=2023.06.01
+    - azure-identity >=2023.06.01
+    - msrest >=2023.06.01
+    - python
+    - six
+    - requests-oauthlib >=0.5.0
+    - aiohttp
+    - isodate
+
+test:
+  imports:
+    - azure.ai.language.questionanswering
+    - azure.ai.language.questionanswering.aio
+    - azure.ai.language.questionanswering.models
+
+about:
+  home: "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-questionanswering"
+  license: MIT
+  license_family: MIT
+  license_file: 
+  summary: "Microsoft Azure Question Answering Client Library for Python"
+  description: |
+    Question Answering is a cloud-based API service that lets you create a conversational 
+    question-and-answer layer over your existing data. Use it to build a knowledge base 
+    by extracting questions and answers from your semi-structured content, including FAQ, 
+    manuals, and documents. Answer users’ questions with the best answers from the QnAs 
+    in your knowledge base automatically. Your knowledge base gets smarter, too, as it 
+    continually learns from users' behavior.
+    Please see https://aka.ms/azsdk/conda/releases/questionanswering for version details.
+  doc_url: 
+  dev_url: 
+
+extra:
+  recipe-maintainers:
+    - xiangyan99

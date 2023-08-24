@@ -1,0 +1,58 @@
+{% set name = "azure-monitor-query" %}
+{% set version = "2023.06.01" %}
+
+package:
+  name: "{{ name|lower }}"
+  version: "{{ version }}"
+
+source:
+  url: "https://files.pythonhosted.org/packages/ad/16/fd06cccfc583d8d38d8d99ee92ec1bbc9604cf6e8c62e64ddca5644e0a60/azure-monitor-query-1.2.0.zip"
+  sha256: 2c57432443f203069e64e500c7e958ca31650f641950515ffe65555ba134c371
+
+build:
+  noarch: python
+  number: 0
+  script: "{{ PYTHON }} -m pip install . -vv"
+
+requirements:
+  host:
+    - azure-core >=2023.06.01
+    - azure-identity >=2023.06.01
+    - msrest >=2023.06.01
+    - pip
+    - python
+    - six
+    - requests-oauthlib >=0.5.0
+    - aiohttp
+    - isodate
+  run:
+    - azure-core >=2023.06.01
+    - azure-identity >=2023.06.01
+    - msrest >=2023.06.01
+    - python
+    - six
+    - requests-oauthlib >=0.5.0
+    - aiohttp
+    - isodate
+
+test:
+  imports:
+    - azure.monitor.query
+    - azure.monitor.query.aio
+
+about:
+  home: "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/monitor/azure-monitor-query"
+  license: MIT
+  license_family: MIT
+  license_file: 
+  summary: "Microsoft Azure Monitor Query Client Library for Python"
+  description: |
+    The Azure Monitor Query client library is used to execute read-only queries against Azure Monitor Logs 
+    and Azure Monitor Metrics.
+    Please see https://aka.ms/azsdk/conda/releases/query for version details.
+  doc_url: 
+  dev_url: 
+
+extra:
+  recipe-maintainers:
+    - xiangyan99

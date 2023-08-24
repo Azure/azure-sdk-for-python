@@ -1,0 +1,61 @@
+{% set name = "azure-ai-language-conversations" %}
+{% set version = "2023.06.01" %}
+
+package:
+  name: "{{ name|lower }}"
+  version: "{{ version }}"
+
+source:
+  url: "https://files.pythonhosted.org/packages/46/fb/0d1a4186717655ab190c0b0108e1c26fc11e62b13bf105cd1316aa0489ce/azure-ai-language-conversations-1.0.0.zip"
+  sha256: 2b01444d088ee5ac0124fca586dead9f92e54612c1892b628a46b2665f698c70
+
+build:
+  noarch: python
+  number: 0
+  script: "{{ PYTHON }} -m pip install . -vv"
+
+requirements:
+  host:
+    - azure-core >=2022.06.01
+    - azure-identity >=2022.06.01
+    - msrest >=2022.06.01
+    - pip
+    - python
+    - six
+    - requests-oauthlib >=0.5.0
+    - aiohttp
+    - isodate
+  run:
+    - azure-core >=2022.06.01
+    - azure-identity >=2022.06.01
+    - msrest >=2022.06.01
+    - python
+    - six
+    - requests-oauthlib >=0.5.0
+    - aiohttp
+    - isodate
+
+test:
+  imports:
+    - azure.ai.language.conversations
+    - azure.ai.language.conversations.aio
+
+about:
+  home: "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations"
+  license: MIT
+  license_family: MIT
+  license_file: 
+  summary: "Azure Conversational Language Understanding client library for Python"
+  description: |
+    Conversational Language Understanding - aka CLU for short - is a cloud-based conversational AI service which provides many language understanding capabilities like:
+    Conversation App: It's used in extracting intents and entities in conversations 
+    Workflow app: Acts like an orchestrator to select the best candidate to analyze conversations to get best response from apps like Qna, Luis, and Conversation App 
+    Conversational Summarization: Used to summarize conversations in the form of issues, and final resolutions 
+    Conversational PII: Used to extract and redact personally-identifiable info (PII)
+    Please see https://aka.ms/azsdk/conda/releases/conversations for version details.
+  doc_url: 
+  dev_url: 
+
+extra:
+  recipe-maintainers:
+    - xiangyan99

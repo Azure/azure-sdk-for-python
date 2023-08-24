@@ -1,0 +1,58 @@
+{% set name = "azure-containerregistry" %}
+{% set version = "2023.06.01" %}
+
+package:
+  name: "{{ name|lower }}"
+  version: "{{ version }}"
+
+source:
+  url: "https://files.pythonhosted.org/packages/ce/d7/c5892390196d05c5ce4f4f78bd39b5d7af9b984ae08776e9f6abf91637ff/azure-containerregistry-1.1.0.zip"
+  sha256: e8853e7f33082fc1c9bf8ac2ad695c252b98adee9c7416bb0634bd2ab21b2115
+
+build:
+  noarch: python
+  number: 0
+  script: "{{ PYTHON }} -m pip install . -vv"
+
+requirements:
+  host:
+    - azure-core >=2023.06.01
+    - azure-identity >=2023.06.01
+    - msrest >=2023.06.01
+    - pip
+    - python
+    - typing-extensions
+    - requests-oauthlib >=0.5.0
+    - aiohttp
+    - isodate
+  run:
+    - azure-core >=2023.06.01
+    - azure-identity >=2023.06.01
+    - msrest >=2023.06.01
+    - python
+    - typing-extensions
+    - requests-oauthlib >=0.5.0
+    - aiohttp
+    - isodate
+
+test:
+  imports:
+    - azure.containerregistry
+    - azure.containerregistry.aio
+
+about:
+  home: "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/containerregistry/azure-containerregistry"
+  license: MIT
+  license_family: MIT
+  license_file: 
+  summary: "Microsoft Azure Container Registry Client Library for Python"
+  description: |
+    Azure Container Registry allows you to store and manage container images and artifacts 
+    in a private registry for all types of container deployments.
+    Please see https://aka.ms/azsdk/conda/releases/containerregistry for version details.
+  doc_url: 
+  dev_url: 
+
+extra:
+  recipe-maintainers:
+    - xiangyan99

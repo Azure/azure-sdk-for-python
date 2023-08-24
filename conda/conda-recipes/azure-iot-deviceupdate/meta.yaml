@@ -1,0 +1,59 @@
+{% set name = "azure-iot-deviceupdate" %}
+{% set version = "2023.06.01" %}
+
+package:
+  name: "{{ name|lower }}"
+  version: "{{ version }}"
+
+source:
+  url: "https://files.pythonhosted.org/packages/25/e1/ee44bfefcf73e94be69a924f6fbb8322f7bf653336c40d5f36eafe4fead7/azure-iot-deviceupdate-1.0.0.zip"
+  sha256: c56b4d9fc05c66ccc4fab29f78fd1f7ac7f4c019df1fc91309edc9ccca18a0a9
+
+build:
+  noarch: python
+  number: 0
+  script: "{{ PYTHON }} -m pip install . -vv"
+
+requirements:
+  host:
+    - azure-core >=2023.06.01
+    - azure-identity >=2023.06.01
+    - msrest >=2023.06.01
+    - pip
+    - python
+    - six
+    - requests-oauthlib >=0.5.0
+    - aiohttp
+    - isodate
+  run:
+    - azure-core >=2023.06.01
+    - azure-identity >=2023.06.01
+    - msrest >=2023.06.01
+    - python
+    - six
+    - requests-oauthlib >=0.5.0
+    - aiohttp
+    - isodate
+
+test:
+  imports:
+    - azure.iot.deviceupdate
+    - azure.iot.deviceupdate.aio
+
+about:
+  home: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/deviceupdate/azure-iot-deviceupdate
+  license: MIT
+  license_family: MIT
+  license_file: 
+  summary: "Azure Device Update for IoT Hub client library for Python"
+  description: |
+    The library provides access to the Device Update for IoT Hub service that enables customers to publish 
+    updates for their IoT devices to the cloud, and then deploy these updates to their devices 
+    (approve updates to groups of devices managed and provisioned in IoT Hub). 
+    Please see https://aka.ms/azsdk/conda/releases/deviceupdate for version details.
+  doc_url: 
+  dev_url: 
+
+extra:
+  recipe-maintainers:
+    - xiangyan99

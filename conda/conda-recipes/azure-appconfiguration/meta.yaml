@@ -1,0 +1,56 @@
+{% set name = "azure-appconfiguration" %}
+{% set version = "2023.06.01" %}
+
+package:
+  name: "{{ name|lower }}"
+  version: "{{ version }}"
+
+source:
+  url: "https://files.pythonhosted.org/packages/77/18/3d95b3ca4aec25070c4f0baaf355d5a537eaaa4e93f0fbc3ab0dbad0e1ce/azure-appconfiguration-1.4.0.zip"
+  sha256: 7f36724fa8f72bdd050a525ac1fde8d05d9348c4aee6956a66f3fcc89c137417
+
+build:
+  noarch: python
+  number: 0
+  script: "{{ PYTHON }} -m pip install . -vv"
+
+requirements:
+  host:
+    - azure-core >=2023.06.01
+    - azure-identity >=2023.06.01
+    - msrest >=2023.06.01
+    - pip
+    - python
+    - requests-oauthlib >=0.5.0
+    - aiohttp
+    - isodate
+  run:
+    - azure-core >=2023.06.01
+    - azure-identity >=2023.06.01
+    - msrest >=2023.06.01
+    - python
+    - requests-oauthlib >=0.5.0
+    - aiohttp
+    - isodate
+
+test:
+  imports:
+    - azure.appconfiguration
+    - azure.appconfiguration.aio
+
+about:
+  home: "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/appconfiguration/azure-appconfiguration"
+  license: MIT
+  license_family: MIT
+  license_file: 
+  summary: "Microsoft App Configuration Data Library for Python"
+  description: |
+    Azure App Configuration is a managed service that helps developers centralize their application 
+    configurations simply and securely.
+    Please see https://aka.ms/azsdk/conda/releases/appconfiguration for version details.
+  doc_url: 
+  dev_url: 
+
+extra:
+  recipe-maintainers:
+    - xiangyan99

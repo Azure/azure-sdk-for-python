@@ -1,0 +1,58 @@
+{% set name = "azure-keyvault" %}
+{% set version = "2023.06.01" %}
+
+package:
+  name: "{{ name|lower }}"
+  version: "{{ version }}"
+
+source:
+  url: ..\azure-keyvault-2023.6.1.tar.gz
+
+build:
+  noarch: python
+  number: 0
+  script: "{{ PYTHON }} -m pip install . -vv"
+
+requirements:
+  host:
+    - azure-core >=2023.06.01
+    - azure-identity >=2023.06.01
+    - cryptography
+    - msrest >=2023.06.01
+    - pip
+    - python
+    - requests-oauthlib >=0.5.0
+    - aiohttp
+    - isodate
+  run:
+    - azure-core >=2023.06.01
+    - azure-identity >=2023.06.01
+    - cryptography
+    - msrest >=2023.06.01
+    - python
+    - requests-oauthlib >=0.5.0
+    - aiohttp
+    - isodate
+
+test:
+  imports:
+    - azure.keyvault.keys
+    - azure.keyvault.certificates
+    - azure.keyvault.secrets
+    - azure.keyvault.administration
+
+about:
+  home: "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault"
+  license: MIT
+  license_family: MIT
+  license_file: 
+  summary: "Microsoft Azure Key Vault Keys Client Library for Python"
+  description: |
+    This is the Microsoft Azure Key Vault libraries bundle.
+    Please see https://aka.ms/azsdk/conda/releases/keyvault for version details.
+  doc_url: 
+  dev_url: 
+
+extra:
+  recipe-maintainers:
+    - xiangyan99

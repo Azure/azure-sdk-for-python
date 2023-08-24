@@ -1,0 +1,58 @@
+{% set name = "azure-ai-metricsadvisor" %}
+{% set version = "2023.06.01" %}
+
+package:
+  name: "{{ name|lower }}"
+  version: "{{ version }}"
+
+source:
+  url: "https://files.pythonhosted.org/packages/f0/03/16532aaeede7abc3a36f6693c1b8b9462dab82d470cffef8d90746615fd7/azure-ai-metricsadvisor-1.0.0.zip"
+  sha256: c07d13c9c3c1a2913a022eb74018133603fad515c848783a676e8405baefb94e
+
+build:
+  noarch: python
+  number: 0
+  script: "{{ PYTHON }} -m pip install . -vv"
+
+requirements:
+  host:
+    - azure-core >=2023.06.01
+    - azure-identity >=2023.06.01
+    - msrest >=2023.06.01
+    - pip
+    - python
+    - six
+    - requests-oauthlib >=0.5.0
+    - aiohttp
+    - isodate
+  run:
+    - azure-core >=2023.06.01
+    - azure-identity >=2023.06.01
+    - msrest >=2023.06.01
+    - python
+    - six
+    - requests-oauthlib >=0.5.0
+    - aiohttp
+    - isodate
+
+test:
+  imports:
+    - azure.ai.metricsadvisor
+    - azure.ai.metricsadvisor.aio
+    - azure.ai.metricsadvisor.models
+
+about:
+  home: "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/metricsadvisor/azure-ai-metricsadvisor"
+  license: MIT
+  license_family: MIT
+  license_file: 
+  summary: "Microsoft Azure Metrics Advisor Client Library for Python"
+  description: |
+    Metrics Advisor is a scalable real-time time series monitoring, alerting, and root cause analysis platform.
+    Please see https://aka.ms/azsdk/conda/releases/metricsadvisor for version details.
+  doc_url: 
+  dev_url: 
+
+extra:
+  recipe-maintainers:
+    - xiangyan99

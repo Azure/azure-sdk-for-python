@@ -1,0 +1,90 @@
+{% set name = "azure-ai-ml" %}
+{% set version = "2023.06.01" %}
+
+package:
+  name: "{{ name|lower }}"
+  version: "{{ version }}"
+
+source:
+  url: "https://files.pythonhosted.org/packages/61/61/c50f2244e09000c101f29a23a585c96e7342693dc9a28064bd70eab82aa3/azure-ai-ml-1.7.2.zip"
+  sha256: dcac4c10179ab14cc3013c3cc9c7bc1b63085a43e7b07eb132a8baacf00b7ea9
+
+build:
+  noarch: python
+  number: 0
+  script: "{{ PYTHON }} -m pip install . -vv"
+
+requirements:
+  host:
+    - azure-core >=2023.06.01
+    - azure-identity >=2023.06.01
+    - msrest >=2023.06.01
+    - aiohttp
+    - azure-storage >=2023.06.01
+    - colorama <=0.4.4
+    - isodate
+    - jsonschema <5.0.0,>=4.0.0
+    - marshmallow <4.0.0,>=3.5
+    - pip
+    - pydash <6.0.0
+    - pyjwt <3.0.0
+    - python
+    - pyyaml <7.0.0,>=5.1.0
+    - strictyaml <=1.6.1
+    - tqdm <=4.63.0
+    - typing-extensions <5.0.0
+    - opencensus >=0.11.0
+    - opencensus-context
+    - opencensus-ext-azure
+  run:
+    - azure-core >=2023.06.01
+    - azure-identity >=2023.06.01
+    - msrest >=2023.06.01
+    - aiohttp
+    - azure-storage >=2023.06.01
+    - colorama <=0.4.4
+    - isodate
+    - jsonschema <5.0.0,>=4.0.0
+    - marshmallow <4.0.0,>=3.5
+    - pydash <6.0.0
+    - pyjwt <3.0.0
+    - python
+    - pyyaml <7.0.0,>=5.1.0
+    - strictyaml <=1.6.1
+    - tqdm <=4.63.0
+    - typing-extensions <5.0.0
+    - opencensus >=0.11.0
+    - opencensus-context
+    - opencensus-ext-azure
+
+test:
+  imports:
+    - azure.ai.ml
+    - azure.ai.ml.automl
+    - azure.ai.ml.constants
+    - azure.ai.ml.dsl
+    - azure.ai.ml.entities
+    - azure.ai.ml.identity
+    - azure.ai.ml.operations
+    - azure.ai.ml.parallel
+    - azure.ai.ml.sweep
+
+about:
+  home: "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ml/azure-ai-ml"
+  license: MIT
+  license_family: MIT
+  license_file: 
+  summary: "Microsoft Azure Machine Learning Client Library for Python"
+  description: |
+    We are excited to introduce the public preview of Azure Machine Learning Python SDK v2. The Python SDK v2 introduces new SDK
+    capabilities like standalone local jobs, reusable components for pipelines and managed online/batch inferencing. Python SDK v2
+    allows you to move from simple to complex tasks easily and incrementally. This is enabled by using a common object model which
+    brings concept reuse and consistency of actions across various tasks. The SDK v2 shares its foundation with the CLI v2 which is
+    currently in also in public preview.
+    Please see https://aka.ms/azsdk/conda/releases/ml for version details.
+  doc_url: 
+  dev_url: 
+
+extra:
+  recipe-maintainers:
+    - xiangyan99

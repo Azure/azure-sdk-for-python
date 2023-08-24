@@ -1,0 +1,60 @@
+{% set name = "azure-digitaltwins-core" %}
+{% set version = "2023.06.01" %}
+
+package:
+  name: "{{ name|lower }}"
+  version: "{{ version }}"
+
+source:
+  url: "https://files.pythonhosted.org/packages/38/59/683c7b1722e0f6090b2d11ea7ed721d398be684d445168e3c107dbc3bb2e/azure-digitaltwins-core-1.2.0.zip"
+  sha256: 607d5a2771dfbbd1ae79392bc9eb8b6d5b93bbaaa74fe14ca23ac2b25a0a3dce
+
+build:
+  noarch: python
+  number: 0
+  script: "{{ PYTHON }} -m pip install . -vv"
+
+requirements:
+  host:
+    - azure-core >=2023.06.01
+    - azure-identity >=2023.06.01
+    - msrest >=2023.06.01
+    - pip
+    - python
+    - six
+    - typing_extensions
+    - requests-oauthlib >=0.5.0
+    - aiohttp
+    - isodate
+  run:
+    - azure-core >=2023.06.01
+    - azure-identity >=2023.06.01
+    - msrest >=2023.06.01
+    - python
+    - six
+    - typing_extensions
+    - requests-oauthlib >=0.5.0
+    - aiohttp
+    - isodate
+
+test:
+  imports:
+    - azure.digitaltwins.core
+    - azure.digitaltwins.core.aio
+
+about:
+  home: "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/digitaltwins/azure-digitaltwins-core"
+  license: MIT
+  license_family: MIT
+  license_file: 
+  summary: "Microsoft Azure Azure DigitalTwins Core Client Library for Python"
+  description: |
+    This package contains an SDK for Azure Digital Twins API to provide access to the Azure Digital Twins 
+    service for managing twins, models, relationships, etc.
+    Please see https://aka.ms/azsdk/conda/releases/digitaltwins for version details.
+  doc_url: 
+  dev_url: 
+
+extra:
+  recipe-maintainers:
+    - xiangyan99

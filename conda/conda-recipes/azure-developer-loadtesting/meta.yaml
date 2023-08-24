@@ -1,0 +1,56 @@
+{% set name = "azure-developer-loadtesting" %}
+{% set version = "2023.06.01" %}
+
+package:
+  name: "{{ name|lower }}"
+  version: "{{ version }}"
+
+source:
+  url: "https://files.pythonhosted.org/packages/15/8e/610c3e58f373f305636d322480c49d0f340025770df2bd4b3610d28d3a8a/azure-developer-loadtesting-1.0.0.zip"
+  sha256: 178d4ef0762a8b95185cda5d9bc18d39a379555929d2f8c0248aa5d201dbe4dd
+
+build:
+  noarch: python
+  number: 0
+  script: "{{ PYTHON }} -m pip install . -vv"
+
+requirements:
+  host:
+    - azure-core >=2023.06.01
+    - azure-identity >=2023.06.01
+    - isodate <1.0.0,>=0.6.1
+    - pip
+    - python
+    - typing-extensions
+  run:
+    - azure-core >=2023.06.01
+    - azure-identity >=2023.06.01
+    - isodate <1.0.0,>=0.6.1
+    - python
+    - typing-extensions
+
+test:
+  imports:
+    - azure.developer.loadtesting
+    - azure.developer.loadtesting.aio
+
+about:
+  home: "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/loadtesting"
+  license: MIT
+  license_family: MIT
+  license_file: 
+  summary: "Microsoft Azure Developer LoadTesting Client Library for Python"
+  description: |
+    Azure Load Testing provides client library in python to the user by which they 
+    can interact natively with Azure Load Testing service. Azure Load Testing is a 
+    fully managed load-testing service that enables you to generate high-scale load. 
+    The service simulates traffic for your applications, regardless of where they're hosted. 
+    Developers, testers, and quality assurance (QA) engineers can use it to optimize 
+    application performance, scalability, or capacity.
+    Please see https://aka.ms/azsdk/conda/releases/loadtesting for version details.
+  doc_url: 
+  dev_url: 
+
+extra:
+  recipe-maintainers:
+    - xiangyan99

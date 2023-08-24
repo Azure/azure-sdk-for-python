@@ -1,0 +1,55 @@
+{% set name = "azure-cosmos" %}
+{% set version = "2023.06.01" %}
+
+package:
+  name: "{{ name|lower }}"
+  version: "{{ version }}"
+
+source:
+  url: "https://files.pythonhosted.org/packages/90/dc/d962600643262152e5b8ab166a5327881a9ac91d6b7e1049ccbec7a2b5d7/azure-cosmos-4.3.1.zip"
+  sha256: e3852b38373ab6853a6b2a800a4a0df0ac7f157a7de3f05d1b18617ba5db76a2
+
+build:
+  noarch: python
+  number: 0
+  script: "{{ PYTHON }} -m pip install . -vv"
+
+requirements:
+  host:
+    - azure-core >=2023.06.01
+    - pip
+    - python
+    - six
+    - typing_extensions
+    - requests-oauthlib >=0.5.0
+    - aiohttp
+    - isodate
+  run:
+    - azure-core >=2023.06.01
+    - python
+    - six
+    - typing_extensions
+    - requests-oauthlib >=0.5.0
+    - aiohttp
+    - isodate
+
+test:
+  imports:
+    - azure.cosmos
+
+about:
+  home: "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos"
+  license: MIT
+  license_family: MIT
+  license_file: 
+  summary: "Microsoft Azure Cosmos Client Library for Python"
+  description: |
+    Azure Cosmos DB is a globally distributed, multi-model database service that supports document, 
+    key-value, wide-column, and graph databases.
+    Please see https://aka.ms/azsdk/conda/releases/cosmos for version details.
+  doc_url: 
+  dev_url: 
+
+extra:
+  recipe-maintainers:
+    - xiangyan99

@@ -1,0 +1,63 @@
+{% set name = "azure-search-documents" %}
+{% set version = "2023.06.01" %}
+
+package:
+  name: "{{ name|lower }}"
+  version: "{{ version }}"
+
+source:
+  url: "https://files.pythonhosted.org/packages/d6/29/1565a336e54013591e7de688259ec0281d4aa0bb0a71df0d7e7be51e77d2/azure-search-documents-11.3.0.zip"
+  sha256: 9a9690c49d1f6a2cc61db67e05f931a0de915647d4778cbbaf688082b4aaee30
+
+build:
+  noarch: python
+  number: 0
+  script: "{{ PYTHON }} -m pip install . -vv"
+
+requirements:
+  host:
+    - azure-core >=2023.06.01
+    - azure-identity >=2023.06.01
+    - msrest >=2023.06.01
+    - pip
+    - python
+    - typing-extensions
+    - requests-oauthlib >=0.5.0
+    - aiohttp
+    - isodate
+  run:
+    - azure-core >=2023.06.01
+    - azure-identity >=2023.06.01
+    - msrest >=2023.06.01
+    - python
+    - typing-extensions
+    - requests-oauthlib >=0.5.0
+    - aiohttp
+    - isodate
+
+test:
+  imports:
+    - azure.search.documents
+    - azure.search.documents.aio
+    - azure.search.documents.indexes
+    - azure.search.documents.indexes.aio
+    - azure.search.documents.indexes.models
+    - azure.search.documents.models
+
+about:
+  home: "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/search/azure-search-documents"
+  license: MIT
+  license_family: MIT
+  license_file: 
+  summary: "Microsoft Azure Cognitive Search Client Library for Python"
+  description: |
+    Azure Cognitive Search is a search-as-a-service cloud solution that gives developers APIs and tools 
+    for adding a rich search experience over private, heterogeneous content in web, mobile, and 
+    enterprise applications.
+    Please see https://aka.ms/azsdk/conda/releases/search for version details.
+  doc_url: 
+  dev_url: 
+
+extra:
+  recipe-maintainers:
+    - xiangyan99
