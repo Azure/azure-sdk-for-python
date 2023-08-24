@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -268,6 +269,30 @@ def is_encryption_v2(encryption_data: Optional[_EncryptionData]) -> bool:
     """
     # If encryption_data is None, assume no encryption
     return encryption_data and encryption_data.encryption_agent.protocol == _ENCRYPTION_PROTOCOL_V2
+
+
+def modify_user_agent_for_encryption(
+        user_agent: str,
+        moniker: str,
+        encryption_version: str,
+        request_options: Dict[str, Any]
+    ) -> None:
+    """
+    Modifies the request options to contain a user agent string updated with encryption information.
+    Adds azstorage-clientsideencryption/<version> immediately proceeding the SDK descriptor.
+
+    :param str user_agent: The existing User Agent to modify.
+    :param str moniker: The specific SDK moniker. The modification will immediately proceed azsdk-python-{moniker}.
+    :param str encryption_version: The version of encryption being used.
+    :param Dict[str, Any] request_options: The reuqest options to add the user agent override to.
+    """
+    feature_flag = f"azstorage-clientsideencryption/{encryption_version}"
+    if feature_flag not in user_agent:
+        index = user_agent.find(f"azsdk-python-{moniker}")
+        user_agent = f"{user_agent[:index]}{feature_flag} {user_agent[index:]}"
+
+        request_options['user_agent'] = user_agent
+        request_options['user_agent_overwrite'] = True
 
 
 def get_adjusted_upload_size(length: int, encryption_version: str) -> int:
