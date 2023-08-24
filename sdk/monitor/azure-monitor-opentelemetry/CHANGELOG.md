@@ -12,6 +12,8 @@
     ([#31744](https://github.com/Azure/azure-sdk-for-python/pull/31740))
 - Add preview warning for Autoinstrumentation entry points
     ([#31767](https://github.com/Azure/azure-sdk-for-python/pull/31767))
+- Add linting back into distro
+    ([#31796](https://github.com/Azure/azure-sdk-for-python/pull/31796))
 
 ### Breaking Changes
 
