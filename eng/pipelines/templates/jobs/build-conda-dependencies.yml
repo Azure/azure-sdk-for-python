@@ -28,20 +28,18 @@ jobs:
         pip install tools/azure-sdk-tools[build]
         pip install disutils
         Invoke-WebRequest "$(VS_INSTALLER_URL)" -OutFile "$(VS_INSTALLER_PATH)"
+        # C# and Visual Basic Roslyn Compilers
+        # C++ 2022 Redistributable Update
+        # C++ CMake tools for Windows
+        # MSBuild
+        # MSVC v143 - VS 2022 C++ x64/x86 build tools (Latest)
+        # native desktop workload
         $(VS_INSTALLER_PATH) --installPath $(VS_ENTERPRISE_PATH) `
-          # C# and Visual Basic Roslyn Compilers
           --add Microsoft.VisualStudio.Component.Roslyn.Compiler `
-          # C++ 2022 Redistributable Update
           --add Microsoft.VisualStudio.Component.VC.Redist.14.Latest `
-          # C++ Build Insights
-          # missing
-          # C++ CMake tools for Windows
           --add Microsoft.VisualStudio.Component.VC.CMake.Project `
-          # MSBuild
           --add Microsoft.Component.MSBuild `
-          # MSVC v143 - VS 2022 C++ x64/x86 build tools (Latest)
           --add Microsoft.VisualStudio.Component.VC.Tools.x86.x64 `
-          # native desktop workload
           --add Microsoft.VisualStudio.Workload.NativeDesktop `
           --quiet
       displayName: Install build script requirements
