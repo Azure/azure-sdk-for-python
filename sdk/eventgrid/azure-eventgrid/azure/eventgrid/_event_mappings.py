@@ -184,6 +184,14 @@ class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     DataBoxOrderCompletedEventName = 'Microsoft.DataBox.OrderCompleted'
 
+    EventGridNamespaceMQTTClientCreatedOrUpdatedEventName = 'Microsoft.EventGrid.MQTTClientCreatedOrUpdated'
+
+    EventGridNamespaceMQTTClientDeletedEventName = 'Microsoft.EventGrid.MQTTClientDeleted'
+
+    EventGridNamespaceMQTTClientSessionConnectedEventName = 'Microsoft.EventGrid.MQTTClientSessionConnected'
+
+    EventGridNamespaceMQTTClientSessionDisconnectedEventName = 'Microsoft.EventGrid.MQTTClientSessionDisconnected'
+
     EventHubCaptureFileCreatedEventName = 'Microsoft.EventHub.CaptureFileCreated'
 
     # spell-checker:ignore Dicom

@@ -10,7 +10,6 @@ files = [
     "https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/eventgrid/data-plane/Microsoft.ContainerService/stable/2018-01-01/ContainerService.json",
     "https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/eventgrid/data-plane/Microsoft.DataBox/stable/2018-01-01/DataBox.json",
     "https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/eventgrid/data-plane/Microsoft.EventHub/stable/2018-01-01/EventHub.json",
-    "https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/eventgrid/data-plane/Microsoft.EventGrid/stable/2018-01-01/EventGrid.json",
     "https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/eventgrid/data-plane/Microsoft.Devices/stable/2018-01-01/IotHub.json",
     "https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/eventgrid/data-plane/Microsoft.KeyVault/stable/2018-01-01/KeyVault.json",
     "https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/eventgrid/data-plane/Microsoft.MachineLearningServices/stable/2018-01-01/MachineLearningServices.json",
@@ -24,6 +23,8 @@ files = [
     "https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/eventgrid/data-plane/Microsoft.Storage/stable/2018-01-01/Storage.json",
     "https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/eventgrid/data-plane/Microsoft.Web/stable/2018-01-01/Web.json",
     "https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/eventgrid/data-plane/Microsoft.HealthcareApis/stable/2018-01-01/HealthcareApis.json",
+    "https://raw.githubusercontent.com/Azure/azure-rest-api-specs/3c03d75d5ce874ebdb82853cbe19f25528aacdc7/specification/eventgrid/data-plane/Microsoft.EventGrid/stable/2018-01-01/SystemEvents.json",
+    "https://raw.githubusercontent.com/Azure/azure-rest-api-specs/3c03d75d5ce874ebdb82853cbe19f25528aacdc7/specification/eventgrid/data-plane/Microsoft.EventGrid/stable/2018-01-01/EventGrid.json"
     ]
 
 
@@ -59,4 +60,4 @@ additional_events = {
     'ServiceBusDeadletterMessagesAvailableWithNoListenerEventName': 'Microsoft.ServiceBus.DeadletterMessagesAvailableWithNoListeners'
 }
 
-EXCEPTIONS = ['ContainerRegistryArtifactEventData', 'ContainerRegistryEventData', 'ContainerServiceClusterSupportEventData', 'ContainerServiceNodePoolRollingEventData']
+EXCEPTIONS = ['ContainerRegistryArtifactEventData', 'ContainerRegistryEventData', 'ContainerServiceClusterSupportEventData', 'ContainerServiceNodePoolRollingEventData', "EventGridNamespaceMQTTClientEventData"]
