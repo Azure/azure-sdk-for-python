@@ -13,7 +13,7 @@ jobs:
   variables:
     VS_INSTALLER_URL: "https://aka.ms/vs/17/release/vs_enterprise.exe"
     VS_INSTALLER_PATH: "$(Build.BinariesDirectory)/vs_enterprise.exe"
-    VS_ENTERPRISE_PATH: "C:\Program Files\Microsoft Visual Studio\2022\Enterprise"
+    VS_ENTERPRISE_PATH: "C:\\Program Files\\Microsoft Visual Studio\\2022\\Enterprise"
   steps:
     - bash: |
         echo "##vso[task.prependpath]$(CONDA)/Scripts"
