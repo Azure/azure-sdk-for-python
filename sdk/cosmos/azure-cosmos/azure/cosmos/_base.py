@@ -753,7 +753,3 @@ def _internal_resourcetype(resource_type: str) -> str:
     if resource_type.lower() == "partitionkey":
         return "colls"
     return resource_type
-
-
-def is_key_in_range(min_range, max_range, key):
-    return max_range > str(key) > min_range
