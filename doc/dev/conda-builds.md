@@ -8,7 +8,7 @@ Follow the instructions [here](https://docs.conda.io/projects/conda-build/en/lat
 
 ## CI Build Process
 
-- Update `CondaArtifacts` parameters as necessary within `eng/pipelines/templates/tages/conda-sdk-client.yml` .
+- Update `CondaArtifacts` parameters as necessary within `eng/pipelines/templates/stages/conda-sdk-client.yml` .
 - If necessary, add or update the conda recipes present under `/conda/conda-recipes`.
 - Update `eng/conda_env.yml` variable `AZURESDK_CONDA_VERSION` to the target version you wish to release.
 - Invoke [python - conda](https://dev.azure.com/azure-sdk/internal/_build?definitionId=6321) manually, checking off which packages you wish to release.

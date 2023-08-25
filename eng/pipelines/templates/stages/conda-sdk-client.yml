@@ -214,93 +214,96 @@ stages:
                 in_batch: ${{ parameters.release_azure_core }}
                 checkout:
                 - package: azure-core
-                  download_uri: https://files.pythonhosted.org/packages/df/d4/1472562806c1cef919503207082c2b2be70d005cd6deb9ae46d4af0c1b4a/azure-core-1.29.1.zip
+                  version: 1.29.1
                 - package: azure-mgmt-core
-                  download_uri: https://files.pythonhosted.org/packages/14/95/2b2085e40f4b9de88ad256428a669583066d8ab348fc19110c7d04c3189b/azure-mgmt-core-1.4.0.zip
+                  version: 1.4.0
                 - package: azure-common
-                  download_uri: https://files.pythonhosted.org/packages/3e/71/f6f71a276e2e69264a97ad39ef850dca0a04fce67b12570730cb38d0ccac/azure-common-1.1.28.zip
+                  version: 1.1.28
               - name: azure-identity
                 service: identity
+                in_batch: ${{ parameters.release_azure_identity }}
                 checkout:
                 - package: azure-identity
-                  download_uri: https://files.pythonhosted.org/packages/ad/3e/34b445ef2f536f4710903cbc3ca33c4272ad37f676609188c4544dc8463a/azure-identity-1.13.0.zip
+                  version: 1.13.0
               - name: azure-storage
                 common_root: azure/storage
                 in_batch: ${{ parameters.release_azure_storage }}
                 service: storage
                 checkout:
                 - package: azure-storage-blob
-                  download_uri: https://files.pythonhosted.org/packages/bd/5f/64a471e09f064b3b3a53529ecd9ed8facfebfafff3dad7ee9350f3a00a30/azure-storage-blob-12.17.0.zip
+                  version: 12.17.0
                 - package: azure-storage-queue
-                  download_uri: https://files.pythonhosted.org/packages/c0/2e/419cdb3640d0fca359b4b37a4fd30a22b5b6500e71d353873d3ab57ac3f6/azure-storage-file-datalake-12.12.0.zip
+                  version: 12.12.0
                 - package: azure-storage-file-share
-                  download_uri: https://files.pythonhosted.org/packages/7c/69/65d30d1a4a10b5c3121a24deaf374edd311556eb777d076c958ecee3d1d7/azure-storage-file-share-12.13.0.zip
+                  version: 12.13.0
                 - package: azure-storage-file-datalake
-                  download_uri: https://files.pythonhosted.org/packages/c0/2e/419cdb3640d0fca359b4b37a4fd30a22b5b6500e71d353873d3ab57ac3f6/azure-storage-file-datalake-12.12.0.zip
+                  version: 12.12.0
               - name: azure-ai-formrecognizer
                 common_root: azure
                 service: formrecognizer
                 in_batch: ${{ parameters.release_azure_ai_formrecognizer }}
                 checkout:
                 - package: azure-ai-formrecognizer
-                  download_uri: https://files.pythonhosted.org/packages/55/f6/4ab4c197d6eb9c83814a7f169c4b26cb1ae360a5f10dac81cccb6b7a00c3/azure-ai-formrecognizer-3.2.1.zip
+                  version: 3.2.1
               - name: azure-ai-language-conversations
                 common_root: azure
                 service: cognitivelanguage
                 in_batch: ${{ parameters.release_azure_ai_language_conversations }}
                 checkout:
                 - package: azure-ai-language-conversations
-                  download_uri: https://files.pythonhosted.org/packages/46/fb/0d1a4186717655ab190c0b0108e1c26fc11e62b13bf105cd1316aa0489ce/azure-ai-language-conversations-1.0.0.zip
+                  version: 1.0.0
               - name: azure-ai-language-questionanswering
                 service: cognitivelanguage
                 in_batch: ${{ parameters.release_azure_ai_language_questionanswering }}
                 checkout:
                 - package: azure-ai-language-questionanswering
-                  download_uri: https://files.pythonhosted.org/packages/88/b5/abd1acfaba2b60cb437ba3c9c888c6f98e2eb99b8e9c8376a882120e2945/azure-ai-language-questionanswering-1.1.0.zip
+                  version: 1.1.0
               - name: azure-ai-metricsadvisor
                 service: cognitivelanguage
                 in_batch: ${{ parameters.release_azure_ai_metricsadvisor }}
                 checkout:
                 - package: azure-ai-metricsadvisor
-                  download_uri: https://files.pythonhosted.org/packages/f0/03/16532aaeede7abc3a36f6693c1b8b9462dab82d470cffef8d90746615fd7/azure-ai-metricsadvisor-1.0.0.zip
+                  version: 1.0.0
+                - package: azure-ai-metricsadvisor
+                  version: 1.0.0
               - name: azure-ai-ml
                 service: ml
                 in_batch: ${{ parameters.release_azure_ai_ml }}
                 checkout:
                 - package: azure-ai-ml
-                  download_uri: https://files.pythonhosted.org/packages/61/61/c50f2244e09000c101f29a23a585c96e7342693dc9a28064bd70eab82aa3/azure-ai-ml-1.7.2.zip
+                  version: 1.7.2
               - name: azure-ai-textanalytics
                 service: textanalytics
                 in_batch: ${{ parameters.release_azure_ai_textanalytics }}
                 checkout:
                 - package: azure-ai-textanalytics
-                  download_uri: https://files.pythonhosted.org/packages/3a/7b/ea7ae656769d6b8f11731532c46cb65372c5fe5c18a31eef26c88c7b2f5e/azure-ai-textanalytics-5.2.1.zip
+                  version: 5.2.1
               - name: azure-ai-translation-document
                 service: translation
                 in_batch: ${{ parameters.release_azure_ai_translation_document }}
                 checkout:
                 - package: azure-ai-translation-document
-                  download_uri: https://files.pythonhosted.org/packages/3a/09/b12960e87cd52fe3893dc395154b42469a4103345bcf8ef28538f6d64ce9/azure-ai-translation-document-1.0.0.zip 
+                  version: 1.0.0
               - name: azure-appconfiguration
                 service: appconfiguration
                 in_batch: ${{ parameters.release_azure_appconfiguration }}
                 checkout:
                 - package: azure-appconfiguration
-                  download_uri: https://files.pythonhosted.org/packages/77/18/3d95b3ca4aec25070c4f0baaf355d5a537eaaa4e93f0fbc3ab0dbad0e1ce/azure-appconfiguration-1.4.0.zip
+                  version: 1.4.0
               - name: azure-communication
                 service: communication
                 in_batch: ${{ parameters.release_azure_communication }}
                 checkout:
                 - package: azure-communication-chat
-                  download_uri: https://files.pythonhosted.org/packages/b5/5b/3c38c0f07f50f1a7877f088a63b27733fa36ca835609459bcf0aefec2571/azure-communication-chat-1.1.0.zip
+                  version: 1.1.0
                 - package: azure-communication-email
-                  download_uri: https://files.pythonhosted.org/packages/4c/fc/45a122a7d6b2cc4652aa9c5ce3a151161433447361af98f15e82cae63727/azure-communication-email-1.0.0.zip
+                  version: 1.0.0
                 - package: azure-communication-identity
-                  download_uri: https://files.pythonhosted.org/packages/f0/b2/21ab355a1db459aabc2c0f7ab431f6577c0c3b6b88d9992548f367b567e0/azure-communication-identity-1.3.1.zip
+                  version: 1.3.1
                 - package: azure-communication-phonenumbers
-                  download_uri: https://files.pythonhosted.org/packages/19/6b/7e8f06bc56c385866c69b736bfcef7748af748783c8434ec38d643339a4b/azure-communication-phonenumbers-1.1.0.zip
-                - package: azure-communication-sms-1.0.1
-                  download_uri: https://files.pythonhosted.org/packages/a2/20/81b03d82c1240b2ee4784e413fb49393b871f78b4e935d7746875a10f8d7/azure-communication-sms-1.0.1.zip
+                  version: 1.1.0
+                - package: azure-communication-sms
+                  version: 1.0.1
               - name: azure-confidentialledger
                 service: confidentialledger
                 in_batch: ${{ parameters.release_azure_confidentialledger }}

@@ -5,8 +5,9 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-# Used to generate conda artifacts given a properly formatted build folder given a properly formatted
-# json targeting document. Find out what one of those looks like at eng/pipelines/templates/stages/conda-sdk-client.yml#L28
+# The functions within this document are utilized through through entrypoint() function which is bound to sdk_build_conda entrypoint.
+
+# Check CondaConfiguration.py for an larger example configuration blob that showcases all supported download methodologies.
 
 import argparse
 import sys
@@ -24,6 +25,7 @@ from typing import List, Any
 from subprocess import check_call
 from ci_tools.variables import discover_repo_root, in_ci
 from ci_tools.functions import unzip_file_to_directory
+from ci_tools.build import create_package
 from subprocess import check_call, CalledProcessError, check_output
 
 from .CondaConfiguration import CondaConfiguration, CheckoutConfiguration
@@ -93,6 +95,8 @@ setup(
 """
 
 http = urllib3.PoolManager()
+
+
 
 
 def resolve_assembly_folder_name(package_name: str, conda_package_name: str):
@@ -454,13 +458,13 @@ def get_package_source(
         )
     else:
         raise ValueError(
-            "Unable to handle a checkoutConfiguraiton that doesn't git clone OR download from pypi for sdist code."
+            "Unable to handle a checkoutConfiguration that doesn't git clone OR download from pypi for sdist code."
         )
 
 
 def assemble_source(conda_configurations: List[CondaConfiguration], repo_root: str) -> None:
     """This function takes a set of conda configurations as an input and creates the necessary artifacts to produce a successful conda build.
-    The function utilizes 3 temporariy directories to do this. Appearing in order of usage:
+    The function utilizes 3 temporary directories to do this. Appearing in order of usage:
 
     /conda/downloaded/
         /<conda-package-name>/
@@ -469,8 +473,8 @@ def assemble_source(conda_configurations: List[CondaConfiguration], repo_root: s
             /<downloaded source or repo package 3>
     /conda/assembly/
         <conda-package-name>/
-        /<downloaded source package 1>
-        /<downloaded source package 2>
+            /<downloaded source package 1>
+            /<downloaded source package 2>
     /conda/assembled/
         /<conda-package-name>
             meta.yaml

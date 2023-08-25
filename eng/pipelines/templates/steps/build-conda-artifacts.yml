@@ -16,7 +16,9 @@ steps:
       versionSpec: $(PythonVersion)
 
   - pwsh: |
-      pip install tools/azure-sdk-tools[build]
+      $ErrorActionPreference = 'Stop'
+      $PSNativeCommandUseErrorActionPreference = $true
+      pip install "tools/azure-sdk-tools[build,conda]"
       pip install disutils
     displayName: Install build script requirements
 
