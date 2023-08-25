@@ -3,16 +3,15 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-from azure.appconfiguration.provider import load
+from azure.appconfiguration.provider import load, SentinelKey
 from azure.appconfiguration import (
     AzureAppConfigurationClient,
     ConfigurationSetting,
-    SentinelKey,
 )
 import os
 import time
 
-connection_string = os.environ.get("AZURE_APPCONFIG_CONNECTION_STRING")
+connection_string = os.environ.get("APPCONFIGURATION_CONNECTION_STRING")
 print(connection_string)
 
 # Setting up a configuration setting with a known value
