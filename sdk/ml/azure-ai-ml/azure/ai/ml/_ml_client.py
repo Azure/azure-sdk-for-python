@@ -540,11 +540,11 @@ class MLClient:
         format:
 
         .. code-block:: json
-        {
-            "subscription_id": "<subscription-id>",
-            "resource_group": "<resource-group>",
-            "workspace_name": "<workspace-name>"
-        }
+            {
+                "subscription_id": "<subscription-id>",
+                "resource_group": "<resource-group>",
+                "workspace_name": "<workspace-name>"
+            }
 
         Then, you can use this method to load the same workspace in different Python notebooks or projects without
         retyping the workspace ARM properties.
