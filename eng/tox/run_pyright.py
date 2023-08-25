@@ -12,6 +12,8 @@ import argparse
 import os
 import logging
 import sys
+import json
+import tempfile
 
 from ci_tools.environment_exclusions import (
     is_check_enabled, is_typing_ignored
@@ -63,20 +65,27 @@ if __name__ == "__main__":
             )
             paths = paths[:-1]
 
-    pyright_env = "pyright" if not args.next else "next-pyright"
-    commands = [
-        sys.executable,
-        "-m",
-        "pyright",
-        "--pythonpath",
-        os.path.join(args.target_package, ".tox", pyright_env),
-    ]
-    commands.extend(paths)
-    try:
-        check_call(commands)
-    except CalledProcessError as error:
-        if args.next and in_ci() and is_check_enabled(args.target_package, "pyright") and not is_typing_ignored(package_name):
-            create_vnext_issue(package_name, "pyright")
+    with open(os.path.join(root_dir, "pyrightconfig.json"), "r") as f:
+        config = json.loads(f.read())
+    
+    config.update({"executionEnvironments": [{"root": args.target_package}]})
+    with tempfile.NamedTemporaryFile() as temp_dir_name:
+        with open(os.path.join(temp_dir_name, "pyrightconfig.json"), "w+") as f:
+            f.write(json.dumps(config, indent=4))
 
-        print("See https://aka.ms/python/typing-guide for information.\n\n")
-        raise error
+        commands = [
+            sys.executable,
+            "-m",
+            "pyright",
+            "--project",
+            os.path.join(temp_dir_name, "pyrightconfig.json"),
+        ]
+        commands.extend(paths)
+        try:
+            check_call(commands)
+        except CalledProcessError as error:
+            if args.next and in_ci() and is_check_enabled(args.target_package, "pyright") and not is_typing_ignored(package_name):
+                create_vnext_issue(package_name, "pyright")
+
+            print("See https://aka.ms/python/typing-guide for information.\n\n")
+            raise error
