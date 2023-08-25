@@ -5,6 +5,7 @@ jobs:
   - template: /eng/common/pipelines/templates/jobs/docindex.yml
 
   - job: UpdateDocsMsBuildConfig
+    timeoutInMinutes: 300
     pool:
       name: azsdk-pool-mms-ubuntu-2004-general
       vmImage: Ubuntu20.04
