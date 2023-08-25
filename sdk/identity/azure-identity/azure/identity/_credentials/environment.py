@@ -100,8 +100,10 @@ class EnvironmentCredential:
             )
             set_variables = [v for v in expected_variables if v in os.environ]
             if set_variables:
-                _LOGGER.warning(
-                    "Incomplete environment configuration. These variables are set: %s", ", ".join(set_variables)
+                _LOGGER.log(
+                    logging.INFO if set_variables == [EnvironmentVariables.AZURE_CLIENT_ID] else logging.WARNING,
+                    "Incomplete environment configuration. These variables are set: %s",
+                    ", ".join(set_variables),
                 )
             else:
                 _LOGGER.info("No environment configuration found.")
