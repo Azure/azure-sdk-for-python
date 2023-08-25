@@ -56,7 +56,8 @@ class WorkspaceConnectionSchema(PathAwareSchema):
         ]
     )
     metadata = fields.Dict(required=False, allow_none=True)
-
+    is_shared_to_all = fields.Bool(required=False, allow_none=True)
+    
     @post_load
     def make(self, data, **kwargs):
         from azure.ai.ml.entities import WorkspaceConnection

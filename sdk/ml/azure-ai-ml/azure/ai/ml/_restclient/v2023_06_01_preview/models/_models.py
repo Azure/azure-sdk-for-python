@@ -33,6 +33,8 @@ class WorkspaceConnectionPropertiesV2(msrest.serialization.Model):
     :vartype metadata: any
     :ivar target:
     :vartype target: str
+    :ivar is_shared_to_all:
+    :vartype is_shared_to_all: bool
     """
 
     _validation = {
@@ -45,6 +47,7 @@ class WorkspaceConnectionPropertiesV2(msrest.serialization.Model):
         'expiry_time': {'key': 'expiryTime', 'type': 'iso-8601'},
         'metadata': {'key': 'metadata', 'type': 'object'},
         'target': {'key': 'target', 'type': 'str'},
+        'is_shared_to_all': {'key': 'isSharedToAll', 'type': 'bool'},
     }
 
     _subtype_map = {
@@ -67,6 +70,8 @@ class WorkspaceConnectionPropertiesV2(msrest.serialization.Model):
         :paramtype metadata: any
         :keyword target:
         :paramtype target: str
+        :keyword is_shared_to_all:
+        :paramtype is_shared_to_all: bool
         """
         super(WorkspaceConnectionPropertiesV2, self).__init__(**kwargs)
         self.auth_type = None  # type: Optional[str]
@@ -74,6 +79,7 @@ class WorkspaceConnectionPropertiesV2(msrest.serialization.Model):
         self.expiry_time = kwargs.get('expiry_time', None)
         self.metadata = kwargs.get('metadata', None)
         self.target = kwargs.get('target', None)
+        self.is_shared_to_all = kwargs.get('is_shared_to_all', None)
 
 
 class AccessKeyAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2):
@@ -96,6 +102,8 @@ class AccessKeyAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionProperti
     :vartype metadata: any
     :ivar target:
     :vartype target: str
+    :ivar is_shared_to_all:
+    :vartype is_shared_to_all: bool
     :ivar credentials:
     :vartype credentials: ~azure.mgmt.machinelearningservices.models.WorkspaceConnectionAccessKey
     """
@@ -110,6 +118,7 @@ class AccessKeyAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionProperti
         'expiry_time': {'key': 'expiryTime', 'type': 'iso-8601'},
         'metadata': {'key': 'metadata', 'type': 'object'},
         'target': {'key': 'target', 'type': 'str'},
+        'is_shared_to_all': {'key': 'isSharedToAll', 'type': 'bool'},
         'credentials': {'key': 'credentials', 'type': 'WorkspaceConnectionAccessKey'},
     }
 
@@ -129,6 +138,8 @@ class AccessKeyAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionProperti
         :paramtype metadata: any
         :keyword target:
         :paramtype target: str
+        :keyword is_shared_to_all:
+        :paramtype is_shared_to_all: bool
         :keyword credentials:
         :paramtype credentials: ~azure.mgmt.machinelearningservices.models.WorkspaceConnectionAccessKey
         """
@@ -1544,6 +1555,8 @@ Use Metadata property bag for ApiType, ApiVersion, Kind and other metadata field
     :vartype metadata: any
     :ivar target:
     :vartype target: str
+    :ivar is_shared_to_all:
+    :vartype is_shared_to_all: bool
     :ivar credentials: Api key object for workspace connection credential.
     :vartype credentials: ~azure.mgmt.machinelearningservices.models.WorkspaceConnectionApiKey
     """
@@ -1558,6 +1571,7 @@ Use Metadata property bag for ApiType, ApiVersion, Kind and other metadata field
         'expiry_time': {'key': 'expiryTime', 'type': 'iso-8601'},
         'metadata': {'key': 'metadata', 'type': 'object'},
         'target': {'key': 'target', 'type': 'str'},
+        'is_shared_to_all': {'key': 'isSharedToAll', 'type': 'bool'},
         'credentials': {'key': 'credentials', 'type': 'WorkspaceConnectionApiKey'},
     }
 
@@ -1577,6 +1591,8 @@ Use Metadata property bag for ApiType, ApiVersion, Kind and other metadata field
         :paramtype metadata: any
         :keyword target:
         :paramtype target: str
+        :keyword is_shared_to_all:
+        :paramtype is_shared_to_all: bool
         :keyword credentials: Api key object for workspace connection credential.
         :paramtype credentials: ~azure.mgmt.machinelearningservices.models.WorkspaceConnectionApiKey
         """
@@ -8199,6 +8215,8 @@ Use Metadata property bag for ApiVersion and other metadata fields.
     :vartype metadata: any
     :ivar target:
     :vartype target: str
+    :ivar is_shared_to_all:
+    :vartype is_shared_to_all: bool
     :ivar credentials: Custom Keys credential object.
     :vartype credentials: ~azure.mgmt.machinelearningservices.models.CustomKeys
     """
@@ -8213,6 +8231,7 @@ Use Metadata property bag for ApiVersion and other metadata fields.
         'expiry_time': {'key': 'expiryTime', 'type': 'iso-8601'},
         'metadata': {'key': 'metadata', 'type': 'object'},
         'target': {'key': 'target', 'type': 'str'},
+        'is_shared_to_all': {'key': 'isSharedToAll', 'type': 'bool'},
         'credentials': {'key': 'credentials', 'type': 'CustomKeys'},
     }
 
@@ -8232,6 +8251,8 @@ Use Metadata property bag for ApiVersion and other metadata fields.
         :paramtype metadata: any
         :keyword target:
         :paramtype target: str
+        :keyword is_shared_to_all:
+        :paramtype is_shared_to_all: bool
         :keyword credentials: Custom Keys credential object.
         :paramtype credentials: ~azure.mgmt.machinelearningservices.models.CustomKeys
         """
@@ -18863,6 +18884,8 @@ class ManagedIdentityAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPr
     :vartype metadata: any
     :ivar target:
     :vartype target: str
+    :ivar is_shared_to_all:
+    :vartype is_shared_to_all: bool
     :ivar credentials:
     :vartype credentials:
      ~azure.mgmt.machinelearningservices.models.WorkspaceConnectionManagedIdentity
@@ -18878,6 +18901,7 @@ class ManagedIdentityAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPr
         'expiry_time': {'key': 'expiryTime', 'type': 'iso-8601'},
         'metadata': {'key': 'metadata', 'type': 'object'},
         'target': {'key': 'target', 'type': 'str'},
+        'is_shared_to_all': {'key': 'isSharedToAll', 'type': 'bool'},
         'credentials': {'key': 'credentials', 'type': 'WorkspaceConnectionManagedIdentity'},
     }
 
@@ -18897,6 +18921,8 @@ class ManagedIdentityAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPr
         :paramtype metadata: any
         :keyword target:
         :paramtype target: str
+        :keyword is_shared_to_all:
+        :paramtype is_shared_to_all: bool
         :keyword credentials:
         :paramtype credentials:
          ~azure.mgmt.machinelearningservices.models.WorkspaceConnectionManagedIdentity
@@ -20923,6 +20949,8 @@ class NoneAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2)
     :vartype metadata: any
     :ivar target:
     :vartype target: str
+    :ivar is_shared_to_all:
+    :vartype is_shared_to_all: bool
     """
 
     _validation = {
@@ -20935,6 +20963,7 @@ class NoneAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2)
         'expiry_time': {'key': 'expiryTime', 'type': 'iso-8601'},
         'metadata': {'key': 'metadata', 'type': 'object'},
         'target': {'key': 'target', 'type': 'str'},
+        'is_shared_to_all': {'key': 'isSharedToAll', 'type': 'bool'},
     }
 
     def __init__(
@@ -20953,6 +20982,8 @@ class NoneAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2)
         :paramtype metadata: any
         :keyword target:
         :paramtype target: str
+        :keyword is_shared_to_all:
+        :paramtype is_shared_to_all: bool
         """
         super(NoneAuthTypeWorkspaceConnectionProperties, self).__init__(**kwargs)
         self.auth_type = 'None'  # type: str
@@ -22724,6 +22755,8 @@ class PATAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2):
     :vartype metadata: any
     :ivar target:
     :vartype target: str
+    :ivar is_shared_to_all:
+    :vartype is_shared_to_all: bool
     :ivar credentials:
     :vartype credentials:
      ~azure.mgmt.machinelearningservices.models.WorkspaceConnectionPersonalAccessToken
@@ -22739,6 +22772,7 @@ class PATAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2):
         'expiry_time': {'key': 'expiryTime', 'type': 'iso-8601'},
         'metadata': {'key': 'metadata', 'type': 'object'},
         'target': {'key': 'target', 'type': 'str'},
+        'is_shared_to_all': {'key': 'isSharedToAll', 'type': 'bool'},
         'credentials': {'key': 'credentials', 'type': 'WorkspaceConnectionPersonalAccessToken'},
     }
 
@@ -22758,6 +22792,8 @@ class PATAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2):
         :paramtype metadata: any
         :keyword target:
         :paramtype target: str
+        :keyword is_shared_to_all:
+        :paramtype is_shared_to_all: bool
         :keyword credentials:
         :paramtype credentials:
          ~azure.mgmt.machinelearningservices.models.WorkspaceConnectionPersonalAccessToken
@@ -24981,6 +25017,8 @@ class SASAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2):
     :vartype metadata: any
     :ivar target:
     :vartype target: str
+    :ivar is_shared_to_all:
+    :vartype is_shared_to_all: bool
     :ivar credentials:
     :vartype credentials:
      ~azure.mgmt.machinelearningservices.models.WorkspaceConnectionSharedAccessSignature
@@ -24996,6 +25034,7 @@ class SASAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2):
         'expiry_time': {'key': 'expiryTime', 'type': 'iso-8601'},
         'metadata': {'key': 'metadata', 'type': 'object'},
         'target': {'key': 'target', 'type': 'str'},
+        'is_shared_to_all': {'key': 'isSharedToAll', 'type': 'bool'},
         'credentials': {'key': 'credentials', 'type': 'WorkspaceConnectionSharedAccessSignature'},
     }
 
@@ -25015,6 +25054,8 @@ class SASAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2):
         :paramtype metadata: any
         :keyword target:
         :paramtype target: str
+        :keyword is_shared_to_all:
+        :paramtype is_shared_to_all: bool
         :keyword credentials:
         :paramtype credentials:
          ~azure.mgmt.machinelearningservices.models.WorkspaceConnectionSharedAccessSignature
@@ -25534,6 +25575,8 @@ class ServicePrincipalAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionP
     :vartype metadata: any
     :ivar target:
     :vartype target: str
+    :ivar is_shared_to_all:
+    :vartype is_shared_to_all: bool
     :ivar credentials:
     :vartype credentials:
      ~azure.mgmt.machinelearningservices.models.WorkspaceConnectionServicePrincipal
@@ -25549,6 +25592,7 @@ class ServicePrincipalAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionP
         'expiry_time': {'key': 'expiryTime', 'type': 'iso-8601'},
         'metadata': {'key': 'metadata', 'type': 'object'},
         'target': {'key': 'target', 'type': 'str'},
+        'is_shared_to_all': {'key': 'isSharedToAll', 'type': 'bool'},
         'credentials': {'key': 'credentials', 'type': 'WorkspaceConnectionServicePrincipal'},
     }
 
@@ -25568,6 +25612,8 @@ class ServicePrincipalAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionP
         :paramtype metadata: any
         :keyword target:
         :paramtype target: str
+        :keyword is_shared_to_all:
+        :paramtype is_shared_to_all: bool
         :keyword credentials:
         :paramtype credentials:
          ~azure.mgmt.machinelearningservices.models.WorkspaceConnectionServicePrincipal
@@ -29266,6 +29312,8 @@ class UsernamePasswordAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionP
     :vartype metadata: any
     :ivar target:
     :vartype target: str
+    :ivar is_shared_to_all:
+    :vartype is_shared_to_all: bool
     :ivar credentials:
     :vartype credentials:
      ~azure.mgmt.machinelearningservices.models.WorkspaceConnectionUsernamePassword
@@ -29281,6 +29329,7 @@ class UsernamePasswordAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionP
         'expiry_time': {'key': 'expiryTime', 'type': 'iso-8601'},
         'metadata': {'key': 'metadata', 'type': 'object'},
         'target': {'key': 'target', 'type': 'str'},
+        'is_shared_to_all': {'key': 'isSharedToAll', 'type': 'bool'},
         'credentials': {'key': 'credentials', 'type': 'WorkspaceConnectionUsernamePassword'},
     }
 
@@ -29300,6 +29349,8 @@ class UsernamePasswordAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionP
         :paramtype metadata: any
         :keyword target:
         :paramtype target: str
+        :keyword is_shared_to_all:
+        :paramtype is_shared_to_all: bool
         :keyword credentials:
         :paramtype credentials:
          ~azure.mgmt.machinelearningservices.models.WorkspaceConnectionUsernamePassword

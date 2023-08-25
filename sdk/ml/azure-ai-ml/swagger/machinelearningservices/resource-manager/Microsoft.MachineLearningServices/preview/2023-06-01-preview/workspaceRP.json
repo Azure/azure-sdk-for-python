@@ -3147,6 +3147,9 @@
         },
         "target": {
           "type": "string"
+        },
+        "isSharedToAll": {
+          "type": "boolean"
         }
       },
       "discriminator": "authType"

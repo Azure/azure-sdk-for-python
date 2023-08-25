@@ -82,12 +82,14 @@ class WorkspaceConnection(Resource):
             AccessKeyConfiguration,
         ],
         metadata: Optional[Dict[str, Any]] = None,
+        is_shared_to_all: Optional[bool] = None,
         **kwargs,
     ):
         self.type = type
         self._target = target
         self._credentials = credentials
         self._metadata = json.loads(json.dumps(metadata))
+        self._is_shared_to_all = is_shared_to_all
         super().__init__(**kwargs)
 
     @property
@@ -218,6 +220,7 @@ class WorkspaceConnection(Resource):
             type=camel_to_snake(properties.category),
             credentials=credentials,
             metadata=properties.metadata if hasattr(properties, "metadata") else None,
+            is_shared_to_all=properties.is_shared_to_all if hasattr(properties, "is_shared_to_all") else None,
         )
 
         return workspace_connection
@@ -252,6 +255,7 @@ class WorkspaceConnection(Resource):
             metadata=self.metadata,
             # auth_type=auth_type,
             category=_snake_to_camel(self.type),
+            is_shared_to_all=self._is_shared_to_all,
         )
 
         return RestWorkspaceConnection(properties=properties)
