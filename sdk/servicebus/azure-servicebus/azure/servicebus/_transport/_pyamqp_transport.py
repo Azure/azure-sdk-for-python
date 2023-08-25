@@ -647,6 +647,8 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         if receiver._receive_context.is_set():
             receiver._handler._received_messages.put((frame, message))
         else:
+            if receiver._receive_mode == ServiceBusReceiveMode.RECEIVE_AND_DELETE:
+                receiver._handler._received_messages.put((frame, message))
             receiver._handler.settle_messages(frame[1], 'released')
 
     @staticmethod
