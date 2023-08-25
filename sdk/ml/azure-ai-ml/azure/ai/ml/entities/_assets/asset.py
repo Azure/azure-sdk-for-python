@@ -94,6 +94,17 @@ class Asset(Resource):
         :type value: str
         :raises ValidationException: Raised if value is not a string.
         """
+        if value:
+            if not isinstance(value, str):
+                msg = f"Asset version must be a string, not type {type(value)}."  # type:ignore[unreachable]
+                err = ValidationException(
+                    message=msg,
+                    target=ErrorTarget.ASSET,
+                    no_personal_data_message=msg,
+                    error_category=ErrorCategory.USER_ERROR,
+                    error_type=ValidationErrorType.INVALID_VALUE,
+                )
+                log_and_raise_error(err)
 
         self._version = value
         self._auto_increment_version = self.name and not self._version
@@ -115,7 +126,7 @@ class Asset(Resource):
         dump_yaml_to_file(dest, yaml_serialized, default_flow_style=False, path=path, **kwargs)
 
     def __eq__(self, other: Any) -> bool:  # type: ignore
-        return (
+        return bool(
             self.name == other.name
             and self.id == other.id
             and self.version == other.version
