@@ -97,7 +97,7 @@ class BulkTests(unittest.TestCase):
         self.assertEqual(throttle_count, 0)
         self.assertEqual(len(batch_result[0]), 100)
 
-    def test_bulk_lsn(self):
+    async def test_bulk_lsn(self):
         container = await self.test_database.create_container_if_not_exists(id="lsn_bulk_container",
                                                                             partition_key=PartitionKey(path="/id"))
         # Create test items
