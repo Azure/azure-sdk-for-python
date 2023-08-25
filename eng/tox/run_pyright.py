@@ -67,7 +67,7 @@ if __name__ == "__main__":
 
     with open(os.path.join(root_dir, "pyrightconfig.json"), "r") as f:
         config = json.loads(f.read())
-    
+
     config.update({"executionEnvironments": [{"root": args.target_package}]})
     with tempfile.TemporaryDirectory() as temp_dir_name:
         with open(os.path.join(temp_dir_name, "pyrightconfig.json"), "w+") as f:
