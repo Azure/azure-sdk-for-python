@@ -115,8 +115,10 @@ try:
             print(f"{key} -- name: {value.name}, supported target languages count: {len(value.translations)}")
 
 except HttpResponseError as exception:
-    print(f"Error Code: {exception.error.code}")
-    print(f"Message: {exception.error.message}")
+    if exception.error is not None:
+        print(f"Error Code: {exception.error.code}")
+        print(f"Message: {exception.error.message}")
+    raise
 ```
 
 <!-- END SNIPPET -->
@@ -178,8 +180,10 @@ try:
         print(f"Input text was transliterated to '{transliteration.script}' script. Transliterated text: '{transliteration.text}'.")
 
 except HttpResponseError as exception:
-    print(f"Error Code: {exception.error.code}")
-    print(f"Message: {exception.error.message}")
+    if exception.error is not None:
+        print(f"Error Code: {exception.error.code}")
+        print(f"Message: {exception.error.message}")
+    raise
 ```
 
 <!-- END SNIPPET -->
@@ -243,8 +247,10 @@ try:
         print(f"First entry: '{dictionary_entry.translations[0].display_target}', confidence: {dictionary_entry.translations[0].confidence}.")
 
 except HttpResponseError as exception:
-    print(f"Error Code: {exception.error.code}")
-    print(f"Message: {exception.error.message}")
+    if exception.error is not None:
+        print(f"Error Code: {exception.error.code}")
+        print(f"Message: {exception.error.message}")
+    raise
 ```
 
 <!-- END SNIPPET -->
@@ -273,8 +279,10 @@ try:
         print(f"First example: '{dictionary_entry.examples[0].target_prefix}{dictionary_entry.examples[0].target_term}{dictionary_entry.examples[0].target_suffix}'.")
 
 except HttpResponseError as exception:
-    print(f"Error Code: {exception.error.code}")
-    print(f"Message: {exception.error.message}")
+    if exception.error is not None:
+        print(f"Error Code: {exception.error.code}")
+        print(f"Message: {exception.error.message}")
+raise
 ```
 
 <!-- END SNIPPET -->
