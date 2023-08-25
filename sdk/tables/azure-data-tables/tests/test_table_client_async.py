@@ -8,7 +8,7 @@ import platform
 import os
 
 from datetime import datetime, timedelta
-from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
+from devtools_testutils import AzureRecordedTestCase
 from devtools_testutils.aio import recorded_by_proxy_async
 
 from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
@@ -206,7 +206,6 @@ class TestTableClientAsync(AzureRecordedTestCase, AsyncTableTestCase):
             with pytest.raises(ClientAuthenticationError):
                 await service_client.create_table_if_not_exists(table_name="TestInsert")
 
-    @pytest.mark.live_test_only
     @tables_decorator_async
     @recorded_by_proxy_async
     async def test_table_client_with_named_key_credential(
@@ -258,7 +257,6 @@ class TestTableClientAsync(AzureRecordedTestCase, AsyncTableTestCase):
                 pass
             await client.delete_table()
 
-    @pytest.mark.live_test_only
     @tables_decorator_async
     @recorded_by_proxy_async
     async def test_table_service_client_with_named_key_credential(
@@ -295,7 +293,6 @@ class TestTableClientAsync(AzureRecordedTestCase, AsyncTableTestCase):
                 pass
             await client.delete_table(table_name)
 
-    @pytest.mark.live_test_only
     @tables_decorator_async
     @recorded_by_proxy_async
     async def test_table_client_with_sas_token_credential(
@@ -349,7 +346,6 @@ class TestTableClientAsync(AzureRecordedTestCase, AsyncTableTestCase):
         ex_msg = "You cannot use AzureSasCredential when the resource URI also contains a Shared Access Signature."
         assert ex_msg == str(ex.value)
 
-    @pytest.mark.live_test_only
     @tables_decorator_async
     @recorded_by_proxy_async
     async def test_table_service_client_with_sas_token_credential(
@@ -390,7 +386,6 @@ class TestTableClientAsync(AzureRecordedTestCase, AsyncTableTestCase):
         ex_msg = "You cannot use AzureSasCredential when the resource URI also contains a Shared Access Signature."
         assert ex_msg == str(ex.value)
 
-    @pytest.mark.live_test_only
     @tables_decorator_async
     @recorded_by_proxy_async
     async def test_table_client_with_token_credential(
@@ -440,7 +435,6 @@ class TestTableClientAsync(AzureRecordedTestCase, AsyncTableTestCase):
                 pass
             await client.delete_table()
 
-    @pytest.mark.live_test_only
     @tables_decorator_async
     @recorded_by_proxy_async
     async def test_table_service_client_with_token_credential(
@@ -476,9 +470,8 @@ class TestTableClientAsync(AzureRecordedTestCase, AsyncTableTestCase):
                 pass
             await client.delete_table(table_name)
 
-    @pytest.mark.live_test_only
     @tables_decorator_async
-    @recorded_by_proxy
+    @recorded_by_proxy_async
     async def test_table_client_without_credential(
         self, tables_storage_account_name, tables_primary_storage_account_key
     ):
@@ -517,9 +510,8 @@ class TestTableClientAsync(AzureRecordedTestCase, AsyncTableTestCase):
                 pass
             await client.delete_table()
 
-    @pytest.mark.live_test_only
     @tables_decorator_async
-    @recorded_by_proxy
+    @recorded_by_proxy_async
     async def test_table_service_client_without_credential(
         self, tables_storage_account_name, tables_primary_storage_account_key
     ):

@@ -209,7 +209,6 @@ class TestTableClient(AzureRecordedTestCase, TableTestCase):
             with pytest.raises(ClientAuthenticationError):
                 service_client.create_table_if_not_exists(table_name="TestInsert")
 
-    @pytest.mark.live_test_only
     @tables_decorator
     @recorded_by_proxy
     def test_table_client_with_named_key_credential(
@@ -261,7 +260,6 @@ class TestTableClient(AzureRecordedTestCase, TableTestCase):
                 pass
             client.delete_table()
 
-    @pytest.mark.live_test_only
     @tables_decorator
     @recorded_by_proxy
     def test_table_service_client_with_named_key_credential(
@@ -293,7 +291,6 @@ class TestTableClient(AzureRecordedTestCase, TableTestCase):
                 pass
             client.delete_table(table_name)
 
-    @pytest.mark.live_test_only
     @tables_decorator
     @recorded_by_proxy
     def test_table_client_with_sas_token_credential(
@@ -343,7 +340,6 @@ class TestTableClient(AzureRecordedTestCase, TableTestCase):
         ex_msg = "You cannot use AzureSasCredential when the resource URI also contains a Shared Access Signature."
         assert ex_msg == str(ex.value)
 
-    @pytest.mark.live_test_only
     @tables_decorator
     @recorded_by_proxy
     def test_table_service_client_with_sas_token_credential(
@@ -378,7 +374,6 @@ class TestTableClient(AzureRecordedTestCase, TableTestCase):
         ex_msg = "You cannot use AzureSasCredential when the resource URI also contains a Shared Access Signature."
         assert ex_msg == str(ex.value)
 
-    @pytest.mark.live_test_only
     @tables_decorator
     @recorded_by_proxy
     def test_table_client_with_token_credential(self, tables_storage_account_name, tables_primary_storage_account_key):
@@ -424,7 +419,6 @@ class TestTableClient(AzureRecordedTestCase, TableTestCase):
                 pass
             client.delete_table()
 
-    @pytest.mark.live_test_only
     @tables_decorator
     @recorded_by_proxy
     def test_table_service_client_with_token_credential(
@@ -456,7 +450,6 @@ class TestTableClient(AzureRecordedTestCase, TableTestCase):
                 pass
             client.delete_table(table_name)
 
-    @pytest.mark.live_test_only
     @tables_decorator
     @recorded_by_proxy
     def test_table_client_without_credential(self, tables_storage_account_name, tables_primary_storage_account_key):
@@ -495,7 +488,6 @@ class TestTableClient(AzureRecordedTestCase, TableTestCase):
                 pass
             client.delete_table()
 
-    @pytest.mark.live_test_only
     @tables_decorator
     @recorded_by_proxy
     def test_table_service_client_without_credential(
