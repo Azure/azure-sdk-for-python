@@ -99,7 +99,9 @@ def _format_url_section(template, **kwargs):
             components = [c for c in formatted_components if "{{{}}}".format(key.args[0]) not in c]
             template = "/".join(components)
             if last_template == template:
-                raise ValueError("The value provided for the url part {} was incorrect, and resulted in an invalid url")
+                raise ValueError(
+                    "The value provided for the url part {} was incorrect, and resulted in an invalid url"
+                ) from key
             last_template = template
 
 

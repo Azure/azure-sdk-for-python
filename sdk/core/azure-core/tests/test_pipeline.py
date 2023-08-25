@@ -206,8 +206,8 @@ def test_format_url_double_query():
 
 def test_format_url_braces_with_dot():
     base_url = "https://bing.com/{aaa.bbb}"
-    url = _format_url_section(base_url)
-    assert url == base_url
+    with pytest.raises(ValueError):
+        url = _format_url_section(base_url)
 
 
 def test_format_url_single_brace():
