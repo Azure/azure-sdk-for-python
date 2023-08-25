@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._azure_sphere_mgmt_client import AzureSphereMgmtClient
+from ._client import AzureSphereMgmtClient
 from ._version import VERSION
 
 __version__ = VERSION

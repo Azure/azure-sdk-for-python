@@ -7,13 +7,13 @@
 # --------------------------------------------------------------------------
 
 from ._operations import Operations
-from ._catalogs_operations import CatalogsOperations
-from ._certificates_operations import CertificatesOperations
-from ._images_operations import ImagesOperations
-from ._products_operations import ProductsOperations
-from ._device_groups_operations import DeviceGroupsOperations
-from ._deployments_operations import DeploymentsOperations
-from ._devices_operations import DevicesOperations
+from ._operations import CatalogsOperations
+from ._operations import CertificatesOperations
+from ._operations import ImagesOperations
+from ._operations import ProductsOperations
+from ._operations import DeviceGroupsOperations
+from ._operations import DeploymentsOperations
+from ._operations import DevicesOperations
 
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
