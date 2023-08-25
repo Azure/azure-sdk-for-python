@@ -114,7 +114,11 @@ class WorkspaceOperationsBase:
             workspace.tags["createdByToolkit"] = "sdk-v2-{}".format(VERSION)
 
         workspace.resource_group = resource_group
-        template, param, resources_being_deployed = self._populate_arm_paramaters(
+        (
+            template,
+            param,
+            resources_being_deployed,
+        ) = self._populate_arm_paramaters(  # pylint: disable=too-many-function-args
             workspace, byo_open_ai_resource_id, **kwargs
         )
         # check if create with workspace hub request is valid
