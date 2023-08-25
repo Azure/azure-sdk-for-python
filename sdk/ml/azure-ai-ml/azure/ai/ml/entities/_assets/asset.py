@@ -94,17 +94,6 @@ class Asset(Resource):
         :type value: str
         :raises ValidationException: Raised if value is not a string.
         """
-        if value:
-            if not isinstance(value, str):
-                msg = f"Asset version must be a string, not type {type(value)}."
-                err = ValidationException(
-                    message=msg,
-                    target=ErrorTarget.ASSET,
-                    no_personal_data_message=msg,
-                    error_category=ErrorCategory.USER_ERROR,
-                    error_type=ValidationErrorType.INVALID_VALUE,
-                )
-                log_and_raise_error(err)
 
         self._version = value
         self._auto_increment_version = self.name and not self._version
