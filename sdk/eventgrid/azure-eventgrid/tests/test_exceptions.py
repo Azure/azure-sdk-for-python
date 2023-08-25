@@ -26,11 +26,9 @@ except ImportError:
 
 from devtools_testutils import AzureMgmtRecordedTestCase, recorded_by_proxy
 
-from azure.core.credentials import AzureKeyCredential, AzureSasCredential
+from azure.core.credentials import AzureKeyCredential
+from azure.eventgrid import EventGridPublisherClient, EventGridEvent
 from azure.core.messaging import CloudEvent
-from azure.core.serialization import NULL
-from azure.eventgrid import EventGridPublisherClient, EventGridEvent, generate_sas
-from azure.eventgrid._legacy._helpers import _cloud_event_to_generated
 
 from eventgrid_preparer import (
     EventGridPreparer,
@@ -66,16 +64,16 @@ class TestEventGridPublisherClientExceptions(AzureMgmtRecordedTestCase):
     @pytest.mark.live_test_only
     @EventGridPreparer()
     def test_raise_on_bad_resource(self, eventgrid_topic_key):
-        akc_credential = AzureKeyCredential(eventgrid_topic_key)
+        credential = AzureKeyCredential(eventgrid_topic_key)
         client = EventGridPublisherClient(
-            "https://bad-resource.westus-1.eventgrid.azure.net/api/events",
-            akc_credential,
+            "https://bad-resource.eastus-1.eventgrid.azure.net/api/events",
+            credential,
         )
-        eg_event = EventGridEvent(
+        eg_event = CloudEvent(
             subject="sample",
             data={"sample": "eventgridevent"},
-            event_type="Sample.EventGrid.Event",
-            data_version="2.0",
+            source="source",
+            type="Sample.Cloud.Event",
         )
         with pytest.raises(HttpResponseError):
             client.send(eg_event)
