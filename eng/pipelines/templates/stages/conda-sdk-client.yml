@@ -58,7 +58,7 @@ stages:
     dependsOn: Build_Dependencies
     jobs:
     - job: 'Build'
-      timeoutInMinutes: 90
+      timeoutInMinutes: 120
         
       pool:
         name: azsdk-pool-mms-ubuntu-2004-general
@@ -265,7 +265,6 @@ stages:
                 checkout:
                 - package: azure-servicebus
                   download_uri: "https://files.pythonhosted.org/packages/4d/41/13ecf05ed4f9192d2aed22f7da8bd508abd2fe33f825f955d2738a9ccbad/azure-servicebus-7.10.0.zip"
-              
               - name: azure-mgmt
                 service: mgmt
                 common_root: azure/mgmt
