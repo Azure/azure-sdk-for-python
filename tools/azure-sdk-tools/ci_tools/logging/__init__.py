@@ -50,7 +50,7 @@ def run_logged(*args, prefix="", **kwargs):
     logfile = get_log_file(prefix)
 
     with open(logfile, "w") as log_output:
-        run(*args, **kwargs, stdout=log_output)
+        run(*args, **kwargs, stdout=log_output, stderr=log_output)
 
 
 __all__ = ["initialize_logger", "run_logged"]

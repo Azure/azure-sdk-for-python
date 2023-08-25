@@ -22,6 +22,7 @@ class TriggerSchema(metaclass=PatchedSchemaMeta):
     time_zone = fields.Str()
 
     @post_dump(pass_original=True)
+    # pylint: disable-next=docstring-missing-param,docstring-missing-return,docstring-missing-rtype
     def resolve_time_zone(self, data, original_data, **kwargs):  # pylint: disable= unused-argument
         """
         Auto-convert will get string like "TimeZone.UTC" for TimeZone enum object,

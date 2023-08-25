@@ -138,6 +138,15 @@ class ModelPackageInput:
     :type mode: Optional[str]
     :param mount_path: The mount path for the input.
     :type mount_path: Optional[str]
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../../../../../../../samples/ml_samples_misc.py
+            :start-after: [START model_package_input_entity_create]
+            :end-before: [END model_package_input_entity_create]
+            :language: python
+            :dedent: 8
+            :caption: Create a Model Package Input object.
     """
 
     def __init__(
@@ -191,7 +200,16 @@ class ModelPackage(Resource, PackageRequest):
     :param model_configuration: The model configuration.
     :type model_configuration: Optional[~azure.ai.ml.entities.ModelConfiguration]
     :param tags: The tags of the model package.
-    :type tags: Optiona[dict[str, str]]
+    :type tags: Optional[dict[str, str]]
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../../../../../../../samples/ml_samples_misc.py
+            :start-after: [START model_package_entity_create]
+            :end-before: [END model_package_entity_create]
+            :language: python
+            :dedent: 8
+            :caption: Create a Model Package object.
     """
 
     def __init__(
@@ -245,8 +263,6 @@ class ModelPackage(Resource, PackageRequest):
             If dest is a file path, a new file will be created.
             If dest is an open file, the file will be written to directly.
         :type dest: Union[PathLike, str, IO[AnyStr]]
-        :param kwargs: Additional arguments to pass to the YAML serializer.
-        :type kwargs: Optional[dict]
         :raises FileExistsError: Raised if dest is a file path and the file already exists.
         :raises IOError: Raised if dest is an open file and the file is not writable.
         """

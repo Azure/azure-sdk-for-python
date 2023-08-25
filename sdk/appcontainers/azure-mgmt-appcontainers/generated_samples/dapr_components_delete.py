@@ -29,14 +29,13 @@ def main():
         subscription_id="8efdecc5-919e-44eb-b179-915dca89ebf9",
     )
 
-    response = client.dapr_components.delete(
+    client.dapr_components.delete(
         resource_group_name="examplerg",
         environment_name="myenvironment",
         component_name="reddog",
     )
-    print(response)
 
 
-# x-ms-original-file: specification/app/resource-manager/Microsoft.App/preview/2022-11-01-preview/examples/DaprComponents_Delete.json
+# x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2023-05-01/examples/DaprComponents_Delete.json
 if __name__ == "__main__":
     main()

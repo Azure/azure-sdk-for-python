@@ -5,6 +5,8 @@
 
 ### Features Added
 - Added support of features that are known into the future/at forecast time for dnn in AutoML Forecasting jobs.
+- Added support for new workspace connection types: azure_open_ai, cognitive_search, and cognitive_service.
+- Added support for new credential type: ApiKeyConfiguration.
 - Added support of `download` for component operations.
 
 ### Bugs Fixed
@@ -18,6 +20,7 @@
 
 - `azure-ai-ml` now performs all file i/o on `utf-8` encoded files per Azure SDK guidance. 
   (instead of the default behavior for python < 3.15, which uses locale specific encodings)
+- Removed references to deprecated "feature_store" workspace connection type.
 
 ## 1.9.0 (2023-07-25)
 
@@ -28,7 +31,6 @@
 
 - Improved the output when printing a workspace object to be more clean and readable.
 - Log level of unknown field notifications for pipeline nodes raised from INFO to WARNING.
-
 ## 1.8.0 (2023-06-12)
 
 ### Features Added

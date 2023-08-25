@@ -50,6 +50,7 @@ from ._credentials import (
     UserIdentityConfiguration,
     UsernamePasswordConfiguration,
     AccessKeyConfiguration,
+    ApiKeyConfiguration,
 )
 from ._datastore.adls_gen1 import AzureDataLakeGen1Datastore
 from ._datastore.azure_storage import AzureBlobDatastore, AzureDataLakeGen2Datastore, AzureFileDatastore
@@ -173,7 +174,6 @@ from ._monitoring.signals import (
     PredictionDriftSignal,
     FeatureAttributionDriftSignal,
     CustomMonitoringSignal,
-    TargetDataset,
     MonitorFeatureFilter,
     DataSegment,
 )
@@ -397,6 +397,7 @@ __all__ = [
     "Route",
     "AccessKeyConfiguration",
     "AlertNotification",
+    "ApiKeyConfiguration",
     "MonitorDefinition",
     "MonitorInputData",
     "MonitorSchedule",
@@ -405,7 +406,6 @@ __all__ = [
     "PredictionDriftSignal",
     "FeatureAttributionDriftSignal",
     "CustomMonitoringSignal",
-    "TargetDataset",
     "MonitorFeatureFilter",
     "DataSegment",
     "MonitoringTarget",
