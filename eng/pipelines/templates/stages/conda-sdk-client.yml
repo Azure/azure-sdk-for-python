@@ -111,6 +111,10 @@ parameters:
   displayName: 'azure-monitor-query'
   type: boolean
   default: true
+- name: release_azure_monitor_ingestion
+  displayName: 'azure-monitor-ingestion'
+  type: boolean
+  default: true
 - name: release_azure_schemaregistry
   displayName: 'azure-schemaregistry'
   type: boolean
@@ -236,7 +240,7 @@ stages:
               - name: azure-ai-formrecognizer
                 common_root: azure
                 service: formrecognizer
-                in_batch: ${{ parameters.release_azure_formrecognizer }}
+                in_batch: ${{ parameters.release_azure_ai_formrecognizer }}
                 checkout:
                 - package: azure-ai-formrecognizer
                   download_uri: https://files.pythonhosted.org/packages/55/f6/4ab4c197d6eb9c83814a7f169c4b26cb1ae360a5f10dac81cccb6b7a00c3/azure-ai-formrecognizer-3.2.1.zip
@@ -371,7 +375,7 @@ stages:
                   download_uri: https://files.pythonhosted.org/packages/5c/a1/78ecabf98e97d600dcac1559ff64b4bc9f84eca126c0aeba859916832b0c/azure-keyvault-secrets-4.7.0.zip
               - name: azure-messaging-webpubsubservice
                 service: webpubsub
-                in_batch: ${{ parameters.release_azure_messaging_webpubservice }}
+                in_batch: ${{ parameters.release_azure_messaging_webpubsubservice }}
                 checkout:
                 - package: azure-messaging-webpubsubservice
                   download_uri: "https://files.pythonhosted.org/packages/6f/d2/29815d91ed5ace96562c26af64c909e44e81c2e5c90aad6e57ff84bc27eb/azure-messaging-webpubsubservice-1.0.1.zip"        
