@@ -17,8 +17,8 @@ from .credentials import NoneCredentialsSchema, ServicePrincipalSchema
 
 
 class OneLakeArtifactSchema(Schema):
-    artifact_name = fields.Str(required=True)
-    artifact_type = StringTransformedEnum(
+    name = fields.Str(required=True)
+    type = StringTransformedEnum(
         allowed_values=OneLakeArtifactType.LAKE_HOUSE, casing_transform=camel_to_snake
     )
 
@@ -33,8 +33,8 @@ class OneLakeSchema(PathAwareSchema):
     )
     # required fields for OneLake
     one_lake_workspace_name = fields.Str(required=True)
+    endpoint = fields.Str(required=True)
     artifact = NestedField(OneLakeArtifactSchema)
-    endpoint = fields.Str()
     # ServicePrincipal and UserIdentity are the two supported credential types
     credentials = UnionField(
         [
