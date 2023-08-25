@@ -1,13 +1,11 @@
 {% set name = "azure-servicebus" %}
-{% set version = "2023.06.01" %}
 
 package:
   name: "{{ name|lower }}"
-  version: "{{ version }}"
+  version: {{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
 
 source:
-  url: "https://files.pythonhosted.org/packages/4d/41/13ecf05ed4f9192d2aed22f7da8bd508abd2fe33f825f955d2738a9ccbad/azure-servicebus-7.10.0.zip"
-  sha256: 00d109e5a2ea7c75ff3863b8d453630aaafd4ba53281032b18c42f32d477cff4
+  url: {{ environ.get('SERVICEBUS_SOURCE_DISTRIBUTION', '') }}
 
 build:
   noarch: python
@@ -16,24 +14,24 @@ build:
 
 requirements:
   host:
-    - azure-core >=2023.06.01
+    - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - isodate
-    - msrest >=2023.06.01
+    - msrest >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - pip
     - python
     - requests-oauthlib >=0.5.0
     - six >=1.11.0
-    - uamqp >=2023.06.01
+    - uamqp >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - aiohttp
     - isodate
   run:
-    - azure-core >=2023.06.01
+    - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - isodate
-    - msrest >=2023.06.01
+    - msrest >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - python
     - requests-oauthlib >=0.5.0
     - six >=1.11.0
-    - uamqp >=2023.06.01
+    - uamqp >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - aiohttp
     - isodate
 

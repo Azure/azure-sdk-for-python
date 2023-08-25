@@ -1,13 +1,11 @@
 {% set name = "azure-search-documents" %}
-{% set version = "2023.06.01" %}
 
 package:
   name: "{{ name|lower }}"
-  version: "{{ version }}"
+  version: {{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
 
 source:
-  url: "https://files.pythonhosted.org/packages/d6/29/1565a336e54013591e7de688259ec0281d4aa0bb0a71df0d7e7be51e77d2/azure-search-documents-11.3.0.zip"
-  sha256: 9a9690c49d1f6a2cc61db67e05f931a0de915647d4778cbbaf688082b4aaee30
+  url: {{ environ.get('SEARCH_SOURCE_DISTRIBUTION', '') }}
 
 build:
   noarch: python
@@ -16,9 +14,9 @@ build:
 
 requirements:
   host:
-    - azure-core >=2023.06.01
-    - azure-identity >=2023.06.01
-    - msrest >=2023.06.01
+    - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - azure-identity >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - msrest >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - pip
     - python
     - typing-extensions
@@ -26,9 +24,9 @@ requirements:
     - aiohttp
     - isodate
   run:
-    - azure-core >=2023.06.01
-    - azure-identity >=2023.06.01
-    - msrest >=2023.06.01
+    - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - azure-identity >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - msrest >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - python
     - typing-extensions
     - requests-oauthlib >=0.5.0

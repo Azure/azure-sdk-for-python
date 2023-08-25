@@ -1,13 +1,11 @@
 {% set name = "azure-messaging-webpubsubservice" %}
-{% set version = "2023.06.01" %}
 
 package:
   name: "{{ name|lower }}"
-  version: "{{ version }}"
+  version: {{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
 
 source:
-  url: "https://files.pythonhosted.org/packages/6f/d2/29815d91ed5ace96562c26af64c909e44e81c2e5c90aad6e57ff84bc27eb/azure-messaging-webpubsubservice-1.0.1.zip"
-  sha256: 70915a477debda0f10bd947a9e879840b7e8a19966e678a9e61fcc79d0f8aa63
+  url: {{ environ.get('WEBPUBSUB_SOURCE_DISTRIBUTION', '') }}
 
 build:
   noarch: python
@@ -17,9 +15,9 @@ build:
 requirements:
   host:
     - cryptography
-    - azure-core >=2023.06.01
-    - azure-identity >=2023.06.01
-    - msrest >=2023.06.01
+    - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - azure-identity >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - msrest >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - pip
     - pyjwt
     - python
@@ -33,9 +31,9 @@ requirements:
     - pyjwt
     - python
     - six
-    - azure-core >=2023.06.01
-    - azure-identity >=2023.06.01
-    - msrest >=2023.06.01
+    - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - azure-identity >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - msrest >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - typing_extensions
     - requests-oauthlib >=0.5.0
     - aiohttp

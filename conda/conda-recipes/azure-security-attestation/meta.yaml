@@ -1,13 +1,11 @@
 {% set name = "azure-security-attestation" %}
-{% set version = "2023.06.01" %}
 
 package:
   name: "{{ name|lower }}"
-  version: "{{ version }}"
+  version: {{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
 
 source:
-  url: "https://files.pythonhosted.org/packages/c1/30/9c728aff4e671de3bce4a56e0ba6c1b53da6a7df83970ee01bab3100ea76/azure-security-attestation-1.0.0.zip"
-  sha256: 0bf814db4225d418b3332f2226537142849c0a45a638a5da380fd3f7c241a2da
+  url: {{ environ.get('ATTESTATION_SOURCE_DISTRIBUTION', '') }}
 
 build:
   noarch: python
@@ -16,20 +14,20 @@ build:
 
 requirements:
   host:
-    - azure-core >=2023.06.01
-    - azure-identity >=2023.06.01
+    - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - azure-identity >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - cryptography
-    - msrest >=2023.06.01
+    - msrest >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - pip
     - python
     - requests-oauthlib >=0.5.0
     - aiohttp
     - isodate
   run:
-    - azure-core >=2023.06.01
-    - azure-identity >=2023.06.01
+    - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - azure-identity >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - cryptography
-    - msrest >=2023.06.01
+    - msrest >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - python
     - requests-oauthlib >=0.5.0
     - aiohttp

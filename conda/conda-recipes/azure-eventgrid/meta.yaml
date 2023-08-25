@@ -1,13 +1,11 @@
 {% set name = "azure-eventgrid" %}
-{% set version = "2023.06.01" %}
 
 package:
   name: "{{ name|lower }}"
-  version: "{{ version }}"
+  version: {{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
 
 source:
-  url: "https://files.pythonhosted.org/packages/00/b4/0b215dc36df6fca99b4d513f094500617104f86de0ee149ec71c74a2b392/azure-eventgrid-4.11.0.zip"
-  sha256: aa851a29b6c1db1dde3ba2225f09f7925fc2e8d0396e265bcd11dcb683457501
+  url: {{ environ.get('EVENTGRID_SOURCE_DISTRIBUTION', '') }}
 
 build:
   noarch: python
@@ -16,16 +14,16 @@ build:
 
 requirements:
   host:
-    - azure-core >=2023.06.01
-    - msrest >=2023.06.01
+    - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - msrest >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - pip
     - python
     - requests-oauthlib >=0.5.0
     - aiohttp
     - isodate
   run:
-    - azure-core >=2023.06.01
-    - msrest >=2023.06.01
+    - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - msrest >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - python
     - requests-oauthlib >=0.5.0
     - aiohttp

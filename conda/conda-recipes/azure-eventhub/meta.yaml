@@ -1,12 +1,11 @@
 {% set name = "azure-eventhub" %}
-{% set version = "2023.06.01" %}
 
 package:
   name: "{{ name|lower }}"
-  version: "{{ version }}"
+  version: {{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
 
 source:
-  url: ..\azure-eventhub-5.11.2.tar.gz
+  url: {{ environ.get('EVENTHUB_SOURCE_DISTRIBUTION', '') }}
 
 build:
   noarch: python
@@ -15,20 +14,20 @@ build:
 
 requirements:
   host:
-    - azure-core >=2023.06.01
+    - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - cryptography
-    - msrest >=2023.06.01
+    - msrest >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - pip
     - python
-    - uamqp >=2023.06.01
+    - uamqp >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - requests-oauthlib >=0.5.0
     - aiohttp
   run:
-    - azure-core >=2023.06.01
+    - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - cryptography
-    - msrest >=2023.06.01
+    - msrest >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - python
-    - uamqp >=2023.06.01
+    - uamqp >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - requests-oauthlib >=0.5.0
     - aiohttp
 

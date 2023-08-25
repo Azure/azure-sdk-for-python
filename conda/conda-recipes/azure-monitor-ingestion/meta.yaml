@@ -1,13 +1,12 @@
 {% set name = "azure-monitor-ingestion" %}
-{% set version = "2023.06.01" %}
+
 
 package:
   name: "{{ name|lower }}"
-  version: "{{ version }}"
+  version: {{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
 
 source:
-  url: "https://files.pythonhosted.org/packages/8c/c8/404575e0f1882d2ace0a6eb62228ad18cd20ed0869848e50fc0c24025aed/azure-monitor-ingestion-1.0.1.zip"
-  sha256: 27440dfd7b660412b551a3c110f963307bb8968c7d0a8d548a0543ff34d7558d
+  url: {{ environ.get('MONITOR_SOURCE_DISTRIBUTION', '') }}
 
 build:
   noarch: python
@@ -16,8 +15,8 @@ build:
 
 requirements:
   host:
-    - azure-core >=2023.06.01
-    - azure-identity >=2023.06.01
+    - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - azure-identity >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - pip
     - python
     - six
@@ -25,8 +24,8 @@ requirements:
     - aiohttp
     - isodate
   run:
-    - azure-core >=2023.06.01
-    - azure-identity >=2023.06.01
+    - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - azure-identity >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - python
     - six
     - requests-oauthlib >=0.5.0

@@ -1,13 +1,11 @@
 {% set name = "azure-digitaltwins-core" %}
-{% set version = "2023.06.01" %}
 
 package:
   name: "{{ name|lower }}"
-  version: "{{ version }}"
+  version: {{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
 
 source:
-  url: "https://files.pythonhosted.org/packages/38/59/683c7b1722e0f6090b2d11ea7ed721d398be684d445168e3c107dbc3bb2e/azure-digitaltwins-core-1.2.0.zip"
-  sha256: 607d5a2771dfbbd1ae79392bc9eb8b6d5b93bbaaa74fe14ca23ac2b25a0a3dce
+  url: {{ environ.get('DIGITALTWINS_SOURCE_DISTRIBUTION', '') }}
 
 build:
   noarch: python
@@ -16,9 +14,9 @@ build:
 
 requirements:
   host:
-    - azure-core >=2023.06.01
-    - azure-identity >=2023.06.01
-    - msrest >=2023.06.01
+    - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - azure-identity >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - msrest >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - pip
     - python
     - six
@@ -27,9 +25,9 @@ requirements:
     - aiohttp
     - isodate
   run:
-    - azure-core >=2023.06.01
-    - azure-identity >=2023.06.01
-    - msrest >=2023.06.01
+    - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - azure-identity >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - msrest >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - python
     - six
     - typing_extensions
