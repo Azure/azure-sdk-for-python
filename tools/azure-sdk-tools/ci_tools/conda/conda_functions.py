@@ -116,21 +116,6 @@ def resolve_assembly_folder_name(package_name: str, conda_package_name: str):
         return package_name
 
 
-def create_package(pkg_directory, output_directory):
-    check_call(
-        [
-            sys.executable,
-            "setup.py",
-            "sdist",
-            "-d",
-            output_directory,
-        ],
-        cwd=pkg_directory,
-        stdout=subprocess.DEVNULL,
-        stderr=subprocess.STDOUT,
-    )
-
-
 def create_namespace_extension(target_directory: str):
     with open(os.path.join(target_directory, "__init__.py"), "w") as f:
         f.write(NAMESPACE_EXTENSION_TEMPLATE)
@@ -301,7 +286,8 @@ def create_combined_sdist(
 
     targeted_folder_for_assembly = os.path.join(config_assembly_folder, conda_build.name)
 
-    create_package(targeted_folder_for_assembly, config_assembled_folder)
+
+    create_package(targeted_folder_for_assembly, config_assembled_folder, enable_wheel=False, enable_sdist=True)
 
     assembled_sdist = next(
         iter(
