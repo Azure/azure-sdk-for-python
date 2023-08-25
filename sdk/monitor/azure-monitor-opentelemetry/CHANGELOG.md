@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0b16 (Unreleased)
+## 1.0.0b16 (2023-08-23)
 
 ### Features Added
 
@@ -12,12 +12,6 @@
     ([#31744](https://github.com/Azure/azure-sdk-for-python/pull/31740))
 - Add preview warning for Autoinstrumentation entry points
     ([#31767](https://github.com/Azure/azure-sdk-for-python/pull/31767))
-
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
 
 ## 1.0.0b15 (2023-07-17)
 
