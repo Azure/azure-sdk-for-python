@@ -10,6 +10,8 @@ from urllib.parse import urlparse
 from azure.core import CaseInsensitiveEnumMeta
 from azure.core.pipeline.policies import HttpLoggingPolicy
 from azure.core.tracing.decorator import distributed_trace
+from azure.core.polling import LROPoller
+from azure.core.polling.base_polling import LROBasePolling
 
 from . import ChallengeAuthPolicy
 from .._generated import KeyVaultClient as _KeyVaultClient
@@ -156,3 +158,22 @@ class KeyVaultClientBase(object):
         }
         request_copy.url = self._client._client.format_url(request_copy.url, **path_format_arguments)
         return self._client._client.send_request(request_copy, stream=stream, **kwargs)
+
+    @distributed_trace
+    def build_poller(self, initial_response: "HttpResponse", *, polling=None) -> LROPoller["HttpResponse"]:
+        """Build a poller object for this response.
+        
+        Will use Azure guidelines for default algorithm if none is provided. This means
+        looking for Operation-Location header, etc. You can provide your own polling algorighm if wanted.
+
+        You is likely used in cunjunction with a first call to "send_request" that returns a response.
+
+        :param initial_response: The initial response returned by the service.
+        :type initial_response: ~azure.core.rest.HttpResponse
+        :keyword polling: A polling algorithm. Defaults to LROBasePolling from azure-core.
+        :type polling: ~azure.core.polling.base_polling.LROPolling
+        :return: A poller object.
+        :rtype: ~azure.core.polling.LROPoller
+        """
+        polling = polling or LROBasePolling()
+        return LROPoller(self._client._client, initial_response, polling)
