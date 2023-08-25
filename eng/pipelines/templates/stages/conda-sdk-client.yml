@@ -233,11 +233,11 @@ stages:
                 - package: azure-storage-blob
                   version: 12.17.0
                 - package: azure-storage-queue
-                  version: 12.12.0
+                  version: 12.6.0
                 - package: azure-storage-file-share
-                  version: 12.13.0
-                - package: azure-storage-file-datalake
                   version: 12.12.0
+                - package: azure-storage-file-datalake
+                  version: 12.11.0
               - name: azure-ai-formrecognizer
                 common_root: azure
                 service: formrecognizer
@@ -309,380 +309,378 @@ stages:
                 in_batch: ${{ parameters.release_azure_confidentialledger }}
                 checkout:
                 - package: azure-confidentialledger
-                  download_uri: https://files.pythonhosted.org/packages/a1/57/853726be83f065e5f7d21f9a0ebfca8bc2dd4132a5fece47b7d9df0e033a/azure-confidentialledger-1.1.0.zip
+                  version: 1.1.0
               - name: azure-containerregistry
                 service: containerregistry
                 in_batch: ${{ parameters.release_azure_containerregistry }}
                 checkout: 
                 - package: azure-containerregistry
-                  download_uri: "https://files.pythonhosted.org/packages/ce/d7/c5892390196d05c5ce4f4f78bd39b5d7af9b984ae08776e9f6abf91637ff/azure-containerregistry-1.1.0.zip" 
+                  version: 1.1.0
               - name: azure-cosmos
                 service: cosmos
                 in_batch: ${{ parameters.release_azure_cosmos }}
                 checkout:
                 - package: azure-cosmos
-                  download_uri: https://files.pythonhosted.org/packages/90/dc/d962600643262152e5b8ab166a5327881a9ac91d6b7e1049ccbec7a2b5d7/azure-cosmos-4.3.1.zip
+                  version: 4.3.1
               - name: azure-data-tables
                 service: tables
                 in_batch: ${{ parameters.release_azure_data_tables }}
                 checkout:
                 - package: azure-data-tables
-                  download_uri: https://files.pythonhosted.org/packages/91/03/606dc3a49f054e3055b7eaf581ea988b76376b66874a2a59ccf1e988c5ee/azure-data-tables-12.4.2.zip
+                  version: 12.4.2
               - name: azure-developer-loadtesting
                 service: loadtesting
                 in_batch: ${{ parameters.release_azure_developer_loadtesting }}
                 checkout:
                 - package: azure-developer-loadtesting
-                  download_uri: https://files.pythonhosted.org/packages/15/8e/610c3e58f373f305636d322480c49d0f340025770df2bd4b3610d28d3a8a/azure-developer-loadtesting-1.0.0.zip
+                  version: 1.0.0
               - name: azure-digitaltwins-core
                 service: digitaltwins
                 in_batch: ${{ parameters.release_azure_digitaltwins_core }}
                 checkout:
                 - package: azure-digitaltwins-core
-                  download_uri: https://files.pythonhosted.org/packages/38/59/683c7b1722e0f6090b2d11ea7ed721d398be684d445168e3c107dbc3bb2e/azure-digitaltwins-core-1.2.0.zip
+                  version: 1.2.0
               - name: azure-eventgrid
                 service: eventgrid
                 in_batch: ${{ parameters.release_azure_eventgrid }}
                 checkout: 
                 - package: azure-eventgrid
-                  download_uri: https://files.pythonhosted.org/packages/00/b4/0b215dc36df6fca99b4d513f094500617104f86de0ee149ec71c74a2b392/azure-eventgrid-4.11.0.zip
+                  version: 4.11.0
               - name: azure-eventhub
                 service: eventhub
                 common_root: azure/eventhub
                 in_batch: ${{ parameters.release_azure_eventhub }}
                 checkout:
                 - package: azure-eventhub
-                  download_uri: https://files.pythonhosted.org/packages/25/85/ef8c29f73b7e0c5490700290204dd87c81386aee9403fd2d0e02b8912c1b/azure-eventhub-5.11.2.zip
+                  version: 5.11.2
                 - package: azure-eventhub-checkpointstoreblob
-                  download_uri: https://files.pythonhosted.org/packages/a7/4e/6425436dc6365909d810c75dc913eb3f7cfb172691ac3841ea106c2e7aac/azure-eventhub-checkpointstoreblob-1.1.4.zip
+                  version: 1.1.4
                 - package: azure-eventhub-checkpointstoreblob-aio
-                  download_uri: https://files.pythonhosted.org/packages/ef/b3/58699d222d900780a2e8e6a20bf6744ea94663980adbc8cd3532c407686c/azure-eventhub-checkpointstoreblob-aio-1.1.4.zip
+                  version: 1.1.4
               - name: azure-iot-deviceupdate
                 service: deviceupdate
                 in_batch: ${{ parameters.release_azure_iot_deviceupdate }}
                 checkout:
                 - package: azure-iot-deviceupdate
-                  download_uri: https://files.pythonhosted.org/packages/25/e1/ee44bfefcf73e94be69a924f6fbb8322f7bf653336c40d5f36eafe4fead7/azure-iot-deviceupdate-1.0.0.zip
+                  version: 1.0.0
               - name: azure-keyvault
                 service: keyvault
                 common_root: azure/keyvault
                 in_batch: ${{ parameters.release_azure_keyvault }}
                 checkout:
                 - package: azure-keyvault-administration
-                  download_uri: https://files.pythonhosted.org/packages/61/25/ebae12d331e21bb149f4a20b8d54b5ccdb3711c565ac452822346beca715/azure-keyvault-administration-4.3.0.zip
+                  version: 4.3.0
                 - package: azure-keyvault-certificates
-                  download_uri: https://files.pythonhosted.org/packages/e6/cf/85d521e65557e4dee2cd9c700f518c3a46f6f71068e61c07d0b13b2e0727/azure-keyvault-certificates-4.7.0.zip
+                  version: 4.7.0
                 - package: azure-keyvault-keys
-                  download_uri: https://files.pythonhosted.org/packages/a1/99/55c0362207729f4849cafcb1a6e8dcacf3f9ac877d91177ec934ce291d0e/azure-keyvault-keys-4.8.0.zip
+                  version: 4.8.0
                 - package: azure-keyvault-secrets
-                  download_uri: https://files.pythonhosted.org/packages/5c/a1/78ecabf98e97d600dcac1559ff64b4bc9f84eca126c0aeba859916832b0c/azure-keyvault-secrets-4.7.0.zip
+                  version: 4.7.0
               - name: azure-messaging-webpubsubservice
                 service: webpubsub
                 in_batch: ${{ parameters.release_azure_messaging_webpubsubservice }}
                 checkout:
                 - package: azure-messaging-webpubsubservice
-                  download_uri: "https://files.pythonhosted.org/packages/6f/d2/29815d91ed5ace96562c26af64c909e44e81c2e5c90aad6e57ff84bc27eb/azure-messaging-webpubsubservice-1.0.1.zip"        
+                  version: 1.0.1
               - name : azure-monitor-ingestion
                 service: monitor
                 in_batch: ${{ parameters.release_azure_monitor_ingestion }}
                 checkout:
                 - package: azure-monitor-ingestion
-                  download_uri: "https://files.pythonhosted.org/packages/8c/c8/404575e0f1882d2ace0a6eb62228ad18cd20ed0869848e50fc0c24025aed/azure-monitor-ingestion-1.0.1.zip"
+                  version: 1.0.1
               - name: azure-monitor-query
                 service: monitor
                 in_batch: ${{ parameters.release_azure_monitor_query }}
                 checkout:
                 - package: azure-monitor-query
-                  download_uri: "https://files.pythonhosted.org/packages/ad/16/fd06cccfc583d8d38d8d99ee92ec1bbc9604cf6e8c62e64ddca5644e0a60/azure-monitor-query-1.2.0.zip"
+                  version: 1.2.0
               - name: azure-schemaregistry
                 service: schemaregistry
                 in_batch: ${{ parameters.release_azure_schemaregistry }}
                 checkout:
                 - package: azure-schemaregistry
-                  download_uri: https://files.pythonhosted.org/packages/21/ac/69d234a343a1303f2acfdaa4ab6885cc0c5974034c813d2a5756409019d2/azure-schemaregistry-1.2.0.zip
+                  version: 1.2.0
                 - package: azure-schemaregistry-avroencoder
-                  download_uri: https://files.pythonhosted.org/packages/41/c8/ce8de6845535463e7e3c900a5bf5f3a66aad9660542deeee4a801165571e/azure-schemaregistry-avroencoder-1.0.0.zip
+                  version: 1.0.0
               - name: azure-search-documents
                 service: search
                 in_batch: ${{ parameters.release_azure_search_documents }}
                 checkout:
                 - package: azure-search-documents
-                  download_uri: https://files.pythonhosted.org/packages/d6/29/1565a336e54013591e7de688259ec0281d4aa0bb0a71df0d7e7be51e77d2/azure-search-documents-11.3.0.zip
+                  version: 11.3.0
               - name: azure-security-attestation
                 service: attestation
                 in_batch: ${{ parameters.release_azure_security_attestation }}
                 checkout:
                 - package: azure-security-attestation
-                  download_uri: https://files.pythonhosted.org/packages/c1/30/9c728aff4e671de3bce4a56e0ba6c1b53da6a7df83970ee01bab3100ea76/azure-security-attestation-1.0.0.zip
+                  version: 1.0.0
               - name: azure-servicebus
                 service: servicebus
                 in_batch: ${{ parameters.release_azure_servicebus }}
                 checkout:
                 - package: azure-servicebus
-                  download_uri: "https://files.pythonhosted.org/packages/4d/41/13ecf05ed4f9192d2aed22f7da8bd508abd2fe33f825f955d2738a9ccbad/azure-servicebus-7.10.0.zip"
+                  version: 7.10.0
               - name: azure-mgmt
                 service: mgmt
                 in_batch: ${{ parameters.release_azure_mgmt }}
                 common_root: azure/mgmt
                 checkout:
                 - package: azure-mgmt-advisor
-                  download_uri: https://files.pythonhosted.org/packages/34/96/e28b949dd55e1fc381fae2676c95c8a9410fa4b9768cc02ec3668fc490c4/azure-mgmt-advisor-9.0.0.zip
+                  version: 9.0.0
                 - package: azure-mgmt-alertsmanagement
-                  download_uri: https://files.pythonhosted.org/packages/da/5a/b213d0299ad5e729cadd99d7ff8299abe73856260ec62c03b902cb48d21e/azure-mgmt-alertsmanagement-1.0.0.zip
+                  version: 1.0.0
                 - package: azure-mgmt-apimanagement
-                  download_uri: https://files.pythonhosted.org/packages/55/41/18982d29dceae7d2cca0e03513e30d65229a6785a0ab0d6b05e942ea6f6c/azure-mgmt-apimanagement-4.0.0.zip
+                  version: 4.0.0
                 - package: azure-mgmt-appconfiguration
-                  download_uri: https://files.pythonhosted.org/packages/fe/67/c49099506deec6d902af1e9e71e8f9f3602615966cef7dd1c7b236942e01/azure-mgmt-appconfiguration-3.0.0.zip
+                  version: 3.0.0
                 - package: azure-mgmt-appcontainers
-                  download_uri: https://files.pythonhosted.org/packages/b6/a2/b030aa9021f7a441d2435d198cd8b880f13bc9ec87812700fccd4a283815/azure-mgmt-appcontainers-1.0.0.zip
+                  version: 1.0.0
                 - package: azure-mgmt-applicationinsights
-                  download_uri: https://files.pythonhosted.org/packages/89/37/65811225c0611bedc784f8fd954eeb5a0e4cf58dc9f46860b33444391589/azure-mgmt-applicationinsights-4.0.0.zip
+                  version: 4.0.0
                 - package: azure-mgmt-appplatform
-                  download_uri: https://files.pythonhosted.org/packages/4b/0b/c25a63a162af47b6e1fa6770a66a4cfc8f027a5672ac33649ea5a66ea07e/azure-mgmt-appplatform-8.0.0.zip
+                  version: 8.0.0
                 - package: azure-mgmt-attestation
-                  download_uri: https://files.pythonhosted.org/packages/ca/70/29383e90c2906f6941db4d92934f3ddda2dea459331c19c18e97e7033b1d/azure-mgmt-attestation-1.0.0.zip
+                  version: 1.0.0
                 - package: azure-mgmt-authorization
-                  download_uri: https://files.pythonhosted.org/packages/7b/39/46adcbabc61a6d91f8514b46a2b64cfba365170325a6c38c31e2c1567090/azure-mgmt-authorization-3.0.0.zip
+                  version: 3.0.0
                 - package: azure-mgmt-automanage
-                  download_uri: https://files.pythonhosted.org/packages/79/86/7a416bcdb47b52c29482487ef3d6754f80fd7794cc74d3f7189068cbd275/azure-mgmt-automanage-1.0.0.zip
+                  version: 1.0.0
                 - package: azure-mgmt-automation
-                  download_uri: https://files.pythonhosted.org/packages/17/6f/ac334848864904c0d97ebbaa1958db963128b7aa0424c800e047e837597c/azure-mgmt-automation-1.0.0.zip
+                  version: 1.0.0
                 - package: azure-mgmt-azurearcdata
-                  download_uri: https://files.pythonhosted.org/packages/9a/aa/7bd2468a9dccc0b811aad95e9f9f6baab9197c323ca76b20fce3aa10783e/azure-mgmt-azurearcdata-1.0.0.zip
+                  version: 1.0.0
                 - package: azure-mgmt-azurestack
-                  download_uri: https://files.pythonhosted.org/packages/e9/65/9160e7e66ca3d9c23d5bab863ee4f2cc110e03c8c32eae53a69428205461/azure-mgmt-azurestack-1.0.0.zip
+                  version: 1.0.0
                 - package: azure-mgmt-azurestackhci
-                  download_uri: https://files.pythonhosted.org/packages/1a/77/9a2aed864f07e25b315a59783faa6f73ea488d9f1395572ad3490a8f3c3e/azure-mgmt-azurestackhci-7.0.0.zip
+                  version: 7.0.0
                 - package: azure-mgmt-baremetalinfrastructure
-                  download_uri: https://files.pythonhosted.org/packages/61/40/5127cb70465f69bfe7ec79007cffb1d98342fc823211ac2b47bc7d46a959/azure-mgmt-baremetalinfrastructure-1.0.0.zip
+                  version: 1.0.0
                 - package: azure-mgmt-batch
-                  download_uri: https://files.pythonhosted.org/packages/ff/16/92da0d8d3006a8cdfc07be79b6cc975bb49b780bf952a5291531f6bb950b/azure-mgmt-batch-17.0.0.zip
+                  version: 17.0.0
                 - package: azure-mgmt-billing
-                  download_uri: https://files.pythonhosted.org/packages/b0/40/59a55614cc987457efe35c2055a7c5d8757f9cb5207010cb1d3ddf382edd/azure-mgmt-billing-6.0.0.zip
+                  version: 6.0.0
                 - package: azure-mgmt-botservice
-                  download_uri: https://files.pythonhosted.org/packages/77/b5/a9dc9413e69e2e1b31885771173cb70018847a4c2bcd2f53c6e375ae1cad/azure-mgmt-botservice-2.0.0.zip
+                  version: 2.0.0
                 - package: azure-mgmt-changeanalysis
-                  download_uri: https://files.pythonhosted.org/packages/86/54/0d4a36dcaf7a345d1ad81941aaec76c6f472ab8906efdb50bbb749e66ec8/azure-mgmt-changeanalysis-1.0.0.zip
+                  version: 1.0.0
                 - package: azure-mgmt-cdn
-                  download_uri: https://files.pythonhosted.org/packages/d7/fc/48310b510043223c42ea2f9ac1e91a9a88b7438c0882d4c32db9f0b9fb0c/azure-mgmt-cdn-12.0.0.zip
+                  version: 12.0.0
                 - package: azure-mgmt-cognitiveservices
-                  download_uri: https://files.pythonhosted.org/packages/5b/f4/b99647c3ec8a24f27fd8a52e76c9c4bd91d558f2581eb7321a3fc9447df7/azure-mgmt-cognitiveservices-13.4.0.zip
+                  version: 13.4.0
                 - package: azure-mgmt-commerce
-                  download_uri: https://files.pythonhosted.org/packages/01/b9/6751a3183f7688e0c3b23de4a0a28356b42f93b3206073dbfbe75cfbc6fd/azure-mgmt-commerce-6.0.0.zip
+                  version: 6.0.0
                 - package: azure-mgmt-communication
-                  download_uri: https://files.pythonhosted.org/packages/07/e5/ad5e50eb1c91e3906ae81fe253e485e062dd12aed0384f7e9875644f05cc/azure-mgmt-communication-2.0.0.zip
+                  version: 2.0.0
                 - package: azure-mgmt-compute
-                  download_uri: https://files.pythonhosted.org/packages/d8/3f/651b3ddfe3849bbdc247ea4a75a506137d1ecdfb460b70dfff81c42e5bb0/azure-mgmt-compute-30.0.0.zip
+                  version: 30.0.0
                 - package: azure-mgmt-confidentialledger
-                  download_uri: https://files.pythonhosted.org/packages/7a/21/018fcab82b0a88addbd7841e8349e00ec59d4fbfd9b053e79d7f8c7eaab2/azure-mgmt-confidentialledger-1.0.0.zip
+                  version: 1.0.0
                 - package: azure-mgmt-confluent
-                  download_uri: https://files.pythonhosted.org/packages/a8/9e/18afb7295a725ac674ba8dde2f41b4ef52ab8f355852966a87649c82eb39/azure-mgmt-confluent-1.0.0.zip
+                  version: 1.0.0
                 - package: azure-mgmt-containerinstance
-                  download_uri: https://files.pythonhosted.org/packages/4c/19/cdb22d87560238893f5c014176b4e6868c3befbd6585bb5c44bdb1ddc997/azure-mgmt-containerinstance-10.1.0.zip
+                  version: 10.1.0
                 - package: azure-mgmt-containerservice
-                  download_uri: https://files.pythonhosted.org/packages/f2/fd/84706a6faf01d4c2b5caa6b3da60c2e0f5c93446983cd04fbbeb03452942/azure-mgmt-containerservice-23.0.0.zip
+                  version: 23.0.0
                 - package: azure-mgmt-cosmosdb
-                  download_uri: https://files.pythonhosted.org/packages/e9/5d/599d62ea130315e49c5a7450e487613eb328d9572b4533e8ff696a0cd6c6/azure-mgmt-cosmosdb-9.2.0.zip
+                  version: 9.2.0
                 - package: azure-mgmt-costmanagement
-                  download_uri: https://files.pythonhosted.org/packages/b9/40/1530ff8f1c8b574f34225f0eef59f9e27bad594e94adb6f09a66d31f8ef8/azure-mgmt-costmanagement-4.0.0.zip
+                  version: 4.0.0
                 - package: azure-mgmt-customproviders
-                  download_uri: https://files.pythonhosted.org/packages/47/e0/21d750d2e0577ac82912107c863f2387fcd714d6bd9504e40145e366df9f/azure-mgmt-customproviders-1.0.0.zip
+                  version: 1.0.0
                 - package: azure-mgmt-dashboard
-                  download_uri: https://files.pythonhosted.org/packages/2e/0c/8d314ec9a57bde21003cffb23e82b91bfc8a3fbf042b28c816ded688bb6b/azure-mgmt-dashboard-1.0.0.zip
+                  version: 1.0.0
                 - package: azure-mgmt-databox
-                  download_uri: https://files.pythonhosted.org/packages/f2/2d/887b4608fc8be4325acbe99f2fcff61b24b9ac925fa4099509d27f21d16e/azure-mgmt-databox-2.0.0.zip
+                  version: 2.0.0
                 - package: azure-mgmt-databoxedge
-                  download_uri: https://files.pythonhosted.org/packages/bc/97/e6f9041c0e22cdf3fa8f5ccfec70daf0d1c15740bc5f36e8e9694ff98a98/azure-mgmt-databoxedge-1.0.0.zip
+                  version: 1.0.0
                 - package: azure-mgmt-databricks
-                  download_uri: https://files.pythonhosted.org/packages/e7/14/a6e30cdc144c273af7c59118940277c72a70126c3e1e1105fb0eac8f6225/azure-mgmt-databricks-1.0.0.zip
+                  version: 1.0.0
                 - package: azure-mgmt-datafactory
-                  download_uri: https://files.pythonhosted.org/packages/b3/c1/6ccd777361727632b70283241535f06b2e3038710e4c1adc5df1bed3f6ed/azure-mgmt-datafactory-3.1.0.zip
+                  version: 3.1.0
                 - package: azure-mgmt-datamigration
-                  download_uri: https://files.pythonhosted.org/packages/06/47/cccd2c22f8f525b8a1c38fd88ffef7ae989f50bd15f1ad5b955e27ef5985/azure-mgmt-datamigration-10.0.0.zip
+                  version: 10.0.0
                 - package: azure-mgmt-dataprotection
-                  download_uri: https://files.pythonhosted.org/packages/e3/4a/65235cdca2a88cb43953165eb59d275424d046e7aadda9bdc675ca183a32/azure-mgmt-dataprotection-1.0.0.zip
+                  version: 1.0.0
                 - package: azure-mgmt-datashare
-                  download_uri: https://files.pythonhosted.org/packages/cc/12/1fecc58ddaf6cf7ae1d131a65947fb389781a387b0441adeeb2d75e53d81/azure-mgmt-datashare-1.0.0.zip
+                  version: 1.0.0
                 - package: azure-mgmt-deploymentmanager
-                  download_uri: https://files.pythonhosted.org/packages/bb/cb/04dab4b3d4822290345ba4388d21617284824e05e3220821c948b4b13f79/azure-mgmt-deploymentmanager-1.0.0.zip
+                  version: 1.0.0
                 - package: azure-mgmt-desktopvirtualization
-                  download_uri: https://files.pythonhosted.org/packages/d4/54/c29a91da618b7d78b6b7d177e8ecd12735b909ebe50b83a992dc2568bebb/azure-mgmt-desktopvirtualization-1.0.0.zip
+                  version: 1.0.0
                 - package: azure-mgmt-devcenter
-                  download_uri: https://files.pythonhosted.org/packages/bc/97/97d9ad24a97dfaaa0005cc40b8c2faa2d48e17910036f0d1817430a39783/azure-mgmt-devcenter-1.0.0.zip
+                  version: 1.0.0
                 - package: azure-mgmt-deviceupdate
-                  download_uri: https://files.pythonhosted.org/packages/1a/31/6214af76b74a4d2300753748b1ccbb1d1356558805eaef1d7800a1b309d5/azure-mgmt-deviceupdate-1.0.0.zip
+                  version: 1.0.0
                 - package: azure-mgmt-devtestlabs
-                  download_uri: https://files.pythonhosted.org/packages/cc/13/ff268e12b886d130bdfad8c5894f7dc90affd2b681057301463c219986d5/azure-mgmt-devtestlabs-9.0.0.zip
+                  version: 9.0.0
                 - package: azure-mgmt-digitaltwins
-                  download_uri: https://files.pythonhosted.org/packages/69/09/301c78ef5edc7e1bfd2ac3061e2221095dff32115d4763334be403df32fd/azure-mgmt-digitaltwins-6.4.0.zip
+                  version: 6.4.0
                 - package: azure-mgmt-dnsresolver
-                  download_uri: https://files.pythonhosted.org/packages/60/4a/d84863617c87bdd863d1032a29de281a0b97796c67f84a47588bb81e9bd4/azure-mgmt-dnsresolver-1.0.0.zip
+                  version: 1.0.0
                 - package: azure-mgmt-dynatrace
-                  download_uri: https://files.pythonhosted.org/packages/5e/37/b61edef17f9082c98834ddbf5164a96174d293da11ebdcb3f88766125f62/azure-mgmt-dynatrace-1.0.0.zip
+                  version: 1.0.0
                 - package: azure-mgmt-edgeorder
-                  download_uri: https://files.pythonhosted.org/packages/ff/76/dc14a58bdff036def09c4c56eeeaf485be4abf908a79d5f99bcb37abb505/azure-mgmt-edgeorder-1.0.0.zip
+                  version: 1.0.0
                 - package: azure-mgmt-elastic
-                  download_uri: https://files.pythonhosted.org/packages/a6/3a/3d8a888d11e581a06c8d923ecbd946f63ee7269d690d40db07b78191f832/azure-mgmt-elastic-1.0.0.zip
+                  version: 1.0.0
                 - package: azure-mgmt-eventhub
-                  download_uri: https://files.pythonhosted.org/packages/cf/aa/a59ef2dc784cd723f66882bd122e85d1b671a3947fca3fab7ec2471d2611/azure-mgmt-eventhub-11.0.0.zip
+                  version: 11.0.0
                 - package: azure-mgmt-extendedlocation
-                  download_uri: https://files.pythonhosted.org/packages/09/93/4889d7ab3119a67825e2e6c811d786631f8db3431bc30806252e8837c48e/azure-mgmt-extendedlocation-1.1.0.zip
+                  version: 1.1.0
                 - package: azure-mgmt-fluidrelay
-                  download_uri: https://files.pythonhosted.org/packages/a3/63/c3709f5b82493d13aabf7fd63310e26e1fb41f371e1229870660dc60fecf/azure-mgmt-fluidrelay-1.0.0.zip
+                  version: 1.0.0
                 - package: azure-mgmt-frontdoor
-                  download_uri: https://files.pythonhosted.org/packages/9b/d4/24991da42b12605209adae8a4ccbdda4ce571546b6063c5cf9ba0afc22e0/azure-mgmt-frontdoor-1.1.0.zip
+                  version: 1.1.0
                 - package: azure-mgmt-hanaonazure
-                  download_uri: https://files.pythonhosted.org/packages/ff/17/19acf816ffea4784d847553318266c2c4594949cc8ec949e543291d7df6b/azure-mgmt-hanaonazure-1.0.0.zip
+                  version: 1.0.0
                 - package: azure-mgmt-hdinsight
-                  download_uri: https://files.pythonhosted.org/packages/2a/cf/f163054cdebc0eb4c17a6e805c3523dc4b6e22a8cb649f3389c762a4f1a3/azure-mgmt-hdinsight-9.0.0.zip
+                  version: 9.0.0
                 - package: azure-mgmt-healthcareapis
-                  download_uri: https://files.pythonhosted.org/packages/9d/3b/2b3dde8e7d55e0ef409cbe4e53de6bf11dd4a77f61c4ea4d73ecba500dd1/azure-mgmt-healthcareapis-1.1.0.zip
+                  version: 1.1.0
                 - package: azure-mgmt-hybridcompute
-                  download_uri: https://files.pythonhosted.org/packages/f2/03/6919f9d6e9092118088d572b91eb1463b65178cd81e431122876b0cf57e3/azure-mgmt-hybridcompute-8.0.0.zip
+                  version: 8.0.0
                 - package: azure-mgmt-hybridkubernetes
-                  download_uri: https://files.pythonhosted.org/packages/97/82/f48a96172504c65fd548a8cca9e3347ad1bcaee545d684694867f8661899/azure-mgmt-hybridkubernetes-1.1.0.zip
+                  version: 1.1.0
                 - package: azure-mgmt-hybridnetwork
-                  download_uri: https://files.pythonhosted.org/packages/3f/c9/c762106a91c469a901d4a995302d3655880600ff26e640d0e79477756ee1/azure-mgmt-hybridnetwork-1.0.0.zip
+                  version: 1.0.0
                 - package: azure-mgmt-imagebuilder
-                  download_uri: https://files.pythonhosted.org/packages/6a/c9/dc0a9f1631cf3e62be90acc3cd6311faa08904d58136f1bdd5847802bb66/azure-mgmt-imagebuilder-1.2.0.zip
+                  version: 1.2.0
                 - package: azure-mgmt-iothub
-                  download_uri: https://files.pythonhosted.org/packages/8d/65/ea40e550598d9281e8fbc2e4ef2dcd82197b625564557949600214a62cc9/azure-mgmt-iothub-2.4.0.zip
+                  version: 2.4.0
                 - package: azure-mgmt-keyvault
-                  download_uri: https://files.pythonhosted.org/packages/e6/e6/7fe0f188a1a574941f19820170350b321bb7fdc3f1abec232f517aadb090/azure-mgmt-keyvault-10.2.2.zip
+                  version: 10.2.2
                 - package: azure-mgmt-kubernetesconfiguration
-                  download_uri: https://files.pythonhosted.org/packages/60/21/40789e594a8f6f4be97ea86fbf08afe928264bc8af0e3eeb4463cb51eb92/azure-mgmt-kubernetesconfiguration-3.0.0.zip
+                  version: 3.0.0
                 - package: azure-mgmt-kusto
-                  download_uri: https://files.pythonhosted.org/packages/6f/63/6bb2806e6c89a9a1bb6ea811dca457b13b550251032d7d41fc2360a2835e/azure-mgmt-kusto-3.1.0.zip
+                  version: 3.1.0
                 - package: azure-mgmt-labservices
-                  download_uri: https://files.pythonhosted.org/packages/c0/6a/a5ca540293e2dbfb600fe951af7dae6c87730e60f5eb636c4d49f0508e20/azure-mgmt-labservices-2.0.0.zip
+                  version: 2.0.0
                 - package: azure-mgmt-loadtesting
-                  download_uri: https://files.pythonhosted.org/packages/cc/8a/4e05de6a14836cad5570af57722376bd82870c946a1efbf5948e0cf5a5a9/azure-mgmt-loadtesting-1.0.0.zip
+                  version: 1.0.0
                 - package: azure-mgmt-loganalytics
-                  download_uri: https://files.pythonhosted.org/packages/8d/66/99802a1711cadb1c41e322dd42aaa3acfb58c70aba13e0f0cdbead21e6c4/azure-mgmt-loganalytics-12.0.0.zip
+                  version: 12.0.0
                 - package: azure-mgmt-logic
-                  download_uri: https://files.pythonhosted.org/packages/fc/89/47e9b71d49ee05782cebcf3a9e4b04e974c76b19f4b2d68fd9ea9c4e358a/azure-mgmt-logic-10.0.0.zip
+                  version: 10.0.0
                 - package: azure-mgmt-logz
-                  download_uri: https://files.pythonhosted.org/packages/2c/3e/64f069ad103b55cce815c73f68819ce7a200105c9274ab3741f013c3091f/azure-mgmt-logz-1.0.0.zip
+                  version: 1.0.0
                 - package: azure-mgmt-machinelearningservices
-                  download_uri: https://files.pythonhosted.org/packages/7f/33/2d86641865687cdffb1658a95a76b92bd6b7f11a5bbcf94643cce75e5aa0/azure-mgmt-machinelearningservices-1.0.0.zip
+                  version: 1.0.0
                 - package: azure-mgmt-maintenance
-                  download_uri: https://files.pythonhosted.org/packages/9a/07/c4c5c032e6c2cb917ee8d891155d34d4d21b049cf0f4b020f91b05c595f1/azure-mgmt-maintenance-2.0.0.zip
+                  version: 2.0.0
                 - package: azure-mgmt-managedservices
-                  download_uri: https://files.pythonhosted.org/packages/4f/aa/81a7ca9c6b9a3124e644e3f4b7fd78ab9a3fde1d4a407f736ec8f7b28d04/azure-mgmt-managedservices-6.0.0.zip
+                  version: 6.0.0
                 - package: azure-mgmt-managementgroups
-                  download_uri: https://files.pythonhosted.org/packages/b3/e7/74159d9cd15966031ba03a92e0b53c6b0cc895bb5fdb7374fc326fb9dd21/azure-mgmt-managementgroups-1.0.0.zip
+                  version: 1.0.0
                 - package: azure-mgmt-managementpartner
-                  download_uri: https://files.pythonhosted.org/packages/f8/93/92d7843ce177c43cee392913a484ab21409dcadf66eabcef0a5aa8debafe/azure-mgmt-managementpartner-1.0.0.zip
+                  version: 1.0.0
                 - package: azure-mgmt-maps
-                  download_uri: https://files.pythonhosted.org/packages/c2/d1/35d471f400b612b38473ffa7747ba5fa2f79f47e410009fb887db19a4e8a/azure-mgmt-maps-2.0.0.zip
+                  version: 2.0.0
                 - package: azure-mgmt-marketplaceordering
-                  download_uri: https://files.pythonhosted.org/packages/17/9c/74d7746672a4e9ac6136e3043078a2f4d0a0e3568daf2de772de8e4d7cff/azure-mgmt-marketplaceordering-1.1.0.zip
+                  version: 1.1.0
                 - package: azure-mgmt-media
-                  download_uri: https://files.pythonhosted.org/packages/e8/16/657369d23df78efd27d83a6ad284d5c70984a7c44a17c434abc0c8cda23c/azure-mgmt-media-10.2.0.zip
+                  version: 10.2.0
                 - package: azure-mgmt-mixedreality
-                  download_uri: https://files.pythonhosted.org/packages/f8/46/848141ea5889f526b14d4d6f5dfc883a641c2411bc31dea9c92436d169c7/azure-mgmt-mixedreality-1.0.0.zip
+                  version: 1.0.0
                 - package: azure-mgmt-mobilenetwork
-                  download_uri: https://files.pythonhosted.org/packages/84/52/e0bbd2415d763ffafe4875f6b0288c2f0ce3a7c087fb28202d2a48fd5642/azure-mgmt-mobilenetwork-2.0.0.zip
+                  version: 2.0.0
                 - package: azure-mgmt-monitor
-                  download_uri: https://files.pythonhosted.org/packages/f0/6a/3148045479b8d3c6d489d74df244c19ccd0657fa8fb84889b0cf760d7f97/azure-mgmt-monitor-6.0.1.zip
+                  version: 6.0.1
                 - package: azure-mgmt-msi
-                  download_uri: https://files.pythonhosted.org/packages/77/d7/4ef788fb8e0f90a3fe5875b05dcef535ad4b4a766372af82870120cd5dd3/azure-mgmt-msi-7.0.0.zip
+                  version: 7.0.0
                 - package: azure-mgmt-netapp
-                  download_uri: https://files.pythonhosted.org/packages/ee/bd/82e8ee14fa61db2ef53aafb8f5b31efcc7748cae851f5c0567afb1903a2d/azure-mgmt-netapp-10.0.0.zip
+                  version: 10.0.0
                 - package: azure-mgmt-network
-                  download_uri: https://files.pythonhosted.org/packages/97/fe/db7cedb698a4b6e36541db499c7fe3e87d218e7068562404adee56df63a0/azure-mgmt-network-23.1.0.zip
+                  version: 23.1.0
                 - package: azure-mgmt-newrelicobservability
-                  download_uri: https://files.pythonhosted.org/packages/fb/c0/bebcae0b373ad794e18baded99eecfb2e324c467ee2ebeff5b854286e4c3/azure-mgmt-newrelicobservability-1.0.0.zip
+                  version: 1.0.0
                 - package: azure-mgmt-nginx
-                  download_uri: https://files.pythonhosted.org/packages/3f/53/85f03093fc5b70fd6d8221cad4b23502d8f90d85993e5a960c4c1315a41c/azure-mgmt-nginx-2.1.0.zip
+                  version: 2.1.0
                 - package: azure-mgmt-notificationhubs
-                  download_uri: https://files.pythonhosted.org/packages/9c/ee/739f76a316277965a84efea16cc2ddc5e10520b8ae7e2f590570d84933e5/azure-mgmt-notificationhubs-8.0.0.zip
+                  version: 8.0.0
                 - package: azure-mgmt-operationsmanagement
-                  download_uri: https://files.pythonhosted.org/packages/8e/bf/52782ba175c736a4efbf97a986b996994c65e86c9c80789e29b587f92cad/azure-mgmt-operationsmanagement-1.0.0.zip
+                  version: 1.0.0
                 - package: azure-mgmt-orbital
-                  download_uri: https://files.pythonhosted.org/packages/54/60/1a17391a7fc45286ad9fe25237e2823452f47f5914587f372ed1b91c4bc9/azure-mgmt-orbital-2.0.0.zip
+                  version: 2.0.0
                 - package: azure-mgmt-peering
-                  download_uri: https://files.pythonhosted.org/packages/01/6f/3552e2ae89772dbc3ceb0729d00dd830d75944c7b1852fbeddca3fa0cdbb/azure-mgmt-peering-1.0.0.zip
+                  version: 1.0.0
                 - package: azure-mgmt-policyinsights
-                  download_uri: https://files.pythonhosted.org/packages/d3/02/9353c3f24f92c424ce0ee05f7defa373f6c4db1a396154f2c15a2603737c/azure-mgmt-policyinsights-1.0.0.zip
+                  version: 1.0.0
                 - package: azure-mgmt-portal
-                  download_uri: https://files.pythonhosted.org/packages/9f/5b/d45a67ef17c8677d35aaa3fdbcfe0e34dfaa496ec39a0466ddca6d3bbb3e/azure-mgmt-portal-1.0.0.zip
+                  version: 1.0.0
                 - package: azure-mgmt-powerbidedicated
-                  download_uri: https://files.pythonhosted.org/packages/b5/e7/525701a4ba9178e62c0ac5b4369f36a777ed6277a9ca6975fd89cab11020/azure-mgmt-powerbidedicated-1.0.0.zip
+                  version: 1.0.0
                 - package: azure-mgmt-privatedns
-                  download_uri: https://files.pythonhosted.org/packages/9a/e8/eec726aa2f75236f9d649a87e6f1ff4ce9686456e10b9afa495b96b08098/azure-mgmt-privatedns-1.1.0.zip
+                  version: 1.1.0
                 - package: azure-mgmt-purview
-                  download_uri: https://files.pythonhosted.org/packages/5d/b0/f3e8e53890954eef06bc5f3b04ddf99ac4ce319566153e5c971d9ce54611/azure-mgmt-purview-1.0.0.zip
+                  version: 1.0.0
                 - package: azure-mgmt-qumulo
-                  download_uri: https://files.pythonhosted.org/packages/46/ae/2278af35a64f2baa161de6e1e7c9e8d851b2d01074eb58035a4341896193/azure-mgmt-qumulo-1.0.0.zip
+                  version: 1.0.0
                 - package: azure-mgmt-rdbms
-                  download_uri: https://files.pythonhosted.org/packages/51/3c/c1e03a11cf3dc2567ba947cc196d695d125d0d0e86af6731a7c067c5404a/azure-mgmt-rdbms-10.1.0.zip
+                  version: 10.1.0
                 - package: azure-mgmt-recoveryservices
-                  download_uri: https://files.pythonhosted.org/packages/70/e1/f6d04b1128f655ef4451c8b3bd977fc185c6cb866e3bf4d31ce79c8f5530/azure-mgmt-recoveryservices-2.4.0.zip
+                  version: 2.4.0
                 - package: azure-mgmt-recoveryservicesbackup
-                  download_uri: https://files.pythonhosted.org/packages/38/3a/9e604acfe62dbd2af81ee3f2562da0bb86685843f5e2c33e6503d5ad43f0/azure-mgmt-recoveryservicesbackup-6.0.0.zip
+                  version: 6.0.0
                 - package: azure-mgmt-redhatopenshift
-                  download_uri: https://files.pythonhosted.org/packages/28/20/ec5e7a3174f2fd48331a61358e9a0c7aea1b9a519a455de4de361f17c914/azure-mgmt-redhatopenshift-1.1.0.zip
+                  version: 1.1.0
                 - package: azure-mgmt-redis
-                  download_uri: https://files.pythonhosted.org/packages/c1/fa/fda9c31e9d6580bfb9dd3ccfb7e1c1399feb888f3e2a53aa1b3187da6c3a/azure-mgmt-redis-14.1.0.zip
+                  version: 14.1.0
                 - package: azure-mgmt-redisenterprise
-                  download_uri: https://files.pythonhosted.org/packages/40/66/326d3a25f0724969978eb2fabcc303e6e4a970c1ac9681238f4e1b79d698/azure-mgmt-redisenterprise-2.0.0.zip
+                  version: 2.0.0
                 - package: azure-mgmt-relay
-                  download_uri: https://files.pythonhosted.org/packages/bc/30/dea0afc2876b6afd761bf92776199a6bd066e85d0b4be224f055e810f74e/azure-mgmt-relay-1.1.0.zip
+                  version: 1.1.0
                 - package: azure-mgmt-reservations
-                  download_uri: https://files.pythonhosted.org/packages/dd/d0/05fb57db3766561b5ad0a8e095587025754c7cd768331b38747dd56af856/azure-mgmt-reservations-2.3.0.zip
+                  version: 2.3.0
                 - package: azure-mgmt-resource
-                  download_uri: https://files.pythonhosted.org/packages/81/65/128984a9bdca0542a6fabd748e4b84398de625193379ac7fc3a0805465cd/azure-mgmt-resource-23.0.1.zip
+                  version: 23.0.1
                 - package: azure-mgmt-resourcemover
-                  download_uri: https://files.pythonhosted.org/packages/25/56/413f799627a33c445faffb30f457f0e44ce2fd23f3da1089f5bb445441aa/azure-mgmt-resourcemover-1.0.0.zip
+                  version: 1.0.0
                 - package: azure-mgmt-search
-                  download_uri: https://files.pythonhosted.org/packages/c5/52/70315fa90fddd4ac681ecf39ce63e81254e4aa972be3ad94a29eb5e8e24d/azure-mgmt-search-9.0.0.zip
+                  version: 9.0.0
                 - package: azure-mgmt-security
-                  download_uri: https://files.pythonhosted.org/packages/ee/ba/a3ac088d30e0179df32e0a4981e670e96138b6141d4be821ccfd9ea5951b/azure-mgmt-security-5.0.0.zip
+                  version: 5.0.0
                 - package: azure-mgmt-securityinsight
-                  download_uri: https://files.pythonhosted.org/packages/5e/cf/d0bba7e17fd6005bbf59c75713f27473ac67379a49a247caab8860c51208/azure-mgmt-securityinsight-1.0.0.zip
+                  version: 1.0.0
                 - package: azure-mgmt-serialconsole
-                  download_uri: https://files.pythonhosted.org/packages/e3/f5/6e514a01af003f644cbb779e6f1377073145f677d2c895933d9445091527/azure-mgmt-serialconsole-1.0.0.zip
+                  version: 1.0.0
                 - package: azure-mgmt-servicebus
-                  download_uri: https://files.pythonhosted.org/packages/f9/fa/88014c3bd2fe34694184e9ced1b8230de495bcf2eb368c0bfc82db36dc12/azure-mgmt-servicebus-8.2.0.zip
+                  version: 8.2.0
                 - package: azure-mgmt-servicefabric
-                  download_uri: https://files.pythonhosted.org/packages/c4/7b/a5e11345bdf01b5bd4843e828dc05afb4c19399bf7616dddeaaeca02d097/azure-mgmt-servicefabric-2.0.0.zip
+                  version: 2.0.0
                 - package: azure-mgmt-servicelinker
-                  download_uri: https://files.pythonhosted.org/packages/47/d1/a3b61ae8ff9420ed4cf761eab2b34689d3eb46eb7d06d763a8ae53c9148b/azure-mgmt-servicelinker-1.1.0.zip
+                  version: 1.1.0
                 - package: azure-mgmt-signalr
-                  download_uri: https://files.pythonhosted.org/packages/63/28/acbe742e49ca694467a3b86e740babbc3bf67204bba980f4d1ebf4d1be03/azure-mgmt-signalr-1.2.0.zip
+                  version: 1.2.0
                 - package: azure-mgmt-sql
-                  download_uri: https://files.pythonhosted.org/packages/3f/af/398c57d15064ea23475076cd087b1a143b66d33a029e6e47c4688ca32310/azure-mgmt-sql-3.0.1.zip
+                  version: 3.0.1
                 - package: azure-mgmt-storage
-                  download_uri: https://files.pythonhosted.org/packages/83/9d/f486f601c9902bce42ea77adfa6f81895535adfb3eadc1f8522b1abbd44b/azure-mgmt-storage-21.0.0.zip
+                  version: 21.0.0
                 - package: azure-mgmt-storagecache
-                  download_uri: https://files.pythonhosted.org/packages/1d/f9/a968d43a407fab07d090faaae43a2b9121b8bb208092ee969ffc660b79d7/azure-mgmt-storagecache-1.4.0.zip
+                  version: 1.4.0
                 - package: azure-mgmt-storagemover
-                  download_uri: https://files.pythonhosted.org/packages/b2/1d/75db21a114d3743ca8f3ecf3f5032f9ada18fc6ab75f9f135c419577374e/azure-mgmt-storagemover-1.0.0.zip
+                  version: 1.0.0
                 - package: azure-mgmt-storagepool
-                  download_uri: https://files.pythonhosted.org/packages/4a/39/2a8934b2cf8fa7d4508d8c47fef8390570a8c4bb220c85206c1e4705f44a/azure-mgmt-storagepool-1.0.0.zip
+                  version: 1.0.0
                 - package: azure-mgmt-storagesync
-                  download_uri: https://files.pythonhosted.org/packages/c3/b3/4302cd19a202e3155bd9d5f91b26e7a5963438e9c722c4e569e5df2e1238/azure-mgmt-storagesync-1.0.0.zip
+                  version: 1.0.0
                 - package: azure-mgmt-streamanalytics
-                  download_uri: https://files.pythonhosted.org/packages/79/f4/63a841eec8b7665a6d7368eef4b7de1e76c8751575ac1a62893c5eddffc9/azure-mgmt-streamanalytics-1.0.0.zip
+                  version: 1.0.0
                 - package: azure-mgmt-subscription
-                  download_uri: https://files.pythonhosted.org/packages/84/67/14b19a006e13d86f05ee59faf78c39dc443d4fd6967344e9c94f688949c1/azure-mgmt-subscription-3.1.1.zip
+                  version: 3.1.1
                 - package: azure-mgmt-support
-                  download_uri: https://files.pythonhosted.org/packages/55/f3/805bd5d73753687a5c393f3f2355b214fd916503ea6b052546c9957e36e6/azure-mgmt-support-6.0.0.zip
+                  version: 6.0.0
                 - package: azure-mgmt-synapse
-                  download_uri: https://files.pythonhosted.org/packages/af/fa/5a7c375d305ec0ec06978db07ac34c4894d2b8a00087ff3dd9e1435e397f/azure-mgmt-synapse-2.0.0.zip
+                  version: 2.0.0
                 - package: azure-mgmt-timeseriesinsights
-                  download_uri: https://files.pythonhosted.org/packages/66/b1/6c152513ead8e2b8fd1d1dd867d0950a1ff384a7b7b1bebc811c7423dd43/azure-mgmt-timeseriesinsights-1.0.0.zip
+                  version: 1.0.0
                 - package: azure-mgmt-voiceservices
-                  download_uri: https://files.pythonhosted.org/packages/53/29/3901ac41ea85ec308c074441a1ccee0291b1785b8a4b7c092baa142bd43a/azure-mgmt-voiceservices-1.0.0.zip
+                  version: 1.0.0
                 - package: azure-mgmt-web
-                  download_uri: https://files.pythonhosted.org/packages/87/c5/1f1322cf8cbb8b05531c49877a753f9de03ed3caa84d14a3f9c1c32a50f2/azure-mgmt-web-7.1.0.zip
+                  version: 7.1.0
                 - package: azure-mgmt-webpubsub
-                  download_uri: https://files.pythonhosted.org/packages/f4/af/3c2dfe99a9fb6a903f949adfb99d67ffaa7964eee8ba4c9d5396f9417d2d/azure-mgmt-webpubsub-1.1.0.zip
+                  version: 1.1.0
                 - package: azure-mgmt-workloads
-                  download_uri: https://files.pythonhosted.org/packages/2f/94/62fffdd5d2d795d84c79be321d3a84e4f0811e356e19c90641d3ed6c07ce/azure-mgmt-workloads-1.0.0.zip
-
-
+                  version: 1.0.0
 
   # # - ${{if and(ne(variables['Build.Reason'], 'PullRequest'), eq(variables['System.TeamProject'], 'internal'))}}:
   # #   - template: archetype-conda-release.yml

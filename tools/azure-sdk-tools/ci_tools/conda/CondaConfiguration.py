@@ -75,7 +75,11 @@ def get_package_sdist_url(package: str, version: str) -> str:
     soup = get_pypi_page(package, version)
 
     # source distribution always first on the page
-    target_zip = soup.select("div.file__card a")[0]["href"]
+    try:
+        target_zip = soup.select("div.file__card a")[0]["href"]
+    except Exception as e:
+        print(f"Cant get data from {package} and {version}")
+        raise e
     filename = os.path.basename(target_zip)
 
     if filename.endswith("tar.gz") or filename.endswith(".zip"):
