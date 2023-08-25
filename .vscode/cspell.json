@@ -408,7 +408,10 @@
     "dacl",
     "whls",
     "aiter",
-    "solft"
+    "solft",
+    "faiss",
+    "mpnet",
+    "aoai"
   ],
   "overrides": [
     {
@@ -1534,6 +1537,13 @@
       "words": [
         "ctxt",
         "wday"
+      ]
+    },
+    {
+      "filename": "sdk/ml/azure-ai-ml/**/*.py",
+      "words": [
+        "LLMRAG",
+        "mlindex"
       ]
     }
   ],
