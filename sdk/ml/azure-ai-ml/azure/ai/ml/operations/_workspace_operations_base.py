@@ -371,9 +371,7 @@ class WorkspaceOperationsBase:
         return poller
 
     # pylint: disable=too-many-statements,too-many-branches,too-many-locals
-    def _populate_arm_paramaters(
-        self, workspace: Workspace, byo_open_ai_resource_id: str, **kwargs: Dict
-    ) -> Tuple[dict, dict, dict]:
+    def _populate_arm_paramaters(self, workspace: Workspace, **kwargs: Dict) -> Tuple[dict, dict, dict]:
         resources_being_deployed = {}
         if not workspace.location:
             workspace.location = get_resource_group_location(
@@ -383,6 +381,7 @@ class WorkspaceOperationsBase:
         param = get_template(resource_type=ArmConstants.WORKSPACE_PARAM)
         if workspace._kind == PROJECT_WORKSPACE_KIND:
             template = get_template(resource_type=ArmConstants.WORKSPACE_PROJECT)
+        byo_open_ai_resource_id = kwargs.get("byo_open_ai_resource_id") or ""
         _set_val(param["byo_open_ai_resource_id"], byo_open_ai_resource_id)
         _set_val(param["workspaceName"], workspace.name)
         if not workspace.display_name:
