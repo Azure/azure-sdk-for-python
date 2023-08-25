@@ -110,7 +110,7 @@ def send_trace_context_manager(
     :param span_name: The name of the tracing span.
     :type span_name: str
     :param links: A list of links to include in the tracing span.
-    :type links: list[Link] or None
+    :type links: list[~azure.core.tracing.Link] or None
     :return: A context manager that will yield when the message is sent.
     :rtype: iterator
     """
@@ -138,7 +138,7 @@ def receive_trace_context_manager(
     :param span_name: The name of the tracing span.
     :type span_name: str
     :param links: A list of links to include in the tracing span.
-    :type links: list[Link] or None
+    :type links: list[~azure.core.tracing.Link] or None
     :param start_time: The time that the receive operation started.
     :type start_time: int or None
     :return: An iterator that yields the tracing span.
@@ -166,7 +166,7 @@ def settle_trace_context_manager(
     :param operation: The operation that is being performed on the message.
     :type operation: str
     :param links: A list of links to include in the tracing span.
-    :type links: list[Link] or None
+    :type links: list[~azure.core.tracing.Link] or None
     :return: An generator that yields the tracing span.
     :rtype: None
     """
@@ -280,7 +280,7 @@ def get_span_links_from_batch(batch: ServiceBusMessageBatch) -> List[Link]:
     """Create span links from a batch of messages.
     :param ~azure.servicebus.ServiceBusMessageBatch batch: The batch of messages to extract the span links from.
     :return: A list of span links created from the batch.
-    :rtype: list[Link]
+    :rtype: list[~azure.core.tracing.Link]
     """
     links = []
     for message in batch._messages:  # pylint: disable=protected-access
@@ -299,7 +299,7 @@ def get_span_link_from_message(message: Union[uamqp_Message, pyamqp_Message, Ser
     :param message: The message to extract the span link from.
     :type message: ~uamqp.Message or ~pyamqp.message.Message or ~azure.servicebus.ServiceBusMessage]
     :return: A span link created from the message.
-    :rtype: Link or None
+    :rtype: ~azure.core.tracing.Link or None
     """
     headers = {}
     try:
