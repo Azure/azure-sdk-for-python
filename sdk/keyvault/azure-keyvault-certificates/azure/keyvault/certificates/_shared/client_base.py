@@ -176,4 +176,6 @@ class KeyVaultClientBase(object):
         :rtype: ~azure.core.polling.LROPoller
         """
         polling = polling or LROBasePolling()
-        return LROPoller(self._client._client, initial_response, polling)
+        def deserialization_callback(pipeline_response):
+            return pipeline_response.http_response
+        return LROPoller(self._client._client, initial_response, deserialization_callback, polling)
