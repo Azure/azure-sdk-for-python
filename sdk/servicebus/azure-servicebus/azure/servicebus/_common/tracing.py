@@ -170,7 +170,7 @@ def settle_trace_context_manager(
     :return: An generator that yields the tracing span.
     :rtype: None
     """
-    span_impl_type = settings.tracing_implementation()
+    span_impl_type: Optional[Type[AbstractSpan]] = settings.tracing_implementation()
     if span_impl_type is not None:
         links = links or []
         with span_impl_type(name=f"ServiceBus.{operation}", kind=SpanKind.CLIENT, links=links) as span:
@@ -277,7 +277,7 @@ def get_receive_links(messages: Union[ReceiveMessageTypes, Iterable[ReceiveMessa
 
 def get_span_links_from_batch(batch: ServiceBusMessageBatch) -> List[Link]:
     """Create span links from a batch of messages.
-    :param ServiceBusMessageBatch batch: The batch of messages to extract the span links from.
+    :param ~azure.servicebus.ServiceBusMessageBatch batch: The batch of messages to extract the span links from.
     :return: A list of span links created from the batch.
     :rtype: list[Link]
     """

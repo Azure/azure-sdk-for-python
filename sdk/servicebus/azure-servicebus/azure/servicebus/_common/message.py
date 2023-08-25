@@ -687,7 +687,8 @@ class ServiceBusMessageBatch(object):
     def _add(self, add_message: Union[ServiceBusMessage, Mapping[str, Any], AmqpAnnotatedMessage]) -> None:
         """Actual add implementation.  The shim exists to hide the internal parameters such as parent_span.
         :param add_message: The message to add.
-        :type add_message: ~azure.servicebus.ServiceBusMessage or mapping[str, any] or ~azure.servicebus.amqp.AmqpAnnotatedMessage
+        :type add_message: ~azure.servicebus.ServiceBusMessage or mapping[str, any]
+         or ~azure.servicebus.amqp.AmqpAnnotatedMessage
         """
         outgoing_sb_message = transform_outbound_messages(
             add_message, ServiceBusMessage, self._amqp_transport.to_outgoing_amqp_message

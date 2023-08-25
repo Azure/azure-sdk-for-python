@@ -116,7 +116,7 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
     async def close_connection_async(connection):
         """
         Closes existing connection.
-        :param ConnectionAsync connection: uamqp or pyamqp Connection.
+        :param ~uamqp.ConnectionAsync connection: uamqp or pyamqp Connection.
         """
 
     @staticmethod
@@ -142,7 +142,7 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
     async def send_messages_async(sender, message, logger, timeout, last_exception):
         """
         Handles sending of service bus messages.
-        :param SendClientAsync sender: The sender with handler to send messages.
+        :param ~uamqp.SendClientAsync or ~pyamqp.aio.SendCientAsync sender: The sender with handler to send messages.
         :param Message message: The message to send.
         :param int timeout: Timeout time.
         :param Exception last_exception: Exception to raise if message timed out. Only used by uamqp transport.
@@ -164,7 +164,7 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
     def create_receive_client_async(receiver, **kwargs):
         """
         Creates and returns the receive client.
-        :param ReceiveClientAsync receiver: The receiver.
+        :param ~uamqp.ReceiveClientAsync or ~pyamqp.aio.ReceiveClientAsync receiver: The receiver.
 
         :keyword Source source: Required. The source.
         :keyword JWTTokenAuth auth: Required.
@@ -189,7 +189,7 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
     ):
         """The purpose of this wrapper is to allow both state restoration (for multiple concurrent iteration)
         and per-iter argument passing that requires the former.
-        :param ReceiveClientAsync receiver: Client with handler to iterate through messages.
+        :param ~uamqp.ReceiveClientAsync or ~pyamqp.aio.ReceiveClientAsync receiver: Client with handler to iterate through messages.
         :param int or None max_wait_time: Max wait time.
         """
 
@@ -200,7 +200,7 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
     ):
         """
         Used to iterate through received messages.
-        :param ReceiveClientAsync receiver: Client with handler to iterate through messages.
+        :param ~uamqp.ReceiveClientAsync or ~pyamqp.aio.ReceiveClientAsync receiver: Client with handler to iterate through messages.
         :param int or None wait_time: Wait time.
         """
 
@@ -209,7 +209,7 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
     def build_received_message(receiver, message_type, received):
         """
         Build ServiceBusReceivedMessage.
-        :param ReceiveClientAsync receiver: Client with handler to build message from.
+        :param ~uamqp.ReceiveClientAsync or ~pyamqp.aio.ReceiveClientAsync receiver: Client with handler to build message from.
         :param str message_type: Message type.
         :param Message received: Received message.
         """
@@ -219,7 +219,7 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
     def set_handler_message_received_async(receiver):
         """
         Sets _message_received on async handler.
-        :param ReceiveClientAsync receiver: Client with handler to set _message_received on.
+        :param ~uamqp.ReceiveClientAsync or ~pyamqp.aio.ReceiveClientAsync receiver: Client with handler to set _message_received on.
         """
 
     @staticmethod
@@ -227,7 +227,7 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
     def get_current_time(handler):
         """
         Gets the current time.
-        :param ReceiveClientAsync handler: Client with link to get current time from.
+        :param ~uamqp.ReceiveClientAsync or ~pyamqp.aio.ReceiveClientAsync handler: Client with link to get current time from.
         """
 
     @staticmethod
@@ -237,7 +237,7 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
     ):
         """
         Resets the link credit on the link.
-        :param ReceiveClientAsync handler: Client with link to reset link credit.
+        :param ~uamqp.ReceiveClientAsync or ~pyamqp.aio.ReceiveClientAsync handler: Client with link to reset link credit.
         :param int link_credit: Link credit needed.
         :rtype: None
         """
@@ -253,8 +253,8 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
     ) -> None:
         """
         Settles message.
-        :param ReceiveClientAsync handler: Client with link to settle message on.
-        :param Message message: The received message to settle.
+        :param ~uamqp.ReceiveClientAsync or ~pyamqp.aio.ReceiveClientAsync handler: Client with link to settle message on.
+        :param ~uamqp.Message or ~pyamqp.message.Message message: The received message to settle.
         :param str settle_operation: The settle operation.
         :param str or None dead_letter_reason: Optional. The dead letter reason.
         :param str or None dead_letter_error_description: Optional. The dead letter error description.
@@ -265,12 +265,12 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
     def parse_received_message(message, message_type, **kwargs):
         """
         Parses peek/deferred op messages into ServiceBusReceivedMessage.
-        :param Message message: Message to parse.
-        :param ServiceBusReceivedMessage message_type: Parse messages to return.
-        :keyword ServiceBusReceiver receiver: Required.
+        :param ~uamqp.Message or ~pyamqp.message.Message message: Message to parse.
+        :param ~azure.servicebus.ServiceBusReceivedMessage message_type: Parse messages to return.
+        :keyword ~azure.servicebus.aio.ServiceBusReceiver receiver: Required.
         :keyword bool is_peeked_message: Optional. For peeked messages.
         :keyword bool is_deferred_message: Optional. For deferred messages.
-        :keyword ServiceBusReceiveMode receive_mode: Optional.
+        :keyword ~azure.servicebus.ServiceBusReceiveMode receive_mode: Optional.
         """
 
     @staticmethod
@@ -287,7 +287,7 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
         :keyword bool update_token: Whether to update token. If not updating token,
          then pass 300 to refresh_window. Only used by uamqp.
         :returns: JWTTokenAuth.
-        :rtype: ~pyamqp.aio._authentication_async.JWTTokenAuth
+        :rtype: ~pyamqp.aio._authentication_async.JWTTokenAuth or ~uamqp.authentication.JWTTokenAuth
         """
 
     @staticmethod

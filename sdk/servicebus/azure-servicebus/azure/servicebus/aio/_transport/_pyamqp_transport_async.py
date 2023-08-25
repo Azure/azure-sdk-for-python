@@ -173,7 +173,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         :keyword timeout: Required.
 
         :returns: A ReceiveClientAsync.
-        :rtype: ~uamqp.aio.ReceiveClientAsync
+        :rtype: ~pyamqp.aio.ReceiveClientAsync
         """
         config = receiver._config   # pylint: disable=protected-access
         source = kwargs.pop("source")
@@ -347,7 +347,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         :keyword bool update_token: Required. Whether to update token. If not updating token,
         then pass 300 to refresh_window.
         :return: An instance of JWTTokenAuth.
-        :rtype: ~uamqp.aio.JWTTokenAuthAsync
+        :rtype: ~pyamqp.aio._authentication_async.JWTTokenAuthAsync
         """
         # TODO: figure out why we're passing all these args to pyamqp JWTTokenAuth, which aren't being used
         update_token = kwargs.pop("update_token")  # pylint: disable=unused-variable
@@ -379,8 +379,8 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
     ) -> "ServiceBusReceivedMessage":
         """
         Send mgmt request.
-        :param ~uamqp.aio.AMQPClientAsync mgmt_client: Client to send request with.
-        :param ~uamqp.Message mgmt_msg: Message.
+        :param ~pyamqp.aio.AMQPClientAsync mgmt_client: Client to send request with.
+        :param ~pyamqp.message.Message mgmt_msg: Message.
         :keyword bytes operation: Operation.
         :keyword bytes operation_type: Op type.
         :keyword bytes node: Mgmt target.

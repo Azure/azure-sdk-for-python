@@ -42,10 +42,10 @@ try:
             """
             Creates and returns the uamqp Connection object.
             :param str host: The hostname, used by uamqp.
-            :param JWTTokenAuthAsync auth: The auth, used by uamqp.
+            :param ~uamqp.authentication.JWTTokenAuth auth: The auth, used by uamqp.
             :param bool network_trace: Required.
             :return: An instance of ConnectionAsync.
-            :rtype: ~uamqp.aio.ConnectionAsync
+            :rtype: ~uamqp.async_ops.ConnectionAsync
             """
             custom_endpoint_address = kwargs.pop("custom_endpoint_address") # pylint:disable=unused-variable
             ssl_opts = kwargs.pop("ssl_opts") # pylint:disable=unused-variable
@@ -61,7 +61,7 @@ try:
         async def close_connection_async(connection: "ConnectionAsync") -> None:
             """
             Closes existing connection.
-            :param ~uamqp.aio.ConnectionAsync connection: uamqp Connection.
+            :param ~uamqp.async_ops.ConnectionAsync connection: uamqp Connection.
             """
             await connection.destroy_async()
 
@@ -112,7 +112,7 @@ try:
             :param message: ServiceBusMessage with uamqp.Message to be sent.
             :paramtype message: ~azure.servicebus.ServiceBusMessage or ~azure.servicebus.ServiceBusMessageBatch
             :param int timeout: Timeout time.
-            :param last_exception: Exception to raise if message timed out. Only used by uamqp transport.
+            :param Exception last_exception: Exception to raise if message timed out. Only used by uamqp transport.
             :param logger: Logger.
             """
             # pylint: disable=protected-access
@@ -149,7 +149,7 @@ try:
             :keyword timeout: Required.
 
             :return: An instance of ReceiveClientAsync.
-            :rtype: ~pyamqp.aio.ReceiveClientAsync
+            :rtype: ~uamqp.ReceiveClientAsync
             """
             source = kwargs.pop("source")
             retry_policy = kwargs.pop("retry_policy")
@@ -295,7 +295,7 @@ try:
             :keyword bool update_token: Required. Whether to update token. If not updating token,
             then pass 300 to refresh_window.
             :return: An instance of JWTTokenAuth.
-            :rtype: ~pyamqp.aio._authentication_async.JWTTokenAuthAsync
+            :rtype: ~uamqp.authentication.JWTTokenAuth
             """
             update_token = kwargs.pop("update_token")
             refresh_window = 0 if update_token else 300
@@ -330,13 +330,13 @@ try:
         ) -> "ServiceBusReceivedMessage":
             """
             Send mgmt request.
-            :param AMQPClient mgmt_client: Client to send request with.
-            :param Message mgmt_msg: Message.
+            :param ~uamqp.AMQPClient mgmt_client: Client to send request with.
+            :param ~uamqp.Message mgmt_msg: Message.
             :keyword bytes operation: Operation.
             :keyword bytes operation_type: Op type.
             :keyword bytes node: Mgmt target.
             :keyword int timeout: Timeout.
-            :keyword Callable callback: Callback to process request response.
+            :keyword callable callback: Callback to process request response.
             :return: The received mgmt response.
             :rtype: ~azure.servicebus.ServiceBusReceivedMessage
             """

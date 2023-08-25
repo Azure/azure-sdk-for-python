@@ -125,7 +125,7 @@ def get_renewable_start_time(renewable):
         pass
     try:
         return renewable._session_start  # pylint: disable=protected-access
-    except AttributeError as ex:
+    except AttributeError:
         raise TypeError(
             "Registered object is not renewable, renewable must be"
             + "a ServiceBusReceivedMessage or a ServiceBusSession from a sessionful ServiceBusReceiver."

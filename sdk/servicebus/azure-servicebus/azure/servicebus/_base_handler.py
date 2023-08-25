@@ -144,7 +144,7 @@ def _generate_sas_token(
     :param str uri: The resource URI.
     :param str policy: The name of the shared access policy.
     :param str key: The shared access key.
-    :param timedelta or None expiry: The time period that the token is valid for.
+    :param ~datetime.timedelta or None expiry: The time period that the token is valid for.
     :returns: SAS token as string literal.
     :rtype: str
     """

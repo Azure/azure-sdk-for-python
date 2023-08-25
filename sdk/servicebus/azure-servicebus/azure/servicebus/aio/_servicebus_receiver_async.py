@@ -578,7 +578,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
          until the connection is closed. If specified, and no messages arrive for the
          timeout period, the iterator will stop.
         :return: An async iterator of messages.
-        :rtype AsyncIterator[ServiceBusReceivedMessage]
+        :rtype asynciterator[~azure.servicebus.ServiceBusReceivedMessage]
 
         .. admonition:: Example:
 

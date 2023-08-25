@@ -493,7 +493,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         :param ~azure.servicebus.ServiceBusSender sender: The sender with handler
          to send messages.
         :param ~azure.servicebus.ServiceBusMessage or ~azure.servicebus.ServiceBusMessageBatch message: Message to send.
-        :param any logger: Logger.
+        :param logging.Logger logger: Logger.
         :param int timeout: Timeout time.
         :param Exception or None last_exception: Exception to raise if message timed out. Only used by uamqp transport.
         """
@@ -807,7 +807,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         """Get body of type value from message.
         :param ~pyamqp.message.Message message: Message to get value from.
         :return: Message value.
-        :rtype: int
+        :rtype: any
         """
         return message.value
 
@@ -830,7 +830,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         :keyword bool update_token: Whether to update token. If not updating token, then pass 300 to refresh_window.
 
         :return: JWTTokenAuth.
-        :rtype: ~pyamqp.JWTTokenAuth
+        :rtype: ~pyamqp.authentication.JWTTokenAuth
         """
         # TODO: figure out why we're passing all these args to pyamqp JWTTokenAuth, which aren't being used
         update_token = kwargs.pop("update_token")  # pylint: disable=unused-variable
@@ -860,10 +860,10 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         """
         :param message: The message to send in the management request.
         :paramtype message: Any
-        :param Dict[bytes, str] application_properties: App props.
+        :param dict[bytes, str] application_properties: App props.
         :param ~azure.servicebus._common._configuration.Configuration config: Configuration.
         :param str reply_to: Reply to.
-        :rtype: pyamqp.Message
+        :rtype: ~pyamqp.message.Message
         """
         return Message( # type: ignore # TODO: fix mypy error
             value=message,

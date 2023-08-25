@@ -283,7 +283,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
                         self._container_id,
                         last_exception,
                     )
-                    raise last_exception # pylint:disable=raise-missing-from
+                    raise last_exception from None
                 await self._backoff(
                     retried_times=retried_times,
                     last_exception=last_exception,
