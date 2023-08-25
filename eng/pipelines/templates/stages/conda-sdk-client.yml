@@ -1,13 +1,144 @@
 parameters:
+- name: release_msrest
+  displayName: 'msrest'
+  type: boolean
+  default: true
+- name: release_msal
+  displayName: 'msal'
+  type: boolean
+  default: true
+- name: release_uamqp
+  displayName: 'uamqp'
+  type: boolean
+  default: true
+- name: release_msal_extensions
+  displayName: 'msal-extensions'
+  type: boolean
+  default: true
 - name: release_azure_core
   displayName: 'azure-core'
+  type: boolean
+  default: true
+- name: release_release_azure_core
+  displayName: 'release_azure_core'
+  type: boolean
+  default: true
+- name: release_release_azure_storage
+  displayName: 'release_azure_storage'
+  type: boolean
+  default: true
+- name: release_azure_identity
+  displayName: 'azure-identity'
   type: boolean
   default: true
 - name: release_azure_storage
   displayName: 'azure-storage'
   type: boolean
   default: true
-
+- name: release_azure_ai_formrecognizer
+  displayName: 'azure-ai-formrecognizer'
+  type: boolean
+  default: true
+- name: release_azure_ai_language_conversations
+  displayName: 'azure-ai-language-conversations'
+  type: boolean
+  default: true
+- name: release_azure_ai_language_questionanswering
+  displayName: 'azure-ai-language-questionanswering'
+  type: boolean
+  default: true
+- name: release_azure_ai_metricsadvisor
+  displayName: 'azure-ai-metricsadvisor'
+  type: boolean
+  default: true
+- name: release_azure_ai_ml
+  displayName: 'azure-ai-ml'
+  type: boolean
+  default: true
+- name: release_azure_ai_textanalytics
+  displayName: 'azure-ai-textanalytics'
+  type: boolean
+  default: true
+- name: release_azure_ai_translation_document
+  displayName: 'azure-ai-translation-document'
+  type: boolean
+  default: true
+- name: release_azure_appconfiguration
+  displayName: 'azure-appconfiguration'
+  type: boolean
+  default: true
+- name: release_azure_communication
+  displayName: 'azure-communication'
+  type: boolean
+  default: true
+- name: release_azure_confidentialledger
+  displayName: 'azure-confidentialledger'
+  type: boolean
+  default: true
+- name: release_azure_containerregistry
+  displayName: 'azure-containerregistry'
+  type: boolean
+  default: true
+- name: release_azure_cosmos
+  displayName: 'azure-cosmos'
+  type: boolean
+  default: true
+- name: release_azure_data_tables
+  displayName: 'azure-data-tables'
+  type: boolean
+  default: true
+- name: release_azure_developer_loadtesting
+  displayName: 'azure-developer-loadtesting'
+  type: boolean
+  default: true
+- name: release_azure_digitaltwins_core
+  displayName: 'azure-digitaltwins-core'
+  type: boolean
+  default: true
+- name: release_azure_eventgrid
+  displayName: 'azure-eventgrid'
+  type: boolean
+  default: true
+- name: release_azure_eventhub
+  displayName: 'azure-eventhub'
+  type: boolean
+  default: true
+- name: release_azure_iot_deviceupdate
+  displayName: 'azure-iot-deviceupdate'
+  type: boolean
+  default: true
+- name: release_azure_keyvault
+  displayName: 'azure-keyvault'
+  type: boolean
+  default: true
+- name: release_azure_messaging_webpubsubservice
+  displayName: 'azure-messaging-webpubsubservice'
+  type: boolean
+  default: true
+- name: release_azure_monitor_query
+  displayName: 'azure-monitor-query'
+  type: boolean
+  default: true
+- name: release_azure_schemaregistry
+  displayName: 'azure-schemaregistry'
+  type: boolean
+  default: true
+- name: release_azure_search_documents
+  displayName: 'azure-search-documents'
+  type: boolean
+  default: true
+- name: release_azure_security_attestation
+  displayName: 'azure-security-attestation'
+  type: boolean
+  default: true
+- name: release_azure_servicebus
+  displayName: 'azure-servicebus'
+  type: boolean
+  default: true
+- name: release_azure_mgmt
+  displayName: 'azure-mgmt'
+  type: boolean
+  default: true
 
 variables:
   - template: /eng/pipelines/templates/variables/globals.yml
@@ -58,7 +189,7 @@ stages:
     dependsOn: Build_Dependencies
     jobs:
     - job: 'Build'
-      timeoutInMinutes: 120
+      timeoutInMinutes: 90
         
       pool:
         name: azsdk-pool-mms-ubuntu-2004-general
@@ -84,7 +215,7 @@ stages:
               - name: azure-core
                 common_root: azure
                 service: core
-                in_batch: true
+                in_batch: ${{ parameters.release_azure_core }}
                 checkout:
                 - package: azure-core
                   download_uri: https://files.pythonhosted.org/packages/df/d4/1472562806c1cef919503207082c2b2be70d005cd6deb9ae46d4af0c1b4a/azure-core-1.29.1.zip
@@ -113,47 +244,56 @@ stages:
               - name: azure-ai-formrecognizer
                 common_root: azure
                 service: formrecognizer
+                in_batch: ${{ parameters.release_azure_formrecognizer }}
                 checkout:
                 - package: azure-ai-formrecognizer
                   download_uri: https://files.pythonhosted.org/packages/55/f6/4ab4c197d6eb9c83814a7f169c4b26cb1ae360a5f10dac81cccb6b7a00c3/azure-ai-formrecognizer-3.2.1.zip
               - name: azure-ai-language-conversations
                 common_root: azure
                 service: cognitivelanguage
+                in_batch: ${{ parameters.release_azure_ai_language_conversations }}
                 checkout:
                 - package: azure-ai-language-conversations
                   download_uri: https://files.pythonhosted.org/packages/46/fb/0d1a4186717655ab190c0b0108e1c26fc11e62b13bf105cd1316aa0489ce/azure-ai-language-conversations-1.0.0.zip
               - name: azure-ai-language-questionanswering
                 service: cognitivelanguage
+                in_batch: ${{ parameters.release_azure_ai_language_questionanswering }}
                 checkout:
                 - package: azure-ai-language-questionanswering
                   download_uri: https://files.pythonhosted.org/packages/88/b5/abd1acfaba2b60cb437ba3c9c888c6f98e2eb99b8e9c8376a882120e2945/azure-ai-language-questionanswering-1.1.0.zip
               - name: azure-ai-metricsadvisor
                 service: cognitivelanguage
+                in_batch: ${{ parameters.release_azure_ai_metricsadvisor }}
                 checkout:
                 - package: azure-ai-metricsadvisor
                   download_uri: https://files.pythonhosted.org/packages/f0/03/16532aaeede7abc3a36f6693c1b8b9462dab82d470cffef8d90746615fd7/azure-ai-metricsadvisor-1.0.0.zip
               - name: azure-ai-ml
                 service: ml
+                in_batch: ${{ parameters.release_azure_ai_ml }}
                 checkout:
                 - package: azure-ai-ml
                   download_uri: https://files.pythonhosted.org/packages/61/61/c50f2244e09000c101f29a23a585c96e7342693dc9a28064bd70eab82aa3/azure-ai-ml-1.7.2.zip
               - name: azure-ai-textanalytics
                 service: textanalytics
+                in_batch: ${{ parameters.release_azure_ai_textanalytics }}
                 checkout:
                 - package: azure-ai-textanalytics
                   download_uri: https://files.pythonhosted.org/packages/3a/7b/ea7ae656769d6b8f11731532c46cb65372c5fe5c18a31eef26c88c7b2f5e/azure-ai-textanalytics-5.2.1.zip
               - name: azure-ai-translation-document
                 service: translation
+                in_batch: ${{ parameters.release_azure_ai_translation_document }}
                 checkout:
                 - package: azure-ai-translation-document
                   download_uri: https://files.pythonhosted.org/packages/3a/09/b12960e87cd52fe3893dc395154b42469a4103345bcf8ef28538f6d64ce9/azure-ai-translation-document-1.0.0.zip 
               - name: azure-appconfiguration
                 service: appconfiguration
+                in_batch: ${{ parameters.release_azure_appconfiguration }}
                 checkout:
                 - package: azure-appconfiguration
                   download_uri: https://files.pythonhosted.org/packages/77/18/3d95b3ca4aec25070c4f0baaf355d5a537eaaa4e93f0fbc3ab0dbad0e1ce/azure-appconfiguration-1.4.0.zip
               - name: azure-communication
                 service: communication
+                in_batch: ${{ parameters.release_azure_communication }}
                 checkout:
                 - package: azure-communication-chat
                   download_uri: https://files.pythonhosted.org/packages/b5/5b/3c38c0f07f50f1a7877f088a63b27733fa36ca835609459bcf0aefec2571/azure-communication-chat-1.1.0.zip
@@ -167,42 +307,50 @@ stages:
                   download_uri: https://files.pythonhosted.org/packages/a2/20/81b03d82c1240b2ee4784e413fb49393b871f78b4e935d7746875a10f8d7/azure-communication-sms-1.0.1.zip
               - name: azure-confidentialledger
                 service: confidentialledger
+                in_batch: ${{ parameters.release_azure_confidentialledger }}
                 checkout:
                 - package: azure-confidentialledger
                   download_uri: https://files.pythonhosted.org/packages/a1/57/853726be83f065e5f7d21f9a0ebfca8bc2dd4132a5fece47b7d9df0e033a/azure-confidentialledger-1.1.0.zip
               - name: azure-containerregistry
                 service: containerregistry
+                in_batch: ${{ parameters.release_azure_containerregistry }}
                 checkout: 
                 - package: azure-containerregistry
                   download_uri: "https://files.pythonhosted.org/packages/ce/d7/c5892390196d05c5ce4f4f78bd39b5d7af9b984ae08776e9f6abf91637ff/azure-containerregistry-1.1.0.zip" 
               - name: azure-cosmos
                 service: cosmos
+                in_batch: ${{ parameters.release_azure_cosmos }}
                 checkout:
                 - package: azure-cosmos
                   download_uri: https://files.pythonhosted.org/packages/90/dc/d962600643262152e5b8ab166a5327881a9ac91d6b7e1049ccbec7a2b5d7/azure-cosmos-4.3.1.zip
               - name: azure-data-tables
                 service: tables
+                in_batch: ${{ parameters.release_azure_data_tables }}
                 checkout:
                 - package: azure-data-tables
                   download_uri: https://files.pythonhosted.org/packages/91/03/606dc3a49f054e3055b7eaf581ea988b76376b66874a2a59ccf1e988c5ee/azure-data-tables-12.4.2.zip
               - name: azure-developer-loadtesting
                 service: loadtesting
+                in_batch: ${{ parameters.release_azure_developer_loadtesting }}
                 checkout:
                 - package: azure-developer-loadtesting
                   download_uri: https://files.pythonhosted.org/packages/15/8e/610c3e58f373f305636d322480c49d0f340025770df2bd4b3610d28d3a8a/azure-developer-loadtesting-1.0.0.zip
               - name: azure-digitaltwins-core
                 service: digitaltwins
+                in_batch: ${{ parameters.release_azure_digitaltwins_core }}
                 checkout:
                 - package: azure-digitaltwins-core
                   download_uri: https://files.pythonhosted.org/packages/38/59/683c7b1722e0f6090b2d11ea7ed721d398be684d445168e3c107dbc3bb2e/azure-digitaltwins-core-1.2.0.zip
               - name: azure-eventgrid
                 service: eventgrid
+                in_batch: ${{ parameters.release_azure_eventgrid }}
                 checkout: 
                 - package: azure-eventgrid
                   download_uri: https://files.pythonhosted.org/packages/00/b4/0b215dc36df6fca99b4d513f094500617104f86de0ee149ec71c74a2b392/azure-eventgrid-4.11.0.zip
               - name: azure-eventhub
                 service: eventhub
                 common_root: azure/eventhub
+                in_batch: ${{ parameters.release_azure_eventhub }}
                 checkout:
                 - package: azure-eventhub
                   download_uri: https://files.pythonhosted.org/packages/25/85/ef8c29f73b7e0c5490700290204dd87c81386aee9403fd2d0e02b8912c1b/azure-eventhub-5.11.2.zip
@@ -212,6 +360,7 @@ stages:
                   download_uri: https://files.pythonhosted.org/packages/ef/b3/58699d222d900780a2e8e6a20bf6744ea94663980adbc8cd3532c407686c/azure-eventhub-checkpointstoreblob-aio-1.1.4.zip
               - name: azure-iot-deviceupdate
                 service: deviceupdate
+                in_batch: ${{ parameters.release_azure_iot_deviceupdate }}
                 checkout:
                 - package: azure-iot-deviceupdate
                   download_uri: https://files.pythonhosted.org/packages/25/e1/ee44bfefcf73e94be69a924f6fbb8322f7bf653336c40d5f36eafe4fead7/azure-iot-deviceupdate-1.0.0.zip
@@ -230,21 +379,25 @@ stages:
                   download_uri: https://files.pythonhosted.org/packages/5c/a1/78ecabf98e97d600dcac1559ff64b4bc9f84eca126c0aeba859916832b0c/azure-keyvault-secrets-4.7.0.zip
               - name: azure-messaging-webpubsubservice
                 service: webpubsub
+                in_batch: ${{ parameters.release_azure_messaging_webpubservice }}
                 checkout:
                 - package: azure-messaging-webpubsubservice
                   download_uri: "https://files.pythonhosted.org/packages/6f/d2/29815d91ed5ace96562c26af64c909e44e81c2e5c90aad6e57ff84bc27eb/azure-messaging-webpubsubservice-1.0.1.zip"        
               - name : azure-monitor-ingestion
                 service: monitor
+                in_batch: ${{ parameters.release_azure_monitor_ingestion }}
                 checkout:
                 - package: azure-monitor-ingestion
                   download_uri: "https://files.pythonhosted.org/packages/8c/c8/404575e0f1882d2ace0a6eb62228ad18cd20ed0869848e50fc0c24025aed/azure-monitor-ingestion-1.0.1.zip"
               - name: azure-monitor-query
                 service: monitor
+                in_batch: ${{ parameters.release_azure_monitor_query }}
                 checkout:
                 - package: azure-monitor-query
                   download_uri: "https://files.pythonhosted.org/packages/ad/16/fd06cccfc583d8d38d8d99ee92ec1bbc9604cf6e8c62e64ddca5644e0a60/azure-monitor-query-1.2.0.zip"
               - name: azure-schemaregistry
                 service: schemaregistry
+                in_batch: ${{ parameters.release_azure_schemaregistry }}
                 checkout:
                 - package: azure-schemaregistry
                   download_uri: https://files.pythonhosted.org/packages/21/ac/69d234a343a1303f2acfdaa4ab6885cc0c5974034c813d2a5756409019d2/azure-schemaregistry-1.2.0.zip
@@ -252,21 +405,25 @@ stages:
                   download_uri: https://files.pythonhosted.org/packages/41/c8/ce8de6845535463e7e3c900a5bf5f3a66aad9660542deeee4a801165571e/azure-schemaregistry-avroencoder-1.0.0.zip
               - name: azure-search-documents
                 service: search
+                in_batch: ${{ parameters.release_azure_search_documents }}
                 checkout:
                 - package: azure-search-documents
                   download_uri: https://files.pythonhosted.org/packages/d6/29/1565a336e54013591e7de688259ec0281d4aa0bb0a71df0d7e7be51e77d2/azure-search-documents-11.3.0.zip
               - name: azure-security-attestation
                 service: attestation
+                in_batch: ${{ parameters.release_azure_security_attestation }}
                 checkout:
                 - package: azure-security-attestation
                   download_uri: https://files.pythonhosted.org/packages/c1/30/9c728aff4e671de3bce4a56e0ba6c1b53da6a7df83970ee01bab3100ea76/azure-security-attestation-1.0.0.zip
               - name: azure-servicebus
                 service: servicebus
+                in_batch: ${{ parameters.release_azure_servicebus }}
                 checkout:
                 - package: azure-servicebus
                   download_uri: "https://files.pythonhosted.org/packages/4d/41/13ecf05ed4f9192d2aed22f7da8bd508abd2fe33f825f955d2738a9ccbad/azure-servicebus-7.10.0.zip"
               - name: azure-mgmt
                 service: mgmt
+                in_batch: ${{ parameters.release_azure_mgmt }}
                 common_root: azure/mgmt
                 checkout:
                 - package: azure-mgmt-advisor
