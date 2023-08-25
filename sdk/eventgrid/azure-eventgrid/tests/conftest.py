@@ -33,7 +33,6 @@ from devtools_testutils.sanitizers import (
     set_custom_default_matcher,
 )
 
-
 @pytest.fixture(scope="session", autouse=True)
 def add_sanitizers(test_proxy):
     # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
