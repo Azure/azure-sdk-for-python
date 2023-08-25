@@ -99,8 +99,6 @@ setup(
 http = urllib3.PoolManager()
 
 
-
-
 def resolve_assembly_folder_name(package_name: str, conda_package_name: str):
     """
     This script does a lot of moving of code automagically. In the case of assembly of a new conda package, the destination
@@ -285,7 +283,6 @@ def create_combined_sdist(
             return assembled_sdist
 
     targeted_folder_for_assembly = os.path.join(config_assembly_folder, conda_build.name)
-
 
     create_package(targeted_folder_for_assembly, config_assembled_folder, enable_wheel=False, enable_sdist=True)
 

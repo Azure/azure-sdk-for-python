@@ -59,15 +59,16 @@ http = urllib3.PoolManager()
 #       checkout_path: sdk/storage
 #       version: 12.7.0
 
+
 def get_pypi_page(package: str, version: str) -> bs4.BeautifulSoup:
     url = f"https://pypi.org/project/{package}/{version}/"
 
     try:
-        r = http.request('GET', url)
+        r = http.request("GET", url)
     except Exception as e:
         raise RuntimeError(f"We must get this the data {url} to continue proper assembly.")
 
-    return bs4.BeautifulSoup(r.data.decode('utf-8'), "html.parser")
+    return bs4.BeautifulSoup(r.data.decode("utf-8"), "html.parser")
 
 
 def get_package_sdist_url(package: str, version: str) -> str:
