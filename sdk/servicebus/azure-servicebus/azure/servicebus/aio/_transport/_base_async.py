@@ -189,7 +189,8 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
     ):
         """The purpose of this wrapper is to allow both state restoration (for multiple concurrent iteration)
         and per-iter argument passing that requires the former.
-        :param ~uamqp.ReceiveClientAsync or ~pyamqp.aio.ReceiveClientAsync receiver: Client with handler to iterate through messages.
+        :param ~uamqp.ReceiveClientAsync or ~pyamqp.aio.ReceiveClientAsync
+         receiver: Client with handler to iterate through messages.
         :param int or None max_wait_time: Max wait time.
         """
 
@@ -200,7 +201,8 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
     ):
         """
         Used to iterate through received messages.
-        :param ~uamqp.ReceiveClientAsync or ~pyamqp.aio.ReceiveClientAsync receiver: Client with handler to iterate through messages.
+        :param ~uamqp.ReceiveClientAsync or ~pyamqp.aio.ReceiveClientAsync
+         receiver: Client with handler to iterate through messages.
         :param int or None wait_time: Wait time.
         """
 
@@ -209,7 +211,8 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
     def build_received_message(receiver, message_type, received):
         """
         Build ServiceBusReceivedMessage.
-        :param ~uamqp.ReceiveClientAsync or ~pyamqp.aio.ReceiveClientAsync receiver: Client with handler to build message from.
+        :param ~uamqp.ReceiveClientAsync or ~pyamqp.aio.ReceiveClientAsync
+         receiver: Client with handler to build message from.
         :param str message_type: Message type.
         :param Message received: Received message.
         """
@@ -219,7 +222,8 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
     def set_handler_message_received_async(receiver):
         """
         Sets _message_received on async handler.
-        :param ~uamqp.ReceiveClientAsync or ~pyamqp.aio.ReceiveClientAsync receiver: Client with handler to set _message_received on.
+        :param ~uamqp.ReceiveClientAsync or ~pyamqp.aio.ReceiveClientAsync
+         receiver: Client with handler to set _message_received on.
         """
 
     @staticmethod
@@ -227,7 +231,8 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
     def get_current_time(handler):
         """
         Gets the current time.
-        :param ~uamqp.ReceiveClientAsync or ~pyamqp.aio.ReceiveClientAsync handler: Client with link to get current time from.
+        :param ~uamqp.ReceiveClientAsync
+         or ~pyamqp.aio.ReceiveClientAsync handler: Client with link to get current time from.
         """
 
     @staticmethod
@@ -237,7 +242,8 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
     ):
         """
         Resets the link credit on the link.
-        :param ~uamqp.ReceiveClientAsync or ~pyamqp.aio.ReceiveClientAsync handler: Client with link to reset link credit.
+        :param ~uamqp.ReceiveClientAsync
+         or ~pyamqp.aio.ReceiveClientAsync handler: Client with link to reset link credit.
         :param int link_credit: Link credit needed.
         :rtype: None
         """
@@ -253,7 +259,8 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
     ) -> None:
         """
         Settles message.
-        :param ~uamqp.ReceiveClientAsync or ~pyamqp.aio.ReceiveClientAsync handler: Client with link to settle message on.
+        :param ~uamqp.ReceiveClientAsync or
+         ~pyamqp.aio.ReceiveClientAsync handler: Client with link to settle message on.
         :param ~uamqp.Message or ~pyamqp.message.Message message: The received message to settle.
         :param str settle_operation: The settle operation.
         :param str or None dead_letter_reason: Optional. The dead letter reason.

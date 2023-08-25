@@ -641,7 +641,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         """
         Used to iterate through received messages.
         :param ~azure.servicebus.ServiceBusReceiver receiver: The receiver object.
-        :param int wait_time: The maximum wait time in seconds for which the iterator will attempt to receive
+        :param int or None wait_time: The maximum wait time in seconds for which the iterator will attempt to receive
         :return: The next received message.
         :rtype: ~azure.servicebus.ServiceBusReceivedMessage
         """
@@ -790,7 +790,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         :keyword bool is_deferred_message: Optional. For deferred messages.
         :keyword ~azure.servicebus.ServiceBusReceiveMode receive_mode: Optional.
         :return: List of service bus received messages.
-        :rtype: List[~azure.servicebus.ServiceBusReceivedMessage]
+        :rtype: list[~azure.servicebus.ServiceBusReceivedMessage]
         """
         parsed = []
         for m in message.value[b"messages"]:

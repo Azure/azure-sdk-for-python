@@ -380,4 +380,4 @@ def create_properties_from_dict_if_needed(properties, sb_resource_type):
             "Update input must be an instance of {}, or a mapping representing one.".format(
                 sb_resource_type.__name__
             )
-        ) from e
+        ) from None
