@@ -75,6 +75,7 @@ class WorkspaceOperationsBase:
         self,
         workspace: Workspace,
         update_dependent_resources: bool = False,
+        byo_open_ai_resource_id: Optional[str] = None,
         get_callback: Optional[Callable[[], Workspace]] = None,
         **kwargs: Dict,
     ) -> LROPoller[Workspace]:
@@ -112,7 +113,7 @@ class WorkspaceOperationsBase:
             workspace.tags["createdByToolkit"] = "sdk-v2-{}".format(VERSION)
 
         workspace.resource_group = resource_group
-        template, param, resources_being_deployed = self._populate_arm_paramaters(workspace, **kwargs)
+        template, param, resources_being_deployed = self._populate_arm_paramaters(workspace, byo_open_ai_resource_id, **kwargs)
         # check if create with workspace hub request is valid
         if workspace._kind == PROJECT_WORKSPACE_KIND:
             if not all(
@@ -367,7 +368,7 @@ class WorkspaceOperationsBase:
         return poller
 
     # pylint: disable=too-many-statements,too-many-branches,too-many-locals
-    def _populate_arm_paramaters(self, workspace: Workspace, **kwargs: Dict) -> Tuple[dict, dict, dict]:
+    def _populate_arm_paramaters(self, workspace: Workspace, byo_open_ai_resource_id: str, **kwargs: Dict) -> Tuple[dict, dict, dict]:
         resources_being_deployed = {}
         if not workspace.location:
             workspace.location = get_resource_group_location(
@@ -377,6 +378,7 @@ class WorkspaceOperationsBase:
         param = get_template(resource_type=ArmConstants.WORKSPACE_PARAM)
         if workspace._kind == PROJECT_WORKSPACE_KIND:
             template = get_template(resource_type=ArmConstants.WORKSPACE_PROJECT)
+        _set_val(param["byo_open_ai_resource_id"], byo_open_ai_resource_id)
         _set_val(param["workspaceName"], workspace.name)
         if not workspace.display_name:
             _set_val(param["friendlyName"], workspace.name)
