@@ -12,6 +12,7 @@ from azure.core.pipeline.policies import HttpLoggingPolicy
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.polling import LROPoller
 from azure.core.polling.base_polling import LROBasePolling
+from azure.core.pipeline import PipelineResponse
 
 from . import ChallengeAuthPolicy
 from .._generated import KeyVaultClient as _KeyVaultClient
@@ -178,4 +179,5 @@ class KeyVaultClientBase(object):
         polling = polling or LROBasePolling()
         def deserialization_callback(pipeline_response):
             return pipeline_response.http_response
-        return LROPoller(self._client._client, initial_response, deserialization_callback, polling)
+        initial_pipeline_response = PipelineResponse(None, initial_response, None)
+        return LROPoller(self._client._client, initial_pipeline_response, deserialization_callback, polling)
