@@ -19,14 +19,6 @@ parameters:
   displayName: 'azure-core'
   type: boolean
   default: true
-- name: release_release_azure_core
-  displayName: 'release_azure_core'
-  type: boolean
-  default: true
-- name: release_release_azure_storage
-  displayName: 'release_azure_storage'
-  type: boolean
-  default: true
 - name: release_azure_identity
   displayName: 'azure-identity'
   type: boolean
