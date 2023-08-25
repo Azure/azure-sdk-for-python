@@ -75,12 +75,13 @@ class WorkspaceOperationsBase:
         self,
         workspace: Workspace,
         update_dependent_resources: bool = False,
-        byo_open_ai_resource_id: Optional[str] = None,
         get_callback: Optional[Callable[[], Workspace]] = None,
         **kwargs: Dict,
     ) -> LROPoller[Workspace]:
         existing_workspace = None
         resource_group = kwargs.get("resource_group") or workspace.resource_group or self._resource_group_name
+        byo_open_ai_resource_id = kwargs.get("byo_open_ai_resource_id") or ""
+
         try:
             existing_workspace = self.get(workspace.name, resource_group=resource_group)
         except Exception:  # pylint: disable=broad-except

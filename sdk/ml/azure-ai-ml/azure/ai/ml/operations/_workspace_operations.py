@@ -160,7 +160,6 @@ class WorkspaceOperations(WorkspaceOperationsBase):
         self,
         workspace: Workspace,
         update_dependent_resources: bool = False,
-        byo_open_ai_resource_id: Optional[str] = None,
         **kwargs: Dict,
     ) -> LROPoller[Workspace]:
         """Create a new Azure Machine Learning Workspace.
@@ -171,13 +170,10 @@ class WorkspaceOperations(WorkspaceOperationsBase):
         :type workspace: Workspace
         :param update_dependent_resources: Whether to update dependent resources
         :type update_dependent_resources: boolean
-        :param byo_open_ai_resource_id: The resource id of the user's existing open ai resource.
-        :type byo_open_ai_resource_id: str
         :return: An instance of LROPoller that returns a Workspace.
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.Workspace]
         """
-
-        return super().begin_create(workspace, update_dependent_resources=update_dependent_resources, byo_open_ai_resource_id=byo_open_ai_resource_id, **kwargs)
+        return super().begin_create(workspace, update_dependent_resources=update_dependent_resources, **kwargs)
 
     @monitor_with_activity(logger, "Workspace.BeginUpdate", ActivityType.PUBLICAPI)
     @distributed_trace
