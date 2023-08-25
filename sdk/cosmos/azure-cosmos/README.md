@@ -586,15 +586,52 @@ For more information on Integrated Cache, see [Azure Cosmos DB integrated cache 
 
 ### Using Bulk requests
 Bulk requests are a new addition to the Python SDK that allows you to send several operations to be executed at once.
-When using bulk, requests get sent in batches of up to 100 operations per partition, and RUs get consumed faster.
+
+Since Bulk is geared towards obtaining as much throughput as possible, and the volume of data will be higher than 
+executing the operations individually, the provisioned throughput (RU/s) consumed will be higher. Make sure you adjust
+it based on the volume of operations you want to push.
+
+Another caveat is the size of the documents. The batches that the SDK creates to optimize throughput have a current maximum
+of 2Mb or 100 operations per batch, the smaller the documents, the greater the optimization that can be achieved
+(the bigger the documents, the more batches need to be used).
+
+If your operations get throttled during a Bulk request, it means that now the bottleneck of your application is on the 
+provisioned throughput of your container. Currently, the SDK does not retry individual throttled requests within a bulk operation.
+
 Available Bulk operation types are:
 - Create
+```python
+create_item_operation = {"operationType": "Create",
+                         "resourceBody": {"id": "create_item"},
+                         "partitionKey": "create_item"}
+```
 - Upsert
+```python
+upsert_item_operation = {"operationType": "Upsert",
+                         "resourceBody": {"id": "upsert_item"},
+                         "partitionKey": "upsert_item"}
+```
 - Read
+```python
+read_item_operation = {"operationType": "Read",
+                       "id": "read_item",
+                       "partitionKey": "read_item"}
+```
 - Replace
+```python
+replace_item_operation = {"operationType": "Replace",
+                          "id": "replace_item",
+                          "partitionKey": "replace_item",
+                          "resourceBody": {"id": "replace_item", "message": "item was replaced"}}
+```
 - Delete
-
-Find here the samples showing how to use bulk with both the [sync][sample_document_mgmt] and [async][sample_document_mgmt_async] clients.
+```python
+delete_item_operation = {"operationType": "Delete",
+                         "id": "delete_item",
+                         "partitionKey": "delete_item"}
+```
+The snippets above assume the container is partitioned on path id. We also have samples showing how 
+to use these bulk operations with both the [sync][sample_document_mgmt] and [async][sample_document_mgmt_async] clients.
 
 ## Troubleshooting
 

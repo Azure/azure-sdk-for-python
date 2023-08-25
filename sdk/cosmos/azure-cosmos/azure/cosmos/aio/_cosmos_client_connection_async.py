@@ -53,6 +53,7 @@ from .. import _runtime_constants as runtime_constants
 from .. import _request_object
 from . import _asynchronous_request as asynchronous_request
 from . import _global_endpoint_manager_async as global_endpoint_manager_async
+from .. import partition_key
 from .._routing.aio import routing_map_provider
 from ._retry_utility_async import _ConnectionRetryPolicy
 from .. import _session
@@ -60,9 +61,10 @@ from .. import _utils
 from ..partition_key import _Undefined, _Empty
 from ._auth_policy_async import AsyncCosmosBearerTokenCredentialPolicy
 from .._cosmos_http_logging_policy import CosmosHttpLoggingPolicy
-from .. import _murmurhash as murmurhash
 
 ClassType = TypeVar("ClassType")
+
+
 # pylint: disable=protected-access
 
 
@@ -91,12 +93,12 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
     _DefaultStringRangePrecision = -1
 
     def __init__(
-        self,
-        url_connection,  # type: str
-        auth,  # type: Dict[str, Any]
-        connection_policy=None,  # type: Optional[ConnectionPolicy]
-        consistency_level=None,  # type: Optional[str]
-        **kwargs  # type: Any
+            self,
+            url_connection,  # type: str
+            auth,  # type: Dict[str, Any]
+            connection_policy=None,  # type: Optional[ConnectionPolicy]
+            consistency_level=None,  # type: Optional[str]
+            **kwargs  # type: Any
     ):
         # type: (...) -> None
         """
@@ -199,7 +201,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             DistributedTracingPolicy(**kwargs),
             CosmosHttpLoggingPolicy(enable_diagnostics_logging=kwargs.pop("enable_diagnostics_logging", False),
                                     **kwargs),
-            ]
+        ]
 
         transport = kwargs.pop("transport", None)
         self.pipeline_client = AsyncPipelineClient(base_url=url_connection, transport=transport, policies=policies)
@@ -281,7 +283,6 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             self.default_headers[http_constants.HttpHeaders.ConsistencyLevel] = consistency_level
 
         return consistency_level
-
 
     def _GetDatabaseIdWithPathForUser(self, database_link, user):  # pylint: disable=no-self-use
         CosmosClientConnection.__ValidateResource(user)
@@ -365,7 +366,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             ]
 
         self._useMultipleWriteLocations = (
-            self.connection_policy.UseMultipleWriteLocations and database_account._EnableMultipleWritableLocations
+                self.connection_policy.UseMultipleWriteLocations and database_account._EnableMultipleWritableLocations
         )
         return database_account
 
@@ -592,7 +593,8 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         result, self.last_response_headers = await self.__Post(path, request_params, params, headers, **kwargs)
         return result
 
-    async def Create(self, body, path, typ, id, initial_headers, options=None, **kwargs):  # pylint: disable=redefined-builtin
+    async def Create(self, body, path, typ, id, initial_headers, options=None,
+                     **kwargs):  # pylint: disable=redefined-builtin
         """Creates a Azure Cosmos resource and returns it.
 
         :param dict body:
@@ -704,7 +706,8 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         )
         return await self.Upsert(document, path, "docs", collection_id, None, options, **kwargs)
 
-    async def Upsert(self, body, path, typ, id, initial_headers, options=None, **kwargs):  # pylint: disable=redefined-builtin
+    async def Upsert(self, body, path, typ, id, initial_headers, options=None,
+                     **kwargs):  # pylint: disable=redefined-builtin
         """Upserts a Azure Cosmos resource and returns it.
 
         :param dict body:
@@ -1224,16 +1227,20 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             }
             batches.append(batch)
         for operation in operations:
-            partition_key = operation.get("partitionKey", None)
-            if partition_key is None:
+            partition_key_value = operation.get("partitionKey", None)
+            if partition_key_value is None:
                 operation = await self._AddPartitionKey(collection_link, operation.get("resourceBody"), operation)
-                partition_key = operation.get("partitionKey", None)
-                if partition_key is None:
+                partition_key_value = operation.get("partitionKey", None)
+                if partition_key_value is None:
                     raise AttributeError("Bulk operation must have a partition key specified.")
-            operation["partitionKey"] = json.dumps([partition_key])
-            hashed_key = murmurhash.murmur64(partition_key)
+            operation["partitionKey"] = json.dumps([partition_key_value])
+            pk_definition = await self._get_partition_key_definition(collection_link)
+            container_pk = partition_key.PartitionKey(path=pk_definition.get('path'),
+                                                      kind=pk_definition.get('kind'),
+                                                      version=pk_definition.get('version'))
+            hashed_key = container_pk.get_effective_partition_key_string([partition_key_value])
             for batch in batches:
-                if base.is_key_in_range(batch.get("min"), batch.get("max"), hashed_key):
+                if partition_key.is_key_in_range(batch.get("min"), batch.get("max"), hashed_key):
                     batch.get("operations").append(operation)
                     break
 
@@ -1242,9 +1249,9 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
 
         response = []
         for batch in batches:
+            # The service does this check as well, but the message is not as informative.
             if len(batch.get("operations")) > 100:
                 raise ValueError("Cannot run bulk request with more than 100 operations per partition.")
-            # try:
             result = await self._Bulk(
                 batch.get("operations"),
                 batch.get("range_id"),
@@ -1253,9 +1260,6 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
                 options,
                 **kwargs)
             response.append(result)
-            # except Exception as e:
-            #     # Leaving this here while I figure out 410s for batch within Python
-            #     print(e)
 
         return response
 
@@ -1319,7 +1323,8 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         sproc_id = base.GetResourceIdOrFullNameFromLink(sproc_link)
         return await self.Replace(sproc, path, "sprocs", sproc_id, None, options, **kwargs)
 
-    async def Replace(self, resource, path, typ, id, initial_headers, options=None, **kwargs):  # pylint: disable=redefined-builtin
+    async def Replace(self, resource, path, typ, id, initial_headers, options=None,
+                      **kwargs):  # pylint: disable=redefined-builtin
         """Replaces a Azure Cosmos resource and returns it.
 
         :param dict resource:
@@ -1590,7 +1595,8 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         conflict_id = base.GetResourceIdOrFullNameFromLink(conflict_link)
         return await self.DeleteResource(path, "conflicts", conflict_id, None, options, **kwargs)
 
-    async def DeleteResource(self, path, typ, id, initial_headers, options=None, **kwargs):  # pylint: disable=redefined-builtin
+    async def DeleteResource(self, path, typ, id, initial_headers, options=None,
+                             **kwargs):  # pylint: disable=redefined-builtin
         """Deletes a Azure Cosmos resource and returns it.
 
         :param str path:
@@ -1812,13 +1818,13 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         return self.QueryItems(collection_link, None, feed_options, response_hook=response_hook, **kwargs)
 
     def QueryItems(
-        self,
-        database_or_container_link,
-        query,
-        options=None,
-        partition_key=None,
-        response_hook=None,
-        **kwargs
+            self,
+            database_or_container_link,
+            query,
+            options=None,
+            partition_key=None,
+            response_hook=None,
+            **kwargs
     ):
         """Queries documents in a collection.
 
@@ -1908,7 +1914,8 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         )
 
     def _QueryChangeFeed(
-        self, collection_link, resource_type, options=None, partition_key_range_id=None, response_hook=None, **kwargs
+            self, collection_link, resource_type, options=None, partition_key_range_id=None, response_hook=None,
+            **kwargs
     ):
         """Queries change feed of a resource in a collection.
 
@@ -2347,18 +2354,18 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         )
 
     async def __QueryFeed(
-        self,
-        path,
-        typ,
-        id_,
-        result_fn,
-        create_fn,
-        query,
-        options=None,
-        partition_key_range_id=None,
-        response_hook=None,
-        is_query_plan=False,
-        **kwargs
+            self,
+            path,
+            typ,
+            id_,
+            result_fn,
+            create_fn,
+            query,
+            options=None,
+            partition_key_range_id=None,
+            response_hook=None,
+            is_query_plan=False,
+            **kwargs
     ):
         """Query for more than one Azure Cosmos resources.
 
@@ -2401,7 +2408,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         if query is None:
             # Query operations will use ReadEndpoint even though it uses GET(for feed requests)
             request_params = _request_object.RequestObject(typ,
-                        documents._OperationType.QueryPlan if is_query_plan else documents._OperationType.ReadFeed)
+                                                           documents._OperationType.QueryPlan if is_query_plan else documents._OperationType.ReadFeed)
             headers = base.GetHeaders(self, initial_headers, "get", path, id_, typ, options, partition_key_range_id)
             result, self.last_response_headers = await self.__Get(path, request_params, headers, **kwargs)
             if response_hook:
@@ -2415,8 +2422,8 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             initial_headers[http_constants.HttpHeaders.IsQuery] = "true"
 
         if (
-            self._query_compatibility_mode == CosmosClientConnection._QueryCompatibilityMode.Default
-            or self._query_compatibility_mode == CosmosClientConnection._QueryCompatibilityMode.Query
+                self._query_compatibility_mode == CosmosClientConnection._QueryCompatibilityMode.Default
+                or self._query_compatibility_mode == CosmosClientConnection._QueryCompatibilityMode.Query
         ):
             initial_headers[http_constants.HttpHeaders.ContentType] = runtime_constants.MediaTypes.QueryJson
         elif self._query_compatibility_mode == CosmosClientConnection._QueryCompatibilityMode.SqlQuery:
@@ -2449,8 +2456,8 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             dict or string
         """
         if (
-            self._query_compatibility_mode == CosmosClientConnection._QueryCompatibilityMode.Default
-            or self._query_compatibility_mode == CosmosClientConnection._QueryCompatibilityMode.Query
+                self._query_compatibility_mode == CosmosClientConnection._QueryCompatibilityMode.Default
+                or self._query_compatibility_mode == CosmosClientConnection._QueryCompatibilityMode.Query
         ):
             if not isinstance(query_body, dict) and not isinstance(query_body, str):
                 raise TypeError("query body must be a dict or string.")
@@ -2459,8 +2466,8 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             if isinstance(query_body, str):
                 return {"query": query_body}
         elif (
-            self._query_compatibility_mode == CosmosClientConnection._QueryCompatibilityMode.SqlQuery
-            and not isinstance(query_body, str)
+                self._query_compatibility_mode == CosmosClientConnection._QueryCompatibilityMode.SqlQuery
+                and not isinstance(query_body, str)
         ):
             raise TypeError("query body must be a string.")
         else:
@@ -2495,10 +2502,10 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             self.session.update_session(response_result, response_headers)
 
     PartitionResolverErrorMessage = (
-        "Couldn't find any partition resolvers for the database link provided. "
-        + "Ensure that the link you used when registering the partition resolvers "
-        + "matches the link provided or you need to register both types of database "
-        + "link(self link as well as ID based link)."
+            "Couldn't find any partition resolvers for the database link provided. "
+            + "Ensure that the link you used when registering the partition resolvers "
+            + "matches the link provided or you need to register both types of database "
+            + "link(self link as well as ID based link)."
     )
 
     # Gets the collection id and path for the document
@@ -2574,14 +2581,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
 
         # TODO: Refresh the cache if partition is extracted automatically and we get a 400.1001
 
-        # If the document collection link is present in the cache, then use the cached partitionkey definition
-        if collection_link in self.partition_key_definition_cache:
-            partitionKeyDefinition = self.partition_key_definition_cache.get(collection_link)
-        # Else read the collection from backend and add it to the cache
-        else:
-            collection = await self.ReadContainer(collection_link)
-            partitionKeyDefinition = collection.get("partitionKey")
-            self.partition_key_definition_cache[collection_link] = partitionKeyDefinition
+        partitionKeyDefinition = await self._get_partition_key_definition(collection_link)
 
         # If the collection doesn't have a partition key definition, skip it as it's a legacy collection
         if partitionKeyDefinition:
@@ -2645,21 +2645,21 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             "isQueryPlanRequest": True,
             "supportedQueryFeatures": supported_query_features,
             "queryVersion": http_constants.Versions.QueryVersion
-            }
+        }
 
         resource_link = base.TrimBeginningAndEndingSlashes(resource_link)
         path = base.GetPathFromLink(resource_link, "docs")
         resource_id = base.GetResourceIdOrFullNameFromLink(resource_link)
 
         return await self.__QueryFeed(path,
-                                "docs",
-                                resource_id,
-                                lambda r: r,
-                                None,
-                                query,
-                                options,
-                                is_query_plan=True,
-                                **kwargs)
+                                      "docs",
+                                      resource_id,
+                                      lambda r: r,
+                                      None,
+                                      query,
+                                      options,
+                                      is_query_plan=True,
+                                      **kwargs)
 
     @staticmethod
     def _return_undefined_or_empty_partition_key(is_system_key):
@@ -2681,10 +2681,10 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
                 raise_with_traceback(TypeError, message="Id type must be a string.")
 
     async def DeleteAllItemsByPartitionKey(
-        self,
-        collection_link,
-        options=None,
-        **kwargs
+            self,
+            collection_link,
+            options=None,
+            **kwargs
     ) -> None:
         """Exposes an API to delete all items with a single partition key without the user having
          to explicitly call delete on each record in the partition key.
@@ -2704,7 +2704,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             options = {}
 
         path = base.GetPathFromLink(collection_link)
-        #Specified url to perform background operation to delete all items by partition key
+        # Specified url to perform background operation to delete all items by partition key
         path = '{}{}/{}'.format(path, "operations", "partitionkeydelete")
         collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
         initial_headers = dict(self.default_headers)
@@ -2713,3 +2713,15 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         result, self.last_response_headers = await self.__Post(path=path, request_params=request_params,
                                                                req_headers=headers, body=None, **kwargs)
         return result
+
+    async def _get_partition_key_definition(self, collection_link):
+        partition_key_definition = None
+        # If the document collection link is present in the cache, then use the cached partitionkey definition
+        if collection_link in self.partition_key_definition_cache:
+            partition_key_definition = self.partition_key_definition_cache.get(collection_link)
+        # Else read the collection from backend and add it to the cache
+        else:
+            collection = await self.ReadContainer(collection_link)
+            partition_key_definition = collection.get("partitionKey")
+            self.partition_key_definition_cache[collection_link] = partition_key_definition
+        return partition_key_definition

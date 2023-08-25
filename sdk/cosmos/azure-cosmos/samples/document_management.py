@@ -187,10 +187,10 @@ def bulk_items(database):
                              "resourceBody": get_sales_order("upsert_item"),
                              "partitionKey": "upsert_item"}
     read_item_operation = {"operationType": "Read",
-                           "id": get_sales_order("read_item"),
+                           "id": "read_item",
                            "partitionKey": "read_item"}
     delete_item_operation = {"operationType": "Delete",
-                             "id": get_sales_order("delete_item"),
+                             "id": "delete_item",
                              "partitionKey": "delete_item"}
     replace_item_operation = {"operationType": "Replace",
                               "id": "replace_item",
