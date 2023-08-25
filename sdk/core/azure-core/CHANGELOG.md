@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Fixed issue where IndexError was raised if multipart responses did not match the number of requests. #31471
+
 ### Other Changes
 
 ## 1.29.3 (2023-08-22)
