@@ -3,10 +3,11 @@
 # ---------------------------------------------------------
 
 from typing import Any, Union
+
+from azure.ai.ml._restclient.v2023_04_01_preview.models import AutoDeleteSetting as RestAutoDeleteSetting
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._common import AutoDeleteCondition
 from azure.ai.ml.entities._mixins import DictMixin
-from azure.ai.ml._restclient.v2023_04_01_preview.models import AutoDeleteSetting as RestAutoDeleteSetting
 
 
 @experimental
@@ -35,7 +36,7 @@ class AutoDeleteSetting(DictMixin):
     def _from_rest_object(cls, obj: RestAutoDeleteSetting) -> "AutoDeleteSetting":
         return cls(condition=obj.condition, value=obj.value)
 
-    def __eq__(self, other: Any) -> bool:
+    def __eq__(self, other: Any) -> bool:  # type: ignore
         if not isinstance(other, AutoDeleteSetting):
             return NotImplemented
         return self.condition == other.condition and self.value == other.value
