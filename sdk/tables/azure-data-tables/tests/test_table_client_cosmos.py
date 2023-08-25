@@ -198,7 +198,6 @@ class TestTableClientCosmos(AzureRecordedTestCase, TableTestCase):
             permission=AccountSasPermissions.from_string("rwdlacu"),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
-        sas_url = f"{base_url}/{table_name}?{sas_token}"
 
         with TableClient.from_table_url(
             f"{base_url}/{table_name}", credential=tables_primary_cosmos_account_key
@@ -215,17 +214,19 @@ class TestTableClientCosmos(AzureRecordedTestCase, TableTestCase):
             for e in entities:
                 pass
 
-        with TableClient(sas_url, table_name, credential=tables_primary_cosmos_account_key) as client:
+        with TableClient(
+            f"{base_url}/?{sas_token}", table_name, credential=tables_primary_cosmos_account_key
+        ) as client:
             entities = client.query_entities(
                 query_filter="PartitionKey eq @pk",
                 parameters={"pk": "dummy-pk"},
             )
-            with pytest.raises(HttpResponseError) as ex:
-                for e in entities:
-                    pass
-            assert "Request url is invalid." in str(ex.value)
+            for e in entities:
+                pass
 
-        with TableClient.from_table_url(sas_url, credential=tables_primary_cosmos_account_key) as client:
+        with TableClient.from_table_url(
+            f"{base_url}/{table_name}?{sas_token}", credential=tables_primary_cosmos_account_key
+        ) as client:
             entities = client.query_entities(
                 query_filter="PartitionKey eq @pk",
                 parameters={"pk": "dummy-pk"},
@@ -249,19 +250,21 @@ class TestTableClientCosmos(AzureRecordedTestCase, TableTestCase):
             permission=AccountSasPermissions.from_string("rwdlacu"),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
-        sas_url = f"{base_url}/{table_name}?{sas_token}"
         name_filter = "TableName eq '{}'".format(table_name)
         conn_str = f"AccountName={tables_cosmos_account_name};AccountKey={tables_primary_cosmos_account_key.named_key.key};EndpointSuffix=cosmos.azure.com"
-
-        with TableServiceClient(sas_url, credential=tables_primary_cosmos_account_key) as client:
-            with pytest.raises(HttpResponseError) as ex:
-                client.create_table(f"{table_name}")
-            assert "Request url is invalid." in str(ex.value)
 
         with TableServiceClient.from_connection_string(conn_str) as client:
             client.create_table(table_name)
             result = client.query_tables(name_filter)
             assert len(list(result)) == 1
+
+        with TableServiceClient(f"{base_url}/?{sas_token}", credential=tables_primary_cosmos_account_key) as client:
+            entities = client.get_table_client(table_name).query_entities(
+                query_filter="PartitionKey eq @pk",
+                parameters={"pk": "dummy-pk"},
+            )
+            for e in entities:
+                pass
             client.delete_table(table_name)
 
     @pytest.mark.live_test_only
@@ -309,15 +312,15 @@ class TestTableClientCosmos(AzureRecordedTestCase, TableTestCase):
         with TableClient.from_table_url(f"{base_url}/{table_name}", credential=AzureSasCredential(sas_token)) as client:
             client.delete_table()
 
-        sas_url = f"{base_url}/{table_name}?{sas_token}"
-
         with pytest.raises(ValueError) as ex:
-            TableClient(sas_url, table_name, credential=AzureSasCredential(sas_token))
+            TableClient(f"{base_url}/?{sas_token}", table_name, credential=AzureSasCredential(sas_token))
         ex_msg = "You cannot use AzureSasCredential when the resource URI also contains a Shared Access Signature."
         assert ex_msg == str(ex.value)
 
         with pytest.raises(ValueError) as ex:
-            client = TableClient.from_table_url(sas_url, credential=AzureSasCredential(sas_token))
+            client = TableClient.from_table_url(
+                f"{base_url}/{table_name}?{sas_token}", credential=AzureSasCredential(sas_token)
+            )
         ex_msg = "You cannot use AzureSasCredential when the resource URI also contains a Shared Access Signature."
         assert ex_msg == str(ex.value)
 
@@ -357,9 +360,8 @@ class TestTableClientCosmos(AzureRecordedTestCase, TableTestCase):
         with TableServiceClient(base_url, credential=AzureSasCredential(sas_token)) as client:
             client.delete_table(table_name)
 
-        sas_url = f"{base_url}/{table_name}?{sas_token}"
         with pytest.raises(ValueError) as ex:
-            TableServiceClient(sas_url, credential=AzureSasCredential(sas_token))
+            TableServiceClient(f"{base_url}/?{sas_token}", credential=AzureSasCredential(sas_token))
         ex_msg = "You cannot use AzureSasCredential when the resource URI also contains a Shared Access Signature."
         assert ex_msg == str(ex.value)
 
@@ -378,7 +380,6 @@ class TestTableClientCosmos(AzureRecordedTestCase, TableTestCase):
             permission=AccountSasPermissions.from_string("rwdlacu"),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
-        sas_url = f"{base_url}/{table_name}?{sas_token}"
 
         with TableClient(base_url, table_name, credential=default_azure_credential) as client:
             with pytest.raises(HttpResponseError) as ex:
@@ -392,12 +393,15 @@ class TestTableClientCosmos(AzureRecordedTestCase, TableTestCase):
             ex_msg = "Authorization header doesn't confirm to the required format. Please verify and try again."
             assert ex_msg in str(ex.value)
 
-        with TableClient(sas_url, table_name, credential=default_azure_credential) as client:
+        with TableClient(f"{base_url}/?{sas_token}", table_name, credential=default_azure_credential) as client:
             with pytest.raises(HttpResponseError) as ex:
                 client.create_table()
-            assert "Request url is invalid." in str(ex.value)
+            ex_msg = "Authorization header doesn't confirm to the required format. Please verify and try again."
+            assert ex_msg in str(ex.value)
 
-        with TableClient.from_table_url(f"{sas_url}/{table_name}", credential=default_azure_credential) as client:
+        with TableClient.from_table_url(
+            f"{base_url}/{table_name}?{sas_token}", credential=default_azure_credential
+        ) as client:
             with pytest.raises(HttpResponseError) as ex:
                 client.create_table()
             ex_msg = "Authorization header doesn't confirm to the required format. Please verify and try again."
@@ -420,7 +424,6 @@ class TestTableClientCosmos(AzureRecordedTestCase, TableTestCase):
             permission=AccountSasPermissions.from_string("rwdlacu"),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
-        sas_url = f"{base_url}/{table_name}?{sas_token}"
 
         with TableServiceClient(base_url, credential=default_azure_credential) as client:
             with pytest.raises(HttpResponseError) as ex:
@@ -428,10 +431,11 @@ class TestTableClientCosmos(AzureRecordedTestCase, TableTestCase):
             ex_msg = "Authorization header doesn't confirm to the required format. Please verify and try again."
             assert ex_msg in str(ex.value)
 
-        with TableServiceClient(sas_url, credential=default_azure_credential) as client:
+        with TableServiceClient(f"{base_url}/?{sas_token}", credential=default_azure_credential) as client:
             with pytest.raises(HttpResponseError) as ex:
                 client.create_table(table_name)
-            assert "Request url is invalid." in str(ex.value)
+            ex_msg = "Authorization header doesn't confirm to the required format. Please verify and try again."
+            assert ex_msg in str(ex.value)
 
     @pytest.mark.live_test_only
     @cosmos_decorator
@@ -446,7 +450,6 @@ class TestTableClientCosmos(AzureRecordedTestCase, TableTestCase):
             permission=AccountSasPermissions.from_string("rwdlacu"),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
-        sas_url = f"{base_url}/{table_name}?{sas_token}"
 
         with pytest.raises(ValueError) as ex:
             client = TableClient(base_url, table_name)
@@ -456,19 +459,21 @@ class TestTableClientCosmos(AzureRecordedTestCase, TableTestCase):
             client = TableClient.from_table_url(f"{base_url}/{table_name}")
         assert str(ex.value) == "You need to provide either an AzureSasCredential or AzureNamedKeyCredential"
 
-        with TableClient(sas_url, table_name) as client:
-            with pytest.raises(HttpResponseError) as ex:
-                client.create_table()
-            assert "Request url is invalid." in str(ex.value)
-
-        with TableClient.from_table_url(f"{sas_url}/{table_name}") as client:
-            with pytest.raises(HttpResponseError) as ex:
-                client.create_table()
-        assert "Server failed to authenticate the request." in str(ex.value)
-
-        with TableClient.from_table_url(sas_url) as client:
+        with TableClient(f"{base_url}/?{sas_token}", table_name) as client:
             table = client.create_table()
             assert table.name == table_name
+
+        with pytest.raises(ValueError) as ex:
+            client = TableClient.from_table_url(f"{base_url}/{table_name}")
+        assert str(ex.value) == "You need to provide either an AzureSasCredential or AzureNamedKeyCredential"
+
+        with TableClient.from_table_url(f"{base_url}/{table_name}?{sas_token}") as client:
+            entities = client.query_entities(
+                query_filter="PartitionKey eq @pk",
+                parameters={"pk": "dummy-pk"},
+            )
+            for e in entities:
+                pass
             client.delete_table()
 
     @pytest.mark.live_test_only
@@ -479,6 +484,7 @@ class TestTableClientCosmos(AzureRecordedTestCase, TableTestCase):
     ):
         base_url = self.account_url(tables_cosmos_account_name, "cosmos")
         table_name = self.get_resource_name("mytable")
+        name_filter = "TableName eq '{}'".format(table_name)
         sas_token = self.generate_sas(
             generate_account_sas,
             tables_primary_cosmos_account_key,
@@ -486,16 +492,16 @@ class TestTableClientCosmos(AzureRecordedTestCase, TableTestCase):
             permission=AccountSasPermissions.from_string("rwdlacu"),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
-        sas_url = f"{base_url}/{table_name}?{sas_token}"
 
         with pytest.raises(ValueError) as ex:
             client = TableServiceClient(base_url)
         assert str(ex.value) == "You need to provide either an AzureSasCredential or AzureNamedKeyCredential"
 
-        with TableServiceClient(sas_url) as client:
-            with pytest.raises(HttpResponseError) as ex:
-                client.create_table(table_name)
-            assert "Request url is invalid." in str(ex.value)
+        with TableServiceClient(f"{base_url}/?{sas_token}") as client:
+            client.create_table(table_name)
+            result = client.query_tables(name_filter)
+            assert len(list(result)) == 1
+            client.delete_table(table_name)
 
 
 # --Helpers-----------------------------------------------------------------

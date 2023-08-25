@@ -224,7 +224,6 @@ class TestTableClient(AzureRecordedTestCase, TableTestCase):
             permission=AccountSasPermissions.from_string("rwdlacu"),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
-        sas_url = f"{base_url}/{table_name}?{sas_token}"
 
         with TableClient.from_table_url(
             f"{base_url}/{table_name}", credential=tables_primary_storage_account_key
@@ -241,17 +240,19 @@ class TestTableClient(AzureRecordedTestCase, TableTestCase):
             for e in entities:
                 pass
 
-        with TableClient(sas_url, table_name, credential=tables_primary_storage_account_key) as client:
+        with TableClient(
+            f"{base_url}/?{sas_token}", table_name, credential=tables_primary_storage_account_key
+        ) as client:
             entities = client.query_entities(
                 query_filter="PartitionKey eq @pk",
                 parameters={"pk": "dummy-pk"},
             )
-            with pytest.raises(HttpResponseError) as ex:
-                for e in entities:
-                    pass
-            assert "The requested operation is not implemented on the specified resource." in str(ex.value)
+            for e in entities:
+                pass
 
-        with TableClient.from_table_url(sas_url, credential=tables_primary_storage_account_key) as client:
+        with TableClient.from_table_url(
+            f"{base_url}/{table_name}?{sas_token}", credential=tables_primary_storage_account_key
+        ) as client:
             entities = client.query_entities(
                 query_filter="PartitionKey eq @pk",
                 parameters={"pk": "dummy-pk"},
@@ -275,7 +276,6 @@ class TestTableClient(AzureRecordedTestCase, TableTestCase):
             permission=AccountSasPermissions.from_string("rwdlacu"),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
-        sas_url = f"{base_url}/{table_name}?{sas_token}"
         name_filter = "TableName eq '{}'".format(table_name)
         conn_str = f"AccountName={tables_storage_account_name};AccountKey={tables_primary_storage_account_key.named_key.key};EndpointSuffix=core.windows.net"
 
@@ -283,12 +283,15 @@ class TestTableClient(AzureRecordedTestCase, TableTestCase):
             client.create_table(table_name)
             result = client.query_tables(name_filter)
             assert len(list(result)) == 1
-            client.delete_table(table_name)
 
-        with TableServiceClient(sas_url, credential=tables_primary_storage_account_key) as client:
-            with pytest.raises(ResourceNotFoundError) as ex:
-                client.create_table(f"{table_name}2")
-            assert "The table specified does not exist." in str(ex.value)
+        with TableServiceClient(f"{base_url}/?{sas_token}", credential=tables_primary_storage_account_key) as client:
+            entities = client.get_table_client(table_name).query_entities(
+                query_filter="PartitionKey eq @pk",
+                parameters={"pk": "dummy-pk"},
+            )
+            for e in entities:
+                pass
+            client.delete_table(table_name)
 
     @pytest.mark.live_test_only
     @tables_decorator
@@ -330,15 +333,13 @@ class TestTableClient(AzureRecordedTestCase, TableTestCase):
                 pass
             client.delete_table()
 
-        sas_url = f"{base_url}/{table_name}?{sas_token}"
-
         with pytest.raises(ValueError) as ex:
-            TableClient(sas_url, table_name, credential=AzureSasCredential(sas_token))
+            TableClient(f"{base_url}/?{sas_token}", table_name, credential=AzureSasCredential(sas_token))
         ex_msg = "You cannot use AzureSasCredential when the resource URI also contains a Shared Access Signature."
         assert ex_msg == str(ex.value)
 
         with pytest.raises(ValueError) as ex:
-            TableClient.from_table_url(sas_url, credential=AzureSasCredential(sas_token))
+            TableClient.from_table_url(f"{base_url}/{table_name}?{sas_token}", credential=AzureSasCredential(sas_token))
         ex_msg = "You cannot use AzureSasCredential when the resource URI also contains a Shared Access Signature."
         assert ex_msg == str(ex.value)
 
@@ -372,9 +373,8 @@ class TestTableClient(AzureRecordedTestCase, TableTestCase):
             assert len(list(result)) == 1
             client.delete_table(table_name)
 
-        sas_url = f"{base_url}/{table_name}?{sas_token}"
         with pytest.raises(ValueError) as ex:
-            TableServiceClient(sas_url, credential=AzureSasCredential(sas_token))
+            TableServiceClient(f"{base_url}/?{sas_token}", credential=AzureSasCredential(sas_token))
         ex_msg = "You cannot use AzureSasCredential when the resource URI also contains a Shared Access Signature."
         assert ex_msg == str(ex.value)
 
@@ -392,15 +392,12 @@ class TestTableClient(AzureRecordedTestCase, TableTestCase):
             permission=AccountSasPermissions.from_string("rwdlacu"),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
-        sas_url = f"{base_url}/{table_name}?{sas_token}"
 
         with TableClient(base_url, table_name, credential=default_azure_credential) as client:
             table = client.create_table()
             assert table.name == table_name
 
         with TableClient.from_table_url(f"{base_url}/{table_name}", credential=default_azure_credential) as client:
-            table = client.create_table()
-            assert table.name == table_name
             entities = client.query_entities(
                 query_filter="PartitionKey eq @pk",
                 parameters={"pk": "dummy-pk"},
@@ -408,18 +405,17 @@ class TestTableClient(AzureRecordedTestCase, TableTestCase):
             for e in entities:
                 pass
 
-        with TableClient(sas_url, table_name, credential=default_azure_credential) as client:
+        with TableClient(f"{base_url}/?{sas_token}", table_name, credential=default_azure_credential) as client:
             entities = client.query_entities(
                 query_filter="PartitionKey eq @pk",
                 parameters={"pk": "dummy-pk"},
             )
-            with pytest.raises(HttpResponseError) as ex:
-                for e in entities:
-                    pass
-            ex_msg = "The requested operation is not implemented on the specified resource."
-            assert ex_msg in str(ex.value)
+            for e in entities:
+                pass
 
-        with TableClient.from_table_url(f"{sas_url}/{table_name}", credential=default_azure_credential) as client:
+        with TableClient.from_table_url(
+            f"{base_url}/{table_name}?{sas_token}", credential=default_azure_credential
+        ) as client:
             entities = client.query_entities(
                 query_filter="PartitionKey eq @pk",
                 parameters={"pk": "dummy-pk"},
@@ -445,16 +441,20 @@ class TestTableClient(AzureRecordedTestCase, TableTestCase):
             permission=AccountSasPermissions.from_string("rwdlacu"),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
-        sas_url = f"{base_url}/{table_name}?{sas_token}"
 
         with TableServiceClient(base_url, credential=default_azure_credential) as client:
             client.create_table(table_name)
             result = client.query_tables(name_filter)
             assert len(list(result)) == 1
 
-        with TableServiceClient(sas_url, credential=default_azure_credential) as client:
-            result = client.query_tables(name_filter)
-            assert len(list(result)) == 1
+        with TableServiceClient(f"{base_url}/?{sas_token}", credential=default_azure_credential) as client:
+            entities = client.get_table_client(table_name).query_entities(
+                query_filter="PartitionKey eq @pk",
+                parameters={"pk": "dummy-pk"},
+            )
+            for e in entities:
+                pass
+            client.delete_table(table_name)
 
     @pytest.mark.live_test_only
     @tables_decorator
@@ -466,10 +466,9 @@ class TestTableClient(AzureRecordedTestCase, TableTestCase):
             generate_account_sas,
             tables_primary_storage_account_key,
             resource_types=ResourceTypes.from_string("sco"),
-            permission=AccountSasPermissions.from_string("rwdlacu"),
+            permission=AccountSasPermissions.from_string("rwdlacu"),  # full permission
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
-        sas_url = f"{base_url}/{table_name}?{sas_token}"
 
         with pytest.raises(ValueError) as ex:
             client = TableClient(base_url, table_name)
@@ -479,19 +478,21 @@ class TestTableClient(AzureRecordedTestCase, TableTestCase):
             client = TableClient.from_table_url(f"{base_url}/{table_name}")
         assert str(ex.value) == "You need to provide either an AzureSasCredential or AzureNamedKeyCredential"
 
-        with TableClient(sas_url, table_name) as client:
-            with pytest.raises(ResourceNotFoundError) as ex:
-                client.create_table()
-            assert "The table specified does not exist." in str(ex.value)
-
-        with TableClient.from_table_url(f"{sas_url}/{table_name}") as client:
-            with pytest.raises(ClientAuthenticationError) as ex:
-                client.create_table()
-        assert "Server failed to authenticate the request." in str(ex.value)
-
-        with TableClient.from_table_url(sas_url) as client:
+        with TableClient(f"{base_url}/?{sas_token}", table_name) as client:
             table = client.create_table()
             assert table.name == table_name
+
+        with pytest.raises(ValueError) as ex:
+            client = TableClient.from_table_url(f"{base_url}/{table_name}")
+        assert str(ex.value) == "You need to provide either an AzureSasCredential or AzureNamedKeyCredential"
+
+        with TableClient.from_table_url(f"{base_url}/{table_name}?{sas_token}") as client:
+            entities = client.query_entities(
+                query_filter="PartitionKey eq @pk",
+                parameters={"pk": "dummy-pk"},
+            )
+            for e in entities:
+                pass
             client.delete_table()
 
     @pytest.mark.live_test_only
@@ -502,6 +503,7 @@ class TestTableClient(AzureRecordedTestCase, TableTestCase):
     ):
         base_url = self.account_url(tables_storage_account_name, "table")
         table_name = self.get_resource_name("mytable")
+        name_filter = "TableName eq '{}'".format(table_name)
         sas_token = self.generate_sas(
             generate_account_sas,
             tables_primary_storage_account_key,
@@ -509,16 +511,16 @@ class TestTableClient(AzureRecordedTestCase, TableTestCase):
             permission=AccountSasPermissions.from_string("rwdlacu"),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
-        sas_url = f"{base_url}/{table_name}?{sas_token}"
 
         with pytest.raises(ValueError) as ex:
             TableServiceClient(base_url)
         assert str(ex.value) == "You need to provide either an AzureSasCredential or AzureNamedKeyCredential"
 
-        with TableServiceClient(sas_url) as client:
-            with pytest.raises(ResourceNotFoundError) as ex:
-                client.create_table(table_name)
-            assert "The table specified does not exist." in str(ex.value)
+        with TableServiceClient(f"{base_url}/?{sas_token}") as client:
+            client.create_table(table_name)
+            result = client.query_tables(name_filter)
+            assert len(list(result)) == 1
+            client.delete_table(table_name)
 
 
 # --Helpers-----------------------------------------------------------------
