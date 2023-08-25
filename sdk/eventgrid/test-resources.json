@@ -26,9 +26,19 @@
         "metadata": {
           "description": "The application client secret used to run tests."
         }
+      },
+      "location": {
+        "type": "string",
+        "defaultValue": "eastus",
+        "metadata": {
+          "description": "The resource location"
+        }
       }
     },
     "variables": {
+      "namespaceName": "[format('{0}-2', parameters('baseName'))]",
+      "topicName": "testtopic1",
+      "subscriptionName": "testsubscription1",
       "apiVersion": "2022-06-15",
       "eventGridTopicName": "[concat(parameters('baseName'), 'topic')]",
       "eventGridDomainName": "[concat(parameters('baseName'), 'domain')]",
@@ -43,6 +53,55 @@
       "eventGridDataSenderRoleId": "d5a91429-5739-47e2-a06b-3470a27159e7",
     },
     "resources": [
+      {
+        "type": "Microsoft.EventGrid/namespaces",
+        "apiVersion": "2023-06-01-preview",
+        "name": "[variables('namespaceName')]",
+        "location": "[parameters('location')]",
+        "sku": {
+          "name": "Standard",
+          "capacity": 1
+        },
+        "properties": {
+          "isZoneRedundant": true,
+          "publicNetworkAccess": "Enabled"
+        }
+      },
+      {
+        "type": "Microsoft.EventGrid/namespaces/topics",
+        "apiVersion": "2023-06-01-preview",
+        "name": "[format('{0}/{1}', variables('namespaceName'), variables('topicName'))]",
+        "properties": {
+          "publisherType": "Custom",
+          "inputSchema": "CloudEventSchemaV1_0",
+          "eventRetentionInDays": 1
+        },
+        "dependsOn": [
+          "[resourceId('Microsoft.EventGrid/namespaces', variables('namespaceName'))]"
+        ]
+      },
+      {
+        "type": "Microsoft.EventGrid/namespaces/topics/eventSubscriptions",
+        "apiVersion": "2023-06-01-preview",
+        "name": "[format('{0}/{1}/{2}', variables('namespaceName'), variables('topicName'), variables('subscriptionName'))]",
+        "properties": {
+          "deliveryConfiguration": {
+            "deliveryMode": "Queue",
+            "queue": {
+              "receiveLockDurationInSeconds": 60,
+              "maxDeliveryCount": 10,
+              "eventTimeToLive": "P1D"
+            }
+          },
+          "eventDeliverySchema": "CloudEventSchemaV1_0",
+          "filtersConfiguration": {
+            "includedEventTypes": []
+          }
+        },
+        "dependsOn": [
+          "[resourceId('Microsoft.EventGrid/namespaces/topics', variables('namespaceName'), variables('topicName'))]"
+        ]
+      },
       {
         "type": "Microsoft.EventGrid/topics",
         "apiVersion": "[variables('apiVersion')]",
@@ -227,6 +286,30 @@
       "EVENTGRID_PARTNER_CHANNEL_NAME": {
         "type": "string",
         "value": "[variables('partnerChannelName')]"
+      },
+      "EVENTGRID_KEY": {
+        "type": "string",
+        "value": "[listKeys(resourceId('Microsoft.EventGrid/namespaces', variables('namespaceName')), '2023-06-01-preview').key1]"
+      },
+      "EVENTGRID_ENDPOINT": {
+        "type": "string",
+        "value": "[format('https://{0}', reference(resourceId('Microsoft.EventGrid/namespaces', variables('namespaceName')), '2023-06-01-preview').topicsConfiguration.hostname)]"
+      },
+      "EVENTGRID_TOPIC_NAME": {
+        "type": "string",
+        "value": "[variables('topicName')]"
+      },
+      "EVENTGRID_EVENT_SUBSCRIPTION_NAME": {
+        "type": "string",
+        "value": "[variables('subscriptionName')]"
+      },
+      "RESOURCE_GROUP": {
+        "type": "string",
+        "value": "[resourceGroup().name]"
+      },
+      "AZURE_SUBSCRIPTION_ID": {
+        "type": "string",
+        "value": "[subscription().subscriptionId]"
       }
     }
   }
