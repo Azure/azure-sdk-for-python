@@ -330,7 +330,7 @@ def add_span_attributes(
     """Add attributes to span based on the operation type.
     :param ~azure.core.tracing.AbstractSpan span: The span to add attributes to.
     :param TraceOperationTypes operation_type: The operation type.
-    :param ~azure.servicebus._base_handelr.BaseHandler or
+    :param ~azure.servicebus._base_handler.BaseHandler or
      ~azure.servicebus.aio._base_handler_async.BaseHandlerAsync handler: The handler that is performing the operation.
     :param int message_count: The number of messages being sent or received.
     """
