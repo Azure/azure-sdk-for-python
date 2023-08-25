@@ -1,7 +1,10 @@
 from typing import List, Any
 import os
+import bs4
+import urllib3
 from ci_tools.functions import str_to_bool
 
+http = urllib3.PoolManager()
 # arguments: |
 #       -c "${{ replace(convertToJson(parameters.CondaArtifacts), '"', '\"') }}"
 #       -w "$(Build.SourcesDirectory)/conda/conda-recipes"
@@ -36,7 +39,8 @@ from ci_tools.functions import str_to_bool
 #     in_batch: ${{ parameters.release_azure_core }}
 #     checkout:
 #     - package: azure-core
-#       checkout_path: sdk/core
+#       version: 1.24.0
+#     - package: azure-core
 #       version: 1.24.0
 #   - name: azure-storage
 #     common_root: azure
@@ -54,6 +58,29 @@ from ci_tools.functions import str_to_bool
 #     - package: azure-storage-file-datalake
 #       checkout_path: sdk/storage
 #       version: 12.7.0
+
+def get_pypi_page(package: str, version: str) -> bs4.BeautifulSoup:
+    url = f"https://pypi.org/project/{package}/{version}/"
+
+    try:
+        r = http.request('GET', url)
+    except Exception as e:
+        raise RuntimeError(f"We must get this the data {url} to continue proper assembly.")
+
+    return bs4.BeautifulSoup(r.data.decode('utf-8'), "html.parser")
+
+
+def get_package_sdist_url(package: str, version: str) -> str:
+    soup = get_pypi_page(package, version)
+
+    # source distribution always first on the page
+    target_zip = soup.select("div.file__card a")[0]["href"]
+    filename = os.path.basename(target_zip)
+
+    if filename.endswith("tar.gz") or filename.endswith(".zip"):
+        return target_zip
+    else:
+        raise ValueError(f"Unable to find a source distribution for {package}@{version}.")
 
 
 class CheckoutConfiguration:
@@ -79,6 +106,9 @@ class CheckoutConfiguration:
             self.download_uri = raw_json["download_uri"]
         else:
             self.download_uri = None
+
+        if "version" in raw_json and self.checkout_path is None:
+            self.download_uri = get_package_sdist_url(self.package, self.version)
 
         if not self.checkout_path and not self.download_uri:
             raise ValueError(

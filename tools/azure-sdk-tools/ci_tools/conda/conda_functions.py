@@ -17,6 +17,7 @@ import json
 import shlex
 import subprocess
 import stat
+import urllib3
 
 from shutil import rmtree
 from typing import List, Any
@@ -90,6 +91,8 @@ setup(
     install_requires=[]
 )
 """
+
+http = urllib3.PoolManager()
 
 
 def resolve_assembly_folder_name(package_name: str, conda_package_name: str):
@@ -412,7 +415,7 @@ def get_package_source(
     """
     Retrieves the source code for a specific checkout_config.
     """
-    if checkout_config.download_uri:
+    if checkout_config.download_uri or checkout_config.version:
         # if we have a single package, we can simply use the source distribution _as is_ rather than
         # repackaging it. so we download and move it directly to assembled
         if len(conda_build.checkout) == 1:
