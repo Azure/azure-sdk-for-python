@@ -29,12 +29,13 @@ class ImportComponent(Component):
     :type tags: dict
     :param display_name: Display name of the component.
     :type display_name: str
-    :param source: input source parameters of the component.
+    :param source: Input source parameters of the component.
     :type source: dict
     :param output: Output of the component.
     :type output: dict
-    :param is_deterministic: Whether the command component is deterministic.
+    :param is_deterministic: Whether the command component is deterministic. Defaults to True.
     :type is_deterministic: bool
+    :param kwargs: Additional parameters for the import component.
     """
 
     def __init__(
@@ -49,7 +50,7 @@ class ImportComponent(Component):
         output: Optional[Dict] = None,
         is_deterministic: bool = True,
         **kwargs,
-    ):
+    ) -> None:
         kwargs[COMPONENT_TYPE] = NodeType.IMPORT
         # Set default base path
         if "base_path" not in kwargs:
@@ -71,7 +72,6 @@ class ImportComponent(Component):
         self.output = output
 
     def _to_dict(self) -> Dict:
-        """Dump the import component content into a dictionary."""
         return convert_ordered_dict_to_dict({**self._other_parameter, **super(ImportComponent, self)._to_dict()})
 
     @classmethod

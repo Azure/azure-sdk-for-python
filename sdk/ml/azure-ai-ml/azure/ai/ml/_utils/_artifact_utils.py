@@ -14,8 +14,9 @@ from collections import defaultdict
 from io import BytesIO
 from pathlib import Path
 from threading import Lock
+from typing import Iterable, List, Optional, Union
 
-
+from typing_extensions import Literal
 from azure.ai.ml.constants._common import DefaultOpenEncoding
 
 from ._http_utils import HttpPipeline
@@ -73,13 +74,23 @@ class ArtifactCache:
         self._download_locks = defaultdict(Lock)
 
     @property
-    def cache_directory(self):
-        """Cache directory path."""
+    def cache_directory(self) -> Path:
+        """Cache directory path.
+
+        :return: The cache directory
+        :rtype: Path
+        """
         return self._cache_directory
 
     @staticmethod
-    def hash_files_content(file_list):
-        """Hash the file content in the file list."""
+    def hash_files_content(file_list: List[Union[str, os.PathLike]]) -> str:
+        """Hash the file content in the file list.
+
+        :param file_list: The list of files to hash
+        :type file_list: List[Union[str, os.PathLike]]
+        :return: Hashed file contents
+        :rtype: str
+        """
         ordered_file_list = copy.copy(file_list)
         hasher = hashlib.sha256()
         ordered_file_list.sort()
@@ -146,9 +157,14 @@ class ArtifactCache:
         artifact_path = Path(path)
         return artifact_path.parent / f"{artifact_path.name}_{cls.POSTFIX_CHECKSUM}"
 
-    def _redirect_artifacts_tool_path(self, organization):
-        """To avoid the transient issue when download artifacts, download the artifacts tool and redirect az artifact
-        command to it."""
+    def _redirect_artifacts_tool_path(self, organization: Optional[str]):
+        """Downloads the artifacts tool and redirects `az artifact` command to it.
+
+        Done to avoid the transient issue when download artifacts
+
+        :param organization:  The organization url. If None, is determined by local git repo
+        :type organization: Optional[str]
+        """
         from azure.identity import DefaultAzureCredential
 
         if not organization:
@@ -193,8 +209,30 @@ class ArtifactCache:
             else:
                 _logger.warning("Download artifact tool failed: %s", response.text)
 
-    def _download_artifacts(self, download_cmd, organization, name, version, feed, max_retries=3):
-        """Download artifacts with retry."""
+    def _download_artifacts(
+        self,
+        download_cmd: Iterable[str],
+        organization: Optional[str],
+        name: str,
+        version: str,
+        feed: str,
+        max_retries: int = 3,
+    ):
+        """Download artifacts with retry.
+
+        :param download_cmd: The command used to download the artifact
+        :type download_cmd: Iterable[str]
+        :param organization: The artifact organization
+        :type organization: Optional[str]
+        :param name: The package name
+        :type name: str
+        :param version: The package version
+        :type version: str
+        :param feed: The download feed
+        :type feed: str
+        :param max_retries: The number of times to retry the download. Defaults to 3
+        :type max_retries: int
+        """
         retries = 0
         while retries <= max_retries:
             try:
@@ -222,12 +260,16 @@ class ArtifactCache:
             else:
                 return
 
-    def _check_artifacts(self, artifact_package_path):
+    def _check_artifacts(self, artifact_package_path: Union[str, os.PathLike]) -> bool:
         """Check the artifact folder is legal.
 
-        If the artifact folder or checksum file does not exist, return false. If the checksum file exists and does not
-        equal to the hash of artifact folder, return False. If the checksum file equals to the hash of artifact folder,
-        return true.
+        :param artifact_package_path: The artifact package path
+        :type artifact_package_path: Union[str, os.PathLike]
+        :return:
+          * If the artifact folder or checksum file does not exist, return false.
+          * If the checksum file exists and does not equal to the hash of artifact folder, return False.
+          * If the checksum file equals to the hash of artifact folder, return true.
+        :rtype: bool
         """
         path = Path(artifact_package_path)
         if not path.exists():
@@ -241,20 +283,37 @@ class ArtifactCache:
                 return checksum == artifact_hash
         return False
 
-    def get(self, feed, name, version, scope, organization=None, project=None, resolve=True):
+    def get(
+        self,
+        feed: str,
+        name: str,
+        version: str,
+        scope: Literal["project", "organization"],
+        organization: Optional[str] = None,
+        project: Optional[str] = None,
+        resolve: bool = True,
+    ) -> Optional[Path]:
         """Get the catch path of artifact package. Package path like this azure-ai-
         ml/components/additional_includes/artifacts/{organization}/{project}/{feed}/{package_name}/{version}. If the
         path exits, it will return the package path. If the path not exist and resolve=True, it will download the
         artifact package and return package path. If the path not exist and resolve=False, it will return None.
 
         :param feed: Name or ID of the feed.
+        :type feed: str
         :param name: Name of the package.
+        :type name: str
         :param version: Version of the package.
+        :type version: str
         :param scope: Scope of the feed: 'project' if the feed was created in a project, and 'organization' otherwise.
+        :type scope: Literal["project", "organization"]
         :param organization: Azure DevOps organization URL.
+        :type organization: str
         :param project: Name or ID of the project.
+        :type project: str
         :param resolve: Whether download package when package does not exist in local.
+        :type resolve: bool
         :return artifact_package_path: Cache path of the artifact package
+        :rtype: Optional[Path]
         """
         if not all([organization, project]):
             org_val, project_val = self.get_organization_project_by_git()
@@ -293,17 +352,32 @@ class ArtifactCache:
                 )
         return None
 
-    def set(self, feed, name, version, scope, organization=None, project=None):
+    def set(
+        self,
+        feed: str,
+        name: str,
+        version: str,
+        scope: Literal["project", "organization"],
+        organization: Optional[str] = None,
+        project: Optional[str] = None,
+    ) -> Path:
         """Set the artifact package to the cache. The key of the cache is path of artifact packages in local. The value
         is the files/folders in this cache folder. If package path exists, directly return package path.
 
         :param feed: Name or ID of the feed.
+        :type feed: str
         :param name: Name of the package.
+        :type name: str
         :param version: Version of the package.
+        :type version: str
         :param scope: Scope of the feed: 'project' if the feed was created in a project, and 'organization' otherwise.
+        :type scope: Literal["project", "organization"]
         :param organization: Azure DevOps organization URL.
+        :type organization: str
         :param project: Name or ID of the project.
+        :type project: str
         :return artifact_package_path: Cache path of the artifact package
+        :rtype: Path
         """
         tempdir = tempfile.mktemp()  # nosec B306
         download_cmd = [

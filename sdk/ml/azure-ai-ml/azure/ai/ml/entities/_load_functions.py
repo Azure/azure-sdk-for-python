@@ -9,11 +9,13 @@ from typing import IO, AnyStr, Optional, Type, Union
 
 from marshmallow import ValidationError
 
+from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils.utils import load_yaml
+from azure.ai.ml.entities._assets._artifacts._package.model_package import ModelPackage
 from azure.ai.ml.entities._assets._artifacts.code import Code
 from azure.ai.ml.entities._assets._artifacts.data import Data
-from azure.ai.ml.entities._assets._artifacts.model import Model
 from azure.ai.ml.entities._assets._artifacts.feature_set import FeatureSet
+from azure.ai.ml.entities._assets._artifacts.model import Model
 from azure.ai.ml.entities._assets.environment import Environment
 from azure.ai.ml.entities._component.command_component import CommandComponent
 from azure.ai.ml.entities._component.component import Component
@@ -23,8 +25,8 @@ from azure.ai.ml.entities._compute.compute import Compute
 from azure.ai.ml.entities._datastore.datastore import Datastore
 from azure.ai.ml.entities._deployment.batch_deployment import BatchDeployment
 from azure.ai.ml.entities._deployment.model_batch_deployment import ModelBatchDeployment
-from azure.ai.ml.entities._deployment.pipeline_component_batch_deployment import PipelineComponentBatchDeployment
 from azure.ai.ml.entities._deployment.online_deployment import OnlineDeployment
+from azure.ai.ml.entities._deployment.pipeline_component_batch_deployment import PipelineComponentBatchDeployment
 from azure.ai.ml.entities._endpoint.batch_endpoint import BatchEndpoint
 from azure.ai.ml.entities._endpoint.online_endpoint import OnlineEndpoint
 from azure.ai.ml.entities._feature_store.feature_store import FeatureStore
@@ -36,9 +38,8 @@ from azure.ai.ml.entities._schedule.schedule import Schedule
 from azure.ai.ml.entities._validation import SchemaValidatableMixin, _ValidationResultBuilder
 from azure.ai.ml.entities._workspace.connections.workspace_connection import WorkspaceConnection
 from azure.ai.ml.entities._workspace.workspace import Workspace
-from azure.ai.ml.entities._assets._artifacts._package.model_package import ModelPackage
+from azure.ai.ml.entities._workspace_hub.workspace_hub import WorkspaceHub
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
-from azure.ai.ml._utils._experimental import experimental
 
 module_logger = logging.getLogger(__name__)
 
@@ -63,9 +64,9 @@ def load_common(
         Must be provided, and is assumed to be assigned by other internal
         functions that call this.
     :type relative_origin: str
-    :keyword params_override: _description_, defaults to None
-    :type params_override: list, optional
-    :return: _description_
+    :param params_override: List of values to override in loaded yaml
+    :type params_override: Optional[list]
+    :return: The loaded resource
     :rtype: Resource
     """
 
@@ -152,27 +153,31 @@ def load_job(
     relative_origin: Optional[str] = None,
     **kwargs,
 ) -> Job:
-    """Construct a job object from a yaml file.
+    """Constructs a Job object from a YAML file.
 
-    :param source: The local yaml source of a job. Must be either a
-        path to a local file, or an already-open file.
-        If the source is a path, it will be open and read.
-        An exception is raised if the file does not exist.
-        If the source is an open file, the file will be read directly,
-        and an exception is raised if the file is not readable.
+    :param source: A path to a local YAML file or an already-open file object containing a job configuration.
+        If the source is a path, it will be opened and read. If the source is an open file, the file will be read
+        directly.
     :type source: Union[PathLike, str, io.TextIOWrapper]
-    :keyword relative_origin: The origin to be used when deducing
-        the relative locations of files referenced in the parsed yaml.
-        Defaults to the inputted source's directory if it is a file or file path input.
-        Defaults to "./" if the source is a stream input with no name value.
-    :type relative_origin: str
-    :keyword params_override: Fields to overwrite on top of the yaml file.
-        Format is [{"field1": "value1"}, {"field2": "value2"}]
-    :type params_override: List[Dict]
+    :keyword relative_origin: The root directory for the YAML. This directory will be used as the origin for deducing
+        the relative locations of files referenced in the parsed YAML. Defaults to the same directory as source if
+        source is a file or file path input. Defaults to "./" if the source is a stream input with no name value.
+    :paramtype relative_origin: Optional[str]
+    :keyword params_override: Parameter fields to overwrite values in the YAML file.
+    :paramtype params_override: Optional[list[dict]]
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Job cannot be successfully validated.
         Details will be provided in the error message.
-    :return: Loaded job object.
-    :rtype: Job
+    :return: A loaded Job object.
+    :rtype: ~azure.ai.ml.entities.Job
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../../../../samples/ml_samples_misc.py
+            :start-after: [START load_job]
+            :end-before: [END load_job]
+            :language: python
+            :dedent: 8
+            :caption: Loading a Job from a YAML config file.
     """
     return load_common(Job, source, relative_origin, **kwargs)
 
@@ -196,10 +201,10 @@ def load_workspace(
         the relative locations of files referenced in the parsed yaml.
         Defaults to the inputted source's directory if it is a file or file path input.
         Defaults to "./" if the source is a stream input with no name value.
-    :type relative_origin: str
+    :paramtype relative_origin: str
     :keyword params_override: Fields to overwrite on top of the yaml file.
         Format is [{"field1": "value1"}, {"field2": "value2"}]
-    :type params_override: List[Dict]
+    :paramtype params_override: List[Dict]
 
     :return: Loaded workspace object.
     :rtype: Workspace
@@ -226,10 +231,10 @@ def load_registry(
         the relative locations of files referenced in the parsed yaml.
         Defaults to the inputted source's directory if it is a file or file path input.
         Defaults to "./" if the source is a stream input with no name value.
-    :type relative_origin: str
+    :paramtype relative_origin: str
     :keyword params_override: Fields to overwrite on top of the yaml file.
         Format is [{"field1": "value1"}, {"field2": "value2"}]
-    :type params_override: List[Dict]
+    :paramtype params_override: List[Dict]
 
     :return: Loaded registry object.
     :rtype: Registry
@@ -256,10 +261,10 @@ def load_datastore(
         the relative locations of files referenced in the parsed yaml.
         Defaults to the inputted source's directory if it is a file or file path input.
         Defaults to "./" if the source is a stream input with no name value.
-    :type relative_origin: str
+    :paramtype relative_origin: str
     :keyword params_override: Fields to overwrite on top of the yaml file.
         Format is [{"field1": "value1"}, {"field2": "value2"}]
-    :type params_override: List[Dict]
+    :paramtype params_override: List[Dict]
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Datastore cannot be successfully validated.
         Details will be provided in the error message.
     :return: Loaded datastore object.
@@ -287,14 +292,14 @@ def load_code(
         the relative locations of files referenced in the parsed yaml.
         Defaults to the inputted source's directory if it is a file or file path input.
         Defaults to "./" if the source is a stream input with no name value.
-    :type relative_origin: str
+    :paramtype relative_origin: Optional[str]
     :keyword params_override: Fields to overwrite on top of the yaml file.
         Format is [{"field1": "value1"}, {"field2": "value2"}]
-    :type params_override: List[Dict]
+    :paramtype params_override: Optional[list[dict]]
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Code cannot be successfully validated.
         Details will be provided in the error message.
-    :return: Loaded compute object.
-    :rtype: Compute
+    :return: Loaded code object.
+    :rtype: ~azure.ai.ml.entities._assets._artifacts.code.Code
     """
     return load_common(Code, source, relative_origin, **kwargs)
 
@@ -318,10 +323,10 @@ def load_compute(
         the relative locations of files referenced in the parsed yaml.
         Defaults to the inputted source's directory if it is a file or file path input.
         Defaults to "./" if the source is a stream input with no name value.
-    :type relative_origin: str
+    :paramtype relative_origin: str
     :keyword params_override: Fields to overwrite on top of the yaml file.
         Format is [{"field1": "value1"}, {"field2": "value2"}]
-    :type params_override: List[Dict]
+    :paramtype params_override: List[Dict]
 
     :return: Loaded compute object.
     :rtype: Compute
@@ -337,18 +342,6 @@ def load_component(
 ) -> Union[CommandComponent, ParallelComponent, PipelineComponent]:
     """Load component from local or remote to a component function.
 
-    For example:
-
-    .. code-block:: python
-
-        # Load a local component to a component function.
-        component_func = load_component(source="custom_component/component_spec.yaml")
-        # Load a remote component to a component function.
-        component_func = load_component(client=ml_client, name="my_component", version=1)
-
-        # Consuming the component func
-        component = component_func(param1=xxx, param2=xxx)
-
     :param source: The local yaml source of a component. Must be either a
         path to a local file, or an already-open file.
         If the source is a path, it will be open and read.
@@ -360,21 +353,22 @@ def load_component(
         the relative locations of files referenced in the parsed yaml.
         Defaults to the inputted source's directory if it is a file or file path input.
         Defaults to "./" if the source is a stream input with no name value.
-    :type relative_origin: str
+    :paramtype relative_origin: str
     :keyword params_override: Fields to overwrite on top of the yaml file.
         Format is [{"field1": "value1"}, {"field2": "value2"}]
-    :type params_override: List[Dict]
-    :keyword client: An MLClient instance.
-    :type client: MLClient
-    :keyword name: Name of the component.
-    :type name: str
-    :keyword version: Version of the component.
-    :type version: str
-    :keyword kwargs: A dictionary of additional configuration parameters.
-    :type kwargs: dict
-
-    :return: A function that can be called with parameters to get a `azure.ai.ml.entities.Component`
+    :paramtype params_override: List[Dict]
+    :return: A Component object
     :rtype: Union[CommandComponent, ParallelComponent, PipelineComponent]
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../../../../samples/ml_samples_component_configurations.py
+            :start-after: [START configure_load_component]
+            :end-before: [END configure_load_component]
+            :language: python
+            :dedent: 8
+            :caption: Loading a Component object from a YAML file, overriding its version to "1.0.2", and
+            registering it remotely.
     """
 
     client = kwargs.pop("client", None)
@@ -403,27 +397,31 @@ def load_model(
     relative_origin: Optional[str] = None,
     **kwargs,
 ) -> Model:
-    """Construct a model object from yaml file.
+    """Constructs a Model object from a YAML file.
 
-    :param source: The local yaml source of a model. Must be either a
-        path to a local file, or an already-open file.
-        If the source is a path, it will be open and read.
-        An exception is raised if the file does not exist.
-        If the source is an open file, the file will be read directly,
-        and an exception is raised if the file is not readable.
+    :param source: A path to a local YAML file or an already-open file object containing a job configuration.
+        If the source is a path, it will be opened and read. If the source is an open file, the file will be read
+        directly.
     :type source: Union[PathLike, str, io.TextIOWrapper]
-    :keyword relative_origin: The origin to be used when deducing
-        the relative locations of files referenced in the parsed yaml.
-        Defaults to the inputted source's directory if it is a file or file path input.
-        Defaults to "./" if the source is a stream input with no name value.
-    :type relative_origin: str
-    :keyword params_override: Fields to overwrite on top of the yaml file.
-        Format is [{"field1": "value1"}, {"field2": "value2"}]
-    :type params_override: List[Dict]
-    :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Model cannot be successfully validated.
+    :keyword relative_origin: The root directory for the YAML. This directory will be used as the origin for deducing
+        the relative locations of files referenced in the parsed YAML. Defaults to the same directory as source if
+        source is a file or file path input. Defaults to "./" if the source is a stream input with no name value.
+    :paramtype relative_origin: Optional[str]
+    :keyword params_override: Parameter fields to overwrite values in the YAML file.
+    :paramtype params_override: Optional[list[dict]]
+    :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Job cannot be successfully validated.
         Details will be provided in the error message.
-    :return: Constructed model object.
-    :rtype: Model
+    :return: A loaded Model object.
+    :rtype: ~azure.ai.ml.entities.Model
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../../../../samples/ml_samples_misc.py
+            :start-after: [START load_model]
+            :end-before: [END load_model]
+            :language: python
+            :dedent: 8
+            :caption: Loading a Model from a YAML config file, overriding the name and version parameters.
     """
     return load_common(Model, source, relative_origin, **kwargs)
 
@@ -447,10 +445,10 @@ def load_data(
         the relative locations of files referenced in the parsed yaml.
         Defaults to the inputted source's directory if it is a file or file path input.
         Defaults to "./" if the source is a stream input with no name value.
-    :type relative_origin: str
+    :paramtype relative_origin: str
     :keyword params_override: Fields to overwrite on top of the yaml file.
         Format is [{"field1": "value1"}, {"field2": "value2"}]
-    :type params_override: List[Dict]
+    :paramtype params_override: List[Dict]
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Data cannot be successfully validated.
         Details will be provided in the error message.
     :return: Constructed Data or DataImport object.
@@ -478,10 +476,10 @@ def load_environment(
         the relative locations of files referenced in the parsed yaml.
         Defaults to the inputted source's directory if it is a file or file path input.
         Defaults to "./" if the source is a stream input with no name value.
-    :type relative_origin: str
+    :paramtype relative_origin: str
     :keyword params_override: Fields to overwrite on top of the yaml file.
         Format is [{"field1": "value1"}, {"field2": "value2"}]
-    :type params_override: List[Dict]
+    :paramtype params_override: List[Dict]
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Environment cannot be successfully validated.
         Details will be provided in the error message.
     :return: Constructed environment object.
@@ -509,10 +507,10 @@ def load_online_deployment(
         the relative locations of files referenced in the parsed yaml.
         Defaults to the inputted source's directory if it is a file or file path input.
         Defaults to "./" if the source is a stream input with no name value.
-    :type relative_origin: str
+    :paramtype relative_origin: str
     :keyword params_override: Fields to overwrite on top of the yaml file.
         Format is [{"field1": "value1"}, {"field2": "value2"}]
-    :type params_override: List[Dict]
+    :paramtype params_override: List[Dict]
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Online Deployment cannot be successfully validated.
         Details will be provided in the error message.
     :return: Constructed online deployment object.
@@ -540,10 +538,10 @@ def load_batch_deployment(
         the relative locations of files referenced in the parsed yaml.
         Defaults to the inputted source's directory if it is a file or file path input.
         Defaults to "./" if the source is a stream input with no name value.
-    :type relative_origin: str
+    :paramtype relative_origin: str
     :keyword params_override: Fields to overwrite on top of the yaml file.
         Format is [{"field1": "value1"}, {"field2": "value2"}]
-    :type params_override: List[Dict]
+    :paramtype params_override: List[Dict]
 
     :return: Constructed batch deployment object.
     :rtype: BatchDeployment
@@ -570,10 +568,10 @@ def load_model_batch_deployment(
         the relative locations of files referenced in the parsed yaml.
         Defaults to the inputted source's directory if it is a file or file path input.
         Defaults to "./" if the source is a stream input with no name value.
-    :type relative_origin: str
+    :paramtype relative_origin: str
     :keyword params_override: Fields to overwrite on top of the yaml file.
         Format is [{"field1": "value1"}, {"field2": "value2"}]
-    :type params_override: List[Dict]
+    :paramtype params_override: List[Dict]
 
     :return: Constructed model batch deployment object.
     :rtype: ModelBatchDeployment
@@ -600,10 +598,10 @@ def load_pipeline_component_batch_deployment(
         the relative locations of files referenced in the parsed yaml.
         Defaults to the inputted source's directory if it is a file or file path input.
         Defaults to "./" if the source is a stream input with no name value.
-    :type relative_origin: str
+    :paramtype relative_origin: str
     :keyword params_override: Fields to overwrite on top of the yaml file.
         Format is [{"field1": "value1"}, {"field2": "value2"}]
-    :type params_override: List[Dict]
+    :paramtype params_override: List[Dict]
 
     :return: Constructed pipeline component batch deployment object.
     :rtype: PipelineComponentBatchDeployment
@@ -630,10 +628,10 @@ def load_online_endpoint(
         the relative locations of files referenced in the parsed yaml.
         Defaults to the inputted source's directory if it is a file or file path input.
         Defaults to "./" if the source is a stream input with no name value.
-    :type relative_origin: str
+    :paramtype relative_origin: str
     :keyword params_override: Fields to overwrite on top of the yaml file.
         Format is [{"field1": "value1"}, {"field2": "value2"}]
-    :type params_override: List[Dict]
+    :paramtype params_override: List[Dict]
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Online Endpoint cannot be successfully validated.
         Details will be provided in the error message.
     :return: Constructed online endpoint object.
@@ -663,7 +661,7 @@ def load_batch_endpoint(
     :type relative_origin: str
     :keyword params_override: Fields to overwrite on top of the yaml file.
         Format is [{"field1": "value1"}, {"field2": "value2"}]
-    :type params_override: List[Dict]
+    :paramtype params_override: List[Dict]
 
     :return: Constructed batch endpoint object.
     :rtype: BatchEndpoint
@@ -690,10 +688,10 @@ def load_workspace_connection(
         the relative locations of files referenced in the parsed yaml.
         Defaults to the inputted source's directory if it is a file or file path input.
         Defaults to "./" if the source is a stream input with no name value.
-    :type relative_origin: str
+    :paramtype relative_origin: str
     :keyword params_override: Fields to overwrite on top of the yaml file.
         Format is [{"field1": "value1"}, {"field2": "value2"}]
-    :type params_override: List[Dict]
+    :paramtype params_override: List[Dict]
 
     :return: Constructed workspace connection object.
     :rtype: WorkspaceConnection
@@ -722,7 +720,7 @@ def load_schedule(
     :type relative_origin: str
     :keyword params_override: Fields to overwrite on top of the yaml file.
         Format is [{"field1": "value1"}, {"field2": "value2"}]
-    :type params_override: List[Dict]
+    :paramtype params_override: List[Dict]
 
     :return: Constructed schedule object.
     :rtype: Schedule
@@ -748,10 +746,10 @@ def load_feature_store(
         the relative locations of files referenced in the parsed yaml.
         Defaults to the inputted source's directory if it is a file or file path input.
         Defaults to "./" if the source is a stream input with no name value.
-    :type relative_origin: str
+    :paramtype relative_origin: str
     :keyword params_override: Fields to overwrite on top of the yaml file.
         Format is [{"field1": "value1"}, {"field2": "value2"}]
-    :type params_override: List[Dict]
+    :paramtype params_override: List[Dict]
     :return: Loaded feature store object.
     :rtype: FeatureStore
     """
@@ -777,10 +775,10 @@ def load_feature_set(
         the relative locations of files referenced in the parsed yaml.
         Defaults to the inputted source's directory if it is a file or file path input.
         Defaults to "./" if the source is a stream input with no name value.
-    :type relative_origin: str
+    :paramtype relative_origin: str
     :keyword params_override: Fields to overwrite on top of the yaml file.
         Format is [{"field1": "value1"}, {"field2": "value2"}]
-    :type params_override: List[Dict]
+    :paramtype params_override: List[Dict]
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if FeatureSet cannot be successfully validated.
         Details will be provided in the error message.
     :return: Constructed FeatureSet object.
@@ -808,16 +806,44 @@ def load_feature_store_entity(
         the relative locations of files referenced in the parsed yaml.
         Defaults to the inputted source's directory if it is a file or file path input.
         Defaults to "./" if the source is a stream input with no name value.
-    :type relative_origin: str
+    :paramtype relative_origin: str
     :keyword params_override: Fields to overwrite on top of the yaml file.
         Format is [{"field1": "value1"}, {"field2": "value2"}]
-    :type params_override: List[Dict]
+    :paramtype params_override: List[Dict]
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if FeatureStoreEntity cannot be successfully validated.
         Details will be provided in the error message.
     :return: Constructed FeatureStoreEntity object.
     :rtype: FeatureStoreEntity
     """
     return load_common(FeatureStoreEntity, source, relative_origin, **kwargs)
+
+
+def load_workspace_hub(
+    source: Union[str, PathLike, IO[AnyStr]],
+    *,
+    relative_origin: Optional[str] = None,
+    **kwargs,
+) -> WorkspaceHub:
+    """Load a WorkspaceHub object from a yaml file.
+    :param source: The local yaml source of a WorkspaceHub. Must be either a
+        path to a local file, or an already-open file.
+        If the source is a path, it will be open and read.
+        An exception is raised if the file does not exist.
+        If the source is an open file, the file will be read directly,
+        and an exception is raised if the file is not readable.
+    :type source: Union[PathLike, str, io.TextIOWrapper]
+    :keyword relative_origin: The origin to be used when deducing
+        the relative locations of files referenced in the parsed yaml.
+        Defaults to the inputted source's directory if it is a file or file path input.
+        Defaults to "./" if the source is a stream input with no name value.
+    :paramtype relative_origin: str
+    :keyword params_override: Fields to overwrite on top of the yaml file.
+        Format is [{"field1": "value1"}, {"field2": "value2"}]
+    :paramtype params_override: List[Dict]
+    :return: Loaded WorkspaceHub object.
+    :rtype: WorkspaceHub
+    """
+    return load_common(WorkspaceHub, source, relative_origin, **kwargs)
 
 
 @experimental
@@ -827,5 +853,30 @@ def load_model_package(
     relative_origin: Optional[str] = None,
     **kwargs,
 ) -> ModelPackage:
-    """Construct a model package object from yaml file."""
+    """Constructs a ModelPackage object from a YAML file.
+
+    :param source: A path to a local YAML file or an already-open file object containing a job configuration.
+        If the source is a path, it will be opened and read. If the source is an open file, the file will be read
+        directly.
+    :type source: Union[PathLike, str, io.TextIOWrapper]
+    :keyword relative_origin: The root directory for the YAML. This directory will be used as the origin for deducing
+        the relative locations of files referenced in the parsed YAML. Defaults to the same directory as source if
+        source is a file or file path input. Defaults to "./" if the source is a stream input with no name value.
+    :paramtype relative_origin: Optional[str]
+    :keyword params_override: Parameter fields to overwrite values in the YAML file.
+    :paramtype params_override: Optional[list[dict]]
+    :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Job cannot be successfully validated.
+        Details will be provided in the error message.
+    :return: A loaded ModelPackage object.
+    :rtype: ~azure.ai.ml.entities.ModelPackage
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../../../../samples/ml_samples_misc.py
+            :start-after: [START load_model_package]
+            :end-before: [END load_model_package]
+            :language: python
+            :dedent: 8
+            :caption: Loading a ModelPackage from a YAML config file.
+    """
     return load_common(ModelPackage, source, relative_origin, **kwargs)

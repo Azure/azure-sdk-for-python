@@ -148,18 +148,72 @@ def test_regional_authority():
             assert kwargs["azure_region"] == region.value
 
 
-def test_token_cache():
-    """the credential should default to an in memory cache, and optionally use a persistent cache"""
+def test_token_cache_persistent():
+    """the credential should use a persistent cache if cache_persistence_options are configured"""
+
+    access_token = "foo token"
+
+    def send(request, **kwargs):
+        # ensure the `claims` and `tenant_id` keywords from credential's `get_token` method don't make it to transport
+        assert "claims" not in kwargs
+        assert "tenant_id" not in kwargs
+        parsed = urlparse(request.url)
+        tenant = parsed.path.split("/")[1]
+        if "/oauth2/v2.0/token" not in parsed.path:
+            return get_discovery_response("https://{}/{}".format(parsed.netloc, tenant))
+        return mock_response(json_payload=build_aad_response(access_token=access_token))
 
     with patch("azure.identity._internal.msal_credentials._load_persistent_cache") as load_persistent_cache:
-        credential = ClientSecretCredential("tenant", "client-id", "secret")
-        assert not load_persistent_cache.called
-        assert isinstance(credential._cache, TokenCache)
-
-        ClientSecretCredential(
-            "tenant", "client-id", "secret", cache_persistence_options=TokenCachePersistenceOptions()
+        credential = ClientSecretCredential(
+            "tenant",
+            "client-id",
+            "secret",
+            cache_persistence_options=TokenCachePersistenceOptions(),
+            transport=Mock(send=send),
         )
+
+        assert load_persistent_cache.call_count == 0
+        assert credential._cache is None
+        assert credential._cae_cache is None
+
+        token = credential.get_token("scope")
+        assert token.token == access_token
         assert load_persistent_cache.call_count == 1
+        assert credential._cache is not None
+        assert credential._cae_cache is None
+
+        token = credential.get_token("scope", enable_cae=True)
+        assert load_persistent_cache.call_count == 2
+        assert credential._cae_cache is not None
+
+
+def test_token_cache_memory():
+    """The credential should default to in-memory cache if no persistence options are provided."""
+    access_token = "foo token"
+
+    def send(request, **kwargs):
+        # ensure the `claims` and `tenant_id` keywords from credential's `get_token` method don't make it to transport
+        assert "claims" not in kwargs
+        assert "tenant_id" not in kwargs
+        parsed = urlparse(request.url)
+        tenant = parsed.path.split("/")[1]
+        if "/oauth2/v2.0/token" not in parsed.path:
+            return get_discovery_response("https://{}/{}".format(parsed.netloc, tenant))
+        return mock_response(json_payload=build_aad_response(access_token=access_token))
+
+    with patch("azure.identity._internal.msal_credentials._load_persistent_cache") as load_persistent_cache:
+        credential = ClientSecretCredential("tenant", "client-id", "secret", transport=Mock(send=send))
+
+        assert credential._cache is None
+        token = credential.get_token("scope")
+        assert token.token == access_token
+        assert isinstance(credential._cache, TokenCache)
+        assert credential._cae_cache is None
+        assert not load_persistent_cache.called
+
+        token = credential.get_token("scope", enable_cae=True)
+        assert isinstance(credential._cae_cache, TokenCache)
+        assert not load_persistent_cache.called
 
 
 def test_cache_multiple_clients():
@@ -184,7 +238,6 @@ def test_cache_multiple_clients():
             transport=transport_a,
             cache_persistence_options=TokenCachePersistenceOptions(),
         )
-        assert mock_cache_loader.call_count == 1, "credential should load the persistent cache"
 
         credential_b = ClientSecretCredential(
             "tenant",
@@ -193,20 +246,21 @@ def test_cache_multiple_clients():
             transport=transport_b,
             cache_persistence_options=TokenCachePersistenceOptions(),
         )
-        assert mock_cache_loader.call_count == 2, "credential should load the persistent cache"
 
-    # A caches a token
-    scope = "scope"
-    token_a = credential_a.get_token(scope)
-    assert token_a.token == access_token_a
-    assert transport_a.send.call_count == 2  # two MSAL discovery requests, one token request
+        # A caches a token
+        scope = "scope"
+        token_a = credential_a.get_token(scope)
+        assert mock_cache_loader.call_count == 1
+        assert token_a.token == access_token_a
+        assert transport_a.send.call_count == 2  # one MSAL discovery request, one token request
 
-    # B should get a different token for the same scope
-    token_b = credential_b.get_token(scope)
-    assert token_b.token == access_token_b
-    assert transport_b.send.call_count == 2
+        # B should get a different token for the same scope
+        token_b = credential_b.get_token(scope)
+        assert mock_cache_loader.call_count == 2
+        assert token_b.token == access_token_b
+        assert transport_b.send.call_count == 2
 
-    assert len(cache.find(TokenCache.CredentialType.ACCESS_TOKEN)) == 2
+        assert len(cache.find(TokenCache.CredentialType.ACCESS_TOKEN)) == 2
 
 
 def test_multitenant_authentication():
@@ -216,7 +270,9 @@ def test_multitenant_authentication():
     second_token = first_token * 2
 
     def send(request, **kwargs):
-        assert "tenant_id" not in kwargs, "tenant_id kwarg shouldn't get passed to send method"
+        # ensure the `claims` and `tenant_id` keywords from credential's `get_token` method don't make it to transport
+        assert "claims" not in kwargs
+        assert "tenant_id" not in kwargs
 
         parsed = urlparse(request.url)
         tenant = parsed.path.split("/")[1]
@@ -262,7 +318,10 @@ def test_multitenant_authentication_not_allowed():
     expected_tenant = "expected-tenant"
     expected_token = "***"
 
-    def send(request, **_):
+    def send(request, **kwargs):
+        # ensure the `claims` and `tenant_id` keywords from credential's `get_token` method don't make it to transport
+        assert "claims" not in kwargs
+        assert "tenant_id" not in kwargs
         parsed = urlparse(request.url)
         if "/oauth2/v2.0/token" not in parsed.path:
             return get_discovery_response("https://{}/{}".format(parsed.netloc, expected_tenant))
@@ -285,7 +344,7 @@ def test_multitenant_authentication_not_allowed():
 
 
 def test_client_capabilities():
-    """The credential should configure MSAL for capability CP1 unless AZURE_IDENTITY_DISABLE_CP1 is set"""
+    """The credential should configure MSAL for capability only if enable_cae is passed in."""
 
     transport = Mock(send=Mock(side_effect=Exception("this test mocks MSAL, so no request should be sent")))
 
@@ -293,18 +352,14 @@ def test_client_capabilities():
     with patch("msal.ConfidentialClientApplication") as ConfidentialClientApplication:
         credential._get_app()
 
-    assert ConfidentialClientApplication.call_count == 1
-    _, kwargs = ConfidentialClientApplication.call_args
-    assert kwargs["client_capabilities"] == ["CP1"]
+        assert ConfidentialClientApplication.call_count == 1
+        _, kwargs = ConfidentialClientApplication.call_args
+        assert kwargs["client_capabilities"] == None
 
-    credential = ClientSecretCredential("tenant-id", "client-id", "client-secret", transport=transport)
-    with patch.dict("os.environ", {"AZURE_IDENTITY_DISABLE_CP1": "true"}):
-        with patch("msal.ConfidentialClientApplication") as ConfidentialClientApplication:
-            credential._get_app()
-
-    assert ConfidentialClientApplication.call_count == 1
-    _, kwargs = ConfidentialClientApplication.call_args
-    assert kwargs["client_capabilities"] is None
+        credential._get_app(enable_cae=True)
+        assert ConfidentialClientApplication.call_count == 2
+        _, kwargs = ConfidentialClientApplication.call_args
+        assert kwargs["client_capabilities"] == ["CP1"]
 
 
 def test_claims_challenge():

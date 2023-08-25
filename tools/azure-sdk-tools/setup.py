@@ -21,7 +21,9 @@ DEPENDENCIES = [
     "python-dotenv",
     "PyYAML",
     "urllib3<2",
-    "tomli"
+    "tomli",
+    # gh tools
+    "PyGithub>=1.59.0"
 ]
 
 setup(

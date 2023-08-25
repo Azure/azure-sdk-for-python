@@ -6,13 +6,17 @@
 # pylint: disable=protected-access, too-many-lines
 
 import datetime
-from typing import Dict, Iterable, List, NewType, Any, Union, Sequence, Optional
+from typing import Dict, Iterable, List, NewType, Any, Union, Sequence, Optional, Mapping
 from enum import Enum
 from collections import namedtuple
+from typing_extensions import Literal
 from azure.core import CaseInsensitiveEnumMeta
 from ._generated.v2023_07_31.models import (
     DocumentModelDetails as ModelDetails,
     DocumentClassifierDetails as ClassifierDetails,
+    AzureBlobFileListContentSource,
+    AzureBlobContentSource,
+    ClassifierDocumentTypeDetails as GeneratedClassifierDocumentTypeDetails,
     Error
 )
 from ._helpers import (
@@ -2708,7 +2712,7 @@ class DocumentWord:
     """
     content: str
     """Text content of the word."""
-    polygon: Optional[Sequence[Point]]
+    polygon: Sequence[Point]
     """Bounding polygon of the word."""
     span: DocumentSpan
     """Location of the word in the reading order concatenated content."""
@@ -2777,7 +2781,7 @@ class DocumentSelectionMark:
     state: str
     """State of the selection mark. Possible values include: "selected",
      "unselected"."""
-    polygon: Optional[Sequence[Point]]
+    polygon: Sequence[Point]
     """Bounding polygon of the selection mark."""
     span: DocumentSpan
     """Location of the selection mark in the reading order concatenated
@@ -2846,7 +2850,7 @@ class DocumentLine:
 
     content: str
     """Concatenated content of the contained elements in reading order."""
-    polygon: Optional[Sequence[Point]]
+    polygon: Sequence[Point]
     """Bounding polygon of the line."""
     spans: List[DocumentSpan]
     """Location of the line in the reading order concatenated content."""
@@ -2999,7 +3003,9 @@ class DocumentParagraph:
 class DocumentBarcode:
     """A barcode object."""
 
-    kind: str
+    kind: Literal["QRCode", "PDF417", "UPCA", "UPCE", "Code39", "Code128", "EAN8", "EAN13",
+                  "DataBar", "Code93", "Codabar", "DataBarExpanded", "ITF", "MicroQRCode",
+                  "Aztec", "DataMatrix", "MaxiCode"]
     """Barcode kind. Known values are "QRCode", "PDF417", "UPCA", "UPCE",
      "Code39", "Code128", "EAN8", "EAN13", "DataBar", "Code93", "Codabar", "DataBarExpanded", "ITF",
      "MicroQRCode", "Aztec", "DataMatrix", "MaxiCode"."""
@@ -3078,7 +3084,7 @@ class DocumentBarcode:
 class DocumentFormula:
     """A formula object."""
 
-    kind: str
+    kind: Literal["inline", "display"]
     """Formula kind. Known values are "inline", "display"."""
     value: str
     """LaTex expression describing the formula."""
@@ -3174,11 +3180,11 @@ class DocumentPage:  # pylint: disable=too-many-instance-attributes
      "inch"."""
     spans: List[DocumentSpan]
     """Location of the page in the reading order concatenated content."""
-    words: Optional[List[DocumentWord]]
+    words: List[DocumentWord]
     """Extracted words from the page."""
-    selection_marks: Optional[List[DocumentSelectionMark]]
+    selection_marks: List[DocumentSelectionMark]
     """Extracted selection marks from the page."""
-    lines: Optional[List[DocumentLine]]
+    lines: List[DocumentLine]
     """Extracted lines from the page, potentially containing both textual and
      visual elements."""
     barcodes: List[DocumentBarcode]
@@ -3758,7 +3764,7 @@ class DocumentModelSummary:
             expires_on=data.get("expires_on", None),
         )
 
-class AzureBlobFileListSource:
+class BlobFileListSource:
     """Content source for a file list in Azure Blob Storage."""
 
     container_url: str
@@ -3773,10 +3779,11 @@ class AzureBlobFileListSource:
     ) -> None:
         self.container_url = container_url
         self.file_list = file_list
+        self._kind: Literal["azureBlobFileList"] = "azureBlobFileList"
 
     def __repr__(self) -> str:
         return (
-            f"AzureBlobFileListSource(container_url={self.container_url}, file_list={self.file_list})"
+            f"BlobFileListSource(container_url={self.container_url}, file_list={self.file_list})"
         )
 
     @classmethod
@@ -3786,8 +3793,11 @@ class AzureBlobFileListSource:
             file_list=model.file_list
         )
 
+    def _to_generated(self) -> AzureBlobFileListContentSource:
+        return AzureBlobFileListContentSource(container_url=self.container_url, file_list=self.file_list)
+
     def to_dict(self) -> Dict[str, Any]:
-        """Returns a dict representation of AzureBlobFileListSource.
+        """Returns a dict representation of BlobFileListSource.
 
         :return: Dict[str, Any]
         :rtype: Dict[str, Any]
@@ -3798,12 +3808,12 @@ class AzureBlobFileListSource:
         }
 
     @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> "AzureBlobFileListSource":
-        """Converts a dict in the shape of a AzureBlobFileListSource to the model itself.
+    def from_dict(cls, data: Dict[str, Any]) -> "BlobFileListSource":
+        """Converts a dict in the shape of a BlobFileListSource to the model itself.
 
-        :param Dict[str, Any] data: A dictionary in the shape of AzureBlobFileListSource.
-        :return: AzureBlobFileListSource
-        :rtype: AzureBlobFileListSource
+        :param dict data: A dictionary in the shape of BlobFileListSource.
+        :return: BlobFileListSource
+        :rtype: BlobFileListSource
         """
         return cls(
             container_url=data.get("container_url", None),
@@ -3811,7 +3821,7 @@ class AzureBlobFileListSource:
         )
 
 
-class AzureBlobSource:
+class BlobSource:
     """Content source for Azure Blob Storage."""
 
     container_url: str
@@ -3827,10 +3837,11 @@ class AzureBlobSource:
     ) -> None:
         self.container_url = container_url
         self.prefix = prefix
+        self._kind: Literal["azureBlob"] = "azureBlob"
 
     def __repr__(self) -> str:
         return (
-            f"AzureBlobSource(container_url={self.container_url}, prefix={self.prefix})"
+            f"BlobSource(container_url={self.container_url}, prefix={self.prefix})"
         )
 
     @classmethod
@@ -3840,8 +3851,11 @@ class AzureBlobSource:
             prefix=model.prefix
         )
 
+    def _to_generated(self) -> AzureBlobContentSource:
+        return AzureBlobContentSource(container_url=self.container_url, prefix=self.prefix)
+
     def to_dict(self) -> Dict[str, Any]:
-        """Returns a dict representation of AzureBlobSource.
+        """Returns a dict representation of BlobSource.
 
         :return: Dict[str, Any]
         :rtype: Dict[str, Any]
@@ -3852,12 +3866,12 @@ class AzureBlobSource:
         }
 
     @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> "AzureBlobSource":
-        """Converts a dict in the shape of a AzureBlobSource to the model itself.
+    def from_dict(cls, data: Dict[str, Any]) -> "BlobSource":
+        """Converts a dict in the shape of a BlobSource to the model itself.
 
-        :param Dict[str, Any] data: A dictionary in the shape of AzureBlobSource.
-        :return: AzureBlobSource
-        :rtype: AzureBlobSource
+        :param dict data: A dictionary in the shape of BlobSource.
+        :return: BlobSource
+        :rtype: BlobSource
         """
         return cls(
             container_url=data.get("container_url", None),
@@ -3868,31 +3882,40 @@ class AzureBlobSource:
 class ClassifierDocumentTypeDetails:
     """Training data source."""
 
-    source: Union[AzureBlobSource, AzureBlobFileListSource]
+    source_kind: Literal["azureBlob", "azureBlobFileList"]
+    """Type of training data source, known values are: "azureBlob" and "azureBlobFileList"."""
+
+    source: Union[BlobSource, BlobFileListSource]
     """Content source containing the training data."""
 
     def __init__(  # pylint: disable=unused-argument
         self,
-        source: Union[AzureBlobSource, AzureBlobFileListSource]
+        source: Union[BlobSource, BlobFileListSource]
     ) -> None:
+        self.source_kind = source._kind
         self.source = source
 
     def __repr__(self) -> str:
         return (
-            f"ClassifierDocumentTypeDetails(source={repr(self.source)})"
+            f"ClassifierDocumentTypeDetails(source_kind={self.source_kind}, source={repr(self.source)})"
         )
 
     @classmethod
     def _from_generated(cls, model):
         source = None
         if model.azure_blob_source is not None:
-            source = AzureBlobSource._from_generated(model.azure_blob_source)
+            source = BlobSource._from_generated(model.azure_blob_source)
         elif model.azure_blob_file_list_source is not None:
-            source=AzureBlobFileListSource._from_generated(model.azure_blob_file_list_source)
+            source=BlobFileListSource._from_generated(model.azure_blob_file_list_source)
 
         return cls(
             source=source,
         )
+
+    def _to_generated(self) -> GeneratedClassifierDocumentTypeDetails:
+        if self.source_kind == "azureBlobFileList":
+            return GeneratedClassifierDocumentTypeDetails(azure_blob_file_list_source=self.source._to_generated())
+        return GeneratedClassifierDocumentTypeDetails(azure_blob_source=self.source._to_generated())
 
     def to_dict(self) -> Dict[str, Any]:
         """Returns a dict representation of ClassifierDocumentTypeDetails.
@@ -3901,6 +3924,7 @@ class ClassifierDocumentTypeDetails:
         :rtype: Dict[str, Any]
         """
         return {
+            "source_kind": self.source_kind,
             "source": self.source.to_dict() if self.source else None,
         }
 
@@ -3908,16 +3932,17 @@ class ClassifierDocumentTypeDetails:
     def from_dict(cls, data: Dict[str, Any]) -> "ClassifierDocumentTypeDetails":
         """Converts a dict in the shape of a ClassifierDocumentTypeDetails to the model itself.
 
-        :param Dict[str, Any] data: A dictionary in the shape of ClassifierDocumentTypeDetails.
+        :param dict data: A dictionary in the shape of ClassifierDocumentTypeDetails.
         :return: ClassifierDocumentTypeDetails
         :rtype: ClassifierDocumentTypeDetails
         """
         source = data.get("source", None)
-        if source is not None:
-            if source.get("file_list") is not None:
-                source = AzureBlobFileListSource.from_dict(source)
+        kind = data.get("source_kind", None)
+        if source is not None and kind is not None:
+            if kind == "azureBlobFileList":
+                source = BlobFileListSource.from_dict(source)
             else:
-                source = AzureBlobSource.from_dict(source)
+                source = BlobSource.from_dict(source)
         return cls(
             source=source,
         )
@@ -3936,7 +3961,7 @@ class DocumentClassifierDetails:
     """Date and time (UTC) when the document classifier will expire."""
     api_version: str
     """API version used to create this document classifier."""
-    doc_types: Dict[str, ClassifierDocumentTypeDetails]
+    doc_types: Mapping[str, ClassifierDocumentTypeDetails]
     """List of document types to classify against."""
 
     def __init__(
@@ -4718,23 +4743,24 @@ class ResourceDetails:
     """Details regarding the Form Recognizer resource.
 
     .. versionadded:: 2023-07-31
-        The *custom_neural_document_model_builds* property.
+        The *neural_document_model_quota* property.
     """
 
     custom_document_models: CustomDocumentModelsDetails
     """Details regarding the custom models under the Form Recognizer resource."""
-    custom_neural_document_model_builds: QuotaDetails
+    neural_document_model_quota: Optional[QuotaDetails]
+    """Quota details regarding the custom neural document model builds under the Form Recognizer resource."""
 
     def __init__(
         self,
         **kwargs: Any
     ) -> None:
         self.custom_document_models = kwargs.get("custom_document_models", None)
-        self.custom_neural_document_model_builds = kwargs.get("custom_neural_document_model_builds", None)
+        self.neural_document_model_quota = kwargs.get("neural_document_model_quota", None)
 
     def __repr__(self) -> str:
         return f"ResourceDetails(custom_document_models={repr(self.custom_document_models)}, " \
-               f"custom_neural_document_model_builds={repr(self.custom_neural_document_model_builds)})"
+               f"neural_document_model_quota={repr(self.neural_document_model_quota)})"
 
     @classmethod
     def _from_generated(cls, info):
@@ -4743,7 +4769,7 @@ class ResourceDetails:
         return cls(
             custom_document_models=CustomDocumentModelsDetails._from_generated(info.custom_document_models)
             if info.custom_document_models else None,
-            custom_neural_document_model_builds=QuotaDetails._from_generated(custom_neural_builds)
+            neural_document_model_quota=QuotaDetails._from_generated(custom_neural_builds)
             if custom_neural_builds else None,
         )
 
@@ -4757,8 +4783,8 @@ class ResourceDetails:
                 "custom_document_models": self.custom_document_models.to_dict()
                 if self.custom_document_models
                 else None,
-                "custom_neural_document_model_builds": self.custom_neural_document_model_builds.to_dict()
-                if self.custom_neural_document_model_builds
+                "neural_document_model_quota": self.neural_document_model_quota.to_dict()
+                if self.neural_document_model_quota
                 else None,
             }
 
@@ -4774,9 +4800,9 @@ class ResourceDetails:
             custom_document_models=CustomDocumentModelsDetails.from_dict(
                 data.get("custom_document_models")  # type: ignore
             ) if data.get("custom_document_models") else None,
-            custom_neural_document_model_builds=QuotaDetails.from_dict(
-                data.get("custom_neural_document_model_builds")  # type: ignore
-            ) if data.get("custom_neural_document_model_builds") else None,
+            neural_document_model_quota=QuotaDetails.from_dict(
+                data.get("neural_document_model_quota")  # type: ignore
+            ) if data.get("neural_document_model_quota") else None,
         )
 
 

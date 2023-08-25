@@ -45,14 +45,26 @@ class DictMixin(object):
 
     def __eq__(self, other):
         # type: (Any) -> bool
-        """Compare objects by comparing all attributes."""
+        """Compare objects by comparing all attributes.
+
+        :param other: The other object
+        :type other: Any
+        :return: True if both object are the same class and have matching __dict__, False otherwise
+        :rtype: bool
+        """
         if isinstance(other, self.__class__):
             return self.__dict__ == other.__dict__
         return False
 
     def __ne__(self, other):
         # type: (Any) -> bool
-        """Compare objects by comparing all attributes."""
+        """Compare objects by comparing all attributes.
+
+        :param other: The other object
+        :type other: Any
+        :return: not self.__eq__(other)
+        :rtype: bool
+        """
         return not self.__eq__(other)
 
     def __str__(self):
@@ -87,8 +99,13 @@ class DictMixin(object):
 
 
 class TelemetryMixin:
+    # pylint: disable-next=docstring-missing-param
     def _get_telemetry_values(self, *args, **kwargs):  # pylint: disable=unused-argument
-        """Return the telemetry values of object."""
+        """Return the telemetry values of object.
+
+        :return: The telemetry values
+        :rtype: Dict
+        """
         return {}
 
 
@@ -97,14 +114,19 @@ class YamlTranslatableMixin:
     def _to_dict(self) -> Dict:
         """Dump the object into a dictionary."""
 
-    def _to_yaml(self) -> str:
-        """Dump the object content into a sorted yaml string."""
+    def _to_ordered_dict_for_yaml_dump(self) -> Dict:
+        """Dump the object into a dictionary with a specific key order.
+
+        :return: The ordered dict
+        :rtype: Dict
+        """
         order_keys = [
             "$schema",
             "name",
             "version",
             "display_name",
             "description",
+            "tags",
             "type",
             "inputs",
             "outputs",
@@ -126,7 +148,8 @@ class YamlTranslatableMixin:
                 for node_name, node in dict_value["jobs"].items():
                     dict_value["jobs"][node_name] = _sort_dict_according_to_list(order_keys, node)
             difference = list(set(dict_value.keys()).difference(set(order_keys)))
-            order_keys.extend(difference)
+            # keys not in order_keys will be put at the end of the list in the order of alphabetic
+            order_keys.extend(sorted(difference))
             return dict(
                 sorted(
                     dict_value.items(),
@@ -134,6 +157,21 @@ class YamlTranslatableMixin:
                 )
             )
 
-        sorted_dict_value = _sort_dict_according_to_list(order_keys, self._to_dict())
+        return _sort_dict_according_to_list(order_keys, self._to_dict())
 
-        return dump_yaml(sorted_dict_value, sort_keys=False)
+    def _to_yaml(self) -> str:
+        """Dump the object content into a sorted yaml string.
+
+        :return: YAML formatted string
+        :rtype: str
+        """
+        return dump_yaml(self._to_ordered_dict_for_yaml_dump(), sort_keys=False)
+
+
+class LocalizableMixin:
+    def _localize(self, base_path: str):
+        """Called on an asset got from service to clean up remote attributes like id, creation_context, etc.
+
+        :param base_path: The base path
+        :type base_path: str
+        """

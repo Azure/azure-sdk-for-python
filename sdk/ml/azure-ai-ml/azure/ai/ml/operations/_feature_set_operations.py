@@ -29,8 +29,8 @@ from azure.ai.ml.operations._datastore_operations import DatastoreOperations
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._feature_store_utils import (
     _archive_or_restore,
-    read_feature_set_metadata_contents,
-    read_remote_feature_set_spec_metadata_contents,
+    read_feature_set_metadata,
+    read_remote_feature_set_spec_metadata,
     _datetime_to_str,
 )
 from azure.ai.ml._utils._logger_utils import OpsLogger
@@ -190,24 +190,25 @@ class FeatureSetOperations(_ScopeDependentOperations):
         """Backfill.
 
         :keyword name: Feature set name. This is case-sensitive.
-        :type name: str
+        :paramtype name: str
         :keyword version: Version identifier. This is case-sensitive.
-        :type version: str
+        :paramtype version: str
         :keyword feature_window_start_time: Start time of the feature window to be materialized.
-        :type feature_window_start_time: datetime
+        :paramtype feature_window_start_time: datetime
         :keyword feature_window_end_time: End time of the feature window to be materialized.
-        :type feature_window_end_time: datetime
+        :paramtype feature_window_end_time: datetime
         :keyword display_name: Specifies description.
-        :type display_name: str
+        :paramtype display_name: str
         :keyword description: Specifies description.
-        :type description: str
+        :paramtype description: str
         :keyword tags: A set of tags. Specifies the tags.
-        :type tags: dict[str, str]
+        :paramtype tags: dict[str, str]
         :keyword compute_resource: Specifies the compute resource settings.
-        :type compute_resource: ~azure.ai.ml.entities.MaterializationComputeResource
+        :paramtype compute_resource: ~azure.ai.ml.entities.MaterializationComputeResource
         :keyword spark_configuration: Specifies the spark compute settings.
-        :type spark_configuration: dict[str, str]
+        :paramtype spark_configuration: dict[str, str]
         :return: An instance of LROPoller that returns ~azure.ai.ml.entities.FeatureSetBackfillMetadata
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.FeatureSetBackfillMetadata]
         """
 
         request_body: FeaturesetVersionBackfillRequest = FeaturesetVersionBackfillRequest(
@@ -249,11 +250,11 @@ class FeatureSetOperations(_ScopeDependentOperations):
         :param version: Feature set version.
         :type version: str
         :keyword feature_window_start_time: Start time of the feature window to filter materialization jobs.
-        :type feature_window_start_time: Union[str, datetime]
+        :paramtype feature_window_start_time: Union[str, datetime]
         :keyword feature_window_end_time: End time of the feature window to filter materialization jobs.
-        :type feature_window_end_time: Union[str, datetime]
+        :paramtype feature_window_end_time: Union[str, datetime]
         :keyword filters: Comma-separated list of tag names (and optionally values). Example: tag1,tag2=value2.
-        :type filters: str
+        :paramtype filters: str
         :return: An iterator like instance of ~azure.ai.ml.entities.FeatureSetMaterializationMetadata objects
         :rtype: ~azure.core.paging.ItemPaged[FeatureSetMaterializationMetadata]
         """
@@ -291,11 +292,11 @@ class FeatureSetOperations(_ScopeDependentOperations):
         :param version: Feature set version.
         :type version: str
         :keyword feature_name: feature name.
-        :type feature_name: str
+        :paramtype feature_name: str
         :keyword description: Description of the featureset.
-        :type description: str
+        :paramtype description: str
         :keyword tags: Comma-separated list of tag names (and optionally values). Example: tag1,tag2=value2.
-        :type tags: str
+        :paramtype tags: str
         :return: An iterator like instance of Feature objects
         :rtype: ~azure.core.paging.ItemPaged[Feature]
         """
@@ -322,9 +323,9 @@ class FeatureSetOperations(_ScopeDependentOperations):
         :param version: Feature set version.
         :type version: str
         :keyword feature_name. This is case-sensitive.
-        :type feature_name: str
+        :paramtype feature_name: str
         :keyword tags: Comma-separated list of tag names (and optionally values). Example: tag1,tag2=value2.
-        :type tags: str
+        :paramtype tags: str
         :return: Feature object
         :rtype: ~azure.ai.ml.entities.Feature
         """
@@ -406,7 +407,7 @@ class FeatureSetOperations(_ScopeDependentOperations):
         featureset_spec_path = str(featureset.specification.path)
         if is_url(featureset_spec_path):
             try:
-                featureset_spec_contents = read_remote_feature_set_spec_metadata_contents(
+                featureset_spec_contents = read_remote_feature_set_spec_metadata(
                     base_uri=featureset_spec_path,
                     datastore_operations=self._datastore_operation,
                 )
@@ -428,6 +429,6 @@ class FeatureSetOperations(_ScopeDependentOperations):
                 error_type=ValidationErrorType.FILE_OR_FOLDER_NOT_FOUND,
             )
 
-        featureset_spec_contents = read_feature_set_metadata_contents(path=featureset_spec_path)
+        featureset_spec_contents = read_feature_set_metadata(path=featureset_spec_path)
         featureset_spec_yaml_path = Path(featureset_spec_path, "FeatureSetSpec.yaml")
         return FeaturesetSpecMetadata._load(featureset_spec_contents, featureset_spec_yaml_path)

@@ -17,11 +17,8 @@ JSON = MutableMapping[str, Any]
 
 BEARER = "Bearer"
 AUTHENTICATION_CHALLENGE_PARAMS_PATTERN = re.compile('(?:(\\w+)="([^""]*)")+')
-SUPPORTED_API_VERSIONS = [
-    "2019-08-15-preview",
-    "2021-07-01"
-]
-DEFAULT_CHUNK_SIZE = 4 * 1024 * 1024 # 4MB
+SUPPORTED_API_VERSIONS = ["2019-08-15-preview", "2021-07-01"]
+DEFAULT_CHUNK_SIZE = 4 * 1024 * 1024  # 4MB
 MAX_MANIFEST_SIZE = 4 * 1024 * 1024
 
 # The default audience used for all clouds when audience is not set
@@ -38,13 +35,15 @@ SUPPORTED_MANIFEST_MEDIA_TYPES = ", ".join(
         DOCKER_MANIFEST,
         "application/vnd.oci.image.index.v1+json",
         "application/vnd.docker.distribution.manifest.list.v2+json",
-        "application/vnd.cncf.oras.artifact.manifest.v1+json"
+        "application/vnd.cncf.oras.artifact.manifest.v1+json",
     ]
 )
+
 
 def _is_tag(tag_or_digest: str) -> bool:
     tag = tag_or_digest.split(":")
     return not (len(tag) == 2 and tag[0].startswith("sha"))
+
 
 def _clean(matches: List[str]) -> None:
     """This method removes empty strings and commas from the regex matching of the Challenge header.
@@ -64,6 +63,7 @@ def _clean(matches: List[str]) -> None:
         except ValueError:
             return
 
+
 def _parse_challenge(header: str) -> Dict[str, str]:
     """Parse challenge header into service and scope
 
@@ -81,6 +81,7 @@ def _parse_challenge(header: str) -> Dict[str, str]:
             ret[matches[i]] = matches[i + 1]
 
     return ret
+
 
 def _parse_next_link(link_string: str) -> Optional[str]:
     """Parse the next link in the list operations response URL
@@ -101,6 +102,7 @@ def _parse_next_link(link_string: str) -> Optional[str]:
     if not link_string:
         return None
     return link_string[1 : link_string.find(">")]
+
 
 def _enforce_https(request: PipelineRequest) -> None:
     """Raise ServiceRequestError if the request URL is non-HTTPS and the sender did not specify enforce_https=False
@@ -123,13 +125,16 @@ def _enforce_https(request: PipelineRequest) -> None:
             "Bearer token authentication is not permitted for non-TLS protected (non-https) URLs."
         )
 
+
 def _host_only(url: str) -> str:
     return urlparse(url).netloc
+
 
 def _strip_alg(digest):
     if len(digest.split(":")) == 2:
         return digest.split(":")[1]
     return digest
+
 
 def _parse_exp_time(raw_token: str) -> float:
     raw_token_list = raw_token.split(".")
@@ -144,6 +149,7 @@ def _parse_exp_time(raw_token: str) -> float:
 
     return time.time()
 
+
 def _compute_digest(data: Union[IO[bytes], bytes]) -> str:
     if isinstance(data, bytes):
         value = data
@@ -153,8 +159,10 @@ def _compute_digest(data: Union[IO[bytes], bytes]) -> str:
         data.seek(0)
     return "sha256:" + hashlib.sha256(value).hexdigest()
 
+
 def _validate_digest(data: IO[bytes], expected_digest: str) -> bool:
     return _compute_digest(data) == expected_digest
+
 
 def _get_blob_size(headers: Dict[str, str]) -> int:
     if not headers["Content-Range"]:
@@ -163,6 +171,7 @@ def _get_blob_size(headers: Dict[str, str]) -> int:
     if blob_size <= 0:
         raise ValueError(f"Invalid content-range header in response: {blob_size}")
     return blob_size
+
 
 def _get_manifest_size(headers: Dict[str, str]) -> int:
     if not headers["Content-Length"]:

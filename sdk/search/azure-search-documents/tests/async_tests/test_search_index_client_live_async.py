@@ -27,7 +27,7 @@ class TestSearchIndexClientAsync(AzureRecordedTestCase):
     @search_decorator(schema=None, index_batch=None)
     @recorded_by_proxy_async
     async def test_search_index_client(self, api_key, endpoint, index_name):
-        client = SearchIndexClient(endpoint, api_key)
+        client = SearchIndexClient(endpoint, api_key, retry_backoff_factor=60)
         index_name = "hotels"
         async with client:
             await self._test_get_service_statistics(client)
@@ -84,7 +84,10 @@ class TestSearchIndexClientAsync(AzureRecordedTestCase):
 
     async def _test_get_index_statistics(self, client, index_name):
         result = await client.get_index_statistics(index_name)
-        assert set(result.keys()) == {"document_count", "storage_size"}
+        keys = set(result.keys())
+        assert "document_count" in keys
+        assert "storage_size" in keys
+        assert "vector_index_size" in keys
 
     async def _test_delete_indexes_if_unchanged(self, client):
         # First create an index

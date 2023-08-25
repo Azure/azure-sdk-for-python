@@ -449,8 +449,7 @@ def find_sdist(dist_dir: str, pkg_name: str, pkg_version: str) -> str:
         logging.error("Package name cannot be empty to find sdist")
         return
 
-    pkg_name_format = f"{pkg_name}-{pkg_version}.zip"
-    pkg_name_format_alt = "${0}-{1}.tar.gz"
+    pkg_name_format = f"{pkg_name}-{pkg_version}.tar.gz"
 
     packages = []
     for root, dirnames, filenames in os.walk(dist_dir):

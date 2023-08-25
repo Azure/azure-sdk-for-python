@@ -150,7 +150,7 @@ class RetryPolicy:
             'history': []
         }
 
-    def increment(self, settings, error):  # pylint: disable=no-self-use
+    def increment(self, settings, error):
         settings['total'] -= 1
         settings['history'].append(error)
         if settings['total'] < 0:

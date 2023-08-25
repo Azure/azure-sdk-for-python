@@ -451,7 +451,10 @@ async def test_app_service_2019_08_01():
     new_secret = "new-expected-secret"
     scope = "scope"
 
-    async def send(request, **_):
+    async def send(request, **kwargs):
+        # ensure the `claims` and `tenant_id` keywords from credential's `get_token` method don't make it to transport
+        assert "claims" not in kwargs
+        assert "tenant_id" not in kwargs
         assert request.url.startswith(new_endpoint)
         assert request.method == "GET"
         assert request.headers["X-IDENTITY-HEADER"] == new_secret
@@ -494,7 +497,10 @@ async def test_app_service_2019_08_01_tenant_id():
     new_secret = "new-expected-secret"
     scope = "scope"
 
-    async def send(request, **_):
+    async def send(request, **kwargs):
+        # ensure the `claims` and `tenant_id` keywords from credential's `get_token` method don't make it to transport
+        assert "claims" not in kwargs
+        assert "tenant_id" not in kwargs
         assert request.url.startswith(new_endpoint)
         assert request.method == "GET"
         assert request.headers["X-IDENTITY-HEADER"] == new_secret
@@ -592,7 +598,10 @@ async def test_client_id_none():
     expected_access_token = "****"
     scope = "scope"
 
-    async def send(request, **_):
+    async def send(request, **kwargs):
+        # ensure the `claims` and `tenant_id` keywords from credential's `get_token` method don't make it to transport
+        assert "claims" not in kwargs
+        assert "tenant_id" not in kwargs
         assert "client_id" not in request.query  # IMDS
         if request.data:
             assert "client_id" not in request.body  # Cloud Shell
@@ -742,7 +751,10 @@ async def test_service_fabric():
     thumbprint = "SHA1HEX"
     scope = "scope"
 
-    async def send(request, **_):
+    async def send(request, **kwargs):
+        # ensure the `claims` and `tenant_id` keywords from credential's `get_token` method don't make it to transport
+        assert "claims" not in kwargs
+        assert "tenant_id" not in kwargs
         assert request.url.startswith(endpoint)
         assert request.method == "GET"
         assert request.headers["Secret"] == secret
@@ -780,7 +792,10 @@ async def test_service_fabric_tenant_id():
     thumbprint = "SHA1HEX"
     scope = "scope"
 
-    async def send(request, **_):
+    async def send(request, **kwargs):
+        # ensure the `claims` and `tenant_id` keywords from credential's `get_token` method don't make it to transport
+        assert "claims" not in kwargs
+        assert "tenant_id" not in kwargs
         assert request.url.startswith(endpoint)
         assert request.method == "GET"
         assert request.headers["Secret"] == secret

@@ -47,5 +47,6 @@ extends:
       safeName: azurecorecoretracingtelemetry
     - name: azure-common
       safeName: azurecommon
+      skipPublishDocMs: true
     - name: azure-core-experimental
       safeName: azurecoreexperimental

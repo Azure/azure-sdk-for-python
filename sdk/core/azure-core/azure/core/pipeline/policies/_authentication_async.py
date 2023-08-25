@@ -31,15 +31,17 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy[HTTPRequestType, AsyncHTT
     :param credential: The credential.
     :type credential: ~azure.core.credentials.TokenCredential
     :param str scopes: Lets you specify the type of access needed.
+    :keyword bool enable_cae: Indicates whether to enable Continuous Access Evaluation (CAE) on all requested
+        tokens. Defaults to False.
     """
 
     def __init__(self, credential: "AsyncTokenCredential", *scopes: str, **kwargs: Any) -> None:
-        # pylint:disable=unused-argument
         super().__init__()
         self._credential = credential
         self._lock = asyncio.Lock()
         self._scopes = scopes
         self._token: Optional["AccessToken"] = None
+        self._enable_cae: bool = kwargs.get("enable_cae", False)
 
     async def on_request(self, request: PipelineRequest[HTTPRequestType]) -> None:
         """Adds a bearer token Authorization header to request and sends request to next policy.
@@ -54,7 +56,12 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy[HTTPRequestType, AsyncHTT
             async with self._lock:
                 # double check because another coroutine may have acquired a token while we waited to acquire the lock
                 if self._token is None or self._need_new_token():
-                    self._token = await await_result(self._credential.get_token, *self._scopes)
+                    if self._enable_cae:
+                        self._token = await await_result(
+                            self._credential.get_token, *self._scopes, enable_cae=self._enable_cae
+                        )
+                    else:
+                        self._token = await await_result(self._credential.get_token, *self._scopes)
         request.http_request.headers["Authorization"] = "Bearer " + cast(AccessToken, self._token).token
 
     async def authorize_request(self, request: PipelineRequest[HTTPRequestType], *scopes: str, **kwargs: Any) -> None:
@@ -66,6 +73,8 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy[HTTPRequestType, AsyncHTT
         :param ~azure.core.pipeline.PipelineRequest request: the request
         :param str scopes: required scopes of authentication
         """
+        if self._enable_cae:
+            kwargs.setdefault("enable_cae", self._enable_cae)
         async with self._lock:
             self._token = await await_result(self._credential.get_token, *scopes, **kwargs)
         request.http_request.headers["Authorization"] = "Bearer " + cast(AccessToken, self._token).token

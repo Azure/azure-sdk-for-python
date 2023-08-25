@@ -20,7 +20,7 @@ from ._models import (
     TableItem,
     ResourceTypes,
     AccountSasPermissions,
-    TransactionOperation
+    TransactionOperation,
 )
 from ._version import VERSION
 
