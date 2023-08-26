@@ -29,6 +29,8 @@ from azure.cosmos.http_constants import HttpHeaders, StatusCodes
 from azure.cosmos.cosmos_client import CosmosClient
 from azure.cosmos.partition_key import PartitionKey
 
+pytestmark = pytest.mark.cosmosEmulator
+
 
 @pytest.mark.usefixtures("teardown")
 class BulkTests(unittest.TestCase):
