@@ -18,9 +18,7 @@ from .credentials import NoneCredentialsSchema, ServicePrincipalSchema
 
 class OneLakeArtifactSchema(Schema):
     name = fields.Str(required=True)
-    type = StringTransformedEnum(
-        allowed_values=OneLakeArtifactType.LAKE_HOUSE, casing_transform=camel_to_snake
-    )
+    type = StringTransformedEnum(allowed_values=OneLakeArtifactType.LAKE_HOUSE, casing_transform=camel_to_snake)
 
 
 class OneLakeSchema(PathAwareSchema):

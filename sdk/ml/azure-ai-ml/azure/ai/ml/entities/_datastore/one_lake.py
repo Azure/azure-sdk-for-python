@@ -100,7 +100,9 @@ class OneLakeDatastore(Datastore):
 
     def _to_rest_object(self) -> DatastoreData:
         one_lake_ds = RestOneLakeDatastore(
-            credentials= RestNoneDatastoreCredentials() if self.credentials is None else self.credentials._to_datastore_rest_object(),
+            credentials=RestNoneDatastoreCredentials()
+            if self.credentials is None
+            else self.credentials._to_datastore_rest_object(),
             artifact=RestLakeHouseArtifact(artifact_name=self.artifact["name"]),
             one_lake_workspace_name=self.one_lake_workspace_name,
             endpoint=self.endpoint,
