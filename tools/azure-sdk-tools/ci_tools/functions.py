@@ -1,7 +1,7 @@
 import fnmatch
 import subprocess
 import shutil
-from ast import Not
+
 from packaging.specifiers import SpecifierSet
 from packaging.version import Version, parse, InvalidVersion
 from pkg_resources import Requirement
@@ -541,3 +541,4 @@ def discover_prebuilt_package(dist_directory: str, setup_path: str, package_type
     if prebuilt_package is not None:
         packages.append(prebuilt_package)
     return packages
+
