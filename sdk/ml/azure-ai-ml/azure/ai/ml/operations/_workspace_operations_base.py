@@ -118,8 +118,8 @@ class WorkspaceOperationsBase:
             template,
             param,
             resources_being_deployed,
-        ) = self._populate_arm_paramaters(  # pylint: disable=too-many-function-args
-            workspace, byo_open_ai_resource_id, **kwargs
+        ) = self._populate_arm_paramaters(
+            workspace, byo_open_ai_resource_id=byo_open_ai_resource_id, **kwargs
         )
         # check if create with workspace hub request is valid
         if workspace._kind == PROJECT_WORKSPACE_KIND:
