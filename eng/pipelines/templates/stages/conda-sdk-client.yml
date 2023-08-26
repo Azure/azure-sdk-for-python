@@ -290,6 +290,7 @@ stages:
                   version: 1.4.0
               - name: azure-communication
                 service: communication
+                common_root: azure/communication
                 in_batch: ${{ parameters.release_azure_communication }}
                 checkout:
                 - package: azure-communication-chat
@@ -394,6 +395,7 @@ stages:
                   version: 1.2.0
               - name: azure-schemaregistry
                 service: schemaregistry
+                common_root: azure/schemaregistry
                 in_batch: ${{ parameters.release_azure_schemaregistry }}
                 checkout:
                 - package: azure-schemaregistry
