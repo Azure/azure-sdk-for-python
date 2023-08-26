@@ -642,16 +642,16 @@ class TestKeyVaultKey(KeyVaultTestCase, KeysTestCase):
             await self._update_key_properties(client, key, new_release_policy)
 
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_version,is_hsm",only_vault_latest)
+    @pytest.mark.parametrize("api_version,is_hsm",only_latest)
     @AsyncKeysClientPreparer()
     @recorded_by_proxy_async
-    async def test_key_rotation(self, client, **kwargs):
+    async def test_key_rotation(self, client, is_hsm, **kwargs):
         if (not is_public_cloud() and self.is_live):
             pytest.skip("This test is not supported in usgov/china region. Follow up with service team.")
 
         set_bodiless_matcher()
         key_name = self.get_resource_name("rotation-key")
-        key = await self._create_rsa_key(client, key_name)
+        key = await self._create_rsa_key(client, key_name, hardware_protected=is_hsm)
         rotated_key = await client.rotate_key(key_name)
 
         # the rotated key should have a new ID, version, and key material (for RSA, n and e fields)
@@ -659,18 +659,17 @@ class TestKeyVaultKey(KeyVaultTestCase, KeysTestCase):
         assert key.properties.version != rotated_key.properties.version
         assert key.key.n != rotated_key.key.n
 
-    @pytest.mark.playback_test_only("Currently fails in live mode because of service regression; will be fixed soon.")
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_version,is_hsm",only_vault_latest)
+    @pytest.mark.parametrize("api_version,is_hsm",only_latest)
     @AsyncKeysClientPreparer()
     @recorded_by_proxy_async
-    async def test_key_rotation_policy(self, client, **kwargs):
+    async def test_key_rotation_policy(self, client, is_hsm, **kwargs):
         if (not is_public_cloud() and self.is_live):
             pytest.skip("This test is not supported in usgov/china region. Follow up with service team.")
 
         set_bodiless_matcher()
         key_name = self.get_resource_name("rotation-key")
-        await self._create_rsa_key(client, key_name)
+        await self._create_rsa_key(client, key_name, hardware_protected=is_hsm)
 
         # ensure passing an empty policy with no kwargs doesn't raise an error
         await client.update_key_rotation_policy(key_name, KeyRotationPolicy())
