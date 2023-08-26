@@ -4,8 +4,35 @@
 # license information.
 #--------------------------------------------------------------------------
 
-from typing_extensions import Generic, TypeVar, TypedDict
+from typing_extensions import (
+    Generic,
+    TypeVar,
+    TypedDict,
+    AnyStr,
+    Union,
+    Mapping,
+    MutableSequence,
+    Tuple,
+    List,
+    Protocol,
+    NotRequired,
+    runtime_checkable
+)
+import uuid
+from datetime import datetime
 from enum import Enum
+from dataclasses import dataclass
+
+
+try:
+    dataclass_decorator = dataclass(order=True, slots=True)
+except TypeError:
+    # slots not supported < Python 3.10
+    dataclass_decorator = dataclass(order=True)
+
+
+TYPE_KEY = '_amqp_type'
+VALUE_KEY = '_amqp_value'
 
 
 class AMQPTypes(Enum):
@@ -43,8 +70,18 @@ AMQPValue = TypeVar("AMQPValue")
 
 
 class AMQPDefinition(TypedDict, Generic[AMQPType, AMQPValue]):
-    type: AMQPType
-    value: AMQPValue
+    _amqp_type: AMQPType
+    _amqp_value: AMQPValue
+
+
+AMQP_BASIC_TYPES = Union[None, bool, str, bytes, bytearray, float, int, uuid.UUID, datetime]
+AMQP_FULL_TYPES = Union[
+    AMQP_BASIC_TYPES,
+    Mapping[Union[AMQPDefinition, AMQP_BASIC_TYPES], "AMQP_FULL_TYPES"],
+    MutableSequence["AMQP_FULL_TYPES"],
+    Tuple[Union[AMQPDefinition, AMQP_BASIC_TYPES], "AMQP_FULL_TYPES"]
+]
+AMQP_DEFINED_TYPES = Union[AMQP_FULL_TYPES, AMQPDefinition]
 
 
 class ConstructorBytes:  # pylint: disable=no-init
@@ -84,3 +121,53 @@ class ConstructorBytes:  # pylint: disable=no-init
     array_small = b'\xE0'
     array_large = b'\xF0'
     descriptor = b'\x00'
+
+
+AMQP_NONE = {TYPE_KEY: AMQPTypes.null, VALUE_KEY: None}
+
+
+def amqp_long_value(value: int) -> AMQPDefinition[AMQPTypes.long, int]:
+    return {TYPE_KEY: AMQPTypes.long, VALUE_KEY: value}
+
+
+def amqp_uint_value(value: int) -> AMQPDefinition[AMQPTypes.uint, int]:
+    return {TYPE_KEY: AMQPTypes.uint, VALUE_KEY: value}
+
+
+def amqp_string_value(value: AnyStr) -> AMQPDefinition[AMQPTypes.string, AnyStr]:
+    return {TYPE_KEY: AMQPTypes.string, VALUE_KEY: value}
+
+
+def amqp_symbol_value(value: AnyStr) -> AMQPDefinition[AMQPTypes.symbol, AnyStr]:
+    return {TYPE_KEY: AMQPTypes.symbol, VALUE_KEY: value}
+
+
+def amqp_array_value(value: MutableSequence[AMQP_DEFINED_TYPES]):
+    return {TYPE_KEY: AMQPTypes.array, VALUE_KEY: value}
+
+@runtime_checkable
+class Performative(Protocol):
+    _code: int
+
+    def _describe(self) -> AMQPDefinition[AMQPTypes.described, Tuple[AMQPDefinition[AMQPTypes.ulong, int], AMQPDefinition[AMQPTypes.list, List[AMQPDefinition]]]]:
+        ...
+
+
+__all__ = [
+    'TYPE_KEY',
+    'VALUE_KEY',
+    'AMQP_NONE',
+    'AMQP_BASIC_TYPES',
+    'AMQP_FULL_TYPES',
+    'AMQP_DEFINED_TYPES',
+    'AMQPDefinition',
+    'AMQPTypes',
+    'Performative',
+    'ConstructorBytes',
+    'amqp_long_value',
+    'amqp_array_value',
+    'amqp_string_value',
+    'amqp_symbol_value',
+    'amqp_uint_value',
+    'dataclass_decorator'
+]

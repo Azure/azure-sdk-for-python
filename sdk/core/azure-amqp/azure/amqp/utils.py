@@ -14,36 +14,12 @@ from .types import TYPE, VALUE, AMQPTypes
 from ._encode import encode_payload
 
 
-class UTC(datetime.tzinfo):
-    """Time Zone info for handling UTC"""
-
-    def utcoffset(self, dt):
-        """UTF offset for UTC is 0."""
-        return datetime.timedelta(0)
-
-    def tzname(self, dt):
-        """Timestamp representation."""
-        return "Z"
-
-    def dst(self, dt):
-        """No daylight saving for UTC."""
-        return datetime.timedelta(hours=1)
-
-
-try:
-    from datetime import timezone  # pylint: disable=ungrouped-imports
-
-    TZ_UTC = timezone.utc  # type: ignore
-except ImportError:
-    TZ_UTC = UTC()  # type: ignore
-
-
 def utc_from_timestamp(timestamp):
-    return datetime.datetime.fromtimestamp(timestamp, tz=TZ_UTC)
+    return datetime.datetime.fromtimestamp(timestamp, tz=datetime.timezone.utc)
 
 
 def utc_now():
-    return datetime.datetime.now(tz=TZ_UTC)
+    return datetime.datetime.now(tz=datetime.timezone.utc)
 
 
 def encode(value, encoding='UTF-8'):
@@ -114,25 +90,3 @@ def get_message_encoded_size(message):
     output = bytearray()
     encode_payload(output, message)
     return len(output)
-
-
-def amqp_long_value(value):
-    # A helper method to wrap a Python int as AMQP long
-    # TODO: wrapping one line in a function is expensive, find if there's a better way to do it
-    return {TYPE: AMQPTypes.long, VALUE: value}
-
-
-def amqp_uint_value(value):
-    # A helper method to wrap a Python int as AMQP uint
-    return {TYPE: AMQPTypes.uint, VALUE: value}
-
-
-def amqp_string_value(value):
-    return {TYPE: AMQPTypes.string, VALUE: value}
-
-
-def amqp_symbol_value(value):
-    return {TYPE: AMQPTypes.symbol, VALUE: value}
-
-def amqp_array_value(value):
-    return {TYPE: AMQPTypes.array, VALUE: value}

@@ -5,16 +5,14 @@
 # --------------------------------------------------------------------------
 
 # pylint: disable=too-many-lines
-from typing import Callable, cast, TYPE_CHECKING
-from enum import Enum
+from typing import Callable, cast
+from enum import IntEnum
 
 from ._encode import encode_payload
 from .utils import get_message_encoded_size
 from .error import AMQPError
 from .message import Header, Properties
 
-if TYPE_CHECKING:
-    from ..amqp._amqp_message import AmqpAnnotatedMessage
 
 def _encode_property(value):
     try:
@@ -23,19 +21,13 @@ def _encode_property(value):
         return value
 
 
-class MessageState(Enum):
+class MessageState(IntEnum):
     WaitingToBeSent = 0
     WaitingForSendAck = 1
     SendComplete = 2
     SendFailed = 3
     ReceivedUnsettled = 4
     ReceivedSettled = 5
-
-    def __eq__(self, __o: object) -> bool:
-        try:
-            return self.value == cast(Enum, __o).value
-        except AttributeError:
-            return super().__eq__(__o)
 
 
 class MessageAlreadySettled(Exception):
@@ -49,7 +41,7 @@ PENDING_STATES = (MessageState.WaitingForSendAck, MessageState.WaitingToBeSent)
 
 class LegacyMessage(object):  # pylint: disable=too-many-instance-attributes
     def __init__(self, message, **kwargs):
-        self._message: "AmqpAnnotatedMessage" = message
+        self._message = message
         self.state = MessageState.SendComplete
         self.idle_time = 0
         self.retries = 0

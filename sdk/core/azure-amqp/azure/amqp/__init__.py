@@ -5,19 +5,12 @@
 # -------------------------------------------------------------------------
 
 from ._version import VERSION
-from ._connection import Connection
-from ._transport import SSLTransport
 
-from .client import AMQPClient, ReceiveClient, SendClient
-from ._frames_v2 import BeginFrame, Performative
-from ._encode_v2 import encode_frame
-from ._decode_v2 import decode_frame
+from ._message_v2 import Message, Properties, Header, BatchMessage
+from ._outcomes_v2 import AMQPError, Received, Rejected, Released, Accepted, Modified
+from ._types_v2 import AMQPTypes
+from ._encode_v2 import encode_frame, encode_payload
+from ._decode_v2 import decode_frame, decode_payload, decode_empty_frame
 
 __version__ = VERSION
-__all__ = [
-    "Connection",
-    "SSLTransport",
-    "AMQPClient",
-    "ReceiveClient",
-    "SendClient",
-]
+

@@ -26,32 +26,26 @@ from typing_extensions import (
 )
 from dataclasses import fields
 
-from ._types_v2 import ConstructorBytes, AMQPDefinition, AMQPTypes
+from ._types_v2 import (
+    ConstructorBytes,
+    AMQPDefinition,
+    AMQPTypes,
+    AMQP_BASIC_TYPES,
+    AMQP_FULL_TYPES,
+    AMQP_DEFINED_TYPES,
+    TYPE_KEY,
+    VALUE_KEY
+)
 from ._frames_v2 import Performative
 from ._message_v2 import Message
 
 
 _FRAME_OFFSET = b"\x02"
 _FRAME_TYPE = b"\x00"
-_TYPE = "type"
-_VALUE = "value"
-_AMQP_BASIC_TYPES = Union[None, bool, str, bytes, bytearray, float, int, uuid.UUID, datetime]
-_AMQP_FULL_TYPES = Union[
-    _AMQP_BASIC_TYPES,
-    AMQPDefinition,
-    Mapping[Union[AMQPDefinition, _AMQP_BASIC_TYPES], "_AMQP_FULL_TYPES"],
-    MutableSequence["_AMQP_FULL_TYPES"],
-    Tuple[Union[AMQPDefinition, _AMQP_BASIC_TYPES], "_AMQP_FULL_TYPES"]
-]
-_AMQP_UNDEFINED_TYPES = Union[
-    _AMQP_BASIC_TYPES,
-    Mapping[Union[AMQPDefinition, _AMQP_BASIC_TYPES], "_AMQP_FULL_TYPES"],
-    MutableSequence["_AMQP_FULL_TYPES"],
-    Tuple[Union[AMQPDefinition, _AMQP_BASIC_TYPES], "_AMQP_FULL_TYPES"]
-]
 
-_InputType = TypeVar("_InputType", bound=_AMQP_FULL_TYPES)
-class EncodeCallable(Protocol, Generic[_InputType]):
+
+_InputType = TypeVar("_InputType", bound=AMQP_DEFINED_TYPES)
+class _EncodeCallable(Protocol, Generic[_InputType]):
     def __call__(
         self,
         output: Buffer,
@@ -67,14 +61,14 @@ def _construct(byte: bytes, construct: bool) -> bytes:
     return byte if construct else b""
 
 
-def encode_null(output: Buffer, _, **__) -> None:
+def _encode_null(output: Buffer, _, **__) -> None:
     """
     encoding code="0x40" category="fixed" width="0" label="the null value"
     """
     output.extend(ConstructorBytes.null)
 
 
-def encode_boolean(
+def _encode_boolean(
     output: Buffer,
     value: bool,
     *,
@@ -95,7 +89,7 @@ def encode_boolean(
         output.extend(ConstructorBytes.bool_true if value else ConstructorBytes.bool_false)
 
 
-def encode_ubyte(
+def _encode_ubyte(
     output: Buffer,
     value: Union[int, bytes],
     *,
@@ -116,7 +110,7 @@ def encode_ubyte(
         raise ValueError(f"Unsigned byte value must be 0-255, got {value}.") from error
 
 
-def encode_ushort(
+def _encode_ushort(
     output: Buffer,
     value: int,
     *,
@@ -134,7 +128,7 @@ def encode_ushort(
         raise ValueError(f"Unsigned byte value must be 0-65535, got {value}.") from error
 
 
-def encode_uint(
+def _encode_uint(
     output: Buffer,
     value: int,
     *,
@@ -162,7 +156,7 @@ def encode_uint(
         raise ValueError(f"Value supplied for unsigned int invalid: {value}.") from error
 
 
-def encode_ulong(
+def _encode_ulong(
     output: Buffer,
     value: int,
     *,
@@ -190,7 +184,7 @@ def encode_ulong(
         raise ValueError(f"Value supplied for unsigned long invalid: {value}") from error
 
 
-def encode_byte(
+def _encode_byte(
     output: Buffer,
     value: int,
     *,
@@ -208,7 +202,7 @@ def encode_byte(
         raise ValueError(f"Byte value must be -128-127, got {value}.") from error
 
 
-def encode_short(
+def _encode_short(
     output: Buffer,
     value: int,
     *,
@@ -226,7 +220,7 @@ def encode_short(
         raise ValueError(f"Short value must be -32768-32767, got {value}.") from error
 
 
-def encode_int(
+def _encode_int(
     output: Buffer,
     value: int,
     *,
@@ -249,7 +243,7 @@ def encode_int(
         raise ValueError(f"Value supplied for int invalid: {value}") from error
 
 
-def encode_long(
+def _encode_long(
     output: Buffer,
     value: Union[int, datetime],
     *,
@@ -274,7 +268,7 @@ def encode_long(
         raise ValueError(f"Value supplied for long invalid: {value}") from error
 
 
-def encode_float(
+def _encode_float(
     output: Buffer,
     value: float,
     *,
@@ -292,7 +286,7 @@ def encode_float(
         raise ValueError(f"Value supplied for float invalid: {value}") from error
 
 
-def encode_double(
+def _encode_double(
     output: Buffer,
     value: float,
     *,
@@ -310,7 +304,7 @@ def encode_double(
         raise ValueError(f"Value supplied for double invalid: {value}") from error
 
 
-def encode_timestamp(
+def _encode_timestamp(
     output: Buffer,
     value: Union[int, datetime],
     *,
@@ -331,7 +325,7 @@ def encode_timestamp(
         raise ValueError(f"Value supplied for timestamp invalid: {value}") from error
 
 
-def encode_uuid(
+def _encode_uuid(
     output: Buffer,
     value: Union[uuid.UUID, str, bytes],
     *,
@@ -353,7 +347,7 @@ def encode_uuid(
     output.extend(value)
 
 
-def encode_binary(
+def _encode_binary(
     output: Buffer,
     value: Union[bytes, bytearray],
     *,
@@ -378,7 +372,7 @@ def encode_binary(
         raise ValueError("Binary data to long to encode") from error
 
 
-def encode_string(
+def _encode_string(
     output: Buffer,
     value: AnyStr,
     *,
@@ -407,7 +401,7 @@ def encode_string(
         raise ValueError("String value too long to encode.") from error
 
 
-def encode_symbol(
+def _encode_symbol(
     output: Buffer,
     value: AnyStr,
     *,
@@ -436,9 +430,9 @@ def encode_symbol(
         raise ValueError("Symbol value too long to encode.") from error
 
 
-def encode_list(
+def _encode_list(
     output: Buffer,
-    value: MutableSequence[_AMQP_FULL_TYPES],
+    value: MutableSequence[AMQP_DEFINED_TYPES],
     *,
     with_constructor: bool = True,
     use_smallest: bool = True
@@ -458,7 +452,7 @@ def encode_list(
     encoded_size = 0
     encoded_values = bytearray()
     for item in value:
-        encode_value(encoded_values, item, with_constructor=True)
+        _encode_value(encoded_values, item, with_constructor=True)
     encoded_size += len(encoded_values)
     if use_smallest and count <= 255 and encoded_size < 255:
         output.extend(_construct(ConstructorBytes.list_small, with_constructor))
@@ -473,9 +467,9 @@ def encode_list(
             raise ValueError("List is too large or too long to be encoded.") from error
     output.extend(encoded_values)
 
-def encode_map(
+def _encode_map(
     output: Buffer,
-    value: Mapping[Union[AMQPDefinition, _AMQP_BASIC_TYPES], _AMQP_FULL_TYPES],
+    value: Mapping[Union[AMQPDefinition, AMQP_BASIC_TYPES], AMQP_DEFINED_TYPES],
     *,
     with_constructor: bool = True,
     use_smallest: bool = True
@@ -490,8 +484,8 @@ def encode_map(
     encoded_size = 0
     encoded_values = bytearray()
     for key, data in value.items():
-        encode_value(encoded_values, key, with_constructor=True)
-        encode_value(encoded_values, data, with_constructor=True)
+        _encode_value(encoded_values, key, with_constructor=True)
+        _encode_value(encoded_values, data, with_constructor=True)
     encoded_size = len(encoded_values)
     if use_smallest and count <= 255 and encoded_size < 255:
         output.extend(_construct(ConstructorBytes.map_small, with_constructor))
@@ -508,18 +502,18 @@ def encode_map(
 
 
 def _check_element_type(
-    item: _AMQP_FULL_TYPES,
+    item: AMQP_DEFINED_TYPES,
     element_type: Optional[Union[AMQPTypes, Type]]
 ) -> Union[AMQPTypes, Type]:
     if not element_type:
         try:
-            return item[_TYPE]
+            return item[TYPE_KEY]
         except (KeyError, TypeError):
             return type(item)
     try:
-        if item[_TYPE] != element_type:
+        if item[TYPE_KEY] != element_type:
             raise TypeError(
-                f"All elements in an array must be the same type. Expected '{element_type}', got '{item[_TYPE]}'."
+                f"All elements in an array must be the same type. Expected '{element_type}', got '{item[TYPE_KEY]}'."
             )
     except (KeyError, TypeError):
         if not isinstance(item, element_type):
@@ -529,9 +523,9 @@ def _check_element_type(
     return element_type
 
 
-def encode_array(
+def _encode_array(
     output: Buffer, 
-    value: MutableSequence[_AMQP_FULL_TYPES],
+    value: MutableSequence[AMQP_DEFINED_TYPES],
     *,
     with_constructor: bool = True,
     use_smallest: bool = True
@@ -549,7 +543,7 @@ def encode_array(
     element_type = None
     for item in value:
         element_type = _check_element_type(item, element_type)
-        encode_value(
+        _encode_value(
             encoded_values, item, with_constructor=first_item, use_smallest=False
         )
         first_item = False
@@ -571,19 +565,19 @@ def encode_array(
     output.extend(encoded_values)
 
 
-def encode_described(
+def _encode_described(
     output: Buffer,
-    value: Tuple[Union[AMQPDefinition, _AMQP_BASIC_TYPES], _AMQP_FULL_TYPES],
+    value: Tuple[Union[AMQPDefinition, AMQP_BASIC_TYPES], AMQP_DEFINED_TYPES],
     **kwargs: Any
 ) -> None:
     output.extend(ConstructorBytes.descriptor)
-    encode_value(output, value[0], **kwargs)
-    encode_value(output, value[1], **kwargs)
+    _encode_value(output, value[0], **kwargs)
+    _encode_value(output, value[1], **kwargs)
 
 
-def encode_fields(
+def _encode_fields(
     output: Buffer,
-    value: Mapping[AnyStr, _AMQP_FULL_TYPES],
+    value: Mapping[AnyStr, AMQP_DEFINED_TYPES],
     **_
 ) -> None:
     """A mapping from field name to value.
@@ -594,15 +588,15 @@ def encode_fields(
 
     <type name="fields" class="restricted" source="map"/>
     """
-    fields: Dict[AMQPDefinition[AMQPTypes.symbol, AnyStr], _AMQP_FULL_TYPES] = {
-        {_TYPE: AMQPTypes.symbol, _VALUE: key}: data for key, data in value.items()
+    fields: Dict[AMQPDefinition[AMQPTypes.symbol, AnyStr], AMQP_DEFINED_TYPES] = {
+        {TYPE_KEY: AMQPTypes.symbol, VALUE_KEY: key}: data for key, data in value.items()
     }
-    encode_map(output, fields)
+    _encode_map(output, fields)
 
 
-def encode_annotations(
+def _encode_annotations(
     output: Buffer,
-    value: Mapping[Union[AnyStr, int], _AMQP_FULL_TYPES],
+    value: Mapping[Union[AnyStr, int], AMQP_DEFINED_TYPES],
     **_
 ) -> None:
     """The annotations type is a map where the keys are restricted to be of type symbol or of type ulong.
@@ -616,16 +610,16 @@ def encode_annotations(
     """
     annotations: Dict[
         Union[AMQPDefinition[AMQPTypes.symbol, AnyStr], AMQPDefinition[AMQPTypes.ulong, int]],
-        _AMQP_FULL_TYPES
+        AMQP_DEFINED_TYPES
     ] = {
-        {_TYPE: AMQPTypes.ulong, _VALUE: k} if isinstance(k, int) else {_TYPE: AMQPTypes.symbol, _VALUE: k}: v for k, v in value.items()
+        {TYPE_KEY: AMQPTypes.ulong, VALUE_KEY: k} if isinstance(k, int) else {TYPE_KEY: AMQPTypes.symbol, VALUE_KEY: k}: v for k, v in value.items()
     }
-    encode_map(output, annotations)
+    _encode_map(output, annotations)
 
 
-def encode_application_properties(
+def _encode_application_properties(
     output: Buffer,
-    value: Mapping[str, Union[AMQPDefinition, _AMQP_BASIC_TYPES]],
+    value: Mapping[AnyStr, Union[AMQPDefinition, AMQP_BASIC_TYPES]],
     **_
 ) -> None:
     """The application-properties section is a part of the bare message used for structured application data.
@@ -638,13 +632,13 @@ def encode_application_properties(
     The keys of this map are restricted to be of type string (which excludes the possibility of a null key)
     and the values are restricted to be of simple types only, that is (excluding map, list, and array types).
     """
-    properties: Dict[AMQPDefinition[AMQPTypes.string, str], Any] = {
-        {_TYPE: AMQPTypes.string, _VALUE: key}: data for key, data in value.items()
+    properties: Dict[AMQPDefinition[AMQPTypes.string, AnyStr], Any] = {
+        {TYPE_KEY: AMQPTypes.string, VALUE_KEY: key}: data for key, data in value.items()
     }
-    encode_map(output, properties)
+    _encode_map(output, properties)
 
 
-def encode_message_id(
+def _encode_message_id(
     output: Buffer,
     value: Union[int, uuid.UUID, bytes, str],
     **_
@@ -656,17 +650,17 @@ def encode_message_id(
     <type name="message-id-string" class="restricted" source="string" provides="message-id"/>
     """
     if isinstance(value, int):
-        encode_ulong(output, value)
+        _encode_ulong(output, value)
     if isinstance(value, uuid.UUID):
-        encode_uuid(output, value)
+        _encode_uuid(output, value)
     if isinstance(value, bytes):
-        encode_binary(output, value)
+        _encode_binary(output, value)
     if isinstance(value, str):
-        encode_string(output, value)
+        _encode_string(output, value)
     raise TypeError("Unsupported Message ID type.")
 
 
-def encode_node_properties(output: Buffer, value: Any, **_) -> None:
+def _encode_node_properties(output: Buffer, value: Any, **_) -> None:
     """Properties of a node.
 
     <type name="node-properties" class="restricted" source="fields"/>
@@ -688,9 +682,9 @@ def encode_node_properties(output: Buffer, value: Any, **_) -> None:
     raise NotImplementedError("Encoding node properties is not currently supported.")
 
 
-def encode_filter_set(
+def _encode_filter_set(
     output: Buffer,
-    value: Mapping[AnyStr, Optional[Tuple[AnyStr, _AMQP_FULL_TYPES]]],
+    value: Mapping[AnyStr, Optional[Tuple[AnyStr, AMQP_DEFINED_TYPES]]],
     **_
 ) -> None:
     """A set of predicates to filter the Messages admitted onto the Link.
@@ -709,191 +703,151 @@ def encode_filter_set(
     filters: Dict[AMQPDefinition[AMQPTypes.symbol, AnyStr], AMQPDefinition] = {}
     for name, data in value.items():
         if data is None:
-            described_filter = {_TYPE: AMQPTypes.null, _VALUE: None}
+            described_filter = {TYPE_KEY: AMQPTypes.null, VALUE_KEY: None}
         else:
             descriptor, filter_value = data
             described_filter = {
-                _TYPE: AMQPTypes.described,
-                _VALUE: ({_TYPE: AMQPTypes.symbol, _VALUE: descriptor}, filter_value),
+                TYPE_KEY: AMQPTypes.described,
+                VALUE_KEY: ({TYPE_KEY: AMQPTypes.symbol, VALUE_KEY: descriptor}, filter_value),
             }
-        filters[{_TYPE: AMQPTypes.symbol, _VALUE: name}] = described_filter
-    encode_map(output, filters)
+        filters[{TYPE_KEY: AMQPTypes.symbol, VALUE_KEY: name}] = described_filter
+    _encode_map(output, filters)
 
 
-def encode_unknown(
+def _encode_unknown(
     output: Buffer,
-    value: _AMQP_UNDEFINED_TYPES,
+    value: AMQP_FULL_TYPES,
     **kwargs: Any
 ) -> None:
     """
     Dynamic encoding according to the type of `value`.
     """
     if value is None:
-        encode_null(output, **kwargs)
+        _encode_null(output, **kwargs)
     elif isinstance(value, bool):
-        encode_boolean(output, value, **kwargs)
+        _encode_boolean(output, value, **kwargs)
     elif isinstance(value, str):
-        encode_string(output, value, **kwargs)
+        _encode_string(output, value, **kwargs)
     elif isinstance(value, uuid.UUID):
-        encode_uuid(output, value, **kwargs)
+        _encode_uuid(output, value, **kwargs)
     elif isinstance(value, (bytearray, bytes)):
-        encode_binary(output, value, **kwargs)
+        _encode_binary(output, value, **kwargs)
     elif isinstance(value, float):
-        encode_double(output, value, **kwargs)
+        _encode_double(output, value, **kwargs)
     elif isinstance(value, int):
-        encode_int(output, value, **kwargs)
+        _encode_int(output, value, **kwargs)
     elif isinstance(value, datetime):
-        encode_timestamp(output, value, **kwargs)
+        _encode_timestamp(output, value, **kwargs)
     elif isinstance(value, MutableSequence):
-        encode_list(output, value, **kwargs)
+        _encode_list(output, value, **kwargs)
     elif isinstance(value, tuple):
-        encode_described(output, value, **kwargs)
+        _encode_described(output, value, **kwargs)
     elif isinstance(value, Mapping):
-        encode_map(output, value, **kwargs)
+        _encode_map(output, value, **kwargs)
     else:
         raise TypeError(f"Unable to encode unknown value: {value}")
 
 
-_ENCODE_MAP: Dict[AMQPTypes, EncodeCallable] = {
-    AMQPTypes.null: encode_null,
-    AMQPTypes.boolean: encode_boolean,
-    AMQPTypes.ubyte: encode_ubyte,
-    AMQPTypes.byte: encode_byte,
-    AMQPTypes.ushort: encode_ushort,
-    AMQPTypes.short: encode_short,
-    AMQPTypes.uint: encode_uint,
-    AMQPTypes.int: encode_int,
-    AMQPTypes.ulong: encode_ulong,
-    AMQPTypes.long: encode_long,
-    AMQPTypes.float: encode_float,
-    AMQPTypes.double: encode_double,
-    AMQPTypes.timestamp: encode_timestamp,
-    AMQPTypes.uuid: encode_uuid,
-    AMQPTypes.binary: encode_binary,
-    AMQPTypes.string: encode_string,
-    AMQPTypes.symbol: encode_symbol,
-    AMQPTypes.list: encode_list,
-    AMQPTypes.map: encode_map,
-    AMQPTypes.array: encode_array,
-    AMQPTypes.described: encode_described,
-    AMQPTypes.fields: encode_fields,
-    AMQPTypes.annotations: encode_annotations,
-    AMQPTypes.message_id: encode_message_id,
-    AMQPTypes.app_properties: encode_application_properties,
-    AMQPTypes.node_properties: encode_node_properties,
-    AMQPTypes.filter_set: encode_filter_set,
+_ENCODE_MAP: Dict[AMQPTypes, _EncodeCallable] = {
+    AMQPTypes.null: _encode_null,
+    AMQPTypes.boolean: _encode_boolean,
+    AMQPTypes.ubyte: _encode_ubyte,
+    AMQPTypes.byte: _encode_byte,
+    AMQPTypes.ushort: _encode_ushort,
+    AMQPTypes.short: _encode_short,
+    AMQPTypes.uint: _encode_uint,
+    AMQPTypes.int: _encode_int,
+    AMQPTypes.ulong: _encode_ulong,
+    AMQPTypes.long: _encode_long,
+    AMQPTypes.float: _encode_float,
+    AMQPTypes.double: _encode_double,
+    AMQPTypes.timestamp: _encode_timestamp,
+    AMQPTypes.uuid: _encode_uuid,
+    AMQPTypes.binary: _encode_binary,
+    AMQPTypes.string: _encode_string,
+    AMQPTypes.symbol: _encode_symbol,
+    AMQPTypes.list: _encode_list,
+    AMQPTypes.map: _encode_map,
+    AMQPTypes.array: _encode_array,
+    AMQPTypes.described: _encode_described,
+    AMQPTypes.fields: _encode_fields,
+    AMQPTypes.annotations: _encode_annotations,
+    AMQPTypes.message_id: _encode_message_id,
+    AMQPTypes.app_properties: _encode_application_properties,
+    AMQPTypes.node_properties: _encode_node_properties,
+    AMQPTypes.filter_set: _encode_filter_set,
 }
 
 
-def encode_value(output: Buffer, value: AMQPDefinition, **kwargs) -> None:
+def _encode_value(output: Buffer, value: AMQPDefinition, **kwargs) -> None:
     try:
-        _ENCODE_MAP[value['type']](output, value['value'], **kwargs)
+        _ENCODE_MAP[value[TYPE_KEY]](output, value[VALUE_KEY], **kwargs)
     except (KeyError, TypeError):
-        raise RuntimeError(f"Encoding unknown: {value}")
-        # encode_unknown(output, value, **kwargs)
-
-
-def describe_performative(
-    performative: Performative
-) -> AMQPDefinition[
-        AMQPTypes.described,
-        Tuple[AMQPDefinition[AMQPTypes.ulong, int], AMQPDefinition[AMQPTypes.list, List[AMQPDefinition]]]
-    ]:
-    body: List[AMQPDefinition] = []
-    drop_trailing_none_index = 0
-    for index, field in enumerate(fields(performative)):
-        if field.name == '_code':
-            continue
-        value = getattr(performative, field.name)
-        if value is None:
-            body.append({_TYPE: AMQPTypes.null, _VALUE: None})
-            continue
-        drop_trailing_none_index = index + 1
-        if isinstance(value, Performative):
-            body.append(describe_performative(value))
-        else:
-            if field.metadata.get('multiple', False):
-                body.append(
-                    {
-                        _TYPE: AMQPTypes.array,
-                        _VALUE: [{_TYPE: field.metadata[_TYPE], _VALUE: v} for v in value],
-                    }
-                )
-            else:
-                body.append({_TYPE: field.metadata[_TYPE], _VALUE: value})
-
-    return {
-        _TYPE: AMQPTypes.described,
-        _VALUE: (
-            {_TYPE: AMQPTypes.ulong, _VALUE: performative._code}, # pylint: disable=protected-access
-            {_VALUE: AMQPTypes.list, _VALUE: body[:drop_trailing_none_index]},
-        ),
-    }
+        _encode_unknown(output, value, **kwargs)
 
 
 def encode_payload(output: Buffer, payload: Message) -> Buffer:
-
     if payload.header:
         # TODO: Header encoding can be optimized to encode bool without constructor
-        encode_value(output, describe_performative(payload.header))
+        _encode_value(output, payload.header._describe())
     if payload.message_annotations:
-        encode_described(
+        _encode_described(
             output,
             (
-                {_TYPE: AMQPTypes.ulong, _VALUE: 0x00000072},
-                encode_annotations(payload.message_annotations),
+                {TYPE_KEY: AMQPTypes.ulong, VALUE_KEY: 0x00000072},
+                _encode_annotations(payload.message_annotations),
             )
         )
     if payload.properties:
-        encode_value(output, describe_performative(payload.properties))
+        _encode_value(output, payload.properties._describe())
     if payload.application_properties:
-        encode_described(
+        _encode_described(
             output,
             (
-                {_TYPE: AMQPTypes.ulong, _VALUE: 0x00000074},
-                encode_application_properties(payload.application_properties),
+                {TYPE_KEY: AMQPTypes.ulong, VALUE_KEY: 0x00000074},
+                _encode_application_properties(payload.application_properties),
             )
         )
     if payload.data:
         for item_value in payload.data:
-            encode_described(
+            _encode_described(
                 output,
                 (
-                    {_TYPE: AMQPTypes.ulong, _VALUE: 0x00000075},
-                    {_TYPE: AMQPTypes.binary, _VALUE: item_value},
+                    {TYPE_KEY: AMQPTypes.ulong, VALUE_KEY: 0x00000075},
+                    {TYPE_KEY: AMQPTypes.binary, VALUE_KEY: item_value},
                 )
             )
     if payload.sequence:
         for item_value in payload.sequence:
-            encode_described(
+            _encode_described(
                 output,
                 (
-                    {_TYPE: AMQPTypes.ulong, _VALUE: 0x00000076},
+                    {TYPE_KEY: AMQPTypes.ulong, VALUE_KEY: 0x00000076},
                     item_value,
                 )
             )
     if payload.value:
-        encode_described(
+        _encode_described(
             output,
             (
-                {_TYPE: AMQPTypes.ulong, _VALUE: 0x00000077},
+                {TYPE_KEY: AMQPTypes.ulong, VALUE_KEY: 0x00000077},
                 payload.value,
             )
         )
     if payload.footer:
-        encode_described(
+        _encode_described(
             output,
             (
-                {_TYPE: AMQPTypes.ulong, _VALUE: 0x00000078},
-                encode_annotations(payload.footer),
+                {TYPE_KEY: AMQPTypes.ulong, VALUE_KEY: 0x00000078},
+                _encode_annotations(payload.footer),
             )
         )
     if payload.delivery_annotations:
-        encode_described(
+        _encode_described(
             output,
             (
-                {_TYPE: AMQPTypes.ulong, _VALUE: 0x00000071},
-                encode_annotations(payload.delivery_annotations),
+                {TYPE_KEY: AMQPTypes.ulong, VALUE_KEY: 0x00000071},
+                _encode_annotations(payload.delivery_annotations),
             )
         )
     return output
@@ -908,13 +862,18 @@ def encode_frame(
         header = size.to_bytes(4, "big") + _FRAME_OFFSET + frame_type
         return header, None
 
-    frame_description = describe_performative(frame)
+    frame_description = frame._describe()
     frame_data = bytearray()
-    encode_value(frame_data, frame_description)
+    _encode_value(frame_data, frame_description)
 
-    if frame._code == 0x00000014:  # TransferFrame
+    if frame._code == 20:  # TransferFrame
         frame_data += frame.payload
 
     size = len(frame_data) + 8
     header = size.to_bytes(4, "big") + _FRAME_OFFSET + frame_type
     return header, frame_data
+
+__all__ = [
+    'encode_frame',
+    'encode_payload'
+]

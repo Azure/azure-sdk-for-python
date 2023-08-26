@@ -3,32 +3,22 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 #--------------------------------------------------------------------------
-# pylint: disable=redefined-builtin, import-error
-
-import struct
-import uuid
-from datetime import datetime
 from typing_extensions import (
     List,
     Tuple,
     Dict,
     Callable,
-    Union,
     Buffer,
     Literal,
+    Union
 )
-
+import struct
+import uuid
 
 from ._message_v2 import Message, Properties, Header
+from ._types_v2 import AMQP_BASIC_TYPES, AMQP_FULL_TYPES
 
 
-_AMQP_BASIC_TYPES = Union[None, bool, str, bytes, float, int, uuid.UUID, datetime]
-_AMQP_FULL_TYPES = Union[
-    _AMQP_BASIC_TYPES,
-    Dict[_AMQP_BASIC_TYPES, "_AMQP_FULL_TYPES"],
-    List["_AMQP_FULL_TYPES"],
-    Tuple[_AMQP_BASIC_TYPES, "_AMQP_FULL_TYPES"]
-]
 _HEADER_PREFIX = memoryview(b'AMQP')
 _COMPOSITES: Dict[int, str] = {
     35: 'received',
@@ -149,7 +139,7 @@ def _decode_binary_large(buffer: Buffer) -> Tuple[Buffer, bytes]:
     return buffer[length_index:], buffer[4:length_index].tobytes()
 
 
-def _decode_list_small(buffer: Buffer) -> Tuple[Buffer, List[_AMQP_FULL_TYPES]]:
+def _decode_list_small(buffer: Buffer) -> Tuple[Buffer, List[AMQP_FULL_TYPES]]:
     count = buffer[1]
     buffer = buffer[2:]
     values = [None] * count
@@ -158,7 +148,7 @@ def _decode_list_small(buffer: Buffer) -> Tuple[Buffer, List[_AMQP_FULL_TYPES]]:
     return buffer, values
 
 
-def _decode_list_large(buffer: Buffer) -> Tuple[Buffer, List[_AMQP_FULL_TYPES]]:
+def _decode_list_large(buffer: Buffer) -> Tuple[Buffer, List[AMQP_FULL_TYPES]]:
     count = c_unsigned_long.unpack(buffer[4:8])[0]
     buffer = buffer[8:]
     values = [None] * count
@@ -167,7 +157,7 @@ def _decode_list_large(buffer: Buffer) -> Tuple[Buffer, List[_AMQP_FULL_TYPES]]:
     return buffer, values
 
 
-def _decode_map_small(buffer:Buffer) -> Tuple[Buffer, Dict[_AMQP_BASIC_TYPES, _AMQP_FULL_TYPES]]:
+def _decode_map_small(buffer:Buffer) -> Tuple[Buffer, Dict[AMQP_BASIC_TYPES, AMQP_FULL_TYPES]]:
     count = int(buffer[1]/2)
     buffer = buffer[2:]
     values = {}
@@ -178,7 +168,7 @@ def _decode_map_small(buffer:Buffer) -> Tuple[Buffer, Dict[_AMQP_BASIC_TYPES, _A
     return buffer, values
 
 
-def _decode_map_large(buffer: Buffer) -> Tuple[Buffer, Dict[_AMQP_BASIC_TYPES, _AMQP_FULL_TYPES]]:
+def _decode_map_large(buffer: Buffer) -> Tuple[Buffer, Dict[AMQP_BASIC_TYPES, AMQP_FULL_TYPES]]:
     count = int(c_unsigned_long.unpack(buffer[4:8])[0]/2)
     buffer = buffer[8:]
     values = {}
@@ -189,7 +179,7 @@ def _decode_map_large(buffer: Buffer) -> Tuple[Buffer, Dict[_AMQP_BASIC_TYPES, _
     return buffer, values
 
 
-def _decode_array_small(buffer: Buffer) -> Tuple[Buffer, List[_AMQP_FULL_TYPES]]:
+def _decode_array_small(buffer: Buffer) -> Tuple[Buffer, List[AMQP_FULL_TYPES]]:
     count = buffer[1]  # Ignore first byte (size) and just rely on count
     if count:
         subconstructor = buffer[2]
@@ -201,7 +191,7 @@ def _decode_array_small(buffer: Buffer) -> Tuple[Buffer, List[_AMQP_FULL_TYPES]]
     return buffer[2:], []
 
 
-def _decode_array_large(buffer: Buffer) -> Tuple[Buffer, List[_AMQP_FULL_TYPES]]:
+def _decode_array_large(buffer: Buffer) -> Tuple[Buffer, List[AMQP_FULL_TYPES]]:
     count = c_unsigned_long.unpack(buffer[4:8])[0]
     if count:
         subconstructor = buffer[8]
@@ -213,7 +203,7 @@ def _decode_array_large(buffer: Buffer) -> Tuple[Buffer, List[_AMQP_FULL_TYPES]]
     return buffer[8:], []
 
 
-def _decode_described(buffer: Buffer) -> Tuple[Buffer, _AMQP_FULL_TYPES]:
+def _decode_described(buffer: Buffer) -> Tuple[Buffer, AMQP_FULL_TYPES]:
     # TODO: Perf improvement: move the cursor of the buffer to the described value based on size of the
     # descriptor without decoding descriptor value
     composite_type = buffer[0]
@@ -260,7 +250,7 @@ def decode_payload(buffer: Buffer) -> Message:
     return message
 
 
-def decode_frame(data: Buffer) -> Tuple[int, List[Buffer]]:
+def decode_frame(data: Buffer) -> Tuple[int, List[Union[AMQP_FULL_TYPES, Buffer]]]:
     # Ignore the first two bytes, they will always be the constructors for
     # described type then ulong.
     frame_type = data[2]
@@ -273,10 +263,10 @@ def decode_frame(data: Buffer) -> Tuple[int, List[Buffer]]:
         # list8 0xc0: data[4] is size, data[5] is count
         count = data[5]
         buffer = data[6:]
-    fields: List[Buffer] = [b""] * count
+    fields: List[Union[AMQP_FULL_TYPES, Buffer]] = [None] * count
     for i in range(count):
         buffer, fields[i] = _DECODE_BY_CONSTRUCTOR[buffer[0]](buffer[1:])
-    if frame_type == 20:
+    if frame_type == 20:  # TransferFrame
         fields.append(buffer)
     return frame_type, fields
 
@@ -289,7 +279,7 @@ def decode_empty_frame(header: Buffer) -> Tuple[int, bytes]:
     raise ValueError("Received unrecognized empty frame")
 
 
-_DECODE_BY_CONSTRUCTOR: List[Callable[[Buffer], Tuple[Buffer, _AMQP_FULL_TYPES]]] = [lambda b: (b, None)] * 256
+_DECODE_BY_CONSTRUCTOR: List[Callable[[Buffer], Tuple[Buffer, AMQP_FULL_TYPES]]] = [lambda b: (b, None)] * 256
 _DECODE_BY_CONSTRUCTOR[0] = _decode_described
 _DECODE_BY_CONSTRUCTOR[64] = _decode_null
 _DECODE_BY_CONSTRUCTOR[65] = _decode_true
@@ -326,3 +316,9 @@ _DECODE_BY_CONSTRUCTOR[208] = _decode_list_large
 _DECODE_BY_CONSTRUCTOR[209] = _decode_map_large
 _DECODE_BY_CONSTRUCTOR[224] = _decode_array_small
 _DECODE_BY_CONSTRUCTOR[240] = _decode_array_large
+
+__all__ = [
+    'decode_empty_frame',
+    'decode_frame',
+    'decode_payload'
+]
