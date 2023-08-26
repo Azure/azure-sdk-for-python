@@ -80,7 +80,7 @@ class WorkspaceOperationsBase:
     ) -> LROPoller[Workspace]:
         existing_workspace = None
         resource_group = kwargs.get("resource_group") or workspace.resource_group or self._resource_group_name
-        byo_open_ai_resource_id = kwargs.get("byo_open_ai_resource_id") or ""
+        byo_open_ai_resource_id = kwargs.pop("byo_open_ai_resource_id", "")
 
         try:
             existing_workspace = self.get(workspace.name, resource_group=resource_group)
