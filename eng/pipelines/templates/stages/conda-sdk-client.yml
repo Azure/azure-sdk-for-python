@@ -264,8 +264,6 @@ stages:
                 checkout:
                 - package: azure-ai-metricsadvisor
                   version: 1.0.0
-                - package: azure-ai-metricsadvisor
-                  version: 1.0.0
               - name: azure-ai-ml
                 service: ml
                 in_batch: ${{ parameters.release_azure_ai_ml }}
