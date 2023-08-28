@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://batch56e27a4.eastus.batch.azure.com/pools?api-version=2022-10-01.16.0",
+      "RequestUri": "https://batch56e27a4.eastus.batch.azure.com/pools?api-version=2023-05-01.17.0",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -57,7 +57,7 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://batch56e27a4.eastus.batch.azure.com/pools/batch_iaas_56e27a4?api-version=2022-10-01.16.0",
+      "RequestUri": "https://batch56e27a4.eastus.batch.azure.com/pools/batch_iaas_56e27a4?api-version=2023-05-01.17.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",

@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d/enableautoscale?api-version=2022-10-01.16.0",
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d/enableautoscale?api-version=2023-05-01.17.0",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -37,7 +37,7 @@
       }
     },
     {
-      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d/enableautoscale?api-version=2022-10-01.16.0",
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d/enableautoscale?api-version=2023-05-01.17.0",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -68,7 +68,7 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d/evaluateautoscale?api-version=2022-10-01.16.0",
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d/evaluateautoscale?api-version=2023-05-01.17.0",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -101,7 +101,7 @@
       }
     },
     {
-      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2022-10-01.16.0",
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2023-05-01.17.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -172,7 +172,7 @@
       }
     },
     {
-      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2022-10-01.16.0",
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2023-05-01.17.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -243,7 +243,7 @@
       }
     },
     {
-      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2022-10-01.16.0",
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2023-05-01.17.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -314,7 +314,7 @@
       }
     },
     {
-      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2022-10-01.16.0",
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2023-05-01.17.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -385,7 +385,7 @@
       }
     },
     {
-      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2022-10-01.16.0",
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2023-05-01.17.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -456,7 +456,7 @@
       }
     },
     {
-      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2022-10-01.16.0",
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2023-05-01.17.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -527,7 +527,7 @@
       }
     },
     {
-      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2022-10-01.16.0",
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2023-05-01.17.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -598,7 +598,7 @@
       }
     },
     {
-      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2022-10-01.16.0",
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2023-05-01.17.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -669,7 +669,7 @@
       }
     },
     {
-      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2022-10-01.16.0",
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2023-05-01.17.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -740,7 +740,7 @@
       }
     },
     {
-      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2022-10-01.16.0",
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2023-05-01.17.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -811,7 +811,7 @@
       }
     },
     {
-      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2022-10-01.16.0",
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2023-05-01.17.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -882,7 +882,7 @@
       }
     },
     {
-      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2022-10-01.16.0",
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2023-05-01.17.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -953,7 +953,7 @@
       }
     },
     {
-      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2022-10-01.16.0",
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2023-05-01.17.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -1024,7 +1024,7 @@
       }
     },
     {
-      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2022-10-01.16.0",
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2023-05-01.17.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -1095,7 +1095,7 @@
       }
     },
     {
-      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2022-10-01.16.0",
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2023-05-01.17.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -1166,7 +1166,7 @@
       }
     },
     {
-      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2022-10-01.16.0",
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2023-05-01.17.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -1237,7 +1237,7 @@
       }
     },
     {
-      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2022-10-01.16.0",
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2023-05-01.17.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -1308,7 +1308,7 @@
       }
     },
     {
-      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2022-10-01.16.0",
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2023-05-01.17.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -1379,7 +1379,7 @@
       }
     },
     {
-      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2022-10-01.16.0",
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2023-05-01.17.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -1450,7 +1450,7 @@
       }
     },
     {
-      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2022-10-01.16.0",
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2023-05-01.17.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -1521,7 +1521,7 @@
       }
     },
     {
-      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2022-10-01.16.0",
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2023-05-01.17.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -1592,7 +1592,7 @@
       }
     },
     {
-      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2022-10-01.16.0",
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2023-05-01.17.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -1663,7 +1663,7 @@
       }
     },
     {
-      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2022-10-01.16.0",
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2023-05-01.17.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -1734,7 +1734,7 @@
       }
     },
     {
-      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2022-10-01.16.0",
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2023-05-01.17.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -1805,7 +1805,7 @@
       }
     },
     {
-      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2022-10-01.16.0",
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2023-05-01.17.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -1876,7 +1876,7 @@
       }
     },
     {
-      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2022-10-01.16.0",
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2023-05-01.17.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -1947,7 +1947,7 @@
       }
     },
     {
-      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2022-10-01.16.0",
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2023-05-01.17.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -2018,7 +2018,7 @@
       }
     },
     {
-      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2022-10-01.16.0",
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2023-05-01.17.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -2089,7 +2089,7 @@
       }
     },
     {
-      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2022-10-01.16.0",
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2023-05-01.17.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -2160,7 +2160,7 @@
       }
     },
     {
-      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2022-10-01.16.0",
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2023-05-01.17.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -2231,7 +2231,7 @@
       }
     },
     {
-      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2022-10-01.16.0",
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2023-05-01.17.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -2302,7 +2302,7 @@
       }
     },
     {
-      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2022-10-01.16.0",
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2023-05-01.17.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -2373,7 +2373,7 @@
       }
     },
     {
-      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2022-10-01.16.0",
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2023-05-01.17.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -2445,7 +2445,7 @@
       }
     },
     {
-      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d/disableautoscale?api-version=2022-10-01.16.0",
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d/disableautoscale?api-version=2023-05-01.17.0",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -2472,7 +2472,7 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2022-10-01.16.0",
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2023-05-01.17.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -2538,7 +2538,7 @@
       }
     },
     {
-      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2022-10-01.16.0",
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2023-05-01.17.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -2604,7 +2604,7 @@
       }
     },
     {
-      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2022-10-01.16.0",
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2023-05-01.17.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -2670,7 +2670,7 @@
       }
     },
     {
-      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2022-10-01.16.0",
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2023-05-01.17.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -2736,7 +2736,7 @@
       }
     },
     {
-      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2022-10-01.16.0",
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2023-05-01.17.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -2802,7 +2802,7 @@
       }
     },
     {
-      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2022-10-01.16.0",
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2023-05-01.17.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -2868,7 +2868,7 @@
       }
     },
     {
-      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2022-10-01.16.0",
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2023-05-01.17.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -2934,7 +2934,7 @@
       }
     },
     {
-      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2022-10-01.16.0",
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2023-05-01.17.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -3000,7 +3000,7 @@
       }
     },
     {
-      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2022-10-01.16.0",
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2023-05-01.17.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -3066,7 +3066,7 @@
       }
     },
     {
-      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2022-10-01.16.0",
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2023-05-01.17.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -3132,7 +3132,7 @@
       }
     },
     {
-      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d/resize?api-version=2022-10-01.16.0",
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d/resize?api-version=2023-05-01.17.0",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -3163,7 +3163,7 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d/stopresize?api-version=2022-10-01.16.0",
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d/stopresize?api-version=2023-05-01.17.0",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -3190,7 +3190,7 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2022-10-01.16.0",
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2023-05-01.17.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -3256,7 +3256,7 @@
       }
     },
     {
-      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2022-10-01.16.0",
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2023-05-01.17.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -3322,7 +3322,7 @@
       }
     },
     {
-      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2022-10-01.16.0",
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2023-05-01.17.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -3388,7 +3388,7 @@
       }
     },
     {
-      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2022-10-01.16.0",
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2023-05-01.17.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -3454,7 +3454,7 @@
       }
     },
     {
-      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2022-10-01.16.0",
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2023-05-01.17.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -3520,7 +3520,7 @@
       }
     },
     {
-      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2022-10-01.16.0",
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2023-05-01.17.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -3586,7 +3586,7 @@
       }
     },
     {
-      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2022-10-01.16.0",
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2023-05-01.17.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -3652,7 +3652,7 @@
       }
     },
     {
-      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2022-10-01.16.0",
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2023-05-01.17.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -3718,7 +3718,7 @@
       }
     },
     {
-      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2022-10-01.16.0",
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2023-05-01.17.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -3784,7 +3784,7 @@
       }
     },
     {
-      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2022-10-01.16.0",
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2023-05-01.17.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -3860,7 +3860,7 @@
       }
     },
     {
-      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/poolusagemetrics?api-version=2022-10-01.16.0",
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/poolusagemetrics?api-version=2023-05-01.17.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",

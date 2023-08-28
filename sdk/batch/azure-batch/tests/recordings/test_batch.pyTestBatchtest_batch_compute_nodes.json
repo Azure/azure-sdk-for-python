@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://batch6e50202e.eastus.batch.azure.com/pools/6e50202e/nodes?api-version=2022-10-01.16.0",
+      "RequestUri": "https://batch6e50202e.eastus.batch.azure.com/pools/6e50202e/nodes?api-version=2023-05-01.17.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -103,7 +103,7 @@
       }
     },
     {
-      "RequestUri": "https://batch6e50202e.eastus.batch.azure.com/pools/6e50202e/nodes?api-version=2022-10-01.16.0",
+      "RequestUri": "https://batch6e50202e.eastus.batch.azure.com/pools/6e50202e/nodes?api-version=2023-05-01.17.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -217,7 +217,7 @@
       }
     },
     {
-      "RequestUri": "https://batch6e50202e.eastus.batch.azure.com/pools/6e50202e/nodes/tvmps_29550a95b574af6d769d243db3e9a6e3120db41cb3c33a671844247d3af18e6c_d?api-version=2022-10-01.16.0",
+      "RequestUri": "https://batch6e50202e.eastus.batch.azure.com/pools/6e50202e/nodes/tvmps_29550a95b574af6d769d243db3e9a6e3120db41cb3c33a671844247d3af18e6c_d?api-version=2023-05-01.17.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -284,7 +284,7 @@
       }
     },
     {
-      "RequestUri": "https://batch6e50202e.eastus.batch.azure.com/pools/6e50202e/nodes/tvmps_29550a95b574af6d769d243db3e9a6e3120db41cb3c33a671844247d3af18e6c_d/uploadbatchservicelogs?api-version=2022-10-01.16.0",
+      "RequestUri": "https://batch6e50202e.eastus.batch.azure.com/pools/6e50202e/nodes/tvmps_29550a95b574af6d769d243db3e9a6e3120db41cb3c33a671844247d3af18e6c_d/uploadbatchservicelogs?api-version=2023-05-01.17.0",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -317,7 +317,7 @@
       }
     },
     {
-      "RequestUri": "https://batch6e50202e.eastus.batch.azure.com/pools/6e50202e/nodes/tvmps_29550a95b574af6d769d243db3e9a6e3120db41cb3c33a671844247d3af18e6c_d/disablescheduling?api-version=2022-10-01.16.0",
+      "RequestUri": "https://batch6e50202e.eastus.batch.azure.com/pools/6e50202e/nodes/tvmps_29550a95b574af6d769d243db3e9a6e3120db41cb3c33a671844247d3af18e6c_d/disablescheduling?api-version=2023-05-01.17.0",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -343,7 +343,7 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://batch6e50202e.eastus.batch.azure.com/pools/6e50202e/nodes/tvmps_29550a95b574af6d769d243db3e9a6e3120db41cb3c33a671844247d3af18e6c_d/enablescheduling?api-version=2022-10-01.16.0",
+      "RequestUri": "https://batch6e50202e.eastus.batch.azure.com/pools/6e50202e/nodes/tvmps_29550a95b574af6d769d243db3e9a6e3120db41cb3c33a671844247d3af18e6c_d/enablescheduling?api-version=2023-05-01.17.0",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -368,7 +368,7 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://batch6e50202e.eastus.batch.azure.com/pools/6e50202e/nodes/tvmps_29550a95b574af6d769d243db3e9a6e3120db41cb3c33a671844247d3af18e6c_d/reboot?api-version=2022-10-01.16.0",
+      "RequestUri": "https://batch6e50202e.eastus.batch.azure.com/pools/6e50202e/nodes/tvmps_29550a95b574af6d769d243db3e9a6e3120db41cb3c33a671844247d3af18e6c_d/reboot?api-version=2023-05-01.17.0",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -396,7 +396,7 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://batch6e50202e.eastus.batch.azure.com/pools/6e50202e/nodes/tvmps_83773ccc00dd38d048509f4582c5262418769b09c10ea611c18ae854c90a0ac8_d/reimage?api-version=2022-10-01.16.0",
+      "RequestUri": "https://batch6e50202e.eastus.batch.azure.com/pools/6e50202e/nodes/tvmps_83773ccc00dd38d048509f4582c5262418769b09c10ea611c18ae854c90a0ac8_d/reimage?api-version=2023-05-01.17.0",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -437,7 +437,7 @@
       }
     },
     {
-      "RequestUri": "https://batch6e50202e.eastus.batch.azure.com/pools/6e50202e/removenodes?api-version=2022-10-01.16.0",
+      "RequestUri": "https://batch6e50202e.eastus.batch.azure.com/pools/6e50202e/removenodes?api-version=2023-05-01.17.0",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",

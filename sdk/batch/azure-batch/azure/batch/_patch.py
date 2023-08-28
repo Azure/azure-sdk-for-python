@@ -15,12 +15,12 @@ from datetime import datetime
 from typing import TYPE_CHECKING
 from typing import List
 from ._version import VERSION
-from ._client import BatchServiceClient as GenerateBatchServiceClient
+from ._client import BatchClient as GenerateBatchClient
 from azure.identity import ClientSecretCredential
 from azure.core.credentials import TokenCredential
-from ._configuration import BatchServiceClientConfiguration
+from ._configuration import BatchClientConfiguration
 
-# from ._batch_service_client import BatchServiceClient as GenerateBatchServiceClient
+# from ._batch_service_client import BatchClient as GenerateBatchClient
 
 from msrest import Deserializer, Serializer
 from azure.core.pipeline import policies
@@ -35,17 +35,17 @@ from azure.core.tracing.decorator import distributed_trace
 from msrest import Serializer
 from msrest.serialization import TZ_UTC
 from azure.core.pipeline import PipelineRequest
-from .operations import (
-    AccountOperations,
-    ApplicationsOperations,
-    CertificatesOperations,
-    BatchNodesOperations,
-    FileOperations,
-    JobOperations,
-    JobScheduleOperations,
-    PoolOperations,
-    TaskOperations,
-)
+# from ._operations import (
+#     AccountOperations,
+#     ApplicationsOperations,
+#     CertificatesOperations,
+#     BatchNodesOperations,
+#     FileOperations,
+#     JobOperations,
+#     JobScheduleOperations,
+#     PoolOperations,
+#     TaskOperations,
+# )
 
 from typing import TypeVar, Any, Union
 
@@ -54,7 +54,7 @@ try:
 except ImportError:
     from urllib.parse import urlparse, parse_qs
 __all__ = [
-    "BatchServiceClient",
+    "BatchClient",
 ]  # Add all objects you want publicly available to users at this package level
 
 if TYPE_CHECKING:
@@ -68,7 +68,7 @@ if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Type, TypeVar, Any, Union, Dict, List
 
-    ClientType = TypeVar("ClientType", bound="BatchServiceClient")
+    ClientType = TypeVar("ClientType", bound="BatchClient")
 
     from azure.core.credentials import TokenCredential
     from azure.core.pipeline import PipelineRequest
@@ -157,8 +157,8 @@ class BatchSharedKeyAuthPolicy(SansIOHTTPPolicy):
         return base64.b64encode(digest).decode("utf-8")
 
 
-class BatchServiceClient(GenerateBatchServiceClient):
-    """BatchServiceClient.
+class BatchClient(GenerateBatchClient):
+    """BatchClient.
 
     :param endpoint: HTTP or HTTPS endpoint for the Web PubSub service instance.
     :type endpoint: str
@@ -173,11 +173,11 @@ class BatchServiceClient(GenerateBatchServiceClient):
     :paramtype api_version: str
     """
 
-    def __init__(self, endpoint: str, credentials: Union[ClientSecretCredential, AzureNamedKeyCredential, TokenCredential], **kwargs):
+    def __init__(self, endpoint: str, credential: Union[ClientSecretCredential, AzureNamedKeyCredential, TokenCredential], **kwargs):
         super().__init__(
             endpoint=endpoint,
-            credential=credentials,
-            authentication_policy=kwargs.pop("authentication_policy", self._format_shared_key_credential("",credentials)),
+            credential=credential,
+            authentication_policy=kwargs.pop("authentication_policy", self._format_shared_key_credential("",credential)),
             **kwargs
         )
 
@@ -233,7 +233,7 @@ class CreateTasksErrorException(Exception):
 
 def patch_sdk():
     curr_package = importlib.import_module("azure.batch")
-    curr_package.BatchServiceClient = BatchServiceClient
+    curr_package.BatchClient = BatchClient
     """Do not remove from this file.
 
     `patch_sdk` is a last resort escape hatch that allows you to do customizations

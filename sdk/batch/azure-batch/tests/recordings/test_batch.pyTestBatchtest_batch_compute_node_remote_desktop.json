@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://batch67c125ff.eastus.batch.azure.com/pools/67c125ff/nodes?api-version=2022-10-01.16.0",
+      "RequestUri": "https://batch67c125ff.eastus.batch.azure.com/pools/67c125ff/nodes?api-version=2023-05-01.17.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -56,7 +56,7 @@
       }
     },
     {
-      "RequestUri": "https://batch67c125ff.eastus.batch.azure.com/pools/67c125ff/nodes?api-version=2022-10-01.16.0",
+      "RequestUri": "https://batch67c125ff.eastus.batch.azure.com/pools/67c125ff/nodes?api-version=2023-05-01.17.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -117,7 +117,7 @@
       }
     },
     {
-      "RequestUri": "https://batch67c125ff.eastus.batch.azure.com/pools/67c125ff/nodes/tvmps_ca7cea459aacd1f5fe687d2d3704c08275fcf5a9cb43bef50c99a4388419aff3_d/rdp?api-version=2022-10-01.16.0",
+      "RequestUri": "https://batch67c125ff.eastus.batch.azure.com/pools/67c125ff/nodes/tvmps_ca7cea459aacd1f5fe687d2d3704c08275fcf5a9cb43bef50c99a4388419aff3_d/rdp?api-version=2023-05-01.17.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",

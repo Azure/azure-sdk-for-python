@@ -1,0 +1,2729 @@
+============================= test session starts =============================
+platform win32 -- Python 3.8.10, pytest-7.4.0, pluggy-1.2.0
+rootdir: C:\Users\hoppe\work\sandbox\azure-sdk-for-python
+configfile: setup.cfg
+plugins: asyncio-0.21.1, cov-4.1.0
+asyncio: mode=strict
+collected 15 items
+
+tests\test_batch.py FFFFFFFFFFFFFFF                                      [100%]
+
+================================== FAILURES ===================================
+______________________ TestBatch.test_batch_applications ______________________
+
+args = (<test_batch.TestBatch object at 0x000002053FD02520>,)
+kwargs = {'__aggregate_cache_key': (('JobPreparer',), (('AccountPreparer',), (('StorageAccountPreparer', 'Standard_LRS', 'eastu... id='batch4ca21fc0'), 'credential': <azure.core.credentials.AzureNamedKeyCredential object at 0x000002053FD02730>, ...}
+trimmed_kwargs = {'__aggregate_cache_key': (('JobPreparer',), (('AccountPreparer',), (('StorageAccountPreparer', 'Standard_LRS', 'eastu... id='batch4ca21fc0'), 'credential': <azure.core.credentials.AzureNamedKeyCredential object at 0x000002053FD02730>, ...}
+test_id = 'sdk/batch/azure-batch/tests/recordings/test_batch.pyTestBatchtest_batch_applications'
+variables = {}
+combined_call = <function recorded_by_proxy.<locals>.record_wrap.<locals>.combined_call at 0x000002053FD13B80>
+test_variables = None, test_run = False
+
+    def record_wrap(*args, **kwargs):
+        def transform_args(*args, **kwargs):
+            copied_positional_args = list(args)
+            request = copied_positional_args[1]
+    
+            transform_request(request, recording_id)
+    
+            return tuple(copied_positional_args), kwargs
+    
+        trimmed_kwargs = {k: v for k, v in kwargs.items()}
+        trim_kwargs_from_test_function(test_func, trimmed_kwargs)
+    
+        if is_live_and_not_recording():
+            return test_func(*args, **trimmed_kwargs)
+    
+        test_id = get_test_id()
+        recording_id, variables = start_record_or_playback(test_id)
+        original_transport_func = RequestsTransport.send
+    
+        def combined_call(*args, **kwargs):
+            adjusted_args, adjusted_kwargs = transform_args(*args, **kwargs)
+            result = original_transport_func(*adjusted_args, **adjusted_kwargs)
+    
+            # make the x-recording-upstream-base-uri the URL of the request
+            # this makes the request look like it was made to the original endpoint instead of to the proxy
+            # without this, things like LROPollers can get broken by polling the wrong endpoint
+            parsed_result = url_parse.urlparse(result.request.url)
+            upstream_uri = url_parse.urlparse(result.request.headers["x-recording-upstream-base-uri"])
+            upstream_uri_dict = {
+                "scheme": upstream_uri.scheme,
+                "netloc": upstream_uri.netloc,
+            }
+            original_target = parsed_result._replace(**upstream_uri_dict).geturl()
+    
+            result.request.url = original_target
+            return result
+    
+        RequestsTransport.send = combined_call
+    
+        # call the modified function
+        # we define test_variables before invoking the test so the variable is defined in case of an exception
+        test_variables = None
+        # this tracks whether the test has been run yet; used when calling the test function with/without `variables`
+        # running without `variables` in the `except` block leads to unnecessary exceptions in test execution output
+        test_run = False
+        try:
+            try:
+>               test_variables = test_func(*args, variables=variables, **trimmed_kwargs)
+
+..\..\..\tools\azure-sdk-tools\devtools_testutils\proxy_testcase.py:218: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <test_batch.TestBatch object at 0x000002053FD02520>
+kwargs = {'__aggregate_cache_key': (('JobPreparer',), (('AccountPreparer',), (('StorageAccountPreparer', 'Standard_LRS', 'eastu...'credential': <azure.core.credentials.AzureNamedKeyCredential object at 0x000002053FD02730>, 'location': 'eastus', ...}
+batch_job = FakeResource(name='batch4ca21fc0', id='batch4ca21fc0')
+client = <azure.batch._patch.BatchClient object at 0x000002053FD337C0>
+apps = [{'id': 'application_id', 'versions': ['v1.0']}], @py_assert2 = None
+@py_assert5 = None, @py_assert4 = None
+
+    @ResourceGroupPreparer(location=AZURE_LOCATION)
+    @StorageAccountPreparer(name_prefix='batch1', location=AZURE_LOCATION)
+    @AccountPreparer(location=AZURE_LOCATION, batch_environment=BATCH_ENVIRONMENT)
+    @JobPreparer()
+    @recorded_by_proxy
+    def test_batch_applications(self, **kwargs):
+        batch_job = kwargs.pop("batch_job")
+        client = self.create_sharedkey_client(**kwargs)
+        # Test List Applications
+        apps = list(client.list_applications())
+        assert len(apps) ==  1
+    
+        # Test Get Application
+>       app = client.get_applications('application_id')
+E       AttributeError: 'BatchClient' object has no attribute 'get_applications'
+
+tests\test_batch.py:147: AttributeError
+----------------------------- Captured log setup ------------------------------
+WARNING  urllib3.connectionpool:connectionpool.py:812 Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x000002053FD14B80>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it')': /Info/Available
+WARNING  urllib3.connectionpool:connectionpool.py:812 Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x000002053FD14D60>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it')': /Info/Available
+WARNING  urllib3.connectionpool:connectionpool.py:812 Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x000002053FD14EE0>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it')': /Info/Available
+INFO     root:proxy_startup.py:284 C:\Users\hoppe\work\sandbox\azure-sdk-for-python is calculated repo root
+INFO     root:proxy_startup.py:300 Downloading and starting standalone proxy executable...
+------------------------------ Captured log call ------------------------------
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:514 Request URL: 'https://batch4ca21fc0.eastus.batch.azure.com/applications?api-version=REDACTED'
+Request method: 'GET'
+Request headers:
+    'Accept': 'application/json'
+    'client-request-id': 'REDACTED'
+    'User-Agent': 'azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)'
+    'ocp-date': 'REDACTED'
+    'Authorization': 'REDACTED'
+No body was attached to the request
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:550 Response status: 200
+Response headers:
+    'Content-Type': 'application/json; odata=minimalmetadata'
+    'Date': 'Fri, 07 Jul 2023 22:26:30 GMT'
+    'Server': 'Microsoft-HTTPAPI/2.0'
+    'Transfer-Encoding': 'chunked'
+    'DataServiceVersion': 'REDACTED'
+    'Request-Id': '52ce77ef-c2d8-497d-8371-2b8e567e9b3c'
+    'Strict-Transport-Security': 'REDACTED'
+    'X-Content-Type-Options': 'REDACTED'
+______________________ TestBatch.test_batch_certificate _______________________
+
+args = (<test_batch.TestBatch object at 0x000002053FD02670>,)
+kwargs = {'__aggregate_cache_key': (('AccountPreparer',), ('ResourceGroupPreparer', 'resource_group', '')), 'batch_account': Fa...'credential': <azure.core.credentials.AzureNamedKeyCredential object at 0x000002053FD6A340>, 'location': 'eastus', ...}
+trimmed_kwargs = {'__aggregate_cache_key': (('AccountPreparer',), ('ResourceGroupPreparer', 'resource_group', '')), 'batch_account': Fa...'credential': <azure.core.credentials.AzureNamedKeyCredential object at 0x000002053FD6A340>, 'location': 'eastus', ...}
+test_id = 'sdk/batch/azure-batch/tests/recordings/test_batch.pyTestBatchtest_batch_certificate'
+
+    def record_wrap(*args, **kwargs):
+        def transform_args(*args, **kwargs):
+            copied_positional_args = list(args)
+            request = copied_positional_args[1]
+    
+            transform_request(request, recording_id)
+    
+            return tuple(copied_positional_args), kwargs
+    
+        trimmed_kwargs = {k: v for k, v in kwargs.items()}
+        trim_kwargs_from_test_function(test_func, trimmed_kwargs)
+    
+        if is_live_and_not_recording():
+            return test_func(*args, **trimmed_kwargs)
+    
+        test_id = get_test_id()
+>       recording_id, variables = start_record_or_playback(test_id)
+
+..\..\..\tools\azure-sdk-tools\devtools_testutils\proxy_testcase.py:187: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+test_id = 'sdk/batch/azure-batch/tests/recordings/test_batch.pyTestBatchtest_batch_certificate'
+
+    def start_record_or_playback(test_id: str) -> "Tuple[str, Dict[str, str]]":
+        """Sends a request to begin recording or playing back the provided test.
+    
+        This returns a tuple, (a, b), where a is the recording ID of the test and b is the `variables` dictionary that maps
+        test variables to values. If no variable dictionary was stored when the test was recorded, b is an empty dictionary.
+        """
+        variables = {}  # this stores a dictionary of test variable values that could have been stored with a recording
+    
+        json_payload = {"x-recording-file": test_id}
+        assets_json = get_recording_assets(test_id)
+        if assets_json:
+            json_payload["x-recording-assets-file"] = assets_json
+    
+        encoded_payload = json.dumps(json_payload).encode("utf-8")
+        http_client = get_http_client()
+    
+        if is_live():
+            result = http_client.request(
+                method="POST",
+                url=RECORDING_START_URL,
+                body=encoded_payload,
+            )
+            if result.status != 200:
+                message = six.ensure_str(result.data)
+                raise HttpResponseError(message=message)
+            recording_id = result.headers["x-recording-id"]
+    
+        else:
+            result = http_client.request(
+                method="POST",
+                url=PLAYBACK_START_URL,
+                body=encoded_payload,
+            )
+            if result.status != 200:
+                message = six.ensure_str(result.data)
+>               raise HttpResponseError(message=message)
+E               azure.core.exceptions.HttpResponseError: {"Message":"Recording file path C:\\Users\\hoppe\\work\\sandbox\\azure-sdk-for-python\\sdk/batch/azure-batch/tests/recordings/test_batch.pyTestBatchtest_batch_certificate.json does not exist.","Status":"NotFound"}
+
+..\..\..\tools\azure-sdk-tools\devtools_testutils\proxy_testcase.py:97: HttpResponseError
+______________________ TestBatch.test_batch_create_pools ______________________
+
+attr = 'MON, 10 JUL 2023 17:46:30 GMT'
+
+    @staticmethod
+    def deserialize_iso(attr):
+        """Deserialize ISO-8601 formatted string into Datetime object.
+    
+        :param str attr: response string to be deserialized.
+        :rtype: Datetime
+        :raises: DeserializationError if string format invalid.
+        """
+        if isinstance(attr, ET.Element):
+            attr = attr.text
+        try:
+            attr = attr.upper()  # type: ignore
+            match = Deserializer.valid_date.match(attr)
+            if not match:
+>               raise ValueError("Invalid datetime string: " + attr)
+E               ValueError: Invalid datetime string: MON, 10 JUL 2023 17:46:30 GMT
+
+azure\batch\_serialization.py:1968: ValueError
+
+During handling of the above exception, another exception occurred:
+
+self = <azure.batch._serialization.Deserializer object at 0x000002053FEAA7C0>
+data = 'Mon, 10 Jul 2023 17:46:30 GMT', data_type = 'iso-8601'
+
+    def deserialize_data(self, data, data_type):
+        """Process data for deserialization according to data type.
+    
+        :param str data: The response string to be deserialized.
+        :param str data_type: The type to deserialize to.
+        :raises: DeserializationError if deserialization fails.
+        :return: Deserialized object.
+        """
+        if data is None:
+            return data
+    
+        try:
+            if not data_type:
+                return data
+            if data_type in self.basic_types.values():
+                return self.deserialize_basic(data, data_type)
+            if data_type in self.deserialize_type:
+                if isinstance(data, self.deserialize_expected_types.get(data_type, tuple())):
+                    return data
+    
+                is_a_text_parsing_type = lambda x: x not in ["object", "[]", r"{}"]
+                if isinstance(data, ET.Element) and is_a_text_parsing_type(data_type) and not data.text:
+                    return None
+>               data_val = self.deserialize_type[data_type](data)
+
+azure\batch\_serialization.py:1641: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+azure\batch\_serialization.py:1987: in deserialize_iso
+    raise_with_traceback(DeserializationError, msg, err)
+..\..\..\env\lib\site-packages\azure\core\exceptions.py:80: in raise_with_traceback
+    raise error.with_traceback(exc_traceback)  # pylint: disable=raise-missing-from
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+attr = 'MON, 10 JUL 2023 17:46:30 GMT'
+
+    @staticmethod
+    def deserialize_iso(attr):
+        """Deserialize ISO-8601 formatted string into Datetime object.
+    
+        :param str attr: response string to be deserialized.
+        :rtype: Datetime
+        :raises: DeserializationError if string format invalid.
+        """
+        if isinstance(attr, ET.Element):
+            attr = attr.text
+        try:
+            attr = attr.upper()  # type: ignore
+            match = Deserializer.valid_date.match(attr)
+            if not match:
+>               raise ValueError("Invalid datetime string: " + attr)
+E               azure.core.exceptions.DeserializationError: (', ValueError: Invalid datetime string: MON, 10 JUL 2023 17:46:30 GMT', 'Cannot deserialize datetime object.', ValueError('Invalid datetime string: MON, 10 JUL 2023 17:46:30 GMT'))
+
+azure\batch\_serialization.py:1968: DeserializationError
+
+During handling of the above exception, another exception occurred:
+
+args = (<test_batch.TestBatch object at 0x000002053FD027F0>,)
+kwargs = {'__aggregate_cache_key': (('AccountPreparer',), ('ResourceGroupPreparer', 'resource_group', '')), 'batch_account': Fa...'credential': <azure.core.credentials.AzureNamedKeyCredential object at 0x000002053FF1DF10>, 'location': 'eastus', ...}
+trimmed_kwargs = {'__aggregate_cache_key': (('AccountPreparer',), ('ResourceGroupPreparer', 'resource_group', '')), 'batch_account': Fa...'credential': <azure.core.credentials.AzureNamedKeyCredential object at 0x000002053FF1DF10>, 'location': 'eastus', ...}
+test_id = 'sdk/batch/azure-batch/tests/recordings/test_batch.pyTestBatchtest_batch_create_pools'
+variables = {}
+combined_call = <function recorded_by_proxy.<locals>.record_wrap.<locals>.combined_call at 0x000002053FEB8310>
+test_variables = None, test_run = False
+
+    def record_wrap(*args, **kwargs):
+        def transform_args(*args, **kwargs):
+            copied_positional_args = list(args)
+            request = copied_positional_args[1]
+    
+            transform_request(request, recording_id)
+    
+            return tuple(copied_positional_args), kwargs
+    
+        trimmed_kwargs = {k: v for k, v in kwargs.items()}
+        trim_kwargs_from_test_function(test_func, trimmed_kwargs)
+    
+        if is_live_and_not_recording():
+            return test_func(*args, **trimmed_kwargs)
+    
+        test_id = get_test_id()
+        recording_id, variables = start_record_or_playback(test_id)
+        original_transport_func = RequestsTransport.send
+    
+        def combined_call(*args, **kwargs):
+            adjusted_args, adjusted_kwargs = transform_args(*args, **kwargs)
+            result = original_transport_func(*adjusted_args, **adjusted_kwargs)
+    
+            # make the x-recording-upstream-base-uri the URL of the request
+            # this makes the request look like it was made to the original endpoint instead of to the proxy
+            # without this, things like LROPollers can get broken by polling the wrong endpoint
+            parsed_result = url_parse.urlparse(result.request.url)
+            upstream_uri = url_parse.urlparse(result.request.headers["x-recording-upstream-base-uri"])
+            upstream_uri_dict = {
+                "scheme": upstream_uri.scheme,
+                "netloc": upstream_uri.netloc,
+            }
+            original_target = parsed_result._replace(**upstream_uri_dict).geturl()
+    
+            result.request.url = original_target
+            return result
+    
+        RequestsTransport.send = combined_call
+    
+        # call the modified function
+        # we define test_variables before invoking the test so the variable is defined in case of an exception
+        test_variables = None
+        # this tracks whether the test has been run yet; used when calling the test function with/without `variables`
+        # running without `variables` in the `except` block leads to unnecessary exceptions in test execution output
+        test_run = False
+        try:
+            try:
+>               test_variables = test_func(*args, variables=variables, **trimmed_kwargs)
+
+..\..\..\tools\azure-sdk-tools\devtools_testutils\proxy_testcase.py:218: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests\test_batch.py:238: in test_batch_create_pools
+    response = client.create_pool(test_iaas_pool)
+..\..\..\env\lib\site-packages\azure\core\tracing\decorator.py:76: in wrapper_use_tracer
+    return func(*args, **kwargs)
+azure\batch\_operations\_operations.py:3502: in create_pool
+    response_headers["last-modified"] = self._deserialize("iso-8601", response.headers.get("last-modified"))
+azure\batch\_serialization.py:1416: in __call__
+    return self._deserialize(target_obj, data)
+azure\batch\_serialization.py:1450: in _deserialize
+    return self.deserialize_data(data, response)
+azure\batch\_serialization.py:1657: in deserialize_data
+    raise_with_traceback(DeserializationError, msg, err)
+..\..\..\env\lib\site-packages\azure\core\exceptions.py:80: in raise_with_traceback
+    raise error.with_traceback(exc_traceback)  # pylint: disable=raise-missing-from
+azure\batch\_serialization.py:1641: in deserialize_data
+    data_val = self.deserialize_type[data_type](data)
+azure\batch\_serialization.py:1987: in deserialize_iso
+    raise_with_traceback(DeserializationError, msg, err)
+..\..\..\env\lib\site-packages\azure\core\exceptions.py:80: in raise_with_traceback
+    raise error.with_traceback(exc_traceback)  # pylint: disable=raise-missing-from
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+attr = 'MON, 10 JUL 2023 17:46:30 GMT'
+
+    @staticmethod
+    def deserialize_iso(attr):
+        """Deserialize ISO-8601 formatted string into Datetime object.
+    
+        :param str attr: response string to be deserialized.
+        :rtype: Datetime
+        :raises: DeserializationError if string format invalid.
+        """
+        if isinstance(attr, ET.Element):
+            attr = attr.text
+        try:
+            attr = attr.upper()  # type: ignore
+            match = Deserializer.valid_date.match(attr)
+            if not match:
+>               raise ValueError("Invalid datetime string: " + attr)
+E               azure.core.exceptions.DeserializationError: (", DeserializationError: (', ValueError: Invalid datetime string: MON, 10 JUL 2023 17:46:30 GMT', 'Cannot deserialize datetime object.', ValueError('Invalid datetime string: MON, 10 JUL 2023 17:46:30 GMT'))", 'Unable to deserialize response data. Data: Mon, 10 Jul 2023 17:46:30 GMT, iso-8601', DeserializationError(', ValueError: Invalid datetime string: MON, 10 JUL 2023 17:46:30 GMT', 'Cannot deserialize datetime object.', ValueError('Invalid datetime string: MON, 10 JUL 2023 17:46:30 GMT')))
+
+azure\batch\_serialization.py:1968: DeserializationError
+------------------------------ Captured log call ------------------------------
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:514 Request URL: 'https://batch4c281fb9.eastus.batch.azure.com/supportedimages?api-version=REDACTED'
+Request method: 'GET'
+Request headers:
+    'Accept': 'application/json'
+    'client-request-id': 'REDACTED'
+    'User-Agent': 'azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)'
+    'ocp-date': 'REDACTED'
+    'Authorization': 'REDACTED'
+No body was attached to the request
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:550 Response status: 200
+Response headers:
+    'Content-Type': 'application/json; odata=minimalmetadata'
+    'Date': 'Mon, 10 Jul 2023 17:46:29 GMT'
+    'Server': 'Microsoft-HTTPAPI/2.0'
+    'Transfer-Encoding': 'chunked'
+    'DataServiceVersion': 'REDACTED'
+    'Request-Id': 'd332ad3b-177f-4051-8b6a-668fc5c7d1a8'
+    'Strict-Transport-Security': 'REDACTED'
+    'X-Content-Type-Options': 'REDACTED'
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:511 Request URL: 'https://batch4c281fb9.eastus.batch.azure.com/pools?api-version=REDACTED'
+Request method: 'POST'
+Request headers:
+    'content-type': 'application/json; odata=minimalmetadata'
+    'Content-Length': '568'
+    'client-request-id': 'REDACTED'
+    'User-Agent': 'azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)'
+    'ocp-date': 'REDACTED'
+    'Authorization': 'REDACTED'
+A body is sent with the request
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:550 Response status: 201
+Response headers:
+    'Content-Length': '0'
+    'Date': 'Mon, 10 Jul 2023 17:46:29 GMT'
+    'Server': 'Microsoft-HTTPAPI/2.0'
+    'ETag': '0x8DB816D97D03029'
+    'Last-Modified': 'Mon, 10 Jul 2023 17:46:30 GMT'
+    'Location': 'REDACTED'
+    'DataServiceId': 'REDACTED'
+    'DataServiceVersion': 'REDACTED'
+    'Request-Id': 'd2ae8eef-bf8c-4c4b-931e-72e3b6fde8e2'
+    'Strict-Transport-Security': 'REDACTED'
+    'X-Content-Type-Options': 'REDACTED'
+____________ TestBatch.test_batch_create_pool_with_blobfuse_mount _____________
+
+attr = 'MON, 10 JUL 2023 18:02:15 GMT'
+
+    @staticmethod
+    def deserialize_iso(attr):
+        """Deserialize ISO-8601 formatted string into Datetime object.
+    
+        :param str attr: response string to be deserialized.
+        :rtype: Datetime
+        :raises: DeserializationError if string format invalid.
+        """
+        if isinstance(attr, ET.Element):
+            attr = attr.text
+        try:
+            attr = attr.upper()  # type: ignore
+            match = Deserializer.valid_date.match(attr)
+            if not match:
+>               raise ValueError("Invalid datetime string: " + attr)
+E               ValueError: Invalid datetime string: MON, 10 JUL 2023 18:02:15 GMT
+
+azure\batch\_serialization.py:1968: ValueError
+
+During handling of the above exception, another exception occurred:
+
+self = <azure.batch._serialization.Deserializer object at 0x000002053FEA1AC0>
+data = 'Mon, 10 Jul 2023 18:02:15 GMT', data_type = 'iso-8601'
+
+    def deserialize_data(self, data, data_type):
+        """Process data for deserialization according to data type.
+    
+        :param str data: The response string to be deserialized.
+        :param str data_type: The type to deserialize to.
+        :raises: DeserializationError if deserialization fails.
+        :return: Deserialized object.
+        """
+        if data is None:
+            return data
+    
+        try:
+            if not data_type:
+                return data
+            if data_type in self.basic_types.values():
+                return self.deserialize_basic(data, data_type)
+            if data_type in self.deserialize_type:
+                if isinstance(data, self.deserialize_expected_types.get(data_type, tuple())):
+                    return data
+    
+                is_a_text_parsing_type = lambda x: x not in ["object", "[]", r"{}"]
+                if isinstance(data, ET.Element) and is_a_text_parsing_type(data_type) and not data.text:
+                    return None
+>               data_val = self.deserialize_type[data_type](data)
+
+azure\batch\_serialization.py:1641: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+azure\batch\_serialization.py:1987: in deserialize_iso
+    raise_with_traceback(DeserializationError, msg, err)
+..\..\..\env\lib\site-packages\azure\core\exceptions.py:80: in raise_with_traceback
+    raise error.with_traceback(exc_traceback)  # pylint: disable=raise-missing-from
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+attr = 'MON, 10 JUL 2023 18:02:15 GMT'
+
+    @staticmethod
+    def deserialize_iso(attr):
+        """Deserialize ISO-8601 formatted string into Datetime object.
+    
+        :param str attr: response string to be deserialized.
+        :rtype: Datetime
+        :raises: DeserializationError if string format invalid.
+        """
+        if isinstance(attr, ET.Element):
+            attr = attr.text
+        try:
+            attr = attr.upper()  # type: ignore
+            match = Deserializer.valid_date.match(attr)
+            if not match:
+>               raise ValueError("Invalid datetime string: " + attr)
+E               azure.core.exceptions.DeserializationError: (', ValueError: Invalid datetime string: MON, 10 JUL 2023 18:02:15 GMT', 'Cannot deserialize datetime object.', ValueError('Invalid datetime string: MON, 10 JUL 2023 18:02:15 GMT'))
+
+azure\batch\_serialization.py:1968: DeserializationError
+
+During handling of the above exception, another exception occurred:
+
+args = (<test_batch.TestBatch object at 0x000002053FD02970>,)
+kwargs = {'__aggregate_cache_key': (('AccountPreparer',), ('ResourceGroupPreparer', 'resource_group', '')), 'batch_account': Fa...'credential': <azure.core.credentials.AzureNamedKeyCredential object at 0x0000020541BF9760>, 'location': 'eastus', ...}
+trimmed_kwargs = {'__aggregate_cache_key': (('AccountPreparer',), ('ResourceGroupPreparer', 'resource_group', '')), 'batch_account': Fa...'credential': <azure.core.credentials.AzureNamedKeyCredential object at 0x0000020541BF9760>, 'location': 'eastus', ...}
+test_id = 'sdk/batch/azure-batch/tests/recordings/test_batch.pyTestBatchtest_batch_create_pool_with_blobfuse_mount'
+variables = {}
+combined_call = <function recorded_by_proxy.<locals>.record_wrap.<locals>.combined_call at 0x00000205411F8CA0>
+test_variables = None, test_run = False
+
+    def record_wrap(*args, **kwargs):
+        def transform_args(*args, **kwargs):
+            copied_positional_args = list(args)
+            request = copied_positional_args[1]
+    
+            transform_request(request, recording_id)
+    
+            return tuple(copied_positional_args), kwargs
+    
+        trimmed_kwargs = {k: v for k, v in kwargs.items()}
+        trim_kwargs_from_test_function(test_func, trimmed_kwargs)
+    
+        if is_live_and_not_recording():
+            return test_func(*args, **trimmed_kwargs)
+    
+        test_id = get_test_id()
+        recording_id, variables = start_record_or_playback(test_id)
+        original_transport_func = RequestsTransport.send
+    
+        def combined_call(*args, **kwargs):
+            adjusted_args, adjusted_kwargs = transform_args(*args, **kwargs)
+            result = original_transport_func(*adjusted_args, **adjusted_kwargs)
+    
+            # make the x-recording-upstream-base-uri the URL of the request
+            # this makes the request look like it was made to the original endpoint instead of to the proxy
+            # without this, things like LROPollers can get broken by polling the wrong endpoint
+            parsed_result = url_parse.urlparse(result.request.url)
+            upstream_uri = url_parse.urlparse(result.request.headers["x-recording-upstream-base-uri"])
+            upstream_uri_dict = {
+                "scheme": upstream_uri.scheme,
+                "netloc": upstream_uri.netloc,
+            }
+            original_target = parsed_result._replace(**upstream_uri_dict).geturl()
+    
+            result.request.url = original_target
+            return result
+    
+        RequestsTransport.send = combined_call
+    
+        # call the modified function
+        # we define test_variables before invoking the test so the variable is defined in case of an exception
+        test_variables = None
+        # this tracks whether the test has been run yet; used when calling the test function with/without `variables`
+        # running without `variables` in the `except` block leads to unnecessary exceptions in test execution output
+        test_run = False
+        try:
+            try:
+>               test_variables = test_func(*args, variables=variables, **trimmed_kwargs)
+
+..\..\..\tools\azure-sdk-tools\devtools_testutils\proxy_testcase.py:218: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests\test_batch.py:393: in test_batch_create_pool_with_blobfuse_mount
+    response = client.create_pool(test_iaas_pool)
+..\..\..\env\lib\site-packages\azure\core\tracing\decorator.py:76: in wrapper_use_tracer
+    return func(*args, **kwargs)
+azure\batch\_operations\_operations.py:3502: in create_pool
+    response_headers["last-modified"] = self._deserialize("iso-8601", response.headers.get("last-modified"))
+azure\batch\_serialization.py:1416: in __call__
+    return self._deserialize(target_obj, data)
+azure\batch\_serialization.py:1450: in _deserialize
+    return self.deserialize_data(data, response)
+azure\batch\_serialization.py:1657: in deserialize_data
+    raise_with_traceback(DeserializationError, msg, err)
+..\..\..\env\lib\site-packages\azure\core\exceptions.py:80: in raise_with_traceback
+    raise error.with_traceback(exc_traceback)  # pylint: disable=raise-missing-from
+azure\batch\_serialization.py:1641: in deserialize_data
+    data_val = self.deserialize_type[data_type](data)
+azure\batch\_serialization.py:1987: in deserialize_iso
+    raise_with_traceback(DeserializationError, msg, err)
+..\..\..\env\lib\site-packages\azure\core\exceptions.py:80: in raise_with_traceback
+    raise error.with_traceback(exc_traceback)  # pylint: disable=raise-missing-from
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+attr = 'MON, 10 JUL 2023 18:02:15 GMT'
+
+    @staticmethod
+    def deserialize_iso(attr):
+        """Deserialize ISO-8601 formatted string into Datetime object.
+    
+        :param str attr: response string to be deserialized.
+        :rtype: Datetime
+        :raises: DeserializationError if string format invalid.
+        """
+        if isinstance(attr, ET.Element):
+            attr = attr.text
+        try:
+            attr = attr.upper()  # type: ignore
+            match = Deserializer.valid_date.match(attr)
+            if not match:
+>               raise ValueError("Invalid datetime string: " + attr)
+E               azure.core.exceptions.DeserializationError: (", DeserializationError: (', ValueError: Invalid datetime string: MON, 10 JUL 2023 18:02:15 GMT', 'Cannot deserialize datetime object.', ValueError('Invalid datetime string: MON, 10 JUL 2023 18:02:15 GMT'))", 'Unable to deserialize response data. Data: Mon, 10 Jul 2023 18:02:15 GMT, iso-8601', DeserializationError(', ValueError: Invalid datetime string: MON, 10 JUL 2023 18:02:15 GMT', 'Cannot deserialize datetime object.', ValueError('Invalid datetime string: MON, 10 JUL 2023 18:02:15 GMT')))
+
+azure\batch\_serialization.py:1968: DeserializationError
+------------------------------ Captured log call ------------------------------
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:511 Request URL: 'https://batch56e27a4.eastus.batch.azure.com/pools?api-version=REDACTED'
+Request method: 'POST'
+Request headers:
+    'content-type': 'application/json; odata=minimalmetadata'
+    'Content-Length': '587'
+    'client-request-id': 'REDACTED'
+    'User-Agent': 'azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)'
+    'ocp-date': 'REDACTED'
+    'Authorization': 'REDACTED'
+A body is sent with the request
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:550 Response status: 201
+Response headers:
+    'Content-Length': '0'
+    'Date': 'Mon, 10 Jul 2023 18:02:14 GMT'
+    'Server': 'Microsoft-HTTPAPI/2.0'
+    'ETag': '0x8DB816FCB062FC2'
+    'Last-Modified': 'Mon, 10 Jul 2023 18:02:15 GMT'
+    'Location': 'REDACTED'
+    'DataServiceId': 'REDACTED'
+    'DataServiceVersion': 'REDACTED'
+    'Request-Id': '4a31a6db-9b6e-45c6-897b-054fc4d59e36'
+    'Strict-Transport-Security': 'REDACTED'
+    'X-Content-Type-Options': 'REDACTED'
+______________________ TestBatch.test_batch_update_pools ______________________
+
+attr = 'TUE, 11 JUL 2023 21:28:21 GMT'
+
+    @staticmethod
+    def deserialize_iso(attr):
+        """Deserialize ISO-8601 formatted string into Datetime object.
+    
+        :param str attr: response string to be deserialized.
+        :rtype: Datetime
+        :raises: DeserializationError if string format invalid.
+        """
+        if isinstance(attr, ET.Element):
+            attr = attr.text
+        try:
+            attr = attr.upper()  # type: ignore
+            match = Deserializer.valid_date.match(attr)
+            if not match:
+>               raise ValueError("Invalid datetime string: " + attr)
+E               ValueError: Invalid datetime string: TUE, 11 JUL 2023 21:28:21 GMT
+
+azure\batch\_serialization.py:1968: ValueError
+
+During handling of the above exception, another exception occurred:
+
+self = <azure.batch._serialization.Deserializer object at 0x0000020541B41880>
+data = 'Tue, 11 Jul 2023 21:28:21 GMT', data_type = 'iso-8601'
+
+    def deserialize_data(self, data, data_type):
+        """Process data for deserialization according to data type.
+    
+        :param str data: The response string to be deserialized.
+        :param str data_type: The type to deserialize to.
+        :raises: DeserializationError if deserialization fails.
+        :return: Deserialized object.
+        """
+        if data is None:
+            return data
+    
+        try:
+            if not data_type:
+                return data
+            if data_type in self.basic_types.values():
+                return self.deserialize_basic(data, data_type)
+            if data_type in self.deserialize_type:
+                if isinstance(data, self.deserialize_expected_types.get(data_type, tuple())):
+                    return data
+    
+                is_a_text_parsing_type = lambda x: x not in ["object", "[]", r"{}"]
+                if isinstance(data, ET.Element) and is_a_text_parsing_type(data_type) and not data.text:
+                    return None
+>               data_val = self.deserialize_type[data_type](data)
+
+azure\batch\_serialization.py:1641: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+azure\batch\_serialization.py:1987: in deserialize_iso
+    raise_with_traceback(DeserializationError, msg, err)
+..\..\..\env\lib\site-packages\azure\core\exceptions.py:80: in raise_with_traceback
+    raise error.with_traceback(exc_traceback)  # pylint: disable=raise-missing-from
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+attr = 'TUE, 11 JUL 2023 21:28:21 GMT'
+
+    @staticmethod
+    def deserialize_iso(attr):
+        """Deserialize ISO-8601 formatted string into Datetime object.
+    
+        :param str attr: response string to be deserialized.
+        :rtype: Datetime
+        :raises: DeserializationError if string format invalid.
+        """
+        if isinstance(attr, ET.Element):
+            attr = attr.text
+        try:
+            attr = attr.upper()  # type: ignore
+            match = Deserializer.valid_date.match(attr)
+            if not match:
+>               raise ValueError("Invalid datetime string: " + attr)
+E               azure.core.exceptions.DeserializationError: (', ValueError: Invalid datetime string: TUE, 11 JUL 2023 21:28:21 GMT', 'Cannot deserialize datetime object.', ValueError('Invalid datetime string: TUE, 11 JUL 2023 21:28:21 GMT'))
+
+azure\batch\_serialization.py:1968: DeserializationError
+
+During handling of the above exception, another exception occurred:
+
+args = (<test_batch.TestBatch object at 0x000002053FD02AF0>,)
+kwargs = {'__aggregate_cache_key': (('AccountPreparer',), ('ResourceGroupPreparer', 'resource_group', '')), 'batch_account': Fa...'credential': <azure.core.credentials.AzureNamedKeyCredential object at 0x0000020541D6FBE0>, 'location': 'eastus', ...}
+trimmed_kwargs = {'__aggregate_cache_key': (('AccountPreparer',), ('ResourceGroupPreparer', 'resource_group', '')), 'batch_account': Fa...'credential': <azure.core.credentials.AzureNamedKeyCredential object at 0x0000020541D6FBE0>, 'location': 'eastus', ...}
+test_id = 'sdk/batch/azure-batch/tests/recordings/test_batch.pyTestBatchtest_batch_update_pools'
+variables = {}
+combined_call = <function recorded_by_proxy.<locals>.record_wrap.<locals>.combined_call at 0x0000020541B2BA60>
+test_variables = None, test_run = False
+
+    def record_wrap(*args, **kwargs):
+        def transform_args(*args, **kwargs):
+            copied_positional_args = list(args)
+            request = copied_positional_args[1]
+    
+            transform_request(request, recording_id)
+    
+            return tuple(copied_positional_args), kwargs
+    
+        trimmed_kwargs = {k: v for k, v in kwargs.items()}
+        trim_kwargs_from_test_function(test_func, trimmed_kwargs)
+    
+        if is_live_and_not_recording():
+            return test_func(*args, **trimmed_kwargs)
+    
+        test_id = get_test_id()
+        recording_id, variables = start_record_or_playback(test_id)
+        original_transport_func = RequestsTransport.send
+    
+        def combined_call(*args, **kwargs):
+            adjusted_args, adjusted_kwargs = transform_args(*args, **kwargs)
+            result = original_transport_func(*adjusted_args, **adjusted_kwargs)
+    
+            # make the x-recording-upstream-base-uri the URL of the request
+            # this makes the request look like it was made to the original endpoint instead of to the proxy
+            # without this, things like LROPollers can get broken by polling the wrong endpoint
+            parsed_result = url_parse.urlparse(result.request.url)
+            upstream_uri = url_parse.urlparse(result.request.headers["x-recording-upstream-base-uri"])
+            upstream_uri_dict = {
+                "scheme": upstream_uri.scheme,
+                "netloc": upstream_uri.netloc,
+            }
+            original_target = parsed_result._replace(**upstream_uri_dict).geturl()
+    
+            result.request.url = original_target
+            return result
+    
+        RequestsTransport.send = combined_call
+    
+        # call the modified function
+        # we define test_variables before invoking the test so the variable is defined in case of an exception
+        test_variables = None
+        # this tracks whether the test has been run yet; used when calling the test function with/without `variables`
+        # running without `variables` in the `except` block leads to unnecessary exceptions in test execution output
+        test_run = False
+        try:
+            try:
+>               test_variables = test_func(*args, variables=variables, **trimmed_kwargs)
+
+..\..\..\tools\azure-sdk-tools\devtools_testutils\proxy_testcase.py:218: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests\test_batch.py:425: in test_batch_update_pools
+    response = client.create_pool(test_paas_pool)
+..\..\..\env\lib\site-packages\azure\core\tracing\decorator.py:76: in wrapper_use_tracer
+    return func(*args, **kwargs)
+azure\batch\_operations\_operations.py:3502: in create_pool
+    response_headers["last-modified"] = self._deserialize("iso-8601", response.headers.get("last-modified"))
+azure\batch\_serialization.py:1416: in __call__
+    return self._deserialize(target_obj, data)
+azure\batch\_serialization.py:1450: in _deserialize
+    return self.deserialize_data(data, response)
+azure\batch\_serialization.py:1657: in deserialize_data
+    raise_with_traceback(DeserializationError, msg, err)
+..\..\..\env\lib\site-packages\azure\core\exceptions.py:80: in raise_with_traceback
+    raise error.with_traceback(exc_traceback)  # pylint: disable=raise-missing-from
+azure\batch\_serialization.py:1641: in deserialize_data
+    data_val = self.deserialize_type[data_type](data)
+azure\batch\_serialization.py:1987: in deserialize_iso
+    raise_with_traceback(DeserializationError, msg, err)
+..\..\..\env\lib\site-packages\azure\core\exceptions.py:80: in raise_with_traceback
+    raise error.with_traceback(exc_traceback)  # pylint: disable=raise-missing-from
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+attr = 'TUE, 11 JUL 2023 21:28:21 GMT'
+
+    @staticmethod
+    def deserialize_iso(attr):
+        """Deserialize ISO-8601 formatted string into Datetime object.
+    
+        :param str attr: response string to be deserialized.
+        :rtype: Datetime
+        :raises: DeserializationError if string format invalid.
+        """
+        if isinstance(attr, ET.Element):
+            attr = attr.text
+        try:
+            attr = attr.upper()  # type: ignore
+            match = Deserializer.valid_date.match(attr)
+            if not match:
+>               raise ValueError("Invalid datetime string: " + attr)
+E               azure.core.exceptions.DeserializationError: (", DeserializationError: (', ValueError: Invalid datetime string: TUE, 11 JUL 2023 21:28:21 GMT', 'Cannot deserialize datetime object.', ValueError('Invalid datetime string: TUE, 11 JUL 2023 21:28:21 GMT'))", 'Unable to deserialize response data. Data: Tue, 11 Jul 2023 21:28:21 GMT, iso-8601', DeserializationError(', ValueError: Invalid datetime string: TUE, 11 JUL 2023 21:28:21 GMT', 'Cannot deserialize datetime object.', ValueError('Invalid datetime string: TUE, 11 JUL 2023 21:28:21 GMT')))
+
+azure\batch\_serialization.py:1968: DeserializationError
+------------------------------ Captured log call ------------------------------
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:511 Request URL: 'https://batch4d491fc8.eastus.batch.azure.com/pools?api-version=REDACTED'
+Request method: 'POST'
+Request headers:
+    'content-type': 'application/json; odata=minimalmetadata'
+    'Content-Length': '383'
+    'client-request-id': 'REDACTED'
+    'User-Agent': 'azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)'
+    'ocp-date': 'REDACTED'
+    'Authorization': 'REDACTED'
+A body is sent with the request
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:550 Response status: 201
+Response headers:
+    'Content-Length': '0'
+    'Date': 'Tue, 11 Jul 2023 21:28:20 GMT'
+    'Server': 'Microsoft-HTTPAPI/2.0'
+    'ETag': '0x8DB8255C0231FC7'
+    'Last-Modified': 'Tue, 11 Jul 2023 21:28:21 GMT'
+    'Location': 'REDACTED'
+    'DataServiceId': 'REDACTED'
+    'DataServiceVersion': 'REDACTED'
+    'Request-Id': 'dfa6f083-9265-40b3-b35b-559c09c8c0b7'
+    'Strict-Transport-Security': 'REDACTED'
+    'X-Content-Type-Options': 'REDACTED'
+______________________ TestBatch.test_batch_scale_pools _______________________
+
+attr = 'MON, 10 JUL 2023 19:09:56 GMT'
+
+    @staticmethod
+    def deserialize_iso(attr):
+        """Deserialize ISO-8601 formatted string into Datetime object.
+    
+        :param str attr: response string to be deserialized.
+        :rtype: Datetime
+        :raises: DeserializationError if string format invalid.
+        """
+        if isinstance(attr, ET.Element):
+            attr = attr.text
+        try:
+            attr = attr.upper()  # type: ignore
+            match = Deserializer.valid_date.match(attr)
+            if not match:
+>               raise ValueError("Invalid datetime string: " + attr)
+E               ValueError: Invalid datetime string: MON, 10 JUL 2023 19:09:56 GMT
+
+azure\batch\_serialization.py:1968: ValueError
+
+During handling of the above exception, another exception occurred:
+
+self = <azure.batch._serialization.Deserializer object at 0x00000205419CF280>
+data = 'Mon, 10 Jul 2023 19:09:56 GMT', data_type = 'iso-8601'
+
+    def deserialize_data(self, data, data_type):
+        """Process data for deserialization according to data type.
+    
+        :param str data: The response string to be deserialized.
+        :param str data_type: The type to deserialize to.
+        :raises: DeserializationError if deserialization fails.
+        :return: Deserialized object.
+        """
+        if data is None:
+            return data
+    
+        try:
+            if not data_type:
+                return data
+            if data_type in self.basic_types.values():
+                return self.deserialize_basic(data, data_type)
+            if data_type in self.deserialize_type:
+                if isinstance(data, self.deserialize_expected_types.get(data_type, tuple())):
+                    return data
+    
+                is_a_text_parsing_type = lambda x: x not in ["object", "[]", r"{}"]
+                if isinstance(data, ET.Element) and is_a_text_parsing_type(data_type) and not data.text:
+                    return None
+>               data_val = self.deserialize_type[data_type](data)
+
+azure\batch\_serialization.py:1641: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+azure\batch\_serialization.py:1987: in deserialize_iso
+    raise_with_traceback(DeserializationError, msg, err)
+..\..\..\env\lib\site-packages\azure\core\exceptions.py:80: in raise_with_traceback
+    raise error.with_traceback(exc_traceback)  # pylint: disable=raise-missing-from
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+attr = 'MON, 10 JUL 2023 19:09:56 GMT'
+
+    @staticmethod
+    def deserialize_iso(attr):
+        """Deserialize ISO-8601 formatted string into Datetime object.
+    
+        :param str attr: response string to be deserialized.
+        :rtype: Datetime
+        :raises: DeserializationError if string format invalid.
+        """
+        if isinstance(attr, ET.Element):
+            attr = attr.text
+        try:
+            attr = attr.upper()  # type: ignore
+            match = Deserializer.valid_date.match(attr)
+            if not match:
+>               raise ValueError("Invalid datetime string: " + attr)
+E               azure.core.exceptions.DeserializationError: (', ValueError: Invalid datetime string: MON, 10 JUL 2023 19:09:56 GMT', 'Cannot deserialize datetime object.', ValueError('Invalid datetime string: MON, 10 JUL 2023 19:09:56 GMT'))
+
+azure\batch\_serialization.py:1968: DeserializationError
+
+During handling of the above exception, another exception occurred:
+
+args = (<test_batch.TestBatch object at 0x000002053FD02C70>,)
+kwargs = {'__aggregate_cache_key': (('PoolPreparer',), (('AccountPreparer',), ('ResourceGroupPreparer', 'resource_group', '')))...f4d', id='2b9b1f4d'), 'credential': <azure.core.credentials.AzureNamedKeyCredential object at 0x0000020541A79820>, ...}
+trimmed_kwargs = {'__aggregate_cache_key': (('PoolPreparer',), (('AccountPreparer',), ('ResourceGroupPreparer', 'resource_group', '')))...f4d', id='2b9b1f4d'), 'credential': <azure.core.credentials.AzureNamedKeyCredential object at 0x0000020541A79820>, ...}
+test_id = 'sdk/batch/azure-batch/tests/recordings/test_batch.pyTestBatchtest_batch_scale_pools'
+variables = {}
+combined_call = <function recorded_by_proxy.<locals>.record_wrap.<locals>.combined_call at 0x00000205411E2B80>
+test_variables = None, test_run = False
+
+    def record_wrap(*args, **kwargs):
+        def transform_args(*args, **kwargs):
+            copied_positional_args = list(args)
+            request = copied_positional_args[1]
+    
+            transform_request(request, recording_id)
+    
+            return tuple(copied_positional_args), kwargs
+    
+        trimmed_kwargs = {k: v for k, v in kwargs.items()}
+        trim_kwargs_from_test_function(test_func, trimmed_kwargs)
+    
+        if is_live_and_not_recording():
+            return test_func(*args, **trimmed_kwargs)
+    
+        test_id = get_test_id()
+        recording_id, variables = start_record_or_playback(test_id)
+        original_transport_func = RequestsTransport.send
+    
+        def combined_call(*args, **kwargs):
+            adjusted_args, adjusted_kwargs = transform_args(*args, **kwargs)
+            result = original_transport_func(*adjusted_args, **adjusted_kwargs)
+    
+            # make the x-recording-upstream-base-uri the URL of the request
+            # this makes the request look like it was made to the original endpoint instead of to the proxy
+            # without this, things like LROPollers can get broken by polling the wrong endpoint
+            parsed_result = url_parse.urlparse(result.request.url)
+            upstream_uri = url_parse.urlparse(result.request.headers["x-recording-upstream-base-uri"])
+            upstream_uri_dict = {
+                "scheme": upstream_uri.scheme,
+                "netloc": upstream_uri.netloc,
+            }
+            original_target = parsed_result._replace(**upstream_uri_dict).geturl()
+    
+            result.request.url = original_target
+            return result
+    
+        RequestsTransport.send = combined_call
+    
+        # call the modified function
+        # we define test_variables before invoking the test so the variable is defined in case of an exception
+        test_variables = None
+        # this tracks whether the test has been run yet; used when calling the test function with/without `variables`
+        # running without `variables` in the `except` block leads to unnecessary exceptions in test execution output
+        test_run = False
+        try:
+            try:
+>               test_variables = test_func(*args, variables=variables, **trimmed_kwargs)
+
+..\..\..\tools\azure-sdk-tools\devtools_testutils\proxy_testcase.py:218: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests\test_batch.py:480: in test_batch_scale_pools
+    response = client.enable_pool_auto_scale(
+..\..\..\env\lib\site-packages\azure\core\tracing\decorator.py:76: in wrapper_use_tracer
+    return func(*args, **kwargs)
+azure\batch\_operations\_operations.py:4260: in enable_pool_auto_scale
+    response_headers["last-modified"] = self._deserialize("iso-8601", response.headers.get("last-modified"))
+azure\batch\_serialization.py:1416: in __call__
+    return self._deserialize(target_obj, data)
+azure\batch\_serialization.py:1450: in _deserialize
+    return self.deserialize_data(data, response)
+azure\batch\_serialization.py:1657: in deserialize_data
+    raise_with_traceback(DeserializationError, msg, err)
+..\..\..\env\lib\site-packages\azure\core\exceptions.py:80: in raise_with_traceback
+    raise error.with_traceback(exc_traceback)  # pylint: disable=raise-missing-from
+azure\batch\_serialization.py:1641: in deserialize_data
+    data_val = self.deserialize_type[data_type](data)
+azure\batch\_serialization.py:1987: in deserialize_iso
+    raise_with_traceback(DeserializationError, msg, err)
+..\..\..\env\lib\site-packages\azure\core\exceptions.py:80: in raise_with_traceback
+    raise error.with_traceback(exc_traceback)  # pylint: disable=raise-missing-from
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+attr = 'MON, 10 JUL 2023 19:09:56 GMT'
+
+    @staticmethod
+    def deserialize_iso(attr):
+        """Deserialize ISO-8601 formatted string into Datetime object.
+    
+        :param str attr: response string to be deserialized.
+        :rtype: Datetime
+        :raises: DeserializationError if string format invalid.
+        """
+        if isinstance(attr, ET.Element):
+            attr = attr.text
+        try:
+            attr = attr.upper()  # type: ignore
+            match = Deserializer.valid_date.match(attr)
+            if not match:
+>               raise ValueError("Invalid datetime string: " + attr)
+E               azure.core.exceptions.DeserializationError: (", DeserializationError: (', ValueError: Invalid datetime string: MON, 10 JUL 2023 19:09:56 GMT', 'Cannot deserialize datetime object.', ValueError('Invalid datetime string: MON, 10 JUL 2023 19:09:56 GMT'))", 'Unable to deserialize response data. Data: Mon, 10 Jul 2023 19:09:56 GMT, iso-8601', DeserializationError(', ValueError: Invalid datetime string: MON, 10 JUL 2023 19:09:56 GMT', 'Cannot deserialize datetime object.', ValueError('Invalid datetime string: MON, 10 JUL 2023 19:09:56 GMT')))
+
+azure\batch\_serialization.py:1968: DeserializationError
+------------------------------ Captured log call ------------------------------
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:511 Request URL: 'https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d/enableautoscale?api-version=REDACTED'
+Request method: 'POST'
+Request headers:
+    'content-type': 'application/json; odata=minimalmetadata'
+    'Content-Length': '90'
+    'client-request-id': 'REDACTED'
+    'User-Agent': 'azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)'
+    'ocp-date': 'REDACTED'
+    'Authorization': 'REDACTED'
+A body is sent with the request
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:550 Response status: 500
+Response headers:
+    'Content-Length': '348'
+    'Content-Type': 'application/json; odata=minimalmetadata'
+    'Date': 'Mon, 10 Jul 2023 19:09:38 GMT'
+    'Server': 'Microsoft-HTTPAPI/2.0'
+    'DataServiceVersion': 'REDACTED'
+    'Request-Id': '000b5c39-fae1-48ad-b5bd-4c44c58378f5'
+    'Strict-Transport-Security': 'REDACTED'
+    'X-Content-Type-Options': 'REDACTED'
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:511 Request URL: 'https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d/enableautoscale?api-version=REDACTED'
+Request method: 'POST'
+Request headers:
+    'content-type': 'application/json; odata=minimalmetadata'
+    'Content-Length': '90'
+    'client-request-id': 'REDACTED'
+    'User-Agent': 'azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)'
+    'ocp-date': 'REDACTED'
+    'Authorization': 'REDACTED'
+    'x-recording-upstream-base-uri': 'REDACTED'
+    'x-recording-id': 'REDACTED'
+    'x-recording-mode': 'REDACTED'
+A body is sent with the request
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:550 Response status: 200
+Response headers:
+    'Content-Length': '0'
+    'Date': 'Mon, 10 Jul 2023 19:09:56 GMT'
+    'Server': 'Microsoft-HTTPAPI/2.0'
+    'ETag': '0x8DB81793FF9E748'
+    'Last-Modified': 'Mon, 10 Jul 2023 19:09:56 GMT'
+    'DataServiceId': 'REDACTED'
+    'DataServiceVersion': 'REDACTED'
+    'Request-Id': '38f7a2f6-43eb-46b0-bbb6-f69893d9f088'
+    'Strict-Transport-Security': 'REDACTED'
+    'X-Content-Type-Options': 'REDACTED'
+_____________________ TestBatch.test_batch_job_schedules ______________________
+
+attr = 'MON, 10 JUL 2023 21:05:59 GMT'
+
+    @staticmethod
+    def deserialize_iso(attr):
+        """Deserialize ISO-8601 formatted string into Datetime object.
+    
+        :param str attr: response string to be deserialized.
+        :rtype: Datetime
+        :raises: DeserializationError if string format invalid.
+        """
+        if isinstance(attr, ET.Element):
+            attr = attr.text
+        try:
+            attr = attr.upper()  # type: ignore
+            match = Deserializer.valid_date.match(attr)
+            if not match:
+>               raise ValueError("Invalid datetime string: " + attr)
+E               ValueError: Invalid datetime string: MON, 10 JUL 2023 21:05:59 GMT
+
+azure\batch\_serialization.py:1968: ValueError
+
+During handling of the above exception, another exception occurred:
+
+self = <azure.batch._serialization.Deserializer object at 0x0000020541A19550>
+data = 'Mon, 10 Jul 2023 21:05:59 GMT', data_type = 'iso-8601'
+
+    def deserialize_data(self, data, data_type):
+        """Process data for deserialization according to data type.
+    
+        :param str data: The response string to be deserialized.
+        :param str data_type: The type to deserialize to.
+        :raises: DeserializationError if deserialization fails.
+        :return: Deserialized object.
+        """
+        if data is None:
+            return data
+    
+        try:
+            if not data_type:
+                return data
+            if data_type in self.basic_types.values():
+                return self.deserialize_basic(data, data_type)
+            if data_type in self.deserialize_type:
+                if isinstance(data, self.deserialize_expected_types.get(data_type, tuple())):
+                    return data
+    
+                is_a_text_parsing_type = lambda x: x not in ["object", "[]", r"{}"]
+                if isinstance(data, ET.Element) and is_a_text_parsing_type(data_type) and not data.text:
+                    return None
+>               data_val = self.deserialize_type[data_type](data)
+
+azure\batch\_serialization.py:1641: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+azure\batch\_serialization.py:1987: in deserialize_iso
+    raise_with_traceback(DeserializationError, msg, err)
+..\..\..\env\lib\site-packages\azure\core\exceptions.py:80: in raise_with_traceback
+    raise error.with_traceback(exc_traceback)  # pylint: disable=raise-missing-from
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+attr = 'MON, 10 JUL 2023 21:05:59 GMT'
+
+    @staticmethod
+    def deserialize_iso(attr):
+        """Deserialize ISO-8601 formatted string into Datetime object.
+    
+        :param str attr: response string to be deserialized.
+        :rtype: Datetime
+        :raises: DeserializationError if string format invalid.
+        """
+        if isinstance(attr, ET.Element):
+            attr = attr.text
+        try:
+            attr = attr.upper()  # type: ignore
+            match = Deserializer.valid_date.match(attr)
+            if not match:
+>               raise ValueError("Invalid datetime string: " + attr)
+E               azure.core.exceptions.DeserializationError: (', ValueError: Invalid datetime string: MON, 10 JUL 2023 21:05:59 GMT', 'Cannot deserialize datetime object.', ValueError('Invalid datetime string: MON, 10 JUL 2023 21:05:59 GMT'))
+
+azure\batch\_serialization.py:1968: DeserializationError
+
+During handling of the above exception, another exception occurred:
+
+args = (<test_batch.TestBatch object at 0x000002053FD02DF0>,)
+kwargs = {'__aggregate_cache_key': (('AccountPreparer',), ('ResourceGroupPreparer', 'resource_group', '')), 'batch_account': Fa...'credential': <azure.core.credentials.AzureNamedKeyCredential object at 0x0000020541D98820>, 'location': 'eastus', ...}
+trimmed_kwargs = {'__aggregate_cache_key': (('AccountPreparer',), ('ResourceGroupPreparer', 'resource_group', '')), 'batch_account': Fa...'credential': <azure.core.credentials.AzureNamedKeyCredential object at 0x0000020541D98820>, 'location': 'eastus', ...}
+test_id = 'sdk/batch/azure-batch/tests/recordings/test_batch.pyTestBatchtest_batch_job_schedules'
+variables = {}
+combined_call = <function recorded_by_proxy.<locals>.record_wrap.<locals>.combined_call at 0x0000020540077A60>
+test_variables = None, test_run = False
+
+    def record_wrap(*args, **kwargs):
+        def transform_args(*args, **kwargs):
+            copied_positional_args = list(args)
+            request = copied_positional_args[1]
+    
+            transform_request(request, recording_id)
+    
+            return tuple(copied_positional_args), kwargs
+    
+        trimmed_kwargs = {k: v for k, v in kwargs.items()}
+        trim_kwargs_from_test_function(test_func, trimmed_kwargs)
+    
+        if is_live_and_not_recording():
+            return test_func(*args, **trimmed_kwargs)
+    
+        test_id = get_test_id()
+        recording_id, variables = start_record_or_playback(test_id)
+        original_transport_func = RequestsTransport.send
+    
+        def combined_call(*args, **kwargs):
+            adjusted_args, adjusted_kwargs = transform_args(*args, **kwargs)
+            result = original_transport_func(*adjusted_args, **adjusted_kwargs)
+    
+            # make the x-recording-upstream-base-uri the URL of the request
+            # this makes the request look like it was made to the original endpoint instead of to the proxy
+            # without this, things like LROPollers can get broken by polling the wrong endpoint
+            parsed_result = url_parse.urlparse(result.request.url)
+            upstream_uri = url_parse.urlparse(result.request.headers["x-recording-upstream-base-uri"])
+            upstream_uri_dict = {
+                "scheme": upstream_uri.scheme,
+                "netloc": upstream_uri.netloc,
+            }
+            original_target = parsed_result._replace(**upstream_uri_dict).geturl()
+    
+            result.request.url = original_target
+            return result
+    
+        RequestsTransport.send = combined_call
+    
+        # call the modified function
+        # we define test_variables before invoking the test so the variable is defined in case of an exception
+        test_variables = None
+        # this tracks whether the test has been run yet; used when calling the test function with/without `variables`
+        # running without `variables` in the `except` block leads to unnecessary exceptions in test execution output
+        test_run = False
+        try:
+            try:
+>               test_variables = test_func(*args, variables=variables, **trimmed_kwargs)
+
+..\..\..\tools\azure-sdk-tools\devtools_testutils\proxy_testcase.py:218: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests\test_batch.py:543: in test_batch_job_schedules
+    response = client.create_job_schedule(params)
+..\..\..\env\lib\site-packages\azure\core\tracing\decorator.py:76: in wrapper_use_tracer
+    return func(*args, **kwargs)
+azure\batch\_operations\_operations.py:7765: in create_job_schedule
+    response_headers["last-modified"] = self._deserialize("iso-8601", response.headers.get("last-modified"))
+azure\batch\_serialization.py:1416: in __call__
+    return self._deserialize(target_obj, data)
+azure\batch\_serialization.py:1450: in _deserialize
+    return self.deserialize_data(data, response)
+azure\batch\_serialization.py:1657: in deserialize_data
+    raise_with_traceback(DeserializationError, msg, err)
+..\..\..\env\lib\site-packages\azure\core\exceptions.py:80: in raise_with_traceback
+    raise error.with_traceback(exc_traceback)  # pylint: disable=raise-missing-from
+azure\batch\_serialization.py:1641: in deserialize_data
+    data_val = self.deserialize_type[data_type](data)
+azure\batch\_serialization.py:1987: in deserialize_iso
+    raise_with_traceback(DeserializationError, msg, err)
+..\..\..\env\lib\site-packages\azure\core\exceptions.py:80: in raise_with_traceback
+    raise error.with_traceback(exc_traceback)  # pylint: disable=raise-missing-from
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+attr = 'MON, 10 JUL 2023 21:05:59 GMT'
+
+    @staticmethod
+    def deserialize_iso(attr):
+        """Deserialize ISO-8601 formatted string into Datetime object.
+    
+        :param str attr: response string to be deserialized.
+        :rtype: Datetime
+        :raises: DeserializationError if string format invalid.
+        """
+        if isinstance(attr, ET.Element):
+            attr = attr.text
+        try:
+            attr = attr.upper()  # type: ignore
+            match = Deserializer.valid_date.match(attr)
+            if not match:
+>               raise ValueError("Invalid datetime string: " + attr)
+E               azure.core.exceptions.DeserializationError: (", DeserializationError: (', ValueError: Invalid datetime string: MON, 10 JUL 2023 21:05:59 GMT', 'Cannot deserialize datetime object.', ValueError('Invalid datetime string: MON, 10 JUL 2023 21:05:59 GMT'))", 'Unable to deserialize response data. Data: Mon, 10 Jul 2023 21:05:59 GMT, iso-8601', DeserializationError(', ValueError: Invalid datetime string: MON, 10 JUL 2023 21:05:59 GMT', 'Cannot deserialize datetime object.', ValueError('Invalid datetime string: MON, 10 JUL 2023 21:05:59 GMT')))
+
+azure\batch\_serialization.py:1968: DeserializationError
+------------------------------ Captured log call ------------------------------
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:511 Request URL: 'https://batch6c682013.eastus.batch.azure.com/jobschedules?api-version=REDACTED'
+Request method: 'POST'
+Request headers:
+    'content-type': 'application/json; odata=minimalmetadata'
+    'Content-Length': '242'
+    'client-request-id': 'REDACTED'
+    'User-Agent': 'azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)'
+    'ocp-date': 'REDACTED'
+    'Authorization': 'REDACTED'
+A body is sent with the request
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:550 Response status: 201
+Response headers:
+    'Content-Length': '0'
+    'Date': 'Mon, 10 Jul 2023 21:05:58 GMT'
+    'Server': 'Microsoft-HTTPAPI/2.0'
+    'ETag': '0x8DB818975F5DF8F'
+    'Last-Modified': 'Mon, 10 Jul 2023 21:05:59 GMT'
+    'Location': 'REDACTED'
+    'DataServiceId': 'REDACTED'
+    'DataServiceVersion': 'REDACTED'
+    'Request-Id': 'f2e3ae0b-abc3-459d-9e90-9e9b391850a1'
+    'Strict-Transport-Security': 'REDACTED'
+    'X-Content-Type-Options': 'REDACTED'
+_________________ TestBatch.test_batch_network_configuration __________________
+
+attr = 'MON, 10 JUL 2023 21:12:49 GMT'
+
+    @staticmethod
+    def deserialize_iso(attr):
+        """Deserialize ISO-8601 formatted string into Datetime object.
+    
+        :param str attr: response string to be deserialized.
+        :rtype: Datetime
+        :raises: DeserializationError if string format invalid.
+        """
+        if isinstance(attr, ET.Element):
+            attr = attr.text
+        try:
+            attr = attr.upper()  # type: ignore
+            match = Deserializer.valid_date.match(attr)
+            if not match:
+>               raise ValueError("Invalid datetime string: " + attr)
+E               ValueError: Invalid datetime string: MON, 10 JUL 2023 21:12:49 GMT
+
+azure\batch\_serialization.py:1968: ValueError
+
+During handling of the above exception, another exception occurred:
+
+self = <azure.batch._serialization.Deserializer object at 0x000002054176C250>
+data = 'Mon, 10 Jul 2023 21:12:49 GMT', data_type = 'iso-8601'
+
+    def deserialize_data(self, data, data_type):
+        """Process data for deserialization according to data type.
+    
+        :param str data: The response string to be deserialized.
+        :param str data_type: The type to deserialize to.
+        :raises: DeserializationError if deserialization fails.
+        :return: Deserialized object.
+        """
+        if data is None:
+            return data
+    
+        try:
+            if not data_type:
+                return data
+            if data_type in self.basic_types.values():
+                return self.deserialize_basic(data, data_type)
+            if data_type in self.deserialize_type:
+                if isinstance(data, self.deserialize_expected_types.get(data_type, tuple())):
+                    return data
+    
+                is_a_text_parsing_type = lambda x: x not in ["object", "[]", r"{}"]
+                if isinstance(data, ET.Element) and is_a_text_parsing_type(data_type) and not data.text:
+                    return None
+>               data_val = self.deserialize_type[data_type](data)
+
+azure\batch\_serialization.py:1641: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+azure\batch\_serialization.py:1987: in deserialize_iso
+    raise_with_traceback(DeserializationError, msg, err)
+..\..\..\env\lib\site-packages\azure\core\exceptions.py:80: in raise_with_traceback
+    raise error.with_traceback(exc_traceback)  # pylint: disable=raise-missing-from
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+attr = 'MON, 10 JUL 2023 21:12:49 GMT'
+
+    @staticmethod
+    def deserialize_iso(attr):
+        """Deserialize ISO-8601 formatted string into Datetime object.
+    
+        :param str attr: response string to be deserialized.
+        :rtype: Datetime
+        :raises: DeserializationError if string format invalid.
+        """
+        if isinstance(attr, ET.Element):
+            attr = attr.text
+        try:
+            attr = attr.upper()  # type: ignore
+            match = Deserializer.valid_date.match(attr)
+            if not match:
+>               raise ValueError("Invalid datetime string: " + attr)
+E               azure.core.exceptions.DeserializationError: (', ValueError: Invalid datetime string: MON, 10 JUL 2023 21:12:49 GMT', 'Cannot deserialize datetime object.', ValueError('Invalid datetime string: MON, 10 JUL 2023 21:12:49 GMT'))
+
+azure\batch\_serialization.py:1968: DeserializationError
+
+During handling of the above exception, another exception occurred:
+
+args = (<test_batch.TestBatch object at 0x000002053FD02F70>,)
+kwargs = {'__aggregate_cache_key': (('AccountPreparer',), ('ResourceGroupPreparer', 'resource_group', '')), 'batch_account': Fa...'credential': <azure.core.credentials.AzureNamedKeyCredential object at 0x000002054184B7F0>, 'location': 'eastus', ...}
+trimmed_kwargs = {'__aggregate_cache_key': (('AccountPreparer',), ('ResourceGroupPreparer', 'resource_group', '')), 'batch_account': Fa...'credential': <azure.core.credentials.AzureNamedKeyCredential object at 0x000002054184B7F0>, 'location': 'eastus', ...}
+test_id = 'sdk/batch/azure-batch/tests/recordings/test_batch.pyTestBatchtest_batch_network_configuration'
+variables = {}
+combined_call = <function recorded_by_proxy.<locals>.record_wrap.<locals>.combined_call at 0x0000020540061550>
+test_variables = None, test_run = False
+
+    def record_wrap(*args, **kwargs):
+        def transform_args(*args, **kwargs):
+            copied_positional_args = list(args)
+            request = copied_positional_args[1]
+    
+            transform_request(request, recording_id)
+    
+            return tuple(copied_positional_args), kwargs
+    
+        trimmed_kwargs = {k: v for k, v in kwargs.items()}
+        trim_kwargs_from_test_function(test_func, trimmed_kwargs)
+    
+        if is_live_and_not_recording():
+            return test_func(*args, **trimmed_kwargs)
+    
+        test_id = get_test_id()
+        recording_id, variables = start_record_or_playback(test_id)
+        original_transport_func = RequestsTransport.send
+    
+        def combined_call(*args, **kwargs):
+            adjusted_args, adjusted_kwargs = transform_args(*args, **kwargs)
+            result = original_transport_func(*adjusted_args, **adjusted_kwargs)
+    
+            # make the x-recording-upstream-base-uri the URL of the request
+            # this makes the request look like it was made to the original endpoint instead of to the proxy
+            # without this, things like LROPollers can get broken by polling the wrong endpoint
+            parsed_result = url_parse.urlparse(result.request.url)
+            upstream_uri = url_parse.urlparse(result.request.headers["x-recording-upstream-base-uri"])
+            upstream_uri_dict = {
+                "scheme": upstream_uri.scheme,
+                "netloc": upstream_uri.netloc,
+            }
+            original_target = parsed_result._replace(**upstream_uri_dict).geturl()
+    
+            result.request.url = original_target
+            return result
+    
+        RequestsTransport.send = combined_call
+    
+        # call the modified function
+        # we define test_variables before invoking the test so the variable is defined in case of an exception
+        test_variables = None
+        # this tracks whether the test has been run yet; used when calling the test function with/without `variables`
+        # running without `variables` in the `except` block leads to unnecessary exceptions in test execution output
+        test_run = False
+        try:
+            try:
+>               test_variables = test_func(*args, variables=variables, **trimmed_kwargs)
+
+..\..\..\tools\azure-sdk-tools\devtools_testutils\proxy_testcase.py:218: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests\test_batch.py:640: in test_batch_network_configuration
+    client.create_pool(pool)
+..\..\..\env\lib\site-packages\azure\core\tracing\decorator.py:76: in wrapper_use_tracer
+    return func(*args, **kwargs)
+azure\batch\_operations\_operations.py:3502: in create_pool
+    response_headers["last-modified"] = self._deserialize("iso-8601", response.headers.get("last-modified"))
+azure\batch\_serialization.py:1416: in __call__
+    return self._deserialize(target_obj, data)
+azure\batch\_serialization.py:1450: in _deserialize
+    return self.deserialize_data(data, response)
+azure\batch\_serialization.py:1657: in deserialize_data
+    raise_with_traceback(DeserializationError, msg, err)
+..\..\..\env\lib\site-packages\azure\core\exceptions.py:80: in raise_with_traceback
+    raise error.with_traceback(exc_traceback)  # pylint: disable=raise-missing-from
+azure\batch\_serialization.py:1641: in deserialize_data
+    data_val = self.deserialize_type[data_type](data)
+azure\batch\_serialization.py:1987: in deserialize_iso
+    raise_with_traceback(DeserializationError, msg, err)
+..\..\..\env\lib\site-packages\azure\core\exceptions.py:80: in raise_with_traceback
+    raise error.with_traceback(exc_traceback)  # pylint: disable=raise-missing-from
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+attr = 'MON, 10 JUL 2023 21:12:49 GMT'
+
+    @staticmethod
+    def deserialize_iso(attr):
+        """Deserialize ISO-8601 formatted string into Datetime object.
+    
+        :param str attr: response string to be deserialized.
+        :rtype: Datetime
+        :raises: DeserializationError if string format invalid.
+        """
+        if isinstance(attr, ET.Element):
+            attr = attr.text
+        try:
+            attr = attr.upper()  # type: ignore
+            match = Deserializer.valid_date.match(attr)
+            if not match:
+>               raise ValueError("Invalid datetime string: " + attr)
+E               azure.core.exceptions.DeserializationError: (", DeserializationError: (', ValueError: Invalid datetime string: MON, 10 JUL 2023 21:12:49 GMT', 'Cannot deserialize datetime object.', ValueError('Invalid datetime string: MON, 10 JUL 2023 21:12:49 GMT'))", 'Unable to deserialize response data. Data: Mon, 10 Jul 2023 21:12:49 GMT, iso-8601', DeserializationError(', ValueError: Invalid datetime string: MON, 10 JUL 2023 21:12:49 GMT', 'Cannot deserialize datetime object.', ValueError('Invalid datetime string: MON, 10 JUL 2023 21:12:49 GMT')))
+
+azure\batch\_serialization.py:1968: DeserializationError
+------------------------------ Captured log call ------------------------------
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:511 Request URL: 'https://batch8733239a.eastus.batch.azure.com/pools?api-version=REDACTED'
+Request method: 'POST'
+Request headers:
+    'content-type': 'application/json; odata=minimalmetadata'
+    'Content-Length': '564'
+    'client-request-id': 'REDACTED'
+    'User-Agent': 'azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)'
+    'ocp-date': 'REDACTED'
+    'Authorization': 'REDACTED'
+A body is sent with the request
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:550 Response status: 201
+Response headers:
+    'Content-Length': '0'
+    'Date': 'Mon, 10 Jul 2023 21:12:49 GMT'
+    'Server': 'Microsoft-HTTPAPI/2.0'
+    'ETag': '0x8DB818A6A9F217A'
+    'Last-Modified': 'Mon, 10 Jul 2023 21:12:49 GMT'
+    'Location': 'REDACTED'
+    'DataServiceId': 'REDACTED'
+    'DataServiceVersion': 'REDACTED'
+    'Request-Id': '9f1de95a-d150-45ed-a406-8d09aac08d4a'
+    'Strict-Transport-Security': 'REDACTED'
+    'X-Content-Type-Options': 'REDACTED'
+_____________________ TestBatch.test_batch_compute_nodes ______________________
+
+args = (<test_batch.TestBatch object at 0x000002053FD14130>,)
+kwargs = {'__aggregate_cache_key': (('PoolPreparer',), (('AccountPreparer',), ('ResourceGroupPreparer', 'resource_group', '')))...02e', id='6e50202e'), 'credential': <azure.core.credentials.AzureNamedKeyCredential object at 0x0000020540065A00>, ...}
+trimmed_kwargs = {'__aggregate_cache_key': (('PoolPreparer',), (('AccountPreparer',), ('ResourceGroupPreparer', 'resource_group', '')))...02e', id='6e50202e'), 'credential': <azure.core.credentials.AzureNamedKeyCredential object at 0x0000020540065A00>, ...}
+test_id = 'sdk/batch/azure-batch/tests/recordings/test_batch.pyTestBatchtest_batch_compute_nodes'
+variables = {}
+combined_call = <function recorded_by_proxy.<locals>.record_wrap.<locals>.combined_call at 0x0000020541A5B700>
+test_variables = None, test_run = False
+
+    def record_wrap(*args, **kwargs):
+        def transform_args(*args, **kwargs):
+            copied_positional_args = list(args)
+            request = copied_positional_args[1]
+    
+            transform_request(request, recording_id)
+    
+            return tuple(copied_positional_args), kwargs
+    
+        trimmed_kwargs = {k: v for k, v in kwargs.items()}
+        trim_kwargs_from_test_function(test_func, trimmed_kwargs)
+    
+        if is_live_and_not_recording():
+            return test_func(*args, **trimmed_kwargs)
+    
+        test_id = get_test_id()
+        recording_id, variables = start_record_or_playback(test_id)
+        original_transport_func = RequestsTransport.send
+    
+        def combined_call(*args, **kwargs):
+            adjusted_args, adjusted_kwargs = transform_args(*args, **kwargs)
+            result = original_transport_func(*adjusted_args, **adjusted_kwargs)
+    
+            # make the x-recording-upstream-base-uri the URL of the request
+            # this makes the request look like it was made to the original endpoint instead of to the proxy
+            # without this, things like LROPollers can get broken by polling the wrong endpoint
+            parsed_result = url_parse.urlparse(result.request.url)
+            upstream_uri = url_parse.urlparse(result.request.headers["x-recording-upstream-base-uri"])
+            upstream_uri_dict = {
+                "scheme": upstream_uri.scheme,
+                "netloc": upstream_uri.netloc,
+            }
+            original_target = parsed_result._replace(**upstream_uri_dict).geturl()
+    
+            result.request.url = original_target
+            return result
+    
+        RequestsTransport.send = combined_call
+    
+        # call the modified function
+        # we define test_variables before invoking the test so the variable is defined in case of an exception
+        test_variables = None
+        # this tracks whether the test has been run yet; used when calling the test function with/without `variables`
+        # running without `variables` in the `except` block leads to unnecessary exceptions in test execution output
+        test_run = False
+        try:
+            try:
+>               test_variables = test_func(*args, variables=variables, **trimmed_kwargs)
+
+..\..\..\tools\azure-sdk-tools\devtools_testutils\proxy_testcase.py:218: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <test_batch.TestBatch object at 0x000002053FD14130>
+kwargs = {'__aggregate_cache_key': (('PoolPreparer',), (('AccountPreparer',), ('ResourceGroupPreparer', 'resource_group', '')))...'credential': <azure.core.credentials.AzureNamedKeyCredential object at 0x0000020540065A00>, 'location': 'eastus', ...}
+batch_pool = FakeResource(name='6e50202e', id='6e50202e')
+client = <azure.batch._patch.BatchClient object at 0x0000020540065EE0>
+nodes = [{'id': 'tvmps_29550a95b574af6d769d243db3e9a6e3120db41cb3c33a671844247d3af18e6c_d', 'url': 'https://batch6e50202e.east...': 'Canonical', 'offer': 'UbuntuServer', 'sku': '18.04-LTS', 'version': 'latest', 'exactVersion': '18.04.202306070'}}}]
+@py_assert2 = None, @py_assert5 = None, @py_assert4 = None
+
+    @ResourceGroupPreparer(location=AZURE_LOCATION)
+    @AccountPreparer(location=AZURE_LOCATION, batch_environment=BATCH_ENVIRONMENT)
+    @PoolPreparer(location=AZURE_LOCATION, size=2, config='iaas')
+    @recorded_by_proxy
+    def test_batch_compute_nodes(self, **kwargs):
+        batch_pool = kwargs.pop("batch_pool")
+        client = self.create_sharedkey_client(**kwargs)
+        # Test List Batch Nodes
+        nodes = list(client.list_nodes(batch_pool.name))
+        assert len(nodes) ==  2
+        while self.is_live and any([n for n in nodes if n.state != models.BatchNodeState.IDLE]):
+            time.sleep(10)
+            nodes = list(client.list_nodes(batch_pool.name))
+        assert len(nodes) ==  2
+    
+        # Test Get Batch Node
+>       node = client.get_nodes(batch_pool.name, nodes[0].id)
+E       AttributeError: 'BatchClient' object has no attribute 'get_nodes'
+
+tests\test_batch.py:670: AttributeError
+------------------------------ Captured log call ------------------------------
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:514 Request URL: 'https://batch6e50202e.eastus.batch.azure.com/pools/6e50202e/nodes?api-version=REDACTED'
+Request method: 'GET'
+Request headers:
+    'Accept': 'application/json'
+    'client-request-id': 'REDACTED'
+    'User-Agent': 'azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)'
+    'ocp-date': 'REDACTED'
+    'Authorization': 'REDACTED'
+No body was attached to the request
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:550 Response status: 200
+Response headers:
+    'Content-Type': 'application/json; odata=minimalmetadata'
+    'Date': 'Mon, 10 Jul 2023 21:41:11 GMT'
+    'Server': 'Microsoft-HTTPAPI/2.0'
+    'Transfer-Encoding': 'chunked'
+    'DataServiceVersion': 'REDACTED'
+    'Request-Id': 'ff94d009-2c53-480f-93ac-91c9a49c5cce'
+    'Strict-Transport-Security': 'REDACTED'
+    'X-Content-Type-Options': 'REDACTED'
+________________ TestBatch.test_batch_compute_node_extensions _________________
+
+attr = 'MON, 10 JUL 2023 21:59:43 GMT'
+
+    @staticmethod
+    def deserialize_iso(attr):
+        """Deserialize ISO-8601 formatted string into Datetime object.
+    
+        :param str attr: response string to be deserialized.
+        :rtype: Datetime
+        :raises: DeserializationError if string format invalid.
+        """
+        if isinstance(attr, ET.Element):
+            attr = attr.text
+        try:
+            attr = attr.upper()  # type: ignore
+            match = Deserializer.valid_date.match(attr)
+            if not match:
+>               raise ValueError("Invalid datetime string: " + attr)
+E               ValueError: Invalid datetime string: MON, 10 JUL 2023 21:59:43 GMT
+
+azure\batch\_serialization.py:1968: ValueError
+
+During handling of the above exception, another exception occurred:
+
+self = <azure.batch._serialization.Deserializer object at 0x0000020541B395B0>
+data = 'Mon, 10 Jul 2023 21:59:43 GMT', data_type = 'iso-8601'
+
+    def deserialize_data(self, data, data_type):
+        """Process data for deserialization according to data type.
+    
+        :param str data: The response string to be deserialized.
+        :param str data_type: The type to deserialize to.
+        :raises: DeserializationError if deserialization fails.
+        :return: Deserialized object.
+        """
+        if data is None:
+            return data
+    
+        try:
+            if not data_type:
+                return data
+            if data_type in self.basic_types.values():
+                return self.deserialize_basic(data, data_type)
+            if data_type in self.deserialize_type:
+                if isinstance(data, self.deserialize_expected_types.get(data_type, tuple())):
+                    return data
+    
+                is_a_text_parsing_type = lambda x: x not in ["object", "[]", r"{}"]
+                if isinstance(data, ET.Element) and is_a_text_parsing_type(data_type) and not data.text:
+                    return None
+>               data_val = self.deserialize_type[data_type](data)
+
+azure\batch\_serialization.py:1641: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+azure\batch\_serialization.py:1987: in deserialize_iso
+    raise_with_traceback(DeserializationError, msg, err)
+..\..\..\env\lib\site-packages\azure\core\exceptions.py:80: in raise_with_traceback
+    raise error.with_traceback(exc_traceback)  # pylint: disable=raise-missing-from
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+attr = 'MON, 10 JUL 2023 21:59:43 GMT'
+
+    @staticmethod
+    def deserialize_iso(attr):
+        """Deserialize ISO-8601 formatted string into Datetime object.
+    
+        :param str attr: response string to be deserialized.
+        :rtype: Datetime
+        :raises: DeserializationError if string format invalid.
+        """
+        if isinstance(attr, ET.Element):
+            attr = attr.text
+        try:
+            attr = attr.upper()  # type: ignore
+            match = Deserializer.valid_date.match(attr)
+            if not match:
+>               raise ValueError("Invalid datetime string: " + attr)
+E               azure.core.exceptions.DeserializationError: (', ValueError: Invalid datetime string: MON, 10 JUL 2023 21:59:43 GMT', 'Cannot deserialize datetime object.', ValueError('Invalid datetime string: MON, 10 JUL 2023 21:59:43 GMT'))
+
+azure\batch\_serialization.py:1968: DeserializationError
+
+During handling of the above exception, another exception occurred:
+
+args = (<test_batch.TestBatch object at 0x000002053FD142B0>,)
+kwargs = {'__aggregate_cache_key': (('AccountPreparer',), ('ResourceGroupPreparer', 'resource_group', '')), 'batch_account': Fa...'credential': <azure.core.credentials.AzureNamedKeyCredential object at 0x0000020541B39130>, 'location': 'eastus', ...}
+trimmed_kwargs = {'__aggregate_cache_key': (('AccountPreparer',), ('ResourceGroupPreparer', 'resource_group', '')), 'batch_account': Fa...'credential': <azure.core.credentials.AzureNamedKeyCredential object at 0x0000020541B39130>, 'location': 'eastus', ...}
+test_id = 'sdk/batch/azure-batch/tests/recordings/test_batch.pyTestBatchtest_batch_compute_node_extensions'
+variables = {}
+combined_call = <function recorded_by_proxy.<locals>.record_wrap.<locals>.combined_call at 0x000002054005AA60>
+test_variables = None, test_run = False
+
+    def record_wrap(*args, **kwargs):
+        def transform_args(*args, **kwargs):
+            copied_positional_args = list(args)
+            request = copied_positional_args[1]
+    
+            transform_request(request, recording_id)
+    
+            return tuple(copied_positional_args), kwargs
+    
+        trimmed_kwargs = {k: v for k, v in kwargs.items()}
+        trim_kwargs_from_test_function(test_func, trimmed_kwargs)
+    
+        if is_live_and_not_recording():
+            return test_func(*args, **trimmed_kwargs)
+    
+        test_id = get_test_id()
+        recording_id, variables = start_record_or_playback(test_id)
+        original_transport_func = RequestsTransport.send
+    
+        def combined_call(*args, **kwargs):
+            adjusted_args, adjusted_kwargs = transform_args(*args, **kwargs)
+            result = original_transport_func(*adjusted_args, **adjusted_kwargs)
+    
+            # make the x-recording-upstream-base-uri the URL of the request
+            # this makes the request look like it was made to the original endpoint instead of to the proxy
+            # without this, things like LROPollers can get broken by polling the wrong endpoint
+            parsed_result = url_parse.urlparse(result.request.url)
+            upstream_uri = url_parse.urlparse(result.request.headers["x-recording-upstream-base-uri"])
+            upstream_uri_dict = {
+                "scheme": upstream_uri.scheme,
+                "netloc": upstream_uri.netloc,
+            }
+            original_target = parsed_result._replace(**upstream_uri_dict).geturl()
+    
+            result.request.url = original_target
+            return result
+    
+        RequestsTransport.send = combined_call
+    
+        # call the modified function
+        # we define test_variables before invoking the test so the variable is defined in case of an exception
+        test_variables = None
+        # this tracks whether the test has been run yet; used when calling the test function with/without `variables`
+        # running without `variables` in the `except` block leads to unnecessary exceptions in test execution output
+        test_run = False
+        try:
+            try:
+>               test_variables = test_func(*args, variables=variables, **trimmed_kwargs)
+
+..\..\..\tools\azure-sdk-tools\devtools_testutils\proxy_testcase.py:218: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests\test_batch.py:758: in test_batch_compute_node_extensions
+    response = client.create_pool(parameters=batch_pool)
+..\..\..\env\lib\site-packages\azure\core\tracing\decorator.py:76: in wrapper_use_tracer
+    return func(*args, **kwargs)
+azure\batch\_operations\_operations.py:3502: in create_pool
+    response_headers["last-modified"] = self._deserialize("iso-8601", response.headers.get("last-modified"))
+azure\batch\_serialization.py:1416: in __call__
+    return self._deserialize(target_obj, data)
+azure\batch\_serialization.py:1450: in _deserialize
+    return self.deserialize_data(data, response)
+azure\batch\_serialization.py:1657: in deserialize_data
+    raise_with_traceback(DeserializationError, msg, err)
+..\..\..\env\lib\site-packages\azure\core\exceptions.py:80: in raise_with_traceback
+    raise error.with_traceback(exc_traceback)  # pylint: disable=raise-missing-from
+azure\batch\_serialization.py:1641: in deserialize_data
+    data_val = self.deserialize_type[data_type](data)
+azure\batch\_serialization.py:1987: in deserialize_iso
+    raise_with_traceback(DeserializationError, msg, err)
+..\..\..\env\lib\site-packages\azure\core\exceptions.py:80: in raise_with_traceback
+    raise error.with_traceback(exc_traceback)  # pylint: disable=raise-missing-from
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+attr = 'MON, 10 JUL 2023 21:59:43 GMT'
+
+    @staticmethod
+    def deserialize_iso(attr):
+        """Deserialize ISO-8601 formatted string into Datetime object.
+    
+        :param str attr: response string to be deserialized.
+        :rtype: Datetime
+        :raises: DeserializationError if string format invalid.
+        """
+        if isinstance(attr, ET.Element):
+            attr = attr.text
+        try:
+            attr = attr.upper()  # type: ignore
+            match = Deserializer.valid_date.match(attr)
+            if not match:
+>               raise ValueError("Invalid datetime string: " + attr)
+E               azure.core.exceptions.DeserializationError: (", DeserializationError: (', ValueError: Invalid datetime string: MON, 10 JUL 2023 21:59:43 GMT', 'Cannot deserialize datetime object.', ValueError('Invalid datetime string: MON, 10 JUL 2023 21:59:43 GMT'))", 'Unable to deserialize response data. Data: Mon, 10 Jul 2023 21:59:43 GMT, iso-8601', DeserializationError(', ValueError: Invalid datetime string: MON, 10 JUL 2023 21:59:43 GMT', 'Cannot deserialize datetime object.', ValueError('Invalid datetime string: MON, 10 JUL 2023 21:59:43 GMT')))
+
+azure\batch\_serialization.py:1968: DeserializationError
+------------------------------ Captured log call ------------------------------
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:511 Request URL: 'https://batchd011246a.eastus.batch.azure.com/pools?api-version=REDACTED'
+Request method: 'POST'
+Request headers:
+    'content-type': 'application/json; odata=minimalmetadata'
+    'Content-Length': '734'
+    'client-request-id': 'REDACTED'
+    'User-Agent': 'azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)'
+    'ocp-date': 'REDACTED'
+    'Authorization': 'REDACTED'
+A body is sent with the request
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:550 Response status: 201
+Response headers:
+    'Content-Length': '0'
+    'Date': 'Mon, 10 Jul 2023 21:59:42 GMT'
+    'Server': 'Microsoft-HTTPAPI/2.0'
+    'ETag': '0x8DB8190F7F07613'
+    'Last-Modified': 'Mon, 10 Jul 2023 21:59:43 GMT'
+    'Location': 'REDACTED'
+    'DataServiceId': 'REDACTED'
+    'DataServiceVersion': 'REDACTED'
+    'Request-Id': '9d4203ed-a6b8-4655-807b-d31f8877deb5'
+    'Strict-Transport-Security': 'REDACTED'
+    'X-Content-Type-Options': 'REDACTED'
+___________________ TestBatch.test_batch_compute_node_user ____________________
+
+args = (<test_batch.TestBatch object at 0x000002053FD14430>,)
+kwargs = {'__aggregate_cache_key': (('PoolPreparer',), (('AccountPreparer',), ('ResourceGroupPreparer', 'resource_group', '')))...1d9', id='f68621d9'), 'credential': <azure.core.credentials.AzureNamedKeyCredential object at 0x0000020541A98910>, ...}
+trimmed_kwargs = {'__aggregate_cache_key': (('PoolPreparer',), (('AccountPreparer',), ('ResourceGroupPreparer', 'resource_group', '')))...1d9', id='f68621d9'), 'credential': <azure.core.credentials.AzureNamedKeyCredential object at 0x0000020541A98910>, ...}
+test_id = 'sdk/batch/azure-batch/tests/recordings/test_batch.pyTestBatchtest_batch_compute_node_user'
+variables = {}
+combined_call = <function recorded_by_proxy.<locals>.record_wrap.<locals>.combined_call at 0x0000020541600670>
+test_variables = None, test_run = False
+
+    def record_wrap(*args, **kwargs):
+        def transform_args(*args, **kwargs):
+            copied_positional_args = list(args)
+            request = copied_positional_args[1]
+    
+            transform_request(request, recording_id)
+    
+            return tuple(copied_positional_args), kwargs
+    
+        trimmed_kwargs = {k: v for k, v in kwargs.items()}
+        trim_kwargs_from_test_function(test_func, trimmed_kwargs)
+    
+        if is_live_and_not_recording():
+            return test_func(*args, **trimmed_kwargs)
+    
+        test_id = get_test_id()
+        recording_id, variables = start_record_or_playback(test_id)
+        original_transport_func = RequestsTransport.send
+    
+        def combined_call(*args, **kwargs):
+            adjusted_args, adjusted_kwargs = transform_args(*args, **kwargs)
+            result = original_transport_func(*adjusted_args, **adjusted_kwargs)
+    
+            # make the x-recording-upstream-base-uri the URL of the request
+            # this makes the request look like it was made to the original endpoint instead of to the proxy
+            # without this, things like LROPollers can get broken by polling the wrong endpoint
+            parsed_result = url_parse.urlparse(result.request.url)
+            upstream_uri = url_parse.urlparse(result.request.headers["x-recording-upstream-base-uri"])
+            upstream_uri_dict = {
+                "scheme": upstream_uri.scheme,
+                "netloc": upstream_uri.netloc,
+            }
+            original_target = parsed_result._replace(**upstream_uri_dict).geturl()
+    
+            result.request.url = original_target
+            return result
+    
+        RequestsTransport.send = combined_call
+    
+        # call the modified function
+        # we define test_variables before invoking the test so the variable is defined in case of an exception
+        test_variables = None
+        # this tracks whether the test has been run yet; used when calling the test function with/without `variables`
+        # running without `variables` in the `except` block leads to unnecessary exceptions in test execution output
+        test_run = False
+        try:
+            try:
+>               test_variables = test_func(*args, variables=variables, **trimmed_kwargs)
+
+..\..\..\tools\azure-sdk-tools\devtools_testutils\proxy_testcase.py:218: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <test_batch.TestBatch object at 0x000002053FD14430>
+kwargs = {'__aggregate_cache_key': (('PoolPreparer',), (('AccountPreparer',), ('ResourceGroupPreparer', 'resource_group', '')))...'credential': <azure.core.credentials.AzureNamedKeyCredential object at 0x0000020541A98910>, 'location': 'eastus', ...}
+batch_pool = FakeResource(name='f68621d9', id='f68621d9')
+client = <azure.batch._patch.BatchClient object at 0x0000020541A98D00>
+nodes = [{'id': 'tvmps_dbe75f6caef8f0f1187459927e02911e8d8bf546552f96efa8e1b8c605699853_d', 'url': 'https://batchf68621d9.east...': 'Canonical', 'offer': 'UbuntuServer', 'sku': '18.04-LTS', 'version': 'latest', 'exactVersion': '18.04.202306070'}}}]
+@py_assert2 = None, @py_assert5 = None, @py_assert4 = None
+
+    @CachedResourceGroupPreparer(location=AZURE_LOCATION)
+    @AccountPreparer(location=AZURE_LOCATION, batch_environment=BATCH_ENVIRONMENT)
+    @PoolPreparer(location=AZURE_LOCATION, size=1)
+    @recorded_by_proxy
+    def test_batch_compute_node_user(self, **kwargs):
+        batch_pool = kwargs.pop("batch_pool")
+        client = self.create_sharedkey_client(**kwargs)
+        nodes = list(client.list_nodes(batch_pool.name))
+        while self.is_live and any([n for n in nodes if n.state != models.BatchNodeState.idle]):
+            time.sleep(10)
+            nodes = list(client.list_nodes(batch_pool.name))
+        assert len(nodes) ==  1
+    
+        # Test Add User
+        user_name = 'BatchPythonSDKUser'
+        nodes = list(client.list_nodes(batch_pool.name))
+        user = models.BatchNodeUser(name=user_name, password=BATCH_TEST_PASSWORD, is_admin=False)
+>       response = client.add_user_nodes(batch_pool.name, nodes[0].id, user)
+E       AttributeError: 'BatchClient' object has no attribute 'add_user_nodes'
+
+tests\test_batch.py:797: AttributeError
+------------------------------ Captured log call ------------------------------
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:514 Request URL: 'https://batchf68621d9.eastus.batch.azure.com/pools/f68621d9/nodes?api-version=REDACTED'
+Request method: 'GET'
+Request headers:
+    'Accept': 'application/json'
+    'client-request-id': 'REDACTED'
+    'User-Agent': 'azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)'
+    'ocp-date': 'REDACTED'
+    'Authorization': 'REDACTED'
+No body was attached to the request
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:550 Response status: 200
+Response headers:
+    'Content-Type': 'application/json; odata=minimalmetadata'
+    'Date': 'Mon, 10 Jul 2023 22:12:43 GMT'
+    'Server': 'Microsoft-HTTPAPI/2.0'
+    'Transfer-Encoding': 'chunked'
+    'DataServiceVersion': 'REDACTED'
+    'Request-Id': '9d508ea8-e41e-48f3-a57a-104250494975'
+    'Strict-Transport-Security': 'REDACTED'
+    'X-Content-Type-Options': 'REDACTED'
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:514 Request URL: 'https://batchf68621d9.eastus.batch.azure.com/pools/f68621d9/nodes?api-version=REDACTED'
+Request method: 'GET'
+Request headers:
+    'Accept': 'application/json'
+    'client-request-id': 'REDACTED'
+    'User-Agent': 'azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)'
+    'ocp-date': 'REDACTED'
+    'Authorization': 'REDACTED'
+No body was attached to the request
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:550 Response status: 200
+Response headers:
+    'Content-Type': 'application/json; odata=minimalmetadata'
+    'Date': 'Mon, 10 Jul 2023 22:12:54 GMT'
+    'Server': 'Microsoft-HTTPAPI/2.0'
+    'Transfer-Encoding': 'chunked'
+    'DataServiceVersion': 'REDACTED'
+    'Request-Id': '087edbd0-7401-4431-a5d4-b45c62899483'
+    'Strict-Transport-Security': 'REDACTED'
+    'X-Content-Type-Options': 'REDACTED'
+______________ TestBatch.test_batch_compute_node_remote_desktop _______________
+
+args = (<test_batch.TestBatch object at 0x000002053FD02430>,)
+kwargs = {'__aggregate_cache_key': (('PoolPreparer',), (('AccountPreparer',), ('ResourceGroupPreparer', 'resource_group', '')))...5ff', id='67c125ff'), 'credential': <azure.core.credentials.AzureNamedKeyCredential object at 0x0000020541D97670>, ...}
+trimmed_kwargs = {'__aggregate_cache_key': (('PoolPreparer',), (('AccountPreparer',), ('ResourceGroupPreparer', 'resource_group', '')))...5ff', id='67c125ff'), 'credential': <azure.core.credentials.AzureNamedKeyCredential object at 0x0000020541D97670>, ...}
+test_id = 'sdk/batch/azure-batch/tests/recordings/test_batch.pyTestBatchtest_batch_compute_node_remote_desktop'
+variables = {}
+combined_call = <function recorded_by_proxy.<locals>.record_wrap.<locals>.combined_call at 0x0000020541600E50>
+test_variables = None, test_run = False
+
+    def record_wrap(*args, **kwargs):
+        def transform_args(*args, **kwargs):
+            copied_positional_args = list(args)
+            request = copied_positional_args[1]
+    
+            transform_request(request, recording_id)
+    
+            return tuple(copied_positional_args), kwargs
+    
+        trimmed_kwargs = {k: v for k, v in kwargs.items()}
+        trim_kwargs_from_test_function(test_func, trimmed_kwargs)
+    
+        if is_live_and_not_recording():
+            return test_func(*args, **trimmed_kwargs)
+    
+        test_id = get_test_id()
+        recording_id, variables = start_record_or_playback(test_id)
+        original_transport_func = RequestsTransport.send
+    
+        def combined_call(*args, **kwargs):
+            adjusted_args, adjusted_kwargs = transform_args(*args, **kwargs)
+            result = original_transport_func(*adjusted_args, **adjusted_kwargs)
+    
+            # make the x-recording-upstream-base-uri the URL of the request
+            # this makes the request look like it was made to the original endpoint instead of to the proxy
+            # without this, things like LROPollers can get broken by polling the wrong endpoint
+            parsed_result = url_parse.urlparse(result.request.url)
+            upstream_uri = url_parse.urlparse(result.request.headers["x-recording-upstream-base-uri"])
+            upstream_uri_dict = {
+                "scheme": upstream_uri.scheme,
+                "netloc": upstream_uri.netloc,
+            }
+            original_target = parsed_result._replace(**upstream_uri_dict).geturl()
+    
+            result.request.url = original_target
+            return result
+    
+        RequestsTransport.send = combined_call
+    
+        # call the modified function
+        # we define test_variables before invoking the test so the variable is defined in case of an exception
+        test_variables = None
+        # this tracks whether the test has been run yet; used when calling the test function with/without `variables`
+        # running without `variables` in the `except` block leads to unnecessary exceptions in test execution output
+        test_run = False
+        try:
+            try:
+>               test_variables = test_func(*args, variables=variables, **trimmed_kwargs)
+
+..\..\..\tools\azure-sdk-tools\devtools_testutils\proxy_testcase.py:218: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <test_batch.TestBatch object at 0x000002053FD02430>
+kwargs = {'__aggregate_cache_key': (('PoolPreparer',), (('AccountPreparer',), ('ResourceGroupPreparer', 'resource_group', '')))...'credential': <azure.core.credentials.AzureNamedKeyCredential object at 0x0000020541D97670>, 'location': 'eastus', ...}
+batch_pool = FakeResource(name='67c125ff', id='67c125ff')
+client = <azure.batch._patch.BatchClient object at 0x0000020541D97130>
+nodes = [{'id': 'tvmps_ca7cea459aacd1f5fe687d2d3704c08275fcf5a9cb43bef50c99a4388419aff3_d', 'url': 'https://batch67c125ff.east...RemoteForwarder.RdpInput', 'protocol': 'tcp', 'frontendPort': 3389, 'backendPort': 20000}]}, 'virtualMachineInfo': {}}]
+@py_assert2 = None, @py_assert5 = None, @py_assert4 = None
+
+    @CachedResourceGroupPreparer(location=AZURE_LOCATION)
+    @AccountPreparer(location=AZURE_LOCATION, batch_environment=BATCH_ENVIRONMENT)
+    @PoolPreparer(location=AZURE_LOCATION, size=1, config="paas")
+    @recorded_by_proxy
+    def test_batch_compute_node_remote_desktop(self, **kwargs):
+        batch_pool = kwargs.pop("batch_pool")
+        client = self.create_sharedkey_client(**kwargs)
+        nodes = list(client.list_nodes(batch_pool.name))
+        while self.is_live and any([n for n in nodes if n.state != models.BatchNodeState.idle]):
+            time.sleep(10)
+            nodes = list(client.list_nodes(batch_pool.name))
+        assert len(nodes) ==  1
+    
+    
+        # Test Get remote desktop
+        file_length = 0
+        with io.BytesIO() as file_handle:
+>           remote_desktop = client.get_remote_desktop_nodes(batch_pool.name, nodes[0].id)
+E           AttributeError: 'BatchClient' object has no attribute 'get_remote_desktop_nodes'
+
+tests\test_batch.py:832: AttributeError
+------------------------------ Captured log call ------------------------------
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:514 Request URL: 'https://batch67c125ff.eastus.batch.azure.com/pools/67c125ff/nodes?api-version=REDACTED'
+Request method: 'GET'
+Request headers:
+    'Accept': 'application/json'
+    'client-request-id': 'REDACTED'
+    'User-Agent': 'azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)'
+    'ocp-date': 'REDACTED'
+    'Authorization': 'REDACTED'
+No body was attached to the request
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:550 Response status: 200
+Response headers:
+    'Content-Type': 'application/json; odata=minimalmetadata'
+    'Date': 'Mon, 10 Jul 2023 22:25:00 GMT'
+    'Server': 'Microsoft-HTTPAPI/2.0'
+    'Transfer-Encoding': 'chunked'
+    'DataServiceVersion': 'REDACTED'
+    'Request-Id': '98f8f03b-1fed-47d3-84e8-eedf75f37099'
+    'Strict-Transport-Security': 'REDACTED'
+    'X-Content-Type-Options': 'REDACTED'
+_________________________ TestBatch.test_batch_files __________________________
+
+attr = 'MON, 10 JUL 2023 23:09:00 GMT'
+
+    @staticmethod
+    def deserialize_iso(attr):
+        """Deserialize ISO-8601 formatted string into Datetime object.
+    
+        :param str attr: response string to be deserialized.
+        :rtype: Datetime
+        :raises: DeserializationError if string format invalid.
+        """
+        if isinstance(attr, ET.Element):
+            attr = attr.text
+        try:
+            attr = attr.upper()  # type: ignore
+            match = Deserializer.valid_date.match(attr)
+            if not match:
+>               raise ValueError("Invalid datetime string: " + attr)
+E               ValueError: Invalid datetime string: MON, 10 JUL 2023 23:09:00 GMT
+
+azure\batch\_serialization.py:1968: ValueError
+
+During handling of the above exception, another exception occurred:
+
+self = <azure.batch._serialization.Deserializer object at 0x0000020541744190>
+data = 'Mon, 10 Jul 2023 23:09:00 GMT', data_type = 'iso-8601'
+
+    def deserialize_data(self, data, data_type):
+        """Process data for deserialization according to data type.
+    
+        :param str data: The response string to be deserialized.
+        :param str data_type: The type to deserialize to.
+        :raises: DeserializationError if deserialization fails.
+        :return: Deserialized object.
+        """
+        if data is None:
+            return data
+    
+        try:
+            if not data_type:
+                return data
+            if data_type in self.basic_types.values():
+                return self.deserialize_basic(data, data_type)
+            if data_type in self.deserialize_type:
+                if isinstance(data, self.deserialize_expected_types.get(data_type, tuple())):
+                    return data
+    
+                is_a_text_parsing_type = lambda x: x not in ["object", "[]", r"{}"]
+                if isinstance(data, ET.Element) and is_a_text_parsing_type(data_type) and not data.text:
+                    return None
+>               data_val = self.deserialize_type[data_type](data)
+
+azure\batch\_serialization.py:1641: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+azure\batch\_serialization.py:1987: in deserialize_iso
+    raise_with_traceback(DeserializationError, msg, err)
+..\..\..\env\lib\site-packages\azure\core\exceptions.py:80: in raise_with_traceback
+    raise error.with_traceback(exc_traceback)  # pylint: disable=raise-missing-from
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+attr = 'MON, 10 JUL 2023 23:09:00 GMT'
+
+    @staticmethod
+    def deserialize_iso(attr):
+        """Deserialize ISO-8601 formatted string into Datetime object.
+    
+        :param str attr: response string to be deserialized.
+        :rtype: Datetime
+        :raises: DeserializationError if string format invalid.
+        """
+        if isinstance(attr, ET.Element):
+            attr = attr.text
+        try:
+            attr = attr.upper()  # type: ignore
+            match = Deserializer.valid_date.match(attr)
+            if not match:
+>               raise ValueError("Invalid datetime string: " + attr)
+E               azure.core.exceptions.DeserializationError: (', ValueError: Invalid datetime string: MON, 10 JUL 2023 23:09:00 GMT', 'Cannot deserialize datetime object.', ValueError('Invalid datetime string: MON, 10 JUL 2023 23:09:00 GMT'))
+
+azure\batch\_serialization.py:1968: DeserializationError
+
+During handling of the above exception, another exception occurred:
+
+args = (<test_batch.TestBatch object at 0x000002053FD02BE0>,)
+kwargs = {'__aggregate_cache_key': (('JobPreparer',), (('PoolPreparer',), (('AccountPreparer',), (('StorageAccountPreparer', 'S...akeResource(name='batch71071ccc', id='batch71071ccc'), 'batch_pool': FakeResource(name='71071ccc', id='71071ccc'), ...}
+trimmed_kwargs = {'__aggregate_cache_key': (('JobPreparer',), (('PoolPreparer',), (('AccountPreparer',), (('StorageAccountPreparer', 'S...akeResource(name='batch71071ccc', id='batch71071ccc'), 'batch_pool': FakeResource(name='71071ccc', id='71071ccc'), ...}
+test_id = 'sdk/batch/azure-batch/tests/recordings/test_batch.pyTestBatchtest_batch_files'
+variables = {}
+combined_call = <function recorded_by_proxy.<locals>.record_wrap.<locals>.combined_call at 0x0000020540072670>
+test_variables = None, test_run = False
+
+    def record_wrap(*args, **kwargs):
+        def transform_args(*args, **kwargs):
+            copied_positional_args = list(args)
+            request = copied_positional_args[1]
+    
+            transform_request(request, recording_id)
+    
+            return tuple(copied_positional_args), kwargs
+    
+        trimmed_kwargs = {k: v for k, v in kwargs.items()}
+        trim_kwargs_from_test_function(test_func, trimmed_kwargs)
+    
+        if is_live_and_not_recording():
+            return test_func(*args, **trimmed_kwargs)
+    
+        test_id = get_test_id()
+        recording_id, variables = start_record_or_playback(test_id)
+        original_transport_func = RequestsTransport.send
+    
+        def combined_call(*args, **kwargs):
+            adjusted_args, adjusted_kwargs = transform_args(*args, **kwargs)
+            result = original_transport_func(*adjusted_args, **adjusted_kwargs)
+    
+            # make the x-recording-upstream-base-uri the URL of the request
+            # this makes the request look like it was made to the original endpoint instead of to the proxy
+            # without this, things like LROPollers can get broken by polling the wrong endpoint
+            parsed_result = url_parse.urlparse(result.request.url)
+            upstream_uri = url_parse.urlparse(result.request.headers["x-recording-upstream-base-uri"])
+            upstream_uri_dict = {
+                "scheme": upstream_uri.scheme,
+                "netloc": upstream_uri.netloc,
+            }
+            original_target = parsed_result._replace(**upstream_uri_dict).geturl()
+    
+            result.request.url = original_target
+            return result
+    
+        RequestsTransport.send = combined_call
+    
+        # call the modified function
+        # we define test_variables before invoking the test so the variable is defined in case of an exception
+        test_variables = None
+        # this tracks whether the test has been run yet; used when calling the test function with/without `variables`
+        # running without `variables` in the `except` block leads to unnecessary exceptions in test execution output
+        test_run = False
+        try:
+            try:
+>               test_variables = test_func(*args, variables=variables, **trimmed_kwargs)
+
+..\..\..\tools\azure-sdk-tools\devtools_testutils\proxy_testcase.py:218: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests\test_batch.py:858: in test_batch_files
+    response = client.create_task(batch_job.id, task_param)
+..\..\..\env\lib\site-packages\azure\core\tracing\decorator.py:76: in wrapper_use_tracer
+    return func(*args, **kwargs)
+azure\batch\_operations\_operations.py:7966: in create_task
+    response_headers["last-modified"] = self._deserialize("iso-8601", response.headers.get("last-modified"))
+azure\batch\_serialization.py:1416: in __call__
+    return self._deserialize(target_obj, data)
+azure\batch\_serialization.py:1450: in _deserialize
+    return self.deserialize_data(data, response)
+azure\batch\_serialization.py:1657: in deserialize_data
+    raise_with_traceback(DeserializationError, msg, err)
+..\..\..\env\lib\site-packages\azure\core\exceptions.py:80: in raise_with_traceback
+    raise error.with_traceback(exc_traceback)  # pylint: disable=raise-missing-from
+azure\batch\_serialization.py:1641: in deserialize_data
+    data_val = self.deserialize_type[data_type](data)
+azure\batch\_serialization.py:1987: in deserialize_iso
+    raise_with_traceback(DeserializationError, msg, err)
+..\..\..\env\lib\site-packages\azure\core\exceptions.py:80: in raise_with_traceback
+    raise error.with_traceback(exc_traceback)  # pylint: disable=raise-missing-from
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+attr = 'MON, 10 JUL 2023 23:09:00 GMT'
+
+    @staticmethod
+    def deserialize_iso(attr):
+        """Deserialize ISO-8601 formatted string into Datetime object.
+    
+        :param str attr: response string to be deserialized.
+        :rtype: Datetime
+        :raises: DeserializationError if string format invalid.
+        """
+        if isinstance(attr, ET.Element):
+            attr = attr.text
+        try:
+            attr = attr.upper()  # type: ignore
+            match = Deserializer.valid_date.match(attr)
+            if not match:
+>               raise ValueError("Invalid datetime string: " + attr)
+E               azure.core.exceptions.DeserializationError: (", DeserializationError: (', ValueError: Invalid datetime string: MON, 10 JUL 2023 23:09:00 GMT', 'Cannot deserialize datetime object.', ValueError('Invalid datetime string: MON, 10 JUL 2023 23:09:00 GMT'))", 'Unable to deserialize response data. Data: Mon, 10 Jul 2023 23:09:00 GMT, iso-8601', DeserializationError(', ValueError: Invalid datetime string: MON, 10 JUL 2023 23:09:00 GMT', 'Cannot deserialize datetime object.', ValueError('Invalid datetime string: MON, 10 JUL 2023 23:09:00 GMT')))
+
+azure\batch\_serialization.py:1968: DeserializationError
+------------------------------ Captured log call ------------------------------
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:514 Request URL: 'https://batch471071ccc.eastus.batch.azure.com/pools/71071ccc/nodes?api-version=REDACTED'
+Request method: 'GET'
+Request headers:
+    'Accept': 'application/json'
+    'client-request-id': 'REDACTED'
+    'User-Agent': 'azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)'
+    'ocp-date': 'REDACTED'
+    'Authorization': 'REDACTED'
+No body was attached to the request
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:550 Response status: 200
+Response headers:
+    'Content-Type': 'application/json; odata=minimalmetadata'
+    'Date': 'Mon, 10 Jul 2023 23:08:18 GMT'
+    'Server': 'Microsoft-HTTPAPI/2.0'
+    'Transfer-Encoding': 'chunked'
+    'DataServiceVersion': 'REDACTED'
+    'Request-Id': '86e0ac88-babd-4a37-9c67-abd415817d04'
+    'Strict-Transport-Security': 'REDACTED'
+    'X-Content-Type-Options': 'REDACTED'
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:511 Request URL: 'https://batch471071ccc.eastus.batch.azure.com/jobs/batch71071ccc/tasks?api-version=REDACTED'
+Request method: 'POST'
+Request headers:
+    'content-type': 'application/json; odata=minimalmetadata'
+    'Content-Length': '65'
+    'client-request-id': 'REDACTED'
+    'User-Agent': 'azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)'
+    'ocp-date': 'REDACTED'
+    'Authorization': 'REDACTED'
+A body is sent with the request
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:550 Response status: 201
+Response headers:
+    'Content-Length': '0'
+    'Date': 'Mon, 10 Jul 2023 23:08:59 GMT'
+    'Server': 'Microsoft-HTTPAPI/2.0'
+    'ETag': '0x8DB819AA571CA49'
+    'Last-Modified': 'Mon, 10 Jul 2023 23:09:00 GMT'
+    'Location': 'REDACTED'
+    'DataServiceId': 'REDACTED'
+    'DataServiceVersion': 'REDACTED'
+    'Request-Id': '216ed14f-699f-4914-8236-7d0e9c8a1150'
+    'Strict-Transport-Security': 'REDACTED'
+    'X-Content-Type-Options': 'REDACTED'
+_________________________ TestBatch.test_batch_tasks __________________________
+
+attr = 'TUE, 11 JUL 2023 04:59:02 GMT'
+
+    @staticmethod
+    def deserialize_iso(attr):
+        """Deserialize ISO-8601 formatted string into Datetime object.
+    
+        :param str attr: response string to be deserialized.
+        :rtype: Datetime
+        :raises: DeserializationError if string format invalid.
+        """
+        if isinstance(attr, ET.Element):
+            attr = attr.text
+        try:
+            attr = attr.upper()  # type: ignore
+            match = Deserializer.valid_date.match(attr)
+            if not match:
+>               raise ValueError("Invalid datetime string: " + attr)
+E               ValueError: Invalid datetime string: TUE, 11 JUL 2023 04:59:02 GMT
+
+azure\batch\_serialization.py:1968: ValueError
+
+During handling of the above exception, another exception occurred:
+
+self = <azure.batch._serialization.Deserializer object at 0x0000020541E6B850>
+data = 'Tue, 11 Jul 2023 04:59:02 GMT', data_type = 'iso-8601'
+
+    def deserialize_data(self, data, data_type):
+        """Process data for deserialization according to data type.
+    
+        :param str data: The response string to be deserialized.
+        :param str data_type: The type to deserialize to.
+        :raises: DeserializationError if deserialization fails.
+        :return: Deserialized object.
+        """
+        if data is None:
+            return data
+    
+        try:
+            if not data_type:
+                return data
+            if data_type in self.basic_types.values():
+                return self.deserialize_basic(data, data_type)
+            if data_type in self.deserialize_type:
+                if isinstance(data, self.deserialize_expected_types.get(data_type, tuple())):
+                    return data
+    
+                is_a_text_parsing_type = lambda x: x not in ["object", "[]", r"{}"]
+                if isinstance(data, ET.Element) and is_a_text_parsing_type(data_type) and not data.text:
+                    return None
+>               data_val = self.deserialize_type[data_type](data)
+
+azure\batch\_serialization.py:1641: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+azure\batch\_serialization.py:1987: in deserialize_iso
+    raise_with_traceback(DeserializationError, msg, err)
+..\..\..\env\lib\site-packages\azure\core\exceptions.py:80: in raise_with_traceback
+    raise error.with_traceback(exc_traceback)  # pylint: disable=raise-missing-from
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+attr = 'TUE, 11 JUL 2023 04:59:02 GMT'
+
+    @staticmethod
+    def deserialize_iso(attr):
+        """Deserialize ISO-8601 formatted string into Datetime object.
+    
+        :param str attr: response string to be deserialized.
+        :rtype: Datetime
+        :raises: DeserializationError if string format invalid.
+        """
+        if isinstance(attr, ET.Element):
+            attr = attr.text
+        try:
+            attr = attr.upper()  # type: ignore
+            match = Deserializer.valid_date.match(attr)
+            if not match:
+>               raise ValueError("Invalid datetime string: " + attr)
+E               azure.core.exceptions.DeserializationError: (', ValueError: Invalid datetime string: TUE, 11 JUL 2023 04:59:02 GMT', 'Cannot deserialize datetime object.', ValueError('Invalid datetime string: TUE, 11 JUL 2023 04:59:02 GMT'))
+
+azure\batch\_serialization.py:1968: DeserializationError
+
+During handling of the above exception, another exception occurred:
+
+args = (<test_batch.TestBatch object at 0x000002053FD025E0>,)
+kwargs = {'__aggregate_cache_key': (('JobPreparer',), (('AccountPreparer',), ('ResourceGroupPreparer', 'resource_group', ''))),... id='batch71d31cdf'), 'credential': <azure.core.credentials.AzureNamedKeyCredential object at 0x0000020541653910>, ...}
+trimmed_kwargs = {'__aggregate_cache_key': (('JobPreparer',), (('AccountPreparer',), ('ResourceGroupPreparer', 'resource_group', ''))),... id='batch71d31cdf'), 'credential': <azure.core.credentials.AzureNamedKeyCredential object at 0x0000020541653910>, ...}
+test_id = 'sdk/batch/azure-batch/tests/recordings/test_batch.pyTestBatchtest_batch_tasks'
+variables = {}
+combined_call = <function recorded_by_proxy.<locals>.record_wrap.<locals>.combined_call at 0x0000020541D8FD30>
+test_variables = None, test_run = False
+
+    def record_wrap(*args, **kwargs):
+        def transform_args(*args, **kwargs):
+            copied_positional_args = list(args)
+            request = copied_positional_args[1]
+    
+            transform_request(request, recording_id)
+    
+            return tuple(copied_positional_args), kwargs
+    
+        trimmed_kwargs = {k: v for k, v in kwargs.items()}
+        trim_kwargs_from_test_function(test_func, trimmed_kwargs)
+    
+        if is_live_and_not_recording():
+            return test_func(*args, **trimmed_kwargs)
+    
+        test_id = get_test_id()
+        recording_id, variables = start_record_or_playback(test_id)
+        original_transport_func = RequestsTransport.send
+    
+        def combined_call(*args, **kwargs):
+            adjusted_args, adjusted_kwargs = transform_args(*args, **kwargs)
+            result = original_transport_func(*adjusted_args, **adjusted_kwargs)
+    
+            # make the x-recording-upstream-base-uri the URL of the request
+            # this makes the request look like it was made to the original endpoint instead of to the proxy
+            # without this, things like LROPollers can get broken by polling the wrong endpoint
+            parsed_result = url_parse.urlparse(result.request.url)
+            upstream_uri = url_parse.urlparse(result.request.headers["x-recording-upstream-base-uri"])
+            upstream_uri_dict = {
+                "scheme": upstream_uri.scheme,
+                "netloc": upstream_uri.netloc,
+            }
+            original_target = parsed_result._replace(**upstream_uri_dict).geturl()
+    
+            result.request.url = original_target
+            return result
+    
+        RequestsTransport.send = combined_call
+    
+        # call the modified function
+        # we define test_variables before invoking the test so the variable is defined in case of an exception
+        test_variables = None
+        # this tracks whether the test has been run yet; used when calling the test function with/without `variables`
+        # running without `variables` in the `except` block leads to unnecessary exceptions in test execution output
+        test_run = False
+        try:
+            try:
+>               test_variables = test_func(*args, variables=variables, **trimmed_kwargs)
+
+..\..\..\tools\azure-sdk-tools\devtools_testutils\proxy_testcase.py:218: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests\test_batch.py:932: in test_batch_tasks
+    client.create_task(batch_job.id, task_param)
+..\..\..\env\lib\site-packages\azure\core\tracing\decorator.py:76: in wrapper_use_tracer
+    return func(*args, **kwargs)
+azure\batch\_operations\_operations.py:7966: in create_task
+    response_headers["last-modified"] = self._deserialize("iso-8601", response.headers.get("last-modified"))
+azure\batch\_serialization.py:1416: in __call__
+    return self._deserialize(target_obj, data)
+azure\batch\_serialization.py:1450: in _deserialize
+    return self.deserialize_data(data, response)
+azure\batch\_serialization.py:1657: in deserialize_data
+    raise_with_traceback(DeserializationError, msg, err)
+..\..\..\env\lib\site-packages\azure\core\exceptions.py:80: in raise_with_traceback
+    raise error.with_traceback(exc_traceback)  # pylint: disable=raise-missing-from
+azure\batch\_serialization.py:1641: in deserialize_data
+    data_val = self.deserialize_type[data_type](data)
+azure\batch\_serialization.py:1987: in deserialize_iso
+    raise_with_traceback(DeserializationError, msg, err)
+..\..\..\env\lib\site-packages\azure\core\exceptions.py:80: in raise_with_traceback
+    raise error.with_traceback(exc_traceback)  # pylint: disable=raise-missing-from
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+attr = 'TUE, 11 JUL 2023 04:59:02 GMT'
+
+    @staticmethod
+    def deserialize_iso(attr):
+        """Deserialize ISO-8601 formatted string into Datetime object.
+    
+        :param str attr: response string to be deserialized.
+        :rtype: Datetime
+        :raises: DeserializationError if string format invalid.
+        """
+        if isinstance(attr, ET.Element):
+            attr = attr.text
+        try:
+            attr = attr.upper()  # type: ignore
+            match = Deserializer.valid_date.match(attr)
+            if not match:
+>               raise ValueError("Invalid datetime string: " + attr)
+E               azure.core.exceptions.DeserializationError: (", DeserializationError: (', ValueError: Invalid datetime string: TUE, 11 JUL 2023 04:59:02 GMT', 'Cannot deserialize datetime object.', ValueError('Invalid datetime string: TUE, 11 JUL 2023 04:59:02 GMT'))", 'Unable to deserialize response data. Data: Tue, 11 Jul 2023 04:59:02 GMT, iso-8601', DeserializationError(', ValueError: Invalid datetime string: TUE, 11 JUL 2023 04:59:02 GMT', 'Cannot deserialize datetime object.', ValueError('Invalid datetime string: TUE, 11 JUL 2023 04:59:02 GMT')))
+
+azure\batch\_serialization.py:1968: DeserializationError
+------------------------------ Captured log call ------------------------------
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:511 Request URL: 'https://batch71d31cdf.eastus.batch.azure.com/jobs/batch71d31cdf/tasks?api-version=REDACTED'
+Request method: 'POST'
+Request headers:
+    'content-type': 'application/json; odata=minimalmetadata'
+    'Content-Length': '286'
+    'client-request-id': 'REDACTED'
+    'User-Agent': 'azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)'
+    'ocp-date': 'REDACTED'
+    'Authorization': 'REDACTED'
+A body is sent with the request
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:550 Response status: 201
+Response headers:
+    'Content-Length': '0'
+    'Date': 'Tue, 11 Jul 2023 04:59:01 GMT'
+    'Server': 'Microsoft-HTTPAPI/2.0'
+    'ETag': '0x8DB81CB8B69C51F'
+    'Last-Modified': 'Tue, 11 Jul 2023 04:59:02 GMT'
+    'Location': 'REDACTED'
+    'DataServiceId': 'REDACTED'
+    'DataServiceVersion': 'REDACTED'
+    'Request-Id': '2ccdce52-ad4a-45fe-bf71-bb13766b4c88'
+    'Strict-Transport-Security': 'REDACTED'
+    'X-Content-Type-Options': 'REDACTED'
+__________________________ TestBatch.test_batch_jobs __________________________
+
+attr = 'Mon, 28 Aug 2023 13:22:00 GMT', kwargs = {}
+
+    @staticmethod
+    def serialize_rfc(attr, **kwargs):
+        """Serialize Datetime object into RFC-1123 formatted string.
+    
+        :param Datetime attr: Object to be serialized.
+        :rtype: str
+        :raises: TypeError if format invalid.
+        """
+        try:
+>           if not attr.tzinfo:
+E           AttributeError: 'str' object has no attribute 'tzinfo'
+
+azure\batch\_serialization.py:1133: AttributeError
+
+During handling of the above exception, another exception occurred:
+
+self = <azure.batch._serialization.Serializer object at 0x000002053F7BF1F0>
+data = 'Mon, 28 Aug 2023 13:22:00 GMT', data_type = 'rfc-1123', kwargs = {}
+msg = 'Unable to serialize value: {!r} as type: {!r}.'
+
+    def serialize_data(self, data, data_type, **kwargs):
+        """Serialize generic data according to supplied data type.
+    
+        :param data: The data to be serialized.
+        :param str data_type: The type to be serialized from.
+        :param bool required: Whether it's essential that the data not be
+         empty or None
+        :raises: AttributeError if required data is None.
+        :raises: ValueError if data is None
+        :raises: SerializationError if serialization fails.
+        """
+        if data is None:
+            raise ValueError("No value for given attribute")
+    
+        try:
+            if data is AzureCoreNull:
+                return None
+            if data_type in self.basic_types.values():
+                return self.serialize_basic(data, data_type, **kwargs)
+    
+            elif data_type in self.serialize_type:
+>               return self.serialize_type[data_type](data, **kwargs)
+
+azure\batch\_serialization.py:815: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+attr = 'Mon, 28 Aug 2023 13:22:00 GMT', kwargs = {}
+
+    @staticmethod
+    def serialize_rfc(attr, **kwargs):
+        """Serialize Datetime object into RFC-1123 formatted string.
+    
+        :param Datetime attr: Object to be serialized.
+        :rtype: str
+        :raises: TypeError if format invalid.
+        """
+        try:
+            if not attr.tzinfo:
+                _LOGGER.warning("Datetime with no tzinfo will be considered UTC.")
+            utc = attr.utctimetuple()
+        except AttributeError:
+>           raise TypeError("RFC1123 object must be valid Datetime object.")
+E           TypeError: RFC1123 object must be valid Datetime object.
+
+azure\batch\_serialization.py:1137: TypeError
+
+During handling of the above exception, another exception occurred:
+
+self = <azure.batch._serialization.Serializer object at 0x000002053F7BF1F0>
+name = 'ocp_date', data = 'Mon, 28 Aug 2023 13:22:00 GMT'
+data_type = 'rfc-1123', kwargs = {}
+
+    def header(self, name, data, data_type, **kwargs):
+        """Serialize data intended for a request header.
+    
+        :param data: The data to be serialized.
+        :param str data_type: The type to be serialized from.
+        :rtype: str
+        :raises: TypeError if serialization fails.
+        :raises: ValueError if data is None
+        """
+        try:
+            if data_type in ["[str]"]:
+                data = ["" if d is None else d for d in data]
+    
+>           output = self.serialize_data(data, data_type, **kwargs)
+
+azure\batch\_serialization.py:786: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+azure\batch\_serialization.py:829: in serialize_data
+    raise_with_traceback(SerializationError, msg.format(data, data_type), err)
+..\..\..\env\lib\site-packages\azure\core\exceptions.py:80: in raise_with_traceback
+    raise error.with_traceback(exc_traceback)  # pylint: disable=raise-missing-from
+azure\batch\_serialization.py:815: in serialize_data
+    return self.serialize_type[data_type](data, **kwargs)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+attr = 'Mon, 28 Aug 2023 13:22:00 GMT', kwargs = {}
+
+    @staticmethod
+    def serialize_rfc(attr, **kwargs):
+        """Serialize Datetime object into RFC-1123 formatted string.
+    
+        :param Datetime attr: Object to be serialized.
+        :rtype: str
+        :raises: TypeError if format invalid.
+        """
+        try:
+            if not attr.tzinfo:
+                _LOGGER.warning("Datetime with no tzinfo will be considered UTC.")
+            utc = attr.utctimetuple()
+        except AttributeError:
+>           raise TypeError("RFC1123 object must be valid Datetime object.")
+E           azure.core.exceptions.SerializationError: (', TypeError: RFC1123 object must be valid Datetime object.', "Unable to serialize value: 'Mon, 28 Aug 2023 13:22:00 GMT' as type: 'rfc-1123'.", TypeError('RFC1123 object must be valid Datetime object.'))
+
+azure\batch\_serialization.py:1137: SerializationError
+
+During handling of the above exception, another exception occurred:
+
+args = (<test_batch.TestBatch object at 0x000002053FD02190>,)
+kwargs = {'__aggregate_cache_key': (('AccountPreparer',), ('ResourceGroupPreparer', 'resource_group', '')), 'batch_account': Fa...'credential': <azure.core.credentials.AzureNamedKeyCredential object at 0x00000205415AB7F0>, 'location': 'eastus', ...}
+trimmed_kwargs = {'__aggregate_cache_key': (('AccountPreparer',), ('ResourceGroupPreparer', 'resource_group', '')), 'batch_account': Fa...'credential': <azure.core.credentials.AzureNamedKeyCredential object at 0x00000205415AB7F0>, 'location': 'eastus', ...}
+test_id = 'sdk/batch/azure-batch/tests/recordings/test_batch.pyTestBatchtest_batch_jobs'
+variables = {}
+combined_call = <function recorded_by_proxy.<locals>.record_wrap.<locals>.combined_call at 0x0000020541DB5430>
+test_variables = None, test_run = False
+
+    def record_wrap(*args, **kwargs):
+        def transform_args(*args, **kwargs):
+            copied_positional_args = list(args)
+            request = copied_positional_args[1]
+    
+            transform_request(request, recording_id)
+    
+            return tuple(copied_positional_args), kwargs
+    
+        trimmed_kwargs = {k: v for k, v in kwargs.items()}
+        trim_kwargs_from_test_function(test_func, trimmed_kwargs)
+    
+        if is_live_and_not_recording():
+            return test_func(*args, **trimmed_kwargs)
+    
+        test_id = get_test_id()
+        recording_id, variables = start_record_or_playback(test_id)
+        original_transport_func = RequestsTransport.send
+    
+        def combined_call(*args, **kwargs):
+            adjusted_args, adjusted_kwargs = transform_args(*args, **kwargs)
+            result = original_transport_func(*adjusted_args, **adjusted_kwargs)
+    
+            # make the x-recording-upstream-base-uri the URL of the request
+            # this makes the request look like it was made to the original endpoint instead of to the proxy
+            # without this, things like LROPollers can get broken by polling the wrong endpoint
+            parsed_result = url_parse.urlparse(result.request.url)
+            upstream_uri = url_parse.urlparse(result.request.headers["x-recording-upstream-base-uri"])
+            upstream_uri_dict = {
+                "scheme": upstream_uri.scheme,
+                "netloc": upstream_uri.netloc,
+            }
+            original_target = parsed_result._replace(**upstream_uri_dict).geturl()
+    
+            result.request.url = original_target
+            return result
+    
+        RequestsTransport.send = combined_call
+    
+        # call the modified function
+        # we define test_variables before invoking the test so the variable is defined in case of an exception
+        test_variables = None
+        # this tracks whether the test has been run yet; used when calling the test function with/without `variables`
+        # running without `variables` in the `except` block leads to unnecessary exceptions in test execution output
+        test_run = False
+        try:
+            try:
+                test_variables = test_func(*args, variables=variables, **trimmed_kwargs)
+                test_run = True
+            except TypeError as error:
+                if "unexpected keyword argument" in str(error) and "variables" in str(error):
+                    logger = logging.getLogger()
+                    logger.info(
+                        "This test can't accept variables as input. The test method should accept `**kwargs` and/or a "
+                        "`variables` parameter to make use of recorded test variables."
+                    )
+                else:
+>                   raise error
+
+..\..\..\tools\azure-sdk-tools\devtools_testutils\proxy_testcase.py:228: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+..\..\..\tools\azure-sdk-tools\devtools_testutils\proxy_testcase.py:218: in record_wrap
+    test_variables = test_func(*args, variables=variables, **trimmed_kwargs)
+tests\test_batch.py:1151: in test_batch_jobs
+    response = client.create_job(parameters=job_param,ocp_date=currenttime)
+..\..\..\env\lib\site-packages\azure\core\tracing\decorator.py:76: in wrapper_use_tracer
+    return func(*args, **kwargs)
+azure\batch\_operations\_operations.py:5891: in create_job
+    request = build_batch_create_job_request(
+azure\batch\_operations\_operations.py:1090: in build_batch_create_job_request
+    _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <azure.batch._serialization.Serializer object at 0x000002053F7BF1F0>
+name = 'ocp_date', data = 'Mon, 28 Aug 2023 13:22:00 GMT'
+data_type = 'rfc-1123', kwargs = {}
+
+    def header(self, name, data, data_type, **kwargs):
+        """Serialize data intended for a request header.
+    
+        :param data: The data to be serialized.
+        :param str data_type: The type to be serialized from.
+        :rtype: str
+        :raises: TypeError if serialization fails.
+        :raises: ValueError if data is None
+        """
+        try:
+            if data_type in ["[str]"]:
+                data = ["" if d is None else d for d in data]
+    
+            output = self.serialize_data(data, data_type, **kwargs)
+            if data_type == "bool":
+                output = json.dumps(output)
+        except SerializationError:
+>           raise TypeError("{} must be type {}.".format(name, data_type))
+E           TypeError: ocp_date must be type rfc-1123.
+
+azure\batch\_serialization.py:790: TypeError
+---------------------------- Captured log teardown ----------------------------
+INFO     root:proxy_startup.py:334 Stopping the test proxy tool...
+=========================== short test summary info ===========================
+FAILED tests\test_batch.py::TestBatch::test_batch_applications - AttributeErr...
+FAILED tests\test_batch.py::TestBatch::test_batch_certificate - azure.core.ex...
+FAILED tests\test_batch.py::TestBatch::test_batch_create_pools - azure.core.e...
+FAILED tests\test_batch.py::TestBatch::test_batch_create_pool_with_blobfuse_mount
+FAILED tests\test_batch.py::TestBatch::test_batch_update_pools - azure.core.e...
+FAILED tests\test_batch.py::TestBatch::test_batch_scale_pools - azure.core.ex...
+FAILED tests\test_batch.py::TestBatch::test_batch_job_schedules - azure.core....
+FAILED tests\test_batch.py::TestBatch::test_batch_network_configuration - azu...
+FAILED tests\test_batch.py::TestBatch::test_batch_compute_nodes - AttributeEr...
+FAILED tests\test_batch.py::TestBatch::test_batch_compute_node_extensions - a...
+FAILED tests\test_batch.py::TestBatch::test_batch_compute_node_user - Attribu...
+FAILED tests\test_batch.py::TestBatch::test_batch_compute_node_remote_desktop
+FAILED tests\test_batch.py::TestBatch::test_batch_files - azure.core.exceptio...
+FAILED tests\test_batch.py::TestBatch::test_batch_tasks - azure.core.exceptio...
+FAILED tests\test_batch.py::TestBatch::test_batch_jobs - TypeError: ocp_date ...
+============================= 15 failed in 22.63s =============================

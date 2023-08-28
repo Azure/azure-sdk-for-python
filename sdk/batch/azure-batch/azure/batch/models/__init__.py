@@ -7,7 +7,6 @@
 # --------------------------------------------------------------------------
 
 from ._models import AffinityInformation
-from ._models import Application
 from ._models import ApplicationPackageReference
 from ._models import AuthenticationTokenSettings
 from ._models import AutoPoolSpecification
@@ -16,6 +15,8 @@ from ._models import AutoScaleRunError
 from ._models import AutoUserSpecification
 from ._models import AzureBlobFileSystemConfiguration
 from ._models import AzureFileShareConfiguration
+from ._models import BatchApplication
+from ._models import BatchCertificate
 from ._models import BatchError
 from ._models import BatchErrorDetail
 from ._models import BatchJob
@@ -29,9 +30,9 @@ from ._models import BatchJobUpdateParameters
 from ._models import BatchNode
 from ._models import BatchNodeEndpointConfiguration
 from ._models import BatchNodeError
-from ._models import BatchNodeGetRemoteLoginSettingsResult
 from ._models import BatchNodeIdentityReference
 from ._models import BatchNodeInformation
+from ._models import BatchNodeRemoteLoginSettingsResult
 from ._models import BatchNodeUser
 from ._models import BatchPool
 from ._models import BatchPoolCreateParameters
@@ -45,7 +46,6 @@ from ._models import BatchTask
 from ._models import BatchTaskCollection
 from ._models import BatchTaskCreateParameters
 from ._models import BatchTaskListSubtasksResult
-from ._models import Certificate
 from ._models import CertificateReference
 from ._models import CifsMountConfiguration
 from ._models import CloudServiceConfiguration
@@ -204,7 +204,6 @@ from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
     "AffinityInformation",
-    "Application",
     "ApplicationPackageReference",
     "AuthenticationTokenSettings",
     "AutoPoolSpecification",
@@ -213,6 +212,8 @@ __all__ = [
     "AutoUserSpecification",
     "AzureBlobFileSystemConfiguration",
     "AzureFileShareConfiguration",
+    "BatchApplication",
+    "BatchCertificate",
     "BatchError",
     "BatchErrorDetail",
     "BatchJob",
@@ -226,9 +227,9 @@ __all__ = [
     "BatchNode",
     "BatchNodeEndpointConfiguration",
     "BatchNodeError",
-    "BatchNodeGetRemoteLoginSettingsResult",
     "BatchNodeIdentityReference",
     "BatchNodeInformation",
+    "BatchNodeRemoteLoginSettingsResult",
     "BatchNodeUser",
     "BatchPool",
     "BatchPoolCreateParameters",
@@ -242,7 +243,6 @@ __all__ = [
     "BatchTaskCollection",
     "BatchTaskCreateParameters",
     "BatchTaskListSubtasksResult",
-    "Certificate",
     "CertificateReference",
     "CifsMountConfiguration",
     "CloudServiceConfiguration",

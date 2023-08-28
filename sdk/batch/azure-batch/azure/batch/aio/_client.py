@@ -13,70 +13,35 @@ from azure.core import AsyncPipelineClient
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 
 from .._serialization import Deserializer, Serializer
-from ._configuration import BatchServiceClientConfiguration
-from .operations import (
-    AccountOperations,
-    ApplicationsOperations,
-    BatchNodesOperations,
-    CertificatesOperations,
-    FileOperations,
-    JobOperations,
-    JobScheduleOperations,
-    PoolOperations,
-    TaskOperations,
-)
+from ._configuration import BatchClientConfiguration
+from ._operations import BatchClientOperationsMixin
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class BatchServiceClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
+class BatchClient(BatchClientOperationsMixin):  # pylint: disable=client-accepts-api-version-keyword
     """A client for issuing REST requests to the Azure Batch service.
 
-    :ivar applications: ApplicationsOperations operations
-    :vartype applications: azure.batch.aio.operations.ApplicationsOperations
-    :ivar pool: PoolOperations operations
-    :vartype pool: azure.batch.aio.operations.PoolOperations
-    :ivar account: AccountOperations operations
-    :vartype account: azure.batch.aio.operations.AccountOperations
-    :ivar job: JobOperations operations
-    :vartype job: azure.batch.aio.operations.JobOperations
-    :ivar certificates: CertificatesOperations operations
-    :vartype certificates: azure.batch.aio.operations.CertificatesOperations
-    :ivar file: FileOperations operations
-    :vartype file: azure.batch.aio.operations.FileOperations
-    :ivar job_schedule: JobScheduleOperations operations
-    :vartype job_schedule: azure.batch.aio.operations.JobScheduleOperations
-    :ivar task: TaskOperations operations
-    :vartype task: azure.batch.aio.operations.TaskOperations
-    :ivar batch_nodes: BatchNodesOperations operations
-    :vartype batch_nodes: azure.batch.aio.operations.BatchNodesOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :keyword endpoint: Service host. Required.
     :paramtype endpoint: str
     :keyword api_version: The API version to use for this operation. Default value is
-     "2022-10-01.16.0". Note that overriding this default value may result in unsupported behavior.
+     "2023-05-01.17.0". Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
     def __init__(self, credential: "AsyncTokenCredential", *, endpoint: str, **kwargs: Any) -> None:
-        self._config = BatchServiceClientConfiguration(credential=credential, **kwargs)
-        self._client: AsyncPipelineClient = AsyncPipelineClient(base_url=endpoint, config=self._config, **kwargs)
+        self._config = BatchClientConfiguration(credential=credential, **kwargs)
+        self._client: AsyncPipelineClient = AsyncPipelineClient(
+            base_url=endpoint, config=self._config, request_id_header_name="client-request-id", **kwargs
+        )
 
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
-        self.applications = ApplicationsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.pool = PoolOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.account = AccountOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.job = JobOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.certificates = CertificatesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.file = FileOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.job_schedule = JobScheduleOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.task = TaskOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.batch_nodes = BatchNodesOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.
@@ -103,7 +68,7 @@ class BatchServiceClient:  # pylint: disable=client-accepts-api-version-keyword,
     async def close(self) -> None:
         await self._client.close()
 
-    async def __aenter__(self) -> "BatchServiceClient":
+    async def __aenter__(self) -> "BatchClient":
         await self._client.__aenter__()
         return self
 

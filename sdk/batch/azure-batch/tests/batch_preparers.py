@@ -46,7 +46,7 @@ class AccountPreparer(AzureMgmtPreparer):
         self.location = location
         self.resource_group_parameter_name = resource_group_parameter_name
         self.parameter_name = parameter_name
-        self.creds_parameter = 'credentials'
+        self.creds_parameter = 'credential'
         self.parameter_name_for_location='location'
         self.resource_moniker=name_prefix
         self.batch_environment = batch_environment
@@ -252,7 +252,7 @@ class JobPreparer(AzureMgmtPreparer):
                  name_prefix='batch',
                  parameter_name='batch_job',
                  batch_account_parameter_name=BATCH_ACCOUNT_PARAM,
-                 batch_credentials_parameter_name='credentials',
+                 batch_credentials_parameter_name='credential',
                  batch_pool_parameter_name='batch_pool',
                  disable_recording=True, playback_fake_resource=None,
                  client_kwargs=None, **extra_args):
@@ -271,7 +271,7 @@ class JobPreparer(AzureMgmtPreparer):
         try:
             account = kwargs[self.batch_account_parameter_name]
             credentials = kwargs[self.batch_credentials_parameter_name]
-            return azure.batch.BatchServiceClient(
+            return azure.batch.BatchClient(
                 credentials=credentials, endpoint='https://' + account.account_endpoint)
         except KeyError:
             template = 'To create a batch job, a batch account is required. Please add ' \

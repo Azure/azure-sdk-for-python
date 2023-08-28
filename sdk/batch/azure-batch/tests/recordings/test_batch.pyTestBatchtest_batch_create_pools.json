@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://batch4c281fb9.eastus.batch.azure.com/supportedimages?api-version=2022-10-01.16.0",
+      "RequestUri": "https://batch4c281fb9.eastus.batch.azure.com/supportedimages?api-version=2023-05-01.17.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -1023,7 +1023,7 @@
       }
     },
     {
-      "RequestUri": "https://batch4c281fb9.eastus.batch.azure.com/pools?api-version=2022-10-01.16.0",
+      "RequestUri": "https://batch4c281fb9.eastus.batch.azure.com/pools?api-version=2023-05-01.17.0",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -1081,7 +1081,7 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://batch4c281fb9.eastus.batch.azure.com/nodecounts?api-version=2022-10-01.16.0",
+      "RequestUri": "https://batch4c281fb9.eastus.batch.azure.com/nodecounts?api-version=2023-05-01.17.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -1144,7 +1144,7 @@
       }
     },
     {
-      "RequestUri": "https://batch4c281fb9.eastus.batch.azure.com/pools?api-version=2022-10-01.16.0",
+      "RequestUri": "https://batch4c281fb9.eastus.batch.azure.com/pools?api-version=2023-05-01.17.0",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -1205,7 +1205,7 @@
       }
     },
     {
-      "RequestUri": "https://batch4c281fb9.eastus.batch.azure.com/pools?api-version=2022-10-01.16.0",
+      "RequestUri": "https://batch4c281fb9.eastus.batch.azure.com/pools?api-version=2023-05-01.17.0",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -1261,7 +1261,7 @@
       }
     },
     {
-      "RequestUri": "https://batch4c281fb9.eastus.batch.azure.com/pools?api-version=2022-10-01.16.0",
+      "RequestUri": "https://batch4c281fb9.eastus.batch.azure.com/pools?api-version=2023-05-01.17.0",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -1308,7 +1308,7 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://batch4c281fb9.eastus.batch.azure.com/pools/batch_disk_4c281fb9?api-version=2022-10-01.16.0",
+      "RequestUri": "https://batch4c281fb9.eastus.batch.azure.com/pools/batch_disk_4c281fb9?api-version=2023-05-01.17.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -1375,7 +1375,7 @@
       }
     },
     {
-      "RequestUri": "https://batch4c281fb9.eastus.batch.azure.com/pools?api-version=2022-10-01.16.0",
+      "RequestUri": "https://batch4c281fb9.eastus.batch.azure.com/pools?api-version=2023-05-01.17.0",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -1425,7 +1425,7 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://batch4c281fb9.eastus.batch.azure.com/pools/batch_app_4c281fb9?api-version=2022-10-01.16.0",
+      "RequestUri": "https://batch4c281fb9.eastus.batch.azure.com/pools/batch_app_4c281fb9?api-version=2023-05-01.17.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -1495,7 +1495,7 @@
       }
     },
     {
-      "RequestUri": "https://batch4c281fb9.eastus.batch.azure.com/pools?api-version=2022-10-01.16.0",
+      "RequestUri": "https://batch4c281fb9.eastus.batch.azure.com/pools?api-version=2023-05-01.17.0",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -1540,7 +1540,7 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://batch4c281fb9.eastus.batch.azure.com/pools/batch_ade_4c281fb9?api-version=2022-10-01.16.0",
+      "RequestUri": "https://batch4c281fb9.eastus.batch.azure.com/pools/batch_ade_4c281fb9?api-version=2023-05-01.17.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -1603,7 +1603,7 @@
       }
     },
     {
-      "RequestUri": "https://batch4c281fb9.eastus.batch.azure.com/pools?api-version=2022-10-01.16.0",
+      "RequestUri": "https://batch4c281fb9.eastus.batch.azure.com/pools?api-version=2023-05-01.17.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -1805,7 +1805,7 @@
       }
     },
     {
-      "RequestUri": "https://batch4c281fb9.eastus.batch.azure.com/pools?api-version=2022-10-01.16.0\u0026maxresults=1",
+      "RequestUri": "https://batch4c281fb9.eastus.batch.azure.com/pools?api-version=2023-05-01.17.0\u0026maxresults=1",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -1867,11 +1867,11 @@
             }
           }
         ],
-        "odata.nextLink": "https://batch4c281fb9.eastus.batch.azure.com/pools?api-version=2022-10-01.16.0\u0026maxresults=1\u0026$skiptoken=WATV2:/sQL6tdGwSDE^BUEDNsriqqGkKo3EymctQNH1XihhdsQyq^^^Msx7U7yXKWL0MbvW8oqPzwPZEecF4Sj5EcXrfP9QYXJrn2PJF0SpMxjwyuni1OgqIwJkPlnjawPyAqEGTBBNpmoIfjQrwKWNQoefJBjeL0pY1LV8wxnMNF4GYT7RyuYH9r8eC8ijBY92kAc2xj96hJ6^RWcn4cDLWmLRPFk/VxE9ESqtCOgVlf/HtS1CQu22tFUvdo26YHu4ZEOHU^OVg9ACVQnXT9bZ5pWq7wUFKyjA^YmF6nwSkoyGXs=:1$1"
+        "odata.nextLink": "https://batch4c281fb9.eastus.batch.azure.com/pools?api-version=2023-05-01.17.0\u0026maxresults=1\u0026$skiptoken=WATV2:/sQL6tdGwSDE^BUEDNsriqqGkKo3EymctQNH1XihhdsQyq^^^Msx7U7yXKWL0MbvW8oqPzwPZEecF4Sj5EcXrfP9QYXJrn2PJF0SpMxjwyuni1OgqIwJkPlnjawPyAqEGTBBNpmoIfjQrwKWNQoefJBjeL0pY1LV8wxnMNF4GYT7RyuYH9r8eC8ijBY92kAc2xj96hJ6^RWcn4cDLWmLRPFk/VxE9ESqtCOgVlf/HtS1CQu22tFUvdo26YHu4ZEOHU^OVg9ACVQnXT9bZ5pWq7wUFKyjA^YmF6nwSkoyGXs=:1$1"
       }
     },
     {
-      "RequestUri": "https://batch4c281fb9.eastus.batch.azure.com/pools?api-version=2022-10-01.16.0\u0026maxresults=1\u0026$skiptoken=WATV2%3A/sQL6tdGwSDE%5EBUEDNsriqqGkKo3EymctQNH1XihhdsQyq%5E%5E%5EMsx7U7yXKWL0MbvW8oqPzwPZEecF4Sj5EcXrfP9QYXJrn2PJF0SpMxjwyuni1OgqIwJkPlnjawPyAqEGTBBNpmoIfjQrwKWNQoefJBjeL0pY1LV8wxnMNF4GYT7RyuYH9r8eC8ijBY92kAc2xj96hJ6%5ERWcn4cDLWmLRPFk/VxE9ESqtCOgVlf/HtS1CQu22tFUvdo26YHu4ZEOHU%5EOVg9ACVQnXT9bZ5pWq7wUFKyjA%5EYmF6nwSkoyGXs%3D%3A1%241",
+      "RequestUri": "https://batch4c281fb9.eastus.batch.azure.com/pools?api-version=2023-05-01.17.0\u0026maxresults=1\u0026$skiptoken=WATV2%3A/sQL6tdGwSDE%5EBUEDNsriqqGkKo3EymctQNH1XihhdsQyq%5E%5E%5EMsx7U7yXKWL0MbvW8oqPzwPZEecF4Sj5EcXrfP9QYXJrn2PJF0SpMxjwyuni1OgqIwJkPlnjawPyAqEGTBBNpmoIfjQrwKWNQoefJBjeL0pY1LV8wxnMNF4GYT7RyuYH9r8eC8ijBY92kAc2xj96hJ6%5ERWcn4cDLWmLRPFk/VxE9ESqtCOgVlf/HtS1CQu22tFUvdo26YHu4ZEOHU%5EOVg9ACVQnXT9bZ5pWq7wUFKyjA%5EYmF6nwSkoyGXs%3D%3A1%241",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -1940,11 +1940,11 @@
             "targetNodeCommunicationMode": "simplified"
           }
         ],
-        "odata.nextLink": "https://batch4c281fb9.eastus.batch.azure.com/pools?api-version=2022-10-01.16.0\u0026maxresults=1\u0026$skiptoken=WATV2:d8C9TsSXkobDC/b1LyMY9eiJy2dmzrFwTTyMxIqOrxdND1XbyPerqGoHDdHFjzZd07keWC5u3uiZdVfTNA/rcG7bCEpPkooChpYkERFr0qbDrfstGeKxBQfINjWWOPcGk926bAZID8wNxepjTW9T03XOqbllA6XWeOdegmOK8zVyQaOtBs3ZVfiRH5hlxxLn8iwNrQggbLTROXeD/K6dnSn8rC/eDzzfi98^MQ^RffBLA8A8sOh9QFWs6PMfUcmmYIeJEDGoUKiNwSldM0fJDqsghGOarEKJ6t2fUW6NQP4=:1$1"
+        "odata.nextLink": "https://batch4c281fb9.eastus.batch.azure.com/pools?api-version=2023-05-01.17.0\u0026maxresults=1\u0026$skiptoken=WATV2:d8C9TsSXkobDC/b1LyMY9eiJy2dmzrFwTTyMxIqOrxdND1XbyPerqGoHDdHFjzZd07keWC5u3uiZdVfTNA/rcG7bCEpPkooChpYkERFr0qbDrfstGeKxBQfINjWWOPcGk926bAZID8wNxepjTW9T03XOqbllA6XWeOdegmOK8zVyQaOtBs3ZVfiRH5hlxxLn8iwNrQggbLTROXeD/K6dnSn8rC/eDzzfi98^MQ^RffBLA8A8sOh9QFWs6PMfUcmmYIeJEDGoUKiNwSldM0fJDqsghGOarEKJ6t2fUW6NQP4=:1$1"
       }
     },
     {
-      "RequestUri": "https://batch4c281fb9.eastus.batch.azure.com/pools?api-version=2022-10-01.16.0\u0026maxresults=1\u0026$skiptoken=WATV2%3Ad8C9TsSXkobDC/b1LyMY9eiJy2dmzrFwTTyMxIqOrxdND1XbyPerqGoHDdHFjzZd07keWC5u3uiZdVfTNA/rcG7bCEpPkooChpYkERFr0qbDrfstGeKxBQfINjWWOPcGk926bAZID8wNxepjTW9T03XOqbllA6XWeOdegmOK8zVyQaOtBs3ZVfiRH5hlxxLn8iwNrQggbLTROXeD/K6dnSn8rC/eDzzfi98%5EMQ%5ERffBLA8A8sOh9QFWs6PMfUcmmYIeJEDGoUKiNwSldM0fJDqsghGOarEKJ6t2fUW6NQP4%3D%3A1%241",
+      "RequestUri": "https://batch4c281fb9.eastus.batch.azure.com/pools?api-version=2023-05-01.17.0\u0026maxresults=1\u0026$skiptoken=WATV2%3Ad8C9TsSXkobDC/b1LyMY9eiJy2dmzrFwTTyMxIqOrxdND1XbyPerqGoHDdHFjzZd07keWC5u3uiZdVfTNA/rcG7bCEpPkooChpYkERFr0qbDrfstGeKxBQfINjWWOPcGk926bAZID8wNxepjTW9T03XOqbllA6XWeOdegmOK8zVyQaOtBs3ZVfiRH5hlxxLn8iwNrQggbLTROXeD/K6dnSn8rC/eDzzfi98%5EMQ%5ERffBLA8A8sOh9QFWs6PMfUcmmYIeJEDGoUKiNwSldM0fJDqsghGOarEKJ6t2fUW6NQP4%3D%3A1%241",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -2010,11 +2010,11 @@
             "targetNodeCommunicationMode": "classic"
           }
         ],
-        "odata.nextLink": "https://batch4c281fb9.eastus.batch.azure.com/pools?api-version=2022-10-01.16.0\u0026maxresults=1\u0026$skiptoken=WATV2:5IDrpwzzROdhnYlDXZv^0B8mMCvYVam^0Vztnb5eoEwQ7eJ3Dmg44gpjRXAxLsh8a6eWIEzhmlChgeVJn3QPeucnPNdZvmdgqynsAIzgElDegJztdndSCq8hjGXMrgmnK3MR0vzlnGfcv8hdLSTvCYZJ2kzuKd77qr/CMLaHm1uoDK3kqE6UmwqCnn0iuiNGluRIH4LOol5mL7FFLRAqe6cQBEacCJ6HnRYHyWXrGIWdk2fAjl0JC5dnANMdTDRN5uPYwEIm0o0/RVKwL3rzUrXgj1YsevLjEHs0U995Dew=:1$1"
+        "odata.nextLink": "https://batch4c281fb9.eastus.batch.azure.com/pools?api-version=2023-05-01.17.0\u0026maxresults=1\u0026$skiptoken=WATV2:5IDrpwzzROdhnYlDXZv^0B8mMCvYVam^0Vztnb5eoEwQ7eJ3Dmg44gpjRXAxLsh8a6eWIEzhmlChgeVJn3QPeucnPNdZvmdgqynsAIzgElDegJztdndSCq8hjGXMrgmnK3MR0vzlnGfcv8hdLSTvCYZJ2kzuKd77qr/CMLaHm1uoDK3kqE6UmwqCnn0iuiNGluRIH4LOol5mL7FFLRAqe6cQBEacCJ6HnRYHyWXrGIWdk2fAjl0JC5dnANMdTDRN5uPYwEIm0o0/RVKwL3rzUrXgj1YsevLjEHs0U995Dew=:1$1"
       }
     },
     {
-      "RequestUri": "https://batch4c281fb9.eastus.batch.azure.com/pools?api-version=2022-10-01.16.0\u0026maxresults=1\u0026$skiptoken=WATV2%3A5IDrpwzzROdhnYlDXZv%5E0B8mMCvYVam%5E0Vztnb5eoEwQ7eJ3Dmg44gpjRXAxLsh8a6eWIEzhmlChgeVJn3QPeucnPNdZvmdgqynsAIzgElDegJztdndSCq8hjGXMrgmnK3MR0vzlnGfcv8hdLSTvCYZJ2kzuKd77qr/CMLaHm1uoDK3kqE6UmwqCnn0iuiNGluRIH4LOol5mL7FFLRAqe6cQBEacCJ6HnRYHyWXrGIWdk2fAjl0JC5dnANMdTDRN5uPYwEIm0o0/RVKwL3rzUrXgj1YsevLjEHs0U995Dew%3D%3A1%241",
+      "RequestUri": "https://batch4c281fb9.eastus.batch.azure.com/pools?api-version=2023-05-01.17.0\u0026maxresults=1\u0026$skiptoken=WATV2%3A5IDrpwzzROdhnYlDXZv%5E0B8mMCvYVam%5E0Vztnb5eoEwQ7eJ3Dmg44gpjRXAxLsh8a6eWIEzhmlChgeVJn3QPeucnPNdZvmdgqynsAIzgElDegJztdndSCq8hjGXMrgmnK3MR0vzlnGfcv8hdLSTvCYZJ2kzuKd77qr/CMLaHm1uoDK3kqE6UmwqCnn0iuiNGluRIH4LOol5mL7FFLRAqe6cQBEacCJ6HnRYHyWXrGIWdk2fAjl0JC5dnANMdTDRN5uPYwEIm0o0/RVKwL3rzUrXgj1YsevLjEHs0U995Dew%3D%3A1%241",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -2094,7 +2094,7 @@
       }
     },
     {
-      "RequestUri": "https://batch4c281fb9.eastus.batch.azure.com/pools?api-version=2022-10-01.16.0\u0026$filter=startswith%28id%2C%27batch_app_%27%29\u0026$select=id%2Cstate\u0026$expand=stats",
+      "RequestUri": "https://batch4c281fb9.eastus.batch.azure.com/pools?api-version=2023-05-01.17.0\u0026$filter=startswith%28id%2C%27batch_app_%27%29\u0026$select=id%2Cstate\u0026$expand=stats",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",

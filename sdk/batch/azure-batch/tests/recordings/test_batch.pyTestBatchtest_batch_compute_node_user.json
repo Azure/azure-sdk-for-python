@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://batchf68621d9.eastus.batch.azure.com/pools/f68621d9/nodes?api-version=2022-10-01.16.0",
+      "RequestUri": "https://batchf68621d9.eastus.batch.azure.com/pools/f68621d9/nodes?api-version=2023-05-01.17.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -66,7 +66,7 @@
       }
     },
     {
-      "RequestUri": "https://batchf68621d9.eastus.batch.azure.com/pools/f68621d9/nodes?api-version=2022-10-01.16.0",
+      "RequestUri": "https://batchf68621d9.eastus.batch.azure.com/pools/f68621d9/nodes?api-version=2023-05-01.17.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -137,7 +137,7 @@
       }
     },
     {
-      "RequestUri": "https://batchf68621d9.eastus.batch.azure.com/pools/f68621d9/nodes?api-version=2022-10-01.16.0",
+      "RequestUri": "https://batchf68621d9.eastus.batch.azure.com/pools/f68621d9/nodes?api-version=2023-05-01.17.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -208,7 +208,7 @@
       }
     },
     {
-      "RequestUri": "https://batchf68621d9.eastus.batch.azure.com/pools/f68621d9/nodes/tvmps_dbe75f6caef8f0f1187459927e02911e8d8bf546552f96efa8e1b8c605699853_d/users?api-version=2022-10-01.16.0",
+      "RequestUri": "https://batchf68621d9.eastus.batch.azure.com/pools/f68621d9/nodes/tvmps_dbe75f6caef8f0f1187459927e02911e8d8bf546552f96efa8e1b8c605699853_d/users?api-version=2023-05-01.17.0",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -239,7 +239,7 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://batchf68621d9.eastus.batch.azure.com/pools/f68621d9/nodes/tvmps_dbe75f6caef8f0f1187459927e02911e8d8bf546552f96efa8e1b8c605699853_d/users/BatchPythonSDKUser?api-version=2022-10-01.16.0",
+      "RequestUri": "https://batchf68621d9.eastus.batch.azure.com/pools/f68621d9/nodes/tvmps_dbe75f6caef8f0f1187459927e02911e8d8bf546552f96efa8e1b8c605699853_d/users/BatchPythonSDKUser?api-version=2023-05-01.17.0",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -267,7 +267,7 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://batchf68621d9.eastus.batch.azure.com/pools/f68621d9/nodes/tvmps_dbe75f6caef8f0f1187459927e02911e8d8bf546552f96efa8e1b8c605699853_d/remoteloginsettings?api-version=2022-10-01.16.0",
+      "RequestUri": "https://batchf68621d9.eastus.batch.azure.com/pools/f68621d9/nodes/tvmps_dbe75f6caef8f0f1187459927e02911e8d8bf546552f96efa8e1b8c605699853_d/remoteloginsettings?api-version=2023-05-01.17.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -296,7 +296,7 @@
       }
     },
     {
-      "RequestUri": "https://batchf68621d9.eastus.batch.azure.com/pools/f68621d9/nodes/tvmps_dbe75f6caef8f0f1187459927e02911e8d8bf546552f96efa8e1b8c605699853_d/users/BatchPythonSDKUser?api-version=2022-10-01.16.0",
+      "RequestUri": "https://batchf68621d9.eastus.batch.azure.com/pools/f68621d9/nodes/tvmps_dbe75f6caef8f0f1187459927e02911e8d8bf546552f96efa8e1b8c605699853_d/users/BatchPythonSDKUser?api-version=2023-05-01.17.0",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "application/json",

@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://batch53a11c67.eastus.batch.azure.com/jobs?api-version=2022-10-01.16.0",
+      "RequestUri": "https://batch53a11c67.eastus.batch.azure.com/jobs?api-version=2023-05-01.17.0",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -49,7 +49,7 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://batch53a11c67.eastus.batch.azure.com/jobs/batch_job1_53a11c67?api-version=2022-10-01.16.0",
+      "RequestUri": "https://batch53a11c67.eastus.batch.azure.com/jobs/batch_job1_53a11c67?api-version=2023-05-01.17.0",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -93,7 +93,7 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://batch53a11c67.eastus.batch.azure.com/jobs/batch_job1_53a11c67?api-version=2022-10-01.16.0",
+      "RequestUri": "https://batch53a11c67.eastus.batch.azure.com/jobs/batch_job1_53a11c67?api-version=2023-05-01.17.0",
       "RequestMethod": "PATCH",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -123,7 +123,7 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://batch53a11c67.eastus.batch.azure.com/jobs/batch_job1_53a11c67?api-version=2022-10-01.16.0",
+      "RequestUri": "https://batch53a11c67.eastus.batch.azure.com/jobs/batch_job1_53a11c67?api-version=2023-05-01.17.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -223,7 +223,7 @@
       }
     },
     {
-      "RequestUri": "https://batch53a11c67.eastus.batch.azure.com/jobs?api-version=2022-10-01.16.0",
+      "RequestUri": "https://batch53a11c67.eastus.batch.azure.com/jobs?api-version=2023-05-01.17.0",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -267,7 +267,7 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://batch53a11c67.eastus.batch.azure.com/jobs/batch_job2_53a11c67?api-version=2022-10-01.16.0",
+      "RequestUri": "https://batch53a11c67.eastus.batch.azure.com/jobs/batch_job2_53a11c67?api-version=2023-05-01.17.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -338,7 +338,7 @@
       }
     },
     {
-      "RequestUri": "https://batch53a11c67.eastus.batch.azure.com/jobs?api-version=2022-10-01.16.0",
+      "RequestUri": "https://batch53a11c67.eastus.batch.azure.com/jobs?api-version=2023-05-01.17.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -485,7 +485,7 @@
       }
     },
     {
-      "RequestUri": "https://batch53a11c67.eastus.batch.azure.com/jobs/batch_job1_53a11c67/disable?api-version=2022-10-01.16.0",
+      "RequestUri": "https://batch53a11c67.eastus.batch.azure.com/jobs/batch_job1_53a11c67/disable?api-version=2023-05-01.17.0",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -515,7 +515,7 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://batch53a11c67.eastus.batch.azure.com/jobs/batch_job1_53a11c67/enable?api-version=2022-10-01.16.0",
+      "RequestUri": "https://batch53a11c67.eastus.batch.azure.com/jobs/batch_job1_53a11c67/enable?api-version=2023-05-01.17.0",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -542,7 +542,7 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://batch53a11c67.eastus.batch.azure.com/jobs/batch_job1_53a11c67/jobpreparationandreleasetaskstatus?api-version=2022-10-01.16.0",
+      "RequestUri": "https://batch53a11c67.eastus.batch.azure.com/jobs/batch_job1_53a11c67/jobpreparationandreleasetaskstatus?api-version=2023-05-01.17.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -569,7 +569,7 @@
       }
     },
     {
-      "RequestUri": "https://batch53a11c67.eastus.batch.azure.com/jobs/batch_job1_53a11c67/terminate?api-version=2022-10-01.16.0",
+      "RequestUri": "https://batch53a11c67.eastus.batch.azure.com/jobs/batch_job1_53a11c67/terminate?api-version=2023-05-01.17.0",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -597,7 +597,7 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://batch53a11c67.eastus.batch.azure.com/jobs/batch_job2_53a11c67?api-version=2022-10-01.16.0",
+      "RequestUri": "https://batch53a11c67.eastus.batch.azure.com/jobs/batch_job2_53a11c67?api-version=2023-05-01.17.0",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "application/json",

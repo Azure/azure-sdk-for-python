@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://batch4ca21fc0.eastus.batch.azure.com/applications?api-version=2022-10-01.16.0",
+      "RequestUri": "https://batch4ca21fc0.eastus.batch.azure.com/applications?api-version=2023-05-01.17.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -35,7 +35,7 @@
       }
     },
     {
-      "RequestUri": "https://batch4ca21fc0.eastus.batch.azure.com/applications/application_id?api-version=2022-10-01.16.0",
+      "RequestUri": "https://batch4ca21fc0.eastus.batch.azure.com/applications/application_id?api-version=2023-05-01.17.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -65,7 +65,7 @@
       }
     },
     {
-      "RequestUri": "https://batch4ca21fc0.eastus.batch.azure.com/jobs/batch4ca21fc0/tasks?api-version=2022-10-01.16.0",
+      "RequestUri": "https://batch4ca21fc0.eastus.batch.azure.com/jobs/batch4ca21fc0/tasks?api-version=2023-05-01.17.0",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -103,7 +103,7 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://batch4ca21fc0.eastus.batch.azure.com/jobs/batch4ca21fc0/tasks/python_task_with_app_package?api-version=2022-10-01.16.0",
+      "RequestUri": "https://batch4ca21fc0.eastus.batch.azure.com/jobs/batch4ca21fc0/tasks/python_task_with_app_package?api-version=2023-05-01.17.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",

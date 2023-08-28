@@ -5,16 +5,52 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import List, cast
+from abc import ABC
+from typing import Optional, TYPE_CHECKING
+
+from azure.core import MatchConditions
+
+from ._configuration import BatchClientConfiguration
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from azure.core import PipelineClient
+
+    from ._serialization import Deserializer, Serializer
 
 
-def _format_url_section(template, **kwargs):
-    components = template.split("/")
-    while components:
-        try:
-            return template.format(**kwargs)
-        except KeyError as key:
-            # Need the cast, as for some reasons "split" is typed as list[str | Any]
-            formatted_components = cast(List[str], template.split("/"))
-            components = [c for c in formatted_components if "{}".format(key.args[0]) not in c]
-            template = "/".join(components)
+class BatchClientMixinABC(ABC):
+    """DO NOT use this class. It is for internal typing use only."""
+
+    _client: "PipelineClient"
+    _config: BatchClientConfiguration
+    _serialize: "Serializer"
+    _deserialize: "Deserializer"
+
+
+def quote_etag(etag: Optional[str]) -> Optional[str]:
+    if not etag or etag == "*":
+        return etag
+    if etag.startswith('"') and etag.endswith('"'):
+        return etag
+    if etag.startswith("'") and etag.endswith("'"):
+        return etag
+    return '"' + etag + '"'
+
+
+def prep_if_match(etag: Optional[str], match_condition: Optional[MatchConditions]) -> Optional[str]:
+    if match_condition == MatchConditions.IfNotModified:
+        if_match = quote_etag(etag) if etag else None
+        return if_match
+    if match_condition == MatchConditions.IfPresent:
+        return "*"
+    return None
+
+
+def prep_if_none_match(etag: Optional[str], match_condition: Optional[MatchConditions]) -> Optional[str]:
+    if match_condition == MatchConditions.IfModified:
+        if_none_match = quote_etag(etag) if etag else None
+        return if_none_match
+    if match_condition == MatchConditions.IfMissing:
+        return "*"
+    return None

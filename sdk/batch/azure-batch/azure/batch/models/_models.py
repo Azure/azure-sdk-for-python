@@ -57,47 +57,6 @@ class AffinityInformation(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class Application(_model_base.Model):
-    """Contains information about an application in an Azure Batch Account.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar id: A string that uniquely identifies the application within the Account. Required.
-    :vartype id: str
-    :ivar display_name: The display name for the application. Required.
-    :vartype display_name: str
-    :ivar versions: The list of available versions of the application. Required.
-    :vartype versions: list[str]
-    """
-
-    id: str = rest_field()
-    """A string that uniquely identifies the application within the Account. Required."""
-    display_name: str = rest_field(name="displayName")
-    """The display name for the application. Required."""
-    versions: List[str] = rest_field()
-    """The list of available versions of the application. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        id: str,  # pylint: disable=redefined-builtin
-        display_name: str,
-        versions: List[str],
-    ):
-        ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
 class ApplicationPackageReference(_model_base.Model):
     """A reference to an Package to be deployed to Compute Nodes.
 
@@ -260,7 +219,7 @@ class AutoScaleRun(_model_base.Model):
     :vartype error: ~azure.batch.models.AutoScaleRunError
     """
 
-    timestamp: datetime.datetime = rest_field()
+    timestamp: datetime.datetime = rest_field(format="rfc3339")
     """The time at which the autoscale formula was last evaluated. Required."""
     results: Optional[str] = rest_field()
     """Each variable value is returned in the form $variable=value, and variables are
@@ -503,6 +462,147 @@ class AzureFileShareConfiguration(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
+class BatchApplication(_model_base.Model):
+    """Contains information about an application in an Azure Batch Account.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: A string that uniquely identifies the application within the Account. Required.
+    :vartype id: str
+    :ivar display_name: The display name for the application. Required.
+    :vartype display_name: str
+    :ivar versions: The list of available versions of the application. Required.
+    :vartype versions: list[str]
+    """
+
+    id: str = rest_field()
+    """A string that uniquely identifies the application within the Account. Required."""
+    display_name: str = rest_field(name="displayName")
+    """The display name for the application. Required."""
+    versions: List[str] = rest_field()
+    """The list of available versions of the application. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        display_name: str,
+        versions: List[str],
+    ):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
+class BatchCertificate(_model_base.Model):  # pylint: disable=too-many-instance-attributes
+    """A Certificate that can be installed on Compute Nodes and can be used to
+    authenticate operations on the machine.
+
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar thumbprint: The X.509 thumbprint of the Certificate. This is a sequence of up to 40 hex
+     digits. Required.
+    :vartype thumbprint: str
+    :ivar thumbprint_algorithm: The algorithm used to derive the thumbprint. Required.
+    :vartype thumbprint_algorithm: str
+    :ivar url: The URL of the Certificate.
+    :vartype url: str
+    :ivar state: The state of the Certificate. Known values are: "active", "deleting", and
+     "deletefailed".
+    :vartype state: str or ~azure.batch.models.CertificateState
+    :ivar state_transition_time: The time at which the Certificate entered its current state.
+    :vartype state_transition_time: ~datetime.datetime
+    :ivar previous_state: This property is not set if the Certificate is in its initial active
+     state. Known values are: "active", "deleting", and "deletefailed".
+    :vartype previous_state: str or ~azure.batch.models.CertificateState
+    :ivar previous_state_transition_time: This property is not set if the Certificate is in its
+     initial Active state.
+    :vartype previous_state_transition_time: ~datetime.datetime
+    :ivar public_data: The public part of the Certificate as a base-64 encoded .cer file.
+    :vartype public_data: str
+    :ivar delete_certificate_error: This property is set only if the Certificate is in the
+     DeleteFailed state.
+    :vartype delete_certificate_error: ~azure.batch.models.DeleteCertificateError
+    :ivar data: The base64-encoded contents of the Certificate. The maximum size is 10KB. Required.
+    :vartype data: str
+    :ivar certificate_format: The format of the Certificate data. Known values are: "pfx" and
+     "cer".
+    :vartype certificate_format: str or ~azure.batch.models.CertificateFormat
+    :ivar password: This must be omitted if the Certificate format is cer.
+    :vartype password: str
+    """
+
+    thumbprint: str = rest_field()
+    """The X.509 thumbprint of the Certificate. This is a sequence of up to 40 hex
+     digits. Required."""
+    thumbprint_algorithm: str = rest_field(name="thumbprintAlgorithm")
+    """The algorithm used to derive the thumbprint. Required."""
+    url: Optional[str] = rest_field(visibility=["read"])
+    """The URL of the Certificate."""
+    state: Optional[Union[str, "_models.CertificateState"]] = rest_field(visibility=["read"])
+    """The state of the Certificate. Known values are: \"active\", \"deleting\", and \"deletefailed\"."""
+    state_transition_time: Optional[datetime.datetime] = rest_field(
+        name="stateTransitionTime", visibility=["read"], format="rfc3339"
+    )
+    """The time at which the Certificate entered its current state."""
+    previous_state: Optional[Union[str, "_models.CertificateState"]] = rest_field(
+        name="previousState", visibility=["read"]
+    )
+    """This property is not set if the Certificate is in its initial active state. Known values are:
+     \"active\", \"deleting\", and \"deletefailed\"."""
+    previous_state_transition_time: Optional[datetime.datetime] = rest_field(
+        name="previousStateTransitionTime", visibility=["read"], format="rfc3339"
+    )
+    """This property is not set if the Certificate is in its initial Active state."""
+    public_data: Optional[str] = rest_field(name="publicData", visibility=["read"])
+    """The public part of the Certificate as a base-64 encoded .cer file."""
+    delete_certificate_error: Optional["_models.DeleteCertificateError"] = rest_field(
+        name="deleteCertificateError", visibility=["read"]
+    )
+    """This property is set only if the Certificate is in the DeleteFailed state."""
+    data: str = rest_field(visibility=["create"])
+    """The base64-encoded contents of the Certificate. The maximum size is 10KB. Required."""
+    certificate_format: Optional[Union[str, "_models.CertificateFormat"]] = rest_field(
+        name="certificateFormat", visibility=["create"]
+    )
+    """The format of the Certificate data. Known values are: \"pfx\" and \"cer\"."""
+    password: Optional[str] = rest_field(visibility=["create"])
+    """This must be omitted if the Certificate format is cer."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        thumbprint: str,
+        thumbprint_algorithm: str,
+        data: str,
+        certificate_format: Optional[Union[str, "_models.CertificateFormat"]] = None,
+        password: Optional[str] = None,
+    ):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
 class BatchError(_model_base.Model):
     """An error response received from the Azure Batch service.
 
@@ -717,23 +817,25 @@ class BatchJob(_model_base.Model):  # pylint: disable=too-many-instance-attribut
      between requests. In particular, you can be pass the ETag when updating a Job
      to specify that your changes should take effect only if nobody else has
      modified the Job in the meantime."""
-    last_modified: Optional[datetime.datetime] = rest_field(name="lastModified", visibility=["read"])
+    last_modified: Optional[datetime.datetime] = rest_field(name="lastModified", visibility=["read"], format="rfc3339")
     """This is the last time at which the Job level data, such as the Job state or
      priority, changed. It does not factor in task-level changes such as adding new
      Tasks or Tasks changing state."""
-    creation_time: Optional[datetime.datetime] = rest_field(name="creationTime", visibility=["read"])
+    creation_time: Optional[datetime.datetime] = rest_field(name="creationTime", visibility=["read"], format="rfc3339")
     """The creation time of the Job."""
     state: Optional[Union[str, "_models.JobState"]] = rest_field(visibility=["read"])
     """The state of the Job. Known values are: \"active\", \"disabling\", \"disabled\", \"enabling\",
      \"terminating\", \"completed\", and \"deleting\"."""
-    state_transition_time: Optional[datetime.datetime] = rest_field(name="stateTransitionTime", visibility=["read"])
+    state_transition_time: Optional[datetime.datetime] = rest_field(
+        name="stateTransitionTime", visibility=["read"], format="rfc3339"
+    )
     """The time at which the Job entered its current state."""
     previous_state: Optional[Union[str, "_models.JobState"]] = rest_field(name="previousState", visibility=["read"])
     """This property is not set if the Job is in its initial Active state. Known values are:
      \"active\", \"disabling\", \"disabled\", \"enabling\", \"terminating\", \"completed\", and
      \"deleting\"."""
     previous_state_transition_time: Optional[datetime.datetime] = rest_field(
-        name="previousStateTransitionTime", visibility=["read"]
+        name="previousStateTransitionTime", visibility=["read"], format="rfc3339"
     )
     """This property is not set if the Job is in its initial Active state."""
     priority: Optional[int] = rest_field()
@@ -1128,16 +1230,18 @@ class BatchJobSchedule(_model_base.Model):  # pylint: disable=too-many-instance-
      changed between requests. In particular, you can be pass the ETag with an
      Update Job Schedule request to specify that your changes should take effect
      only if nobody else has modified the schedule in the meantime."""
-    last_modified: Optional[datetime.datetime] = rest_field(name="lastModified", visibility=["read"])
+    last_modified: Optional[datetime.datetime] = rest_field(name="lastModified", visibility=["read"], format="rfc3339")
     """This is the last time at which the schedule level data, such as the Job
      specification or recurrence information, changed. It does not factor in
      job-level changes such as new Jobs being created or Jobs changing state."""
-    creation_time: Optional[datetime.datetime] = rest_field(name="creationTime", visibility=["read"])
+    creation_time: Optional[datetime.datetime] = rest_field(name="creationTime", visibility=["read"], format="rfc3339")
     """The creation time of the Job Schedule."""
     state: Optional[Union[str, "_models.JobScheduleState"]] = rest_field(visibility=["read"])
     """The state of the Job Schedule. Known values are: \"active\", \"completed\", \"disabled\",
      \"terminating\", and \"deleting\"."""
-    state_transition_time: Optional[datetime.datetime] = rest_field(name="stateTransitionTime", visibility=["read"])
+    state_transition_time: Optional[datetime.datetime] = rest_field(
+        name="stateTransitionTime", visibility=["read"], format="rfc3339"
+    )
     """The time at which the Job Schedule entered the current state."""
     previous_state: Optional[Union[str, "_models.JobScheduleState"]] = rest_field(
         name="previousState", visibility=["read"]
@@ -1145,7 +1249,7 @@ class BatchJobSchedule(_model_base.Model):  # pylint: disable=too-many-instance-
     """This property is not present if the Job Schedule is in its initial active state. Known values
      are: \"active\", \"completed\", \"disabled\", \"terminating\", and \"deleting\"."""
     previous_state_transition_time: Optional[datetime.datetime] = rest_field(
-        name="previousStateTransitionTime", visibility=["read"]
+        name="previousStateTransitionTime", visibility=["read"], format="rfc3339"
     )
     """This property is not present if the Job Schedule is in its initial active state."""
     schedule: "_models.Schedule" = rest_field()
@@ -1318,8 +1422,6 @@ class BatchJobTerminateParameters(_model_base.Model):
 class BatchJobUpdateParameters(_model_base.Model):
     """An Azure Batch Job Update Model.
 
-    All required parameters must be populated in order to send to Azure.
-
     :ivar priority: Priority values can range from -1000 to 1000, with -1000 being the lowest
      priority and 1000 being the highest priority. The default value is 0.
     :vartype priority: int
@@ -1337,7 +1439,7 @@ class BatchJobUpdateParameters(_model_base.Model):
     :vartype max_parallel_tasks: int
     :ivar constraints: The execution constraints for a Job.
     :vartype constraints: ~azure.batch.models.JobConstraints
-    :ivar pool_info: Specifies how a Job should be assigned to a Pool. Required.
+    :ivar pool_info: Specifies how a Job should be assigned to a Pool.
     :vartype pool_info: ~azure.batch.models.PoolInformation
     :ivar on_all_tasks_complete: The default is noaction. Known values are: "noaction" and
      "terminatejob".
@@ -1362,8 +1464,8 @@ class BatchJobUpdateParameters(_model_base.Model):
      it has been created using the update job API."""
     constraints: Optional["_models.JobConstraints"] = rest_field()
     """The execution constraints for a Job."""
-    pool_info: "_models.PoolInformation" = rest_field(name="poolInfo")
-    """Specifies how a Job should be assigned to a Pool. Required."""
+    pool_info: Optional["_models.PoolInformation"] = rest_field(name="poolInfo")
+    """Specifies how a Job should be assigned to a Pool."""
     on_all_tasks_complete: Optional[Union[str, "_models.OnAllTasksComplete"]] = rest_field(name="onAllTasksComplete")
     """The default is noaction. Known values are: \"noaction\" and \"terminatejob\"."""
     metadata: Optional[List["_models.MetadataItem"]] = rest_field()
@@ -1374,11 +1476,11 @@ class BatchJobUpdateParameters(_model_base.Model):
     def __init__(
         self,
         *,
-        pool_info: "_models.PoolInformation",
         priority: Optional[int] = None,
         allow_task_preemption: Optional[bool] = None,
         max_parallel_tasks: Optional[int] = None,
         constraints: Optional["_models.JobConstraints"] = None,
+        pool_info: Optional["_models.PoolInformation"] = None,
         on_all_tasks_complete: Optional[Union[str, "_models.OnAllTasksComplete"]] = None,
         metadata: Optional[List["_models.MetadataItem"]] = None,
     ):
@@ -1477,13 +1579,15 @@ class BatchNode(_model_base.Model):  # pylint: disable=too-many-instance-attribu
     :ivar start_task_info: Information about a StartTask running on a Compute Node.
     :vartype start_task_info: ~azure.batch.models.StartTaskInformation
     :ivar certificate_references: For Windows Nodes, the Batch service installs the Certificates to
-     the specified
-     Certificate store and location. For Linux Compute Nodes, the Certificates are
-     stored in a directory inside the Task working directory and an environment
-     variable AZ_BATCH_CERTIFICATES_DIR is supplied to the Task to query for this
-     location. For Certificates with visibility of 'remoteUser', a 'certs' directory
-     is created in the user's home directory (e.g., /home/{user-name}/certs) and
-     Certificates are placed in that directory.
+     the specified Certificate store and location.
+     For Linux Compute Nodes, the Certificates are stored in a directory inside the Task working
+     directory and an environment variable AZ_BATCH_CERTIFICATES_DIR is supplied to the Task to
+     query for this location.
+     For Certificates with visibility of 'remoteUser', a 'certs' directory is created in the user's
+     home directory (e.g., /home/{user-name}/certs) and Certificates are placed in that directory.
+     Warning: This property is deprecated and will be removed after February, 2024. Please use the
+     `Azure KeyVault Extension
+     <https://learn.microsoft.com/azure/batch/batch-certificate-migration-guide>`_ instead.
     :vartype certificate_references: list[~azure.batch.models.CertificateReference]
     :ivar errors: The list of errors that are currently being encountered by the Compute Node.
     :vartype errors: list[~azure.batch.models.BatchNodeError]
@@ -1516,11 +1620,11 @@ class BatchNode(_model_base.Model):  # pylint: disable=too-many-instance-attribu
     scheduling_state: Optional[Union[str, "_models.SchedulingState"]] = rest_field(name="schedulingState")
     """Whether the Compute Node is available for Task scheduling. Known values are: \"enabled\" and
      \"disabled\"."""
-    state_transition_time: Optional[datetime.datetime] = rest_field(name="stateTransitionTime")
+    state_transition_time: Optional[datetime.datetime] = rest_field(name="stateTransitionTime", format="rfc3339")
     """The time at which the Compute Node entered its current state."""
-    last_boot_time: Optional[datetime.datetime] = rest_field(name="lastBootTime")
+    last_boot_time: Optional[datetime.datetime] = rest_field(name="lastBootTime", format="rfc3339")
     """This property may not be present if the Compute Node state is unusable."""
-    allocation_time: Optional[datetime.datetime] = rest_field(name="allocationTime")
+    allocation_time: Optional[datetime.datetime] = rest_field(name="allocationTime", format="rfc3339")
     """This is the time when the Compute Node was initially allocated and doesn't
      change once set. It is not updated when the Compute Node is service healed or
      preempted."""
@@ -1573,13 +1677,16 @@ class BatchNode(_model_base.Model):  # pylint: disable=too-many-instance-attribu
     start_task_info: Optional["_models.StartTaskInformation"] = rest_field(name="startTaskInfo")
     """Information about a StartTask running on a Compute Node."""
     certificate_references: Optional[List["_models.CertificateReference"]] = rest_field(name="certificateReferences")
-    """For Windows Nodes, the Batch service installs the Certificates to the specified
-     Certificate store and location. For Linux Compute Nodes, the Certificates are
-     stored in a directory inside the Task working directory and an environment
-     variable AZ_BATCH_CERTIFICATES_DIR is supplied to the Task to query for this
-     location. For Certificates with visibility of 'remoteUser', a 'certs' directory
-     is created in the user's home directory (e.g., /home/{user-name}/certs) and
-     Certificates are placed in that directory."""
+    """For Windows Nodes, the Batch service installs the Certificates to the specified Certificate
+     store and location.
+     For Linux Compute Nodes, the Certificates are stored in a directory inside the Task working
+     directory and an environment variable AZ_BATCH_CERTIFICATES_DIR is supplied to the Task to
+     query for this location.
+     For Certificates with visibility of 'remoteUser', a 'certs' directory is created in the user's
+     home directory (e.g., /home/{user-name}/certs) and Certificates are placed in that directory.
+     Warning: This property is deprecated and will be removed after February, 2024. Please use the
+     `Azure KeyVault Extension
+     <https://learn.microsoft.com/azure/batch/batch-certificate-migration-guide>`_ instead."""
     errors: Optional[List["_models.BatchNodeError"]] = rest_field()
     """The list of errors that are currently being encountered by the Compute Node."""
     is_dedicated: Optional[bool] = rest_field(name="isDedicated")
@@ -1711,43 +1818,6 @@ class BatchNodeError(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchNodeGetRemoteLoginSettingsResult(_model_base.Model):
-    """The remote login settings for a Compute Node.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar remote_login_ip_address: The IP address used for remote login to the Compute Node.
-     Required.
-    :vartype remote_login_ip_address: str
-    :ivar remote_login_port: The port used for remote login to the Compute Node. Required.
-    :vartype remote_login_port: int
-    """
-
-    remote_login_ip_address: str = rest_field(name="remoteLoginIPAddress")
-    """The IP address used for remote login to the Compute Node. Required."""
-    remote_login_port: int = rest_field(name="remoteLoginPort")
-    """The port used for remote login to the Compute Node. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        remote_login_ip_address: str,
-        remote_login_port: int,
-    ):
-        ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
 class BatchNodeIdentityReference(_model_base.Model):
     """The reference to a user assigned identity associated with the Batch pool which
     a compute node will use.
@@ -1834,6 +1904,43 @@ class BatchNodeInformation(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
+class BatchNodeRemoteLoginSettingsResult(_model_base.Model):
+    """The remote login settings for a Compute Node.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar remote_login_ip_address: The IP address used for remote login to the Compute Node.
+     Required.
+    :vartype remote_login_ip_address: str
+    :ivar remote_login_port: The port used for remote login to the Compute Node. Required.
+    :vartype remote_login_port: int
+    """
+
+    remote_login_ip_address: str = rest_field(name="remoteLoginIPAddress")
+    """The IP address used for remote login to the Compute Node. Required."""
+    remote_login_port: int = rest_field(name="remoteLoginPort")
+    """The port used for remote login to the Compute Node. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        remote_login_ip_address: str,
+        remote_login_port: int,
+    ):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
 class BatchNodeUser(_model_base.Model):
     """A user Account for RDP or SSH access on a Compute Node.
 
@@ -1864,7 +1971,7 @@ class BatchNodeUser(_model_base.Model):
     """The user name of the Account. Required."""
     is_admin: Optional[bool] = rest_field(name="isAdmin")
     """The default value is false."""
-    expiry_time: Optional[datetime.datetime] = rest_field(name="expiryTime")
+    expiry_time: Optional[datetime.datetime] = rest_field(name="expiryTime", format="rfc3339")
     """If omitted, the default is 1 day from the current time. For Linux Compute
      Nodes, the expiryTime has a precision up to a day."""
     password: Optional[str] = rest_field()
@@ -2007,13 +2114,15 @@ class BatchPool(_model_base.Model):  # pylint: disable=too-many-instance-attribu
      block Batch from being able to re-run the StartTask.
     :vartype start_task: ~azure.batch.models.StartTask
     :ivar certificate_references: For Windows Nodes, the Batch service installs the Certificates to
-     the specified
-     Certificate store and location. For Linux Compute Nodes, the Certificates are
-     stored in a directory inside the Task working directory and an environment
-     variable AZ_BATCH_CERTIFICATES_DIR is supplied to the Task to query for this
-     location. For Certificates with visibility of 'remoteUser', a 'certs' directory
-     is created in the user's home directory (e.g., /home/{user-name}/certs) and
-     Certificates are placed in that directory.
+     the specified Certificate store and location.
+     For Linux Compute Nodes, the Certificates are stored in a directory inside the Task working
+     directory and an environment variable AZ_BATCH_CERTIFICATES_DIR is supplied to the Task to
+     query for this location.
+     For Certificates with visibility of 'remoteUser', a 'certs' directory is created in the user's
+     home directory (e.g., /home/{user-name}/certs) and Certificates are placed in that directory.
+     Warning: This property is deprecated and will be removed after February, 2024. Please use the
+     `Azure KeyVault Extension
+     <https://learn.microsoft.com/azure/batch/batch-certificate-migration-guide>`_ instead.
     :vartype certificate_references: list[~azure.batch.models.CertificateReference]
     :ivar application_package_references: Changes to Package references affect all new Nodes
      joining the Pool, but do not
@@ -2068,22 +2177,24 @@ class BatchPool(_model_base.Model):  # pylint: disable=too-many-instance-attribu
      between requests. In particular, you can be pass the ETag when updating a Pool
      to specify that your changes should take effect only if nobody else has
      modified the Pool in the meantime."""
-    last_modified: Optional[datetime.datetime] = rest_field(name="lastModified", visibility=["read"])
+    last_modified: Optional[datetime.datetime] = rest_field(name="lastModified", visibility=["read"], format="rfc3339")
     """This is the last time at which the Pool level data, such as the
      targetDedicatedNodes or enableAutoscale settings, changed. It does not factor
      in node-level changes such as a Compute Node changing state."""
-    creation_time: Optional[datetime.datetime] = rest_field(name="creationTime", visibility=["read"])
+    creation_time: Optional[datetime.datetime] = rest_field(name="creationTime", visibility=["read"], format="rfc3339")
     """The creation time of the Pool."""
     state: Optional[Union[str, "_models.PoolState"]] = rest_field(visibility=["read"])
     """The current state of the Pool. Known values are: \"active\" and \"deleting\"."""
-    state_transition_time: Optional[datetime.datetime] = rest_field(name="stateTransitionTime", visibility=["read"])
+    state_transition_time: Optional[datetime.datetime] = rest_field(
+        name="stateTransitionTime", visibility=["read"], format="rfc3339"
+    )
     """The time at which the Pool entered its current state."""
     allocation_state: Optional[Union[str, "_models.AllocationState"]] = rest_field(
         name="allocationState", visibility=["read"]
     )
     """Whether the Pool is resizing. Known values are: \"steady\", \"resizing\", and \"stopping\"."""
     allocation_state_transition_time: Optional[datetime.datetime] = rest_field(
-        name="allocationStateTransitionTime", visibility=["read"]
+        name="allocationStateTransitionTime", visibility=["read"], format="rfc3339"
     )
     """The time at which the Pool entered its current allocation state."""
     vm_size: Optional[str] = rest_field(name="vmSize", visibility=["read"])
@@ -2158,13 +2269,16 @@ class BatchPool(_model_base.Model):  # pylint: disable=too-many-instance-attribu
     certificate_references: Optional[List["_models.CertificateReference"]] = rest_field(
         name="certificateReferences", visibility=["read"]
     )
-    """For Windows Nodes, the Batch service installs the Certificates to the specified
-     Certificate store and location. For Linux Compute Nodes, the Certificates are
-     stored in a directory inside the Task working directory and an environment
-     variable AZ_BATCH_CERTIFICATES_DIR is supplied to the Task to query for this
-     location. For Certificates with visibility of 'remoteUser', a 'certs' directory
-     is created in the user's home directory (e.g., /home/{user-name}/certs) and
-     Certificates are placed in that directory."""
+    """For Windows Nodes, the Batch service installs the Certificates to the specified Certificate
+     store and location.
+     For Linux Compute Nodes, the Certificates are stored in a directory inside the Task working
+     directory and an environment variable AZ_BATCH_CERTIFICATES_DIR is supplied to the Task to
+     query for this location.
+     For Certificates with visibility of 'remoteUser', a 'certs' directory is created in the user's
+     home directory (e.g., /home/{user-name}/certs) and Certificates are placed in that directory.
+     Warning: This property is deprecated and will be removed after February, 2024. Please use the
+     `Azure KeyVault Extension
+     <https://learn.microsoft.com/azure/batch/batch-certificate-migration-guide>`_ instead."""
     application_package_references: Optional[List["_models.ApplicationPackageReference"]] = rest_field(
         name="applicationPackageReferences", visibility=["read"]
     )
@@ -2298,13 +2412,15 @@ class BatchPoolCreateParameters(_model_base.Model):  # pylint: disable=too-many-
      block Batch from being able to re-run the StartTask.
     :vartype start_task: ~azure.batch.models.StartTask
     :ivar certificate_references: For Windows Nodes, the Batch service installs the Certificates to
-     the specified
-     Certificate store and location. For Linux Compute Nodes, the Certificates are
-     stored in a directory inside the Task working directory and an environment
-     variable AZ_BATCH_CERTIFICATES_DIR is supplied to the Task to query for this
-     location. For Certificates with visibility of 'remoteUser', a 'certs' directory
-     is created in the user's home directory (e.g., /home/{user-name}/certs) and
-     Certificates are placed in that directory.
+     the specified Certificate store and location.
+     For Linux Compute Nodes, the Certificates are stored in a directory inside the Task working
+     directory and an environment variable AZ_BATCH_CERTIFICATES_DIR is supplied to the Task to
+     query for this location.
+     For Certificates with visibility of 'remoteUser', a 'certs' directory is created in the user's
+     home directory (e.g., /home/{user-name}/certs) and Certificates are placed in that directory.
+     Warning: This property is deprecated and will be removed after February, 2024. Please use the
+     `Azure KeyVault Extension
+     <https://learn.microsoft.com/azure/batch/batch-certificate-migration-guide>`_ instead.
     :vartype certificate_references: list[~azure.batch.models.CertificateReference]
     :ivar application_package_references: Changes to Package references affect all new Nodes
      joining the Pool, but do not
@@ -2393,13 +2509,16 @@ class BatchPoolCreateParameters(_model_base.Model):  # pylint: disable=too-many-
      install/launch services from the StartTask working directory, as this will
      block Batch from being able to re-run the StartTask."""
     certificate_references: Optional[List["_models.CertificateReference"]] = rest_field(name="certificateReferences")
-    """For Windows Nodes, the Batch service installs the Certificates to the specified
-     Certificate store and location. For Linux Compute Nodes, the Certificates are
-     stored in a directory inside the Task working directory and an environment
-     variable AZ_BATCH_CERTIFICATES_DIR is supplied to the Task to query for this
-     location. For Certificates with visibility of 'remoteUser', a 'certs' directory
-     is created in the user's home directory (e.g., /home/{user-name}/certs) and
-     Certificates are placed in that directory."""
+    """For Windows Nodes, the Batch service installs the Certificates to the specified Certificate
+     store and location.
+     For Linux Compute Nodes, the Certificates are stored in a directory inside the Task working
+     directory and an environment variable AZ_BATCH_CERTIFICATES_DIR is supplied to the Task to
+     query for this location.
+     For Certificates with visibility of 'remoteUser', a 'certs' directory is created in the user's
+     home directory (e.g., /home/{user-name}/certs) and Certificates are placed in that directory.
+     Warning: This property is deprecated and will be removed after February, 2024. Please use the
+     `Azure KeyVault Extension
+     <https://learn.microsoft.com/azure/batch/batch-certificate-migration-guide>`_ instead."""
     application_package_references: Optional[List["_models.ApplicationPackageReference"]] = rest_field(
         name="applicationPackageReferences"
     )
@@ -2629,14 +2748,19 @@ class BatchPoolPatchParameters(_model_base.Model):
      install/launch services from the StartTask working directory, as this will
      block Batch from being able to re-run the StartTask.
     :vartype start_task: ~azure.batch.models.StartTask
-    :ivar certificate_references: For Windows Nodes, the Batch service installs the Certificates to
-     the specified
-     Certificate store and location. For Linux Compute Nodes, the Certificates are
-     stored in a directory inside the Task working directory and an environment
-     variable AZ_BATCH_CERTIFICATES_DIR is supplied to the Task to query for this
-     location. For Certificates with visibility of 'remoteUser', a 'certs' directory
-     is created in the user's home directory (e.g., /home/{user-name}/certs) and
-     Certificates are placed in that directory.
+    :ivar certificate_references: If this element is present, it replaces any existing Certificate
+     references configured on the Pool.
+     If omitted, any existing Certificate references are left unchanged.
+     For Windows Nodes, the Batch service installs the Certificates to the specified Certificate
+     store and location.
+     For Linux Compute Nodes, the Certificates are stored in a directory inside the Task working
+     directory and an environment variable AZ_BATCH_CERTIFICATES_DIR is supplied to the Task to
+     query for this location.
+     For Certificates with visibility of 'remoteUser', a 'certs' directory is created in the user's
+     home directory (e.g., /home/{user-name}/certs) and Certificates are placed in that directory.
+     Warning: This property is deprecated and will be removed after February, 2024. Please use the
+     `Azure KeyVault Extension
+     <https://learn.microsoft.com/azure/batch/batch-certificate-migration-guide>`_ instead.
     :vartype certificate_references: list[~azure.batch.models.CertificateReference]
     :ivar application_package_references: Changes to Package references affect all new Nodes
      joining the Pool, but do not
@@ -2665,13 +2789,19 @@ class BatchPoolPatchParameters(_model_base.Model):
      install/launch services from the StartTask working directory, as this will
      block Batch from being able to re-run the StartTask."""
     certificate_references: Optional[List["_models.CertificateReference"]] = rest_field(name="certificateReferences")
-    """For Windows Nodes, the Batch service installs the Certificates to the specified
-     Certificate store and location. For Linux Compute Nodes, the Certificates are
-     stored in a directory inside the Task working directory and an environment
-     variable AZ_BATCH_CERTIFICATES_DIR is supplied to the Task to query for this
-     location. For Certificates with visibility of 'remoteUser', a 'certs' directory
-     is created in the user's home directory (e.g., /home/{user-name}/certs) and
-     Certificates are placed in that directory."""
+    """If this element is present, it replaces any existing Certificate references configured on the
+     Pool.
+     If omitted, any existing Certificate references are left unchanged.
+     For Windows Nodes, the Batch service installs the Certificates to the specified Certificate
+     store and location.
+     For Linux Compute Nodes, the Certificates are stored in a directory inside the Task working
+     directory and an environment variable AZ_BATCH_CERTIFICATES_DIR is supplied to the Task to
+     query for this location.
+     For Certificates with visibility of 'remoteUser', a 'certs' directory is created in the user's
+     home directory (e.g., /home/{user-name}/certs) and Certificates are placed in that directory.
+     Warning: This property is deprecated and will be removed after February, 2024. Please use the
+     `Azure KeyVault Extension
+     <https://learn.microsoft.com/azure/batch/batch-certificate-migration-guide>`_ instead."""
     application_package_references: Optional[List["_models.ApplicationPackageReference"]] = rest_field(
         name="applicationPackageReferences"
     )
@@ -2782,14 +2912,21 @@ class BatchPoolUpdateParameters(_model_base.Model):
      install/launch services from the StartTask working directory, as this will
      block Batch from being able to re-run the StartTask.
     :vartype start_task: ~azure.batch.models.StartTask
-    :ivar certificate_references: For Windows Nodes, the Batch service installs the Certificates to
-     the specified
-     Certificate store and location. For Linux Compute Nodes, the Certificates are
-     stored in a directory inside the Task working directory and an environment
-     variable AZ_BATCH_CERTIFICATES_DIR is supplied to the Task to query for this
-     location. For Certificates with visibility of 'remoteUser', a 'certs' directory
-     is created in the user's home directory (e.g., /home/{user-name}/certs) and
-     Certificates are placed in that directory. Required.
+    :ivar certificate_references: This list replaces any existing Certificate references configured
+     on the Pool.
+     If you specify an empty collection, any existing Certificate references are removed from the
+     Pool.
+     For Windows Nodes, the Batch service installs the Certificates to the specified Certificate
+     store and location.
+     For Linux Compute Nodes, the Certificates are stored in a directory inside the Task working
+     directory and an environment variable AZ_BATCH_CERTIFICATES_DIR is supplied to the Task to
+     query for this location.
+     For Certificates with visibility of 'remoteUser', a 'certs' directory is created in the user's
+     home directory (e.g., /home/{user-name}/certs) and Certificates are placed in that directory.
+     Warning: This property is deprecated and will be removed after February, 2024. Please use the
+     `Azure KeyVault Extension
+     <https://learn.microsoft.com/azure/batch/batch-certificate-migration-guide>`_ instead.
+     Required.
     :vartype certificate_references: list[~azure.batch.models.CertificateReference]
     :ivar application_package_references: Changes to Package references affect all new Nodes
      joining the Pool, but do not
@@ -2818,13 +2955,20 @@ class BatchPoolUpdateParameters(_model_base.Model):
      install/launch services from the StartTask working directory, as this will
      block Batch from being able to re-run the StartTask."""
     certificate_references: List["_models.CertificateReference"] = rest_field(name="certificateReferences")
-    """For Windows Nodes, the Batch service installs the Certificates to the specified
-     Certificate store and location. For Linux Compute Nodes, the Certificates are
-     stored in a directory inside the Task working directory and an environment
-     variable AZ_BATCH_CERTIFICATES_DIR is supplied to the Task to query for this
-     location. For Certificates with visibility of 'remoteUser', a 'certs' directory
-     is created in the user's home directory (e.g., /home/{user-name}/certs) and
-     Certificates are placed in that directory. Required."""
+    """This list replaces any existing Certificate references configured on the Pool.
+     If you specify an empty collection, any existing Certificate references are removed from the
+     Pool.
+     For Windows Nodes, the Batch service installs the Certificates to the specified Certificate
+     store and location.
+     For Linux Compute Nodes, the Certificates are stored in a directory inside the Task working
+     directory and an environment variable AZ_BATCH_CERTIFICATES_DIR is supplied to the Task to
+     query for this location.
+     For Certificates with visibility of 'remoteUser', a 'certs' directory is created in the user's
+     home directory (e.g., /home/{user-name}/certs) and Certificates are placed in that directory.
+     Warning: This property is deprecated and will be removed after February, 2024. Please use the
+     `Azure KeyVault Extension
+     <https://learn.microsoft.com/azure/batch/batch-certificate-migration-guide>`_ instead.
+     Required."""
     application_package_references: List["_models.ApplicationPackageReference"] = rest_field(
         name="applicationPackageReferences"
     )
@@ -3003,22 +3147,24 @@ class BatchTask(_model_base.Model):  # pylint: disable=too-many-instance-attribu
      between requests. In particular, you can be pass the ETag when updating a Task
      to specify that your changes should take effect only if nobody else has
      modified the Task in the meantime."""
-    last_modified: Optional[datetime.datetime] = rest_field(name="lastModified", visibility=["read"])
+    last_modified: Optional[datetime.datetime] = rest_field(name="lastModified", visibility=["read"], format="rfc3339")
     """The last modified time of the Task."""
-    creation_time: Optional[datetime.datetime] = rest_field(name="creationTime", visibility=["read"])
+    creation_time: Optional[datetime.datetime] = rest_field(name="creationTime", visibility=["read"], format="rfc3339")
     """The creation time of the Task."""
     exit_conditions: Optional["_models.ExitConditions"] = rest_field(name="exitConditions", visibility=["read"])
     """How the Batch service should respond when the Task completes."""
     state: Optional[Union[str, "_models.TaskState"]] = rest_field(visibility=["read"])
     """The state of the Task. Known values are: \"active\", \"preparing\", \"running\", and
      \"completed\"."""
-    state_transition_time: Optional[datetime.datetime] = rest_field(name="stateTransitionTime", visibility=["read"])
+    state_transition_time: Optional[datetime.datetime] = rest_field(
+        name="stateTransitionTime", visibility=["read"], format="rfc3339"
+    )
     """The time at which the Task entered its current state."""
     previous_state: Optional[Union[str, "_models.TaskState"]] = rest_field(name="previousState", visibility=["read"])
     """This property is not set if the Task is in its initial Active state. Known values are:
      \"active\", \"preparing\", \"running\", and \"completed\"."""
     previous_state_transition_time: Optional[datetime.datetime] = rest_field(
-        name="previousStateTransitionTime", visibility=["read"]
+        name="previousStateTransitionTime", visibility=["read"], format="rfc3339"
     )
     """This property is not set if the Task is in its initial Active state."""
     command_line: Optional[str] = rest_field(name="commandLine", visibility=["read"])
@@ -3408,106 +3554,11 @@ class BatchTaskListSubtasksResult(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class Certificate(_model_base.Model):  # pylint: disable=too-many-instance-attributes
-    """A Certificate that can be installed on Compute Nodes and can be used to
-    authenticate operations on the machine.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar thumbprint: The X.509 thumbprint of the Certificate. This is a sequence of up to 40 hex
-     digits. Required.
-    :vartype thumbprint: str
-    :ivar thumbprint_algorithm: The algorithm used to derive the thumbprint. Required.
-    :vartype thumbprint_algorithm: str
-    :ivar url: The URL of the Certificate.
-    :vartype url: str
-    :ivar state: The state of the Certificate. Known values are: "active", "deleting", and
-     "deletefailed".
-    :vartype state: str or ~azure.batch.models.CertificateState
-    :ivar state_transition_time: The time at which the Certificate entered its current state.
-    :vartype state_transition_time: ~datetime.datetime
-    :ivar previous_state: This property is not set if the Certificate is in its initial active
-     state. Known values are: "active", "deleting", and "deletefailed".
-    :vartype previous_state: str or ~azure.batch.models.CertificateState
-    :ivar previous_state_transition_time: This property is not set if the Certificate is in its
-     initial Active state.
-    :vartype previous_state_transition_time: ~datetime.datetime
-    :ivar public_data: The public part of the Certificate as a base-64 encoded .cer file.
-    :vartype public_data: str
-    :ivar delete_certificate_error: This property is set only if the Certificate is in the
-     DeleteFailed state.
-    :vartype delete_certificate_error: ~azure.batch.models.DeleteCertificateError
-    :ivar data: The base64-encoded contents of the Certificate. The maximum size is 10KB. Required.
-    :vartype data: str
-    :ivar certificate_format: The format of the Certificate data. Known values are: "pfx" and
-     "cer".
-    :vartype certificate_format: str or ~azure.batch.models.CertificateFormat
-    :ivar password: This must be omitted if the Certificate format is cer.
-    :vartype password: str
-    """
-
-    thumbprint: str = rest_field()
-    """The X.509 thumbprint of the Certificate. This is a sequence of up to 40 hex
-     digits. Required."""
-    thumbprint_algorithm: str = rest_field(name="thumbprintAlgorithm")
-    """The algorithm used to derive the thumbprint. Required."""
-    url: Optional[str] = rest_field(visibility=["read"])
-    """The URL of the Certificate."""
-    state: Optional[Union[str, "_models.CertificateState"]] = rest_field(visibility=["read"])
-    """The state of the Certificate. Known values are: \"active\", \"deleting\", and \"deletefailed\"."""
-    state_transition_time: Optional[datetime.datetime] = rest_field(name="stateTransitionTime", visibility=["read"])
-    """The time at which the Certificate entered its current state."""
-    previous_state: Optional[Union[str, "_models.CertificateState"]] = rest_field(
-        name="previousState", visibility=["read"]
-    )
-    """This property is not set if the Certificate is in its initial active state. Known values are:
-     \"active\", \"deleting\", and \"deletefailed\"."""
-    previous_state_transition_time: Optional[datetime.datetime] = rest_field(
-        name="previousStateTransitionTime", visibility=["read"]
-    )
-    """This property is not set if the Certificate is in its initial Active state."""
-    public_data: Optional[str] = rest_field(name="publicData", visibility=["read"])
-    """The public part of the Certificate as a base-64 encoded .cer file."""
-    delete_certificate_error: Optional["_models.DeleteCertificateError"] = rest_field(
-        name="deleteCertificateError", visibility=["read"]
-    )
-    """This property is set only if the Certificate is in the DeleteFailed state."""
-    data: str = rest_field(visibility=["create"])
-    """The base64-encoded contents of the Certificate. The maximum size is 10KB. Required."""
-    certificate_format: Optional[Union[str, "_models.CertificateFormat"]] = rest_field(
-        name="certificateFormat", visibility=["create"]
-    )
-    """The format of the Certificate data. Known values are: \"pfx\" and \"cer\"."""
-    password: Optional[str] = rest_field(visibility=["create"])
-    """This must be omitted if the Certificate format is cer."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        thumbprint: str,
-        thumbprint_algorithm: str,
-        data: str,
-        certificate_format: Optional[Union[str, "_models.CertificateFormat"]] = None,
-        password: Optional[str] = None,
-    ):
-        ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
 class CertificateReference(_model_base.Model):
-    """A reference to a Certificate to be installed on Compute Nodes in a Pool.
+    """A reference to a Certificate to be installed on Compute Nodes in a Pool. Warning: This object
+    is deprecated and will be removed after February, 2024. Please use the `Azure KeyVault
+    Extension <https://learn.microsoft.com/azure/batch/batch-certificate-migration-guide>`_
+    instead.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -3710,7 +3761,8 @@ class ContainerConfiguration(_model_base.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type: The container technology to be used. Required. "dockerCompatible"
+    :ivar type: The container technology to be used. Required. Known values are: "dockerCompatible"
+     and "criCompatible".
     :vartype type: str or ~azure.batch.models.ContainerType
     :ivar container_image_names: This is the full Image reference, as would be specified to "docker
      pull". An
@@ -3724,7 +3776,8 @@ class ContainerConfiguration(_model_base.Model):
     """
 
     type: Union[str, "_models.ContainerType"] = rest_field()
-    """The container technology to be used. Required. \"dockerCompatible\""""
+    """The container technology to be used. Required. Known values are: \"dockerCompatible\" and
+     \"criCompatible\"."""
     container_image_names: Optional[List[str]] = rest_field(name="containerImageNames")
     """This is the full Image reference, as would be specified to \"docker pull\". An
      Image will be sourced from the default Docker registry unless the Image is
@@ -4269,9 +4322,9 @@ class FileProperties(_model_base.Model):
     :vartype file_mode: str
     """
 
-    creation_time: Optional[datetime.datetime] = rest_field(name="creationTime")
+    creation_time: Optional[datetime.datetime] = rest_field(name="creationTime", format="rfc3339")
     """The creation time is not returned for files on Linux Compute Nodes."""
-    last_modified: datetime.datetime = rest_field(name="lastModified")
+    last_modified: datetime.datetime = rest_field(name="lastModified", format="rfc3339")
     """The time at which the file was last modified. Required."""
     content_length: int = rest_field(name="contentLength")
     """The length of the file. Required."""
@@ -4385,7 +4438,7 @@ class ImageInformation(_model_base.Model):
     """Not every capability of the Image is listed. Capabilities in this list are
      considered of special interest and are generally related to integration with
      other features in the Azure Batch service."""
-    batch_support_end_of_life: Optional[datetime.datetime] = rest_field(name="batchSupportEndOfLife")
+    batch_support_end_of_life: Optional[datetime.datetime] = rest_field(name="batchSupportEndOfLife", format="rfc3339")
     """The time when the Azure Batch service will stop accepting create Pool requests
      for the Image."""
     verification_type: Union[str, "_models.VerificationType"] = rest_field(name="verificationType")
@@ -4706,13 +4759,12 @@ class JobConstraints(_model_base.Model):
      specified, there is no time limit on how long the Job may run.
     :vartype max_wall_clock_time: ~datetime.timedelta
     :ivar max_task_retry_count: Note that this value specifically controls the number of retries.
-     The Batch
-     service will try each Task once, and may then retry up to this limit. For
-     example, if the maximum retry count is 3, Batch tries a Task up to 4 times (one
-     initial try and 3 retries). If the maximum retry count is 0, the Batch service
-     does not retry Tasks. If the maximum retry count is -1, the Batch service
-     retries the Task without limit, however this is not recommended for a start
-     task or any task. The default value is 0 (no retries).
+       The Batch service will try each Task once, and may then retry up to this limit.
+       For example, if the maximum retry count is 3, Batch tries a Task up to 4 times (one initial
+     try and 3 retries).
+       If the maximum retry count is 0, the Batch service does not retry Tasks.
+       If the maximum retry count is -1, the Batch service retries Tasks without limit. The default
+     value is 0 (no retries).
     :vartype max_task_retry_count: int
     """
 
@@ -4722,13 +4774,13 @@ class JobConstraints(_model_base.Model):
      termination reason will be MaxWallClockTimeExpiry. If this property is not
      specified, there is no time limit on how long the Job may run."""
     max_task_retry_count: Optional[int] = rest_field(name="maxTaskRetryCount")
-    """Note that this value specifically controls the number of retries. The Batch
-     service will try each Task once, and may then retry up to this limit. For
-     example, if the maximum retry count is 3, Batch tries a Task up to 4 times (one
-     initial try and 3 retries). If the maximum retry count is 0, the Batch service
-     does not retry Tasks. If the maximum retry count is -1, the Batch service
-     retries the Task without limit, however this is not recommended for a start
-     task or any task. The default value is 0 (no retries)."""
+    """Note that this value specifically controls the number of retries.
+       The Batch service will try each Task once, and may then retry up to this limit.
+       For example, if the maximum retry count is 3, Batch tries a Task up to 4 times (one initial
+     try and 3 retries).
+       If the maximum retry count is 0, the Batch service does not retry Tasks.
+       If the maximum retry count is -1, the Batch service retries Tasks without limit. The default
+     value is 0 (no retries)."""
 
     @overload
     def __init__(
@@ -4783,9 +4835,9 @@ class JobExecutionInformation(_model_base.Model):
     :vartype terminate_reason: str
     """
 
-    start_time: datetime.datetime = rest_field(name="startTime")
+    start_time: datetime.datetime = rest_field(name="startTime", format="rfc3339")
     """This is the time at which the Job was created. Required."""
-    end_time: Optional[datetime.datetime] = rest_field(name="endTime")
+    end_time: Optional[datetime.datetime] = rest_field(name="endTime", format="rfc3339")
     """This property is set only if the Job is in the completed state."""
     pool_id: Optional[str] = rest_field(name="poolId")
     """This element contains the actual Pool where the Job is assigned. When you get
@@ -5423,10 +5475,10 @@ class JobPreparationTaskExecutionInformation(_model_base.Model):  # pylint: disa
     :vartype result: str or ~azure.batch.models.TaskExecutionResult
     """
 
-    start_time: datetime.datetime = rest_field(name="startTime")
+    start_time: datetime.datetime = rest_field(name="startTime", format="rfc3339")
     """If the Task has been restarted or retried, this is the most recent time at
      which the Task started running. Required."""
-    end_time: Optional[datetime.datetime] = rest_field(name="endTime")
+    end_time: Optional[datetime.datetime] = rest_field(name="endTime", format="rfc3339")
     """This property is set only if the Task is in the Completed state."""
     state: Union[str, "_models.JobPreparationTaskState"] = rest_field()
     """The current state of the Job Preparation Task on the Compute Node. Required. Known values are:
@@ -5452,7 +5504,7 @@ class JobPreparationTaskExecutionInformation(_model_base.Model):  # pylint: disa
     """Task application failures (non-zero exit code) are retried, pre-processing
      errors (the Task could not be run) and file upload errors are not retried. The
      Batch service will retry the Task up to the limit specified by the constraints. Required."""
-    last_retry_time: Optional[datetime.datetime] = rest_field(name="lastRetryTime")
+    last_retry_time: Optional[datetime.datetime] = rest_field(name="lastRetryTime", format="rfc3339")
     """This property is set only if the Task was retried (i.e. retryCount is nonzero).
      If present, this is typically the same as startTime, but may be different if
      the Task has been restarted for reasons other than retry; for example, if the
@@ -5664,10 +5716,10 @@ class JobReleaseTaskExecutionInformation(_model_base.Model):
     :vartype result: str or ~azure.batch.models.TaskExecutionResult
     """
 
-    start_time: datetime.datetime = rest_field(name="startTime")
+    start_time: datetime.datetime = rest_field(name="startTime", format="rfc3339")
     """If the Task has been restarted or retried, this is the most recent time at
      which the Task started running. Required."""
-    end_time: Optional[datetime.datetime] = rest_field(name="endTime")
+    end_time: Optional[datetime.datetime] = rest_field(name="endTime", format="rfc3339")
     """This property is set only if the Task is in the Completed state."""
     state: Union[str, "_models.JobReleaseTaskState"] = rest_field()
     """The current state of the Job Release Task on the Compute Node. Required. Known values are:
@@ -5736,14 +5788,14 @@ class JobScheduleExecutionInformation(_model_base.Model):
     :vartype end_time: ~datetime.datetime
     """
 
-    next_run_time: Optional[datetime.datetime] = rest_field(name="nextRunTime")
+    next_run_time: Optional[datetime.datetime] = rest_field(name="nextRunTime", format="rfc3339")
     """This property is meaningful only if the schedule is in the active state when
      the time comes around. For example, if the schedule is disabled, no Job will be
      created at nextRunTime unless the Job is enabled before then."""
     recent_job: Optional["_models.RecentJob"] = rest_field(name="recentJob")
     """This property is present only if the at least one Job has run under the
      schedule."""
-    end_time: Optional[datetime.datetime] = rest_field(name="endTime")
+    end_time: Optional[datetime.datetime] = rest_field(name="endTime", format="rfc3339")
     """This property is set only if the Job Schedule is in the completed state."""
 
     @overload
@@ -5831,9 +5883,9 @@ class JobScheduleStatistics(_model_base.Model):  # pylint: disable=too-many-inst
 
     url: str = rest_field()
     """The URL of the statistics. Required."""
-    start_time: datetime.datetime = rest_field(name="startTime")
+    start_time: datetime.datetime = rest_field(name="startTime", format="rfc3339")
     """The start time of the time range covered by the statistics. Required."""
-    last_update_time: datetime.datetime = rest_field(name="lastUpdateTime")
+    last_update_time: datetime.datetime = rest_field(name="lastUpdateTime", format="rfc3339")
     """The time at which the statistics were last updated. All statistics are limited
      to the range between startTime and lastUpdateTime. Required."""
     user_c_p_u_time: datetime.timedelta = rest_field(name="userCPUTime")
@@ -6189,9 +6241,9 @@ class JobStatistics(_model_base.Model):  # pylint: disable=too-many-instance-att
 
     url: str = rest_field()
     """The URL of the statistics. Required."""
-    start_time: datetime.datetime = rest_field(name="startTime")
+    start_time: datetime.datetime = rest_field(name="startTime", format="rfc3339")
     """The start time of the time range covered by the statistics. Required."""
-    last_update_time: datetime.datetime = rest_field(name="lastUpdateTime")
+    last_update_time: datetime.datetime = rest_field(name="lastUpdateTime", format="rfc3339")
     """The time at which the statistics were last updated. All statistics are limited
      to the range between startTime and lastUpdateTime. Required."""
     user_c_p_u_time: datetime.timedelta = rest_field(name="userCPUTime")
@@ -6542,6 +6594,11 @@ class NetworkConfiguration(_model_base.Model):
      Pools with the
      virtualMachineConfiguration property.
     :vartype public_ip_address_configuration: ~azure.batch.models.PublicIPAddressConfiguration
+    :ivar enable_accelerated_networking: Accelerated networking enables single root I/O
+     virtualization (SR-IOV) to a VM, which may lead to improved networking performance. For more
+     details, see:
+     https://learn.microsoft.com/azure/virtual-network/accelerated-networking-overview.
+    :vartype enable_accelerated_networking: bool
     """
 
     subnet_id: Optional[str] = rest_field(name="subnetId")
@@ -6581,6 +6638,10 @@ class NetworkConfiguration(_model_base.Model):
     )
     """Public IP configuration property is only supported on Pools with the
      virtualMachineConfiguration property."""
+    enable_accelerated_networking: Optional[bool] = rest_field(name="enableAcceleratedNetworking")
+    """Accelerated networking enables single root I/O virtualization (SR-IOV) to a VM, which may lead
+     to improved networking performance. For more details, see:
+     https://learn.microsoft.com/azure/virtual-network/accelerated-networking-overview."""
 
     @overload
     def __init__(
@@ -6590,6 +6651,7 @@ class NetworkConfiguration(_model_base.Model):
         dynamic_v_net_assignment_scope: Optional[Union[str, "_models.DynamicVNetAssignmentScope"]] = None,
         endpoint_configuration: Optional["_models.PoolEndpointConfiguration"] = None,
         public_ip_address_configuration: Optional["_models.PublicIPAddressConfiguration"] = None,
+        enable_accelerated_networking: Optional[bool] = None,
     ):
         ...
 
@@ -6740,7 +6802,7 @@ class NodeAgentInformation(_model_base.Model):
     """This version number can be checked against the Compute Node agent release notes
      located at
      https://github.com/Azure/Batch/blob/master/changelogs/nodeagent/CHANGELOG.md. Required."""
-    last_update_time: datetime.datetime = rest_field(name="lastUpdateTime")
+    last_update_time: datetime.datetime = rest_field(name="lastUpdateTime", format="rfc3339")
     """This is the most recent time that the Compute Node agent was updated to a new
      version. Required."""
 
@@ -7109,7 +7171,7 @@ class NodeUpdateUserParameters(_model_base.Model):
      'cloudServiceConfiguration', or created with 'virtualMachineConfiguration' using a Windows
      Image reference). For Linux Compute Nodes, the password can optionally be specified along with
      the sshPublicKey property. If omitted, any existing password is removed."""
-    expiry_time: Optional[datetime.datetime] = rest_field(name="expiryTime")
+    expiry_time: Optional[datetime.datetime] = rest_field(name="expiryTime", format="rfc3339")
     """If omitted, the default is 1 day from the current time. For Linux Compute
      Nodes, the expiryTime has a precision up to a day."""
     ssh_public_key: Optional[str] = rest_field(name="sshPublicKey")
@@ -7645,13 +7707,14 @@ class PoolSpecification(_model_base.Model):  # pylint: disable=too-many-instance
      block Batch from being able to re-run the StartTask.
     :vartype start_task: ~azure.batch.models.StartTask
     :ivar certificate_references: For Windows Nodes, the Batch service installs the Certificates to
-     the specified
-     Certificate store and location. For Linux Compute Nodes, the Certificates are
-     stored in a directory inside the Task working directory and an environment
-     variable AZ_BATCH_CERTIFICATES_DIR is supplied to the Task to query for this
-     location. For Certificates with visibility of 'remoteUser', a 'certs' directory
-     is created in the user's home directory (e.g., /home/{user-name}/certs) and
-     Certificates are placed in that directory.
+     the specified Certificate store and location. For Linux Compute Nodes, the Certificates are
+     stored in a directory inside the Task working directory and an environment variable
+     AZ_BATCH_CERTIFICATES_DIR is supplied to the Task to query for this location. For Certificates
+     with visibility of 'remoteUser', a 'certs' directory is created in the user's home directory
+     (e.g., /home/{user-name}/certs) and Certificates are placed in that directory.
+     Warning: This property is deprecated and will be removed after February, 2024.
+     Please use the `Azure KeyVault Extension
+     <https://learn.microsoft.com/azure/batch/batch-certificate-migration-guide>`_ instead.
     :vartype certificate_references: list[~azure.batch.models.CertificateReference]
     :ivar application_package_references: When creating a pool, the package's application ID must
      be fully qualified
@@ -7756,13 +7819,15 @@ class PoolSpecification(_model_base.Model):  # pylint: disable=too-many-instance
      install/launch services from the StartTask working directory, as this will
      block Batch from being able to re-run the StartTask."""
     certificate_references: Optional[List["_models.CertificateReference"]] = rest_field(name="certificateReferences")
-    """For Windows Nodes, the Batch service installs the Certificates to the specified
-     Certificate store and location. For Linux Compute Nodes, the Certificates are
-     stored in a directory inside the Task working directory and an environment
-     variable AZ_BATCH_CERTIFICATES_DIR is supplied to the Task to query for this
-     location. For Certificates with visibility of 'remoteUser', a 'certs' directory
-     is created in the user's home directory (e.g., /home/{user-name}/certs) and
-     Certificates are placed in that directory."""
+    """For Windows Nodes, the Batch service installs the Certificates to the specified Certificate
+     store and location. For Linux Compute Nodes, the Certificates are stored in a directory inside
+     the Task working directory and an environment variable AZ_BATCH_CERTIFICATES_DIR is supplied to
+     the Task to query for this location. For Certificates with visibility of 'remoteUser', a
+     'certs' directory is created in the user's home directory (e.g., /home/{user-name}/certs) and
+     Certificates are placed in that directory.
+     Warning: This property is deprecated and will be removed after February, 2024.
+     Please use the `Azure KeyVault Extension
+     <https://learn.microsoft.com/azure/batch/batch-certificate-migration-guide>`_ instead."""
     application_package_references: Optional[List["_models.ApplicationPackageReference"]] = rest_field(
         name="applicationPackageReferences"
     )
@@ -7850,9 +7915,9 @@ class PoolStatistics(_model_base.Model):
 
     url: str = rest_field()
     """The URL for the statistics. Required."""
-    start_time: datetime.datetime = rest_field(name="startTime")
+    start_time: datetime.datetime = rest_field(name="startTime", format="rfc3339")
     """The start time of the time range covered by the statistics. Required."""
-    last_update_time: datetime.datetime = rest_field(name="lastUpdateTime")
+    last_update_time: datetime.datetime = rest_field(name="lastUpdateTime", format="rfc3339")
     """The time at which the statistics were last updated. All statistics are limited
      to the range between startTime and lastUpdateTime. Required."""
     usage_stats: Optional["_models.UsageStatistics"] = rest_field(name="usageStats")
@@ -7905,9 +7970,9 @@ class PoolUsageMetrics(_model_base.Model):
 
     pool_id: str = rest_field(name="poolId")
     """The ID of the Pool whose metrics are aggregated in this entry. Required."""
-    start_time: datetime.datetime = rest_field(name="startTime")
+    start_time: datetime.datetime = rest_field(name="startTime", format="rfc3339")
     """The start time of the aggregation interval covered by this entry. Required."""
-    end_time: datetime.datetime = rest_field(name="endTime")
+    end_time: datetime.datetime = rest_field(name="endTime", format="rfc3339")
     """The end time of the aggregation interval covered by this entry. Required."""
     vm_size: str = rest_field(name="vmSize")
     """For information about available sizes of virtual machines in Pools, see Choose
@@ -8228,9 +8293,9 @@ class ResourceStatistics(_model_base.Model):  # pylint: disable=too-many-instanc
     :vartype network_write_gi_b: float
     """
 
-    start_time: datetime.datetime = rest_field(name="startTime")
+    start_time: datetime.datetime = rest_field(name="startTime", format="rfc3339")
     """The start time of the time range covered by the statistics. Required."""
-    last_update_time: datetime.datetime = rest_field(name="lastUpdateTime")
+    last_update_time: datetime.datetime = rest_field(name="lastUpdateTime", format="rfc3339")
     """The time at which the statistics were last updated. All statistics are limited
      to the range between startTime and lastUpdateTime. Required."""
     avg_cpu_percentage: float = rest_field(name="avgCPUPercentage")
@@ -8334,10 +8399,10 @@ class Schedule(_model_base.Model):
     :vartype recurrence_interval: ~datetime.timedelta
     """
 
-    do_not_run_until: Optional[datetime.datetime] = rest_field(name="doNotRunUntil")
+    do_not_run_until: Optional[datetime.datetime] = rest_field(name="doNotRunUntil", format="rfc3339")
     """If you do not specify a doNotRunUntil time, the schedule becomes ready to
      create Jobs immediately."""
-    do_not_run_after: Optional[datetime.datetime] = rest_field(name="doNotRunAfter")
+    do_not_run_after: Optional[datetime.datetime] = rest_field(name="doNotRunAfter", format="rfc3339")
     """If you do not specify a doNotRunAfter time, and you are creating a recurring
      Job Schedule, the Job Schedule will remain active until you explicitly
      terminate it."""
@@ -8571,10 +8636,10 @@ class StartTaskInformation(_model_base.Model):
     state: Union[str, "_models.StartTaskState"] = rest_field()
     """The state of the StartTask on the Compute Node. Required. Known values are: \"running\" and
      \"completed\"."""
-    start_time: datetime.datetime = rest_field(name="startTime")
+    start_time: datetime.datetime = rest_field(name="startTime", format="rfc3339")
     """This value is reset every time the Task is restarted or retried (that is, this
      is the most recent time at which the StartTask started running). Required."""
-    end_time: Optional[datetime.datetime] = rest_field(name="endTime")
+    end_time: Optional[datetime.datetime] = rest_field(name="endTime", format="rfc3339")
     """This is the end time of the most recent run of the StartTask, if that run has
      completed (even if that run failed and a retry is pending). This element is not
      present if the StartTask is currently running."""
@@ -8595,7 +8660,7 @@ class StartTaskInformation(_model_base.Model):
     """Task application failures (non-zero exit code) are retried, pre-processing
      errors (the Task could not be run) and file upload errors are not retried. The
      Batch service will retry the Task up to the limit specified by the constraints. Required."""
-    last_retry_time: Optional[datetime.datetime] = rest_field(name="lastRetryTime")
+    last_retry_time: Optional[datetime.datetime] = rest_field(name="lastRetryTime", format="rfc3339")
     """This element is present only if the Task was retried (i.e. retryCount is
      nonzero). If present, this is typically the same as startTime, but may be
      different if the Task has been restarted for reasons other than retry; for
@@ -8680,11 +8745,11 @@ class SubtaskInformation(_model_base.Model):  # pylint: disable=too-many-instanc
     """The ID of the subtask."""
     node_info: Optional["_models.BatchNodeInformation"] = rest_field(name="nodeInfo")
     """Information about the Compute Node on which a Task ran."""
-    start_time: Optional[datetime.datetime] = rest_field(name="startTime")
+    start_time: Optional[datetime.datetime] = rest_field(name="startTime", format="rfc3339")
     """The time at which the subtask started running. If the subtask has been
      restarted or retried, this is the most recent time at which the subtask started
      running."""
-    end_time: Optional[datetime.datetime] = rest_field(name="endTime")
+    end_time: Optional[datetime.datetime] = rest_field(name="endTime", format="rfc3339")
     """This property is set only if the subtask is in the Completed state."""
     exit_code: Optional[int] = rest_field(name="exitCode")
     """This property is set only if the subtask is in the completed state. In general,
@@ -8701,12 +8766,14 @@ class SubtaskInformation(_model_base.Model):  # pylint: disable=too-many-instanc
      a failure."""
     state: Optional[Union[str, "_models.SubtaskState"]] = rest_field()
     """The state of the subtask. Known values are: \"preparing\", \"running\", and \"completed\"."""
-    state_transition_time: Optional[datetime.datetime] = rest_field(name="stateTransitionTime")
+    state_transition_time: Optional[datetime.datetime] = rest_field(name="stateTransitionTime", format="rfc3339")
     """The time at which the subtask entered its current state."""
     previous_state: Optional[Union[str, "_models.SubtaskState"]] = rest_field(name="previousState")
     """This property is not set if the subtask is in its initial running state. Known values are:
      \"preparing\", \"running\", and \"completed\"."""
-    previous_state_transition_time: Optional[datetime.datetime] = rest_field(name="previousStateTransitionTime")
+    previous_state_transition_time: Optional[datetime.datetime] = rest_field(
+        name="previousStateTransitionTime", format="rfc3339"
+    )
     """This property is not set if the subtask is in its initial running state."""
     result: Optional[Union[str, "_models.TaskExecutionResult"]] = rest_field()
     """If the value is 'failed', then the details of the failure can be found in the
@@ -8804,7 +8871,7 @@ class TaskAddResult(_model_base.Model):
      particular, you can be pass the ETag with an Update Task request to specify
      that your changes should take effect only if nobody else has modified the Job
      in the meantime."""
-    last_modified: Optional[datetime.datetime] = rest_field(name="lastModified")
+    last_modified: Optional[datetime.datetime] = rest_field(name="lastModified", format="rfc3339")
     """The last modified time of the Task."""
     location: Optional[str] = rest_field()
     """The URL of the Task, if the Task was successfully added."""
@@ -8846,14 +8913,14 @@ class TaskConstraints(_model_base.Model):
      unless the Compute Node is removed or the Job is deleted.
     :vartype retention_time: ~datetime.timedelta
     :ivar max_task_retry_count: Note that this value specifically controls the number of retries
-     for the Task
-     executable due to a nonzero exit code. The Batch service will try the Task
-     once, and may then retry up to this limit. For example, if the maximum retry
-     count is 3, Batch tries the Task up to 4 times (one initial try and 3 retries).
-     If the maximum retry count is 0, the Batch service does not retry the Task
-     after the first attempt. If the maximum retry count is -1, the Batch service
-     retries the Task without limit, however this is not recommended for a start
-     task or any task. The default value is 0 (no retries).
+     for the Task executable due to a nonzero exit code.
+       The Batch service will try the Task once, and may then retry up to this limit.
+       For example, if the maximum retry count is 3, Batch tries the Task up to 4 times (one
+     initial try and 3 retries).
+       If the maximum retry count is 0, the Batch service does not retry the Task after the first
+     attempt.
+       If the maximum retry count is -1, the Batch service retries the Task without limit, however
+     this is not recommended for a start task or any task. The default value is 0 (no retries).
     :vartype max_task_retry_count: int
     """
 
@@ -8863,14 +8930,15 @@ class TaskConstraints(_model_base.Model):
     """The default is 7 days, i.e. the Task directory will be retained for 7 days
      unless the Compute Node is removed or the Job is deleted."""
     max_task_retry_count: Optional[int] = rest_field(name="maxTaskRetryCount")
-    """Note that this value specifically controls the number of retries for the Task
-     executable due to a nonzero exit code. The Batch service will try the Task
-     once, and may then retry up to this limit. For example, if the maximum retry
-     count is 3, Batch tries the Task up to 4 times (one initial try and 3 retries).
-     If the maximum retry count is 0, the Batch service does not retry the Task
-     after the first attempt. If the maximum retry count is -1, the Batch service
-     retries the Task without limit, however this is not recommended for a start
-     task or any task. The default value is 0 (no retries)."""
+    """Note that this value specifically controls the number of retries for the Task executable due to
+     a nonzero exit code.
+       The Batch service will try the Task once, and may then retry up to this limit.
+       For example, if the maximum retry count is 3, Batch tries the Task up to 4 times (one initial
+     try and 3 retries).
+       If the maximum retry count is 0, the Batch service does not retry the Task after the first
+     attempt.
+       If the maximum retry count is -1, the Batch service retries the Task without limit, however
+     this is not recommended for a start task or any task. The default value is 0 (no retries)."""
 
     @overload
     def __init__(
@@ -9176,13 +9244,13 @@ class TaskExecutionInformation(_model_base.Model):
     :vartype result: str or ~azure.batch.models.TaskExecutionResult
     """
 
-    start_time: Optional[datetime.datetime] = rest_field(name="startTime")
+    start_time: Optional[datetime.datetime] = rest_field(name="startTime", format="rfc3339")
     """'Running' corresponds to the running state, so if the Task specifies resource
      files or Packages, then the start time reflects the time at which the Task
      started downloading or deploying these. If the Task has been restarted or
      retried, this is the most recent time at which the Task started running. This
      property is present only for Tasks that are in the running or completed state."""
-    end_time: Optional[datetime.datetime] = rest_field(name="endTime")
+    end_time: Optional[datetime.datetime] = rest_field(name="endTime", format="rfc3339")
     """This property is set only if the Task is in the Completed state."""
     exit_code: Optional[int] = rest_field(name="exitCode")
     """This property is set only if the Task is in the completed state. In general,
@@ -9201,7 +9269,7 @@ class TaskExecutionInformation(_model_base.Model):
     """Task application failures (non-zero exit code) are retried, pre-processing
      errors (the Task could not be run) and file upload errors are not retried. The
      Batch service will retry the Task up to the limit specified by the constraints. Required."""
-    last_retry_time: Optional[datetime.datetime] = rest_field(name="lastRetryTime")
+    last_retry_time: Optional[datetime.datetime] = rest_field(name="lastRetryTime", format="rfc3339")
     """This element is present only if the Task was retried (i.e. retryCount is
      nonzero). If present, this is typically the same as startTime, but may be
      different if the Task has been restarted for reasons other than retry; for
@@ -9212,7 +9280,7 @@ class TaskExecutionInformation(_model_base.Model):
      pool) or when the Job is being disabled, the user can specify that running
      Tasks on the Compute Nodes be requeued for execution. This count tracks how
      many times the Task has been requeued for these reasons. Required."""
-    last_requeue_time: Optional[datetime.datetime] = rest_field(name="lastRequeueTime")
+    last_requeue_time: Optional[datetime.datetime] = rest_field(name="lastRequeueTime", format="rfc3339")
     """This property is set only if the requeueCount is nonzero."""
     result: Optional[Union[str, "_models.TaskExecutionResult"]] = rest_field()
     """If the value is 'failed', then the details of the failure can be found in the
@@ -9519,9 +9587,9 @@ class TaskStatistics(_model_base.Model):  # pylint: disable=too-many-instance-at
 
     url: str = rest_field()
     """The URL of the statistics. Required."""
-    start_time: datetime.datetime = rest_field(name="startTime")
+    start_time: datetime.datetime = rest_field(name="startTime", format="rfc3339")
     """The start time of the time range covered by the statistics. Required."""
-    last_update_time: datetime.datetime = rest_field(name="lastUpdateTime")
+    last_update_time: datetime.datetime = rest_field(name="lastUpdateTime", format="rfc3339")
     """The time at which the statistics were last updated. All statistics are limited
      to the range between startTime and lastUpdateTime. Required."""
     user_c_p_u_time: datetime.timedelta = rest_field(name="userCPUTime")
@@ -9611,12 +9679,12 @@ class UploadBatchServiceLogsConfiguration(_model_base.Model):
      Shared Access Signature (SAS) granting write permissions to the container. The
      SAS duration must allow enough time for the upload to finish. The start time
      for SAS is optional and recommended to not be specified. Required."""
-    start_time: datetime.datetime = rest_field(name="startTime")
+    start_time: datetime.datetime = rest_field(name="startTime", format="rfc3339")
     """Any log file containing a log message in the time range will be uploaded. This
      means that the operation might retrieve more logs than have been requested
      since the entire log file is always uploaded, but the operation should not
      retrieve fewer logs than have been requested. Required."""
-    end_time: Optional[datetime.datetime] = rest_field(name="endTime")
+    end_time: Optional[datetime.datetime] = rest_field(name="endTime", format="rfc3339")
     """Any log file containing a log message in the time range will be uploaded. This
      means that the operation might retrieve more logs than have been requested
      since the entire log file is always uploaded, but the operation should not
@@ -9703,9 +9771,9 @@ class UsageStatistics(_model_base.Model):
     :vartype dedicated_core_time: ~datetime.timedelta
     """
 
-    start_time: datetime.datetime = rest_field(name="startTime")
+    start_time: datetime.datetime = rest_field(name="startTime", format="rfc3339")
     """The start time of the time range covered by the statistics. Required."""
-    last_update_time: datetime.datetime = rest_field(name="lastUpdateTime")
+    last_update_time: datetime.datetime = rest_field(name="lastUpdateTime", format="rfc3339")
     """The time at which the statistics were last updated. All statistics are limited
      to the range between startTime and lastUpdateTime. Required."""
     dedicated_core_time: datetime.timedelta = rest_field(name="dedicatedCoreTime")
@@ -10076,6 +10144,9 @@ class VMExtension(_model_base.Model):
      available at deployment time. Once deployed, however, the extension will not
      upgrade minor versions unless redeployed, even with this property set to true.
     :vartype auto_upgrade_minor_version: bool
+    :ivar enable_automatic_upgrade: Indicates whether the extension should be automatically
+     upgraded by the platform if there is a newer version of the extension available.
+    :vartype enable_automatic_upgrade: bool
     :ivar settings: JSON formatted public settings for the extension.
     :vartype settings: dict[str, str]
     :ivar protected_settings: The extension can contain either protectedSettings or
@@ -10099,6 +10170,9 @@ class VMExtension(_model_base.Model):
     """Indicates whether the extension should use a newer minor version if one is
      available at deployment time. Once deployed, however, the extension will not
      upgrade minor versions unless redeployed, even with this property set to true."""
+    enable_automatic_upgrade: Optional[bool] = rest_field(name="enableAutomaticUpgrade")
+    """Indicates whether the extension should be automatically upgraded by the platform if there is a
+     newer version of the extension available."""
     settings: Optional[Dict[str, str]] = rest_field()
     """JSON formatted public settings for the extension."""
     protected_settings: Optional[Dict[str, str]] = rest_field(name="protectedSettings")
@@ -10117,6 +10191,7 @@ class VMExtension(_model_base.Model):
         type: str,
         type_handler_version: Optional[str] = None,
         auto_upgrade_minor_version: Optional[bool] = None,
+        enable_automatic_upgrade: Optional[bool] = None,
         settings: Optional[Dict[str, str]] = None,
         protected_settings: Optional[Dict[str, str]] = None,
         provision_after_extensions: Optional[List[str]] = None,
