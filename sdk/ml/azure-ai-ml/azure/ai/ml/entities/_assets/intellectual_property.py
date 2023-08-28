@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from typing import Any
+from typing import Any, Optional
 
 from azure.ai.ml._restclient.v2023_04_01_preview.models import IntellectualProperty as RestIntellectualProperty
 from azure.ai.ml._utils._experimental import experimental
@@ -30,7 +30,9 @@ class IntellectualProperty(RestTranslatableMixin):
             :caption: Configuring intellectual property settings on a CommandComponent.
     """
 
-    def __init__(self, *, publisher: str = None, protection_level: IPProtectionLevel = IPProtectionLevel.ALL) -> None:
+    def __init__(
+        self, *, publisher: Optional[str] = None, protection_level: IPProtectionLevel = IPProtectionLevel.ALL
+    ) -> None:
         self.publisher = publisher
         self.protection_level = protection_level
 
@@ -41,7 +43,7 @@ class IntellectualProperty(RestTranslatableMixin):
     def _from_rest_object(cls, obj: RestIntellectualProperty) -> "IntellectualProperty":
         return cls(publisher=obj.publisher, protection_level=obj.protection_level)
 
-    def __eq__(self, other: Any) -> bool:
+    def __eq__(self, other: Any) -> bool:  # type: ignore
         if not isinstance(other, IntellectualProperty):
             return NotImplemented
         return self.publisher == other.publisher and self.protection_level == other.protection_level
