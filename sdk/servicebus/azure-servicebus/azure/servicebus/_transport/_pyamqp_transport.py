@@ -699,9 +699,6 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         dead_letter_error_description: Optional[str] = None,
     ) -> None:
         # pylint: disable=protected-access
-        if not handler:
-            raise RuntimeError("handler is not open")
-        
         try:
             if settle_operation == MESSAGE_COMPLETE:
                 return handler.settle_messages(message._delivery_id, 'accepted')
@@ -732,6 +729,9 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
                     delivery_failed=True,
                     undeliverable_here=True
                 )
+        except AttributeError as ae:
+            raise RuntimeError("handler is not open") from ae
+
         except AMQPConnectionError as e:
             raise RuntimeError("Connection lost during settle operation.") from e
         
