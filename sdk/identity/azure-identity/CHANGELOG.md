@@ -1,8 +1,11 @@
 # Release History
 
-## 1.14.1 (Unreleased)
+## 1.15.0b1 (Unreleased)
 
 ### Features Added
+
+- Added Windows Web Account Manager (WAM) Brokered Authentication support.
+- Added `enable_msa_passthrough` suppport for `InteractiveBrowserCredential`.
 
 ### Breaking Changes
 
