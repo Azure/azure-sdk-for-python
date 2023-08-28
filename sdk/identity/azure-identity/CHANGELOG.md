@@ -9,6 +9,7 @@
 ### Bugs Fixed
 
 - Ensure `AzurePowershellCredential` calls PowerShell with the `-NoProfile` flag to avoid loading user profiles for more consistent behavior.  ([#31682](https://github.com/Azure/azure-sdk-for-python/pull/31682))
+- Fixed an issue with subprocess-based developer credentials (such as AzureCliCredential) where the process would sometimes hang waiting for user input.  ([#31534](https://github.com/Azure/azure-sdk-for-python/pull/31534))
 
 ### Other Changes
 
