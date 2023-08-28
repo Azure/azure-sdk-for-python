@@ -22,8 +22,10 @@ from azure.ai.ml.entities._datastore.datastore import Datastore
 from azure.ai.ml.entities._datastore.utils import from_rest_datastore_credentials
 from azure.ai.ml.entities._mixins import DictMixin, RestTranslatableMixin
 from azure.ai.ml.entities._util import load_from_dict
+from azure.ai.ml._utils._experimental import experimental
 
 
+@experimental
 class OneLakeArtifact(RestTranslatableMixin, DictMixin, ABC):
     """OneLake artifact (data source) backing the OneLake workspace.
 
@@ -39,6 +41,7 @@ class OneLakeArtifact(RestTranslatableMixin, DictMixin, ABC):
         self.type = type
 
 
+@experimental
 class LakeHouseArtifact(OneLakeArtifact):
     """LakeHouse artifact type for OneLake.
 
@@ -53,6 +56,7 @@ class LakeHouseArtifact(OneLakeArtifact):
         return RestLakeHouseArtifact(artifact_name=self.name)
 
 
+@experimental
 class OneLakeDatastore(Datastore):
     """OneLake datastore that is linked to an Azure ML workspace.
 
