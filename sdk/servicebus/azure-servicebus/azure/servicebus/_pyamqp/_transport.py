@@ -580,7 +580,7 @@ class SSLTransport(_AbstractTransport):
                 exc.filename = {"ca_certs": ca_certs}
                 raise exc from None
         elif context.verify_mode != ssl.CERT_NONE:
-            # load the default system root CA certs. 
+            # load the default system root CA certs.
             context.load_default_certs(purpose=purpose)
 
         if certfile is not None:
