@@ -767,6 +767,8 @@ try:
             if receiver._receive_context.is_set():
                 receiver._handler._received_messages.put(message)
             else:
+                if receiver._receive_mode == ServiceBusReceiveMode.RECEIVE_AND_DELETE:
+                    receiver._handler._received_messages.put(message)
                 message.release()
 
         @staticmethod
