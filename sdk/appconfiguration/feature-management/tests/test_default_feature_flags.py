@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from feature.management import FeatureManager, FeatureFilter
+from feature.management import FeatureManager
 from devtools_testutils import AzureRecordedTestCase
 
 
