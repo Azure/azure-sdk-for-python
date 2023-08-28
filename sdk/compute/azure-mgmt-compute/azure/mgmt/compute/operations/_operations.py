@@ -11713,12 +11713,7 @@ class VirtualMachinesOperations:
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            data = self._deserialize._unpack_content(pipeline_response)
-            if data and not isinstance(data, dict):
-                data = {"value": data}
-                deserialized = self._deserialize._deserialize("RunCommandResult", data)
-            else:
-                deserialized = self._deserialize("RunCommandResult", pipeline_response)
+            deserialized = self._deserialize("RunCommandResult", pipeline_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
