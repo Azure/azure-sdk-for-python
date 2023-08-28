@@ -40,7 +40,7 @@ def extract_sdk_folder(python_md: List[str]) -> str:
     pattern = ["$(python-sdks-folder)", "azure-mgmt-"]
     for line in python_md:
         if all(p in line for p in pattern):
-            return re.findall("[a-z]+/[a-z]+-[a-z]+-[a-z]+", line)[0]
+            return re.findall("[a-z]+/[a-z]+-[a-z]+-[a-z]+[-a-z]*", line)[0]
     return ""
 
 

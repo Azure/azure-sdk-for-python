@@ -43,8 +43,16 @@ class CustomDimensionsFilter(logging.Filter):
     def __init__(self, custom_dimensions=None):  # pylint: disable=super-init-not-called
         self.custom_dimensions = custom_dimensions or {}
 
-    def filter(self, record):
-        """Adds the default custom_dimensions into the current log record"""
+    def filter(self, record: dict) -> bool:
+        """Adds the default custom_dimensions into the current log record. Does not
+        otherwise filter any records
+
+        :param record: The record
+        :type record: dict
+        :return: True
+        :rtype: bool
+        """
+
         custom_dimensions = self.custom_dimensions.copy()
         custom_dimensions.update(getattr(record, "custom_dimensions", {}))
         record.custom_dimensions = custom_dimensions
@@ -53,11 +61,13 @@ class CustomDimensionsFilter(logging.Filter):
 
 
 def in_jupyter_notebook() -> bool:
-    """
-    Checks if user is using a Jupyter Notebook. This is necessary because logging is not allowed in
+    """Checks if user is using a Jupyter Notebook. This is necessary because logging is not allowed in
     non-Jupyter contexts.
 
     Adapted from https://stackoverflow.com/a/22424821
+
+    :return: Whether is running in a Jupyter Notebook
+    :rtype: bool
     """
     try:  # cspell:ignore ipython
         from IPython import get_ipython
@@ -87,13 +97,13 @@ def get_appinsights_log_handler(
     :param args: Optional arguments for formatting messages.
     :type args: list
     :keyword instrumentation_key: The Application Insights instrumentation key.
-    :type instrumentation_key: str
+    :paramtype instrumentation_key: str
     :keyword component_name: The component name.
-    :type component_name: str
+    :paramtype component_name: str
     :keyword enable_telemetry: Whether to enable telemetry. Will be overriden to False if not in a Jupyter Notebook.
-    :type enable_telemetry: bool
+    :paramtype enable_telemetry: bool
     :keyword kwargs: Optional keyword arguments for adding additional information to messages.
-    :type kwargs: dict
+    :paramtype kwargs: dict
     :return: The logging handler.
     :rtype: AzureMLSDKLogHandler
     """

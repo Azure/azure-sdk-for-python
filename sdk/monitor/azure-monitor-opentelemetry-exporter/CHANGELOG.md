@@ -6,6 +6,8 @@
 
 - Export OTel Resource
     ([#31355](https://github.com/Azure/azure-sdk-for-python/pull/31355))
+- Use observed timestamp for log record if timetamp is None
+    ([#31355](https://github.com/Azure/azure-sdk-for-python/pull/31355))
 
 ### Breaking Changes
 

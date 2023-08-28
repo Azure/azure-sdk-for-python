@@ -29,14 +29,13 @@ def main():
         subscription_id="651f8027-33e8-4ec4-97b4-f6e9f3dc8744",
     )
 
-    response = client.container_apps_auth_configs.delete(
+    client.container_apps_auth_configs.delete(
         resource_group_name="workerapps-rg-xj",
         container_app_name="testcanadacentral",
         auth_config_name="current",
     )
-    print(response)
 
 
-# x-ms-original-file: specification/app/resource-manager/Microsoft.App/preview/2022-11-01-preview/examples/AuthConfigs_Delete.json
+# x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2023-05-01/examples/AuthConfigs_Delete.json
 if __name__ == "__main__":
     main()

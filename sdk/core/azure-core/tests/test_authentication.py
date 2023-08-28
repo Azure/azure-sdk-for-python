@@ -152,7 +152,7 @@ def test_bearer_policy_default_context(http_request):
 
     pipeline.run(http_request("GET", "https://localhost"))
 
-    credential.get_token.assert_called_once_with(expected_scope, enable_cae=False)
+    credential.get_token.assert_called_once_with(expected_scope)
 
 
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
@@ -222,7 +222,7 @@ def test_bearer_policy_cannot_complete_challenge(http_request):
 
     assert response.http_response is expected_response
     assert transport.send.call_count == 1
-    credential.get_token.assert_called_once_with(expected_scope, enable_cae=False)
+    credential.get_token.assert_called_once_with(expected_scope)
 
 
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)

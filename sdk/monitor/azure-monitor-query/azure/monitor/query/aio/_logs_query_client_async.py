@@ -95,7 +95,7 @@ class LogsQueryClient(object):  # pylint: disable=client-accepts-api-version-key
         :paramtype additional_workspaces: Optional[List[str]]
         :return: LogsQueryResult if there is a success or LogsQueryPartialResult when there is a partial success.
         :rtype: ~azure.monitor.query.LogsQueryResult or ~azure.monitor.query.LogsQueryPartialResult
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
 
@@ -148,7 +148,7 @@ class LogsQueryClient(object):  # pylint: disable=client-accepts-api-version-key
          The status of each response can be checked using `LogsQueryStatus` enum.
         :rtype: list[~azure.monitor.query.LogsQueryResult or ~azure.monitor.query.LogsQueryPartialResult
          or ~azure.monitor.query.LogsQueryError]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
 
@@ -212,7 +212,7 @@ class LogsQueryClient(object):  # pylint: disable=client-accepts-api-version-key
         :paramtype additional_workspaces: Optional[List[str]]
         :return: LogsQueryResult if there is a success or LogsQueryPartialResult when there is a partial success.
         :rtype: Union[~azure.monitor.query.LogsQueryResult, ~azure.monitor.query.LogsQueryPartialResult]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
 

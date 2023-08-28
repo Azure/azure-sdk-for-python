@@ -15,10 +15,10 @@ class IntellectualProperty(RestTranslatableMixin):
     """Intellectual property settings definition.
 
     :keyword publisher: The publisher's name.
-    :type publisher: Optional[str]
+    :paramtype publisher: Optional[str]
     :keyword protection_level: Asset Protection Level. Accepted values are IPProtectionLevel.ALL ("all") and
         IPProtectionLevel.NONE ("none"). Defaults to IPProtectionLevel.ALL ("all").
-    :type protection_level: Optional[Union[str, ~azure.ai.ml.constants.IPProtectionLevel]]
+    :paramtype protection_level: Optional[Union[str, ~azure.ai.ml.constants.IPProtectionLevel]]
 
     .. admonition:: Example:
 

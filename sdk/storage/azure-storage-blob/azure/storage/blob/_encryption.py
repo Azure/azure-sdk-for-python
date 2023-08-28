@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -147,7 +148,7 @@ class _EncryptionData:
         The content encryption initialization vector.
         Required for AES-CBC (V1).
     :param Optional[_EncryptedRegionInfo] encrypted_region_info:
-        The info about the autenticated block sizes.
+        The info about the authenticated block sizes.
         Required for AES-GCM (V2).
     :param _EncryptionAgent encryption_agent:
         The encryption agent.
@@ -254,8 +255,8 @@ class GCMBlobEncryptionStream:
         aesgcm = AESGCM(self.content_encryption_key)
 
         # Returns ciphertext + tag
-        cipertext_with_tag = aesgcm.encrypt(nonce, data, None)
-        return nonce + cipertext_with_tag
+        ciphertext_with_tag = aesgcm.encrypt(nonce, data, None)
+        return nonce + ciphertext_with_tag
 
 
 def is_encryption_v2(encryption_data: Optional[_EncryptionData]) -> bool:
@@ -268,6 +269,30 @@ def is_encryption_v2(encryption_data: Optional[_EncryptionData]) -> bool:
     """
     # If encryption_data is None, assume no encryption
     return encryption_data and encryption_data.encryption_agent.protocol == _ENCRYPTION_PROTOCOL_V2
+
+
+def modify_user_agent_for_encryption(
+        user_agent: str,
+        moniker: str,
+        encryption_version: str,
+        request_options: Dict[str, Any]
+    ) -> None:
+    """
+    Modifies the request options to contain a user agent string updated with encryption information.
+    Adds azstorage-clientsideencryption/<version> immediately proceeding the SDK descriptor.
+
+    :param str user_agent: The existing User Agent to modify.
+    :param str moniker: The specific SDK moniker. The modification will immediately proceed azsdk-python-{moniker}.
+    :param str encryption_version: The version of encryption being used.
+    :param Dict[str, Any] request_options: The reuqest options to add the user agent override to.
+    """
+    feature_flag = f"azstorage-clientsideencryption/{encryption_version}"
+    if feature_flag not in user_agent:
+        index = user_agent.find(f"azsdk-python-{moniker}")
+        user_agent = f"{user_agent[:index]}{feature_flag} {user_agent[index:]}"
+
+        request_options['user_agent'] = user_agent
+        request_options['user_agent_overwrite'] = True
 
 
 def get_adjusted_upload_size(length: int, encryption_version: str) -> int:
@@ -883,7 +908,7 @@ def encrypt_queue_message(message, key_encryption_key, version):
     Returns a json-formatted string containing the encrypted message and the encryption metadata.
 
     :param object message:
-        The plain text messge to be encrypted.
+        The plain text message to be encrypted.
     :param object key_encryption_key:
         The user-provided key-encryption-key. Must implement the following methods:
         wrap_key(key)--wraps the specified key using an algorithm of the user's choice.
@@ -927,8 +952,8 @@ def encrypt_queue_message(message, key_encryption_key, version):
         aesgcm = AESGCM(content_encryption_key)
 
         # Returns ciphertext + tag
-        cipertext_with_tag = aesgcm.encrypt(nonce, message, None)
-        encrypted_data = nonce + cipertext_with_tag
+        ciphertext_with_tag = aesgcm.encrypt(nonce, message, None)
+        encrypted_data = nonce + ciphertext_with_tag
 
     else:
         raise ValueError("Invalid encryption version specified.")

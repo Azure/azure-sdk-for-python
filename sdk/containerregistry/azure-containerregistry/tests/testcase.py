@@ -86,6 +86,10 @@ def is_public_endpoint(endpoint):
     return ".azurecr.io" in endpoint
 
 
+def is_china_endpoint(endpoint):
+    return ".azurecr.cn" in endpoint
+
+
 def get_authority(endpoint: str) -> str:
     if ".azurecr.io" in endpoint:
         logger.warning("Public cloud Authority")
