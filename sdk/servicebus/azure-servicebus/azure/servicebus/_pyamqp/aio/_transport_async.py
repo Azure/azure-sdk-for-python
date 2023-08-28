@@ -186,7 +186,7 @@ class AsyncTransportMixin:
             ssl_version = sslopts.get("ssl_version")
             if ssl_version is None:
                 ssl_version = ssl.PROTOCOL_TLS_CLIENT
-            
+
             context = ssl.SSLContext(ssl_version)
 
             purpose = ssl.Purpose.SERVER_AUTH
@@ -203,7 +203,7 @@ class AsyncTransportMixin:
                     exc.filename = {"ca_certs": ca_certs}
                     raise exc from None
             elif context.verify_mode != ssl.CERT_NONE:
-                # load the default system root CA certs. 
+                # load the default system root CA certs.
                 context.load_default_certs(purpose=purpose)
 
             certfile = sslopts.get("certfile")
