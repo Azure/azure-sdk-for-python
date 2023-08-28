@@ -27,14 +27,21 @@
 
 import functools
 
-from typing import Awaitable, Callable, Any, TypeVar, overload, Optional
+from typing import Awaitable, Callable, Any, TypeVar, overload, Optional, Protocol, Generic
 from typing_extensions import ParamSpec
 from .common import change_context, get_function_and_class_name
-from . import SpanKind as _SpanKind
+from . import SpanKind as _SpanKind, AbstractSpan
 from ..settings import settings
 
 P = ParamSpec("P")
-T = TypeVar("T")
+T = TypeVar("T", covariant=True)
+
+
+class AsyncTracedMethod(Protocol, Generic[P, T]):
+    async def __call__(
+        self, *args: P.args, merge_span: bool = False, parent_span: Optional[AbstractSpan] = None, **kwds: P.kwargs
+    ) -> T:
+        ...
 
 
 @overload
@@ -66,21 +73,21 @@ def distributed_trace_async(  # pylint:disable=function-redefined
     tracing_attributes = kwargs.pop("tracing_attributes", {})
     kind = kwargs.pop("kind", _SpanKind.INTERNAL)
 
-    def decorator(func: Callable[P, Awaitable[T]]) -> Callable[P, Awaitable[T]]:
+    def decorator(func: Callable[P, Awaitable[T]]) -> AsyncTracedMethod[P, T]:
         @functools.wraps(func)
-        async def wrapper_use_tracer(*args: Any, **kwargs: Any) -> T:
-            merge_span = kwargs.pop("merge_span", False)
-            passed_in_parent = kwargs.pop("parent_span", None)
+        async def wrapper_use_tracer(
+            *args: P.args, merge_span: bool = False, parent_span: Optional[AbstractSpan] = None, **kwargs: P.kwargs
+        ) -> T:
 
             span_impl_type = settings.tracing_implementation()
             if span_impl_type is None:
                 return await func(*args, **kwargs)
 
             # Merge span is parameter is set, but only if no explicit parent are passed
-            if merge_span and not passed_in_parent:
+            if merge_span and not parent_span:
                 return await func(*args, **kwargs)
 
-            with change_context(passed_in_parent):
+            with change_context(parent_span):
                 name = name_of_span or get_function_and_class_name(func, *args)
                 with span_impl_type(name=name, kind=kind) as span:
                     for key, value in tracing_attributes.items():
