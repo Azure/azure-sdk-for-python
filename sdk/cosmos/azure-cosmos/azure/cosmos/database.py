@@ -591,7 +591,7 @@ class DatabaseProxy(object):
             instance of the user to be retrieved.
         :type user: Union[str, UserProxy, Dict[str, Any]]
         :returns: A `UserProxy` instance representing the retrieved user.
-        :rtype: ~azure.cosmos.user.UserProxy
+        :rtype: ~azure.cosmos.UserProxy
         """
         if isinstance(user, UserProxy):
             id_value = user.id
