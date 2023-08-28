@@ -28,7 +28,7 @@ import pytest
 from azure.core.pipeline import AsyncPipeline
 from azure.core import AsyncPipelineClient
 from azure.core.pipeline.policies import AsyncHTTPPolicy, SansIOHTTPPolicy, UserAgentPolicy, AsyncRedirectPolicy
-from azure.core.rest import HttpRequest
+from azure.core.rest import HttpRequest, AsyncHttpResponse
 
 import trio
 
@@ -89,7 +89,8 @@ async def test_example_async_pipeline():
     # [START build_async_pipeline]
     from azure.core.pipeline import AsyncPipeline
     from azure.core.pipeline.policies import AsyncRedirectPolicy, UserAgentPolicy
-    from azure.core.pipeline.transport import AioHttpTransport, HttpRequest
+    from azure.core.pipeline.transport import AioHttpTransport
+    from azure.core.rest import HttpRequest
 
     # example: create request and policies
     request = HttpRequest("GET", "https://bing.com")
@@ -112,7 +113,7 @@ async def test_example_async_pipeline_client():
     # [START build_async_pipeline_client]
     from azure.core import AsyncPipelineClient
     from azure.core.pipeline.policies import AsyncRedirectPolicy, UserAgentPolicy
-    from azure.core.pipeline.transport import HttpRequest
+    from azure.core.rest import HttpRequest
 
     # example policies
     request = HttpRequest("GET", url)
@@ -121,11 +122,11 @@ async def test_example_async_pipeline_client():
         AsyncRedirectPolicy(),
     ]
 
-    async with AsyncPipelineClient(base_url=url, policies=policies) as client:
-        response = await client._pipeline.run(request)
+    async with AsyncPipelineClient[HttpRequest, AsyncHttpResponse](base_url=url, policies=policies) as client:
+        response = await client.send_request(request)
     # [END build_async_pipeline_client]
 
-    assert isinstance(response.http_response.status_code, int)
+    assert isinstance(response.status_code, int)
 
 
 @pytest.mark.asyncio
@@ -148,7 +149,7 @@ async def test_example_async_redirect_policy():
     redirect_policy = AsyncRedirectPolicy.no_redirects()
 
     # It can also be overridden per operation.
-    async with AsyncPipelineClient(base_url=url, policies=[redirect_policy]) as client:
+    async with AsyncPipelineClient[HttpRequest, AsyncHttpResponse](base_url=url, policies=[redirect_policy]) as client:
         response = await client._pipeline.run(request, permit_redirects=True, redirect_max=5)
 
     # [END async_redirect_policy]
@@ -204,7 +205,7 @@ async def test_example_async_retry_policy():
 
     # All of these settings can also be configured per operation.
     policies.append(retry_policy)
-    async with AsyncPipelineClient(base_url=url, policies=policies) as client:
+    async with AsyncPipelineClient[HttpRequest, AsyncHttpResponse](base_url=url, policies=policies) as client:
         response = await client._pipeline.run(
             request,
             retry_total=10,
