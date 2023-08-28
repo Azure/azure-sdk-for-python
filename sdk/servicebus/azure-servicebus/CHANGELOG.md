@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Fixed a bug where receiving messages in `RECEIVE_AND_DELETE` mode while messages were being sent simultaneously resulted in messages not being returned ([#31711](https://github.com/Azure/azure-sdk-for-python/issues/31711)).
+
 ### Other Changes
 
 ## 7.11.1 (2023-07-12)
