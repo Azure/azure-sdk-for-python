@@ -44,9 +44,11 @@ def create_text_translation_client_with_credential():
     endpoint = os.environ["AZURE_TEXT_TRANSLATION_ENDPOINT"]
     apikey = os.environ["AZURE_TEXT_TRANSLATION_APIKEY"]
     region = os.environ["AZURE_TEXT_TRANSLATION_REGION"]
-    # [START create_text_translation_client_with_credential]  
-    credential = TranslatorCredential(apikey, region)
+    # [START create_text_translation_client_with_credential]
+    credential = TranslatorCredential(apikey, region, endpoint)
     text_translator = TextTranslationClient(credential)
     # [END create_text_translation_client_with_credential]
     return text_translator
+
+
 

@@ -55,3 +55,4 @@ def get_text_translation_dictionary_examples():
             print(f"Message: {exception.error.message}")
     raise
     # [END get_text_translation_dictionary_examples]
+

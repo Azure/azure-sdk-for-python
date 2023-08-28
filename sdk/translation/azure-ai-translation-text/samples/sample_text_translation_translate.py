@@ -304,4 +304,4 @@ def get_text_translation_custom():
         print(f"Error Code: {exception.error.code}")
         print(f"Message: {exception.error.message}")
     # [END get_text_translation_custom]
-    
+
