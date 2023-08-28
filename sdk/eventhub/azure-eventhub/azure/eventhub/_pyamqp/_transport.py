@@ -547,7 +547,6 @@ class SSLTransport(_AbstractTransport):
         :param socket.socket sock: socket to wrap
         :param str or None keyfile: key file path
         :param str or None certfile: cert file path
-        :param bool or None server_side: server side socket
         :param int cert_reqs: cert requirements
         :param str or None ca_certs: ca certs file path
         :param bool do_handshake_on_connect: do handshake on connect
