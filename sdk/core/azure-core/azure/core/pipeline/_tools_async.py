@@ -23,13 +23,27 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Callable, TypeVar, Awaitable, Union, overload
+from typing_extensions import ParamSpec
 
 if TYPE_CHECKING:
     from ..rest import AsyncHttpResponse as RestAsyncHttpResponse
 
+P = ParamSpec("P")
+T = TypeVar("T")
 
-async def await_result(func, *args, **kwargs):
+
+@overload
+async def await_result(func: Callable[P, Awaitable[T]], *args: P.args, **kwargs: P.kwargs) -> T:
+    ...
+
+
+@overload
+async def await_result(func: Callable[P, T], *args: P.args, **kwargs: P.kwargs) -> T:
+    ...
+
+
+async def await_result(func: Callable[P, Union[T, Awaitable[T]]], *args: P.args, **kwargs: P.kwargs) -> T:
     """If func returns an awaitable, await it.
 
     :param func: The function to run.
@@ -41,8 +55,7 @@ async def await_result(func, *args, **kwargs):
     """
     result = func(*args, **kwargs)
     if hasattr(result, "__await__"):
-        # type ignore on await: https://github.com/python/mypy/issues/7587
-        return await result  # type: ignore
+        return await result
     return result
 
 
