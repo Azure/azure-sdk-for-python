@@ -65,10 +65,15 @@ if __name__ == "__main__":
             )
             paths = paths[:-1]
 
-    with open(os.path.join(root_dir, "pyrightconfig.json"), "r") as f:
+    config_path = args.target_package if os.path.exists(os.path.join(args.target_package, "pyrightconfig.json")) else root_dir
+    with open(os.path.join(config_path, "pyrightconfig.json"), "r") as f:
         config = json.loads(f.read())
 
-    config.update({"executionEnvironments": [{"root": args.target_package}]})
+    if config.get("executionEnvironments"):
+        config["executionEnvironments"].append({"root": args.target_package})
+    else:
+        config.update({"executionEnvironments": [{"root": args.target_package}]})
+
     with tempfile.TemporaryDirectory() as temp_dir_name:
         with open(os.path.join(temp_dir_name, "pyrightconfig.json"), "w+") as f:
             f.write(json.dumps(config, indent=4))
