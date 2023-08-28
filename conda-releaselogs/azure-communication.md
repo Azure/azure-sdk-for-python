@@ -10,7 +10,7 @@
 - azure-communication-phonenumbers-1.1.0
 - azure-communication-sms-1.0.1
 - azure-communication-callautomation-1.0.0
--azure-communication-rooms-1.0.0
+- azure-communication-rooms-1.0.0
 
 ## 2023.06.01
 
