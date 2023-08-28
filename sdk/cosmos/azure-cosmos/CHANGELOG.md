@@ -5,7 +5,6 @@
 #### Features Added
 
 #### Breaking Changes
-* Removed `populate_query_metrics` option from methods where it sees no use. See [PR 31096](https://github.com/Azure/azure-sdk-for-python/pull/31096).
 
 #### Bugs Fixed
 

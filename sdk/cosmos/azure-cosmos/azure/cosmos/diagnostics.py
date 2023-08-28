@@ -22,6 +22,7 @@
 """Diagnostic tools for Azure Cosmos database service operations.
 """
 
+from azure.core.utils import CaseInsensitiveDict
 
 class RecordDiagnostics(object):
     """Record Response headers from Cosmos read operations.
@@ -52,13 +53,13 @@ class RecordDiagnostics(object):
     }
 
     def __init__(self):
-        self._headers = {}
+        self._headers = CaseInsensitiveDict()
         self._body = None
         self._request_charge = 0
 
     @property
     def headers(self):
-        return self._headers
+        return CaseInsensitiveDict(self._headers)
 
     @property
     def body(self):

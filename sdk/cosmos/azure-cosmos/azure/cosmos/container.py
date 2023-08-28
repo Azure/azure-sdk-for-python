@@ -131,7 +131,7 @@ class ContainerProxy(object):
         # type: (...) -> Dict[str, Any]
         """Read the container properties.
 
-        :param list args: The explicit arguments of the method.
+        :param Any args: The explicit arguments of the method.
         :keyword bool populate_partition_key_range_statistics: Enable returning partition key
             range statistics in response headers.
         :keyword bool populate_quota_info: Enable returning collection storage quota information in response headers.
