@@ -530,7 +530,7 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
             self._error = AMQPConnectionError(
                 condition=frame[0][0], description=frame[0][1], info=frame[0][2]
             )
-            _LOGGER.error(
+            _LOGGER.debug(
                 "Connection closed with error: %r", frame[0],
                 extra=self._network_trace_params
             )
