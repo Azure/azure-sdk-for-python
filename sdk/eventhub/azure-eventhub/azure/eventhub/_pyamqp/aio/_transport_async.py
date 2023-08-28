@@ -214,7 +214,6 @@ class AsyncTransportMixin:
 
             server_hostname = sslopts.get("server_hostname")
             cert_reqs = sslopts.get("cert_reqs", ssl.CERT_REQUIRED)
-
             if cert_reqs == ssl.CERT_NONE and server_hostname is None:
                 context.check_hostname = False
                 context.verify_mode = cert_reqs
