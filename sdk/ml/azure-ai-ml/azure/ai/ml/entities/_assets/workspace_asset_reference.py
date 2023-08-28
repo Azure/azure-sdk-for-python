@@ -13,6 +13,7 @@ from azure.ai.ml._restclient.v2021_10_01_dataplanepreview.models import (
 from azure.ai.ml._schema import WorkspaceAssetReferenceSchema
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
 from azure.ai.ml.entities._assets.asset import Asset
+from azure.ai.ml.entities._resource import Resource
 from azure.ai.ml.entities._util import load_from_dict
 
 
@@ -49,7 +50,7 @@ class WorkspaceAssetReference(Asset):
 
     @classmethod
     def _load(
-        cls,
+        cls: Resource,
         data: Optional[dict] = None,
         yaml_path: Optional[Union[os.PathLike, str]] = None,
         params_override: Optional[list] = None,
@@ -61,7 +62,7 @@ class WorkspaceAssetReference(Asset):
             BASE_PATH_CONTEXT_KEY: Path(yaml_path).parent if yaml_path else Path("./"),
             PARAMS_OVERRIDE_KEY: params_override,
         }
-        return load_from_dict(WorkspaceAssetReferenceSchema, data, context, **kwargs)
+        return load_from_dict(WorkspaceAssetReferenceSchema, data, context, **kwargs)  # type: ignore
 
     def _to_rest_object(self) -> ResourceManagementAssetReferenceData:
         resource_management_details = ResourceManagementAssetReferenceDetails(
@@ -84,4 +85,4 @@ class WorkspaceAssetReference(Asset):
 
     def _to_dict(self) -> Dict:
         # pylint: disable=no-member
-        return WorkspaceAssetReferenceSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        return WorkspaceAssetReferenceSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)  # type: ignore
