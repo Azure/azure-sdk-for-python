@@ -12,18 +12,15 @@ from azure.ai.ml._restclient.v2023_04_01_preview.models import DatastoreType, On
 
 from azure.ai.ml._schema.core.fields import NestedField, PathAwareSchema, StringTransformedEnum, UnionField
 from azure.ai.ml._utils.utils import camel_to_snake
-from azure.ai.ml._utils._experimental import experimental
 
 from .credentials import NoneCredentialsSchema, ServicePrincipalSchema
 
 
-@experimental
 class OneLakeArtifactSchema(Schema):
     name = fields.Str(required=True)
     type = StringTransformedEnum(allowed_values=OneLakeArtifactType.LAKE_HOUSE, casing_transform=camel_to_snake)
 
 
-@experimental
 class OneLakeSchema(PathAwareSchema):
     name = fields.Str(required=True)
     id = fields.Str(dump_only=True)
