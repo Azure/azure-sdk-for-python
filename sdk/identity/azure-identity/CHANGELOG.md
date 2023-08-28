@@ -12,6 +12,8 @@
 
 ### Other Changes
 
+- Update typing of async credentials to match the `AsyncTokenCredential` protocol.
+
 ## 1.14.0 (2023-08-08)
 
 ### Features Added

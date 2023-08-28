@@ -88,10 +88,15 @@ setup(
         "azure-core-tracing-opentelemetry~=1.0.0b10",
         "azure-monitor-opentelemetry-exporter~=1.0.0b15",
         "opentelemetry-api~=1.19.0",
+        "opentelemetry-instrumentation-django~=0.40b0",
+        "opentelemetry-instrumentation-fastapi~=0.40b0",
+        "opentelemetry-instrumentation-flask~=0.40b0",
+        "opentelemetry-instrumentation-psycopg2~=0.40b0",
+        "opentelemetry-instrumentation-requests~=0.40b0",
+        "opentelemetry-instrumentation-urllib~=0.40b0",
+        "opentelemetry-instrumentation-urllib3~=0.40b0",
         "opentelemetry-sdk~=1.19.0",
         "wrapt >= 1.14.0, < 2.0.0",
-        "importlib-metadata>=6.0,<6.8; python_version < '3.8'",
-        "importlib-metadata~=6.0; python_version >= '3.8'",
     ],
     entry_points={
         "opentelemetry_distro": [
@@ -99,15 +104,6 @@ setup(
         ],
         "opentelemetry_configurator": [
             "azure_monitor_opentelemetry_configurator = azure.monitor.opentelemetry.autoinstrumentation._configurator:AzureMonitorConfigurator"
-        ],
-        "azure_monitor_opentelemetry_instrumentor": [
-            "django = azure.monitor.opentelemetry._vendor.v0_39b0.opentelemetry.instrumentation.django:DjangoInstrumentor",
-            "fastapi = azure.monitor.opentelemetry._vendor.v0_39b0.opentelemetry.instrumentation.fastapi:FastAPIInstrumentor",
-            "flask = azure.monitor.opentelemetry._vendor.v0_39b0.opentelemetry.instrumentation.flask:FlaskInstrumentor",
-            "psycopg2 = azure.monitor.opentelemetry._vendor.v0_39b0.opentelemetry.instrumentation.psycopg2:Psycopg2Instrumentor",
-            "requests = azure.monitor.opentelemetry._vendor.v0_39b0.opentelemetry.instrumentation.requests:RequestsInstrumentor",
-            "urllib = azure.monitor.opentelemetry._vendor.v0_39b0.opentelemetry.instrumentation.urllib:URLLibInstrumentor",
-            "urllib3 = azure.monitor.opentelemetry._vendor.v0_39b0.opentelemetry.instrumentation.urllib3:URLLib3Instrumentor",
         ],
     },
 )

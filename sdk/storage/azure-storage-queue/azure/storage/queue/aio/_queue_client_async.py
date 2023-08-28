@@ -22,7 +22,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from ._models import MessagesPaged
 from .._deserialize import deserialize_queue_creation, deserialize_queue_properties
-from .._encryption import StorageEncryptionMixin
+from .._encryption import modify_user_agent_for_encryption, StorageEncryptionMixin
 from .._generated.aio import AzureQueueStorage
 from .._generated.models import QueueMessage as GenQueueMessage, SignedIdentifier
 from .._message_encoding import NoDecodePolicy, NoEncodePolicy
@@ -498,6 +498,13 @@ class QueueClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Stora
                 :caption: Send messages.
         """
         timeout = kwargs.pop('timeout', None)
+        if self.key_encryption_key:
+            modify_user_agent_for_encryption(
+                self._config.user_agent_policy.user_agent,
+                self._sdk_moniker,
+                self.encryption_version,
+                kwargs)
+
         try:
             self.message_encode_policy.configure(
                 require_encryption=self.require_encryption,
@@ -580,7 +587,14 @@ class QueueClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Stora
                 :caption: Receive one message from the queue.
         """
         timeout = kwargs.pop('timeout', None)
-        self.message_decode_policy.configure(
+        if self.key_encryption_key or self.key_resolver_function:
+            modify_user_agent_for_encryption(
+                self._config.user_agent_policy.user_agent,
+                self._sdk_moniker,
+                self.encryption_version,
+                kwargs)
+
+        self._config.message_decode_policy.configure(
             require_encryption=self.require_encryption,
             key_encryption_key=self.key_encryption_key,
             resolver=self.key_resolver_function)
@@ -655,7 +669,15 @@ class QueueClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Stora
                 :caption: Receive messages from the queue.
         """
         timeout = kwargs.pop('timeout', None)
-        self.message_decode_policy.configure(
+        max_messages = kwargs.pop('max_messages', None)
+        if self.key_encryption_key or self.key_resolver_function:
+            modify_user_agent_for_encryption(
+                self._config.user_agent_policy.user_agent,
+                self._sdk_moniker,
+                self.encryption_version,
+                kwargs)
+
+        self._config.message_decode_policy.configure(
             require_encryption=self.require_encryption,
             key_encryption_key=self.key_encryption_key,
             resolver=self.key_resolver_function
@@ -736,9 +758,14 @@ class QueueClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Stora
                 :caption: Update a message.
         """
         timeout = kwargs.pop('timeout', None)
+        if self.key_encryption_key or self.key_resolver_function:
+            modify_user_agent_for_encryption(
+                self._config.user_agent_policy.user_agent,
+                self._sdk_moniker,
+                self.encryption_version,
+                kwargs)
 
-        receipt: Optional[str]
-        if isinstance(message, QueueMessage):
+        try:
             message_id = message.id
             message_text = content or message.content
             receipt = pop_receipt or message.pop_receipt
@@ -844,10 +871,18 @@ class QueueClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Stora
                 :dedent: 16
                 :caption: Peek messages.
         """
-        timeout = kwargs.pop('timeout', None)
         if max_messages and not 1 <= max_messages <= 32:
             raise ValueError("Number of messages to peek should be between 1 and 32")
-        self.message_decode_policy.configure(
+
+        timeout = kwargs.pop('timeout', None)
+        if self.key_encryption_key or self.key_resolver_function:
+            modify_user_agent_for_encryption(
+                self._config.user_agent_policy.user_agent,
+                self._sdk_moniker,
+                self.encryption_version,
+                kwargs)
+
+        self._config.message_decode_policy.configure(
             require_encryption=self.require_encryption,
             key_encryption_key=self.key_encryption_key,
             resolver=self.key_resolver_function
