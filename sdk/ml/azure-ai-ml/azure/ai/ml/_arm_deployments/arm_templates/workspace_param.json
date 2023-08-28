@@ -166,5 +166,8 @@
     },
     "set_up_feature_store": {
         "value": "false"
+    },
+    "byo_open_ai_resource_id": {
+        "value": ""
     }
 }
