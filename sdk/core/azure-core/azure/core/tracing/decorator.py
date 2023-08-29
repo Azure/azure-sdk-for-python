@@ -27,7 +27,7 @@
 
 import functools
 
-from typing import Callable, Any, TypeVar, overload, Optional, Generic
+from typing import Callable, Any, TypeVar, overload, Optional, Generic, Union
 from typing_extensions import ParamSpec, Protocol
 from .common import change_context, get_function_and_class_name
 from . import SpanKind as _SpanKind, AbstractSpan
@@ -46,20 +46,20 @@ class TracedMethod(Protocol, Generic[P, T]):
 
 
 @overload
-def distributed_trace(__func: Callable[P, T]) -> Callable[P, T]:
+def distributed_trace(__func: Callable[P, T]) -> TracedMethod[P, T]:
     pass
 
 
 @overload
-def distributed_trace(  # pylint:disable=function-redefined
+def distributed_trace(
     **kwargs: Any,  # pylint:disable=unused-argument
-) -> Callable[[Callable[P, T]], Callable[P, T]]:
+) -> Callable[[Callable[P, T]], TracedMethod[P, T]]:
     pass
 
 
 def distributed_trace(
     __func: Optional[Callable[P, T]] = None, **kwargs: Any
-) -> Any:  # pylint:disable=function-redefined
+) -> Union[TracedMethod[P, T], Callable[[Callable[P, T]], TracedMethod[P, T]]]:
     """Decorator to apply to function to get traced automatically.
 
     Span will use the func name or "name_of_span".
