@@ -28,12 +28,6 @@ http = urllib3.PoolManager()
 #     checkout:
 #     - package: uamqp
 #       download_uri: https://files.pythonhosted.org/packages/0b/d8/fc24d95e6f6c80851ae6738c78da081cd535c924b02c5a4928b108b9ed42/uamqp-1.6.5.tar.gz
-#   - name: msal-extensions
-#     common_root: msal
-#     in_batch: true
-#     checkout:
-#     - package: msal-extensions
-#       download_uri: https://files.pythonhosted.org/packages/33/5e/2e23593c67df0b21ffb141c485ca0ae955569203d7ff5064040af968cb81/msal-extensions-1.0.0.tar.gz
 #   - name: azure-core
 #     common_root: azure
 #     in_batch: ${{ parameters.release_azure_core }}
@@ -58,7 +52,6 @@ http = urllib3.PoolManager()
 #     - package: azure-storage-file-datalake
 #       checkout_path: sdk/storage
 #       version: 12.7.0
-
 
 def get_pypi_page(package: str, version: str) -> bs4.BeautifulSoup:
     url = f"https://pypi.org/project/{package}/{version}/"

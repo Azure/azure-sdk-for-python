@@ -173,6 +173,22 @@ def create_sdist_skeleton(build_directory, artifact_name, common_root):
                 if os.path.isdir(os.path.join(pkg_till_common_root, file))
             ]
 
+            if os.path.basename(pkg) == f"s{artifact_name}":
+                # find all the _file_ contents of the ending directory and copy them directly _into_ the target
+                # we do this because packages like azure-eventhub actually emplace a lot of user detail into the __init__ at azure/eventhub
+                # even if there are further namespaces under azure/eventhub/extensions/<checkpointstoreblob/aio>
+                # we need that one to live on.
+                files_for_copy = [
+                    file
+                    for file in os.listdir(pkg_till_common_root)
+                    if os.path.isfile(os.path.join(pkg_till_common_root, file))
+                ]
+
+                for file in files_for_copy:
+                    src = os.path.join(pkg_till_common_root, file)
+                    target = os.path.join(ns_dir, file)
+                    shutil.copy(src, target)
+
             for directory in directories_for_copy:
                 src = os.path.join(pkg_till_common_root, directory)
                 dest = os.path.join(ns_dir, directory)
