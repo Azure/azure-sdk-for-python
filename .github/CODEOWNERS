@@ -115,6 +115,9 @@
 # PRLabel: %Monitor - LogAnalytics
 /sdk/loganalytics/                                                   @pvaneck
 
+# PRLabel: %Monitor - Distro
+/sdk/monitor/azure-monitor-opentelemetry/                            @lzchen @jeremydvoss
+
 # PRLabel: %Monitor - Exporter
 /sdk/monitor/azure-monitor-opentelemetry-exporter/                   @lmazuel @lzchen @hectorhdzg @jeremydvoss
 
@@ -950,6 +953,8 @@
 # ServiceLabel: %Monitor - Exporter %Service Attention
 #/<NotInRepo>/          @lzchen @jeremydvoss
 
+# ServiceLabel: %Monitor - Distro %Service Attention
+#/<NotInRepo>/          @lzchen @jeremydvoss
 
 # Management Plane
 /**/*mgmt*/                                                          @ChenxiJiang333 @msyyc
