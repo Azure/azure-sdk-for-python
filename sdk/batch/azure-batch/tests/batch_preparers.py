@@ -270,9 +270,9 @@ class JobPreparer(AzureMgmtPreparer):
     def _get_batch_client(self, **kwargs):
         try:
             account = kwargs[self.batch_account_parameter_name]
-            credentials = kwargs[self.batch_credentials_parameter_name]
+            credential = kwargs[self.batch_credentials_parameter_name]
             return azure.batch.BatchClient(
-                credentials=credentials, endpoint='https://' + account.account_endpoint)
+                credential=credential, endpoint='https://' + account.account_endpoint)
         except KeyError:
             template = 'To create a batch job, a batch account is required. Please add ' \
                        'decorator @AccountPreparer in front of this job preparer.'
@@ -306,7 +306,7 @@ class JobPreparer(AzureMgmtPreparer):
                 **self.extra_args
             )
             try:
-                self.client.job.create(self.resource)
+                self.client.create_job(self.resource)
             except azure.core.exceptions.HttpResponseError as e:
                 message = "{}:{} ".format(e.error.code, e.error.message)
                 for v in e.error.values:
@@ -320,4 +320,4 @@ class JobPreparer(AzureMgmtPreparer):
 
     def remove_resource(self, name, **kwargs):
         if self.is_live:
-            self.client.job.delete(name)
+            self.client.delete_job(name)
