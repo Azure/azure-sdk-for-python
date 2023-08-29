@@ -760,37 +760,6 @@ class ModelOperations(_ScopeDependentOperations):
                 **self._scope_kwargs,
             ).result()
         )
-        # package_out = {
-        #         "packageBuildState": "Succeeded",
-        #         "status": "Succeeded",
-        #         "logUrl": "https://eus2euapmanaged2.blob.core.windows.net/65560886db2d492f8828f23ae2b80048-xdiibjmw2y/logs/wb2y/rawtext.log?sv=2021-12-02&se=2023-08-29T01%3A59%3A08Z&sr=b&sp=r&sig=OGk%2BAbJ9qKrhh5HtUsHlBA9WT07uTiGE2rFCGy%2FjqXA%3D",
-        #         "buildId": "wb2y",
-        #         "targetEnvironmentName": "diabetes-online-mlflow",
-        #         "targetEnvironmentVersion": "12",
-        #         "targetEnvironmentId": "azureml://locations/eastus2euap/workspaces/60106ea5-8e62-4d03-90a5-f1aa66fb613e/environments/diabetes-online-mlflow/versions/12",
-        #         "baseEnvironment": "",
-        #         "inferencingServer": {
-        #             "serverType": "AzureMLOnline",
-        #             "codeConfiguration": ""
-        #         },
-        #         "environmentVariables": "",
-        #         "modelPath": "azureml://registries/azureml/models/distilbert-base-uncased/versions/5",
-        #         "modelConfiguration": {
-        #             "mode": "Download",
-        #             "mountPath": ""
-        #         },
-        #         "inputs": [],
-        #         "tags": {
-        #             "ModelPackageGenerated": "azureml://registries/azureml/models/distilbert-base-uncased/versions/5",
-        #             "ModelConfiguration": "Download, ",
-        #             "InferencingServerType": "AzureMLOnline"
-        #         },
-        #         "properties": "",
-        #         "skuArchitectureType": ""
-        #         }
-        # import debugpy
-        # debugpy.connect(("localhost", 5678))
-        # debugpy.breakpoint()
         if is_deployment_flow:  # No need to go through the schema, as this is for deployment notification only
             return package_out
         if hasattr(package_out, "target_environment_name"):
@@ -802,9 +771,6 @@ class ModelOperations(_ScopeDependentOperations):
             environment_version = package_out.target_environment_version
         else:
             environment_version = package_out.additional_properties["targetEnvironmentVersion"]
-
-        # environment_name = "diabetes-online-mlflow"
-        # environment_version = "12"
 
         module_logger.info("\nPackage Created")
         if package_out is not None and package_out.__class__.__name__ == "PackageResponse":
