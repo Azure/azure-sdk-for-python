@@ -2,6 +2,6 @@
 type_check_samples = false
 verifytypes = false
 pyright = false
-mypy = false
-pylint = false
-bandit = false
+mypy = true
+pylint = true
+bandit = true
