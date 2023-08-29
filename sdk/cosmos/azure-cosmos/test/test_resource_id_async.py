@@ -83,7 +83,7 @@ class ResourceIdTests(unittest.TestCase):
         self.assertEqual(resource_id1, item1.get("id"))
         self.assertEqual(resource_id2, item2.get("id"))
 
-    def test_create_illegal_characters(self):
+    async def test_create_illegal_characters(self):
         database_id = str(uuid.uuid4())
         container_id = str(uuid.uuid4())
         partition_key = PartitionKey(path="/id")
@@ -99,7 +99,8 @@ class ResourceIdTests(unittest.TestCase):
             "ID_with_poun#d",
             "ID_with_tab\t",
             "ID\r_with_return_carriage",
-            "ID_with_newline\n"
+            "ID_with_newline\n",
+            "ID_with_trailing_spaces   "
         ]
 
         # test illegal resource id's for all resources

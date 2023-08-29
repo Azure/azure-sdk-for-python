@@ -2595,7 +2595,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         if id_:
             try:
                 if id_.find("/") != -1 or id_.find("\\") != -1 or id_.find("?") != -1 or id_.find("#") != -1 \
-                        or id_.find("\t") != -1 or id_.find("\r") != -1 or id_.find("\n") != -1:
+                        or id_.find("\t") != -1 or id_.find("\r") != -1 or id_.find("\n") != -1 or id_.endswith(" "):
                     raise ValueError("Id contains illegal chars.")
 
                 if id_[-1] == " ":

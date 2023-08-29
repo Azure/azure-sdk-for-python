@@ -98,7 +98,8 @@ class ResourceIdTests(unittest.TestCase):
             "ID_with_poun#d",
             "ID_with_tab\t",
             "ID\r_with_return_carriage",
-            "ID_with_newline\n"
+            "ID_with_newline\n",
+            "ID_with_trailing_spaces   "
         ]
 
         # test illegal resource id's for all resources
