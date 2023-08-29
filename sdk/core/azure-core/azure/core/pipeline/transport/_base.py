@@ -100,7 +100,7 @@ def _format_url_section(template, **kwargs):
             template = "/".join(components)
             if last_template == template:
                 raise ValueError(
-                    "The value provided for the url part {} was incorrect, and resulted in an invalid url"
+                    f"The value provided for the url part '{template}' was incorrect, and resulted in an invalid url"
                 ) from key
             last_template = template
 
