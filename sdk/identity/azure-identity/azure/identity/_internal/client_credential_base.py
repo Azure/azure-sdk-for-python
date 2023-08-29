@@ -20,6 +20,7 @@ class ClientCredentialBase(MsalCredential, GetTokenMixin):
     def _acquire_token_silently(self, *scopes: str, **kwargs: Any) -> Optional[AccessToken]:
         app = self._get_app(**kwargs)
         request_time = int(time.time())
+        kwargs.pop("enable_cae", None)
         result = app.acquire_token_silent_with_error(
             list(scopes), account=None, claims_challenge=kwargs.pop("claims", None), **kwargs
         )
