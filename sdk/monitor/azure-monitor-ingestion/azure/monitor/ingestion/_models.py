@@ -16,7 +16,7 @@ JSON = Mapping[str, Any]  # pylint: disable=unsubscriptable-object
 class LogsUploadError:
     """Error information for a failed upload to Azure Monitor.
 
-    :param error: The error that occured during the upload.
+    :param error: The error that occurred during the upload.
     :type error: Exception
     :param failed_logs: The list of logs that failed to upload.
     :type failed_logs: list[JSON]
