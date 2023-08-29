@@ -7,7 +7,7 @@ import abc
 import os
 from os import PathLike
 from pathlib import Path
-from typing import IO, AnyStr, Dict, Optional, Union
+from typing import IO, AnyStr, Dict, List, Optional, Tuple, Union
 
 from msrest import Serializer
 
@@ -119,7 +119,7 @@ class Resource(abc.ABC):
 
     @classmethod
     # pylint: disable=unused-argument
-    def _resolve_cls_and_type(cls, data, params_override):
+    def _resolve_cls_and_type(cls, data: Dict, params_override: Optional[List[Dict]] = None) -> Tuple:
         """Resolve the class to use for deserializing the data. Return current class if no override is provided.
 
         :param data: Data to deserialize.
