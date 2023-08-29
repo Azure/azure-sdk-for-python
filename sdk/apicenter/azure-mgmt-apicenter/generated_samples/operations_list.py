@@ -7,14 +7,14 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
-from azure.mgmt.avs import AVSClient
+from azure.mgmt.apicenter import ApiCenterMgmtClient
 
 """
 # PREREQUISITES
     pip install azure-identity
-    pip install azure-mgmt-avs
+    pip install azure-mgmt-apicenter
 # USAGE
-    python workload_networks_delete_public_ips.py
+    python operations_list.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -24,19 +24,16 @@ from azure.mgmt.avs import AVSClient
 
 
 def main():
-    client = AVSClient(
+    client = ApiCenterMgmtClient(
         credential=DefaultAzureCredential(),
-        subscription_id="00000000-0000-0000-0000-000000000000",
+        subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.workload_networks.begin_delete_public_ip(
-        resource_group_name="group1",
-        public_ip_id="publicIP1",
-        private_cloud_name="cloud1",
-    ).result()
-    print(response)
+    response = client.operations.list()
+    for item in response:
+        print(item)
 
 
-# x-ms-original-file: specification/vmware/resource-manager/Microsoft.AVS/stable/2022-05-01/examples/WorkloadNetworks_DeletePublicIPs.json
+# x-ms-original-file: specification/apicenter/resource-manager/Microsoft.ApiCenter/preview/2023-07-01-preview/examples/Operations_List.json
 if __name__ == "__main__":
     main()

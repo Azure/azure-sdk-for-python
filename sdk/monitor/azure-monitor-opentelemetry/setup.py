@@ -97,8 +97,6 @@ setup(
         "opentelemetry-instrumentation-urllib3~=0.40b0",
         "opentelemetry-sdk~=1.19.0",
         "wrapt >= 1.14.0, < 2.0.0",
-        "importlib-metadata>=6.0,<6.8; python_version < '3.8'",
-        "importlib-metadata~=6.0; python_version >= '3.8'",
     ],
     entry_points={
         "opentelemetry_distro": [

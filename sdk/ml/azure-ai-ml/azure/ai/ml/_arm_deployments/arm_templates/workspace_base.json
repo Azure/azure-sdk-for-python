@@ -518,6 +518,13 @@
             "metadata": {
                 "description": "A flag to determine whether to set up feature store"
             }
+        },
+        "byo_open_ai_resource_id": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Resource Id of BYO open ai resource."
+            }
         }
     },
     "variables": {
@@ -759,7 +766,10 @@
                 },
                 "enableDataIsolation": "[parameters('enable_data_isolation')]",
                 "workspaceHubConfig": "[parameters('workspace_hub_config')]",
-                "existingWorkspaces": "[parameters('existing_workspaces')]"
+                "existingWorkspaces": "[parameters('existing_workspaces')]",
+                "azureOpenAI": {
+                    "resourceId": "[parameters('byo_open_ai_resource_id')]"
+                }
             }
         },
         {

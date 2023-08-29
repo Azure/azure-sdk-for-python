@@ -29,7 +29,7 @@ from azure.core.utils import case_insensitive_dict
 
 from .. import models as _models
 from .._serialization import Serializer
-from .._vendor import AzureAppConfigurationMixinABC, _convert_request, _format_url_section
+from .._vendor import AzureAppConfigurationMixinABC, _convert_request
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
@@ -209,7 +209,7 @@ def build_get_key_value_request(
         "key": _SERIALIZER.url("key", key, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     if label is not None:
@@ -254,7 +254,7 @@ def build_put_key_value_request(
         "key": _SERIALIZER.url("key", key, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     if label is not None:
@@ -295,7 +295,7 @@ def build_delete_key_value_request(
         "key": _SERIALIZER.url("key", key, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     if label is not None:
@@ -333,7 +333,7 @@ def build_check_key_value_request(
         "key": _SERIALIZER.url("key", key, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     if label is not None:
@@ -435,7 +435,7 @@ def build_get_snapshot_request(
         "name": _SERIALIZER.url("name", name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -468,7 +468,7 @@ def build_create_snapshot_request(name: str, *, sync_token: Optional[str] = None
         "name": _SERIALIZER.url("name", name, "str", max_length=256),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -504,7 +504,7 @@ def build_update_snapshot_request(
         "name": _SERIALIZER.url("name", name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -541,7 +541,7 @@ def build_check_snapshot_request(
         "name": _SERIALIZER.url("name", name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -649,7 +649,7 @@ def build_put_lock_request(
         "key": _SERIALIZER.url("key", key, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     if label is not None:
@@ -689,7 +689,7 @@ def build_delete_lock_request(
         "key": _SERIALIZER.url("key", key, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     if label is not None:
