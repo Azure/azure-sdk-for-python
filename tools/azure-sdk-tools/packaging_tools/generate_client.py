@@ -15,7 +15,10 @@ def check_post_process(folder: Path) -> bool:
         return False
 
     with open(conf_path, "rb") as fd:
-        return tomli.load(fd)["generate"]["autorest-post-process"]
+        toml_dict = tomli.load(fd)
+        if "tox-generate" in toml_dict:
+            return toml_dict["tox-generate"]["autorest-post-process"]
+    return False
 
 def run_post_process(folder: Path) -> None:
     completed_process = run(["autorest", "--postprocess", f"--output-folder={folder}", "--perform-load=false", "--python"], cwd=folder, shell=True)
