@@ -9,6 +9,7 @@
 #### Bugs Fixed
 
 #### Other Changes
+- Added additional checks for resource creation using specific characters that cause issues. See [PR 123](https://github.com/Azure/azure-sdk-for-python/pull/123).
 
 ### 4.5.0 (2023-08-09)
 
