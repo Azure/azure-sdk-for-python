@@ -133,7 +133,7 @@ class FeatureFlagConfigurationSetting(ConfigurationSetting):  # pylint: disable=
     enabled: str
     """The value indicating whether the feature flag is enabled. A feature is OFF if enabled is false.
         If enabled is true, then the feature is ON if there are no conditions or if all conditions are satisfied."""
-    filters: List[dict[str, Any]]
+    filters: List[Dict[str, Any]]
     """Filters that must run on the client and be evaluated as true for the feature
         to be considered enabled."""
     label: str
@@ -274,13 +274,13 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
     """The label used to group this configuration setting with others."""
     content_type: str
     """The content_type of the configuration setting."""
-    value: dict[str, Any]
+    value: Dict[str, Any]
     """The value of the configuration setting."""
     last_modified: datetime
     """A date representing the last time the key-value was modified."""
     read_only: bool
     """Indicates whether the key-value is locked."""
-    tags: dict[str, str]
+    tags: Dict[str, str]
     """The tags assigned to the configuration setting."""
 
     _attribute_map = {
