@@ -176,7 +176,8 @@ def create_sdist_skeleton(build_directory, artifact_name, common_root):
             for directory in directories_for_copy:
                 src = os.path.join(pkg_till_common_root, directory)
                 dest = os.path.join(ns_dir, directory)
-                shutil.copytree(src, dest)
+
+                shutil.copytree(src, dest, dirs_exist_ok=True)
 
 
 def get_version_from_config(environment_config):
