@@ -4,20 +4,18 @@
 
 # pylint: disable=protected-access
 
-from typing import Any, Iterable, Optional, Union
 from contextlib import contextmanager
+from typing import Any, Iterable, Optional, Union
 
 from marshmallow.exceptions import ValidationError as SchemaValidationError
-from azure.ai.ml._utils._registry_utils import get_registry_client
 
-from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._artifacts._artifact_utilities import _check_and_upload_env_build_context
 from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
     AzureMachineLearningWorkspaces as ServiceClient102021Dataplane,
 )
-from azure.ai.ml._restclient.v2023_04_01_preview.models import EnvironmentVersion, ListViewType
 from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient042023Preview
+from azure.ai.ml._restclient.v2023_04_01_preview.models import EnvironmentVersion, ListViewType
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationsContainer,
@@ -31,12 +29,17 @@ from azure.ai.ml._utils._asset_utils import (
     _get_next_version_from_container,
     _resolve_label_to_asset,
 )
+from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils._logger_utils import OpsLogger
-from azure.ai.ml._utils._registry_utils import get_asset_body_for_registry_storage, get_sas_uri_for_registry_asset
-from azure.ai.ml.constants._common import ARM_ID_PREFIX, AzureMLResourceType, ASSET_ID_FORMAT
+from azure.ai.ml._utils._registry_utils import (
+    get_asset_body_for_registry_storage,
+    get_registry_client,
+    get_sas_uri_for_registry_asset,
+)
+from azure.ai.ml.constants._common import ARM_ID_PREFIX, ASSET_ID_FORMAT, AzureMLResourceType
 from azure.ai.ml.entities._assets import Environment, WorkspaceAssetReference
-from azure.core.exceptions import ResourceNotFoundError
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+from azure.core.exceptions import ResourceNotFoundError
 
 ops_logger = OpsLogger(__name__)
 logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
@@ -48,6 +51,19 @@ class EnvironmentOperations(_ScopeDependentOperations):
     You should not instantiate this class directly. Instead, you should
     create an MLClient instance that instantiates it for you and
     attaches it as an attribute.
+
+    :param operation_scope: Scope variables for the operations classes of an MLClient object.
+    :type operation_scope: ~azure.ai.ml._scope_dependent_operations.OperationScope
+    :param operation_config: Common configuration for operations classes of an MLClient object.
+    :type operation_config: ~azure.ai.ml._scope_dependent_operations.OperationConfig
+    :param service_client: Service client to allow end users to operate on Azure Machine Learning Workspace
+        resources (ServiceClient042023Preview or ServiceClient102021Dataplane).
+    :type service_client: typing.Union[
+        ~azure.ai.ml._restclient.v2023_04_01_preview._azure_machine_learning_workspaces.AzureMachineLearningWorkspaces,
+        ~azure.ai.ml._restclient.v2021_10_01_dataplanepreview._azure_machine_learning_workspaces.
+        AzureMachineLearningWorkspaces]
+    :param all_operations: All operations classes of an MLClient object.
+    :type all_operations: ~azure.ai.ml._scope_dependent_operations.OperationsContainer
     """
 
     def __init__(
@@ -82,6 +98,15 @@ class EnvironmentOperations(_ScopeDependentOperations):
         :raises ~azure.ai.ml.exceptions.EmptyDirectoryError: Raised if local path provided points to an empty directory.
         :return: Created or updated Environment object
         :rtype: ~azure.ai.ml.entities.Environment
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+                :start-after: [START env_operations_create_or_update]
+                :end-before: [END env_operations_create_or_update]
+                :language: python
+                :dedent: 8
+                :caption: Create environment.
         """
         try:
             if not environment.version and environment._auto_increment_version:
@@ -225,6 +250,15 @@ class EnvironmentOperations(_ScopeDependentOperations):
             Details will be provided in the error message.
         :return: Environment object
         :rtype: ~azure.ai.ml.entities.Environment
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+                :start-after: [START env_operations_get]
+                :end-before: [END env_operations_get]
+                :language: python
+                :dedent: 8
+                :caption: Get example.
         """
         if version and label:
             msg = "Cannot specify both version and label."
@@ -269,6 +303,15 @@ class EnvironmentOperations(_ScopeDependentOperations):
         :type list_view_type: Optional[ListViewType]
         :return: An iterator like instance of Environment objects.
         :rtype: ~azure.core.paging.ItemPaged[Environment]
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+                :start-after: [START env_operations_list]
+                :end-before: [END env_operations_list]
+                :language: python
+                :dedent: 8
+                :caption: List example.
         """
         if name:
             return (
@@ -322,6 +365,15 @@ class EnvironmentOperations(_ScopeDependentOperations):
         :type version: str
         :param label: Label of the environment. (mutually exclusive with version)
         :type label: str
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+                :start-after: [START env_operations_archive]
+                :end-before: [END env_operations_archive]
+                :language: python
+                :dedent: 8
+                :caption: Archive example.
         """
         name = _preprocess_environment_name(name)
         _archive_or_restore(
@@ -350,6 +402,15 @@ class EnvironmentOperations(_ScopeDependentOperations):
         :type version: str
         :param label: Label of the environment. (mutually exclusive with version)
         :type label: str
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+                :start-after: [START env_operations_restore]
+                :end-before: [END env_operations_restore]
+                :language: python
+                :dedent: 8
+                :caption: Restore example.
         """
         name = _preprocess_environment_name(name)
         _archive_or_restore(
@@ -394,11 +455,11 @@ class EnvironmentOperations(_ScopeDependentOperations):
         :param version: Version of environment asset.
         :type version: str
         :keyword share_with_name: Name of environment asset to share with.
-        :type share_with_name: str
+        :paramtype share_with_name: str
         :keyword share_with_version: Version of environment asset to share with.
-        :type share_with_version: str
+        :paramtype share_with_version: str
         :keyword registry_name: Name of the destination registry.
-        :type registry_name: str
+        :paramtype registry_name: str
         :return: Environment asset object.
         :rtype: ~azure.ai.ml.entities.Environment
         """

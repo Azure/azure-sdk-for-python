@@ -29,14 +29,13 @@ def main():
         subscription_id="34adfa4f-cedf-4dc0-ba29-b6d1a69ab345",
     )
 
-    response = client.jobs.begin_stop_execution(
+    client.jobs.begin_stop_execution(
         resource_group_name="rg",
         job_name="testcontainerAppsJob0",
         job_execution_name="jobExecution1",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/app/resource-manager/Microsoft.App/preview/2022-11-01-preview/examples/Job_Stop_Execution.json
+# x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2023-05-01/examples/Job_Stop_Execution.json
 if __name__ == "__main__":
     main()

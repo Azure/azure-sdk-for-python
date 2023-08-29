@@ -13,11 +13,11 @@ class StoredProcedureParameter(DictMixin, RestTranslatableMixin):
     """Define a stored procedure parameter class for DataTransfer import database task.
 
     :keyword name: The name of the database stored procedure.
-    :type name: str, optional
+    :paramtype name: str
     :keyword value: The value of the database stored procedure.
-    :type value: str, optional
+    :paramtype value: str
     :keyword type: The type of the database stored procedure.
-    :type type: str, optional
+    :paramtype type: str
     """
 
     def __init__(
@@ -36,16 +36,16 @@ class Database(DictMixin, RestTranslatableMixin):  # pylint: disable=too-many-in
     """Define a database class for a DataTransfer Component or Job.
 
     :keyword query: The SQL query to retrieve data from the database.
-    :type query: str, optional
+    :paramtype query: str
     :keyword table_name: The name of the database table.
-    :type table_name: str, optional
+    :paramtype table_name: str
     :keyword stored_procedure: The name of the stored procedure.
-    :type stored_procedure: str, optional
+    :paramtype stored_procedure: str
     :keyword stored_procedure_params: The parameters for the stored procedure.
-    :type stored_procedure_params: List[dict, StoredProcedureParameter], optional
+    :paramtype stored_procedure_params: List[dict, StoredProcedureParameter]
     :keyword connection: The connection string for the database.
         The credential information should be stored in the workspace connection.
-    :type connection: str, optional
+    :paramtype connection: str
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if the Database object cannot be successfully validated.
         Details will be provided in the error message.
 
@@ -84,7 +84,7 @@ class Database(DictMixin, RestTranslatableMixin):  # pylint: disable=too-many-in
         """Convert the Source object to a dict.
 
         :param remove_name: Whether to remove the `name` key from the  dict representation. Defaults to True.
-        :type remove_name: bool, optional
+        :type remove_name: bool
         :return: The dictionary representation of the class
         :rtype: Dict
         """
@@ -120,7 +120,7 @@ class Database(DictMixin, RestTranslatableMixin):  # pylint: disable=too-many-in
         """Get or set the parameters for the stored procedure.
 
         :return: The parameters for the stored procedure.
-        :rtype: List[StoredProcedureParameter], optional
+        :rtype: List[StoredProcedureParameter]
         """
 
         return self._stored_procedure_params
@@ -149,10 +149,10 @@ class FileSystem(DictMixin, RestTranslatableMixin):  # pylint: disable=too-many-
     e.g. source_s3 = FileSystem(path='s3://my_bucket/my_folder', connection='azureml:my_s3_connection')
 
     :param path: The path to which the input is pointing. Could be pointing to the path of file system. Default is None.
-    :type path: str, optional
+    :type path: str
     :param connection: Connection is workspace, we didn't support storage connection here, need leverage workspace
         connection to store these credential info. Default is None.
-    :type connection: str, optional
+    :type connection: str
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Source cannot be successfully validated.
         Details will be provided in the error message.
     """
@@ -180,7 +180,7 @@ class FileSystem(DictMixin, RestTranslatableMixin):  # pylint: disable=too-many-
         """Convert the Source object to a dict.
 
         :param remove_name: Whether to remove the `name` key from the  dict representation. Defaults to True.
-        :type remove_name: bool, optional
+        :type remove_name: bool
         :return: The dictionary representation of the object
         :rtype: Dict
         """

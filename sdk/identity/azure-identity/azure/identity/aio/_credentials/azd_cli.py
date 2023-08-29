@@ -158,6 +158,7 @@ async def _run_command(command: str, timeout: int) -> str:
             *args,
             stdout=asyncio.subprocess.PIPE,
             stderr=asyncio.subprocess.PIPE,
+            stdin=asyncio.subprocess.DEVNULL,
             cwd=working_directory,
             env=dict(os.environ, NO_COLOR="true"),
         )

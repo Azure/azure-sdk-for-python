@@ -21,7 +21,7 @@ from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job._input_output_helpers import build_input_output
 from azure.ai.ml.entities._job.job import Job
 from azure.ai.ml.entities._job.pipeline._attr_dict import _AttrDict
-from azure.ai.ml.entities._job.pipeline._io import NodeInput, NodeOutput, PipelineInput
+from azure.ai.ml.entities._job.pipeline._io import NodeOutput, PipelineInput
 from azure.ai.ml.entities._job.pipeline._io.mixin import NodeWithGroupInputMixin
 from azure.ai.ml.entities._job.pipeline._pipeline_expression import PipelineExpression
 from azure.ai.ml.entities._job.sweep.search_space import SweepDistribution
@@ -489,20 +489,20 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, SchemaValidatableMixin, No
         return convert_ordered_dict_to_dict(rest_obj)
 
     @property
-    def inputs(self) -> Dict[str, NodeInput]:
+    def inputs(self) -> Dict[str, Union[Input, str, bool, int, float]]:
         """Get the inputs for the object.
 
         :return: A dictionary containing the inputs for the object.
-        :rtype: Dict[str, NodeInput]
+        :rtype: Dict[str, Union[Input, str, bool, int, float]]
         """
         return self._inputs
 
     @property
-    def outputs(self) -> Dict[str, NodeOutput]:
+    def outputs(self) -> Dict[str, Union[str, Output]]:
         """Get the outputs of the object.
 
         :return: A dictionary containing the outputs for the object.
-        :rtype: Dict[str, Union[str, NodeOutput]
+        :rtype: Dict[str, Union[str, Output]]
         """
         return self._outputs
 

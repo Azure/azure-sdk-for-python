@@ -112,7 +112,7 @@ class _SeparateConnectionManager(object):
     def __init__(self, **kwargs):
         pass
 
-    def get_connection(  # pylint:disable=unused-argument, no-self-use
+    def get_connection(  # pylint:disable=unused-argument
         self,
         *,
         host: Optional[str] = None,

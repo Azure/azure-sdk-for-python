@@ -33,7 +33,7 @@ class ParallelFor(LoopNode, NodeIOMixin):
         ~azure.ai.ml.entities._job.pipeline._io.PipelineInput]
     :param max_concurrency: Maximum number of concurrent iterations to run. All loop body nodes will be executed
         in parallel if not specified.
-    :type max_concurrency: int, optional
+    :type max_concurrency: int
     """
 
     OUT_TYPE_MAPPING = {

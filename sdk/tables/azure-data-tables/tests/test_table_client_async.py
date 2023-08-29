@@ -191,6 +191,9 @@ class TestTableClientAsync(AzureRecordedTestCase, AsyncTableTestCase):
         assert ("URI does not match number of key properties for the resource") in str(exc.value)
         assert ("Please check your account URL.") in str(exc.value)
         await valid_tc.delete_table()
+        await valid_tc.close()
+        await tc.close()
+        await tc2.close()
 
     @tables_decorator_async
     @recorded_by_proxy_async

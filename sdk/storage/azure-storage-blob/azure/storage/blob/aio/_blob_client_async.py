@@ -382,7 +382,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
             Defaults to UTF-8.
         :keyword progress_hook:
             An async callback to track the progress of a long running upload. The signature is
-            function(current: int, total: Optional[int]) where current is the number of bytes transfered
+            function(current: int, total: Optional[int]) where current is the number of bytes transferred
             so far, and total is the size of the blob or None if the size is unknown.
         :paramtype progress_hook: Callable[[int, Optional[int]], Awaitable[None]]
         :keyword int timeout:
@@ -508,7 +508,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
             Encoding to decode the downloaded bytes. Default is None, i.e. no decoding.
         :keyword progress_hook:
             An async callback to track the progress of a long running download. The signature is
-            function(current: int, total: int) where current is the number of bytes transfered
+            function(current: int, total: int) where current is the number of bytes transferred
             so far, and total is the total size of the download.
         :paramtype progress_hook: Callable[[int, int], Awaitable[None]]
         :keyword int timeout:
@@ -1075,7 +1075,9 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
     @distributed_trace_async
     async def create_append_blob(self, content_settings=None, metadata=None, **kwargs):
         # type: (Optional[ContentSettings], Optional[Dict[str, str]], Any) -> Dict[str, Union[str, datetime]]
-        """Creates a new Append Blob.
+        """Creates a new Append Blob. This operation creates a new 0-length append blob. The content
+        of any existing blob is overwritten with the newly initialized append blob. To add content to
+        the append blob, call the :func:`append_block` or :func:`append_block_from_url` method.
 
         :param ~azure.storage.blob.ContentSettings content_settings:
             ContentSettings object used to set blob properties. Used to set content type, encoding,
