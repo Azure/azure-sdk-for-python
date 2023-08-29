@@ -38,27 +38,27 @@ T = TypeVar("T", covariant=True)
 
 
 class AsyncTracedMethod(Protocol, Generic[P, T]):
-    async def __call__(
+    def __call__(
         self, *args: P.args, merge_span: bool = False, parent_span: Optional[AbstractSpan] = None, **kwds: P.kwargs
-    ) -> T:
+    ) -> Awaitable[T]:
         ...
 
 
 @overload
-def distributed_trace_async(__func: Callable[P, Awaitable[T]]) -> AsyncTracedMethod[P, Awaitable[T]]:
+def distributed_trace_async(__func: Callable[P, Awaitable[T]]) -> AsyncTracedMethod[P, T]:
     pass
 
 
 @overload
 def distributed_trace_async(  # pylint:disable=function-redefined
     **kwargs: Any,  # pylint:disable=unused-argument
-) -> Callable[[Callable[P, Awaitable[T]]], AsyncTracedMethod[P, Awaitable[T]]]:
+) -> Callable[[Callable[P, Awaitable[T]]], AsyncTracedMethod[P, T]]:
     pass
 
 
 def distributed_trace_async(  # pylint:disable=function-redefined
     __func: Optional[Callable[P, Awaitable[T]]] = None, **kwargs: Any
-) -> Union[AsyncTracedMethod[P, Awaitable[T]], Callable[[Callable[P, Awaitable[T]]], AsyncTracedMethod[P, Awaitable[T]]]]:
+) -> Union[AsyncTracedMethod[P, T], Callable[[Callable[P, Awaitable[T]]], AsyncTracedMethod[P, T]]]:
     """Decorator to apply to function to get traced automatically.
 
     Span will use the func name or "name_of_span".
@@ -73,7 +73,7 @@ def distributed_trace_async(  # pylint:disable=function-redefined
     tracing_attributes = kwargs.pop("tracing_attributes", {})
     kind = kwargs.pop("kind", _SpanKind.INTERNAL)
 
-    def decorator(func: Callable[P, Awaitable[T]]) -> AsyncTracedMethod[P, Awaitable[T]]:
+    def decorator(func: Callable[P, Awaitable[T]]) -> AsyncTracedMethod[P, T]:
         @functools.wraps(func)
         async def wrapper_use_tracer(
             *args: P.args, merge_span: bool = False, parent_span: Optional[AbstractSpan] = None, **kwargs: P.kwargs
