@@ -165,13 +165,13 @@ def _from_cncf_events(event): # pylint: disable=inconsistent-return-statements
 
 def _build_request(endpoint, content_type, events, *, channel_name=None):
     serialize = Serializer()
-    header_parameters = {}  # type: Dict[str, Any]
+    header_parameters: dict[str, Any] = {}
     header_parameters['Content-Type'] = serialize.header("content_type", content_type, 'str')
 
     if channel_name:
         header_parameters['aeg-channel-name'] = channel_name
 
-    query_parameters = {}  # type: Dict[str, Any]
+    query_parameters: dict[str, Any] = {}
     query_parameters['api-version'] = serialize.query("api_version", "2018-01-01", 'str')
 
     body = serialize.body(events, '[object]')
