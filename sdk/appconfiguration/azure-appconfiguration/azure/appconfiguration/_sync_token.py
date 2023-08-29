@@ -65,7 +65,7 @@ class SyncTokenPolicy(SansIOHTTPPolicy):
     :keyword callback raw_response_hook: Callback function. Will be invoked on response.
     """
 
-    def __init__(self, **kwargs) -> None:  # pylint: disable=unused-argument
+    def __init__(self, **kwargs: Any):  # pylint: disable=unused-argument
         self._sync_token_header = "Sync-Token"
         self._sync_tokens = {}  # type: Dict[str, Any]
         self._lock = Lock()

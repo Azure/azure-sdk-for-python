@@ -60,7 +60,7 @@ class AzureAppConfigurationClient:
 
     # pylint:disable=protected-access
 
-    def __init__(self, base_url: str, credential: AsyncTokenCredential, **kwargs) -> None:
+    def __init__(self, base_url: str, credential: AsyncTokenCredential, **kwargs: Any):
         try:
             if not base_url.lower().startswith("http"):
                 base_url = "https://" + base_url
@@ -100,7 +100,7 @@ class AzureAppConfigurationClient:
         )
 
     @classmethod
-    def from_connection_string(cls, connection_string: str, **kwargs) -> "AzureAppConfigurationClient":
+    def from_connection_string(cls, connection_string: str, **kwargs: Any) -> "AzureAppConfigurationClient":
         """Create AzureAppConfigurationClient from a Connection String.
         This is the async version of :class:`~azure.appconfiguration.AzureAppConfigurationClient`
 
@@ -754,9 +754,9 @@ class AzureAppConfigurationClient:
         """Close all connections made by the client"""
         await self._impl._client.close()
 
-    async def __aenter__(self):
+    async def __aenter__(self) -> "AzureAppConfigurationClient":
         await self._impl.__aenter__()
         return self
 
-    async def __aexit__(self, *args):
+    async def __aexit__(self, *args: Any) -> None:
         await self._impl.__aexit__(*args)
