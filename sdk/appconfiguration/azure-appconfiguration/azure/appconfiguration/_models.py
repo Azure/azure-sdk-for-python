@@ -5,7 +5,7 @@
 import json
 import sys
 from datetime import datetime
-from typing import Any, Dict, List, MutableMapping, Optional, Union, cast
+from typing import Any, Dict, List, Optional, Union, cast
 
 from azure.core.rest import HttpResponse
 from ._generated._serialization import Model
@@ -24,7 +24,6 @@ else:
 PolymorphicConfigurationSetting = Union[
     "ConfigurationSetting", "SecretReferenceConfigurationSetting", "FeatureFlagConfigurationSetting"
 ]
-JSON = MutableMapping[str, Any]
 
 
 class ConfigurationSetting(Model):
@@ -127,10 +126,8 @@ class FeatureFlagConfigurationSetting(ConfigurationSetting):  # pylint: disable=
     feature_id: str
     """The identity of the configuration setting."""
     key: str
-    """The key of the configuration setting."""
-    value: str
-    """The value of the configuration setting."""
-    enabled: str
+    """The key of the configuration setting."""    
+    enabled: Optional[bool]
     """The value indicating whether the feature flag is enabled. A feature is OFF if enabled is false.
         If enabled is true, then the feature is ON if there are no conditions or if all conditions are satisfied."""
     filters: List[Dict[str, Any]]
@@ -193,6 +190,7 @@ class FeatureFlagConfigurationSetting(ConfigurationSetting):  # pylint: disable=
 
     @property
     def value(self) -> str:
+        """The value of the configuration setting."""
         try:
             temp = json.loads(self._value)
             temp["id"] = self.feature_id
@@ -206,20 +204,20 @@ class FeatureFlagConfigurationSetting(ConfigurationSetting):  # pylint: disable=
             return self._value
 
     @value.setter
-    def value(self, new_value: JSON) -> None:
+    def value(self, new_value: str) -> None:
         try:
             temp = json.loads(new_value)
             temp["id"] = self.feature_id
             self._value = json.dumps(temp)
             self.enabled = temp.get("enabled", None)
-            self.filters = None
+            self.filters = []
             conditions = temp.get("conditions", None)
             if conditions:
                 self.filters = conditions.get("client_filters", None)
         except (json.JSONDecodeError, ValueError):
             self._value = new_value
             self.enabled = None
-            self.filters = None
+            self.filters = []
 
     @classmethod
     def _from_generated(cls, key_value: KeyValue) -> Union["FeatureFlagConfigurationSetting", ConfigurationSetting]:
@@ -268,14 +266,12 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
     """A value representing the current state of the resource."""
     key: str
     """The key of the configuration setting."""
-    secret_id: str
+    secret_id: Optional[str]
     """The identity of the configuration setting."""
     label: str
     """The label used to group this configuration setting with others."""
     content_type: str
     """The content_type of the configuration setting."""
-    value: Dict[str, Any]
-    """The value of the configuration setting."""
     last_modified: datetime
     """A date representing the last time the key-value was modified."""
     read_only: bool
@@ -311,6 +307,7 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
 
     @property
     def value(self) -> str:
+        """The value of the configuration setting."""
         try:
             temp = json.loads(self._value)
             temp["uri"] = self.secret_id
@@ -320,7 +317,7 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
             return self._value
 
     @value.setter
-    def value(self, new_value: JSON) -> None:
+    def value(self, new_value: str) -> None:
         try:
             temp = json.loads(new_value)
             self._value = new_value
@@ -370,7 +367,7 @@ class ConfigurationSettingFilter:
 
     key: str
     """Filters configuration settings by their key field. Required."""
-    label: str
+    label: Optional[str]
     """Filters configuration settings by their label field."""
 
     def __init__(self, *, key: str, label: Optional[str] = None):
@@ -378,7 +375,7 @@ class ConfigurationSettingFilter:
         :keyword key: Filters configuration settings by their key field. Required.
         :paramtype key: str
         :keyword label: Filters configuration settings by their label field.
-        :paramtype label: str
+        :paramtype label: str or None
         """
         self.key = key
         self.label = label
@@ -387,33 +384,33 @@ class ConfigurationSettingFilter:
 class Snapshot:  # pylint: disable=too-many-instance-attributes
     """A point-in-time snapshot of configuration settings."""
 
-    name: str
+    name: Optional[str]
     """The name of the snapshot."""
-    status: str
+    status: Optional[str]
     """The current status of the snapshot. Known values are: "provisioning", "ready",
         "archived", and "failed"."""
     filters: List[ConfigurationSettingFilter]
     """A list of filters used to filter the key-values included in the snapshot. Required."""
-    composition_type: str
+    composition_type: Optional[str]
     """The composition type describes how the key-values within the snapshot
         are composed. The 'key' composition type ensures there are no two key-values containing the
         same key. The 'key_label' composition type ensures there are no two key-values containing the
         same key and label. Known values are: "key" and "key_label"."""
-    created: datetime
+    created: Optional[datetime]
     """The time that the snapshot was created."""
-    expires: datetime
+    expires: Optional[datetime]
     """The time that the snapshot will expire."""
-    retention_period: int
+    retention_period: Optional[int]
     """The amount of time, in seconds, that a snapshot will remain in the
         archived state before expiring. This property is only writable during the creation of a
         snapshot. If not specified, the default lifetime of key-value revisions will be used."""
-    size: int
+    size: Optional[int]
     """The size in bytes of the snapshot."""
-    items_count: int
+    items_count: Optional[int]
     """The amount of key-values in the snapshot."""
-    tags: Dict[str, str]
+    tags: Optional[Dict[str, str]]
     """The tags of the snapshot."""
-    etag: str
+    etag: Optional[str]
     """A value representing the current state of the snapshot."""
 
     def __init__(
@@ -432,13 +429,13 @@ class Snapshot:  # pylint: disable=too-many-instance-attributes
             snapshot are composed. The 'key' composition type ensures there are no two key-values
             containing the same key. The 'key_label' composition type ensures there are no two key-values
             containing the same key and label. Known values are: "key" and "key_label".
-        :paramtype composition_type: str
+        :paramtype composition_type: str or None
         :keyword retention_period: The amount of time, in seconds, that a snapshot will remain in the
             archived state before expiring. This property is only writable during the creation of a
             snapshot. If not specified, the default lifetime of key-value revisions will be used.
-        :paramtype retention_period: int
+        :paramtype retention_period: int or None
         :keyword tags: The tags of the snapshot.
-        :paramtype tags: dict[str, str]
+        :paramtype tags: dict[str, str] or None
         """
         self.name = None
         self.status = None
