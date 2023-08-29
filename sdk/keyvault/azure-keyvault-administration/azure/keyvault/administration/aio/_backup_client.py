@@ -86,13 +86,14 @@ class KeyVaultBackupClient(AsyncKeyVaultClientBase):
         """
         polling_interval = kwargs.pop("_polling_interval", 5)
         continuation_token = kwargs.pop("continuation_token", None)
+        use_managed_identity = kwargs.pop("use_managed_identity", None)
         # `sas_token` was formerly a required positional parameter
         try:
             sas_token: Optional[str] = args[0]
         except IndexError:
             sas_token = kwargs.pop("sas_token", None)
         sas_parameter = self._models.SASTokenParameter(
-            storage_resource_uri=blob_storage_url, token=sas_token, use_managed_identity=sas_token is None
+            storage_resource_uri=blob_storage_url, token=sas_token, use_managed_identity=use_managed_identity
         )
 
         status_response = None
@@ -191,6 +192,7 @@ class KeyVaultBackupClient(AsyncKeyVaultClientBase):
         polling_interval = kwargs.pop("_polling_interval", 5)
         continuation_token = kwargs.pop("continuation_token", None)
         key_name = kwargs.pop("key_name", None)
+        use_managed_identity = kwargs.pop("use_managed_identity", None)
         # `sas_token` was formerly a required positional parameter
         try:
             sas_token: Optional[str] = args[0]
@@ -216,7 +218,7 @@ class KeyVaultBackupClient(AsyncKeyVaultClientBase):
 
         container_url, folder_name = parse_folder_url(folder_url)
         sas_parameter = self._models.SASTokenParameter(
-            storage_resource_uri=container_url, token=sas_token, use_managed_identity=sas_token is None
+            storage_resource_uri=container_url, token=sas_token, use_managed_identity=use_managed_identity
         )
         polling = KeyVaultAsyncBackupClientPollingMethod(
             lro_algorithms=[KeyVaultBackupClientPolling()], timeout=polling_interval, **kwargs
