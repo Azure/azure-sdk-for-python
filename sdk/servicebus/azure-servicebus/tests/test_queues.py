@@ -521,6 +521,7 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
                 else:
                     with pytest.raises(TypeError):
                         pickled = pickle.loads(pickle.dumps(messages[0]))
+
     
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -573,8 +574,67 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
                 for message in receiver:
                     messages.append(message)
                 assert len(messages) == 0
-    
-    
+
+            # send 10 messages
+            with sb_client.get_queue_sender(servicebus_queue.name) as sender:
+                for i in range(10):
+                    message = ServiceBusMessage("Handler message no. {}".format(i))
+                    sender.send_messages(message)
+            time.sleep(10)
+
+            # check peek_messages returns correctly, with default prefetch_count = 0
+            messages = []
+            with sb_client.get_queue_receiver(servicebus_queue.name, 
+                                              receive_mode=ServiceBusReceiveMode.RECEIVE_AND_DELETE, 
+                                              max_wait_time=10) as receiver:
+                # peek messages checks current state of queue, which should return 10
+                # since 0 were prefetched and deleted on receive
+                peeked_msgs = receiver.peek_messages(max_message_count=10, timeout=10)
+                assert len(peeked_msgs) == 10
+
+                # iterator receives and deletes each message
+                for msg in receiver:
+                    messages.append(msg)
+                assert len(messages) == 10
+            
+                # queue should be empty now
+                peeked_msgs = receiver.peek_messages(max_message_count=10, timeout=10)
+                assert len(peeked_msgs) == 0
+
+            # send 10 messages
+            with sb_client.get_queue_sender(servicebus_queue.name) as sender:
+                for i in range(10):
+                    message = ServiceBusMessage("Handler message no. {}".format(i))
+                    sender.send_messages(message)
+            time.sleep(10)
+
+            # check peek_messages returns correctly, with default prefetch_count > 0
+            messages = []
+            with sb_client.get_queue_receiver(servicebus_queue.name, 
+                                              receive_mode=ServiceBusReceiveMode.RECEIVE_AND_DELETE, 
+                                              prefetch_count=5,
+                                              max_wait_time=10) as receiver:
+                # peek messages checks current state of queue, which should return 5
+                # since 5 were prefetched and deleted from internal buffer, then rest are retrieved from SB queue
+                peeked_msgs = receiver.peek_messages(max_message_count=10, timeout=10)
+                # uamqp has incorrect behavior and would return all 10 messages, since prefetch isn't passed through
+                if not uamqp_transport:
+                    assert len(peeked_msgs) == 5
+
+                # receive 5 messages
+                recvd_msgs = receiver.receive_messages(max_message_count=5)
+                assert len(recvd_msgs) == 5
+
+                # iterator receives and deletes 5 leftover messages
+                for msg in receiver:
+                    messages.append(msg)
+                assert len(messages) == 5
+
+                # queue should be empty now
+                peeked_msgs = receiver.peek_messages(max_message_count=10, timeout=10)
+                assert len(peeked_msgs) == 0
+            
+
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedServiceBusResourceGroupPreparer(name_prefix='servicebustest')

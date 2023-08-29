@@ -596,6 +596,21 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
     ) -> Iterator["ServiceBusReceivedMessage"]:
         """The purpose of this wrapper is to allow both state restoration (for multiple concurrent iteration)
         and per-iter argument passing that requires the former."""
+        # pylint: disable=protected-access
+        # to allow receiving with iterator, if link_credit is 0, set to 1 (and related values)
+        reset_link_credit = receiver._handler._link.link_credit == 0
+        if reset_link_credit:
+            # save original values
+            receiver_link_credit = receiver._handler._link.link_credit
+            message_received = receiver._handler._message_received
+            keep_alive_interval = receiver._handler._keep_alive_interval
+            # set new values
+            receiver._handler._link.link_credit = 1
+            receiver._handler._message_received = functools.partial(
+                PyamqpTransport.enhanced_message_received,
+                receiver
+            )
+            receiver._handler._keep_alive_interval = 5
         while True:
             try:
                 # pylint: disable=protected-access
@@ -604,6 +619,11 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
                 with receive_trace_context_manager(receiver, links=links):
                     yield message
             except StopIteration:
+                # if needed, reset link credit and related values to original values
+                if reset_link_credit:
+                    receiver._handler._link.link_credit = receiver_link_credit
+                    receiver._handler._message_received = message_received
+                    receiver._handler._keep_alive_interval = keep_alive_interval
                 break
 
     @staticmethod

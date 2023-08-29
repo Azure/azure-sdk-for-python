@@ -32,6 +32,7 @@ from .error import (
 from .outcomes import Received, Rejected, Released, Accepted, Modified
 
 from .constants import (
+    DEFAULT_LINK_CREDIT,
     MAX_CHANNELS,
     MessageDeliveryState,
     SenderSettleMode,
@@ -566,7 +567,7 @@ class SendClient(AMQPClient):
         # Sender and Link settings
         self._max_message_size = kwargs.pop("max_message_size", MAX_FRAME_SIZE_BYTES)
         self._link_properties = kwargs.pop("link_properties", None)
-        self._link_credit = kwargs.pop("link_credit", None)
+        self._link_credit = kwargs.pop("link_credit", DEFAULT_LINK_CREDIT)
         super(SendClient, self).__init__(hostname, **kwargs)
 
     def _client_ready(self):
