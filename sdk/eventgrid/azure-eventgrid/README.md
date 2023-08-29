@@ -60,9 +60,9 @@ For example, you can use `DefaultAzureCredential` to construct a client which wi
 from azure.identity import DefaultAzureCredential
 from azure.eventgrid import EventGridPublisherClient, EventGridEvent
 
-credential = DefaultAzureCredential()
+credential_az_cred = DefaultAzureCredential()
 endpoint = os.environ["EVENTGRID_TOPIC_ENDPOINT"]
-client = EventGridPublisherClient(endpoint, credential)
+client = EventGridPublisherClient(endpoint, credential_az_cred)
 ```
 
 <!-- END SNIPPET -->
@@ -88,8 +88,8 @@ from azure.core.credentials import AzureKeyCredential
 topic_key = os.environ["EVENTGRID_TOPIC_KEY"]
 endpoint = os.environ["EVENTGRID_TOPIC_ENDPOINT"]
 
-credential = AzureKeyCredential(topic_key)
-client = EventGridPublisherClient(endpoint, credential)
+credential_key = AzureKeyCredential(topic_key)
+client = EventGridPublisherClient(endpoint, credential_key)
 ```
 
 <!-- END SNIPPET -->
