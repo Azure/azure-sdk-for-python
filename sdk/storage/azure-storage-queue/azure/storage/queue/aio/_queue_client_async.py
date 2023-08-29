@@ -772,7 +772,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Stora
             inserted_on = message.inserted_on
             expires_on = message.expires_on
             dequeue_count = message.dequeue_count
-        else:
+        except AttributeError:
             message_id = message
             message_text = content
             receipt = pop_receipt

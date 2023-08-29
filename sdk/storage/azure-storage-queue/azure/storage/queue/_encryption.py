@@ -15,7 +15,8 @@ from json import (
     dumps,
     loads,
 )
-from typing import Any, BinaryIO, Callable, Dict, Optional, Tuple, TYPE_CHECKING, Union
+from typing import Any, BinaryIO, Callable, Dict, List, Optional, Tuple, TYPE_CHECKING
+from typing_extensions import Protocol
 
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives.ciphers import Cipher
@@ -46,23 +47,40 @@ _ERROR_OBJECT_INVALID = \
     '{0} does not define a complete interface. Value of {1} is either missing or invalid.'
 
 
+class KeyEncryptionKey(Protocol):
+    """Protocol that defines what calling functions should be defined for a user-provided key-encryption-key (kek)."""
+
+    def wrap_key(self, key):
+        ...
+    
+    def unwrap_key(self, key, algorithm):
+        ...
+
+    def get_kid(self):
+        ...
+
+    def get_key_wrap_algorithm(self):
+        ...
+
+
 def _validate_not_none(param_name: str, param: Any):
     if param is None:
         raise ValueError(f'{param_name} should not be None.')
 
 
-def _validate_key_encryption_key_wrap(kek: object):
+def _validate_key_encryption_key_wrap(kek: KeyEncryptionKey):
     # Note that None is not callable and so will fail the second clause of each check.
     if not hasattr(kek, 'wrap_key') or not callable(kek.wrap_key):
         raise AttributeError(_ERROR_OBJECT_INVALID.format('key encryption key', 'wrap_key'))
     if not hasattr(kek, 'get_kid') or not callable(kek.get_kid):
         raise AttributeError(_ERROR_OBJECT_INVALID.format('key encryption key', 'get_kid'))
-    if not hasattr(kek, 'get_key_wrap_algorithm') or not callable(kek.get_key_wrap_algorithm):
+    if not (hasattr(kek, 'get_key_wrap_algorithm') or
+       not callable(kek.get_key_wrap_algorithm)):
         raise AttributeError(_ERROR_OBJECT_INVALID.format('key encryption key', 'get_key_wrap_algorithm'))
 
 
 class StorageEncryptionMixin(object):
-    def _configure_encryption(self, kwargs: Any):
+    def _configure_encryption(self, kwargs: Dict[str, Any]):
         self.require_encryption = kwargs.get("require_encryption", False)
         self.encryption_version = kwargs.get("encryption_version", "1.0")
         self.key_encryption_key = kwargs.get("key_encryption_key")
@@ -83,19 +101,19 @@ class _EncryptionAlgorithm(object):
 
 
 class _WrappedContentKey:
-    '''
+    """
     Represents the envelope key details stored on the service.
-    '''
+    """
 
     def __init__(self, algorithm: str, encrypted_key: bytes, key_id: str) -> None:
-        '''
+        """
         :param str algorithm:
             The algorithm used for wrapping.
         :param bytes encrypted_key:
             The encrypted content-encryption-key.
         :param str key_id:
             The key-encryption-key identifier string.
-        '''
+        """
         _validate_not_none('algorithm', algorithm)
         _validate_not_none('encrypted_key', encrypted_key)
         _validate_not_none('key_id', key_id)
@@ -106,20 +124,20 @@ class _WrappedContentKey:
 
 
 class _EncryptedRegionInfo:
-    '''
+    """
     Represents the length of encryption elements.
     This is only used for Encryption V2.
-    '''
+    """
 
     def __init__(self, data_length: int, nonce_length: int, tag_length: int) -> None:
-        '''
+        """
         :param int data_length:
             The length of the encryption region data (not including nonce + tag).
         :param int nonce_length:
             The length of nonce used when encrypting.
         :param int tag_length:
             The length of the encryption tag.
-        '''
+        """
         _validate_not_none('data_length', data_length)
         _validate_not_none('nonce_length', nonce_length)
         _validate_not_none('tag_length', tag_length)
@@ -130,18 +148,18 @@ class _EncryptedRegionInfo:
 
 
 class _EncryptionAgent:
-    '''
+    """
     Represents the encryption agent stored on the service.
     It consists of the encryption protocol version and encryption algorithm used.
-    '''
+    """
 
     def __init__(self, encryption_algorithm: _EncryptionAlgorithm, protocol: str) -> None:
-        '''
+        """
         :param _EncryptionAlgorithm encryption_algorithm:
             The algorithm used for encrypting the message contents.
         :param str protocol:
             The protocol version used for encryption.
-        '''
+        """
         _validate_not_none('encryption_algorithm', encryption_algorithm)
         _validate_not_none('protocol', protocol)
 
@@ -150,9 +168,9 @@ class _EncryptionAgent:
 
 
 class _EncryptionData:
-    '''
+    """
     Represents the encryption data that is stored on the service.
-    '''
+    """
 
     def __init__(
         self, content_encryption_IV: Optional[bytes],
@@ -161,7 +179,7 @@ class _EncryptionData:
         wrapped_content_key: _WrappedContentKey,
         key_wrapping_metadata: Dict[str, Any]
     ) -> None:
-        '''
+        """
         :param Optional[bytes] content_encryption_IV:
             The content encryption initialization vector.
             Required for AES-CBC (V1).
@@ -175,7 +193,7 @@ class _EncryptionData:
             and the encrypted key bytes.
         :param Dict[str, Any] key_wrapping_metadata:
             A dict containing metadata related to the key wrapping.
-        '''
+        """
         _validate_not_none('encryption_agent', encryption_agent)
         _validate_not_none('wrapped_content_key', wrapped_content_key)
 
@@ -195,20 +213,20 @@ class _EncryptionData:
 
 
 class GCMBlobEncryptionStream:
-    '''
+    """
     A stream that performs AES-GCM encryption on the given data as
     it's streamed. Data is read and encrypted in regions. The stream
     will use the same encryption key and will generate a guaranteed unique
     nonce for each encryption region.
-    '''
+    """
     def __init__(
         self, content_encryption_key: bytes,
         data_stream: BinaryIO,
     ) -> None:
-        '''
+        """
         :param bytes content_encryption_key: The encryption key to use.
         :param BinaryIO data_stream: The data stream to read data from.
-        '''
+        """
         self.content_encryption_key = content_encryption_key
         self.data_stream = data_stream
 
@@ -268,7 +286,7 @@ class GCMBlobEncryptionStream:
         return nonce + ciphertext_with_tag
 
 
-def is_encryption_v2(encryption_data: Optional[_EncryptionData]) ->  Optional[Union[_EncryptionData, bool]]:
+def is_encryption_v2(encryption_data: Optional[_EncryptionData]) ->  bool:
     """
     Determine whether the given encryption data signifies version 2.0.
 
@@ -277,7 +295,10 @@ def is_encryption_v2(encryption_data: Optional[_EncryptionData]) ->  Optional[Un
     :rtype: bool
     """
     # If encryption_data is None, assume no encryption
-    return encryption_data and encryption_data.encryption_agent.protocol == _ENCRYPTION_PROTOCOL_V2
+    if encryption_data and (encryption_data.encryption_agent.protocol == _ENCRYPTION_PROTOCOL_V2):
+        return True
+    
+    return False
 
 
 def modify_user_agent_for_encryption(
@@ -376,12 +397,11 @@ def get_adjusted_download_range_and_offset(
         start_offset, end_offset = 0, end
 
         if encryption_data.encrypted_region_info is not None:
-            if isinstance(encryption_data.encrypted_region_info, _EncryptedRegionInfo):
-                nonce_length = encryption_data.encrypted_region_info.nonce_length
-                data_length = encryption_data.encrypted_region_info.data_length
-                tag_length = encryption_data.encrypted_region_info.tag_length
-                region_length = nonce_length + data_length + tag_length
-                requested_length = end - start
+            nonce_length = encryption_data.encrypted_region_info.nonce_length
+            data_length = encryption_data.encrypted_region_info.data_length
+            tag_length = encryption_data.encrypted_region_info.tag_length
+        region_length = nonce_length + data_length + tag_length
+        requested_length = end - start
 
         if start is not None:
             # Find which data region the start is in
@@ -421,62 +441,60 @@ def parse_encryption_data(metadata: Dict[str, Any]) -> Optional[_EncryptionData]
         return None
 
 
-def adjust_blob_size_for_encryption(size: int, encryption_data: Optional[_EncryptionData]) -> int:
+def adjust_blob_size_for_encryption(size: int, encryption_data: _EncryptionData) -> int:
     """
     Adjusts the given blob size for encryption by subtracting the size of
     the encryption data (nonce + tag). This only has an affect for encryption V2.
 
     :param int size: The original blob size.
-    :param Optional[_EncryptionData] encryption_data: The encryption data to determine version and sizes.
+    :param _EncryptionData encryption_data: The encryption data to determine version and sizes.
     :return: The new blob size.
     :rtype: int
     """
-    if is_encryption_v2(encryption_data):
-        if encryption_data is not None:
-            if encryption_data.encrypted_region_info is not None:
-                if isinstance(encryption_data.encrypted_region_info, _EncryptedRegionInfo):
-                    nonce_length = encryption_data.encrypted_region_info.nonce_length
-                    data_length = encryption_data.encrypted_region_info.data_length
-                    tag_length = encryption_data.encrypted_region_info.tag_length
-                    region_length = nonce_length + data_length + tag_length
+    if is_encryption_v2(encryption_data) and encryption_data.encrypted_region_info is not None:
+        nonce_length = encryption_data.encrypted_region_info.nonce_length
+        data_length = encryption_data.encrypted_region_info.data_length
+        tag_length = encryption_data.encrypted_region_info.tag_length
+        region_length = nonce_length + data_length + tag_length
 
-                num_regions = math.ceil(size / region_length)
-                metadata_size = num_regions * (nonce_length + tag_length)
-                return size - metadata_size
+        num_regions = math.ceil(size / region_length)
+        metadata_size = num_regions * (nonce_length + tag_length)
+        return size - metadata_size
 
     return size
 
 
-def _generate_encryption_data_dict(kek: object, cek: bytes, iv: Optional[bytes], version: str) -> Dict[str, Any]:
-    '''
+def _generate_encryption_data_dict(
+        kek: KeyEncryptionKey,
+        cek: bytes,
+        iv: Optional[bytes],
+        version: str
+    ) -> Dict[str, Any]:
+    """
     Generates and returns the encryption metadata as a dict.
 
-    :param object kek: The key encryption key. See calling functions for more information.
+    :param KeyEncryptionKey kek: The key encryption key. See calling functions for more information.
     :param bytes cek: The content encryption key.
     :param Optional[bytes] iv: The initialization vector. Only required for AES-CBC.
     :param str version: The client encryption version used.
     :return: A dict containing all the encryption metadata.
     :rtype: dict
-    '''
+    """
     # Encrypt the cek.
     if version == _ENCRYPTION_PROTOCOL_V1:
-        if hasattr(kek, 'wrap_key'):
-            wrapped_cek = kek.wrap_key(cek)
+        wrapped_cek = kek.wrap_key(cek)
     # For V2, we include the encryption version in the wrapped key.
     elif version == _ENCRYPTION_PROTOCOL_V2:
         # We must pad the version to 8 bytes for AES Keywrap algorithms
         to_wrap = _ENCRYPTION_PROTOCOL_V2.encode().ljust(8, b'\0') + cek
-        if hasattr(kek, 'wrap_key'):
-            wrapped_cek = kek.wrap_key(to_wrap)
+        wrapped_cek = kek.wrap_key(to_wrap)
 
     # Build the encryption_data dict.
     # Use OrderedDict to comply with Java's ordering requirement.
     wrapped_content_key = OrderedDict()
-    if hasattr(kek, 'get_kid'):
-        wrapped_content_key['KeyId'] = kek.get_kid()
+    wrapped_content_key['KeyId'] = kek.get_kid()
     wrapped_content_key['EncryptedKey'] = encode_base64(wrapped_cek)
-    if hasattr(kek, 'get_key_wrap_algorithm'):
-        wrapped_content_key['Algorithm'] = kek.get_key_wrap_algorithm()
+    wrapped_content_key['Algorithm'] = kek.get_key_wrap_algorithm()
 
     encryption_agent = OrderedDict()
     encryption_agent['Protocol'] = version
@@ -498,13 +516,13 @@ def _generate_encryption_data_dict(kek: object, cek: bytes, iv: Optional[bytes],
         encryption_data_dict['ContentEncryptionIV'] = encode_base64(iv)
     elif version == _ENCRYPTION_PROTOCOL_V2:
         encryption_data_dict['EncryptedRegionInfo'] = encrypted_region_info
-    encryption_data_dict['KeyWrappingMetadata'] = OrderedDict([('EncryptionLibrary', 'Python ' + VERSION)])
+    encryption_data_dict['KeyWrappingMetadata'] = OrderedDict({'EncryptionLibrary': 'Python ' + VERSION})
 
     return encryption_data_dict
 
 
 def _dict_to_encryption_data(encryption_data_dict: Dict[str, Any]) -> _EncryptionData:
-    '''
+    """
     Converts the specified dictionary to an EncryptionData object for
     eventual use in decryption.
 
@@ -512,7 +530,7 @@ def _dict_to_encryption_data(encryption_data_dict: Dict[str, Any]) -> _Encryptio
         The dictionary containing the encryption data.
     :return: an _EncryptionData object built from the dictionary.
     :rtype: _EncryptionData
-    '''
+    """
     try:
         protocol = encryption_data_dict['EncryptionAgent']['Protocol']
         if protocol not in [_ENCRYPTION_PROTOCOL_V1, _ENCRYPTION_PROTOCOL_V2]:
@@ -556,14 +574,14 @@ def _dict_to_encryption_data(encryption_data_dict: Dict[str, Any]) -> _Encryptio
 
 
 def _generate_AES_CBC_cipher(cek: bytes, iv: bytes) -> Cipher:
-    '''
+    """
     Generates and returns an encryption cipher for AES CBC using the given cek and iv.
 
     :param bytes[] cek: The content encryption key for the cipher.
     :param bytes[] iv: The initialization vector for the cipher.
     :return: A cipher for encrypting in AES256 CBC.
     :rtype: ~cryptography.hazmat.primitives.ciphers.Cipher
-    '''
+    """
 
     backend = default_backend()
     algorithm = AES(cek)
@@ -573,23 +591,28 @@ def _generate_AES_CBC_cipher(cek: bytes, iv: bytes) -> Cipher:
 
 def _validate_and_unwrap_cek(
     encryption_data: _EncryptionData,
-    key_encryption_key: object = None,
+    key_encryption_key: KeyEncryptionKey,
     key_resolver: Optional[Callable[[str], bytes]] = None
 ) -> bytes:
-    '''
+    """
     Extracts and returns the content_encryption_key stored in the encryption_data object
     and performs necessary validation on all parameters.
     :param _EncryptionData encryption_data:
         The encryption metadata of the retrieved value.
-    :param object key_encryption_key:
-        The key_encryption_key used to unwrap the cek. Please refer to high-level service object
-        instance variables for more details.
+    :param KeyEncryptionKey key_encryption_key:
+        The user-provided key-encryption-key. Must implement the following methods:
+        wrap_key(key)
+            - Wraps the specified key using an algorithm of the user's choice.
+        get_key_wrap_algorithm()
+            - Returns the algorithm used to wrap the specified symmetric key.
+        get_kid()
+            - Returns a string key id for this key-encryption-key.
     :param Optional[Callable[[str], bytes]] key_resolver:
         A function used that, given a key_id, will return a key_encryption_key. Please refer
         to high-level service object instance variables for more details.
-    :return: the content_encryption_key stored in the encryption_data object.
+    :return: The content_encryption_key stored in the encryption_data object.
     :rtype: bytes
-    '''
+    """
 
     _validate_not_none('encrypted_key', encryption_data.wrapped_content_key.encrypted_key)
 
@@ -601,11 +624,11 @@ def _validate_and_unwrap_cek(
     else:
         raise ValueError('Specified encryption version is not supported.')
 
-    content_encryption_key = None
+    content_encryption_key = b''
 
     # If the resolver exists, give priority to the key it finds.
     if key_resolver is not None:
-        key_encryption_key = key_resolver(encryption_data.wrapped_content_key.key_id)
+        key_encryption_key = key_resolver(encryption_data.wrapped_content_key.key_id) #type: ignore [assignment]
 
     _validate_not_none('key_encryption_key', key_encryption_key)
     if not hasattr(key_encryption_key, 'get_kid') or not callable(key_encryption_key.get_kid):
@@ -615,47 +638,48 @@ def _validate_and_unwrap_cek(
     if encryption_data.wrapped_content_key.key_id != key_encryption_key.get_kid():
         raise ValueError('Provided or resolved key-encryption-key does not match the id of key used to encrypt.')
     # Will throw an exception if the specified algorithm is not supported.
-    if hasattr(key_encryption_key, 'unwrap_key'):
-        content_encryption_key = key_encryption_key.unwrap_key(encryption_data.wrapped_content_key.encrypted_key,
+    content_encryption_key = key_encryption_key.unwrap_key(encryption_data.wrapped_content_key.encrypted_key,
                                                                encryption_data.wrapped_content_key.algorithm)
 
     # For V2, the version is included with the cek. We need to validate it
     # and remove it from the actual cek.
     if encryption_data.encryption_agent.protocol == _ENCRYPTION_PROTOCOL_V2:
         version_2_bytes = _ENCRYPTION_PROTOCOL_V2.encode().ljust(8, b'\0')
-        cek_version_bytes = content_encryption_key[:len(version_2_bytes)] #type: ignore [index]
+        cek_version_bytes = content_encryption_key[:len(version_2_bytes)]
         if cek_version_bytes != version_2_bytes:
             raise ValueError('The encryption metadata is not valid and may have been modified.')
 
         # Remove version from the start of the cek.
-        content_encryption_key = content_encryption_key[len(version_2_bytes):] #type: ignore [index]
+        content_encryption_key = content_encryption_key[len(version_2_bytes):]
 
     _validate_not_none('content_encryption_key', content_encryption_key)
 
-    return content_encryption_key #type: ignore[return-value]
+    return content_encryption_key
 
 
 def _decrypt_message(
     message: str,
     encryption_data: _EncryptionData,
-    key_encryption_key: object = None,
+    key_encryption_key: KeyEncryptionKey,
     resolver: Optional[Callable] = None
 ) -> str:
     """
     Decrypts the given ciphertext using AES256 in CBC mode with 128 bit padding.
     Unwraps the content-encryption-key using the user-provided or resolved key-encryption-key (kek).
-    Returns the original plaintex.
+    Returns the original plaintext.
 
     :param str message:
         The ciphertext to be decrypted.
     :param _EncryptionData encryption_data:
         The metadata associated with this ciphertext.
-    :param object key_encryption_key:
+    :param KeyEncryptionKey key_encryption_key:
         The user-provided key-encryption-key. Must implement the following methods:
-        unwrap_key(key, algorithm)
-            - returns the unwrapped form of the specified symmetric key using the string-specified algorithm.
+        wrap_key(key)
+            - Wraps the specified key using an algorithm of the user's choice.
+        get_key_wrap_algorithm()
+            - Returns the algorithm used to wrap the specified symmetric key.
         get_kid()
-            - returns a string key id for this key-encryption-key.
+            - Returns a string key id for this key-encryption-key.
     :param Callable resolver:
         The user-provided key resolver. Uses the kid string to return a key-encryption-key
         implementing the interface defined above.
@@ -686,15 +710,15 @@ def _decrypt_message(
             raise ValueError("Missing required metadata for decryption.")
 
         if encryption_data.encrypted_region_info is not None:
-            if isinstance(encryption_data.encrypted_region_info, _EncryptedRegionInfo):
-                nonce_length = encryption_data.encrypted_region_info.nonce_length
+            nonce_length = encryption_data.encrypted_region_info.nonce_length
 
         # First bytes are the nonce
-        nonce = message[:nonce_length]
-        ciphertext_with_tag = message[nonce_length:]
+        message_as_bytes = message.encode('utf-8')
+        nonce = message_as_bytes[:nonce_length]
+        ciphertext_with_tag = message_as_bytes[nonce_length:]
 
         aesgcm = AESGCM(content_encryption_key)
-        decrypted_data = aesgcm.decrypt(nonce, ciphertext_with_tag, None) #type: ignore
+        decrypted_data = (aesgcm.decrypt(nonce, ciphertext_with_tag, None)).decode()
 
     else:
         raise ValueError('Specified encryption version is not supported.')
@@ -702,8 +726,8 @@ def _decrypt_message(
     return decrypted_data
 
 
-def encrypt_blob(blob: bytes, key_encryption_key: object, version: str) -> Tuple[str, bytes]:
-    '''
+def encrypt_blob(blob: bytes, key_encryption_key: KeyEncryptionKey, version: str) -> Tuple[str, bytes]:
+    """
     Encrypts the given blob using the given encryption protocol version.
     Wraps the generated content-encryption-key using the user-provided key-encryption-key (kek).
     Returns a json-formatted string containing the encryption metadata. This method should
@@ -712,15 +736,18 @@ def encrypt_blob(blob: bytes, key_encryption_key: object, version: str) -> Tuple
 
     :param bytes blob:
         The blob to be encrypted.
-    :param object key_encryption_key:
+    :param KeyEncryptionKey key_encryption_key:
         The user-provided key-encryption-key. Must implement the following methods:
-        wrap_key(key)--wraps the specified key using an algorithm of the user's choice.
-        get_key_wrap_algorithm()--returns the algorithm used to wrap the specified symmetric key.
-        get_kid()--returns a string key id for this key-encryption-key.
+        wrap_key(key)
+            - Wraps the specified key using an algorithm of the user's choice.
+        get_key_wrap_algorithm()
+            - Returns the algorithm used to wrap the specified symmetric key.
+        get_kid()
+            - Returns a string key id for this key-encryption-key.
     :param str version: The client encryption version to use.
     :return: A tuple of json-formatted string containing the encryption metadata and the encrypted blob data.
     :rtype: (str, bytes)
-    '''
+    """
 
     _validate_not_none('blob', blob)
     _validate_not_none('key_encryption_key', key_encryption_key)
@@ -761,45 +788,41 @@ def encrypt_blob(blob: bytes, key_encryption_key: object, version: str) -> Tuple
     return dumps(encryption_data), encrypted_data
 
 
-def generate_blob_encryption_data(key_encryption_key: object, version: str) -> Tuple[bytes, Optional[bytes], Dict[str, Any]]: # pylint: disable=line-too-long
-    '''
+def generate_blob_encryption_data(
+        key_encryption_key: KeyEncryptionKey,
+        version: str
+        ) -> Tuple[bytes, Optional[bytes], str]:
+    """
     Generates the encryption_metadata for the blob.
 
-    :param object key_encryption_key:
+    :param KeyEncryptionKey key_encryption_key:
         The key-encryption-key used to wrap the cek associate with this blob.
     :param str version: The client encryption version to use.
     :return: A tuple containing the cek and iv for this blob as well as the
         serialized encryption metadata for the blob.
     :rtype: (bytes, Optional[bytes], str)
-    '''
-    encryption_data = None
-    content_encryption_key = None
+    """
+
     initialization_vector = None
-    if key_encryption_key:
-        _validate_key_encryption_key_wrap(key_encryption_key)
-        content_encryption_key = os.urandom(32)
-        # Initialization vector only needed for V1
-        if version == _ENCRYPTION_PROTOCOL_V1:
-            initialization_vector = os.urandom(16)
-        encryption_data = _generate_encryption_data_dict(key_encryption_key,
-                                                         content_encryption_key,
-                                                         initialization_vector,
-                                                         version)
-        encryption_data['EncryptionMode'] = 'FullBlob'
-        encryption_data = dumps(encryption_data) # type: ignore
 
-        if content_encryption_key is not None:
-            valid_cek = content_encryption_key
+    _validate_key_encryption_key_wrap(key_encryption_key)
+    content_encryption_key = os.urandom(32)
+    # Initialization vector only needed for V1
+    if version == _ENCRYPTION_PROTOCOL_V1:
+        initialization_vector = os.urandom(16)
+    encryption_data = _generate_encryption_data_dict(key_encryption_key,
+                                                        content_encryption_key,
+                                                        initialization_vector,
+                                                        version)
+    encryption_data['EncryptionMode'] = 'FullBlob'
+    encryption_data_dump = dumps(encryption_data)
 
-        if encryption_data is not None:
-            valid_encryption_data = encryption_data
-
-    return valid_cek, initialization_vector, valid_encryption_data
+    return content_encryption_key, initialization_vector, encryption_data_dump
 
 
 def decrypt_blob(  # pylint: disable=too-many-locals,too-many-statements
         require_encryption: bool,
-        key_encryption_key: object,
+        key_encryption_key: KeyEncryptionKey,
         key_resolver: Callable[[str], bytes],
         content: bytes,
         start_offset: int,
@@ -811,11 +834,14 @@ def decrypt_blob(  # pylint: disable=too-many-locals,too-many-statements
 
     :param bool require_encryption:
         Whether the calling blob service requires objects to be decrypted.
-    :param object key_encryption_key:
+    :param KeyEncryptionKey key_encryption_key:
         The user-provided key-encryption-key. Must implement the following methods:
-        wrap_key(key)--wraps the specified key using an algorithm of the user's choice.
-        get_key_wrap_algorithm()--returns the algorithm used to wrap the specified symmetric key.
-        get_kid()--returns a string key id for this key-encryption-key.
+        wrap_key(key)
+            - Wraps the specified key using an algorithm of the user's choice.
+        get_key_wrap_algorithm()
+            - Returns the algorithm used to wrap the specified symmetric key.
+        get_kid()
+            - Returns a string key id for this key-encryption-key.
     :param object key_resolver:
         The user-provided key resolver. Uses the kid string to return a key-encryption-key
         implementing the interface defined above.
@@ -854,7 +880,7 @@ def decrypt_blob(  # pylint: disable=too-many-locals,too-many-statements
     if version == _ENCRYPTION_PROTOCOL_V1:
         blob_type = response_headers['x-ms-blob-type']
 
-        iv = None
+        iv = b''
         unpad = False
         if 'content-range' in response_headers:
             content_range = response_headers['content-range']
@@ -873,19 +899,18 @@ def decrypt_blob(  # pylint: disable=too-many-locals,too-many-statements
                 content = content[16:]
                 start_offset -= 16
             else:
-                iv = encryption_data.content_encryption_IV
+                iv = encryption_data.content_encryption_IV #type: ignore [assignment]
 
             if end_range == blob_size - 1:
                 unpad = True
         else:
             unpad = True
-            iv = encryption_data.content_encryption_IV
+            iv = encryption_data.content_encryption_IV #type: ignore [assignment]
 
         if blob_type == 'PageBlob':
             unpad = False
 
-        if isinstance(iv, bytes):
-            cipher = _generate_AES_CBC_cipher(content_encryption_key, iv)
+        cipher = _generate_AES_CBC_cipher(content_encryption_key, iv)
         decryptor = cipher.decryptor()
 
         content = decryptor.update(content) + decryptor.finalize()
@@ -901,11 +926,10 @@ def decrypt_blob(  # pylint: disable=too-many-locals,too-many-statements
         offset = 0
 
         if encryption_data.encrypted_region_info is not None:
-            if isinstance(encryption_data.encrypted_region_info, _EncryptedRegionInfo):
-                nonce_length = encryption_data.encrypted_region_info.nonce_length
-                data_length = encryption_data.encrypted_region_info.data_length
-                tag_length = encryption_data.encrypted_region_info.tag_length
-                region_length = nonce_length + data_length + tag_length
+            nonce_length = encryption_data.encrypted_region_info.nonce_length
+            data_length = encryption_data.encrypted_region_info.data_length
+            tag_length = encryption_data.encrypted_region_info.tag_length
+        region_length = nonce_length + data_length + tag_length
 
         decrypted_content = bytearray()
         while offset < total_size:
@@ -945,23 +969,26 @@ def get_blob_encryptor_and_padder(
     return encryptor, padder
 
 
-def encrypt_queue_message(message: str, key_encryption_key: object, version: str) -> str:
-    '''
+def encrypt_queue_message(message: str, key_encryption_key: KeyEncryptionKey, version: str) -> str:
+    """
     Encrypts the given plain text message using the given protocol version.
     Wraps the generated content-encryption-key using the user-provided key-encryption-key (kek).
     Returns a json-formatted string containing the encrypted message and the encryption metadata.
 
     :param object message:
         The plain text message to be encrypted.
-    :param object key_encryption_key:
+    :param KeyEncryptionKey key_encryption_key:
         The user-provided key-encryption-key. Must implement the following methods:
-        wrap_key(key)--wraps the specified key using an algorithm of the user's choice.
-        get_key_wrap_algorithm()--returns the algorithm used to wrap the specified symmetric key.
-        get_kid()--returns a string key id for this key-encryption-key.
+        wrap_key(key)
+            - Wraps the specified key using an algorithm of the user's choice.
+        get_key_wrap_algorithm()
+            - Returns the algorithm used to wrap the specified symmetric key.
+        get_kid()
+            - Returns a string key id for this key-encryption-key.
     :param str version: The client encryption version to use.
     :return: A json-formatted string containing the encrypted message and the encryption metadata.
     :rtype: str
-    '''
+    """
 
     _validate_not_none('message', message)
     _validate_not_none('key_encryption_key', key_encryption_key)
@@ -970,7 +997,6 @@ def encrypt_queue_message(message: str, key_encryption_key: object, version: str
     # Queue encoding functions all return unicode strings, and encryption should
     # operate on binary strings.
     message_as_bytes: bytes = message.encode('utf-8')
-
 
     if version == _ENCRYPTION_PROTOCOL_V1:
         # AES256 CBC uses 256 bit (32 byte) keys and always with 16 byte blocks
@@ -1017,7 +1043,7 @@ def decrypt_queue_message(
     message: str,
     response: "PipelineResponse",
     require_encryption: bool,
-    key_encryption_key: object,
+    key_encryption_key: KeyEncryptionKey,
     resolver: Callable[[str], bytes]
 ) -> str:
     """
@@ -1029,12 +1055,14 @@ def decrypt_queue_message(
         The pipeline response used to generate an error with.
     :param bool require_encryption:
         If set, will enforce that the retrieved messages are encrypted and decrypt them.
-    :param object key_encryption_key:
+    :param KeyEncryptionKey key_encryption_key:
         The user-provided key-encryption-key. Must implement the following methods:
-        unwrap_key(key, algorithm)
-            - returns the unwrapped form of the specified symmetric key usingthe string-specified algorithm.
+        wrap_key(key)
+            - Wraps the specified key using an algorithm of the user's choice.
+        get_key_wrap_algorithm()
+            - Returns the algorithm used to wrap the specified symmetric key.
         get_kid()
-            - returns a string key id for this key-encryption-key.
+            - Returns a string key id for this key-encryption-key.
     :param Callable resolver:
         The user-provided key resolver. Uses the kid string to return a key-encryption-key
         implementing the interface defined above.
@@ -1059,7 +1087,7 @@ def decrypt_queue_message(
 
         return message
     try:
-        return _decrypt_message(decoded_data, encryption_data, key_encryption_key, resolver).decode('utf-8') #type: ignore  # pylint: disable=line-too-long
+        return _decrypt_message(decoded_data, encryption_data, key_encryption_key, resolver)
     except Exception as error:
         raise HttpResponseError(
             message="Decryption failed.",
