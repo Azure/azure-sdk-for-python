@@ -11,7 +11,7 @@ from abc import abstractmethod
 from collections import OrderedDict
 from os import PathLike
 from pathlib import Path
-from typing import IO, AnyStr, Dict, Optional, Type, Union
+from typing import IO, AnyStr, Dict, List, Optional, Tuple, Type, Union
 
 from azure.ai.ml._restclient.runhistory.models import Run
 from azure.ai.ml._restclient.v2023_04_01_preview.models import JobBase, JobService
@@ -200,7 +200,7 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
         pass
 
     @classmethod
-    def _resolve_cls_and_type(cls, data, params_override):
+    def _resolve_cls_and_type(cls, data: Dict, params_override: Optional[List[Dict]] = None) -> Tuple:
         from azure.ai.ml.entities._builders.command import Command
         from azure.ai.ml.entities._builders.spark import Spark
         from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
