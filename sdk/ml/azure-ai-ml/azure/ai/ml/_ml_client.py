@@ -190,7 +190,8 @@ class MLClient:
             )
 
         self._credential = credential
-
+        self._ws_rg = None,
+        self._ws_sub = None,
         show_progress = kwargs.pop("show_progress", True)
         enable_telemetry = kwargs.pop("enable_telemetry", True)
         self._operation_config = OperationConfig(show_progress=show_progress, enable_telemetry=enable_telemetry)
