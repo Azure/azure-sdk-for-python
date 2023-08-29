@@ -5,9 +5,9 @@
 
 from os import PathLike
 from typing import IO, AnyStr, Dict, List, Optional, Union
+
 from azure.ai.ml import Input
-from azure.ai.ml._utils.utils import load_yaml
-from azure.ai.ml._utils.utils import dump_yaml_to_file
+from azure.ai.ml._utils.utils import dump_yaml_to_file, load_yaml
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 
 
@@ -69,7 +69,7 @@ class FederatedLearningSilo:
         # pylint: disable=no-member
         schema = FederatedLearningSiloSchema(context={BASE_PATH_CONTEXT_KEY: "./"})
 
-        return schema.dump(self)
+        return Dict(schema.dump(self))
 
     @classmethod
     def _load_from_dict(cls, silo_dict: dict) -> "FederatedLearningSilo":
