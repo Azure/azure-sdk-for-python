@@ -53,7 +53,7 @@ class IotCentralClientConfiguration(Configuration):  # pylint: disable=too-many-
         self.subscription_id = subscription_id
         self.api_version = api_version
         self.credential_scopes = kwargs.pop("credential_scopes", ["https://management.azure.com/.default"])
-        kwargs.setdefault("sdk_moniker", "mgmt-iotcentral/{}".format(VERSION))
+        kwargs.setdefault("sdk_moniker", f"mgmt-iotcentral/{VERSION}")
         self._configure(**kwargs)
 
     def _configure(self, **kwargs: Any) -> None:
