@@ -31,14 +31,24 @@ class DictMixin(object):
 
     def __eq__(self, other):
         # type: (Any) -> bool
-        """Compare objects by comparing all attributes."""
+        """Compare objects by comparing all attributes.
+
+        :param any other: Any object
+        :return: True if objects are equal, False otherwise.
+        :rtype: bool
+        """
         if isinstance(other, self.__class__):
             return self.__dict__ == other.__dict__
         return False
 
     def __ne__(self, other):
         # type: (Any) -> bool
-        """Compare objects by comparing all attributes."""
+        """Compare objects by comparing all attributes.
+
+        :param any other: Any object
+        :return: True if objects are not equal, False otherwise.
+        :rtype: bool
+        """
         return not self.__eq__(other)
 
     def __contains__(self, key):

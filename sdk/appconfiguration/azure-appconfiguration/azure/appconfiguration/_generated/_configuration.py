@@ -14,7 +14,7 @@ from azure.core.pipeline import policies
 VERSION = "unknown"
 
 
-class AzureAppConfigurationConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
+class AzureAppConfigurationConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes,name-too-long
     """Configuration for AzureAppConfiguration.
 
     Note that all parameters used to create this instance are saved as instance

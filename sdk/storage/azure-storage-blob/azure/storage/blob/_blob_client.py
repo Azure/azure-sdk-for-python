@@ -25,7 +25,9 @@ from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str,
 from ._shared.uploads import IterStreamer
 from ._shared.uploads_async import AsyncIterStreamer
 from ._shared.request_handlers import (
-    add_metadata_headers, get_length, read_length,
+    add_metadata_headers,
+    get_length,
+    read_length,
     validate_and_format_range_headers)
 from ._shared.response_handlers import return_response_headers, process_storage_error, return_headers_and_deserialized
 from ._generated import AzureBlobStorage
@@ -55,7 +57,7 @@ from ._deserialize import (
     deserialize_pipeline_response_into_cls
 )
 from ._download import StorageStreamDownloader
-from ._encryption import StorageEncryptionMixin
+from ._encryption import modify_user_agent_for_encryption, StorageEncryptionMixin
 from ._lease import BlobLeaseClient
 from ._models import BlobType, BlobBlock, BlobProperties, BlobQueryError, QuickQueryDialect, \
     DelimitedJsonDialect, DelimitedTextDialect, PageRangePaged, PageRange
@@ -424,6 +426,13 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         kwargs['blob_settings'] = self._config
         kwargs['max_concurrency'] = max_concurrency
         kwargs['encryption_options'] = encryption_options
+        # Add feature flag to user agent for encryption
+        if self.key_encryption_key:
+            modify_user_agent_for_encryption(
+                self._config.user_agent_policy.user_agent,
+                self._sdk_moniker,
+                self.encryption_version,
+                kwargs)
 
         if blob_type == BlobType.BlockBlob:
             kwargs['client'] = self._client.block_blob
@@ -747,7 +756,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
 
     def _download_blob_options(self, offset=None, length=None, encoding=None, **kwargs):
         # type: (Optional[int], Optional[int], Optional[str], **Any) -> Dict[str, Any]
-        if self.require_encryption and not self.key_encryption_key:
+        if self.require_encryption and not (self.key_encryption_key or self.key_resolver_function):
             raise ValueError("Encryption required but no key was provided.")
         if length is not None and offset is None:
             raise ValueError("Offset value must not be None if length is set.")
@@ -766,6 +775,14 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
                 raise ValueError("Customer provided encryption key must be used over HTTPS.")
             cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
                                encryption_algorithm=cpk.algorithm)
+
+        # Add feature flag to user agent for encryption
+        if self.key_encryption_key or self.key_resolver_function:
+            modify_user_agent_for_encryption(
+                self._config.user_agent_policy.user_agent,
+                self._sdk_moniker,
+                self.encryption_version,
+                kwargs)
 
         options = {
             'clients': self._client,
