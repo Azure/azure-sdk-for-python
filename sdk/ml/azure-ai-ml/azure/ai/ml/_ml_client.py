@@ -246,6 +246,8 @@ class MLClient:
                     ),
                     self._credential,
                 )
+                self._ws_rg = resource_group_name
+                self._ws_sub = subscription_id
                 workspace_details = ws_ops.get(workspace_reference if workspace_reference else workspace_name)
                 workspace_location, workspace_id = (
                     workspace_details.location,
@@ -450,6 +452,8 @@ class MLClient:
             self._operation_container,
             requests_pipeline=self._requests_pipeline,
             control_plane_client=self._service_client_04_2023_preview,
+            workspace_rg = self._ws_rg,
+            workspace_sub = self._ws_sub,
             registry_reference=registry_reference,
             **app_insights_handler_kwargs,
         )
@@ -746,6 +750,15 @@ class MLClient:
         :rtype: ~azure.ai.ml.operations.WorkspaceOperations
         """
         return self._workspaces
+
+    @property
+    def workspace_outbound_rules(self) -> WorkspaceOutboundRuleOperations:
+        """A collection of workspace outbound rule related operations.
+
+        :return: Workspace outbound rule operations
+        :rtype: ~azure.ai.ml.operations.WorkspaceOutboundRuleOperations
+        """
+        return self._workspace_outbound_rules
 
     @property
     @experimental

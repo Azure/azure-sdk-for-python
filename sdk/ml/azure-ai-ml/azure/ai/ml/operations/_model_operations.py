@@ -4,13 +4,12 @@
 
 # pylint: disable=protected-access,no-value-for-parameter,disable=docstring-missing-return,docstring-missing-param,docstring-missing-rtype,ungrouped-imports,line-too-long
 
+from contextlib import contextmanager
 from os import PathLike, path
 from typing import Dict, Iterable, Optional, Union
-from contextlib import contextmanager
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 from azure.ai.ml.constants._common import REGISTRY_URI_FORMAT
 
-from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._artifacts._artifact_utilities import (
     _check_and_upload_path,
     _get_default_datastore_info,
@@ -21,8 +20,6 @@ from azure.ai.ml._artifacts._constants import (
     CHANGED_ASSET_PATH_MSG,
     CHANGED_ASSET_PATH_MSG_NO_PERSONAL_DATA,
 )
-from azure.ai.ml._utils._arm_id_utils import is_ARM_id_for_resource
-from azure.ai.ml._utils._registry_utils import get_registry_client
 from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
     AzureMachineLearningWorkspaces as ServiceClient102021Dataplane,
@@ -36,23 +33,23 @@ from azure.ai.ml._restclient.v2023_04_01_preview import (
 )
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
+    OperationsContainer,
     OperationScope,
     _ScopeDependentOperations,
-    OperationsContainer,
 )
-from azure.ai.ml.entities._assets._artifacts.code import Code
-
-from azure.ai.ml.constants._common import ARM_ID_PREFIX
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
+from azure.ai.ml._utils._arm_id_utils import is_ARM_id_for_resource
 from azure.ai.ml._utils._asset_utils import (
     _archive_or_restore,
     _get_latest,
-    _resolve_label_to_asset,
     _get_next_version_from_container,
+    _resolve_label_to_asset,
 )
+from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils._registry_utils import (
     get_asset_body_for_registry_storage,
+    get_registry_client,
     get_sas_uri_for_registry_asset,
     get_storage_details_for_registry_assets,
 )
@@ -64,11 +61,12 @@ from azure.ai.ml._utils.utils import (
     resolve_short_datastore_url,
     validate_ml_flow_folder,
 )
-from azure.ai.ml.constants._common import ASSET_ID_FORMAT, AzureMLResourceType
 from azure.ai.ml.entities._assets import Model, ModelPackage, Environment
 from azure.ai.ml.entities._assets.workspace_asset_reference import (
     WorkspaceAssetReference,
 )
+from azure.ai.ml.constants._common import ARM_ID_PREFIX, ASSET_ID_FORMAT, AzureMLResourceType
+from azure.ai.ml.entities._assets._artifacts.code import Code
 from azure.ai.ml.entities._credentials import AccountKeyConfiguration
 from azure.ai.ml.exceptions import (
     AssetPathException,
@@ -77,8 +75,9 @@ from azure.ai.ml.exceptions import (
     ValidationErrorType,
     ValidationException,
 )
-from azure.core.exceptions import ResourceNotFoundError
 from azure.ai.ml.operations._datastore_operations import DatastoreOperations
+from azure.core.exceptions import ResourceNotFoundError
+
 from ._operation_orchestrator import OperationOrchestrator
 
 ops_logger = OpsLogger(__name__)
@@ -90,6 +89,21 @@ class ModelOperations(_ScopeDependentOperations):
 
     You should not instantiate this class directly. Instead, you should create an MLClient instance that instantiates it
     for you and attaches it as an attribute.
+
+    :param operation_scope: Scope variables for the operations classes of an MLClient object.
+    :type operation_scope: ~azure.ai.ml._scope_dependent_operations.OperationScope
+    :param operation_config: Common configuration for operations classes of an MLClient object.
+    :type operation_config: ~azure.ai.ml._scope_dependent_operations.OperationConfig
+    :param service_client: Service client to allow end users to operate on Azure Machine Learning Workspace
+        resources (ServiceClient042023Preview or ServiceClient102021Dataplane).
+    :type service_client: typing.Union[
+        ~azure.ai.ml._restclient.v2023_04_01_preview._azure_machine_learning_workspaces.AzureMachineLearningWorkspaces,
+        ~azure.ai.ml._restclient.v2021_10_01_dataplanepreview._azure_machine_learning_workspaces.
+        AzureMachineLearningWorkspaces]
+    :param datastore_operations: Represents a client for performing operations on Datastores.
+    :type datastore_operations: ~azure.ai.ml.operations._datastore_operations.DatastoreOperations
+    :param all_operations: All operations classes of an MLClient object.
+    :type all_operations: ~azure.ai.ml._scope_dependent_operations.OperationsContainer
     """
 
     # pylint: disable=unused-argument
@@ -133,6 +147,15 @@ class ModelOperations(_ScopeDependentOperations):
         :raises ~azure.ai.ml.exceptions.EmptyDirectoryError: Raised if local path provided points to an empty directory.
         :return: Model asset object.
         :rtype: ~azure.ai.ml.entities.Model
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+                :start-after: [START model_operations_create_or_update]
+                :end-before: [END model_operations_create_or_update]
+                :language: python
+                :dedent: 8
+                :caption: Create model example.
         """
         try:
             name = model.name
@@ -291,6 +314,15 @@ class ModelOperations(_ScopeDependentOperations):
             Details will be provided in the error message.
         :return: Model asset object.
         :rtype: ~azure.ai.ml.entities.Model
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+                :start-after: [START model_operations_get]
+                :end-before: [END model_operations_get]
+                :language: python
+                :dedent: 8
+                :caption: Get model example.
         """
         if version and label:
             msg = "Cannot specify both version and label."
@@ -323,11 +355,23 @@ class ModelOperations(_ScopeDependentOperations):
     def download(self, name: str, version: str, download_path: Union[PathLike, str] = ".") -> None:
         """Download files related to a model.
 
-        :param str name: Name of the model.
-        :param str version: Version of the model.
-        :param Union[PathLike, str] download_path: Local path as download destination,
-            defaults to current working directory of the current user. Contents will be overwritten.
-        :raise: ResourceNotFoundError if can't find a model matching provided name.
+        :param name: Name of the model.
+        :type name: str
+        :param version: Version of the model.
+        :type version: str
+        :param download_path: Local path as download destination, defaults to current working directory of the current
+            user. Contents will be overwritten.
+        :type download_path: Union[PathLike, str]
+        :raises ResourceNotFoundError: if can't find a model matching provided name.
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+                :start-after: [START model_operations_download]
+                :end-before: [END model_operations_download]
+                :language: python
+                :dedent: 8
+                :caption: Download files to model example.
         """
 
         model_uri = self.get(name=name, version=version).path
@@ -402,6 +446,15 @@ class ModelOperations(_ScopeDependentOperations):
         :type version: str
         :param label: Label of the model asset. (mutually exclusive with version)
         :type label: str
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+                :start-after: [START model_operations_archive]
+                :end-before: [END model_operations_archive]
+                :language: python
+                :dedent: 8
+                :caption: Archive a model example.
         """
         _archive_or_restore(
             asset_operations=self,
@@ -429,6 +482,15 @@ class ModelOperations(_ScopeDependentOperations):
         :type version: str
         :param label: Label of the model asset. (mutually exclusive with version)
         :type label: str
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+                :start-after: [START model_operations_restore]
+                :end-before: [END model_operations_restore]
+                :language: python
+                :dedent: 8
+                :caption: Restore a model example.
         """
         _archive_or_restore(
             asset_operations=self,
@@ -458,7 +520,16 @@ class ModelOperations(_ScopeDependentOperations):
              :attr:`ListViewType.ACTIVE_ONLY`.
         :type list_view_type: ListViewType
         :return: An iterator like instance of Model objects
-        :rtype: ~azure.core.paging.ItemPaged[Model]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.ml.entities.Model]
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+                :start-after: [START model_operations_list]
+                :end-before: [END model_operations_list]
+                :language: python
+                :dedent: 8
+                :caption: List all models example.
         """
         if name:
             return (
@@ -512,6 +583,15 @@ class ModelOperations(_ScopeDependentOperations):
         :paramtype registry_name: str
         :return: Model asset object.
         :rtype: ~azure.ai.ml.entities.Model
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+                :start-after: [START model_operations_share]
+                :end-before: [END model_operations_share]
+                :language: python
+                :dedent: 8
+                :caption: Share a model example.
         """
 
         #  Get workspace info to get workspace GUID
@@ -596,6 +676,14 @@ class ModelOperations(_ScopeDependentOperations):
         :return: Environment object
         :rtype: ~azure.ai.ml.entities.Environment
 
+        .. admonition:: Example:
+
+            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+                :start-after: [START model_operations_package]
+                :end-before: [END model_operations_package]
+                :language: python
+                :dedent: 8
+                :caption: Package a model example.
         """
         is_deployment_flow = kwargs.pop("skip_to_rest", False)
         if not is_deployment_flow:
@@ -672,6 +760,37 @@ class ModelOperations(_ScopeDependentOperations):
                 **self._scope_kwargs,
             ).result()
         )
+        # package_out = {
+        #         "packageBuildState": "Succeeded",
+        #         "status": "Succeeded",
+        #         "logUrl": "https://eus2euapmanaged2.blob.core.windows.net/65560886db2d492f8828f23ae2b80048-xdiibjmw2y/logs/wb2y/rawtext.log?sv=2021-12-02&se=2023-08-29T01%3A59%3A08Z&sr=b&sp=r&sig=OGk%2BAbJ9qKrhh5HtUsHlBA9WT07uTiGE2rFCGy%2FjqXA%3D",
+        #         "buildId": "wb2y",
+        #         "targetEnvironmentName": "diabetes-online-mlflow",
+        #         "targetEnvironmentVersion": "12",
+        #         "targetEnvironmentId": "azureml://locations/eastus2euap/workspaces/60106ea5-8e62-4d03-90a5-f1aa66fb613e/environments/diabetes-online-mlflow/versions/12",
+        #         "baseEnvironment": "",
+        #         "inferencingServer": {
+        #             "serverType": "AzureMLOnline",
+        #             "codeConfiguration": ""
+        #         },
+        #         "environmentVariables": "",
+        #         "modelPath": "azureml://registries/azureml/models/distilbert-base-uncased/versions/5",
+        #         "modelConfiguration": {
+        #             "mode": "Download",
+        #             "mountPath": ""
+        #         },
+        #         "inputs": [],
+        #         "tags": {
+        #             "ModelPackageGenerated": "azureml://registries/azureml/models/distilbert-base-uncased/versions/5",
+        #             "ModelConfiguration": "Download, ",
+        #             "InferencingServerType": "AzureMLOnline"
+        #         },
+        #         "properties": "",
+        #         "skuArchitectureType": ""
+        #         }
+        # import debugpy
+        # debugpy.connect(("localhost", 5678))
+        # debugpy.breakpoint()
         if is_deployment_flow:  # No need to go through the schema, as this is for deployment notification only
             return package_out
         if hasattr(package_out, "target_environment_name"):
@@ -683,6 +802,9 @@ class ModelOperations(_ScopeDependentOperations):
             environment_version = package_out.target_environment_version
         else:
             environment_version = package_out.additional_properties["targetEnvironmentVersion"]
+
+        # environment_name = "diabetes-online-mlflow"
+        # environment_version = "12"
 
         module_logger.info("\nPackage Created")
         if package_out is not None and package_out.__class__.__name__ == "PackageResponse":
