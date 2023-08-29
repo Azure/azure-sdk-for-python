@@ -10,6 +10,7 @@ Example to show receiving deferred message from a Service Bus Queue.
 """
 
 import os
+from typing import List
 from azure.servicebus import ServiceBusMessage, ServiceBusClient
 
 CONNECTION_STR = os.environ['SERVICEBUS_CONNECTION_STR']

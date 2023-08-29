@@ -652,7 +652,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
             if not receiver._message_iter or wait_time:
                 receiver._message_iter = receiver._handler.receive_messages_iter(timeout=wait_time)
             pyamqp_message = next(
-                cast(Iterator["Message"], receiver._message_iter)
+                cast(Iterator["ServiceBusReceivedMessage"], receiver._message_iter)
             )
             message = receiver._build_received_message(pyamqp_message)
             if (

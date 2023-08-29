@@ -247,7 +247,7 @@ class ServiceBusReceiver(
                 self._message_iter = None
                 raise
 
-    def __next__(self):
+    def __next__(self) -> ServiceBusReceivedMessage:
         # Normally this would wrap the yield of the iter, but for a direct next call we just trace imperitively.
         try:
             self._receive_context.set()

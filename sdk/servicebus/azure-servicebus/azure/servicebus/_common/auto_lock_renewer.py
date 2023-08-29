@@ -241,12 +241,11 @@ class AutoLockRenewer(object):  # pylint:disable=too-many-instance-attributes
 
     def register(
         self,
-        receiver,
-        renewable,
-        max_lock_renewal_duration=None,
-        on_lock_renew_failure=None,
-    ):
-        # type: (ServiceBusReceiver, Renewable, Optional[float], Optional[LockRenewFailureCallback]) -> None
+        receiver: ServiceBusReceiver,
+        renewable: Union[ServiceBusReceivedMessage, ServiceBusSession],
+        max_lock_renewal_duration: Optional[float] = None,
+        on_lock_renew_failure: Optional[LockRenewFailureCallback] = None,
+    ) -> None:
         """Register a renewable entity for automatic lock renewal.
 
         :param receiver: The ServiceBusReceiver instance that is associated with the message or the session to

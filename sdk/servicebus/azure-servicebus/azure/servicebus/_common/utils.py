@@ -58,7 +58,9 @@ if TYPE_CHECKING:
         Mapping[str, Any],
         ServiceBusMessage,
         AmqpAnnotatedMessage,
-        List[Union[Mapping[str, Any], ServiceBusMessage, AmqpAnnotatedMessage]],
+        List[Mapping[str, Any]],
+        List[ServiceBusMessage],
+        List[AmqpAnnotatedMessage],
     ]
 
     SingleMessageType = Union[

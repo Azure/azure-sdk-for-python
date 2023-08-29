@@ -244,7 +244,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
                 self._message_iter = None
                 raise
 
-    async def __anext__(self):
+    async def __anext__(self) -> ServiceBusReceivedMessage:
         try:
             self._receive_context.set()
             message = await self._inner_anext()
