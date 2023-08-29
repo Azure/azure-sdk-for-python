@@ -158,6 +158,10 @@ class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     AppConfigurationKeyValueModifiedEventName = 'Microsoft.AppConfiguration.KeyValueModified'
 
+    AppConfigurationSnapshotCreatedEventName = 'Microsoft.AppConfiguration.SnapshotCreated'
+
+    AppConfigurationSnapshotModifiedEventName = 'Microsoft.AppConfiguration.SnapshotModified'
+
     ContainerRegistryChartDeletedEventName = 'Microsoft.ContainerRegistry.ChartDeleted'
 
     ContainerRegistryChartPushedEventName = 'Microsoft.ContainerRegistry.ChartPushed'
