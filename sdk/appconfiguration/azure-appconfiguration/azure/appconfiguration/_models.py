@@ -263,7 +263,7 @@ class FeatureFlagConfigurationSetting(ConfigurationSetting):  # pylint: disable=
 
 class SecretReferenceConfigurationSetting(ConfigurationSetting):
     """A configuration value that references a configuration setting secret."""
-    
+
     etag: str
     """A value representing the current state of the resource."""
     key: str
@@ -367,7 +367,7 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
 
 class ConfigurationSettingFilter:
     """Enables filtering of configuration settings."""
-    
+
     key: str
     """Filters configuration settings by their key field. Required."""
     label: str
@@ -386,7 +386,7 @@ class ConfigurationSettingFilter:
 
 class Snapshot:  # pylint: disable=too-many-instance-attributes
     """A point-in-time snapshot of configuration settings."""
-    
+
     name: str
     """The name of the snapshot."""
     status: str
