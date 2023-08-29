@@ -135,7 +135,7 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
 
     Use this client to configure and execute requests to the Azure Cosmos DB service.
 
-    Its recommended to maintain a single instance of CosmosClient per lifetime of the application which enables
+    It's recommended to maintain a single instance of CosmosClient per lifetime of the application which enables
         efficient connection management and performance.
 
     CosmosClient initialization is a heavy operation - don't use initialization CosmosClient instances as
@@ -250,6 +250,7 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
         # type: (...) -> DatabaseProxy
         """
         Create a new database with the given ID (name).
+
         :param str id: ID (name) of the database to create.
         :param offer_throughput: The provisioned throughput for this offer.
         :type offer_throughput: Union[int, ~azure.cosmos.ThroughputProperties]
@@ -302,6 +303,7 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
         ..note::
             This function does not check or update existing database settings or
             offer throughput if they differ from what is passed in.
+
         :param str id: ID (name) of the database to read or create.
         :param bool populate_query_metrics: Enable returning query metrics in response headers.
         :param offer_throughput: The provisioned throughput for this offer.
@@ -360,6 +362,7 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
     ):
         # type: (...) -> Iterable[Dict[str, Any]]
         """List the databases in a Cosmos DB SQL database account.
+
         :param int max_item_count: Max number of items to be returned in the enumeration operation.
         :keyword str session_token: Token for use with Session consistency.
         :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
@@ -395,6 +398,7 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
     ):
         # type: (...) -> Iterable[Dict[str, Any]]
         """Query the databases in a Cosmos DB SQL database account.
+
         :param str query: The Azure Cosmos DB SQL query to execute.
         :param List[str] parameters: Optional array of parameters to the query. Ignored if no query is provided.
         :param bool enable_cross_partition_query: Allow scan on the queries which couldn't be
@@ -442,6 +446,7 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
     ):
         # type: (...) -> None
         """Delete the database with the given ID (name).
+
         :param database: The ID (name), dict representing the properties or :class:`DatabaseProxy`
             instance of the database to delete.
         :type database: Union[str, Dict[str, str], ~azure.cosmos.DatabaseProxy]

@@ -537,7 +537,7 @@ class ContainerProxy(object):
         patch_operations: List[Dict[str, Any]],
         **kwargs: Any
     ) -> Dict[str, Any]:
-        """ **Provisional method** Patches the specified item with the provided operations if it
+        """ Patches the specified item with the provided operations if it
          exists in the container.
 
         If the item does not already exist in the container, an exception is raised.

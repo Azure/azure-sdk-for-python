@@ -177,6 +177,7 @@ class ContainerProxy(object):
     ):
         # type: (...) -> Dict[str, Any]
         """Get the item identified by `item`.
+
         :param item: The ID (name) or dict representing item to retrieve.
         :type item: Union[str, Dict[str, Any]]
         :param partition_key: Partition key for the item to retrieve.
@@ -234,6 +235,7 @@ class ContainerProxy(object):
     ):
         # type: (...) -> Iterable[Dict[str, Any]]
         """List all the items in the container.
+
         :param int max_item_count: Max number of items to be returned in the enumeration operation.
         :keyword str session_token: Token for use with Session consistency.
         :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
@@ -429,7 +431,9 @@ class ContainerProxy(object):
     ):
         # type: (...) -> Dict[str, Any]
         """Replaces the specified item if it exists in the container.
+
         If the item does not already exist in the container, an exception is raised.
+
         :param item: The ID (name) or dict representing item to be replaced.
         :type item: Union[str, Dict[str, Any]]
         :param body: A dict-like object representing the item to replace.
@@ -480,8 +484,10 @@ class ContainerProxy(object):
     ):
         # type: (...) -> Dict[str, Any]
         """Insert or update the specified item.
+
         If the item already exists in the container, it is replaced. If the item
         does not already exist, it is inserted.
+
         :param body: A dict-like object representing the item to update or insert.
         :type body: Dict[str, Any]
         :param str pre_trigger_include: trigger id to be used as pre operation trigger.
@@ -532,8 +538,10 @@ class ContainerProxy(object):
     ):
         # type: (...) -> Dict[str, Any]
         """Create an item in the container.
+
         To update or replace an existing item, use the
         :func:`ContainerProxy.upsert_item` method.
+
         :param body: A dict-like object representing the item to create.
         :type body: Dict[str, Any]
         :param str pre_trigger_include: trigger id to be used as pre operation trigger.
@@ -584,7 +592,7 @@ class ContainerProxy(object):
         patch_operations: List[Dict[str, Any]],
         **kwargs: Any
     ) -> Dict[str, Any]:
-        """ **Provisional method** Patches the specified item with the provided operations if it
+        """ Patches the specified item with the provided operations if it
          exists in the container.
 
         If the item does not already exist in the container, an exception is raised.
@@ -635,7 +643,9 @@ class ContainerProxy(object):
     ):
         # type: (...) -> None
         """Delete the specified item from the container.
+
         If the item does not already exist in the container, an exception is raised.
+
         :param item: The ID (name) or dict representing item to be deleted.
         :type item: Union[str, Dict[str, Any]]
         :param partition_key: Specifies the partition key value for the item.
@@ -677,6 +687,7 @@ class ContainerProxy(object):
         # type: (Any) -> Offer
         """Get the ThroughputProperties object for this container.
         If no ThroughputProperties already exist for the container, an exception is raised.
+
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: Throughput for the container.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: No throughput properties exists for the container or
@@ -695,6 +706,7 @@ class ContainerProxy(object):
         """Get the ThroughputProperties object for this container.
 
         If no ThroughputProperties already exist for the container, an exception is raised.
+
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: Throughput for the container.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: No throughput properties exists for the container or

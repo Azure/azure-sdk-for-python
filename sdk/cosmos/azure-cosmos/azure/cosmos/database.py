@@ -165,7 +165,9 @@ class DatabaseProxy(object):
     ):
         # type: (...) -> ContainerProxy
         """Create a new container with the given ID (name).
+
         If a container with the given ID already exists, a CosmosResourceExistsError is raised.
+
         :param str id: ID (name) of container to create.
         :param ~azure.cosmos.PartitionKey partition_key: The partition key to use for the container.
         :param Dict[str, Any] indexing_policy: The indexing policy to apply to the container.
@@ -255,9 +257,11 @@ class DatabaseProxy(object):
     ):
         # type: (...) -> ContainerProxy
         """Create a container if it does not exist already.
+
         If the container already exists, the existing settings are returned.
         Note: it does not check or update the existing container settings or offer throughput
         if they differ from what was passed into the method.
+
         :param id: ID (name) of container to read or create.
         :param partition_key: The partition key to use for the container.
         :param indexing_policy: The indexing policy to apply to the container.
@@ -309,6 +313,7 @@ class DatabaseProxy(object):
     ):
         # type: (...) -> None
         """Delete a container.
+
         :param container: The ID (name) of the container to delete. You can either
             pass in the ID of the container to delete, a :class:`ContainerProxy` instance or
             a dict representing the properties of the container.
@@ -420,6 +425,7 @@ class DatabaseProxy(object):
     ):
         # type: (...) -> Iterable[Dict[str, Any]]
         """List the properties for containers in the current database.
+
         :param str query: The Azure Cosmos DB SQL query to execute.
         :param parameters: Optional array of parameters to the query. Ignored if no query is provided.
         :type parameters: List[Dict[str, Any]]
@@ -464,8 +470,10 @@ class DatabaseProxy(object):
     ):
         # type: (...) -> ContainerProxy
         """Reset the properties of the container.
+
         Property changes are persisted immediately. Any properties not specified
         will be reset to their default values.
+
         :param container: The ID (name), dict representing the properties or
             :class:`ContainerProxy` instance of the container to be replaced.
         :type container: Union[str, ContainerProxy, Dict[str, Any]]
@@ -732,7 +740,9 @@ class DatabaseProxy(object):
     def read_offer(self, **kwargs):
         # type: (Any) -> ThroughputProperties
         """Get the ThroughputProperties object for this database.
+
         If no ThroughputProperties already exist for the database, an exception is raised.
+
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: ThroughputProperties for the database.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: No throughput properties exists for the container or
@@ -749,7 +759,9 @@ class DatabaseProxy(object):
     def get_throughput(self, **kwargs):
         # type: (Any) -> ThroughputProperties
         """Get the ThroughputProperties object for this database.
+
         If no ThroughputProperties already exist for the database, an exception is raised.
+
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: ThroughputProperties for the database.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: No throughput properties exists for the container or
