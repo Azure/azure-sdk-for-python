@@ -190,8 +190,8 @@ class MLClient:
             )
 
         self._credential = credential
-        self._ws_rg = None,
-        self._ws_sub = None,
+        self._ws_rg = None
+        self._ws_sub = None
         show_progress = kwargs.pop("show_progress", True)
         enable_telemetry = kwargs.pop("enable_telemetry", True)
         self._operation_config = OperationConfig(show_progress=show_progress, enable_telemetry=enable_telemetry)
@@ -453,8 +453,8 @@ class MLClient:
             self._operation_container,
             requests_pipeline=self._requests_pipeline,
             control_plane_client=self._service_client_04_2023_preview,
-            workspace_rg = self._ws_rg,
-            workspace_sub = self._ws_sub,
+            workspace_rg=self._ws_rg,
+            workspace_sub=self._ws_sub,
             registry_reference=registry_reference,
             **app_insights_handler_kwargs,
         )

@@ -16,8 +16,7 @@ from azure.ai.ml.entities._load_functions import load_model, load_model_package,
 
 @pytest.mark.unittest
 @pytest.mark.production_experiences_test
-class TestModelPackageSchema:  
-
+class TestModelPackageSchema:
     def test_model_package(self) -> None:
         file = Path("tests/test_configs/model_package/model_package_simple.yml")
         model_pack = load_model_package(source=file)
@@ -30,4 +29,3 @@ class TestModelPackageSchema:
         deployment = load_online_deployment(source=file)
         assert deployment.environment == "azureml://registries/bani-euap/environments/testv1/versions/20"
         deployment.model = "azureml://registries/bani-euap/models/demo_ml/versions/1"
-
