@@ -38,6 +38,7 @@ class BatchClient(BatchClientOperationsMixin):  # pylint: disable=client-accepts
         self._client: PipelineClient = PipelineClient(
             base_url=endpoint, config=self._config, request_id_header_name="client-request-id", **kwargs
         )
+
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
