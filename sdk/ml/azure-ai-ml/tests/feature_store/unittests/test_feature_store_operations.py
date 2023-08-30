@@ -1,7 +1,6 @@
 from unittest.mock import DEFAULT, Mock
 
 import pytest
-from azure.core.polling import LROPoller
 from marshmallow import ValidationError
 from pytest_mock import MockFixture
 
@@ -13,6 +12,7 @@ from azure.ai.ml.entities._feature_store._constants import (
 )
 from azure.ai.ml.entities._feature_store.materialization_store import MaterializationStore
 from azure.ai.ml.operations._feature_store_operations import FeatureStoreOperations
+from azure.core.polling import LROPoller
 
 
 @pytest.fixture
@@ -226,7 +226,7 @@ class TestFeatureStoreOperation:
 
                 # remove this condition check when test env python version >= 3.8
                 if isinstance(call_kwargs, dict):
-                    assert call_kwargs["grant_materialization_identity_permissions"] == True
+                    assert call_kwargs["grant_materialization_permissions"] == True
                     assert call_kwargs["update_workspace_role_assignment"] == testcase[1][0]
                     assert call_kwargs["update_offline_store_role_assignment"] == testcase[1][1]
                     assert call_kwargs["update_online_store_role_assignment"] == testcase[1][2]
