@@ -478,7 +478,7 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
         as true prepares the feature store managed network for supporting Spark.
 
         :keyword feature_store_name: Name of the feature store.
-        :type feature_store_name: str
+        :paramtype feature_store_name: str
         :return: An instance of LROPoller.
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.ManagedNetworkProvisionStatus]
         """
