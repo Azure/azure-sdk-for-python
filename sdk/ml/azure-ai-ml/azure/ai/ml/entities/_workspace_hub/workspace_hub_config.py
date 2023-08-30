@@ -20,6 +20,7 @@ from azure.ai.ml._utils._experimental import experimental
 class WorkspaceHubConfig:
     def __init__(
         self,
+        *,
         additional_workspace_storage_accounts: Optional[List[str]] = None,
         default_workspace_resource_group: Optional[str] = None,
     ) -> None:

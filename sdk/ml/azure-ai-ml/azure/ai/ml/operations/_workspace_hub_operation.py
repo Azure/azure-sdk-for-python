@@ -17,6 +17,7 @@ from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml.entities._workspace_hub.workspace_hub import WorkspaceHub
+from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils._workspace_utils import delete_resource_by_arm_id
 
 from azure.ai.ml.constants._common import Scope, ArmConstants
@@ -26,7 +27,7 @@ from ._workspace_operations_base import WorkspaceOperationsBase
 ops_logger = OpsLogger(__name__)
 module_logger = ops_logger.module_logger
 
-
+@experimental
 class WorkspaceHubOperations(WorkspaceOperationsBase):
     """_HubOperations.
 
@@ -81,7 +82,7 @@ class WorkspaceHubOperations(WorkspaceOperationsBase):
     # @monitor_with_activity(logger, "Hub.Get", ActivityType.PUBLICAPI)
     @distributed_trace
     # pylint: disable=arguments-renamed
-    def get(self, name: str, **kwargs: Dict) -> WorkspaceHub:
+    def get(self, *, name: str, **kwargs: Dict) -> WorkspaceHub:
         """Get a Workspace WorkspaceHub by name.
 
         :param name: Name of the WorkspaceHub.
@@ -103,6 +104,7 @@ class WorkspaceHubOperations(WorkspaceOperationsBase):
     # pylint: disable=arguments-differ
     def begin_create(
         self,
+        *,
         workspace_hub: WorkspaceHub,
         update_dependent_resources: bool = False,
         **kwargs: Dict,
@@ -167,7 +169,7 @@ class WorkspaceHubOperations(WorkspaceOperationsBase):
     @distributed_trace
     def begin_delete(
         self, name: str, *, delete_dependent_resources: bool, permanently_delete: bool = False, **kwargs: Dict
-    ) -> LROPoller:
+    ) -> LROPoller[None]:
         """Delete a WorkspaceHub.
 
         :param name: Name of the WorkspaceHub
