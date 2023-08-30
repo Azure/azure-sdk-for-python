@@ -7,3 +7,4 @@ flask
 psycopg2
 requests
 urllib3
+importlib-metadata~=6.0
