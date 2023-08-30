@@ -606,9 +606,12 @@ def build_conda_packages(
         invoke_command(f'conda run --prefix "{conda_env_dir}" conda index {conda_output_dir}', repo_root)
 
     for conda_build in conda_configurations:
+        command = f'conda run --prefix "{conda_env_dir}" conda-build . --output-folder "{conda_output_dir}" -c "{conda_output_dir}"'
+        print(command)
+
         conda_build_folder = os.path.join(conda_sdist_dir, conda_build.name).replace("\\", "/")
         get_output(
-            f'conda run --prefix "{conda_env_dir}" conda-build . --output-folder "{conda_output_dir}" -c "{conda_output_dir}"',
+            command,
             conda_build_folder,
         )
 
