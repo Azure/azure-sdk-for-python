@@ -529,7 +529,7 @@
                 "description": "Feature store materialization identity name"
             }
         },
-        "grant_materialization_identity_permissions": {
+        "grant_materialization_permissions": {
             "type": "string",
             "defaultValue": "false",
             "allowedValues": [
