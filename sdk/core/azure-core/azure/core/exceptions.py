@@ -40,6 +40,7 @@ from typing import (
     TypeVar,
     Generic,
     Dict,
+    NoReturn,
     TYPE_CHECKING,
 )
 from typing_extensions import Protocol, runtime_checkable
@@ -79,7 +80,7 @@ __all__ = [
 ]
 
 
-def raise_with_traceback(exception: Callable, *args: Any, **kwargs: Any) -> None:
+def raise_with_traceback(exception: Callable, *args: Any, **kwargs: Any) -> NoReturn:
     """Raise exception with a specified traceback.
     This MUST be called inside a "except" clause.
 
