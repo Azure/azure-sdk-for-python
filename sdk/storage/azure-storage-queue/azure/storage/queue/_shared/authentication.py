@@ -6,7 +6,7 @@
 
 import logging
 import re
-from typing import List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple
 from urllib.parse import unquote, urlparse
 
 try:
@@ -35,7 +35,7 @@ def _wrap_exception(ex, desired_type):
     return desired_type(msg)
 
 # This method attempts to emulate the sorting done by the service
-def _storage_header_sort(input_headers: List[Tuple[str, Optional[str]]]) -> List[Tuple[str, Optional[str]]]:
+def _storage_header_sort(input_headers: List[Tuple[str, str]]) -> List[Tuple[str, str]]:
     # Define the custom alphabet for weights
     custom_weights = "-!#$%&*.^_|~+\"\'(),/`~0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[]abcdefghijklmnopqrstuvwxyz{}"
 
@@ -56,7 +56,7 @@ def _storage_header_sort(input_headers: List[Tuple[str, Optional[str]]]) -> List
     sorted_headers = []
     for key in header_keys:
         sorted_headers.append((key, header_dict.get(key)))
-    return sorted_headers
+    return sorted_headers  # type: ignore [return-value]
 
 
 class AzureSigningError(ClientAuthenticationError):

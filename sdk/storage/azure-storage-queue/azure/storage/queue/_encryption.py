@@ -15,7 +15,7 @@ from json import (
     dumps,
     loads,
 )
-from typing import Any, BinaryIO, Callable, Dict, List, Optional, Tuple, TYPE_CHECKING
+from typing import Any, BinaryIO, Callable, Dict, Optional, Tuple, TYPE_CHECKING
 from typing_extensions import Protocol
 
 from cryptography.hazmat.backends import default_backend
@@ -52,7 +52,7 @@ class KeyEncryptionKey(Protocol):
 
     def wrap_key(self, key):
         ...
-    
+
     def unwrap_key(self, key, algorithm):
         ...
 
@@ -297,7 +297,7 @@ def is_encryption_v2(encryption_data: Optional[_EncryptionData]) ->  bool:
     # If encryption_data is None, assume no encryption
     if encryption_data and (encryption_data.encryption_agent.protocol == _ENCRYPTION_PROTOCOL_V2):
         return True
-    
+
     return False
 
 

@@ -235,11 +235,10 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             You can include up to five CorsRule elements in the
             list. If an empty list is specified, all CORS rules will be deleted,
             and CORS will be disabled for the service.
-        :type cors: list(~azure.storage.queue.CorsRule)
+        :type cors: List[~azure.storage.queue.CorsRule]
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: None
-        :rtype: None
 
         .. admonition:: Example:
 
@@ -258,7 +257,7 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             cors=cors
         )
         try:
-            return self._client.service.set_properties(props, timeout=timeout, **kwargs)
+            self._client.service.set_properties(props, timeout=timeout, **kwargs)
         except HttpResponseError as error:
             process_storage_error(error)
 

@@ -6,11 +6,11 @@
 # pylint: disable=unused-argument
 
 from base64 import b64encode, b64decode
-from typing import Any, Callable, Dict, Optional, TYPE_CHECKING, Union
+from typing import Any, Callable, Dict, Iterable, Optional, TYPE_CHECKING, Union
 
 from azure.core.exceptions import DecodeError
 
-from ._encryption import decrypt_queue_message, encrypt_queue_message, _ENCRYPTION_PROTOCOL_V1
+from ._encryption import decrypt_queue_message, encrypt_queue_message, _ENCRYPTION_PROTOCOL_V1, KeyEncryptionKey
 
 if TYPE_CHECKING:
     from azure.core.pipeline import PipelineResponse
@@ -22,7 +22,7 @@ class MessageEncodePolicy(object):
     """Indicates whether a retention policy is enabled for the storage service."""
     encryption_version: Optional[str] = None
     """Indicates whether a retention policy is enabled for the storage service."""
-    key_encryption_key: Optional[object] = None
+    key_encryption_key: Optional[KeyEncryptionKey] = None
     """Indicates whether a retention policy is enabled for the storage service."""
     resolver: Optional[Callable[[str], bytes]] = None
     """Indicates whether a retention policy is enabled for the storage service."""
@@ -42,7 +42,7 @@ class MessageEncodePolicy(object):
 
     def configure(
         self, require_encryption: bool,
-        key_encryption_key: object,
+        key_encryption_key: KeyEncryptionKey,
         resolver: Callable[[str], bytes],
         encryption_version: str = _ENCRYPTION_PROTOCOL_V1
     ) -> None:
@@ -64,22 +64,21 @@ class MessageDecodePolicy(object):
         self.key_encryption_key = None
         self.resolver = None
 
-    def __call__(self, response: "PipelineResponse", obj: object, headers: Dict[str, Any]) -> object:
-        if hasattr(obj, '__iter__'):
-            for message in obj:
-                if message.message_text in [None, "", b""]:
-                    continue
-                content = message.message_text
-                if (self.key_encryption_key is not None) or (self.resolver is not None):
-                    content = decrypt_queue_message(
-                        content, response,
-                        self.require_encryption,
-                        self.key_encryption_key,
-                        self.resolver)
-                message.message_text = self.decode(content, response)
+    def __call__(self, response: "PipelineResponse", obj: Iterable, headers: Dict[str, Any]) -> object:
+        for message in obj:
+            if message.message_text in [None, "", b""]:
+                continue
+            content = message.message_text
+            if (self.key_encryption_key is not None) or (self.resolver is not None):
+                content = decrypt_queue_message(
+                    content, response,
+                    self.require_encryption,
+                    self.key_encryption_key,
+                    self.resolver)
+            message.message_text = self.decode(content, response)
         return obj
 
-    def configure(self, require_encryption: bool, key_encryption_key: object, resolver: Callable[[str], bytes]) -> None:
+    def configure(self, require_encryption: bool, key_encryption_key: KeyEncryptionKey, resolver: Callable[[str], bytes]) -> None:
         self.require_encryption = require_encryption
         self.key_encryption_key = key_encryption_key
         self.resolver = resolver

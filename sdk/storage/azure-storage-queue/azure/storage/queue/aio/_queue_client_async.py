@@ -4,7 +4,6 @@
 # license information.
 # --------------------------------------------------------------------------
 # pylint: disable=invalid-overridden-method
-# mypy: disable-error-code="misc"
 
 import functools
 import warnings
@@ -45,7 +44,7 @@ if TYPE_CHECKING:
     from .._models import QueueProperties
 
 
-class QueueClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, StorageEncryptionMixin):
+class QueueClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, StorageEncryptionMixin):  # type: ignore [misc]
     """A client to interact with a specific Queue.
 
     :param str account_url:
@@ -213,7 +212,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Stora
         return cls(account_url, queue_name=queue_name, credential=credential, **kwargs)
 
     @distributed_trace_async
-    async def create_queue(  # type: ignore[override]
+    async def create_queue(
         self, *,
         metadata: Optional[Dict[str, str]] = None,
         **kwargs: Any

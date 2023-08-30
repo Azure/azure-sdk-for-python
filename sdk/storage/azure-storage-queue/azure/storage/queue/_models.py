@@ -424,6 +424,8 @@ class QueuePropertiesPaged(PageIterator):
     """The location mode being used to list results. The available options include "primary" and "secondary"."""
     command: Callable
     """Function to retrieve the next page of items."""
+    _response: Any
+    """Function to retrieve the next page of items."""
 
     def __init__(
         self, command: Callable,
@@ -455,19 +457,12 @@ class QueuePropertiesPaged(PageIterator):
 
     def _extract_data_cb(self, get_next_return: Any) -> Tuple[Optional[str], List[QueueProperties]]:
         self.location_mode, self._response = get_next_return
-        if self._response is not None:
-            if hasattr(self._response, 'service_endpoint'):
-                self.service_endpoint = self._response.service_endpoint
-            if hasattr(self._response, 'prefix'):
-                self.prefix = self._response.prefix
-            if hasattr(self._response, 'marker'):
-                self.marker = self._response.marker
-            if hasattr(self._response, 'max_results'):
-                self.results_per_page = self._response.max_results
-            if hasattr(self._response, 'queue_items'):
-                props_list = [QueueProperties._from_generated(q) for q in self._response.queue_items] # pylint: disable=protected-access
-            if hasattr(self._response, 'next_marker'):
-                next_marker = self._response.next_marker
+        self.service_endpoint = self._response.service_endpoint
+        self.prefix = self._response.prefix
+        self.marker = self._response.marker
+        self.results_per_page = self._response.max_results
+        props_list = [QueueProperties._from_generated(q) for q in self._response.queue_items] # pylint: disable=protected-access
+        next_marker = self._response.next_marker
         return next_marker or None, props_list
 
 

@@ -258,7 +258,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         ]
         if kwargs.get("_additional_pipeline_policies"):
             policies = policies + kwargs.get("_additional_pipeline_policies")  # type: ignore
-        config.transport = transport #type: ignore
+        config.transport = transport  # type: ignore
         return config, Pipeline(transport, policies=policies)
 
     # Given a series of request, do a Storage batch call.
