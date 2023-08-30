@@ -194,8 +194,8 @@ class CloudEvent(Generic[DataType]):  # pylint:disable=too-many-instance-attribu
             # specversion. We autopopulate everything other than source, type.
             # So we will assume the KeyError is coming from source/type access.
             if all(
-                _ in event
-                for _ in (
+                key in event
+                for key in (
                     "subject",
                     "eventType",
                     "data",
