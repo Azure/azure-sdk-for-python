@@ -209,6 +209,10 @@ class TestTableClientAsync(AzureRecordedTestCase, AsyncTableTestCase):
             with pytest.raises(ClientAuthenticationError):
                 await service_client.create_table_if_not_exists(table_name="TestInsert")
 
+    def check_request_auth(self, pipeline_request):
+        assert f"/?{self.sas_token}" not in pipeline_request.http_request.url
+        assert pipeline_request.http_request.headers.get('Authorization') is not None
+    
     @tables_decorator_async
     @recorded_by_proxy_async
     async def test_table_client_with_named_key_credential(
@@ -216,7 +220,7 @@ class TestTableClientAsync(AzureRecordedTestCase, AsyncTableTestCase):
     ):
         base_url = self.account_url(tables_storage_account_name, "table")
         table_name = self.get_resource_name("mytable")
-        sas_token = self.generate_sas(
+        self.sas_token = self.generate_sas(
             generate_account_sas,
             tables_primary_storage_account_key,
             resource_types=ResourceTypes.from_string("sco"),
@@ -239,22 +243,26 @@ class TestTableClientAsync(AzureRecordedTestCase, AsyncTableTestCase):
             async for e in entities:
                 pass
 
+        # AzureNamedKeyCredential is actually in use
         async with TableClient(
-            f"{base_url}/?{sas_token}", table_name, credential=tables_primary_storage_account_key
+            f"{base_url}/?{self.sas_token}", table_name, credential=tables_primary_storage_account_key
         ) as client:
             entities = client.query_entities(
                 query_filter="PartitionKey eq @pk",
                 parameters={"pk": "dummy-pk"},
+                raw_request_hook=self.check_request_auth,
             )
             async for e in entities:
                 pass
 
+        # AzureNamedKeyCredential is actually in use
         async with TableClient.from_table_url(
-            f"{base_url}/{table_name}?{sas_token}", credential=tables_primary_storage_account_key
+            f"{base_url}/{table_name}?{self.sas_token}", credential=tables_primary_storage_account_key
         ) as client:
             entities = client.query_entities(
                 query_filter="PartitionKey eq @pk",
                 parameters={"pk": "dummy-pk"},
+                raw_request_hook=self.check_request_auth,
             )
             async for e in entities:
                 pass
@@ -267,7 +275,7 @@ class TestTableClientAsync(AzureRecordedTestCase, AsyncTableTestCase):
     ):
         base_url = self.account_url(tables_storage_account_name, "table")
         table_name = self.get_resource_name("mytable")
-        sas_token = self.generate_sas(
+        self.sas_token = self.generate_sas(
             generate_account_sas,
             tables_primary_storage_account_key,
             resource_types=ResourceTypes.from_string("sco"),
@@ -285,12 +293,14 @@ class TestTableClientAsync(AzureRecordedTestCase, AsyncTableTestCase):
                 count += 1
             assert count == 1
 
+        # AzureNamedKeyCredential is actually in use
         async with TableServiceClient(
-            f"{base_url}/?{sas_token}", credential=tables_primary_storage_account_key
+            f"{base_url}/?{self.sas_token}", credential=tables_primary_storage_account_key
         ) as client:
             entities = client.get_table_client(table_name).query_entities(
                 query_filter="PartitionKey eq @pk",
                 parameters={"pk": "dummy-pk"},
+                raw_request_hook=self.check_request_auth,
             )
             async for e in entities:
                 pass
@@ -397,7 +407,7 @@ class TestTableClientAsync(AzureRecordedTestCase, AsyncTableTestCase):
         base_url = self.account_url(tables_storage_account_name, "table")
         table_name = self.get_resource_name("mytable")
         default_azure_credential = self.get_token_credential()
-        sas_token = self.generate_sas(
+        self.sas_token = self.generate_sas(
             generate_account_sas,
             tables_primary_storage_account_key,
             resource_types=ResourceTypes.from_string("sco"),
@@ -419,20 +429,24 @@ class TestTableClientAsync(AzureRecordedTestCase, AsyncTableTestCase):
             async for e in entities:
                 pass
 
-        async with TableClient(f"{base_url}/?{sas_token}", table_name, credential=default_azure_credential) as client:
+        # DefaultAzureCredential is actually in use
+        async with TableClient(f"{base_url}/?{self.sas_token}", table_name, credential=default_azure_credential) as client:
             entities = client.query_entities(
                 query_filter="PartitionKey eq @pk",
                 parameters={"pk": "dummy-pk"},
+                raw_request_hook=self.check_request_auth,
             )
             async for e in entities:
                 pass
 
+        # DefaultAzureCredential is actually in use
         async with TableClient.from_table_url(
-            f"{base_url}/{table_name}?{sas_token}", credential=default_azure_credential
+            f"{base_url}/{table_name}?{self.sas_token}", credential=default_azure_credential
         ) as client:
             entities = client.query_entities(
                 query_filter="PartitionKey eq @pk",
                 parameters={"pk": "dummy-pk"},
+                raw_request_hook=self.check_request_auth,
             )
             async for e in entities:
                 pass
@@ -447,7 +461,7 @@ class TestTableClientAsync(AzureRecordedTestCase, AsyncTableTestCase):
         table_name = self.get_resource_name("mytable")
         default_azure_credential = self.get_token_credential()
         name_filter = "TableName eq '{}'".format(table_name)
-        sas_token = self.generate_sas(
+        self.sas_token = self.generate_sas(
             generate_account_sas,
             tables_primary_storage_account_key,
             resource_types=ResourceTypes.from_string("sco"),
@@ -464,10 +478,12 @@ class TestTableClientAsync(AzureRecordedTestCase, AsyncTableTestCase):
                 count += 1
             assert count == 1
 
-        async with TableServiceClient(f"{base_url}/?{sas_token}", credential=default_azure_credential) as client:
+        # DefaultAzureCredential is actually in use
+        async with TableServiceClient(f"{base_url}/?{self.sas_token}", credential=default_azure_credential) as client:
             entities = client.get_table_client(table_name).query_entities(
                 query_filter="PartitionKey eq @pk",
                 parameters={"pk": "dummy-pk"},
+                raw_request_hook=self.check_request_auth,
             )
             async for e in entities:
                 pass
