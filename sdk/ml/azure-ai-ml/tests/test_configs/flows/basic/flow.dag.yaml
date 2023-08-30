@@ -26,5 +26,3 @@ nodes:
     max_tokens: "120"
 environment:
   python_requirements_txt: requirements.txt
-additional_includes:
-  - ../additional_includes/utils.py

@@ -3285,44 +3285,50 @@ class TestDSLPipeline(AzureRecordedTestCase):
         job_res = client.jobs.create_or_update(job=pipeline_job, experiment_name="test_unknown_field")
         assert job_res.jobs["node"].unknown_field == "${{parent.inputs.input}}"
 
-    @pytest.mark.skip(reason="enable this after server-side is ready")
-    def test_flow_in_pipeline(self, client):
-        """
-        benefits: no need to download component.code to re-create it in another workspace; naturally support
-          maintaining flow definition flow in git repo.
-        Solution: Type of the component will be determined on client-side.
-        Benefit: Relatively easy to implement - nearly no change to service side.
-        Drawback: Need to add a different parameter for component load function like this:
-            load_component(path, type="command")
-        """
+    def test_flow_in_dsl_pipeline_with_non_existed_data_input(self, client):
         component_func = load_component(
-            # pass flow.meta.yaml if we have it
-            "./tests/test_configs/flows/basic/flow.dag.yaml",
+            "./tests/test_configs/flows/web_classification_with_additional_includes/flow.dag.yaml"
         )
 
-        data_input = Input(path="./tests/test_configs/flows/data/basic.jsonl", type=AssetTypes.URI_FILE)
+        data_input = Input(path="./tests/test_configs/flows/data/web_classification.jsonl", type=AssetTypes.URI_FILE)
 
-        # TODO: need dev efforts to do client-side validation on inputs
-        # @dsl.pipeline
-        # def pipeline_func_with_flow_fail(data):
-        #     flow_node = component_func(non_existed_input=data)
-        #     flow_node.compute = "cpu-cluster"
-        #
-        # invalid_pipeline = pipeline_func_with_flow_fail(data=data_input)
-        # with pytest.raises(Exception, match="can't find input non_existed_input."):
-        #     client.jobs.create_or_update(invalid_pipeline)
+        @dsl.pipeline
+        def pipeline_func_with_flow_fail(data):
+            # we can't detect mismatched data binding inputs as they will be resolved in server-side
+            flow_node = component_func(data=data, non_existed_data_input=data_input)
+            flow_node.compute = "cpu-cluster"
+
+        invalid_pipeline = pipeline_func_with_flow_fail(data=data_input)
+        validation_result = client.jobs.validate(invalid_pipeline)
+        # TODO: input type mismatch won't be checked for now
+        assert validation_result.passed
+
+    def test_flow_in_dsl_pipeline(self, client):
+        component_func = load_component(
+            "./tests/test_configs/flows/web_classification_with_additional_includes/flow.dag.yaml"
+        )
+
+        data_input = Input(path="./tests/test_configs/flows/data/web_classification.jsonl", type=AssetTypes.URI_FILE)
+
+        @group
+        class Connection:
+            connection: str
+            deployment_name: str
 
         @dsl.pipeline
         def pipeline_func_with_flow(data):
             flow_node = component_func(
                 data=data,
-                text="${{data.text}}",
+                url="${data.url}",
                 connections={
-                    "llm": {
+                    "summarize_text_content": {
                         "connection": "azure_open_ai_connection",
                         "deployment_name": "text-davinci-003",
-                        "custom_connection": "azure_open_ai_connection",
-                    }
+                    },
+                    "classify_with_llm": Connection(
+                        connection="azure_open_ai_connection",
+                        deployment_name="llm-davinci-003",
+                    ),
                 },
             )
             flow_node.compute = "cpu-cluster"
@@ -3333,9 +3339,19 @@ class TestDSLPipeline(AzureRecordedTestCase):
 
         assert validation_result.passed
 
-        _ = client.jobs.create_or_update(
-            pipeline_with_flow,
-            compute="cpu-cluster",
-        )
+        created_pipeline_job = assert_job_cancel(pipeline_with_flow, client)
 
-        # TODO: verify e2e change in Shrike
+        node_dict = created_pipeline_job._to_dict()["jobs"]["flow_node"]
+        node_dict.pop("component")
+        assert node_dict == {
+            "compute": "azureml:cpu-cluster",
+            "inputs": {
+                "connections.classify_with_llm.connection": "azure_open_ai_connection",
+                "connections.classify_with_llm.deployment_name": "llm-davinci-003",
+                "connections.summarize_text_content.connection": "azure_open_ai_connection",
+                "connections.summarize_text_content.deployment_name": "text-davinci-003",
+                "data": {"path": "${{parent.inputs.data}}"},
+                "url": "${data.url}",
+            },
+            "type": "parallel",
+        }

@@ -6,9 +6,12 @@ description: The hello world pipeline job with flow option 1
 compute: "azureml:cpu-cluster"
 
 inputs:
-  job_data:
+  web_classification_input:
     type: uri_file
-    path: "../test_data/flow_input_data.jsonl"
+    path: "../flows/data/web_classification.jsonl"
+  basic_input:
+    type: uri_file
+    path: "../flows/data/basic.jsonl"
 
 outputs:
   output_data:
@@ -19,13 +22,12 @@ jobs:
     type: parallel
     # type of the component will be determined by node type
     # if there is default value in flow.dag.yaml, it will be used as component input default value
-    component: ../flows/basic/flow.dag.yaml
+    component: ../flows/web_classification_with_additional_includes/flow.dag.yaml
     inputs:
-      data: ${{parent.inputs.job_data}}
-      groundtruth: "5"
-      prediction: "${run.outputs.category}"
-      connections.node_name.connection: another_connection
-      connections.node_name.deployment_name: deployment_name
+      data: ${{parent.inputs.web_classification_input}}
+      url: "${data.url}"
+      connections.summarize_text_content.connection: azure_open_ai_connection
+      connections.summarize_text_content.deployment_name: text-davinci-003
     outputs:
       flow_outputs: ${{parent.outputs.output_data}}
 
@@ -35,11 +37,8 @@ jobs:
     # if there is default value in flow.dag.yaml, it will be used as component input default value
     component: ../flows/runs/basic_run.yml
     inputs:
-      data: ${{parent.inputs.job_data}}
-      groundtruth: "5"
-      prediction: "${run.outputs.category}"
-      connections.node_name.connection: another_connection
-      connections.node_name.deployment_name: deployment_name
+      data: ${{parent.inputs.basic_input}}
+      text: "${data.text}"
 
 #  registered_parallel_flow:
 #    type: parallel

@@ -123,15 +123,28 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):
         validate_attribute_type(attrs_to_check=locals(), attr_type_map=self._attr_type_map())
         kwargs.pop("type", None)
 
-        BaseNode.__init__(
-            self,
-            type=NodeType.PARALLEL,
-            component=component,
-            inputs=inputs,
-            outputs=outputs,
-            compute=compute,
-            **kwargs,
-        )
+        if isinstance(component, FlowComponent):
+            # make input definition fit actual inputs for flow component
+            with component._inputs._fit_inputs(inputs):  # pylint: disable=protected-access
+                BaseNode.__init__(
+                    self,
+                    type=NodeType.PARALLEL,
+                    component=component,
+                    inputs=inputs,
+                    outputs=outputs,
+                    compute=compute,
+                    **kwargs,
+                )
+        else:
+            BaseNode.__init__(
+                self,
+                type=NodeType.PARALLEL,
+                component=component,
+                inputs=inputs,
+                outputs=outputs,
+                compute=compute,
+                **kwargs,
+            )
         # init mark for _AttrDict
         self._init = True
 

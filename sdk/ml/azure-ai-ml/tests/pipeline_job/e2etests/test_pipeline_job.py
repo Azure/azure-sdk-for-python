@@ -10,7 +10,7 @@ from test_utilities.utils import _PYTEST_TIMEOUT_METHOD, assert_job_cancel, slee
 from azure.ai.ml import Input, MLClient, load_component, load_data, load_job
 from azure.ai.ml._utils._arm_id_utils import AMLVersionedArmId, is_singularity_id_for_resource
 from azure.ai.ml._utils.utils import load_yaml
-from azure.ai.ml.constants import InputOutputModes
+from azure.ai.ml.constants import AssetTypes, InputOutputModes
 from azure.ai.ml.constants._job.pipeline import PipelineConstants
 from azure.ai.ml.entities import Component, Job, PipelineJob
 from azure.ai.ml.entities._builders import Command, Pipeline
@@ -1948,6 +1948,94 @@ jobs:
             "component_in_path": {"path": "${{parent.inputs.job_in_path}}"},
         }
 
+    def test_flow_node_skip_input_filtering(self, client: MLClient, randstr: Callable[[str], str]):
+        flow_dag_path = "./tests/test_configs/flows/web_classification_with_additional_includes/flow.dag.yaml"
+        anonymous_component = load_component(flow_dag_path)
+        created_component = client.components.create_or_update(
+            load_component(flow_dag_path, params_override=[{"name": randstr("component_name")}])
+        )
+
+        from azure.ai.ml.dsl._group_decorator import group
+
+        @group
+        class Connection:
+            connection: str
+            deployment_name: str
+
+        init_args = {
+            "inputs": {
+                "data": Input(
+                    type=AssetTypes.URI_FOLDER, path="./tests/test_configs/flows/data/web_classification.jsonl"
+                ),
+                "url": "${data.url}",
+                "connections": {
+                    "summarize_text_content": {
+                        "connection": "azure_open_ai_connection",
+                        "deployment_name": "text-davinci-003",
+                    },
+                    "classify_with_llm": Connection(
+                        connection="azure_open_ai_connection",
+                        deployment_name="llm-davinci-003",
+                    ),
+                },
+            },
+        }
+        node_registered = Parallel(component=created_component, **init_args)
+        node_anonymous = Parallel(component=anonymous_component, **init_args)
+
+        registered_inputs = node_registered._to_rest_object()["inputs"]
+        assert registered_inputs == {
+            "connections.classify_with_llm.connection": {
+                "job_input_type": "literal",
+                "value": "azure_open_ai_connection",
+            },
+            "connections.classify_with_llm.deployment_name": {"job_input_type": "literal", "value": "llm-davinci-003"},
+            "connections.summarize_text_content.connection": {
+                "job_input_type": "literal",
+                "value": "azure_open_ai_connection",
+            },
+            "connections.summarize_text_content.deployment_name": {
+                "job_input_type": "literal",
+                "value": "text-davinci-003",
+            },
+            "data": {"job_input_type": "uri_folder", "uri": "./tests/test_configs/flows/data/web_classification.jsonl"},
+            "url": {"job_input_type": "literal", "value": "${data.url}"},
+        }
+
+        assert node_anonymous._to_rest_object()["inputs"] == registered_inputs
+
+    def test_pipeline_job_with_flow(
+        self,
+        client: MLClient,
+        randstr: Callable[[str], str],
+    ) -> None:
+        test_path = "./tests/test_configs/pipeline_jobs/pipeline_job_with_flow.yml"
+        pipeline_job = load_job(source=test_path, params_override=[{"name": randstr("name")}])
+        assert client.jobs.validate(pipeline_job).passed
+
+        created_pipeline_job = assert_job_cancel(pipeline_job, client)
+
+        pipeline_job_dict = created_pipeline_job._to_dict()
+        for node_name in ["anonymous_parallel_flow", "anonymous_parallel_flow_from_run"]:
+            pipeline_job_dict["jobs"][node_name].pop("component", None)
+
+        assert pipeline_job_dict["jobs"] == {
+            "anonymous_parallel_flow": {
+                "inputs": {
+                    "connections.summarize_text_content.connection": "azure_open_ai_connection",
+                    "connections.summarize_text_content.deployment_name": "text-davinci-003",
+                    "data": {"path": "${{parent.inputs.web_classification_input}}"},
+                    "url": "${data.url}",
+                },
+                "outputs": {"flow_outputs": "${{parent.outputs.output_data}}"},
+                "type": "parallel",
+            },
+            "anonymous_parallel_flow_from_run": {
+                "inputs": {"data": {"path": "${{parent.inputs.basic_input}}"}, "text": "${data.text}"},
+                "type": "parallel",
+            },
+        }
+
 
 @pytest.mark.usefixtures("enable_pipeline_private_preview_features")
 @pytest.mark.e2etest
@@ -2059,13 +2147,3 @@ class TestPipelineJobLongRunning:
         assert next(artifact_dir.iterdir(), None), "No artifacts were downloaded"
         assert output_dir.exists()
         assert next(output_dir.iterdir(), None), "No outputs were downloaded"
-
-    def test_pipeline_job_with_flow(
-        self,
-        client: MLClient,
-    ) -> None:
-        test_path = "./tests/test_configs/pipeline_jobs/pipeline_job_with_flow.yml"
-        pipeline_job: PipelineJob = load_job(source=test_path)
-        assert client.jobs.validate(pipeline_job).passed
-
-        # TODO: enable create test after server-side is ready

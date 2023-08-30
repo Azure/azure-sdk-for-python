@@ -234,108 +234,31 @@
         }
     },
     "code": {
-        "hello.jinja2": {
-            "type": "prompt",
-            "inputs": {
-                "text": {
-                    "type": [
-                        "string"
-                    ]
-                }
-            },
-            "description": "Please replace the template with your own prompt.",
-            "source": "hello.jinja2"
-        },
-        "hello.py": {
+        "prepare_examples.py": {
             "type": "python",
+            "source": "prepare_examples.py",
+            "function": "prepare_examples"
+        },
+        "classify_with_llm.jinja2": {
+            "type": "llm",
             "inputs": {
-                "prompt": {
+                "url": {
                     "type": [
                         "string"
                     ]
                 },
-                "deployment_name": {
+                "examples": {
                     "type": [
                         "string"
                     ]
                 },
-                "suffix": {
-                    "type": [
-                        "string"
-                    ]
-                },
-                "max_tokens": {
-                    "type": [
-                        "int"
-                    ],
-                    "default": "120"
-                },
-                "temperature": {
-                    "type": [
-                        "double"
-                    ],
-                    "default": "1.0"
-                },
-                "top_p": {
-                    "type": [
-                        "double"
-                    ],
-                    "default": "1.0"
-                },
-                "n": {
-                    "type": [
-                        "int"
-                    ],
-                    "default": "1"
-                },
-                "logprobs": {
-                    "type": [
-                        "int"
-                    ]
-                },
-                "echo": {
-                    "type": [
-                        "bool"
-                    ],
-                    "default": "False"
-                },
-                "stop": {
-                    "type": [
-                        "list"
-                    ]
-                },
-                "presence_penalty": {
-                    "type": [
-                        "double"
-                    ],
-                    "default": "0"
-                },
-                "frequency_penalty": {
-                    "type": [
-                        "double"
-                    ],
-                    "default": "0"
-                },
-                "best_of": {
-                    "type": [
-                        "int"
-                    ],
-                    "default": "1"
-                },
-                "logit_bias": {
-                    "type": [
-                        "object"
-                    ],
-                    "default": "{}"
-                },
-                "user": {
+                "text_content": {
                     "type": [
                         "string"
                     ]
                 }
             },
-            "source": "hello.py",
-            "function": "my_python_tool"
+            "source": "classify_with_llm.jinja2"
         }
     }
 }

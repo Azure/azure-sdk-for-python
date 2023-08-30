@@ -428,8 +428,10 @@ class ComponentOperations(_ScopeDependentOperations):
         from azure.ai.ml._utils._arm_id_utils import AMLVersionedArmId
 
         component_spec = rest_component_resource.properties.component_spec
-        code, flow_file_name = AMLVersionedArmId(component_spec.pop("code")), component_spec.pop("flow_file_name")
+        code, flow_file_name = AMLVersionedArmId(component_spec["code"]), component_spec.pop("flow_file_name")
+        # TODO: avoid remote request here if met performance issue
         created_code = self._code_operations.get(name=code.asset_name, version=code.asset_version)
+        # remove port number and append flow file name to get full uri for flow.dag.yaml
         component_spec["flow_definition_uri"] = f"{re.sub(r':[0-9]+/', '/', created_code.path)}/{flow_file_name}"
 
     def _reset_version_if_no_change(

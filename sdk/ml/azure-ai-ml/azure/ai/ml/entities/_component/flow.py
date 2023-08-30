@@ -4,6 +4,7 @@
 import contextlib
 import json
 import os
+from collections import defaultdict
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional, Tuple, Union
 
@@ -22,22 +23,145 @@ from azure.ai.ml.constants._component import ComponentParameterTypes, NodeType
 from ..._restclient.v2022_10_01.models import ComponentVersion
 from ..._schema import PathAwareSchema
 from ..._schema.component.flow import FlowComponentSchema, FlowSchema, RunSchema
-from ...exceptions import ErrorCategory, ValidationException
+from ...exceptions import ErrorCategory, ErrorTarget, ValidationException
 from .._assets import Code
 from .._inputs_outputs import GroupInput, Input, Output
-from .._job.pipeline._io import _GroupAttrDict
 from ._additional_includes import AdditionalIncludesMixin
 from .component import Component
 
 # pylint: disable=protected-access
 
 
-class FlowComponentPortDict(dict):
-    def __setitem__(self, key, value):
-        raise RuntimeError("Ports of flow component are not editable.")
+class _FlowPortNames:
+    """Common yaml fields.
 
-    def __getitem__(self, item):
-        raise RuntimeError("Ports of flow component are not readable before creation.")
+    Common yaml fields are used to define the common fields in yaml files. It can be one of the following values: type,
+    name, $schema.
+    """
+
+    DATA = "data"
+    RUN_OUTPUTS = "run_outputs"
+    CONNECTIONS = "connections"
+
+    FLOW_OUTPUTS = "flow_outputs"
+    DEBUG_INFO = "debug_info"
+
+
+class _FlowComponentPortDict(dict):
+    def __init__(self, ports):
+        self._allow_update_item = True
+        super().__init__()
+        for input_port_name, input_port in ports.items():
+            self[input_port_name] = input_port
+        self._allow_update_item = False
+
+    def __setitem__(self, key, value):
+        if not self._allow_update_item:
+            raise RuntimeError("Ports of flow component are not editable.")
+        super().__setitem__(key, value)
+
+    def __delitem__(self, key):
+        if not self._allow_update_item:
+            raise RuntimeError("Ports of flow component are not editable.")
+        super().__delitem__(key)
+
+
+class FlowComponentInputDict(_FlowComponentPortDict):
+    """Input port dictionary for FlowComponent, with fixed input ports."""
+
+    def __init__(self):
+        super().__init__(
+            {
+                _FlowPortNames.CONNECTIONS: GroupInput(values={}, _group_class=None),
+                _FlowPortNames.DATA: Input(type=AssetTypes.URI_FOLDER, optional=False),
+                _FlowPortNames.FLOW_OUTPUTS: Input(type=AssetTypes.URI_FOLDER, optional=True),
+            }
+        )
+
+    @contextlib.contextmanager
+    def _fit_inputs(self, inputs: Dict[str, Any]) -> Iterable[None]:
+        """Add dynamic input ports to the input port dictionary.
+        Input ports of a flow component include:
+        1. data: required major uri_folder input
+        2. run_output: optional uri_folder input
+        3. connections.xxx.xxx: group of string parameters, first layer key can be any node name,
+           but we won't resolve the exact keys in SDK
+        4. xxx: input_mapping parameters, key can be any node name, but we won't resolve the exact keys in SDK
+
+        #3 will be grouped into connections, we make it a fixed group input port.
+        #4 are dynamic input ports, we will add them temporarily in this context manager and remove them
+        after the context manager is finished.
+
+        :param inputs: The dynamic input to fit.
+        :type inputs: Dict[str, Any]
+        :return: None
+        :rtype: None
+        """
+        dynamic_columns_mapping_keys = []
+        dynamic_connections_inputs = defaultdict(list)
+        from azure.ai.ml.entities._job.pipeline._io import _GroupAttrDict
+        from azure.ai.ml.entities._job.pipeline._io.mixin import flatten_dict
+
+        flattened_inputs = flatten_dict(inputs, _GroupAttrDict, allow_dict_fields=[_FlowPortNames.CONNECTIONS])
+
+        for flattened_input_key in flattened_inputs:
+            if flattened_input_key.startswith(f"{_FlowPortNames.CONNECTIONS}."):
+                if flattened_input_key.count(".") != 2:
+                    raise ValidationException(
+                        message="flattened connection input prot name must be "
+                        "in the format of connections.<node_name>.<port_name>, "
+                        "but got %s" % flattened_input_key,
+                        no_personal_data_message="flattened connection input prot name must be in the format of "
+                        "connections.<node_name>.<port_name>",
+                        target=ErrorTarget.PIPELINE,
+                        error_category=ErrorCategory.USER_ERROR,
+                    )
+                _, node_name, param_name = flattened_input_key.split(".")
+                dynamic_connections_inputs[node_name].append(param_name)
+                continue
+            if flattened_input_key not in self:
+                dynamic_columns_mapping_keys.append(flattened_input_key)
+
+        self._allow_update_item = True
+        for flattened_input_key in dynamic_columns_mapping_keys:
+            self[flattened_input_key] = Input(type=ComponentParameterTypes.STRING, optional=True)
+        if dynamic_connections_inputs:
+            self[_FlowPortNames.CONNECTIONS] = GroupInput(
+                values={
+                    node_name: GroupInput(
+                        values={
+                            parameter_name: Input(
+                                type=ComponentParameterTypes.STRING,
+                            )
+                            for parameter_name in param_names
+                        },
+                        _group_class=None,
+                    )
+                    for node_name, param_names in dynamic_connections_inputs.items()
+                },
+                _group_class=None,
+            )
+        self._allow_update_item = False
+
+        yield
+
+        self._allow_update_item = True
+        for flattened_input_key in dynamic_columns_mapping_keys:
+            del self[flattened_input_key]
+        self[_FlowPortNames.CONNECTIONS] = GroupInput(values={}, _group_class=None)
+        self._allow_update_item = False
+
+
+class FlowComponentOutputDict(_FlowComponentPortDict):
+    """Output port dictionary for FlowComponent, with fixed output ports."""
+
+    def __init__(self):
+        super().__init__(
+            {
+                _FlowPortNames.FLOW_OUTPUTS: Output(type=AssetTypes.URI_FOLDER),
+                _FlowPortNames.DEBUG_INFO: Output(type=AssetTypes.URI_FOLDER),
+            }
+        )
 
 
 class FlowComponent(Component, AdditionalIncludesMixin):
@@ -98,10 +222,10 @@ class FlowComponent(Component, AdditionalIncludesMixin):
         # validate init params are valid type
         kwargs[COMPONENT_TYPE] = NodeType.FLOW_PARALLEL
 
-        flow_dir, flow_file_name = self._get_flow_definition(
-            flow,
-            kwargs.get(BASE_PATH_CONTEXT_KEY, Path.cwd()),
-            kwargs.get(SOURCE_PATH_CONTEXT_KEY, None),
+        flow_dir, self._flow_file_name = self._get_flow_definition(
+            flow=flow,
+            base_path=kwargs.get(BASE_PATH_CONTEXT_KEY, Path.cwd()),
+            source_path=kwargs.get(SOURCE_PATH_CONTEXT_KEY, None),
         )
 
         super().__init__(
@@ -122,15 +246,20 @@ class FlowComponent(Component, AdditionalIncludesMixin):
         self._connections = connections or {}
         self._environment_variables = environment_variables or {}
 
+        self._inputs = FlowComponentInputDict()
+        self._outputs = FlowComponentOutputDict()
+
         if flow:
             # file existence has been checked in _get_flow_definition
-            with open(Path(flow_dir, flow_file_name), "r", encoding="utf-8") as f:
+            with open(Path(flow_dir, self._flow_file_name), "r", encoding="utf-8") as f:
                 flow_content = f.read()
                 additional_includes = yaml.safe_load(flow_content).get("additional_includes", None)
         self._additional_includes = additional_includes or []
 
-        # unlike other Component, code is a private property in FlowComponent
-        self._code, self._flow_file_name = None, None
+        # unlike other Component, code is a private property in FlowComponent and
+        # will be used to store the arm id of the created code before constructing rest object
+        # we haven't used self.flow directly as self.flow can be a path to the flow dag yaml file instead of a directory
+        self._code = None
 
     # region valid properties
     @property
@@ -144,10 +273,16 @@ class FlowComponent(Component, AdditionalIncludesMixin):
 
     @flow.setter
     def flow(self, value: Optional[Union[str, Path]]) -> None:
+        """The path to the flow directory or flow definition file. Defaults to None and base path of this
+        component will be used as flow directory.
+
+        :param value: The path to the flow directory or flow definition file.
+        :type value: Optional[Union[str, Path]]
+        """
         if self._flow != value:
             # reset code and flow file name when flow is changed
             self._code = None
-            self._flow_file_name = None
+            _, self._flow_file_name = self._get_flow_definition(flow=value, base_path=self.base_path)
         self._flow = value
 
     @property
@@ -160,6 +295,12 @@ class FlowComponent(Component, AdditionalIncludesMixin):
 
     @column_mappings.setter
     def column_mappings(self, value: Optional[Dict[str, str]]) -> None:
+        """
+        The column mappings for the flow. Defaults to None.
+
+        :param value: The column mappings for the flow.
+        :type value: Optional[Dict[str, str]]
+        """
         self._column_mappings = value or {}
 
     @property
@@ -172,6 +313,11 @@ class FlowComponent(Component, AdditionalIncludesMixin):
 
     @variant.setter
     def variant(self, value: Optional[str]) -> None:
+        """The variant of the flow. Defaults to None.
+
+        :param value: The variant of the flow.
+        :type value: Optional[str]
+        """
         self._variant = value
 
     @property
@@ -184,6 +330,12 @@ class FlowComponent(Component, AdditionalIncludesMixin):
 
     @connections.setter
     def connections(self, value: Optional[Dict[str, Dict[str, str]]]) -> None:
+        """
+        The connections for the flow. Defaults to None.
+
+        :param value: The connections for the flow.
+        :type value: Optional[Dict[str, Dict[str, str]]]
+        """
         self._connections = value or {}
 
     @property
@@ -196,6 +348,11 @@ class FlowComponent(Component, AdditionalIncludesMixin):
 
     @environment_variables.setter
     def environment_variables(self, value: Optional[Dict[str, str]]) -> None:
+        """The environment variables for the flow. Defaults to None.
+
+        :param value: The environment variables for the flow.
+        :type value: Optional[Dict[str, str]]
+        """
         self._environment_variables = value or {}
 
     @property
@@ -208,20 +365,16 @@ class FlowComponent(Component, AdditionalIncludesMixin):
 
     @additional_includes.setter
     def additional_includes(self, value: Optional[List]) -> None:
+        """A list of shared additional files to be included in the component. Defaults to None.
+
+        :param value: A list of shared additional files to be included in the component.
+        :type value: Optional[List]
+        """
         self._additional_includes = value or []
 
     # endregion
 
     # region Component
-
-    @property
-    def inputs(self) -> Dict:
-        return self._inputs or FlowComponentPortDict()
-
-    @property
-    def outputs(self) -> Dict:
-        return self._outputs or FlowComponentPortDict()
-
     @classmethod
     def _from_rest_object_to_init_params(cls, obj: ComponentVersion) -> Dict:
         raise RuntimeError("FlowComponent does not support loading from REST object.")
@@ -232,106 +385,21 @@ class FlowComponent(Component, AdditionalIncludesMixin):
         rest_obj.properties.component_spec["flow_file_name"] = self._flow_file_name
         return rest_obj
 
-    @contextlib.contextmanager
-    def _use_actual_input_output_ports(self, input_values: Dict[str, Any]):
-        if self._inputs:
-            yield
-            return
-
-        self._outputs = {
-            "flow_outputs": Output(
-                type=AssetTypes.URI_FOLDER,
-            ),
-            "debug_info": Output(
-                type=AssetTypes.URI_FOLDER,
-            ),
-        }
-
-        self._inputs = {
-            "data": Input(
-                type=AssetTypes.URI_FOLDER,
-                optional=False,
-            ),
-            "run_outputs": Input(
-                type=AssetTypes.URI_FOLDER,
-            ),
-        }
-
-        connection_parameters_root = "connections"
-        involved_connection_paths = set()
-
-        def _get_paths(cur_node, cur_paths, target_depth):
-            if target_depth == 0:
-                return [".".join(cur_paths)]
-            paths = []
-            if isinstance(cur_node, dict):
-                for key, value in cur_node.items():
-                    cur_paths.append(key)
-                    paths.extend(_get_paths(value, cur_paths, target_depth - 1))
-                    cur_paths.pop()
-            elif isinstance(cur_node, _GroupAttrDict):
-                # TODO: is it necessary to support this?
-                raise ValidationException(
-                    message="Connection parameters must be a dict for now, but got %s" % cur_node,
-                    no_personal_data_message="Connection parameters must be a dict for now",
-                    target=self._get_validation_error_target(),
-                    error_category=ErrorCategory.USER_ERROR,
-                )
-            return paths
-
-        for input_port_name, input_value in input_values.items():
-            if input_port_name in self._inputs:
-                continue
-            if input_port_name == connection_parameters_root:
-                involved_connection_paths.update(_get_paths(input_value, [connection_parameters_root], 2))
-            elif input_port_name.startswith(connection_parameters_root + "."):
-                involved_connection_paths.add(input_port_name)
-            else:
-                self._inputs[input_port_name] = Input(
-                    type=ComponentParameterTypes.STRING,
-                )
-
-        node_names, param_names = set(), set()
-        for connection_path in involved_connection_paths:
-            if connection_path.count(".") != 2:
-                raise ValidationException(
-                    message="Connection path must be in the format of connections.<node_name>.<connection_name>, but "
-                    "detected %s" % connection_path,
-                    no_personal_data_message="Invalid connection path",
-                    target=self._get_validation_error_target(),
-                    error_category=ErrorCategory.USER_ERROR,
-                )
-            _, node_name, parameter_name = connection_path.split(".")
-            node_names.add(node_name)
-            param_names.add(parameter_name)
-
-        self._inputs[connection_parameters_root] = GroupInput(
-            values={
-                node_name: GroupInput(
-                    values={
-                        parameter_name: Input(
-                            type=ComponentParameterTypes.STRING,
-                        )
-                        for parameter_name in param_names
-                    },
-                    _group_class=None,
-                )
-                for node_name in node_names
-            },
-            _group_class=None,
-        )
-
-        yield
-        self._inputs, self._outputs = {}, {}
-        return
-
     def _func(self, **kwargs) -> "Parallel":  # pylint: disable=invalid-overridden-method
-        with self._use_actual_input_output_ports(kwargs):
+        with self._inputs._fit_inputs(kwargs):  # pylint: disable=protected-access
             return super()._func(**kwargs)  # pylint: disable=not-callable
 
     @classmethod
-    def _get_flow_definition(cls, flow, base_path, source_path) -> Tuple[Path, str]:
+    def _get_flow_definition(cls, base_path, *, flow=None, source_path=None) -> Tuple[Path, str]:
         flow_file_name = "flow.dag.yaml"
+
+        if flow is None and source_path is None:
+            raise ValidationException(
+                message="Either flow or source_path must be specified.",
+                no_personal_data_message="Either flow or source_path must be specified.",
+                target=cls._get_validation_error_target(),
+                error_category=ErrorCategory.USER_ERROR,
+            )
 
         if flow is None:
             # Flow component must be created with a local yaml file, so no need to check if source_path exists
@@ -405,26 +473,30 @@ class FlowComponent(Component, AdditionalIncludesMixin):
     def _get_origin_code_value(self) -> Union[str, os.PathLike, None]:
         if self._code:
             return self._code
-        return self._get_flow_definition(self.flow, self.base_path, self._source_path)[0]
+        return self._get_flow_definition(flow=self.flow, base_path=self.base_path, source_path=self._source_path)[0]
 
     def _fill_back_code_value(self, value: str) -> None:
-        if not self._flow_file_name:
-            _, self._flow_file_name = self._get_flow_definition(self.flow, self.base_path, self._source_path)
         self._code = value
 
     @contextlib.contextmanager
     def _try_build_local_code(self) -> Iterable[Optional[Code]]:
         with super()._try_build_local_code() as code:
-            if code and code.path:
-                if not (Path(code.path) / ".promptflow" / "flow.tools.json").is_file():
-                    raise ValidationException(
-                        message="Flow component must be created with a ./promptflow/flow.tools.json, "
-                        "please run `pf flow build` to generate it or skip it in your ignore file.",
-                        no_personal_data_message="Flow component must be created with a ./promptflow/flow.tools.json, "
-                        "please run `pf flow build` to generate it or skip it in your ignore file.",
-                        target=self._get_validation_error_target(),
-                        error_category=ErrorCategory.USER_ERROR,
-                    )
+            if not code or not code.path:
+                yield code
+                return
+
+            if not (Path(code.path) / ".promptflow" / "flow.tools.json").is_file():
+                raise ValidationException(
+                    message="Flow component must be created with a ./promptflow/flow.tools.json, "
+                    "please run `pf flow build` to generate it or skip it in your ignore file.",
+                    no_personal_data_message="Flow component must be created with a ./promptflow/flow.tools.json, "
+                    "please run `pf flow build` to generate it or skip it in your ignore file.",
+                    target=self._get_validation_error_target(),
+                    error_category=ErrorCategory.USER_ERROR,
+                )
+            # TODO: should we remove additional includes from flow.dag.yaml? for now we suppose it will be removed
+            #  by mldesigner compile if needed
+
             yield code
 
     # endregion

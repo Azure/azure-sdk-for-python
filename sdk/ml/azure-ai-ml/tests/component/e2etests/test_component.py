@@ -1170,7 +1170,6 @@ class TestComponent(AzureRecordedTestCase):
                 created_component._to_dict(), *omit_fields
             )
 
-    @pytest.mark.skip(reason="TODO: flow component creation is not supported on service side yet")
     def test_load_component_from_flow(self, client: MLClient, randstr):
         target_path: str = "./tests/test_configs/flows/basic/flow.dag.yaml"
         component = load_component(
@@ -1188,3 +1187,5 @@ class TestComponent(AzureRecordedTestCase):
 
         assert created_component.name == component.name
         assert created_component.version == "2"
+
+        assert component._get_origin_code_value() == created_component._get_origin_code_value()
