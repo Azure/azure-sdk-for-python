@@ -2,7 +2,6 @@
 
 package:
   name: "{{ name|lower }}"
-  version: "{{ version }}"
 
 source:
   url: {{ environ.get('ML_SOURCE_DISTRIBUTION', '') }}
