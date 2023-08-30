@@ -36,7 +36,7 @@ class AutoDeleteSetting(DictMixin):
     def _from_rest_object(cls, obj: RestAutoDeleteSetting) -> "AutoDeleteSetting":
         return cls(condition=obj.condition, value=obj.value)
 
-    def __eq__(self, other: Any) -> bool:  # type: ignore
+    def __eq__(self, other: Any) -> bool:
         if not isinstance(other, AutoDeleteSetting):
             return NotImplemented
         return self.condition == other.condition and self.value == other.value

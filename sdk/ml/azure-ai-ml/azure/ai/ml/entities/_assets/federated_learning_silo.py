@@ -4,7 +4,7 @@
 # TODO determine where this file should live.
 
 from os import PathLike
-from typing import IO, AnyStr, Dict, List, Optional, Union
+from typing import IO, Any, AnyStr, Dict, List, Optional, Union
 
 from azure.ai.ml import Input
 from azure.ai.ml._utils.utils import dump_yaml_to_file, load_yaml
@@ -50,7 +50,7 @@ class FederatedLearningSilo:
     def dump(
         self,
         dest: Union[str, PathLike, IO[AnyStr]],
-        **kwargs,  # pylint: disable=unused-argument
+        **kwargs: Any,  # pylint: disable=unused-argument
     ) -> None:
         """Dump the Federated Learning Silo spec into a file in yaml format.
 

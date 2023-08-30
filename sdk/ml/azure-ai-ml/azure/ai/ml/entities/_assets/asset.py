@@ -41,7 +41,7 @@ class Asset(Resource):
         description: Optional[str] = None,
         tags: Optional[Dict] = None,
         properties: Optional[Dict] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
         self._is_anonymous = kwargs.pop("is_anonymous", False)
         self._auto_increment_version = kwargs.pop("auto_increment_version", False)
@@ -96,7 +96,7 @@ class Asset(Resource):
         """
         if value:
             if not isinstance(value, str):
-                msg = f"Asset version must be a string, not type {type(value)}."  # type:ignore[unreachable]
+                msg = f"Asset version must be a string, not type {type(value)}."  # type: ignore[unreachable]
                 err = ValidationException(
                     message=msg,
                     target=ErrorTarget.ASSET,
@@ -109,7 +109,7 @@ class Asset(Resource):
         self._version = value
         self._auto_increment_version = self.name and not self._version
 
-    def dump(self, dest: Union[str, PathLike, IO[AnyStr]], **kwargs) -> None:
+    def dump(self, dest: Union[str, PathLike, IO[AnyStr]], **kwargs: Any) -> None:
         """Dump the asset content into a file in YAML format.
 
         :param dest: The local path or file stream to write the YAML content to.
@@ -125,7 +125,7 @@ class Asset(Resource):
         yaml_serialized = self._to_dict()
         dump_yaml_to_file(dest, yaml_serialized, default_flow_style=False, path=path, **kwargs)
 
-    def __eq__(self, other: Any) -> bool:  # type: ignore
+    def __eq__(self, other: Any) -> bool:
         return bool(
             self.name == other.name
             and self.id == other.id
@@ -139,7 +139,7 @@ class Asset(Resource):
             and self.auto_delete_setting == other.auto_delete_setting
         )
 
-    def __ne__(self, other: Any) -> bool:  # type: ignore
+    def __ne__(self, other: Any) -> bool:
         return not self.__eq__(other)
 
 
