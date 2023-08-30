@@ -580,7 +580,6 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
                 for i in range(10):
                     message = ServiceBusMessage("Handler message no. {}".format(i))
                     sender.send_messages(message)
-            time.sleep(10)
 
             # check peek_messages returns correctly, with default prefetch_count = 0
             messages = []
@@ -588,11 +587,11 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
                                               receive_mode=ServiceBusReceiveMode.RECEIVE_AND_DELETE, 
                                               max_wait_time=10) as receiver:
                 # peek messages checks current state of queue, which should return 10
-                # since 0 were prefetched and deleted on receive
+                # since none were prefetched, added to internal queue, and deleted
                 peeked_msgs = receiver.peek_messages(max_message_count=10, timeout=10)
                 assert len(peeked_msgs) == 10
 
-                # iterator receives and deletes each message
+                # iterator receives and deletes each message from SB queue
                 for msg in receiver:
                     messages.append(msg)
                 assert len(messages) == 10
@@ -606,26 +605,23 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
                 for i in range(10):
                     message = ServiceBusMessage("Handler message no. {}".format(i))
                     sender.send_messages(message)
-            time.sleep(10)
 
             # check peek_messages returns correctly, with default prefetch_count > 0
             messages = []
+            # prefetch gets 2 messages from SB queue, stores in internal buffer, then deletes from SB queue
             with sb_client.get_queue_receiver(servicebus_queue.name, 
-                                              receive_mode=ServiceBusReceiveMode.RECEIVE_AND_DELETE, 
-                                              prefetch_count=5,
-                                              max_wait_time=10) as receiver:
-                # peek messages checks current state of queue, which should return 5
-                # since 5 were prefetched and deleted from internal buffer, then rest are retrieved from SB queue
+                                            receive_mode=ServiceBusReceiveMode.RECEIVE_AND_DELETE,
+                                            prefetch_count=2,
+                                            max_wait_time=30) as receiver:
+                # peek messages checks current state of SB queue, and returns 8 since 2 were prefetched and deleted
                 peeked_msgs = receiver.peek_messages(max_message_count=10, timeout=10)
-                # uamqp has incorrect behavior and would return all 10 messages, since prefetch isn't passed through
-                if not uamqp_transport:
-                    assert len(peeked_msgs) == 5
+                assert len(peeked_msgs) == 8
 
-                # receive 5 messages
-                recvd_msgs = receiver.receive_messages(max_message_count=5)
+                # receive_messages returns 2 messages from internal buffer, then 3 more from SB queue and deletes from SB queue
+                recvd_msgs = receiver.receive_messages(max_message_count=5, max_wait_time=10)
                 assert len(recvd_msgs) == 5
 
-                # iterator receives and deletes 5 leftover messages
+                # iterator receives and deletes 5 leftover messages in SB queue
                 for msg in receiver:
                     messages.append(msg)
                 assert len(messages) == 5
