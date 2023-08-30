@@ -698,7 +698,7 @@ class TestTableBatchCosmos(AzureRecordedTestCase, TableTestCase):
         url = self.account_url(tables_cosmos_account_name, "cosmos")
         table_name = self.get_resource_name("mytable")
         with TableClient(url, table_name, credential=tables_primary_cosmos_account_key) as client:
-            client.create_table()
+            # client.create_table()
             result = client.submit_transaction([])
             assert result == []
             client.delete_table()

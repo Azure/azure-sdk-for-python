@@ -662,19 +662,7 @@ class TableClient(TablesBaseClient):
 
         try:
             return self._batch_send(self.table_name, *batched_requests.requests, **kwargs)  # type: ignore
-        except TableTransactionError as ex:
-            if (
-                not self._cosmos_endpoint
-                and "An error occurred while processing this request." in ex.message
-                and "ErrorCode:InvalidInput" in ex.message
-            ):
-                return []
-            raise ex
         except HttpResponseError as ex:
-            if (
-                self._cosmos_endpoint
-                and "The batch request body is malformed." in ex.message
-                and "ErrorCode:InvalidInput" in ex.message
-            ):
+            if ex.status_code == 400 and not batched_requests.requests:
                 return []
-            raise ex
+            raise
