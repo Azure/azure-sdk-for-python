@@ -83,11 +83,11 @@ class WorkspaceHubOperations(WorkspaceOperationsBase):
     # @monitor_with_activity(logger, "Hub.Get", ActivityType.PUBLICAPI)
     @distributed_trace
     # pylint: disable=arguments-renamed, arguments-differ
-    def get(self, *, name: str, **kwargs: Dict) -> WorkspaceHub:
+    def get(self, name: str, **kwargs: Dict) -> WorkspaceHub:
         """Get a Workspace WorkspaceHub by name.
 
-        :keyword name: Name of the WorkspaceHub.
-        :paramtype name: str
+        :param name: Name of the WorkspaceHub.
+        :type name: str
         :return: The WorkspaceHub with the provided name.
         :rtype: WorkspaceHub
         """
