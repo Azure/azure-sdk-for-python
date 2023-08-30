@@ -658,4 +658,10 @@ class TableClient(TablesBaseClient):
                 "The value of 'operations' must be an iterator "
                 "of Tuples. Please check documentation for correct Tuple format."
             ) from exc
-        return self._batch_send(self.table_name, *batched_requests.requests, **kwargs)  # type: ignore
+
+        try:
+            return self._batch_send(self.table_name, *batched_requests.requests, **kwargs)  # type: ignore
+        except HttpResponseError as ex:
+            if ex.status_code == 400 and not batched_requests.requests:
+                return []
+            raise
