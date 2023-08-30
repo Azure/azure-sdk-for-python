@@ -26,10 +26,8 @@ import asyncio
 import logging
 import os
 import sys
-import time
+from typing import Optional
 import uuid
-from typing import cast
-import datetime
 
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.credentials import AzureKeyCredential
@@ -76,17 +74,19 @@ account_key = os.environ.get("ARR_ACCOUNT_KEY", None)
 if not account_key:
     raise ValueError("Set ARR_ACCOUNT_KEY env before run this sample.")
 
-storage_container_uri = os.environ.get("ARR_STORAGE_CONTAINER_URI", None)
-if not storage_container_uri:
+storage_container_uri_optional: Optional[str] = os.environ.get("ARR_STORAGE_CONTAINER_URI", None)
+if not storage_container_uri_optional:
     raise ValueError("Set ARR_STORAGE_CONTAINER_URI env before run this sample.")
+storage_container_uri: str = storage_container_uri_optional
 
 input_blob_prefix = os.environ.get("ARR_STORAGE_INPUT_BLOB_PREFIX", None)
 # if no input_blob_prefix is specified the whole content of the storage container will be retrieved for conversions
 # this is not recommended since copying lots of unneeded files will slow down conversions
 
-relative_input_asset_path = os.environ.get("ARR_STORAGE_INPUT_ASSET_PATH", None)
-if not relative_input_asset_path:
+relative_input_asset_path_optional: Optional[str] = os.environ.get("ARR_STORAGE_INPUT_ASSET_PATH", None)
+if not relative_input_asset_path_optional:
     raise ValueError("Set ARR_STORAGE_INPUT_ASSET_PATH env before run this sample.")
+relative_input_asset_path: str = relative_input_asset_path_optional
 
 # use AzureKeyCredentials to authenticate to the service - other auth options include AAD and getting
 # STS token using the mixed reality STS client
@@ -112,14 +112,14 @@ async def perform_asset_conversion():
         # input_settings blob_prefix more details at:
         # https://docs.microsoft.com/en-us/azure/remote-rendering/resources/troubleshoot#conversion-file-download-errors
         input_settings = AssetConversionInputSettings(
-            storage_container_uri=str(storage_container_uri),
+            storage_container_uri=storage_container_uri,
             blob_prefix=input_blob_prefix,  # if not specified all files from the input container will be retrieved
-            relative_input_asset_path=str(relative_input_asset_path),
+            relative_input_asset_path=relative_input_asset_path,
             # container_read_list_sas #if storage is not linked with the ARR account provide a SAS here to grant access.
         )
 
         output_settings = AssetConversionOutputSettings(
-            storage_container_uri=str(storage_container_uri),  # Note: different input/output containers can be specified
+            storage_container_uri=storage_container_uri,  # Note: different input/output containers can be specified
             blob_prefix="output/"+conversion_id,
             # output_asset_filename= convertedAsset.arrAsset # if not specified the output will be "<inputfile>.arrAsset".
             # container_write_sas  #if storage is not linked with the ARR account provide a SAS here to grant access.
@@ -132,8 +132,8 @@ async def perform_asset_conversion():
         print("conversion with id:", conversion_id, "created. Waiting for completion.")
         conversion = await conversion_poller.result()
         print("conversion with id:", conversion_id, "finished with result:", conversion.status)
-        if conversion.output != None:
-            print(cast(AssetConversionOutput, conversion.output).asset_uri)
+        if conversion.output is not None:
+            print(conversion.output.asset_uri)
         else:
             print("conversion had no output asset_uri")
 
@@ -158,8 +158,8 @@ async def list_all_asset_conversions():
         created_on = c.created_on.strftime("%m/%d/%Y, %H:%M:%S")
         print("\t conversion:  id:", c.id, "status:", c.status, "created on:", created_on)
         if c.status == AssetConversionStatus.SUCCEEDED:
-            if c.output != None:
-                print("\t\tconversion result URI:", cast(AssetConversionOutput, c.output).asset_uri)
+            if c.output is not None:
+                print("\t\tconversion result URI:", c.output.asset_uri)
             else:
                 print("conversion result returned with empty URI")
 
@@ -189,9 +189,9 @@ async def demonstrate_rendering_session_lifecycle():
 
         # if the session should run longer than initially requested we can extend the lifetime of the session
         session = await client.get_rendering_session(session_id)
-        if cast(int, session.lease_time_minutes) - cast(int, session.elapsed_time_minutes) < 2:
+        if session.lease_time_minutes - session.elapsed_time_minutes < 2:
             session = await client.update_rendering_session(
-                session_id=session_id, lease_time_minutes=cast(int, session.lease_time_minutes) + 10)
+                session_id=session_id, lease_time_minutes=session.lease_time_minutes + 10)
             print("session with id:", session.id, "updated. New lease time:", session.lease_time_minutes, "minutes")
 
         # once we do not need the session anymore we can stop the session
@@ -207,7 +207,7 @@ async def list_all_rendering_sessions():
     rendering_sessions = await client.list_rendering_sessions()
     async for session in rendering_sessions:
         print("\t session:  id:", session.id, "status:", session.status,
-              "created on:", cast(datetime.datetime, session.created_on).strftime("%m/%d/%Y, %H:%M:%S"))
+              "created on:", session.created_on.strftime("%m/%d/%Y, %H:%M:%S"))
 
 
 async def main():
