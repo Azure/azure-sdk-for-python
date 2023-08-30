@@ -5,12 +5,8 @@
 # pylint: disable=protected-access
 
 from typing import Dict, Iterable, Optional
-from marshmallow import ValidationError
 
-from azure.core.credentials import TokenCredential
-from azure.core.exceptions import ResourceNotFoundError
-from azure.core.polling import LROPoller
-from azure.core.tracing.decorator import distributed_trace
+from marshmallow import ValidationError
 
 from azure.ai.ml._restclient.v2023_06_01_preview import AzureMachineLearningWorkspaces as ServiceClient062023Preview
 from azure.ai.ml._restclient.v2023_06_01_preview.models import ManagedNetworkProvisionOptions
@@ -23,8 +19,8 @@ from azure.ai.ml.constants._common import Scope
 from azure.ai.ml.entities import (
     IdentityConfiguration,
     ManagedIdentityConfiguration,
-    WorkspaceConnection,
     ManagedNetworkProvisionStatus,
+    WorkspaceConnection,
 )
 from azure.ai.ml.entities._feature_store._constants import (
     FEATURE_STORE_KIND,
@@ -38,6 +34,10 @@ from azure.ai.ml.entities._feature_store._constants import (
 from azure.ai.ml.entities._feature_store.feature_store import FeatureStore
 from azure.ai.ml.entities._feature_store.materialization_store import MaterializationStore
 from azure.ai.ml.entities._workspace.feature_store_settings import FeatureStoreSettings
+from azure.core.credentials import TokenCredential
+from azure.core.exceptions import ResourceNotFoundError
+from azure.core.polling import LROPoller
+from azure.core.tracing.decorator import distributed_trace
 
 from ._workspace_operations_base import WorkspaceOperationsBase
 
