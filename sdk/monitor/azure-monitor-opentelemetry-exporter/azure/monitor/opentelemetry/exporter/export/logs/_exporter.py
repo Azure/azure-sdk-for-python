@@ -180,7 +180,7 @@ def _get_severity_level(severity_number: SeverityNumber):
 
 
 def _is_ignored_attribute(key: str) -> bool:
-    return key in _is_ignored_attribute
+    return key in _IGNORED_ATTRS
 
 
 _IGNORED_ATTRS = frozenset(
