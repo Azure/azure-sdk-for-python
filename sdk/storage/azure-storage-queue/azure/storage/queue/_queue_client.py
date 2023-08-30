@@ -318,7 +318,7 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
     def set_queue_metadata(
         self, metadata: Optional[Dict[str, Any]] = None,
         **kwargs: Any
-    ) -> Dict[str, Any]:
+        ) -> Dict[str, Any]:
         """Sets user-defined metadata on the specified queue.
 
         Metadata is associated with the queue as name-value pairs.
