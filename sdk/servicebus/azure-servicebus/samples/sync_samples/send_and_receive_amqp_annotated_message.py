@@ -11,7 +11,7 @@ Example to show sending, receiving and parsing amqp annotated message(s) to a Se
 
 import os
 from azure.servicebus import ServiceBusClient
-from azure.servicebus.amqp import AmqpAnnotatedMessage, AmqpMessageBodyType
+from azure.servicebus.amqp import AmqpAnnotatedMessage, AmqpMessageBodyType, AmqpMessageProperties, AmqpMessageHeader
 
 
 CONNECTION_STR = os.environ['SERVICEBUS_CONNECTION_STR']
@@ -34,7 +34,7 @@ def send_data_message(sender):
 def send_sequence_message(sender):
     sequence_body = [b'message', 123.456, True]
     footer = {'footer_key': 'footer_value'}
-    properties = {"subject": "sequence"}
+    properties = AmqpMessageProperties(subject="sequence")
     application_properties = {"body_type": "sequence"}
     sequence_message = AmqpAnnotatedMessage(
         sequence_body=sequence_body,
@@ -48,7 +48,7 @@ def send_sequence_message(sender):
 
 def send_value_message(sender):
     value_body = {b"key": [-123, b'data', False]}
-    header = {"priority": 10}
+    header = AmqpMessageHeader(priority=10)
     annotations = {"annotation_key": "value"}
     application_properties = {"body_type": "value"}
     value_message = AmqpAnnotatedMessage(

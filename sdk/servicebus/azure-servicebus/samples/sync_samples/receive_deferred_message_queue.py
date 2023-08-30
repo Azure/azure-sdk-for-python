@@ -30,7 +30,8 @@ with servicebus_client:
         deferred_sequenced_numbers = []
         for msg in received_msgs:
             print("Deferring msg: {}".format(str(msg)))
-            deferred_sequenced_numbers.append(msg.sequence_number)
+            if msg.sequence_number:
+                deferred_sequenced_numbers.append(msg.sequence_number)
             receiver.defer_message(msg)
 
         if deferred_sequenced_numbers:

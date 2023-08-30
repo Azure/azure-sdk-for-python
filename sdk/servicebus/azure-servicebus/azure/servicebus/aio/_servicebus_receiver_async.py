@@ -12,7 +12,7 @@ import logging
 import time
 import warnings
 from enum import Enum
-from typing import Any, List, Optional, AsyncIterator, Union, TYPE_CHECKING, cast
+from typing import Any, List, Optional, AsyncIterator, Union, TYPE_CHECKING, cast, Callable
 
 from ..exceptions import MessageLockLostError
 from ._servicebus_session_async import ServiceBusSession
@@ -234,7 +234,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
     def __aiter__(self):
         return self._iter_contextual_wrapper()
 
-    async def _inner_anext(self, wait_time=None):
+    async def _inner_anext(self, wait_time=None) -> ServiceBusReceivedMessage:
         # We do this weird wrapping such that an imperitive next() call, and a generator-based iter both trace sanely.
         self._check_live()
         while True:
