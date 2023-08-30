@@ -33,7 +33,6 @@ from .._serialize import (
 )
 from .._deserialize import deserialize_iso, _return_headers_and_deserialized, _convert_to_entity, _trim_service_metadata
 from .._error import (
-    TableTransactionError,
     _decode_error,
     _process_table_error,
     _reprocess_error,
@@ -685,19 +684,7 @@ class TableClient(AsyncTablesBaseClient):
 
         try:
             return await self._batch_send(self.table_name, *batched_requests.requests, **kwargs)
-        except TableTransactionError as ex:
-            if (
-                not self._cosmos_endpoint
-                and "An error occurred while processing this request." in ex.message
-                and "ErrorCode:InvalidInput" in ex.message
-            ):
-                return []
-            raise ex
         except HttpResponseError as ex:
-            if (
-                self._cosmos_endpoint
-                and "The batch request body is malformed." in ex.message
-                and "ErrorCode:InvalidInput" in ex.message
-            ):
+            if ex.status_code == 400 and not batched_requests.requests:
                 return []
-            raise ex
+            raise

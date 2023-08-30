@@ -22,7 +22,6 @@ from azure.core.tracing.decorator import distributed_trace
 from ._base_client import parse_connection_str, TablesBaseClient
 from ._entity import TableEntity
 from ._error import (
-    TableTransactionError,
     _decode_error,
     _process_table_error,
     _reprocess_error,
