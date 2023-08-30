@@ -95,7 +95,7 @@ class ResourceIdTests(unittest.TestCase):
             "ID_with_back/slash",
             "ID_\\with_forward_slashes",
             "ID_with_question?_mark",
-            "ID_with_poun#d",
+            "ID_with_#pound",
             "ID_with_tab\t",
             "ID\r_with_return_carriage",
             "ID_with_newline\n",
