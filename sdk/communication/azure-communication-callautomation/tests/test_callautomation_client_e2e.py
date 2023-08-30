@@ -29,7 +29,7 @@ class CallAutomationClientAsyncAutomatedLiveTest(CallAutomationAutomatedLiveTest
         super(CallAutomationClientAsyncAutomatedLiveTest, self).tearDown()
         self.persist_events(self.test_name)
 
-    @pytest.mark.live_test_only
+    @pytest.mark.live_test_only("Can't use recordings until tests use the test proxy")
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_create_VOIP_call_and_answer_then_hangup(self):
         call_connection_list = []

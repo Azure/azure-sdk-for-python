@@ -1,6 +1,6 @@
 # Release History
 
-## 1.29.2 (Unreleased)
+## 1.29.4 (Unreleased)
 
 ### Features Added
 
@@ -8,7 +8,25 @@
 
 ### Bugs Fixed
 
+- Fixed issue where IndexError was raised if multipart responses did not match the number of requests. #31471
+
 ### Other Changes
+
+## 1.29.3 (2023-08-22)
+
+### Bugs Fixed
+
+- Typing fix: `message` cannot be `None` in `AzureError`. #31564
+
+## 1.29.2 (2023-08-14)
+
+### Bugs Fixed
+
+- Added a default implementation for `AsyncTokenCredential.__aexit__()` #31573
+
+### Other Changes
+
+- Bumped `typing-extensions` version to 4.6.0.
 
 ## 1.29.1 (2023-08-09)
 

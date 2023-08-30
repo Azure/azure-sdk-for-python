@@ -36,29 +36,29 @@ class CommandComponent(Component, ParameterizedCommand, AdditionalIncludesMixin)
     """Command component version, used to define a Command Component or Job.
 
     :keyword name: The name of the Command job or component.
-    :type name: Optional[str]
+    :paramtype name: Optional[str]
     :keyword version: The version of the Command job or component.
-    :type version: Optional[str]
+    :paramtype version: Optional[str]
     :keyword description: The description of the component. Defaults to None.
-    :type description: Optional[str]
+    :paramtype description: Optional[str]
     :keyword tags: Tag dictionary. Tags can be added, removed, and updated. Defaults to None.
-    :type tags: Optional[dict]
+    :paramtype tags: Optional[dict]
     :keyword display_name: The display name of the component.
-    :type display_name: Optional[str]
+    :paramtype display_name: Optional[str]
     :keyword command: The command to be executed.
-    :type command: Optional[str]
+    :paramtype command: Optional[str]
     :keyword code: The source code to run the job. Can be a local path or "http:", "https:", or "azureml:" url pointing
         to a remote location.
     :type code: Optional[str]
     :keyword environment: The environment that the job will run in.
-    :type environment: Optional[Union[str, ~azure.ai.ml.entities.Environment]]
+    :paramtype environment: Optional[Union[str, ~azure.ai.ml.entities.Environment]]
     :keyword distribution: The configuration for distributed jobs. Defaults to None.
-    :type distribution: Optional[Union[~azure.ai.ml.PyTorchDistribution, ~azure.ai.ml.MpiDistribution,
+    :paramtype distribution: Optional[Union[~azure.ai.ml.PyTorchDistribution, ~azure.ai.ml.MpiDistribution,
         ~azure.ai.ml.TensorFlowDistribution, ~azure.ai.ml.RayDistribution]]
     :keyword resources: The compute resource configuration for the command.
-    :type resources: Optional[~azure.ai.ml.entities.JobResourceConfiguration]
+    :paramtype resources: Optional[~azure.ai.ml.entities.JobResourceConfiguration]
     :keyword inputs: A mapping of input names to input data sources used in the job. Defaults to None.
-    :type inputs: Optional[dict[str, Union[
+    :paramtype inputs: Optional[dict[str, Union[
         ~azure.ai.ml.Input,
         str,
         bool,
@@ -67,18 +67,18 @@ class CommandComponent(Component, ParameterizedCommand, AdditionalIncludesMixin)
         Enum,
         ]]]
     :keyword outputs: A mapping of output names to output data sources used in the job. Defaults to None.
-    :type outputs: Optional[dict[str, Union[str, ~azure.ai.ml.Output]]]
+    :paramtype outputs: Optional[dict[str, Union[str, ~azure.ai.ml.Output]]]
     :keyword instance_count: The number of instances or nodes to be used by the compute target. Defaults to 1.
-    :type instance_count: Optional[int]
+    :paramtype instance_count: Optional[int]
     :keyword is_deterministic: Specifies whether the Command will return the same output given the same input.
         Defaults to True. When True, if a Command (component) is deterministic and has been run before in the
         current workspace with the same input and settings, it will reuse results from a previous submitted job
         when used as a node or step in a pipeline. In that scenario, no compute resources will be used.
-    :type is_deterministic: Optional[bool]
+    :paramtype is_deterministic: Optional[bool]
     :keyword additional_includes: A list of shared additional files to be included in the component. Defaults to None.
-    :type additional_includes: Optional[list[str]]
+    :paramtype additional_includes: Optional[list[str]]
     :keyword properties: The job property dictionary. Defaults to None.
-    :type properties: Optional[dict[str, str]]
+    :paramtype properties: Optional[dict[str, str]]
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if CommandComponent cannot be successfully validated.
         Details will be provided in the error message.
 
@@ -160,7 +160,11 @@ class CommandComponent(Component, ParameterizedCommand, AdditionalIncludesMixin)
         self.additional_includes = additional_includes or []
 
     def _to_ordered_dict_for_yaml_dump(self) -> Dict:
-        """Dump the component content into a sorted yaml string."""
+        """Dump the component content into a sorted yaml string.
+
+        :return: The ordered dict
+        :rtype: Dict
+        """
 
         obj = super()._to_ordered_dict_for_yaml_dump()
         # dict dumped base on schema will transfer code to an absolute path, while we want to keep its original value
@@ -181,7 +185,7 @@ class CommandComponent(Component, ParameterizedCommand, AdditionalIncludesMixin)
     def instance_count(self, value: int) -> None:
         """Sets the number of instances or nodes to be used by the compute target.
 
-        :param value: The number of instances or nodes to be used by the compute target. Defaults to 1.
+        :param value: The number of instances of nodes to be used by the compute target. Defaults to 1.
         :type value: int
         """
         if not value:
@@ -201,7 +205,6 @@ class CommandComponent(Component, ParameterizedCommand, AdditionalIncludesMixin)
         }
 
     def _to_dict(self) -> Dict:
-        """Dump the command component content into a dictionary."""
         return convert_ordered_dict_to_dict({**self._other_parameter, **super(CommandComponent, self)._to_dict()})
 
     @classmethod

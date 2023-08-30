@@ -602,6 +602,7 @@ class ServiceBusReceiver(
          until the connection is closed. If specified, and no messages arrive for the
          timeout period, the iterator will stop.
         :type max_wait_time: Optional[float]
+        :return: An iterator of messages.
         :rtype: Iterator[ServiceBusReceivedMessage]
 
         .. admonition:: Example:
@@ -643,7 +644,7 @@ class ServiceBusReceiver(
          If no messages arrive, and no timeout is specified, this call will not return
          until the connection is closed. If specified, an no messages arrive within the
          timeout period, an empty list will be returned.
-
+        :return: A list of messages received. If no messages are available, this will be an empty list.
         :rtype: List[~azure.servicebus.ServiceBusReceivedMessage]
 
         .. admonition:: Example:
@@ -695,7 +696,8 @@ class ServiceBusReceiver(
          deferred.
         :keyword Optional[float] timeout: The total operation timeout in seconds including all the retries.
          The value must be greater than 0 if specified. The default value is None, meaning no timeout.
-        :rtype: List[~azure.servicebus.ServiceBusReceivedMessage]
+        :returns: A list of the requested ~azure.servicebus.ServiceBusReceivedMessage instances.
+        :rtype: list[~azure.servicebus.ServiceBusReceivedMessage]
 
         .. admonition:: Example:
 
@@ -776,8 +778,8 @@ class ServiceBusReceiver(
         :keyword int sequence_number: A message sequence number from which to start browsing messages.
         :keyword Optional[float] timeout: The total operation timeout in seconds including all the retries.
          The value must be greater than 0 if specified. The default value is None, meaning no timeout.
-
-        :rtype: List[~azure.servicebus.ServiceBusReceivedMessage]
+        :returns: A list of ~azure.servicebus.ServiceBusReceivedMessage.
+        :rtype: list[~azure.servicebus.ServiceBusReceivedMessage]
 
         .. admonition:: Example:
 

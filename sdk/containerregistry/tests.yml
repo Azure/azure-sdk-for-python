@@ -6,6 +6,7 @@ stages:
       BuildTargetingString: azure-containerregistry
       ServiceDirectory: containerregistry
       SupportedClouds: 'Public,UsGov,China'
+      TestTimeoutInMinutes: 240
       CloudConfig:
         Public:
           SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)

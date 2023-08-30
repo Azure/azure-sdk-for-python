@@ -34,7 +34,7 @@ logging.getLogger().setLevel(logging.INFO)
 MINIMUM_VERSION_GENERIC_OVERRIDES = {
     "azure-common": "1.1.10",
     "msrest": "0.6.10",
-    "typing-extensions": "3.6.5",
+    "typing-extensions": "4.6.0",
     "opentelemetry-api": "1.3.0",
     "opentelemetry-sdk": "1.3.0",
     "azure-core": "1.11.0",
@@ -53,7 +53,6 @@ MINIMUM_VERSION_SPECIFIC_OVERRIDES = {
 }
 
 MAXIMUM_VERSION_GENERIC_OVERRIDES = {
-    "cryptography": "4.0.0",
     "typing-extensions": "4.6.3"
 }
 

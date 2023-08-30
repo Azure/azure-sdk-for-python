@@ -69,6 +69,7 @@ class AbstractSpan(Protocol):
         :return: The child span
         :rtype: AbstractSpan
         """
+        ...
 
     @property
     def kind(self) -> Optional[SpanKind]:
@@ -77,6 +78,7 @@ class AbstractSpan(Protocol):
         :rtype: SpanKind
         :return: The span kind of this span
         """
+        ...
 
     @kind.setter
     def kind(self, value: SpanKind) -> None:
@@ -85,9 +87,11 @@ class AbstractSpan(Protocol):
         :param value: The span kind of this span
         :type value: SpanKind
         """
+        ...
 
     def __enter__(self) -> AbstractSpan:
         """Start a span."""
+        ...
 
     def __exit__(
         self,
@@ -104,12 +108,15 @@ class AbstractSpan(Protocol):
         :param traceback: The traceback of the exception
         :type traceback: Traceback
         """
+        ...
 
     def start(self) -> None:
         """Set the start time for a span."""
+        ...
 
     def finish(self) -> None:
         """Set the end time for a span."""
+        ...
 
     def to_header(self) -> Dict[str, str]:
         """Returns a dictionary with the header labels and values.
@@ -117,6 +124,7 @@ class AbstractSpan(Protocol):
         :return: A dictionary with the header labels and values
         :rtype: dict
         """
+        ...
 
     def add_attribute(self, key: str, value: Union[str, int]) -> None:
         """
@@ -127,6 +135,7 @@ class AbstractSpan(Protocol):
         :param value: The value of the key value pair
         :type value: Union[str, int]
         """
+        ...
 
     def set_http_attributes(self, request: HttpRequestType, response: Optional[HttpResponseType] = None) -> None:
         """
@@ -137,6 +146,7 @@ class AbstractSpan(Protocol):
         :param response: The response received by the server. Is None if no response received.
         :type response: ~azure.core.pipeline.transport.HttpResponse or ~azure.core.pipeline.transport.AsyncHttpResponse
         """
+        ...
 
     def get_trace_parent(self) -> str:
         """Return traceparent string.
@@ -144,12 +154,14 @@ class AbstractSpan(Protocol):
         :return: a traceparent string
         :rtype: str
         """
+        ...
 
     @property
     def span_instance(self) -> Any:
         """
         Returns the span the class is wrapping.
         """
+        ...
 
     @classmethod
     def link(cls, traceparent: str, attributes: Optional[Attributes] = None) -> None:
@@ -161,6 +173,7 @@ class AbstractSpan(Protocol):
         :param attributes: Any additional attributes that should be added to link
         :type attributes: dict
         """
+        ...
 
     @classmethod
     def link_from_headers(cls, headers: Dict[str, str], attributes: Optional[Attributes] = None) -> None:
@@ -172,6 +185,7 @@ class AbstractSpan(Protocol):
         :param attributes: Any additional attributes that should be added to link
         :type attributes: dict
         """
+        ...
 
     @classmethod
     def get_current_span(cls) -> Any:
@@ -181,6 +195,7 @@ class AbstractSpan(Protocol):
         :return: The current span
         :rtype: AbstractSpan
         """
+        ...
 
     @classmethod
     def get_current_tracer(cls) -> Any:
@@ -190,6 +205,7 @@ class AbstractSpan(Protocol):
         :return: The current tracer
         :rtype: Any
         """
+        ...
 
     @classmethod
     def set_current_span(cls, span: Any) -> None:
@@ -198,6 +214,7 @@ class AbstractSpan(Protocol):
         :param span: The span to set as the current span
         :type span: Any
         """
+        ...
 
     @classmethod
     def set_current_tracer(cls, tracer: Any) -> None:
@@ -206,6 +223,7 @@ class AbstractSpan(Protocol):
         :param tracer: The tracer to set as the current tracer
         :type tracer: Any
         """
+        ...
 
     @classmethod
     def change_context(cls, span: AbstractSpan) -> ContextManager[AbstractSpan]:
@@ -216,6 +234,7 @@ class AbstractSpan(Protocol):
         :rtype: contextmanager
         :return: A context manager that will run the given span in the new context
         """
+        ...
 
     @classmethod
     def with_current_context(cls, func: Callable) -> Callable:
@@ -226,6 +245,7 @@ class AbstractSpan(Protocol):
         :return: The target the pass in instead of the function
         :rtype: callable
         """
+        ...
 
 
 class HttpSpanMixin:
