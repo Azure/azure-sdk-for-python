@@ -27,6 +27,7 @@ from ._workspace_operations_base import WorkspaceOperationsBase
 ops_logger = OpsLogger(__name__)
 module_logger = ops_logger.module_logger
 
+
 @experimental
 class WorkspaceHubOperations(WorkspaceOperationsBase):
     """_HubOperations.
@@ -81,12 +82,12 @@ class WorkspaceHubOperations(WorkspaceOperationsBase):
 
     # @monitor_with_activity(logger, "Hub.Get", ActivityType.PUBLICAPI)
     @distributed_trace
-    # pylint: disable=arguments-renamed
+    # pylint: disable=arguments-renamed, arguments-differ
     def get(self, *, name: str, **kwargs: Dict) -> WorkspaceHub:
         """Get a Workspace WorkspaceHub by name.
 
-        :param name: Name of the WorkspaceHub.
-        :type name: str
+        :keyword name: Name of the WorkspaceHub.
+        :paramtype name: str
         :return: The WorkspaceHub with the provided name.
         :rtype: WorkspaceHub
         """
@@ -113,16 +114,16 @@ class WorkspaceHubOperations(WorkspaceOperationsBase):
 
         Returns the WorkspaceHub if already exists.
 
-        :param workspace_hub: WorkspaceHub definition.
-        :type workspace_hub: WorkspaceHub
-        :param update_dependent_resources: Whether to update dependent resources. Defaults to False.
-        :type update_dependent_resources: boolean
+        :keyword workspace_hub: WorkspaceHub definition.
+        :paramtype workspace_hub: WorkspaceHub
+        :keyword update_dependent_resources: Whether to update dependent resources. Defaults to False.
+        :paramtype update_dependent_resources: boolean
         :return: An instance of LROPoller that returns a WorkspaceHub.
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.WorkspaceHub]
         """
 
         def get_callback():
-            return self.get(workspace_hub.name)
+            return self.get(name=workspace_hub.name)
 
         return super().begin_create(
             workspace=workspace_hub,
