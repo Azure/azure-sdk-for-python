@@ -67,7 +67,6 @@ class AzureMonitorLogExporter(BaseExporter, LogExporter):
     def _log_to_envelope(self, log_data: LogData) -> TelemetryItem:
         if not log_data:
             return None
-        envelope = None
         envelope = _convert_log_to_envelope(log_data)
         envelope.instrumentation_key = self._instrumentation_key
         return envelope
