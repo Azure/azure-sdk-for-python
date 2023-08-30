@@ -9,25 +9,18 @@ http = urllib3.PoolManager()
 #       -c "${{ replace(convertToJson(parameters.CondaArtifacts), '"', '\"') }}"
 #       -w "$(Build.SourcesDirectory)/conda/conda-recipes"
 #
-# Sample configuration yaml. This is converted to json before being passed a blob to the invoking script. (see directly above for conversion)
-#   - name: msrest
-#     in_batch: true
-#     multiplatform: true
-#     checkout:
-#     - package: msrest
-#       download_uri: https://files.pythonhosted.org/packages/68/77/8397c8fb8fc257d8ea0fa66f8068e073278c65f05acb17dcb22a02bfdc42/msrest-0.7.1.zip
-#   - name: msal
-#     in_batch: true
-#     multiplatform: true
-#     checkout:
-#     - package: msal
-#       download_uri: https://files.pythonhosted.org/packages/85/9b/cf94ca59e4d88afe1852962d2b7e0cd9cee752dddf7cd6e30382cdc3f7ed/msal-1.23.0.tar.gz
-#   - name: uamqp
-#     common_root: uamqp
-#     in_batch: true
-#     checkout:
-#     - package: uamqp
-#       download_uri: https://files.pythonhosted.org/packages/0b/d8/fc24d95e6f6c80851ae6738c78da081cd535c924b02c5a4928b108b9ed42/uamqp-1.6.5.tar.gz
+# # Sample configuration yaml. This is converted to json before being passed a blob to the invoking script. (see directly above for conversion)
+#     - name: uamqp
+#         common_root: uamqp
+#         in_batch: true
+#         conda_py_versions:
+#         - "38"
+#         - "39"
+#         - "310"
+#         - "311"
+#         checkout:
+#         - package: uamqp
+#         download_uri: https://files.pythonhosted.org/packages/0b/d8/fc24d95e6f6c80851ae6738c78da081cd535c924b02c5a4928b108b9ed42/uamqp-1.6.5.tar.gz
 #   - name: azure-core
 #     common_root: azure
 #     in_batch: ${{ parameters.release_azure_core }}
@@ -139,6 +132,7 @@ class CondaConfiguration:
         checkout: List[CheckoutConfiguration],
         created_sdist_path: str = None,
         service: str = "",
+        conda_py_versions: List[str] = []
     ):
         self.name: str = name
         self.common_root: str = common_root
@@ -146,6 +140,7 @@ class CondaConfiguration:
         self.checkout: List[CheckoutConfiguration] = checkout
         self.created_sdist_path: str = created_sdist_path
         self.service: str = service
+        self.conda_py_versions = conda_py_versions
 
     @classmethod
     def from_json(cls, raw_json_blob: dict):
@@ -158,6 +153,11 @@ class CondaConfiguration:
 
         in_batch = str_to_bool(raw_json_blob["in_batch"])
         checkout_config = parse_checkout_config(raw_json_blob["checkout"])
+
+        if "conda_py_versions" in raw_json_blob:
+            conda_py_versions = raw_json_blob["conda_py_versions"]
+        else:
+            conda_py_versions = []
 
         if "service" in raw_json_blob:
             service = raw_json_blob["service"]
@@ -173,7 +173,7 @@ class CondaConfiguration:
                 f"Tooling cannot auto-detect targeted service for conda package {name}, nor is there a checkout_path that we can parse the service from. Please correct and retry."
             )
 
-        return cls(name, common_root, in_batch, checkout_config, None, service)
+        return cls(name, common_root, in_batch, checkout_config, None, service, conda_py_versions)
 
     def __str__(self) -> str:
         checkout = f"{os.linesep}".join([str(c_config) for c_config in self.checkout])

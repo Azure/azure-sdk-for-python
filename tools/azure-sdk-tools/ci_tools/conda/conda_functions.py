@@ -606,14 +606,27 @@ def build_conda_packages(
         invoke_command(f'conda run --prefix "{conda_env_dir}" conda index {conda_output_dir}', repo_root)
 
     for conda_build in conda_configurations:
-        command = f'conda run --prefix "{conda_env_dir}" conda-build . --output-folder "{conda_output_dir}" -c "{conda_output_dir}"'
-        print(command)
-
         conda_build_folder = os.path.join(conda_sdist_dir, conda_build.name).replace("\\", "/")
-        get_output(
-            command,
-            conda_build_folder,
-        )
+
+        if conda_build.conda_py_versions:
+            for pyversion in conda_build.conda_py_versions:
+                invoke_conda_build(conda_output_dir, conda_env_dir, conda_build_folder, pyversion)
+        else:
+            invoke_conda_build(conda_output_dir, conda_env_dir, conda_build_folder)
+
+
+
+def invoke_conda_build(conda_output_dir: str, conda_env_dir: str, conda_build_folder: str, optional_py_version: str = None) -> None:
+    command = f'conda run --prefix "{conda_env_dir}" conda-build . --output-folder "{conda_output_dir}" -c "{conda_output_dir}"'
+
+    if optional_py_version:
+        command += f" --py {optional_py_version}"
+
+    print(command)
+    get_output(
+        command,
+        conda_build_folder,
+    )
 
 
 def check_conda_config():
