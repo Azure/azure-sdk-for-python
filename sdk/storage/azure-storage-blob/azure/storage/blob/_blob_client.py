@@ -239,6 +239,8 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             The optional blob snapshot on which to operate. This can be the snapshot ID string
             or the response returned from :func:`create_snapshot`. If specified, this will override
             the snapshot in the url.
+        :keyword str version_id: The version id parameter is an opaque DateTime value that, when present,
+            specifies the version of the blob to operate on.
         :returns: A Blob client.
         :rtype: ~azure.storage.blob.BlobClient
         """
@@ -283,10 +285,11 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
                     path_snapshot = snapshot['snapshot'] # type: ignore
                 except TypeError:
                     path_snapshot = snapshot
+        version_id = kwargs.pop('version_id', None)
 
         return cls(
             account_url, container_name=container_name, blob_name=blob_name,
-            snapshot=path_snapshot, credential=credential, **kwargs
+            snapshot=path_snapshot, credential=credential, version_id=version_id, **kwargs
         )
 
     @classmethod
@@ -319,6 +322,8 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
             should be the storage account key.
         :type credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]]  # pylint: disable=line-too-long
+        :keyword str version_id: The version id parameter is an opaque DateTime value that, when present,
+            specifies the version of the blob to operate on.
         :returns: A Blob client.
         :rtype: ~azure.storage.blob.BlobClient
 
@@ -334,9 +339,10 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         account_url, secondary, credential = parse_connection_str(conn_str, credential, 'blob')
         if 'secondary_hostname' not in kwargs:
             kwargs['secondary_hostname'] = secondary
+        version_id = kwargs.pop('version_id', None)
         return cls(
             account_url, container_name=container_name, blob_name=blob_name,
-            snapshot=snapshot, credential=credential, **kwargs
+            snapshot=snapshot, credential=credential, version_id=version_id, **kwargs
         )
 
     @distributed_trace
