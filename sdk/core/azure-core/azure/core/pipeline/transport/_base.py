@@ -89,6 +89,7 @@ def _format_url_section(template, **kwargs):
     :rtype: str
     :returns: Template completed
     """
+    last_template = template
     components = template.split("/")
     while components:
         try:
@@ -97,7 +98,11 @@ def _format_url_section(template, **kwargs):
             formatted_components = template.split("/")
             components = [c for c in formatted_components if "{{{}}}".format(key.args[0]) not in c]
             template = "/".join(components)
-    # No URL sections left - returning None
+            if last_template == template:
+                raise ValueError(
+                    f"The value provided for the url part '{template}' was incorrect, and resulted in an invalid url"
+                ) from key
+            last_template = template
 
 
 def _urljoin(base_url: str, stub_url: str) -> str:

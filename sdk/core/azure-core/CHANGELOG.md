@@ -1,6 +1,19 @@
 # Release History
 
-## 1.29.3 (2023-08-18)
+## 1.29.4 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+- Fixed the issue that some urls trigger an infinite loop. #31346
+- Fixed issue where IndexError was raised if multipart responses did not match the number of requests. #31471
+
+### Other Changes
+
+## 1.29.3 (2023-08-22)
 
 ### Bugs Fixed
 
