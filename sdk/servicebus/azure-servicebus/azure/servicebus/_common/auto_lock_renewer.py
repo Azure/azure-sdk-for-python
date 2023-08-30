@@ -244,7 +244,7 @@ class AutoLockRenewer(object):  # pylint:disable=too-many-instance-attributes
         receiver: ServiceBusReceiver,
         renewable: Union[ServiceBusReceivedMessage, ServiceBusSession],
         max_lock_renewal_duration: Optional[float] = None,
-        on_lock_renew_failure: Optional[LockRenewFailureCallback] = None,
+        on_lock_renew_failure: Optional["LockRenewFailureCallback"] = None,
     ) -> None:
         """Register a renewable entity for automatic lock renewal.
 
