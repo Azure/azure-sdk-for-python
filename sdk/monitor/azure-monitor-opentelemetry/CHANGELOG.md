@@ -12,6 +12,8 @@
     ([#31744](https://github.com/Azure/azure-sdk-for-python/pull/31740))
 - Add preview warning for Autoinstrumentation entry points
     ([#31767](https://github.com/Azure/azure-sdk-for-python/pull/31767))
+- Bandit, mypy, and pylint
+    ([#31881](https://github.com/Azure/azure-sdk-for-python/pull/31881))
 
 ## 1.0.0b15 (2023-07-17)
 
