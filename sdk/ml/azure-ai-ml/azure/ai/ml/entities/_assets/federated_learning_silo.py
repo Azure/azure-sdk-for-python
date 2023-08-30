@@ -50,7 +50,8 @@ class FederatedLearningSilo:
     def dump(
         self,
         dest: Union[str, PathLike, IO[AnyStr]],
-        **kwargs: Any,  # pylint: disable=unused-argument
+        # pylint: disable=unused-argument
+        **kwargs: Any,
     ) -> None:
         """Dump the Federated Learning Silo spec into a file in yaml format.
 
