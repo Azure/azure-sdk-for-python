@@ -46,7 +46,7 @@ class TestWorkspaceHubOperation:
             mock_workspace_hub_operation._operation.list_by_resource_group.assert_called_once()
 
     def test_get(self, mock_workspace_hub_operation: WorkspaceHubOperations) -> None:
-        mock_workspace_hub_operation.get("random_name")
+        mock_workspace_hub_operation.get(name="random_name")
         mock_workspace_hub_operation._operation.get.assert_called_once()
 
     def test_begin_create(
