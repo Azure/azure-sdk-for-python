@@ -223,6 +223,7 @@ class DatastoreOperations(_ScopeDependentOperations):
                     source_type="URI",
                     mount_name=mount_name,
                     mount_action="Mount",
+                    mount_path=mount_point,
                 )],
                 api_version="2021-01-01",
             )
