@@ -10,7 +10,7 @@ import threading
 import time
 from concurrent.futures import ThreadPoolExecutor, TimeoutError as FuturesTimeoutError
 import queue
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Union
 
 from .._servicebus_receiver import ServiceBusReceiver
 from .._servicebus_session import ServiceBusSession
