@@ -41,7 +41,7 @@ async def create_authentication(client):
     # pylint: disable=protected-access
     try:
         # ignore mypy's warning because token_type is Optional
-        token_type = client._credential.token_type  # type: ignore
+        token_type = client._credential.token_type
     except AttributeError:
         token_type = TOKEN_TYPE_JWT
     if token_type == TOKEN_TYPE_SASTOKEN:

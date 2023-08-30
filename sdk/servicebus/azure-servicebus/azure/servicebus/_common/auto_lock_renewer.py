@@ -103,7 +103,7 @@ class AutoLockRenewer(object):  # pylint:disable=too-many-instance-attributes
         self._dispatcher_timeout = 5  # the idle time that dispatcher should exit if there's no activity
         self._max_lock_renewal_duration = max_lock_renewal_duration
         self._on_lock_renew_failure = on_lock_renew_failure
-        self._renew_tasks = queue.Queue()  # type: ignore
+        self._renew_tasks = queue.Queue()
         self._infer_max_workers_time = 1
 
     def __enter__(self):
@@ -208,10 +208,10 @@ class AutoLockRenewer(object):  # pylint:disable=too-many-instance-attributes
                     )
                     try:
                         # Renewable is a session
-                        renewable.renew_lock()  # type: ignore
+                        renewable.renew_lock()
                     except AttributeError:
                         # Renewable is a message
-                        receiver.renew_message_lock(renewable)  # type: ignore
+                        receiver.renew_message_lock(renewable)
                 time.sleep(self._sleep_time)
                 # enqueue a new task, keeping renewing the renewable
                 if self._renewable(renewable):
@@ -309,7 +309,7 @@ class AutoLockRenewer(object):  # pylint:disable=too-many-instance-attributes
             )
         )
 
-    def close(self, wait=True):
+    def close(self, wait:bool = True):
         """Cease autorenewal by shutting down the thread pool to clean up any remaining lock renewal threads.
 
         :param wait: Whether to block until thread pool has shutdown. Default is `True`.

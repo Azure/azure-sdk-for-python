@@ -589,7 +589,7 @@ try:
                 logger.info("%r send operation timed out. (%r)", sender._name, error)
                 raise error
             cast("SendClient", sender._handler)._msg_timeout = (
-                timeout * UamqpTransport.TIMEOUT_FACTOR  # type: ignore
+                timeout * UamqpTransport.TIMEOUT_FACTOR
             )
 
         @staticmethod
@@ -973,7 +973,7 @@ try:
             :param str reply_to: Reply to.
             :rtype: uamqp.Message
             """
-            return Message(  # type: ignore # TODO: fix mypy error
+            return Message(
                 body=message,
                 properties=MessageProperties(
                     reply_to=reply_to, encoding=config.encoding, **kwargs

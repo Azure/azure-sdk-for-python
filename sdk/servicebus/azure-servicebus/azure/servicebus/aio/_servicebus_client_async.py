@@ -222,11 +222,11 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
         if token and token_expiry:
             credential = ServiceBusSASTokenCredential(token, token_expiry)
         elif policy and key:
-            credential = ServiceBusSharedKeyCredential(policy, key)  # type: ignore
-        return cls(  # type: ignore # for credential
+            credential = ServiceBusSharedKeyCredential(policy, key)
+        return cls(
             fully_qualified_namespace=host,
             entity_name=entity_in_conn_str or kwargs.pop("entity_name", None),
-            credential=credential,  # type: ignore
+            credential=credential,
             retry_total=retry_total,
             retry_backoff_factor=retry_backoff_factor,
             retry_backoff_max=retry_backoff_max,

@@ -277,10 +277,10 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         if token and token_expiry:
             credential = ServiceBusSASTokenCredential(token, token_expiry)
         elif shared_access_key_name and shared_access_key:
-            credential = ServiceBusSharedKeyCredential(shared_access_key_name, shared_access_key)  # type: ignore
+            credential = ServiceBusSharedKeyCredential(shared_access_key_name, shared_access_key)
         if "//" in endpoint:
             endpoint = endpoint[endpoint.index("//") + 2 :]
-        return cls(endpoint, credential, api_version=api_version, **kwargs)  # type: ignore
+        return cls(endpoint, credential, api_version=api_version, **kwargs)
 
     async def get_queue(self, queue_name: str, **kwargs: Any) -> QueueProperties:
         """Get the properties of a queue.
@@ -407,12 +407,12 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         :rtype: ~azure.servicebus.management.QueueProperties
         """
         forward_to = _normalize_entity_path_to_full_path_if_needed(
-            forward_to, self.fully_qualified_namespace
+            self.fully_qualified_namespace, forward_to
         )
         forward_dead_lettered_messages_to = (
             _normalize_entity_path_to_full_path_if_needed(
-                forward_dead_lettered_messages_to,
                 self.fully_qualified_namespace,
+                forward_dead_lettered_messages_to
             )
         )
         queue = QueueProperties(
@@ -440,7 +440,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         to_create = queue._to_internal_entity(self.fully_qualified_namespace)
         create_entity_body = CreateQueueBody(
             content=CreateQueueBodyContent(
-                queue_description=to_create,  # type: ignore
+                queue_description=to_create,
             )
         )
         request_body = create_entity_body.serialize(is_xml=True)
@@ -449,7 +449,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
             entry_ele = cast(
                 ElementTree,
                 await self._impl.entity.put(
-                    queue_name, request_body, **kwargs  # type: ignore
+                    queue_name, request_body, **kwargs
                 ),
             )
 
@@ -492,7 +492,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         await self._create_forward_to_header_tokens(to_update, kwargs)
         with _handle_response_error():
             await self._impl.entity.put(
-                queue.name, request_body, if_match="*", **kwargs  # type: ignore
+                queue.name, request_body, if_match="*", **kwargs
             )
 
     async def delete_queue(self, queue_name: str, **kwargs: Any) -> None:
@@ -690,7 +690,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
 
         create_entity_body = CreateTopicBody(
             content=CreateTopicBodyContent(
-                topic_description=to_create,  # type: ignore
+                topic_description=to_create,
             )
         )
         request_body = create_entity_body.serialize(is_xml=True)
@@ -698,7 +698,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
             entry_ele = cast(
                 ElementTree,
                 await self._impl.entity.put(
-                    topic_name, request_body, **kwargs  # type: ignore
+                    topic_name, request_body, **kwargs
                 ),
             )
         entry = TopicDescriptionEntry.deserialize(entry_ele)
@@ -739,7 +739,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         request_body = create_entity_body.serialize(is_xml=True)
         with _handle_response_error():
             await self._impl.entity.put(
-                topic.name, request_body, if_match="*", **kwargs  # type: ignore
+                topic.name, request_body, if_match="*", **kwargs
             )
 
     async def delete_topic(self, topic_name: str, **kwargs: Any) -> None:
@@ -917,12 +917,12 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         # pylint:disable=protected-access
         _validate_entity_name_type(topic_name, display_name="topic_name")
         forward_to = _normalize_entity_path_to_full_path_if_needed(
-            forward_to, self.fully_qualified_namespace
+            self.fully_qualified_namespace, forward_to
         )
         forward_dead_lettered_messages_to = (
             _normalize_entity_path_to_full_path_if_needed(
-                forward_dead_lettered_messages_to,
                 self.fully_qualified_namespace,
+                forward_dead_lettered_messages_to,
             )
         )
 
@@ -942,11 +942,11 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
             auto_delete_on_idle=auto_delete_on_idle,
             availability_status=None,
         )
-        to_create = subscription._to_internal_entity(self.fully_qualified_namespace)  # type: ignore
+        to_create = subscription._to_internal_entity(self.fully_qualified_namespace)
 
         create_entity_body = CreateSubscriptionBody(
             content=CreateSubscriptionBodyContent(
-                subscription_description=to_create,  # type: ignore
+                subscription_description=to_create,
             )
         )
         request_body = create_entity_body.serialize(is_xml=True)
@@ -956,7 +956,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
                 ElementTree,
                 await self._impl.subscription.put(
                     topic_name,
-                    subscription_name,  # type: ignore
+                    subscription_name,
                     request_body,
                     **kwargs
                 ),
@@ -1151,7 +1151,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
 
         create_entity_body = CreateRuleBody(
             content=CreateRuleBodyContent(
-                rule_description=to_create,  # type: ignore
+                rule_description=to_create,
             )
         )
         request_body = create_entity_body.serialize(is_xml=True)
@@ -1159,7 +1159,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         with _handle_response_error():
             entry_ele = await self._impl.rule.put(
                 topic_name,
-                subscription_name,  # type: ignore
+                subscription_name,
                 rule_name,
                 request_body,
                 **kwargs

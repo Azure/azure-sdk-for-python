@@ -14,7 +14,7 @@ from azure.core.pipeline.policies import RetryMode
 try:
     from urllib.parse import urlparse
 except ImportError:
-    from urlparse import urlparse  # type: ignore
+    from urlparse import urlparse
 
 from ._pyamqp.utils import generate_sas_token
 from ._transport._pyamqp_transport import PyamqpTransport
@@ -64,7 +64,7 @@ def _parse_conn_str(
     conn_properties = [s.split("=", 1) for s in conn_str.strip().rstrip(";").split(";")]
     if any(len(tup) != 2 for tup in conn_properties):
         raise ValueError("Connection string is either blank or malformed.")
-    conn_settings = dict(conn_properties)   # type: ignore
+    conn_settings = dict(conn_properties)
 
     # case sensitive check when parsing for connection string properties
     if check_case:
@@ -81,7 +81,7 @@ def _parse_conn_str(
             try:
                 # Expiry can be stored in the "se=<timestamp>" clause of the token. ('&'-separated key-value pairs)
                 shared_access_signature_expiry = int(
-                    shared_access_signature.split("se=")[1].split("&")[0]   # type: ignore
+                    shared_access_signature.split("se=")[1].split("&")[0]
                 )
             except (
                 IndexError,
@@ -267,9 +267,9 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         if isinstance(credential, AzureSasCredential):
             self._credential = ServiceBusAzureSasTokenCredential(credential)
         elif isinstance(credential, AzureNamedKeyCredential):
-            self._credential = ServiceBusAzureNamedKeyTokenCredential(credential) # type: ignore
+            self._credential = ServiceBusAzureNamedKeyTokenCredential(credential)
         else:
-            self._credential = credential # type: ignore
+            self._credential = credential
         self._container_id = CONTAINER_PREFIX + str(uuid.uuid4())[:8]
         self._config = Configuration(
             hostname=self.fully_qualified_namespace,
@@ -355,8 +355,8 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
             # should create a new session receiver instance to receive from session.
             # There are pitfalls WRT both next session IDs, and the diversity of session
             # failure modes, that motivates us to disallow this.
-            if self._session and self._running and isinstance(error, (SessionLockLostError, ServiceBusConnectionError)):  # type: ignore
-                self._session._lock_lost = True  # type: ignore
+            if self._session and self._running and isinstance(error, (SessionLockLostError, ServiceBusConnectionError)):
+                self._session._lock_lost = True
                 self._close_handler()
                 raise error
         except AttributeError:

@@ -119,7 +119,7 @@ class ServiceBusSession(BaseSession):
             mgmt_handlers.default,
             timeout=timeout,
         )
-        session_state = response.get(MGMT_RESPONSE_SESSION_STATE)  # type: ignore
+        session_state = response.get(MGMT_RESPONSE_SESSION_STATE)
         return session_state
 
     def set_state(
@@ -153,7 +153,7 @@ class ServiceBusSession(BaseSession):
         state = (
             state.encode(self._encoding) if isinstance(state, str) else state
         )
-        return self._receiver._mgmt_request_response_with_retry(  # type: ignore
+        return self._receiver._mgmt_request_response_with_retry(
             REQUEST_RESPONSE_SET_SESSION_STATE_OPERATION,
             {
                 MGMT_REQUEST_SESSION_ID: self._session_id,
@@ -200,7 +200,7 @@ class ServiceBusSession(BaseSession):
             mgmt_handlers.session_lock_renew_op,
             timeout=timeout,
         )
-        expiry_timestamp = expiry[MGMT_RESPONSE_RECEIVER_EXPIRATION] / 1000.0  # type: ignore
-        self._locked_until_utc = utc_from_timestamp(expiry_timestamp)  # type: datetime.datetime
+        expiry_timestamp = expiry[MGMT_RESPONSE_RECEIVER_EXPIRATION] / 1000.0
+        self._locked_until_utc = utc_from_timestamp(expiry_timestamp)
 
         return self._locked_until_utc

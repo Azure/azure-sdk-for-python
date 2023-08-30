@@ -110,7 +110,6 @@ class MessageAlreadySettled(ValueError):
     """
 
     def __init__(self, **kwargs):
-        # type: (Any) -> None
         super(MessageAlreadySettled, self).__init__(
             "Unable to {} message; The message has either been deleted"
             " or already settled.".format(kwargs.get("action", "operate"))
@@ -123,7 +122,6 @@ class MessageLockLostError(ServiceBusError):
     """The lock on the message is lost. Callers should call attempt to receive and process the message again."""
 
     def __init__(self, **kwargs):
-        # type: (Any) -> None
         message = kwargs.pop(
             "message",
             "The lock on the message lock has expired. Callers should "
@@ -142,7 +140,6 @@ class SessionLockLostError(ServiceBusError):
     """
 
     def __init__(self, **kwargs):
-        # type: (Any) -> None
         message = kwargs.pop(
             "message",
             "The lock on the session has expired. Callers should request the session again.",

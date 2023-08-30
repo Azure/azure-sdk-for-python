@@ -467,7 +467,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             )
             message._settled = True
 
-    async def _settle_message(  # type: ignore
+    async def _settle_message(
         self,
         message: ServiceBusReceivedMessage,
         settle_operation: str,
@@ -561,7 +561,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
                 :dedent: 4
                 :caption: Get session from a receiver
         """
-        return self._session  # type: ignore
+        return self._session
 
     async def close(self) -> None:
         await super(ServiceBusReceiver, self).close()
@@ -950,10 +950,10 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")
 
-        expiry = await self._renew_locks(token, timeout=timeout)  # type: ignore
-        message._expiry = utc_from_timestamp(expiry[MGMT_RESPONSE_MESSAGE_EXPIRATION][0] / 1000.0)  # type: ignore
+        expiry = await self._renew_locks(token, timeout=timeout)
+        message._expiry = utc_from_timestamp(expiry[MGMT_RESPONSE_MESSAGE_EXPIRATION][0] / 1000.0)
 
-        return message._expiry  # type: ignore
+        return message._expiry
 
     @property
     def client_identifier(self) -> str:

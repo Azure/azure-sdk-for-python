@@ -30,11 +30,11 @@ from .._vendor import ServiceBusManagementClientMixinABC, _format_url_section
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing import MutableMapping  # pylint: disable=ungrouped-imports
 if sys.version_info >= (3, 8):
     from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
 else:
-    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing_extensions import Literal  # pylint: disable=ungrouped-imports
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
@@ -56,7 +56,7 @@ def build_entity_get_request(entity_name: str, *, enrich: bool = False, **kwargs
         "entityName": _SERIALIZER.url("entity_name", entity_name, "str", min_length=1),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
     if enrich is not None:
@@ -85,7 +85,7 @@ def build_entity_put_request(
         "entityName": _SERIALIZER.url("entity_name", entity_name, "str", min_length=1),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -113,7 +113,7 @@ def build_entity_delete_request(entity_name: str, **kwargs: Any) -> HttpRequest:
         "entityName": _SERIALIZER.url("entity_name", entity_name, "str", min_length=1),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -139,7 +139,7 @@ def build_service_bus_management_list_subscriptions_request(
         "topicName": _SERIALIZER.url("topic_name", topic_name, "str", min_length=1),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
     if skip is not None:
@@ -170,7 +170,7 @@ def build_service_bus_management_list_rules_request(
         "subscriptionName": _SERIALIZER.url("subscription_name", subscription_name, "str", min_length=1),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
     if skip is not None:
@@ -200,7 +200,7 @@ def build_service_bus_management_list_entities_request(
         "entityType": _SERIALIZER.url("entity_type", entity_type, "str", min_length=1),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
     if skip is not None:
@@ -231,7 +231,7 @@ def build_subscription_get_request(
         "subscriptionName": _SERIALIZER.url("subscription_name", subscription_name, "str", min_length=1),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
     if enrich is not None:
@@ -261,7 +261,7 @@ def build_subscription_put_request(
         "subscriptionName": _SERIALIZER.url("subscription_name", subscription_name, "str", min_length=1),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -290,7 +290,7 @@ def build_subscription_delete_request(topic_name: str, subscription_name: str, *
         "subscriptionName": _SERIALIZER.url("subscription_name", subscription_name, "str", min_length=1),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -318,7 +318,7 @@ def build_rule_get_request(
         "ruleName": _SERIALIZER.url("rule_name", rule_name, "str", min_length=1),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
     if enrich is not None:
@@ -355,7 +355,7 @@ def build_rule_put_request(
         "ruleName": _SERIALIZER.url("rule_name", rule_name, "str", min_length=1),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -385,7 +385,7 @@ def build_rule_delete_request(topic_name: str, subscription_name: str, rule_name
         "ruleName": _SERIALIZER.url("rule_name", rule_name, "str", min_length=1),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -561,9 +561,9 @@ class EntityOperations:
             deserialized = self._deserialize("object", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, deserialized, {})
 
-        return deserialized  # type: ignore
+        return deserialized
 
     @distributed_trace
     def delete(self, entity_name: str, **kwargs: Any) -> JSON:
@@ -971,9 +971,9 @@ class SubscriptionOperations:
             deserialized = self._deserialize("object", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, deserialized, {})
 
-        return deserialized  # type: ignore
+        return deserialized
 
     @distributed_trace
     def delete(self, topic_name: str, subscription_name: str, **kwargs: Any) -> JSON:
@@ -1201,9 +1201,9 @@ class RuleOperations:
             deserialized = self._deserialize("object", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, deserialized, {})
 
-        return deserialized  # type: ignore
+        return deserialized
 
     @distributed_trace
     def delete(self, topic_name: str, subscription_name: str, rule_name: str, **kwargs: Any) -> JSON:

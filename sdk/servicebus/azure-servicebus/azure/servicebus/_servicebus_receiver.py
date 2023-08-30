@@ -522,7 +522,7 @@ class ServiceBusReceiver(
             )
             self._settle_message_via_mgmt_link(
                 MESSAGE_MGMT_SETTLEMENT_TERM_MAP[settle_operation],
-                [message.lock_token],  # type: ignore
+                [message.lock_token],
                 dead_letter_details=dead_letter_details,
             )
         except Exception as exception:
@@ -585,7 +585,7 @@ class ServiceBusReceiver(
                 :dedent: 4
                 :caption: Get session from a receiver
         """
-        return self._session  # type: ignore
+        return self._session
 
     def close(self) -> None:
         super(ServiceBusReceiver, self).close()
@@ -969,7 +969,6 @@ class ServiceBusReceiver(
         """
         if kwargs:
             warnings.warn(f"Unsupported keyword args: {kwargs}")
-        # type: ignore
         try:
             if self.session:
                 raise TypeError(
@@ -987,12 +986,12 @@ class ServiceBusReceiver(
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")
 
-        expiry = self._renew_locks(token, timeout=timeout)  # type: ignore
+        expiry = self._renew_locks(token, timeout=timeout)
         message._expiry = utc_from_timestamp(
             expiry[MGMT_RESPONSE_MESSAGE_EXPIRATION][0] / 1000.0
         )
 
-        return message._expiry  # type: ignore
+        return message._expiry
 
     @property
     def client_identifier(self) -> str:

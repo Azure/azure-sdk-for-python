@@ -137,7 +137,7 @@ class AmqpAnnotatedMessage(object):
                 "or value_body being set as the body of the AmqpAnnotatedMessage."
             )
 
-        self._body_type: AmqpMessageBodyType = None # type: ignore
+        self._body_type: AmqpMessageBodyType = None
         if "data_body" in kwargs:
             self._data_body = normalized_data_body(kwargs.get("data_body"))
             self._body_type = AmqpMessageBodyType.DATA

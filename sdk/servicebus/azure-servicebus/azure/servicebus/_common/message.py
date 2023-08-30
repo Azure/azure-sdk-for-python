@@ -130,7 +130,7 @@ class ServiceBusMessage(
         # problems as MessageProperties won't absorb spurious args.
         self._encoding = kwargs.pop("encoding", "UTF-8")
         self._uamqp_message: Optional[Union[LegacyMessage, "Message"]] = None
-        self._message: Union["Message", "pyamqp_Message"] = None # type: ignore
+        self._message: Union["Message", "pyamqp_Message"] = None
 
         # Internal usage only for transforming AmqpAnnotatedMessage to outgoing ServiceBusMessage
         if "message" in kwargs:
@@ -336,7 +336,7 @@ class ServiceBusMessage(
         :rtype: str or None
         """
         try:
-            opt_p_key = self._raw_amqp_message.annotations.get(_X_OPT_PARTITION_KEY)  # type: ignore
+            opt_p_key = self._raw_amqp_message.annotations.get(_X_OPT_PARTITION_KEY)
             if opt_p_key is not None:
                 return opt_p_key.decode("UTF-8")
         except (AttributeError, UnicodeDecodeError):
@@ -814,7 +814,7 @@ class ServiceBusReceivedMessage(ServiceBusMessage): # pylint: disable=too-many-i
             **kwargs
     ) -> None:
         self._amqp_transport = kwargs.pop("amqp_transport", PyamqpTransport)
-        super(ServiceBusReceivedMessage, self).__init__(None, message=message)  # type: ignore
+        super(ServiceBusReceivedMessage, self).__init__(None, message=message)
         if self._amqp_transport.KIND == "uamqp":
             self._uamqp_message = message
         self._message = message
@@ -854,7 +854,7 @@ class ServiceBusReceivedMessage(ServiceBusMessage): # pylint: disable=too-many-i
         :rtype: bool
         """
         try:
-            if self._receiver.session:  # type: ignore
+            if self._receiver.session:
                 raise TypeError(
                     "Session messages do not expire. Please use the Session expiry instead."
                 )
@@ -998,7 +998,7 @@ class ServiceBusReceivedMessage(ServiceBusMessage): # pylint: disable=too-many-i
         """
         if self._raw_amqp_message.application_properties:
             try:
-                return self._raw_amqp_message.application_properties.get(  # type: ignore
+                return self._raw_amqp_message.application_properties.get(
                     PROPERTIES_DEAD_LETTER_ERROR_DESCRIPTION
                 ).decode("UTF-8")
             except AttributeError:
@@ -1014,7 +1014,7 @@ class ServiceBusReceivedMessage(ServiceBusMessage): # pylint: disable=too-many-i
         """
         if self._raw_amqp_message.application_properties:
             try:
-                return self._raw_amqp_message.application_properties.get(  # type: ignore
+                return self._raw_amqp_message.application_properties.get(
                     PROPERTIES_DEAD_LETTER_REASON
                 ).decode("UTF-8")
             except AttributeError:
@@ -1032,7 +1032,7 @@ class ServiceBusReceivedMessage(ServiceBusMessage): # pylint: disable=too-many-i
         """
         if self._raw_amqp_message.annotations:
             try:
-                return self._raw_amqp_message.annotations.get(_X_OPT_DEAD_LETTER_SOURCE).decode(  # type: ignore
+                return self._raw_amqp_message.annotations.get(_X_OPT_DEAD_LETTER_SOURCE).decode(
                     "UTF-8"
                 )
             except AttributeError:
@@ -1150,7 +1150,7 @@ class ServiceBusReceivedMessage(ServiceBusMessage): # pylint: disable=too-many-i
         :rtype: datetime.datetime
         """
         try:
-            if self._settled or self._receiver.session:  # type: ignore
+            if self._settled or self._receiver.session:
                 return None
         except AttributeError:  # not settled, and isn't session receiver.
             pass

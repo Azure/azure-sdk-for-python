@@ -401,17 +401,17 @@ class ServiceBusSender(BaseHandler, SenderMixin):
             if self._amqp_transport is not message._amqp_transport: # pylint: disable=protected-access
                 # pylint: disable=protected-access
                 batch = await self.create_message_batch()
-                batch._from_list(message._messages)  # type: ignore
+                batch._from_list(message._messages)
                 obj_message = batch
             else:
                 obj_message = message
         else:
-            obj_message = transform_outbound_messages(  # type: ignore
+            obj_message = transform_outbound_messages(
                 message, ServiceBusMessage, self._amqp_transport.to_outgoing_amqp_message
             )
             try:
                 batch = await self.create_message_batch()
-                batch._from_list(obj_message)  # type: ignore # pylint: disable=protected-access
+                batch._from_list(obj_message)  # pylint: disable=protected-access
                 obj_message = batch
             except TypeError:  # Message was not a list or generator.
                 # pylint: disable=protected-access

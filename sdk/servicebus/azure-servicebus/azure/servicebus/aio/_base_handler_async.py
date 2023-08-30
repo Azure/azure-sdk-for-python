@@ -149,9 +149,9 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         if isinstance(credential, AzureSasCredential):
             self._credential = ServiceBusAzureSasTokenCredentialAsync(credential)
         elif isinstance(credential, AzureNamedKeyCredential):
-            self._credential = ServiceBusAzureNamedKeyTokenCredentialAsync(credential) # type: ignore
+            self._credential = ServiceBusAzureNamedKeyTokenCredentialAsync(credential)
         else:
-            self._credential = credential # type: ignore
+            self._credential = credential
         self._container_id = CONTAINER_PREFIX + str(uuid.uuid4())[:8]
         self._config = Configuration(
             hostname=self.fully_qualified_namespace,
@@ -353,7 +353,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
             except AttributeError:
                 pass
 
-        mgmt_msg = self._amqp_transport.create_mgmt_msg(    # type: ignore  # TODO: fix mypy
+        mgmt_msg = self._amqp_transport.create_mgmt_msg(
             message=message,
             application_properties=application_properties,
             config=self._config,

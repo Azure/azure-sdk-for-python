@@ -296,7 +296,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
                 reply_to_group_id=annotated_message.properties.reply_to_group_id,
             )
         elif ttl_set:
-            message_properties = Properties(    # type: ignore[call-arg]
+            message_properties = Properties(
                 creation_time=creation_time_from_ttl if ttl_set else None,
                 absolute_expiry_time=absolute_expiry_time_from_ttl if ttl_set else None,
             )
@@ -535,7 +535,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         :rtype: ~pyamqp.endpoints.Source
         """
         filter_map = {SESSION_FILTER: session_filter}
-        source = Source(address=source, filters=filter_map) # type: ignore[call-arg]
+        source = Source(address=source, filters=filter_map)
         return source
 
     @staticmethod
@@ -872,7 +872,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         :param str reply_to: Reply to.
         :rtype: ~pyamqp.message.Message
         """
-        return Message( # type: ignore # TODO: fix mypy error
+        return Message(
             value=message,
             properties=Properties(
                 reply_to=reply_to,

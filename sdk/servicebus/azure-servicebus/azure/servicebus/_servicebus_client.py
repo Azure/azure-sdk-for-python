@@ -254,11 +254,11 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
         if token and token_expiry:
             credential = ServiceBusSASTokenCredential(token, token_expiry)
         elif policy and key:
-            credential = ServiceBusSharedKeyCredential(policy, key)  # type: ignore
+            credential = ServiceBusSharedKeyCredential(policy, key)
         return cls(
             fully_qualified_namespace=host,
             entity_name=entity_in_conn_str or kwargs.pop("entity_name", None),
-            credential=credential,  # type: ignore
+            credential=credential,
             retry_total=retry_total,
             retry_backoff_factor=retry_backoff_factor,
             retry_backoff_max=retry_backoff_max,
@@ -445,8 +445,7 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
         self._handlers.add(handler)
         return handler
 
-    def get_topic_sender(self, topic_name, **kwargs):
-        # type: (str, Any) -> ServiceBusSender
+    def get_topic_sender(self, topic_name: str, **kwargs: Any) -> ServiceBusSender:
         """Get ServiceBusSender for the specific topic.
 
         :param str topic_name: The path of specific Service Bus Topic the client connects to.

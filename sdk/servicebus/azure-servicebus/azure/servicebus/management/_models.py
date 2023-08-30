@@ -55,28 +55,22 @@ def validate_extraction_missing_args(extraction_missing_args):
 
 
 class DictMixin(object):
-    def __setitem__(self, key, item):
-        # type: (str, Any) -> None
+    def __setitem__(self, key: str, item: Any) -> None:
         self.__dict__[key] = item
 
-    def __getitem__(self, key):
-        # type: (str) -> Any
+    def __getitem__(self, key: str) -> Any:
         return self.__dict__[key]
 
-    def __repr__(self):
-        # type: () -> str
+    def __repr__(self) -> str:
         return str(self)
 
-    def __len__(self):
-        # type: () -> int
+    def __len__(self) -> int:
         return len(self.keys())
 
-    def __delitem__(self, key):
-        # type: (str) -> None
+    def __delitem__(self, key: str) -> None:
         self.__dict__[key] = None
 
     def __eq__(self, other):
-        # type: (Any) -> bool
         """Compare objects by comparing all attributes.
         :param any other: The object to compare with
         :return: `True` if `self` and `other` are equal, `False` otherwise.
@@ -87,7 +81,6 @@ class DictMixin(object):
         return False
 
     def __ne__(self, other):
-        # type: (Any) -> bool
         """Compare objects by comparing all attributes.
         :param any other: The object to compare with
         :return: `True` if `self` and `other` are not equal, `False` otherwise.
@@ -96,34 +89,27 @@ class DictMixin(object):
         return not self.__eq__(other)
 
     def __str__(self):
-        # type: () -> str
         return str({k: v for k, v in self.__dict__.items() if not k.startswith("_")})
 
     def __contains__(self, key: str) -> bool:
         return key in self.__dict__
 
-    def has_key(self, k):
-        # type: (str) -> bool
+    def has_key(self, k: str) -> bool:
         return k in self.__dict__
 
     def update(self, *args, **kwargs):
-        # type: (Any, Any) -> None
         return self.__dict__.update(*args, **kwargs)
 
     def keys(self):
-        # type: () -> List[str]
         return [k for k in self.__dict__ if not k.startswith("_")]
 
     def values(self):
-        # type: () -> List
         return [v for k, v in self.__dict__.items() if not k.startswith("_")]
 
     def items(self):
-        # type: () -> List[Tuple[str, Any]]
         return [(k, v) for k, v in self.__dict__.items() if not k.startswith("_")]
 
     def get(self, key, default=None):
-        # type: (str, Optional[Any]) -> Any
         if key in self.__dict__:
             return self.__dict__[key]
         return default
@@ -148,10 +134,9 @@ class NamespaceProperties(DictMixin):
     """
 
     def __init__(self, name, **kwargs):
-        # type: (str, Any) -> None
         self.name = name
 
-        extraction_missing_args = []  # type: List[str]
+        extraction_missing_args: List[str] = []
         extract_kwarg = functools.partial(
             extract_kwarg_template, kwargs, extraction_missing_args
         )
@@ -167,8 +152,7 @@ class NamespaceProperties(DictMixin):
         validate_extraction_missing_args(extraction_missing_args)
 
     @classmethod
-    def _from_internal_entity(cls, name, internal_entity):
-        # type: (str, InternalNamespaceProperties) -> NamespaceProperties
+    def _from_internal_entity(cls, name: str, internal_entity: InternalNamespaceProperties) -> "NamespaceProperties":
         namespace_properties = cls(
             name,
             alias=internal_entity.alias,
@@ -259,12 +243,11 @@ class QueueProperties(DictMixin):  # pylint:disable=too-many-instance-attributes
     :type max_message_size_in_kilobytes: int
     """
 
-    def __init__(self, name, **kwargs):
-        # type: (str, Any) -> None
+    def __init__(self, name: str, **kwargs: Any):
         self.name = name
-        self._internal_qd = None  # type: Optional[InternalQueueDescription]
+        self._internal_qd: Optional[InternalQueueDescription] = None
 
-        extraction_missing_args = []  # type: List[str]
+        extraction_missing_args: List[str] = []
         extract_kwarg = functools.partial(
             extract_kwarg_template, kwargs, extraction_missing_args
         )
@@ -304,8 +287,7 @@ class QueueProperties(DictMixin):  # pylint:disable=too-many-instance-attributes
         validate_extraction_missing_args(extraction_missing_args)
 
     @classmethod
-    def _from_internal_entity(cls, name, internal_qd):
-        # type: (str, InternalQueueDescription) -> QueueProperties
+    def _from_internal_entity(cls, name: str, internal_qd: InternalQueueDescription) -> "QueueProperties":
         qd = cls(
             name,
             authorization_rules=[
@@ -337,8 +319,7 @@ class QueueProperties(DictMixin):  # pylint:disable=too-many-instance-attributes
         qd._internal_qd = deepcopy(internal_qd)  # pylint:disable=protected-access
         return qd
 
-    def _to_internal_entity(self, fully_qualified_namespace, kwargs=None):
-        # type: (str, Optional[Dict]) -> InternalQueueDescription
+    def _to_internal_entity(self, fully_qualified_namespace: str, kwargs: Optional[Dict] = None) -> InternalQueueDescription:
         kwargs = kwargs or {}
 
         if not self._internal_qd:
@@ -354,14 +335,14 @@ class QueueProperties(DictMixin):  # pylint:disable=too-many-instance-attributes
             else authorization_rules
         )
 
-        self._internal_qd.auto_delete_on_idle = avoid_timedelta_overflow(  # type: ignore
+        self._internal_qd.auto_delete_on_idle = avoid_timedelta_overflow(
             kwargs.pop("auto_delete_on_idle", self.auto_delete_on_idle)
         )
         self._internal_qd.dead_lettering_on_message_expiration = kwargs.pop(
             "dead_lettering_on_message_expiration",
             self.dead_lettering_on_message_expiration,
         )
-        self._internal_qd.default_message_time_to_live = avoid_timedelta_overflow(  # type: ignore
+        self._internal_qd.default_message_time_to_live = avoid_timedelta_overflow(
             kwargs.pop(
                 "default_message_time_to_live", self.default_message_time_to_live
             )
@@ -401,7 +382,7 @@ class QueueProperties(DictMixin):  # pylint:disable=too-many-instance-attributes
 
         forward_to = kwargs.pop("forward_to", self.forward_to)
         self._internal_qd.forward_to = _normalize_entity_path_to_full_path_if_needed(
-            forward_to, fully_qualified_namespace
+            fully_qualified_namespace, forward_to
         )
 
         forward_dead_lettered_messages_to = kwargs.pop(
@@ -409,7 +390,7 @@ class QueueProperties(DictMixin):  # pylint:disable=too-many-instance-attributes
         )
         self._internal_qd.forward_dead_lettered_messages_to = (
             _normalize_entity_path_to_full_path_if_needed(
-                forward_dead_lettered_messages_to, fully_qualified_namespace
+                fully_qualified_namespace, forward_dead_lettered_messages_to
             )
         )
 
@@ -428,14 +409,12 @@ class QueueRuntimeProperties(object):
 
     def __init__(
         self,
-    ):
-        # type: () -> None
-        self._name = None  # type: Optional[str]
-        self._internal_qr = None  # type: Optional[InternalQueueDescription]
+    ) -> None:
+        self._name: Optional[str] = None
+        self._internal_qr: Optional[InternalQueueDescription] = None
 
     @classmethod
-    def _from_internal_entity(cls, name, internal_qr):
-        # type: (str, InternalQueueDescription) -> QueueRuntimeProperties
+    def _from_internal_entity(cls, name: str, internal_qr: InternalQueueDescription) -> "QueueRuntimeProperties":
         qr = cls()
         qr._name = name
         qr._internal_qr = deepcopy(internal_qr)  # pylint:disable=protected-access
@@ -586,12 +565,11 @@ class TopicProperties(DictMixin):  # pylint:disable=too-many-instance-attributes
     :type max_message_size_in_kilobytes: int
     """
 
-    def __init__(self, name, **kwargs):
-        # type: (str, Any) -> None
+    def __init__(self, name: str, **kwargs: Any) -> None:
         self.name = name
-        self._internal_td = None  # type: Optional[InternalTopicDescription]
+        self._internal_td: Optional[InternalTopicDescription] = None
 
-        extraction_missing_args = []  # type: List[str]
+        extraction_missing_args: List[str] = []
         extract_kwarg = functools.partial(
             extract_kwarg_template, kwargs, extraction_missing_args
         )
@@ -623,8 +601,7 @@ class TopicProperties(DictMixin):  # pylint:disable=too-many-instance-attributes
         validate_extraction_missing_args(extraction_missing_args)
 
     @classmethod
-    def _from_internal_entity(cls, name, internal_td):
-        # type: (str, InternalTopicDescription) -> TopicProperties
+    def _from_internal_entity(cls, name: str, internal_td: InternalTopicDescription) -> "TopicProperties":
         td = cls(
             name,
             default_message_time_to_live=internal_td.default_message_time_to_live,
@@ -651,13 +628,12 @@ class TopicProperties(DictMixin):  # pylint:disable=too-many-instance-attributes
         td._internal_td = deepcopy(internal_td)
         return td
 
-    def _to_internal_entity(self, kwargs=None):
-        # type: (Optional[Dict]) -> InternalTopicDescription
+    def _to_internal_entity(self, kwargs: Optional[Dict] = None) -> InternalTopicDescription:
         kwargs = kwargs or {}
 
         if not self._internal_td:
             self._internal_td = InternalTopicDescription()
-        self._internal_td.default_message_time_to_live = avoid_timedelta_overflow(  # type: ignore
+        self._internal_td.default_message_time_to_live = avoid_timedelta_overflow(
             kwargs.pop(
                 "default_message_time_to_live", self.default_message_time_to_live
             )
@@ -691,7 +667,7 @@ class TopicProperties(DictMixin):  # pylint:disable=too-many-instance-attributes
         self._internal_td.support_ordering = kwargs.pop(
             "support_ordering", self.support_ordering
         )
-        self._internal_td.auto_delete_on_idle = avoid_timedelta_overflow(  # type: ignore
+        self._internal_td.auto_delete_on_idle = avoid_timedelta_overflow(
             kwargs.pop("auto_delete_on_idle", self.auto_delete_on_idle)
         )
         self._internal_td.enable_partitioning = kwargs.pop(
@@ -718,14 +694,12 @@ class TopicRuntimeProperties(object):
 
     def __init__(
         self,
-    ):
-        # type: () -> None
-        self._name = None  # type: Optional[str]
-        self._internal_td = None  # type: Optional[InternalTopicDescription]
+    ) -> None:
+        self._name: Optional[str] = None
+        self._internal_td: Optional[InternalTopicDescription] = None
 
     @classmethod
-    def _from_internal_entity(cls, name, internal_td):
-        # type: (str, InternalTopicDescription) -> TopicRuntimeProperties
+    def _from_internal_entity(cls, name: str, internal_td: InternalTopicDescription) -> "TopicRuntimeProperties":
         qd = cls()
         qd._name = name
         qd._internal_td = internal_td
@@ -837,12 +811,11 @@ class SubscriptionProperties(DictMixin):  # pylint:disable=too-many-instance-att
      ~azure.servicebus.management.EntityAvailabilityStatus
     """
 
-    def __init__(self, name, **kwargs):
-        # type: (str, Any) -> None
+    def __init__(self, name: str, **kwargs: Any) -> None:
         self.name = name
-        self._internal_sd = None  # type: Optional[InternalSubscriptionDescription]
+        self._internal_sd: Optional[InternalSubscriptionDescription] = None
 
-        extraction_missing_args = []  # type: List[str]
+        extraction_missing_args: List[str] = []
         extract_kwarg = functools.partial(
             extract_kwarg_template, kwargs, extraction_missing_args
         )
@@ -872,8 +845,7 @@ class SubscriptionProperties(DictMixin):  # pylint:disable=too-many-instance-att
         validate_extraction_missing_args(extraction_missing_args)
 
     @classmethod
-    def _from_internal_entity(cls, name, internal_subscription):
-        # type: (str, InternalSubscriptionDescription) -> SubscriptionProperties
+    def _from_internal_entity(cls, name: str, internal_subscription: InternalSubscriptionDescription) -> "SubscriptionProperties":
         # pylint: disable=line-too-long
         subscription = cls(
             name,
@@ -894,8 +866,7 @@ class SubscriptionProperties(DictMixin):  # pylint:disable=too-many-instance-att
         subscription._internal_sd = deepcopy(internal_subscription)
         return subscription
 
-    def _to_internal_entity(self, fully_qualified_namespace, kwargs=None):
-        # type: (str, Optional[Dict]) -> InternalSubscriptionDescription
+    def _to_internal_entity(self, fully_qualified_namespace: str, kwargs: Optional[Dict] = None) -> InternalSubscriptionDescription:
         kwargs = kwargs or {}
 
         if not self._internal_sd:
@@ -906,7 +877,7 @@ class SubscriptionProperties(DictMixin):  # pylint:disable=too-many-instance-att
         self._internal_sd.requires_session = kwargs.pop(
             "requires_session", self.requires_session
         )
-        self._internal_sd.default_message_time_to_live = avoid_timedelta_overflow(  # type: ignore
+        self._internal_sd.default_message_time_to_live = avoid_timedelta_overflow(
             kwargs.pop(
                 "default_message_time_to_live", self.default_message_time_to_live
             )
@@ -929,7 +900,7 @@ class SubscriptionProperties(DictMixin):  # pylint:disable=too-many-instance-att
 
         forward_to = kwargs.pop("forward_to", self.forward_to)
         self._internal_sd.forward_to = _normalize_entity_path_to_full_path_if_needed(
-            forward_to, fully_qualified_namespace
+            fully_qualified_namespace, forward_to
         )
 
         forward_dead_lettered_messages_to = kwargs.pop(
@@ -937,14 +908,14 @@ class SubscriptionProperties(DictMixin):  # pylint:disable=too-many-instance-att
         )
         self._internal_sd.forward_dead_lettered_messages_to = (
             _normalize_entity_path_to_full_path_if_needed(
-                forward_dead_lettered_messages_to, fully_qualified_namespace
+                fully_qualified_namespace, forward_dead_lettered_messages_to
             )
         )
 
         self._internal_sd.user_metadata = kwargs.pop(
             "user_metadata", self.user_metadata
         )
-        self._internal_sd.auto_delete_on_idle = avoid_timedelta_overflow(  # type: ignore
+        self._internal_sd.auto_delete_on_idle = avoid_timedelta_overflow(
             kwargs.pop("auto_delete_on_idle", self.auto_delete_on_idle)
         )
         self._internal_sd.entity_availability_status = kwargs.pop(
@@ -957,14 +928,12 @@ class SubscriptionProperties(DictMixin):  # pylint:disable=too-many-instance-att
 class SubscriptionRuntimeProperties(object):
     """Runtime properties of a Service Bus topic subscription resource."""
 
-    def __init__(self):
-        # type: () -> None
-        self._internal_sd = None  # type: Optional[InternalSubscriptionDescription]
-        self._name = None  # type: Optional[str]
+    def __init__(self) -> None:
+        self._internal_sd: Optional[InternalSubscriptionDescription] = None
+        self._name: Optional[str] = None
 
     @classmethod
-    def _from_internal_entity(cls, name, internal_subscription):
-        # type: (str, InternalSubscriptionDescription) -> SubscriptionRuntimeProperties
+    def _from_internal_entity(cls, name: str, internal_subscription: InternalSubscriptionDescription) -> "SubscriptionRuntimeProperties":
         subscription = cls()
         subscription._name = name
         subscription._internal_sd = internal_subscription
@@ -1060,13 +1029,12 @@ class RuleProperties(DictMixin):
     :type created_at_utc: ~datetime.datetime
     """
 
-    def __init__(self, name, **kwargs):
-        # type: (str, Any) -> None
+    def __init__(self, name: str, **kwargs: Any) -> None:
 
         self.name = name
-        self._internal_rule = None  # type: Optional[InternalRuleDescription]
+        self._internal_rule: Optional[InternalRuleDescription] = None
 
-        extraction_missing_args = []  # type: List[str]
+        extraction_missing_args: List[str] = []
         extract_kwarg = functools.partial(
             extract_kwarg_template, kwargs, extraction_missing_args
         )
@@ -1078,8 +1046,7 @@ class RuleProperties(DictMixin):
         validate_extraction_missing_args(extraction_missing_args)
 
     @classmethod
-    def _from_internal_entity(cls, name, internal_rule):
-        # type: (str, InternalRuleDescription) -> RuleProperties
+    def _from_internal_entity(cls, name: str, internal_rule: InternalRuleDescription) -> "RuleProperties":
         rule = cls(
             name,
             filter=RULE_CLASS_MAPPING[type(internal_rule.filter)]._from_internal_entity(
@@ -1099,14 +1066,13 @@ class RuleProperties(DictMixin):
         rule._internal_rule = deepcopy(internal_rule)
         return rule
 
-    def _to_internal_entity(self, kwargs=None):
-        # type: (Optional[Dict]) -> InternalRuleDescription
+    def _to_internal_entity(self, kwargs: Optional[Dict] = None) -> InternalRuleDescription:
         kwargs = kwargs or {}
         if not self._internal_rule:
             self._internal_rule = InternalRuleDescription()
 
         rule_filter = kwargs.pop("filter", self.filter)
-        self._internal_rule.filter = rule_filter._to_internal_entity() if rule_filter else TRUE_FILTER  # type: ignore
+        self._internal_rule.filter = rule_filter._to_internal_entity() if rule_filter else TRUE_FILTER
 
         action = kwargs.pop("action", self.action)
         self._internal_rule.action = (
@@ -1144,8 +1110,7 @@ class CorrelationRuleFilter(object):
     :type properties: dict[str, Union[str, int, float, bool, datetime, timedelta]]
     """
 
-    def __init__(self, **kwargs):
-        # type: (Any) -> None
+    def __init__(self, **kwargs: Any) -> None:
         self.correlation_id = kwargs.get("correlation_id", None)
         self.message_id = kwargs.get("message_id", None)
         self.to = kwargs.get("to", None)
@@ -1157,8 +1122,7 @@ class CorrelationRuleFilter(object):
         self.properties = kwargs.get("properties", None)
 
     @classmethod
-    def _from_internal_entity(cls, internal_correlation_filter):
-        # type: (InternalCorrelationFilter) -> CorrelationRuleFilter
+    def _from_internal_entity(cls, internal_correlation_filter: InternalCorrelationFilter) -> "CorrelationRuleFilter":
         correlation_filter = cls()
         correlation_filter.correlation_id = internal_correlation_filter.correlation_id
         correlation_filter.message_id = internal_correlation_filter.message_id
@@ -1180,8 +1144,7 @@ class CorrelationRuleFilter(object):
 
         return correlation_filter
 
-    def _to_internal_entity(self):
-        # type: () -> InternalCorrelationFilter
+    def _to_internal_entity(self) -> InternalCorrelationFilter:
         internal_entity = InternalCorrelationFilter()
         internal_entity.correlation_id = self.correlation_id
 
@@ -1225,8 +1188,7 @@ class SqlRuleFilter(object):
     :type parameters: Dict[str, Union[str, int, float, bool, datetime, timedelta]]
     """
 
-    def __init__(self, sql_expression=None, parameters=None):
-        # type: (Optional[str], Optional[Dict[str, Union[str, int, float, bool, datetime, timedelta]]]) -> None
+    def __init__(self, sql_expression: Optional[str] = None, parameters: Optional[Dict[str, Union[str, int, float, bool, datetime, timedelta]]] = None) -> None:
         self.sql_expression = sql_expression
         self.parameters = parameters
         self.requires_preprocessing = True
@@ -1247,12 +1209,11 @@ class SqlRuleFilter(object):
         )
         return sql_rule_filter
 
-    def _to_internal_entity(self):
-        # type: () -> InternalSqlFilter
+    def _to_internal_entity(self) -> InternalSqlFilter:
         internal_entity = InternalSqlFilter(sql_expression=self.sql_expression)
         internal_entity.parameters = (
             [
-                KeyValue(key=key, value=value) for key, value in self.parameters.items()  # type: ignore
+                KeyValue(key=key, value=value) for key, value in self.parameters.items()
             ]
             if self.parameters
             else None
@@ -1265,8 +1226,7 @@ class SqlRuleFilter(object):
 class TrueRuleFilter(SqlRuleFilter):
     """A sql filter with a sql expression that is always True"""
 
-    def __init__(self):
-        # type: () -> None
+    def __init__(self) -> None:
         super(TrueRuleFilter, self).__init__("1=1", None)
 
     def _to_internal_entity(self):
@@ -1281,8 +1241,7 @@ class TrueRuleFilter(SqlRuleFilter):
 class FalseRuleFilter(SqlRuleFilter):
     """A sql filter with a sql expression that is always True"""
 
-    def __init__(self):
-        # type: () -> None
+    def __init__(self) -> None:
         super(FalseRuleFilter, self).__init__("1>1", None)
 
     def _to_internal_entity(self):
@@ -1304,8 +1263,7 @@ class SqlRuleAction(object):
     :type requires_preprocessing: bool
     """
 
-    def __init__(self, sql_expression=None, parameters=None):
-        # type: (Optional[str], Optional[Dict[str, Union[str, int, float, bool, datetime, timedelta]]]) -> None
+    def __init__(self, sql_expression: Optional[str] = None, parameters: Optional[Dict[str, Union[str, int, float, bool, datetime, timedelta]]] = None) -> None:
         self.sql_expression = sql_expression
         self.parameters = parameters
         self.requires_preprocessing = True
@@ -1345,7 +1303,7 @@ RULE_CLASS_MAPPING = {
     InternalSqlFilter: SqlRuleFilter,
     InternalTrueFilter: TrueRuleFilter,
     InternalFalseFilter: FalseRuleFilter,
-}  # type: Dict[Type[Model], Type]
+}
 EMPTY_RULE_ACTION = InternalEmptyRuleAction()
 TRUE_FILTER = TrueRuleFilter()
 
@@ -1373,8 +1331,7 @@ class AuthorizationRule(object):
     :type secondary_key: str
     """
 
-    def __init__(self, **kwargs):
-        # type: (Any) -> None
+    def __init__(self, **kwargs: Any) -> None:
         self.type = kwargs.get("type", None)
         self.claim_type = kwargs.get("claim_type", None)
         self.claim_value = kwargs.get("claim_value", None)
@@ -1399,8 +1356,7 @@ class AuthorizationRule(object):
 
         return authorization_rule
 
-    def _to_internal_entity(self):
-        # type: () -> InternalAuthorizationRule
+    def _to_internal_entity(self) -> InternalAuthorizationRule:
         internal_entity = InternalAuthorizationRule()
         internal_entity.claim_type = self.claim_type
         internal_entity.claim_value = self.claim_value
