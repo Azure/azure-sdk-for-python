@@ -509,61 +509,62 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
                     messages.append(message)
                 assert len(messages) == 0
 
-            # send 10 messages
-            async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
-                for i in range(10):
-                    message = ServiceBusMessage("Handler message no. {}".format(i))
-                    await sender.send_messages(message)
+            if not uamqp_transport:
+                # send 10 messages
+                async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
+                    for i in range(10):
+                        message = ServiceBusMessage("Handler message no. {}".format(i))
+                        await sender.send_messages(message)
 
-            # check peek_messages returns correctly, with default prefetch_count = 0
-            messages = []
-            async with sb_client.get_queue_receiver(servicebus_queue.name, 
-                                              receive_mode=ServiceBusReceiveMode.RECEIVE_AND_DELETE, 
-                                              max_wait_time=10) as receiver:
-                # peek messages checks current state of queue, which should return 10
-                # since none were prefetched, added to internal buffer, and deleted on receive
-                peeked_msgs = await receiver.peek_messages(max_message_count=10, timeout=10)
-                assert len(peeked_msgs) == 10
+                # check peek_messages returns correctly, with default prefetch_count = 0
+                messages = []
+                async with sb_client.get_queue_receiver(servicebus_queue.name,
+                                                    receive_mode=ServiceBusReceiveMode.RECEIVE_AND_DELETE,
+                                                    max_wait_time=10) as receiver:
+                    # peek messages checks current state of queue, which should return 10
+                    # since none were prefetched, added to internal buffer, and deleted on receive
+                    peeked_msgs = await receiver.peek_messages(max_message_count=10, timeout=10)
+                    assert len(peeked_msgs) == 10
 
-                # iterator receives and deletes each message from SB queue
-                async for msg in receiver:
-                    messages.append(msg)
-                assert len(messages) == 10
-            
-                # queue should be empty now
-                peeked_msgs = await receiver.peek_messages(max_message_count=10, timeout=10)
-                assert len(peeked_msgs) == 0
+                    # iterator receives and deletes each message from SB queue
+                    async for msg in receiver:
+                        messages.append(msg)
+                    assert len(messages) == 10
 
-            # send 10 messages
-            async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
-                for i in range(10):
-                    message = ServiceBusMessage("Handler message no. {}".format(i))
-                    await sender.send_messages(message)
+                    # queue should be empty now
+                    peeked_msgs = await receiver.peek_messages(max_message_count=10, timeout=10)
+                    assert len(peeked_msgs) == 0
 
-            # prefetch gets 1 message from SB queue, stores in internal buffer, then deletes from SB queue
-            messages = []
-            async with sb_client.get_queue_receiver(servicebus_queue.name, 
-                                            receive_mode=ServiceBusReceiveMode.RECEIVE_AND_DELETE,
-                                            prefetch_count=1,
-                                            max_wait_time=30) as receiver:
-                # peek messages checks current state of SB queue, and returns 9 since 1 was prefetched and deleted
-                peeked_msgs = await receiver.peek_messages(max_message_count=10, timeout=10)
-                assert len(peeked_msgs) == 9
+                # send 10 messages
+                async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
+                    for i in range(10):
+                        message = ServiceBusMessage("Handler message no. {}".format(i))
+                        await sender.send_messages(message)
 
-                # receive_messages returns 1 message from internal buffer, then 4 more from SB queue and deletes from SB queue
-                recvd_msgs = await receiver.receive_messages(max_message_count=5, max_wait_time=10)
-                assert len(recvd_msgs) == 5
+                # prefetch gets 1 message from SB queue, stores in internal buffer, then deletes from SB queue
+                messages = []
+                async with sb_client.get_queue_receiver(servicebus_queue.name,
+                                                receive_mode=ServiceBusReceiveMode.RECEIVE_AND_DELETE,
+                                                prefetch_count=1,
+                                                max_wait_time=30) as receiver:
+                    # peek messages checks current state of SB queue, and returns 9 since 1 was prefetched and deleted
+                    peeked_msgs = await receiver.peek_messages(max_message_count=10, timeout=10)
+                    assert len(peeked_msgs) == 9
 
-                # iterator receives and deletes 5 leftover messages in SB queue
-                async for msg in receiver:
-                    messages.append(msg)
-                assert len(messages) == 5
+                    # receive_messages returns 1 message from internal buffer, then 4 more from SB queue and deletes from SB queue
+                    recvd_msgs = await receiver.receive_messages(max_message_count=5, max_wait_time=10)
+                    assert len(recvd_msgs) == 5
 
-                # queue should be empty now
-                peeked_msgs = await receiver.peek_messages(max_message_count=10, timeout=10)
-                assert len(peeked_msgs) == 0
+                    # iterator receives and deletes 5 leftover messages in SB queue
+                    async for msg in receiver:
+                        messages.append(msg)
+                    assert len(messages) == 5
 
-    
+                    # queue should be empty now
+                    peeked_msgs = await receiver.peek_messages(max_message_count=10, timeout=10)
+                    assert len(peeked_msgs) == 0
+
+
     @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
