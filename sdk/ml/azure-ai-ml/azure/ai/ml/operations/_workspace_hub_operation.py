@@ -57,8 +57,8 @@ class WorkspaceHubOperations(WorkspaceOperationsBase):
         """List all WorkspaceHubs that the user has access to in the current
         resource group or subscription.
 
-        :param scope: scope of the listing, "resource_group" or "subscription", defaults to "resource_group"
-        :type scope: str, optional
+        :keyword scope: scope of the listing, "resource_group" or "subscription", defaults to "resource_group"
+        :paramtype scope: str
         :return: An iterator like instance of WorkspaceHub objects
         :rtype: ~azure.core.paging.ItemPaged[WorkspaceHub]
         """
@@ -113,6 +113,7 @@ class WorkspaceHubOperations(WorkspaceOperationsBase):
 
         :param workspace_hub: WorkspaceHub definition.
         :type workspace_hub: WorkspaceHub
+        :param update_dependent_resources: Whether to update dependent resources. Defaults to False.
         :type update_dependent_resources: boolean
         :return: An instance of LROPoller that returns a WorkspaceHub.
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.WorkspaceHub]
@@ -164,15 +165,20 @@ class WorkspaceHubOperations(WorkspaceOperationsBase):
 
     # @monitor_with_activity(logger, "Hub.BeginDelete", ActivityType.PUBLICAPI)
     @distributed_trace
-    def begin_delete(self, name: str, *, delete_dependent_resources: bool, **kwargs: Dict) -> LROPoller:
+    def begin_delete(
+        self, name: str, *, delete_dependent_resources: bool, permanently_delete: bool = False, **kwargs: Dict
+    ) -> LROPoller:
         """Delete a WorkspaceHub.
 
         :param name: Name of the WorkspaceHub
         :type name: str
-        :param delete_dependent_resources: Whether to delete resources associated with the WorkspaceHub,
+        :keyword delete_dependent_resources: Whether to delete resources associated with the WorkspaceHub,
             i.e., container registry, storage account, key vault.
             The default is False. Set to True to delete these resources.
-        :type delete_dependent_resources: bool
+        :paramtype delete_dependent_resources: bool
+        :keyword permanently_delete: Workspaces are soft-deleted by default to allow recovery of workspace data.
+            Set this flag to true to override the soft-delete behavior and permanently delete your workspace.
+        :paramtype permanently_delete: bool
         :return: A poller to track the operation status.
         :rtype: ~azure.core.polling.LROPoller[None]
         """
@@ -182,7 +188,9 @@ class WorkspaceHubOperations(WorkspaceOperationsBase):
             rest_workspace_obj and rest_workspace_obj.kind and rest_workspace_obj.kind.lower() == WORKSPACE_HUB_KIND
         ):
             raise ValidationError("{0} is not a WorkspaceHub".format(name))
-        if hasattr(rest_workspace_obj, 'workspace_hub_config') and hasattr(rest_workspace_obj.workspace_hub_config, 'additional_workspace_storage_accounts'):
+        if hasattr(rest_workspace_obj, "workspace_hub_config") and hasattr(
+            rest_workspace_obj.workspace_hub_config, "additional_workspace_storage_accounts"
+        ):
             for storageaccount in rest_workspace_obj.workspace_hub_config.additional_workspace_storage_accounts:
                 delete_resource_by_arm_id(
                     self._credentials,
@@ -191,4 +199,9 @@ class WorkspaceHubOperations(WorkspaceOperationsBase):
                     ArmConstants.AZURE_MGMT_STORAGE_API_VERSION,
                 )
 
-        return super().begin_delete(name=name, delete_dependent_resources=delete_dependent_resources, **kwargs)
+        return super().begin_delete(
+            name=name,
+            delete_dependent_resources=delete_dependent_resources,
+            permanently_delete=permanently_delete,
+            **kwargs,
+        )

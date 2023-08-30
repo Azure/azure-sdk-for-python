@@ -4,11 +4,11 @@
 # ------------------------------------
 import logging
 import os
-from typing import List, TYPE_CHECKING, Any, cast
+from typing import List, Optional, TYPE_CHECKING, Any, cast
 
 from azure.core.credentials import AccessToken
 from ..._constants import EnvironmentVariables
-from ..._internal import get_default_authority, normalize_authority
+from ..._internal import get_default_authority, normalize_authority, within_dac
 from .azure_cli import AzureCliCredential
 from .azd_cli import AzureDeveloperCliCredential
 from .azure_powershell import AzurePowerShellCredential
@@ -136,7 +136,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
 
         credentials = []  # type: List[AsyncTokenCredential]
         if not exclude_environment_credential:
-            credentials.append(EnvironmentCredential(authority=authority, **kwargs))
+            credentials.append(EnvironmentCredential(authority=authority, _within_dac=True, **kwargs))
         if not exclude_workload_identity_credential:
             if all(os.environ.get(var) for var in EnvironmentVariables.WORKLOAD_IDENTITY_VARS):
                 client_id = workload_identity_client_id
@@ -160,19 +160,15 @@ class DefaultAzureCredential(ChainedTokenCredential):
             try:
                 # username and/or tenant_id are only required when the cache contains tokens for multiple identities
                 shared_cache = SharedTokenCacheCredential(
-                    username=shared_cache_username,
-                    tenant_id=shared_cache_tenant_id,
-                    authority=authority,
-                    _is_chained=True,
-                    **kwargs
+                    username=shared_cache_username, tenant_id=shared_cache_tenant_id, authority=authority, **kwargs
                 )
                 credentials.append(shared_cache)
             except Exception as ex:  # pylint:disable=broad-except
                 _LOGGER.info("Shared token cache is unavailable: '%s'", ex)
         if not exclude_visual_studio_code_credential:
-            credentials.append(VisualStudioCodeCredential(_is_chained=True, **vscode_args))
+            credentials.append(VisualStudioCodeCredential(**vscode_args))
         if not exclude_cli_credential:
-            credentials.append(AzureCliCredential(process_timeout=process_timeout, _is_chained=True))
+            credentials.append(AzureCliCredential(process_timeout=process_timeout))
         if not exclude_powershell_credential:
             credentials.append(AzurePowerShellCredential(process_timeout=process_timeout))
         if not exclude_developer_cli_credential:
@@ -180,7 +176,9 @@ class DefaultAzureCredential(ChainedTokenCredential):
 
         super().__init__(*credentials)
 
-    async def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
+    async def get_token(
+        self, *scopes: str, claims: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs: Any
+    ) -> AccessToken:
         """Asynchronously request an access token for `scopes`.
 
         This method is called automatically by Azure SDK clients.
@@ -188,6 +186,8 @@ class DefaultAzureCredential(ChainedTokenCredential):
         :param str scopes: desired scopes for the access token. This method requires at least one scope.
             For more information about scopes, see
             https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
+        :keyword str claims: additional claims required in the token, such as those returned in a resource provider's
+            claims challenge following an authorization failure.
         :keyword str tenant_id: optional tenant to include in the token request.
 
         :return: An access token with the desired scopes.
@@ -196,6 +196,8 @@ class DefaultAzureCredential(ChainedTokenCredential):
           `message` attribute listing each authentication attempt and its error message.
         """
         if self._successful_credential:
-            return await self._successful_credential.get_token(*scopes, **kwargs)
-
-        return await super().get_token(*scopes, **kwargs)
+            return await self._successful_credential.get_token(*scopes, claims=claims, tenant_id=tenant_id, **kwargs)
+        within_dac.set(True)
+        token = await super().get_token(*scopes, claims=claims, tenant_id=tenant_id, **kwargs)
+        within_dac.set(False)
+        return token

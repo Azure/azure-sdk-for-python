@@ -88,9 +88,9 @@ class TestManagement(FormRecognizerTest):
 
         assert info.custom_document_models.limit
         assert info.custom_document_models.count
-        assert info.custom_neural_document_model_builds.quota
-        assert info.custom_neural_document_model_builds.quota_resets_on
-        assert info.custom_neural_document_model_builds.used is not None
+        assert info.neural_document_model_quota.quota
+        assert info.neural_document_model_quota.quota_resets_on
+        assert info.neural_document_model_quota.used is not None
 
     @skip_flaky_test
     @FormRecognizerPreparer()

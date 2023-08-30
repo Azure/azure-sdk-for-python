@@ -29,6 +29,7 @@ class MsalCredential:  # pylint: disable=too-many-instance-attributes
         additionally_allowed_tenants: Optional[List[str]] = None,
         allow_broker: Optional[bool] = None,
         parent_window_handle: Optional[int] = None,
+        enable_msa_passthrough: Optional[bool] = None,
         authority: Optional[str] = None,
         disable_instance_discovery: Optional[bool] = None,
         tenant_id: Optional[str] = None,
@@ -42,20 +43,19 @@ class MsalCredential:  # pylint: disable=too-many-instance-attributes
         self._tenant_id = tenant_id or "organizations"
         validate_tenant_id(self._tenant_id)
         self._client = MsalClient(**kwargs)
-        self._client_applications: Dict[str, msal.ClientApplication] = {}
         self._client_credential = client_credential
         self._client_id = client_id
         self._allow_broker = allow_broker
         self._parent_window_handle = parent_window_handle
+        self._enable_msa_passthrough = enable_msa_passthrough
         self._additionally_allowed_tenants = additionally_allowed_tenants or []
 
+        self._client_applications: Dict[str, msal.ClientApplication] = {}
+        self._cae_client_applications: Dict[str, msal.ClientApplication] = {}
+
         self._cache = kwargs.pop("_cache", None)
-        if not self._cache:
-            options = kwargs.pop("cache_persistence_options", None)
-            if options:
-                self._cache = _load_persistent_cache(options)
-            else:
-                self._cache = msal.TokenCache()
+        self._cae_cache = kwargs.pop("_cae_cache", None)
+        self._cache_options = kwargs.pop("cache_persistence_options", None)
 
         super(MsalCredential, self).__init__()
 
@@ -69,25 +69,50 @@ class MsalCredential:  # pylint: disable=too-many-instance-attributes
     def close(self) -> None:
         self.__exit__()
 
-    def _get_app(self, **kwargs):
-        # type: (**Any) -> msal.ClientApplication
+    def _initialize_cache(self, is_cae: bool = False) -> msal.TokenCache:
+        if self._cache_options:
+            if is_cae:
+                self._cae_cache = _load_persistent_cache(self._cache_options, is_cae)
+            else:
+                self._cache = _load_persistent_cache(self._cache_options, is_cae)
+        else:
+            if is_cae:
+                self._cae_cache = msal.TokenCache()
+            else:
+                self._cache = msal.TokenCache()
+
+        return self._cae_cache if is_cae else self._cache
+
+    def _get_app(self, **kwargs: Any) -> msal.ClientApplication:
         tenant_id = resolve_tenant(
             self._tenant_id, additionally_allowed_tenants=self._additionally_allowed_tenants, **kwargs
         )
-        if tenant_id not in self._client_applications:
-            # CP1 = can handle claims challenges (CAE)
-            capabilities = None if EnvironmentVariables.AZURE_IDENTITY_DISABLE_CP1 in os.environ else ["CP1"]
-            cls = msal.ConfidentialClientApplication if self._client_credential else msal.PublicClientApplication
-            self._client_applications[tenant_id] = cls(
+
+        client_applications_map = self._client_applications
+        capabilities = None
+        token_cache = self._cache
+
+        app_class = msal.ConfidentialClientApplication if self._client_credential else msal.PublicClientApplication
+
+        if kwargs.get("enable_cae"):
+            client_applications_map = self._cae_client_applications
+            capabilities = ["CP1"]
+            token_cache = self._cae_cache
+
+        if not token_cache:
+            token_cache = self._initialize_cache(is_cae=bool(kwargs.get("enable_cae")))
+
+        if tenant_id not in client_applications_map:
+            client_applications_map[tenant_id] = app_class(
                 client_id=self._client_id,
                 client_credential=self._client_credential,
                 client_capabilities=capabilities,
                 authority="{}/{}".format(self._authority, tenant_id),
                 azure_region=self._regional_authority,
-                token_cache=self._cache,
+                token_cache=token_cache,
                 http_client=self._client,
                 instance_discovery=self._instance_discovery,
                 allow_broker=self._allow_broker,
             )
 
-        return self._client_applications[tenant_id]
+        return client_applications_map[tenant_id]

@@ -68,13 +68,8 @@ class RestMockResponse(RestAsyncHttpResponse):
         # the impl takes in a lot more kwargs. It's not public and is a
         # helper implementation shared across our azure core transport responses
         self._content = body
-
-    def body(self):
-        return self._content
-
-    @property
-    def content(self):
-        return self._content
+        self._is_closed = True
+        self._is_stream_consumed = True
 
 
 MOCK_RESPONSES = [PipelineTransportMockResponse, RestMockResponse]

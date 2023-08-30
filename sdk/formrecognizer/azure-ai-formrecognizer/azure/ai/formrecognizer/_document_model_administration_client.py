@@ -44,9 +44,10 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
     """DocumentModelAdministrationClient is the Form Recognizer interface to use for building
     and managing models.
 
-    It provides methods for building models, as well as methods for viewing and deleting models,
-    viewing model operations, accessing account information, copying models to another
-    Form Recognizer resource, and composing a new model from a collection of existing models.
+    It provides methods for building models and classifiers, as well as methods for viewing and
+    deleting models and classifiers, viewing model and classifier operations, accessing account
+    information, copying models to another Form Recognizer resource, and composing a new model
+    from a collection of existing models.
 
     .. note:: DocumentModelAdministrationClient should be used with API versions
         2022-08-31 and up. To use API versions <=v2.1, instantiate a FormTrainingClient.
@@ -69,14 +70,14 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../samples/v3.2/sample_authentication.py
+        .. literalinclude:: ../samples/v3.2_and_later/sample_authentication.py
             :start-after: [START create_dt_client_with_key]
             :end-before: [END create_dt_client_with_key]
             :language: python
             :dedent: 4
             :caption: Creating the DocumentModelAdministrationClient with an endpoint and API key.
 
-        .. literalinclude:: ../samples/v3.2/sample_authentication.py
+        .. literalinclude:: ../samples/v3.2_and_later/sample_authentication.py
             :start-after: [START create_dt_client_with_aad]
             :end-before: [END create_dt_client_with_aad]
             :language: python
@@ -102,7 +103,35 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         tags: Optional[Mapping[str, str]] = None,
         **kwargs: Any
     ) -> DocumentModelAdministrationLROPoller[DocumentModelDetails]:
-        ...
+        """Build a custom document model.
+
+        The request must include a `blob_container_url` keyword parameter that is an
+        externally accessible Azure storage blob container URI (preferably a Shared Access Signature URI). Note that
+        a container URI (without SAS) is accepted only when the container is public or has a managed identity
+        configured, see more about configuring managed identities to work with Form Recognizer here:
+        https://docs.microsoft.com/azure/applied-ai-services/form-recognizer/managed-identities.
+        Models are built using documents that are of the following content type - 'application/pdf',
+        'image/jpeg', 'image/png', 'image/tiff', 'image/bmp', or 'image/heif'. Other types of content in the container
+        is ignored.
+
+        :param build_mode: The custom model build mode. Possible values include: "template", "neural".
+            For more information about build modes, see: https://aka.ms/azsdk/formrecognizer/buildmode.
+        :type build_mode: str or :class:`~azure.ai.formrecognizer.ModelBuildMode`
+        :keyword str blob_container_url: An Azure Storage blob container's SAS URI. A container URI (without SAS)
+            can be used if the container is public or has a managed identity configured. For more information on
+            setting up a training data set, see: https://aka.ms/azsdk/formrecognizer/buildtrainingset.
+        :keyword str model_id: A unique ID for your model. If not specified, a model ID will be created for you.
+        :keyword str description: An optional description to add to the model.
+        :keyword str prefix: A case-sensitive prefix string to filter documents in the blob container url path.
+            For example, when using an Azure storage blob URI, use the prefix to restrict sub folders.
+            `prefix` should end in '/' to avoid cases where filenames share the same prefix.
+        :keyword tags: List of user defined key-value tag attributes associated with the model.
+        :paramtype tags: dict[str, str]
+        :return: An instance of an DocumentModelAdministrationLROPoller. Call `result()` on the poller
+            object to return a :class:`~azure.ai.formrecognizer.DocumentModelDetails`.
+        :rtype: ~azure.ai.formrecognizer.DocumentModelAdministrationLROPoller[DocumentModelDetails]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
 
     @overload
     def begin_build_document_model(
@@ -116,7 +145,34 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         tags: Optional[Mapping[str, str]] = None,
         **kwargs: Any
     ) -> DocumentModelAdministrationLROPoller[DocumentModelDetails]:
-        ...
+        """Build a custom document model.
+
+        The request must include a `blob_container_url` keyword parameter that is an
+        externally accessible Azure storage blob container URI (preferably a Shared Access Signature URI). Note that
+        a container URI (without SAS) is accepted only when the container is public or has a managed identity
+        configured, see more about configuring managed identities to work with Form Recognizer here:
+        https://docs.microsoft.com/azure/applied-ai-services/form-recognizer/managed-identities.
+        Models are built using documents that are of the following content type - 'application/pdf',
+        'image/jpeg', 'image/png', 'image/tiff', 'image/bmp', or 'image/heif'. Other types of content in the container
+        is ignored.
+
+        :param build_mode: The custom model build mode. Possible values include: "template", "neural".
+            For more information about build modes, see: https://aka.ms/azsdk/formrecognizer/buildmode.
+        :type build_mode: str or :class:`~azure.ai.formrecognizer.ModelBuildMode`
+        :keyword str blob_container_url: An Azure Storage blob container's SAS URI. A container URI (without SAS)
+            can be used if the container is public or has a managed identity configured. For more information on
+            setting up a training data set, see: https://aka.ms/azsdk/formrecognizer/buildtrainingset.
+        :keyword str model_id: A unique ID for your model. If not specified, a model ID will be created for you.
+        :keyword str description: An optional description to add to the model.
+        :keyword str file_list: Path to a JSONL file within the container specifying a subset of
+            documents for training.
+        :keyword tags: List of user defined key-value tag attributes associated with the model.
+        :paramtype tags: dict[str, str]
+        :return: An instance of an DocumentModelAdministrationLROPoller. Call `result()` on the poller
+            object to return a :class:`~azure.ai.formrecognizer.DocumentModelDetails`.
+        :rtype: ~azure.ai.formrecognizer.DocumentModelAdministrationLROPoller[DocumentModelDetails]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
 
     @distributed_trace
     def begin_build_document_model(
@@ -158,7 +214,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/v3.2/sample_build_model.py
+            .. literalinclude:: ../samples/v3.2_and_later/sample_build_model.py
                 :start-after: [START build_model]
                 :end-before: [END build_model]
                 :language: python
@@ -250,7 +306,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/v3.2/sample_compose_model.py
+            .. literalinclude:: ../samples/v3.2_and_later/sample_compose_model.py
                 :start-after: [START composed_model]
                 :end-before: [END composed_model]
                 :language: python
@@ -355,7 +411,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/v3.2/sample_copy_model_to.py
+            .. literalinclude:: ../samples/v3.2_and_later/sample_copy_model_to.py
                 :start-after: [START begin_copy_document_model_to]
                 :end-before: [END begin_copy_document_model_to]
                 :language: python
@@ -410,7 +466,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/v3.2/sample_manage_models.py
+            .. literalinclude:: ../samples/v3.2_and_later/sample_manage_models.py
                 :start-after: [START delete_document_model]
                 :end-before: [END delete_document_model]
                 :language: python
@@ -438,7 +494,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/v3.2/sample_manage_models.py
+            .. literalinclude:: ../samples/v3.2_and_later/sample_manage_models.py
                 :start-after: [START list_document_models]
                 :end-before: [END list_document_models]
                 :language: python
@@ -468,7 +524,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/v3.2/sample_manage_models.py
+            .. literalinclude:: ../samples/v3.2_and_later/sample_manage_models.py
                 :start-after: [START get_resource_details]
                 :end-before: [END get_resource_details]
                 :language: python
@@ -494,7 +550,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/v3.2/sample_manage_models.py
+            .. literalinclude:: ../samples/v3.2_and_later/sample_manage_models.py
                 :start-after: [START get_document_model]
                 :end-before: [END get_document_model]
                 :language: python
@@ -526,7 +582,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/v3.2/sample_get_operations.py
+            .. literalinclude:: ../samples/v3.2_and_later/sample_get_operations.py
                 :start-after: [START list_operations]
                 :end-before: [END list_operations]
                 :language: python
@@ -561,7 +617,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/v3.2/sample_get_operations.py
+            .. literalinclude:: ../samples/v3.2_and_later/sample_get_operations.py
                 :start-after: [START get_operation]
                 :end-before: [END get_operation]
                 :language: python
@@ -593,8 +649,8 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         """Build a document classifier. For more information on how to build and train
         a custom classifier model, see https://aka.ms/azsdk/formrecognizer/buildclassifiermodel.
 
-        :param doc_types: Required. Mapping of document types to classify against.
-        :paramtype doc_types: Mapping[str, ~azure.ai.formrecognizer.ClassifierDocumentTypeDetails]
+        :param doc_types: Mapping of document types to classify against.
+        :type doc_types: Mapping[str, ~azure.ai.formrecognizer.ClassifierDocumentTypeDetails]
         :keyword str classifier_id: Unique document classifier name.
             If not specified, a classifier ID will be created for you.
         :keyword str description: Document classifier description.
@@ -608,7 +664,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/v3.2/sample_build_classifier.py
+            .. literalinclude:: ../samples/v3.2_and_later/sample_build_classifier.py
                 :start-after: [START build_classifier]
                 :end-before: [END build_classifier]
                 :language: python
@@ -630,18 +686,8 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         if classifier_id is None:
             classifier_id = str(uuid.uuid4())
 
-        _doc_types = {}
-        for doc, details in doc_types.items():
-            _source = None
-            if hasattr(details.source, "prefix"):
-                _source = self._generated_models.ClassifierDocumentTypeDetails(
-                    azure_blob_source=self._generated_models.AzureBlobContentSource(
-                        container_url=details.source.container_url, prefix=details.source.prefix))
-            elif hasattr(details.source, "file_list"):
-                _source = self._generated_models.ClassifierDocumentTypeDetails(
-                    azure_blob_file_list_source=self._generated_models.AzureBlobFileListContentSource(
-                        container_url=details.source.container_url, file_list=details.source.file_list))
-            _doc_types[doc] = _source
+        _doc_types = {doc: details._to_generated() for doc, details in doc_types.items()}
+
         return self._client.document_classifiers.begin_build_classifier(
             build_request=self._generated_models.BuildDocumentClassifierRequest(
                 classifier_id=classifier_id,
@@ -670,7 +716,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/v3.2/sample_manage_classifiers.py
+            .. literalinclude:: ../samples/v3.2_and_later/sample_manage_classifiers.py
                 :start-after: [START get_document_classifier]
                 :end-before: [END get_document_classifier]
                 :language: python
@@ -701,7 +747,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/v3.2/sample_manage_classifiers.py
+            .. literalinclude:: ../samples/v3.2_and_later/sample_manage_classifiers.py
                 :start-after: [START list_document_classifiers]
                 :end-before: [END list_document_classifiers]
                 :language: python
@@ -734,7 +780,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/v3.2/sample_manage_classifiers.py
+            .. literalinclude:: ../samples/v3.2_and_later/sample_manage_classifiers.py
                 :start-after: [START delete_document_classifier]
                 :end-before: [END delete_document_classifier]
                 :language: python

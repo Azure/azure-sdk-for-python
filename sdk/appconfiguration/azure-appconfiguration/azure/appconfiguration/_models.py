@@ -29,21 +29,21 @@ class ConfigurationSetting(Model):
     """A configuration value.
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar value: The value of the configuration setting
+    :ivar value: The value of the configuration setting.
     :vartype value: str
-    :ivar etag: Entity tag (etag) of the object
+    :ivar etag: Entity tag (etag) of the object.
     :vartype etag: str
-    :ivar key:
+    :ivar key: The key of the configuration setting.
     :vartype key: str
-    :ivar label:
+    :ivar label: The label of the configuration setting.
     :vartype label: str
-    :ivar content_type:
+    :ivar content_type: The content_type of the configuration setting.
     :vartype content_type: str
     :ivar last_modified:
     :vartype last_modified: datetime
     :ivar read_only:
     :vartype read_only: bool
-    :ivar tags:
+    :ivar tags: The tags assigned to the configuration setting.
     :vartype tags: dict[str, str]
     """
 
@@ -123,29 +123,31 @@ class FeatureFlagConfigurationSetting(ConfigurationSetting):  # pylint: disable=
     """A feature flag configuration value.
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar etag: Entity tag (etag) of the object
+    :ivar etag: Entity tag (etag) of the object.
     :vartype etag: str
-    :param feature_id:
+    :param feature_id: The identity of the configuration setting.
     :type feature_id: str
-    :ivar value: The value of the configuration setting
+    :ivar value: The value of the configuration setting.
     :vartype value: str
-    :keyword enabled:
+    :keyword enabled: The value indicating whether the feature flag is enabled. A feature is OFF if enabled is false.
+        If enabled is true, then the feature is ON if there are no conditions or if all conditions are satisfied.
     :paramtype enabled: bool
-    :keyword filters:
+    :keyword filters: Filters that must run on the client and be evaluated as true for the feature
+        to be considered enabled.
     :paramtype filters: list[dict[str, Any]]
-    :ivar label:
+    :ivar label: The label used to group this configuration setting with others.
     :vartype label: str
-    :ivar display_name:
+    :ivar display_name: The name for the feature to use for display rather than the ID.
     :vartype display_name: str
-    :ivar description:
+    :ivar description: The description of the feature.
     :vartype description: str
-    :ivar content_type:
+    :ivar content_type: The content_type of the configuration setting.
     :vartype content_type: str
     :ivar last_modified:
     :vartype last_modified: datetime
     :ivar read_only:
     :vartype read_only: bool
-    :ivar tags:
+    :ivar tags: The tags assigned to the configuration setting.
     :vartype tags: dict[str, str]
     """
 
@@ -185,14 +187,16 @@ class FeatureFlagConfigurationSetting(ConfigurationSetting):  # pylint: disable=
         self.display_name = kwargs.get("display_name", None)
         self.filters = [] if filters is None else filters
         self.enabled = enabled
-        self._value = json.dumps({"enabled": self.enabled, "conditions": {"client_filters": self.filters}})
+        self._value = json.dumps(
+            {"id": self.feature_id, "enabled": self.enabled, "conditions": {"client_filters": self.filters}}
+        )
 
     @property
     def value(self):
         try:
             temp = json.loads(self._value)
+            temp["id"] = self.feature_id
             temp["enabled"] = self.enabled
-
             if "conditions" not in temp.keys():
                 temp["conditions"] = {}
             temp["conditions"]["client_filters"] = self.filters
@@ -205,7 +209,8 @@ class FeatureFlagConfigurationSetting(ConfigurationSetting):  # pylint: disable=
     def value(self, new_value):
         try:
             temp = json.loads(new_value)
-            self._value = new_value
+            temp["id"] = self.feature_id
+            self._value = json.dumps(temp)
             self.enabled = temp.get("enabled", None)
             self.filters = None
             conditions = temp.get("conditions", None)
@@ -261,15 +266,15 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar etag: Entity tag (etag) of the object
+    :ivar etag: Entity tag (etag) of the object.
     :vartype etag: str
-    :param key:
+    :param key: The key of the configuration setting.
     :type key: str
-    :param secret_id:
+    :param secret_id: The identity of the configuration setting.
     :type secret_id: str
-    :ivar label:
+    :ivar label: The label used to group this configuration setting with others.
     :vartype label: str
-    :ivar content_type:
+    :ivar content_type: The content_type of the configuration setting.
     :vartype content_type: str
     :ivar value: The value of the configuration setting
     :vartype value: dict[str, Any]
@@ -277,7 +282,7 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
     :vartype last_modified: datetime
     :ivar read_only:
     :vartype read_only: bool
-    :ivar tags:
+    :ivar tags: The tags assigned to the configuration setting.
     :vartype tags: dict[str, str]
     """
 
@@ -465,8 +470,11 @@ class Snapshot:  # pylint: disable=too-many-instance-attributes
             return generated
 
         filters = []
-        for config_setting_filter in generated.filters:
-            filters.append(ConfigurationSettingFilter(key=config_setting_filter.key, label=config_setting_filter.label))
+        if generated.filters:
+            for config_setting_filter in generated.filters:
+                filters.append(
+                    ConfigurationSettingFilter(key=config_setting_filter.key, label=config_setting_filter.label)
+                )
         snapshot = cls(
             filters=filters,
             composition_type=cast(Optional[Literal["key", "key_label"]], generated.composition_type),
@@ -493,8 +501,11 @@ class Snapshot:  # pylint: disable=too-many-instance-attributes
         if deserialized is None:
             return deserialized
         filters = []
-        for config_setting_filter in deserialized.filters:
-            filters.append(ConfigurationSettingFilter(key=config_setting_filter.key, label=config_setting_filter.label))
+        if deserialized.filters:
+            for config_setting_filter in deserialized.filters:
+                filters.append(
+                    ConfigurationSettingFilter(key=config_setting_filter.key, label=config_setting_filter.label)
+                )
         snapshot = cls(
             filters=filters,
             composition_type=cast(Optional[Literal["key", "key_label"]], deserialized.composition_type),

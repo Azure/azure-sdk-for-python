@@ -71,7 +71,6 @@
     "sdk/keyvault/azure-keyvault-certificates/tests/certs.py",
     "sdk/keyvault/azure-keyvault-keys/tests/keys.py",
     "sdk/modelsrepository/azure-iot-modelsrepository/**",
-    "sdk/monitor/azure-monitor-query/**",
     "sdk/servicefabric/azure-servicefabric/**",
     "sdk/search/azure-search-documents/**",
     "sdk/storage/azure-storage-blob-changefeed/**",
@@ -90,7 +89,6 @@
     "sdk/ml/azure-ai-ml/swagger/**",
     "sdk/ml/azure-ai-ml/NOTICE.txt",
     "sdk/loadtestservice/azure-developer-loadtesting/**",
-    "sdk/monitor/azure-monitor-ingestion/**",
     "sdk/translation/azure-ai-translation-text/azure/ai/translation/text/_serialization.py",
     "sdk/translation/azure-ai-translation-text/tests/test_break_sentence.py",
     "sdk/translation/azure-ai-translation-text/tests/test_translation.py",
@@ -130,10 +128,12 @@
     "adls",
     "aenter",
     "aiohttp",
+    "alru",
     "amqp",
     "amqps",
     "apim",
     "Asal",
+    "asgi",
     "astimezone",
     "AsyncIterable",
     "asyncio",
@@ -354,6 +354,7 @@
     "ukwest",
     "unpad",
     "unpadder",
+    "unpartial",
     "unredacted",
     "unseekable",
     "unsubscriptable",
@@ -453,6 +454,13 @@
         "isfork",
         "ISFORK",
         "thead"
+      ]
+    },
+    {
+      "filename": "tools/azure-sdk-tools/gh_tools/**",
+      "words": [
+        "JOBID",
+        "vnext"
       ]
     },
     {
@@ -809,19 +817,40 @@
       ]
     },
     {
-      "filename": "sdk/monitor/azure-monitor-opentelemetry-exporter/**/*.py",
+      "filename": "sdk/monitor/azure-monitor-*/**/*",
       "words": [
-        "ikey",
-        "semconv"
+        "ctxt",
+        "wday"
       ]
     },
     {
-      "filename": "sdk/monitor/azure-monitor-opentelemetry-exporter/**/*",
+      "filename": "sdk/monitor/azure-monitor-opentelemetry*/**/*",
       "words": [
+        "blrp",
+        "configurators",
+        "dbapi",
+        "grpc",
+        "opentelemetry",
         "otel",
+        "OTELRESOURCE",
         "OTLP",
         "otlp",
-        "grpc"
+        "speced",
+        "pkgutils",
+        "psycopg",
+        "uninstrument",
+        "uninstrumented"
+      ]
+    },
+    {
+      "filename": "sdk/monitor/azure-monitor-opentelemetry*/**/*.py",
+      "words": [
+        "asgi",
+        "ikey",
+        "msecs",
+        "mycontainer",
+        "semconv",
+        "updown"
       ]
     },
     {
@@ -834,9 +863,7 @@
     {
       "filename": "sdk/schemaregistry/azure-schemaregistry-avroencoder/**/*.py",
       "words": [
-        "currsize",
-        "unpartial",
-        "alru"
+        "currsize"
       ]
     },
     {

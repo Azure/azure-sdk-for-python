@@ -24,11 +24,10 @@ from azure.ai.ml._scope_dependent_operations import (
     OperationScope,
     _ScopeDependentOperations,
 )
-
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
-from azure.ai.ml._utils._arm_id_utils import get_datastore_arm_id, is_ARM_id_for_resource, remove_aml_prefix
+from azure.ai.ml._utils._arm_id_utils import is_ARM_id_for_resource, remove_aml_prefix
 from azure.ai.ml._utils._azureml_polling import AzureMLPolling
-from azure.ai.ml._utils._endpoint_utils import validate_response
+from azure.ai.ml._utils._endpoint_utils import convert_v1_dataset_to_v2, validate_response
 from azure.ai.ml._utils._http_utils import HttpPipeline
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils.utils import (
@@ -73,6 +72,19 @@ class BatchEndpointOperations(_ScopeDependentOperations):
 
     You should not instantiate this class directly. Instead, you should create an MLClient instance that instantiates it
     for you and attaches it as an attribute.
+
+    :param operation_scope: Scope variables for the operations classes of an MLClient object.
+    :type operation_scope: ~azure.ai.ml._scope_dependent_operations.OperationScope
+    :param operation_config: Common configuration for operations classes of an MLClient object.
+    :type operation_config: ~azure.ai.ml._scope_dependent_operations.OperationConfig
+    :param service_client_05_2022: Service client to allow end users to operate on Azure Machine Learning Workspace
+        resources.
+    :type service_client_05_2022: ~azure.ai.ml._restclient.v2022_05_01._azure_machine_learning_workspaces.
+        AzureMachineLearningWorkspaces
+    :param all_operations: All operations classes of an MLClient object.
+    :type all_operations: ~azure.ai.ml._scope_dependent_operations.OperationsContainer
+    :param credentials: Credential to use for authentication.
+    :type credentials: ~azure.core.credentials.TokenCredential
     """
 
     def __init__(
@@ -106,6 +118,15 @@ class BatchEndpointOperations(_ScopeDependentOperations):
 
         :return: A list of endpoints
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.ml.entities.BatchEndpoint]
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+                :start-after: [START batch_endpoint_operations_list]
+                :end-before: [END batch_endpoint_operations_list]
+                :language: python
+                :dedent: 8
+                :caption: List example.
         """
         return self._batch_operation.list(
             resource_group_name=self._resource_group_name,
@@ -126,6 +147,15 @@ class BatchEndpointOperations(_ScopeDependentOperations):
         :type name: str
         :return: Endpoint object retrieved from the service.
         :rtype: ~azure.ai.ml.entities.BatchEndpoint
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+                :start-after: [START batch_endpoint_operations_get]
+                :end-before: [END batch_endpoint_operations_get]
+                :language: python
+                :dedent: 8
+                :caption: Get endpoint example.
         """
         # first get the endpoint
         endpoint = self._batch_operation.get(
@@ -147,6 +177,15 @@ class BatchEndpointOperations(_ScopeDependentOperations):
         :type name: str
         :return: A poller to track the operation status.
         :rtype: ~azure.core.polling.LROPoller[None]
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+                :start-after: [START batch_endpoint_operations_delete]
+                :end-before: [END batch_endpoint_operations_delete]
+                :language: python
+                :dedent: 8
+                :caption: Delete endpoint example.
         """
         path_format_arguments = {
             "endpointName": name,
@@ -177,6 +216,15 @@ class BatchEndpointOperations(_ScopeDependentOperations):
         :type endpoint: ~azure.ai.ml.entities.BatchEndpoint
         :return: A poller to track the operation status.
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.BatchEndpoint]
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+                :start-after: [START batch_endpoint_operations_create_or_update]
+                :end-before: [END batch_endpoint_operations_create_or_update]
+                :language: python
+                :dedent: 8
+                :caption: Create endpoint example.
         """
 
         try:
@@ -190,6 +238,7 @@ class BatchEndpointOperations(_ScopeDependentOperations):
                 body=endpoint_resource,
                 polling=True,
                 **self._init_kwargs,
+                cls=lambda response, deserialized, headers: BatchEndpoint._from_rest_object(deserialized),
             )
             return poller
 
@@ -214,10 +263,10 @@ class BatchEndpointOperations(_ScopeDependentOperations):
         :type endpoint_name: str
         :keyword deployment_name: (Optional) The name of a specific deployment to invoke. This is optional.
             By default requests are routed to any of the deployments according to the traffic rules.
-        :type deployment_name: str
+        :paramtype deployment_name: str
         :keyword inputs: (Optional) A dictionary of existing data asset, public uri file or folder
             to use with the deployment
-        :type inputs: Dict[str, Input]
+        :paramtype inputs: Dict[str, Input]
         :raises ~azure.ai.ml.exceptions.ValidationException: Raised if deployment cannot be successfully validated.
             Details will be provided in the error message.
         :raises ~azure.ai.ml.exceptions.AssetException: Raised if BatchEndpoint assets
@@ -228,6 +277,15 @@ class BatchEndpointOperations(_ScopeDependentOperations):
         :raises ~azure.ai.ml.exceptions.EmptyDirectoryError: Raised if local path provided points to an empty directory.
         :return: The invoked batch deployment job.
         :rtype: ~azure.ai.ml.entities.BatchJob
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+                :start-after: [START batch_endpoint_operations_invoke]
+                :end-before: [END batch_endpoint_operations_invoke]
+                :language: python
+                :dedent: 8
+                :caption: Invoke endpoint example.
         """
         outputs = kwargs.get("outputs", None)
         job_name = kwargs.get("job_name", None)
@@ -283,14 +341,19 @@ class BatchEndpointOperations(_ScopeDependentOperations):
         batch_job = BatchJobSchema(context=context).load(data={})  # pylint: disable=no-member
         # update output datastore to arm id if needed
         # TODO: Unify datastore name -> arm id logic, TASK: 1104172
+        request = {}
         if (
             batch_job.output_dataset
             and batch_job.output_dataset.datastore_id
             and (not is_ARM_id_for_resource(batch_job.output_dataset.datastore_id))
         ):
-            batch_job.output_dataset.datastore_id = get_datastore_arm_id(
-                batch_job.output_dataset.datastore_id, self._operation_scope
-            )
+            v2_dataset_dictionary = convert_v1_dataset_to_v2(batch_job.output_dataset, batch_job.output_file_name)
+            batch_job.output_dataset = None
+            batch_job.output_file_name = None
+            request = BatchJobResource(properties=batch_job).serialize()
+            request["properties"]["outputData"] = v2_dataset_dictionary
+        else:
+            request = BatchJobResource(properties=batch_job).serialize()
 
         endpoint = self._batch_operation.get(
             resource_group_name=self._resource_group_name,
@@ -310,7 +373,7 @@ class BatchEndpointOperations(_ScopeDependentOperations):
 
         response = self._requests_pipeline.post(
             endpoint.properties.scoring_uri,
-            json=BatchJobResource(properties=batch_job).serialize(),
+            json=request,
             headers=headers,
         )
         validate_response(response)
@@ -326,6 +389,15 @@ class BatchEndpointOperations(_ScopeDependentOperations):
         :type endpoint_name: str
         :return: List of jobs
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.ml.entities.BatchJob]
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+                :start-after: [START batch_endpoint_operations_list_jobs]
+                :end-before: [END batch_endpoint_operations_list_jobs]
+                :language: python
+                :dedent: 8
+                :caption: List jobs example.
         """
 
         workspace_operations = self._all_operations.all_operations[AzureMLResourceType.WORKSPACE]
