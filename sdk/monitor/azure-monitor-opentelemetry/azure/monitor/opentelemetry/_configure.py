@@ -34,7 +34,7 @@ from azure.monitor.opentelemetry._constants import (
     SAMPLING_RATIO_ARG,
 )
 from azure.monitor.opentelemetry._types import ConfigurationValue
-from azure.monitor.opentelemetry.exporter import (  # pylint: disable=import-error
+from azure.monitor.opentelemetry.exporter import (  # pylint: disable=import-error,no-name-in-module
     ApplicationInsightsSampler,
     AzureMonitorLogExporter,
     AzureMonitorMetricExporter,
