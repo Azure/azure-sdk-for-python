@@ -173,7 +173,6 @@ class WorkspaceOperations(WorkspaceOperationsBase):
         :return: An instance of LROPoller that returns a Workspace.
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.Workspace]
         """
-
         return super().begin_create(workspace, update_dependent_resources=update_dependent_resources, **kwargs)
 
     @monitor_with_activity(logger, "Workspace.BeginUpdate", ActivityType.PUBLICAPI)

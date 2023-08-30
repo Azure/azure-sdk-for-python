@@ -185,7 +185,7 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
             try:
                 location = self._get_workspace_location()
                 if kwargs.pop("package_model", False):
-                    deployment = package_deployment(deployment, self._all_operations.all_operations)
+                    deployment = package_deployment(deployment, self._all_operations.all_operations["models"])
                     module_logger.info("\nStarting deployment")
 
                 deployment_rest = deployment._to_rest_object(location=location)

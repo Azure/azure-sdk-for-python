@@ -5,7 +5,7 @@
 import logging
 import warnings
 from os import PathLike
-from typing import IO, Any, AnyStr, Dict, Optional, Type, Union
+from typing import IO, Any, AnyStr, Dict, List, Optional, Type, Union
 
 from marshmallow import ValidationError
 
@@ -308,6 +308,7 @@ def load_compute(
     source: Union[str, PathLike, IO[AnyStr]],
     *,
     relative_origin: Optional[str] = None,
+    params_override: Optional[List[Dict[str, str]]] = None,
     **kwargs: Any,
 ) -> Compute:
     """Construct a compute object from a yaml file.
@@ -323,15 +324,23 @@ def load_compute(
         the relative locations of files referenced in the parsed yaml.
         Defaults to the inputted source's directory if it is a file or file path input.
         Defaults to "./" if the source is a stream input with no name value.
-    :paramtype relative_origin: str
+    :paramtype relative_origin: Optional[str]
     :keyword params_override: Fields to overwrite on top of the yaml file.
         Format is [{"field1": "value1"}, {"field2": "value2"}]
-    :paramtype params_override: List[Dict]
-
+    :paramtype params_override: Optional[List[Dict]]
     :return: Loaded compute object.
-    :rtype: Compute
+    :rtype: ~azure.ai.ml.entities.Compute
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../../../../samples/ml_samples_compute.py
+            :start-after: [START load_compute]
+            :end-before: [END load_compute]
+            :language: python
+            :dedent: 8
+            :caption: Loading a Compute object from a YAML file and overriding its description.
     """
-    return load_common(Compute, source, relative_origin, **kwargs)
+    return load_common(Compute, source, relative_origin, params_override=params_override, **kwargs)
 
 
 def load_component(

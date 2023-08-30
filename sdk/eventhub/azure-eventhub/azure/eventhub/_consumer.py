@@ -13,7 +13,6 @@ from typing import TYPE_CHECKING, Callable, Dict, Optional, Any, Deque, Union, c
 from ._common import EventData
 from ._client_base import ConsumerProducerMixin
 from ._utils import create_properties, event_position_selector
-from ._transport._pyamqp_transport import PyamqpTransport
 from ._constants import (
     EPOCH_SYMBOL,
     TIMEOUT_SYMBOL,
@@ -190,7 +189,11 @@ class EventHubConsumer(
         return event_data
 
     def _open(self) -> bool:
-        """Open the EventHubConsumer/EventHubProducer using the supplied connection."""
+        """Open the EventHubConsumer/EventHubProducer using the supplied connection.
+
+        :return: Whether the ReceiveClient is open
+        :rtype: bool
+        """
         # pylint: disable=protected-access
         if not self.running:
             if self._handler:
@@ -246,7 +249,7 @@ class EventHubConsumer(
                             self._name,
                             last_exception,
                         )
-                        raise last_exception
+                        raise last_exception from None
         if (
             len(self._message_buffer) >= max_batch_size
             or (self._message_buffer and not max_wait_time)

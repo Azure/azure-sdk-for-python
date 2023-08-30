@@ -13,6 +13,9 @@ from opentelemetry.environment_variables import (
     OTEL_METRICS_EXPORTER,
     OTEL_TRACES_EXPORTER,
 )
+from opentelemetry.instrumentation.environment_variables import (
+    OTEL_PYTHON_DISABLED_INSTRUMENTATIONS,
+)
 from opentelemetry.sdk.environment_variables import OTEL_TRACES_SAMPLER_ARG
 
 from azure.monitor.opentelemetry._constants import (
@@ -24,9 +27,6 @@ from azure.monitor.opentelemetry._constants import (
     SAMPLING_RATIO_ARG,
 )
 from azure.monitor.opentelemetry._types import ConfigurationValue
-from azure.monitor.opentelemetry._vendor.v0_39b0.opentelemetry.instrumentation.environment_variables import (
-    OTEL_PYTHON_DISABLED_INSTRUMENTATIONS,
-)
 
 
 _INVALID_FLOAT_MESSAGE = "Value of %s must be a float. Defaulting to %s: %s"
