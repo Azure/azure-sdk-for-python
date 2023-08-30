@@ -248,8 +248,10 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
             deployed inference endpoints this feature store. Only set this argument if you are sure that you want
             to perform this operation. If this argument is not set, the command to update
             Azure Container Registry and Azure Application Insights will fail.
-        :keyword application_insights: Application insights resource for feature store.
-        :keyword container_registry: Container registry resource for feature store.
+        :keyword application_insights: Application insights resource for feature store. Defaults to None.
+        :paramtype application_insights: Optional[str]
+        :keyword container_registry: Container registry resource for feature store. Defaults to None.
+        :paramtype container_registry: Optional[str]
         :return: An instance of LROPoller that returns a FeatureStore.
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.FeatureStore]
         """
