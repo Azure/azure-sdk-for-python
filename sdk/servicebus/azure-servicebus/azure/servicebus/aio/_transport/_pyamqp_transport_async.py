@@ -203,20 +203,8 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         receiver: "ServiceBusReceiver", max_wait_time: Optional[int] = None
     ) -> AsyncIterator["ServiceBusReceivedMessage"]:
         # pylint: disable=protected-access
-        # to allow receiving with iterator, if link_credit is 0, set to 1 (and related values)
-        reset_link_credit = receiver._handler._link.link_credit == 0
-        if reset_link_credit:
-            # save original values
-            receiver_link_credit = receiver._handler._link.link_credit
-            message_received = receiver._handler._message_received
-            keep_alive_interval = receiver._handler._keep_alive_interval
-            # set new values
-            receiver._handler._link.link_credit = 1
-            receiver._handler._message_received = functools.partial(
-                PyamqpTransport.enhanced_message_received,
-                receiver
-            )
-            receiver._handler._keep_alive_interval = 5
+        # to allow receiving with iterator, if link_credit is 0, set to 1
+        link_credit_updated = PyamqpTransport.update_receiver_link_credit(receiver, 1)
         while True:
             try:
                 # pylint: disable=protected-access
@@ -225,10 +213,10 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
                 with receive_trace_context_manager(receiver, links=links):
                     yield message
             except StopAsyncIteration:
-                if reset_link_credit:
-                    receiver._handler._link.link_credit = receiver_link_credit
-                    receiver._handler._message_received = message_received
-                    receiver._handler._keep_alive_interval = keep_alive_interval
+                if link_credit_updated:
+                    receiver._handler._link.link_credit = link_credit_updated[0]
+                    receiver._handler._message_received = link_credit_updated[1]  # type: ignore[assignment]
+                    receiver._handler._keep_alive_interval = link_credit_updated[2]
                 break
 
     @staticmethod

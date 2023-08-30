@@ -20,6 +20,7 @@ from typing import (
     Type,
     cast,
     Iterable,
+    Tuple
 )
 
 try:
@@ -763,6 +764,23 @@ try:
                             receiver._handler._timeout = original_timeout
                         except AttributeError:  # Handler may be disposed already.
                             pass
+
+        @staticmethod
+        def update_receiver_link_credit(    # pylint:disable=unused-argument
+            receiver: "ServiceBusReceiver",
+            link_credit: int
+        ) -> Optional[Tuple[int, Callable, int]]:
+            """
+            Not needed for uamqp, only pyamqp. Does not actually update link credit, since uamqp sets
+            link credit/prefetch to 1 during receive client creation. Added to support SDK level receive call.
+
+            :param ~azure.servicebus.ServiceBusReceiver receiver: The receiver object to reset link credit on.
+            :param int link_credit: The new link credit value to set to.
+            :return: The original (link credit, message_received callable, keep alive interval) if prefetch was off.
+            False, if prefetch was already 1 or more.
+            :rtype: False or Tuple[int, Callable, int]
+            """
+            return None
 
         # wait_time used by pyamqp
         @staticmethod

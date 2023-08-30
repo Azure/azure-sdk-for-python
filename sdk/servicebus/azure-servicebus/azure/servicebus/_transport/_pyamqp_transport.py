@@ -625,20 +625,8 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         :rtype: iterator[~azure.servicebus.ServiceBusReceivedMessage]
         """
         # pylint: disable=protected-access
-        # to allow receiving with iterator, if link_credit is 0, set to 1 (and related values)
-        reset_link_credit = receiver._handler._link.link_credit == 0
-        if reset_link_credit:
-            # save original values
-            receiver_link_credit = receiver._handler._link.link_credit
-            message_received = receiver._handler._message_received
-            keep_alive_interval = receiver._handler._keep_alive_interval
-            # set new values
-            receiver._handler._link.link_credit = 1
-            receiver._handler._message_received = functools.partial(
-                PyamqpTransport.enhanced_message_received,
-                receiver
-            )
-            receiver._handler._keep_alive_interval = 5
+        # to allow receiving with iterator, if link_credit is 0, set to 1
+        link_credit_updated = PyamqpTransport.update_receiver_link_credit(receiver, 1)
         while True:
             try:
                 # pylint: disable=protected-access
@@ -647,12 +635,45 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
                 with receive_trace_context_manager(receiver, links=links):
                     yield message
             except StopIteration:
-                # if needed, reset link credit and related values to original values
-                if reset_link_credit:
-                    receiver._handler._link.link_credit = receiver_link_credit
-                    receiver._handler._message_received = message_received
-                    receiver._handler._keep_alive_interval = keep_alive_interval
+                # reset original (link_credit, _message_received, keep_alive_interval)
+                if link_credit_updated:
+                    receiver._handler._link.link_credit = link_credit_updated[0]
+                    receiver._handler._message_received = link_credit_updated[1]  # type: ignore[assignment]
+                    receiver._handler._keep_alive_interval = link_credit_updated[2]
                 break
+
+    @staticmethod
+    def update_receiver_link_credit(
+        receiver: "ServiceBusReceiver",
+        link_credit: int
+    ) -> Optional[Tuple[int, Callable, int]]:
+        """
+        If prefetch is turned off (prefetch_count = 0) on the receiver, link credit > 1 must be
+        issued to receive messages. This method resets receiver link credit and related properties
+        and returns previous values. If prefetch was already turned on, returns None.
+
+        :param ~azure.servicebus.ServiceBusReceiver receiver: The receiver object to reset link credit on.
+        :param int link_credit: The new link credit value to set to.
+        :return: The original (link credit, message_received callable, keep alive interval) if prefetch was off.
+         None, if prefetch was already 1 or more.
+        :rtype: None or Tuple[int, Callable, int]
+        """
+        # pylint:disable=protected-access
+        update_link_credit = receiver._handler._link.link_credit == 0
+        if update_link_credit:
+            # save original values
+            receiver_link_credit = receiver._handler._link.link_credit
+            message_received = receiver._handler._message_received
+            keep_alive_interval = receiver._handler._keep_alive_interval
+            # set new values
+            receiver._handler._link.link_credit = link_credit
+            receiver._handler._message_received = functools.partial( # type: ignore[assignment]
+                PyamqpTransport.enhanced_message_received,
+                receiver
+            )
+            receiver._handler._keep_alive_interval = 5
+            return receiver_link_credit, message_received, keep_alive_interval
+        return None
 
     @staticmethod
     def iter_next(
@@ -702,6 +723,8 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         if receiver._receive_context.is_set():
             receiver._handler._received_messages.put((frame, message))
         else:
+            if receiver._receive_mode == ServiceBusReceiveMode.RECEIVE_AND_DELETE:
+                receiver._handler._received_messages.put((frame, message))
             receiver._handler.settle_messages(frame[1], 'released')
 
     @staticmethod

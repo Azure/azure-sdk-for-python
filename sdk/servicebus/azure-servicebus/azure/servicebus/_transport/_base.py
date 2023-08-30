@@ -3,10 +3,11 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 from __future__ import annotations
-from typing import Union, TYPE_CHECKING, Dict, Any, Callable
+from typing import Union, TYPE_CHECKING, Dict, Any, Callable, Optional, Tuple
 from abc import ABC, abstractmethod
 
 if TYPE_CHECKING:
+    from .._servicebus_receiver import ServiceBusReceiver
     try:
         from uamqp import types as uamqp_types
     except ImportError:
@@ -223,6 +224,25 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
         and per-iter argument passing that requires the former.
         :param ~azure.servicebus.ServiceBusReceiver receiver: The receiver.
         :param int or None max_wait_time: The maximum wait time in seconds for the batch to be received.
+        """
+
+    @staticmethod
+    @abstractmethod
+    def update_receiver_link_credit(
+        receiver: "ServiceBusReceiver",
+        link_credit: int
+    ) -> Optional[Tuple[int, Callable, int]]:
+        """
+        Not used for uamqp.
+        If prefetch is turned off (prefetch_count = 0) on the receiver, link credit > 1 must be
+        issued to receive messages. This method resets receiver link credit and related properties
+        and returns previous values. If prefetch was already turned on, returns None.
+
+        :param ~azure.servicebus.ServiceBusReceiver receiver: The receiver to reset link credit on.
+        :param int link_credit: The new link credit value to set to.
+        :return: The original (link credit, message_received callable, keep alive interval) if prefetch was off.
+         None, if prefetch was already 1 or more.
+        :rtype: None or Tuple[int, Callable, int]
         """
 
     @staticmethod
