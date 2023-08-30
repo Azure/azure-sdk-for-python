@@ -23,7 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import TYPE_CHECKING, Callable, TypeVar, Awaitable, Union, overload
+from typing import TYPE_CHECKING, Callable, TypeVar, Awaitable, Union, overload, cast
 from typing_extensions import ParamSpec
 
 if TYPE_CHECKING:
@@ -53,9 +53,13 @@ async def await_result(func: Callable[P, Union[T, Awaitable[T]]], *args: P.args,
     :rtype: any
     :return: The result of the function
     """
-    result = func(*args, **kwargs)
+    result: Union[T, Awaitable[T]] = func(*args, **kwargs)
+    # pyright has issue with narrowing types here
+    # https://github.com/microsoft/pyright/issues/5860
     if hasattr(result, "__await__"):
+        result = cast(Awaitable[T], result)
         return await result
+    result = cast(T, result)
     return result
 
 
