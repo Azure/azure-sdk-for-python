@@ -102,8 +102,6 @@ class DataLakeFileClient(PathClient):
         :param str file_path:
             The whole file path, so that to interact with a specific file.
             eg. "{directory}/{subdirectory}/{file}"
-        :keyword str directory_name: The name of directory to interact with. The directory is under file system.
-        :keyword str file_name: The name of file to interact with. The file is under directory.
         :param credential:
             The credentials with which to authenticate. This is optional if the
             account URL already has a SAS token, or the connection string already has shared
