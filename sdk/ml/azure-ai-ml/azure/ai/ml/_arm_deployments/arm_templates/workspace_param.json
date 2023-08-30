@@ -143,7 +143,7 @@
     "materialization_identity_resource_id" : {
         "value": ""
     },
-    "grant_materialization_identity_permissions" : {
+    "grant_materialization_permissions" : {
         "value": "true"
     },
     "online_store_connection_name" : {
