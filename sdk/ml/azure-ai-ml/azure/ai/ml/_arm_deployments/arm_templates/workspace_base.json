@@ -458,7 +458,7 @@
                 "description": "Feature store materialization identity resource id"
             }
         },
-        "grant_materialization_identity_permissions": {
+        "grant_materialization_permissions": {
             "type": "string",
             "defaultValue": "false",
             "allowedValues": [
@@ -639,7 +639,8 @@
                 },
                 "supportsHttpsTrafficOnly": true,
                 "allowBlobPublicAccess": false,
-                "networkAcls": "[if(equals(parameters('storageAccountBehindVNet'), 'true'), variables('networkRuleSetBehindVNet'), json('null'))]"
+                "networkAcls": "[if(equals(parameters('storageAccountBehindVNet'), 'true'), variables('networkRuleSetBehindVNet'), json('null'))]",
+                "isHnsEnabled": "[equals(parameters('set_up_feature_store'), 'true')]"
             }
         },
         {
@@ -881,7 +882,7 @@
                                     }
                                 },
                                 {
-                                    "condition": "[and(equals(parameters('set_up_feature_store'), 'true'), equals(parameters('grant_materialization_identity_permissions'), 'true'))]",
+                                    "condition": "[and(equals(parameters('set_up_feature_store'), 'true'), equals(parameters('grant_materialization_permissions'), 'true'))]",
                                     "type": "Microsoft.MachineLearningServices/workspaces/providers/roleAssignments",
                                     "apiVersion": "2019-04-01-preview",
                                     "name": "[concat(parameters('workspaceName'), '/Microsoft.Authorization/', guid(variables('materialization_identity_resource_id'), parameters('workspaceName'), 'azureml ds role'))]",
@@ -901,7 +902,7 @@
 			}
 		},
         {
-            "condition": "[and(equals(parameters('set_up_feature_store'), 'true'), equals(parameters('grant_materialization_identity_permissions'), 'true'))]",
+            "condition": "[and(equals(parameters('set_up_feature_store'), 'true'), equals(parameters('grant_materialization_permissions'), 'true'))]",
             "type": "Microsoft.Authorization/roleAssignments",
             "apiVersion": "2022-04-01",
             "name": "[guid(variables('materialization_identity_resource_id'), variables('offlineStoreConnectionTarget'), 'storage blob data contributor')]",
@@ -917,7 +918,7 @@
             }
         },
         {
-            "condition": "[and(equals(parameters('set_up_feature_store'), 'true'), equals(parameters('grant_materialization_identity_permissions'), 'true'), not(empty(parameters('online_store_connection_target'))))]",
+            "condition": "[and(equals(parameters('set_up_feature_store'), 'true'), equals(parameters('grant_materialization_permissions'), 'true'), not(empty(parameters('online_store_connection_target'))))]",
             "type": "Microsoft.Authorization/roleAssignments",
             "apiVersion": "2022-04-01",
             "name": "[guid(variables('materialization_identity_resource_id'), parameters('online_store_connection_target'), 'contributor')]",
