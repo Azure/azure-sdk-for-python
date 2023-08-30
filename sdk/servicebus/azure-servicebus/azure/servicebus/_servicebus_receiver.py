@@ -642,8 +642,8 @@ class ServiceBusReceiver(
          returned will depend on prefetch_count and incoming stream rate.
          Setting to None will fully depend on the prefetch config. The default value is 1.
         :param Optional[float] max_wait_time: DEPRECATED. It is not advised to use this parameter. 
-         If you want to set the timeout in seconds to wait for the first message to arrive.
-         You may specify the max_wait_time on the ServiceBusReceiver. If this parameter is specified it
+         If you want to set the timeout in seconds to wait for the first message to arrive
+         you may specify the max_wait_time on the ServiceBusReceiver. If this parameter is specified it
          will be used instead of the one set on the receiver. When specified, this parameter also interacts with 
          the operation absolute timeout and can impact whether or not you have time to retry the receive operation.
         :return: A list of messages received. If no messages are available, this will be an empty list.
