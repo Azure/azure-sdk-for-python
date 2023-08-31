@@ -4398,7 +4398,7 @@
           },
           "referenceCode": {
             "type": "string",
-            "description": "This code can optionally be set by the system generating the error.\r\nIt should be used to classify the problem and identify the module and code area where the failure occured.",
+            "description": "This code can optionally be set by the system generating the error.\r\nIt should be used to classify the problem and identify the module and code area where the failure occurred.",
             "nullable": true
           },
           "detailsUri": {
@@ -4577,7 +4577,7 @@
           },
           "userIss": {
             "type": "string",
-            "description": "The issuer which issed the token for this user.\r\nThis is PII and should never be logged.",
+            "description": "The issuer which issued the token for this user.\r\nThis is PII and should never be logged.",
             "nullable": true
           },
           "userTenantId": {
