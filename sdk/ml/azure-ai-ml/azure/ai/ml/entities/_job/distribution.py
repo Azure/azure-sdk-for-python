@@ -78,7 +78,9 @@ class MpiDistribution(DistributionConfiguration):
     """MPI distribution configuration.
 
     :keyword process_count_per_instance: The number of processes per node.
-    :type process_count_per_instance: Optional[int]
+    :paramtype process_count_per_instance: Optional[int]
+    :ivar type: Specifies the type of distribution. Set automatically to "mpi" for this class.
+    :vartype type: str
 
     .. admonition:: Example:
 
@@ -104,7 +106,9 @@ class PyTorchDistribution(DistributionConfiguration):
     """PyTorch distribution configuration.
 
     :keyword process_count_per_instance: The number of processes per node.
-    :type process_count_per_instance: Optional[int]
+    :paramtype process_count_per_instance: Optional[int]
+    :ivar type: Specifies the type of distribution. Set automatically to "pytorch" for this class.
+    :vartype type: str
 
     .. admonition:: Example:
 
@@ -129,10 +133,17 @@ class PyTorchDistribution(DistributionConfiguration):
 class TensorFlowDistribution(DistributionConfiguration):
     """TensorFlow distribution configuration.
 
+    :vartype distribution_type: str or ~azure.mgmt.machinelearningservices.models.DistributionType
     :keyword parameter_server_count: The number of parameter server tasks. Defaults to 0.
-    :type parameter_server_count: Optional[int]
+    :paramtype parameter_server_count: Optional[int]
     :keyword worker_count: The number of workers. Defaults to the instance count.
-    :type worker_count: Optional[int]
+    :paramtype worker_count: Optional[int]
+    :ivar parameter_server_count: Number of parameter server tasks.
+    :vartype parameter_server_count: int
+    :ivar worker_count: Number of workers. If not specified, will default to the instance count.
+    :vartype worker_count: int
+    :ivar type: Specifies the type of distribution. Set automatically to "tensorflow" for this class.
+    :vartype type: str
 
     .. admonition:: Example:
 

@@ -115,14 +115,17 @@
 # PRLabel: %Monitor - LogAnalytics
 /sdk/loganalytics/                                                   @pvaneck
 
+# PRLabel: %Monitor - Distro
+/sdk/monitor/azure-monitor-opentelemetry/                            @lzchen @jeremydvoss
+
 # PRLabel: %Monitor - Exporter
 /sdk/monitor/azure-monitor-opentelemetry-exporter/                   @lmazuel @lzchen @hectorhdzg @jeremydvoss
 
 # PRLabel: %Monitor - Query
-/sdk/monitor/azure-monitor-query/                                    @pvaneck
+/sdk/monitor/azure-monitor-query/                                    @pvaneck @Azure/azure-sdk-write-monitor-data-plane
 
 # PRLabel: %Monitor - Ingestion
-/sdk/monitor/azure-monitor-ingestion/                                @pvaneck
+/sdk/monitor/azure-monitor-ingestion/                                @pvaneck @Azure/azure-sdk-write-monitor-data-plane
 
 # PRLabel: %Consumption
 /sdk/consumption/                                                    @sandeepnl
@@ -137,10 +140,10 @@
 /sdk/containerservice/                                               @zqingqing1
 
 # PRLabel: %Cosmos
-/sdk/cosmos/                                                         @kushagraThapar @simorenoh @simplynaveen20 @xinlian12 @annatisch @bambriz
+/sdk/cosmos/                                                         @kushagraThapar @simorenoh @xinlian12 @annatisch @bambriz
 
 # ServiceLabel: %Cosmos %Service Attention
-#/<NotInRepo>/                                                       @pjohari-ms @simorenoh @gahl-levy @bambriz
+#/<NotInRepo>/                                                       @pjohari-ms @simorenoh @AbhinavTrips @bambriz
 
 # PRLabel: %Data Factory
 /sdk/datafactory/                                                    @hvermis
@@ -425,8 +428,8 @@
 # ServiceLabel: %Bot Service %Service Attention
 #/<NotInRepo>/          @sgellock
 
-# ServiceLabel: %Client
-#/<NotInRepo>/          @simorenoh @gahl-levy @bambriz
+# ServiceLabel: %Cosmos %Client
+#/<NotInRepo>/          @simorenoh @AbhinavTrips @bambriz
 
 # ServiceLabel: %Cloud Shell %Service Attention
 #/<NotInRepo>/          @maertendMSFT
@@ -950,6 +953,8 @@
 # ServiceLabel: %Monitor - Exporter %Service Attention
 #/<NotInRepo>/          @lzchen @jeremydvoss
 
+# ServiceLabel: %Monitor - Distro %Service Attention
+#/<NotInRepo>/          @lzchen @jeremydvoss
 
 # Management Plane
 /**/*mgmt*/                                                          @ChenxiJiang333 @msyyc

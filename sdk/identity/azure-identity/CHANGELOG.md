@@ -1,14 +1,23 @@
 # Release History
 
-## 1.14.1 (Unreleased)
+## 1.15.0b1 (Unreleased)
 
 ### Features Added
+
+- Added Windows Web Account Manager (WAM) Brokered Authentication support.
+- Added `enable_msa_passthrough` suppport for `InteractiveBrowserCredential`. By default `InteractiveBrowserCredential` only lists AAD accounts. If you set `enable_msa_passthrough` to `True`, it lists both AAD accounts and MSA outlook.com accounts that are logged in to Windows.
 
 ### Breaking Changes
 
 ### Bugs Fixed
 
+- Ensure `AzurePowershellCredential` calls PowerShell with the `-NoProfile` flag to avoid loading user profiles for more consistent behavior.  ([#31682](https://github.com/Azure/azure-sdk-for-python/pull/31682))
+- Fixed an issue with subprocess-based developer credentials (such as AzureCliCredential) where the process would sometimes hang waiting for user input.  ([#31534](https://github.com/Azure/azure-sdk-for-python/pull/31534))
+
 ### Other Changes
+
+- Update typing of async credentials to match the `AsyncTokenCredential` protocol.
+- If within `DefaultAzureCredential`, `EnvironmentCredential` will now use log level INFO instead of WARNING to inform users of an incomplete environment configuration.  ([#31814](https://github.com/Azure/azure-sdk-for-python/pull/31814))
 
 ## 1.14.0 (2023-08-08)
 

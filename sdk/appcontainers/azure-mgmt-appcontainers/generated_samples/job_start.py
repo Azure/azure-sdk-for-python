@@ -32,28 +32,10 @@ def main():
     response = client.jobs.begin_start(
         resource_group_name="rg",
         job_name="testcontainerAppsJob0",
-        template={
-            "containers": [
-                {
-                    "image": "repo/testcontainerAppsJob0:v4",
-                    "name": "testcontainerAppsJob0",
-                    "resources": {"cpu": 0.2, "memory": "100Mi"},
-                }
-            ],
-            "initContainers": [
-                {
-                    "args": ["-c", "while true; do echo hello; sleep 10;done"],
-                    "command": ["/bin/sh"],
-                    "image": "repo/testcontainerAppsJob0:v4",
-                    "name": "testinitcontainerAppsJob0",
-                    "resources": {"cpu": 0.2, "memory": "100Mi"},
-                }
-            ],
-        },
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/app/resource-manager/Microsoft.App/preview/2022-11-01-preview/examples/Job_Start.json
+# x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2023-05-01/examples/Job_Start.json
 if __name__ == "__main__":
     main()

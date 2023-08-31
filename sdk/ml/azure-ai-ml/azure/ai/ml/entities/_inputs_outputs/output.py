@@ -21,32 +21,31 @@ class Output(_InputOutputBase):
     """Define an output.
 
     :keyword type: The type of the data output. Accepted values are 'uri_folder', 'uri_file', 'mltable', 'mlflow_model',
-        'custom_model', and user-defined types.
-    :type type: str, optional
+        'custom_model', and user-defined types. Defaults to 'uri_folder'.
+    :paramtype type: str
     :keyword path: The remote path where the output should be stored.
-    :type path: Optional[str]
+    :paramtype path: Optional[str]
     :keyword mode: The access mode of the data output. Accepted values are
         * 'rw_mount': Read-write mount the data
         * 'upload': Upload the data from the compute target
         * 'direct': Pass in the URI as a string
-    :type mode: Optional[str]
+    :paramtype mode: Optional[str]
     :keyword description: The description of the output.
-    :type description: Optional[str]
+    :paramtype description: Optional[str]
     :keyword name: The name to be used to register the output as a Data or Model asset. A name can be set without
         setting a version.
-    :type name: str
+    :paramtype name: str
     :keyword version: The version used to register the output as a Data or Model asset. A version can be set only
         when name is set.
-    :type version: str
+    :paramtype version: str
     :keyword is_control: Determine if the output is a control output.
-    :type is_control: bool, optional
+    :paramtype is_control: bool
     :keyword early_available: Mark the output for early node orchestration.
-    :type early_available: bool, optional
+    :paramtype early_available: bool
     :keyword intellectual_property: Intellectual property associated with the output.
         It can be an instance of `IntellectualProperty` or a dictionary that will be used to create an instance.
-    :type intellectual_property: Union[
-        ~azure.ai.ml.entities._assets.intellectual_property.IntellectualProperty,
-        dict], optional
+    :paramtype intellectual_property: Union[~azure.ai.ml.entities._assets.intellectual_property.IntellectualProperty,
+        dict]
 
     .. admonition:: Example:
 
@@ -62,48 +61,29 @@ class Output(_InputOutputBase):
 
     @overload
     def __init__(self, type: Literal["uri_folder"] = "uri_folder", path=None, mode=None, description=None) -> None:
-        """Define a URI folder output.
-
-        :param type: The type of the data output. Can only be set to "uri_folder".
-        :type type: str
-        :param path: The remote path where the output should be stored.
-        :type path: str
-        :param mode: The access mode of the data output. Accepted values are
-            * 'rw_mount': Read-write mount the data
-            * 'upload': Upload the data from the compute target
-            * 'direct': Pass in the URI as a string
-        :type mode: str
-        :param description: The description of the output.
-        :type description: str
-        :param name: The name to be used to register the output as a Data or Model asset. A name can be set without
-            setting a version.
-        :type name: str
-        :param version: The version used to register the output as a Data or Model asset. A version can be set only
-            when name is set.
-        :type version: str
-        """
+        """"""
 
     @overload
     def __init__(self, type: Literal["uri_file"] = "uri_file", path=None, mode=None, description=None):
-        """Define a URI file outputs.
+        """Define a URI file output.
 
-        :param type: The type of the data output. Can only be set to 'uri_file'.
-        :type type: str
-        :param path: The remote path where the output should be stored.
-        :type path: str
-        :param mode: The access mode of the data output. Accepted values are
+        :keyword type: The type of the data output. Can only be set to 'uri_file'.
+        :paramtype type: str
+        :keyword path: The remote path where the output should be stored.
+        :paramtype path: str
+        :keyword mode: The access mode of the data output. Accepted values are
             * 'rw_mount': Read-write mount the data,
             * 'upload': Upload the data from the compute target,
             * 'direct': Pass in the URI as a string
-        :type mode: str
-        :param description: The description of the output.
-        :type description: str
-        :param name: The name to be used to register the output as a Data or Model asset. A name can be set without
+        :paramtype mode: str
+        :keyword description: The description of the output.
+        :paramtype description: str
+        :keyword name: The name to be used to register the output as a Data or Model asset. A name can be set without
             setting a version.
-        :type name: str
-        :param version: The version used to register the output as a Data or Model asset. A version can be set only
+        :paramtype name: str
+        :keyword version: The version used to register the output as a Data or Model asset. A version can be set only
             when name is set.
-        :type version: str
+        :paramtype version: str
         """
 
     def __init__(self, *, type=AssetTypes.URI_FOLDER, path=None, mode=None, description=None, **kwargs) -> None:

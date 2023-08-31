@@ -3,7 +3,6 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import sys
 import re
 from enum import Enum
 
@@ -117,6 +116,14 @@ def _validate_tablename_error(decoded_error, table_name):
         _validate_cosmos_tablename(table_name)
 
 
+def _validate_key_values(decoded_error, partition_key, row_key):
+    if decoded_error.error_code == "PropertiesNeedValue":
+        if partition_key is None:
+            raise ValueError("PartitionKey must be present in an entity") from decoded_error
+        if row_key is None:
+            raise ValueError("RowKey must be present in an entity") from decoded_error
+
+
 def _decode_error(response, error_message=None, error_type=None, **kwargs):  # pylint: disable=too-many-branches
     error_code = response.headers.get("x-ms-error-code")
     additional_data = {}
@@ -191,15 +198,6 @@ def _decode_error(response, error_message=None, error_type=None, **kwargs):  # p
     return error
 
 
-def _reraise_error(decoded_error):
-    _, _, exc_traceback = sys.exc_info()
-    try:
-        raise decoded_error.with_traceback(exc_traceback)
-    except AttributeError as exc:
-        decoded_error.__traceback__ = exc_traceback
-        raise decoded_error from exc
-
-
 def _process_table_error(storage_error, table_name=None):
     try:
         decoded_error = _decode_error(storage_error.response, storage_error.message)
@@ -207,7 +205,7 @@ def _process_table_error(storage_error, table_name=None):
         raise storage_error from exc
     if table_name:
         _validate_tablename_error(decoded_error, table_name)
-    _reraise_error(decoded_error)
+    raise decoded_error from storage_error
 
 
 def _reprocess_error(decoded_error, identifiers=None):

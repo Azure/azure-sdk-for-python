@@ -19,7 +19,7 @@ class SweepDistribution(ABC, RestTranslatableMixin):
     This class should not be instantiated directly. Instead, use one of its subclasses.
 
     :keyword type: Type of distribution.
-    :type type: str
+    :paramtype type: str
     """
 
     def __init__(self, *, type: Optional[str] = None) -> None:  # pylint: disable=redefined-builtin

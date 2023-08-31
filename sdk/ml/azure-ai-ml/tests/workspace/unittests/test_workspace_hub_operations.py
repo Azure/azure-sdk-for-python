@@ -46,7 +46,7 @@ class TestWorkspaceHubOperation:
             mock_workspace_hub_operation._operation.list_by_resource_group.assert_called_once()
 
     def test_get(self, mock_workspace_hub_operation: WorkspaceHubOperations) -> None:
-        mock_workspace_hub_operation.get("random_name")
+        mock_workspace_hub_operation.get(name="random_name")
         mock_workspace_hub_operation._operation.get.assert_called_once()
 
     def test_begin_create(
@@ -80,7 +80,7 @@ class TestWorkspaceHubOperation:
 
         mock_workspace_hub_operation._operation.get.side_effect = outgoing_get_call
         mock_workspace_hub_operation._operation.begin_update.side_effect = outgoing_call
-        mock_workspace_hub_operation.begin_update(workspaceHub, update_dependent_resources=True)
+        mock_workspace_hub_operation.begin_update(workspace_hub=workspaceHub, update_dependent_resources=True)
         mock_workspace_hub_operation._operation.begin_update.assert_called()
 
     def test_delete(self, mock_workspace_hub_operation: WorkspaceHubOperations, mocker: MockFixture) -> None:

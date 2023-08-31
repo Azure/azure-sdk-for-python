@@ -83,9 +83,9 @@ def _get_param_with_standard_annotation(
     :param cls_or_func: Either a class or a function
     :type cls_or_func: Union[Callable, Type]
     :param is_func: Whether `cls_or_func` is a function. Defaults to False.
-    :type is_func: bool, optional
+    :type is_func: bool
     :param skip_params:
-    :type skip_params: Optional[List[str]], optional
+    :type skip_params: Optional[List[str]]
     :return: A dictionary of field annotations
     :rtype: Dict[str, Union[Annotation, "Input", "Output"]]
     """

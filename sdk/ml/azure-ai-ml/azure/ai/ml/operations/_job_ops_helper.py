@@ -15,10 +15,10 @@ from typing import Dict, Iterable, List, Optional, Union
 
 from azure.ai.ml._artifacts._artifact_utilities import get_datastore_info, list_logs_in_datastore
 from azure.ai.ml._restclient.runhistory.models import Run, RunDetails, TypedAssetReference
-from azure.ai.ml._restclient.v2022_10_01.models import JobBase
 from azure.ai.ml._restclient.v2022_02_01_preview.models import DataType
 from azure.ai.ml._restclient.v2022_02_01_preview.models import JobType as RestJobType
 from azure.ai.ml._restclient.v2022_02_01_preview.models import ModelType
+from azure.ai.ml._restclient.v2022_10_01.models import JobBase
 from azure.ai.ml._utils._http_utils import HttpPipeline
 from azure.ai.ml._utils.utils import create_requests_pipeline_with_retry, download_text_from_url
 from azure.ai.ml.constants._common import GitProperties
@@ -202,7 +202,21 @@ def stream_logs_until_completion(
     studio_endpoint = studio_endpoint.endpoint if studio_endpoint else None
     # Feature store jobs should be linked to the Feature Store Workspace UI.
     # Todo: Consolidate this logic to service side
-    if "FeatureStoreJobType" in job_resource.properties.properties:
+    if "azureml.FeatureStoreJobType" in job_resource.properties.properties:
+        url_format = (
+            "https://ml.azure.com/featureStore/{fs_name}/featureSets/{fset_name}/{fset_version}/matJobs/"
+            "jobs/{run_id}?wsid=/subscriptions/{fs_sub_id}/resourceGroups/{fs_rg_name}/providers/"
+            "Microsoft.MachineLearningServices/workspaces/{fs_name}"
+        )
+        studio_endpoint = url_format.format(
+            fs_name=job_resource.properties.properties["azureml.FeatureStoreName"],
+            fs_sub_id=run_operations._subscription_id,
+            fs_rg_name=run_operations._resource_group_name,
+            fset_name=job_resource.properties.properties["azureml.FeatureSetName"],
+            fset_version=job_resource.properties.properties["azureml.FeatureSetVersion"],
+            run_id=job_name,
+        )
+    elif "FeatureStoreJobType" in job_resource.properties.properties:
         url_format = (
             "https://ml.azure.com/featureStore/{fs_name}/featureSets/{fset_name}/{fset_version}/matJobs/"
             "jobs/{run_id}?wsid=/subscriptions/{fs_sub_id}/resourceGroups/{fs_rg_name}/providers/"
@@ -443,7 +457,7 @@ def get_job_output_uris_from_dataplane(
     :param model_dataplane_operations:  The ModelDataplaneOperations used to fetch dataset uris
     :type model_dataplane_operations: ModelDataplaneOperations
     :param output_names: The output name(s) to fetch. If not specified, retrieves all.
-    :type output_names: Optional[Union[Iterable[str] str]], optional
+    :type output_names: Optional[Union[Iterable[str] str]]
     :return: Dictionary mapping user-defined output name to output uri
     :rtype: Dict[str, str]
     """
