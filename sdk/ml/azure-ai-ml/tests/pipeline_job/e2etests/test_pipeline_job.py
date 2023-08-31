@@ -2004,37 +2004,55 @@ jobs:
 
         assert node_anonymous._to_rest_object()["inputs"] == registered_inputs
 
-    def test_pipeline_job_with_flow(
+    @pytest.mark.parametrize(
+        "test_path,expected_node_dict",
+        [
+            pytest.param(
+                "./tests/test_configs/pipeline_jobs/pipeline_job_with_flow_from_dag.yml",
+                {
+                    "inputs": {
+                        "connections.summarize_text_content.connection": "azure_open_ai_connection",
+                        "connections.summarize_text_content.deployment_name": "text-davinci-003",
+                        "data": {"path": "${{parent.inputs.data}}"},
+                        "url": "${data.url}",
+                    },
+                    "outputs": {"flow_outputs": "${{parent.outputs.output_data}}"},
+                    "type": "parallel",
+                },
+                id="dag",
+            ),
+            pytest.param(
+                "./tests/test_configs/pipeline_jobs/pipeline_job_with_flow_from_run.yml",
+                {
+                    "inputs": {"data": {"path": "${{parent.inputs.data}}"}, "text": "${data.text}"},
+                    "outputs": {"flow_outputs": "${{parent.outputs.output_data}}"},
+                    "type": "parallel",
+                },
+                id="run",
+            ),
+        ],
+    )
+    def test_pipeline_job_with_flow_from_dag(
         self,
         client: MLClient,
         randstr: Callable[[str], str],
+        test_path: str,
+        expected_node_dict: Dict[str, Any],
     ) -> None:
-        test_path = "./tests/test_configs/pipeline_jobs/pipeline_job_with_flow.yml"
+        # for some unclear reason, there will be unstable failure in playback mode when there are multiple
+        # anonymous flow components in the same pipeline job. This is a workaround to avoid that.
+        # the probable cause is that flow component creation request contains flow definition uri, which is
+        # constructed based on response of code pending upload requests, and those requests have been normalized
+        # in playback mode and mixed up.
         pipeline_job = load_job(source=test_path, params_override=[{"name": randstr("name")}])
         assert client.jobs.validate(pipeline_job).passed
 
         created_pipeline_job = assert_job_cancel(pipeline_job, client)
 
         pipeline_job_dict = created_pipeline_job._to_dict()
-        for node_name in ["anonymous_parallel_flow", "anonymous_parallel_flow_from_run"]:
-            pipeline_job_dict["jobs"][node_name].pop("component", None)
+        pipeline_job_dict["jobs"]["anonymous_node"].pop("component", None)
 
-        assert pipeline_job_dict["jobs"] == {
-            "anonymous_parallel_flow": {
-                "inputs": {
-                    "connections.summarize_text_content.connection": "azure_open_ai_connection",
-                    "connections.summarize_text_content.deployment_name": "text-davinci-003",
-                    "data": {"path": "${{parent.inputs.web_classification_input}}"},
-                    "url": "${data.url}",
-                },
-                "outputs": {"flow_outputs": "${{parent.outputs.output_data}}"},
-                "type": "parallel",
-            },
-            "anonymous_parallel_flow_from_run": {
-                "inputs": {"data": {"path": "${{parent.inputs.basic_input}}"}, "text": "${data.text}"},
-                "type": "parallel",
-            },
-        }
+        assert pipeline_job_dict["jobs"]["anonymous_node"] == expected_node_dict
 
 
 @pytest.mark.usefixtures("enable_pipeline_private_preview_features")
