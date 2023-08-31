@@ -635,44 +635,33 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
                 with receive_trace_context_manager(receiver, links=links):
                     yield message
             except StopIteration:
-                # reset original (link_credit, _message_received, keep_alive_interval)
+                # reset original link_credit if needed
                 if link_credit_updated:
-                    receiver._handler._link.link_credit = link_credit_updated[0]
-                    receiver._handler._message_received = link_credit_updated[1]  # type: ignore[assignment]
-                    receiver._handler._keep_alive_interval = link_credit_updated[2]
+                    receiver._handler._link.link_credit = link_credit_updated
                 break
 
     @staticmethod
     def update_receiver_link_credit(
         receiver: "ServiceBusReceiver",
         link_credit: int
-    ) -> Optional[Tuple[int, Callable, int]]:
+    ) -> Optional[int]:
         """
-        If prefetch is turned off (prefetch_count = 0) on the receiver, link credit > 1 must be
-        issued to receive messages. This method resets receiver link credit and related properties
-        and returns previous values. If prefetch was already turned on, returns None.
+        If prefetch is turned off (prefetch_count = 0) on the receiver, link credit >= 1 must be
+        issued to receive messages. This method resets receiver link credit and returns the previous value.
+        If prefetch was already turned on, returns None.
 
         :param ~azure.servicebus.ServiceBusReceiver receiver: The receiver object to reset link credit on.
         :param int link_credit: The new link credit value to set to.
-        :return: The original (link credit, message_received callable, keep alive interval) if prefetch was off.
+        :return: The original link credit if prefetch was off.
          None, if prefetch was already 1 or more.
-        :rtype: None or Tuple[int, Callable, int]
+        :rtype: None or int
         """
         # pylint:disable=protected-access
         update_link_credit = receiver._handler._link.link_credit == 0
         if update_link_credit:
-            # save original values
             receiver_link_credit = receiver._handler._link.link_credit
-            message_received = receiver._handler._message_received
-            keep_alive_interval = receiver._handler._keep_alive_interval
-            # set new values
             receiver._handler._link.link_credit = link_credit
-            receiver._handler._message_received = functools.partial( # type: ignore[assignment]
-                PyamqpTransport.enhanced_message_received,
-                receiver
-            )
-            receiver._handler._keep_alive_interval = 5
-            return receiver_link_credit, message_received, keep_alive_interval
+            return receiver_link_credit
         return None
 
     @staticmethod

@@ -337,14 +337,17 @@ class ServiceBusReceiver(
             if self._max_wait_time
             else 0,
             link_credit=self._prefetch_count,
-            # If prefetch is 1, then keep_alive coroutine serves as keep receiving for releasing messages
+            # If prefetch is 0, then keep_alive coroutine frequently listens on the connection for messages and
+            # releases right away, since no "prefetched" messages should be in the internal buffer.
             keep_alive_interval=self._config.keep_alive
-            if self._prefetch_count != 1
+            if self._prefetch_count != 0
             else 5,
             shutdown_after_timeout=False,
             link_properties={CONSUMER_IDENTIFIER: self._name},
         )
-        if self._prefetch_count == 1:
+        # Releases messages from internal buffer when prefetch=0 and there is no active receive call, which
+        # helps avoid messages from expiring in the buffer and incrementing delivery count of a message.
+        if self._prefetch_count == 0:
             # pylint: disable=protected-access
             self._handler._message_received = functools.partial(
                 self._amqp_transport.enhanced_message_received, # type: ignore[attr-defined]
@@ -376,7 +379,6 @@ class ServiceBusReceiver(
         self, max_message_count: Optional[int] = None, timeout: Optional[float] = None
     ) -> List[ServiceBusReceivedMessage]:
         # pylint: disable=protected-access
-        link_credit_updated = None
         try:
             self._receive_context.set()
             self._open()
@@ -384,8 +386,6 @@ class ServiceBusReceiver(
             amqp_receive_client = self._handler
             received_messages_queue = amqp_receive_client._received_messages
             max_message_count = max_message_count or self._prefetch_count
-            # reset underlying receive link credit if needed (if max_message_count > link credit or link_credit = 0)
-            link_credit_updated = self._amqp_transport.update_receiver_link_credit(self, max_message_count)
             timeout_time = (
                 self._amqp_transport.TIMEOUT_FACTOR * (timeout or self._max_wait_time)
                 if (timeout or self._max_wait_time)
@@ -405,11 +405,11 @@ class ServiceBusReceiver(
             if len(batch) >= max_message_count:
                 return [self._build_received_message(message) for message in batch]
 
-            # Dynamically issue link credit if max_message_count > 1 when the prefetch_count is the default value 1
+            # Dynamically issue link credit if max_message_count >= 1 when the prefetch_count is the default value 0
             if (
                 max_message_count
-                and self._prefetch_count == 1
-                and max_message_count > 1
+                and self._prefetch_count == 0
+                and max_message_count >= 1
             ):
                 link_credit_needed = max_message_count - len(batch)
                 self._amqp_transport.reset_link_credit(amqp_receive_client, link_credit_needed)
@@ -448,11 +448,6 @@ class ServiceBusReceiver(
 
             return [self._build_received_message(message) for message in batch]
         finally:
-            # reset link credit to original prefetch value
-            if link_credit_updated:
-                self._handler._link.link_credit = link_credit_updated[0]
-                self._handler._message_received = link_credit_updated[1]  # type: ignore[assignment]
-                self._handler._keep_alive_interval = link_credit_updated[2]
             self._receive_context.clear()
 
     def _settle_message_with_retry(

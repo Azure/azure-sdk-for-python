@@ -214,9 +214,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
                     yield message
             except StopAsyncIteration:
                 if link_credit_updated:
-                    receiver._handler._link.link_credit = link_credit_updated[0]
-                    receiver._handler._message_received = link_credit_updated[1]  # type: ignore[assignment]
-                    receiver._handler._keep_alive_interval = link_credit_updated[2]
+                    receiver._handler._link.link_credit = link_credit_updated
                 break
 
     @staticmethod

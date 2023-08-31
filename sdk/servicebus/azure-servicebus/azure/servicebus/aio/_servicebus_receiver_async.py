@@ -330,14 +330,17 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             if self._max_wait_time
             else 0,
             link_credit=self._prefetch_count,
-            # If prefetch is 1, then keep_alive coroutine serves as keep receiving for releasing messages
+            # If prefetch is 0, then keep_alive coroutine frequently listens on the connection for messages and
+            # releases right away, since no "prefetched" messages should be in the internal buffer.
             keep_alive_interval=self._config.keep_alive
-            if self._prefetch_count != 1
+            if self._prefetch_count != 0
             else 5,
             shutdown_after_timeout=False,
             link_properties = {CONSUMER_IDENTIFIER:self._name}
         )
-        if self._prefetch_count == 1:
+        # Releases messages from internal buffer when prefetch=0 and there is no active receive call, which
+        # helps avoid messages from expiring in the buffer and incrementing delivery count of a message.
+        if self._prefetch_count == 0:
             # pylint: disable=protected-access
             self._amqp_transport.set_handler_message_received_async(self)
 
@@ -390,8 +393,8 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             if len(batch) >= max_message_count:
                 return [self._build_received_message(message) for message in batch]
 
-            # Dynamically issue link credit if max_message_count > 1 when the prefetch_count is the default value 1
-            if max_message_count and self._prefetch_count == 1 and max_message_count > 1:
+            # Dynamically issue link credit if max_message_count >= 1 when the prefetch_count is the default value 0
+            if max_message_count and self._prefetch_count == 0 and max_message_count >= 1:
                 link_credit_needed = max_message_count - len(batch)
                 await self._amqp_transport.reset_link_credit_async(amqp_receive_client, link_credit_needed)
 
