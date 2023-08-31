@@ -16,6 +16,7 @@ from azure.monitor.opentelemetry.exporter._constants import (
 from azure.monitor.opentelemetry.exporter._generated.models import (
     MessageData,
     MonitorBase,
+    TelemetryEventData,
     TelemetryExceptionData,
     TelemetryExceptionDetails,
     TelemetryItem,
@@ -32,6 +33,7 @@ _DEFAULT_TRACE_ID = 0
 
 __all__ = ["AzureMonitorLogExporter"]
 
+_APPLICATION_INSIGHTS_EVENT_MARKER_ATTRIBUTE = "APPLICATION_INSIGHTS_EVENT_MARKER_ATTRIBUTE"
 
 class AzureMonitorLogExporter(BaseExporter, LogExporter):
     """Azure Monitor Log exporter for OpenTelemetry."""
@@ -88,6 +90,11 @@ class AzureMonitorLogExporter(BaseExporter, LogExporter):
         return cls(connection_string=conn_str, **kwargs)
 
 
+def _log_data_is_event(log_data: LogData):
+    log_record = log_data.log_record
+    is_event = log_record.attributes.get(_APPLICATION_INSIGHTS_EVENT_MARKER_ATTRIBUTE)
+    return is_event is True
+
 # pylint: disable=protected-access
 def _convert_log_to_envelope(log_data: LogData) -> TelemetryItem:
     log_record = log_data.log_record
@@ -102,7 +109,7 @@ def _convert_log_to_envelope(log_data: LogData) -> TelemetryItem:
     )
     properties = _utils._filter_custom_properties(
         log_record.attributes,
-        lambda key, val: not _is_opentelemetry_standard_attribute(key)
+        lambda key, val: not _is_ignored_attribute(key)
     )
     exc_type = log_record.attributes.get(SpanAttributes.EXCEPTION_TYPE)
     exc_message = log_record.attributes.get(SpanAttributes.EXCEPTION_MESSAGE)
@@ -110,8 +117,16 @@ def _convert_log_to_envelope(log_data: LogData) -> TelemetryItem:
     stack_trace = log_record.attributes.get(SpanAttributes.EXCEPTION_STACKTRACE)
     severity_level = _get_severity_level(log_record.severity_number)
 
+    # Event telemetry
+    if _log_data_is_event(log_data):
+        envelope.name = 'Microsoft.ApplicationInsights.Event'
+        data = TelemetryEventData(
+            name=str(log_record.body)[:32768],
+            properties=properties,
+        )
+        envelope.data = MonitorBase(base_data=data, base_type="EventData")
     # Exception telemetry
-    if exc_type is not None or exc_message is not None:
+    elif exc_type is not None or exc_message is not None:
         envelope.name = _EXCEPTION_ENVELOPE_NAME
         has_full_stack = stack_trace is not None
         if not exc_message:
@@ -163,15 +178,16 @@ def _get_severity_level(severity_number: SeverityNumber):
     return int((severity_number.value - 1) / 4 - 1)
 
 
-def _is_opentelemetry_standard_attribute(key: str) -> bool:
-    return key in _EXCEPTION_ATTRS
+def _is_ignored_attribute(key: str) -> bool:
+    return key in _IGNORED_ATTRS
 
 
-_EXCEPTION_ATTRS = frozenset(
+_IGNORED_ATTRS = frozenset(
     (
         SpanAttributes.EXCEPTION_TYPE,
         SpanAttributes.EXCEPTION_MESSAGE,
         SpanAttributes.EXCEPTION_STACKTRACE,
         SpanAttributes.EXCEPTION_ESCAPED,
+        _APPLICATION_INSIGHTS_EVENT_MARKER_ATTRIBUTE,
     )
 )

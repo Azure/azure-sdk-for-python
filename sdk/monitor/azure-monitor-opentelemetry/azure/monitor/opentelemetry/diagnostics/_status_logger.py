@@ -54,7 +54,9 @@ class AzureStatusLogger:
             # Change to be hostname and pid
             status_logger_file_name = _get_status_logger_file_name(pid)
             with open(
-                join(_STATUS_LOG_PATH, status_logger_file_name), "w"
+                join(_STATUS_LOG_PATH, status_logger_file_name),
+                "w",
+                encoding="utf8"
             ) as f:
                 f.seek(0)
                 f.write(dumps(status_json))

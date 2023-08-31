@@ -283,7 +283,7 @@ class WorkspaceOperationsBase:
             or kwargs.get("update_offline_store_role_assignment", None)
             or kwargs.get("update_online_store_role_assignment", None)
         )
-        grant_materialization_identity_permissions = kwargs.get("grant_materialization_identity_permissions", None)
+        grant_materialization_permissions = kwargs.get("grant_materialization_permissions", None)
 
         # pylint: disable=unused-argument
         def callback(_, deserialized, args):
@@ -291,7 +291,7 @@ class WorkspaceOperationsBase:
                 workspace._kind
                 and workspace._kind.lower() == "featurestore"
                 and update_role_assignment
-                and grant_materialization_identity_permissions
+                and grant_materialization_permissions
             ):
                 module_logger.info("updating feature store materialization identity role assignments..")
                 template, param, resources_being_deployed = self._populate_feature_store_role_assignment_parameters(
@@ -541,8 +541,8 @@ class WorkspaceOperationsBase:
                     f"materialization-uai-{workspace.resource_group}-{workspace.name}",
                 )
 
-            if not kwargs.get("grant_materialization_identity_permissions", None):
-                _set_val(param["grant_materialization_identity_permissions"], "false")
+            if not kwargs.get("grant_materialization_permissions", None):
+                _set_val(param["grant_materialization_permissions"], "false")
 
         managed_network = None
         if workspace.managed_network:
