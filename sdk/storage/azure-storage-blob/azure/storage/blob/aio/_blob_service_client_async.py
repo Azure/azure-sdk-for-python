@@ -37,7 +37,7 @@ from .._models import ContainerProperties
 from .._serialize import get_api_version
 from ._blob_client_async import BlobClient
 from ._container_client_async import ContainerClient
-from ._models import ContainerPropertiesPaged, FilteredBlobPaged
+from ._models import ContainerPropertiesPaged, FilteredBlobPaged, FilteredBlob
 
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
@@ -414,8 +414,7 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase, St
         )
 
     @distributed_trace
-    def find_blobs_by_tags(self, filter_expression: str, **kwargs: Any):
-        # type: (str, **Any) -> AsyncItemPaged[FilteredBlob]
+    def find_blobs_by_tags(self, filter_expression: str, **kwargs: Any) -> AsyncItemPaged[FilteredBlob]:
         """The Filter Blobs operation enables callers to list blobs across all
         containers whose tags match a given search expression.  Filter blobs
         searches across all containers within a storage account but can be
