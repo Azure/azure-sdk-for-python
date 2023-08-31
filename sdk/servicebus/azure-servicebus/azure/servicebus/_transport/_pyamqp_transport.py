@@ -703,8 +703,14 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
     ) -> None:
         """Callback run on receipt of every message.
 
-        Releases messages from the internal buffer when there is no active receive call. This 
-        helps avoid messages from expiring in the buffer and incrementing the delivery count of a message.
+        Releases messages from the internal buffer when there is no active receive call. In PEEKLOCK mode,
+        this helps avoid messages from expiring in the buffer and incrementing the delivery count of a message.
+
+        Should not be used with RECEIVE_AND_DELETE mode, since those messages are settled right away and removed
+        from the Service Bus entity.
+
+        :param ~azure.servicebus.ServiceBusReceiver receiver: The receiver object.
+        :param ~pyamqp.Message message: The received message.
         """
         # pylint: disable=protected-access
         receiver._handler._last_activity_timestamp = time.time()

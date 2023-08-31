@@ -345,12 +345,14 @@ class ServiceBusReceiver(
             shutdown_after_timeout=False,
             link_properties={CONSUMER_IDENTIFIER: self._name},
         )
-        # Releases messages from internal buffer when prefetch=0 and there is no active receive call, which
-        # helps avoid messages from expiring in the buffer and incrementing delivery count of a message.
-        if self._prefetch_count == 0:
+        # When prefetch is 0 and receive mode is PEEK_LOCK, release messages when they're received.
+        # This will stop messages from expiring in the buffer and incrementing delivery count of a message.
+        # If RECEIVE_AND_DELETE mode, messages are settled and removed from the Service Bus entity immediately,
+        # so they should be added to the internal buffer so they're not lost.
+        if self._prefetch_count == 0 and self._receive_mode == ServiceBusReceiveMode.PEEK_LOCK:
             # pylint: disable=protected-access
-            self._handler._message_received = functools.partial(
-                self._amqp_transport.enhanced_message_received, # type: ignore[attr-defined]
+            self._handler._message_received = functools.partial( # type: ignore[assignment]
+                self._amqp_transport.enhanced_message_received,
                 self
             )
 
@@ -445,7 +447,6 @@ class ServiceBusReceiver(
                 ):
                     batch.append(received_messages_queue.get())
                     received_messages_queue.task_done()
-
             return [self._build_received_message(message) for message in batch]
         finally:
             self._receive_context.clear()

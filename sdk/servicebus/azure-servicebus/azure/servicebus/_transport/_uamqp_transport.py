@@ -795,7 +795,12 @@ try:
             receiver: "ServiceBusReceiver", message: "Message"
         ) -> None:
             """
-            Receiver enhanced_message_received callback.
+            Releases messages from the internal buffer when there is no active receive call. In PEEKLOCK mode,
+            this helps avoid messages from expiring in the buffer and incrementing the delivery count of a message.
+
+            Should not be used with RECEIVE_AND_DELETE mode, since those messages are settled right away and removed
+            from the Service Bus entity.
+
             :param ~azure.servicebus.ServiceBusReceiver receiver: The receiver object.
             :param ~uamqp.Message message: The received message.
             """
