@@ -148,7 +148,7 @@ def _decode_error(response, error_message=None, error_type=None, **kwargs):  # p
                             error_message = info.text
                         else:
                             additional_data[info.tag] = info.text
-                except:
+                except Exception:
                     # Response body wasn't XML, give up trying to parse
                     error_message = str(error_body)
     except DecodeError:
