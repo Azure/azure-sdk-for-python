@@ -410,19 +410,7 @@ class AdditionalIncludes:
                 yield self.resolved_code_path.absolute()
             return
 
-        # for now, upload path of a code asset will include the folder name of the code path (name of folder or
-        # parent name of file). For example, if code path is /mnt/c/code-a, upload path will be xxx/code-a
-        # which means that the upload path will change every time as we will merge additional includes into a temp
-        # folder. To avoid this, we will copy the code path to a child folder with a fixed name under the temp folder,
-        # then the child folder will be used in upload path.
-        # This issue shouldn't impact users as there is a separate asset existence check before uploading.
-        # We still make this change as:
-        # 1. We will always need to record for twice as upload path will be changed for first time uploading
-        # 2. This will improve the stability of the code asset existence check - AssetNotChanged check in
-        #    BlobStorageClient will be a backup check
-        tmp_folder_path = Path(tempfile.mkdtemp(), "code_with_additional_includes")
-        tmp_folder_path.mkdir(parents=True, exist_ok=True)
-
+        tmp_folder_path = Path(tempfile.mkdtemp())
         root_ignore_file = self._copy_origin_code(tmp_folder_path)
 
         # resolve additional includes

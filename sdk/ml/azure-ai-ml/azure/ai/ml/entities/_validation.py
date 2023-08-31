@@ -407,8 +407,8 @@ class SchemaValidatableMixin:
         :rtype: typing.Union[str, os.PathLike]
         """
         return (
-            try_get_non_arbitrary_attr(self, BASE_PATH_CONTEXT_KEY)
-            or try_get_non_arbitrary_attr(self, f"_{BASE_PATH_CONTEXT_KEY}")
+            try_get_non_arbitrary_attr(self, "base_path")
+            or try_get_non_arbitrary_attr(self, "_base_path")
             or Path.cwd()
         )
 
