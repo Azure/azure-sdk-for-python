@@ -1,5 +1,4 @@
 pip==20.2
-cryptography<4
 
 # requirements leveraged by ci for testing
 pytest==7.3.1

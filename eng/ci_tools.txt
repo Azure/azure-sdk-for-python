@@ -1,5 +1,4 @@
 # requirements leveraged by ci tools
-cryptography<4
 setuptools==67.6.0; python_version >= '3.5'
 virtualenv==20.23.0
 wheel==0.37.0
