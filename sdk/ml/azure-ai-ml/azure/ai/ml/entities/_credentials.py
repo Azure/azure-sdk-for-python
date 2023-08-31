@@ -377,13 +377,14 @@ class _BaseJobIdentityConfiguration(ABC, RestTranslatableMixin, DictMixin, YamlT
             obj = RestJobIdentityConfiguration.from_dict(obj)
 
         identity_class = mapping.get(obj.identity_type, None)
-        if (
-            isinstance(identity_class, AmlTokenConfiguration)
-            or isinstance(identity_class, ManagedIdentityConfiguration)
-            or isinstance(identity_class, UserIdentityConfiguration)
-        ):
-            # pylint: disable=protected-access
-            return identity_class._from_job_rest_object(obj)
+        if identity_class:
+            if (
+                isinstance(identity_class, AmlTokenConfiguration)
+                or isinstance(identity_class, ManagedIdentityConfiguration)
+                or isinstance(identity_class, UserIdentityConfiguration)
+            ):
+                # pylint: disable=protected-access
+                return identity_class._from_job_rest_object(obj)
         msg = f"Unknown identity type: {obj.identity_type}"
         raise JobException(
             message=msg,
