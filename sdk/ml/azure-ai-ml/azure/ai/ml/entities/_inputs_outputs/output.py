@@ -44,9 +44,7 @@ class Output(_InputOutputBase):
     :paramtype early_available: bool
     :keyword intellectual_property: Intellectual property associated with the output.
         It can be an instance of `IntellectualProperty` or a dictionary that will be used to create an instance.
-    :paramtype intellectual_property: Union[
-        ~azure.ai.ml.entities._assets.intellectual_property.IntellectualProperty,
-        dict]
+    :paramtype intellectual_property: Union[~azure.ai.ml.entities._assets.intellectual_property.IntellectualProperty, dict]
 
     .. admonition:: Example:
 
