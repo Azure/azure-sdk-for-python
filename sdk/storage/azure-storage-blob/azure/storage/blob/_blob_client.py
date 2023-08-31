@@ -285,11 +285,10 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
                     path_snapshot = snapshot['snapshot'] # type: ignore
                 except TypeError:
                     path_snapshot = snapshot
-        version_id = kwargs.pop('version_id', None)
 
         return cls(
             account_url, container_name=container_name, blob_name=blob_name,
-            snapshot=path_snapshot, credential=credential, version_id=version_id, **kwargs
+            snapshot=path_snapshot, credential=credential, **kwargs
         )
 
     @classmethod
@@ -339,10 +338,9 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         account_url, secondary, credential = parse_connection_str(conn_str, credential, 'blob')
         if 'secondary_hostname' not in kwargs:
             kwargs['secondary_hostname'] = secondary
-        version_id = kwargs.pop('version_id', None)
         return cls(
             account_url, container_name=container_name, blob_name=blob_name,
-            snapshot=snapshot, credential=credential, version_id=version_id, **kwargs
+            snapshot=snapshot, credential=credential, **kwargs
         )
 
     @distributed_trace

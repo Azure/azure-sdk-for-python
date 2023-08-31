@@ -316,8 +316,8 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
 
     @distributed_trace
     def set_queue_metadata(
-        self, metadata: Optional[Dict[str, Any]] = None,
-        **kwargs: Any
+            self, metadata: Optional[Dict[str, Any]] = None,
+            **kwargs: Any
         ) -> Dict[str, Any]:
         """Sets user-defined metadata on the specified queue.
 
