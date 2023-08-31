@@ -348,7 +348,8 @@ class ServiceBusReceiver(
         # When prefetch is 0 and receive mode is PEEK_LOCK, release messages when they're received.
         # This will stop messages from expiring in the buffer and incrementing delivery count of a message.
         # If RECEIVE_AND_DELETE mode, messages are settled and removed from the Service Bus entity immediately,
-        # so they should be added to the internal buffer so they're not lost.
+        # so the regular _message_received callback should be used. This will ensure that all messages are added
+        # to the internal buffer since they cannot be re-received, even if not received during an active receive call.
         if self._prefetch_count == 0 and self._receive_mode == ServiceBusReceiveMode.PEEK_LOCK:
             # pylint: disable=protected-access
             self._handler._message_received = functools.partial( # type: ignore[assignment]
