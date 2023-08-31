@@ -215,11 +215,11 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         try:
             user_delegation_key = self._client.service.get_user_delegation_key(key_info=key_info,
                                                                                timeout=timeout,
-                                                                               **kwargs)   
+                                                                               **kwargs)
         except HttpResponseError as error:
             process_storage_error(error)
 
-        return parse_to_internal_user_delegation_key(user_delegation_key)   
+        return parse_to_internal_user_delegation_key(user_delegation_key)
 
     @distributed_trace
     def get_account_information(self, **kwargs: Any) -> Dict[str, str]:
@@ -241,7 +241,7 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
                 :caption: Getting account information for the blob service.
         """
         try:
-            return self._client.service.get_account_info(cls=return_response_headers, **kwargs)  
+            return self._client.service.get_account_info(cls=return_response_headers, **kwargs)
         except HttpResponseError as error:
             process_storage_error(error)
 
@@ -328,7 +328,7 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             hour_metrics: Optional[Metrics] = None,
             minute_metrics: Optional[Metrics] = None,
             cors: Optional[List[CorsRule]] = None,
-            target_version: Optional[str] = None, 
+            target_version: Optional[str] = None,
             delete_retention_policy: Optional[RetentionPolicy] = None,
             static_website: Optional[StaticWebsite] = None,
             **kwargs
@@ -405,7 +405,7 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
 
     @distributed_trace
     def list_containers(
-            self, name_starts_with: Optional[str] = None, 
+            self, name_starts_with: Optional[str] = None,
             include_metadata: Optional[bool] = False,
             **kwargs
         ) -> ItemPaged[ContainerProperties]:
@@ -611,10 +611,10 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
                 :dedent: 12
                 :caption: Deleting a container in the blob service.
         """
-        container = self.get_container_client(container)  
+        container = self.get_container_client(container)
         kwargs.setdefault('merge_span', True)
         timeout = kwargs.pop('timeout', None)
-        container.delete_container(  
+        container.delete_container(
             lease=lease,
             timeout=timeout,
             **kwargs)
@@ -654,7 +654,10 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             process_storage_error(error)
 
     @distributed_trace
-    def undelete_container(self, deleted_container_name: str, deleted_container_version: str, **kwargs: Any) -> ContainerClient:
+    def undelete_container(self, deleted_container_name: str,
+        deleted_container_version: str,
+        **kwargs: Any
+    ) -> ContainerClient:
         """Restores soft-deleted container.
 
         Operation will only be successful if used within the specified number of days
@@ -773,7 +776,7 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             transport=TransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
             policies=self._pipeline._impl_policies # pylint: disable = protected-access
         )
-        return BlobClient(  
+        return BlobClient(
             self.url, container_name=container_name, blob_name=blob_name, snapshot=snapshot,
             credential=self.credential, api_version=self.api_version, _configuration=self._config,
             _pipeline=_pipeline, _location_mode=self._location_mode, _hosts=self._hosts,
