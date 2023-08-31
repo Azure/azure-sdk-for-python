@@ -60,7 +60,7 @@ class ConfigurationSetting(Model):
     kind = "Generic"
     content_type = None
 
-    def __init__(self, **kwargs: Any):
+    def __init__(self, **kwargs: Any) -> None:
         super(ConfigurationSetting, self).__init__(**kwargs)
         self.key = kwargs.get("key", None)
         self.label = kwargs.get("label", None)
@@ -126,7 +126,7 @@ class FeatureFlagConfigurationSetting(ConfigurationSetting):  # pylint: disable=
     feature_id: str
     """The identity of the configuration setting."""
     key: str
-    """The key of the configuration setting."""    
+    """The key of the configuration setting."""
     enabled: Optional[bool]
     """The value indicating whether the feature flag is enabled. A feature is OFF if enabled is false.
         If enabled is true, then the feature is ON if there are no conditions or if all conditions are satisfied."""
@@ -169,7 +169,17 @@ class FeatureFlagConfigurationSetting(ConfigurationSetting):  # pylint: disable=
         enabled: Optional[bool] = None,
         filters: Optional[List[Dict[str, Any]]] = None,
         **kwargs: Any,
-    ):
+    ) -> None:
+        """
+        :param feature_id: The identity of the configuration setting.
+        :type feature_id: str
+        :keyword enabled: The value indicating whether the feature flag is enabled. A feature is OFF if enabled is false.
+            If enabled is true, then the feature is ON if there are no conditions or if all conditions are satisfied.
+        :paramtype enabled: bool or None
+        :keyword filters: Filters that must run on the client and be evaluated as true for the feature
+            to be considered enabled.
+        :paramtype filters: list[dict[str, Any]] or None
+        """
         if "key" in kwargs or "value" in kwargs:
             raise TypeError("Unexpected keyword argument, do not provide 'key' or 'value' as a keyword-arg")
         self.feature_id = feature_id
@@ -210,14 +220,14 @@ class FeatureFlagConfigurationSetting(ConfigurationSetting):  # pylint: disable=
             temp["id"] = self.feature_id
             self._value = json.dumps(temp)
             self.enabled = temp.get("enabled", None)
-            self.filters = []
+            self.filters = None
             conditions = temp.get("conditions", None)
             if conditions:
                 self.filters = conditions.get("client_filters", None)
         except (json.JSONDecodeError, ValueError):
             self._value = new_value
             self.enabled = None
-            self.filters = []
+            self.filters = None
 
     @classmethod
     def _from_generated(cls, key_value: KeyValue) -> Union["FeatureFlagConfigurationSetting", ConfigurationSetting]:
@@ -292,7 +302,13 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
     _secret_reference_content_type = "application/vnd.microsoft.appconfig.keyvaultref+json;charset=utf-8"
     kind = "SecretReference"
 
-    def __init__(self, key: str, secret_id: str, **kwargs: Any):  # pylint: disable=super-init-not-called
+    def __init__(self, key: str, secret_id: str, **kwargs: Any) -> None:  # pylint: disable=super-init-not-called
+        """
+        :param key: The key of the configuration setting.
+        :type key: str
+        :param secret_id: The identity of the configuration setting.
+        :type secret_id: str
+        """
         if "value" in kwargs:
             raise TypeError("Unexpected keyword argument, do not provide 'value' as a keyword-arg")
         self.key = key
@@ -370,7 +386,7 @@ class ConfigurationSettingFilter:
     label: Optional[str]
     """Filters configuration settings by their label field."""
 
-    def __init__(self, *, key: str, label: Optional[str] = None):
+    def __init__(self, *, key: str, label: Optional[str] = None) -> None:
         """
         :keyword key: Filters configuration settings by their key field. Required.
         :paramtype key: str
@@ -420,7 +436,7 @@ class Snapshot:  # pylint: disable=too-many-instance-attributes
         composition_type: Optional[Literal["key", "key_label"]] = None,
         retention_period: Optional[int] = None,
         tags: Optional[Dict[str, str]] = None,
-    ):
+    ) -> None:
         """
         :param filters: A list of filters used to filter the key-values included in the snapshot.
             Required.

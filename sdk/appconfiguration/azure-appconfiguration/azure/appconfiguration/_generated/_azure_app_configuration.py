@@ -35,7 +35,7 @@ class AzureAppConfiguration(AzureAppConfigurationOperationsMixin):  # pylint: di
 
     def __init__(  # pylint: disable=missing-client-constructor-parameter-credential
         self, endpoint: str, sync_token: Optional[str] = None, **kwargs: Any
-    ):
+    ) -> None:
         _endpoint = "{endpoint}"
         self._config = AzureAppConfigurationConfiguration(endpoint=endpoint, sync_token=sync_token, **kwargs)
         self._client: PipelineClient = PipelineClient(base_url=_endpoint, config=self._config, **kwargs)

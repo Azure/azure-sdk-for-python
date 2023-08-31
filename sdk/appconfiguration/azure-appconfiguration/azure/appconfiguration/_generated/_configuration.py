@@ -30,7 +30,7 @@ class AzureAppConfigurationConfiguration(Configuration):  # pylint: disable=too-
     :paramtype api_version: str
     """
 
-    def __init__(self, endpoint: str, sync_token: Optional[str] = None, **kwargs: Any):
+    def __init__(self, endpoint: str, sync_token: Optional[str] = None, **kwargs: Any) -> None:
         super(AzureAppConfigurationConfiguration, self).__init__(**kwargs)
         api_version: str = kwargs.pop("api_version", "2022-11-01-preview")
 
