@@ -30,7 +30,7 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
 
     :keyword type: The type of the data input. Accepted values are
         'uri_folder', 'uri_file', 'mltable', 'mlflow_model', 'custom_model', 'integer', 'number', 'string', and
-        'boolean'.
+        'boolean'. Defaults to 'uri_folder'.
     :paramtype type: str
     :keyword path: The path to the input data. Paths can be local paths, remote data uris, or a registered AzureML asset
         ID.
@@ -83,25 +83,7 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
         description: Optional[str] = None,
         **kwargs,
     ) -> None:
-        """Initialize a uri_folder input.
-
-        :keyword type: The type of the data input. Can only be set to "uri_folder".
-        :paramtype type: str
-        :keyword path: The path to the input data. Paths can be local paths, remote data uris, or a registered AzureML
-            asset id.
-        :paramtype path: str
-        :keyword mode: The mode of the data input. Accepted values are:
-            * 'ro_mount': Mount the data to the compute target as read-only,
-            * 'download': Download the data to the compute target,
-            * 'direct': Pass in the URI as a string to be accessed at runtime
-        :paramtype mode: str
-        :keyword optional: Specifies if the input is optional.
-        :paramtype optional: bool
-        :keyword description: Description of the input
-        :paramtype description: str
-        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Input cannot be successfully validated.
-            Details will be provided in the error message.
-        """
+        """"""
 
     @overload
     def __init__(

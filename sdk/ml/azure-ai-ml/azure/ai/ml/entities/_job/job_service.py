@@ -177,6 +177,8 @@ class JobService(JobServiceBase):
 class SshJobService(JobServiceBase):
     """SSH job service configuration.
 
+    :ivar type: Specifies the type of job service. Set automatically to "ssh" for this class.
+    :vartype type: str
     :keyword endpoint: The endpoint URL.
     :paramtype endpoint: Optional[str]
     :keyword port: The port for the endpoint.
@@ -238,6 +240,8 @@ class SshJobService(JobServiceBase):
 class TensorBoardJobService(JobServiceBase):
     """TensorBoard job service configuration.
 
+    :ivar type: Specifies the type of job service. Set automatically to "tensor_board" for this class.
+    :vartype type: str
     :keyword endpoint: The endpoint URL.
     :paramtype endpoint: Optional[str]
     :keyword port: The port for the endpoint.
@@ -299,6 +303,8 @@ class TensorBoardJobService(JobServiceBase):
 class JupyterLabJobService(JobServiceBase):
     """JupyterLab job service configuration.
 
+    :ivar type: Specifies the type of job service. Set automatically to "jupyter_lab" for this class.
+    :vartype type: str
     :keyword endpoint: The endpoint URL.
     :paramtype endpoint: Optional[str]
     :keyword port: The port for the endpoint.
@@ -353,6 +359,8 @@ class JupyterLabJobService(JobServiceBase):
 class VsCodeJobService(JobServiceBase):
     """VS Code job service configuration.
 
+    :ivar type: Specifies the type of job service. Set automatically to "vs_code" for this class.
+    :vartype type: str
     :keyword endpoint: The endpoint URL.
     :paramtype endpoint: Optional[str]
     :keyword port: The port for the endpoint.

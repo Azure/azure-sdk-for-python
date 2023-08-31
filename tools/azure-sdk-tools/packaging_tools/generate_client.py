@@ -2,10 +2,32 @@ import argparse
 import logging
 from pathlib import Path
 from subprocess import run
-import sys
+import tomli
 
 _LOGGER = logging.getLogger(__name__)
 
+
+CONF_NAME = "pyproject.toml"
+
+def check_post_process(folder: Path) -> bool:
+    conf_path = folder / CONF_NAME
+    if not conf_path.exists():
+        return False
+
+    with open(conf_path, "rb") as fd:
+        toml_dict = tomli.load(fd)
+        if toml_dict.get("tool", None) is not None:
+            if toml_dict["tool"].get("generate", None) is not None:
+                if toml_dict["tool"]["generate"].get("autorest-post-process", None) is not None:
+                    return toml_dict["tool"]["generate"]["autorest-post-process"]
+    return False
+
+def run_post_process(folder: Path) -> None:
+    completed_process = run(["autorest", "--postprocess", f"--output-folder={folder}", "--perform-load=false", "--python"], cwd=folder, shell=True)
+
+    if completed_process.returncode != 0:
+        raise ValueError("Something happened during autorest post processing: " + str(completed_process))
+    _LOGGER.info("Autorest post processing done")
 
 def generate_autorest(folder: Path) -> None:
 
@@ -35,6 +57,8 @@ def generate_typespec(folder: Path) -> None:
 def generate(folder: Path = Path(".")) -> None:
     if (folder / "swagger" / "README.md").exists():
         generate_autorest(folder)
+        if check_post_process(folder):
+            run_post_process(folder)
     elif (folder / "tsp-location.yaml").exists():
         generate_typespec(folder)
     else:
