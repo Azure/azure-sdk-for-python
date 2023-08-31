@@ -188,10 +188,11 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         return cls(account_url, credential=credential, **kwargs)
 
     @distributed_trace
-    def get_user_delegation_key(self, key_start_time: datetime,
-                                key_expiry_time: datetime,
-                                **kwargs: Any
-                                ) -> UserDelegationKey:
+    def get_user_delegation_key(
+        self, key_start_time: datetime,
+        key_expiry_time: datetime,
+        **kwargs: Any
+    ) -> UserDelegationKey:
         """
         Obtain a user delegation key for the purpose of signing SAS tokens.
         A token credential must be present on the service object for this request to succeed.
