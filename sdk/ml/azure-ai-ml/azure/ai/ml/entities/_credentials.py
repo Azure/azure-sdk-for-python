@@ -378,13 +378,13 @@ class _BaseJobIdentityConfiguration(ABC, RestTranslatableMixin, DictMixin, YamlT
 
         identity_class = mapping.get(obj.identity_type, None)
         if identity_class:
-            if (
-                isinstance(identity_class, AmlTokenConfiguration)
-                or isinstance(identity_class, ManagedIdentityConfiguration)
-                or isinstance(identity_class, UserIdentityConfiguration)
-            ):
-                # pylint: disable=protected-access
-                return identity_class._from_job_rest_object(obj)
+            if obj.identity_type == IdentityConfigurationType.AML_TOKEN:
+                return AmlTokenConfiguration._from_job_rest_object(obj)
+            elif obj.identity_type == IdentityConfigurationType.MANAGED:
+                return ManagedIdentityConfiguration._from_job_rest_object(obj)
+            elif obj.identity_type == IdentityConfigurationType.USER_IDENTITY:
+                return UserIdentityConfiguration._from_job_rest_object(obj)
+
         msg = f"Unknown identity type: {obj.identity_type}"
         raise JobException(
             message=msg,
