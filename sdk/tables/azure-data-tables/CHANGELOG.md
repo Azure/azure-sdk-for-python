@@ -7,7 +7,7 @@
 
 ### Bugs Fixed
 * Fixed a bug when submitting transactions with an empty operation list. ([#31471](https://github.com/Azure/azure-sdk-for-python/issues/31471))
-* Fixed a bug when decoding response body in string type. Thanks @kldtz!
+* Fixed a bug when decoding response body in string type. Thanks @kldtz for the contribution! ([#31265](https://github.com/Azure/azure-sdk-for-python/pull/31265))
 
 ### Other Changes
 * Bumped minimum dependency on `azure-core` to `>=1.27.1`. ([#28918](https://github.com/Azure/azure-sdk-for-python/issues/28918))
