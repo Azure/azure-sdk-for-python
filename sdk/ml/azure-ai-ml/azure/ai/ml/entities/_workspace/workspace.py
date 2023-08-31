@@ -255,17 +255,6 @@ class Workspace(Resource):
             workspace_id=rest_obj.workspace_id,
         )
 
-    @classmethod
-    def get_workspace_info(cls, armid: str) -> str:
-        """Get the workspace SubscriptionId, ResourceGroup, Name from from the resource ID.
-
-        :param armid: the Resource Id of a workspace
-        :type armid: str
-        :return: This method return SubscriptionId, ResourceGroupName, WorkspaceName in order.
-        :rtype: (str,str,str)
-        """
-        return armid.split("/")[-7], armid.split("/")[-5], armid.split("/")[-1]
-
     def _to_rest_object(self) -> RestWorkspace:
         feature_store_settings = None
         if is_private_preview_enabled() and self._feature_store_settings:
