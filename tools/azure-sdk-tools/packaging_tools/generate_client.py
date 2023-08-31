@@ -16,8 +16,10 @@ def check_post_process(folder: Path) -> bool:
 
     with open(conf_path, "rb") as fd:
         toml_dict = tomli.load(fd)
-        if toml_dict.get("tox-generate", None) is not None:
-            return toml_dict["tox-generate"]["autorest-post-process"]
+        if toml_dict.get("tool", None) is not None:
+            if toml_dict["tool"].get("generate", None) is not None:
+                if toml_dict["tool"]["generate"].get("autorest-post-process", None) is not None:
+                    return toml_dict["tool"]["generate"]["autorest-post-process"]
     return False
 
 def run_post_process(folder: Path) -> None:
