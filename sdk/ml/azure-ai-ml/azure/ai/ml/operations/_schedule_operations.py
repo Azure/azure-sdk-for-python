@@ -340,9 +340,21 @@ class ScheduleOperations(_ScopeDependentOperations):
             if signal.type == MonitorSignalType.CUSTOM:
                 for input_value in signal.input_literals.values():
                     self._job_operations._resolve_job_input(input_value, schedule._base_path)
-                    input_value.pre_processing_component = self._orchestrators.get_asset_arm_id(
-                        asset=input_value.pre_processing_component, azureml_type=AzureMLResourceType.COMPONENT
+                for prod_data in signal.input_datasets.values():
+                    prod_data.pre_processing_component = self._orchestrators.get_asset_arm_id(
+                        asset=prod_data.pre_processing_component, azureml_type=AzureMLResourceType.COMPONENT
                     )
+                continue
+            if signal.type == MonitorSignalType.FEATURE_ATTRIBUTION_DRIFT:
+                for prod_data in signal.production_data:
+                    self._job_operations._resolve_job_input(prod_data.input_data, schedule._base_path)
+                    prod_data.pre_processing_component = self._orchestrators.get_asset_arm_id(
+                        asset=prod_data.pre_processing_component, azureml_type=AzureMLResourceType.COMPONENT
+                    )
+                self._job_operations._resolve_job_input(signal.reference_data.input_data, schedule._base_path)
+                signal.reference_data.pre_processing_component = self._orchestrators.get_asset_arm_id(
+                    asset=signal.reference_data.pre_processing_component, azureml_type=AzureMLResourceType.COMPONENT
+                )
                 continue
             error_messages = []
             if not signal.production_data or not signal.reference_data:
