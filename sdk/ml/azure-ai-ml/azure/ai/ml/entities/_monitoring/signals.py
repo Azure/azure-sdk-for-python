@@ -4,7 +4,7 @@
 
 # pylint: disable=protected-access
 
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 import datetime
 import isodate
 
@@ -21,6 +21,9 @@ from azure.ai.ml._restclient.v2023_06_01_preview.models import (
 )
 from azure.ai.ml._restclient.v2023_06_01_preview.models import (
     DataQualityMonitoringSignal as RestMonitoringDataQualitySignal,
+)
+from azure.ai.ml._restclient.v2023_06_01_preview.models import (
+    GenerationSafetyQualityMonitoringSignal as RestGenerationSafetyQualityMonitoringSignal,
 )
 from azure.ai.ml._restclient.v2023_06_01_preview.models import (
     FeatureAttributionDriftMonitoringSignal as RestFeatureAttributionDriftMonitoringSignal,
@@ -61,6 +64,7 @@ from azure.ai.ml.entities._monitoring.thresholds import (
     MetricThreshold,
     ModelPerformanceMetricThreshold,
     CustomMonitoringMetricThreshold,
+    GenerationSafetyQualityMonitoringMetricThreshold,
 )
 
 
@@ -941,6 +945,71 @@ class CustomMonitoringSignal(RestTranslatableMixin):
             workspace_connection=WorkspaceConnection._from_rest_object(obj.workspace_connection),
         )
 
+
+@experimental
+class LlmRequestResponseData(RestTranslatableMixin):
+    def __init__(
+        self,
+        *,
+        input_data: Input,
+        data_column_names: Dict[str, str] = None,
+        data_window_size: str = None,
+    ):
+        self.input_data = input_data
+        self.data_column_names = data_column_names
+        self.data_window_size = data_window_size
+
+    def _to_rest_object(self, **kwargs) -> RestMonitoringInputData:
+        if self.data_window_size is None:
+            self.data_window_size = kwargs.get("default_data_window_size")
+        return TrailingInputData(
+            target_columns=self.data_column_names,
+            job_type=self.input_data.type,
+            uri=self.input_data.path,
+            window_size=self.data_window_size,
+            window_offset=self.data_window_size,
+        )._to_rest_object()
+
+    @classmethod
+    def _from_rest_object(cls, obj: RestMonitoringInputData) -> "LlmRequestResponseData":
+        return cls(
+            input_data=Input(
+                path=obj.uri,
+                type=obj.job_input_type,
+            ),
+            data_column_names=obj.columns,
+            data_window_size=obj.window_size,
+        )
+
+@experimental
+class GenerationSafetyQualitySignal(RestTranslatableMixin):
+    def __init__(
+        self,
+        *,
+        production_data: List[LlmRequestResponseData],
+        workspace_connection_id: str,
+        metric_thresholds: GenerationSafetyQualityMonitoringMetricThreshold,
+        alert_enabled: bool = True,
+        properties: Optional[Dict[str, str]] = None,
+        sampling_rate: Optional[float] = None,
+    ):
+        self.type = MonitorSignalType.GENERATION_SAFETY_QUALITY
+        self.production_data = production_data
+        self.workspace_connection_id = workspace_connection_id
+        self.metric_thresholds = metric_thresholds
+        self.alert_enabled = alert_enabled
+        self.properties = properties
+        self.sampling_rate = sampling_rate
+
+    def _to_rest_object(self, **kwargs) -> RestGenerationSafetyQualityMonitoringSignal:
+        return RestGenerationSafetyQualityMonitoringSignal(
+            production_data=[data._to_rest_object() for data in self.production_data],
+            workspace_connection_id=self.workspace_connection_id,
+            metric_thresholds=self.metric_thresholds._to_rest_object(),
+            mode=MonitoringNotificationMode.ENABLED if self.alert_enabled else MonitoringNotificationMode.DISABLED,
+            properties=self.properties,
+            sampling_rate=self.sampling_rate,
+        )
 
 def _from_rest_features(
     obj: RestMonitoringFeatureFilterBase,

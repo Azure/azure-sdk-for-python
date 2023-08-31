@@ -337,6 +337,10 @@ class ScheduleOperations(_ScopeDependentOperations):
                 )
         # resolve ARM id for each signal and populate any defaults if needed
         for signal_name, signal in schedule.create_monitor.monitoring_signals.items():
+            if signal.type == MonitorSignalType.GENERATION_SAFETY_QUALITY:
+                for llm_data in signal.production_data:
+                    self._job_operations._resolve_job_input(llm_data.input_data, schedule._base_path)
+                continue
             if signal.type == MonitorSignalType.CUSTOM:
                 for input_value in signal.input_literals.values():
                     self._job_operations._resolve_job_input(input_value, schedule._base_path)

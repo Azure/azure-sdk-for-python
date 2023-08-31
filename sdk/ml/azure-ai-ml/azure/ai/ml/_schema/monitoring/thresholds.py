@@ -140,3 +140,20 @@ class CustomMonitoringMetricThresholdSchema(MetricThresholdSchema):
         from azure.ai.ml.entities._monitoring.thresholds import CustomMonitoringMetricThreshold
 
         return CustomMonitoringMetricThreshold(**data)
+
+
+class GenerationSafetyQualityMetricThresholdSchema(metaclass=PatchedSchemaMeta):
+    groundedness = fields.Dict(
+        keys=StringTransformedEnum(allowed_values=["acceptable_groundedness_score_per_instance","aggregated_groundedness_pass_rate"]), 
+        values=fields.Number()
+    )
+    # relevance = NestedField()
+    # coherence = NestedField()
+    # fluency = NestedField()
+    # similary = NestedField()
+
+    @post_load
+    def make(self, data, **kwargs):
+        from azure.ai.ml.entities._monitoring.thresholds import GenerationSafetyQualityMetricThreshold
+
+        return GenerationSafetyQualityMetricThreshold(**data)

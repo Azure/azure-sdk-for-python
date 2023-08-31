@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from typing import Any, List, Optional
+from typing import Any, Dict, List, Optional
 
 from typing_extensions import Literal
 
@@ -25,6 +25,7 @@ from azure.ai.ml._restclient.v2023_06_01_preview.models import (
     RegressionModelPerformanceMetricThreshold,
     RegressionModelPerformanceMetric,
     CustomMetricThreshold,
+    GenerationSafetyQualityMetricThreshold,
 )
 from azure.ai.ml._utils.utils import camel_to_snake, snake_to_camel
 from azure.ai.ml._utils._experimental import experimental
@@ -663,3 +664,31 @@ class CustomMonitoringMetricThreshold(MetricThreshold):
     @classmethod
     def _from_rest_object(cls, obj: CustomMetricThreshold) -> "CustomMonitoringMetricThreshold":
         return cls(metric_name=obj.metric, threshold=obj.threshold.value if obj.threshold else None)
+    
+
+class GenerationSafetyQualityMonitoringMetricThreshold(MetricThreshold):
+    """Generation safety quality metric threshold
+
+    :param metric_name: The metric to calculate
+    :type metric_name: str
+    :param threshold: The threshold value. If None, a default value will be set
+        depending on the selected metric.
+    :type threshold: float
+    """
+
+    def __init__(
+        self,
+        *,
+        groundedness: Dict[str, float] = None,
+    ):
+        self.groundedness = groundedness
+
+    def _to_rest_object(self) -> GenerationSafetyQualityMetricThreshold:
+        return [GenerationSafetyQualityMetricThreshold(
+            metric="acceptable_groundedness_score_per_instance",
+            threshold=MonitoringThreshold(value=0.0),
+        )]
+
+    @classmethod
+    def _from_rest_object(cls, obj: GenerationSafetyQualityMetricThreshold) -> "GenerationSafetyQualityMonitoringMetricThreshold":
+        return cls(groundedness={"string": 0.0})

@@ -26,6 +26,7 @@ from azure.ai.ml.entities._monitoring.signals import (
     FeatureAttributionDriftSignal,
     MonitoringSignal,
     PredictionDriftSignal,
+    GenerationSafetyQualitySignal,
 )
 from azure.ai.ml.entities._monitoring.target import MonitoringTarget
 from azure.ai.ml.entities._monitoring.compute import ServerlessSparkCompute
@@ -73,6 +74,7 @@ class MonitorDefinition(RestTranslatableMixin):
                 PredictionDriftSignal,
                 FeatureAttributionDriftSignal,
                 CustomMonitoringSignal,
+                GenerationSafetyQualitySignal,
             ],
         ] = None,
         alert_notification: Optional[Union[Literal[AZMONITORING], AlertNotification]] = None,
