@@ -205,12 +205,6 @@ stages:
                   version: 1.4.0
                 - package: azure-common
                   version: 1.1.28
-              - name: msal-extensions
-                common_root: msal
-                in_batch: true
-                checkout:
-                - package: msal-extensions
-                  download_uri: https://files.pythonhosted.org/packages/33/5e/2e23593c67df0b21ffb141c485ca0ae955569203d7ff5064040af968cb81/msal-extensions-1.0.0.tar.gz
               - name: msrest
                 in_batch: true
                 checkout:
@@ -221,6 +215,12 @@ stages:
                 checkout:
                 - package: msal
                   download_uri: https://files.pythonhosted.org/packages/85/9b/cf94ca59e4d88afe1852962d2b7e0cd9cee752dddf7cd6e30382cdc3f7ed/msal-1.23.0.tar.gz
+              - name: msal-extensions
+                common_root: msal
+                in_batch: true
+                checkout:
+                - package: msal-extensions
+                  download_uri: https://files.pythonhosted.org/packages/33/5e/2e23593c67df0b21ffb141c485ca0ae955569203d7ff5064040af968cb81/msal-extensions-1.0.0.tar.gz
               - name: azure-identity
                 service: identity
                 in_batch: ${{ parameters.release_azure_identity }}
