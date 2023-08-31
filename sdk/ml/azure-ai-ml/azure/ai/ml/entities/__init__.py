@@ -180,7 +180,7 @@ from ._monitoring.signals import (
     DataSegment,
     FADProductionData,
     ProductionData,
-    ReferenceData
+    ReferenceData,
 )
 from ._monitoring.target import MonitoringTarget
 from ._monitoring.thresholds import (
@@ -190,7 +190,7 @@ from ._monitoring.thresholds import (
     FeatureAttributionDriftMetricThreshold,
     CustomMonitoringMetricThreshold,
     CategoricalDriftMetrics,
-    NumericalDriftMetrics
+    NumericalDriftMetrics,
 )
 
 from ._workspace_hub.workspace_hub import WorkspaceHub, WorkspaceHubConfig
