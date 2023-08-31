@@ -1180,8 +1180,6 @@ class TestBatchUnitTestsAsync(AsyncTableTestCase):
         with pytest.raises(RequestCorrect):
             await table.submit_transaction(self.batch)
 
-    
-
     @pytest.mark.asyncio
     async def test_decode_string_body(self):
         async def patch_run(request: PipelineRequest, **kwargs) -> PipelineResponse:
@@ -1204,19 +1202,21 @@ class TestBatchUnitTestsAsync(AsyncTableTestCase):
             credential=DefaultAzureCredential(
                 name=self.tables_storage_account_name, key=self.tables_primary_storage_account_key
             ),
-            table_name="syncenabled"
+            table_name="syncenabled",
         )
         client._client._client._pipeline.run = partial(patch_run)
         with pytest.raises(HttpResponseError) as ex:
-            await client.submit_transaction([
-                (
-                    "upsert",
-                    {
-                        "PartitionKey": "test-partition",
-                        "RowKey": "test-key",
-                        "name": "test-name",
-                    },
-                )
-            ])
+            await client.submit_transaction(
+                [
+                    (
+                        "upsert",
+                        {
+                            "PartitionKey": "test-partition",
+                            "RowKey": "test-key",
+                            "name": "test-name",
+                        },
+                    )
+                ]
+            )
         assert ex.value.status_code == 405
         assert ex.value.error_code == "UnsupportedHttpVerb"
