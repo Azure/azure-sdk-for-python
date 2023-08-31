@@ -380,9 +380,11 @@ class _BaseJobIdentityConfiguration(ABC, RestTranslatableMixin, DictMixin, YamlT
         if identity_class:
             if obj.identity_type == IdentityConfigurationType.AML_TOKEN:
                 return AmlTokenConfiguration._from_job_rest_object(obj)
-            elif obj.identity_type == IdentityConfigurationType.MANAGED:
+
+            if obj.identity_type == IdentityConfigurationType.MANAGED:
                 return ManagedIdentityConfiguration._from_job_rest_object(obj)
-            elif obj.identity_type == IdentityConfigurationType.USER_IDENTITY:
+
+            if obj.identity_type == IdentityConfigurationType.USER_IDENTITY:
                 return UserIdentityConfiguration._from_job_rest_object(obj)
 
         msg = f"Unknown identity type: {obj.identity_type}"
