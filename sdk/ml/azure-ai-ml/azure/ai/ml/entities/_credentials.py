@@ -403,20 +403,21 @@ class _BaseJobIdentityConfiguration(ABC, RestTranslatableMixin, DictMixin, YamlT
         type_str = data.get(CommonYamlFields.TYPE)
         if type_str == IdentityType.MANAGED_IDENTITY:
             return ManagedIdentityConfiguration._load_from_dict(data)
-        elif type_str == IdentityType.USER_IDENTITY:
+
+        if type_str == IdentityType.USER_IDENTITY:
             return UserIdentityConfiguration._load_from_dict(data)
-        elif type_str == IdentityType.AML_TOKEN:
-            identity_cls = AmlTokenConfiguration
-        else:
-            msg = f"Unsupported identity type: {type_str}."
-            raise ValidationException(
-                message=msg,
-                no_personal_data_message=msg,
-                target=ErrorTarget.IDENTITY,
-                error_category=ErrorCategory.USER_ERROR,
-                error_type=ValidationErrorType.INVALID_VALUE,
-            )
-        return identity_cls._load_from_dict(data)
+
+        if type_str == IdentityType.AML_TOKEN:
+            return AmlTokenConfiguration._load_from_dict(data)
+
+        msg = f"Unsupported identity type: {type_str}."
+        raise ValidationException(
+            message=msg,
+            no_personal_data_message=msg,
+            target=ErrorTarget.IDENTITY,
+            error_category=ErrorCategory.USER_ERROR,
+            error_type=ValidationErrorType.INVALID_VALUE,
+        )
 
 
 class ManagedIdentityConfiguration(_BaseIdentityConfiguration):
