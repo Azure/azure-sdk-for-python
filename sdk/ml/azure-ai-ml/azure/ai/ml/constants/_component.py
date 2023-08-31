@@ -23,6 +23,7 @@ class NodeType(object):
     IMPORT = "import"
     SPARK = "spark"
     DATA_TRANSFER = "data_transfer"
+    FLOW_PARALLEL = "promptflow_parallel"
     # Note: container is not a real component type,
     # only used to mark component from container data.
     _CONTAINER = "_container"
