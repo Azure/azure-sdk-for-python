@@ -329,7 +329,7 @@ def data_index_faiss(
         if data_index.source.citation_url_replacement_regex
         else None,
         aoai_connection_id=resolve_connection_id(ml_client, data_index.embedding.connection),
-        embeddings_container=Input(type=AssetTypes.URI_FOLDER, path=data_index.embedding.cache_path),
+        embeddings_container=Input(type=AssetTypes.URI_FOLDER, path=data_index.embedding.cache_path) if data_index.embedding.cache_path else None,
     )
     # Hack until full Component classes are implemented that can annotate the optional parameters properly
     component.inputs["data_source_glob"]._meta.optional = True
@@ -504,7 +504,7 @@ def optional_pipeline_input_provided(input: Optional[PipelineInput]):
     return input is not None and input._data is not None
 
 
-def use_automatic_compute(component, instance_count=1, instance_type="Standard_E8s_v3"):
+def use_automatic_compute(component, instance_count=1, instance_type=None):
     """Configure input `component` to use automatic compute with `instance_count` and `instance_type`.
 
     This avoids the need to provision a compute cluster to run the component.
@@ -534,6 +534,11 @@ def get_component_obj(ml_client, component_uri):
         r"/(?P<identifier_type>.*)/(?P<identifier_name>.*)",
         component_uri,
     )
+    if matches is None:
+        from azure.ai.ml import load_component
+        # Assume local path to component
+        return load_component(source=component_uri)
+
     registry_name = matches.group("registry_name")
     registry_client = MLClient(
         subscription_id=ml_client.subscription_id,
