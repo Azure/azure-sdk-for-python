@@ -211,8 +211,8 @@ class TestTableClientAsync(AzureRecordedTestCase, AsyncTableTestCase):
 
     def check_request_auth(self, pipeline_request):
         assert f"/?{self.sas_token}" not in pipeline_request.http_request.url
-        assert pipeline_request.http_request.headers.get('Authorization') is not None
-    
+        assert pipeline_request.http_request.headers.get("Authorization") is not None
+
     @tables_decorator_async
     @recorded_by_proxy_async
     async def test_table_client_with_named_key_credential(
@@ -430,7 +430,9 @@ class TestTableClientAsync(AzureRecordedTestCase, AsyncTableTestCase):
                 pass
 
         # DefaultAzureCredential is actually in use
-        async with TableClient(f"{base_url}/?{self.sas_token}", table_name, credential=default_azure_credential) as client:
+        async with TableClient(
+            f"{base_url}/?{self.sas_token}", table_name, credential=default_azure_credential
+        ) as client:
             entities = client.query_entities(
                 query_filter="PartitionKey eq @pk",
                 parameters={"pk": "dummy-pk"},

@@ -211,8 +211,8 @@ class TestTableClient(AzureRecordedTestCase, TableTestCase):
 
     def check_request_auth(self, pipeline_request):
         assert f"/?{self.sas_token}" not in pipeline_request.http_request.url
-        assert pipeline_request.http_request.headers.get('Authorization') is not None
-    
+        assert pipeline_request.http_request.headers.get("Authorization") is not None
+
     @tables_decorator
     @recorded_by_proxy
     def test_table_client_with_named_key_credential(
@@ -291,7 +291,9 @@ class TestTableClient(AzureRecordedTestCase, TableTestCase):
             assert len(list(result)) == 1
 
         # AzureNamedKeyCredential is actually in use
-        with TableServiceClient(f"{base_url}/?{self.sas_token}", credential=tables_primary_storage_account_key) as client:
+        with TableServiceClient(
+            f"{base_url}/?{self.sas_token}", credential=tables_primary_storage_account_key
+        ) as client:
             entities = client.get_table_client(table_name).query_entities(
                 query_filter="PartitionKey eq @pk",
                 parameters={"pk": "dummy-pk"},
