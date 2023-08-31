@@ -130,7 +130,7 @@ class FeatureFlagConfigurationSetting(ConfigurationSetting):  # pylint: disable=
     enabled: Optional[bool]
     """The value indicating whether the feature flag is enabled. A feature is OFF if enabled is false.
         If enabled is true, then the feature is ON if there are no conditions or if all conditions are satisfied."""
-    filters: List[Dict[str, Any]]
+    filters: Optional[List[Dict[str, Any]]]
     """Filters that must run on the client and be evaluated as true for the feature
         to be considered enabled."""
     label: str
@@ -173,8 +173,9 @@ class FeatureFlagConfigurationSetting(ConfigurationSetting):  # pylint: disable=
         """
         :param feature_id: The identity of the configuration setting.
         :type feature_id: str
-        :keyword enabled: The value indicating whether the feature flag is enabled. A feature is OFF if enabled is false.
-            If enabled is true, then the feature is ON if there are no conditions or if all conditions are satisfied.
+        :keyword enabled: The value indicating whether the feature flag is enabled.
+            A feature is OFF if enabled is false. If enabled is true, then the feature is ON
+            if there are no conditions or if all conditions are satisfied.
         :paramtype enabled: bool or None
         :keyword filters: Filters that must run on the client and be evaluated as true for the feature
             to be considered enabled.
@@ -200,7 +201,10 @@ class FeatureFlagConfigurationSetting(ConfigurationSetting):  # pylint: disable=
 
     @property
     def value(self) -> str:
-        """The value of the configuration setting."""
+        """The value of the configuration setting.
+
+        :rtype: str
+        """
         try:
             temp = json.loads(self._value)
             temp["id"] = self.feature_id
@@ -323,7 +327,10 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
 
     @property
     def value(self) -> str:
-        """The value of the configuration setting."""
+        """The value of the configuration setting.
+
+        :rtype: str
+        """
         try:
             temp = json.loads(self._value)
             temp["uri"] = self.secret_id
