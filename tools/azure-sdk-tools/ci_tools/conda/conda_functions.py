@@ -622,7 +622,7 @@ def invoke_conda_build(conda_output_dir: str, conda_env_dir: str, conda_build_fo
     if optional_py_version:
         command += f" --py {optional_py_version}"
 
-    print(command)
+    print("Calling \'{command}\' in folder {conda_build_folder}.")
     get_output(
         command,
         conda_build_folder,

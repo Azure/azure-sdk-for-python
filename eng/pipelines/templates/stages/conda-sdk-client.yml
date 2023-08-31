@@ -185,6 +185,14 @@ stages:
         - template: ../steps/build-conda-artifacts.yml
           parameters:
             Arguments: '--channel "$(Pipeline.Workspace)/mac_conda" "$(Pipeline.Workspace)/windows_conda" "$(Pipeline.Workspace)/linux_conda"'
+
+            # Temporarily removed azure-ai-ml due to mismatch of linxu requirements
+              # - name: azure-ai-ml
+              #   service: ml
+              #   in_batch: ${{ parameters.release_azure_ai_ml }}
+              #   checkout:
+              #   - package: azure-ai-ml
+              #     version: 1.7.2
             CondaArtifacts:
               - name: azure-core
                 common_root: azure
@@ -258,12 +266,6 @@ stages:
                 checkout:
                 - package: azure-ai-metricsadvisor
                   version: 1.0.0
-              - name: azure-ai-ml
-                service: ml
-                in_batch: ${{ parameters.release_azure_ai_ml }}
-                checkout:
-                - package: azure-ai-ml
-                  version: 1.7.2
               - name: azure-ai-textanalytics
                 service: textanalytics
                 in_batch: ${{ parameters.release_azure_ai_textanalytics }}
