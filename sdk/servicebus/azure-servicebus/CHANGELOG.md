@@ -8,7 +8,7 @@
 
 ### Bugs Fixed
 
-- Fixed a bug where `prefetch_count` was not being passed through correctly and caused messages to not return correctly when peeking messages in `RECEIVE_AND_DELETE` mode ([#31712](https://github.com/Azure/azure-sdk-for-python/issues/31712)).
+- Fixed a bug where `prefetch_count` was not being passed through correctly and caused messages to not return correctly when in `RECEIVE_AND_DELETE` mode ([#31712](https://github.com/Azure/azure-sdk-for-python/issues/31712), [#31711](https://github.com/Azure/azure-sdk-for-python/issues/31711)).
 
 ### Other Changes
 

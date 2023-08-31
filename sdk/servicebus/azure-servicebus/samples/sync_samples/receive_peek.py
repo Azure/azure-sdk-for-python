@@ -10,7 +10,7 @@ Example to show browsing messages currently pending in the queue.
 """
 
 import os
-from azure.servicebus import ServiceBusClient
+from azure.servicebus import ServiceBusClient, ServiceBusReceiveMode
 
 CONNECTION_STR = os.environ['SERVICEBUS_CONNECTION_STR']
 QUEUE_NAME = os.environ["SERVICEBUS_QUEUE_NAME"]
