@@ -818,6 +818,7 @@ def load_feature_store_entity(
     return load_common(FeatureStoreEntity, source, relative_origin, **kwargs)
 
 
+@experimental
 def load_workspace_hub(
     source: Union[str, PathLike, IO[AnyStr]],
     *,
