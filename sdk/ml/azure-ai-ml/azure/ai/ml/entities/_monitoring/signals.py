@@ -290,8 +290,6 @@ class MonitoringSignal(RestTranslatableMixin):
 
     This class should not be instantiated directly. Instead, use one of its subclasses.
 
-    :keyword target_dataset: The target dataset definition for monitor input.
-    :paramtype target_dataset: ~azure.ai.ml.entities.TargetDataset
     :keyword baseline_dataset: The baseline dataset definition for monitor input.
     :paramtype baseline_dataset: ~azure.ai.ml.entities.MonitorInputData
     :keyword metric_thresholds: The metric thresholds for the signal.
@@ -353,8 +351,6 @@ class DataSignal(MonitoringSignal):
 
     This class should not be instantiated directly. Instead, use one of its subclasses.
 
-    :keyword target_dataset: The target dataset definition for monitor input.
-    :paramtype target_dataset: ~azure.ai.ml.entities.TargetDataset
     :keyword baseline_dataset: The baseline dataset definition for monitor input.
     :paramtype baseline_dataset: ~azure.ai.ml.entities.MonitorInputData
     :keyword features: The features to include in the signal.
@@ -484,8 +480,6 @@ class PredictionDriftSignal(MonitoringSignal):
 
     :keyword baseline_dataset: The dataset to calculate drift against.
     :paramtype baseline_dataset: ~azure.ai.ml.entities.MonitorInputData
-    :keyword target_dataset: The dataset for which drift will be calculated.
-    :paramtype target_dataset: ~azure.ai.ml.entities.TargetDataset
     :keyword metric_thresholds: A list of metrics to calculate and their associated thresholds
     :paramtype metric_thresholds: list[~azure.ai.ml.entities.PredictionDriftMetricThreshold]
     :keyword alert_enabled: Whether or not to enable alerts for the signal. Defaults to True.
@@ -547,8 +541,6 @@ class DataQualitySignal(DataSignal):
     """Data quality signal
 
 
-    :keyword target_dataset: The data for which quality will be calculated.
-    :paramtype target_dataset: ~azure.ai.ml.entities.TargetDataset
     :keyword baseline_dataset: The data to calculate quality against.
     :paramtype baseline_dataset: ~azure.ai.ml.entities.MonitorInputData
     :keyword metric_thresholds: A list of metrics to calculate and their
@@ -631,8 +623,6 @@ class ModelSignal(MonitoringSignal):
 
     This class should not be instantiated directly. Instead, use one of its subclasses.
 
-    :keyword target_dataset: The data for which quality will be calculated.
-    :paramtype target_dataset: ~azure.ai.ml.entities.TargetDataset
     :keyword baseline_dataset: The data to calculate quality against.
     :paramtype baseline_dataset: ~azure.ai.ml.entities.MonitorInputData
     :keyword metric_thresholds: A list of metrics to calculate and their
@@ -714,8 +704,6 @@ class FADProductionData(RestTranslatableMixin):
 class FeatureAttributionDriftSignal(RestTranslatableMixin):
     """Feature attribution drift signal
 
-    :keyword target_dataset: The data for which drift will be calculated.
-    :paramtype target_dataset: ~azure.ai.ml.entities.TargetDataset
     :keyword baseline_dataset: The data to calculate drift against.
     :paramtype baseline_dataset: ~azure.ai.ml.entities.MonitorInputData
     :keyword metric_thresholds: A list of metrics to calculate and their
@@ -771,8 +759,6 @@ class FeatureAttributionDriftSignal(RestTranslatableMixin):
 class ModelPerformanceSignal(ModelSignal):
     """Model performance signal.
 
-    :keyword target_dataset: The data for which performance will be calculated.
-    :paramtype target_dataset: ~azure.ai.ml.entities.TargetDataset
     :keyword baseline_dataset: The data to calculate performance against.
     :paramtype baseline_dataset: ~azure.ai.ml.entities.MonitorInputData
     :keyword metric_thresholds: A list of metrics to calculate and their
