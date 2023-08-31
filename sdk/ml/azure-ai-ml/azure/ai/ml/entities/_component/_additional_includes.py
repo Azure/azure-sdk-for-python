@@ -410,8 +410,8 @@ class AdditionalIncludes:
                 yield self.resolved_code_path.absolute()
             return
 
-        # for now, upload path of a code asset will include the parent folder name of the code path
-        # for example, if code path is /mnt/c/code-a, upload path will be xxx/code-a
+        # for now, upload path of a code asset will include the folder name of the code path (name of folder or
+        # parent name of file). For example, if code path is /mnt/c/code-a, upload path will be xxx/code-a
         # which means that the upload path will change every time as we will merge additional includes into a temp
         # folder. To avoid this, we will copy the code path to a child folder with a fixed name under the temp folder,
         # then the child folder will be used in upload path.

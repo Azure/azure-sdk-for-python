@@ -144,7 +144,7 @@ class TestFlowComponent:
             del input_port_dict["text"]
 
         component.flow = None
-        component.column_mappings = None
+        component.column_mapping = None
         component.variant = None
         component.connections = None
         component.additional_includes = None
@@ -154,6 +154,29 @@ class TestFlowComponent:
         }
         assert component.environment_variables == {
             "AZURE_OPENAI_API_BASE": "${azure_open_ai_connection.api_base}",
+        }
+
+        component._fill_back_code_value("/subscriptions/xxx/resourceGroups/xxx/workspaces/xxx/codes/xxx/versions/1")
+
+        assert component._to_rest_object().as_dict() == {
+            "name": "basic",
+            "properties": {
+                "component_spec": {
+                    "_source": "YAML.COMPONENT",
+                    "code": "/subscriptions/xxx/resourceGroups/xxx/workspaces/xxx/codes/xxx/versions/1",
+                    "environment_variables": {"AZURE_OPENAI_API_BASE": "${azure_open_ai_connection.api_base}"},
+                    "flow_file_name": "flow.dag.yaml",
+                    "is_deterministic": True,
+                    "name": "basic",
+                    "type": "promptflow_parallel",
+                    "version": "1",
+                },
+                "is_anonymous": False,
+                "is_archived": False,
+                # note that this won't take effect actually
+                "properties": {"client_component_hash": "0eec0297-5f6d-e333-780d-c76871ad9c57"},
+                "tags": {},
+            },
         }
 
         flow_node = component(

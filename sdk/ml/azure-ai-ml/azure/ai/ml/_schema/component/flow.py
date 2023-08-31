@@ -9,24 +9,15 @@ from marshmallow import fields
 from azure.ai.ml._schema import YamlFileSchema
 from azure.ai.ml._schema.component import ComponentSchema
 from azure.ai.ml._schema.component.component import ComponentNameStr
-from azure.ai.ml._schema.core.fields import (
-    ArmVersionedStr,
-    LocalPathField,
-    NestedField,
-    StringTransformedEnum,
-    UnionField,
-)
+from azure.ai.ml._schema.core.fields import ArmVersionedStr, LocalPathField, StringTransformedEnum, UnionField
 from azure.ai.ml._schema.core.schema_meta import PatchedSchemaMeta
 from azure.ai.ml.constants._common import AzureMLResourceType
 from azure.ai.ml.constants._component import NodeType
 
 
-class ConnectionSchema(metaclass=PatchedSchemaMeta):
-    connection = fields.Str()
-    deployment_name = fields.Str()
+class _ComponentMetadataSchema(metaclass=PatchedSchemaMeta):
+    """Schema to recognize metadata of a flow as a component."""
 
-
-class ComponentMetadataSchema(metaclass=PatchedSchemaMeta):
     name = ComponentNameStr()
     version = fields.Str()
     display_name = fields.Str()
@@ -35,7 +26,9 @@ class ComponentMetadataSchema(metaclass=PatchedSchemaMeta):
     is_deterministic = fields.Bool()
 
 
-class FlowComponentArgumentSchema(metaclass=PatchedSchemaMeta):
+class _FlowAttributesSchema(metaclass=PatchedSchemaMeta):
+    """Schema to recognize attributes of a flow."""
+
     variant = fields.Str()
     column_mappings = fields.Dict(
         fields.Str(),
@@ -43,7 +36,10 @@ class FlowComponentArgumentSchema(metaclass=PatchedSchemaMeta):
     )
     connections = fields.Dict(
         keys=fields.Str(),
-        values=NestedField(ConnectionSchema),
+        values=fields.Dict(
+            keys=fields.Str(),
+            values=fields.Str(),
+        ),
     )
     environment_variables = fields.Dict(
         fields.Str(),
@@ -51,20 +47,24 @@ class FlowComponentArgumentSchema(metaclass=PatchedSchemaMeta):
     )
 
 
-class FlowSchema(YamlFileSchema, ComponentMetadataSchema):
+class FlowSchema(YamlFileSchema, _ComponentMetadataSchema):
+    """Schema for flow.dag.yaml file."""
+
     additional_includes = fields.List(LocalPathField())
 
 
-class RunSchema(YamlFileSchema, ComponentMetadataSchema, FlowComponentArgumentSchema):
+class RunSchema(YamlFileSchema, _ComponentMetadataSchema, _FlowAttributesSchema):
+    """Schema for run.yaml file."""
+
     flow = LocalPathField(required=True)
 
 
-class FlowComponentSchema(ComponentSchema, FlowComponentArgumentSchema):
-    """
-    FlowSchema and FlowRunSchema are used to load flow while FlowComponentSchema is used to dump flow.
-    """
+class FlowComponentSchema(ComponentSchema, _FlowAttributesSchema):
+    """FlowSchema and FlowRunSchema are used to load flow while FlowComponentSchema is used to dump flow."""
 
     class Meta:
+        """Override this to exclude inputs & outputs as component doesn't have them."""
+
         exclude = ["inputs", "outputs"]  # component doesn't have inputs & outputs
 
     # TODO: name should be required?

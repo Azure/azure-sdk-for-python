@@ -165,11 +165,11 @@ class FlowComponentOutputDict(_FlowComponentPortDict):
 
 
 class FlowComponent(Component, AdditionalIncludesMixin):
-    """Command component version, used to define a Command Component or Job.
+    """Flow component version, used to define a Flow Component or Job.
 
-    :keyword name: The name of the Command job or component.
+    :keyword name: The name of the Flow job or component.
     :type name: Optional[str]
-    :keyword version: The version of the Command job or component.
+    :keyword version: The version of the Flow job or component.
     :type version: Optional[str]
     :keyword description: The description of the component. Defaults to None.
     :type description: Optional[str]
@@ -180,16 +180,16 @@ class FlowComponent(Component, AdditionalIncludesMixin):
     :keyword flow: The path to the flow directory or flow definition file. Defaults to None and base path of this
         component will be used as flow directory.
     :type flow: Optional[Union[str, Path]]
-    :keyword column_mappings: The column mappings for the flow. Defaults to None.
-    :type column_mappings: Optional[dict[str, str]]
+    :keyword column_mappings: The column mapping for the flow. Defaults to None.
+    :type column_mapping: Optional[dict[str, str]]
     :keyword variant: The variant of the flow. Defaults to None.
     :type variant: Optional[str]
     :keyword connections: The connections for the flow. Defaults to None.
     :type connections: Optional[dict[str, dict[str, str]]]
     :keyword environment_variables: The environment variables for the flow. Defaults to None.
     :type environment_variables: Optional[dict[str, str]]
-    :keyword is_deterministic: Specifies whether the Command will return the same output given the same input.
-        Defaults to True. When True, if a Command (component) is deterministic and has been run before in the
+    :keyword is_deterministic: Specifies whether the Flow will return the same output given the same input.
+        Defaults to True. When True, if a Flow (component) is deterministic and has been run before in the
         current workspace with the same input and settings, it will reuse results from a previous submitted job
         when used as a node or step in a pipeline. In that scenario, no compute resources will be used.
     :type is_deterministic: Optional[bool]
@@ -197,7 +197,7 @@ class FlowComponent(Component, AdditionalIncludesMixin):
     :type additional_includes: Optional[list[str]]
     :keyword properties: The job property dictionary. Defaults to None.
     :type properties: Optional[dict[str, str]]
-    :raises ~azure.ai.ml.exceptions.ValidationException: Raised if CommandComponent cannot be successfully validated.
+    :raises ~azure.ai.ml.exceptions.ValidationException: Raised if FlowComponent cannot be successfully validated.
         Details will be provided in the error message.
     """
 
@@ -210,7 +210,7 @@ class FlowComponent(Component, AdditionalIncludesMixin):
         tags: Optional[Dict] = None,
         display_name: Optional[str] = None,
         flow: Optional[Union[str, Path]] = None,
-        column_mappings: Optional[Dict[str, str]] = None,
+        column_mapping: Optional[Dict[str, str]] = None,
         variant: Optional[str] = None,
         connections: Optional[Dict[str, Dict[str, str]]] = None,
         environment_variables: Optional[Dict[str, str]] = None,
@@ -241,7 +241,7 @@ class FlowComponent(Component, AdditionalIncludesMixin):
             **kwargs,
         )
         self._flow = flow
-        self._column_mappings = column_mappings or {}
+        self._column_mapping = column_mapping or {}
         self._variant = variant
         self._connections = connections or {}
         self._environment_variables = environment_variables or {}
@@ -286,22 +286,22 @@ class FlowComponent(Component, AdditionalIncludesMixin):
         self._flow = value
 
     @property
-    def column_mappings(self) -> Dict[str, str]:
-        """The column mappings for the flow. Defaults to None.
+    def column_mapping(self) -> Dict[str, str]:
+        """The column mapping for the flow. Defaults to None.
 
         :rtype: Dict[str, str]
         """
-        return self._column_mappings
+        return self._column_mapping
 
-    @column_mappings.setter
-    def column_mappings(self, value: Optional[Dict[str, str]]) -> None:
+    @column_mapping.setter
+    def column_mapping(self, value: Optional[Dict[str, str]]) -> None:
         """
-        The column mappings for the flow. Defaults to None.
+        The column mapping for the flow. Defaults to None.
 
-        :param value: The column mappings for the flow.
+        :param value: The column mapping for the flow.
         :type value: Optional[Dict[str, str]]
         """
-        self._column_mappings = value or {}
+        self._column_mapping = value or {}
 
     @property
     def variant(self) -> Optional[str]:
@@ -390,7 +390,30 @@ class FlowComponent(Component, AdditionalIncludesMixin):
             return super()._func(**kwargs)  # pylint: disable=not-callable
 
     @classmethod
-    def _get_flow_definition(cls, base_path, *, flow=None, source_path=None) -> Tuple[Path, str]:
+    def _get_flow_definition(
+        cls,
+        base_path,
+        *,
+        flow: Optional[Union[str, os.PathLike]] = None,
+        source_path: Optional[Union[str, os.PathLike]] = None,
+    ) -> Tuple[Path, str]:
+        """
+        Get the path to the flow directory and the file name of the flow dag yaml file.
+        If flow is not specified, we will assume that the source_path is the path to the flow dag yaml file.
+        If flow is specified, it can be either a path to the flow dag yaml file or a path to the flow directory.
+        If flow is a path to the flow directory, we will assume that the flow dag yaml file is named flow.dag.yaml.
+
+        :param base_path: The base path of the flow component.
+        :type base_path: Path
+        :keyword flow: The path to the flow directory or flow definition file. Defaults to None and base path of this
+            component will be used as flow directory.
+        :type flow: Optional[Union[str, Path]]
+        :keyword source_path: The source path of the flow component, should be path to the flow dag yaml file
+            if specified.
+        :type source_path: Optional[Union[str, os.PathLike]]
+        :return: The path to the flow directory and the file name of the flow dag yaml file.
+        :rtype: Tuple[Path, str]
+        """
         flow_file_name = "flow.dag.yaml"
 
         if flow is None and source_path is None:
@@ -488,9 +511,9 @@ class FlowComponent(Component, AdditionalIncludesMixin):
             if not (Path(code.path) / ".promptflow" / "flow.tools.json").is_file():
                 raise ValidationException(
                     message="Flow component must be created with a ./promptflow/flow.tools.json, "
-                    "please run `pf flow build` to generate it or skip it in your ignore file.",
+                    "please run `pf flow validate` to generate it or skip it in your ignore file.",
                     no_personal_data_message="Flow component must be created with a ./promptflow/flow.tools.json, "
-                    "please run `pf flow build` to generate it or skip it in your ignore file.",
+                    "please run `pf flow validate` to generate it or skip it in your ignore file.",
                     target=self._get_validation_error_target(),
                     error_category=ErrorCategory.USER_ERROR,
                 )

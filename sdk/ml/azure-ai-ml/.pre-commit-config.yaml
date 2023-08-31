@@ -11,7 +11,7 @@ repos:
   - id: interrogate
     types_or: [python]
     args: [--ignore-init-method, --ignore-private, --ignore-semiprivate, --ignore-magic]
-    exclude: ^(sdk/ml/azure-ai-ml/tests/|sdk/ml/azure-ai-ml/azure/ai/ml/_schema/|sdk/ml/azure-ai-ml/samples/|sdk/ml/azure-ai-ml/scripts/|sdk/ml/azure-ai-ml/azure/ai/ml/_restclient|sdk/ml/azure-ai-ml/setup.py)
+    exclude: ^(sdk/ml/azure-ai-ml/tests/|sdk/ml/azure-ai-ml/samples/|sdk/ml/azure-ai-ml/scripts/|sdk/ml/azure-ai-ml/azure/ai/ml/_restclient|sdk/ml/azure-ai-ml/setup.py)
     # exclude defined here because exclude in pyproject.toml is not being respected
 - repo: https://github.com/streetsidesoftware/cspell-cli
   rev: v6.31.0
