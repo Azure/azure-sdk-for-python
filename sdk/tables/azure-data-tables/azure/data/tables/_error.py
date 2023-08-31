@@ -130,17 +130,20 @@ def _decode_error(response, error_message=None, error_type=None, **kwargs):  # p
                     error_message = error_body["odata.error"][info]["value"]
                 else:
                     additional_data[info.tag] = info.text
-        elif isinstance(error_body, str):
-            error_message = error_body
         else:
             if error_body:
-                for info in error_body.iter():
-                    if info.tag.lower().find("code") != -1:
-                        error_code = info.text
-                    elif info.tag.lower().find("message") != -1:
-                        error_message = info.text
-                    else:
-                        additional_data[info.tag] = info.text
+                try:
+                    # Attemp to parse from XML element
+                    for info in error_body.iter():
+                        if info.tag.lower().find("code") != -1:
+                            error_code = info.text
+                        elif info.tag.lower().find("message") != -1:
+                            error_message = info.text
+                        else:
+                            additional_data[info.tag] = info.text
+                except:
+                    # Response body wasn't XML, give up trying to parse
+                    error_message = str(error_body)
     except DecodeError:
         pass
 
