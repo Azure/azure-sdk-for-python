@@ -11,7 +11,7 @@ import os.path
 import typing
 from os import PathLike
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, Iterable, List, Mapping, Optional, Tuple, Union
 
 import msrest
 import pydash
@@ -358,13 +358,22 @@ class SchemaValidatableMixin:
         return _ValidationResultBuilder.success()
 
     @classmethod
-    def _create_schema_for_validation_with_base_path(cls, base_path=None) -> PathAwareSchema:
+    def _create_schema_for_validation_with_base_path(
+        cls, base_path: Optional[Union[str, PathLike]] = None
+    ) -> PathAwareSchema:
         # Note that, although context can be passed here, nested.schema will be initialized only once
         # base_path works well because it's fixed after loaded
         return cls._create_schema_for_validation(context={BASE_PATH_CONTEXT_KEY: base_path or Path.cwd()})
 
     @classmethod
-    def _load_with_schema(cls, data, *, context=None, raise_original_exception=False, **kwargs):
+    def _load_with_schema(
+        cls,
+        data: Union[Mapping[str, typing.Any], Iterable[Mapping[str, typing.Any]]],
+        *,
+        context: Optional[Dict] = None,
+        raise_original_exception: Optional[bool] = False,
+        **kwargs: Any,
+    ) -> Any:
         if context is None:
             schema = cls._create_schema_for_validation_with_base_path()
         else:
@@ -388,7 +397,7 @@ class SchemaValidatableMixin:
 
     @classmethod
     # pylint: disable-next=docstring-missing-param
-    def _create_schema_for_validation(cls, context) -> PathAwareSchema:
+    def _create_schema_for_validation(cls, context: Dict) -> PathAwareSchema:
         """Create a schema of the resource with specific context. Should be overridden by subclass.
 
         :return: The schema of the resource. PathAwareSchema will add marshmallow.Schema as super class on runtime.
