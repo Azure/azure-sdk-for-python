@@ -121,7 +121,7 @@ class CodegenTestPR:
     def __init__(self):
         self.issue_link = os.getenv('ISSUE_LINK', '')
         self.pipeline_link = os.getenv('PIPELINE_LINK', '')
-        self.bot_token = os.getenv('GIT_TOKEN')
+        self.bot_token = os.getenv('BOT_TOKEN')
         self.spec_readme = os.getenv('SPEC_README', '')
         self.spec_repo = os.getenv('SPEC_REPO', '')
         self.conn_str = os.getenv('STORAGE_CONN_STR')

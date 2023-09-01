@@ -245,10 +245,17 @@ def _decode_parts_helper(
     for index, raw_response in enumerate(message.get_payload()):
         content_type = raw_response.get_content_type()
         if content_type == "application/http":
+            try:
+                matching_request = requests[index]
+            except IndexError:
+                # If we have no matching request, this could mean that we had an empty batch.
+                # The request object is only needed to get the HTTP METHOD and to store in the response object,
+                # so let's just use the parent request so allow the rest of the deserialization to continue.
+                matching_request = response.request
             responses.append(
                 deserialize_response(
                     raw_response.get_payload(decode=True),
-                    requests[index],
+                    matching_request,
                     http_response_type=http_response_type,
                 )
             )
