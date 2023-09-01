@@ -37,7 +37,7 @@ if TYPE_CHECKING:
 try:
     import urllib.parse as urlparse
 except ImportError:
-    import urlparse
+    import urlparse # type: ignore[no-redef]
 
 
 def extract_rule_data_template(feed_class, convert, feed_element):
@@ -342,7 +342,7 @@ def _validate_topic_subscription_and_rule_types(
 
 def _normalize_entity_path_to_full_path_if_needed(
     fully_qualified_namespace: str, entity_path: Optional[str] = None, 
-) -> str:
+) -> Optional[str]:
     if not entity_path:
         return entity_path
     parsed = urlparse.urlparse(entity_path)

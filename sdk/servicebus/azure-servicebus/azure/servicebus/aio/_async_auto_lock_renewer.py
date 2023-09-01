@@ -7,7 +7,7 @@
 import asyncio
 import logging
 import datetime
-from typing import Optional, Iterable, Any, Union, Callable, Awaitable, List
+from typing import Optional, Iterable, Any, Union, Callable, Awaitable, List, cast
 
 from .._common.message import ServiceBusReceivedMessage
 from ._servicebus_session_async import ServiceBusSession
@@ -143,9 +143,11 @@ class AutoLockRenewer:
                     )
                     try:
                         # Renewable is a session
+                        renewable = cast(ServiceBusSession, renewable)
                         await renewable.renew_lock()
                     except AttributeError:
                         # Renewable is a message
+                        renewable = cast(ServiceBusReceivedMessage, renewable)
                         await receiver.renew_message_lock(renewable)
                 await asyncio.sleep(self._sleep_time)
             clean_shutdown = not renewable._lock_expired

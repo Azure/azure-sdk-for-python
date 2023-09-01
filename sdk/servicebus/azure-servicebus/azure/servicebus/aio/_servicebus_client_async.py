@@ -31,6 +31,7 @@ from ._async_utils import create_authentication
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
+    from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
 
 NextAvailableSessionType = Literal[ServiceBusSessionFilter.NEXT_AVAILABLE]
 
@@ -98,7 +99,7 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
         self,
         fully_qualified_namespace: str,
         credential: Union[
-            "AsyncTokenCredential", AzureSasCredential, AzureNamedKeyCredential
+            "AsyncTokenCredential", "AzureSasCredential", "AzureNamedKeyCredential"
         ],
         *,
         retry_total: int = 3,
@@ -220,9 +221,9 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
             conn_str
         )
         if token and token_expiry:
-            credential = ServiceBusSASTokenCredential(token, token_expiry)
+            credential: ServiceBusSASTokenCredential = ServiceBusSASTokenCredential(token, token_expiry)
         elif policy and key:
-            credential = ServiceBusSharedKeyCredential(policy, key)
+            credential: ServiceBusSharedKeyCredential = ServiceBusSharedKeyCredential(policy, key) # type: ignore[no-redef]
         return cls(
             fully_qualified_namespace=host,
             entity_name=entity_in_conn_str or kwargs.pop("entity_name", None),

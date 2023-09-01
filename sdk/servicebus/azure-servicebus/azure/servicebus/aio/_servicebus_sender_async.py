@@ -113,7 +113,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         self,
         fully_qualified_namespace: str,
         credential: Union[
-            "AsyncTokenCredential", AzureSasCredential, AzureNamedKeyCredential
+            "AsyncTokenCredential", "AzureSasCredential", "AzureNamedKeyCredential"
         ],
         *,
         queue_name: Optional[str] = None,
@@ -395,27 +395,31 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         except TypeError:   # continue if ServiceBusMessage
             pass
 
-        obj_message: Union[ServiceBusMessage, ServiceBusMessageBatch]
+        obj_message: Union[ServiceBusMessage, List[ServiceBusMessage]]
+        batch_message: ServiceBusMessageBatch
         if isinstance(message, ServiceBusMessageBatch):
             # If AmqpTransports are not the same, create batch with correct BatchMessage.
             if self._amqp_transport is not message._amqp_transport: # pylint: disable=protected-access
                 # pylint: disable=protected-access
                 batch = await self.create_message_batch()
                 batch._from_list(message._messages)
-                obj_message = batch
+                batch_message = batch
             else:
-                obj_message = message
+                batch_message = message
         else:
             obj_message = transform_outbound_messages(
                 message, ServiceBusMessage, self._amqp_transport.to_outgoing_amqp_message
             )
             try:
                 batch = await self.create_message_batch()
+                # Cast -- checking for list type is done in the try block.
+                obj_message = cast(List[ServiceBusMessage], obj_message)
                 batch._from_list(obj_message)  # pylint: disable=protected-access
-                obj_message = batch
+                batch_message = batch
             except TypeError:  # Message was not a list or generator.
                 # pylint: disable=protected-access
-                obj_message._message = trace_message(
+                obj_message = cast(ServiceBusMessage, obj_message)
+                batch_message._message = trace_message(
                     obj_message._message,
                     amqp_transport=self._amqp_transport,
                     additional_attributes={
@@ -426,17 +430,17 @@ class ServiceBusSender(BaseHandler, SenderMixin):
 
         trace_links = []
         if is_tracing_enabled():
-            if isinstance(obj_message, ServiceBusMessageBatch):
-                trace_links = get_span_links_from_batch(obj_message)
+            if isinstance(batch_message, ServiceBusMessageBatch):
+                trace_links = get_span_links_from_batch(batch_message)
             else:
-                link = get_span_link_from_message(obj_message._message)  # pylint: disable=protected-access
+                link = get_span_link_from_message(batch_message._message)  # pylint: disable=protected-access
                 if link:
                     trace_links.append(link)
 
         with send_trace_context_manager(self, links=trace_links):
             await self._do_retryable_operation(
                 self._send,
-                message=obj_message,
+                message=batch_message,
                 timeout=timeout,
                 operation_requires_timeout=True,
                 require_last_exception=True,

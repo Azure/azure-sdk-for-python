@@ -201,6 +201,6 @@ class ServiceBusSession(BaseSession):
             timeout=timeout,
         )
         expiry_timestamp = expiry[MGMT_RESPONSE_RECEIVER_EXPIRATION] / 1000.0
-        self._locked_until_utc = utc_from_timestamp(expiry_timestamp)
+        self._locked_until_utc: datetime.datetime = utc_from_timestamp(expiry_timestamp)
 
         return self._locked_until_utc

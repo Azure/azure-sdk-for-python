@@ -103,7 +103,7 @@ class AutoLockRenewer(object):  # pylint:disable=too-many-instance-attributes
         self._dispatcher_timeout = 5  # the idle time that dispatcher should exit if there's no activity
         self._max_lock_renewal_duration = max_lock_renewal_duration
         self._on_lock_renew_failure = on_lock_renew_failure
-        self._renew_tasks = queue.Queue()
+        self._renew_tasks: queue.Queue = queue.Queue()
         self._infer_max_workers_time = 1
 
     def __enter__(self):

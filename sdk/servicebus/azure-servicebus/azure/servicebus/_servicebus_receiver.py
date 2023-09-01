@@ -12,6 +12,7 @@ import datetime
 import warnings
 from enum import Enum
 from typing import Any, List, Optional, Dict, Iterator, Union, TYPE_CHECKING, cast
+from uuid import UUID
 
 from .exceptions import MessageLockLostError
 from ._base_handler import BaseHandler
@@ -554,7 +555,7 @@ class ServiceBusReceiver(
         )
 
 
-    def _renew_locks(self, *lock_tokens: str, **kwargs: Any) -> Any:
+    def _renew_locks(self, *lock_tokens: Union[UUID, str], **kwargs: Any) -> Any:
         timeout = kwargs.pop("timeout", None)
         message = {MGMT_REQUEST_LOCK_TOKENS: self._amqp_transport.AMQP_ARRAY_VALUE(lock_tokens)}
         return self._mgmt_request_response_with_retry(
@@ -569,7 +570,7 @@ class ServiceBusReceiver(
         super(ServiceBusReceiver, self)._close_handler()
 
     @property
-    def session(self) -> ServiceBusSession:
+    def session(self) -> Optional[ServiceBusSession]:
         """
         Get the ServiceBusSession object linked with the receiver. Session is only available to session-enabled
         entities, it would return None if called on a non-sessionful receiver.
@@ -990,6 +991,8 @@ class ServiceBusReceiver(
         message._expiry = utc_from_timestamp(
             expiry[MGMT_RESPONSE_MESSAGE_EXPIRATION][0] / 1000.0
         )
+        # casting - mypy won't allow type declaration on non-self properties
+        message._expiry = cast(datetime.datetime, message._expiry)
 
         return message._expiry
 

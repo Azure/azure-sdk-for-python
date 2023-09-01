@@ -14,7 +14,7 @@ from azure.core.pipeline.policies import RetryMode
 try:
     from urllib.parse import urlparse
 except ImportError:
-    from urlparse import urlparse
+    from urlparse import urlparse # type: ignore[no-redef]
 
 from ._pyamqp.utils import generate_sas_token
 from ._transport._pyamqp_transport import PyamqpTransport
@@ -284,6 +284,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
             amqp_transport=self._amqp_transport,
         )
         self._shutdown = threading.Event()
+        self._session = None
 
     @classmethod
     def _convert_connection_string_to_kwargs(

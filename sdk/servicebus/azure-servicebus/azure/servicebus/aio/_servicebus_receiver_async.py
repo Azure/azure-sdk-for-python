@@ -13,6 +13,7 @@ import time
 import warnings
 from enum import Enum
 from typing import Any, List, Optional, AsyncIterator, Union, TYPE_CHECKING, cast
+from uuid import UUID
 
 from ..exceptions import MessageLockLostError
 from ._servicebus_session_async import ServiceBusSession
@@ -141,7 +142,9 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
     def __init__(
         self,
         fully_qualified_namespace: str,
-        credential: Union["AsyncTokenCredential", "AzureSasCredential", "AzureNamedKeyCredential"],
+        credential: Union[
+            "AsyncTokenCredential","AzureSasCredential", "AzureNamedKeyCredential"
+        ],
         *,
         queue_name: Optional[str] = None,
         topic_name: Optional[str] = None,
@@ -531,7 +534,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             REQUEST_RESPONSE_UPDATE_DISPOSTION_OPERATION, message, mgmt_handlers.default
         )
 
-    async def _renew_locks(self, *lock_tokens: str, timeout: Optional[float] = None) -> Any:
+    async def _renew_locks(self, *lock_tokens: Union[UUID, str], timeout: Optional[float] = None) -> Any:
         message = {MGMT_REQUEST_LOCK_TOKENS: self._amqp_transport.AMQP_ARRAY_VALUE(lock_tokens)}
         return await self._mgmt_request_response_with_retry(
             REQUEST_RESPONSE_RENEWLOCK_OPERATION,
@@ -545,7 +548,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         await super(ServiceBusReceiver, self)._close_handler()
 
     @property
-    def session(self) -> ServiceBusSession:
+    def session(self) -> Optional[ServiceBusSession]:
         """
         Get the ServiceBusSession object linked with the receiver. Session is only available to session-enabled
         entities, it would return None if called on a non-sessionful receiver.
@@ -952,6 +955,8 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
 
         expiry = await self._renew_locks(token, timeout=timeout)
         message._expiry = utc_from_timestamp(expiry[MGMT_RESPONSE_MESSAGE_EXPIRATION][0] / 1000.0)
+        # Casting because won't allow type to be assigned to non-self attribute
+        message._expiry = cast(datetime.datetime, message._expiry)
 
         return message._expiry
 

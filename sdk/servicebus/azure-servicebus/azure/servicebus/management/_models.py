@@ -164,7 +164,7 @@ class NamespaceProperties(DictMixin):
         )
         return namespace_properties
 
-    def _to_internal_entity(self):
+    def _to_internal_entity(self) -> InternalNamespaceProperties:
         internal_entity = InternalNamespaceProperties()
         internal_entity.alias = self.alias
         internal_entity.created_time = self.created_at_utc
@@ -1144,7 +1144,7 @@ class CorrelationRuleFilter(object):
 
         return correlation_filter
 
-    def _to_internal_entity(self) -> InternalCorrelationFilter:
+    def _to_internal_entity(self) -> "InternalCorrelationFilter":
         internal_entity = InternalCorrelationFilter()
         internal_entity.correlation_id = self.correlation_id
 
@@ -1209,7 +1209,7 @@ class SqlRuleFilter(object):
         )
         return sql_rule_filter
 
-    def _to_internal_entity(self) -> InternalSqlFilter:
+    def _to_internal_entity(self) -> "InternalSqlFilter":
         internal_entity = InternalSqlFilter(sql_expression=self.sql_expression)
         internal_entity.parameters = (
             [
@@ -1229,7 +1229,7 @@ class TrueRuleFilter(SqlRuleFilter):
     def __init__(self) -> None:
         super(TrueRuleFilter, self).__init__("1=1", None)
 
-    def _to_internal_entity(self):
+    def _to_internal_entity(self) -> "InternalTrueFilter":
         internal_entity = InternalTrueFilter()
         internal_entity.sql_expression = self.sql_expression
         internal_entity.requires_preprocessing = True
@@ -1244,7 +1244,7 @@ class FalseRuleFilter(SqlRuleFilter):
     def __init__(self) -> None:
         super(FalseRuleFilter, self).__init__("1>1", None)
 
-    def _to_internal_entity(self):
+    def _to_internal_entity(self) -> "InternalFalseFilter":
         internal_entity = InternalFalseFilter()
         internal_entity.sql_expression = self.sql_expression
         internal_entity.requires_preprocessing = True
@@ -1284,7 +1284,7 @@ class SqlRuleAction(object):
         )
         return sql_rule_action
 
-    def _to_internal_entity(self):
+    def _to_internal_entity(self) -> "InternalSqlRuleAction":
         internal_entity = InternalSqlRuleAction(sql_expression=self.sql_expression)
         internal_entity.parameters = (
             [KeyValue(key=key, value=value) for key, value in self.parameters.items()]

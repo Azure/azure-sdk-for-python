@@ -99,7 +99,6 @@ from ...management._utils import (
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
-
 class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
     """Use this client to create, update, list, and delete resources of a ServiceBus namespace.
 
