@@ -88,6 +88,7 @@
     "sdk/ml/azure-ai-ml/tests/**",
     "sdk/ml/azure-ai-ml/swagger/**",
     "sdk/ml/azure-ai-ml/NOTICE.txt",
+    "sdk/ml/azure-ai-ml/.pre-commit-config.yaml",
     "sdk/loadtestservice/azure-developer-loadtesting/**",
     "sdk/translation/azure-ai-translation-text/azure/ai/translation/text/_serialization.py",
     "sdk/translation/azure-ai-translation-text/tests/test_break_sentence.py",
