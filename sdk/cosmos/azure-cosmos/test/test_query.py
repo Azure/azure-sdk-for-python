@@ -408,7 +408,16 @@ class QueryTest(unittest.TestCase):
         values = []
         for i in range(10):
             document_definition = {'pk': i, 'id': 'myId' + str(uuid.uuid4())}
+            document_definition['value'] = i // 3
             values.append(created_collection.create_item(body=document_definition)['pk'])
+
+        self._validate_distinct_offset_limit(created_collection=created_collection,
+                                             query='SELECT DISTINCT c["value"] from c ORDER BY c.pk OFFSET 0 LIMIT 2',
+                                             results=[0, 1])
+
+        self._validate_distinct_offset_limit(created_collection=created_collection,
+                                             query='SELECT DISTINCT c["value"] from c ORDER BY c.pk OFFSET 2 LIMIT 2',
+                                             results=[2, 3])
 
         self._validate_offset_limit(created_collection=created_collection,
                                     query='SELECT * from c ORDER BY c.pk OFFSET 0 LIMIT 5',
@@ -432,6 +441,13 @@ class QueryTest(unittest.TestCase):
             enable_cross_partition_query=True
         )
         self.assertListEqual(list(map(lambda doc: doc['pk'], list(query_iterable))), results)
+
+    def _validate_distinct_offset_limit(self, created_collection, query, results):
+        query_iterable = created_collection.query_items(
+            query=query,
+            enable_cross_partition_query=True
+        )
+        self.assertListEqual(list(map(lambda doc: doc['value'], list(query_iterable))), results)
 
     # TODO: Look into distinct query behavior to re-enable this test when possible
     @unittest.skip("intermittent failures in the pipeline")
