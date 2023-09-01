@@ -1491,7 +1491,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`_.
         :return: An iterator of responses, one for each blob in order
-        :rtype: Iterator[~azure.core.rest.HttpResponse]
+        :rtype: Iterator[~azure.core.pipeline.transport.HttpResponse]
 
         .. admonition:: Example:
 
@@ -1664,7 +1664,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             This is a boolean param which defaults to True. When this is set, an exception
             is raised even if there is a single operation failure.
         :return: An iterator of responses, one for each blob in order
-        :rtype: Iterator[~azure.core.rest.HttpResponse]
+        :rtype: Iterator[~azure.core.pipeline.transport.HttpResponse]
         """
         reqs, options = self._generate_set_tiers_options(standard_blob_tier, *blobs, **kwargs)
 
@@ -1717,7 +1717,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             This is a boolean param which defaults to True. When this is set, an exception
             is raised even if there is a single operation failure.
         :return: An iterator of responses, one for each blob in order
-        :rtype: iterator[~azure.core.rest.HttpResponse]
+        :rtype: Iterator[~azure.core.pipeline.transport.HttpResponse]
         """
         reqs, options = self._generate_set_tiers_options(premium_page_blob_tier, *blobs, **kwargs)
 
