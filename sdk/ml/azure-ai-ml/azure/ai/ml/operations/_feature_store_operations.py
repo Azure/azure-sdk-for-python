@@ -218,9 +218,6 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
             workspace=feature_store,
             update_dependent_resources=update_dependent_resources,
             get_callback=get_callback,
-            offline_store_target=feature_store.offline_store.target if feature_store.offline_store else None,
-            online_store_target=feature_store.online_store.target if feature_store.online_store else None,
-            materialization_identity=feature_store.materialization_identity,
             grant_materialization_permissions=grant_materialization_permissions,
             **kwargs,
         )

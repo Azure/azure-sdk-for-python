@@ -527,17 +527,18 @@ class WorkspaceOperationsBase:
             offline_store_target = kwargs.get("offline_store_target", None)
             online_store_target = kwargs.get("online_store_target", None)
 
+            _set_val(param["set_up_feature_store"], "true")
+
             from azure.ai.ml._utils._arm_id_utils import AzureResourceId
 
-            _set_val(param["set_up_feature_store"], "true")
             if offline_store_target is not None:
                 arm_id = AzureResourceId(offline_store_target)
-                _set_val(param["offline_store_connection_target"], offline_store_target)
+                _set_val(param["offline_store_target"], offline_store_target)
                 _set_val(param["offline_store_resource_group_name"], arm_id.resource_group_name)
                 _set_val(param["offline_store_subscription_id"], arm_id.subscription_id)
             if online_store_target is not None:
                 arm_id = AzureResourceId(online_store_target)
-                _set_val(param["online_store_connection_target"], online_store_target)
+                _set_val(param["online_store_target"], online_store_target)
                 _set_val(param["online_store_resource_group_name"], arm_id.resource_group_name)
                 _set_val(param["online_store_subscription_id"], arm_id.subscription_id)
 
@@ -602,11 +603,20 @@ class WorkspaceOperationsBase:
 
         offline_store_target = kwargs.get("offline_store_target", None)
         online_store_target = kwargs.get("online_store_target", None)
+
+        from azure.ai.ml._utils._arm_id_utils import AzureResourceId
+
         if offline_store_target:
+            arm_id = AzureResourceId(offline_store_target)
             _set_val(param["offline_store_target"], offline_store_target)
+            _set_val(param["offline_store_resource_group_name"], arm_id.resource_group_name)
+            _set_val(param["offline_store_subscription_id"], arm_id.subscription_id)
 
         if online_store_target:
+            arm_id = AzureResourceId(offline_store_target)
             _set_val(param["online_store_target"], online_store_target)
+            _set_val(param["online_store_resource_group_name"], arm_id.resource_group_name)
+            _set_val(param["online_store_subscription_id"], arm_id.subscription_id)
 
         resources_being_deployed[materialization_identity_id] = (ArmConstants.USER_ASSIGNED_IDENTITIES, None)
         return template, param, resources_being_deployed
