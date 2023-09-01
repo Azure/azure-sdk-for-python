@@ -935,8 +935,8 @@
             "name": "offline-store-role-assignment",
             "apiVersion": "2020-06-01",
             "dependsOn": [
-                "[resourceId(subscription().subscriptionId, parameters('resourceGroupName'), 'Microsoft.Storage/storageAccounts/blobServices/containers', parameters('storageAccountName'), 'default', variables('offlineStoreContainerName'))]",
-                "[resourceId(subscription().subscriptionId, parameters('resourceGroupName'), 'Microsoft.ManagedIdentity/userAssignedIdentities', parameters('materialization_identity_name'))]"
+                "[resourceId('Microsoft.Storage/storageAccounts/blobServices/containers', parameters('storageAccountName'), 'default', variables('offlineStoreContainerName'))]",
+                "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', parameters('materialization_identity_name'))]"
             ],
             "resourceGroup": "[If(empty(parameters('offline_store_resource_group_name')), resourceGroup().name, parameters('offline_store_resource_group_name'))]",
             "subscriptionId": "[If(empty(parameters('offline_store_subscription_id')), subscription().subscriptionId, parameters('offline_store_subscription_id'))]",
@@ -967,7 +967,7 @@
             "name": "online-store-role-assignment",
             "apiVersion": "2020-06-01",
             "dependsOn": [
-                "[resourceId(subscription().subscriptionId, parameters('resourceGroupName'), 'Microsoft.ManagedIdentity/userAssignedIdentities', parameters('materialization_identity_name'))]"
+                "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', parameters('materialization_identity_name'))]"
             ],
             "resourceGroup": "[If(empty(parameters('online_store_resource_group_name')), resourceGroup().name, parameters('online_store_resource_group_name'))]",
             "subscriptionId": "[If(empty(parameters('online_store_subscription_id')), subscription().subscriptionId, parameters('online_store_subscription_id'))]",
