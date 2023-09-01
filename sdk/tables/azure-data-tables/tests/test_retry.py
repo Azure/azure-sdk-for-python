@@ -4,6 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 import pytest
+import time
 
 from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy, ResponseCallback
 
@@ -13,7 +14,6 @@ from azure.core.exceptions import (
     AzureError,
     ServiceResponseError,
     ServiceRequestError,
-    ResourceNotFoundError,
 )
 from azure.core.pipeline.policies import RetryMode
 from azure.core.pipeline.transport import RequestsTransport
@@ -205,6 +205,7 @@ class TestStorageRetry(AzureRecordedTestCase, TableTestCase):
     def test_failover_and_retry_on_secondary(self, tables_storage_account_name, tables_primary_storage_account_key):
         url = self.account_url(tables_storage_account_name, "table")
         table_name = self.get_resource_name("mytable")
+        entity = {"PartitionKey": "foo", "RowKey": "bar"}
 
         # secondary endpoint only works on READ operations: get, list, query.
         # retry request type in frozenset({'PUT', 'HEAD', 'TRACE', 'OPTIONS', 'DELETE', 'GET'})
@@ -229,11 +230,8 @@ class TestStorageRetry(AzureRecordedTestCase, TableTestCase):
             transport=FailoverRetryTransport(),
         ) as client:
             client.create_table()
-            import time
-
             time.sleep(10)
             # add the entity then run get_entity() again
-            entity = {"PartitionKey": "foo", "RowKey": "bar"}
             client.create_entity(entity)
             time.sleep(10)
             client.get_entity(
@@ -275,5 +273,40 @@ class TestStorageRetry(AzureRecordedTestCase, TableTestCase):
             # clean up
             client.delete_table()
 
+    @tables_decorator
+    @recorded_by_proxy
+    def test_failover_and_retry_on_primary(self, tables_storage_account_name, tables_primary_storage_account_key):
+        url = self.account_url(tables_storage_account_name, "table")
+        table_name = self.get_resource_name("mytable")
+        entity = {"PartitionKey": "foo", "RowKey": "bar"}
+
+        # prepare
+        with TableClient(url, table_name, credential=tables_primary_storage_account_key) as client:
+            client.create_table()
+            time.sleep(10)
+            client.create_entity(entity)
+            time.sleep(10)
+
+        with TableClient(
+            url,
+            table_name,
+            credential=tables_primary_storage_account_key,
+            retry_total=5,
+            location_mode=LocationMode.SECONDARY,
+            transport=SecondaryFailoverRetryTransport(),
+        ) as client:
+            client.get_entity(
+                "foo", "bar", failover=ServiceRequestError("Attempting to force failover")
+            )  # GET, retried on secondary endpoint
+            
+            entities = client.list_entities(
+                failover=ServiceRequestError("Attempting to force failover")
+            )  # GET, retried on secondary endpoint
+            for e in entities:
+                pass
+
+        # clean up
+        with TableClient(url, table_name, credential=tables_primary_storage_account_key) as client:
+            client.delete_table()
 
 # ------------------------------------------------------------------------------
