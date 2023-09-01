@@ -122,6 +122,12 @@ class _PipelineNodeFactory:
             load_from_rest_object_func=DataTransferExport._from_rest_object,
             nested_schema=None,
         )
+        self.register_type(
+            _type=NodeType.FLOW_PARALLEL,
+            create_instance_func=lambda: Parallel.__new__(Parallel),
+            load_from_rest_object_func=None,
+            nested_schema=None,
+        )
 
     @classmethod
     def _get_func(cls, _type: str, funcs: Dict[str, Callable]) -> Callable:
