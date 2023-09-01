@@ -31,7 +31,7 @@ from enum import Enum
 import logging
 import os
 import sys
-from typing import Type, Optional, Callable, cast, Union, Dict, Any, TypeVar, Tuple, Generic, Mapping, List
+from typing import Type, Optional, Callable, Union, Dict, Any, TypeVar, Tuple, Generic, Mapping, List
 from azure.core.tracing import AbstractSpan
 
 ValidInputType = TypeVar("ValidInputType")

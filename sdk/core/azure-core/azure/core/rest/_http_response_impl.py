@@ -24,7 +24,7 @@
 #
 # --------------------------------------------------------------------------
 from json import loads
-from typing import cast, Any, Optional, Iterator, MutableMapping, Callable
+from typing import Any, Optional, Iterator, MutableMapping, Callable
 from http.client import HTTPResponse as _HTTPResponse
 from ._helpers import (
     get_charset_encoding,
