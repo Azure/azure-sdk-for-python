@@ -1610,7 +1610,6 @@ class TestDSLPipeline(AzureRecordedTestCase):
         job = client.jobs.create_or_update(pipeline, force_rerun=True)
         assert job.settings.force_rerun is True
 
-    @pytest.mark.skip("TODO (2370129): Recording fails due to 'Cannot find pipeline run' error")
     def test_parallel_components_with_tabular_input(self, client: MLClient) -> None:
         components_dir = tests_root_dir / "test_configs/dsl_pipeline/parallel_component_with_tabular_input"
 
@@ -1635,17 +1634,10 @@ class TestDSLPipeline(AzureRecordedTestCase):
         # submit pipeline job
         pipeline_job = assert_job_cancel(pipeline, client, experiment_name="parallel_in_pipeline")
 
-        # check required fields in job dict
-        job_dict = pipeline_job._to_dict()
-        expected_keys = ["status", "properties", "creation_context"]
-        for k in expected_keys:
-            assert k in job_dict.keys(), f"failed to get {k} in {job_dict}"
-
         # original job did not change
         assert_job_input_output_types(pipeline_job)
         assert pipeline_job.settings.default_compute == "cpu-cluster"
 
-    @pytest.mark.skip("TODO (2370129): Recording fails due to 'Cannot find pipeline run' error")
     def test_parallel_components_with_tabular_input_bind_to_literal_input(self, client: MLClient) -> None:
         components_dir = tests_root_dir / "test_configs/dsl_pipeline/parallel_component_with_tabular_input"
 
@@ -1676,15 +1668,34 @@ class TestDSLPipeline(AzureRecordedTestCase):
 
         # check required fields in job dict
         job_dict = pipeline_job._to_dict()
-        expected_keys = ["status", "properties", "creation_context"]
-        for k in expected_keys:
-            assert k in job_dict.keys(), f"failed to get {k} in {job_dict}"
+        assert job_dict["jobs"] == {
+            "batch_inference_node": {
+                "component": "azureml:azureml_anonymous:3b254aac-ff7a-4e5b-b2de-c1649ddd7483",
+                "error_threshold": "${{parent.inputs.literal_input}}",
+                "input_data": "${{inputs.job_data_path}}",
+                "inputs": {
+                    "job_data_path": {"path": "${{parent.inputs.job_data_path}}"},
+                    "score_model": {"path": "${{parent.inputs.score_model}}"},
+                },
+                "max_concurrency_per_instance": "${{parent.inputs.literal_input}}",
+                "mini_batch_error_threshold": "${{parent.inputs.literal_input}}",
+                "mini_batch_size": "5",
+                "task": {
+                    "append_row_to": "${{outputs.job_out_path}}",
+                    "code": "azureml:/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/codes/369eaa78-d186-4348-a5ad-c28e544366db/versions/1",
+                    "entry_script": "tabular_run_with_model.py",
+                    "environment": "azureml:/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/environments/CliV2AnonymousEnvironment/versions/749b0b89c72d185f6585c92cc6c1ea8b",
+                    "program_arguments": "--model ${{inputs.score_model}}",
+                    "type": "run_function",
+                },
+                "type": "parallel",
+            }
+        }
 
         # original job did not change
         assert_job_input_output_types(pipeline_job)
         assert pipeline_job.settings.default_compute == "cpu-cluster"
 
-    @pytest.mark.skip("TODO (2370129): Recording fails due to 'Cannot find pipeline run' error")
     def test_parallel_components_with_file_input(self, client: MLClient) -> None:
         components_dir = tests_root_dir / "test_configs/dsl_pipeline/parallel_component_with_file_input"
 
@@ -1705,17 +1716,11 @@ class TestDSLPipeline(AzureRecordedTestCase):
         )
         # submit pipeline job
         pipeline_job = assert_job_cancel(pipeline, client, experiment_name="parallel_in_pipeline")
-        # check required fields in job dict
-        job_dict = pipeline_job._to_dict()
-        expected_keys = ["status", "properties", "creation_context"]
-        for k in expected_keys:
-            assert k in job_dict.keys(), f"failed to get {k} in {job_dict}"
 
         # original job did not change
         assert_job_input_output_types(pipeline_job)
         assert pipeline_job.settings.default_compute == "cpu-cluster"
 
-    @pytest.mark.skip("TODO (2370129): Recording fails due to 'Cannot find pipeline run' error")
     def test_parallel_run_function(self, client: MLClient):
         data = Input(
             type=AssetTypes.MLTABLE,
@@ -1775,7 +1780,6 @@ class TestDSLPipeline(AzureRecordedTestCase):
         assert_job_input_output_types(pipeline_job)
         assert pipeline_job.settings.default_compute == "cpu-cluster"
 
-    @pytest.mark.skip("TODO (2370129): Recording fails due to 'Cannot find pipeline run' error")
     def test_parallel_run_function_run_settings_bind_to_literal_input(self, client: MLClient):
         data = Input(
             type=AssetTypes.MLTABLE,
