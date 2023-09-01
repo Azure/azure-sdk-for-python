@@ -204,7 +204,9 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
     ) -> AsyncIterator["ServiceBusReceivedMessage"]:
         # pylint: disable=protected-access
         # to allow receiving with iterator, if link_credit is 0, set to 1
-        link_credit_updated = PyamqpTransport.update_receiver_link_credit(receiver, 1)
+        update_link_credit = receiver._handler._link.link_credit == 0
+        if update_link_credit:
+            receiver._handler._link.link_credit = 1
         while True:
             try:
                 # pylint: disable=protected-access
@@ -213,8 +215,8 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
                 with receive_trace_context_manager(receiver, links=links):
                     yield message
             except StopAsyncIteration:
-                if link_credit_updated:
-                    receiver._handler._link.link_credit = link_credit_updated
+                if update_link_credit:
+                    receiver._handler._link.link_credit = 1
                 break
 
     @staticmethod

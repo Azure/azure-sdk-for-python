@@ -626,7 +626,9 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         """
         # pylint: disable=protected-access
         # to allow receiving with iterator, if link_credit is 0, set to 1
-        link_credit_updated = PyamqpTransport.update_receiver_link_credit(receiver, 1)
+        update_link_credit = receiver._handler._link.link_credit == 0
+        if update_link_credit:
+            receiver._handler._link.link_credit = 1
         while True:
             try:
                 # pylint: disable=protected-access
@@ -635,34 +637,10 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
                 with receive_trace_context_manager(receiver, links=links):
                     yield message
             except StopIteration:
-                # reset original link_credit if needed
-                if link_credit_updated:
-                    receiver._handler._link.link_credit = link_credit_updated
+                # reset to 0 link_credit if needed
+                if update_link_credit:
+                    receiver._handler._link.link_credit = 0
                 break
-
-    @staticmethod
-    def update_receiver_link_credit(
-        receiver: "ServiceBusReceiver",
-        link_credit: int
-    ) -> Optional[int]:
-        """
-        If prefetch is turned off (prefetch_count = 0) on the receiver, link credit >= 1 must be
-        issued to receive messages. This method resets receiver link credit and returns the previous value.
-        If prefetch was already turned on, returns None.
-
-        :param ~azure.servicebus.ServiceBusReceiver receiver: The receiver object to reset link credit on.
-        :param int link_credit: The new link credit value to set to.
-        :return: The original link credit if prefetch was off.
-         None, if prefetch was already 1 or more.
-        :rtype: None or int
-        """
-        # pylint:disable=protected-access
-        update_link_credit = receiver._handler._link.link_credit == 0
-        if update_link_credit:
-            receiver_link_credit = receiver._handler._link.link_credit
-            receiver._handler._link.link_credit = link_credit
-            return receiver_link_credit
-        return None
 
     @staticmethod
     def iter_next(
