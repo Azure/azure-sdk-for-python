@@ -21,6 +21,7 @@ from ._models import (
     ResourceTypes,
     AccountSasPermissions,
     TransactionOperation,
+    LocationMode,
 )
 from ._version import VERSION
 
@@ -49,4 +50,5 @@ __all__ = [
     "TableTransactionError",
     "TransactionOperation",
     "RequestTooLargeError",
+    "LocationMode",
 ]
