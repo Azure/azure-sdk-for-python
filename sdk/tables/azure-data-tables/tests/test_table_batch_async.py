@@ -5,17 +5,18 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-
-import pytest
-
 from datetime import datetime, timedelta
 import os
-
+import pytest
+from functools import partial
+from requests import Response
 from devtools_testutils import AzureRecordedTestCase, set_custom_default_matcher
 from devtools_testutils.aio import recorded_by_proxy_async
 
 from azure.core import MatchConditions
+from azure.core.pipeline import PipelineRequest, PipelineResponse
 from azure.core.pipeline.policies import AsyncHTTPPolicy
+from azure.core.pipeline.transport._requests_asyncio import AsyncioRequestsTransportResponse
 from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
 from azure.core.exceptions import ResourceNotFoundError, ClientAuthenticationError, HttpResponseError
 from azure.data.tables.aio import TableServiceClient, TableClient
@@ -32,7 +33,7 @@ from azure.data.tables import (
     TableErrorCode,
 )
 from azure.data.tables._constants import DEFAULT_STORAGE_ENDPOINT_SUFFIX
-
+from azure.identity.aio import DefaultAzureCredential
 from _shared.asynctestcase import AsyncTableTestCase
 from async_preparers import tables_decorator_async
 
@@ -1178,3 +1179,44 @@ class TestBatchUnitTestsAsync(AsyncTableTestCase):
         assert table.scheme == "http"
         with pytest.raises(RequestCorrect):
             await table.submit_transaction(self.batch)
+
+    @pytest.mark.asyncio
+    async def test_decode_string_body(self):
+        async def patch_run(request: PipelineRequest, **kwargs) -> PipelineResponse:
+            response = Response()
+            response.status_code = 405
+            response._content = b"<!DOCTYPE html><html><head><title>UnsupportedHttpVerb</title></head><body><h1>The resource doesn't support specified Http Verb.</h1><p><ul><li>HttpStatusCode: 405</li><li>ErrorCode: UnsupportedHttpVerb</li><li>RequestId : 98adf858-a01e-0071-2580-bfe811000000</li><li>TimeStamp : 2023-07-26T05:19:26.9825582Z</li></ul></p></body></html>"
+            response.url = "https://<storage>.z6.web.core.windows.net/$batch"
+            response.headers = {"x-ms-error-code": "UnsupportedHttpVerb", "content-type": "text/html"}
+            return PipelineResponse(
+                http_request=None,
+                http_response=AsyncioRequestsTransportResponse(
+                    requests_response=response,
+                    request=None,
+                ),
+                context=None,
+            )
+
+        client = TableClient(
+            endpoint=self.account_url(self.tables_storage_account_name, "table"),
+            credential=DefaultAzureCredential(
+                name=self.tables_storage_account_name, key=self.tables_primary_storage_account_key
+            ),
+            table_name="syncenabled",
+        )
+        client._client._client._pipeline.run = partial(patch_run)
+        with pytest.raises(HttpResponseError) as ex:
+            await client.submit_transaction(
+                [
+                    (
+                        "upsert",
+                        {
+                            "PartitionKey": "test-partition",
+                            "RowKey": "test-key",
+                            "name": "test-name",
+                        },
+                    )
+                ]
+            )
+        assert ex.value.status_code == 405
+        assert ex.value.error_code == "UnsupportedHttpVerb"
