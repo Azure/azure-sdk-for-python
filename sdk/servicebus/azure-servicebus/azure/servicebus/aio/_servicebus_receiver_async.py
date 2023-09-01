@@ -234,12 +234,17 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
     def __aiter__(self):
         return self._iter_contextual_wrapper()
 
-    async def _inner_anext(self, wait_time=None):
+    async def _inner_anext(
+        self,
+        wait_time: Optional[int] = None,
+        *,
+        link_credit: Optional[int] = None
+    ) -> "ServiceBusReceivedMessage":
         # We do this weird wrapping such that an imperitive next() call, and a generator-based iter both trace sanely.
         self._check_live()
         while True:
             try:
-                return await self._do_retryable_operation(self._iter_next, wait_time=wait_time)
+                return await self._do_retryable_operation(self._iter_next, wait_time=wait_time, link_credit=link_credit)
             except StopAsyncIteration:
                 self._message_iter = None
                 raise
@@ -347,14 +352,14 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             # pylint: disable=protected-access
             self._amqp_transport.set_handler_message_received_async(self)
 
-    async def _open(self):
+    async def _open(self, *, link_credit: Optional[int] = None) -> None:
         # pylint: disable=protected-access
         if self._running:
             return
         if self._handler and not self._handler._shutdown:
             await self._handler.close_async()
         auth = None if self._connection else (await create_authentication(self))
-        self._create_handler(auth)
+        self._create_handler(auth, link_credit=link_credit)
         try:
             await self._handler.open_async(connection=self._connection)
             while not await self._handler.client_ready_async():

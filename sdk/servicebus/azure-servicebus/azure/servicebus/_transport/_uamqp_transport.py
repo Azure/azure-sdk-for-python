@@ -764,10 +764,13 @@ try:
                         except AttributeError:  # Handler may be disposed already.
                             pass
 
-        # wait_time used by pyamqp
+        # wait_time, link_credit used by pyamqp
         @staticmethod
         def iter_next(
-            receiver: "ServiceBusReceiver", wait_time: Optional[int] = None
+            receiver: "ServiceBusReceiver",
+            wait_time: Optional[int] = None,
+            *,
+            link_credit: Optional[int] = None
         ) -> "ServiceBusReceivedMessage":  # pylint: disable=unused-argument
             # pylint: disable=protected-access
             try:

@@ -4,11 +4,10 @@
 # --------------------------------------------------------------------------------------------
 from __future__ import annotations
 from abc import ABC, abstractmethod
-from typing import Tuple, Union, TYPE_CHECKING, Any, Dict, Callable, Optional
+from typing import Tuple, Union, TYPE_CHECKING, Any, Dict, Callable
 from typing_extensions import Literal
 
 if TYPE_CHECKING:
-    from .._servicebus_receiver_async import ServiceBusReceiver
     try:
         from uamqp import types as uamqp_types
     except ImportError:

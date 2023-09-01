@@ -237,12 +237,17 @@ class ServiceBusReceiver(
     def __iter__(self):
         return self._iter_contextual_wrapper()
 
-    def _inner_next(self, wait_time=None):
+    def _inner_next(
+        self,
+        wait_time: Optional[int] = None,
+        *,
+        link_credit: Optional[int] = None
+    ) -> "ServiceBusReceivedMessage":
         # We do this weird wrapping such that an imperitive next() call, and a generator-based iter both trace sanely.
         self._check_live()
         while True:
             try:
-                return self._do_retryable_operation(self._iter_next, wait_time=wait_time)
+                return self._do_retryable_operation(self._iter_next, wait_time=wait_time, link_credit=link_credit)
             except StopIteration:
                 self._message_iter = None
                 raise
@@ -322,7 +327,12 @@ class ServiceBusReceiver(
             )
         return cls(**constructor_args)
 
-    def _create_handler(self, auth: Union["pyamqp_JWTTokenAuth", "uamqp_JWTTokenAuth"]) -> None:
+    def _create_handler(
+        self,
+        auth: Union["pyamqp_JWTTokenAuth", "uamqp_JWTTokenAuth"],
+        *,
+        link_credit: Optional[int] = None   # passed in if handler opened in receive iterator and prefetch is 0
+    ) -> None:
 
         self._handler = self._amqp_transport.create_receive_client(
             receiver=self,
@@ -336,8 +346,8 @@ class ServiceBusReceiver(
             timeout=self._max_wait_time * self._amqp_transport.TIMEOUT_FACTOR
             if self._max_wait_time
             else 0,
-            link_credit=self._prefetch_count,
-            # If prefetch is 0, then keep_alive coroutine frequently listens on the connection for messages and
+            link_credit=link_credit if link_credit else self._prefetch_count,
+            # If prefetch is "off", then keep_alive coroutine frequently listens on the connection for messages and
             # releases right away, since no "prefetched" messages should be in the internal buffer.
             keep_alive_interval=self._config.keep_alive
             if self._prefetch_count != 0
@@ -357,7 +367,7 @@ class ServiceBusReceiver(
                 self
             )
 
-    def _open(self):
+    def _open(self, *, link_credit: Optional[int] = None) -> None:
         # pylint: disable=protected-access
         if self._running:
             return
@@ -365,7 +375,7 @@ class ServiceBusReceiver(
             self._handler.close()
 
         auth = None if self._connection else create_authentication(self)
-        self._create_handler(auth)
+        self._create_handler(auth, link_credit=link_credit)
         try:
             self._handler.open(connection=self._connection)
             while not self._handler.client_ready():

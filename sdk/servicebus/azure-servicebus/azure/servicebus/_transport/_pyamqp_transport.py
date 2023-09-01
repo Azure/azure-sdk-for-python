@@ -625,14 +625,22 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         :rtype: iterator[~azure.servicebus.ServiceBusReceivedMessage]
         """
         # pylint: disable=protected-access
-        # to allow receiving with iterator, if link_credit is 0, set to 1
-        update_link_credit = receiver._handler._link.link_credit == 0
-        if update_link_credit:
-            receiver._handler._link.link_credit = 1
+        link_credit = None
+        try:    # handler was opened already
+            # to allow receiving with iterator, if ReceiveLink.link_credit is 0, set to 1
+            update_link_credit = receiver._handler._link.link_credit == 0
+            if update_link_credit:
+                receiver._handler._link.link_credit = 1
+        except AttributeError:  # handler still needs to be opened
+            # pass in link_credit > 0 when creating handler to allow receiving with iterator
+            update_link_credit = receiver._prefetch_count == 0
+            if update_link_credit:
+                link_credit = 1
+
         while True:
             try:
                 # pylint: disable=protected-access
-                message = receiver._inner_next(wait_time=max_wait_time)
+                message = receiver._inner_next(wait_time=max_wait_time, link_credit=link_credit)
                 links = get_receive_links(message)
                 with receive_trace_context_manager(receiver, links=links):
                     yield message
@@ -644,7 +652,10 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
 
     @staticmethod
     def iter_next(
-        receiver: "ServiceBusReceiver", wait_time: Optional[int] = None
+        receiver: "ServiceBusReceiver",
+        wait_time: Optional[int] = None,
+        *,
+        link_credit: Optional[int] = None
     ) -> "ServiceBusReceivedMessage":
         """
         Used to iterate through received messages.
@@ -656,7 +667,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         # pylint: disable=protected-access
         try:
             receiver._receive_context.set()
-            receiver._open()
+            receiver._open(link_credit=link_credit)
             if not receiver._message_iter or wait_time:
                 receiver._message_iter = receiver._handler.receive_messages_iter(timeout=wait_time)
             pyamqp_message = next(
