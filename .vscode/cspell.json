@@ -505,6 +505,12 @@
       ]
     },
     {
+      "filename": "sdk/tables/azure-data-tables/CHANGELOG.md",
+      "words": [
+        "kldtz"
+      ]
+    },
+    {
       "filename": "sdk/tables/test-resources.json",
       "words": [
         "mmspecial"
