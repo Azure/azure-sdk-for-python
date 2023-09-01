@@ -12,10 +12,12 @@ from azure.core.exceptions import (
     ResourceExistsError,
     AzureError,
     ServiceResponseError,
+    ServiceRequestError,
+    ResourceNotFoundError,
 )
 from azure.core.pipeline.policies import RetryMode
 from azure.core.pipeline.transport import RequestsTransport
-from azure.data.tables import TableServiceClient
+from azure.data.tables import TableServiceClient, TableClient, LocationMode
 
 from _shared.testcase import TableTestCase
 
@@ -36,6 +38,52 @@ class RetryRequestTransport(RequestsTransport):
         assert "read_timeout" in kwargs.keys()
         timeout_error = ReadTimeout("Read timed out", request=request)
         raise ServiceResponseError(timeout_error, error=timeout_error)
+
+
+class FailoverRetryTransport(RequestsTransport):
+    """Transport to attempt to raise on first request but allow requests to secondary location.
+    To simulate a failover scenario, pass the exception into the `failover` keyword arg on the method
+    you wish to test, e.g.:
+    client.get_entity("foo", "bar", failover=ServiceRequestError("Attempting to force failover"))
+    """
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._already_raised = False
+
+    def send(self, request, **kwargs):
+        # secondary endpoint is not allowed on DELETE operations
+        if request.method != "DELETE":
+            if self._already_raised:
+                assert "-secondary" in request.url
+            else:
+                assert "-secondary" not in request.url
+        failover_on_error = kwargs.pop("failover", None)
+        if failover_on_error and not self._already_raised:
+            self._already_raised = True
+            raise failover_on_error
+
+        self._already_raised = False
+        return super().send(request, **kwargs)
+
+
+class SecondaryFailoverRetryTransport(RequestsTransport):
+    """Transport to attempt to raise on first request on secondary endpoint."""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._already_raised = False
+
+    def send(self, request, **kwargs):
+        # doesn't retry on primary
+        assert "-secondary" in request.url
+        failover_on_error = kwargs.pop("failover", None)
+        if failover_on_error and not self._already_raised:
+            self._already_raised = True
+            raise failover_on_error
+
+        self._already_raised = False
+        return super().send(request, **kwargs)
 
 
 # --Test Class -----------------------------------------------------------------
@@ -151,6 +199,81 @@ class TestStorageRetry(AzureRecordedTestCase, TableTestCase):
         finally:
             self.ts.delete_table(new_table_name)
             self._tear_down()
+
+    @tables_decorator
+    @recorded_by_proxy
+    def test_failover_and_retry_on_secondary(self, tables_storage_account_name, tables_primary_storage_account_key):
+        url = self.account_url(tables_storage_account_name, "table")
+        table_name = self.get_resource_name("mytable")
+
+        # secondary endpoint only works on READ operations: get, list, query.
+        # retry request type in frozenset({'PUT', 'HEAD', 'TRACE', 'OPTIONS', 'DELETE', 'GET'})
+        with TableClient(
+            url,
+            table_name,
+            credential=tables_primary_storage_account_key,
+            retry_total=5,
+            retry_to_secondary=True,
+            transport=FailoverRetryTransport(),
+        ) as client:
+            with pytest.raises(ServiceRequestError) as ex:
+                client.create_table(failover=ServiceRequestError("Attempting to force failover"))  # POST, not retry
+            assert "Attempting to force failover" in str(ex.value)
+
+        with TableClient(
+            url,
+            table_name,
+            credential=tables_primary_storage_account_key,
+            retry_total=5,
+            retry_to_secondary=True,
+            transport=FailoverRetryTransport(),
+        ) as client:
+            client.create_table()
+            import time
+
+            time.sleep(10)
+            # add the entity then run get_entity() again
+            entity = {"PartitionKey": "foo", "RowKey": "bar"}
+            client.create_entity(entity)
+            time.sleep(10)
+            client.get_entity(
+                "foo", "bar", failover=ServiceRequestError("Attempting to force failover")
+            )  # GET, succeed when retry
+
+            with pytest.raises(ServiceRequestError) as ex:
+                client.upsert_entity(
+                    entity, failover=ServiceRequestError("Attempting to force failover")
+                )  # PATCH, not retry
+            assert "Attempting to force failover" in str(ex.value)
+
+        with TableClient(
+            url,
+            table_name,
+            credential=tables_primary_storage_account_key,
+            retry_total=5,
+            retry_to_secondary=True,
+            transport=FailoverRetryTransport(),
+        ) as client:
+            entities = client.list_entities(
+                failover=ServiceRequestError("Attempting to force failover")
+            )  # GET, succeed when retry
+            for e in entities:
+                pass
+
+        with TableClient(
+            url,
+            table_name,
+            credential=tables_primary_storage_account_key,
+            retry_total=5,
+            retry_to_secondary=True,
+            transport=FailoverRetryTransport(),
+        ) as client:
+            client.delete_entity(
+                entity, failover=ServiceRequestError("Attempting to force failover")
+            )  # DELETE, succeed when retry
+
+            # clean up
+            client.delete_table()
 
 
 # ------------------------------------------------------------------------------

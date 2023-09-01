@@ -255,49 +255,54 @@ class TestTableClient(AzureRecordedTestCase, TableTestCase):
             for e in entities:
                 pass
             client.delete_table()
-    
+
     @tables_decorator
     @recorded_by_proxy
     def test_table_client_location_mode(self, tables_storage_account_name, tables_primary_storage_account_key):
         url = self.account_url(tables_storage_account_name, "table")
         table_name = self.get_resource_name("mytable")
         entity = {"PartitionKey": "foo", "RowKey": "bar"}
-        
-        with TableClient(url, table_name, credential=tables_primary_storage_account_key, location_mode=LocationMode.SECONDARY) as client:
+
+        with TableClient(
+            url, table_name, credential=tables_primary_storage_account_key, location_mode=LocationMode.SECONDARY
+        ) as client:
             with pytest.raises(HttpResponseError) as ex:
                 client.create_table()
             assert "Write operations are not allowed." in str(ex.value)
-            
+
         with TableClient(url, table_name, credential=tables_primary_storage_account_key) as client:
             client.create_table()
             import time
+
             time.sleep(20)
-        
-        with TableClient(url, table_name, credential=tables_primary_storage_account_key, location_mode=LocationMode.SECONDARY) as client:    
+
+        with TableClient(
+            url, table_name, credential=tables_primary_storage_account_key, location_mode=LocationMode.SECONDARY
+        ) as client:
             with pytest.raises(HttpResponseError) as ex:
                 client.create_entity(entity)
             assert "Operation returned an invalid status 'Forbidden'" in str(ex.value)
-            
+
             with pytest.raises(HttpResponseError) as ex:
                 client.upsert_entity(entity)
             assert "Write operations are not allowed." in str(ex.value)
-            
+
             with pytest.raises(ResourceNotFoundError) as ex:
                 client.get_entity("foo", "bar")
             assert "The specified resource does not exist." in str(ex.value)
-            
+
             entities = client.list_entities()
             for e in entities:
                 pass
-            
+
             with pytest.raises(HttpResponseError) as ex:
                 client.delete_entity(entity)
             assert "Write operations are not allowed." in str(ex.value)
-            
+
             with pytest.raises(HttpResponseError) as ex:
                 client.delete_table()
             assert "Write operations are not allowed." in str(ex.value)
-    
+
         # clean up
         with TableClient(url, table_name, credential=tables_primary_storage_account_key) as client:
             client.delete_table()

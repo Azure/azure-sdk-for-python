@@ -175,24 +175,26 @@ class TestTableClientCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
                 batch.append(("upsert", {"PartitionKey": "A", "RowKey": "B"}))
                 await client.submit_transaction(batch)
             assert error.value.error_code == "ResourceNotFound"
-    
+
     @cosmos_decorator_async
     @recorded_by_proxy_async
     async def test_table_client_location_mode(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         url = self.account_url(tables_cosmos_account_name, "cosmos")
         table_name = self.get_resource_name("mytable")
         entity = {"PartitionKey": "foo", "RowKey": "bar"}
-        
-        async with TableClient(url, table_name, credential=tables_primary_cosmos_account_key, location_mode=LocationMode.SECONDARY) as client:
+
+        async with TableClient(
+            url, table_name, credential=tables_primary_cosmos_account_key, location_mode=LocationMode.SECONDARY
+        ) as client:
             await client.create_table()
             await client.create_entity(entity)
             await client.upsert_entity(entity)
             await client.get_entity("foo", "bar")
-            
+
             entities = client.list_entities()
             async for e in entities:
                 pass
-            
+
             await client.delete_entity(entity)
             await client.delete_table()
 
