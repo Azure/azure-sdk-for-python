@@ -42,7 +42,7 @@ from ._models import FilteredBlobPaged
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
     from azure.core.credentials_async import AsyncTokenCredential
-    from azure.core.rest import AsyncHttpResponse
+    from azure.core.pipeline.transport import AsyncHttpResponse  # pylint: disable=C4756
     from datetime import datetime
     from .._models import ( # pylint: disable=unused-import
         AccessPolicy,

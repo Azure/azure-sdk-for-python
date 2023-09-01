@@ -18,7 +18,7 @@ from azure.core import MatchConditions
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import Pipeline
-from azure.core.rest import HttpRequest
+from azure.core.pipeline.transport import HttpRequest
 from azure.core.tracing.decorator import distributed_trace
 from ._shared.base_client import StorageAccountHostsMixin, TransportWrapper, parse_connection_str, parse_query
 from ._shared.request_handlers import add_metadata_headers, serialize_iso
@@ -51,7 +51,7 @@ from ._serialize import get_modify_conditions, get_container_cpk_scope_info, get
 
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
-    from azure.core.rest import HttpResponse
+    from azure.core.pipeline.transport import HttpResponse  # pylint: disable=C4756
     from datetime import datetime
     from ._models import (  # pylint: disable=unused-import
         PublicAccess,
