@@ -1,5 +1,11 @@
 # uAMQP for Python (conda)
 
+## 2023.09.01
+
+### Packages included
+
+- uamqp-1.6.5
+
 ## 2023.06.01
 
 ### Packages included
