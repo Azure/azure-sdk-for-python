@@ -34,17 +34,6 @@
             "TestSamples": "false"
           }
         }
-      },
-      {
-        "CoverageConfig": {
-          "ubuntu2004_pypy310": {
-            "OSVmImage": "MMSUbuntu20.04",
-            "Pool": "azsdk-pool-mms-ubuntu-2004-general",
-            "PythonVersion": "pypy3.10",
-            "CoverageArg": "--disablecov",
-            "TestSamples": "false"
-          }
-        }
       }
     ]
 }
