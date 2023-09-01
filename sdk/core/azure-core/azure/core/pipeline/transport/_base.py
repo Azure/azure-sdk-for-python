@@ -52,6 +52,7 @@ from typing import (
 
 from http.client import HTTPResponse as _HTTPResponse
 
+from azure.core.pipeline import Pipeline
 from azure.core.exceptions import HttpResponseError
 from ...utils._utils import case_insensitive_dict
 from ...utils._pipeline_transport_rest_shared import (
@@ -68,7 +69,6 @@ from ...utils._pipeline_transport_rest_shared import (
 
 HTTPResponseType = TypeVar("HTTPResponseType")
 HTTPRequestType = TypeVar("HTTPRequestType")
-PipelineType = TypeVar("PipelineType")
 DataType = Union[bytes, str, Dict[str, Union[str, int]]]
 
 _LOGGER = logging.getLogger(__name__)
@@ -488,7 +488,7 @@ class _HttpResponseBase:
 
 
 class HttpResponse(_HttpResponseBase):  # pylint: disable=abstract-method
-    def stream_download(self, pipeline: PipelineType, **kwargs: Any) -> Iterator[bytes]:
+    def stream_download(self, pipeline: Pipeline[HttpRequest, "HttpResponse"], **kwargs: Any) -> Iterator[bytes]:
         """Generator for streaming request body data.
 
         Should be implemented by sub-classes if streaming download

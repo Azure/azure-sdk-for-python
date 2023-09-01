@@ -32,7 +32,6 @@ from typing import (
     TypeVar,
     Generic,
     Any,
-    TYPE_CHECKING,
     AsyncContextManager,
     Optional,
     Type,
@@ -40,10 +39,9 @@ from typing import (
 from types import TracebackType
 
 from ._base import _HttpResponseBase, _HttpClientTransportResponse, HttpRequest
+from .._base_async import AsyncPipeline
 from ...utils._pipeline_transport_rest_shared_async import _PartGenerator
 
-if TYPE_CHECKING:
-    from ..._pipeline_client_async import AsyncPipelineClient
 
 AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType")
 HTTPResponseType = TypeVar("HTTPResponseType")
@@ -76,7 +74,7 @@ class AsyncHttpResponse(_HttpResponseBase, AsyncContextManager["AsyncHttpRespons
     """
 
     def stream_download(
-        self, pipeline: AsyncPipelineClient[HttpRequest, "AsyncHttpResponse"], **kwargs: Any
+        self, pipeline: AsyncPipeline[HttpRequest, "AsyncHttpResponse"], **kwargs: Any
     ) -> AsyncIteratorType[bytes]:
         """Generator for streaming response body data.
 

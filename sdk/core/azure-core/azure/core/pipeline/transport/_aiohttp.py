@@ -23,6 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+from __future__ import annotations
 import sys
 from typing import Any, Optional, AsyncIterator as AsyncIteratorType, TYPE_CHECKING, overload, cast, Union, Type
 from types import TracebackType
@@ -56,6 +57,7 @@ if TYPE_CHECKING:
         HttpRequest as RestHttpRequest,
         AsyncHttpResponse as RestAsyncHttpResponse,
     )
+    from ...rest._aiohttp import RestAioHttpTransportResponse
 
 # Matching requests, because why not?
 CONTENT_CHUNK_SIZE = 10 * 1024
@@ -188,7 +190,7 @@ class AioHttpTransport(AsyncHttpTransport):
         """
 
     @overload
-    async def send(self, request: "RestHttpRequest", **config: Any) -> "RestAsyncHttpResponse":
+    async def send(self, request: RestHttpRequest, **config: Any) -> RestAsyncHttpResponse:
         """Send the `azure.core.rest` request using this HTTP sender.
 
         Will pre-load the body into memory to be available with a sync method.
@@ -206,8 +208,8 @@ class AioHttpTransport(AsyncHttpTransport):
         """
 
     async def send(
-        self, request: Union[HttpRequest, "RestHttpRequest"], **config
-    ) -> Union[AsyncHttpResponse, "RestAsyncHttpResponse"]:
+        self, request: Union[HttpRequest, RestHttpRequest], **config
+    ) -> Union[AsyncHttpResponse, RestAsyncHttpResponse]:
         """Send the request using this HTTP sender.
 
         Will pre-load the body into memory to be available with a sync method.
@@ -240,7 +242,7 @@ class AioHttpTransport(AsyncHttpTransport):
                     config["proxy"] = proxies[protocol]
                     break
 
-        response: Optional[Union[AsyncHttpResponse, "RestAsyncHttpResponse"]] = None
+        response: Optional[Union[AsyncHttpResponse, RestAsyncHttpResponse]] = None
         config["ssl"] = self._build_ssl_config(
             cert=config.pop("connection_cert", self.connection_config.cert),
             verify=config.pop("connection_verify", self.connection_config.verify),
@@ -262,7 +264,7 @@ class AioHttpTransport(AsyncHttpTransport):
                 data=self._get_request_data(request),
                 timeout=socket_timeout,
                 allow_redirects=False,
-                **config
+                **config,
             )
             if _is_rest(request):
                 from azure.core.rest._aiohttp import RestAioHttpTransportResponse
@@ -307,7 +309,33 @@ class AioHttpStreamDownloadGenerator(AsyncIterator):
         on the *content-encoding* header.
     """
 
-    def __init__(self, pipeline: AsyncPipeline, response: AsyncHttpResponse, *, decompress: bool = True) -> None:
+    @overload
+    def __init__(
+        self,
+        pipeline: AsyncPipeline[HttpRequest, AsyncHttpResponse],
+        response: AioHttpTransportResponse,
+        *,
+        decompress: bool = True,
+    ) -> None:
+        ...
+
+    @overload
+    def __init__(
+        self,
+        pipeline: AsyncPipeline[RestHttpRequest, RestAsyncHttpResponse],
+        response: RestAioHttpTransportResponse,
+        *,
+        decompress: bool = True,
+    ) -> None:
+        ...
+
+    def __init__(
+        self,
+        pipeline: AsyncPipeline,
+        response: Union[AioHttpTransportResponse, RestAioHttpTransportResponse],
+        *,
+        decompress: bool = True,
+    ) -> None:
         self.pipeline = pipeline
         self.request = response.request
         self.response = response
@@ -380,7 +408,7 @@ class AioHttpTransportResponse(AsyncHttpResponse):
         aiohttp_response: aiohttp.ClientResponse,
         block_size: Optional[int] = None,
         *,
-        decompress: bool = True
+        decompress: bool = True,
     ) -> None:
         super(AioHttpTransportResponse, self).__init__(request, aiohttp_response, block_size=block_size)
         # https://aiohttp.readthedocs.io/en/stable/client_reference.html#aiohttp.ClientResponse
@@ -462,7 +490,9 @@ class AioHttpTransportResponse(AsyncHttpResponse):
         except aiohttp.client_exceptions.ClientError as err:
             raise ServiceRequestError(err, error=err) from err
 
-    def stream_download(self, pipeline, **kwargs) -> AsyncIteratorType[bytes]:
+    def stream_download(
+        self, pipeline: AsyncPipeline[HttpRequest, AsyncHttpResponse], **kwargs
+    ) -> AsyncIteratorType[bytes]:
         """Generator for streaming response body data.
 
         :param pipeline: The pipeline object
