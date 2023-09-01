@@ -21,6 +21,7 @@ from base64 import b64encode, b64decode
 from hashlib import sha256
 from hmac import HMAC
 import asyncio
+from typing import Tuple
 from urllib.parse import urlencode, quote_plus
 from uamqp import ReceiveClient, Source
 from uamqp.errors import LinkRedirect
@@ -48,10 +49,10 @@ def generate_sas_token(uri, policy, key, expiry=None):
     return 'SharedAccessSignature ' + urlencode(result)
 
 
-def parse_iot_conn_str(iothub_conn_str):
-    hostname = None
-    shared_access_key_name = None
-    shared_access_key = None
+def parse_iot_conn_str(iothub_conn_str) -> Tuple[str,str,str]:
+    hostname = ''
+    shared_access_key_name = ''
+    shared_access_key = ''
     for element in iothub_conn_str.split(';'):
         key, _, value = element.partition('=')
         if key.lower() == 'hostname':
