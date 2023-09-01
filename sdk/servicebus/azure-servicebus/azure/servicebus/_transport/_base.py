@@ -4,6 +4,7 @@
 # --------------------------------------------------------------------------------------------
 from __future__ import annotations
 from typing import Union, TYPE_CHECKING, Dict, Any, Callable, Optional
+from typing_extensions import Literal
 from abc import ABC, abstractmethod
 
 if TYPE_CHECKING:
@@ -224,6 +225,35 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
         and per-iter argument passing that requires the former.
         :param ~azure.servicebus.ServiceBusReceiver receiver: The receiver.
         :param int or None max_wait_time: The maximum wait time in seconds for the batch to be received.
+        """
+
+    @staticmethod
+    @abstractmethod
+    def turn_on_prefetch(
+        receiver: "ServiceBusReceiver"
+    ) -> Optional[Literal[1]]:
+        """
+        Not used for uamqp. To be used with `__next__` calls.
+         If prefetch is turned off (prefetch_count = 0) on the receiver and handler has been opened,
+         sets the link credit on the ReceiveLink to 1 and returns 1. If prefetch is off and handler has not been opened,
+         returns 1 (to be passed in when creating the handler).
+         If prefetch was already turned on, returns None.
+        :param ~azure.servicebus.ServiceBusReceiver receiver: The receiver to update link credit on.
+        :return: 1, the new link credit value if prefetch was off/0. Either link credit has already been set to 1 on the
+         RecieveLink or needs to be passed in when creating the handler.
+         None, if prefetch was already 1 or more.
+        :rtype: 1 or None
+        """
+
+    @staticmethod
+    @abstractmethod
+    def turn_off_prefetch(
+        receiver: "ServiceBusReceiver"
+    ) -> None:
+        """
+        Not used for uamqp. To be used to reset link credit to 0 on ReceiveLink.
+        :param ~azure.servicebus.ServiceBusReceiver receiver: The receiver to update link credit on.
+        :rtype: None
         """
 
     @staticmethod

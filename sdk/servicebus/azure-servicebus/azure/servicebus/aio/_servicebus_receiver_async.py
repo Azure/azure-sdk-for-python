@@ -250,13 +250,17 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
                 raise
 
     async def __anext__(self):
+        update_link_credit = None
         try:
+            update_link_credit = self._amqp_transport.turn_on_prefetch(self)
             self._receive_context.set()
-            message = await self._inner_anext()
+            message = await self._inner_anext(link_credit=update_link_credit)
             links = get_receive_links(message)
             with receive_trace_context_manager(self, links=links):
                 return message
         finally:
+            if update_link_credit:
+                self._amqp_transport.turn_off_prefetch(self)
             self._receive_context.clear()
 
     @classmethod

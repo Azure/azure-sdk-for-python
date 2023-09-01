@@ -8,6 +8,7 @@ import time
 import datetime
 from datetime import timezone
 from typing import Optional, Tuple, cast, List, TYPE_CHECKING, Any, Callable, Dict, Union, Iterator, Type
+from typing_extensions import Literal
 
 from .._pyamqp import (
     utils,
@@ -625,30 +626,59 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         :rtype: iterator[~azure.servicebus.ServiceBusReceivedMessage]
         """
         # pylint: disable=protected-access
-        link_credit = None
-        try:    # handler was opened already
-            # to allow receiving with iterator, if ReceiveLink.link_credit is 0, set to 1
-            update_link_credit = receiver._handler._link.link_credit == 0
-            if update_link_credit:
-                receiver._handler._link.link_credit = 1
-        except AttributeError:  # handler still needs to be opened
-            # pass in link_credit > 0 when creating handler to allow receiving with iterator
-            update_link_credit = receiver._prefetch_count == 0
-            if update_link_credit:
-                link_credit = 1
-
+        update_link_credit = PyamqpTransport.turn_on_prefetch(receiver)
         while True:
             try:
-                # pylint: disable=protected-access
-                message = receiver._inner_next(wait_time=max_wait_time, link_credit=link_credit)
+                # if handler has not been opened and prefetch is 0, pass link_credit=1 when creating handler
+                message = receiver._inner_next(wait_time=max_wait_time, link_credit=update_link_credit)
                 links = get_receive_links(message)
                 with receive_trace_context_manager(receiver, links=links):
                     yield message
             except StopIteration:
                 # reset to 0 link_credit if needed
                 if update_link_credit:
-                    receiver._handler._link.link_credit = 0
+                    PyamqpTransport.turn_off_prefetch(receiver)
                 break
+
+    @staticmethod
+    def turn_on_prefetch(
+        receiver: "ServiceBusReceiver"
+    ) -> Optional[Literal[1]]:
+        """
+        Not used for uamqp. To be used with `__next__` calls.
+         If prefetch is turned off (prefetch_count = 0) on the receiver and handler has been opened,
+         sets the link credit on the ReceiveLink to 1 and returns 1. If prefetch is off and handler has not been opened,
+         returns 1 (to be passed in when creating the handler).
+         If prefetch was already turned on, returns None.
+        :param ~azure.servicebus.ServiceBusReceiver receiver: The receiver to update link credit on.
+        :return: 1, the new link credit value if prefetch was off/0. Either link credit has already been set to 1 on the
+         RecieveLink or needs to be passed in when creating the handler.
+         None, if prefetch was already 1 or more.
+        :rtype: 1 or None
+        """
+        # pylint: disable=protected-access
+        try:    # handler was opened already
+            # if link_credit = 0, set to 1 to allow receiving with iterator and return 1 to indicate update
+            if not receiver._handler._link.link_credit:
+                receiver._handler._link.link_credit = 1
+                return 1
+        except AttributeError:  # handler still needs to be opened
+            # if prefetch is 0, return link credit of 1 to be passed when creating handler
+            if not receiver._prefetch_count:
+                return 1
+        return None
+
+    @staticmethod
+    def turn_off_prefetch(
+        receiver: "ServiceBusReceiver"
+    ) -> None:
+        """
+        Not used for uamqp. To be used to reset link credit to 0 on ReceiveLink.
+        :param ~azure.servicebus.ServiceBusReceiver receiver: The receiver to update link credit on.
+        :rtype: None
+        """
+        # pylint: disable=protected-access
+        receiver._handler._link.link_credit = 0
 
     @staticmethod
     def iter_next(

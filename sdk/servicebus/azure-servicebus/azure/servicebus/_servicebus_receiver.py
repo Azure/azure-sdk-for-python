@@ -254,13 +254,17 @@ class ServiceBusReceiver(
 
     def __next__(self):
         # Normally this would wrap the yield of the iter, but for a direct next call we just trace imperitively.
+        update_link_credit = None
         try:
+            update_link_credit = self._amqp_transport.turn_on_prefetch(self)
             self._receive_context.set()
-            message = self._inner_next()
+            message = self._inner_next(link_credit=update_link_credit)
             links = get_receive_links(message)
             with receive_trace_context_manager(self, links=links):
                 return message
         finally:
+            if update_link_credit:
+                self._amqp_transport.turn_off_prefetch(self)
             self._receive_context.clear()
 
     next = __next__  # for python2.7
