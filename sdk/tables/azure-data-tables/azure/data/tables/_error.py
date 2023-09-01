@@ -139,7 +139,7 @@ def _decode_error(response, error_message=None, error_type=None, **kwargs):  # p
                     additional_data[info.tag] = info.text
         else:
             if error_body:
-                # Attemp to parse from XML element
+                # Attempt to parse from XML element
                 for info in error_body.iter():
                     if info.tag.lower().find("code") != -1:
                         error_code = info.text
