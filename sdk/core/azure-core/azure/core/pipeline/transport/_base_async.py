@@ -35,17 +35,21 @@ from typing import (
     AsyncContextManager,
     Optional,
     Type,
+    TYPE_CHECKING,
 )
 from types import TracebackType
 
 from ._base import _HttpResponseBase, _HttpClientTransportResponse, HttpRequest
-from .._base_async import AsyncPipeline
 from ...utils._pipeline_transport_rest_shared_async import _PartGenerator
 
 
 AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType")
 HTTPResponseType = TypeVar("HTTPResponseType")
 HTTPRequestType = TypeVar("HTTPRequestType")
+
+if TYPE_CHECKING:
+    # We need a transport to define a pipeline, this "if" avoid a circular import
+    from .._base_async import AsyncPipeline
 
 
 class _ResponseStopIteration(Exception):

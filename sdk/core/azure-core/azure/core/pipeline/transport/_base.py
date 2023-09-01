@@ -23,6 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+from __future__ import annotations
 import abc
 from email.message import Message
 import json
@@ -48,11 +49,11 @@ from typing import (
     Sequence,
     MutableMapping,
     ContextManager,
+    TYPE_CHECKING,
 )
 
 from http.client import HTTPResponse as _HTTPResponse
 
-from azure.core.pipeline import Pipeline
 from azure.core.exceptions import HttpResponseError
 from ...utils._utils import case_insensitive_dict
 from ...utils._pipeline_transport_rest_shared import (
@@ -70,6 +71,10 @@ from ...utils._pipeline_transport_rest_shared import (
 HTTPResponseType = TypeVar("HTTPResponseType")
 HTTPRequestType = TypeVar("HTTPRequestType")
 DataType = Union[bytes, str, Dict[str, Union[str, int]]]
+
+if TYPE_CHECKING:
+    # We need a transport to define a pipeline, this "if" avoid a circular import
+    from azure.core.pipeline import Pipeline
 
 _LOGGER = logging.getLogger(__name__)
 
