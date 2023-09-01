@@ -54,25 +54,32 @@ class BulkTests(unittest.TestCase):
         cls.client = CosmosClient(cls.host, cls.masterKey, connection_policy=cls.connectionPolicy)
         cls.test_database = cls.configs.create_database_if_not_exist(cls.client)
 
-    def test_bulk_create_volume(self):
-        # Try with default container (400 RUs)
+    def test_bulk_batch_creation(self):
         container = self.test_database.create_container_if_not_exists(id="default_bulk_container",
                                                                       partition_key=PartitionKey(path="/id"))
-
-        # Negative test - try to run more than 100 operations for a partition
+        # Verify there is one batch/ 100 operations
         operations = []
-        for i in range(101):
+        for i in range(201):
             operations.append({"operationType": "Create",
                                "resourceBody": {"id": "item-" + str(i), "name": str(uuid.uuid4())},
                                "partitionKey": "item-" + str(i)})
-        try:
-            container.bulk(operations=operations)
-            self.fail("Bulk operation should have failed due to too many operations per partition.")
-        except ValueError as e:
-            self.assertEqual(str(e), 'Cannot run bulk request with more than 100 operations per partition.')
+        bulk_result = container.bulk(operations=operations)
+        self.assertEqual(len(bulk_result), 3)
 
-        # Remove one operation and try request again
+        # Remove one operation and try request again - check there's only 2 batches
         operations.pop()
+        bulk_result = container.bulk(operations=operations)
+        self.assertEqual(len(bulk_result), 2)
+
+    def test_bulk_throttle(self):
+        # Try with default container (400 RUs)
+        container = self.test_database.create_container_if_not_exists(id="default_bulk_container",
+                                                                      partition_key=PartitionKey(path="/id"))
+        operations = []
+        for i in range(100):
+            operations.append({"operationType": "Create",
+                               "resourceBody": {"id": "item-" + str(i), "name": str(uuid.uuid4())},
+                               "partitionKey": "item-" + str(i)})
 
         # Negative test - see how many requests were throttled due to lack of RUs on default container
         bulk_result = container.bulk(operations=operations)

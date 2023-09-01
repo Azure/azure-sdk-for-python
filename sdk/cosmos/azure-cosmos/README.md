@@ -592,11 +592,11 @@ executing the operations individually, the provisioned throughput (RU/s) consume
 it based on the volume of operations you want to push.
 
 Another caveat is the size of the documents. The batches that the SDK creates to optimize throughput have a current maximum
-of 2Mb or 100 operations per batch, the smaller the documents, the greater the optimization that can be achieved
+of 220kb or 100 operations per batch, the smaller the documents, the greater the optimization that can be achieved
 (the bigger the documents, the more batches need to be used).
 
 If your operations get throttled during a Bulk request, it means that now the bottleneck of your application is on the 
-provisioned throughput of your container. Currently, the SDK does not retry individual throttled requests within a bulk operation.
+provisioned throughput of your container. Currently, the SDK does *not* retry individual throttled requests within a bulk operation.
 
 Available Bulk operation types are:
 - Create

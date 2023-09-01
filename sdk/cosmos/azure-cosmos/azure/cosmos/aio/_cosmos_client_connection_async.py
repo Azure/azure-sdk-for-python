@@ -30,6 +30,7 @@ import json
 from typing import Dict, Any, Optional, TypeVar  # pylint: disable=unused-import
 from urllib.parse import urlparse
 from urllib3.util.retry import Retry
+from sys import getsizeof
 from azure.core.async_paging import AsyncItemPaged
 from azure.core import AsyncPipelineClient
 from azure.core.exceptions import raise_with_traceback  # type: ignore
@@ -1223,9 +1224,11 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
                 "max": pk_range.get("maxExclusive"),
                 "range_id": pk_range.get("id"),
                 "indexes": [],
-                "operations": []
+                "operations": [],
+                "size": 0
             }
             batches.append(batch)
+        micro_batches = []
         for operation in operations:
             partition_key_value = operation.get("partitionKey", None)
             if partition_key_value is None:
@@ -1242,24 +1245,29 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             for batch in batches:
                 if partition_key.is_key_in_range(batch.get("min"), batch.get("max"), hashed_key):
                     batch.get("operations").append(operation)
+                    batch["size"] = batch.get("size") + getsizeof(operation)
+                    # Split batch into micro batches if at 100 operations or if total request size > 220Kb
+                    if len(batch.get("operations")) == 100 or batch.get("size") > 220000:
+                        micro_batches.append(batch.copy())
+                        batch.update({"operations": [], "size": 0})
                     break
+        # Append whatever leftover batches to the final list of micro batches
+        micro_batches.extend(batches)
 
         path = base.GetPathFromLink(collection_link, "docs")
         collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
 
         response = []
-        for batch in batches:
-            # The service does this check as well, but the message is not as informative.
-            if len(batch.get("operations")) > 100:
-                raise ValueError("Cannot run bulk request with more than 100 operations per partition.")
-            result = await self._Bulk(
-                batch.get("operations"),
-                batch.get("range_id"),
-                path,
-                collection_id,
-                options,
-                **kwargs)
-            response.append(result)
+        for batch in micro_batches:
+            if len(batch.get("operations")) > 0:
+                result = await self._Bulk(
+                    batch.get("operations"),
+                    batch.get("range_id"),
+                    path,
+                    collection_id,
+                    options,
+                    **kwargs)
+                response.append(result)
 
         return response
 
