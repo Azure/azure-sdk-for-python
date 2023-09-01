@@ -17,12 +17,7 @@ from azure.ai.ml._restclient.v2022_10_01.models import ComponentVersion, Compone
 from azure.ai.ml._schema import PathAwareSchema
 from azure.ai.ml._schema.pipeline.pipeline_component import PipelineComponentSchema
 from azure.ai.ml._utils.utils import hash_dict, is_data_binding_expression
-from azure.ai.ml.constants._common import (
-    ARM_ID_PREFIX,
-    ASSET_ARM_ID_REGEX_FORMAT,
-    BASE_PATH_CONTEXT_KEY,
-    COMPONENT_TYPE,
-)
+from azure.ai.ml.constants._common import ARM_ID_PREFIX, ASSET_ARM_ID_REGEX_FORMAT, COMPONENT_TYPE
 from azure.ai.ml.constants._component import ComponentSource, NodeType
 from azure.ai.ml.constants._job.pipeline import ValidationErrorCode
 from azure.ai.ml.entities._builders import BaseNode, Command
@@ -30,7 +25,10 @@ from azure.ai.ml.entities._builders.control_flow_node import ControlFlowNode, Lo
 from azure.ai.ml.entities._component.component import Component
 from azure.ai.ml.entities._inputs_outputs import GroupInput, Input
 from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
-from azure.ai.ml.entities._job.pipeline._attr_dict import has_attr_safe, try_get_non_arbitrary_attr
+from azure.ai.ml.entities._job.pipeline._attr_dict import (
+    has_attr_safe,
+    try_get_non_arbitrary_attr,
+)
 from azure.ai.ml.entities._job.pipeline._pipeline_expression import PipelineExpression
 from azure.ai.ml.entities._validation import MutableValidationResult
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
@@ -276,7 +274,7 @@ class PipelineComponent(Component):
                 # not check optional/required for pipeline input used in pipeline expression
                 if name in optional_binding_in_expression_dict.get(pipeline_input_name, []):
                     continue
-                if name in component_definition_inputs and component_definition_inputs[name].optional is not True:
+                if component_definition_inputs[name].optional is not True:
                     required_bindings.append(f"{node.name}.inputs.{name}")
             if pipeline_input.optional is None and not required_bindings:
                 # Set input as optional if all binding is optional and optional not set.
@@ -443,7 +441,7 @@ class PipelineComponent(Component):
     def _to_dict(self) -> Dict:
         # Replace the name of $schema to schema.
         component_schema_dict = self._dump_for_validation()
-        component_schema_dict.pop(BASE_PATH_CONTEXT_KEY, None)
+        component_schema_dict.pop("base_path", None)
         return {**self._other_parameter, **component_schema_dict}
 
     def _build_rest_component_jobs(self) -> Dict[str, dict]:

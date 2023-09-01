@@ -9,6 +9,8 @@ from typing import Callable
 
 import pydash
 import pytest
+from azure.core.exceptions import HttpResponseError
+from azure.core.paging import ItemPaged
 from devtools_testutils import AzureRecordedTestCase, is_live
 from test_utilities.utils import assert_job_cancel, omit_with_wildcard, sleep_if_live
 
@@ -25,8 +27,6 @@ from azure.ai.ml.constants._common import (
 from azure.ai.ml.dsl._utils import _sanitize_python_variable_name
 from azure.ai.ml.entities import CommandComponent, Component, PipelineComponent
 from azure.ai.ml.entities._load_functions import load_code, load_job
-from azure.core.exceptions import HttpResponseError
-from azure.core.paging import ItemPaged
 
 from .._util import _COMPONENT_TIMEOUT_SECOND
 from ..unittests.test_component_schema import load_component_entity_from_rest_json
@@ -1169,23 +1169,3 @@ class TestComponent(AzureRecordedTestCase):
             assert omit_with_wildcard(recreated_component._to_dict(), *omit_fields) == omit_with_wildcard(
                 created_component._to_dict(), *omit_fields
             )
-
-    def test_load_component_from_flow(self, client: MLClient, randstr):
-        target_path: str = "./tests/test_configs/flows/basic/flow.dag.yaml"
-        component = load_component(
-            target_path,
-            params_override=[
-                {
-                    "name": randstr("component_name"),
-                    "version": "1",
-                    "description": "test load component from flow",
-                }
-            ],
-        )
-
-        created_component = client.components.create_or_update(component, version="2")
-
-        assert created_component.name == component.name
-        assert created_component.version == "2"
-
-        assert component._get_origin_code_value() == created_component._get_origin_code_value()

@@ -7,7 +7,7 @@ from typing import Dict, Optional, Union
 from marshmallow import Schema
 
 from azure.ai.ml._schema.component.import_component import ImportComponentSchema
-from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, COMPONENT_TYPE
+from azure.ai.ml.constants._common import COMPONENT_TYPE
 from azure.ai.ml.constants._component import NodeType
 
 from ..._schema import PathAwareSchema
@@ -53,8 +53,8 @@ class ImportComponent(Component):
     ) -> None:
         kwargs[COMPONENT_TYPE] = NodeType.IMPORT
         # Set default base path
-        if BASE_PATH_CONTEXT_KEY not in kwargs:
-            kwargs[BASE_PATH_CONTEXT_KEY] = Path(".")
+        if "base_path" not in kwargs:
+            kwargs["base_path"] = Path(".")
 
         super().__init__(
             name=name,

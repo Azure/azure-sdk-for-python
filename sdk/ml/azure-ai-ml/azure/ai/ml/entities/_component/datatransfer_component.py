@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 from pathlib import Path
-from typing import Dict, NoReturn, Optional, Union
+from typing import Dict, Optional, Union, NoReturn
 
 from marshmallow import Schema
 
@@ -12,7 +12,7 @@ from azure.ai.ml._schema.component.data_transfer_component import (
     DataTransferImportComponentSchema,
 )
 from azure.ai.ml._utils._experimental import experimental
-from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, COMPONENT_TYPE, AssetTypes
+from azure.ai.ml.constants._common import COMPONENT_TYPE, AssetTypes
 from azure.ai.ml.constants._component import DataTransferTaskType, ExternalDataType, NodeType
 from azure.ai.ml.entities._inputs_outputs.external_data import Database, FileSystem
 from azure.ai.ml.entities._inputs_outputs.output import Output
@@ -51,8 +51,8 @@ class DataTransferComponent(Component):  # pylint: disable=too-many-instance-att
 
         kwargs[COMPONENT_TYPE] = NodeType.DATA_TRANSFER
         # Set default base path
-        if BASE_PATH_CONTEXT_KEY not in kwargs:
-            kwargs[BASE_PATH_CONTEXT_KEY] = Path(".")
+        if "base_path" not in kwargs:
+            kwargs["base_path"] = Path(".")
 
         super().__init__(
             inputs=inputs,

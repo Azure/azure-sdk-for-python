@@ -26,8 +26,8 @@ repos:
     args: ['--settings-file', 'sdk/ml/azure-ai-ml/pyproject.toml']
 - repo: local
   hooks:
-    - id: pylint-dependencies-check
-      name: pylint-dependencies-check
+    - id: pylint
+      name: pylint
       entry: python
       language: system
       types: [python]
@@ -69,9 +69,9 @@ repos:
             print(f"Please run the following command to install the correct version of {packagename}")
             print(f"\tpython -m pip install {packagename}=={required_version} {' '.join(install_args)}")
             sys.exit(1)
-    - id: pylint
-      name: pylint
-      entry: pylint
-      language: system
-      args: [--rcfile=pylintrc, --output-format=parseable]
-      files: '^sdk/ml/azure-ai-ml/azure/ai/ml/.*\.py$'
+
+        # Run pylint
+        os.execl(sys.executable, sys.executable, "-m", "pylint", *sys.argv[1:])
+      # cspell:disable-next-line
+      - "--rcfile=pylintrc"
+      - "--output-format=parseable"

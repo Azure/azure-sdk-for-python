@@ -5,10 +5,9 @@ import re
 import uuid
 from os import PathLike
 from pathlib import Path
-from typing import IO, TYPE_CHECKING, AnyStr, Callable, Dict, Iterable, Optional, Tuple, Union
-
-from marshmallow import INCLUDE
+from typing import AnyStr, Dict, Callable, IO, Iterable, Optional, TYPE_CHECKING, Tuple, Union
 from typing_extensions import Literal
+from marshmallow import INCLUDE
 
 from ..._restclient.v2022_10_01.models import (
     ComponentContainer,
@@ -26,7 +25,6 @@ from ...constants._common import (
     REGISTRY_URI_FORMAT,
     SOURCE_PATH_CONTEXT_KEY,
     CommonYamlFields,
-    SchemaUrl,
 )
 from ...constants._component import ComponentSource, IOConstants, NodeType
 from ...entities._assets.asset import Asset
@@ -133,8 +131,8 @@ class Component(
             properties=properties,
             creation_context=creation_context,
             is_anonymous=is_anonymous,
-            base_path=kwargs.pop(BASE_PATH_CONTEXT_KEY, None),
-            source_path=kwargs.pop(SOURCE_PATH_CONTEXT_KEY, None),
+            base_path=kwargs.pop("base_path", None),
+            source_path=kwargs.pop("source_path", None),
         )
         # store kwargs to self._other_parameter instead of pop to super class to allow component have extra
         # fields not defined in current schema.
@@ -337,14 +335,6 @@ class Component(
         return ErrorTarget.COMPONENT
 
     @classmethod
-    def _is_flow(cls, data) -> bool:
-        _schema = data.get(CommonYamlFields.SCHEMA, None)
-
-        if _schema and _schema in [SchemaUrl.PROMPTFLOW_FLOW, SchemaUrl.PROMPTFLOW_RUN]:
-            return True
-        return False
-
-    @classmethod
     def _load(
         cls,
         data: Optional[Dict] = None,
@@ -360,11 +350,7 @@ class Component(
 
         # type_in_override > type_in_yaml > default (command)
         if type_in_override is None:
-            type_in_override = data.get(CommonYamlFields.TYPE, None)
-        if type_in_override is None and cls._is_flow(data):
-            type_in_override = NodeType.FLOW_PARALLEL
-        if type_in_override is None:
-            type_in_override = NodeType.COMMAND
+            type_in_override = data.get(CommonYamlFields.TYPE, NodeType.COMMAND)
         data[CommonYamlFields.TYPE] = type_in_override
 
         from azure.ai.ml.entities._component.component_factory import component_factory
@@ -392,15 +378,15 @@ class Component(
                 **kwargs,
             )
         )
-        # Set base path separately to avoid doing this in post load, as return types of post load are not unified,
-        # could be object or dict.
-        # base_path in context can be changed in loading, so we use original base_path here.
-        init_kwargs[BASE_PATH_CONTEXT_KEY] = base_path.absolute()
-        if yaml_path:
-            init_kwargs[SOURCE_PATH_CONTEXT_KEY] = Path(yaml_path).absolute().as_posix()
         new_instance.__init__(
             **init_kwargs,
         )
+        # Set base path separately to avoid doing this in post load, as return types of post load are not unified,
+        # could be object or dict.
+        # base_path in context can be changed in loading, so we use original base_path here.
+        new_instance._base_path = base_path
+        if yaml_path:
+            new_instance._source_path = yaml_path
         return new_instance
 
     @classmethod
@@ -540,8 +526,8 @@ class Component(
 
         # TODO: Remove in PuP with native import job/component type support in MFE/Designer
         # Convert import component to command component private preview
-        if component.get(CommonYamlFields.TYPE, None) == NodeType.IMPORT:
-            component[CommonYamlFields.TYPE] = NodeType.COMMAND
+        if component["type"] == NodeType.IMPORT:
+            component["type"] = NodeType.COMMAND
             component["inputs"] = component.pop("source")
             component["outputs"] = dict({"output": component.pop("output")})
             # method _to_dict() will remove empty keys
@@ -574,7 +560,7 @@ class Component(
     def _to_dict(self) -> Dict:
         # Replace the name of $schema to schema.
         component_schema_dict = self._dump_for_validation()
-        component_schema_dict.pop(BASE_PATH_CONTEXT_KEY, None)
+        component_schema_dict.pop("base_path", None)
 
         # TODO: handle other_parameters and remove override from subclass
         return component_schema_dict
