@@ -2032,7 +2032,7 @@ jobs:
             ),
         ],
     )
-    def test_pipeline_job_with_flow_from_dag(
+    def test_pipeline_job_with_flow(
         self,
         client: MLClient,
         randstr: Callable[[str], str],

@@ -71,7 +71,7 @@ repos:
             sys.exit(1)
     - id: pylint
       name: pylint
-      entry: pylint
+      entry: python
       language: system
-      args: [--rcfile=pylintrc, --output-format=parseable]
-      files: '^sdk/ml/azure-ai-ml/azure/ai/ml/.*\.py$'
+      args: [ -m, pylint, --rcfile=pylintrc, --output-format=parseable ]
+      types: [python]
