@@ -34,12 +34,16 @@ class ArtifactStorageInfo:
 
     @property
     def full_storage_path(self) -> Optional[str]:
+        if self.storage_account_url is None:
+            return f"{self.container_name}/{self.relative_path}"
         return urljoin(self.storage_account_url, f"{self.container_name}/{self.relative_path}")
 
     @property
     def subdir_path(self) -> Optional[str]:
         if self.is_file:
             path = PurePosixPath(self.relative_path).parent
+            if self.storage_account_url is None:
+                return f"{self.container_name}/{path}"
             return urljoin(self.storage_account_url, f"{self.container_name}/{path}")
         return self.full_storage_path
 
