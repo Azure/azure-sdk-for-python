@@ -28,8 +28,8 @@ extend_skip_glob = [
 ]
 
 [tool.mypy] 
-exclude = ["azure/"]
-files = ["azure/ai/ml/entities/"] 
+exclude = ["azure"]
+files = ["azure/ai/ml/entities"] 
 disallow_any_explicit = true 
 disallow_untyped_defs = true 
 warn_unused_ignores = true 
