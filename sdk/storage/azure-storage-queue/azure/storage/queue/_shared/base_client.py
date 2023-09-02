@@ -20,7 +20,6 @@ except ImportError:
     from urlparse import parse_qs  # type: ignore
     from urllib2 import quote  # type: ignore
 
-from azure.core.configuration import Configuration
 from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
 from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline import Pipeline
@@ -37,7 +36,7 @@ from azure.core.pipeline.policies import (
 )
 
 from .constants import CONNECTION_TIMEOUT, READ_TIMEOUT, SERVICE_HOST_BASE, STORAGE_OAUTH_SCOPE
-from .models import LocationMode
+from .models import LocationMode, StorageConfiguration
 from .authentication import SharedKeyCredentialPolicy
 from .shared_access_signature import QueryStringConstants
 from .request_handlers import serialize_batch_body, _get_batch_request_delimiter
@@ -71,12 +70,11 @@ _SERVICE_PARAMS = {
 class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-attributes
     def __init__(
         self,
-        parsed_url,  # type: Any
-        service,  # type: str
-        credential=None,  # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential", "AsyncTokenCredential"]] # pylint: disable=line-too-long
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        parsed_url: Any,
+        service: str,
+        credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential", "AsyncTokenCredential"]] = None, # pylint: disable=line-too-long 
+        **kwargs: Any
+    ) -> None:
         self._location_mode = kwargs.get("_location_mode", LocationMode.PRIMARY)
         self._hosts = kwargs.get("_hosts")
         self.scheme = parsed_url.scheme
@@ -96,7 +94,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
             raise ValueError("Token credential is only supported with HTTPS.")
 
         secondary_hostname = None
-        if hasattr(self.credential, "account_name"):
+        if hasattr(self.credential, "account_name") and self.credential is not None:
             self.account_name = self.credential.account_name
             secondary_hostname = f"{self.credential.account_name}-secondary.{service_name}.{SERVICE_HOST_BASE}"
 
@@ -139,7 +137,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
     def primary_endpoint(self):
         """The full primary endpoint URL.
 
-        :type: str
+        :rtype: str
         """
         return self._format_url(self._hosts[LocationMode.PRIMARY])
 
@@ -147,7 +145,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
     def primary_hostname(self):
         """The hostname of the primary endpoint.
 
-        :type: str
+        :rtype: str
         """
         return self._hosts[LocationMode.PRIMARY]
 
@@ -158,7 +156,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         If not available a ValueError will be raised. To explicitly specify a secondary hostname, use the optional
         `secondary_hostname` keyword argument on instantiation.
 
-        :type: str
+        :rtype: str
         :raise ValueError:
         """
         if not self._hosts[LocationMode.SECONDARY]:
@@ -172,7 +170,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         If not available this will be None. To explicitly specify a secondary hostname, use the optional
         `secondary_hostname` keyword argument on instantiation.
 
-        :type: str or None
+        :rtype: Optional[str]
         """
         return self._hosts[LocationMode.SECONDARY]
 
@@ -182,7 +180,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
 
         By default this will be "primary". Options include "primary" and "secondary".
 
-        :type: str
+        :rtype: str
         """
 
         return self._location_mode
@@ -199,11 +197,16 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
     def api_version(self):
         """The version of the Storage API used for requests.
 
-        :type: str
+        :rtype: str
         """
         return self._client._config.version  # pylint: disable=protected-access
 
-    def _format_query_string(self, sas_token, credential, snapshot=None, share_snapshot=None):
+    def _format_query_string(
+        self, sas_token: Optional[str],
+        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]],  # pylint: disable=line-too-long
+        snapshot: Optional[str] = None,
+        share_snapshot: Optional[str] = None
+    ) -> Tuple[str, Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]]]:  # pylint: disable=line-too-long
         query_str = "?"
         if snapshot:
             query_str += f"snapshot={self.snapshot}&"
@@ -213,17 +216,19 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
             raise ValueError(
                 "You cannot use AzureSasCredential when the resource URI also contains a Shared Access Signature.")
         if is_credential_sastoken(credential):
-            query_str += credential.lstrip("?")
+            query_str += credential.lstrip("?")  # type: ignore [union-attr]
             credential = None
         elif sas_token:
             query_str += sas_token
         return query_str.rstrip("?&"), credential
 
-    def _create_pipeline(self, credential, **kwargs):
-        # type: (Any, **Any) -> Tuple[Configuration, Pipeline]
+    def _create_pipeline(
+        self, credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential", "AsyncTokenCredential"]] = None, # pylint: disable=line-too-long 
+        **kwargs: Any
+    ) -> Tuple[StorageConfiguration, Pipeline]:
         self._credential_policy: Any = None
         if hasattr(credential, "get_token"):
-            self._credential_policy = BearerTokenCredentialPolicy(credential, STORAGE_OAUTH_SCOPE)
+            self._credential_policy = BearerTokenCredentialPolicy(credential, STORAGE_OAUTH_SCOPE)  # type: ignore [arg-type]
         elif isinstance(credential, SharedKeyCredentialPolicy):
             self._credential_policy = credential
         elif isinstance(credential, AzureSasCredential):
@@ -265,29 +270,26 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
     def _batch_send(
         self,
         *reqs: "HttpRequest",
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Given a series of request, do a Storage batch call.
 
         :param HttpRequest reqs: A collection of HttpRequest objects.
-        :rtype: None
-        :returns: None
         """
         # Pop it here, so requests doesn't feel bad about additional kwarg
         raise_on_any_failure = kwargs.pop("raise_on_any_failure", True)
         batch_id = str(uuid.uuid1())
 
-        if hasattr(self, '_client'):
-            request = self._client._client.post(  # pylint: disable=protected-access
-            url=(
-                f'{self.scheme}://{self.primary_hostname}/'
-                f"{kwargs.pop('path', '')}?{kwargs.pop('restype', '')}"
-                f"comp=batch{kwargs.pop('sas', '')}{kwargs.pop('timeout', '')}"
-            ),
-            headers={
-                'x-ms-version': self.api_version,
-                "Content-Type": "multipart/mixed; boundary=" + _get_batch_request_delimiter(batch_id, False, False)
-            }
+        request = self._client._client.post(  # pylint: disable=protected-access
+        url=(
+            f'{self.scheme}://{self.primary_hostname}/'
+            f"{kwargs.pop('path', '')}?{kwargs.pop('restype', '')}"
+            f"comp=batch{kwargs.pop('sas', '')}{kwargs.pop('timeout', '')}"
+        ),
+        headers={
+            'x-ms-version': self.api_version,
+            "Content-Type": "multipart/mixed; boundary=" + _get_batch_request_delimiter(batch_id, False, False)
+        }
         )
 
         policies = [StorageHeadersPolicy()]
@@ -354,7 +356,10 @@ class TransportWrapper(HttpTransport):
         pass
 
 
-def _format_shared_key_credential(account_name, credential):
+def _format_shared_key_credential(
+    account_name: str,
+    credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential", "AsyncTokenCredential"]] = None, # pylint: disable=line-too-long
+) -> Any:
     if isinstance(credential, str):
         if not account_name:
             raise ValueError("Unable to determine account name for shared key credential.")
@@ -370,12 +375,16 @@ def _format_shared_key_credential(account_name, credential):
     return credential
 
 
-def parse_connection_str(conn_str, credential, service):
+def parse_connection_str(
+    conn_str: str,
+    credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential", "AsyncTokenCredential"]], # pylint: disable=line-too-long 
+    service: str
+) -> Tuple[Optional[str], Optional[str], Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential", "AsyncTokenCredential"]]]: # pylint: disable=line-too-long
     conn_str = conn_str.rstrip(";")
-    conn_settings = [s.split("=", 1) for s in conn_str.split(";")]
-    if any(len(tup) != 2 for tup in conn_settings):
+    conn_settings_list = [s.split("=", 1) for s in conn_str.split(";")]
+    if any(len(tup) != 2 for tup in conn_settings_list):
         raise ValueError("Connection string is either blank or malformed.")
-    conn_settings = dict((key.upper(), val) for key, val in conn_settings)
+    conn_settings = dict((key.upper(), val) for key, val in conn_settings_list)
     endpoints = _SERVICE_PARAMS[service]
     primary = None
     secondary = None
@@ -418,9 +427,8 @@ def parse_connection_str(conn_str, credential, service):
     return primary, secondary, credential
 
 
-def create_configuration(**kwargs):
-    # type: (**Any) -> Configuration
-    config: Configuration = Configuration(**kwargs)
+def create_configuration(**kwargs: Any) -> StorageConfiguration:
+    config: StorageConfiguration = StorageConfiguration(**kwargs)
     config.headers_policy = StorageHeadersPolicy(**kwargs)
     config.user_agent_policy = UserAgentPolicy(sdk_moniker=kwargs.pop('sdk_moniker'), **kwargs)
     config.retry_policy = kwargs.get("retry_policy") or ExponentialRetry(**kwargs)
@@ -428,40 +436,30 @@ def create_configuration(**kwargs):
     config.proxy_policy = ProxyPolicy(**kwargs)
 
     # Storage settings
-    if hasattr(config, 'max_single_put_size'):
-        config.max_single_put_size = kwargs.get("max_single_put_size", 64 * 1024 * 1024)
-    if hasattr(config, 'copy_polling_interval'):
-        config.copy_polling_interval = 15
+    config.max_single_put_size = kwargs.get("max_single_put_size", 64 * 1024 * 1024)
+    config.copy_polling_interval = 15
 
     # Block blob uploads
-    if hasattr(config, 'max_block_size'):
-        config.max_block_size = kwargs.get("max_block_size", 4 * 1024 * 1024)
-    if hasattr(config, 'min_large_block_upload_threshold'):
-        config.min_large_block_upload_threshold = kwargs.get("min_large_block_upload_threshold", 4 * 1024 * 1024 + 1)
-    if hasattr(config, 'use_byte_buffer'):
-        config.use_byte_buffer = kwargs.get("use_byte_buffer", False)
+    config.max_block_size = kwargs.get("max_block_size", 4 * 1024 * 1024)
+    config.min_large_block_upload_threshold = kwargs.get("min_large_block_upload_threshold", 4 * 1024 * 1024 + 1)
+    config.use_byte_buffer = kwargs.get("use_byte_buffer", False)
 
     # Page blob uploads
-    if hasattr(config, 'max_page_size'):
-        config.max_page_size = kwargs.get("max_page_size", 4 * 1024 * 1024)
+    config.max_page_size = kwargs.get("max_page_size", 4 * 1024 * 1024)
 
     # Datalake file uploads
-    if hasattr(config, 'min_large_chunk_upload_threshold'):
-        config.min_large_chunk_upload_threshold = kwargs.get("min_large_chunk_upload_threshold", 100 * 1024 * 1024 + 1)
+    config.min_large_chunk_upload_threshold = kwargs.get("min_large_chunk_upload_threshold", 100 * 1024 * 1024 + 1)
 
     # Blob downloads
-    if hasattr(config, 'max_single_get_size'):
-        config.max_single_get_size = kwargs.get("max_single_get_size", 32 * 1024 * 1024)
-    if hasattr(config, 'max_chunk_get_size'):
-        config.max_chunk_get_size = kwargs.get("max_chunk_get_size", 4 * 1024 * 1024)
+    config.max_single_get_size = kwargs.get("max_single_get_size", 32 * 1024 * 1024)
+    config.max_chunk_get_size = kwargs.get("max_chunk_get_size", 4 * 1024 * 1024)
 
     # File uploads
-    if hasattr(config, 'max_range_size'):
-        config.max_range_size = kwargs.get("max_range_size", 4 * 1024 * 1024)
+    config.max_range_size = kwargs.get("max_range_size", 4 * 1024 * 1024)
     return config
 
 
-def parse_query(query_str):
+def parse_query(query_str: str) -> Tuple[Optional[str], Optional[str]]:
     sas_values = QueryStringConstants.to_list()
     parsed_query = {k: v[0] for k, v in parse_qs(query_str).items()}
     sas_params = [f"{k}={quote(v, safe='')}" for k, v in parsed_query.items() if k in sas_values]
@@ -473,7 +471,7 @@ def parse_query(query_str):
     return snapshot, sas_token
 
 
-def is_credential_sastoken(credential):
+def is_credential_sastoken(credential: Any) -> bool:
     if not credential or not isinstance(credential, str):
         return False
 

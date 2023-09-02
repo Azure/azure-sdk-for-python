@@ -88,8 +88,7 @@ class AsyncStorageAccountHostsMixin(object):
             except ImportError as exc:
                 raise ImportError("Unable to create async transport. Please check aiohttp is installed.") from exc
             transport = AioHttpTransport(**kwargs)
-        if hasattr(self, '_hosts'):
-            hosts = self._hosts
+        hosts = self._hosts
         policies = [
             QueueMessagePolicy(),
             config.headers_policy,
@@ -120,14 +119,10 @@ class AsyncStorageAccountHostsMixin(object):
     ):
         # Pop it here, so requests doesn't feel bad about additional kwarg
         raise_on_any_failure = kwargs.pop("raise_on_any_failure", True)
-        if hasattr(self, '_client'):
-            client = self._client
-        if hasattr(self, 'scheme'):
-            scheme = self.scheme
-        if hasattr(self, 'primary_hostname'):
-            primary_hostname = self.primary_hostname
-        if hasattr(self, 'api_version'):
-            api_version = self.api_version
+        client = self._client
+        scheme = self.scheme
+        primary_hostname = self.primary_hostname
+        api_version = self.api_version
         request = client._client.post(  # pylint: disable=protected-access
             url=(
                 f'{scheme}://{primary_hostname}/'
@@ -149,10 +144,9 @@ class AsyncStorageAccountHostsMixin(object):
             enforce_https=False
         )
 
-        if hasattr(self, '_pipeline'):
-            pipeline_response = await self._pipeline.run(
-                request, **kwargs
-            )
+        pipeline_response = await self._pipeline.run(
+            request, **kwargs
+        )
         response = pipeline_response.http_response
 
         try:

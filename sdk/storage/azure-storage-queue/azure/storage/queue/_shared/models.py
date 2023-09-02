@@ -7,6 +7,7 @@
 from enum import Enum
 
 from azure.core import CaseInsensitiveEnumMeta
+from azure.core.configuration import Configuration
 
 
 def get_enum_value(value):
@@ -487,3 +488,52 @@ class UserDelegationKey(object):
         self.signed_service = None
         self.signed_version = None
         self.value = None
+
+
+class StorageConfiguration(Configuration):
+    """
+    Specifies the configurable values used in Azure Storage.
+
+    :param int max_single_put_size: If the blob size is less than or equal max_single_put_size, then the blob will be
+        uploaded with only one http PUT request. If the blob size is larger than max_single_put_size,
+        the blob will be uploaded in chunks. Defaults to 64*1024*1024, or 64MB.
+    :param int copy_polling_interval: The interval in seconds for polling copy operations.
+    :param int max_block_size: The maximum chunk size for uploading a block blob in chunks.
+        Defaults to 4*1024*1024, or 4MB.
+    :param int min_large_block_upload_threshold: The minimum chunk size required to use the memory efficient
+        algorithm when uploading a block blob.
+    :param bool use_byte_buffer: Use a byte buffer for block blob uploads. Defaults to False.
+    :param int max_page_size: The maximum chunk size for uploading a page blob. Defaults to 4*1024*1024, or 4MB.
+    :param int min_large_chunk_upload_threshold: The max size for a single put operation.
+    :param int max_single_get_size: The maximum size for a blob to be downloaded in a single call,
+        the exceeded part will be downloaded in chunks (could be parallel). Defaults to 32*1024*1024, or 32MB.
+    :param int max_chunk_get_size: The maximum chunk size used for downloading a blob. Defaults to 4*1024*1024,
+        or 4MB.
+    :param int max_range_size: The max range size for file upload.
+
+    """
+    def __init__(
+        self,
+        max_single_put_size = 64 * 1024 * 1024,
+        copy_polling_interval = 15,
+        max_block_size = 4 * 1024 * 1024,
+        min_large_block_upload_threshold = 4 * 1024 * 1024 + 1,
+        use_byte_buffer = False,
+        max_page_size = 4 * 1024 * 1024,
+        min_large_chunk_upload_threshold = 100 * 1024 * 1024 + 1,
+        max_single_get_size = 32 * 1024 * 1024,
+        max_chunk_get_size = 4 * 1024 * 1024,
+        max_range_size = 4 * 1024 * 1024,
+        **kwargs,
+    ):
+        super(StorageConfiguration, self).__init__(**kwargs)
+        self.max_single_put_size = max_single_put_size
+        self.copy_polling_interval = copy_polling_interval
+        self.max_block_size = max_block_size
+        self.min_large_block_upload_threshold = min_large_block_upload_threshold
+        self.use_byte_buffer = use_byte_buffer
+        self.max_page_size = max_page_size
+        self.min_large_chunk_upload_threshold = min_large_chunk_upload_threshold
+        self.max_single_get_size = max_single_get_size
+        self.max_chunk_get_size = max_chunk_get_size
+        self.max_range_size = max_range_size

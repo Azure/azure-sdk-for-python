@@ -396,10 +396,12 @@ def get_adjusted_download_range_and_offset(
     elif encryption_data.encryption_agent.protocol == _ENCRYPTION_PROTOCOL_V2:
         start_offset, end_offset = 0, end
 
-        if encryption_data.encrypted_region_info is not None:
-            nonce_length = encryption_data.encrypted_region_info.nonce_length
-            data_length = encryption_data.encrypted_region_info.data_length
-            tag_length = encryption_data.encrypted_region_info.tag_length
+        if encryption_data.encrypted_region_info is None:
+            raise ValueError("Field required for V2 encryption is missing (encrypted_region_info).")
+
+        nonce_length = encryption_data.encrypted_region_info.nonce_length
+        data_length = encryption_data.encrypted_region_info.data_length
+        tag_length = encryption_data.encrypted_region_info.tag_length
         region_length = nonce_length + data_length + tag_length
         requested_length = end - start
 
@@ -709,8 +711,10 @@ def _decrypt_message(
         if not block_info or not block_info.nonce_length:
             raise ValueError("Missing required metadata for decryption.")
 
-        if encryption_data.encrypted_region_info is not None:
-            nonce_length = encryption_data.encrypted_region_info.nonce_length
+        if encryption_data.encrypted_region_info is None:
+            raise ValueError("Field required for V2 encryption is missing (encrypted_region_info).")
+
+        nonce_length = encryption_data.encrypted_region_info.nonce_length
 
         # First bytes are the nonce
         message_as_bytes = message.encode('utf-8')
@@ -925,10 +929,12 @@ def decrypt_blob(  # pylint: disable=too-many-locals,too-many-statements
         total_size = len(content)
         offset = 0
 
-        if encryption_data.encrypted_region_info is not None:
-            nonce_length = encryption_data.encrypted_region_info.nonce_length
-            data_length = encryption_data.encrypted_region_info.data_length
-            tag_length = encryption_data.encrypted_region_info.tag_length
+        if encryption_data.encrypted_region_info is None:
+            raise ValueError("Field required for V2 encryption is missing (encrypted_region_info).")
+
+        nonce_length = encryption_data.encrypted_region_info.nonce_length
+        data_length = encryption_data.encrypted_region_info.data_length
+        tag_length = encryption_data.encrypted_region_info.tag_length
         region_length = nonce_length + data_length + tag_length
 
         decrypted_content = bytearray()
