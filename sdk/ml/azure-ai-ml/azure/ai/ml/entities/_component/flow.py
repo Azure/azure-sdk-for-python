@@ -113,7 +113,7 @@ class FlowComponentInputDict(_FlowComponentPortDict):
                         "but got %s" % flattened_input_key,
                         no_personal_data_message="flattened connection input prot name must be in the format of "
                         "connections.<node_name>.<port_name>",
-                        target=ErrorTarget.PIPELINE,
+                        target=ErrorTarget.COMPONENT,
                         error_category=ErrorCategory.USER_ERROR,
                     )
                 _, node_name, param_name = flattened_input_key.split(".")
@@ -417,11 +417,9 @@ class FlowComponent(Component, AdditionalIncludesMixin):
         flow_file_name = "flow.dag.yaml"
 
         if flow is None and source_path is None:
-            raise ValidationException(
+            raise cls._create_validation_error(
                 message="Either flow or source_path must be specified.",
                 no_personal_data_message="Either flow or source_path must be specified.",
-                target=cls._get_validation_error_target(),
-                error_category=ErrorCategory.USER_ERROR,
             )
 
         if flow is None:
@@ -440,11 +438,9 @@ class FlowComponent(Component, AdditionalIncludesMixin):
         if flow_path.is_file():
             return flow_path.parent, flow_path.name
 
-        raise ValidationException(
+        raise cls._create_validation_error(
             message="Flow path must be a directory containing flow.dag.yaml or a file, but got %s" % flow_path,
             no_personal_data_message="Flow path must be a directory or a file",
-            target=cls._get_validation_error_target(),
-            error_category=ErrorCategory.USER_ERROR,
         )
 
     # endregion
@@ -460,11 +456,9 @@ class FlowComponent(Component, AdditionalIncludesMixin):
         elif _schema == SchemaUrl.PROMPTFLOW_FLOW:
             schema = FlowSchema(context=context)
         else:
-            raise ValidationException(
+            raise cls._create_validation_error(
                 message="$schema must be specified correctly for loading component from flow, but got %s" % _schema,
                 no_personal_data_message="$schema must be specified for loading component from flow",
-                target=cls._get_validation_error_target(),
-                error_category=ErrorCategory.USER_ERROR,
             )
 
         # unlike other component, we should ignore unknown fields in flow to keep init_params clean and avoid
@@ -479,11 +473,9 @@ class FlowComponent(Component, AdditionalIncludesMixin):
                 json.dumps(data, indent=4) if isinstance(data, dict) else data,
                 json.dumps(e.messages, indent=4),
             )
-            raise ValidationException(
+            raise cls._create_validation_error(
                 message=msg,
                 no_personal_data_message=str(e),
-                target=cls._get_validation_error_target(),
-                error_category=ErrorCategory.USER_ERROR,
             ) from e
 
     @classmethod
@@ -496,7 +488,9 @@ class FlowComponent(Component, AdditionalIncludesMixin):
     def _get_origin_code_value(self) -> Union[str, os.PathLike, None]:
         if self._code:
             return self._code
-        return self._get_flow_definition(flow=self.flow, base_path=self.base_path, source_path=self._source_path)[0]
+        return self._get_flow_definition(flow=self.flow, base_path=Path(self.base_path), source_path=self._source_path)[
+            0
+        ]
 
     def _fill_back_code_value(self, value: str) -> None:
         self._code = value
@@ -509,13 +503,11 @@ class FlowComponent(Component, AdditionalIncludesMixin):
                 return
 
             if not (Path(code.path) / ".promptflow" / "flow.tools.json").is_file():
-                raise ValidationException(
+                raise self._create_validation_error(
                     message="Flow component must be created with a ./promptflow/flow.tools.json, "
                     "please run `pf flow validate` to generate it or skip it in your ignore file.",
                     no_personal_data_message="Flow component must be created with a ./promptflow/flow.tools.json, "
                     "please run `pf flow validate` to generate it or skip it in your ignore file.",
-                    target=self._get_validation_error_target(),
-                    error_category=ErrorCategory.USER_ERROR,
                 )
             # TODO: should we remove additional includes from flow.dag.yaml? for now we suppose it will be removed
             #  by mldesigner compile if needed
