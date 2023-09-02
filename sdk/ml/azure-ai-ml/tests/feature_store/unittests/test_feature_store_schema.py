@@ -2,9 +2,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-import yaml
 import pytest
-
+import yaml
 
 from azure.ai.ml.entities._feature_store.feature_store import FeatureStore
 from azure.ai.ml.entities._load_functions import load_feature_store
@@ -27,3 +26,31 @@ class TestFeatureStoreSchema:
         assert feature_store.properties is not None
         assert feature_store.managed_network is not None
         assert feature_store.managed_network.outbound_rules is not None
+
+    def test_materialization_store(self):
+        from azure.ai.ml.entities._feature_store._constants import (
+            OFFLINE_MATERIALIZATION_STORE_TYPE,
+            ONLINE_MATERIALIZATION_STORE_TYPE,
+        )
+        from azure.ai.ml.entities._feature_store.materialization_store import MaterializationStore
+        from azure.ai.ml.exceptions import ValidationException
+
+        with pytest.raises(ValidationException) as ve:
+            FeatureStore(
+                name="name",
+                description="description",
+                offline_store=MaterializationStore(
+                    type=OFFLINE_MATERIALIZATION_STORE_TYPE, target="offline_store_resource_id"
+                ),
+            )
+        assert "Invalid ARM Id" in str(ve.exception)
+
+        with pytest.raises(ValidationException) as ve:
+            FeatureStore(
+                name="name",
+                description="description",
+                online_store=MaterializationStore(
+                    type=ONLINE_MATERIALIZATION_STORE_TYPE, target="online_store_resource_id"
+                ),
+            )
+        assert "Invalid ARM Id" in str(ve.exception)

@@ -146,14 +146,14 @@ class TestFeatureStoreOperation:
         from azure.ai.ml.entities._credentials import ManagedIdentityConfiguration
         from azure.ai.ml.entities._feature_store.materialization_store import MaterializationStore
 
-        EXISTING_IDENTITY_RESOURCE_ID = "existing_identity_resource_id"
-        EXISTING_OFFLINE_STORE_RESOURCE_ID = "existing_offline_store_resource_id"
-        EXISTING_ONLINE_STORE_RESOURCE_ID = "existing_online_store_resource_id"
+        EXISTING_IDENTITY_RESOURCE_ID = "/subscriptions/b17253fa-f327-42d6-9686-f3e553e24763/resourcegroups/test_rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/exist_identity"
+        EXISTING_OFFLINE_STORE_RESOURCE_ID = "/subscriptions/b17253fa-f327-42d6-9686-f3e553e24763/resourceGroups/test_rg/providers/Microsoft.Storage/storageAccounts/test_storage/blobServices/default/containers/exist"
+        EXISTING_ONLINE_STORE_RESOURCE_ID = "/subscriptions/b17253fa-f327-42d6-9686-f3e553e24763/resourceGroups/mdctest/providers/Microsoft.Cache/Redis/exist"
         OFFLINE_STORE_CONNECTION_NAME = "offlineStoreConnectionName"
         ONLINE_STORE_CONNECTION_NAME = "onlineStoreConnectionName"
-        NEW_IDENTITY_RESOURCE_ID = "new_identity_resource_id"
-        NEW_OFFLINE_STORE_RESOURCE_ID = "new_offline_store_resource_id"
-        NEW_ONLINE_STORE_RESOURCE_ID = "new_online_store_resource_id"
+        NEW_IDENTITY_RESOURCE_ID = "/subscriptions/b17253fa-f327-42d6-9686-f3e553e24763/resourcegroups/test_rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/new_identity"
+        NEW_OFFLINE_STORE_RESOURCE_ID = "/subscriptions/b17253fa-f327-42d6-9686-f3e553e24763/resourceGroups/test_rg/providers/Microsoft.Storage/storageAccounts/test_storage/blobServices/default/containers/new"
+        NEW_ONLINE_STORE_RESOURCE_ID = "/subscriptions/b17253fa-f327-42d6-9686-f3e553e24763/resourceGroups/mdctest/providers/Microsoft.Cache/Redis/new"
 
         mocker.patch(
             "azure.ai.ml.operations._workspace_operations_base.WorkspaceOperationsBase.begin_update",
