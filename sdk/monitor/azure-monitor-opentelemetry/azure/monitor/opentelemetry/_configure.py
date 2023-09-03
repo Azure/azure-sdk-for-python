@@ -40,7 +40,7 @@ from azure.monitor.opentelemetry.exporter import (  # pylint: disable=import-err
     AzureMonitorMetricExporter,
     AzureMonitorTraceExporter,
 )
-from azure.monitor.opentelemetry.util._configurations import _get_configurations
+from azure.monitor.opentelemetry._util.configurations import _get_configurations
 
 _logger = getLogger(__name__)
 
