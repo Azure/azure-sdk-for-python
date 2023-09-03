@@ -222,11 +222,16 @@ class FlowComponent(Component, AdditionalIncludesMixin):
         # validate init params are valid type
         kwargs[COMPONENT_TYPE] = NodeType.FLOW_PARALLEL
 
-        flow_dir, self._flow_file_name = self._get_flow_definition(
+        # always use flow directory as base path
+        # Note: we suppose that there is no relative path in run.yaml other than flow.
+        #   If there are any, we will need to rebase them so that they have the same base path as attributes in
+        #   flow.dag.yaml
+        flow_dir, self._flow = self._get_flow_definition(
             flow=flow,
-            base_path=kwargs.get(BASE_PATH_CONTEXT_KEY, Path.cwd()),
+            base_path=kwargs.pop(BASE_PATH_CONTEXT_KEY, Path.cwd()),
             source_path=kwargs.get(SOURCE_PATH_CONTEXT_KEY, None),
         )
+        kwargs[BASE_PATH_CONTEXT_KEY] = flow_dir
 
         super().__init__(
             name=name or flow_dir.name,
@@ -240,7 +245,6 @@ class FlowComponent(Component, AdditionalIncludesMixin):
             properties=properties,
             **kwargs,
         )
-        self._flow = flow
         self._column_mapping = column_mapping or {}
         self._variant = variant
         self._connections = connections or {}
@@ -251,7 +255,8 @@ class FlowComponent(Component, AdditionalIncludesMixin):
 
         if flow:
             # file existence has been checked in _get_flow_definition
-            with open(Path(flow_dir, self._flow_file_name), "r", encoding="utf-8") as f:
+            # we don't need to rebase additional_includes as we have updated base_path
+            with open(Path(self.base_path, self._flow), "r", encoding="utf-8") as f:
                 flow_content = f.read()
                 additional_includes = yaml.safe_load(flow_content).get("additional_includes", None)
         self._additional_includes = additional_includes or []
@@ -259,31 +264,16 @@ class FlowComponent(Component, AdditionalIncludesMixin):
         # unlike other Component, code is a private property in FlowComponent and
         # will be used to store the arm id of the created code before constructing rest object
         # we haven't used self.flow directly as self.flow can be a path to the flow dag yaml file instead of a directory
-        self._code = None
+        self._code_arm_id = None
 
     # region valid properties
     @property
-    def flow(self) -> Optional[Union[str, Path]]:
-        """The path to the flow directory or flow definition file. Defaults to None and base path of this
-        component will be used as flow directory.
+    def flow(self) -> str:
+        """The path to the flow definition file relative to the flow directory.
 
-        :rtype: Optional[Union[str, Path]]
+        :rtype: str
         """
         return self._flow
-
-    @flow.setter
-    def flow(self, value: Optional[Union[str, Path]]) -> None:
-        """The path to the flow directory or flow definition file. Defaults to None and base path of this
-        component will be used as flow directory.
-
-        :param value: The path to the flow directory or flow definition file.
-        :type value: Optional[Union[str, Path]]
-        """
-        if self._flow != value:
-            # reset code and flow file name when flow is changed
-            self._code = None
-            _, self._flow_file_name = self._get_flow_definition(flow=value, base_path=self.base_path)
-        self._flow = value
 
     @property
     def column_mapping(self) -> Dict[str, str]:
@@ -366,6 +356,7 @@ class FlowComponent(Component, AdditionalIncludesMixin):
     @additional_includes.setter
     def additional_includes(self, value: Optional[List]) -> None:
         """A list of shared additional files to be included in the component. Defaults to None.
+        All local additional includes should be relative to the flow directory.
 
         :param value: A list of shared additional files to be included in the component.
         :type value: Optional[List]
@@ -381,8 +372,8 @@ class FlowComponent(Component, AdditionalIncludesMixin):
 
     def _to_rest_object(self) -> ComponentVersion:
         rest_obj = super()._to_rest_object()
-        rest_obj.properties.component_spec["code"] = self._code
-        rest_obj.properties.component_spec["flow_file_name"] = self._flow_file_name
+        rest_obj.properties.component_spec["code"] = self._code_arm_id
+        rest_obj.properties.component_spec["flow_file_name"] = self._flow
         return rest_obj
 
     def _func(self, **kwargs) -> "Parallel":  # pylint: disable=invalid-overridden-method
@@ -486,14 +477,12 @@ class FlowComponent(Component, AdditionalIncludesMixin):
 
     # region AdditionalIncludesMixin
     def _get_origin_code_value(self) -> Union[str, os.PathLike, None]:
-        if self._code:
-            return self._code
-        return self._get_flow_definition(flow=self.flow, base_path=Path(self.base_path), source_path=self._source_path)[
-            0
-        ]
+        if self._code_arm_id:
+            return self._code_arm_id
+        return self.base_path
 
     def _fill_back_code_value(self, value: str) -> None:
-        self._code = value
+        self._code_arm_id = value
 
     @contextlib.contextmanager
     def _try_build_local_code(self) -> Iterable[Optional[Code]]:
