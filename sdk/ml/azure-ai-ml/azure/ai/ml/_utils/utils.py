@@ -1033,8 +1033,14 @@ def is_concurrent_component_registration_enabled():  # pylint: disable=name-too-
     return os.getenv(AZUREML_DISABLE_CONCURRENT_COMPONENT_REGISTRATION) not in ["True", "true", True]
 
 
+__is_internal_components_enabled = False
+
+
 def _is_internal_components_enabled():
-    return os.getenv(AZUREML_INTERNAL_COMPONENTS_ENV_VAR) in ["True", "true", True]
+    global __is_internal_components_enabled  # pylint: disable=global-statement
+    if os.getenv(AZUREML_INTERNAL_COMPONENTS_ENV_VAR) in ["True", "true", True]:
+        __is_internal_components_enabled = True
+    return __is_internal_components_enabled
 
 
 def try_enable_internal_components(*, force=False) -> bool:

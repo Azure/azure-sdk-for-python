@@ -7,6 +7,7 @@ from typing import NoReturn
 from marshmallow import INCLUDE
 
 from .._schema import NestedField
+from .._utils import utils
 from ..entities._builders.control_flow_node import LoopNode
 from ..entities._component.component_factory import component_factory
 from ..entities._job.pipeline._load_component import pipeline_node_factory
@@ -28,12 +29,9 @@ from .entities import (
 )
 from .entities.spark import InternalSparkComponent
 
-_registered = False
-
 
 def _set_registered(value: bool):
-    global _registered  # pylint: disable=global-statement
-    _registered = value
+    utils.__is_internal_components_enabled = value
 
 
 def _enable_internal_components():
@@ -68,7 +66,7 @@ def enable_internal_components_in_pipeline(*, force=False) -> NoReturn:
     :return: No return value.
     :rtype: None
     """
-    if _registered and not force:
+    if utils.__is_internal_components_enabled and not force:
         return  # already registered
 
     _enable_internal_components()
