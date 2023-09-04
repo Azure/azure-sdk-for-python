@@ -289,7 +289,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
         response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
-        response_headers["last-modified"] = self._deserialize("iso-8601", response.headers.get("last-modified"))
+        response_headers["last-modified"] = self._deserialize("rfc-1123", response.headers.get("last-modified"))
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -427,7 +427,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
     @distributed_trace_async
     async def create_pool(  # pylint: disable=inconsistent-return-statements
         self,
-        parameters: _models.BatchPoolCreateParameters,
+        body: _models.BatchPoolCreateOptions,
         *,
         time_out: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
@@ -439,8 +439,8 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         secret project names. This information may appear in telemetry logs accessible
         to Microsoft Support engineers.
 
-        :param parameters: The Pool to be created. Required.
-        :type parameters: ~azure.batch.models.BatchPoolCreateParameters
+        :param body: The Pool to be created. Required.
+        :type body: ~azure.batch.models.BatchPoolCreateOptions
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
@@ -473,7 +473,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _content = json.dumps(parameters, cls=AzureJSONEncoder)  # type: ignore
+        _content = json.dumps(body, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
 
         request = build_batch_create_pool_request(
             time_out=time_out,
@@ -504,7 +504,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
         response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
-        response_headers["last-modified"] = self._deserialize("iso-8601", response.headers.get("last-modified"))
+        response_headers["last-modified"] = self._deserialize("rfc-1123", response.headers.get("last-modified"))
         response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
@@ -830,7 +830,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
             response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
             response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
             response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
-            response_headers["last-modified"] = self._deserialize("iso-8601", response.headers.get("last-modified"))
+            response_headers["last-modified"] = self._deserialize("rfc-1123", response.headers.get("last-modified"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)
@@ -940,7 +940,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
         response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
-        response_headers["last-modified"] = self._deserialize("iso-8601", response.headers.get("last-modified"))
+        response_headers["last-modified"] = self._deserialize("rfc-1123", response.headers.get("last-modified"))
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -956,7 +956,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
     async def update_pool(  # pylint: disable=inconsistent-return-statements
         self,
         pool_id: str,
-        parameters: _models.BatchPoolPatchParameters,
+        body: _models.BatchPoolUpdateOptions,
         *,
         time_out: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
@@ -974,8 +974,8 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         :param pool_id: The ID of the Pool to get. Required.
         :type pool_id: str
-        :param parameters: The parameters for the request. Required.
-        :type parameters: ~azure.batch.models.BatchPoolPatchParameters
+        :param body: The pool properties to update. Required.
+        :type body: ~azure.batch.models.BatchPoolUpdateOptions
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
@@ -1029,7 +1029,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _content = json.dumps(parameters, cls=AzureJSONEncoder)  # type: ignore
+        _content = json.dumps(body, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
 
         request = build_batch_update_pool_request(
             pool_id=pool_id,
@@ -1065,7 +1065,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
         response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
-        response_headers["last-modified"] = self._deserialize("iso-8601", response.headers.get("last-modified"))
+        response_headers["last-modified"] = self._deserialize("rfc-1123", response.headers.get("last-modified"))
         response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
@@ -1140,7 +1140,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
         response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
-        response_headers["last-modified"] = self._deserialize("iso-8601", response.headers.get("last-modified"))
+        response_headers["last-modified"] = self._deserialize("rfc-1123", response.headers.get("last-modified"))
         response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
@@ -1150,7 +1150,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
     async def enable_pool_auto_scale(  # pylint: disable=inconsistent-return-statements
         self,
         pool_id: str,
-        parameters: _models.BatchPoolEnableAutoScaleParameters,
+        body: _models.BatchPoolEnableAutoScaleOptions,
         *,
         time_out: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
@@ -1171,8 +1171,8 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         :param pool_id: The ID of the Pool to get. Required.
         :type pool_id: str
-        :param parameters: The parameters for the request. Required.
-        :type parameters: ~azure.batch.models.BatchPoolEnableAutoScaleParameters
+        :param body: The options to use for enabling automatic scaling. Required.
+        :type body: ~azure.batch.models.BatchPoolEnableAutoScaleOptions
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
@@ -1226,7 +1226,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _content = json.dumps(parameters, cls=AzureJSONEncoder)  # type: ignore
+        _content = json.dumps(body, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
 
         request = build_batch_enable_pool_auto_scale_request(
             pool_id=pool_id,
@@ -1262,7 +1262,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
         response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
-        response_headers["last-modified"] = self._deserialize("iso-8601", response.headers.get("last-modified"))
+        response_headers["last-modified"] = self._deserialize("rfc-1123", response.headers.get("last-modified"))
         response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
@@ -1272,7 +1272,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
     async def evaluate_pool_auto_scale(
         self,
         pool_id: str,
-        parameters: _models.BatchPoolEvaluateAutoScaleParameters,
+        body: _models.BatchPoolEvaluateAutoScaleOptions,
         *,
         time_out: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
@@ -1287,8 +1287,8 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         :param pool_id: The ID of the Pool on which to evaluate the automatic scaling formula.
          Required.
         :type pool_id: str
-        :param parameters: The parameters for the request. Required.
-        :type parameters: ~azure.batch.models.BatchPoolEvaluateAutoScaleParameters
+        :param body: The options to use for evaluating the automatic scaling formula. Required.
+        :type body: ~azure.batch.models.BatchPoolEvaluateAutoScaleOptions
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
@@ -1321,7 +1321,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         )
         cls: ClsType[_models.AutoScaleRun] = kwargs.pop("cls", None)
 
-        _content = json.dumps(parameters, cls=AzureJSONEncoder)  # type: ignore
+        _content = json.dumps(body, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
 
         request = build_batch_evaluate_pool_auto_scale_request(
             pool_id=pool_id,
@@ -1353,7 +1353,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
         response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
-        response_headers["last-modified"] = self._deserialize("iso-8601", response.headers.get("last-modified"))
+        response_headers["last-modified"] = self._deserialize("rfc-1123", response.headers.get("last-modified"))
         response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if _stream:
@@ -1370,7 +1370,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
     async def resize_pool(  # pylint: disable=inconsistent-return-statements
         self,
         pool_id: str,
-        parameters: _models.BatchPoolResizeParameters,
+        body: _models.BatchPoolResizeOptions,
         *,
         time_out: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
@@ -1392,8 +1392,8 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         :param pool_id: The ID of the Pool to get. Required.
         :type pool_id: str
-        :param parameters: The parameters for the request. Required.
-        :type parameters: ~azure.batch.models.BatchPoolResizeParameters
+        :param body: The options to use for resizing the pool. Required.
+        :type body: ~azure.batch.models.BatchPoolResizeOptions
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
@@ -1447,7 +1447,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _content = json.dumps(parameters, cls=AzureJSONEncoder)  # type: ignore
+        _content = json.dumps(body, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
 
         request = build_batch_resize_pool_request(
             pool_id=pool_id,
@@ -1483,7 +1483,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
         response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
-        response_headers["last-modified"] = self._deserialize("iso-8601", response.headers.get("last-modified"))
+        response_headers["last-modified"] = self._deserialize("rfc-1123", response.headers.get("last-modified"))
         response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
@@ -1593,7 +1593,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
         response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
-        response_headers["last-modified"] = self._deserialize("iso-8601", response.headers.get("last-modified"))
+        response_headers["last-modified"] = self._deserialize("rfc-1123", response.headers.get("last-modified"))
         response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
@@ -1603,7 +1603,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
     async def replace_pool_properties(  # pylint: disable=inconsistent-return-statements
         self,
         pool_id: str,
-        parameters: _models.BatchPoolUpdateParameters,
+        body: _models.BatchPoolReplaceOptions,
         *,
         time_out: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
@@ -1617,8 +1617,8 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         :param pool_id: The ID of the Pool to update. Required.
         :type pool_id: str
-        :param parameters: The parameters for the request. Required.
-        :type parameters: ~azure.batch.models.BatchPoolUpdateParameters
+        :param body: The options to use for replacing properties on the pool. Required.
+        :type body: ~azure.batch.models.BatchPoolReplaceOptions
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
@@ -1651,7 +1651,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _content = json.dumps(parameters, cls=AzureJSONEncoder)  # type: ignore
+        _content = json.dumps(body, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
 
         request = build_batch_replace_pool_properties_request(
             pool_id=pool_id,
@@ -1683,7 +1683,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
         response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
-        response_headers["last-modified"] = self._deserialize("iso-8601", response.headers.get("last-modified"))
+        response_headers["last-modified"] = self._deserialize("rfc-1123", response.headers.get("last-modified"))
         response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
@@ -1693,7 +1693,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
     async def remove_nodes(  # pylint: disable=inconsistent-return-statements
         self,
         pool_id: str,
-        parameters: _models.NodeRemoveParameters,
+        body: _models.NodeRemoveOptions,
         *,
         time_out: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
@@ -1711,8 +1711,8 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         :param pool_id: The ID of the Pool to get. Required.
         :type pool_id: str
-        :param parameters: The parameters for the request. Required.
-        :type parameters: ~azure.batch.models.NodeRemoveParameters
+        :param body: The options to use for removing the node. Required.
+        :type body: ~azure.batch.models.NodeRemoveOptions
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
@@ -1766,7 +1766,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _content = json.dumps(parameters, cls=AzureJSONEncoder)  # type: ignore
+        _content = json.dumps(body, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
 
         request = build_batch_remove_nodes_request(
             pool_id=pool_id,
@@ -1802,7 +1802,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
         response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
-        response_headers["last-modified"] = self._deserialize("iso-8601", response.headers.get("last-modified"))
+        response_headers["last-modified"] = self._deserialize("rfc-1123", response.headers.get("last-modified"))
         response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
@@ -2228,7 +2228,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
         response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
-        response_headers["last-modified"] = self._deserialize("iso-8601", response.headers.get("last-modified"))
+        response_headers["last-modified"] = self._deserialize("rfc-1123", response.headers.get("last-modified"))
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -2244,7 +2244,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
     async def update_job(  # pylint: disable=inconsistent-return-statements
         self,
         job_id: str,
-        parameters: _models.BatchJobUpdateParameters,
+        body: _models.BatchJobUpdateOptions,
         *,
         time_out: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
@@ -2262,8 +2262,8 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         :param job_id: The ID of the Job whose properties you want to update. Required.
         :type job_id: str
-        :param parameters: The parameters for the request. Required.
-        :type parameters: ~azure.batch.models.BatchJobUpdateParameters
+        :param body: The options to use for updating the Job. Required.
+        :type body: ~azure.batch.models.BatchJobUpdateOptions
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
@@ -2317,7 +2317,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _content = json.dumps(parameters, cls=AzureJSONEncoder)  # type: ignore
+        _content = json.dumps(body, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
 
         request = build_batch_update_job_request(
             job_id=job_id,
@@ -2353,7 +2353,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
         response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
-        response_headers["last-modified"] = self._deserialize("iso-8601", response.headers.get("last-modified"))
+        response_headers["last-modified"] = self._deserialize("rfc-1123", response.headers.get("last-modified"))
         response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
@@ -2363,7 +2363,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
     async def replace_job(  # pylint: disable=inconsistent-return-statements
         self,
         job_id: str,
-        parameters: _models.BatchJob,
+        body: _models.BatchJob,
         *,
         time_out: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
@@ -2381,8 +2381,8 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         :param job_id: The ID of the Job whose properties you want to update. Required.
         :type job_id: str
-        :param parameters: The parameters for the request. Required.
-        :type parameters: ~azure.batch.models.BatchJob
+        :param body: A job with updated properties. Required.
+        :type body: ~azure.batch.models.BatchJob
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
@@ -2436,7 +2436,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _content = json.dumps(parameters, cls=AzureJSONEncoder)  # type: ignore
+        _content = json.dumps(body, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
 
         request = build_batch_replace_job_request(
             job_id=job_id,
@@ -2472,7 +2472,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
         response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
-        response_headers["last-modified"] = self._deserialize("iso-8601", response.headers.get("last-modified"))
+        response_headers["last-modified"] = self._deserialize("rfc-1123", response.headers.get("last-modified"))
         response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
@@ -2482,7 +2482,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
     async def disable_job(  # pylint: disable=inconsistent-return-statements
         self,
         job_id: str,
-        parameters: _models.BatchJobDisableParameters,
+        body: _models.BatchJobDisableOptions,
         *,
         time_out: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
@@ -2505,8 +2505,8 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         :param job_id: The ID of the Job to disable. Required.
         :type job_id: str
-        :param parameters: The parameters for the request. Required.
-        :type parameters: ~azure.batch.models.BatchJobDisableParameters
+        :param body: The options to use for disabling the Job. Required.
+        :type body: ~azure.batch.models.BatchJobDisableOptions
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
@@ -2560,7 +2560,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _content = json.dumps(parameters, cls=AzureJSONEncoder)  # type: ignore
+        _content = json.dumps(body, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
 
         request = build_batch_disable_job_request(
             job_id=job_id,
@@ -2596,7 +2596,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
         response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
-        response_headers["last-modified"] = self._deserialize("iso-8601", response.headers.get("last-modified"))
+        response_headers["last-modified"] = self._deserialize("rfc-1123", response.headers.get("last-modified"))
         response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
@@ -2705,7 +2705,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
         response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
-        response_headers["last-modified"] = self._deserialize("iso-8601", response.headers.get("last-modified"))
+        response_headers["last-modified"] = self._deserialize("rfc-1123", response.headers.get("last-modified"))
         response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
@@ -2715,7 +2715,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
     async def terminate_job(  # pylint: disable=inconsistent-return-statements
         self,
         job_id: str,
-        parameters: Optional[_models.BatchJobTerminateParameters] = None,
+        body: Optional[_models.BatchJobTerminateOptions] = None,
         *,
         time_out: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
@@ -2736,8 +2736,8 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         :param job_id: The ID of the Job to terminate. Required.
         :type job_id: str
-        :param parameters: The parameters for the request. Default value is None.
-        :type parameters: ~azure.batch.models.BatchJobTerminateParameters
+        :param body: The options to use for terminating the Job. Default value is None.
+        :type body: ~azure.batch.models.BatchJobTerminateOptions
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
@@ -2791,8 +2791,8 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        if parameters is not None:
-            _content = json.dumps(parameters, cls=AzureJSONEncoder)  # type: ignore
+        if body is not None:
+            _content = json.dumps(body, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
         else:
             _content = None
 
@@ -2830,7 +2830,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
         response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
-        response_headers["last-modified"] = self._deserialize("iso-8601", response.headers.get("last-modified"))
+        response_headers["last-modified"] = self._deserialize("rfc-1123", response.headers.get("last-modified"))
         response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
@@ -2839,7 +2839,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
     @distributed_trace_async
     async def create_job(  # pylint: disable=inconsistent-return-statements
         self,
-        parameters: _models.BatchJobCreateParameters,
+        body: _models.BatchJobCreateOptions,
         *,
         time_out: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
@@ -2857,8 +2857,8 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         This information may appear in telemetry logs accessible to Microsoft Support
         engineers.
 
-        :param parameters: The Job to be crated. Required.
-        :type parameters: ~azure.batch.models.BatchJobCreateParameters
+        :param body: The Job to be created. Required.
+        :type body: ~azure.batch.models.BatchJobCreateOptions
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
@@ -2891,7 +2891,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _content = json.dumps(parameters, cls=AzureJSONEncoder)  # type: ignore
+        _content = json.dumps(body, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
 
         request = build_batch_create_job_request(
             time_out=time_out,
@@ -2922,7 +2922,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
         response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
-        response_headers["last-modified"] = self._deserialize("iso-8601", response.headers.get("last-modified"))
+        response_headers["last-modified"] = self._deserialize("rfc-1123", response.headers.get("last-modified"))
         response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
@@ -3360,7 +3360,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
     @distributed_trace_async
     async def create_certificate(  # pylint: disable=inconsistent-return-statements
         self,
-        parameters: _models.BatchCertificate,
+        body: _models.BatchCertificate,
         *,
         time_out: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
@@ -3370,8 +3370,8 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         Creates a Certificate to the specified Account.
 
-        :param parameters: The Certificate to be created. Required.
-        :type parameters: ~azure.batch.models.BatchCertificate
+        :param body: The Certificate to be created. Required.
+        :type body: ~azure.batch.models.BatchCertificate
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
@@ -3404,7 +3404,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _content = json.dumps(parameters, cls=AzureJSONEncoder)  # type: ignore
+        _content = json.dumps(body, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
 
         request = build_batch_create_certificate_request(
             time_out=time_out,
@@ -3435,7 +3435,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
         response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
-        response_headers["last-modified"] = self._deserialize("iso-8601", response.headers.get("last-modified"))
+        response_headers["last-modified"] = self._deserialize("rfc-1123", response.headers.get("last-modified"))
         response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
@@ -3628,7 +3628,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
         response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
-        response_headers["last-modified"] = self._deserialize("iso-8601", response.headers.get("last-modified"))
+        response_headers["last-modified"] = self._deserialize("rfc-1123", response.headers.get("last-modified"))
         response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
@@ -3716,7 +3716,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
         response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
-        response_headers["last-modified"] = self._deserialize("iso-8601", response.headers.get("last-modified"))
+        response_headers["last-modified"] = self._deserialize("rfc-1123", response.headers.get("last-modified"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)
@@ -3797,7 +3797,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
         response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
-        response_headers["last-modified"] = self._deserialize("iso-8601", response.headers.get("last-modified"))
+        response_headers["last-modified"] = self._deserialize("rfc-1123", response.headers.get("last-modified"))
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -3908,7 +3908,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
             response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
             response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
             response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
-            response_headers["last-modified"] = self._deserialize("iso-8601", response.headers.get("last-modified"))
+            response_headers["last-modified"] = self._deserialize("rfc-1123", response.headers.get("last-modified"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)
@@ -4123,7 +4123,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
         response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
-        response_headers["last-modified"] = self._deserialize("iso-8601", response.headers.get("last-modified"))
+        response_headers["last-modified"] = self._deserialize("rfc-1123", response.headers.get("last-modified"))
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -4139,7 +4139,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
     async def update_job_schedule(  # pylint: disable=inconsistent-return-statements
         self,
         job_schedule_id: str,
-        parameters: _models.BatchJobScheduleUpdateParameters,
+        body: _models.BatchJobScheduleUpdateOptions,
         *,
         time_out: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
@@ -4159,8 +4159,8 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         :param job_schedule_id: The ID of the Job Schedule to update. Required.
         :type job_schedule_id: str
-        :param parameters: The parameters for the request. Required.
-        :type parameters: ~azure.batch.models.BatchJobScheduleUpdateParameters
+        :param body: The options to use for updating the Job Schedule. Required.
+        :type body: ~azure.batch.models.BatchJobScheduleUpdateOptions
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
@@ -4214,7 +4214,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _content = json.dumps(parameters, cls=AzureJSONEncoder)  # type: ignore
+        _content = json.dumps(body, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
 
         request = build_batch_update_job_schedule_request(
             job_schedule_id=job_schedule_id,
@@ -4250,7 +4250,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
         response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
-        response_headers["last-modified"] = self._deserialize("iso-8601", response.headers.get("last-modified"))
+        response_headers["last-modified"] = self._deserialize("rfc-1123", response.headers.get("last-modified"))
         response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
@@ -4260,7 +4260,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
     async def replace_job_schedule(  # pylint: disable=inconsistent-return-statements
         self,
         job_schedule_id: str,
-        parameters: _models.BatchJobSchedule,
+        body: _models.BatchJobSchedule,
         *,
         time_out: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
@@ -4280,8 +4280,8 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         :param job_schedule_id: The ID of the Job Schedule to update. Required.
         :type job_schedule_id: str
-        :param parameters: The parameters for the request. Required.
-        :type parameters: ~azure.batch.models.BatchJobSchedule
+        :param body: A Job Schedule with updated properties. Required.
+        :type body: ~azure.batch.models.BatchJobSchedule
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
@@ -4335,7 +4335,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _content = json.dumps(parameters, cls=AzureJSONEncoder)  # type: ignore
+        _content = json.dumps(body, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
 
         request = build_batch_replace_job_schedule_request(
             job_schedule_id=job_schedule_id,
@@ -4371,7 +4371,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
         response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
-        response_headers["last-modified"] = self._deserialize("iso-8601", response.headers.get("last-modified"))
+        response_headers["last-modified"] = self._deserialize("rfc-1123", response.headers.get("last-modified"))
         response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
@@ -4475,7 +4475,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
         response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
-        response_headers["last-modified"] = self._deserialize("iso-8601", response.headers.get("last-modified"))
+        response_headers["last-modified"] = self._deserialize("rfc-1123", response.headers.get("last-modified"))
         response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
@@ -4579,7 +4579,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
         response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
-        response_headers["last-modified"] = self._deserialize("iso-8601", response.headers.get("last-modified"))
+        response_headers["last-modified"] = self._deserialize("rfc-1123", response.headers.get("last-modified"))
         response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
@@ -4683,7 +4683,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
         response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
-        response_headers["last-modified"] = self._deserialize("iso-8601", response.headers.get("last-modified"))
+        response_headers["last-modified"] = self._deserialize("rfc-1123", response.headers.get("last-modified"))
         response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
@@ -4692,7 +4692,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
     @distributed_trace_async
     async def create_job_schedule(  # pylint: disable=inconsistent-return-statements
         self,
-        cloud_job_schedule: _models.BatchJobScheduleCreateParameters,
+        body: _models.BatchJobScheduleCreateOptions,
         *,
         time_out: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
@@ -4702,8 +4702,8 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         Creates a Job Schedule to the specified Account.
 
-        :param cloud_job_schedule: The Job Schedule to be created. Required.
-        :type cloud_job_schedule: ~azure.batch.models.BatchJobScheduleCreateParameters
+        :param body: The Job Schedule to be created. Required.
+        :type body: ~azure.batch.models.BatchJobScheduleCreateOptions
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
@@ -4736,7 +4736,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _content = json.dumps(cloud_job_schedule, cls=AzureJSONEncoder)  # type: ignore
+        _content = json.dumps(body, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
 
         request = build_batch_create_job_schedule_request(
             time_out=time_out,
@@ -4767,7 +4767,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
         response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
-        response_headers["last-modified"] = self._deserialize("iso-8601", response.headers.get("last-modified"))
+        response_headers["last-modified"] = self._deserialize("rfc-1123", response.headers.get("last-modified"))
         response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
@@ -4888,7 +4888,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
     async def create_task(  # pylint: disable=inconsistent-return-statements
         self,
         job_id: str,
-        task: _models.BatchTaskCreateParameters,
+        body: _models.BatchTaskCreateOptions,
         *,
         time_out: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
@@ -4902,8 +4902,8 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         :param job_id: The ID of the Job to which the Task is to be created. Required.
         :type job_id: str
-        :param task: The Task to be created. Required.
-        :type task: ~azure.batch.models.BatchTaskCreateParameters
+        :param body: The Task to be created. Required.
+        :type body: ~azure.batch.models.BatchTaskCreateOptions
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
@@ -4936,7 +4936,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _content = json.dumps(task, cls=AzureJSONEncoder)  # type: ignore
+        _content = json.dumps(body, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
 
         request = build_batch_create_task_request(
             job_id=job_id,
@@ -4968,7 +4968,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
         response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
-        response_headers["last-modified"] = self._deserialize("iso-8601", response.headers.get("last-modified"))
+        response_headers["last-modified"] = self._deserialize("rfc-1123", response.headers.get("last-modified"))
         response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
@@ -5154,7 +5154,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         )
         cls: ClsType[_models.TaskAddCollectionResult] = kwargs.pop("cls", None)
 
-        _content = json.dumps(collection, cls=AzureJSONEncoder)  # type: ignore
+        _content = json.dumps(collection, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
 
         request = build_batch_create_task_collection_request(
             job_id=job_id,
@@ -5417,7 +5417,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
         response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
-        response_headers["last-modified"] = self._deserialize("iso-8601", response.headers.get("last-modified"))
+        response_headers["last-modified"] = self._deserialize("rfc-1123", response.headers.get("last-modified"))
         response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if _stream:
@@ -5435,7 +5435,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         self,
         job_id: str,
         task_id: str,
-        parameters: _models.BatchTask,
+        body: _models.BatchTask,
         *,
         time_out: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
@@ -5451,8 +5451,8 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         :type job_id: str
         :param task_id: The ID of the Task to update. Required.
         :type task_id: str
-        :param parameters: The parameters for the request. Required.
-        :type parameters: ~azure.batch.models.BatchTask
+        :param body: The Task to update. Required.
+        :type body: ~azure.batch.models.BatchTask
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
@@ -5506,7 +5506,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _content = json.dumps(parameters, cls=AzureJSONEncoder)  # type: ignore
+        _content = json.dumps(body, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
 
         request = build_batch_replace_task_request(
             job_id=job_id,
@@ -5543,7 +5543,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
         response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
-        response_headers["last-modified"] = self._deserialize("iso-8601", response.headers.get("last-modified"))
+        response_headers["last-modified"] = self._deserialize("rfc-1123", response.headers.get("last-modified"))
         response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
@@ -5628,7 +5628,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
         response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
-        response_headers["last-modified"] = self._deserialize("iso-8601", response.headers.get("last-modified"))
+        response_headers["last-modified"] = self._deserialize("rfc-1123", response.headers.get("last-modified"))
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -5744,7 +5744,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
         response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
-        response_headers["last-modified"] = self._deserialize("iso-8601", response.headers.get("last-modified"))
+        response_headers["last-modified"] = self._deserialize("rfc-1123", response.headers.get("last-modified"))
         response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
@@ -5859,7 +5859,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
         response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
-        response_headers["last-modified"] = self._deserialize("iso-8601", response.headers.get("last-modified"))
+        response_headers["last-modified"] = self._deserialize("rfc-1123", response.headers.get("last-modified"))
         response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
@@ -6048,8 +6048,8 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
         response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
-        response_headers["last-modified"] = self._deserialize("iso-8601", response.headers.get("last-modified"))
-        response_headers["ocp-creation-time"] = self._deserialize("iso-8601", response.headers.get("ocp-creation-time"))
+        response_headers["last-modified"] = self._deserialize("rfc-1123", response.headers.get("last-modified"))
+        response_headers["ocp-creation-time"] = self._deserialize("rfc-1123", response.headers.get("ocp-creation-time"))
         response_headers["ocp-batch-file-isdirectory"] = self._deserialize(
             "bool", response.headers.get("ocp-batch-file-isdirectory")
         )
@@ -6156,8 +6156,8 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
         response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
-        response_headers["last-modified"] = self._deserialize("iso-8601", response.headers.get("last-modified"))
-        response_headers["ocp-creation-time"] = self._deserialize("iso-8601", response.headers.get("ocp-creation-time"))
+        response_headers["last-modified"] = self._deserialize("rfc-1123", response.headers.get("last-modified"))
+        response_headers["ocp-creation-time"] = self._deserialize("rfc-1123", response.headers.get("ocp-creation-time"))
         response_headers["ocp-batch-file-isdirectory"] = self._deserialize(
             "bool", response.headers.get("ocp-batch-file-isdirectory")
         )
@@ -6291,7 +6291,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         self,
         pool_id: str,
         node_id: str,
-        parameters: _models.BatchNodeUser,
+        body: _models.BatchNodeUserCreateOptions,
         *,
         time_out: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
@@ -6306,8 +6306,8 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         :type pool_id: str
         :param node_id: The ID of the machine on which you want to create a user Account. Required.
         :type node_id: str
-        :param parameters: The user Account to be created. Required.
-        :type parameters: ~azure.batch.models.BatchNodeUser
+        :param body: The options to use for creating the user. Required.
+        :type body: ~azure.batch.models.BatchNodeUserCreateOptions
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
@@ -6340,7 +6340,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _content = json.dumps(parameters, cls=AzureJSONEncoder)  # type: ignore
+        _content = json.dumps(body, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
 
         request = build_batch_create_node_user_request(
             pool_id=pool_id,
@@ -6373,7 +6373,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
         response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
-        response_headers["last-modified"] = self._deserialize("iso-8601", response.headers.get("last-modified"))
+        response_headers["last-modified"] = self._deserialize("rfc-1123", response.headers.get("last-modified"))
         response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
@@ -6466,7 +6466,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         pool_id: str,
         node_id: str,
         user_name: str,
-        parameters: _models.NodeUpdateUserParameters,
+        body: _models.BatchNodeUserUpdateOptions,
         *,
         time_out: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
@@ -6485,8 +6485,8 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         :type node_id: str
         :param user_name: The name of the user Account to update. Required.
         :type user_name: str
-        :param parameters: The parameters for the request. Required.
-        :type parameters: ~azure.batch.models.NodeUpdateUserParameters
+        :param body: The options to use for updating the user. Required.
+        :type body: ~azure.batch.models.BatchNodeUserUpdateOptions
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
@@ -6519,7 +6519,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _content = json.dumps(parameters, cls=AzureJSONEncoder)  # type: ignore
+        _content = json.dumps(body, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
 
         request = build_batch_replace_node_user_request(
             pool_id=pool_id,
@@ -6553,7 +6553,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
         response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
-        response_headers["last-modified"] = self._deserialize("iso-8601", response.headers.get("last-modified"))
+        response_headers["last-modified"] = self._deserialize("rfc-1123", response.headers.get("last-modified"))
         response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
@@ -6636,7 +6636,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
         response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
-        response_headers["last-modified"] = self._deserialize("iso-8601", response.headers.get("last-modified"))
+        response_headers["last-modified"] = self._deserialize("rfc-1123", response.headers.get("last-modified"))
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -6653,7 +6653,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         self,
         pool_id: str,
         node_id: str,
-        parameters: Optional[_models.NodeRebootParameters] = None,
+        body: Optional[_models.NodeRebootOptions] = None,
         *,
         time_out: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
@@ -6667,8 +6667,8 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         :type pool_id: str
         :param node_id: The ID of the Compute Node that you want to restart. Required.
         :type node_id: str
-        :param parameters: The parameters for the request. Default value is None.
-        :type parameters: ~azure.batch.models.NodeRebootParameters
+        :param body: The options to use for rebooting the Compute Node. Default value is None.
+        :type body: ~azure.batch.models.NodeRebootOptions
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
@@ -6701,8 +6701,8 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        if parameters is not None:
-            _content = json.dumps(parameters, cls=AzureJSONEncoder)  # type: ignore
+        if body is not None:
+            _content = json.dumps(body, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
         else:
             _content = None
 
@@ -6737,7 +6737,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
         response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
-        response_headers["last-modified"] = self._deserialize("iso-8601", response.headers.get("last-modified"))
+        response_headers["last-modified"] = self._deserialize("rfc-1123", response.headers.get("last-modified"))
         response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
@@ -6748,7 +6748,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         self,
         pool_id: str,
         node_id: str,
-        parameters: Optional[_models.NodeReimageParameters] = None,
+        body: Optional[_models.NodeReimageOptions] = None,
         *,
         time_out: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
@@ -6764,8 +6764,8 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         :type pool_id: str
         :param node_id: The ID of the Compute Node that you want to restart. Required.
         :type node_id: str
-        :param parameters: The parameters for the request. Default value is None.
-        :type parameters: ~azure.batch.models.NodeReimageParameters
+        :param body: The options to use for reimaging the Compute Node. Default value is None.
+        :type body: ~azure.batch.models.NodeReimageOptions
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
@@ -6798,8 +6798,8 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        if parameters is not None:
-            _content = json.dumps(parameters, cls=AzureJSONEncoder)  # type: ignore
+        if body is not None:
+            _content = json.dumps(body, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
         else:
             _content = None
 
@@ -6834,7 +6834,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
         response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
-        response_headers["last-modified"] = self._deserialize("iso-8601", response.headers.get("last-modified"))
+        response_headers["last-modified"] = self._deserialize("rfc-1123", response.headers.get("last-modified"))
         response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
@@ -6845,7 +6845,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         self,
         pool_id: str,
         node_id: str,
-        parameters: Optional[_models.NodeDisableSchedulingParameters] = None,
+        body: Optional[_models.NodeDisableSchedulingOptions] = None,
         *,
         time_out: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
@@ -6861,8 +6861,9 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         :param node_id: The ID of the Compute Node on which you want to disable Task scheduling.
          Required.
         :type node_id: str
-        :param parameters: The parameters for the request. Default value is None.
-        :type parameters: ~azure.batch.models.NodeDisableSchedulingParameters
+        :param body: The options to use for disabling scheduling on the Compute Node. Default value is
+         None.
+        :type body: ~azure.batch.models.NodeDisableSchedulingOptions
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
@@ -6895,8 +6896,8 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        if parameters is not None:
-            _content = json.dumps(parameters, cls=AzureJSONEncoder)  # type: ignore
+        if body is not None:
+            _content = json.dumps(body, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
         else:
             _content = None
 
@@ -6931,7 +6932,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
         response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
-        response_headers["last-modified"] = self._deserialize("iso-8601", response.headers.get("last-modified"))
+        response_headers["last-modified"] = self._deserialize("rfc-1123", response.headers.get("last-modified"))
         response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
@@ -7012,7 +7013,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
         response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
-        response_headers["last-modified"] = self._deserialize("iso-8601", response.headers.get("last-modified"))
+        response_headers["last-modified"] = self._deserialize("rfc-1123", response.headers.get("last-modified"))
         response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
@@ -7097,7 +7098,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
         response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
-        response_headers["last-modified"] = self._deserialize("iso-8601", response.headers.get("last-modified"))
+        response_headers["last-modified"] = self._deserialize("rfc-1123", response.headers.get("last-modified"))
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -7186,7 +7187,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
         response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
-        response_headers["last-modified"] = self._deserialize("iso-8601", response.headers.get("last-modified"))
+        response_headers["last-modified"] = self._deserialize("rfc-1123", response.headers.get("last-modified"))
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -7203,7 +7204,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         self,
         pool_id: str,
         node_id: str,
-        parameters: _models.UploadBatchServiceLogsConfiguration,
+        body: _models.UploadBatchServiceLogsOptions,
         *,
         time_out: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
@@ -7222,8 +7223,8 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         :param node_id: The ID of the Compute Node for which you want to get the Remote Desktop
          Protocol file. Required.
         :type node_id: str
-        :param parameters: The Azure Batch service log files upload configuration. Required.
-        :type parameters: ~azure.batch.models.UploadBatchServiceLogsConfiguration
+        :param body: The Azure Batch service log files upload options. Required.
+        :type body: ~azure.batch.models.UploadBatchServiceLogsOptions
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
@@ -7257,7 +7258,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         )
         cls: ClsType[_models.UploadBatchServiceLogsResult] = kwargs.pop("cls", None)
 
-        _content = json.dumps(parameters, cls=AzureJSONEncoder)  # type: ignore
+        _content = json.dumps(body, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
 
         request = build_batch_upload_node_logs_request(
             pool_id=pool_id,
@@ -7494,7 +7495,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
         response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
-        response_headers["last-modified"] = self._deserialize("iso-8601", response.headers.get("last-modified"))
+        response_headers["last-modified"] = self._deserialize("rfc-1123", response.headers.get("last-modified"))
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -7798,8 +7799,8 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
         response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
-        response_headers["last-modified"] = self._deserialize("iso-8601", response.headers.get("last-modified"))
-        response_headers["ocp-creation-time"] = self._deserialize("iso-8601", response.headers.get("ocp-creation-time"))
+        response_headers["last-modified"] = self._deserialize("rfc-1123", response.headers.get("last-modified"))
+        response_headers["ocp-creation-time"] = self._deserialize("rfc-1123", response.headers.get("ocp-creation-time"))
         response_headers["ocp-batch-file-isdirectory"] = self._deserialize(
             "bool", response.headers.get("ocp-batch-file-isdirectory")
         )
@@ -7906,8 +7907,8 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
         response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
-        response_headers["last-modified"] = self._deserialize("iso-8601", response.headers.get("last-modified"))
-        response_headers["ocp-creation-time"] = self._deserialize("iso-8601", response.headers.get("ocp-creation-time"))
+        response_headers["last-modified"] = self._deserialize("rfc-1123", response.headers.get("last-modified"))
+        response_headers["ocp-creation-time"] = self._deserialize("rfc-1123", response.headers.get("ocp-creation-time"))
         response_headers["ocp-batch-file-isdirectory"] = self._deserialize(
             "bool", response.headers.get("ocp-batch-file-isdirectory")
         )

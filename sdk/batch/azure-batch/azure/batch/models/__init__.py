@@ -20,31 +20,32 @@ from ._models import BatchCertificate
 from ._models import BatchError
 from ._models import BatchErrorDetail
 from ._models import BatchJob
-from ._models import BatchJobCreateParameters
-from ._models import BatchJobDisableParameters
+from ._models import BatchJobCreateOptions
+from ._models import BatchJobDisableOptions
 from ._models import BatchJobSchedule
-from ._models import BatchJobScheduleCreateParameters
-from ._models import BatchJobScheduleUpdateParameters
-from ._models import BatchJobTerminateParameters
-from ._models import BatchJobUpdateParameters
+from ._models import BatchJobScheduleCreateOptions
+from ._models import BatchJobScheduleUpdateOptions
+from ._models import BatchJobTerminateOptions
+from ._models import BatchJobUpdateOptions
 from ._models import BatchNode
 from ._models import BatchNodeEndpointConfiguration
 from ._models import BatchNodeError
 from ._models import BatchNodeIdentityReference
 from ._models import BatchNodeInformation
 from ._models import BatchNodeRemoteLoginSettingsResult
-from ._models import BatchNodeUser
+from ._models import BatchNodeUserCreateOptions
+from ._models import BatchNodeUserUpdateOptions
 from ._models import BatchPool
-from ._models import BatchPoolCreateParameters
-from ._models import BatchPoolEnableAutoScaleParameters
-from ._models import BatchPoolEvaluateAutoScaleParameters
+from ._models import BatchPoolCreateOptions
+from ._models import BatchPoolEnableAutoScaleOptions
+from ._models import BatchPoolEvaluateAutoScaleOptions
 from ._models import BatchPoolIdentity
-from ._models import BatchPoolPatchParameters
-from ._models import BatchPoolResizeParameters
-from ._models import BatchPoolUpdateParameters
+from ._models import BatchPoolReplaceOptions
+from ._models import BatchPoolResizeOptions
+from ._models import BatchPoolUpdateOptions
 from ._models import BatchTask
 from ._models import BatchTaskCollection
-from ._models import BatchTaskCreateParameters
+from ._models import BatchTaskCreateOptions
 from ._models import BatchTaskListSubtasksResult
 from ._models import CertificateReference
 from ._models import CifsMountConfiguration
@@ -92,13 +93,12 @@ from ._models import NetworkConfiguration
 from ._models import NetworkSecurityGroupRule
 from ._models import NodeAgentInformation
 from ._models import NodeCounts
-from ._models import NodeDisableSchedulingParameters
+from ._models import NodeDisableSchedulingOptions
 from ._models import NodeFile
 from ._models import NodePlacementConfiguration
-from ._models import NodeRebootParameters
-from ._models import NodeReimageParameters
-from ._models import NodeRemoveParameters
-from ._models import NodeUpdateUserParameters
+from ._models import NodeRebootOptions
+from ._models import NodeReimageOptions
+from ._models import NodeRemoveOptions
 from ._models import NodeVMExtension
 from ._models import OSDisk
 from ._models import OutputFile
@@ -135,7 +135,7 @@ from ._models import TaskInformation
 from ._models import TaskSchedulingPolicy
 from ._models import TaskSlotCounts
 from ._models import TaskStatistics
-from ._models import UploadBatchServiceLogsConfiguration
+from ._models import UploadBatchServiceLogsOptions
 from ._models import UploadBatchServiceLogsResult
 from ._models import UsageStatistics
 from ._models import UserAccount
@@ -217,31 +217,32 @@ __all__ = [
     "BatchError",
     "BatchErrorDetail",
     "BatchJob",
-    "BatchJobCreateParameters",
-    "BatchJobDisableParameters",
+    "BatchJobCreateOptions",
+    "BatchJobDisableOptions",
     "BatchJobSchedule",
-    "BatchJobScheduleCreateParameters",
-    "BatchJobScheduleUpdateParameters",
-    "BatchJobTerminateParameters",
-    "BatchJobUpdateParameters",
+    "BatchJobScheduleCreateOptions",
+    "BatchJobScheduleUpdateOptions",
+    "BatchJobTerminateOptions",
+    "BatchJobUpdateOptions",
     "BatchNode",
     "BatchNodeEndpointConfiguration",
     "BatchNodeError",
     "BatchNodeIdentityReference",
     "BatchNodeInformation",
     "BatchNodeRemoteLoginSettingsResult",
-    "BatchNodeUser",
+    "BatchNodeUserCreateOptions",
+    "BatchNodeUserUpdateOptions",
     "BatchPool",
-    "BatchPoolCreateParameters",
-    "BatchPoolEnableAutoScaleParameters",
-    "BatchPoolEvaluateAutoScaleParameters",
+    "BatchPoolCreateOptions",
+    "BatchPoolEnableAutoScaleOptions",
+    "BatchPoolEvaluateAutoScaleOptions",
     "BatchPoolIdentity",
-    "BatchPoolPatchParameters",
-    "BatchPoolResizeParameters",
-    "BatchPoolUpdateParameters",
+    "BatchPoolReplaceOptions",
+    "BatchPoolResizeOptions",
+    "BatchPoolUpdateOptions",
     "BatchTask",
     "BatchTaskCollection",
-    "BatchTaskCreateParameters",
+    "BatchTaskCreateOptions",
     "BatchTaskListSubtasksResult",
     "CertificateReference",
     "CifsMountConfiguration",
@@ -289,13 +290,12 @@ __all__ = [
     "NetworkSecurityGroupRule",
     "NodeAgentInformation",
     "NodeCounts",
-    "NodeDisableSchedulingParameters",
+    "NodeDisableSchedulingOptions",
     "NodeFile",
     "NodePlacementConfiguration",
-    "NodeRebootParameters",
-    "NodeReimageParameters",
-    "NodeRemoveParameters",
-    "NodeUpdateUserParameters",
+    "NodeRebootOptions",
+    "NodeReimageOptions",
+    "NodeRemoveOptions",
     "NodeVMExtension",
     "OSDisk",
     "OutputFile",
@@ -332,7 +332,7 @@ __all__ = [
     "TaskSchedulingPolicy",
     "TaskSlotCounts",
     "TaskStatistics",
-    "UploadBatchServiceLogsConfiguration",
+    "UploadBatchServiceLogsOptions",
     "UploadBatchServiceLogsResult",
     "UsageStatistics",
     "UserAccount",
