@@ -17,7 +17,7 @@ autorest AUTOREST.md
 
 ```yaml
 title: RemoteRenderingRestClient
-input-file: https://raw.githubusercontent.com/rikogeln/azure-rest-api-specs/c90870a194ab90b29760ab06ea7d18c4573a7d93/specification/mixedreality/data-plane/Microsoft.MixedReality/stable/2021-01-01/mr-arr.json
+input-file: azure/mixedreality/remoterendering/mr-arr.json
 output-folder: ../azure/mixedreality/remoterendering/_generated
 namespace: azure.mixedreality.remoterendering._generated
 no-namespace-folders: true
@@ -160,7 +160,6 @@ directive:
     transform: >
         $["x-ms-client-name"] = "leaseTimeMinutes";
 ```
-
 
 ### Directive renaming conversion settings inputLocation property to inputSettings
 
