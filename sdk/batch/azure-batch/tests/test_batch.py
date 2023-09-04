@@ -239,7 +239,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         assert response is None
 
         # Test list pool node counnt
-        counts = list(client.list_pool_node_counts_account())
+        counts = list(client.list_pool_node_counts())
         assert counts is not None
         assert len(counts) ==  1
         assert counts[0].pool_id ==  test_iaas_pool.id
@@ -544,7 +544,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         assert response is None
 
         # Test List Job Schedules
-        schedules = list(client.list_job_schedule())
+        schedules = list(client.list_job_schedules())
         assert (len(schedules) > 0)
 
         # Test Get Job Schedule
@@ -554,7 +554,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         assert schedule.state ==  models.JobScheduleState.active
 
         # Test Job Schedule Exists
-        exists = client.exists_job_schedule(schedule_id)
+        exists = client.job_schedule_exists(schedule_id)
         assert exists
 
         # Test List Jobs from Schedule
@@ -667,7 +667,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         assert len(nodes) ==  2
 
         # Test Get Batch Node
-        node = client.get_nodes(batch_pool.name, nodes[0].id)
+        node = client.get_node(batch_pool.name, nodes[0].id)
         assert isinstance(node,  models.BatchNode)
         assert node.scheduling_state ==  models.SchedulingState.enabled
         assert node.is_dedicated
@@ -676,7 +676,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
 
 
         # Test Upload Log
-        config = models.UploadBatchServiceLogsConfiguration(
+        config = models.UploadBatchServiceLogsOptions(
             container_url = "https://computecontainer.blob.core.windows.net/", 
             start_time = datetime.datetime.utcnow() - datetime.timedelta(minutes=6))
         set_custom_default_matcher(
@@ -759,7 +759,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
             virtual_machine_configuration=virtual_machine_config,
             network_configuration=network_config
         )
-        response = client.create_pool(parameters=batch_pool)
+        response = client.create_pool(batch_pool)
         assert response is None
 
         batch_pool = client.get_pool(batch_pool.id)
@@ -772,10 +772,10 @@ class TestBatch(AzureMgmtRecordedTestCase):
         assert len(nodes) == 1
 
 
-        extensions = list(client.list_extensions_nodes(batch_pool.id,nodes[0].id))
+        extensions = list(client.list_node_extensions(batch_pool.id,nodes[0].id))
         assert extensions is not None
         assert len(extensions) == 2
-        extension = client.get_extensions_nodes(batch_pool.id,nodes[0].id, extensions[1].vm_extension.name)
+        extension = client.get_node_extension(batch_pool.id,nodes[0].id, extensions[1].vm_extension.name)
         assert extension is not None
         assert extension.vm_extension.name == "secretext"
         assert extension.vm_extension.publisher == "Microsoft.Azure.KeyVault"
@@ -797,17 +797,17 @@ class TestBatch(AzureMgmtRecordedTestCase):
         # Test Add User
         user_name = 'BatchPythonSDKUser'
         nodes = list(client.list_nodes(batch_pool.name))
-        user = models.BatchNodeUser(name=user_name, password=BATCH_TEST_PASSWORD, is_admin=False)
-        response = client.add_user_nodes(batch_pool.name, nodes[0].id, user)
+        user = models.BatchNodeUserCreateOptions(name=user_name, password=BATCH_TEST_PASSWORD, is_admin=False)
+        response = client.create_node_user(batch_pool.name, nodes[0].id, user)
         assert response is None
 
         # Test Update User
-        user = models.NodeUpdateUserOptions(password='liilef#$DdRGSa_ewkjh')
-        response = client.update_user_nodes(batch_pool.name, nodes[0].id, user_name, user)
+        user = models.BatchNodeUserUpdateOptions(password='liilef#$DdRGSa_ewkjh')
+        response = client.replace_node_user(batch_pool.name, nodes[0].id, user_name, user)
         assert response is None
 
         # Test Get remote login settings
-        remote_login_settings = client.get_remote_login_settings_nodes(batch_pool.name, nodes[0].id)
+        remote_login_settings = client.get_node_remote_login_settings(batch_pool.name, nodes[0].id)
         assert isinstance(remote_login_settings,  models.BatchNodeGetRemoteLoginSettingsResult)
         assert remote_login_settings.remote_login_ip_address is not None
         assert remote_login_settings.remote_login_port is not None
@@ -833,7 +833,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         # Test Get remote desktop 
         file_length = 0
         with io.BytesIO() as file_handle:
-            remote_desktop = client.get_remote_desktop_nodes(batch_pool.name, nodes[0].id)
+            remote_desktop = client.get_node_remote_desktop_file(batch_pool.name, nodes[0].id)
             assert remote_desktop is not None
             for data in remote_desktop:
                 file_length += len(data)
@@ -867,12 +867,12 @@ class TestBatch(AzureMgmtRecordedTestCase):
             task = client.get_task(batch_job.id, task_id)
 
         # Test List Files from Batch Node
-        all_files = client.list_from_batch_node_file(batch_pool.name, node, recursive=True)
+        all_files = client.list_node_files(batch_pool.name, node, recursive=True)
         only_files = [f for f in all_files if not f.is_directory]
         assert (len(only_files) >= 2)
 
         # Test File Properties from Batch Node
-        props = client.get_properties_from_batch_node_file(
+        props = client.get_node_file_properties(
             batch_pool.name, node, only_files[0].name)
         assert ('Content-Length' in props.headers)
         assert ('Content-Type' in props.headers)
@@ -1031,7 +1031,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
             tasks.append(models.BatchTaskCreateOptions(
                 id=self.get_resource_name('batch_task{}_'.format(i)),
                 command_line='cmd /c "echo hello world"'))
-        result = client.add_collection_task(batch_job.id, collection=tasks)
+        result = client.create_task_collection(batch_job.id, collection=tasks)
         assert isinstance(result,  models.TaskAddCollectionResult)
         assert len(result.value) ==  3
         assert result.value[0].status ==  models.TaskAddStatus.success
@@ -1152,7 +1152,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         stamp = mktime(now.timetuple())
         currenttime =  format_date_time(stamp) #--> Wed, 22 Oct 2008 10:52:40 GMT
         
-        response = client.create_job(parameters=job_param,ocp_date=currenttime)
+        response = client.create_job(body=job_param,ocp_date=currenttime)
         
         #response = client.create_job(parameters=job_param,ocp_date="Wed, 3 May 2023 21:49:13 GMT")
         #response = client.create_job(parameters=job_param,ocp_date=datetime.datetime.utcnow())
