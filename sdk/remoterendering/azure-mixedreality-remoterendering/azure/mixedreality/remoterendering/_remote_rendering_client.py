@@ -58,12 +58,12 @@ class RemoteRenderingClient(object):
     :keyword api_version:
         The API version of the service to use for requests. It defaults to the latest service version.
         Setting to an older version may result in reduced feature compatibility.
+    :type api_version: str or ~azure.mixedreality.remoterenderings.RemoteRenderingApiVersion
     :keyword polling_interval:
         Seconds to wait between each check, whether the session is ready yet.
     :keyword authentication_endpoint_url:
         Overwrite for the authentication endpoint. Usually using account_domain for the authentication domain is enough.
         If used, specify the whole authentication url including the schema.
-    :paramtype api_version: str or ~azure.mixedreality.remoterenderings.RemoteRenderingApiVersion
     """
 
     def __init__(self,
