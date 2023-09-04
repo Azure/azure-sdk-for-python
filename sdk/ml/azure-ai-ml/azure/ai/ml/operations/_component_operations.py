@@ -414,11 +414,15 @@ class ComponentOperations(_ScopeDependentOperations):
                 ),
                 **self._init_args,
             )
-            result.merge_with(remote_validation_result.result(), overwrite=True)
+            result.merge_with(
+                # pylint: disable=protected-access
+                component._build_validation_result_from_rest_object(remote_validation_result.result()),
+                overwrite=True,
+            )
         # resolve location for diagnostics from remote validation
         result.resolve_location_for_diagnostics(component._source_path)
-        return result.try_raise(
-            error_target=ErrorTarget.COMPONENT,
+        return component._try_raise(  # pylint: disable=protected-access
+            result,
             raise_error=raise_on_failure,
         )
 
