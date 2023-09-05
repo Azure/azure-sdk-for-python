@@ -63,7 +63,7 @@ def configure_azure_monitor(**kwargs) -> None:
     :keyword str connection_string: Connection string for your Application Insights resource.
     :keyword credential: Token credential, such as `ManagedIdentityCredential` or `ClientSecretCredential`,
      used for Azure Active Directory (AAD) authentication. Defaults to `None`.
-    :paramtype credential: ~azure.core.credentials.TokenCredential
+    :paramtype credential: ~azure.core.credentials.TokenCredential or None
     :keyword bool disable_offline_storage: Boolean value to determine whether to disable storing failed
      telemetry records for retry. Defaults to `False`.
     :keyword str storage_directory: Storage directory in which to store retry files. Defaults to
