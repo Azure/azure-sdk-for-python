@@ -90,6 +90,10 @@ class ResourceIdTests(unittest.TestCase):
         created_database = self.client.create_database(id=database_id)
         created_container = created_database.create_container(id=container_id, partition_key=partition_key)
 
+        # Define errors returned by checks
+        illegal_chars_string = 'Id contains illegal chars.'
+        space_chars_string = 'Id ends with a space.'
+
         # Define illegal strings
         illegal_strings = [
             "ID_with_back/slash",
@@ -103,27 +107,30 @@ class ResourceIdTests(unittest.TestCase):
         ]
 
         # test illegal resource id's for all resources
+        error_string = illegal_chars_string
         for resource_id in illegal_strings:
+            if resource_id == "ID_with_trailing_spaces   ":
+                error_string = space_chars_string
             try:
                 self.client.create_database(resource_id)
                 self.fail("Database create should have failed for id {}".format(resource_id))
             except ValueError as e:
-                self.assertEquals(str(e), 'Id contains illegal chars.')
+                self.assertEquals(str(e), error_string)
 
             try:
                 created_database.create_container(id=resource_id, partition_key=partition_key)
                 self.fail("Container create should have failed for id {}".format(resource_id))
             except ValueError as e:
-                self.assertEquals(str(e), 'Id contains illegal chars.')
+                self.assertEquals(str(e), error_string)
 
             try:
                 created_container.create_item({"id": resource_id})
                 self.fail("Item create should have failed for id {}".format(resource_id))
             except ValueError as e:
-                self.assertEquals(str(e), 'Id contains illegal chars.')
+                self.assertEquals(str(e), error_string)
             try:
                 created_container.upsert_item({"id": resource_id})
                 self.fail("Item upsert should have failed for id {}".format(resource_id))
             except ValueError as e:
-                self.assertEquals(str(e), 'Id contains illegal chars.')
+                self.assertEquals(str(e), error_string)
 
