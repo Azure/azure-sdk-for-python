@@ -381,6 +381,18 @@ class CommonYamlFields:
     """Schema."""
 
 
+class SchemaUrl:
+    """Schema urls.
+
+    Schema urls will be used in VSCode extension to validate yaml files. It will also be used to identify the
+    corresponding entity type of a yaml file, especially for some internal yaml files.
+    """
+
+    PROMPTFLOW_PREFIX = "https://azuremlschemas.azureedge.net/promptflow/"
+    PROMPTFLOW_FLOW = PROMPTFLOW_PREFIX + "latest/Flow.schema.json"
+    PROMPTFLOW_RUN = PROMPTFLOW_PREFIX + "latest/Run.schema.json"
+
+
 class GitProperties:
     """GitProperties is a class that defines the constants used by the SDK/CLI for Git operations.
 

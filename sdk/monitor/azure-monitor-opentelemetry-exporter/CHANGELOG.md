@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0b16 (Unreleased)
+## 1.0.0b16 (2023-08-30)
 
 ### Features Added
 
@@ -10,10 +10,6 @@
     ([#31660](https://github.com/Azure/azure-sdk-for-python/pull/31660))
 - Support custom events
     ([#31883](https://github.com/Azure/azure-sdk-for-python/pull/31883))
-
-### Breaking Changes
-
-### Bugs Fixed
 
 ### Other Changes
 
