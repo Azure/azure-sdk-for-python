@@ -16,6 +16,7 @@ from opentelemetry._logs.severity import SeverityNumber
 
 from azure.monitor.opentelemetry.exporter.export._base import ExportResult
 from azure.monitor.opentelemetry.exporter.export.logs._exporter import (
+    _APPLICATION_INSIGHTS_EVENT_MARKER_ATTRIBUTE,
     AzureMonitorLogExporter,
     _get_log_export_result,
     _get_severity_level,
@@ -59,6 +60,59 @@ class TestAzureLogExporter(unittest.TestCase):
                 ),
                 attributes={
                     "test": "attribute"
+                },
+            ),
+            InstrumentationScope("test_name"),
+        )
+        cls._log_data_empty = _logs.LogData(
+            _logs.LogRecord(
+                timestamp = 1646865018558419456,
+                trace_id = 125960616039069540489478540494783893221,
+                span_id = 2909973987304607650,
+                severity_text = "WARNING",
+                trace_flags = None,
+                severity_number = SeverityNumber.WARN,
+                body = "",
+                resource = Resource.create(
+                    attributes={"asd":"test_resource"}
+                ),
+                attributes={
+                    "test": "attribute"
+                },
+            ),
+            InstrumentationScope("test_name"),
+        )
+        cls._log_data_none = _logs.LogData(
+            _logs.LogRecord(
+                timestamp = 1646865018558419456,
+                trace_id = 125960616039069540489478540494783893221,
+                span_id = 2909973987304607650,
+                severity_text = "WARNING",
+                trace_flags = None,
+                severity_number = SeverityNumber.WARN,
+                body = None,
+                resource = Resource.create(
+                    attributes={"asd":"test_resource"}
+                ),
+                attributes={
+                    "test": "attribute"
+                },
+            ),
+            InstrumentationScope("test_name"),
+        )
+        cls._log_data_event = _logs.LogData(
+            _logs.LogRecord(
+                timestamp = 1646865018558419456,
+                trace_id = 125960616039069540489478540494783893221,
+                span_id = 2909973987304607650,
+                severity_text = "INFO",
+                trace_flags = None,
+                severity_number = SeverityNumber.INFO,
+                body = "Test Event",
+                resource = Resource.create(attributes={"asd":"test_resource"}),
+                attributes={
+                    "event_key": "event_attribute",
+                    _APPLICATION_INSIGHTS_EVENT_MARKER_ATTRIBUTE: True,
                 },
             ),
             InstrumentationScope("test_name"),
@@ -209,6 +263,20 @@ class TestAzureLogExporter(unittest.TestCase):
         self.assertEqual(envelope.data.base_data.severity_level, 2)
         self.assertEqual(envelope.data.base_data.properties["test"], "attribute")
 
+    def test_log_to_envelope_log_none(self):
+        exporter = self._exporter
+        envelope = exporter._log_to_envelope(self._log_data_none)
+        self.assertEqual(envelope.name, 'Microsoft.ApplicationInsights.Message')
+        self.assertEqual(envelope.data.base_type, 'MessageData')
+        self.assertEqual(envelope.data.base_data.message, "n/a")
+
+    def test_log_to_envelope_log_empty(self):
+        exporter = self._exporter
+        envelope = exporter._log_to_envelope(self._log_data_empty)
+        self.assertEqual(envelope.name, 'Microsoft.ApplicationInsights.Message')
+        self.assertEqual(envelope.data.base_type, 'MessageData')
+        self.assertEqual(envelope.data.base_data.message, "n/a")
+
     def test_log_to_envelope_exception(self):
         exporter = self._exporter
         envelope = exporter._log_to_envelope(self._exc_data)
@@ -223,6 +291,17 @@ class TestAzureLogExporter(unittest.TestCase):
         self.assertEqual(envelope.data.base_data.exceptions[0].message, "division by zero")
         self.assertTrue(envelope.data.base_data.exceptions[0].has_full_stack)
         self.assertEqual(envelope.data.base_data.exceptions[0].stack, 'Traceback (most recent call last):\n  File "test.py", line 38, in <module>\n    raise ZeroDivisionError()\nZeroDivisionError\n')
+
+    def test_log_to_envelope_event(self):
+        exporter = self._exporter
+        envelope = exporter._log_to_envelope(self._log_data_event)
+        record = self._log_data_event.log_record
+        self.assertEqual(envelope.name, 'Microsoft.ApplicationInsights.Event')
+        self.assertEqual(envelope.time, ns_to_iso_str(record.timestamp))
+        self.assertEqual(envelope.data.base_type, 'EventData')
+        self.assertEqual(envelope.data.base_data.name, record.body)
+        self.assertEqual(envelope.data.base_data.properties["event_key"], "event_attribute")
+
 
     def test_log_to_envelope_timestamp(self):
         exporter = self._exporter

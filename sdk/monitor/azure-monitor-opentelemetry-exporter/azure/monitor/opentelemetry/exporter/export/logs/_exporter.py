@@ -117,6 +117,9 @@ def _convert_log_to_envelope(log_data: LogData) -> TelemetryItem:
     stack_trace = log_record.attributes.get(SpanAttributes.EXCEPTION_STACKTRACE)
     severity_level = _get_severity_level(log_record.severity_number)
 
+    if not log_record.body:
+        log_record.body = "n/a"
+
     # Event telemetry
     if _log_data_is_event(log_data):
         envelope.name = 'Microsoft.ApplicationInsights.Event'
