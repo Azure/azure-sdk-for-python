@@ -1,8 +1,16 @@
 # Release History
 
+## 1.11.0 (unreleased)
 
-## 1.10.0 (Unreleased)
+### Features Added
 
+### Bugs Fixed
+
+### Breaking Changes
+
+### Other Changes
+
+## 1.10.0 (2023-09-07)
 ### Features Added
 - Added support of features that are known into the future/at forecast time for dnn in AutoML Forecasting jobs.
 - Added support for new workspace connection types: azure_open_ai, cognitive_search, and cognitive_service.
