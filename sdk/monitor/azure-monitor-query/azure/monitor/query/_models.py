@@ -4,7 +4,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-
+# cspell:ignore milli
 import uuid
 from datetime import datetime, timedelta
 import sys

@@ -321,7 +321,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Stora
         return response
 
     @distributed_trace_async
-    async def set_queue_metadata(  # type: ignore[override]
+    async def set_queue_metadata(
         self, metadata: Optional[Dict[str, str]] = None,
         **kwargs: Any
     ) -> None:
@@ -329,16 +329,17 @@ class QueueClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Stora
 
         Metadata is associated with the queue as name-value pairs.
 
-        :param metadata:
+        :param Optional[Dict[str, Any]] metadata:
             A dict containing name-value pairs to associate with the
             queue as metadata.
-        :type metadata: dict(str, str)
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-queue
             #other-client--per-operation-configuration>`_.
+        :return: A dictionary of response headers.
+        :rtype: Dict[str, Any]
 
         .. admonition:: Example:
 

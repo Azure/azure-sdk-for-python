@@ -96,14 +96,13 @@ setup(
         "opentelemetry-instrumentation-urllib~=0.40b0",
         "opentelemetry-instrumentation-urllib3~=0.40b0",
         "opentelemetry-sdk~=1.19.0",
-        "wrapt >= 1.14.0, < 2.0.0",
     ],
     entry_points={
         "opentelemetry_distro": [
-            "azure_monitor_opentelemetry_distro = azure.monitor.opentelemetry.autoinstrumentation._distro:AzureMonitorDistro"
+            "azure_monitor_opentelemetry_distro = azure.monitor.opentelemetry._autoinstrumentation.distro:AzureMonitorDistro"
         ],
         "opentelemetry_configurator": [
-            "azure_monitor_opentelemetry_configurator = azure.monitor.opentelemetry.autoinstrumentation._configurator:AzureMonitorConfigurator"
+            "azure_monitor_opentelemetry_configurator = azure.monitor.opentelemetry._autoinstrumentation.configurator:AzureMonitorConfigurator"
         ],
     },
 )

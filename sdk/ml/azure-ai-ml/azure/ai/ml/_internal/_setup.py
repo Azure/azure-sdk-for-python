@@ -1,11 +1,13 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+from typing import NoReturn
 
 # pylint: disable=protected-access
 from marshmallow import INCLUDE
 
 from .._schema import NestedField
+from ..entities._builders.control_flow_node import LoopNode
 from ..entities._component.component_factory import component_factory
 from ..entities._job.pipeline._load_component import pipeline_node_factory
 from ._schema.command import CommandSchema, DistributedSchema, ParallelSchema
@@ -20,6 +22,7 @@ from .entities import (
     InternalBaseNode,
     InternalComponent,
     Parallel,
+    Pipeline,
     Scope,
     Starlite,
 )
@@ -57,7 +60,14 @@ def _register_node(_type, node_cls, schema_cls):
     )
 
 
-def enable_internal_components_in_pipeline(*, force=False):
+def enable_internal_components_in_pipeline(*, force=False) -> NoReturn:
+    """Enable internal components in pipeline.
+
+    :keyword force: Whether to force re-enable internal components. Defaults to False.
+    :type force: bool
+    :return: No return value.
+    :rtype: None
+    """
     if _registered and not force:
         return  # already registered
 
@@ -83,4 +93,8 @@ def enable_internal_components_in_pipeline(*, force=False):
     _register_node(NodeType.SCOPE_V2, Scope, ScopeSchema)
     _register_node(NodeType.HDI_V2, HDInsight, HDInsightSchema)
     # Ae365exepool and AetherBridge have been registered to InternalBaseNode
+
+    # allow using internal nodes in do-while loop
+    LoopNode._extra_body_types = (Command, Pipeline)
+
     _set_registered(True)
