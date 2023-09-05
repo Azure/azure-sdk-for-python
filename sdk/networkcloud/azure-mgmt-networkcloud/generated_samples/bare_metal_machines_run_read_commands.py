@@ -29,7 +29,7 @@ def main():
         subscription_id="123e4567-e89b-12d3-a456-426655440000",
     )
 
-    client.bare_metal_machines.begin_run_read_commands(
+    response = client.bare_metal_machines.begin_run_read_commands(
         resource_group_name="resourceGroupName",
         bare_metal_machine_name="bareMetalMachineName",
         bare_metal_machine_run_read_commands_parameters={
@@ -40,8 +40,9 @@ def main():
             "limitTimeSeconds": 60,
         },
     ).result()
+    print(response)
 
 
-# x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/preview/2023-05-01-preview/examples/BareMetalMachines_RunReadCommands.json
+# x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/stable/2023-07-01/examples/BareMetalMachines_RunReadCommands.json
 if __name__ == "__main__":
     main()

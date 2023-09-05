@@ -9,8 +9,8 @@ from typing import Any, Callable, Dict, Optional, Tuple
 from marshmallow import Schema
 
 from ..._restclient.v2022_10_01.models import ComponentVersion
-from ..._utils.utils import is_internal_components_enabled
-from ...constants._common import AZUREML_INTERNAL_COMPONENTS_SCHEMA_PREFIX, SOURCE_PATH_CONTEXT_KEY, CommonYamlFields
+from ..._utils.utils import is_internal_component_data
+from ...constants._common import SOURCE_PATH_CONTEXT_KEY
 from ...constants._component import DataTransferTaskType, NodeType
 from ...entities._component.automl_component import AutoMLComponent
 from ...entities._component.command_component import CommandComponent
@@ -25,6 +25,7 @@ from ...entities._component.parallel_component import ParallelComponent
 from ...entities._component.pipeline_component import PipelineComponent
 from ...entities._component.spark_component import SparkComponent
 from ...entities._util import get_type_from_spec
+from .flow import FlowComponent
 
 
 class _ComponentFactory:
@@ -82,6 +83,12 @@ class _ComponentFactory:
             create_schema_func=DataTransferExportComponent._create_schema_for_validation,
         )
 
+        self.register_type(
+            _type=NodeType.FLOW_PARALLEL,
+            create_instance_func=lambda: FlowComponent.__new__(FlowComponent),
+            create_schema_func=FlowComponent._create_schema_for_validation,
+        )
+
     def get_create_funcs(
         self, yaml_spec: dict, for_load=False
     ) -> Tuple[Callable[..., Component], Callable[[Any], Schema]]:
@@ -96,16 +103,11 @@ class _ComponentFactory:
         """
 
         _type = get_type_from_spec(yaml_spec, valid_keys=self._create_instance_funcs)
-        if for_load and is_internal_components_enabled():
-            schema_url = yaml_spec[CommonYamlFields.SCHEMA] if CommonYamlFields.SCHEMA in yaml_spec else None
-            if (
-                _type == NodeType.SPARK
-                and schema_url
-                and schema_url.startswith(AZUREML_INTERNAL_COMPONENTS_SCHEMA_PREFIX)
-            ):
-                from azure.ai.ml._internal._schema.node import NodeType as InternalNodeType
+        # SparkComponent and InternalSparkComponent share the same type name, but they are different types.
+        if for_load and is_internal_component_data(yaml_spec, raise_if_not_enabled=True) and _type == NodeType.SPARK:
+            from azure.ai.ml._internal._schema.node import NodeType as InternalNodeType
 
-                _type = InternalNodeType.SPARK
+            _type = InternalNodeType.SPARK
 
         create_instance_func = self._create_instance_funcs[_type]
         create_schema_func = self._create_schema_funcs[_type]
@@ -134,11 +136,11 @@ class _ComponentFactory:
         """Load a component from a YAML dict.
 
         :keyword data: The YAML dict.
-        :type data: dict
+        :paramtype data: dict
         :keyword context: The context of the YAML dict.
-        :type context: dict
+        :paramtype context: dict
         :keyword _type: The type name of the component. When None, it will be inferred from the YAML dict.
-        :type _type: str
+        :paramtype _type: str
         :return: The loaded component.
         :rtype: ~azure.ai.ml.entities.Component
         """
@@ -155,9 +157,9 @@ class _ComponentFactory:
         """Load a component from a REST object.
 
         :keyword obj: The REST object.
-        :type obj: ComponentVersion
+        :paramtype obj: ComponentVersion
         :keyword _type: The type name of the component. When None, it will be inferred from the REST object.
-        :type _type: str
+        :paramtype _type: str
         :return: The loaded component.
         :rtype: ~azure.ai.ml.entities.Component
         """

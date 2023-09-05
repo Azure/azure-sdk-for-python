@@ -1375,7 +1375,7 @@ class ApplicationGatewayProbe(SubResource):  # pylint: disable=too-many-instance
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar port: Custom port which will be used for probing the backend servers. The valid value
      ranges from 1 to 65535. In case not set, port from http settings will be used. This property is
-     valid for Standard_v2 and WAF_v2 only.
+     valid for Basic, Standard_v2 and WAF_v2 only.
     :vartype port: int
     """
 
@@ -1463,7 +1463,7 @@ class ApplicationGatewayProbe(SubResource):  # pylint: disable=too-many-instance
          ~azure.mgmt.network.models.ApplicationGatewayProbeHealthResponseMatch
         :keyword port: Custom port which will be used for probing the backend servers. The valid value
          ranges from 1 to 65535. In case not set, port from http settings will be used. This property is
-         valid for Standard_v2 and WAF_v2 only.
+         valid for Basic, Standard_v2 and WAF_v2 only.
         :paramtype port: int
         """
         super().__init__(id=id, **kwargs)
@@ -1605,10 +1605,11 @@ class ApplicationGatewaySku(_serialization.Model):
     """SKU of an application gateway.
 
     :ivar name: Name of an application gateway SKU. Known values are: "Standard_Small",
-     "Standard_Medium", "Standard_Large", "WAF_Medium", "WAF_Large", "Standard_v2", and "WAF_v2".
+     "Standard_Medium", "Standard_Large", "WAF_Medium", "WAF_Large", "Standard_v2", "WAF_v2", and
+     "Basic".
     :vartype name: str or ~azure.mgmt.network.models.ApplicationGatewaySkuName
     :ivar tier: Tier of an application gateway. Known values are: "Standard", "WAF", "Standard_v2",
-     and "WAF_v2".
+     "WAF_v2", and "Basic".
     :vartype tier: str or ~azure.mgmt.network.models.ApplicationGatewayTier
     :ivar capacity: Capacity (instance count) of an application gateway.
     :vartype capacity: int
@@ -1630,10 +1631,11 @@ class ApplicationGatewaySku(_serialization.Model):
     ) -> None:
         """
         :keyword name: Name of an application gateway SKU. Known values are: "Standard_Small",
-         "Standard_Medium", "Standard_Large", "WAF_Medium", "WAF_Large", "Standard_v2", and "WAF_v2".
+         "Standard_Medium", "Standard_Large", "WAF_Medium", "WAF_Large", "Standard_v2", "WAF_v2", and
+         "Basic".
         :paramtype name: str or ~azure.mgmt.network.models.ApplicationGatewaySkuName
         :keyword tier: Tier of an application gateway. Known values are: "Standard", "WAF",
-         "Standard_v2", and "WAF_v2".
+         "Standard_v2", "WAF_v2", and "Basic".
         :paramtype tier: str or ~azure.mgmt.network.models.ApplicationGatewayTier
         :keyword capacity: Capacity (instance count) of an application gateway.
         :paramtype capacity: int
@@ -1934,6 +1936,9 @@ class BackendAddressPool(SubResource):  # pylint: disable=too-many-instance-attr
     :vartype drain_period_in_seconds: int
     :ivar virtual_network: A reference to a virtual network.
     :vartype virtual_network: ~azure.mgmt.network.models.SubResource
+    :ivar sync_mode: Backend address synchronous mode for the backend pool. Known values are:
+     "Automatic" and "Manual".
+    :vartype sync_mode: str or ~azure.mgmt.network.models.SyncMode
     """
 
     _validation = {
@@ -1969,6 +1974,7 @@ class BackendAddressPool(SubResource):  # pylint: disable=too-many-instance-attr
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
         "drain_period_in_seconds": {"key": "properties.drainPeriodInSeconds", "type": "int"},
         "virtual_network": {"key": "properties.virtualNetwork", "type": "SubResource"},
+        "sync_mode": {"key": "properties.syncMode", "type": "str"},
     }
 
     def __init__(
@@ -1981,6 +1987,7 @@ class BackendAddressPool(SubResource):  # pylint: disable=too-many-instance-attr
         load_balancer_backend_addresses: Optional[List["_models.LoadBalancerBackendAddress"]] = None,
         drain_period_in_seconds: Optional[int] = None,
         virtual_network: Optional["_models.SubResource"] = None,
+        sync_mode: Optional[Union[str, "_models.SyncMode"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -2002,6 +2009,9 @@ class BackendAddressPool(SubResource):  # pylint: disable=too-many-instance-attr
         :paramtype drain_period_in_seconds: int
         :keyword virtual_network: A reference to a virtual network.
         :paramtype virtual_network: ~azure.mgmt.network.models.SubResource
+        :keyword sync_mode: Backend address synchronous mode for the backend pool. Known values are:
+         "Automatic" and "Manual".
+        :paramtype sync_mode: str or ~azure.mgmt.network.models.SyncMode
         """
         super().__init__(id=id, **kwargs)
         self.name = name
@@ -2018,6 +2028,7 @@ class BackendAddressPool(SubResource):  # pylint: disable=too-many-instance-attr
         self.provisioning_state = None
         self.drain_period_in_seconds = drain_period_in_seconds
         self.virtual_network = virtual_network
+        self.sync_mode = sync_mode
 
 class BgpSettings(_serialization.Model):
     """BGP settings details.
@@ -41672,4 +41683,42 @@ class WebApplicationFirewallScrubbingRules(_serialization.Model):
         self.selector_match_operator = selector_match_operator
         self.selector = selector
         self.state = state
+
+class MigrateLoadBalancerToIpBasedRequest(_serialization.Model):
+    """The request for a migrateToIpBased API.
+
+    :ivar pools: A list of pool names that should be migrated from Nic based to IP based pool.
+    :vartype pools: list[str]
+    """
+
+    _attribute_map = {
+        "pools": {"key": "pools", "type": "[str]"},
+    }
+
+    def __init__(self, *, pools: Optional[List[str]] = None, **kwargs: Any) -> None:
+        """
+        :keyword pools: A list of pool names that should be migrated from Nic based to IP based pool.
+        :paramtype pools: list[str]
+        """
+        super().__init__(**kwargs)
+        self.pools = pools
+
+class MigratedPools(_serialization.Model):
+    """The response for a migrateToIpBased API.
+
+    :ivar migrated_pools: A list of pools migrated from Nic based to IP based pool.
+    :vartype migrated_pools: list[str]
+    """
+
+    _attribute_map = {
+        "migrated_pools": {"key": "migratedPools", "type": "[str]"},
+    }
+
+    def __init__(self, *, migrated_pools: Optional[List[str]] = None, **kwargs: Any) -> None:
+        """
+        :keyword migrated_pools: A list of pools migrated from Nic based to IP based pool.
+        :paramtype migrated_pools: list[str]
+        """
+        super().__init__(**kwargs)
+        self.migrated_pools = migrated_pools
 

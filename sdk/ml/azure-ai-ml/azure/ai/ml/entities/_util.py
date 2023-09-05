@@ -13,8 +13,8 @@ import msrest
 from marshmallow.exceptions import ValidationError
 
 from .._restclient.v2022_02_01_preview.models import JobInputType as JobInputType02
-from .._restclient.v2023_04_01_preview.models import JobInputType as JobInputType10
 from .._restclient.v2023_04_01_preview.models import JobInput as RestJobInput
+from .._restclient.v2023_04_01_preview.models import JobInputType as JobInputType10
 from .._restclient.v2023_04_01_preview.models import JobOutput as RestJobOutput
 from .._schema._datastore import AzureBlobSchema, AzureDataLakeGen1Schema, AzureDataLakeGen2Schema, AzureFileSchema
 from .._schema._deployment.batch.batch_deployment import BatchDeploymentSchema
@@ -37,10 +37,8 @@ from .._schema.job import CommandJobSchema, ParallelJobSchema
 from .._schema.pipeline.pipeline_job import PipelineJobSchema
 from .._schema.schedule.schedule import JobScheduleSchema
 from .._schema.workspace import WorkspaceSchema
-from .._utils.utils import is_internal_components_enabled, try_enable_internal_components
+from .._utils.utils import is_internal_component_data, try_enable_internal_components
 from ..constants._common import (
-    AZUREML_INTERNAL_COMPONENTS_ENV_VAR,
-    AZUREML_INTERNAL_COMPONENTS_SCHEMA_PREFIX,
     REF_DOC_YAML_SCHEMA_ERROR_MSG_FORMAT,
     CommonYamlFields,
     YAMLRefDocLinks,
@@ -130,6 +128,13 @@ REF_DOC_ERROR_MESSAGE_MAP = {
 
 
 def find_type_in_override(params_override: Optional[list] = None) -> Optional[str]:
+    """Find type in params override.
+
+    :param params_override: The params override
+    :type params_override: Optional[list]
+    :return: The type
+    :rtype: Optional[str]
+    """
     params_override = params_override or []
     for override in params_override:
         if CommonYamlFields.TYPE in override:
@@ -138,10 +143,30 @@ def find_type_in_override(params_override: Optional[list] = None) -> Optional[st
 
 
 def is_compute_in_override(params_override: Optional[list] = None) -> bool:
+    """Check if compute is in params override.
+
+    :param params_override: The params override
+    :type params_override: Optional[list]
+    :return: True if compute is in params override
+    :rtype: bool
+    """
     return any(EndpointYamlFields.COMPUTE in param for param in params_override)
 
 
 def load_from_dict(schema: Any, data: Dict, context: Dict, additional_message: str = "", **kwargs):
+    """Load data from dict.
+
+    :param schema: The schema to load data with.
+    :type schema: Any
+    :param data: The data to load.
+    :type data: Dict
+    :param context: The context of the data.
+    :type context: Dict
+    :param additional_message: The additional message to add to the error message.
+    :type additional_message: str
+    :return: The loaded data.
+    :rtype: Any
+    """
     try:
         return schema(context=context).load(data, **kwargs)
     except ValidationError as e:
@@ -150,6 +175,17 @@ def load_from_dict(schema: Any, data: Dict, context: Dict, additional_message: s
 
 
 def decorate_validation_error(schema: Any, pretty_error: str, additional_message: str = "") -> str:
+    """Decorate validation error with additional message.
+
+    :param schema: The schema that failed validation.
+    :type schema: Any
+    :param pretty_error: The pretty error message.
+    :type pretty_error: str
+    :param additional_message: The additional message to add.
+    :type additional_message: str
+    :return: The decorated error message.
+    :rtype: str
+    """
     ref_doc_link_error_msg = REF_DOC_ERROR_MESSAGE_MAP.get(schema, "")
     if ref_doc_link_error_msg:
         additional_message += f"\n{ref_doc_link_error_msg}"
@@ -162,6 +198,13 @@ def decorate_validation_error(schema: Any, pretty_error: str, additional_message
 
 
 def get_md5_string(text):
+    """Get md5 string for a given text.
+
+    :param text: The text to get md5 string for.
+    :type text: str
+    :return: The md5 string.
+    :rtype: str
+    """
     try:
         return hashlib.md5(text.encode("utf8")).hexdigest()  # nosec
     except Exception as ex:
@@ -215,7 +258,7 @@ def convert_ordered_dict_to_dict(target_object: Union[Dict, List], remove_empty:
     :param target_object: The object to convert
     :type target_object: Union[Dict, List]
     :param remove_empty: Whether to omit values that are None or empty dictionaries. Defaults to True.
-    :type remove_empty: bool, optional
+    :type remove_empty: bool
     :return: Converted ordered dict with removed None values
     :rtype: Union[Dict, List]
     """
@@ -248,7 +291,7 @@ def _general_copy(src: Union[str, os.PathLike], dst: Union[str, os.PathLike], ma
     :param dst: The destination path to copy to
     :type dst: Union[str, os.PathLike]
     :param make_dirs: Whether to ensure the destination path exists. Defaults to True.
-    :type make_dirs: bool, optional
+    :type make_dirs: bool
     """
     if make_dirs:
         os.makedirs(os.path.dirname(dst), exist_ok=True)
@@ -281,7 +324,7 @@ def get_rest_dict_for_node_attrs(target_obj: T, clear_empty_value: bool = False)
     :param target_obj: The object to convert
     :type target_obj: T
     :param clear_empty_value: Whether to clear empty values. Defaults to False.
-    :type clear_empty_value: bool, optional
+    :type clear_empty_value: bool
     :return: The translated dict, or the the original object
     :rtype: Union[T, Dict]
     """
@@ -370,6 +413,13 @@ def from_rest_dict_to_dummy_rest_object(rest_dict: Optional[Dict]) -> _DummyRest
 
 
 def extract_label(input_str: str):
+    """Extract label from input string.
+
+    :param input_str: The input string
+    :type input_str: str
+    :return: The rest of the string and the label
+    :rtype: Tuple[str, Optional[str]]
+    """
     if not isinstance(input_str, str):
         return None, None
     if "@" in input_str:
@@ -400,7 +450,7 @@ def resolve_pipeline_parameters(
     :param pipeline_parameters: The pipeline parameters
     :type pipeline_parameters: Optional[Dict[str, T]]
     :param remove_empty: Whether to remove None values. Defaults to False.
-    :type remove_empty: bool, optional
+    :type remove_empty: bool
     :return:
         * None if pipeline_parameters is None
         * The resolved dict of pipeline parameters
@@ -427,11 +477,22 @@ def resolve_pipeline_parameters(
 
 
 def resolve_pipeline_parameter(data: T) -> Union[T, str, "NodeOutput"]:
+    """Resolve pipeline parameter.
+
+    1. Resolve BaseNode and OutputsAttrDict type to NodeOutput.
+    2. Remove empty value (optional).
+
+    :param data: The pipeline parameter
+    :type data: T
+    :return:
+        * None if data is None
+        * The resolved pipeline parameter
+    :rtype: Union[T, str, "NodeOutput"]
+    """
     from azure.ai.ml.entities._builders.base_node import BaseNode
     from azure.ai.ml.entities._builders.pipeline import Pipeline
-    from azure.ai.ml.entities._job.pipeline._io import OutputsAttrDict
+    from azure.ai.ml.entities._job.pipeline._io import NodeOutput, OutputsAttrDict
     from azure.ai.ml.entities._job.pipeline._pipeline_expression import PipelineExpression
-    from azure.ai.ml.entities._job.pipeline._io import NodeOutput
 
     if isinstance(data, PipelineExpression):
         data: Union[str, BaseNode] = data.resolve()
@@ -511,12 +572,11 @@ def get_type_from_spec(data: dict, *, valid_keys: Iterable[str]) -> str:
     :param data: The data
     :type data: dict
     :keyword valid_keys: An iterable of valid types
-    :type valid_keys: Iterable[str]
+    :paramtype valid_keys: Iterable[str]
     :return: The type of the node or component
     :rtype: str
     """
     _type, _ = extract_label(data.get(CommonYamlFields.TYPE, None))
-    schema = data.get(CommonYamlFields.SCHEMA, None)
 
     # we should keep at least 1 place outside _internal to enable internal components
     # and this is the only place
@@ -525,21 +585,12 @@ def get_type_from_spec(data: dict, *, valid_keys: Iterable[str]) -> str:
     if _type == NodeType.DATA_TRANSFER:
         _type = "_".join([NodeType.DATA_TRANSFER, data.get("task", " ")])
     if _type not in valid_keys:
-        if (
-            schema
-            and not is_internal_components_enabled()
-            and schema.startswith(AZUREML_INTERNAL_COMPONENTS_SCHEMA_PREFIX)
-        ):
-            msg = (
-                f"Internal components is a private feature in v2, please set environment variable "
-                f"{AZUREML_INTERNAL_COMPONENTS_ENV_VAR} to true to use it."
-            )
-        else:
-            msg = f"Unsupported component type: {_type}."
+        is_internal_component_data(data, raise_if_not_enabled=True)
+
         raise ValidationException(
-            message=msg,
+            message="Unsupported component type: %s." % _type,
             target=ErrorTarget.COMPONENT,
-            no_personal_data_message=msg,
+            no_personal_data_message="Unsupported component type",
             error_category=ErrorCategory.USER_ERROR,
         )
     return _type

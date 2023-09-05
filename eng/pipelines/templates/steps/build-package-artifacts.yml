@@ -67,7 +67,7 @@ steps:
 
   - script: |
       twine check $(Build.ArtifactStagingDirectory)/**/*.whl
-      twine check $(Build.ArtifactStagingDirectory)/**/*.zip
+      twine check $(Build.ArtifactStagingDirectory)/**/*.tar.gz
     displayName: 'Verify Readme'
 
   - ${{if eq(variables['System.TeamProject'], 'internal') }}:

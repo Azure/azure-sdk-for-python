@@ -6,9 +6,9 @@
 
 from typing import Any, Dict
 
-from marshmallow import fields, post_load
+from marshmallow import fields, post_load, Schema
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import DatastoreType
+from azure.ai.ml._restclient.v2023_04_01_preview.models import DatastoreType, OneLakeArtifactType
 
 from azure.ai.ml._schema.core.fields import NestedField, PathAwareSchema, StringTransformedEnum, UnionField
 from azure.ai.ml._utils.utils import camel_to_snake
@@ -16,9 +16,9 @@ from azure.ai.ml._utils.utils import camel_to_snake
 from .credentials import NoneCredentialsSchema, ServicePrincipalSchema
 
 
-class OneLakeArtifactSchema(PathAwareSchema):
-    artifact_name = fields.Str(required=True)
-    artifact_type = fields.Str()
+class OneLakeArtifactSchema(Schema):
+    name = fields.Str(required=True)
+    type = StringTransformedEnum(allowed_values=OneLakeArtifactType.LAKE_HOUSE, casing_transform=camel_to_snake)
 
 
 class OneLakeSchema(PathAwareSchema):
@@ -31,8 +31,8 @@ class OneLakeSchema(PathAwareSchema):
     )
     # required fields for OneLake
     one_lake_workspace_name = fields.Str(required=True)
+    endpoint = fields.Str(required=True)
     artifact = NestedField(OneLakeArtifactSchema)
-    endpoint = fields.Str()
     # ServicePrincipal and UserIdentity are the two supported credential types
     credentials = UnionField(
         [

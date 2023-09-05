@@ -387,3 +387,25 @@ def test_claims_challenge():
         assert msal_app.acquire_token_for_client.call_count == 1
         args, kwargs = msal_app.acquire_token_for_client.call_args
         assert kwargs["claims_challenge"] == expected_claims
+
+
+def test_msal_kwargs_filtered():
+    msal_acquire_token_result = dict(
+        build_aad_response(access_token="**", id_token=build_id_token()),
+        id_token_claims=id_token_claims("issuer", "subject", "audience", upn="upn"),
+    )
+    expected_claims = '{"access_token": {"essential": "true"}}'
+    transport = Mock(send=Mock(side_effect=Exception("this test mocks MSAL, so no request should be sent")))
+    credential = ClientSecretCredential("tenant-id", "client-id", "client-secret", transport=transport)
+    with patch.object(ClientSecretCredential, "_get_app") as get_mock_app:
+        msal_app = get_mock_app()
+        msal_app.acquire_token_silent_with_error.return_value = None
+        msal_app.acquire_token_for_client.return_value = msal_acquire_token_result
+
+        credential.get_token("scope", claims=expected_claims, correlation_id="foo", enable_cae=True)
+
+        assert msal_app.acquire_token_silent_with_error.call_count == 1
+        _, kwargs = msal_app.acquire_token_silent_with_error.call_args
+        assert kwargs["claims_challenge"] == expected_claims
+        assert kwargs["correlation_id"] == "foo"
+        assert "enable_cae" not in kwargs

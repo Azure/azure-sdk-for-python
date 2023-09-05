@@ -10,10 +10,6 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Optional, Union
 
 import jwt
-from azure.core.credentials import TokenCredential
-from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
-from azure.core.polling import LROPoller
-from azure.core.tracing.decorator import distributed_trace
 
 from azure.ai.ml._artifacts._artifact_utilities import (
     _upload_and_generate_remote_uri,
@@ -79,7 +75,7 @@ from azure.ai.ml.entities._job.import_job import ImportJob
 from azure.ai.ml.entities._job.job import _is_pipeline_child_job
 from azure.ai.ml.entities._job.parallel.parallel_job import ParallelJob
 from azure.ai.ml.entities._job.to_rest_functions import to_rest_job_object
-from azure.ai.ml.entities._validation import SchemaValidatableMixin
+from azure.ai.ml.entities._validation import PathAwareSchemaValidatableMixin
 from azure.ai.ml.exceptions import (
     ComponentException,
     ErrorCategory,
@@ -94,6 +90,10 @@ from azure.ai.ml.exceptions import (
 )
 from azure.ai.ml.operations._run_history_constants import RunHistoryConstants
 from azure.ai.ml.sweep import SweepJob
+from azure.core.credentials import TokenCredential
+from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
+from azure.core.polling import LROPoller
+from azure.core.tracing.decorator import distributed_trace
 
 from .._utils._experimental import experimental
 from ..constants._component import ComponentSource
@@ -106,8 +106,8 @@ from ._job_ops_helper import get_git_properties, get_job_output_uris_from_datapl
 from ._local_job_invoker import is_local_run, start_run_if_local
 from ._model_dataplane_operations import ModelDataplaneOperations
 from ._operation_orchestrator import (
-    _AssetResolver,
     OperationOrchestrator,
+    _AssetResolver,
     is_ARM_id_for_resource,
     is_registry_id_for_resource,
     is_singularity_full_name_for_resource,
@@ -257,10 +257,10 @@ class JobOperations(_ScopeDependentOperations):
 
         :keyword parent_job_name: When provided, only returns jobs that are children of the named job. Defaults to None,
             listing all jobs in the workspace.
-        :type parent_job_name: Optional[str]
+        :paramtype parent_job_name: Optional[str]
         :keyword list_view_type: The view type for including/excluding archived jobs. Defaults to
             ~azure.mgt.machinelearningservices.models.ListViewType.ACTIVE_ONLY, excluding archived jobs.
-        :type list_view_type: ~azure.mgmt.machinelearningservices.models.ListViewType
+        :paramtype list_view_type: ~azure.mgmt.machinelearningservices.models.ListViewType
         :return: An iterator-like instance of Job objects.
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.ml.entities.Job]
 
@@ -476,7 +476,7 @@ class JobOperations(_ScopeDependentOperations):
         :param job: The job object to be validated.
         :type job: ~azure.ai.ml.entities.Job
         :keyword raise_on_failure: Specifies if an error should be raised if validation fails. Defaults to False.
-        :type raise_on_failure: bool
+        :paramtype raise_on_failure: bool
         :return: A ValidationResult object containing all found errors.
         :rtype: ~azure.ai.ml.entities.ValidationResult
 
@@ -504,11 +504,11 @@ class JobOperations(_ScopeDependentOperations):
         :param job: The job to validate
         :type job: Job
         :keyword raise_on_failure: Whether to raise on validation failure
-        :type raise_on_failure: bool
+        :paramtype raise_on_failure: bool
         :return: The validation result
         :rtype: ValidationResult
         """
-        git_code_validation_result = SchemaValidatableMixin._create_empty_validation_result()
+        git_code_validation_result = PathAwareSchemaValidatableMixin._create_empty_validation_result()
         # TODO: move this check to Job._validate after validation is supported for all job types
         # If private features are enable and job has code value of type str we need to check
         # that it is a valid git path case. Otherwise we should throw a ValidationException
@@ -525,8 +525,20 @@ class JobOperations(_ScopeDependentOperations):
                 yaml_path="code",
             )
 
-        if not isinstance(job, SchemaValidatableMixin):
-            return git_code_validation_result.try_raise(error_target=ErrorTarget.JOB, raise_error=raise_on_failure)
+        if not isinstance(job, PathAwareSchemaValidatableMixin):
+
+            def error_func(msg, no_personal_data_msg):
+                return ValidationException(
+                    message=msg,
+                    no_personal_data_message=no_personal_data_msg,
+                    error_target=ErrorTarget.JOB,
+                    error_category=ErrorCategory.USER_ERROR,
+                )
+
+            return git_code_validation_result.try_raise(
+                raise_error=raise_on_failure,
+                error_func=error_func,
+            )
 
         validation_result = job._validate(raise_error=raise_on_failure)
         validation_result.merge_with(git_code_validation_result)
@@ -547,7 +559,7 @@ class JobOperations(_ScopeDependentOperations):
                     validation_result.append_error(yaml_path=f"jobs.{node_name}.compute", message=str(e))
 
         validation_result.resolve_location_for_diagnostics(job._source_path)
-        return validation_result.try_raise(raise_error=raise_on_failure, error_target=ErrorTarget.PIPELINE)
+        return job._try_raise(validation_result, raise_error=raise_on_failure)  # pylint: disable=protected-access
 
     @distributed_trace
     @monitor_with_telemetry_mixin(logger, "Job.CreateOrUpdate", ActivityType.PUBLICAPI)
@@ -568,18 +580,18 @@ class JobOperations(_ScopeDependentOperations):
         :param job: The job object.
         :type job: ~azure.ai.ml.entities.Job
         :keyword description: The job description.
-        :type description: Optional[str]
+        :paramtype description: Optional[str]
         :keyword compute: The compute target for the job.
-        :type compute: Optional[str]
+        :paramtype compute: Optional[str]
         :keyword tags: The tags for the job.
-        :type tags: Optional[dict]
+        :paramtype tags: Optional[dict]
         :keyword experiment_name: The name of the experiment the job will be created under. If None is provided,
             job will be created under experiment 'Default'.
-        :type experiment_name: Optional[str]
+        :paramtype experiment_name: Optional[str]
         :keyword skip_validation: Specifies whether or not to skip validation before creating or updating the job. Note
             that validation for dependent resources such as an anonymous component will not be skipped. Defaults to
             False.
-        :type skip_validation: bool
+        :paramtype skip_validation: bool
         :raises Union[~azure.ai.ml.exceptions.UserErrorException, ~azure.ai.ml.exceptions.ValidationException]: Raised
             if Job cannot be successfully validated. Details will be provided in the error message.
         :raises ~azure.ai.ml.exceptions.AssetException: Raised if Job assets
@@ -795,11 +807,11 @@ class JobOperations(_ScopeDependentOperations):
         :param name: The name of a job.
         :type name: str
         :keyword download_path: The local path to be used as the download destination. Defaults to ".".
-        :type download_path: Union[PathLike, str]
+        :paramtype download_path: Union[PathLike, str]
         :keyword output_name: The name of the output to download. Defaults to None.
-        :type output_name: Optional[str]
+        :paramtype output_name: Optional[str]
         :keyword all: Specifies if all logs and named outputs should be downloaded. Defaults to False.
-        :type all: bool
+        :paramtype all: bool
         :raises ~azure.ai.ml.exceptions.JobException: Raised if Job is not yet in a terminal state.
             Details will be provided in the error message.
         :raises ~azure.ai.ml.exceptions.MlException: Raised if logs and outputs cannot be successfully downloaded.

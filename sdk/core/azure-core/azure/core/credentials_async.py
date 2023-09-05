@@ -3,7 +3,8 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from __future__ import annotations
-from typing import Any, Optional, AsyncContextManager
+from types import TracebackType
+from typing import Any, Optional, AsyncContextManager, Type
 from typing_extensions import Protocol, runtime_checkable
 from .credentials import AccessToken as _AccessToken
 
@@ -28,6 +29,15 @@ class AsyncTokenCredential(Protocol, AsyncContextManager["AsyncTokenCredential"]
         :rtype: AccessToken
         :return: An AccessToken instance containing the token string and its expiration time in Unix time.
         """
+        ...
 
     async def close(self) -> None:
+        pass
+
+    async def __aexit__(
+        self,
+        exc_type: Optional[Type[BaseException]] = None,
+        exc_value: Optional[BaseException] = None,
+        traceback: Optional[TracebackType] = None,
+    ) -> None:
         pass

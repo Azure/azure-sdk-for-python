@@ -30,32 +30,32 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
 
     :keyword type: The type of the data input. Accepted values are
         'uri_folder', 'uri_file', 'mltable', 'mlflow_model', 'custom_model', 'integer', 'number', 'string', and
-        'boolean'.
-    :type type: str, optional
+        'boolean'. Defaults to 'uri_folder'.
+    :paramtype type: str
     :keyword path: The path to the input data. Paths can be local paths, remote data uris, or a registered AzureML asset
         ID.
-    :type path: Optional[str]
+    :paramtype path: Optional[str]
     :keyword mode: The access mode of the data input. Accepted values are:
         * 'ro_mount': Mount the data to the compute target as read-only,
         * 'download': Download the data to the compute target,
         * 'direct': Pass in the URI as a string to be accessed at runtime
-    :type mode: Optional[str]
+    :paramtype mode: Optional[str]
     :keyword default: The default value of the input. If a default is set, the input data will be optional.
-    :type default: Union[str, int, float, bool]
+    :paramtype default: Union[str, int, float, bool]
     :keyword min: The minimum value for the input. If a value smaller than the minimum is passed to the job, the job
         execution will fail.
-    :type min: Union[int, float]
+    :paramtype min: Union[int, float]
     :keyword max: The maximum value for the input. If a value larger than the maximum is passed to a job, the job
         execution will fail.
-    :type max: Union[integer, float]
+    :paramtype max: Union[int, float]
     :keyword optional: Specifies if the input is optional.
-    :type optional: Optional[bool]
+    :paramtype optional: Optional[bool]
     :keyword description: Description of the input
-    :type description: Optional[str]
+    :paramtype description: Optional[str]
     :keyword datastore: The datastore to upload local files to.
-    :type datastore: str, optional
+    :paramtype datastore: str
     :keyword intellectual_property: Intellectual property for the input.
-    :type intellectual_property: IntellectualProperty, optional
+    :paramtype intellectual_property: IntellectualProperty
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Input cannot be successfully validated.
         Details will be provided in the error message.
 
@@ -83,25 +83,7 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
         description: Optional[str] = None,
         **kwargs,
     ) -> None:
-        """Initialize a uri_folder input.
-
-        :param type: The type of the data input. Can only be set to "uri_folder".
-        :type type: str
-        :param path: The path to the input data. Paths can be local paths, remote data uris, or a registered AzureML
-            asset id.
-        :type path: str
-        :param mode: The mode of the data input. Accepted values are:
-            * 'ro_mount': Mount the data to the compute target as read-only,
-            * 'download': Download the data to the compute target,
-            * 'direct': Pass in the URI as a string to be accessed at runtime
-        :type mode: str
-        :param optional: Specifies if the input is optional.
-        :type optional: bool
-        :param description: Description of the input
-        :type description: str
-        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Input cannot be successfully validated.
-            Details will be provided in the error message.
-        """
+        """"""
 
     @overload
     def __init__(
@@ -117,20 +99,20 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
     ) -> None:
         """Initialize a number input.
 
-        :param type: The type of the data input. Can only be set to "number".
-        :type type: str
-        :param default: The default value of the input. If a default is set, the input data will be optional.
-        :type default: Union[str, int, float, bool]
-        :param min: The minimum value for the input. If a value smaller than the minimum is passed to the job, the job
+        :keyword type: The type of the data input. Can only be set to "number".
+        :paramtype type: str
+        :keyword default: The default value of the input. If a default is set, the input data will be optional.
+        :paramtype default: Union[str, int, float, bool]
+        :keyword min: The minimum value for the input. If a value smaller than the minimum is passed to the job, the job
             execution will fail.
-        :type min: Union[int, float]
-        :param max: The maximum value for the input. If a value larger than the maximum is passed to a job, the job
+        :paramtype min: Union[int, float]
+        :keyword max: The maximum value for the input. If a value larger than the maximum is passed to a job, the job
             execution will fail.
-        :type max: Union[integer, float]
-        :param optional: Specifies if the input is optional.
-        :type optional: bool
-        :param description: Description of the input
-        :type description: str
+        :paramtype max: Union[int, float]
+        :keyword optional: Specifies if the input is optional.
+        :paramtype optional: bool
+        :keyword description: Description of the input
+        :paramtype description: str
         :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Input cannot be successfully validated.
             Details will be provided in the error message.
         """
@@ -149,20 +131,20 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
     ) -> None:
         """Initialize an integer input.
 
-        :param type: The type of the data input. Can only be set to "integer".
-        :type type: str
-        :param default: The default value of the input. If a default is set, the input data will be optional.
-        :type default: Union[str, int, float, bool]
-        :param min: The minimum value for the input. If a value smaller than the minimum is passed to the job, the job
+        :keyword type: The type of the data input. Can only be set to "integer".
+        :paramtype type: str
+        :keyword default: The default value of the input. If a default is set, the input data will be optional.
+        :paramtype default: Union[str, int, float, bool]
+        :keyword min: The minimum value for the input. If a value smaller than the minimum is passed to the job, the job
             execution will fail.
-        :type min: Union[int, float]
-        :param max: The maximum value for the input. If a value larger than the maximum is passed to a job, the job
+        :paramtype min: Union[int, float]
+        :keyword max: The maximum value for the input. If a value larger than the maximum is passed to a job, the job
             execution will fail.
-        :type max: Union[integer, float]
-        :param optional: Specifies if the input is optional.
-        :type optional: bool
-        :param description: Description of the input
-        :type description: str
+        :paramtype max: Union[int, float]
+        :keyword optional: Specifies if the input is optional.
+        :paramtype optional: bool
+        :keyword description: Description of the input
+        :paramtype description: str
         """
 
     @overload
@@ -177,14 +159,14 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
     ) -> None:
         """Initialize a string input.
 
-        :param type: The type of the data input. Can only be set to "string".
-        :type type: str
-        :param default: The default value of this input. When a `default` is set, the input will be optional.
-        :type default: str, optional
-        :param optional: Determine if this input is optional.
-        :type optional: bool, optional
-        :param description: Description of the input.
-        :type description: str, optional
+        :keyword type: The type of the data input. Can only be set to "string".
+        :paramtype type: str
+        :keyword default: The default value of this input. When a `default` is set, the input will be optional.
+        :paramtype default: str
+        :keyword optional: Determine if this input is optional.
+        :paramtype optional: bool
+        :keyword description: Description of the input.
+        :paramtype description: str
         :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Input cannot be successfully validated.
             Details will be provided in the error message.
         """
@@ -201,17 +183,17 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
     ) -> None:
         """Initialize a bool input.
 
-        :param type: The type of the data input. Can only be set to "boolean".
-        :type type: str
-        :param path: The path to the input data. Paths can be local paths, remote data uris, or a registered AzureML
+        :keyword type: The type of the data input. Can only be set to "boolean".
+        :paramtype type: str
+        :keyword path: The path to the input data. Paths can be local paths, remote data uris, or a registered AzureML
             asset id.
-        :type path: str
-        :param default: The default value of the input. If a default is set, the input data will be optional.
-        :type default: Union[str, int, float, bool]
-        :param optional: Specifies if the input is optional.
-        :type optional: bool
-        :param description: Description of the input
-        :type description: str
+        :paramtype path: str
+        :keyword default: The default value of the input. If a default is set, the input data will be optional.
+        :paramtype default: Union[str, int, float, bool]
+        :keyword optional: Specifies if the input is optional.
+        :paramtype optional: bool
+        :keyword description: Description of the input
+        :paramtype description: str
         :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Input cannot be successfully validated.
             Details will be provided in the error message.
         """

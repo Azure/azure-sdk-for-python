@@ -21,14 +21,14 @@ from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job._input_output_helpers import build_input_output
 from azure.ai.ml.entities._job.job import Job
 from azure.ai.ml.entities._job.pipeline._attr_dict import _AttrDict
-from azure.ai.ml.entities._job.pipeline._io import NodeInput, NodeOutput, PipelineInput
+from azure.ai.ml.entities._job.pipeline._io import NodeOutput, PipelineInput
 from azure.ai.ml.entities._job.pipeline._io.mixin import NodeWithGroupInputMixin
 from azure.ai.ml.entities._job.pipeline._pipeline_expression import PipelineExpression
 from azure.ai.ml.entities._job.sweep.search_space import SweepDistribution
 from azure.ai.ml.entities._mixins import YamlTranslatableMixin
 from azure.ai.ml.entities._util import convert_ordered_dict_to_dict, resolve_pipeline_parameters
-from azure.ai.ml.entities._validation import MutableValidationResult, SchemaValidatableMixin
-from azure.ai.ml.exceptions import ErrorTarget
+from azure.ai.ml.entities._validation import MutableValidationResult, PathAwareSchemaValidatableMixin
+from azure.ai.ml.exceptions import ErrorTarget, ValidationException
 
 module_logger = logging.getLogger(__name__)
 
@@ -76,7 +76,7 @@ def pipeline_node_decorator(func):
 
 
 # pylint: disable=too-many-instance-attributes
-class BaseNode(Job, YamlTranslatableMixin, _AttrDict, SchemaValidatableMixin, NodeWithGroupInputMixin):
+class BaseNode(Job, YamlTranslatableMixin, _AttrDict, PathAwareSchemaValidatableMixin, NodeWithGroupInputMixin):
     """Base class for node in pipeline, used for component version consumption. Can't be instantiated directly.
 
     You should not instantiate this class directly. Instead, you should
@@ -315,20 +315,17 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, SchemaValidatableMixin, No
         return self._component.name
 
     def _to_dict(self) -> Dict:
-        return self._dump_for_validation()
+        return convert_ordered_dict_to_dict(self._dump_for_validation())
 
     @classmethod
-    def _get_validation_error_target(cls) -> ErrorTarget:
-        """Return the error target of this resource.
+    def _create_validation_error(cls, message: str, no_personal_data_message: str):
+        return ValidationException(
+            message=message,
+            no_personal_data_message=no_personal_data_message,
+            target=ErrorTarget.PIPELINE,
+        )
 
-        Should be overridden by subclass. Value should be in ErrorTarget enum.
-
-        :return: The error target
-        :rtype: ErrorTarget
-        """
-        return ErrorTarget.PIPELINE
-
-    def _validate_inputs(self, raise_error=True):
+    def _validate_inputs(self):
         validation_result = self._create_empty_validation_result()
         if self._validate_required_input_not_provided:
             # validate required inputs not provided
@@ -353,7 +350,7 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, SchemaValidatableMixin, No
                     message=f"Input of command {self.name} is a SweepDistribution, "
                     f"please use command.sweep to transform the command into a sweep node.",
                 )
-        return validation_result.try_raise(self._get_validation_error_target(), raise_error=raise_error)
+        return validation_result
 
     def _customized_validate(self) -> MutableValidationResult:
         """Validate the resource with customized logic.
@@ -363,7 +360,7 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, SchemaValidatableMixin, No
         :return: The validation result
         :rtype: MutableValidationResult
         """
-        validate_result = self._validate_inputs(raise_error=False)
+        validate_result = self._validate_inputs()
         return validate_result
 
     @classmethod
@@ -489,20 +486,20 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, SchemaValidatableMixin, No
         return convert_ordered_dict_to_dict(rest_obj)
 
     @property
-    def inputs(self) -> Dict[str, NodeInput]:
+    def inputs(self) -> Dict[str, Union[Input, str, bool, int, float]]:
         """Get the inputs for the object.
 
         :return: A dictionary containing the inputs for the object.
-        :rtype: Dict[str, NodeInput]
+        :rtype: Dict[str, Union[Input, str, bool, int, float]]
         """
         return self._inputs
 
     @property
-    def outputs(self) -> Dict[str, NodeOutput]:
+    def outputs(self) -> Dict[str, Union[str, Output]]:
         """Get the outputs of the object.
 
         :return: A dictionary containing the outputs for the object.
-        :rtype: Dict[str, Union[str, NodeOutput]
+        :rtype: Dict[str, Union[str, Output]]
         """
         return self._outputs
 

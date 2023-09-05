@@ -56,13 +56,13 @@ from azure.ai.ml.entities._job.pipeline._io import PipelineInput, PipelineJobIOM
 from azure.ai.ml.entities._job.pipeline.pipeline_job_settings import PipelineJobSettings
 from azure.ai.ml.entities._mixins import YamlTranslatableMixin
 from azure.ai.ml.entities._system_data import SystemData
-from azure.ai.ml.entities._validation import MutableValidationResult, SchemaValidatableMixin
-from azure.ai.ml.exceptions import ErrorTarget, UserErrorException
+from azure.ai.ml.entities._validation import MutableValidationResult, PathAwareSchemaValidatableMixin
+from azure.ai.ml.exceptions import ErrorTarget, UserErrorException, ValidationException
 
 module_logger = logging.getLogger(__name__)
 
 
-class PipelineJob(Job, YamlTranslatableMixin, PipelineJobIOMixin, SchemaValidatableMixin):
+class PipelineJob(Job, YamlTranslatableMixin, PipelineJobIOMixin, PathAwareSchemaValidatableMixin):
     """Pipeline job.
 
     You should not instantiate this class directly. Instead, you should
@@ -75,30 +75,30 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineJobIOMixin, SchemaValidata
     :param outputs: Outputs of the pipeline job.
     :type outputs: dict[str, ~azure.ai.ml.entities.Output]
     :param name: Name of the PipelineJob. Defaults to None
-    :type name: str, optional
+    :type name: str
     :param description: Description of the pipeline job. Defaults to None
-    :type description: str, optional
+    :type description: str
     :param display_name: Display name of the pipeline job. Defaults to None
-    :type display_name: str, optional
+    :type display_name: str
     :param experiment_name: Name of the experiment the job will be created under.
         If None is provided, the experiment will be set to the current directory. Defaults to None
-    :type experiment_name: str, optional
+    :type experiment_name: str
     :param jobs: Pipeline component node name to component object. Defaults to None
-    :type jobs: dict[str, ~azure.ai.ml.entities._builders.BaseNode], optional
+    :type jobs: dict[str, ~azure.ai.ml.entities._builders.BaseNode]
     :param settings: Setting of the pipeline job. Defaults to None
-    :type settings: ~azure.ai.ml.entities.PipelineJobSettings, optional
+    :type settings: ~azure.ai.ml.entities.PipelineJobSettings
     :param identity: Identity that the training job will use while running on compute. Defaults to None
     :type identity: Union[
         ~azure.ai.ml.entities._credentials.ManagedIdentityConfiguration,
         ~azure.ai.ml.entities._credentials.AmlTokenConfiguration,
         ~azure.ai.ml.entities._credentials.UserIdentityConfiguration
-    ], optional
+    ]
     :param compute: Compute target name of the built pipeline. Defaults to None
-    :type compute: str, optional
+    :type compute: str
     :param tags: Tag dictionary. Tags can be added, removed, and updated. Defaults to None
-    :type tags: dict[str, str], optional
+    :type tags: dict[str, str]
     :param kwargs: A dictionary of additional configuration parameters. Defaults to None
-    :type kwargs: dict, optional
+    :type kwargs: dict
 
     .. admonition:: Example:
 
@@ -234,8 +234,12 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineJobIOMixin, SchemaValidata
         self._settings = value
 
     @classmethod
-    def _get_validation_error_target(cls) -> ErrorTarget:
-        return ErrorTarget.PIPELINE
+    def _create_validation_error(cls, message: str, no_personal_data_message: str):
+        return ValidationException(
+            message=message,
+            no_personal_data_message=no_personal_data_message,
+            target=ErrorTarget.PIPELINE,
+        )
 
     @classmethod
     def _create_schema_for_validation(cls, context) -> PathAwareSchema:
@@ -462,7 +466,7 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineJobIOMixin, SchemaValidata
         (Write a pipeline job as node in yaml is not supported presently.)
 
         :param context: Context of command job YAML file.
-        :type context: dict, optional
+        :type context: dict
         :keyword kwargs: Extra arguments.
         :return: Translated command component.
         :rtype: Pipeline
@@ -662,7 +666,7 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineJobIOMixin, SchemaValidata
         """Translate a pipeline job to pipeline component.
 
         :param context: Context of pipeline job YAML file.
-        :type context: dict, optional
+        :type context: dict
         :keyword kwargs: Extra arguments.
         :return: Translated pipeline component.
         :rtype: PipelineComponent

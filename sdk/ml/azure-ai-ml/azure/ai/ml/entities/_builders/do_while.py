@@ -4,7 +4,6 @@
 import logging
 from typing import Dict, List, Optional, Union
 
-from marshmallow import ValidationError
 from typing_extensions import Literal
 
 from azure.ai.ml._schema.pipeline.control_flow_job import DoWhileSchema
@@ -13,7 +12,6 @@ from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job.job_limits import DoWhileJobLimits
 from azure.ai.ml.entities._job.pipeline._io import InputOutputBase, NodeInput, NodeOutput
 from azure.ai.ml.entities._validation import MutableValidationResult
-from azure.ai.ml.exceptions import ErrorCategory, ValidationErrorType
 
 from .._util import load_from_dict, validate_attribute_type
 from .base_node import BaseNode
@@ -37,7 +35,7 @@ class DoWhile(LoopNode):
     :type mapping: dict[Union[str, ~azure.ai.ml.entities.Output],
         Union[str, ~azure.ai.ml.entities.Input, list]]
     :param limits: Limits in running the do-while node.
-    :type limits: Union[dict, ~azure.ai.ml.entities._job.job_limits.DoWhileJobLimits], optional
+    :type limits: Union[dict, ~azure.ai.ml.entities._job.job_limits.DoWhileJobLimits]
     :raises ValidationError: If the initialization parameters are not of valid types.
     """
 
@@ -110,6 +108,24 @@ class DoWhile(LoopNode):
         return cls(**loaded_data)
 
     @classmethod
+    def _get_port_obj(
+        cls, body: BaseNode, port_name: str, is_input: bool = True, validate_port: bool = True
+    ) -> Union[str, NodeInput, NodeOutput]:
+        if is_input:
+            port = body.inputs.get(port_name, None)
+        else:
+            port = body.outputs.get(port_name, None)
+        if port is None:
+            if validate_port:
+                raise cls._create_validation_error(
+                    message=f"Cannot find {port_name} in do_while loop body {'inputs' if is_input else 'outputs'}.",
+                    no_personal_data_message=f"Miss port in do_while loop body {'inputs' if is_input else 'outputs'}.",
+                )
+            return port_name
+
+        return port
+
+    @classmethod
     def _create_instance_from_schema_dict(
         cls, pipeline_jobs: Dict[str, BaseNode], loaded_data: Dict, validate_port: bool = True
     ) -> "DoWhile":
@@ -126,26 +142,6 @@ class DoWhile(LoopNode):
         """
 
         # pylint: disable=protected-access
-
-        def get_port_obj(
-            body: BaseNode, port_name: str, is_input: bool = True, validate_port: bool = True
-        ) -> Union[str, NodeInput, NodeOutput]:
-            if is_input:
-                port = body.inputs.get(port_name, None)
-            else:
-                port = body.outputs.get(port_name, None)
-            if port is None:
-                if validate_port:
-                    raise ValidationError(
-                        message=f"Cannot find {port_name} in do_while loop body {'inputs' if is_input else 'outputs'}.",
-                        target=cls._get_validation_error_target(),
-                        error_category=ErrorCategory.USER_ERROR,
-                        error_type=ValidationErrorType.INVALID_VALUE,
-                    )
-                return port_name
-
-            return port
-
         # Get body object from pipeline job list.
         body_name = cls._get_data_binding_expression_value(loaded_data.pop("body"), regex=r"\{\{.*\.jobs\.(.*)\}\}")
         body = cls._get_body_from_pipeline_jobs(pipeline_jobs, body_name)
@@ -159,7 +155,7 @@ class DoWhile(LoopNode):
                 cls._get_data_binding_expression_value(item, regex=r"\{\{.*\.%s\.inputs\.(.*)\}\}" % body_name)
                 for item in input_names
             ]
-            mapping[output_name] = [get_port_obj(body, item, validate_port=validate_port) for item in input_names]
+            mapping[output_name] = [cls._get_port_obj(body, item, validate_port=validate_port) for item in input_names]
 
         limits = loaded_data.pop("limits", None)
 
@@ -168,7 +164,7 @@ class DoWhile(LoopNode):
             condition_name = cls._get_data_binding_expression_value(
                 loaded_data.pop("condition"), regex=r"\{\{.*\.%s\.outputs\.(.*)\}\}" % body_name
             )
-            condition_value = get_port_obj(body, condition_name, is_input=False, validate_port=validate_port)
+            condition_value = cls._get_port_obj(body, condition_name, is_input=False, validate_port=validate_port)
         else:
             condition_value = None
 
@@ -205,7 +201,7 @@ class DoWhile(LoopNode):
         The range of the iteration count is (0, 1000].
 
         :keyword max_iteration_count: The maximum iteration count for the do-while job.
-        :type max_iteration_count: int
+        :paramtype max_iteration_count: int
         """
         if isinstance(self.limits, DoWhileJobLimits):
             self.limits._max_iteration_count = max_iteration_count  # pylint: disable=protected-access
@@ -213,10 +209,10 @@ class DoWhile(LoopNode):
             self._limits = DoWhileJobLimits(max_iteration_count=max_iteration_count)
 
     def _customized_validate(self):
-        validation_result = self._validate_loop_condition(raise_error=False)
-        validation_result.merge_with(self._validate_body(raise_error=False))
-        validation_result.merge_with(self._validate_do_while_limit(raise_error=False))
-        validation_result.merge_with(self._validate_body_output_mapping(raise_error=False))
+        validation_result = self._validate_loop_condition()
+        validation_result.merge_with(self._validate_body())
+        validation_result.merge_with(self._validate_do_while_limit())
+        validation_result.merge_with(self._validate_body_output_mapping())
         return validation_result
 
     def _validate_port(
@@ -270,7 +266,7 @@ class DoWhile(LoopNode):
             )
         return validation_result
 
-    def _validate_loop_condition(self, raise_error=True):
+    def _validate_loop_condition(self):
         # pylint: disable=protected-access
         validation_result = self._create_empty_validation_result()
         if self.condition is not None:
@@ -289,12 +285,12 @@ class DoWhile(LoopNode):
                             "The condition of dowhile must be the control output or primitive type of the body."
                         ),
                     )
-        return validation_result.try_raise(self._get_validation_error_target(), raise_error=raise_error)
+        return validation_result
 
-    def _validate_do_while_limit(self, raise_error=True):
+    def _validate_do_while_limit(self):
         validation_result = self._create_empty_validation_result()
         if not self.limits or self.limits.max_iteration_count is None:
-            return validation_result.try_raise(self._get_validation_error_target(), raise_error=raise_error)
+            return validation_result
         if isinstance(self.limits.max_iteration_count, InputOutputBase):
             validation_result.append_error(
                 yaml_path="limit.max_iteration_count",
@@ -305,9 +301,9 @@ class DoWhile(LoopNode):
                 yaml_path="limit.max_iteration_count",
                 message=f"The max iteration count cannot be less than 0 or larger than {DO_WHILE_MAX_ITERATION}.",
             )
-        return validation_result.try_raise(self._get_validation_error_target(), raise_error=raise_error)
+        return validation_result
 
-    def _validate_body_output_mapping(self, raise_error=True):
+    def _validate_body_output_mapping(self):
         # pylint disable=protected-access
         validation_result = self._create_empty_validation_result()
         if not isinstance(self.mapping, dict):
@@ -347,7 +343,7 @@ class DoWhile(LoopNode):
                                 message=(
                                     f"{output_name} is a non-primitive type output and {input_name} "
                                     "is a primitive input. Non-primitive type output cannot be connected "
-                                    "to an a primitive type input.",
+                                    "to an a primitive type input."
                                 ),
                             )
 
@@ -358,4 +354,4 @@ class DoWhile(LoopNode):
                     validation_result.append_error(
                         yaml_path="mapping", message=f"Input {_input} has been linked to multiple outputs {outputs}."
                     )
-        return validation_result.try_raise(self._get_validation_error_target(), raise_error=raise_error)
+        return validation_result

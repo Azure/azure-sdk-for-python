@@ -55,21 +55,21 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
     :param aggregation_component: Component representing the aggregation step.
     :type aggregation_component: ~azure.ai.ml.entities.Component
     :param aggregation_compute: The compute resource for the aggregation step.
-    :type aggregation_compute: str, optional
+    :type aggregation_compute: str
     :param aggregation_datastore: The datastore for the aggregation step.
-    :type aggregation_datastore: str, optional
+    :type aggregation_datastore: str
     :param shared_silo_kwargs: Keyword arguments shared across all silos.
-    :type shared_silo_kwargs: dict, optional
+    :type shared_silo_kwargs: dict
     :param aggregation_kwargs: Keyword arguments specific to the aggregation step.
-    :type aggregation_kwargs: dict, optional
+    :type aggregation_kwargs: dict
     :param silo_to_aggregation_argument_map: Mapping of silo to aggregation arguments.
-    :type silo_to_aggregation_argument_map: dict, optional
+    :type silo_to_aggregation_argument_map: dict
     :param aggregation_to_silo_argument_map: Mapping of aggregation to silo arguments.
-    :type aggregation_to_silo_argument_map: dict, optional
+    :type aggregation_to_silo_argument_map: dict
     :param max_iterations: The maximum number of iterations for the scatter-gather loop.
-    :type max_iterations: int, optional
+    :type max_iterations: int
     :param create_default_mappings_if_needed: Whether to create default argument mappings if needed.
-    :type create_default_mappings_if_needed: bool, optional
+    :type create_default_mappings_if_needed: bool
     """
 
     # See node class for input descriptions, no point maintaining
@@ -377,7 +377,7 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
             'real' output anchoring.
         :type orchestrator_datastore: str
         :param iteration: The current iteration number in the scatter gather loop. Defaults to 0.
-        :type iteration: Optional[int], optional
+        :type iteration: Optional[int]
         :param _path: for recursive anchoring, codes the "path" inside the pipeline for messaging
         :type _path: str
         :return: A validation result containing any issues that were uncovered during anchoring. This function adds
@@ -488,27 +488,27 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
         """Validates the inputs for the scatter-gather node.
 
         :keyword silo_configs: List of federated learning silo configurations.
-        :type silo_configs: List[~azure.ai.ml.entities._assets.federated_learning_silo.FederatedLearningSilo]
+        :paramtype silo_configs: List[~azure.ai.ml.entities._assets.federated_learning_silo.FederatedLearningSilo]
         :keyword silo_component: Component representing the silo for federated learning.
-        :type silo_component: ~azure.ai.ml.entities.Component
+        :paramtype silo_component: ~azure.ai.ml.entities.Component
         :keyword aggregation_component: Component representing the aggregation step.
-        :type aggregation_component: ~azure.ai.ml.entities.Component
+        :paramtype aggregation_component: ~azure.ai.ml.entities.Component
         :keyword shared_silo_kwargs: Keyword arguments shared across all silos.
-        :type shared_silo_kwargs: Dict
+        :paramtype shared_silo_kwargs: Dict
         :keyword aggregation_compute: The compute resource for the aggregation step.
-        :type aggregation_compute: str
+        :paramtype aggregation_compute: str
         :keyword aggregation_datastore: The datastore for the aggregation step.
-        :type aggregation_datastore: str
+        :paramtype aggregation_datastore: str
         :keyword aggregation_kwargs: Keyword arguments specific to the aggregation step.
-        :type aggregation_kwargs: Dict
+        :paramtype aggregation_kwargs: Dict
         :keyword silo_to_aggregation_argument_map: Mapping of silo to aggregation arguments.
-        :type silo_to_aggregation_argument_map: Dict
+        :paramtype silo_to_aggregation_argument_map: Dict
         :keyword aggregation_to_silo_argument_map: Mapping of aggregation to silo arguments.
-        :type aggregation_to_silo_argument_map: Dict
+        :paramtype aggregation_to_silo_argument_map: Dict
         :keyword max_iterations: The maximum number of iterations for the scatter-gather loop.
-        :type max_iterations: int
+        :paramtype max_iterations: int
         :keyword raise_error: Whether to raise an exception if validation fails. Defaults to False.
-        :type raise_error: bool
+        :paramtype raise_error: bool
         :return: The validation result.
         :rtype: ~azure.ai.ml.entities._validation.MutableValidationResult
         """
@@ -703,10 +703,7 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
                 message=f"max_iterations must be a positive value, not '{max_iterations}'.",
             )
 
-        return validation_result.try_raise(
-            cls._get_validation_error_target(),
-            raise_error=raise_error,
-        )
+        return cls._try_raise(validation_result, raise_error=raise_error)
 
     @classmethod
     def _custom_fl_data_path(

@@ -40,6 +40,7 @@ from typing import (
     TypeVar,
     Generic,
     Dict,
+    NoReturn,
     TYPE_CHECKING,
 )
 from typing_extensions import Protocol, runtime_checkable
@@ -79,7 +80,7 @@ __all__ = [
 ]
 
 
-def raise_with_traceback(exception: Callable, *args: Any, **kwargs: Any) -> None:
+def raise_with_traceback(exception: Callable, *args: Any, **kwargs: Any) -> NoReturn:
     """Raise exception with a specified traceback.
     This MUST be called inside a "except" clause.
 
@@ -113,18 +114,18 @@ class _HttpResponseCommonAPI(Protocol):
 
     @property
     def reason(self) -> Optional[str]:
-        pass
+        ...
 
     @property
     def status_code(self) -> Optional[int]:
-        pass
+        ...
 
     def text(self) -> str:
-        pass
+        ...
 
     @property
     def request(self) -> object:  # object as type, since all we need is str() on it
-        pass
+        ...
 
 
 class ErrorMap(Generic[KeyType, ValueType]):
@@ -297,7 +298,7 @@ class AzureError(Exception):
 
         self.exc_type = self.exc_type if self.exc_type else type(self.inner_exception)
         self.exc_msg: str = "{}, {}: {}".format(message, self.exc_type.__name__, self.exc_value)
-        self.message: Optional[str] = str(message)
+        self.message: str = str(message)
         self.continuation_token: Optional[str] = kwargs.get("continuation_token")
         super(AzureError, self).__init__(self.message, *args)
 
@@ -490,13 +491,13 @@ class ODataV4Error(HttpResponseError):
             odata_message = None
 
         self.code: Optional[str] = None
-        self.message: Optional[str] = kwargs.get("message", odata_message)
+        message: Optional[str] = kwargs.get("message", odata_message)
         self.target: Optional[str] = None
         self.details: Optional[List[Any]] = []
         self.innererror: Optional[Mapping[str, Any]] = {}
 
-        if self.message and "message" not in kwargs:
-            kwargs["message"] = self.message
+        if message and "message" not in kwargs:
+            kwargs["message"] = message
 
         super(ODataV4Error, self).__init__(response=response, **kwargs)
 

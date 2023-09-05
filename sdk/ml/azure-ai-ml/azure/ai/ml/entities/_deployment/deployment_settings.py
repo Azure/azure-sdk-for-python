@@ -25,9 +25,9 @@ class BatchRetrySettings(RestTranslatableMixin):
     """Retry settings for batch deployment.
 
     :param max_retries: Number of retries in failure, defaults to 3
-    :type max_retries: int, optional
+    :type max_retries: int
     :param timeout: Timeout in seconds, defaults to 30
-    :type timeout: int, optional
+    :type timeout: int
     """
 
     def __init__(self, *, max_retries: Optional[int] = None, timeout: Optional[int] = None):
@@ -61,11 +61,11 @@ class OnlineRequestSettings(RestTranslatableMixin):
     """Request Settings entity.
 
     :param request_timeout_ms: defaults to 5000
-    :type request_timeout_ms: int, optional
+    :type request_timeout_ms: int
     :param max_concurrent_requests_per_instance: defaults to 1
-    :type max_concurrent_requests_per_instance: int, optional
+    :type max_concurrent_requests_per_instance: int
     :param max_queue_wait_ms: defaults to 500
-    :type max_queue_wait_ms: int, optional
+    :type max_queue_wait_ms: int
     """
 
     def __init__(
@@ -134,15 +134,15 @@ class ProbeSettings(RestTranslatableMixin):
         """Settings on how to probe an endpoint.
 
         :param failure_threshold: Threshold for probe failures, defaults to 30
-        :type failure_threshold: int, optional
+        :type failure_threshold: int
         :param success_threshold: Threshold for probe success, defaults to 1
-        :type success_threshold: int, optional
+        :type success_threshold: int
         :param timeout: timeout in seconds, defaults to 2
-        :type timeout: int, optional
+        :type timeout: int
         :param period: [description], defaults to 10
-        :type period: int, optional
+        :type period: int
         :param initial_delay: How to to wait for the first probe, defaults to 10
-        :type initial_delay: int, optional
+        :type initial_delay: int
         """
 
         self.failure_threshold = failure_threshold
