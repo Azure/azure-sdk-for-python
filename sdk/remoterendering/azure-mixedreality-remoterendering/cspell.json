@@ -1,0 +1,10 @@
+{
+    "overrides": [
+        {
+            "filename": "swagger/AUTOREST.md",
+            "words": [
+                "mr-arr.json" // that is just the name of the base file
+            ]
+        }
+    ]
+}
