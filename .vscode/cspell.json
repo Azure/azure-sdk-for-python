@@ -71,7 +71,6 @@
     "sdk/keyvault/azure-keyvault-certificates/tests/certs.py",
     "sdk/keyvault/azure-keyvault-keys/tests/keys.py",
     "sdk/modelsrepository/azure-iot-modelsrepository/**",
-    "sdk/monitor/azure-monitor-query/**",
     "sdk/remoterendering/test-resources.json",
     "sdk/remoterendering/azure-mixedreality-remoterendering/swagger/azure/mixedreality/remoterendering/mr-arr.json",
     "sdk/servicefabric/azure-servicefabric/**",
@@ -91,8 +90,8 @@
     "sdk/ml/azure-ai-ml/tests/**",
     "sdk/ml/azure-ai-ml/swagger/**",
     "sdk/ml/azure-ai-ml/NOTICE.txt",
+    "sdk/ml/azure-ai-ml/.pre-commit-config.yaml",
     "sdk/loadtestservice/azure-developer-loadtesting/**",
-    "sdk/monitor/azure-monitor-ingestion/**",
     "sdk/translation/azure-ai-translation-text/azure/ai/translation/text/_serialization.py",
     "sdk/translation/azure-ai-translation-text/tests/test_break_sentence.py",
     "sdk/translation/azure-ai-translation-text/tests/test_translation.py",
@@ -509,6 +508,12 @@
       ]
     },
     {
+      "filename": "sdk/tables/azure-data-tables/CHANGELOG.md",
+      "words": [
+        "kldtz"
+      ]
+    },
+    {
       "filename": "sdk/tables/test-resources.json",
       "words": [
         "mmspecial"
@@ -821,6 +826,13 @@
       ]
     },
     {
+      "filename": "sdk/monitor/azure-monitor-*/**/*",
+      "words": [
+        "ctxt",
+        "wday"
+      ]
+    },
+    {
       "filename": "sdk/monitor/azure-monitor-opentelemetry*/**/*",
       "words": [
         "blrp",
@@ -848,32 +860,6 @@
         "mycontainer",
         "semconv",
         "updown"
-      ]
-    },
-    {
-      "filename": "sdk/monitor/azure-monitor-opentelemetry/azure/monitor/opentelemetry/_vendor/**/*.py",
-      "words": [
-        "aiopg",
-        "asgiref",
-        "asyncpg",
-        "boto",
-        "botocore",
-        "Cbar",
-        "funcs",
-        "grpcio",
-        "islast",
-        "libpq",
-        "owais",
-        "psutil",
-        "pydantic",
-        "pymongo",
-        "pymysql",
-        "remoulade",
-        "setifnotnone",
-        "sklearn",
-        "starlette",
-        "tortoiseorm",
-        "trysetip"
       ]
     },
     {

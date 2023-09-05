@@ -2,20 +2,28 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=protected-access
+# pylint: disable=protected-access,no-value-for-parameter
 
 from contextlib import contextmanager
 from typing import Any, Iterable, Optional, Union
 
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
-from azure.ai.ml._artifacts._artifact_utilities import _check_and_upload_env_build_context
+from azure.ai.ml._utils._experimental import experimental
+from azure.ai.ml._artifacts._artifact_utilities import (
+    _check_and_upload_env_build_context,
+)
 from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
     AzureMachineLearningWorkspaces as ServiceClient102021Dataplane,
 )
-from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient042023Preview
-from azure.ai.ml._restclient.v2023_04_01_preview.models import EnvironmentVersion, ListViewType
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    EnvironmentVersion,
+    ListViewType,
+)
+from azure.ai.ml._restclient.v2023_04_01_preview import (
+    AzureMachineLearningWorkspaces as ServiceClient042023Preview,
+)
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationsContainer,
@@ -29,17 +37,27 @@ from azure.ai.ml._utils._asset_utils import (
     _get_next_version_from_container,
     _resolve_label_to_asset,
 )
-from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils._registry_utils import (
     get_asset_body_for_registry_storage,
-    get_registry_client,
     get_sas_uri_for_registry_asset,
+    get_registry_client,
 )
-from azure.ai.ml.constants._common import ARM_ID_PREFIX, ASSET_ID_FORMAT, AzureMLResourceType
+
+from azure.ai.ml.constants._common import (
+    ARM_ID_PREFIX,
+    AzureMLResourceType,
+    ASSET_ID_FORMAT,
+)
 from azure.ai.ml.entities._assets import Environment, WorkspaceAssetReference
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 from azure.core.exceptions import ResourceNotFoundError
+from azure.ai.ml.exceptions import (
+    ErrorCategory,
+    ErrorTarget,
+    ValidationErrorType,
+    ValidationException,
+)
+
 
 ops_logger = OpsLogger(__name__)
 logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
@@ -170,7 +188,10 @@ class EnvironmentOperations(_ScopeDependentOperations):
                 )
 
             environment = _check_and_upload_env_build_context(
-                environment=environment, operations=self, sas_uri=sas_uri, show_progress=self._show_progress
+                environment=environment,
+                operations=self,
+                sas_uri=sas_uri,
+                show_progress=self._show_progress,
             )
             env_version_resource = environment._to_rest_object()
             env_rest_obj = (
@@ -446,7 +467,13 @@ class EnvironmentOperations(_ScopeDependentOperations):
     @monitor_with_activity(logger, "Environment.Share", ActivityType.PUBLICAPI)
     @experimental
     def share(
-        self, name: str, version: str, *, share_with_name: str, share_with_version: str, registry_name: str
+        self,
+        name: str,
+        version: str,
+        *,
+        share_with_name: str,
+        share_with_version: str,
+        registry_name: str,
     ) -> Environment:
         """Share a environment asset from workspace to registry.
 
@@ -466,7 +493,8 @@ class EnvironmentOperations(_ScopeDependentOperations):
 
         #  Get workspace info to get workspace GUID
         workspace = self._service_client.workspaces.get(
-            resource_group_name=self._resource_group_name, workspace_name=self._workspace_name
+            resource_group_name=self._resource_group_name,
+            workspace_name=self._workspace_name,
         )
         workspace_guid = workspace.workspace_id
         workspace_location = workspace.location

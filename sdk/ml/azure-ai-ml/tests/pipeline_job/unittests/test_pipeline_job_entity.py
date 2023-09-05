@@ -18,6 +18,7 @@ from azure.ai.ml.constants._common import AssetTypes
 from azure.ai.ml.dsl._group_decorator import group
 from azure.ai.ml.entities import PipelineJob
 from azure.ai.ml.entities._builders import DataTransfer, Spark
+from azure.ai.ml.entities._component.flow import FlowComponent
 from azure.ai.ml.entities._job.automl.image import (
     ImageClassificationJob,
     ImageClassificationMultilabelJob,
@@ -2108,3 +2109,57 @@ class TestPipelineJobEntity:
         assert get_predecessors(pipeline.jobs["hello_world_component_1"]) == []
         assert get_predecessors(pipeline.jobs["hello_world_component_2"]) == []
         assert get_predecessors(pipeline.jobs["merge_component_outputs"]) == []
+
+    def test_pipeline_job_with_flow(self) -> None:
+        test_path = "./tests/test_configs/pipeline_jobs/pipeline_job_with_flow.yml"
+        pipeline: PipelineJob = load_job(source=test_path)
+
+        assert isinstance(pipeline.jobs["anonymous_parallel_flow"].component, FlowComponent)
+        assert pipeline.jobs["anonymous_parallel_flow"].component.additional_includes == [
+            "../additional_includes/convert_to_dict.py",
+            "../additional_includes/fetch_text_content_from_url.py",
+            "../additional_includes/summarize_text_content.jinja2",
+        ]
+
+        assert isinstance(pipeline.jobs["anonymous_parallel_flow_from_run"].component, FlowComponent)
+
+        dummy_component_arm_id = (
+            "/subscriptions/xxx/resourceGroups/xxx/providers/Microsoft.MachineLearningServices/"
+            "workspaces/xxx/components/xxx/versions/xxx"
+        )
+        # mock component resolution
+        for _, node in pipeline.jobs.items():
+            node._component = dummy_component_arm_id
+
+        pipeline_job_rest_object = pipeline._to_rest_object()
+        assert pipeline_job_rest_object.properties.jobs == {
+            "anonymous_parallel_flow": {
+                "_source": "YAML.COMPONENT",
+                "componentId": dummy_component_arm_id,
+                "inputs": {
+                    "connections.summarize_text_content.connection": {
+                        "job_input_type": "literal",
+                        "value": "azure_open_ai_connection",
+                    },
+                    "connections.summarize_text_content.deployment_name": {
+                        "job_input_type": "literal",
+                        "value": "text-davinci-003",
+                    },
+                    "data": {"job_input_type": "literal", "value": "${{parent.inputs.web_classification_input}}"},
+                    "url": {"job_input_type": "literal", "value": "${data.url}"},
+                },
+                "name": "anonymous_parallel_flow",
+                "outputs": {"flow_outputs": {"type": "literal", "value": "${{parent.outputs.output_data}}"}},
+                "type": "parallel",
+            },
+            "anonymous_parallel_flow_from_run": {
+                "_source": "YAML.COMPONENT",
+                "componentId": dummy_component_arm_id,
+                "inputs": {
+                    "data": {"job_input_type": "literal", "value": "${{parent.inputs.basic_input}}"},
+                    "text": {"job_input_type": "literal", "value": "${data.text}"},
+                },
+                "name": "anonymous_parallel_flow_from_run",
+                "type": "parallel",
+            },
+        }
