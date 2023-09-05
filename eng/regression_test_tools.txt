@@ -16,7 +16,6 @@ typing-extensions<=4.6.3
 # locking packages defined as deps from azure-sdk-tools or azure-devtools
 pytoml==0.1.21
 readme-renderer[md]==25.0
-pyOpenSSL==23.2.0
 json-delta==2.0
 ConfigArgParse==1.2.3
 six==1.14.0
