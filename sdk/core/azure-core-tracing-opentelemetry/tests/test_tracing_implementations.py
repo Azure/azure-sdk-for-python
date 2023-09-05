@@ -13,7 +13,11 @@ import requests
 
 
 from azure.core.tracing.ext.opentelemetry_span import OpenTelemetrySpan
-from azure.core.tracing import SpanKind
+from azure.core.tracing import SpanKind, AbstractSpan
+
+def test_structural_subtyping():
+    #assert issubclass(OpenTelemetrySpan, AbstractSpan)
+    assert isinstance(OpenTelemetrySpan(), AbstractSpan)
 
 
 class TestOpentelemetryWrapper:

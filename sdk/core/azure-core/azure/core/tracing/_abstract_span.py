@@ -7,7 +7,7 @@ from __future__ import annotations
 from enum import Enum
 from urllib.parse import urlparse
 
-from typing import Any, Sequence, Optional, Union, Callable, Dict, Type
+from typing import Any, Sequence, Optional, Union, Callable, Dict, Type, runtime_checkable, Generic, TypeVar
 from types import TracebackType
 from typing_extensions import Protocol, ContextManager
 from azure.core.pipeline.transport import HttpRequest, HttpResponse, AsyncHttpResponse
@@ -31,6 +31,7 @@ AttributeValue = Union[
     Sequence[float],
 ]
 Attributes = Dict[str, AttributeValue]
+SpanType = TypeVar("SpanType", covariant=True)
 
 
 class SpanKind(Enum):
@@ -42,7 +43,7 @@ class SpanKind(Enum):
     INTERNAL = 6
 
 
-class AbstractSpan(Protocol):
+class AbstractSpan(Protocol, Generic[SpanType]):
     """Wraps a span from a distributed tracing implementation.
 
     If a span is given wraps the span. Else a new span is created.
@@ -55,11 +56,11 @@ class AbstractSpan(Protocol):
     """
 
     def __init__(  # pylint: disable=super-init-not-called
-        self, span: Optional[Any] = None, name: Optional[str] = None, **kwargs: Any
+        self, span: Optional[SpanType] = None, name: Optional[str] = None, **kwargs: Any
     ) -> None:
         pass
 
-    def span(self, name: str = "child_span", **kwargs: Any) -> AbstractSpan:
+    def span(self, name: str = "child_span", **kwargs: Any) -> AbstractSpan[SpanType]:
         """
         Create a child span for the current span and append it to the child spans list.
         The child span must be wrapped by an implementation of AbstractSpan
@@ -89,7 +90,7 @@ class AbstractSpan(Protocol):
         """
         ...
 
-    def __enter__(self) -> AbstractSpan:
+    def __enter__(self) -> AbstractSpan[SpanType]:
         """Start a span."""
         ...
 
@@ -157,7 +158,7 @@ class AbstractSpan(Protocol):
         ...
 
     @property
-    def span_instance(self) -> Any:
+    def span_instance(self) -> SpanType:
         """
         Returns the span the class is wrapping.
         """
@@ -188,7 +189,7 @@ class AbstractSpan(Protocol):
         ...
 
     @classmethod
-    def get_current_span(cls) -> Any:
+    def get_current_span(cls) -> SpanType:
         """
         Get the current span from the execution context. Return None otherwise.
 
@@ -208,7 +209,7 @@ class AbstractSpan(Protocol):
         ...
 
     @classmethod
-    def set_current_span(cls, span: Any) -> None:
+    def set_current_span(cls, span: SpanType) -> None:
         """Set the given span as the current span in the execution context.
 
         :param span: The span to set as the current span
@@ -226,11 +227,11 @@ class AbstractSpan(Protocol):
         ...
 
     @classmethod
-    def change_context(cls, span: AbstractSpan) -> ContextManager[AbstractSpan]:
+    def change_context(cls, span: SpanType) -> ContextManager[SpanType]:
         """Change the context for the life of this context manager.
 
         :param span: The span to run in the new context
-        :type span: AbstractSpan
+        :type span: Any
         :rtype: contextmanager
         :return: A context manager that will run the given span in the new context
         """
