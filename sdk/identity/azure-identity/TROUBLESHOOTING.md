@@ -26,7 +26,7 @@ This troubleshooting guide covers failure investigation techniques, common error
 - [Troubleshoot AzurePowerShellCredential authentication issues](#troubleshoot-azurepowershellcredential-authentication-issues)
 - [Troubleshoot WorkloadIdentityCredential authentication issues](#troubleshoot-workloadidentitycredential-authentication-issues)
 - [Troubleshoot multi-tenant authentication issues](#troubleshoot-multi-tenant-authentication-issues)
-- [Troubleshoot WAM+MSA login issues](#troubleshoot-wam+msa-login-issues)
+- [Troubleshoot WAM+MSA login issues](#troubleshoot-wammsa-login-issues)
 - [Get additional help](#get-additional-help)
 
 ## Handle Azure Identity errors
