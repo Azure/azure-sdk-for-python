@@ -23,14 +23,10 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-
+from __future__ import annotations
 import logging
 from collections.abc import Iterable
-from typing import (
-    TypeVar,
-    Generic,
-    Optional,
-)
+from typing import TypeVar, Generic, Optional, Any
 from .configuration import Configuration
 from .pipeline import Pipeline
 from .pipeline.transport._base import PipelineClientBase
@@ -82,34 +78,34 @@ class PipelineClient(PipelineClientBase, Generic[HTTPRequestType, HTTPResponseTy
         base_url: str,
         *,
         pipeline: Optional[Pipeline[HTTPRequestType, HTTPResponseType]] = None,
-        config: Optional[Configuration] = None,
-        **kwargs
+        config: Optional[Configuration[HTTPRequestType, HTTPResponseType]] = None,
+        **kwargs: Any,
     ):
         super(PipelineClient, self).__init__(base_url)
-        self._config: Configuration = config or Configuration(**kwargs)
+        self._config: Configuration[HTTPRequestType, HTTPResponseType] = config or Configuration(**kwargs)
         self._base_url = base_url
 
         self._pipeline = pipeline or self._build_pipeline(self._config, **kwargs)
 
-    def __enter__(self):
+    def __enter__(self) -> PipelineClient[HTTPRequestType, HTTPResponseType]:
         self._pipeline.__enter__()
         return self
 
-    def __exit__(self, *exc_details):
+    def __exit__(self, *exc_details: Any) -> None:
         self._pipeline.__exit__(*exc_details)
 
-    def close(self):
+    def close(self) -> None:
         self.__exit__()
 
     def _build_pipeline(
         self,
-        config: Configuration,
+        config: Configuration[HTTPRequestType, HTTPResponseType],
         *,
         transport: Optional[HttpTransport[HTTPRequestType, HTTPResponseType]] = None,
         policies=None,
         per_call_policies=None,
         per_retry_policies=None,
-        **kwargs
+        **kwargs,
     ) -> Pipeline[HTTPRequestType, HTTPResponseType]:
         per_call_policies = per_call_policies or []
         per_retry_policies = per_retry_policies or []
@@ -182,7 +178,7 @@ class PipelineClient(PipelineClientBase, Generic[HTTPRequestType, HTTPResponseTy
 
         return Pipeline(transport, policies)
 
-    def send_request(self, request: HTTPRequestType, **kwargs) -> HTTPResponseType:
+    def send_request(self, request: HTTPRequestType, **kwargs: Any) -> HTTPResponseType:
         """Method that runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest

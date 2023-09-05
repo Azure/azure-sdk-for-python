@@ -9,14 +9,13 @@ from os import PathLike
 from pathlib import Path
 from typing import IO, AnyStr, Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import CreateMonitorAction, RecurrenceFrequency
-from azure.ai.ml._restclient.v2023_04_01_preview.models import Schedule as RestSchedule
-from azure.ai.ml._restclient.v2023_04_01_preview.models import ScheduleProperties
+from azure.ai.ml._restclient.v2023_06_01_preview.models import CreateMonitorAction, RecurrenceFrequency
+from azure.ai.ml._restclient.v2023_06_01_preview.models import Schedule as RestSchedule
+from azure.ai.ml._restclient.v2023_06_01_preview.models import ScheduleProperties
 from azure.ai.ml._schema.monitoring.schedule import MonitorScheduleSchema
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils.utils import dump_yaml_to_file
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, ScheduleType
-from azure.ai.ml.constants._monitoring import SPARK_INSTANCE_TYPE_KEY, SPARK_RUNTIME_VERSION
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 from azure.ai.ml.entities._monitoring.definition import MonitorDefinition
 from azure.ai.ml.entities._schedule.schedule import Schedule
@@ -32,19 +31,19 @@ class MonitorSchedule(Schedule, RestTranslatableMixin):
     """Monitor schedule.
 
     :keyword name: The schedule name.
-    :type name: str
+    :paramtype name: str
     :keyword trigger: The schedule trigger.
-    :type trigger: Union[~azure.ai.ml.entities.CronTrigger, ~azure.ai.ml.entities.RecurrenceTrigger]
+    :paramtype trigger: Union[~azure.ai.ml.entities.CronTrigger, ~azure.ai.ml.entities.RecurrenceTrigger]
     :keyword create_monitor: The schedule action monitor definition.
-    :type create_monitor: ~azure.ai.ml.entities.MonitorDefinition
+    :paramtype create_monitor: ~azure.ai.ml.entities.MonitorDefinition
     :keyword display_name: The display name of the schedule.
-    :type display_name: Optional[str]
+    :paramtype display_name: Optional[str]
     :keyword description: A description of the schedule.
-    :type description: Optional[str]
+    :paramtype description: Optional[str]
     :keyword tags: Tag dictionary. Tags can be added, removed, and updated.
-    :type tags: Optional[dict[str, str]]
+    :paramtype tags: Optional[dict[str, str]]
     :keyword properties: The job property dictionary.
-    :type properties: Optional[dict[str, str]]
+    :paramtype properties: Optional[dict[str, str]]
     """
 
     def __init__(
@@ -93,10 +92,6 @@ class MonitorSchedule(Schedule, RestTranslatableMixin):
     def _to_rest_object(self) -> RestSchedule:
         tags = {
             **self.tags,
-            **{
-                SPARK_INSTANCE_TYPE_KEY: self.create_monitor.compute.instance_type,
-                SPARK_RUNTIME_VERSION: self.create_monitor.compute.runtime_version,
-            },
         }
         # default data window size is calculated based on the trigger frequency
         # by default 7 days if user provides incorrect recurrence frequency
@@ -137,7 +132,7 @@ class MonitorSchedule(Schedule, RestTranslatableMixin):
             If dest is an open file, the file will be written to directly.
         :type dest: Union[PathLike, str, IO[AnyStr]]
         :keyword kwargs: Additional arguments to pass to the YAML serializer.
-        :type kwargs: dict
+        :paramtype kwargs: dict
         :raises FileExistsError: Raised if dest is a file path and the file already exists.
         :raises IOError: Raised if dest is an open file and the file is not writable.
         """

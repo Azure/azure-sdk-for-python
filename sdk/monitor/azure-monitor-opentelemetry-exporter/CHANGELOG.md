@@ -1,15 +1,15 @@
 # Release History
 
-## 1.0.0b16 (Unreleased)
+## 1.0.0b16 (2023-08-30)
 
 ### Features Added
 
 - Export OTel Resource
     ([#31355](https://github.com/Azure/azure-sdk-for-python/pull/31355))
-
-### Breaking Changes
-
-### Bugs Fixed
+- Use observed timestamp for log record if timetamp is None
+    ([#31660](https://github.com/Azure/azure-sdk-for-python/pull/31660))
+- Support custom events
+    ([#31883](https://github.com/Azure/azure-sdk-for-python/pull/31883))
 
 ### Other Changes
 

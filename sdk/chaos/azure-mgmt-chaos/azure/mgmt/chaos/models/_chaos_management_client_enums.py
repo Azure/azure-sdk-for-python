@@ -46,12 +46,17 @@ class ResourceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     NONE = "None"
     SYSTEM_ASSIGNED = "SystemAssigned"
+    USER_ASSIGNED = "UserAssigned"
 
 
 class SelectorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enum of the selector type."""
 
-    PERCENT = "Percent"
-    RANDOM = "Random"
-    TAG = "Tag"
     LIST = "List"
+    QUERY = "Query"
+
+
+class TargetReferenceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum of the Target reference type."""
+
+    CHAOS_TARGET = "ChaosTarget"

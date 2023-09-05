@@ -15,9 +15,9 @@ class SparkResourceConfiguration(RestTranslatableMixin, DictMixin):
     """Compute resource configuration for Spark component or job.
 
     :keyword instance_type: The type of VM to be used by the compute target.
-    :type instance_type: Optional[str]
+    :paramtype instance_type: Optional[str]
     :keyword runtime_version: The Spark runtime version.
-    :type runtime_version: Optional[str]
+    :paramtype runtime_version: Optional[str]
 
     .. admonition:: Example:
 

@@ -94,7 +94,7 @@ class WorkspaceConnectionsOperations(_ScopeDependentOperations):
         :type name: str
         """
 
-        return self._operation.delete(
+        self._operation.delete(
             connection_name=name,
             workspace_name=self._workspace_name,
             **self._scope_kwargs,

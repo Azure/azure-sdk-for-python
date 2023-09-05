@@ -21,7 +21,9 @@ DEPENDENCIES = [
     "python-dotenv",
     "PyYAML",
     "urllib3<2",
-    "tomli"
+    "tomli",
+    # gh tools
+    "PyGithub>=1.59.0"
 ]
 
 setup(
@@ -38,6 +40,7 @@ setup(
         "console_scripts": [
             "generate_package=packaging_tools.generate_package:generate_main",
             "generate_sdk=packaging_tools.generate_sdk:generate_main",
+            "generate_client=packaging_tools.generate_client:generate_main",
             "sdk_generator=packaging_tools.sdk_generator:generate_main",
             "sdk_package=packaging_tools.sdk_package:generate_main",
             "sdk_build=ci_tools.build:build",

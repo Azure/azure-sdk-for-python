@@ -2,17 +2,14 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=protected-access
-
+# pylint: disable=protected-access,too-many-lines
 import time
 import types
 from functools import partial
 from inspect import Parameter, signature
 from os import PathLike
 from pathlib import Path
-from typing import Any, Callable, Dict, Iterable, List, Optional, Union
-
-from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
+from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple, Union
 
 from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
     AzureMachineLearningWorkspaces as ServiceClient102021Dataplane,
@@ -41,10 +38,12 @@ from azure.ai.ml.constants._common import (
     DEFAULT_COMPONENT_VERSION,
     DEFAULT_LABEL_NAME,
     AzureMLResourceType,
+    DefaultOpenEncoding,
     LROConfigurations,
 )
 from azure.ai.ml.entities import Component, Environment, ValidationResult
 from azure.ai.ml.exceptions import ComponentException, ErrorCategory, ErrorTarget, ValidationException
+from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 
 from .._utils._cache_utils import CachedNodeResolver
 from .._utils._experimental import experimental
@@ -58,7 +57,7 @@ from ..entities._component.pipeline_component import PipelineComponent
 from ..entities._job.pipeline._attr_dict import has_attr_safe
 from ._code_operations import CodeOperations
 from ._environment_operations import EnvironmentOperations
-from ._operation_orchestrator import OperationOrchestrator
+from ._operation_orchestrator import OperationOrchestrator, _AssetResolver
 from ._workspace_operations import WorkspaceOperations
 
 ops_logger = OpsLogger(__name__)
@@ -151,6 +150,15 @@ class ComponentOperations(_ScopeDependentOperations):
         :type list_view_type: Optional[ListViewType]
         :return: An iterator like instance of component objects
         :rtype: ~azure.core.paging.ItemPaged[Component]
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+                :start-after: [START component_operations_list]
+                :end-before: [END component_operations_list]
+                :language: python
+                :dedent: 8
+                :caption: List component example.
         """
 
         if name:
@@ -233,6 +241,15 @@ class ComponentOperations(_ScopeDependentOperations):
             identified and retrieved. Details will be provided in the error message.
         :return: The specified component object.
         :rtype: ~azure.ai.ml.entities.Component
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+                :start-after: [START component_operations_get]
+                :end-before: [END component_operations_get]
+                :language: python
+                :dedent: 8
+                :caption: Get component example.
         """
         return self._get(name=name, version=version, label=label)
 
@@ -285,8 +302,8 @@ class ComponentOperations(_ScopeDependentOperations):
         :param Union[PathLike, str] download_path: Local path as download destination,
             defaults to current working directory of the current user. Will be created if not exists.
         :type download_path: str
-        :param version: Version of the component.
-        :type version: Optional[str]
+        :keyword version: Version of the component.
+        :paramtype version: Optional[str]
         :raises ~OSError: Raised if download_path is pointing to an existing directory that is not empty.
             identified and retrieved. Details will be provided in the error message.
         :return: The specified component object.
@@ -308,7 +325,7 @@ class ComponentOperations(_ScopeDependentOperations):
         self._localize_environment(component, output_dir)
 
         component._localize(output_dir.absolute().as_posix())
-        (output_dir / "component_spec.yaml").write_text(component._to_yaml())
+        (output_dir / "component_spec.yaml").write_text(component._to_yaml(), encoding=DefaultOpenEncoding.WRITE)
 
     def _get(self, name: str, version: Optional[str] = None, label: Optional[str] = None) -> Component:
         if version and label:
@@ -348,10 +365,10 @@ class ComponentOperations(_ScopeDependentOperations):
 
         :param component: The component object or a mldesigner component function that generates component object
         :type component: Union[Component, types.FunctionType]
-        :param raise_on_failure: whether to raise exception on validation error, defaults to False
+        :param raise_on_failure: Whether to raise exception on validation error. Defaults to False
         :type raise_on_failure: bool
         :return: All validation errors
-        :type: ~azure.ai.ml.entities.ValidationResult
+        :rtype: ~azure.ai.ml.entities.ValidationResult
         """
         return self._validate(
             component,
@@ -369,6 +386,15 @@ class ComponentOperations(_ScopeDependentOperations):
     ) -> ValidationResult:
         """Implementation of validate. Add this function to avoid calling validate() directly in create_or_update(),
         which will impact telemetry statistics & bring experimental warning in create_or_update().
+
+        :param component: The component
+        :type component: Union[Component, types.FunctionType]
+        :param raise_on_failure: Whether to raise on failure.
+        :type raise_on_failure: bool
+        :param skip_remote_validation: Whether to skip remote validation.
+        :type skip_remote_validation: bool
+        :return: The validation result
+        :rtype: ValidationResult
         """
         # Update component when the input is a component function
         if isinstance(component, types.FunctionType):
@@ -388,13 +414,115 @@ class ComponentOperations(_ScopeDependentOperations):
                 ),
                 **self._init_args,
             )
-            result.merge_with(remote_validation_result.result(), overwrite=True)
+            result.merge_with(
+                # pylint: disable=protected-access
+                component._build_validation_result_from_rest_object(remote_validation_result.result()),
+                overwrite=True,
+            )
         # resolve location for diagnostics from remote validation
         result.resolve_location_for_diagnostics(component._source_path)
-        return result.try_raise(
-            error_target=ErrorTarget.COMPONENT,
+        return component._try_raise(  # pylint: disable=protected-access
+            result,
             raise_error=raise_on_failure,
         )
+
+    def _update_flow_rest_object(self, rest_component_resource):
+        import re
+
+        from azure.ai.ml._utils._arm_id_utils import AMLVersionedArmId
+
+        component_spec = rest_component_resource.properties.component_spec
+        code, flow_file_name = AMLVersionedArmId(component_spec["code"]), component_spec.pop("flow_file_name")
+        # TODO: avoid remote request here if met performance issue
+        created_code = self._code_operations.get(name=code.asset_name, version=code.asset_version)
+        # remove port number and append flow file name to get full uri for flow.dag.yaml
+        component_spec["flow_definition_uri"] = f"{re.sub(r':[0-9]+/', '/', created_code.path)}/{flow_file_name}"
+
+    def _reset_version_if_no_change(
+        self, component: Component, current_name: str, current_version: str
+    ) -> Tuple[str, ComponentVersion]:
+        """Reset component version to default version if there's no change in the component.
+
+        :param component: The component object
+        :type component: Component
+        :param current_name: The component name
+        :type current_name: str
+        :param current_version: The component version
+        :type current_version: str
+        :return: The new version and rest component resource
+        :rtype: Tuple[str, ComponentVersion]
+        """
+        rest_component_resource = component._to_rest_object()
+
+        try:
+            client_component_hash = rest_component_resource.properties.properties.get("client_component_hash")
+            remote_component_version = self._get_component_version(name=current_name)  # will raise error if not found.
+            remote_component_hash = remote_component_version.properties.properties.get("client_component_hash")
+            if client_component_hash == remote_component_hash:
+                component.version = remote_component_version.properties.component_spec.get(
+                    "version"
+                )  # only update the default version component instead of creating a new version component
+                logger.warning(
+                    "The component is not modified compared to the default version "
+                    "and the new version component registration is skipped."
+                )
+                return component.version, component._to_rest_object()
+        except ResourceNotFoundError as e:
+            logger.info("Failed to get component version, %s", e)
+        except Exception as e:  # pylint: disable=broad-except
+            logger.error("Failed to compare client_component_hash, %s", e)
+
+        return current_version, rest_component_resource
+
+    def _create_or_update_component_version(self, component, name, version, rest_component_resource):
+        try:
+            if self._registry_name:
+                start_time = time.time()
+                path_format_arguments = {
+                    "componentName": component.name,
+                    "resourceGroupName": self._resource_group_name,
+                    "registryName": self._registry_name,
+                }
+                poller = self._version_operation.begin_create_or_update(
+                    name=name,
+                    version=version,
+                    resource_group_name=self._operation_scope.resource_group_name,
+                    registry_name=self._registry_name,
+                    body=rest_component_resource,
+                    polling=AzureMLPolling(
+                        LROConfigurations.POLL_INTERVAL,
+                        path_format_arguments=path_format_arguments,
+                    ),
+                )
+                message = f"Creating/updating registry component {component.name} with version {component.version} "
+                polling_wait(poller=poller, start_time=start_time, message=message, timeout=None)
+
+            else:
+                # _auto_increment_version can be True for non-registry component creation operation;
+                # and anonymous component should use hash as version
+                if not component._is_anonymous and component._auto_increment_version:
+                    return _create_or_update_autoincrement(
+                        name=name,
+                        body=rest_component_resource,
+                        version_operation=self._version_operation,
+                        container_operation=self._container_operation,
+                        resource_group_name=self._operation_scope.resource_group_name,
+                        workspace_name=self._workspace_name,
+                        **self._init_args,
+                    )
+
+                return self._version_operation.create_or_update(
+                    name=name,
+                    version=version,
+                    resource_group_name=self._resource_group_name,
+                    workspace_name=self._workspace_name,
+                    body=rest_component_resource,
+                    **self._init_args,
+                )
+        except Exception as e:
+            raise e
+
+        return None
 
     @monitor_with_telemetry_mixin(
         logger,
@@ -413,8 +541,8 @@ class ComponentOperations(_ScopeDependentOperations):
         :type component: Union[Component, types.FunctionType]
         :param version: The component version to override.
         :type version: str
-        :param skip_validation: whether to skip validation before creating/updating the component, defaults to False
-        :type skip_validation: bool
+        :keyword skip_validation: whether to skip validation before creating/updating the component, defaults to False
+        :paramtype skip_validation: bool
         :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Component cannot be successfully validated.
             Details will be provided in the error message.
         :raises ~azure.ai.ml.exceptions.AssetException: Raised if Component assets
@@ -427,6 +555,15 @@ class ComponentOperations(_ScopeDependentOperations):
         :raises ~azure.ai.ml.exceptions.EmptyDirectoryError: Raised if local path provided points to an empty directory.
         :return: The specified component object.
         :rtype: ~azure.ai.ml.entities.Component
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+                :start-after: [START component_operations_create_or_update]
+                :end-before: [END component_operations_create_or_update]
+                :language: python
+                :dedent: 8
+                :caption: Create component example.
         """
         # Update component when the input is a component function
         if isinstance(component, types.FunctionType):
@@ -459,74 +596,27 @@ class ComponentOperations(_ScopeDependentOperations):
             self._resolve_arm_id_or_upload_dependencies(component)
 
         name, version = component._get_rest_name_version()
-        rest_component_resource = component._to_rest_object()
-        result = None
-        try:
-            if not component._is_anonymous and kwargs.get("skip_if_no_change"):
-                client_component_hash = rest_component_resource.properties.properties.get("client_component_hash")
-                remote_component_version = self._get_component_version(name=name)  # will raise error if not found.
-                remote_component_hash = remote_component_version.properties.properties.get("client_component_hash")
-                if client_component_hash == remote_component_hash:
-                    component.version = remote_component_version.properties.component_spec.get(
-                        "version"
-                    )  # only update the default version component instead of creating a new version component
-                    version = component.version
-                    rest_component_resource = component._to_rest_object()
-                    logger.warning(
-                        "The component is not modified compared to the default version "
-                        "and the new version component registration is skipped."
-                    )
-        except ResourceNotFoundError as e:
-            logger.info("Failed to get component version, %s", e)
-        except Exception as e:  # pylint: disable=broad-except
-            logger.error("Failed to compare client_component_hash, %s", e)
+        if not component._is_anonymous and kwargs.get("skip_if_no_change"):
+            version, rest_component_resource = self._reset_version_if_no_change(
+                component,
+                current_name=name,
+                current_version=version,
+            )
+        else:
+            rest_component_resource = component._to_rest_object()
 
-        try:
-            if self._registry_name:
-                start_time = time.time()
-                path_format_arguments = {
-                    "componentName": component.name,
-                    "resourceGroupName": self._resource_group_name,
-                    "registryName": self._registry_name,
-                }
-                poller = self._version_operation.begin_create_or_update(
-                    name=name,
-                    version=version,
-                    resource_group_name=self._operation_scope.resource_group_name,
-                    registry_name=self._registry_name,
-                    body=rest_component_resource,
-                    polling=AzureMLPolling(
-                        LROConfigurations.POLL_INTERVAL,
-                        path_format_arguments=path_format_arguments,
-                    ),
-                )
-                message = f"Creating/updating registry component {component.name} with version {component.version} "
-                polling_wait(poller=poller, start_time=start_time, message=message, timeout=None)
+        # TODO: remove this after server side support directly using client created code
+        from azure.ai.ml.entities._component.flow import FlowComponent
 
-            else:
-                # _auto_increment_version can be True for non-registry component creation operation;
-                # and anonymous component should use hash as version
-                if not component._is_anonymous and component._auto_increment_version:
-                    result = _create_or_update_autoincrement(
-                        name=name,
-                        body=rest_component_resource,
-                        version_operation=self._version_operation,
-                        container_operation=self._container_operation,
-                        resource_group_name=self._operation_scope.resource_group_name,
-                        workspace_name=self._workspace_name,
-                        **self._init_args,
-                    )
-                else:
-                    result = self._version_operation.create_or_update(
-                        name=name,
-                        version=version,
-                        resource_group_name=self._resource_group_name,
-                        workspace_name=self._workspace_name,
-                        body=rest_component_resource,
-                        **self._init_args,
-                    )
-        except Exception as e:
-            raise e
+        if isinstance(component, FlowComponent):
+            self._update_flow_rest_object(rest_component_resource)
+
+        result = self._create_or_update_component_version(
+            component,
+            name,
+            version,
+            rest_component_resource,
+        )
 
         if not result:
             component = self.get(name=component.name, version=component.version)
@@ -555,6 +645,15 @@ class ComponentOperations(_ScopeDependentOperations):
         :type version: str
         :param label: Label of the component. (mutually exclusive with version).
         :type label: str
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+                :start-after: [START component_operations_archive]
+                :end-before: [END component_operations_archive]
+                :language: python
+                :dedent: 8
+                :caption: Archive component example.
         """
         _archive_or_restore(
             asset_operations=self,
@@ -582,6 +681,15 @@ class ComponentOperations(_ScopeDependentOperations):
         :type version: str
         :param label: Label of the component. (mutually exclusive with version).
         :type label: str
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+                :start-after: [START component_operations_restore]
+                :end-before: [END component_operations_restore]
+                :language: python
+                :dedent: 8
+                :caption: Restore component example.
         """
         _archive_or_restore(
             asset_operations=self,
@@ -598,6 +706,11 @@ class ComponentOperations(_ScopeDependentOperations):
 
         Latest is defined as the most recently created, not the most
         recently updated.
+
+        :param component_name: The component name
+        :type component_name: str
+        :return: A latest version of the named Component
+        :rtype: Component
         """
 
         result = (
@@ -619,7 +732,7 @@ class ComponentOperations(_ScopeDependentOperations):
         return Component._from_rest_object(result)
 
     @classmethod
-    def _try_resolve_environment_for_component(cls, component, _: str, resolver: Callable):
+    def _try_resolve_environment_for_component(cls, component, _: str, resolver: _AssetResolver):
         if isinstance(component, BaseNode):
             component = component._component  # pylint: disable=protected-access
 
@@ -700,8 +813,7 @@ class ComponentOperations(_ScopeDependentOperations):
 
         :param jobs: A dict of nodes in a pipeline component.
         :type jobs: Dict[str, Any]
-        :param base_path: The base path used to resolve inputs. Usually it's
-        the base path of the pipeline component.
+        :param base_path: The base path used to resolve inputs. Usually it's the base path of the pipeline component.
         :type base_path: str
         """
         from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
@@ -719,8 +831,12 @@ class ComponentOperations(_ScopeDependentOperations):
                 self._job_operations._resolve_automl_job_inputs(job_instance)
 
     @classmethod
-    def _resolve_binding_on_supported_fields_for_node(cls, node):
-        """Resolve all PipelineInput(binding from sdk) on supported fields to string."""
+    def _resolve_binding_on_supported_fields_for_node(cls, node: BaseNode):
+        """Resolve all PipelineInput(binding from sdk) on supported fields to string.
+
+        :param node: The node
+        :type node: BaseNode
+        """
         from azure.ai.ml.entities._job.pipeline._attr_dict import try_get_non_arbitrary_attr
         from azure.ai.ml.entities._job.pipeline._io import PipelineInput
 
@@ -733,7 +849,7 @@ class ComponentOperations(_ScopeDependentOperations):
                 setattr(node, field_name, val._data_binding())
 
     @classmethod
-    def _try_resolve_node_level_task_for_parallel_node(cls, node: BaseNode, _: str, resolver: Callable):
+    def _try_resolve_node_level_task_for_parallel_node(cls, node: BaseNode, _: str, resolver: _AssetResolver):
         """Resolve node.task.code for parallel node if it's a reference to node.component.task.code.
 
         This is a hack operation.
@@ -750,6 +866,13 @@ class ComponentOperations(_ScopeDependentOperations):
         consistent across os and python versions.
 
         The ideal solution should be done after PRS team decides how to handle parallel.task.code
+
+        :param node: The node
+        :type node: BaseNode
+        :param _: The component name
+        :type _: str
+        :param resolver: The resolver function
+        :type resolver: _AssetResolver
         """
         from azure.ai.ml.entities import Parallel, ParallelComponent
 
@@ -774,6 +897,11 @@ class ComponentOperations(_ScopeDependentOperations):
     def _set_default_display_name_for_anonymous_component_in_node(cls, node: BaseNode, default_name: str):
         """Set default display name for anonymous component in a node.
         If node._component is an anonymous component and without display name, set the default display name.
+
+        :param node: The node
+        :type node: BaseNode
+        :param default_name: The default name to set
+        :type default_name: str
         """
         if not isinstance(node, BaseNode):
             return
@@ -794,8 +922,16 @@ class ComponentOperations(_ScopeDependentOperations):
             component.display_name = default_name
 
     @classmethod
-    def _try_resolve_compute_for_node(cls, node: BaseNode, _: str, resolver):
-        """Resolve compute for base node."""
+    def _try_resolve_compute_for_node(cls, node: BaseNode, _: str, resolver: _AssetResolver):
+        """Resolve compute for base node.
+
+        :param node: The node
+        :type node: BaseNode
+        :param _: The node name
+        :type _: str
+        :param resolver: The resolver function
+        :type resolver: _AssetResolver
+        """
         if not isinstance(node, BaseNode):
             return
         if not isinstance(node._component, PipelineComponent):
@@ -808,7 +944,9 @@ class ComponentOperations(_ScopeDependentOperations):
                 node.compute_name = resolver(node.compute_name, azureml_type=AzureMLResourceType.COMPUTE)
 
     @classmethod
-    def _divide_nodes_to_resolve_into_layers(cls, component: PipelineComponent, extra_operations: List[Callable]):
+    def _divide_nodes_to_resolve_into_layers(
+        cls, component: PipelineComponent, extra_operations: List[Callable[[BaseNode, str], Any]]
+    ):
         """Traverse the pipeline component and divide nodes to resolve into layers. Note that all leaf nodes will be
         put in the last layer.
         For example, for below pipeline component, assuming that all nodes need to be resolved:
@@ -829,7 +967,7 @@ class ComponentOperations(_ScopeDependentOperations):
         :param component: The pipeline component to resolve.
         :type component: PipelineComponent
         :param extra_operations: Extra operations to apply on nodes during the traversing.
-        :type extra_operations: List[Callable]
+        :type extra_operations: List[Callable[Callable[[BaseNode, str], Any]]]
         :return: A list of layers of nodes to resolve.
         :rtype: List[List[Tuple[str, BaseNode]]]
         """
@@ -876,17 +1014,24 @@ class ComponentOperations(_ScopeDependentOperations):
 
     def _get_registry_key(self) -> str:
         """Get key for used registry.
+
         Note that, although registry id is in registry discovery response, it is not in RegistryDiscoveryDto; and we'll
         lose the information after deserialization.
         To avoid changing related rest client, we simply use registry related information from self to construct
         registry key, which means that on-disk cache will be invalid if a registry is deleted and then created
         again with the same name.
+
+        :return: The registry key
+        :rtype: str
         """
         return "{}/{}/{}".format(self._subscription_id, self._resource_group_name, self._registry_name)
 
     def _get_client_key(self) -> str:
         """Get key for used client.
         Key should be able to uniquely identify used registry or workspace.
+
+        :return: The client key
+        :rtype: str
         """
         # check cache first
         if self._client_key:
@@ -904,7 +1049,7 @@ class ComponentOperations(_ScopeDependentOperations):
         return self._client_key
 
     def _resolve_dependencies_for_pipeline_component_jobs(
-        self, component: Union[Component, str], resolver: Callable, *, resolve_inputs: bool = True
+        self, component: Union[Component, str], resolver: _AssetResolver, *, resolve_inputs: bool = True
     ):
         """Resolve dependencies for pipeline component jobs.
         Will directly return if component is not a pipeline component.
@@ -912,9 +1057,9 @@ class ComponentOperations(_ScopeDependentOperations):
         :param component: The pipeline component to resolve.
         :type component: Union[Component, str]
         :param resolver: The resolver to resolve the dependencies.
-        :type resolver: Callable
+        :type resolver: _AssetResolver
         :keyword resolve_inputs: Whether to resolve inputs.
-        :type resolve_inputs: bool
+        :paramtype resolve_inputs: bool
         """
         if not isinstance(component, PipelineComponent) or not component.jobs:
             return
@@ -978,9 +1123,12 @@ def _refine_component(component_func: types.FunctionType) -> Component:
     :rtype: Component
     """
 
-    def check_parameter_type(f):
-        """Check all parameter is annotated or has a default value with
-        clear type(not None)."""
+    def check_parameter_type(f: types.FunctionType):
+        """Check all parameter is annotated or has a default value with clear type(not None).
+
+        :param f: The component function
+        :type f: types.FunctionType
+        """
         annotations = getattr(f, "__annotations__", {})
         func_parameters = signature(f).parameters
         defaults_dict = {key: val.default for key, val in func_parameters.items()}
@@ -1007,8 +1155,12 @@ def _refine_component(component_func: types.FunctionType) -> Component:
                 error_category=ErrorCategory.USER_ERROR,
             )
 
-    def check_non_pipeline_inputs(f):
-        """Check whether non_pipeline_inputs exist in pipeline builder."""
+    def check_non_pipeline_inputs(f: types.FunctionType):
+        """Check whether non_pipeline_inputs exist in pipeline builder.
+
+        :param f: The component function
+        :type f: types.FunctionType
+        """
         if f._pipeline_builder.non_pipeline_parameter_names:
             msg = "Cannot register pipeline component {!r} with non_pipeline_inputs."
             raise ValidationException(
@@ -1042,11 +1194,11 @@ def _refine_component(component_func: types.FunctionType) -> Component:
     )
 
 
-def _try_resolve_code_for_component(component: Component, resolver: Callable) -> None:
+def _try_resolve_code_for_component(component: Component, resolver: _AssetResolver) -> None:
     if isinstance(component, ComponentCodeMixin):
         with component._build_code() as code:
             if code is None:
                 code = component._get_origin_code_value()
             if code is None:
                 return
-            component.code = resolver(code, azureml_type=AzureMLResourceType.CODE)
+            component._fill_back_code_value(resolver(code, azureml_type=AzureMLResourceType.CODE))
