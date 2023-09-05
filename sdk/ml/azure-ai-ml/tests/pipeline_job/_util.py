@@ -60,25 +60,3 @@ DATABINDING_EXPRESSION_TEST_CASE_ENUMERATE = list(
         )
     )
 )
-
-
-SERVERLESS_COMPUTE_TEST_PARAMETERS = [
-    # test matrix: <pipeline-default-compute> + <step-compute>
-    (
-        "none_pipeline_default_compute_invalid",
-        {
-            "jobs.vanilla_node.compute": "Compute not set",
-            "jobs.node_with_resources.compute": "Compute not set",
-            "jobs.pipeline_node.jobs.vanilla_node.compute": "Compute not set",
-            "jobs.pipeline_node.jobs.node_with_resources.compute": "Compute not set",
-        },
-    ),  # invalid: none + none / none + resources
-    (
-        "none_pipeline_default_compute_valid",
-        None,
-    ),  # valid: none + resources / none + serverless / none + compute target
-    (
-        "serverless_pipeline_default_compute_valid",
-        None,
-    ),  # valid serverless + <step-compute> (any combination should be valid)
-]

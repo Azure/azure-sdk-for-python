@@ -7,6 +7,7 @@ import typing
 from os import PathLike
 from pathlib import Path
 from typing import IO, AnyStr, Dict, Optional, Union
+
 from typing_extensions import Literal
 
 from azure.ai.ml._restclient.v2023_06_01_preview.models import JobBase as RestJobBase
@@ -25,7 +26,7 @@ from azure.ai.ml.entities._mixins import RestTranslatableMixin, TelemetryMixin, 
 from azure.ai.ml.entities._resource import Resource
 from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._util import load_from_dict
-from azure.ai.ml.entities._validation import MutableValidationResult, SchemaValidatableMixin
+from azure.ai.ml.entities._validation import MutableValidationResult, PathAwareSchemaValidatableMixin
 
 from ...exceptions import ErrorCategory, ErrorTarget, ScheduleException, ValidationException
 from .. import CommandJob, SparkJob
@@ -35,7 +36,7 @@ from .trigger import CronTrigger, RecurrenceTrigger, TriggerBase
 module_logger = logging.getLogger(__name__)
 
 
-class Schedule(YamlTranslatableMixin, SchemaValidatableMixin, Resource):
+class Schedule(YamlTranslatableMixin, PathAwareSchemaValidatableMixin, Resource):
     """Schedule object used to create and manage schedules.
 
     This class should not be instantiated directly. Instead, please use the subclasses.
@@ -93,8 +94,12 @@ class Schedule(YamlTranslatableMixin, SchemaValidatableMixin, Resource):
         dump_yaml_to_file(dest, yaml_serialized, default_flow_style=False, path=path, **kwargs)
 
     @classmethod
-    def _get_validation_error_target(cls) -> ErrorTarget:
-        return ErrorTarget.SCHEDULE
+    def _create_validation_error(cls, message: str, no_personal_data_message: str):
+        return ValidationException(
+            message=message,
+            no_personal_data_message=no_personal_data_message,
+            target=ErrorTarget.SCHEDULE,
+        )
 
     @classmethod
     def _resolve_cls_and_type(cls, data, params_override):  # pylint: disable=unused-argument

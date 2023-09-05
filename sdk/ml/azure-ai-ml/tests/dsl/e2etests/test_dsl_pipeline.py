@@ -1519,7 +1519,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
             node1.compute = "cpu-cluster"
 
         dsl_pipeline: PipelineJob = pipeline(10, job_input)
-        with patch("azure.ai.ml.entities._validation.module_logger.warning") as mock_logging:
+        with patch("azure.ai.ml.entities._validation.core.module_logger.warning") as mock_logging:
             _ = client.jobs.create_or_update(dsl_pipeline)
             mock_logging.assert_called_with("Warnings: [jobs.node1.jeff_special_option: Unknown field.]")
 
