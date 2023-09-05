@@ -18,7 +18,7 @@ from unittest.mock import patch
 from opentelemetry.instrumentation.environment_variables import (
     OTEL_PYTHON_DISABLED_INSTRUMENTATIONS,
 )
-from azure.monitor.opentelemetry.util._configurations import (
+from azure.monitor.opentelemetry._util.configurations import (
     SAMPLING_RATIO_ENV_VAR,
     _get_configurations,
 )
