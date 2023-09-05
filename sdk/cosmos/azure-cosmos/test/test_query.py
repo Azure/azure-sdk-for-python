@@ -419,6 +419,10 @@ class QueryTest(unittest.TestCase):
                                              query='SELECT DISTINCT c["value"] from c ORDER BY c.pk OFFSET 2 LIMIT 2',
                                              results=[2, 3])
 
+        self._validate_distinct_offset_limit(created_collection=created_collection,
+                                             query='SELECT DISTINCT c["value"] from c ORDER BY c.pk OFFSET 4 LIMIT 3',
+                                             results=[])
+
         self._validate_offset_limit(created_collection=created_collection,
                                     query='SELECT * from c ORDER BY c.pk OFFSET 0 LIMIT 5',
                                     results=values[:5])
