@@ -2,6 +2,10 @@
 
 ## 1.0.0 (2023-09-05)
 
+### Other Changes
+
+- The `autoinstrumentation', 'diagnostics' and 'util' subnamespaces have been made internal.
+
 ## 1.0.0b16 (2023-08-28)
 
 ### Features Added
