@@ -613,7 +613,7 @@ class WorkspaceOperationsBase:
             _set_val(param["offline_store_subscription_id"], arm_id.subscription_id)
 
         if online_store_target:
-            arm_id = AzureResourceId(offline_store_target)
+            arm_id = AzureResourceId(online_store_target)
             _set_val(param["online_store_target"], online_store_target)
             _set_val(param["online_store_resource_group_name"], arm_id.resource_group_name)
             _set_val(param["online_store_subscription_id"], arm_id.subscription_id)

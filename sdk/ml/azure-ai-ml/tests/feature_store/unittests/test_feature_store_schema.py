@@ -43,7 +43,7 @@ class TestFeatureStoreSchema:
                     type=OFFLINE_MATERIALIZATION_STORE_TYPE, target="offline_store_resource_id"
                 ),
             )
-        assert "Invalid ARM Id" in str(ve.exception)
+        assert "Invalid ARM Id" in str(ve)
 
         with pytest.raises(ValidationException) as ve:
             FeatureStore(
@@ -53,4 +53,4 @@ class TestFeatureStoreSchema:
                     type=ONLINE_MATERIALIZATION_STORE_TYPE, target="online_store_resource_id"
                 ),
             )
-        assert "Invalid ARM Id" in str(ve.exception)
+        assert "Invalid ARM Id" in str(ve)
