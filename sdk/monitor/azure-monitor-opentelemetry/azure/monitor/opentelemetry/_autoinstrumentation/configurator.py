@@ -14,7 +14,7 @@ from azure.monitor.opentelemetry._constants import (
     _is_attach_enabled,
     _PREVIEW_ENTRY_POINT_WARNING,
 )
-from azure.monitor.opentelemetry.diagnostics._diagnostic_logging import (
+from azure.monitor.opentelemetry._diagnostics.diagnostic_logging import (
     AzureDiagnosticLogging,
 )
 
