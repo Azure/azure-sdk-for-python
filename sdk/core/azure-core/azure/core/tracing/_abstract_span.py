@@ -31,7 +31,7 @@ AttributeValue = Union[
     Sequence[float],
 ]
 Attributes = Dict[str, AttributeValue]
-SpanType = TypeVar("SpanType", covariant=True)
+SpanType = TypeVar("SpanType")
 
 
 class SpanKind(Enum):
