@@ -4,8 +4,6 @@
 # license information.
 # -------------------------------------------------------------------------
 
-from typing import Any
-
 from azure.core.exceptions import AzureError
 
 class ServiceBusError(AzureError):

@@ -254,7 +254,7 @@ class AmqpAnnotatedMessage(object):
     @property
     def body_type(self) -> AmqpMessageBodyType:
         """The body type of the underlying AMQP message.
-        rtype: ~azure.servicebus.amqp.AmqpMessageBodyType
+        :rtype: ~azure.servicebus.amqp.AmqpMessageBodyType
         """
         return self._body_type
 

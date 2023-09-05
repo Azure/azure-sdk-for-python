@@ -341,7 +341,7 @@ def _validate_topic_subscription_and_rule_types(
 
 
 def _normalize_entity_path_to_full_path_if_needed(
-    fully_qualified_namespace: str, entity_path: Optional[str] = None, 
+    fully_qualified_namespace: str, entity_path: Optional[str] = None,
 ) -> Optional[str]:
     if not entity_path:
         return entity_path
@@ -354,7 +354,8 @@ def _normalize_entity_path_to_full_path_if_needed(
     return entity_path
 
 
-def create_properties_from_dict_if_needed(properties: Union["PropertiesType", Mapping[str, Any]], sb_resource_type: Type["PropertiesType"]) -> "PropertiesType":
+def create_properties_from_dict_if_needed(properties: Union["PropertiesType", Mapping[str, Any]],
+                                          sb_resource_type: Type["PropertiesType"]) -> "PropertiesType":
     """
     This method is used to create a properties object given the
     resource properties type and its corresponding dict representation.

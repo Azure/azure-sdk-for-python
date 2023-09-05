@@ -279,7 +279,8 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         if token and token_expiry:
             credential = cast("AzureSasCredential", ServiceBusSASTokenCredential(token, token_expiry))
         elif shared_access_key_name and shared_access_key:
-            credential = cast("AzureNamedKeyCredential", ServiceBusSharedKeyCredential(shared_access_key_name, shared_access_key))
+            credential = cast("AzureNamedKeyCredential",
+                              ServiceBusSharedKeyCredential(shared_access_key_name, shared_access_key))
         if "//" in endpoint:
             endpoint = endpoint[endpoint.index("//") + 2 :]
         return cls(endpoint, credential, api_version=api_version, **kwargs)

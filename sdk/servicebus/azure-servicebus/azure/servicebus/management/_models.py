@@ -9,7 +9,6 @@ from collections import OrderedDict
 from copy import deepcopy
 from datetime import datetime, timedelta
 from typing import Dict, Any, Union, Optional, List
-from ._generated._serialization import Model
 
 from ._generated.models import (
     QueueDescription as InternalQueueDescription,
@@ -324,7 +323,8 @@ class QueueProperties(DictMixin):  # pylint:disable=too-many-instance-attributes
         qd._internal_qd = deepcopy(internal_qd)  # pylint:disable=protected-access
         return qd
 
-    def _to_internal_entity(self, fully_qualified_namespace: str, kwargs: Optional[Dict] = None) -> InternalQueueDescription:
+    def _to_internal_entity(self, fully_qualified_namespace: str,
+                            kwargs: Optional[Dict] = None) -> InternalQueueDescription:
         kwargs = kwargs or {}
 
         if not self._internal_qd:
@@ -850,15 +850,14 @@ class SubscriptionProperties(DictMixin):  # pylint:disable=too-many-instance-att
         validate_extraction_missing_args(extraction_missing_args)
 
     @classmethod
-    def _from_internal_entity(cls, name: str, internal_subscription: InternalSubscriptionDescription) -> "SubscriptionProperties":
-        # pylint: disable=line-too-long
+    def _from_internal_entity(cls, name: str, internal_subscription: InternalSubscriptionDescription) -> "SubscriptionProperties": # pylint: disable=line-too-long
         subscription = cls(
             name,
             lock_duration=internal_subscription.lock_duration,
             requires_session=internal_subscription.requires_session,
             default_message_time_to_live=internal_subscription.default_message_time_to_live,
             dead_lettering_on_message_expiration=internal_subscription.dead_lettering_on_message_expiration,
-            dead_lettering_on_filter_evaluation_exceptions=internal_subscription.dead_lettering_on_filter_evaluation_exceptions,
+            dead_lettering_on_filter_evaluation_exceptions=internal_subscription.dead_lettering_on_filter_evaluation_exceptions, # pylint:disable=line-too-long
             max_delivery_count=internal_subscription.max_delivery_count,
             enable_batched_operations=internal_subscription.enable_batched_operations,
             status=internal_subscription.status,
@@ -871,7 +870,8 @@ class SubscriptionProperties(DictMixin):  # pylint:disable=too-many-instance-att
         subscription._internal_sd = deepcopy(internal_subscription)
         return subscription
 
-    def _to_internal_entity(self, fully_qualified_namespace: str, kwargs: Optional[Dict] = None) -> InternalSubscriptionDescription:
+    def _to_internal_entity(self, fully_qualified_namespace: str,
+                            kwargs: Optional[Dict] = None) -> InternalSubscriptionDescription:
         kwargs = kwargs or {}
 
         if not self._internal_sd:
@@ -938,7 +938,7 @@ class SubscriptionRuntimeProperties(object):
         self._name: Optional[str] = None
 
     @classmethod
-    def _from_internal_entity(cls, name: str, internal_subscription: InternalSubscriptionDescription) -> "SubscriptionRuntimeProperties":
+    def _from_internal_entity(cls, name: str, internal_subscription: InternalSubscriptionDescription) -> "SubscriptionRuntimeProperties": # pylint: disable=line-too-long
         subscription = cls()
         subscription._name = name
         subscription._internal_sd = internal_subscription
@@ -1077,7 +1077,7 @@ class RuleProperties(DictMixin):
             self._internal_rule = InternalRuleDescription()
 
         rule_filter: RULE_FILTERS = kwargs.pop("filter", self.filter)
-        self._internal_rule.filter = rule_filter._to_internal_entity() if rule_filter else TRUE_FILTER # type: ignore[assignment]
+        self._internal_rule.filter = rule_filter._to_internal_entity() if rule_filter else TRUE_FILTER # type: ignore[assignment] # pylint:disable=line-too-long
 
         action = kwargs.pop("action", self.action)
         self._internal_rule.action = (
@@ -1193,7 +1193,8 @@ class SqlRuleFilter(object):
     :type parameters: Dict[str, Union[str, int, float, bool, datetime, timedelta]]
     """
 
-    def __init__(self, sql_expression: Optional[str] = None, parameters: Optional[Dict[str, Union[str, int, float, bool, datetime, timedelta]]] = None) -> None:
+    def __init__(self, sql_expression: Optional[str] = None,
+                 parameters: Optional[Dict[str, Union[str, int, float, bool, datetime, timedelta]]] = None) -> None:
         self.sql_expression = sql_expression
         self.parameters = parameters
         self.requires_preprocessing = True
@@ -1268,7 +1269,8 @@ class SqlRuleAction(object):
     :type requires_preprocessing: bool
     """
 
-    def __init__(self, sql_expression: Optional[str] = None, parameters: Optional[Dict[str, Union[str, int, float, bool, datetime, timedelta]]] = None) -> None:
+    def __init__(self, sql_expression: Optional[str] = None,
+                 parameters: Optional[Dict[str, Union[str, int, float, bool, datetime, timedelta]]] = None) -> None:
         self.sql_expression = sql_expression
         self.parameters = parameters
         self.requires_preprocessing = True

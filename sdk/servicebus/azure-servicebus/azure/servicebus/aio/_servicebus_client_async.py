@@ -31,7 +31,6 @@ from ._async_utils import create_authentication
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
-    from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
 
 NextAvailableSessionType = Literal[ServiceBusSessionFilter.NEXT_AVAILABLE]
 
