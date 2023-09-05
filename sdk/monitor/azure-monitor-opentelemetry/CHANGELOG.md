@@ -1,10 +1,11 @@
 # Release History
 
-## 1.0.0 (2023-09-05)
+## 1.0.0 (2023-09-12)
 
 ### Other Changes
 
 - The `autoinstrumentation', 'diagnostics' and 'util' subnamespaces have been made internal.
+    ([#31931](https://github.com/Azure/azure-sdk-for-python/pull/31931))
 
 ## 1.0.0b16 (2023-08-28)
 
