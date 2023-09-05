@@ -654,7 +654,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
             pyamqp_message = next(
                 cast(Iterator["Message"], receiver._message_iter)
             )
-            message: ServiceBusReceivedMessage = receiver._build_received_message(pyamqp_message)
+            message = receiver._build_received_message(pyamqp_message)
             if (
                 receiver._auto_lock_renewer
                 and not receiver._session
