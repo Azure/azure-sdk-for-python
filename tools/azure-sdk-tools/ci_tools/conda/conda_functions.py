@@ -617,7 +617,7 @@ def build_conda_packages(
 
 
 def invoke_conda_build(conda_output_dir: str, conda_env_dir: str, conda_build_folder: str, optional_py_version: str = None) -> None:
-    command = f'conda run --prefix "{conda_env_dir}" conda-build . --output-folder "{conda_output_dir}" -c "{conda_output_dir} -c conda-forge"'
+    command = f'conda run --prefix "{conda_env_dir}" conda-build . --output-folder "{conda_output_dir}" -c "{conda_output_dir}" -c conda-forge'
 
     if optional_py_version:
         command += f" --py {optional_py_version}"
