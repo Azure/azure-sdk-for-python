@@ -324,7 +324,12 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             )
         return cls(**constructor_args)
 
-    def _create_handler(self, auth: Union["pyamqp_JWTTokenAuthAsync", "uamqp_JWTTokenAuthAsync"]) -> None:
+    def _create_handler(
+        self,
+        auth: Union["pyamqp_JWTTokenAuthAsync", "uamqp_JWTTokenAuthAsync"],
+        *,
+        link_credit: Optional[int] = None   # passed in if handler opened in receive iterator and prefetch is 0
+    ) -> None:
 
         self._handler = self._amqp_transport.create_receive_client_async(
             receiver=self,
