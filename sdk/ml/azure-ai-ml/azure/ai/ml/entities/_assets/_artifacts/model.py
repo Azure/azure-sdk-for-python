@@ -121,7 +121,7 @@ class Model(Artifact):  # pylint: disable=too-many-instance-attributes
         return cast(Model, load_from_dict(ModelSchema, data, context, **kwargs))
 
     def _to_dict(self) -> Dict:
-        return Dict(ModelSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self))  # pylint: disable=no-member
+        return dict(ModelSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self))  # pylint: disable=no-member
 
     @classmethod
     def _from_rest_object(cls, model_rest_object: ModelVersion) -> "Model":
