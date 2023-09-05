@@ -35,19 +35,14 @@ steps:
       ArtifactPath: '$(Build.SourcesDirectory)/conda/assembled'
       ArtifactName: '${{ parameters.ArtifactPrefix }}distributions'
 
+  - ${{if eq(variables['System.TeamProject'], 'internal') }}:
+    - task: AzureArtifacts.manifest-generator-task.manifest-generator-task.ManifestGeneratorTask@0
+      displayName: 'Upload Conda SBOM'
+      condition: succeededOrFailed()
+      inputs:
+        BuildDropPath: '$(Build.SourcesDirectory)/conda/output'
+
   - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
     parameters:
       ArtifactPath: '$(Build.SourcesDirectory)/conda/output'
       ArtifactName: '${{ parameters.ArtifactPrefix }}conda'
-
-  # - ${{if eq(variables['System.TeamProject'], 'internal') }}:
-  #   - task: AzureArtifacts.manifest-generator-task.manifest-generator-task.ManifestGeneratorTask@0
-  #     displayName: 'Upload Conda SBOM'
-  #     condition: succeededOrFailed()
-  #     inputs:
-  #       BuildDropPath: '$(Build.ArtifactStagingDirectory)/manifest'
-
-  #   - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
-  #     parameters:
-  #       ArtifactPath: '$(Build.ArtifactStagingDirectory)/manifest/_manifest'
-  #       ArtifactName: 'manifest'
