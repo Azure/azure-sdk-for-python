@@ -188,6 +188,7 @@ class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     DataBoxOrderCompletedEventName = 'Microsoft.DataBox.OrderCompleted'
 
+    # spell-checker:ignore MQTT
     EventGridMQTTClientCreatedOrUpdatedEventName = 'Microsoft.EventGrid.MQTTClientCreatedOrUpdated'
 
     EventGridMQTTClientDeletedEventName = 'Microsoft.EventGrid.MQTTClientDeleted'
