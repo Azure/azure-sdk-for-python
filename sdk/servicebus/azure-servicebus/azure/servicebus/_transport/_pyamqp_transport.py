@@ -297,6 +297,17 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
             )
         elif ttl_set:
             message_properties = Properties(
+                message_id=None,
+                user_id=None,
+                to=None,
+                subject=None,
+                reply_to=None,
+                correlation_id=None,
+                content_type=None,
+                content_encoding=None,
+                group_id=None,
+                group_sequence=None,
+                reply_to_group_id=None,
                 creation_time=creation_time_from_ttl if ttl_set else None,
                 absolute_expiry_time=absolute_expiry_time_from_ttl if ttl_set else None,
             )
@@ -535,7 +546,9 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         :rtype: ~pyamqp.endpoints.Source
         """
         filter_map = {SESSION_FILTER: session_filter}
-        source = Source(address=source, filters=filter_map)
+        source = Source(address=source, filters=filter_map, durable=None, expiry_policy=None,
+                    timeout=None, dynamic=None, dynamic_node_properties=None, distribution_mode=None,
+                        default_outcome=None, outcomes=None, capabilities=None)
         return source
 
     @staticmethod
@@ -879,6 +892,8 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
                 **kwargs
             ),
             application_properties=application_properties,
+            header=None, delivery_annotations=None, message_annotations=None,
+            data=None, sequence=None, footer=None,
         )
 
     @staticmethod

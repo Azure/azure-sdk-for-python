@@ -98,6 +98,8 @@ from ...management._utils import (
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
+    from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
+
 
 class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
     """Use this client to create, update, list, and delete resources of a ServiceBus namespace.
@@ -114,7 +116,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
     def __init__(
         self,
         fully_qualified_namespace: str,
-        credential: "AsyncTokenCredential",
+        credential: Union["AsyncTokenCredential", "AzureSasCredential", "AzureNamedKeyCredential"],
         *,
         api_version: Union[str, ApiVersion] = DEFAULT_VERSION,
         **kwargs: Any
@@ -153,7 +155,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
                 self._endpoint, self._credential, "Authorization"
             )
             if isinstance(self._credential, ServiceBusSharedKeyCredential)
-            else AsyncBearerTokenCredentialPolicy(self._credential, JWT_TOKEN_SCOPE)
+            else AsyncBearerTokenCredentialPolicy(cast("AsyncTokenCredential", self._credential), JWT_TOKEN_SCOPE)
         )
         if policies is None:  # [] is a valid policy list
             policies = [
@@ -273,10 +275,11 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
             token,
             token_expiry,
         ) = _parse_conn_str(conn_str)
+        credential: Union["AsyncTokenCredential", "AzureSasCredential", "AzureNamedKeyCredential"]
         if token and token_expiry:
-            credential = ServiceBusSASTokenCredential(token, token_expiry)
+            credential = cast("AzureSasCredential", ServiceBusSASTokenCredential(token, token_expiry))
         elif shared_access_key_name and shared_access_key:
-            credential = ServiceBusSharedKeyCredential(shared_access_key_name, shared_access_key)
+            credential = cast("AzureNamedKeyCredential", ServiceBusSharedKeyCredential(shared_access_key_name, shared_access_key))
         if "//" in endpoint:
             endpoint = endpoint[endpoint.index("//") + 2 :]
         return cls(endpoint, credential, api_version=api_version, **kwargs)

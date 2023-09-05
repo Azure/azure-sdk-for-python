@@ -110,6 +110,7 @@ class ServiceBusSession(BaseSession):
         """
         if kwargs:
             warnings.warn(f"Unsupported keyword args: {kwargs}")
+        self._receiver: ServiceBusReceiver
         self._receiver._check_live()  # pylint: disable=protected-access
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")

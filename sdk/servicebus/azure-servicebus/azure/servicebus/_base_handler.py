@@ -264,6 +264,8 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
             ("/Subscriptions/" + subscription_name) if subscription_name else ""
         )
         self._mgmt_target = f"{self._entity_path}{MANAGEMENT_PATH_SUFFIX}"
+
+        self._credential: Union[ServiceBusAzureSasTokenCredential, ServiceBusAzureNamedKeyTokenCredential, "TokenCredential"]
         if isinstance(credential, AzureSasCredential):
             self._credential = ServiceBusAzureSasTokenCredential(credential)
         elif isinstance(credential, AzureNamedKeyCredential):

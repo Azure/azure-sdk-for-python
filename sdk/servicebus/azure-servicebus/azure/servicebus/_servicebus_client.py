@@ -251,6 +251,7 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
         host, policy, key, entity_in_conn_str, token, token_expiry = _parse_conn_str(
             conn_str
         )
+        credential: Union[ServiceBusSASTokenCredential, ServiceBusSharedKeyCredential]
         if token and token_expiry:
             credential = ServiceBusSASTokenCredential(token, token_expiry)
         elif policy and key:

@@ -523,7 +523,7 @@ class ServiceBusReceiver(
             )
             self._settle_message_via_mgmt_link(
                 MESSAGE_MGMT_SETTLEMENT_TERM_MAP[settle_operation],
-                [message.lock_token],
+                [message.lock_token], # type: ignore[list-item]
                 dead_letter_details=dead_letter_details,
             )
         except Exception as exception:

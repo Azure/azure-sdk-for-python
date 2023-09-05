@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 # pylint: disable=client-method-missing-tracing-decorator
-from typing import Any, Union, Optional, TYPE_CHECKING
+from typing import Any, Union, Optional, TYPE_CHECKING, cast
 import logging
 from weakref import WeakSet
 from typing_extensions import Literal
@@ -220,10 +220,11 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
         host, policy, key, entity_in_conn_str, token, token_expiry = _parse_conn_str(
             conn_str
         )
+        credential: Union["AsyncTokenCredential", "AzureSasCredential", "AzureNamedKeyCredential"]
         if token and token_expiry:
-            credential: ServiceBusSASTokenCredential = ServiceBusSASTokenCredential(token, token_expiry)
+            credential = cast(AzureSasCredential, ServiceBusSASTokenCredential(token, token_expiry))
         elif policy and key:
-            credential: ServiceBusSharedKeyCredential = ServiceBusSharedKeyCredential(policy, key) # type: ignore[no-redef]
+            credential = cast(AzureNamedKeyCredential, ServiceBusSharedKeyCredential(policy, key))
         return cls(
             fully_qualified_namespace=host,
             entity_name=entity_in_conn_str or kwargs.pop("entity_name", None),

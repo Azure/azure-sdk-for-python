@@ -271,6 +271,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
             token,
             token_expiry,
         ) = _parse_conn_str(conn_str)
+        credential: Union[ServiceBusSASTokenCredential, ServiceBusSharedKeyCredential]
         if token and token_expiry:
             credential = ServiceBusSASTokenCredential(token, token_expiry)
         elif shared_access_key_name and shared_access_key:

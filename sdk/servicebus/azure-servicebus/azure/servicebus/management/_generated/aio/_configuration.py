@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 import sys
-from typing import Any, TYPE_CHECKING
+from typing import Any, TYPE_CHECKING, Union
 
 from azure.core.configuration import Configuration
 from azure.core.pipeline import policies
@@ -20,6 +20,8 @@ else:
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
+    from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
+
 
 VERSION = "unknown"
 
@@ -39,7 +41,7 @@ class ServiceBusManagementClientConfiguration(Configuration):  # pylint: disable
     :paramtype api_version: str
     """
 
-    def __init__(self, endpoint: str, credential: "AsyncTokenCredential", **kwargs: Any) -> None:
+    def __init__(self, endpoint: str, credential: Union["AsyncTokenCredential", "AzureSasCredential", "AzureNamedKeyCredential"], **kwargs: Any) -> None:
         super(ServiceBusManagementClientConfiguration, self).__init__(**kwargs)
         api_version: Literal["2021-05"] = kwargs.pop("api_version", "2021-05")
 

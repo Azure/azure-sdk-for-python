@@ -8,7 +8,7 @@ import functools
 from collections import OrderedDict
 from copy import deepcopy
 from datetime import datetime, timedelta
-from typing import Type, Dict, Any, Union, Optional, List, Tuple
+from typing import Dict, Any, Union, Optional, List
 from ._generated._serialization import Model
 
 from ._generated.models import (
@@ -30,6 +30,11 @@ from ._generated.models import (
 from ._model_workaround import adjust_attribute_map, avoid_timedelta_overflow
 from ._constants import RULE_SQL_COMPATIBILITY_LEVEL
 from ._utils import _normalize_entity_path_to_full_path_if_needed
+
+RULE_FILTERS = Union["SqlRuleFilter",
+                      "CorrelationRuleFilter",
+                        "TrueRuleFilter",
+                          "FalseRuleFilter"]
 
 adjust_attribute_map()
 
@@ -1039,7 +1044,7 @@ class RuleProperties(DictMixin):
             extract_kwarg_template, kwargs, extraction_missing_args
         )
 
-        self.filter = extract_kwarg("filter")
+        self.filter: Union[CorrelationRuleFilter, SqlRuleFilter] = extract_kwarg("filter")
         self.action = extract_kwarg("action")
         self.created_at_utc = extract_kwarg("created_at_utc")
 
@@ -1049,13 +1054,13 @@ class RuleProperties(DictMixin):
     def _from_internal_entity(cls, name: str, internal_rule: InternalRuleDescription) -> "RuleProperties":
         rule = cls(
             name,
-            filter=RULE_CLASS_MAPPING[type(internal_rule.filter)]._from_internal_entity(
+            filter=RULE_CLASS_MAPPING[type(internal_rule.filter)]._from_internal_entity( # type: ignore[attr-defined]
                 internal_rule.filter
             )
             if internal_rule.filter
             and isinstance(internal_rule.filter, tuple(RULE_CLASS_MAPPING.keys()))
             else None,
-            action=RULE_CLASS_MAPPING[type(internal_rule.action)]._from_internal_entity(
+            action=RULE_CLASS_MAPPING[type(internal_rule.action)]._from_internal_entity( # type: ignore[attr-defined]
                 internal_rule.action
             )
             if internal_rule.action
@@ -1071,8 +1076,8 @@ class RuleProperties(DictMixin):
         if not self._internal_rule:
             self._internal_rule = InternalRuleDescription()
 
-        rule_filter = kwargs.pop("filter", self.filter)
-        self._internal_rule.filter = rule_filter._to_internal_entity() if rule_filter else TRUE_FILTER
+        rule_filter: RULE_FILTERS = kwargs.pop("filter", self.filter)
+        self._internal_rule.filter = rule_filter._to_internal_entity() if rule_filter else TRUE_FILTER # type: ignore[assignment]
 
         action = kwargs.pop("action", self.action)
         self._internal_rule.action = (
@@ -1213,7 +1218,7 @@ class SqlRuleFilter(object):
         internal_entity = InternalSqlFilter(sql_expression=self.sql_expression)
         internal_entity.parameters = (
             [
-                KeyValue(key=key, value=value) for key, value in self.parameters.items()
+                KeyValue(key=key, value=str(value)) for key, value in self.parameters.items()
             ]
             if self.parameters
             else None
@@ -1287,7 +1292,7 @@ class SqlRuleAction(object):
     def _to_internal_entity(self) -> "InternalSqlRuleAction":
         internal_entity = InternalSqlRuleAction(sql_expression=self.sql_expression)
         internal_entity.parameters = (
-            [KeyValue(key=key, value=value) for key, value in self.parameters.items()]
+            [KeyValue(key=key, value=str(value)) for key, value in self.parameters.items()]
             if self.parameters
             else None
         )

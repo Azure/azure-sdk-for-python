@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Awaitable, TYPE_CHECKING
+from typing import Any, Awaitable, TYPE_CHECKING, Union
 
 from azure.core import AsyncPipelineClient
 from azure.core.rest import AsyncHttpResponse, HttpRequest
@@ -26,6 +26,7 @@ from .operations import (
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
+    from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
 
 
 class ServiceBusManagementClient(
@@ -51,7 +52,7 @@ class ServiceBusManagementClient(
     :paramtype api_version: str
     """
 
-    def __init__(self, endpoint: str, credential: "AsyncTokenCredential", **kwargs: Any) -> None:
+    def __init__(self, endpoint: str, credential: Union["AsyncTokenCredential", "AzureSasCredential", "AzureNamedKeyCredential"], **kwargs: Any) -> None:
         _endpoint = "https://{endpoint}"
         self._config = ServiceBusManagementClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
         self._client: AsyncPipelineClient = AsyncPipelineClient(base_url=_endpoint, config=self._config, **kwargs)
