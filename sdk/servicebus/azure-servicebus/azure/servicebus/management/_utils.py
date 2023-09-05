@@ -354,7 +354,7 @@ def _normalize_entity_path_to_full_path_if_needed(
     return entity_path
 
 
-def create_properties_from_dict_if_needed(properties: Union[PropertiesType, Mapping[str, Any]], sb_resource_type: Type[PropertiesType]) -> PropertiesType:
+def create_properties_from_dict_if_needed(properties: Union["PropertiesType", Mapping[str, Any]], sb_resource_type: Type["PropertiesType"]) -> "PropertiesType":
     """
     This method is used to create a properties object given the
     resource properties type and its corresponding dict representation.
