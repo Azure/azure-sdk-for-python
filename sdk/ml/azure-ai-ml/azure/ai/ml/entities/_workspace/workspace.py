@@ -107,6 +107,7 @@ class Workspace(Resource):
         self.print_as_yaml = True
         self._discovery_url = kwargs.pop("discovery_url", None)
         self._mlflow_tracking_uri = kwargs.pop("mlflow_tracking_uri", None)
+        self._workspace_id = kwargs.pop("workspace_id", None)
         self._feature_store_settings: Optional[FeatureStoreSettings] = kwargs.pop("feature_store_settings", None)
         super().__init__(name=name, description=description, tags=tags, **kwargs)
 
@@ -251,18 +252,8 @@ class Workspace(Resource):
             feature_store_settings=feature_store_settings,
             enable_data_isolation=rest_obj.enable_data_isolation,
             workspace_hub=rest_obj.hub_resource_id,
+            workspace_id=rest_obj.workspace_id,
         )
-
-    @classmethod
-    def get_workspace_info(cls, armid: str) -> str:
-        """Get the workspace SubscriptionId, ResourceGroup, Name from from the resource ID.
-
-        :param armid: the Resource Id of a workspace
-        :type armid: str
-        :return: This method return SubscriptionId, ResourceGroupName, WorkspaceName in order.
-        :rtype: (str,str,str)
-        """
-        return armid.split("/")[-7], armid.split("/")[-5], armid.split("/")[-1]
 
     def _to_rest_object(self) -> RestWorkspace:
         feature_store_settings = None

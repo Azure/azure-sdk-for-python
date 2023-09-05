@@ -703,10 +703,7 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
                 message=f"max_iterations must be a positive value, not '{max_iterations}'.",
             )
 
-        return validation_result.try_raise(
-            cls._get_validation_error_target(),
-            raise_error=raise_error,
-        )
+        return cls._try_raise(validation_result, raise_error=raise_error)
 
     @classmethod
     def _custom_fl_data_path(

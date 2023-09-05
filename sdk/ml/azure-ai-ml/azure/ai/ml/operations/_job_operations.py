@@ -10,10 +10,6 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Optional, Union
 
 import jwt
-from azure.core.credentials import TokenCredential
-from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
-from azure.core.polling import LROPoller
-from azure.core.tracing.decorator import distributed_trace
 
 from azure.ai.ml._artifacts._artifact_utilities import (
     _upload_and_generate_remote_uri,
@@ -79,7 +75,7 @@ from azure.ai.ml.entities._job.import_job import ImportJob
 from azure.ai.ml.entities._job.job import _is_pipeline_child_job
 from azure.ai.ml.entities._job.parallel.parallel_job import ParallelJob
 from azure.ai.ml.entities._job.to_rest_functions import to_rest_job_object
-from azure.ai.ml.entities._validation import SchemaValidatableMixin
+from azure.ai.ml.entities._validation import PathAwareSchemaValidatableMixin
 from azure.ai.ml.exceptions import (
     ComponentException,
     ErrorCategory,
@@ -94,6 +90,10 @@ from azure.ai.ml.exceptions import (
 )
 from azure.ai.ml.operations._run_history_constants import RunHistoryConstants
 from azure.ai.ml.sweep import SweepJob
+from azure.core.credentials import TokenCredential
+from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
+from azure.core.polling import LROPoller
+from azure.core.tracing.decorator import distributed_trace
 
 from .._utils._experimental import experimental
 from ..constants._component import ComponentSource
@@ -106,8 +106,8 @@ from ._job_ops_helper import get_git_properties, get_job_output_uris_from_datapl
 from ._local_job_invoker import is_local_run, start_run_if_local
 from ._model_dataplane_operations import ModelDataplaneOperations
 from ._operation_orchestrator import (
-    _AssetResolver,
     OperationOrchestrator,
+    _AssetResolver,
     is_ARM_id_for_resource,
     is_registry_id_for_resource,
     is_singularity_full_name_for_resource,
@@ -508,7 +508,7 @@ class JobOperations(_ScopeDependentOperations):
         :return: The validation result
         :rtype: ValidationResult
         """
-        git_code_validation_result = SchemaValidatableMixin._create_empty_validation_result()
+        git_code_validation_result = PathAwareSchemaValidatableMixin._create_empty_validation_result()
         # TODO: move this check to Job._validate after validation is supported for all job types
         # If private features are enable and job has code value of type str we need to check
         # that it is a valid git path case. Otherwise we should throw a ValidationException
@@ -525,8 +525,20 @@ class JobOperations(_ScopeDependentOperations):
                 yaml_path="code",
             )
 
-        if not isinstance(job, SchemaValidatableMixin):
-            return git_code_validation_result.try_raise(error_target=ErrorTarget.JOB, raise_error=raise_on_failure)
+        if not isinstance(job, PathAwareSchemaValidatableMixin):
+
+            def error_func(msg, no_personal_data_msg):
+                return ValidationException(
+                    message=msg,
+                    no_personal_data_message=no_personal_data_msg,
+                    error_target=ErrorTarget.JOB,
+                    error_category=ErrorCategory.USER_ERROR,
+                )
+
+            return git_code_validation_result.try_raise(
+                raise_error=raise_on_failure,
+                error_func=error_func,
+            )
 
         validation_result = job._validate(raise_error=raise_on_failure)
         validation_result.merge_with(git_code_validation_result)
@@ -547,7 +559,7 @@ class JobOperations(_ScopeDependentOperations):
                     validation_result.append_error(yaml_path=f"jobs.{node_name}.compute", message=str(e))
 
         validation_result.resolve_location_for_diagnostics(job._source_path)
-        return validation_result.try_raise(raise_error=raise_on_failure, error_target=ErrorTarget.PIPELINE)
+        return job._try_raise(validation_result, raise_error=raise_on_failure)  # pylint: disable=protected-access
 
     @distributed_trace
     @monitor_with_telemetry_mixin(logger, "Job.CreateOrUpdate", ActivityType.PUBLICAPI)

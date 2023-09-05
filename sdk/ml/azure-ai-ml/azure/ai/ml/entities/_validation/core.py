@@ -9,24 +9,27 @@ import json
 import logging
 import os.path
 import typing
-from os import PathLike
 from pathlib import Path
 from typing import Dict, List, Optional
 
-import msrest
 import pydash
 import strictyaml
-from marshmallow import Schema, ValidationError
-
-from .._schema import PathAwareSchema
-from .._vendor.azure_resources.models import Deployment, DeploymentProperties, DeploymentValidateResult, ErrorResponse
-from ..constants._common import BASE_PATH_CONTEXT_KEY, OperationStatus
-from ..entities._job.pipeline._attr_dict import try_get_non_arbitrary_attr
-from ..entities._util import convert_ordered_dict_to_dict, decorate_validation_error
-from ..exceptions import ErrorCategory, ErrorTarget, ValidationException
-from ._mixins import RestTranslatableMixin
+from marshmallow import ValidationError
 
 module_logger = logging.getLogger(__name__)
+
+
+class _ValidationStatus:
+    """Validation status class.
+
+    Validation status is used to indicate the status of an validation result. It can be one of the following values:
+    Succeeded, Failed.
+    """
+
+    SUCCEEDED = "Succeeded"
+    """Succeeded."""
+    FAILED = "Failed"
+    """Failed."""
 
 
 class Diagnostic(object):
@@ -128,7 +131,7 @@ class ValidationResult(object):
 
     def _to_dict(self) -> typing.Dict[str, typing.Any]:
         result = {
-            "result": OperationStatus.SUCCEEDED if self.passed else OperationStatus.FAILED,
+            "result": _ValidationStatus.SUCCEEDED if self.passed else _ValidationStatus.FAILED,
         }
         for diagnostic_type, diagnostics in [
             ("errors", self._errors),
@@ -169,7 +172,7 @@ class MutableValidationResult(ValidationResult):
 
     def merge_with(
         self,
-        target: typing.Union[ValidationResult, DeploymentValidateResult],
+        target: ValidationResult,
         field_name: Optional[str] = None,
         condition_skip: Optional[typing.Callable] = None,
         overwrite: bool = False,
@@ -180,8 +183,8 @@ class MutableValidationResult(ValidationResult):
         If field_name is not None, then yaml_path in the other validation result will be updated accordingly.
         * => field_name, jobs.job_a => field_name.jobs.job_a e.g.. If None, then no update.
 
-        :param target: Validation result to merge. Also accept DeploymentValidateResult.
-        :type target: Union[ValidationResult, DeploymentValidateResult]
+        :param target: Validation result to merge.
+        :type target: ValidationResult
         :param field_name: The base field name for the target to merge.
         :type field_name: str
         :param condition_skip: A function to determine whether to skip the merge of a diagnostic in the target.
@@ -192,9 +195,6 @@ class MutableValidationResult(ValidationResult):
         :return: The current validation result.
         :rtype: MutableValidationResult
         """
-        if isinstance(target, DeploymentValidateResult):
-            target = _ValidationResultBuilder.from_rest_object(target)
-            return self.merge_with(target, field_name, condition_skip, overwrite)
         for source_diagnostics, target_diagnostics in [
             (target._errors, self._errors),
             (target._warnings, self._warnings),
@@ -218,30 +218,21 @@ class MutableValidationResult(ValidationResult):
 
     def try_raise(
         self,
-        error_target: ErrorTarget,
-        error_category: ErrorCategory = ErrorCategory.USER_ERROR,
         raise_error: bool = True,
-        schema: Optional[Schema] = None,
-        additional_message: str = "",
-        raise_mashmallow_error: bool = False,
+        *,
+        error_func: typing.Callable[[str, str], Exception] = None,
     ) -> "MutableValidationResult":
         """Try to raise an error from the validation result.
 
         If the validation is passed or raise_error is False, this method
         will return the validation result.
 
-        :param error_target: The target of the error.
-        :type error_target: ErrorTarget
-        :param error_category: The category of the error.
-        :type error_category: ErrorCategory
         :param raise_error: Whether to raise the error.
         :type raise_error: bool
-        :param schema: The schema to do the validation, will be used in the error message.
-        :type schema: Schema
-        :param additional_message: Additional message to add to the error message.
-        :type additional_message: str
-        :param raise_mashmallow_error: Whether to raise a marshmallow.ValidationError instead of ValidationException.
-        :type raise_mashmallow_error: bool
+        :keyword error_func: A function to create the error. If None, a marshmallow.ValidationError will be created.
+                             The first parameter of the function is the string representation of the validation result,
+                             and the second parameter is the error message without personal data.
+        :type error_func: typing.Callable[[str, str], Exception]
         :return: The current validation result.
         :rtype: MutableValidationResult
         """
@@ -253,23 +244,14 @@ class MutableValidationResult(ValidationResult):
             module_logger.warning("Warnings: %s" % str(self._warnings))
 
         if not self.passed:
-            message = (
-                decorate_validation_error(
-                    schema=schema.__class__,
-                    pretty_error=self.__repr__(),
-                    additional_message=additional_message,
-                )
-                if schema
-                else self.__repr__()
-            )
-            if raise_mashmallow_error:
-                raise ValidationError(message)
+            if error_func is None:
 
-            raise ValidationException(
-                message=message,
-                no_personal_data_message="validation failed on the following fields: " + ", ".join(self.error_messages),
-                target=error_target,
-                error_category=error_category,
+                def error_func(msg, _):
+                    return ValidationError(message=msg)
+
+            raise error_func(
+                self.__repr__(),
+                "validation failed on the following fields: " + ", ".join(self.error_messages),
             )
         return self
 
@@ -345,154 +327,9 @@ class MutableValidationResult(ValidationResult):
         return self
 
 
-class SchemaValidatableMixin:
-    @classmethod
-    def _create_empty_validation_result(cls) -> MutableValidationResult:
-        """Simply create an empty validation result
+class ValidationResultBuilder:
+    """A helper class to create a validation result."""
 
-        To reduce _ValidationResultBuilder importing, which is a private class.
-
-        :return: An empty validation result
-        :rtype: MutableValidationResult
-        """
-        return _ValidationResultBuilder.success()
-
-    @classmethod
-    def _create_schema_for_validation_with_base_path(cls, base_path=None):
-        # Note that, although context can be passed here, nested.schema will be initialized only once
-        # base_path works well because it's fixed after loaded
-        return cls._create_schema_for_validation(context={BASE_PATH_CONTEXT_KEY: base_path or Path.cwd()})
-
-    @classmethod
-    def _load_with_schema(cls, data, *, context=None, raise_original_exception=False, **kwargs):
-        if context is None:
-            schema = cls._create_schema_for_validation_with_base_path()
-        else:
-            schema = cls._create_schema_for_validation(context=context)
-
-        try:
-            return schema.load(data, **kwargs)
-        except ValidationError as e:
-            if raise_original_exception:
-                raise e
-            msg = "Trying to load data with schema failed. Data:\n%s\nError: %s" % (
-                json.dumps(data, indent=4) if isinstance(data, dict) else data,
-                json.dumps(e.messages, indent=4),
-            )
-            raise ValidationException(
-                message=msg,
-                no_personal_data_message=str(e),
-                target=cls._get_validation_error_target(),
-                error_category=ErrorCategory.USER_ERROR,
-            ) from e
-
-    @classmethod
-    # pylint: disable-next=docstring-missing-param
-    def _create_schema_for_validation(cls, context) -> PathAwareSchema:
-        """Create a schema of the resource with specific context. Should be overridden by subclass.
-
-        :return: The schema of the resource. PathAwareSchema will add marshmallow.Schema as super class on runtime.
-        :rtype: PathAwareSchema.
-        """
-        raise NotImplementedError()
-
-    @property
-    def __base_path_for_validation(self) -> typing.Union[str, PathLike]:
-        """Get the base path of the resource.
-
-        It will try to return self.base_path, then self._base_path, then Path.cwd() if above attrs are non-existent or
-        `None.
-
-        :return: The base path of the resource
-        :rtype: typing.Union[str, os.PathLike]
-        """
-        return (
-            try_get_non_arbitrary_attr(self, "base_path")
-            or try_get_non_arbitrary_attr(self, "_base_path")
-            or Path.cwd()
-        )
-
-    @classmethod
-    def _get_validation_error_target(cls) -> ErrorTarget:
-        """Return the error target of this resource.
-
-        Should be overridden by subclass. Value should be in ErrorTarget enum.
-
-        :return: The error target of the resource
-        :rtype: ErrorTarget
-        """
-        raise NotImplementedError()
-
-    @property
-    def _schema_for_validation(self) -> PathAwareSchema:
-        """Return the schema of this Resource with self._base_path as base_path of Schema. Do not override this method.
-        Override _get_schema instead.
-
-        :return: The schema of the resource. Note that PathAwareSchema will add marshmallow.Schema as super class on
-            runtime.
-        :rtype: PathAwareSchema.
-        """
-        return self._create_schema_for_validation_with_base_path(self.__base_path_for_validation)
-
-    def _dump_for_validation(self) -> typing.Dict:
-        """Convert the resource to a dictionary.
-
-        :return: Converted dictionary
-        :rtype: Dict
-        """
-        return convert_ordered_dict_to_dict(self._schema_for_validation.dump(self))
-
-    def _validate(self, raise_error=False) -> MutableValidationResult:
-        """Validate the resource. If raise_error is True, raise ValidationError if validation fails and log warnings if
-        applicable; Else, return the validation result.
-
-        :param raise_error: Whether to raise ValidationError if validation fails.
-        :type raise_error: bool
-        :return: The validation result
-        :rtype: ValidationResult
-        """
-        result = self.__schema_validate()
-        result.merge_with(self._customized_validate())
-        return result.try_raise(raise_error=raise_error, error_target=self._get_validation_error_target())
-
-    def _customized_validate(self) -> MutableValidationResult:
-        """Validate the resource with customized logic.
-
-        Override this method to add customized validation logic.
-
-        :return: The customized validation result
-        :rtype: MutableValidationResult
-        """
-        return self._create_empty_validation_result()
-
-    @classmethod
-    def _get_skip_fields_in_schema_validation(
-        cls,
-    ) -> typing.List[str]:
-        """Get the fields that should be skipped in schema validation.
-
-        Override this method to add customized validation logic.
-
-        :return: The fields to skip in schema validation
-        :rtype: typing.List[str]
-        """
-        return []
-
-    def __schema_validate(self) -> MutableValidationResult:
-        """Validate the resource with the schema.
-
-        :return: The validation result
-        :rtype: MutableValidationResult
-        """
-        data = self._dump_for_validation()
-        messages = self._schema_for_validation.validate(data)
-        for skip_field in self._get_skip_fields_in_schema_validation():
-            if skip_field in messages:
-                del messages[skip_field]
-        return _ValidationResultBuilder.from_validation_messages(messages, data=data)
-
-
-class _ValidationResultBuilder:
     UNKNOWN_MESSAGE = "Unknown field."
 
     def __init__(self):
@@ -506,28 +343,6 @@ class _ValidationResultBuilder:
         :rtype: MutableValidationResult
         """
         return MutableValidationResult()
-
-    @classmethod
-    def from_rest_object(cls, rest_obj: DeploymentValidateResult) -> MutableValidationResult:
-        """Create a validation result from a rest object. Note that the created validation result does not have
-        target_obj so should only be used for merging.
-
-        :param rest_obj: The Deployment Validate REST obj
-        :type rest_obj: DeploymentValidateResult
-        :return: The validation result created from rest_obj
-        :rtype: MutableValidationResult
-        """
-        if not rest_obj.error or not rest_obj.error.details:
-            return cls.success()
-        result = MutableValidationResult(target_obj=None)
-        details: List[ErrorResponse] = rest_obj.error.details
-        for detail in details:
-            result.append_error(
-                message=detail.message,
-                yaml_path=detail.target.replace("/", "."),
-                error_code=detail.code,  # will always be UserError for now, not sure if innerError can be passed back
-            )
-        return result
 
     @classmethod
     def from_single_message(
@@ -703,123 +518,4 @@ class _YamlLocationResolver:
         return (
             f"{source_path.resolve().absolute()}#line {loaded_yaml.start_line}",
             None if attrs else loaded_yaml.value,
-        )
-
-
-class PreflightResource(msrest.serialization.Model):
-    """Specified resource.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Resource ID.
-    :vartype id: str
-    :ivar name: Resource name.
-    :vartype name: str
-    :ivar type: Resource type.
-    :vartype type: str
-    :param location: Resource location.
-    :type location: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    """
-
-    _attribute_map = {
-        "type": {"key": "type", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "location": {"key": "location", "type": "str"},
-        "api_version": {"key": "apiversion", "type": "str"},
-        "properties": {"key": "properties", "type": "object"},
-    }
-
-    def __init__(self, **kwargs):
-        super(PreflightResource, self).__init__(**kwargs)
-        self.name = kwargs.get("name", None)
-        self.type = kwargs.get("type", None)
-        self.location = kwargs.get("location", None)
-        self.properties = kwargs.get("properties", None)
-        self.api_version = kwargs.get("api_version", None)
-
-
-class ValidationTemplateRequest(msrest.serialization.Model):
-    """Export resource group template request parameters.
-
-    :param resources: The rest objects to be validated.
-    :type resources: list[_models.Resource]
-    :param options: The export template options. A CSV-formatted list containing zero or more of
-     the following: 'IncludeParameterDefaultValue', 'IncludeComments',
-     'SkipResourceNameParameterization', 'SkipAllParameterization'.
-    :type options: str
-    """
-
-    _attribute_map = {
-        "resources": {"key": "resources", "type": "[PreflightResource]"},
-        "content_version": {"key": "contentVersion", "type": "str"},
-        "parameters": {"key": "parameters", "type": "object"},
-        "_schema": {
-            "key": "$schema",
-            "type": "str",
-            "default": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-        },
-    }
-
-    def __init__(self, **kwargs):
-        super(ValidationTemplateRequest, self).__init__(**kwargs)
-        self._schema = kwargs.get("_schema", None)
-        self.content_version = kwargs.get("content_version", None)
-        self.parameters = kwargs.get("parameters", None)
-        self.resources = kwargs.get("resources", None)
-
-
-class RemoteValidatableMixin(RestTranslatableMixin):
-    @classmethod
-    def _get_resource_type(cls) -> str:
-        """Return resource type to be used in remote validation.
-
-        Should be overridden by subclass.
-
-        :return: The resource type
-        :rtype: str
-        """
-        raise NotImplementedError()
-
-    def _get_resource_name_version(self) -> typing.Tuple[str, str]:
-        """Return resource name and version to be used in remote validation.
-
-        Should be overridden by subclass.
-
-        :return: The name and version
-        :rtype: typing.Tuple[str, str]
-        """
-        raise NotImplementedError()
-
-    def _to_preflight_resource(self, location: str, workspace_name: str) -> PreflightResource:
-        """Return the preflight resource to be used in remote validation.
-
-        :param location: The location of the resource.
-        :type location: str
-        :param workspace_name: The workspace name
-        :type workspace_name: str
-        :return: The preflight resource
-        :rtype: PreflightResource
-        """
-        name, version = self._get_resource_name_version()
-        return PreflightResource(
-            type=self._get_resource_type(),
-            name=f"{workspace_name}/{name}/{version}",
-            location=location,
-            properties=self._to_rest_object().properties,
-            api_version="2023-03-01-preview",
-        )
-
-    def _build_rest_object_for_remote_validation(self, location: str, workspace_name: str) -> Deployment:
-        return Deployment(
-            properties=DeploymentProperties(
-                mode="Incremental",
-                template=ValidationTemplateRequest(
-                    _schema="https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-                    content_version="1.0.0.0",
-                    parameters={},
-                    resources=[self._to_preflight_resource(location=location, workspace_name=workspace_name)],
-                ),
-            )
         )
