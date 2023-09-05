@@ -5,7 +5,7 @@ from ci_tools.parsing import ParsedSetup
 from ci_tools.variables import in_ci
 from ci_tools.environment_exclusions import is_check_enabled
 
-def verify_classifiers() -> None:
+def entrypoint() -> None:
     parser = argparse.ArgumentParser(
         description="""This is the primary entrypoint for the "build" action. This command is used to build any package within the azure-sdk-for-python repository.""",
     )
@@ -28,8 +28,8 @@ def verify_classifiers() -> None:
             )
             exit(0)
 
-    if "azure-sdk" not in pkg_details.classifiers:
-        print(f"Classifier 'azure-sdk' not present in classifers for {pkg_details.name}. Before attempting publishing, ensure that package {pkg_details.name} has classifier 'azure-sdk' present in the classifier set.")
+    if "azure sdk" not in pkg_details.keywords:
+        print(f"Keyword 'azure sdk' not present in keywords for {pkg_details.name}. Before attempting publishing, ensure that package {pkg_details.name} has keyword 'azure sdk' present in the keyword array.")
         exit(1)
     else:
         exit(0)
