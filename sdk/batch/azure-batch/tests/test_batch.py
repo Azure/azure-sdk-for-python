@@ -167,10 +167,10 @@ class TestBatch(AzureMgmtRecordedTestCase):
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     @AccountPreparer(location=AZURE_LOCATION, batch_environment=BATCH_ENVIRONMENT)
     @recorded_by_proxy
-    def test_batch_certificate(self, **kwargs):
+    def test_batch_certificates(self, **kwargs):
         client = self.create_sharedkey_client(**kwargs)
         # Test Add Certificate
-        certificate = models.Certificate(
+        certificate = models.BatchCertificate(
             thumbprint='cff2ab63c8c955aaf71989efa641b906558d9fb7',
             thumbprint_algorithm='sha1',
             data='MIIGMQIBAzCCBe0GCSqGSIb3DQEHAaCCBd4EggXaMIIF1jCCA8AGCSqGSIb3DQEHAaCCA7EEggOtMIIDqTCCA6UGCyqGSIb3DQEMCgECoIICtjCCArIwHAYKKoZIhvcNAQwBAzAOBAhyd3xCtln3iQICB9AEggKQhe5P10V9iV1BsDlwWT561Yu2hVq3JT8ae/ebx1ZR/gMApVereDKkS9Zg4vFyssusHebbK5pDpU8vfAqle0TM4m7wGsRj453ZorSPUfMpHvQnAOn+2pEpWdMThU7xvZ6DVpwhDOQk9166z+KnKdHGuJKh4haMT7Rw/6xZ1rsBt2423cwTrQVMQyACrEkianpuujubKltN99qRoFAxhQcnYE2KlYKw7lRcExq6mDSYAyk5xJZ1ZFdLj6MAryZroQit/0g5eyhoNEKwWbi8px5j71pRTf7yjN+deMGQKwbGl+3OgaL1UZ5fCjypbVL60kpIBxLZwIJ7p3jJ+q9pbq9zSdzshPYor5lxyUfXqaso/0/91ayNoBzg4hQGh618PhFI6RMGjwkzhB9xk74iweJ9HQyIHf8yx2RCSI22JuCMitPMWSGvOszhbNx3AEDLuiiAOHg391mprEtKZguOIr9LrJwem/YmcHbwyz5YAbZmiseKPkllfC7dafFfCFEkj6R2oegIsZo0pEKYisAXBqT0g+6/jGwuhlZcBo0f7UIZm88iA3MrJCjlXEgV5OcQdoWj+hq0lKEdnhtCKr03AIfukN6+4vjjarZeW1bs0swq0l3XFf5RHa11otshMS4mpewshB9iO9MuKWpRxuxeng4PlKZ/zuBqmPeUrjJ9454oK35Pq+dghfemt7AUpBH/KycDNIZgfdEWUZrRKBGnc519C+RTqxyt5hWL18nJk4LvSd3QKlJ1iyJxClhhb/NWEzPqNdyA5cxen+2T9bd/EqJ2KzRv5/BPVwTQkHH9W/TZElFyvFfOFIW2+03RKbVGw72Mr/0xKZ+awAnEfoU+SL/2Gj2m6PHkqFX2sOCi/tN9EA4xgdswEwYJKoZIhvcNAQkVMQYEBAEAAAAwXQYJKwYBBAGCNxEBMVAeTgBNAGkAYwByAG8AcwBvAGYAdAAgAFMAdAByAG8AbgBnACAAQwByAHkAcAB0AG8AZwByAGEAcABoAGkAYwAgAFAAcgBvAHYAaQBkAGUAcjBlBgkqhkiG9w0BCRQxWB5WAFAAdgBrAFQAbQBwADoANABjAGUANgAwADQAZABhAC0AMAA2ADgAMQAtADQANAAxADUALQBhADIAYwBhAC0ANQA3ADcAMwAwADgAZQA2AGQAOQBhAGMwggIOBgkqhkiG9w0BBwGgggH/BIIB+zCCAfcwggHzBgsqhkiG9w0BDAoBA6CCAcswggHHBgoqhkiG9w0BCRYBoIIBtwSCAbMwggGvMIIBXaADAgECAhAdka3aTQsIsUphgIXGUmeRMAkGBSsOAwIdBQAwFjEUMBIGA1UEAxMLUm9vdCBBZ2VuY3kwHhcNMTYwMTAxMDcwMDAwWhcNMTgwMTAxMDcwMDAwWjASMRAwDgYDVQQDEwdub2Rlc2RrMIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC5fhcxbJHxxBEIDzVOMc56s04U6k4GPY7yMR1m+rBGVRiAyV4RjY6U936dqXHCVD36ps2Q0Z+OeEgyCInkIyVeB1EwXcToOcyeS2YcUb0vRWZDouC3tuFdHwiK1Ed5iW/LksmXDotyV7kpqzaPhOFiMtBuMEwNJcPge9k17hRgRQIDAQABo0swSTBHBgNVHQEEQDA+gBAS5AktBh0dTwCNYSHcFmRjoRgwFjEUMBIGA1UEAxMLUm9vdCBBZ2VuY3mCEAY3bACqAGSKEc+41KpcNfQwCQYFKw4DAh0FAANBAHl2M97QbpzdnwO5HoRBsiEExOcLTNg+GKCr7HUsbzfvrUivw+JLL7qjHAIc5phnK+F5bQ8HKe0L9YXBSKl+fvwxFTATBgkqhkiG9w0BCRUxBgQEAQAAADA7MB8wBwYFKw4DAhoEFGVtyGMqiBd32fGpzlGZQoRM6UQwBBTI0YHFFqTS4Go8CoLgswn29EiuUQICB9A=',
@@ -181,7 +181,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         assert response is None
 
         # Test List Certificates
-        certs = client.list_certificate()
+        certs = client.list_certificates()
         test_cert = [c for c in certs if c.thumbprint == 'cff2ab63c8c955aaf71989efa641b906558d9fb7']
         assert len(test_cert) ==  1
 
@@ -267,7 +267,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
                 ),
                 node_agent_sku_id='batch.node.ubuntu 18.04')
         )
-        self.assertBatchError('InvalidPropertyValue', client.create_pool, parameters=test_network_pool, timeout=45)
+        self.assertBatchError('InvalidPropertyValue', client.create_pool, body=test_network_pool, timeout=45)
 
         test_image_pool = models.BatchPoolCreateOptions(
             id=self.get_resource_name('batch_image_'),
@@ -284,7 +284,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
                 node_agent_sku_id='batch.node.ubuntu 18.04'
             )
         )
-        self.assertBatchError('InvalidPropertyValue', client.create_pool, parameters=test_image_pool, timeout=45)
+        self.assertBatchError('InvalidPropertyValue', client.create_pool, body=test_image_pool, timeout=45)
 
         # Test Create Pool with Data Disk
         data_disk = models.DataDisk(lun=1, disk_size_gb=50)
@@ -350,15 +350,15 @@ class TestBatch(AzureMgmtRecordedTestCase):
         assert ade_pool.virtual_machine_configuration.disk_encryption_configuration.targets == [models.DiskEncryptionTarget.temporary_disk]
 
         # Test List Pools without Filters
-        pools = list(client.list_pool())
+        pools = list(client.list_pools())
         assert (len(pools) > 1)
 
         # Test List Pools with Maximum
-        pools = list(client.list_pool(maxresults=1))
+        pools = list(client.list_pools(maxresults=1))
         assert len(pools) == 4
 
         # Test List Pools with Filter
-        pools = list(client.list_pool(filter='startswith(id,\'batch_app_\')',
+        pools = list(client.list_pools(filter='startswith(id,\'batch_app_\')',
             select='id,state',
             expand='stats'))
         assert len(pools) ==  1
@@ -704,7 +704,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
 
         # Test Reimage Node
         self.assertBatchError('OperationNotValidOnNode',
-                              client.reimage_nodes,
+                              client.reimage_node,
                               batch_pool.name,
                               nodes[1].id,
                               models.NodeReimageOptions(node_reimage_option=models.BatchNodeReimageOption.terminate))
@@ -808,12 +808,12 @@ class TestBatch(AzureMgmtRecordedTestCase):
 
         # Test Get remote login settings
         remote_login_settings = client.get_node_remote_login_settings(batch_pool.name, nodes[0].id)
-        assert isinstance(remote_login_settings,  models.BatchNodeGetRemoteLoginSettingsResult)
+        assert isinstance(remote_login_settings,  models.BatchNodeRemoteLoginSettingsResult)
         assert remote_login_settings.remote_login_ip_address is not None
         assert remote_login_settings.remote_login_port is not None
 
         # Test Delete User
-        response = client.delete_user_nodes(batch_pool.name, nodes[0].id, user_name)
+        response = client.delete_node_user(batch_pool.name, nodes[0].id, user_name)
         assert response is None
 
     @CachedResourceGroupPreparer(location=AZURE_LOCATION)
@@ -896,7 +896,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         assert (len(only_files) >= 1)
 
         # Test File Properties from Task
-        props = client.get_properties_from_task_file(
+        props = client.get_task_file_properties(
             job_id=batch_job.id, task_id=task_id, file_path=only_files[0].name)
         assert ('Content-Length' in props.headers)
         assert ('Content-Type' in props.headers)
@@ -1090,12 +1090,12 @@ class TestBatch(AzureMgmtRecordedTestCase):
         tasks_to_add.append(task)
         self.assertCreateTasksError(
             "RequestBodyTooLarge",
-            client.add_collection_task,
+            client.create_task_collection,
             batch_job.id,
             tasks_to_add)
         self.assertCreateTasksError(
             "RequestBodyTooLarge",
-            client.add_collection_task,
+            client.create_task_collection,
             batch_job.id,
             tasks_to_add,
             threads=3)
@@ -1115,7 +1115,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
                 command_line="sleep 1",
                 resource_files=resource_files)
             tasks_to_add.append(task)
-        result = client.add_collection_task(batch_job.id, tasks_to_add)
+        result = client.create_task_collection(batch_job.id, tasks_to_add)
         assert isinstance(result,  models.TaskAddCollectionResult)
         assert len(result.value) ==  733
         assert result.value[0].status ==  models.TaskAddStatus.success
@@ -1149,10 +1149,10 @@ class TestBatch(AzureMgmtRecordedTestCase):
         )
         
         now = datetime.datetime.now()
-        stamp = mktime(now.timetuple())
-        currenttime =  format_date_time(stamp) #--> Wed, 22 Oct 2008 10:52:40 GMT
+        # stamp = mktime(now.timetuple())
+        # currenttime =  format_date_time(stamp) #--> Wed, 22 Oct 2008 10:52:40 GMT
         
-        response = client.create_job(body=job_param,ocp_date=currenttime)
+        response = client.create_job(body=job_param,ocp_date=now)
         
         #response = client.create_job(parameters=job_param,ocp_date="Wed, 3 May 2023 21:49:13 GMT")
         #response = client.create_job(parameters=job_param,ocp_date=datetime.datetime.utcnow())
