@@ -63,8 +63,8 @@ With the value of the `endpoint`, `credential` and a `region`, you can create th
 <!-- SNIPPET: sample_text_translation_client.create_text_translation_client_with_credential -->
 
 ```python
-credential = TranslatorCredential(apikey, region, endpoint)
-text_translator = TextTranslationClient(credential)
+credential = TranslatorCredential(apikey, region)
+text_translator = TextTranslationClient(credential, endpoint)
 ```
 
 <!-- END SNIPPET -->
