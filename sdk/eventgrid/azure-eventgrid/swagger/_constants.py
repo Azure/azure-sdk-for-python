@@ -61,4 +61,4 @@ additional_events = {
 }
 
 EXCEPTIONS = ['ContainerRegistryArtifactEventData', 'ContainerRegistryEventData', 'ContainerServiceClusterSupportEventData', 'ContainerServiceNodePoolRollingEventData',
-              'EventGridMQTTClientEventData', 'AppConfigurationSnapshotEventData'] # spell-checker:ignore MQTT
+              'EventGridMQTTClientEventData', 'AppConfigurationSnapshotEventData']
