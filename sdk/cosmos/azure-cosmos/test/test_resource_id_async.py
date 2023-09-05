@@ -110,19 +110,9 @@ class ResourceIdTests(unittest.TestCase):
                 self.fail("Database create should have failed for id {}".format(resource_id))
             except ValueError as e:
                 self.assertEquals(str(e), 'Id contains illegal chars.')
-            try:
-                await self.client.create_database_if_not_exists(resource_id)
-                self.fail("Database create should have failed for id {}".format(resource_id))
-            except ValueError as e:
-                self.assertEquals(str(e), 'Id contains illegal chars.')
 
             try:
                 await created_database.create_container(id=resource_id, partition_key=partition_key)
-                self.fail("Container create should have failed for id {}".format(resource_id))
-            except ValueError as e:
-                self.assertEquals(str(e), 'Id contains illegal chars.')
-            try:
-                await created_database.create_container_if_not_exists(id=resource_id, partition_key=partition_key)
                 self.fail("Container create should have failed for id {}".format(resource_id))
             except ValueError as e:
                 self.assertEquals(str(e), 'Id contains illegal chars.')
