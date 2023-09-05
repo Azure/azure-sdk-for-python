@@ -26,7 +26,7 @@ from .._generated.aio import AzureQueueStorage
 from .._generated.models import QueueMessage as GenQueueMessage, SignedIdentifier
 from .._message_encoding import NoDecodePolicy, NoEncodePolicy
 from .._models import AccessPolicy, QueueMessage
-from .._queue_client_helpers import _parse_url
+from .._queue_client_helpers import _parse_url, _format_url_helper, _from_queue_url_helper
 from .._serialize import get_api_version
 from .._shared.base_client import parse_connection_str, StorageAccountHostsMixin
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin
@@ -118,13 +118,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Stora
         :returns: The formatted endpoint URL according to the specified location mode hostname.
         :rtype: str
         """
-        if isinstance(self.queue_name, str):
-            queue_name = self.queue_name.encode('UTF-8')
-        else:
-            queue_name = self.queue_name
-        return (
-            f"{self.scheme}://{hostname}"
-            f"/{quote(queue_name)}{self._query_str}")
+        return _format_url_helper(queue_name=self.queue_name, hostname=hostname, scheme=self.scheme, query_str=self._query_str)  # pylint: disable=line-too-long
 
     @classmethod
     def from_queue_url(
@@ -148,27 +142,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Stora
         :returns: A queue client.
         :rtype: ~azure.storage.queue.QueueClient
         """
-        try:
-            if not queue_url.lower().startswith('http'):
-                queue_url = "https://" + queue_url
-        except AttributeError as exc:
-            raise ValueError("Queue URL must be a string.") from exc
-        parsed_url = urlparse(queue_url.rstrip('/'))
-
-        if not parsed_url.netloc:
-            raise ValueError(f"Invalid URL: {queue_url}")
-
-        queue_path = parsed_url.path.lstrip('/').split('/')
-        account_path = ""
-        if len(queue_path) > 1:
-            account_path = "/" + "/".join(queue_path[:-1])
-        account_url = (
-            f"{parsed_url.scheme}://{parsed_url.netloc.rstrip('/')}"
-            f"{account_path}?{parsed_url.query}")
-        queue_name = unquote(queue_path[-1])
-        if not queue_name:
-            raise ValueError("Invalid URL. Please provide a URL with a valid queue name")
-        return cls(account_url, queue_name=queue_name, credential=credential, **kwargs)
+        return _from_queue_url_helper(cls=cls, queue_url=queue_url, credential=credential, **kwargs)
 
     @classmethod
     def from_connection_string(

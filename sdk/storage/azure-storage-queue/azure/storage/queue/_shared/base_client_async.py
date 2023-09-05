@@ -10,7 +10,7 @@ from typing import (  # pylint: disable=unused-import
 )
 import logging
 
-from azure.core.credentials import AzureSasCredential
+from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
 from azure.core.pipeline import AsyncPipeline
 from azure.core.async_paging import AsyncList
 from azure.core.exceptions import HttpResponseError
@@ -35,11 +35,14 @@ from .policies import (
     StorageRequestHook,
 )
 from .policies_async import AsyncStorageResponseHook
+from .models import StorageConfiguration
 
 from .response_handlers import process_storage_error, PartialBatchErrorException
 
 if TYPE_CHECKING:
     from azure.core.pipeline.transport import HttpRequest
+    from azure.core.credentials import TokenCredential
+    from azure.core.credentials_async import AsyncTokenCredential
     from azure.core.configuration import Configuration
 _LOGGER = logging.getLogger(__name__)
 
@@ -65,8 +68,10 @@ class AsyncStorageAccountHostsMixin(object):
         """
         await self._client.close()
 
-    def _create_pipeline(self, credential, **kwargs):
-        # type: (Any, **Any) -> Tuple[Configuration, AsyncPipeline]
+    def _create_pipeline(
+        self, credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential", "AsyncTokenCredential"]] = None, # pylint: disable=line-too-long 
+        **kwargs: Any
+    ) -> Tuple[StorageConfiguration, AsyncPipeline]:
         self._credential_policy: Optional[Union[AsyncBearerTokenCredentialPolicy, SharedKeyCredentialPolicy, AzureSasCredentialPolicy]] = None # pylint: disable=line-too-long
         if hasattr(credential, 'get_token'):
             self._credential_policy = AsyncBearerTokenCredentialPolicy(credential, STORAGE_OAUTH_SCOPE)

@@ -12,7 +12,7 @@ from time import time
 from io import SEEK_SET, UnsupportedOperation
 import logging
 import uuid
-from typing import Any, TYPE_CHECKING
+from typing import Any, Dict, Optional, TYPE_CHECKING
 from wsgiref.handlers import format_date_time
 try:
     from urllib.parse import (
@@ -294,8 +294,7 @@ class StorageResponseHook(HTTPPolicy):
         self._response_callback = kwargs.get('raw_response_hook')
         super(StorageResponseHook, self).__init__()
 
-    def send(self, request):
-        # type: ("PipelineRequest") -> "PipelineResponse"
+    def send(self, request: "PipelineRequest") -> "PipelineResponse":
         # Values could be 0
         data_stream_total = request.context.get('data_stream_total')
         if data_stream_total is None:
@@ -382,7 +381,7 @@ class StorageContentValidation(SansIOHTTPPolicy):
             request.context['validate_content_md5'] = computed_md5
         request.context['validate_content'] = validate_content
 
-    def on_response(self, request, response):
+    def on_response(self, request: "PipelineRequest", response: "PipelineResponse") -> None:
         if response.context.get('validate_content', False) and response.http_response.headers.get('content-md5'):
             computed_md5 = request.context.get('validate_content_md5') or \
                 encode_base64(StorageContentValidation.get_content_md5(response.http_response.body()))
@@ -424,7 +423,7 @@ class StorageRetryPolicy(HTTPPolicy):
             updated = url._replace(netloc=settings['hosts'].get(settings['mode']))
             request.url = updated.geturl()
 
-    def configure_retries(self, request):
+    def configure_retries(self, request: "PipelineRequest") -> Dict[str, Any]:
         body_position = None
         if hasattr(request.http_request.body, 'read'):
             try:
@@ -605,13 +604,19 @@ class ExponentialRetry(StorageRetryPolicy):
 class LinearRetry(StorageRetryPolicy):
     """Linear retry."""
 
-    def __init__(self, backoff=15, retry_total=3, retry_to_secondary=False, random_jitter_range=3, **kwargs):
+    def __init__(
+        self, backoff: int = 15,
+        retry_total: int = 3,
+        retry_to_secondary: bool = False,
+        random_jitter_range: int = 3,
+        **kwargs: Any
+    ) -> None:
         """
         Constructs a Linear retry object.
 
         :param int backoff:
             The backoff interval, in seconds, between retries.
-        :param int max_attempts:
+        :param int retry_total:
             The maximum number of retry attempts.
         :param bool retry_to_secondary:
             Whether the request should be retried to secondary, if able. This should
@@ -626,7 +631,7 @@ class LinearRetry(StorageRetryPolicy):
         super(LinearRetry, self).__init__(
             retry_total=retry_total, retry_to_secondary=retry_to_secondary, **kwargs)
 
-    def get_backoff_time(self, settings):
+    def get_backoff_time(self, settings: Optional[Dict[str, Any]]) -> Optional[int]:
         """
         Calculates how long to sleep before retrying.
 
@@ -648,12 +653,10 @@ class LinearRetry(StorageRetryPolicy):
 class StorageBearerTokenCredentialPolicy(BearerTokenCredentialPolicy):
     """ Custom Bearer token credential policy for following Storage Bearer challenges """
 
-    def __init__(self, credential, **kwargs):
-        # type: (TokenCredential, **Any) -> None
+    def __init__(self, credential: "TokenCredential", **kwargs) -> None:
         super(StorageBearerTokenCredentialPolicy, self).__init__(credential, STORAGE_OAUTH_SCOPE, **kwargs)
 
-    def on_challenge(self, request, response):
-        # type: ("PipelineRequest", "PipelineResponse") -> bool
+    def on_challenge(self, request: "PipelineRequest", response: "PipelineResponse") -> bool:
         try:
             auth_header = response.http_response.headers.get("WWW-Authenticate")
             challenge = StorageHttpChallenge(auth_header)

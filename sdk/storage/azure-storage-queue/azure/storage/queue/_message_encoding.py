@@ -19,13 +19,13 @@ if TYPE_CHECKING:
 class MessageEncodePolicy(object):
 
     require_encryption: Optional[bool] = None
-    """Indicates whether a retention policy is enabled for the storage service."""
+    """Indicates whether encryption is required or not."""
     encryption_version: Optional[str] = None
-    """Indicates whether a retention policy is enabled for the storage service."""
+    """Indicates the version of encryption being used."""
     key_encryption_key: Optional[KeyEncryptionKey] = None
-    """Indicates whether a retention policy is enabled for the storage service."""
+    """The user-provided key-encryption-key."""
     resolver: Optional[Callable[[str], bytes]] = None
-    """Indicates whether a retention policy is enabled for the storage service."""
+    """The user-provided key resolver."""
 
     def __init__(self) -> None:
         self.require_encryption = False
