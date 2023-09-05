@@ -7,9 +7,9 @@ from __future__ import annotations
 from enum import Enum
 from urllib.parse import urlparse
 
-from typing import Any, Sequence, Optional, Union, Callable, Dict, Type, runtime_checkable, Generic, TypeVar
+from typing import Any, Sequence, Optional, Union, Callable, Dict, Type, Generic, TypeVar
 from types import TracebackType
-from typing_extensions import Protocol, ContextManager
+from typing_extensions import Protocol, ContextManager, runtime_checkable
 from azure.core.pipeline.transport import HttpRequest, HttpResponse, AsyncHttpResponse
 from azure.core.rest import (
     HttpResponse as RestHttpResponse,
@@ -43,6 +43,7 @@ class SpanKind(Enum):
     INTERNAL = 6
 
 
+@runtime_checkable
 class AbstractSpan(Protocol, Generic[SpanType]):
     """Wraps a span from a distributed tracing implementation.
 
