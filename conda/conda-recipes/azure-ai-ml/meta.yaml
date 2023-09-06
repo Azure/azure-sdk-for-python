@@ -2,6 +2,7 @@
 
 package:
   name: "{{ name|lower }}"
+  version: {{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
 
 source:
   url: {{ environ.get('ML_SOURCE_DISTRIBUTION', '') }}
