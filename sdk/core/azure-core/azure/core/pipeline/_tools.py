@@ -24,15 +24,18 @@
 #
 # --------------------------------------------------------------------------
 from __future__ import annotations
-from typing import TYPE_CHECKING, Union
-from typing_extensions import TypeGuard
+from typing import TYPE_CHECKING, Union, Callable, TypeVar
+from typing_extensions import TypeGuard, ParamSpec
 
 if TYPE_CHECKING:
-    from typing import Any
     from azure.core.rest import HttpResponse, HttpRequest, AsyncHttpResponse
 
 
-def await_result(func, *args, **kwargs):
+P = ParamSpec("P")
+T = TypeVar("T")
+
+
+def await_result(func: Callable[P, T], *args: P.args, **kwargs: P.kwargs) -> T:
     """If func returns an awaitable, raise that this runner can't handle it.
 
     :param func: The function to run.

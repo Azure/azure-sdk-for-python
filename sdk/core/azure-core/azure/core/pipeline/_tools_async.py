@@ -53,13 +53,9 @@ async def await_result(func: Callable[P, Union[T, Awaitable[T]]], *args: P.args,
     :rtype: any
     :return: The result of the function
     """
-    result: Union[T, Awaitable[T]] = func(*args, **kwargs)
-    # pyright has issue with narrowing types here
-    # https://github.com/microsoft/pyright/issues/5860
-    if hasattr(result, "__await__"):
-        result = cast(Awaitable[T], result)
+    result = func(*args, **kwargs)
+    if isinstance(result, Awaitable):
         return await result
-    result = cast(T, result)
     return result
 
 
