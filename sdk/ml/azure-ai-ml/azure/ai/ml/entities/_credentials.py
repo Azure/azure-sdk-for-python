@@ -31,10 +31,15 @@ from azure.ai.ml._restclient.v2023_04_01_preview.models import (
 from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     AccountKeyDatastoreSecrets as RestAccountKeyDatastoreSecrets,
 )
+from azure.ai.ml._restclient.v2023_04_01_preview.models import AmlToken as RestAmlToken
 from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     CertificateDatastoreCredentials as RestCertificateDatastoreCredentials,
 )
 from azure.ai.ml._restclient.v2023_04_01_preview.models import CertificateDatastoreSecrets, CredentialsType
+from azure.ai.ml._restclient.v2023_04_01_preview.models import IdentityConfiguration as RestJobIdentityConfiguration
+from azure.ai.ml._restclient.v2023_04_01_preview.models import IdentityConfigurationType
+from azure.ai.ml._restclient.v2023_04_01_preview.models import ManagedIdentity as RestJobManagedIdentity
+from azure.ai.ml._restclient.v2023_04_01_preview.models import ManagedServiceIdentity as RestRegistryManagedIdentity
 from azure.ai.ml._restclient.v2023_04_01_preview.models import NoneDatastoreCredentials as RestNoneDatastoreCredentials
 from azure.ai.ml._restclient.v2023_04_01_preview.models import SasDatastoreCredentials as RestSasDatastoreCredentials
 from azure.ai.ml._restclient.v2023_04_01_preview.models import SasDatastoreSecrets as RestSasDatastoreSecrets
@@ -44,12 +49,6 @@ from azure.ai.ml._restclient.v2023_04_01_preview.models import (
 from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     ServicePrincipalDatastoreSecrets as RestServicePrincipalDatastoreSecrets,
 )
-
-from azure.ai.ml._restclient.v2023_04_01_preview.models import AmlToken as RestAmlToken
-from azure.ai.ml._restclient.v2023_04_01_preview.models import IdentityConfiguration as RestJobIdentityConfiguration
-from azure.ai.ml._restclient.v2023_04_01_preview.models import IdentityConfigurationType
-from azure.ai.ml._restclient.v2023_04_01_preview.models import ManagedIdentity as RestJobManagedIdentity
-from azure.ai.ml._restclient.v2023_04_01_preview.models import ManagedServiceIdentity as RestRegistryManagedIdentity
 from azure.ai.ml._restclient.v2023_04_01_preview.models import UserIdentity as RestUserIdentity
 from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     WorkspaceConnectionAccessKey as RestWorkspaceConnectionAccessKey,
@@ -58,11 +57,11 @@ from azure.ai.ml._restclient.v2023_06_01_preview.models import ConnectionAuthTyp
 from azure.ai.ml._restclient.v2023_06_01_preview.models import (
     WorkspaceConnectionApiKey as RestWorkspaceConnectionApiKey,
 )
+from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils.utils import camel_to_snake, snake_to_pascal
 from azure.ai.ml.constants._common import CommonYamlFields, IdentityType
 from azure.ai.ml.entities._mixins import DictMixin, RestTranslatableMixin, YamlTranslatableMixin
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, JobException, ValidationErrorType, ValidationException
-from azure.ai.ml._utils._experimental import experimental
 
 
 class _BaseIdentityConfiguration(ABC, DictMixin, RestTranslatableMixin):
@@ -392,25 +391,23 @@ class _BaseJobIdentityConfiguration(ABC, RestTranslatableMixin, DictMixin, YamlT
     @classmethod
     def _load(
         cls,
-        data: Optional[Dict] = None,
+        data: Dict,
     ) -> Union["ManagedIdentityConfiguration", "UserIdentityConfiguration", "AmlTokenConfiguration"]:
         type_str = data.get(CommonYamlFields.TYPE)
         if type_str == IdentityType.MANAGED_IDENTITY:
-            identity_cls = ManagedIdentityConfiguration
-        elif type_str == IdentityType.USER_IDENTITY:
-            identity_cls = UserIdentityConfiguration
-        elif type_str == IdentityType.AML_TOKEN:
-            identity_cls = AmlTokenConfiguration
-        else:
-            msg = f"Unsupported identity type: {type_str}."
-            raise ValidationException(
-                message=msg,
-                no_personal_data_message=msg,
-                target=ErrorTarget.IDENTITY,
-                error_category=ErrorCategory.USER_ERROR,
-                error_type=ValidationErrorType.INVALID_VALUE,
-            )
-        return identity_cls._load_from_dict(data)
+            return ManagedIdentityConfiguration._load_from_dict(data)
+        if type_str == IdentityType.USER_IDENTITY:
+            return UserIdentityConfiguration._load_from_dict(data)
+        if type_str == IdentityType.AML_TOKEN:
+            return AmlTokenConfiguration._load_from_dict(data)
+        msg = f"Unsupported identity type: {type_str}."
+        raise ValidationException(
+            message=msg,
+            no_personal_data_message=msg,
+            target=ErrorTarget.IDENTITY,
+            error_category=ErrorCategory.USER_ERROR,
+            error_type=ValidationErrorType.INVALID_VALUE,
+        )
 
 
 class ManagedIdentityConfiguration(_BaseIdentityConfiguration):
@@ -586,7 +583,7 @@ class AmlTokenConfiguration(_BaseIdentityConfiguration):
         return AMLTokenIdentitySchema().dump(self)
 
     @classmethod
-    def _load_from_dict(cls, data: Dict) -> "AMLTokenIdentitySchema":
+    def _load_from_dict(cls, data: Dict) -> "AmlTokenConfiguration":
         # pylint: disable=no-member
         from azure.ai.ml._schema.job.identity import AMLTokenIdentitySchema
 
