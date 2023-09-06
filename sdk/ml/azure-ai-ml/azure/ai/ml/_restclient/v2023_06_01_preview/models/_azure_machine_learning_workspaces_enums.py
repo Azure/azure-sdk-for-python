@@ -633,8 +633,8 @@ class ForecastingModels(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     #: This method is suitable for forecasting when data is stationary/non stationary, and
     #: multivariate with any type of data pattern, i.e., level/trend /seasonality/cyclicity.
     ARIMAX = "Arimax"
-    #: TCNForecaster: Temporal Convolutional Networks Forecaster. //TODO: Ask forecasting team for
-    #: brief intro.
+    #: TCNForecaster: Temporal Convolutional Networks Forecaster is a deep neural network model
+    #: capable of modeling correlations over long time periods.
     TCN_FORECASTER = "TCNForecaster"
     #: Elastic net is a popular type of regularized linear regression that combines two popular
     #: penalties, specifically the L1 and L2 penalty functions.

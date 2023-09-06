@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
+# pylint: disable=client-method-missing-tracing-decorator
 from typing import Any, Union, Optional, TYPE_CHECKING
 import logging
 from weakref import WeakSet
@@ -118,7 +119,7 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
             try:
                 from ._transport._uamqp_transport import UamqpTransport
             except ImportError:
-                raise ValueError("To use the uAMQP transport, please install `uamqp>=1.6.3,<2.0.0`.")
+                raise ValueError("To use the uAMQP transport, please install `uamqp>=1.6.3,<2.0.0`.") from None
         self._amqp_transport = UamqpTransport if uamqp_transport else PyamqpTransport
 
         # If the user provided http:// or sb://, let's be polite and strip that.
@@ -280,6 +281,7 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
          wait when sending and receiving data before timing out. The default value is 0.2 for TransportType.Amqp
          and 1 for TransportType.AmqpOverWebsocket. If connection errors are occurring due to write timing out,
          a larger than default value may need to be passed in.
+        :return: A queue Sender.
         :rtype: ~azure.servicebus.ServiceBusSender
 
         .. admonition:: Example:
@@ -455,6 +457,7 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
          wait when sending and receiving data before timing out. The default value is 0.2 for TransportType.Amqp
          and 1 for TransportType.AmqpOverWebsocket. If connection errors are occurring due to write timing out,
          a larger than default value may need to be passed in.
+        :returns: A topic sender.
         :rtype: ~azure.servicebus.ServiceBusSender
 
         .. admonition:: Example:

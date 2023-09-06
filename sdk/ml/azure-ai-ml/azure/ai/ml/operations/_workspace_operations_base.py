@@ -31,7 +31,7 @@ from azure.ai.ml._utils.utils import camel_to_snake, from_iso_duration_format_mi
 from azure.ai.ml._version import VERSION
 from azure.ai.ml.constants import ManagedServiceIdentityType
 from azure.ai.ml.constants._common import ArmConstants, LROConfigurations, WorkspaceResourceConstants
-from azure.ai.ml.constants._workspace import IsolationMode
+from azure.ai.ml.constants._workspace import IsolationMode, OutboundRuleCategory
 from azure.ai.ml.entities import Workspace
 from azure.ai.ml.entities._credentials import IdentityConfiguration
 from azure.ai.ml.entities._workspace.networking import ManagedNetwork
@@ -80,6 +80,8 @@ class WorkspaceOperationsBase:
     ) -> LROPoller[Workspace]:
         existing_workspace = None
         resource_group = kwargs.get("resource_group") or workspace.resource_group or self._resource_group_name
+        byo_open_ai_resource_id = kwargs.pop("byo_open_ai_resource_id", "")
+
         try:
             existing_workspace = self.get(workspace.name, resource_group=resource_group)
         except Exception:  # pylint: disable=broad-except
@@ -112,7 +114,11 @@ class WorkspaceOperationsBase:
             workspace.tags["createdByToolkit"] = "sdk-v2-{}".format(VERSION)
 
         workspace.resource_group = resource_group
-        template, param, resources_being_deployed = self._populate_arm_paramaters(workspace, **kwargs)
+        (
+            template,
+            param,
+            resources_being_deployed,
+        ) = self._populate_arm_paramaters(workspace, byo_open_ai_resource_id=byo_open_ai_resource_id, **kwargs)
         # check if create with workspace hub request is valid
         if workspace._kind == PROJECT_WORKSPACE_KIND:
             if not all(
@@ -264,12 +270,20 @@ class WorkspaceOperationsBase:
                 )
             )
 
+        if workspace.managed_network is not None and workspace.managed_network.outbound_rules is not None:
+            # drop recommended and required rules from the update request since it would result in bad request
+            workspace.managed_network.outbound_rules = [
+                rule
+                for rule in workspace.managed_network.outbound_rules
+                if rule.category not in (OutboundRuleCategory.REQUIRED, OutboundRuleCategory.RECOMMENDED)
+            ]
+
         update_role_assignment = (
             kwargs.get("update_workspace_role_assignment", None)
             or kwargs.get("update_offline_store_role_assignment", None)
             or kwargs.get("update_online_store_role_assignment", None)
         )
-        grant_materialization_identity_permissions = kwargs.get("grant_materialization_identity_permissions", None)
+        grant_materialization_permissions = kwargs.get("grant_materialization_permissions", None)
 
         # pylint: disable=unused-argument
         def callback(_, deserialized, args):
@@ -277,7 +291,7 @@ class WorkspaceOperationsBase:
                 workspace._kind
                 and workspace._kind.lower() == "featurestore"
                 and update_role_assignment
-                and grant_materialization_identity_permissions
+                and grant_materialization_permissions
             ):
                 module_logger.info("updating feature store materialization identity role assignments..")
                 template, param, resources_being_deployed = self._populate_feature_store_role_assignment_parameters(
@@ -369,6 +383,8 @@ class WorkspaceOperationsBase:
         param = get_template(resource_type=ArmConstants.WORKSPACE_PARAM)
         if workspace._kind == PROJECT_WORKSPACE_KIND:
             template = get_template(resource_type=ArmConstants.WORKSPACE_PROJECT)
+        byo_open_ai_resource_id = kwargs.get("byo_open_ai_resource_id") or ""
+        _set_val(param["byo_open_ai_resource_id"], byo_open_ai_resource_id)
         _set_val(param["workspaceName"], workspace.name)
         if not workspace.display_name:
             _set_val(param["friendlyName"], workspace.name)
@@ -512,10 +528,19 @@ class WorkspaceOperationsBase:
             online_store_target = kwargs.get("online_store_target", None)
 
             _set_val(param["set_up_feature_store"], "true")
+
+            from azure.ai.ml._utils._arm_id_utils import AzureResourceId
+
             if offline_store_target is not None:
-                _set_val(param["offline_store_connection_target"], offline_store_target)
+                arm_id = AzureResourceId(offline_store_target)
+                _set_val(param["offline_store_target"], offline_store_target)
+                _set_val(param["offline_store_resource_group_name"], arm_id.resource_group_name)
+                _set_val(param["offline_store_subscription_id"], arm_id.subscription_id)
             if online_store_target is not None:
-                _set_val(param["online_store_connection_target"], online_store_target)
+                arm_id = AzureResourceId(online_store_target)
+                _set_val(param["online_store_target"], online_store_target)
+                _set_val(param["online_store_resource_group_name"], arm_id.resource_group_name)
+                _set_val(param["online_store_subscription_id"], arm_id.subscription_id)
 
             if materialization_identity:
                 _set_val(param["materialization_identity_resource_id"], materialization_identity.resource_id)
@@ -525,8 +550,8 @@ class WorkspaceOperationsBase:
                     f"materialization-uai-{workspace.resource_group}-{workspace.name}",
                 )
 
-            if not kwargs.get("grant_materialization_identity_permissions", None):
-                _set_val(param["grant_materialization_identity_permissions"], "false")
+            if not kwargs.get("grant_materialization_permissions", None):
+                _set_val(param["grant_materialization_permissions"], "false")
 
         managed_network = None
         if workspace.managed_network:
@@ -578,11 +603,20 @@ class WorkspaceOperationsBase:
 
         offline_store_target = kwargs.get("offline_store_target", None)
         online_store_target = kwargs.get("online_store_target", None)
+
+        from azure.ai.ml._utils._arm_id_utils import AzureResourceId
+
         if offline_store_target:
+            arm_id = AzureResourceId(offline_store_target)
             _set_val(param["offline_store_target"], offline_store_target)
+            _set_val(param["offline_store_resource_group_name"], arm_id.resource_group_name)
+            _set_val(param["offline_store_subscription_id"], arm_id.subscription_id)
 
         if online_store_target:
+            arm_id = AzureResourceId(online_store_target)
             _set_val(param["online_store_target"], online_store_target)
+            _set_val(param["online_store_resource_group_name"], arm_id.resource_group_name)
+            _set_val(param["online_store_subscription_id"], arm_id.subscription_id)
 
         resources_being_deployed[materialization_identity_id] = (ArmConstants.USER_ASSIGNED_IDENTITIES, None)
         return template, param, resources_being_deployed

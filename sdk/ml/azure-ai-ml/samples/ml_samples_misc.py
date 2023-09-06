@@ -20,9 +20,8 @@ import os
 
 class MiscConfigurationOptions(object):
     def ml_misc_config(self):
-        from azure.identity import DefaultAzureCredential
-
         from azure.ai.ml import MLClient
+        from azure.identity import DefaultAzureCredential
 
         subscription_id = os.environ["AZURE_SUBSCRIPTION_ID"]
         resource_group = os.environ["RESOURCE_GROUP_NAME"]
@@ -119,6 +118,43 @@ class MiscConfigurationOptions(object):
             stage="Production",
         )
         # [END model_entity_create]
+
+        # [START model_batch_deployment_settings_entity_create]
+        from azure.ai.ml.entities._deployment.model_batch_deployment_settings import ModelBatchDeploymentSettings
+
+        modelBatchDeploymentSetting = ModelBatchDeploymentSettings(
+            mini_batch_size=256,
+            instance_count=5,
+            max_concurrency_per_instance=2,
+            output_file_name="output-file-name",
+            environment_variables={"env1": "value1", "env2": "value2"},
+            error_threshold=2,
+            logging_level=1,
+        )
+        # [END model_batch_deployment_settings_entity_create]
+
+        # [START model_configuration_entity_create]
+        from azure.ai.ml.entities._assets._artifacts._package.model_configuration import ModelConfiguration
+
+        modelConfiguration = ModelConfiguration(mode="model-mode", mount_path="model-mount-path")
+        # [END model_configuration_entity_create]
+
+        # [START model_package_input_entity_create]
+        from azure.ai.ml.entities._assets._artifacts._package.model_package import ModelPackageInput
+
+        modelPackageInput = ModelPackageInput(type="input-type", mode="input-mode", mount_path="input-mount-path")
+        # [END model_package_input_entity_create]
+
+        # [START model_package_entity_create]
+        from azure.ai.ml.entities._assets._artifacts._package.model_package import ModelPackage
+
+        modelPackage = ModelPackage(
+            target_environment_name="env-name",
+            target_environment_version="1.0",
+            environment_variables={"env1": "value1", "env2": "value2"},
+            tags={"tag1": "value1", "tag2": "value2"},
+        )
+        # [END model_package_entity_create]
 
         # [START create_inputs_outputs]
         from azure.ai.ml import Input, Output

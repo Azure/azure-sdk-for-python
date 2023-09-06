@@ -71,7 +71,6 @@
     "sdk/keyvault/azure-keyvault-certificates/tests/certs.py",
     "sdk/keyvault/azure-keyvault-keys/tests/keys.py",
     "sdk/modelsrepository/azure-iot-modelsrepository/**",
-    "sdk/monitor/azure-monitor-query/**",
     "sdk/servicefabric/azure-servicefabric/**",
     "sdk/search/azure-search-documents/**",
     "sdk/storage/azure-storage-blob-changefeed/**",
@@ -89,8 +88,8 @@
     "sdk/ml/azure-ai-ml/tests/**",
     "sdk/ml/azure-ai-ml/swagger/**",
     "sdk/ml/azure-ai-ml/NOTICE.txt",
+    "sdk/ml/azure-ai-ml/.pre-commit-config.yaml",
     "sdk/loadtestservice/azure-developer-loadtesting/**",
-    "sdk/monitor/azure-monitor-ingestion/**",
     "sdk/translation/azure-ai-translation-text/azure/ai/translation/text/_serialization.py",
     "sdk/translation/azure-ai-translation-text/tests/test_break_sentence.py",
     "sdk/translation/azure-ai-translation-text/tests/test_translation.py",
@@ -487,6 +486,12 @@
       ]
     },
     {
+      "filename": "sdk/identity/azure-identity/TROUBLESHOOTING.md",
+      "words": [
+        "wammsa"
+      ]
+    },    
+    {
       "filename": "sdk/tables/azure-data-tables/tests/**/*.py",
       "words": [
         "tzutc",
@@ -512,6 +517,12 @@
         "mytable",
         "edmtypes",
         "specifed"
+      ]
+    },
+    {
+      "filename": "sdk/tables/azure-data-tables/CHANGELOG.md",
+      "words": [
+        "kldtz"
       ]
     },
     {
@@ -653,7 +664,11 @@
       "words": [
         "cncf",
         "CNCF",
-        "Cncf"
+        "Cncf",
+        "MQTT",
+        "Dicom",
+        "Errored",
+        "Fhir"
       ]
     },
     {
@@ -827,6 +842,13 @@
       ]
     },
     {
+      "filename": "sdk/monitor/azure-monitor-*/**/*",
+      "words": [
+        "ctxt",
+        "wday"
+      ]
+    },
+    {
       "filename": "sdk/monitor/azure-monitor-opentelemetry*/**/*",
       "words": [
         "blrp",
@@ -854,32 +876,6 @@
         "mycontainer",
         "semconv",
         "updown"
-      ]
-    },
-    {
-      "filename": "sdk/monitor/azure-monitor-opentelemetry/azure/monitor/opentelemetry/_vendor/**/*.py",
-      "words": [
-        "aiopg",
-        "asgiref",
-        "asyncpg",
-        "boto",
-        "botocore",
-        "Cbar",
-        "funcs",
-        "grpcio",
-        "islast",
-        "libpq",
-        "owais",
-        "psutil",
-        "pydantic",
-        "pymongo",
-        "pymysql",
-        "remoulade",
-        "setifnotnone",
-        "sklearn",
-        "starlette",
-        "tortoiseorm",
-        "trysetip"
       ]
     },
     {
