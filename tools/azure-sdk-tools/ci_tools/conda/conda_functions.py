@@ -610,9 +610,9 @@ def build_conda_packages(
 
         if conda_build.conda_py_versions:
             for pyversion in conda_build.conda_py_versions:
-                invoke_conda_build(conda_output_dir, conda_env_dir, conda_build_folder, pyversion)
+                invoke_conda_build(conda_output_dir, conda_env_dir, conda_build_folder, pyversion, conda_build.channels)
         else:
-            invoke_conda_build(conda_output_dir, conda_env_dir, conda_build_folder)
+            invoke_conda_build(conda_output_dir, conda_env_dir, conda_build_folder, None, conda_build.channels)
 
 
 
