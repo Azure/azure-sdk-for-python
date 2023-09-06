@@ -25,8 +25,9 @@ USAGE:
 import logging
 import os
 import sys
-from typing import Optional, Union
+from typing import Optional, Union, cast
 import uuid
+from datetime import datetime
 
 from azure.core.credentials import AzureKeyCredential, AccessToken, TokenCredential
 from azure.core.pipeline.policies import NetworkTraceLoggingPolicy
@@ -188,9 +189,9 @@ def demonstrate_rendering_session_lifecycle():
 
         # if the session should run longer than initially requested we can extend the lifetime of the session
         session = client.get_rendering_session(session_id)
-        if session.lease_time_minutes - session.elapsed_time_minutes < 2:
+        if cast(int, session.lease_time_minutes) - cast(int, session.elapsed_time_minutes) < 2:
             session = client.update_rendering_session(
-                session_id=session_id, lease_time_minutes=session.lease_time_minutes + 10)
+                session_id=session_id, lease_time_minutes=cast(int, session.lease_time_minutes) + 10)
             print("session with id:", session.id, "updated. New lease time:", session.lease_time_minutes, "minutes",)
 
         # once we do not need the session anymore we can stop the session
@@ -205,7 +206,7 @@ def list_all_rendering_sessions():
     print("sessions:")
     rendering_sessions = client.list_rendering_sessions()
     for session in rendering_sessions:
-        created_on = session.created_on.strftime("%m/%d/%Y, %H:%M:%S")
+        created_on = cast(datetime, session.created_on).strftime("%m/%d/%Y, %H:%M:%S")
         print("\t session:  id:", session.id, "status:", session.status, "created on:", created_on,)
 
 

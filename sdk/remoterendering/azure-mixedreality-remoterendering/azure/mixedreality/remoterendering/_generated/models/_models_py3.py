@@ -503,17 +503,17 @@ class RenderingSession(msrest.serialization.Model):
         **kwargs
     ):
         super(RenderingSession, self).__init__(**kwargs)
-        self.id: str = id
-        self.arr_inspector_port: int = None
-        self.handshake_port:int = None
-        self.elapsed_time_minutes: int = None
-        self.hostname: str = None
-        self.lease_time_minutes: int = None
-        self.size: str = size
-        self.status: Union[str, RenderingSessionStatus] = status
-        self.teraflops: float = None
-        self.error: RemoteRenderingError = None
-        self.created_on: datetime.datetime = None
+        self.id = id
+        self.arr_inspector_port = None
+        self.handshake_port = None
+        self.elapsed_time_minutes = None
+        self.hostname = None
+        self.lease_time_minutes = None
+        self.size = size
+        self.status = status
+        self.teraflops = None
+        self.error = None
+        self.created_on = None
 
 
 class SessionsList(msrest.serialization.Model):

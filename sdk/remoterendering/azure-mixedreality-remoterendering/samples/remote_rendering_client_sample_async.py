@@ -26,8 +26,9 @@ import asyncio
 import logging
 import os
 import sys
-from typing import Optional
+from typing import Optional, cast
 import uuid
+from datetime import datetime
 
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.credentials import AzureKeyCredential
@@ -189,9 +190,9 @@ async def demonstrate_rendering_session_lifecycle():
 
         # if the session should run longer than initially requested we can extend the lifetime of the session
         session = await client.get_rendering_session(session_id)
-        if session.lease_time_minutes - session.elapsed_time_minutes < 2:
+        if cast(int, session.lease_time_minutes) - cast(int, session.elapsed_time_minutes) < 2:
             session = await client.update_rendering_session(
-                session_id=session_id, lease_time_minutes=session.lease_time_minutes + 10)
+                session_id=session_id, lease_time_minutes=cast(int, session.lease_time_minutes) + 10)
             print("session with id:", session.id, "updated. New lease time:", session.lease_time_minutes, "minutes")
 
         # once we do not need the session anymore we can stop the session
@@ -207,7 +208,7 @@ async def list_all_rendering_sessions():
     rendering_sessions = await client.list_rendering_sessions()
     async for session in rendering_sessions:
         print("\t session:  id:", session.id, "status:", session.status,
-              "created on:", session.created_on.strftime("%m/%d/%Y, %H:%M:%S"))
+              "created on:", cast(datetime, session.created_on).strftime("%m/%d/%Y, %H:%M:%S"))
 
 
 async def main():
