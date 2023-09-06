@@ -49,7 +49,7 @@ To use this package, you must have:
 Install the Azure Monitor Opentelemetry Distro with [pip][pip]:
 
 ```Bash
-pip install azure-monitor-opentelemetry --pre
+pip install azure-monitor-opentelemetry
 ```
 
 ### Usage
@@ -72,7 +72,6 @@ You can configure further with [OpenTelemetry environment variables][ot_env_vars
 | `OTEL_BSP_SCHEDULE_DELAY` | Specifies the distributed tracing export interval in milliseconds. Defaults to 5000. |
 | `OTEL_TRACES_SAMPLER_ARG` | Specifies the ratio of distributed tracing telemetry to be [sampled][application_insights_sampling]. Accepted values are in the range [0,1]. Defaults to 1.0, meaning no telemetry is sampled out. |
 | `OTEL_PYTHON_DISABLED_INSTRUMENTATIONS` | Specifies which of the supported instrumentations to disable. Disabled instrumentations will not be instrumented as part of `configure_azure_monitor`. However, they can still be manually instrumented by users after the fact. Accepts a comma-separated list of lowercase entry point names for instrumentations. For example, set to `"psycopg2,fastapi"` to disable the Psycopg2 and FastAPI instrumentations. Defaults to an empty list, enabling all supported instrumentations. |
-
 
 #### Azure monitor OpenTelemetry Exporter configurations
 
@@ -121,7 +120,7 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 
 <!-- LINKS -->
 [azure_core_tracing_opentelemetry_plugin]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/core/azure-core-tracing-opentelemetry
-[azure_core_tracing_opentelemetry_plugin_sample]: https://github.com/microsoft/ApplicationInsights-Python/tree/main/azure-monitor-opentelemetry/samples/tracing/azure_core.py
+[azure_core_tracing_opentelemetry_plugin_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/monitor/azure-monitor-opentelemetry/samples/tracing/azure_core.py
 [azure_monitor_enable_docs]: https://learn.microsoft.com/azure/azure-monitor/app/opentelemetry-enable?tabs=python
 [azure_monitor_opentelemetry_exporters]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/monitor/azure-monitor-opentelemetry-exporter#microsoft-opentelemetry-exporter-for-azure-monitor
 [azure_portal]: https://portal.azure.com
@@ -129,7 +128,7 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 [application_insights_namespace]: https://learn.microsoft.com/azure/azure-monitor/app/app-insights-overview
 [application_insights_sampling]: https://learn.microsoft.com/azure/azure-monitor/app/sampling
 [connection_string_doc]: https://learn.microsoft.com/azure/azure-monitor/app/sdk-connection-string
-[distro_feature_request]: https://github.com/microsoft/ApplicationInsights-Python/issues/new
+[distro_feature_request]: https://github.com/Azure/azure-sdk-for-python/issues/new
 [exporter_configuration_docs]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/monitor/azure-monitor-opentelemetry-exporter#configuration
 [logging_level]: https://docs.python.org/3/library/logging.html#levels
 [logger_name_hierarchy_doc]: https://docs.python.org/3/library/logging.html#logger-objects
@@ -166,5 +165,5 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 [pypi_urllib]: https://docs.python.org/3/library/urllib.html
 [pypi_urllib3]: https://pypi.org/project/urllib3/
 [python]: https://www.python.org/downloads/
-[samples]: https://github.com/microsoft/ApplicationInsights-Python/tree/main/azure-monitor-opentelemetry/samples
-[samples_manual]: https://github.com/microsoft/ApplicationInsights-Python/tree/main/azure-monitor-opentelemetry/samples/tracing/manual.py
+[samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/monitor/azure-monitor-opentelemetry/samples
+[samples_manual]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/monitor/azure-monitor-opentelemetry/samples/tracing/manual.py

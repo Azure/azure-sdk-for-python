@@ -290,18 +290,28 @@ class TestWorkspaceOperation:
         )
         template, param, _ = mock_workspace_operation_base._populate_feature_store_role_assignment_parameters(
             workspace=FeatureStore(name="name"),
-            materialization_identity_id="mat_id",
-            offline_store_target="offline_target",
-            online_store_target="online_target",
+            materialization_identity_id="/subscriptions/sub/resourcegroups/rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/identity",
+            offline_store_target="/subscriptions/sub/resourceGroups/rg/providers/Microsoft.Storage/storageAccounts/test_storage/blobServices/default/containers/offlinestore",
+            online_store_target="/subscriptions/sub1/resourceGroups/mdctest/providers/Microsoft.Cache/Redis/onlinestore",
             update_workspace_role_assignment=True,
             update_offline_store_role_assignment=True,
             update_online_store_role_assignment=True,
         )
 
         assert template is not None
-        assert param["materialization_identity_resource_id"] == {"value": "mat_id"}
-        assert param["offline_store_target"] == {"value": "offline_target"}
-        assert param["online_store_target"] == {"value": "online_target"}
+        assert param["materialization_identity_resource_id"] == {
+            "value": "/subscriptions/sub/resourcegroups/rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/identity"
+        }
+        assert param["offline_store_target"] == {
+            "value": "/subscriptions/sub/resourceGroups/rg/providers/Microsoft.Storage/storageAccounts/test_storage/blobServices/default/containers/offlinestore"
+        }
+        assert param["offline_store_resource_group_name"] == {"value": "rg"}
+        assert param["offline_store_subscription_id"] == {"value": "sub"}
+        assert param["online_store_target"] == {
+            "value": "/subscriptions/sub1/resourceGroups/mdctest/providers/Microsoft.Cache/Redis/onlinestore"
+        }
+        assert param["online_store_resource_group_name"] == {"value": "mdctest"}
+        assert param["online_store_subscription_id"] == {"value": "sub1"}
         assert param["update_workspace_role_assignment"] == {"value": "true"}
         assert param["update_offline_store_role_assignment"] == {"value": "true"}
         assert param["update_online_store_role_assignment"] == {"value": "true"}

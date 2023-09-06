@@ -478,6 +478,12 @@
       ]
     },
     {
+      "filename": "sdk/identity/azure-identity/TROUBLESHOOTING.md",
+      "words": [
+        "wammsa"
+      ]
+    },    
+    {
       "filename": "sdk/tables/azure-data-tables/tests/**/*.py",
       "words": [
         "tzutc",
@@ -650,7 +656,11 @@
       "words": [
         "cncf",
         "CNCF",
-        "Cncf"
+        "Cncf",
+        "MQTT",
+        "Dicom",
+        "Errored",
+        "Fhir"
       ]
     },
     {
