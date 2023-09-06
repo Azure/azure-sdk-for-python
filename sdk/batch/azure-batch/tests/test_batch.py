@@ -187,7 +187,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
 
         # Test Get Certificate
         cert = client.get_certificate('sha1', 'cff2ab63c8c955aaf71989efa641b906558d9fb7')
-        assert isinstance(cert,  models.Certificate)
+        assert isinstance(cert,  models.BatchCertificate)
         assert cert.thumbprint ==  'cff2ab63c8c955aaf71989efa641b906558d9fb7'
         assert cert.thumbprint_algorithm ==  'sha1'
         assert cert.delete_certificate_error is None
@@ -880,18 +880,18 @@ class TestBatch(AzureMgmtRecordedTestCase):
         # Test Get File from Batch Node
         file_length = 0
         with io.BytesIO() as file_handle:
-            response = client.get_from_batch_node_file(batch_pool.name, node, only_files[0].name)
+            response = client.get_node_file(batch_pool.name, node, only_files[0].name)
             #lenght = len(response)
             for data in response:
                 file_length += len(data)
         assert file_length ==  int(props.headers['Content-Length'])
 
         # Test Delete File from Batch Node
-        response = client.delete_from_batch_node_file(batch_pool.name, node, only_files[0].name)
+        response = client.delete_node_file(batch_pool.name, node, only_files[0].name)
         assert response is None
 
         # Test List Files from Task
-        all_files = client.list_from_task_file(batch_job.id, task_id)
+        all_files = client.list_task_files(batch_job.id, task_id)
         only_files = [f for f in all_files if not f.is_directory]
         assert (len(only_files) >= 1)
 
@@ -904,14 +904,14 @@ class TestBatch(AzureMgmtRecordedTestCase):
         # Test Get File from Task
         file_length = 0
         with io.BytesIO() as file_handle:
-            response = client.get_from_task_file(batch_job.id, task_id, only_files[0].name)
+            response = client.get_task_file(batch_job.id, task_id, only_files[0].name)
             for data in response:
                 file_length += len(data)
         assert file_length ==  int(props.headers['Content-Length'])
         assert 'hello world' in str(data)
 
         # Test Delete File from Task
-        response = client.delete_from_task_file(batch_job.id, task_id, only_files[0].name)
+        response = client.delete_task_file(batch_job.id, task_id, only_files[0].name)
         assert response is None
 
     @ResourceGroupPreparer(location=AZURE_LOCATION)
@@ -1037,11 +1037,11 @@ class TestBatch(AzureMgmtRecordedTestCase):
         assert result.value[0].status ==  models.TaskAddStatus.success
 
         # Test List Tasks
-        tasks = list(client.list_task(batch_job.id))
+        tasks = list(client.list_tasks(batch_job.id))
         assert len(tasks) ==  9
 
         # Test Count Tasks
-        task_results = client.get_task_counts_job(batch_job.id)
+        task_results = client.get_job_task_counts(batch_job.id)
         assert isinstance(task_results,  models.TaskCountsResult)
         assert task_results.task_counts.completed ==  0
         assert task_results.task_counts.succeeded ==  0
@@ -1059,14 +1059,14 @@ class TestBatch(AzureMgmtRecordedTestCase):
         assert task.state ==  models.TaskState.active
 
         # Test Update Task
-        response = client.update_task(
+        response = client.replace_task(
             job_id=batch_job.id, task_id=task_param.id,
-            parameters=models.BatchTask(constraints=models.TaskConstraints(max_task_retry_count=1)))
+            body=models.BatchTask(constraints=models.TaskConstraints(max_task_retry_count=1)))
         assert response is None
 
         # Test Get Subtasks
         # TODO: Test with actual subtasks
-        subtasks = client.list_subtasks_task(batch_job.id, task_param.id)
+        subtasks = client.list_sub_tasks(batch_job.id, task_param.id)
         assert isinstance(subtasks,  models.BatchTaskListSubtasksResult)
         assert subtasks.value ==  []
 
@@ -1154,8 +1154,8 @@ class TestBatch(AzureMgmtRecordedTestCase):
         
         response = client.create_job(body=job_param,ocp_date=now)
         
-        #response = client.create_job(parameters=job_param,ocp_date="Wed, 3 May 2023 21:49:13 GMT")
-        #response = client.create_job(parameters=job_param,ocp_date=datetime.datetime.utcnow())
+        #response = client.create_job(body=job_param,ocp_date="Wed, 3 May 2023 21:49:13 GMT")
+        #response = client.create_job(body=job_param,ocp_date=datetime.datetime.utcnow())
         assert response is None
 
         # Test Update Job
@@ -1204,7 +1204,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         assert len(list(jobs)) ==  2
 
         # Test Disable Job
-        response = client.disable_job(job_id=job_param.id,parameters=models.BatchJobDisableOptions(disable_tasks="requeue"))
+        response = client.disable_job(job_id=job_param.id,body=models.BatchJobDisableOptions(disable_tasks="requeue"))
         assert response is None
 
         # Test Enable Job

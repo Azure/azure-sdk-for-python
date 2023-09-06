@@ -8,26 +8,31 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 from typing import Any, Callable, Dict, Iterable, List, Optional, TypeVar
 from .. import models as _models
-import datetime
-from ._operations import BatchClientOperationsMixin as BatchClientOperationsMixinGenerated
+from ._operations import (
+    BatchClientOperationsMixin as BatchClientOperationsMixinGenerated,
+)
 import collections
-import importlib
 import logging
 import threading
-import types
-import sys
+from azure.core.exceptions import HttpResponseError
+from azure.core.rest import HttpResponse
 
-__all__: List[str] = ["BatchClientOperationsMixin"]  # Add all objects you want publicly available to users at this package level
+MAX_TASKS_PER_REQUEST = 100
+_LOGGER = logging.getLogger(__name__)
+
+__all__: List[str] = [
+    "BatchClientOperationsMixin"
+]  # Add all objects you want publicly available to users at this package level
+
 
 class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
     """Customize generated code"""
+
     def create_task_collection(
         self,
         job_id: str,
         collection: _models.BatchTaskCollection,
-        *,
-        time_out: Optional[int] = None,
-        ocp_date: Optional[datetime.datetime] = None,
+        threads: Optional[int] = 0,
         **kwargs: Any
     ) -> _models.TaskAddCollectionResult:
         """Adds a collection of Tasks to the specified Job.
@@ -51,26 +56,24 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :type job_id: str
         :param collection: The Tasks to be added. Required.
         :type collection: ~azure.batch.models.BatchTaskCollection
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API
-         directly. Default value is None.
-        :paramtype ocp_date: ~datetime.datetime
-        :keyword content_type: Type of content. Default value is "application/json;
-         odata=minimalmetadata".
-        :paramtype content_type: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
+        :param threads: number of threads to use in parallel when adding tasks. If specified
+        and greater than 0, will start additional threads to submit requests and wait for them to finish.
+        Otherwise will submit create_task_collection requests sequentially on main thread
+        :type threads: int
+        :param kwargs: Additional parameters for the operation, see : `super().create_task_collection`
         :return: TaskAddCollectionResult. The TaskAddCollectionResult is compatible with MutableMapping
         :rtype: ~azure.batch.models.TaskAddCollectionResult
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :raises ~azure.batch.custom.CreateTasksErrorException
         """
-        results_queue = collections.deque()  # deque operations(append/pop) are thread-safe
+
+        results_queue = (
+            collections.deque()
+        )  # deque operations(append/pop) are thread-safe
         task_workflow_manager = _TaskWorkflowManager(
-            self, original_create_task_collection, job_id, collection, time_out,client_request_id, 
-            return_client_request_id , ocp_date, content_type, **kwargs
+            super().create_task_collection,
+            job_id=job_id,
+            collection=collection,
+            **kwargs
         )
 
         # multi-threaded behavior
@@ -81,7 +84,10 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
             active_threads = []
             for i in range(threads):
                 active_threads.append(
-                    threading.Thread(target=task_workflow_manager.task_collection_thread_handler, args=(results_queue,))
+                    threading.Thread(
+                        target=task_workflow_manager.task_collection_thread_handler,
+                        args=(results_queue,),
+                    )
                 )
                 active_threads[-1].start()
             for thread in active_threads:
@@ -92,14 +98,47 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
 
         # Only define error if all threads have finished and there were failures
         if task_workflow_manager.failure_tasks or task_workflow_manager.errors:
-            raise CreateTasksErrorException(
-                task_workflow_manager.tasks_to_add, task_workflow_manager.failure_tasks, task_workflow_manager.errors
+            raise _models.CreateTasksErrorException(
+                task_workflow_manager.tasks_to_add,
+                task_workflow_manager.failure_tasks,
+                task_workflow_manager.errors,
             )
         else:
             submitted_tasks = _handle_output(results_queue)
-            return TaskAddCollectionResult(value=submitted_tasks)
-    
-    
+            return _models.TaskAddCollectionResult(value=submitted_tasks)
+
+    def get_node_file(self, *args, **kwargs) -> Iterable[bytes]:
+        kwargs["stream"] = True
+        return super().get_node_file(*args, **kwargs)
+
+    def get_node_file_properties(self, *args, **kwargs) -> HttpResponse:
+        kwargs["cls"] = lambda pipeline_response, json_response, headers: (
+            pipeline_response,
+            json_response,
+            headers,
+        )
+        get_response = super().get_node_file_properties(*args, **kwargs)
+
+        return get_response[0].http_response
+
+    def get_task_file_properties(self, *args, **kwargs) -> HttpResponse:
+        kwargs["cls"] = lambda pipeline_response, json_response, headers: (
+            pipeline_response,
+            json_response,
+            headers,
+        )
+        get_response = super().get_task_file_properties(*args, **kwargs)
+
+        return get_response[0].http_response
+
+    def get_node_remote_desktop_file(self, *args, **kwargs) -> Iterable[bytes]:
+        kwargs["stream"] = True
+        return super().get_node_remote_desktop_file(*args, **kwargs)
+
+    def get_task_file(self, *args, **kwargs) -> Iterable[bytes]:
+        kwargs["stream"] = True
+        return super().get_task_file(*args, **kwargs)
+
 
 def patch_sdk():
     """Do not remove from this file.
@@ -127,12 +166,9 @@ class _TaskWorkflowManager(object):
 
     def __init__(
         self,
-        client,
         original_create_task_collection,
         job_id: str,
         collection: _models.BatchTaskCollection,
-        time_out: Optional[int] = None,
-        ocp_date: Optional[str] = None,
         **kwargs
     ):
         # Append operations thread safe - Only read once all threads have completed
@@ -149,16 +185,10 @@ class _TaskWorkflowManager(object):
         self._pending_queue_lock = threading.Lock()
 
         # Variables to be used for task create_task_collection requests
-        self._client = client
         self._original_create_task_collection = original_create_task_collection
         self._job_id = job_id
-        self._time_out = time_out
-        self._client_request_id = client_request_id
-        self._return_client_request_id = return_client_request_id
-        self._ocp_date = ocp_date
-        self._content_type = content_type
 
-        self._kwargs = dict(**kwargs)
+        self._kwargs = kwargs
 
     def _bulk_add_tasks(self, results_queue, chunk_tasks_to_add):
         """Adds a chunk of tasks to the job
@@ -174,14 +204,9 @@ class _TaskWorkflowManager(object):
 
         try:
             create_task_collection_response = self._original_create_task_collection(
-                self._client,
                 job_id=self._job_id,
-                collection=BatchTaskCollection(value=chunk_tasks_to_add),
-                time_out = self._time_out,
-                client_request_id = self._client_request_id,
-                return_client_request_id = self._return_client_request_id,
-                ocp_date = self._ocp_date,
-                content_type = self._content_type,
+                collection=_models.BatchTaskCollection(value=chunk_tasks_to_add),
+                **self._kwargs
             )
         except HttpResponseError as e:
             # In case of a chunk exceeding the MaxMessageSize split chunk in half
@@ -196,7 +221,8 @@ class _TaskWorkflowManager(object):
                     failed_task = chunk_tasks_to_add.pop()
                     self.errors.appendleft(e)
                     _LOGGER.error(
-                        "Failed to add task with ID %s due to the body" " exceeding the maximum request size",
+                        "Failed to add task with ID %s due to the body"
+                        " exceeding the maximum request size",
                         failed_task.id,
                     )
                 else:
@@ -208,13 +234,13 @@ class _TaskWorkflowManager(object):
                     # therefore forcing max_tasks_per_request to be strictly decreasing
                     with self._max_tasks_lock:
                         if midpoint < self._max_tasks_per_request:
-                            self._max_tasks_per_request = midpoint
                             _LOGGER.info(
                                 "Amount of tasks per request reduced from %s to %s due to the"
                                 " request body being too large",
                                 str(self._max_tasks_per_request),
                                 str(midpoint),
                             )
+                            self._max_tasks_per_request = midpoint
 
                     # Not the most efficient solution for all cases, but the goal of this is to handle this
                     # exception and have it work in all cases where tasks are well behaved
@@ -241,14 +267,19 @@ class _TaskWorkflowManager(object):
             except AttributeError:
                 pass
 
-            for task_result in create_task_collection_response.value:  # pylint: disable=no-member
-                if task_result.status == TaskAddStatus.server_error:
+            for (
+                task_result
+            ) in create_task_collection_response.value:  # pylint: disable=no-member
+                if task_result.status == _models.TaskAddStatus.server_error:
                     # Server error will be retried
                     with self._pending_queue_lock:
                         for task in chunk_tasks_to_add:
                             if task.id == task_result.task_id:
                                 self.tasks_to_add.appendleft(task)
-                elif task_result.status == TaskAddStatus.client_error and not task_result.error.code == "TaskExists":
+                elif (
+                    task_result.status == _models.TaskAddStatus.client_error
+                    and not task_result.error.code == "TaskExists"
+                ):
                     # Client error will be recorded unless Task already exists
                     self.failure_tasks.appendleft(task_result)
                 else:
@@ -271,3 +302,20 @@ class _TaskWorkflowManager(object):
 
             if chunk_tasks_to_add:
                 self._bulk_add_tasks(results_queue, chunk_tasks_to_add)
+
+
+def _handle_output(results_queue):
+    """Scan output for exceptions
+
+    If there is an output from an add task collection call add it to the results.
+
+    :param results_queue: Queue containing results of attempted create_task_collection's
+    :type results_queue: collections.deque
+    :return: list of TaskAddResults
+    :rtype: list[~TaskAddResult]
+    """
+    results = []
+    while results_queue:
+        queue_item = results_queue.pop()
+        results.append(queue_item)
+    return results
