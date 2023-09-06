@@ -22,9 +22,9 @@ def entrypoint() -> None:
     pkg_details = ParsedSetup.from_path(args.target)
 
     if in_ci():
-        if not is_check_enabled(args.target_package, "pylint"):
+        if not is_check_enabled(args.target_package, "verify_keywords"):
             logging.info(
-                f"Package {pkg_details.name} opts-out of pylint check."
+                f"Package {pkg_details.name} opts-out of keyword verification check."
             )
             exit(0)
 
