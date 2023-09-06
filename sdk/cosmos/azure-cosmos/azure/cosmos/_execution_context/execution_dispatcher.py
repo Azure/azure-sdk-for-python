@@ -146,10 +146,6 @@ class _PipelineExecutionContext(_QueryExecutionContextBase):  # pylint: disable=
 
         self._endpoint = endpoint_component._QueryExecutionEndpointComponent(execution_context)
 
-        order_by = query_execution_info.get_order_by()
-        if order_by:
-            self._endpoint = endpoint_component._QueryExecutionOrderByEndpointComponent(self._endpoint)
-
         aggregates = query_execution_info.get_aggregates()
         if aggregates:
             self._endpoint = endpoint_component._QueryExecutionAggregateEndpointComponent(self._endpoint, aggregates)
@@ -160,6 +156,10 @@ class _PipelineExecutionContext(_QueryExecutionContextBase):  # pylint: disable=
                 self._endpoint = endpoint_component._QueryExecutionDistinctOrderedEndpointComponent(self._endpoint)
             else:
                 self._endpoint = endpoint_component._QueryExecutionDistinctUnorderedEndpointComponent(self._endpoint)
+
+        order_by = query_execution_info.get_order_by()
+        if order_by:
+            self._endpoint = endpoint_component._QueryExecutionOrderByEndpointComponent(self._endpoint)
 
         offset = query_execution_info.get_offset()
         if offset is not None:
