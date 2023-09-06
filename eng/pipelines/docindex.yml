@@ -118,6 +118,14 @@ jobs:
       - task: Powershell@2
         inputs:
           pwsh: true
+          filePath: eng/common/scripts/Update-DocsMsPackageMonikers.ps1
+          arguments: -DocRepoLocation $(DocRepoLocation)
+        displayName: Move deprecated packages to legacy moniker
+        condition: and(succeeded(), or(eq(variables['Build.Reason'], 'Schedule'), eq(variables['Force.MainUpdate'], 'true')))
+
+      - task: Powershell@2
+        inputs:
+          pwsh: true
           filePath: eng/common/scripts/Update-DocsMsPackages.ps1
           arguments: >-
             -DocRepoLocation $(DocRepoLocation)
