@@ -163,7 +163,7 @@ stages:
     dependsOn: Build_Dependencies
     jobs:
     - job: 'Build'
-      timeoutInMinutes: 180
+      timeoutInMinutes: 240
         
       pool:
         name: azsdk-pool-mms-ubuntu-2004-general
@@ -236,6 +236,8 @@ stages:
               - name: azure-ai-ml
                 service: ml
                 in_batch: ${{ parameters.release_azure_ai_ml }}
+                channels:
+                - "conda-forge"
                 checkout:
                 - package: azure-ai-ml
                   version: 1.7.2

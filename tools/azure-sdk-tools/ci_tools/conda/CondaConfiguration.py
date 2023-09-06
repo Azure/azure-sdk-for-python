@@ -24,6 +24,7 @@ http = urllib3.PoolManager()
 #   - name: azure-core
 #     common_root: azure
 #     in_batch: ${{ parameters.release_azure_core }}
+#     channels: "conda-forge"
 #     checkout:
 #     - package: azure-core
 #       version: 1.24.0
@@ -132,7 +133,8 @@ class CondaConfiguration:
         checkout: List[CheckoutConfiguration],
         created_sdist_path: str = None,
         service: str = "",
-        conda_py_versions: List[str] = []
+        conda_py_versions: List[str] = [],
+        channels: List[str] = []
     ):
         self.name: str = name
         self.common_root: str = common_root
@@ -141,6 +143,7 @@ class CondaConfiguration:
         self.created_sdist_path: str = created_sdist_path
         self.service: str = service
         self.conda_py_versions = conda_py_versions
+        self.channels = channels
 
     @classmethod
     def from_json(cls, raw_json_blob: dict):
@@ -162,6 +165,11 @@ class CondaConfiguration:
         if "service" in raw_json_blob:
             service = raw_json_blob["service"]
 
+        if "channels" in raw_json_blob:
+            channels = raw_json_blob["channels"]
+        else:
+            channels = []
+
         # default the service
         if any([a.checkout_path for a in checkout_config]) and not service:
             valid_checkout_config = next((x for x in checkout_config if x.checkout_path is not None), None)
@@ -173,7 +181,7 @@ class CondaConfiguration:
                 f"Tooling cannot auto-detect targeted service for conda package {name}, nor is there a checkout_path that we can parse the service from. Please correct and retry."
             )
 
-        return cls(name, common_root, in_batch, checkout_config, None, service, conda_py_versions)
+        return cls(name, common_root, in_batch, checkout_config, None, service, conda_py_versions, channels)
 
     def __str__(self) -> str:
         checkout = f"{os.linesep}".join([str(c_config) for c_config in self.checkout])
