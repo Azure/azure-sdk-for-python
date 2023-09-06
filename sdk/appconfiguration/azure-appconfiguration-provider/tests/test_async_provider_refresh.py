@@ -28,7 +28,7 @@ class TestAppConfigurationProvider(AppConfigTestCase, unittest.TestCase):
             assert client["my_json"]["key"] == "value"
             assert (
                 client["FeatureManagementFeatureFlags"]["Alpha"]
-                == '{"enabled": false, "conditions": {"client_filters": []}}'
+                == '{"id": "Alpha", "enabled": false, "conditions": {"client_filters": []}}'
             )
             setting = await client._client.get_configuration_setting(key="refresh_message")
             setting.value = "updated value"
@@ -74,7 +74,7 @@ class TestAppConfigurationProvider(AppConfigTestCase, unittest.TestCase):
             assert client["my_json"]["key"] == "value"
             assert (
                 client["FeatureManagementFeatureFlags"]["Alpha"]
-                == '{"enabled": false, "conditions": {"client_filters": []}}'
+                == '{"id": "Alpha", "enabled": false, "conditions": {"client_filters": []}}'
             )
             setting = await client._client.get_configuration_setting(key="refresh_message")
             setting.value = "updated value"
