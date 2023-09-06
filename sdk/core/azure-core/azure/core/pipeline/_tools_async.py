@@ -23,7 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import TYPE_CHECKING, Callable, TypeVar, Awaitable, Union, overload, cast
+from typing import TYPE_CHECKING, Callable, TypeVar, Awaitable, Union, overload
 from typing_extensions import ParamSpec
 
 if TYPE_CHECKING:
