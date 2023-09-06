@@ -93,6 +93,8 @@ class AioHttpTransport(AsyncHttpTransport):
         self._loop = loop
         self._session_owner = session_owner
         self.session = session
+        if not self._session_owner and not self.session:
+            raise ValueError("session_owner cannot be False if no session is provided")
         self.connection_config = ConnectionConfiguration(**kwargs)
         self._use_env_settings = kwargs.pop("use_env_settings", True)
 
@@ -120,8 +122,9 @@ class AioHttpTransport(AsyncHttpTransport):
             if self._loop is not None:
                 clientsession_kwargs["loop"] = self._loop
             self.session = aiohttp.ClientSession(**clientsession_kwargs)
-        if self.session is not None:
-            await self.session.__aenter__()
+        # pyright has trouble to understand that self.session is not None, since we raised at worst in the init
+        self.session = cast(aiohttp.ClientSession, self.session)
+        await self.session.__aenter__()
 
     async def close(self):
         """Closes the connection."""
