@@ -8,8 +8,6 @@ source:
   url: {{ environ.get('STORAGE_SOURCE_DISTRIBUTION', '') }}
 
 build:
-  script_env:
-    - STORAGE_SOURCE_DISTRIBUTION
   noarch: python
   number: 0
   script: "{{ PYTHON }} -m pip install . -vv"
@@ -18,14 +16,14 @@ requirements:
   host:
     - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - cryptography >=2.1.4
-    - msrest >=2021.05.01
+    - msrest >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - pip
     - python
     - aiohttp
   run:
     - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - cryptography >=2.1.4
-    - msrest >=2021.05.01
+    - msrest >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - python
     - aiohttp
     - requests-oauthlib >=0.5.0
@@ -42,7 +40,7 @@ about:
   license: MIT
   license_family: MIT
   license_file:
-  summary: Microsoft Azure Storage Client Library for Python{{ environ.get('STORAGE_SUMMARY', '') }}
+  summary: Microsoft Azure Storage Client Library for Python.
   doc_url:
   dev_url:
 

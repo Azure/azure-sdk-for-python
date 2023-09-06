@@ -8,8 +8,6 @@ source:
   url: {{ environ.get('CORE_SOURCE_DISTRIBUTION', '') }}
 
 build:
-  script_env:
-    - CORE_SOURCE_DISTRIBUTION
   noarch: python
   number: 0
   script: "{{ PYTHON }} -m pip install . -vv"
@@ -18,14 +16,14 @@ requirements:
   host:
     - pip
     - python
-    - requests >=2.18.4
-    - six >=1.11.0
-    - typing-extensions>=4.0.1
+    - requests
+    - six
+    - typing_extensions
   run:
     - python
-    - requests >=2.18.4
-    - six >=1.11.0
-    - typing-extensions>=4.0.1
+    - requests
+    - six
+    - typing_extensions
 
 test:
   imports:
@@ -34,16 +32,26 @@ test:
     - azure.core.pipeline.policies
     - azure.core.pipeline.transport
     - azure.core.polling
+    - azure.core.rest
+    - azure.core.utils
+    - azure.common
+    - azure.profiles
+    - azure.mgmt.core
+    - azure.mgmt.core.policies
+    - azure.mgmt.core.polling
 
 about:
   home: "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/core/azure-core"
   license: MIT
   license_family: MIT
-  license_file:
-  summary: Microsoft Azure Core Library for Python{{ environ.get('CORE_SUMMARY', '') }}
-  doc_url:
-  dev_url:
+  license_file: 
+  summary: "Microsoft Azure Core Library for Python"
+  description: |
+    Azure core provides shared exceptions and modules for Python SDK client libraries.
+    Please see https://aka.ms/azsdk/conda/releases/core for version details.
+  doc_url: 
+  dev_url: 
 
 extra:
   recipe-maintainers:
-    - lmazuel,xiangyan99,scbedd
+    - xiangyan99

@@ -1,6 +1,8 @@
 import fnmatch
 import subprocess
 import shutil
+import zipfile
+import tarfile
 from ast import Not
 from packaging.specifiers import SpecifierSet
 from packaging.version import Version, parse, InvalidVersion
@@ -58,6 +60,19 @@ omit_function_dict = {
     "Regression": omit_regression,
     "Omit_management": omit_mgmt,
 }
+
+
+def unzip_file_to_directory(path_to_zip_file: str, extract_location: str) -> str:
+    if path_to_zip_file.endswith(".zip"):
+        with zipfile.ZipFile(path_to_zip_file, "r") as zip_ref:
+            zip_ref.extractall(extract_location)
+            extracted_dir = os.path.basename(os.path.splitext(path_to_zip_file)[0])
+            return os.path.join(extract_location, extracted_dir)
+    else:
+        with tarfile.open(path_to_zip_file) as tar_ref:
+            tar_ref.extractall(extract_location)
+            extracted_dir = os.path.basename(path_to_zip_file).replace(".tar.gz", "")
+            return os.path.join(extract_location, extracted_dir)
 
 
 def apply_compatibility_filter(package_set: List[str]) -> List[str]:
