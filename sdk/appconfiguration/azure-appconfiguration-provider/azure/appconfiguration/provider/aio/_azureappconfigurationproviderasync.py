@@ -6,7 +6,20 @@
 import json
 from asyncio.locks import Lock
 import logging
-from typing import Any, Callable, Dict, Iterable, Mapping, Optional, overload, List, Tuple, TYPE_CHECKING, Union
+from typing import (
+    Any,
+    Awaitable,
+    Callable,
+    Dict,
+    Iterable,
+    Mapping,
+    Optional,
+    overload,
+    List,
+    Tuple,
+    TYPE_CHECKING,
+    Union,
+)
 
 from azure.appconfiguration import (  # pylint:disable=no-name-in-module
     FeatureFlagConfigurationSetting,
