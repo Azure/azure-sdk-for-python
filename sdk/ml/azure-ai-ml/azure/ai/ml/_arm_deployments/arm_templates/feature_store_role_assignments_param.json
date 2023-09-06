@@ -5,7 +5,19 @@
     "offline_store_target": {
         "value": ""
     },
+    "offline_store_resource_group_name" : {
+        "value": ""
+    },
+    "offline_store_subscription_id" : {
+        "value": ""
+    },
     "online_store_target": {
+        "value": ""
+    },
+    "online_store_resource_group_name" : {
+        "value": ""
+    },
+    "online_store_subscription_id" : {
         "value": ""
     },
     "workspace_name": {
