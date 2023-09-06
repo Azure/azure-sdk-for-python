@@ -17,7 +17,7 @@ autorest AUTOREST.md
 
 ```yaml
 title: RemoteRenderingRestClient
-input-file: azure/mixedreality/remoterendering/mr-arr.json
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/2a65b0a2bbd9113b91c889f187d8778c2725c0b9/specification/mixedreality/data-plane/Microsoft.MixedReality/stable/2021-01-01/mr-arr.json
 output-folder: ../azure/mixedreality/remoterendering/_generated
 namespace: azure.mixedreality.remoterendering._generated
 no-namespace-folders: true
