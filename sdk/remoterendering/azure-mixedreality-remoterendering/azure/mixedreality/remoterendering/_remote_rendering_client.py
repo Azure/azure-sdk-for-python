@@ -38,7 +38,7 @@ if TYPE_CHECKING:
 # pylint: disable=unsubscriptable-object
 
 
-class RemoteRenderingClient(object):
+class RemoteRenderingClient:
     """A client for the Azure Remote Rendering Service.
 
     This client offers functionality to convert assets to the format expected by the runtime, and also to manage the
