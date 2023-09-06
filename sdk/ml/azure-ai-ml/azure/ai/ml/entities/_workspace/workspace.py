@@ -13,7 +13,7 @@ from azure.ai.ml._restclient.v2023_06_01_preview.models import ManagedNetworkSet
 from azure.ai.ml._restclient.v2023_06_01_preview.models import ManagedServiceIdentity as RestManagedServiceIdentity
 from azure.ai.ml._restclient.v2023_06_01_preview.models import Workspace as RestWorkspace
 from azure.ai.ml._schema.workspace.workspace import WorkspaceSchema
-from azure.ai.ml._utils.utils import dump_yaml_to_file, is_private_preview_enabled
+from azure.ai.ml._utils.utils import dump_yaml_to_file
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, WorkspaceResourceConstants
 from azure.ai.ml.entities._credentials import IdentityConfiguration
 from azure.ai.ml.entities._resource import Resource
@@ -218,11 +218,7 @@ class Workspace(Resource):
                 rest_obj.identity
             )
         feature_store_settings = None
-        if (
-            is_private_preview_enabled()
-            and rest_obj.feature_store_settings
-            and isinstance(rest_obj.feature_store_settings, RestFeatureStoreSettings)
-        ):
+        if rest_obj.feature_store_settings and isinstance(rest_obj.feature_store_settings, RestFeatureStoreSettings):
             feature_store_settings = FeatureStoreSettings._from_rest_object(  # pylint: disable=protected-access
                 rest_obj.feature_store_settings
             )
@@ -255,7 +251,7 @@ class Workspace(Resource):
 
     def _to_rest_object(self) -> RestWorkspace:
         feature_store_settings = None
-        if is_private_preview_enabled() and self._feature_store_settings:
+        if self._feature_store_settings:
             feature_store_settings = self._feature_store_settings._to_rest_object()  # pylint: disable=protected-access
 
         return RestWorkspace(

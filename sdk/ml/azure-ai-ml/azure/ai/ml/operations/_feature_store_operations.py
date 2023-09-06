@@ -310,22 +310,21 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
                 rest_workspace_obj.feature_store_settings.offline_store_connection_name,
             )
 
-            if existing_offline_store_connection:
-                offline_store_target_to_update = (
-                    offline_store_target_to_update or existing_offline_store_connection.properties.target
-                )
-                if offline_store and (
-                    not existing_offline_store_connection.properties
-                    or existing_offline_store_connection.properties.target != offline_store.target
-                ):
-                    update_offline_store_role_assignment = True
-                    module_logger.info(
-                        "Warning: You have changed the offline store connection, "
-                        "any data that was materialized "
-                        "earlier will not be available. You have to run backfill again."
-                    )
-            elif offline_store:
+            offline_store_target_to_update = (
+                offline_store_target_to_update or existing_offline_store_connection.properties.target
+            )
+            if offline_store and (
+                not existing_offline_store_connection.properties
+                or existing_offline_store_connection.properties.target != offline_store.target
+            ):
                 update_offline_store_role_assignment = True
+                module_logger.info(
+                    "Warning: You have changed the offline store connection, "
+                    "any data that was materialized "
+                    "earlier will not be available. You have to run backfill again."
+                )
+        elif offline_store_target_to_update:
+            update_offline_store_role_assignment = True
 
         if online_store and online_store.type != ONLINE_MATERIALIZATION_STORE_TYPE:
             raise ValidationError("online store type should be redis")
@@ -339,22 +338,21 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
                 feature_store.name,
                 rest_workspace_obj.feature_store_settings.online_store_connection_name,
             )
-            if existing_online_store_connection:
-                online_store_target_to_update = (
-                    online_store_target_to_update or existing_online_store_connection.properties.target
-                )
-                if online_store and (
-                    not existing_online_store_connection.properties
-                    or existing_online_store_connection.properties.target != online_store.target
-                ):
-                    update_online_store_role_assignment = True
-                    module_logger.info(
-                        "Warning: You have changed the online store connection, "
-                        "any data that was materialized earlier "
-                        "will not be available. You have to run backfill again."
-                    )
-            elif online_store:
+            online_store_target_to_update = (
+                online_store_target_to_update or existing_online_store_connection.properties.target
+            )
+            if online_store and (
+                not existing_online_store_connection.properties
+                or existing_online_store_connection.properties.target != online_store.target
+            ):
                 update_online_store_role_assignment = True
+                module_logger.info(
+                    "Warning: You have changed the online store connection, "
+                    "any data that was materialized earlier "
+                    "will not be available. You have to run backfill again."
+                )
+        elif online_store_target_to_update:
+            update_online_store_role_assignment = True
 
         feature_store_settings = FeatureStoreSettings._from_rest_object(rest_workspace_obj.feature_store_settings)
 

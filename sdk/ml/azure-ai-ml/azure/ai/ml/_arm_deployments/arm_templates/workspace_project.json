@@ -437,18 +437,46 @@
                 "description": "Feature store online store config"
             }
         },
-        "offline_store_connection_target": {
+        "offline_store_target": {
             "type": "string",
             "defaultValue": "",
             "metadata": {
                 "description": "Feature store offline store connection target"
             }
         },
-        "online_store_connection_target": {
+        "offline_store_resource_group_name": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Feature store offline store resource group"
+            }
+        },
+        "offline_store_subscription_id": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Feature store offline store subscription id"
+            }
+        },
+        "online_store_target": {
             "type": "string",
             "defaultValue": "",
             "metadata": {
                 "description": "Feature store online store connection target"
+            }
+        },
+        "online_store_resource_group_name": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Feature store online store resource group"
+            }
+        },
+        "online_store_subscription_id": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Feature store online store subscription id"
             }
         },
         "materialization_identity_client_id": {
