@@ -4,6 +4,7 @@
 
 # pylint: disable=protected-access
 
+import uuid
 from typing import Dict, Iterable, Optional
 
 from marshmallow import ValidationError
@@ -162,9 +163,9 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
                     )
 
             # materialization identity = identity when created through feature store operations
-            if (offline_store_connection and offline_store_connection.name == OFFLINE_STORE_CONNECTION_NAME) or (
-                online_store_connection and online_store_connection.name == ONLINE_STORE_CONNECTION_NAME
-            ):
+            if (
+                offline_store_connection and offline_store_connection.name.startswith(OFFLINE_STORE_CONNECTION_NAME)
+            ) or (online_store_connection and online_store_connection.name.startswith(ONLINE_STORE_CONNECTION_NAME)):
                 if (
                     feature_store.identity
                     and feature_store.identity.user_assigned_identities
@@ -237,7 +238,8 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
         update_dependent_resources: bool = False,
         **kwargs: Dict,
     ) -> LROPoller[FeatureStore]:
-        """Update friendly name, description, materialization identities or tags of a feature store.
+        """Update friendly name, description, online store connection, offline store connection, materialization
+            identities or tags of a feature store.
 
         :param feature_store: FeatureStore resource.
         :type feature_store: FeatureStore
@@ -270,6 +272,9 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
         update_workspace_role_assignment = False
         update_offline_store_role_assignment = False
         update_online_store_role_assignment = False
+
+        update_offline_store_connection = False
+        update_online_store_connection = False
 
         existing_materialization_identity = None
         if rest_workspace_obj.identity:
@@ -319,12 +324,14 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
                     or existing_offline_store_connection.properties.target != offline_store.target
                 ):
                     update_offline_store_role_assignment = True
+                    update_offline_store_connection = True
                     module_logger.info(
                         "Warning: You have changed the offline store connection, "
                         "any data that was materialized "
                         "earlier will not be available. You have to run backfill again."
                     )
             elif offline_store:
+                update_offline_store_connection = True
                 update_offline_store_role_assignment = True
 
         if online_store and online_store.type != ONLINE_MATERIALIZATION_STORE_TYPE:
@@ -347,6 +354,7 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
                     not existing_online_store_connection.properties
                     or existing_online_store_connection.properties.target != online_store.target
                 ):
+                    update_online_store_connection = True
                     update_online_store_role_assignment = True
                     module_logger.info(
                         "Warning: You have changed the online store connection, "
@@ -354,16 +362,19 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
                         "will not be available. You have to run backfill again."
                     )
             elif online_store:
+                update_online_store_connection = True
                 update_online_store_role_assignment = True
 
         feature_store_settings = FeatureStoreSettings._from_rest_object(rest_workspace_obj.feature_store_settings)
 
+        # generate a random suffix for online/offline store connection name
+        random_string = uuid.uuid4().hex[:8]
         if offline_store:
             if materialization_identity:
                 offline_store_connection_name = (
                     feature_store_settings.offline_store_connection_name
-                    if feature_store_settings.offline_store_connection_name
-                    else OFFLINE_STORE_CONNECTION_NAME
+                    if not update_offline_store_connection
+                    else f"{OFFLINE_STORE_CONNECTION_NAME}-{random_string}"
                 )
                 offline_store_connection = WorkspaceConnection(
                     name=offline_store_connection_name,
@@ -386,8 +397,8 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
             if materialization_identity:
                 online_store_connection_name = (
                     feature_store_settings.online_store_connection_name
-                    if feature_store_settings.online_store_connection_name
-                    else ONLINE_STORE_CONNECTION_NAME
+                    if not update_online_store_connection
+                    else f"{ONLINE_STORE_CONNECTION_NAME}-{random_string}"
                 )
                 online_store_connection = WorkspaceConnection(
                     name=online_store_connection_name,
