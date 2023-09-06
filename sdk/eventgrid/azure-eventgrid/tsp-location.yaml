@@ -1,4 +1,4 @@
 cleanup: false
-commit: c07d9898ed901330e5ac4996b1bc641adac2e6fd
+commit: 322a7c15a332600022161dd5163498c5e9df6626
 directory: specification/eventgrid/Azure.Messaging.EventGrid
 repo: Azure/azure-rest-api-specs
