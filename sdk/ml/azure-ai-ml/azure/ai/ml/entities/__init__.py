@@ -196,6 +196,7 @@ from ._feature_store_entity.feature_store_entity import FeatureStoreEntity
 from ._feature_store_entity.data_column import DataColumn
 from ._feature_store_entity.data_column_type import DataColumnType
 from ._feature_set.feature import Feature
+from ._feature_set.feature_set_backfill_request import FeaturesetBackfillRequest
 from ._feature_set.feature_set_specification import FeatureSetSpecification
 from ._feature_set.materialization_compute_resource import MaterializationComputeResource
 from ._feature_set.materialization_settings import MaterializationSettings
@@ -350,6 +351,7 @@ __all__ = [
     "WorkspaceHubConfig",
     "Feature",
     "FeatureSet",
+    "FeaturesetBackfillRequest",
     "ComputeRuntime",
     "FeatureStoreSettings",
     "FeatureStoreEntity",
