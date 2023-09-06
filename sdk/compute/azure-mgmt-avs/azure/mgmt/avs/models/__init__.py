@@ -32,6 +32,7 @@ from ._models_py3 import Encryption
 from ._models_py3 import EncryptionKeyVaultProperties
 from ._models_py3 import Endpoints
 from ._models_py3 import ErrorAdditionalInfo
+from ._models_py3 import ErrorDetail
 from ._models_py3 import ErrorResponse
 from ._models_py3 import ExpressRouteAuthorization
 from ._models_py3 import ExpressRouteAuthorizationList
@@ -190,6 +191,7 @@ __all__ = [
     "EncryptionKeyVaultProperties",
     "Endpoints",
     "ErrorAdditionalInfo",
+    "ErrorDetail",
     "ErrorResponse",
     "ExpressRouteAuthorization",
     "ExpressRouteAuthorizationList",

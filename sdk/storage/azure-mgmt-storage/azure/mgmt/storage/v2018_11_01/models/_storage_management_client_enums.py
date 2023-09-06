@@ -134,6 +134,7 @@ class LeaseContainerRequestAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CHANGE = "Change"
     RELEASE = "Release"
     BREAK = "Break"
+    BREAK_ENUM = "Break"
 
 
 class LeaseDuration(str, Enum, metaclass=CaseInsensitiveEnumMeta):

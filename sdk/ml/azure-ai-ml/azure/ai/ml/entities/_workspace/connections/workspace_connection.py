@@ -16,7 +16,7 @@ from azure.ai.ml._restclient.v2023_06_01_preview.models import (
     SASAuthTypeWorkspaceConnectionProperties,
     ServicePrincipalAuthTypeWorkspaceConnectionProperties,
     UsernamePasswordAuthTypeWorkspaceConnectionProperties,
-    ApiKeyAuthWorkspaceConnectionProperties
+    ApiKeyAuthWorkspaceConnectionProperties,
 )
 from azure.ai.ml._restclient.v2023_06_01_preview.models import (
     WorkspaceConnectionPropertiesV2BasicResource as RestWorkspaceConnection,
@@ -36,7 +36,7 @@ from azure.ai.ml.entities._credentials import (
     ServicePrincipalConfiguration,
     UsernamePasswordConfiguration,
     AccessKeyConfiguration,
-    ApiKeyConfiguration
+    ApiKeyConfiguration,
 )
 from azure.ai.ml.entities._resource import Resource
 from azure.ai.ml.entities._system_data import SystemData

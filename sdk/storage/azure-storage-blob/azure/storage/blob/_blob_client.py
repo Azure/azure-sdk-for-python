@@ -25,7 +25,9 @@ from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str,
 from ._shared.uploads import IterStreamer
 from ._shared.uploads_async import AsyncIterStreamer
 from ._shared.request_handlers import (
-    add_metadata_headers, get_length, read_length,
+    add_metadata_headers,
+    get_length,
+    read_length,
     validate_and_format_range_headers)
 from ._shared.response_handlers import return_response_headers, process_storage_error, return_headers_and_deserialized
 from ._generated import AzureBlobStorage
@@ -55,7 +57,7 @@ from ._deserialize import (
     deserialize_pipeline_response_into_cls
 )
 from ._download import StorageStreamDownloader
-from ._encryption import StorageEncryptionMixin
+from ._encryption import modify_user_agent_for_encryption, StorageEncryptionMixin
 from ._lease import BlobLeaseClient
 from ._models import BlobType, BlobBlock, BlobProperties, BlobQueryError, QuickQueryDialect, \
     DelimitedJsonDialect, DelimitedTextDialect, PageRangePaged, PageRange
@@ -237,6 +239,8 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             The optional blob snapshot on which to operate. This can be the snapshot ID string
             or the response returned from :func:`create_snapshot`. If specified, this will override
             the snapshot in the url.
+        :keyword str version_id: The version id parameter is an opaque DateTime value that, when present,
+            specifies the version of the blob to operate on.
         :returns: A Blob client.
         :rtype: ~azure.storage.blob.BlobClient
         """
@@ -317,6 +321,8 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
             should be the storage account key.
         :type credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]]  # pylint: disable=line-too-long
+        :keyword str version_id: The version id parameter is an opaque DateTime value that, when present,
+            specifies the version of the blob to operate on.
         :returns: A Blob client.
         :rtype: ~azure.storage.blob.BlobClient
 
@@ -424,6 +430,13 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         kwargs['blob_settings'] = self._config
         kwargs['max_concurrency'] = max_concurrency
         kwargs['encryption_options'] = encryption_options
+        # Add feature flag to user agent for encryption
+        if self.key_encryption_key:
+            modify_user_agent_for_encryption(
+                self._config.user_agent_policy.user_agent,
+                self._sdk_moniker,
+                self.encryption_version,
+                kwargs)
 
         if blob_type == BlobType.BlockBlob:
             kwargs['client'] = self._client.block_blob
@@ -711,7 +724,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             Defaults to UTF-8.
         :keyword progress_hook:
             A callback to track the progress of a long running upload. The signature is
-            function(current: int, total: Optional[int]) where current is the number of bytes transfered
+            function(current: int, total: Optional[int]) where current is the number of bytes transferred
             so far, and total is the size of the blob or None if the size is unknown.
         :paramtype progress_hook: Callable[[int, Optional[int]], None]
         :keyword int timeout:
@@ -747,7 +760,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
 
     def _download_blob_options(self, offset=None, length=None, encoding=None, **kwargs):
         # type: (Optional[int], Optional[int], Optional[str], **Any) -> Dict[str, Any]
-        if self.require_encryption and not self.key_encryption_key:
+        if self.require_encryption and not (self.key_encryption_key or self.key_resolver_function):
             raise ValueError("Encryption required but no key was provided.")
         if length is not None and offset is None:
             raise ValueError("Offset value must not be None if length is set.")
@@ -766,6 +779,14 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
                 raise ValueError("Customer provided encryption key must be used over HTTPS.")
             cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
                                encryption_algorithm=cpk.algorithm)
+
+        # Add feature flag to user agent for encryption
+        if self.key_encryption_key or self.key_resolver_function:
+            modify_user_agent_for_encryption(
+                self._config.user_agent_policy.user_agent,
+                self._sdk_moniker,
+                self.encryption_version,
+                kwargs)
 
         options = {
             'clients': self._client,
@@ -880,7 +901,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             Encoding to decode the downloaded bytes. Default is None, i.e. no decoding.
         :keyword progress_hook:
             A callback to track the progress of a long running download. The signature is
-            function(current: int, total: int) where current is the number of bytes transfered
+            function(current: int, total: int) where current is the number of bytes transferred
             so far, and total is the total size of the download.
         :paramtype progress_hook: Callable[[int, int], None]
         :keyword int timeout:
@@ -1796,7 +1817,9 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
     @distributed_trace
     def create_append_blob(self, content_settings=None, metadata=None, **kwargs):
         # type: (Optional[ContentSettings], Optional[Dict[str, str]], **Any) -> Dict[str, Union[str, datetime]]
-        """Creates a new Append Blob.
+        """Creates a new Append Blob. This operation creates a new 0-length append blob. The content
+        of any existing blob is overwritten with the newly initialized append blob. To add content to
+        the append blob, call the :func:`append_block` or :func:`append_block_from_url` method.
 
         :param ~azure.storage.blob.ContentSettings content_settings:
             ContentSettings object used to set blob properties. Used to set content type, encoding,

@@ -16,9 +16,6 @@ from unittest.mock import Mock, patch
 
 import pytest
 from _pytest.fixtures import FixtureRequest
-from azure.core.exceptions import ResourceNotFoundError
-from azure.core.pipeline.transport import HttpTransport
-from azure.identity import AzureCliCredential, ClientSecretCredential, DefaultAzureCredential
 from devtools_testutils import (
     add_body_key_sanitizer,
     add_general_regex_sanitizer,
@@ -52,6 +49,9 @@ from azure.ai.ml.entities._credentials import NoneCredentialConfiguration
 from azure.ai.ml.entities._job.job_name_generator import generate_job_name
 from azure.ai.ml.operations._run_history_constants import RunHistoryConstants
 from azure.ai.ml.operations._workspace_operations_base import get_deployment_name, get_name_for_dependent_resource
+from azure.core.exceptions import ResourceNotFoundError
+from azure.core.pipeline.transport import HttpTransport
+from azure.identity import AzureCliCredential, ClientSecretCredential, DefaultAzureCredential
 
 E2E_TEST_LOGGING_ENABLED = "E2E_TEST_LOGGING_ENABLED"
 test_folder = Path(os.path.abspath(__file__)).parent.absolute()
@@ -977,6 +977,7 @@ def disable_internal_components():
     """
     from azure.ai.ml._internal._schema.component import NodeType
     from azure.ai.ml._internal._setup import _set_registered
+    from azure.ai.ml.entities._builders.control_flow_node import LoopNode
     from azure.ai.ml.entities._component.component_factory import component_factory
     from azure.ai.ml.entities._job.pipeline._load_component import pipeline_node_factory
 
@@ -986,6 +987,7 @@ def disable_internal_components():
         component_factory._create_instance_funcs.pop(_type, None)  # pylint: disable=protected-access
         component_factory._create_schema_funcs.pop(_type, None)  # pylint: disable=protected-access
 
+    LoopNode._extra_body_types = None
     _set_registered(False)
 
     with reload_schema_for_nodes_in_pipeline_job(revert_after_yield=False):

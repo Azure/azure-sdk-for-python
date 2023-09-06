@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=client-accepts-api-version-keyword,too-many-statements,too-many-instance-attributes,too-many-lines,using-constant-test
+# pylint: disable=client-accepts-api-version-keyword,(line-too-long,too-many-locals,no-member,too-many-statements,too-many-instance-attributes,too-many-lines,using-constant-test
 
 import json
 import logging
@@ -31,15 +31,35 @@ from azure.ai.ml._restclient.workspace_dataplane import (
     AzureMachineLearningWorkspaces as ServiceClientWorkspaceDataplane,
 )
 
-from azure.ai.ml._restclient.v2022_02_01_preview import AzureMachineLearningWorkspaces as ServiceClient022022Preview
-from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
-from azure.ai.ml._restclient.v2022_10_01 import AzureMachineLearningWorkspaces as ServiceClient102022
-from azure.ai.ml._restclient.v2022_10_01_preview import AzureMachineLearningWorkspaces as ServiceClient102022Preview
-from azure.ai.ml._restclient.v2023_02_01_preview import AzureMachineLearningWorkspaces as ServiceClient022023Preview
-from azure.ai.ml._restclient.v2023_04_01 import AzureMachineLearningWorkspaces as ServiceClient042023
-from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient042023Preview
-from azure.ai.ml._restclient.v2023_06_01_preview import AzureMachineLearningWorkspaces as ServiceClient062023Preview
-from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationsContainer, OperationScope
+from azure.ai.ml._restclient.v2022_02_01_preview import (
+    AzureMachineLearningWorkspaces as ServiceClient022022Preview,
+)
+from azure.ai.ml._restclient.v2022_05_01 import (
+    AzureMachineLearningWorkspaces as ServiceClient052022,
+)
+from azure.ai.ml._restclient.v2022_10_01 import (
+    AzureMachineLearningWorkspaces as ServiceClient102022,
+)
+from azure.ai.ml._restclient.v2022_10_01_preview import (
+    AzureMachineLearningWorkspaces as ServiceClient102022Preview,
+)
+from azure.ai.ml._restclient.v2023_02_01_preview import (
+    AzureMachineLearningWorkspaces as ServiceClient022023Preview,
+)
+from azure.ai.ml._restclient.v2023_04_01 import (
+    AzureMachineLearningWorkspaces as ServiceClient042023,
+)
+from azure.ai.ml._restclient.v2023_04_01_preview import (
+    AzureMachineLearningWorkspaces as ServiceClient042023Preview,
+)
+from azure.ai.ml._restclient.v2023_06_01_preview import (
+    AzureMachineLearningWorkspaces as ServiceClient062023Preview,
+)
+from azure.ai.ml._scope_dependent_operations import (
+    OperationConfig,
+    OperationsContainer,
+    OperationScope,
+)
 from azure.ai.ml._telemetry.logging_handler import get_appinsights_log_handler
 from azure.ai.ml._user_agent import USER_AGENT
 from azure.ai.ml._utils._experimental import experimental
@@ -86,12 +106,16 @@ from azure.ai.ml.operations import (
 )
 from azure.ai.ml.operations._code_operations import CodeOperations
 from azure.ai.ml.operations._feature_set_operations import FeatureSetOperations
-from azure.ai.ml.operations._feature_store_entity_operations import FeatureStoreEntityOperations
+from azure.ai.ml.operations._feature_store_entity_operations import (
+    FeatureStoreEntityOperations,
+)
 from azure.ai.ml.operations._feature_store_operations import FeatureStoreOperations
 from azure.ai.ml.operations._local_deployment_helper import _LocalDeploymentHelper
 from azure.ai.ml.operations._local_endpoint_helper import _LocalEndpointHelper
 from azure.ai.ml.operations._schedule_operations import ScheduleOperations
-from azure.ai.ml.operations._workspace_outbound_rule_operations import WorkspaceOutboundRuleOperations
+from azure.ai.ml.operations._workspace_outbound_rule_operations import (
+    WorkspaceOutboundRuleOperations,
+)
 
 module_logger = logging.getLogger(__name__)
 
@@ -116,12 +140,12 @@ class MLClient:
     :type registry_name: Optional[str]
     :keyword show_progress: Specifies whether or not to display progress bars for long-running operations (e.g.
         customers may consider setting this to False if not using this SDK in an interactive setup). Defaults to True.
-    :type show_progress: Optional[bool]
+    :paramtype show_progress: Optional[bool]
     :keyword enable_telemetry: Specifies whether or not to enable telemetry. Will be overridden to False if not in a
         Jupyter Notebook. Defaults to True if in a Jupyter Notebook.
-    :type enable_telemetry: Optional[bool]
+    :paramtype enable_telemetry: Optional[bool]
     :keyword cloud: The cloud name to use. Defaults to "AzureCloud".
-    :type cloud: Optional[str]
+    :paramtype cloud: Optional[str]
     :raises ValueError: Raised if credential is None.
     :raises ~azure.ai.ml.ValidationException: Raised if both workspace_name and registry_name are provided.
 
@@ -169,7 +193,8 @@ class MLClient:
             )
 
         self._credential = credential
-
+        self._ws_rg = None
+        self._ws_sub = None
         show_progress = kwargs.pop("show_progress", True)
         enable_telemetry = kwargs.pop("enable_telemetry", True)
         self._operation_config = OperationConfig(show_progress=show_progress, enable_telemetry=enable_telemetry)
@@ -204,12 +229,53 @@ class MLClient:
         # registry_name is present when the operations need referring assets from registry.
         # the subscription, resource group, if provided, will be ignored and replaced by
         # whatever is received from the registry discovery service.
-        if registry_name:
-            self._service_client_10_2021_dataplanepreview, resource_group_name, subscription_id = get_registry_client(
-                self._credential, registry_name, **kwargs
+        workspace_location = None
+        workspace_id = None
+        registry_reference = kwargs.pop("registry_reference", None)
+        if registry_name or registry_reference:
+            # get the workspace location here if workspace_reference is provided
+            self._ws_operation_scope = OperationScope(
+                subscription_id,
+                resource_group_name,
+                workspace_name,
             )
+            workspace_reference = kwargs.pop("workspace_reference", None)
+            if workspace_reference or registry_reference:
+                ws_ops = WorkspaceOperations(
+                    OperationScope(subscription_id, resource_group_name, workspace_reference),
+                    ServiceClient042023Preview(
+                        credential=self._credential,
+                        subscription_id=subscription_id,
+                        **kwargs,
+                    ),
+                    self._credential,
+                )
+                self._ws_rg = resource_group_name
+                self._ws_sub = subscription_id
+                workspace_details = ws_ops.get(workspace_reference if workspace_reference else workspace_name)
+                workspace_location, workspace_id = (
+                    workspace_details.location,
+                    workspace_details._workspace_id,
+                )
 
-        self._operation_scope = OperationScope(subscription_id, resource_group_name, workspace_name, registry_name)
+            (
+                self._service_client_10_2021_dataplanepreview,
+                resource_group_name,
+                subscription_id,
+            ) = get_registry_client(
+                self._credential, registry_name if registry_name else registry_reference, workspace_location, **kwargs
+            )
+            if not workspace_name:
+                workspace_name = workspace_reference
+
+        self._operation_scope = OperationScope(
+            subscription_id,
+            resource_group_name,
+            workspace_name,
+            registry_name,
+            workspace_id,
+            workspace_location,
+        )
 
         # Cannot send multiple base_url as azure-cli sets the base_url automatically.
         kwargs.pop("base_url", None)
@@ -227,7 +293,9 @@ class MLClient:
         user_agent = kwargs.get("user_agent", None)
 
         app_insights_handler = get_appinsights_log_handler(
-            user_agent, **{"properties": properties}, enable_telemetry=self._operation_config.enable_telemetry
+            user_agent,
+            **{"properties": properties},
+            enable_telemetry=self._operation_config.enable_telemetry,
         )
         app_insights_handler_kwargs = {"app_insights_handler": app_insights_handler}
 
@@ -272,7 +340,9 @@ class MLClient:
 
         self._service_client_04_2023 = ServiceClient042023(
             credential=self._credential,
-            subscription_id=self._operation_scope._subscription_id,
+            subscription_id=self._ws_operation_scope._subscription_id
+            if registry_reference
+            else self._operation_scope._subscription_id,
             base_url=base_url,
             **kwargs,
         )
@@ -290,7 +360,9 @@ class MLClient:
 
         self._service_client_10_2022_preview = ServiceClient102022Preview(
             credential=self._credential,
-            subscription_id=self._operation_scope._subscription_id,
+            subscription_id=self._ws_operation_scope._subscription_id
+            if registry_reference
+            else self._operation_scope._subscription_id,
             base_url=base_url,
             **kwargs,
         )
@@ -311,20 +383,24 @@ class MLClient:
 
         self._service_client_04_2023_preview = ServiceClient042023Preview(
             credential=self._credential,
-            subscription_id=self._operation_scope._subscription_id,
+            subscription_id=self._ws_operation_scope._subscription_id
+            if registry_reference
+            else self._operation_scope._subscription_id,
             base_url=base_url,
             **kwargs,
         )
 
         self._service_client_06_2023_preview = ServiceClient062023Preview(
             credential=self._credential,
-            subscription_id=self._operation_scope._subscription_id,
+            subscription_id=self._ws_operation_scope._subscription_id
+            if registry_reference
+            else self._operation_scope._subscription_id,
             base_url=base_url,
             **kwargs,
         )
 
         self._workspaces = WorkspaceOperations(
-            self._operation_scope,
+            self._ws_operation_scope if registry_reference else self._operation_scope,
             self._service_client_06_2023_preview,
             self._operation_container,
             self._credential,
@@ -375,22 +451,28 @@ class MLClient:
         self._datastores = DatastoreOperations(
             operation_scope=self._operation_scope,
             operation_config=self._operation_config,
-            serviceclient_2022_10_01=self._service_client_10_2022,
+            serviceclient_2023_04_01_preview=self._service_client_04_2023_preview,
             **ops_kwargs,
         )
         self._operation_container.add(AzureMLResourceType.DATASTORE, self._datastores)
         self._models = ModelOperations(
             self._operation_scope,
             self._operation_config,
-            self._service_client_10_2021_dataplanepreview if registry_name else self._service_client_04_2023_preview,
+            self._service_client_10_2021_dataplanepreview
+            if registry_name or registry_reference
+            else self._service_client_04_2023_preview,
             self._datastores,
             self._operation_container,
             requests_pipeline=self._requests_pipeline,
+            control_plane_client=self._service_client_04_2023_preview,
+            workspace_rg=self._ws_rg,
+            workspace_sub=self._ws_sub,
+            registry_reference=registry_reference,
             **app_insights_handler_kwargs,
         )
         self._operation_container.add(AzureMLResourceType.MODEL, self._models)
         self._code = CodeOperations(
-            self._operation_scope,
+            self._ws_operation_scope if registry_reference else self._operation_scope,
             self._operation_config,
             self._service_client_10_2021_dataplanepreview if registry_name else self._service_client_04_2023,
             self._datastores,
@@ -398,7 +480,7 @@ class MLClient:
         )
         self._operation_container.add(AzureMLResourceType.CODE, self._code)
         self._environments = EnvironmentOperations(
-            self._operation_scope,
+            self._ws_operation_scope if registry_reference else self._operation_scope,
             self._operation_config,
             self._service_client_10_2021_dataplanepreview if registry_name else self._service_client_04_2023_preview,
             self._operation_container,
@@ -430,7 +512,7 @@ class MLClient:
         self._operation_container.add(AzureMLResourceType.BATCH_ENDPOINT, self._batch_endpoints)
         self._operation_container.add(AzureMLResourceType.ONLINE_ENDPOINT, self._online_endpoints)
         self._online_deployments = OnlineDeploymentOperations(
-            self._operation_scope,
+            self._ws_operation_scope if registry_reference else self._operation_scope,
             self._operation_config,
             self._service_client_04_2023_preview,
             self._operation_container,
@@ -484,7 +566,7 @@ class MLClient:
         self._schedules = ScheduleOperations(
             self._operation_scope,
             self._operation_config,
-            self._service_client_04_2023_preview,
+            self._service_client_06_2023_preview,
             self._operation_container,
             self._credential,
             _service_client_kwargs=kwargs,
@@ -493,7 +575,9 @@ class MLClient:
         self._operation_container.add(AzureMLResourceType.SCHEDULE, self._schedules)
 
         try:
-            from azure.ai.ml.operations._virtual_cluster_operations import VirtualClusterOperations
+            from azure.ai.ml.operations._virtual_cluster_operations import (
+                VirtualClusterOperations,
+            )
 
             self._virtual_clusters = VirtualClusterOperations(
                 self._operation_scope,
@@ -507,7 +591,7 @@ class MLClient:
 
         self._featurestores = FeatureStoreOperations(
             self._operation_scope,
-            self._service_client_04_2023_preview,
+            self._service_client_06_2023_preview,
             self._operation_container,
             self._credential,
             **app_insights_handler_kwargs,
@@ -522,7 +606,10 @@ class MLClient:
         )
 
         self._featurestoreentities = FeatureStoreEntityOperations(
-            self._operation_scope, self._operation_config, self._service_client_04_2023_preview, **ops_kwargs
+            self._operation_scope,
+            self._operation_config,
+            self._service_client_04_2023_preview,
+            **ops_kwargs,
         )
 
         self._workspace_hubs = WorkspaceHubOperations(
@@ -559,12 +646,12 @@ class MLClient:
         :type credential: ~azure.core.credentials.TokenCredential
         :keyword path: The path to the configuration file or starting directory to search for the configuration file
             within. Defaults to None, indicating the current directory will be used.
-        :type path: Optional[Union[os.PathLike, str]]
+        :paramtype path: Optional[Union[os.PathLike, str]]
         :keyword file_name: The configuration file name to search for when path is a directory path. Defaults to
             "config.json".
-        :type file_name: Optional[str]
+        :paramtype file_name: Optional[str]
         :keyword cloud: The cloud name to use. Defaults to "AzureCloud".
-        :type cloud: Optional[str]
+        :paramtype cloud: Optional[str]
         :raises ~azure.ai.ml.exceptions.ValidationException: Raised if "config.json", or file_name if overridden,
             cannot be found in directory. Details will be provided in the error message.
         :returns: The client for an existing Azure ML Workspace.
@@ -651,11 +738,18 @@ class MLClient:
         )
 
     @classmethod
-    def _ml_client_cli(cls, credentials, subscription_id, **kwargs):
+    def _ml_client_cli(cls, credentials: TokenCredential, subscription_id: Optional[str], **kwargs) -> "MLClient":
         """This method provides a way to create MLClient object for cli to leverage cli context for authentication.
 
         With this we do not have to use AzureCliCredentials from azure-identity package (not meant for heavy usage). The
         credentials are passed by cli get_mgmt_service_client when it created a object of this class.
+
+        :param credentials: The authentication credentials
+        :type credentials: TokenCredential
+        :param subscription_id: The subscription ID
+        :type subscription_id: Optional[str]
+        :return: An MLClient
+        :rtype: ~azure.ai.ml.MLClient
         """
 
         ml_client = cls(credential=credentials, subscription_id=subscription_id, **kwargs)
@@ -669,6 +763,15 @@ class MLClient:
         :rtype: ~azure.ai.ml.operations.WorkspaceOperations
         """
         return self._workspaces
+
+    @property
+    def workspace_outbound_rules(self) -> WorkspaceOutboundRuleOperations:
+        """A collection of workspace outbound rule related operations.
+
+        :return: Workspace outbound rule operations
+        :rtype: ~azure.ai.ml.operations.WorkspaceOutboundRuleOperations
+        """
+        return self._workspace_outbound_rules
 
     @property
     @experimental
@@ -869,6 +972,8 @@ class MLClient:
 
         :param workspace_name: AzureML workspace of the new MLClient.
         :type workspace_name: str
+        :return: An updated MLClient
+        :rtype: MLClient
         """
 
         return MLClient(

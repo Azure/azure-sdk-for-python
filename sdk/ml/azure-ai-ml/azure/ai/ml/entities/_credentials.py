@@ -25,26 +25,27 @@ from azure.ai.ml._restclient.v2022_01_01_preview.models import (
 )
 from azure.ai.ml._restclient.v2022_05_01.models import ManagedServiceIdentity as RestManagedServiceIdentityConfiguration
 from azure.ai.ml._restclient.v2022_05_01.models import UserAssignedIdentity as RestUserAssignedIdentityConfiguration
-from azure.ai.ml._restclient.v2022_10_01.models import (
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     AccountKeyDatastoreCredentials as RestAccountKeyDatastoreCredentials,
 )
-from azure.ai.ml._restclient.v2022_10_01.models import AccountKeyDatastoreSecrets as RestAccountKeyDatastoreSecrets
-from azure.ai.ml._restclient.v2022_10_01.models import (
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    AccountKeyDatastoreSecrets as RestAccountKeyDatastoreSecrets,
+)
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     CertificateDatastoreCredentials as RestCertificateDatastoreCredentials,
 )
-from azure.ai.ml._restclient.v2022_10_01.models import CertificateDatastoreSecrets, CredentialsType
-from azure.ai.ml._restclient.v2022_10_01.models import NoneDatastoreCredentials as RestNoneDatastoreCredentials
-from azure.ai.ml._restclient.v2022_10_01.models import SasDatastoreCredentials as RestSasDatastoreCredentials
-from azure.ai.ml._restclient.v2022_10_01.models import SasDatastoreSecrets as RestSasDatastoreSecrets
-from azure.ai.ml._restclient.v2022_10_01.models import (
+from azure.ai.ml._restclient.v2023_04_01_preview.models import CertificateDatastoreSecrets, CredentialsType
+from azure.ai.ml._restclient.v2023_04_01_preview.models import NoneDatastoreCredentials as RestNoneDatastoreCredentials
+from azure.ai.ml._restclient.v2023_04_01_preview.models import SasDatastoreCredentials as RestSasDatastoreCredentials
+from azure.ai.ml._restclient.v2023_04_01_preview.models import SasDatastoreSecrets as RestSasDatastoreSecrets
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     ServicePrincipalDatastoreCredentials as RestServicePrincipalDatastoreCredentials,
 )
-from azure.ai.ml._restclient.v2022_10_01.models import (
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     ServicePrincipalDatastoreSecrets as RestServicePrincipalDatastoreSecrets,
 )
 
 from azure.ai.ml._restclient.v2023_04_01_preview.models import AmlToken as RestAmlToken
-from azure.ai.ml._restclient.v2023_04_01_preview.models import ConnectionAuthType
 from azure.ai.ml._restclient.v2023_04_01_preview.models import IdentityConfiguration as RestJobIdentityConfiguration
 from azure.ai.ml._restclient.v2023_04_01_preview.models import IdentityConfigurationType
 from azure.ai.ml._restclient.v2023_04_01_preview.models import ManagedIdentity as RestJobManagedIdentity
@@ -55,7 +56,7 @@ from azure.ai.ml._restclient.v2023_04_01_preview.models import (
 )
 from azure.ai.ml._restclient.v2023_06_01_preview.models import ConnectionAuthType
 from azure.ai.ml._restclient.v2023_06_01_preview.models import (
-    WorkspaceConnectionApiKey as WorkspaceConnectionApiKey,
+    WorkspaceConnectionApiKey as RestWorkspaceConnectionApiKey,
 )
 from azure.ai.ml._utils.utils import camel_to_snake, snake_to_pascal
 from azure.ai.ml.constants._common import CommonYamlFields, IdentityType
@@ -240,7 +241,7 @@ class ServicePrincipalConfiguration(BaseTenantCredentials):
     :param client_secret: The client secret.
     :type client_secret: str
     :keyword kwargs: Additional arguments to pass to the parent class.
-    :type kwargs: Optional[dict]
+    :paramtype kwargs: Optional[dict]
     """
 
     def __init__(
@@ -416,13 +417,13 @@ class ManagedIdentityConfiguration(_BaseIdentityConfiguration):
     """Managed Identity credential configuration.
 
     :keyword client_id: The client ID of the managed identity.
-    :type client_id: Optional[str]
+    :paramtype client_id: Optional[str]
     :keyword resource_id: The resource ID of the managed identity.
-    :type resource_id: Optional[str]
+    :paramtype resource_id: Optional[str]
     :keyword object_id: The object ID.
-    :type object_id: Optional[str]
+    :paramtype object_id: Optional[str]
     :keyword principal_id: The principal ID.
-    :type principal_id: Optional[str]
+    :paramtype principal_id: Optional[str]
     """
 
     def __init__(
@@ -783,6 +784,7 @@ class AccessKeyConfiguration(RestTranslatableMixin, DictMixin):
             return NotImplemented
         return self.access_key_id == other.access_key_id and self.secret_access_key == other.secret_access_key
 
+
 @experimental
 class ApiKeyConfiguration(RestTranslatableMixin, DictMixin):
     """Api Key Credentials.
@@ -800,14 +802,14 @@ class ApiKeyConfiguration(RestTranslatableMixin, DictMixin):
         self.type = camel_to_snake(ConnectionAuthType.API_KEY)
         self.key = key
 
-    def _to_workspace_connection_rest_object(self) -> WorkspaceConnectionApiKey:
-        return WorkspaceConnectionApiKey(
+    def _to_workspace_connection_rest_object(self) -> RestWorkspaceConnectionApiKey:
+        return RestWorkspaceConnectionApiKey(
             key=self.key,
         )
 
     @classmethod
     def _from_workspace_connection_rest_object(
-        cls, obj: Optional[WorkspaceConnectionApiKey]
+        cls, obj: Optional[RestWorkspaceConnectionApiKey]
     ) -> "AccessKeyConfiguration":
         return cls(
             key=obj.key if obj is not None and obj.key else None,

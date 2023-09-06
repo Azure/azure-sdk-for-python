@@ -27,7 +27,17 @@ from __future__ import annotations
 import asyncio
 import abc
 from collections.abc import AsyncIterator
-from typing import AsyncIterator as AsyncIteratorType, TypeVar, Generic, Any, TYPE_CHECKING, AsyncContextManager
+from typing import (
+    AsyncIterator as AsyncIteratorType,
+    TypeVar,
+    Generic,
+    Any,
+    TYPE_CHECKING,
+    AsyncContextManager,
+    Optional,
+    Type,
+)
+from types import TracebackType
 
 from ._base import _HttpResponseBase, _HttpClientTransportResponse, HttpRequest
 from ...utils._pipeline_transport_rest_shared_async import _PartGenerator
@@ -94,7 +104,12 @@ class AsyncHttpResponse(_HttpResponseBase, AsyncContextManager["AsyncHttpRespons
 
         return _PartGenerator(self, default_http_response_type=AsyncHttpClientTransportResponse)
 
-    async def __aexit__(self, exc_type: Any, exc_value: Any, traceback: Any) -> None:
+    async def __aexit__(
+        self,
+        exc_type: Optional[Type[BaseException]] = None,
+        exc_value: Optional[BaseException] = None,
+        traceback: Optional[TracebackType] = None,
+    ) -> None:
         return None
 
 

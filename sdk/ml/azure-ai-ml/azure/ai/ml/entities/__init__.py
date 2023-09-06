@@ -50,7 +50,8 @@ from ._credentials import (
     UserIdentityConfiguration,
     UsernamePasswordConfiguration,
     AccessKeyConfiguration,
-    ApiKeyConfiguration
+    ApiKeyConfiguration,
+    NoneCredentialConfiguration,
 )
 from ._datastore.adls_gen1 import AzureDataLakeGen1Datastore
 from ._datastore.azure_storage import AzureBlobDatastore, AzureDataLakeGen2Datastore, AzureFileDatastore
@@ -165,6 +166,7 @@ from ._assets._artifacts._package.model_package import (
     PackageInputPathVersion,
 )
 from ._monitoring.alert_notification import AlertNotification
+from ._monitoring.compute import ServerlessSparkCompute
 from ._monitoring.definition import MonitorDefinition
 from ._monitoring.input_data import MonitorInputData
 from ._monitoring.schedule import MonitorSchedule
@@ -174,9 +176,11 @@ from ._monitoring.signals import (
     PredictionDriftSignal,
     FeatureAttributionDriftSignal,
     CustomMonitoringSignal,
-    TargetDataset,
     MonitorFeatureFilter,
     DataSegment,
+    FADProductionData,
+    ProductionData,
+    ReferenceData,
 )
 from ._monitoring.target import MonitoringTarget
 from ._monitoring.thresholds import (
@@ -185,6 +189,8 @@ from ._monitoring.thresholds import (
     PredictionDriftMetricThreshold,
     FeatureAttributionDriftMetricThreshold,
     CustomMonitoringMetricThreshold,
+    CategoricalDriftMetrics,
+    NumericalDriftMetrics,
 )
 
 from ._workspace_hub.workspace_hub import WorkspaceHub, WorkspaceHubConfig
@@ -398,6 +404,7 @@ __all__ = [
     "Route",
     "AccessKeyConfiguration",
     "AlertNotification",
+    "ServerlessSparkCompute",
     "ApiKeyConfiguration",
     "MonitorDefinition",
     "MonitorInputData",
@@ -407,17 +414,22 @@ __all__ = [
     "PredictionDriftSignal",
     "FeatureAttributionDriftSignal",
     "CustomMonitoringSignal",
-    "TargetDataset",
     "MonitorFeatureFilter",
     "DataSegment",
+    "FADProductionData",
+    "ProductionData",
+    "ReferenceData",
     "MonitoringTarget",
     "DataDriftMetricThreshold",
     "DataQualityMetricThreshold",
     "PredictionDriftMetricThreshold",
     "FeatureAttributionDriftMetricThreshold",
     "CustomMonitoringMetricThreshold",
+    "CategoricalDriftMetrics",
+    "NumericalDriftMetrics",
     "DataCollector",
     "IntellectualProperty",
     "DeploymentCollection",
     "RequestLogging",
+    "NoneCredentialConfiguration",
 ]

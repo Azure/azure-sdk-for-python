@@ -56,13 +56,13 @@ from azure.ai.ml.entities._job.pipeline._io import PipelineInput, PipelineJobIOM
 from azure.ai.ml.entities._job.pipeline.pipeline_job_settings import PipelineJobSettings
 from azure.ai.ml.entities._mixins import YamlTranslatableMixin
 from azure.ai.ml.entities._system_data import SystemData
-from azure.ai.ml.entities._validation import MutableValidationResult, SchemaValidatableMixin
-from azure.ai.ml.exceptions import ErrorTarget, UserErrorException
+from azure.ai.ml.entities._validation import MutableValidationResult, PathAwareSchemaValidatableMixin
+from azure.ai.ml.exceptions import ErrorTarget, UserErrorException, ValidationException
 
 module_logger = logging.getLogger(__name__)
 
 
-class PipelineJob(Job, YamlTranslatableMixin, PipelineJobIOMixin, SchemaValidatableMixin):
+class PipelineJob(Job, YamlTranslatableMixin, PipelineJobIOMixin, PathAwareSchemaValidatableMixin):
     """Pipeline job.
 
     You should not instantiate this class directly. Instead, you should
@@ -75,30 +75,30 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineJobIOMixin, SchemaValidata
     :param outputs: Outputs of the pipeline job.
     :type outputs: dict[str, ~azure.ai.ml.entities.Output]
     :param name: Name of the PipelineJob. Defaults to None
-    :type name: str, optional
+    :type name: str
     :param description: Description of the pipeline job. Defaults to None
-    :type description: str, optional
+    :type description: str
     :param display_name: Display name of the pipeline job. Defaults to None
-    :type display_name: str, optional
+    :type display_name: str
     :param experiment_name: Name of the experiment the job will be created under.
         If None is provided, the experiment will be set to the current directory. Defaults to None
-    :type experiment_name: str, optional
+    :type experiment_name: str
     :param jobs: Pipeline component node name to component object. Defaults to None
-    :type jobs: dict[str, ~azure.ai.ml.entities._builders.BaseNode], optional
+    :type jobs: dict[str, ~azure.ai.ml.entities._builders.BaseNode]
     :param settings: Setting of the pipeline job. Defaults to None
-    :type settings: ~azure.ai.ml.entities.PipelineJobSettings, optional
+    :type settings: ~azure.ai.ml.entities.PipelineJobSettings
     :param identity: Identity that the training job will use while running on compute. Defaults to None
     :type identity: Union[
         ~azure.ai.ml.entities._credentials.ManagedIdentityConfiguration,
         ~azure.ai.ml.entities._credentials.AmlTokenConfiguration,
         ~azure.ai.ml.entities._credentials.UserIdentityConfiguration
-    ], optional
+    ]
     :param compute: Compute target name of the built pipeline. Defaults to None
-    :type compute: str, optional
+    :type compute: str
     :param tags: Tag dictionary. Tags can be added, removed, and updated. Defaults to None
-    :type tags: dict[str, str], optional
+    :type tags: dict[str, str]
     :param kwargs: A dictionary of additional configuration parameters. Defaults to None
-    :type kwargs: dict, optional
+    :type kwargs: dict
 
     .. admonition:: Example:
 
@@ -234,8 +234,12 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineJobIOMixin, SchemaValidata
         self._settings = value
 
     @classmethod
-    def _get_validation_error_target(cls) -> ErrorTarget:
-        return ErrorTarget.PIPELINE
+    def _create_validation_error(cls, message: str, no_personal_data_message: str):
+        return ValidationException(
+            message=message,
+            no_personal_data_message=no_personal_data_message,
+            target=ErrorTarget.PIPELINE,
+        )
 
     @classmethod
     def _create_schema_for_validation(cls, context) -> PathAwareSchema:
@@ -263,7 +267,11 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineJobIOMixin, SchemaValidata
         return validation_result
 
     def _customized_validate(self) -> MutableValidationResult:
-        """Validate that all provided inputs and parameters are valid for current pipeline and components in it."""
+        """Validate that all provided inputs and parameters are valid for current pipeline and components in it.
+
+        :return: The validation result
+        :rtype: MutableValidationResult
+        """
         validation_result = super(PipelineJob, self)._customized_validate()
 
         if isinstance(self.component, PipelineComponent):
@@ -356,12 +364,22 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineJobIOMixin, SchemaValidata
             return issubclass(type(_validate_job), ControlFlowNode)
 
         def _is_isolated_job(_validate_job_name: str) -> bool:
-            def _try_get_data_bindings(_name: str, _input_output_data) -> Union[List[str], None]:
-                """Try to get data bindings from input/output data, return None if not found."""
+            def _try_get_data_bindings(
+                _name: str, _input_output_data: Union["_GroupAttrDict", str, "InputOutputBase"]
+            ) -> Optional[List[str]]:
+                """Try to get data bindings from input/output data, return None if not found.
+
+                :param _name: The name to use when flattening GroupAttrDict
+                :type _name: str
+                :param _input_output_data: The input/output data
+                :type _input_output_data: Union[_GroupAttrDict, str, InputOutputBase]
+                :return: A list of data bindings, or None if not found
+                :rtype: Optional[List[str]]
+                """
                 # handle group input
                 if GroupInput._is_group_attr_dict(_input_output_data):
                     # flatten to avoid nested cases
-                    flattened_values = list(_input_output_data.flatten(_name).values())
+                    flattened_values: List[Input] = list(_input_output_data.flatten(_name).values())
                     # handle invalid empty group
                     if len(flattened_values) == 0:
                         return None
@@ -442,14 +460,16 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineJobIOMixin, SchemaValidata
                     msg = error_msg.format("Import job in pipeline")
                     raise UserErrorException(message=msg, no_personal_data_message=msg)
 
-    def _to_node(self, context: Optional[Dict] = None, **kwargs):
+    def _to_node(self, context: Optional[Dict] = None, **kwargs) -> "Pipeline":
         """Translate a command job to a pipeline node when load schema.
 
         (Write a pipeline job as node in yaml is not supported presently.)
 
         :param context: Context of command job YAML file.
+        :type context: dict
         :keyword kwargs: Extra arguments.
         :return: Translated command component.
+        :rtype: Pipeline
         """
         component = self._to_component(context, **kwargs)
 
@@ -469,6 +489,7 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineJobIOMixin, SchemaValidata
         """Build current parameterized pipeline instance to a pipeline job object before submission.
 
         :return: Rest pipeline job.
+        :rtype: JobBase
         """
         # Check if there are private preview features in it
         self._check_private_preview_features()
@@ -531,7 +552,10 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineJobIOMixin, SchemaValidata
     def _load_from_rest(cls, obj: JobBase) -> "PipelineJob":
         """Build a pipeline instance from rest pipeline object.
 
+        :param obj: The REST Pipeline Object
+        :type obj: JobBase
         :return: pipeline job.
+        :rtype: PipelineJob
         """
         properties: RestPipelineJob = obj.properties
         # Workaround for BatchEndpoint as these fields are not filled in
@@ -638,12 +662,14 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineJobIOMixin, SchemaValidata
         telemetry_values.pop("is_anonymous")
         return telemetry_values
 
-    def _to_component(self, context: Optional[Dict] = None, **kwargs):
+    def _to_component(self, context: Optional[Dict] = None, **kwargs) -> "PipelineComponent":
         """Translate a pipeline job to pipeline component.
 
         :param context: Context of pipeline job YAML file.
+        :type context: dict
         :keyword kwargs: Extra arguments.
         :return: Translated pipeline component.
+        :rtype: PipelineComponent
         """
         ignored_keys = PipelineComponent._check_ignored_keys(self)
         if ignored_keys:

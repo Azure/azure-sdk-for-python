@@ -395,6 +395,8 @@ class TestDoWhilePipelineUT(TestControlFlowPipelineUT):
 
 
 class TestParallelForPipelineUT(TestControlFlowPipelineUT):
+    # Need to disable internal components or internal nodes will be in allowed node types
+    @pytest.mark.usefixtures("disable_internal_components")
     def test_dsl_parallel_for_pipeline_illegal_cases(self):
         # body unsupported
         parallel_component = load_component(
@@ -630,8 +632,8 @@ class TestParallelForPipelineUT(TestControlFlowPipelineUT):
             ({"type": "custom_model"}, {"job_output_type": "mltable"}, {"type": "mltable"}, True),
             ({"type": "path"}, {"job_output_type": "mltable"}, {"type": "mltable"}, True),
             ({"type": "number"}, {}, {"type": "string"}, False),
-            ({"type": "string", "is_control": True}, {}, {"type": "string", "is_control": True}, False),
-            ({"type": "boolean", "is_control": True}, {}, {"type": "string", "is_control": True}, False),
+            ({"type": "string"}, {}, {"type": "string"}, False),
+            ({"type": "boolean"}, {}, {"type": "string"}, False),
             ({"type": "integer"}, {}, {"type": "string"}, False),
         ],
     )
