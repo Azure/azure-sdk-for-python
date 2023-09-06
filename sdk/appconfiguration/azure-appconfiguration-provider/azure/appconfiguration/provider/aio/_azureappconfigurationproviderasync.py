@@ -4,7 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 import json
-from threading import Lock
+from asyncio.locks import Lock
 import logging
 from typing import Any, Callable, Dict, Iterable, Mapping, Optional, overload, List, Tuple, TYPE_CHECKING, Union
 
@@ -49,7 +49,7 @@ async def load(
     key_vault_options: Optional[AzureAppConfigurationKeyVaultOptions] = None,
     refresh_on: Optional[List[Tuple[str, str]]] = None,
     refresh_interval: int = 30,
-    on_refresh_error: Optional[Callable[[Exception], None]] = None,
+    on_refresh_error: Optional[Callable[[Exception], Awaitable[None]]] = None,
     **kwargs
 ) -> "AzureAppConfigurationProvider":
     """
@@ -113,7 +113,7 @@ async def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
 
     # Start by parsing kwargs
     endpoint: Optional[str] = kwargs.pop("endpoint", None)
-    credential: Optional["TokenCredential"] = kwargs.pop("credential", None)
+    credential: Optional["AsyncTokenCredential"] = kwargs.pop("credential", None)
     connection_string: Optional[str] = kwargs.pop("connection_string", None)
 
     # Update endpoint and credential if specified positionally.
@@ -249,7 +249,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
             logging.debug("Refresh called but refresh interval not elapsed.")
             return
         try:
-            with self._update_lock:
+            async with self._update_lock:
                 for (key, label), etag in self._refresh_on.items():
                     updated_sentinel = await self._client.get_configuration_setting(
                         key=key, label=label, etag=etag, match_condition=MatchConditions.IfModified, **kwargs
@@ -273,12 +273,12 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
             if _is_retryable_error(e):
                 return
             if self._on_refresh_error:
-                self._on_refresh_error(e)
+                await self._on_refresh_error(e)
                 return
             raise
         except Exception as e:
             if self._on_refresh_error:
-                self._on_refresh_error(e)
+                await self._on_refresh_error(e)
                 return
             raise
 
@@ -356,7 +356,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
         :return: A list of keys loaded from Azure App Configuration.
         :rtype: Iterable[str]
         """
-        with self._update_lock:
+        async with self._update_lock:
             return self._dict.keys()
 
     def items(self) -> Iterable[Tuple[str, str]]:
@@ -367,7 +367,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
         :return: A list of key-value pairs loaded from Azure App Configuration.
         :rtype: Iterable[Tuple[str, str]]
         """
-        with self._update_lock:
+        async with self._update_lock:
             return self._dict.items()
 
     def values(self) -> Iterable[str]:
@@ -378,7 +378,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
         :return: A list of values loaded from Azure App Configuration.
         :rtype: Iterable[str]
         """
-        with self._update_lock:
+        async with self._update_lock:
             return self._dict.values()
 
     def get(self, key: str, default: Optional[str] = None) -> str:
@@ -391,7 +391,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
         :return: The value of the specified key.
         :rtype: str
         """
-        with self._update_lock:
+        async with self._update_lock:
             return self._dict.get(key, default)
 
     def __eq__(self, other: Any) -> bool:
