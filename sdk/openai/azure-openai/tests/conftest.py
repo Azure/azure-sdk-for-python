@@ -6,6 +6,9 @@
 # --------------------------------------------------------------------------
 import os
 import pytest
+import requests
+import aiohttp
+import yarl
 import functools
 import openai
 from devtools_testutils.sanitizers import add_header_regex_sanitizer, add_oauth_response_sanitizer
@@ -25,16 +28,21 @@ ENV_SUBSCRIPTION_ID = "AZURE_SUBSCRIPTION_ID"
 ENV_TENANT_ID = "AZURE_TENANT_ID"
 ENV_CLIENT_ID = "AZURE_CLIENT_ID"
 ENV_CLIENT_SECRET = "AZURE_CLIENT_SECRET"
+ENV_AZURE_OPENAI_SEARCH_ENDPOINT = "AZURE_OPENAI_SEARCH_ENDPOINT"
+ENV_AZURE_OPENAI_SEARCH_KEY = "AZURE_OPENAI_SEARCH_KEY"
+ENV_AZURE_OPENAI_SEARCH_INDEX = "AZURE_OPENAI_SEARCH_INDEX"
 
-ENV_AZURE_OPENAI_API_VERSION = "2023-07-01-preview"
+ENV_AZURE_OPENAI_API_VERSION = "2023-08-01-preview"
 ENV_AZURE_OPENAI_COMPLETIONS_NAME = "text-davinci-003"
-ENV_AZURE_OPENAI_CHAT_COMPLETIONS_NAME = "gpt-35-turbo-0613"
+ENV_AZURE_OPENAI_CHAT_COMPLETIONS_NAME = "gpt-4"
 ENV_AZURE_OPENAI_EMBEDDINGS_NAME = "text-embedding-ada-002"
+ENV_AZURE_OPENAI_AUDIO_NAME = "whisper-deployment"
 
 ENV_OPENAI_KEY = "OPENAI_KEY"
 ENV_OPENAI_COMPLETIONS_MODEL = "text-davinci-003"
 ENV_OPENAI_CHAT_COMPLETIONS_MODEL = "gpt-3.5-turbo"
 ENV_OPENAI_EMBEDDINGS_MODEL = "text-embedding-ada-002"
+ENV_OPENAI_AUDIO_MODEL = "whisper-1"
 
 # Fake values
 TEST_ENDPOINT = "https://test-resource.openai.azure.com/"
@@ -51,7 +59,10 @@ def add_sanitizers(test_proxy, environment_variables):
         ENV_TENANT_ID: TEST_ID,
         ENV_CLIENT_ID: TEST_ID,
         ENV_CLIENT_SECRET: TEST_ID,
-        ENV_OPENAI_KEY: TEST_KEY
+        ENV_OPENAI_KEY: TEST_KEY,
+        ENV_OPENAI_KEY: TEST_KEY,
+        ENV_AZURE_OPENAI_SEARCH_ENDPOINT: TEST_ENDPOINT,
+        ENV_AZURE_OPENAI_SEARCH_KEY: TEST_KEY,
     }
     environment_variables.sanitize_batch(sanitization_mapping)
     add_oauth_response_sanitizer()
@@ -67,6 +78,11 @@ def azure_openai_creds():
         "completions_model": ENV_OPENAI_COMPLETIONS_MODEL,
         "chat_completions_model": ENV_OPENAI_CHAT_COMPLETIONS_MODEL,
         "embeddings_model": ENV_OPENAI_EMBEDDINGS_MODEL,
+        "search_endpoint": os.getenv(ENV_AZURE_OPENAI_SEARCH_ENDPOINT),
+        "search_key": os.getenv(ENV_AZURE_OPENAI_SEARCH_KEY),
+        "search_index": os.getenv(ENV_AZURE_OPENAI_SEARCH_INDEX),
+        "audio_name": ENV_AZURE_OPENAI_AUDIO_NAME,
+        "audio_model": ENV_OPENAI_AUDIO_MODEL,
     }
 
 
@@ -114,3 +130,39 @@ def configure(f):
             pytest.skip(f"{str(f).split(' ')[1]}[{api_type}]: Skipping - Rate limit reached.")
 
     return wrapper
+
+
+def setup_adapter(deployment_id, *, byod = False, audio = False):
+
+    class CustomAdapter(requests.adapters.HTTPAdapter):
+
+        def send(self, request, **kwargs):
+            if byod:
+                request.url = f"{openai.api_base}/openai/deployments/{deployment_id}/extensions/chat/completions?api-version={openai.api_version}"
+            if audio:
+                request.url = f"{openai.api_base}/openai/deployments/{deployment_id}{request.path_url}?api-version=2023-09-01-preview"  # TODO hardcoded api version
+            return super().send(request, **kwargs)
+
+    session = requests.Session()
+
+    session.mount(
+        prefix=f"{openai.api_base}",
+        adapter=CustomAdapter()
+    )
+
+    openai.requestssession = session
+
+
+def setup_adapter_async(deployment_id, *, byod = False, audio = False):
+
+    class CustomAdapterAsync(aiohttp.ClientRequest):
+
+        async def send(self, conn) -> aiohttp.ClientResponse:
+            if byod:
+                self.url = yarl.URL(f"{openai.api_base}/openai/deployments/{deployment_id}/extensions/chat/completions?api-version={openai.api_version}")
+            if audio:
+                self.url = yarl.URL(f"{openai.api_base}/openai/deployments/{deployment_id}{self.url.path}?api-version=2023-09-01-preview")  # TODO hardcoded api version
+            return await super().send(conn)
+    
+    session = aiohttp.ClientSession(request_class=CustomAdapterAsync)
+    openai.aiosession.set(session)
