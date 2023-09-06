@@ -15,6 +15,8 @@ class RemoteRenderingApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     V2021_01_01 = "2021-01-01"
 
 
+DEFAULT_VERSION = RemoteRenderingApiVersion.V2021_01_01
+
 def validate_api_version(api_version):
     # type: (str) -> None
     """Raise ValueError if api_version is invalid

@@ -14,7 +14,7 @@ from azure.core.pipeline.policies import BearerTokenCredentialPolicy
 from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace
 
-from ._api_version import RemoteRenderingApiVersion, validate_api_version
+from ._api_version import validate_api_version, DEFAULT_VERSION
 from ._generated import RemoteRenderingRestClient
 
 from ._generated.models import (AssetConversion, AssetConversionInputSettings,
@@ -61,9 +61,11 @@ class RemoteRenderingClient:
     :type api_version: str or ~azure.mixedreality.remoterenderings.RemoteRenderingApiVersion
     :keyword polling_interval:
         Seconds to wait between each check, whether the session is ready yet.
+    :type polling_interval: int
     :keyword authentication_endpoint_url:
         Overwrite for the authentication endpoint. Usually using account_domain for the authentication domain is enough.
         If used, specify the whole authentication url including the schema.
+    :type authentication_endpoint_url: str
     """
 
     def __init__(self,
@@ -74,7 +76,7 @@ class RemoteRenderingClient:
                  **kwargs) -> None:
 
         self._api_version = kwargs.pop(
-            "api_version", RemoteRenderingApiVersion.V2021_01_01
+            "api_version", DEFAULT_VERSION
         )
         validate_api_version(self._api_version)
 

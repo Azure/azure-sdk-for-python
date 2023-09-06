@@ -14,7 +14,7 @@ from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy
 from azure.core.polling import AsyncLROPoller
 from azure.core.tracing.decorator_async import distributed_trace_async
 
-from .._api_version import RemoteRenderingApiVersion, validate_api_version
+from .._api_version import validate_api_version, DEFAULT_VERSION
 from .._generated.aio import RemoteRenderingRestClient
 from .._generated.models import (AssetConversion, AssetConversionInputSettings,
                                  AssetConversionOutputSettings,
@@ -62,12 +62,14 @@ class RemoteRenderingClient(object):
     :keyword api_version:
         The API version of the service to use for requests. It defaults to the latest service version.
         Setting to an older version may result in reduced feature compatibility.
+    :type api_version: str or ~azure.mixedreality.remoterenderings.RemoteRenderingApiVersion
     :keyword polling_interval:
         Seconds to wait between each check, whether the session is ready yet.
+    :type polling_interval: int
     :keyword authentication_endpoint_url:
         Overwrite for the authentication endpoint. Usually using account_domain for the authentication domain is enough.
         If used, specify the whole authentication url including the schema.
-    :paramtype api_version: str or ~azure.mixedreality.remoterenderings.RemoteRenderingApiVersion
+    :type authentication_endpoint_url: str
     """
 
     def __init__(self,
@@ -78,7 +80,7 @@ class RemoteRenderingClient(object):
                  **kwargs) -> None:
 
         self._api_version = kwargs.pop(
-            "api_version", RemoteRenderingApiVersion.V2021_01_01
+            "api_version", DEFAULT_VERSION
         )
         validate_api_version(self._api_version)
 
